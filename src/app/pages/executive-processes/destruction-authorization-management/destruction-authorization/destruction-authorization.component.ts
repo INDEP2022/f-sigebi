@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -10,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { format } from 'date-fns';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -41,6 +43,7 @@ import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictat
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
@@ -86,7 +89,8 @@ export class DestructionAuthorizationComponent
   totalItems4: number = 0;
   totalItems5: number = 0;
   totalItems6: number = 0;
-
+  columnFilters: any = [];
+  array: any = [];
   $state = this.store.select(getDestructionAuth);
   state: IDestructionAuth;
   modalRef: BsModalRef;
@@ -97,6 +101,7 @@ export class DestructionAuthorizationComponent
   params5 = new BehaviorSubject<ListParams>(new ListParams());
   params6 = new BehaviorSubject<ListParams>(new ListParams());
   params7 = new BehaviorSubject<ListParams>(new ListParams());
+  params8 = new BehaviorSubject<ListParams>(new ListParams());
 
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   searchFilter: SearchBarFilter;
@@ -115,10 +120,10 @@ export class DestructionAuthorizationComponent
 
   goods: IDetailProceedingsDeliveryReception;
 
-  settings2;
-  settings3;
-  settings4;
-  settings5;
+  settings2: any = [];
+  settings3: any = [];
+  settings4: any = [];
+  settings5: any = [];
 
   rowSelected: boolean = false;
   selectedRow: any = null;
@@ -127,6 +132,7 @@ export class DestructionAuthorizationComponent
   actaList2: LocalDataSource = new LocalDataSource();
   dictaList2: LocalDataSource = new LocalDataSource();
   detailProceedingsList2: LocalDataSource = new LocalDataSource();
+  goodPDS1: LocalDataSource = new LocalDataSource();
   actaList: { cve_acta: string }[] = [];
 
   loadingProceedings = false;
@@ -186,6 +192,7 @@ export class DestructionAuthorizationComponent
 
   goodTrackerGoods: Partial<IDetailProceedingsDeliveryReception>[] = [];
   selectedGoods: IDetailProceedingsDeliveryReception[] = [];
+  good: IGood[] = [];
   get controls() {
     return this.proceedingForm.controls;
   }
@@ -206,6 +213,8 @@ export class DestructionAuthorizationComponent
     private documentsService: DocumentsService,
     private siabService: SiabService,
     private massiveGoodService: MassiveGoodService,
+    private datePipe: DatePipe,
+    private goodprocessService: GoodprocessService,
     private copiesOfficialOpinionService: CopiesOfficialOpinionService
   ) {
     super();
@@ -235,19 +244,18 @@ export class DestructionAuthorizationComponent
 
     this.settings2 = {
       //Bienes por actas
-      ...this.settings,
+      ...this.settings2,
       actions: false,
       columns: {
         ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
         selection: {
           title: '',
-          sort: false,
           type: 'custom',
-          valuePrepareFunction: (value: any, row: any) =>
-            this.isGoodSelected(row),
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGood(instance),
+          filter: false,
+          sort: false,
         },
       },
       hideSubHeader: false,
@@ -255,15 +263,36 @@ export class DestructionAuthorizationComponent
 
     this.settings3 = {
       //Bienes en estatus PDS
-      ...this.settings,
+      ...this.settings3,
       actions: false,
-      columns: { ...GOODS_COLUMNS },
+      columns: {
+        ...GOODS_COLUMNS,
+        selection: {
+          title: '',
+          sort: false,
+          type: 'custom',
+          filter: false,
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectGoodPSD(instance),
+        },
+      },
       hideSubHeader: false,
+      rowClassFunction: (row: any) => {
+        const di_disponible = row.data.di_disponible;
+        console.log(row.data);
+
+        if (di_disponible === 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
     };
 
     this.settings4 = {
       //Actas de recepción
-      ...this.settings,
+      ...this.settings4,
       actions: false,
       columns: { ...ACTA_RECEPTION_COLUMNS },
       hideSubHeader: false,
@@ -271,11 +300,19 @@ export class DestructionAuthorizationComponent
 
     this.settings5 = {
       //dictaminaciones
-      ...this.settings,
+      ...this.settings5,
       actions: false,
       columns: { ...DICTATION_COLUMNS },
       hideSubHeader: false,
     };
+  }
+
+  formatDateForInput(dateString: string): string {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${day}/${month}/${year}`;
   }
 
   onSelectGood(instance: CheckboxElementComponent) {
@@ -287,11 +324,35 @@ export class DestructionAuthorizationComponent
     });
   }
 
+  private tempArray: any[] = [];
+  onSelectGoodPSD(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        this.selectGoodPSD(data.row.goodId, data.toggle);
+
+        this.tempArray = [...this.array];
+
+        if (data.toggle) {
+          // Si el checkbox se selecciona, agregar el elemento al array
+          if (!this.array.includes(data.row.goodId)) {
+            this.array.push(data.row.goodId);
+          }
+        } else {
+          // Si el checkbox se deselecciona, eliminar el elemento del array
+          const index = this.array.indexOf(data.row.goodId);
+          if (index !== -1) {
+            this.array.splice(index, 1);
+          }
+        }
+      },
+    });
+  }
+
   deleteGood() {
     const { id } = this.controls;
     if (!this.controls.keysProceedings.value) {
       this.alert(
-        'error',
+        'warning',
         'Error',
         'Debe especificar/buscar la Solicitud para despues eliminar el bien de esta'
       );
@@ -300,7 +361,7 @@ export class DestructionAuthorizationComponent
 
     if (this.controls.statusProceedings.value == 'CERRADA') {
       this.alert(
-        'error',
+        'warning',
         'Error',
         'La Solicitud ya esta cerrada, no puede realizar modificaciones a esta'
       );
@@ -309,7 +370,7 @@ export class DestructionAuthorizationComponent
 
     if (this.selectedGoods.length == 0) {
       this.alert(
-        'error',
+        'warning',
         'Error',
         'Debe seleccionar un bien que forme parte de la Solicitud primero'
       );
@@ -378,15 +439,17 @@ export class DestructionAuthorizationComponent
     }
   }
 
+  selectGoodPSD(good: IGood, selected: boolean) {
+    if (selected) {
+      this.good.push(good);
+    } else {
+      this.good = this.good.filter(
+        _detail => _detail['goodNumber'] != good['goodNumber']
+      );
+    }
+  }
   proceedingDetail(): any[] {
     return [...this.detailProceedingsList, ...this.goodTrackerGoods];
-  }
-
-  isGoodSelected(detail: IDetailProceedingsDeliveryReception) {
-    const exists = this.selectedGoods.find(
-      _detail => _detail.good.id == detail.good.id
-    );
-    return exists ? true : false;
   }
 
   getUserInfo() {
@@ -421,6 +484,8 @@ export class DestructionAuthorizationComponent
       }
       this.goodTrackerGoods = trackerGoods;
       this.getProceedingGoods(id.value);
+      this.searchActa(id.value);
+      this.searchDicta(id.value);
     });
   }
 
@@ -444,9 +509,6 @@ export class DestructionAuthorizationComponent
     });
     this.show = true;
     this.show2 = true;
-    this.filterParams2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodByStatusPDS());
     this.globalVarService
       .getGlobalVars$()
       .pipe(takeUntil(this.$unSubscribe))
@@ -456,9 +518,50 @@ export class DestructionAuthorizationComponent
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
             this.insertDetailFromGoodsTracker();
+            this.getDictAndActs().subscribe();
           }
         },
       });
+    this.goodPDS1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'goodId':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'quantity':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params8 = this.pageFilter(this.params);
+          this.getGoodByStatusPDS();
+        }
+      });
+    this.params8
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodByStatusPDS());
   }
 
   setExpedientNum(goodId: number | string) {
@@ -474,6 +577,75 @@ export class DestructionAuthorizationComponent
       keyAct: this.controls.keysProceedings.value,
       statusAct: 'RGA',
       goodNumber: this.ngGlobal.REL_BIENES,
+    };
+    this.goodsTrackerLoading = true;
+    this.massiveGoodService.goodTracker(body).subscribe({
+      next: response => {
+        const goods = response.bienes_aceptados.map(good => {
+          return {
+            numberGood: Number(good.goodNumber),
+            good: {
+              id: Number(good.goodNumber),
+              description: good.description,
+            },
+            amount: Number(good.amount),
+            numberProceedings: null,
+          };
+        });
+        if (
+          response.bienes_aceptados.length > 0 &&
+          !this.controls.numFile.value
+        ) {
+          this.setExpedientNum(response.bienes_aceptados[0].goodNumber);
+        }
+        this.goodTrackerGoods = [
+          ...new Set([...this.goodTrackerGoods, ...goods]),
+        ];
+        this.detailProceedingsList = [
+          ...this.goodTrackerGoods,
+          ...this.detailProceedingsList,
+        ];
+        this.refusedGoods = response.bienes_rechazados;
+        this.goodsTrackerLoading = false;
+        let message = `<p>Se ingresaron <b>${response.aceptados}</b> bienes</p>`;
+        if (response.rechazados > 0) {
+          message += `<p>Se rechazaron <b>${response.rechazados}</b> bienes</p>`;
+        }
+        this.alert('info', 'Info', null, message);
+        this.keyProceedingchange();
+        this.getDictAndActs().subscribe(result => {
+          // Manejar los datos de result aquí
+          console.log(result);
+        });
+
+        console.log(this.getDictAndActs());
+
+        if (response.rechazados > 0) {
+          const modalConfig = {
+            ...MODAL_CONFIG,
+            class: 'modal-dialog-centered',
+          };
+          this.modalRef = this.modalService.show(this.modal, modalConfig);
+        }
+      },
+      error: () => {
+        this.goodsTrackerLoading = false;
+        this.getDictAndActs().subscribe(result => {
+          // Manejar los datos de result aquí
+          console.log(result);
+        });
+      },
+    });
+  }
+
+  insertDetailFromOn() {
+    let dato: string = '';
+    dato = this.array[0];
+
+    const body = {
+      keyAct: this.controls.keysProceedings.value,
+      statusAct: 'RGA',
+      goodNumber: dato,
     };
     this.goodsTrackerLoading = true;
     this.massiveGoodService.goodTracker(body).subscribe({
@@ -531,18 +703,19 @@ export class DestructionAuthorizationComponent
 
   insertFromGoodsTracker() {
     if (this.controls.statusProceedings.value == 'CERRADA') {
-      this.onLoadToast('error', 'Error', 'La Solicitud ya esta cerrada');
+      this.alert('warning', 'Error', 'La Solicitud ya esta cerrada');
       return;
     }
 
     if (!this.controls.keysProceedings.value) {
-      this.onLoadToast(
-        'error',
+      this.alert(
+        'warning',
         'Error',
         'No se ha especificado el Oficio de Solicitud'
       );
       return;
     }
+
     this.conserveState = true;
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
@@ -552,7 +725,6 @@ export class DestructionAuthorizationComponent
   }
 
   save() {
-    console.log(this.proceedingForm.value);
     if (!this.proceedingForm.valid) {
       this.onLoadToast('error', 'Error', 'El formulario es invalido');
       return;
@@ -605,6 +777,8 @@ export class DestructionAuthorizationComponent
           this.onLoadToast('success', 'Acta generada correctamente', '');
         },
         error: error => {
+          console.log(error);
+
           this.loading = false;
           this.onLoadToast(
             'error',
@@ -664,12 +838,13 @@ export class DestructionAuthorizationComponent
     const folio = universalFolio.value;
     const expedient = numFile.value;
     if (!id.value) {
-      this.alert('error', 'Error', 'No hay un acta guardado aún');
+      this.alert('warning', 'No hay un acta guardada aún', '');
       return;
     }
+
     if (status == 'CERRADA' || !status) {
       this.alert(
-        'error',
+        'warning',
         'Error',
         'No se puede generar el folio de escaneo en una Solicitud ya cerrada o clave inválida'
       );
@@ -713,6 +888,7 @@ export class DestructionAuthorizationComponent
     }
 
     const flyerNumber = this.detailProceedingsList[0].good.flyerNumber;
+
     if (!flyerNumber) {
       this.alert(
         'error',
@@ -737,7 +913,6 @@ export class DestructionAuthorizationComponent
       numberDepartmentRequest: this.department,
       flyerNumber,
     };
-
     this.createDocument(document)
       .pipe(
         tap(_document => this.controls.universalFolio.setValue(_document.id)),
@@ -829,49 +1004,17 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    this.generateScanRequestReport().subscribe();
+    //this.generateScanRequestReport().subscribe();
   }
 
   getDictAndActs() {
     const allGoods = this.detailProceedingsList.map(detail => detail.good.id);
-    console.log(allGoods);
 
-    return forkJoin([this.getDicts(allGoods), this.getActs(allGoods)]);
-  }
-
-  getActs(goodNumbers: number[]) {
-    return this.dictationXGoodService.getByAct(goodNumbers).pipe(
-      catchError(error => {
-        if (error.status >= 500) {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al obtener las actas de recepci+on'
-          );
-        }
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.actaList = response.data;
-      })
-    );
-  }
-
-  getDicts(goodNumbers: number[]) {
-    return this.dictationXGoodService.getByDictation(goodNumbers).pipe(
-      catchError(error => {
-        if (error.status >= 500) {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al obtener las dictaminaciones'
-          );
-        }
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.dictaList = response.data;
-      })
+    // Usar mergeMap para ejecutar las solicitudes en paralelo
+    return forkJoin(
+      allGoods.map(arg =>
+        forkJoin([this.searchActa(arg), this.searchDicta(arg)])
+      )
     );
   }
 
@@ -882,7 +1025,6 @@ export class DestructionAuthorizationComponent
 
   queryProceeding() {
     this.resetAll();
-    this.focusElement.nativeElement.focus();
     this.queryMode = true;
   }
 
@@ -895,36 +1037,19 @@ export class DestructionAuthorizationComponent
 
   keyProceedingchange() {
     const keyProceeding = this.controls.keysProceedings.value;
-    console.log(keyProceeding);
-
-    // if (!this.queryMode) {
-    //   console.log(!this.queryMode);
-    //   return;
-    // }
-    // if (!keyProceeding) {
-    //   return;
-    // }
 
     this.findProceeding(keyProceeding).subscribe();
   }
 
-  formatDateForInput(dateString: string): string {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString();
-    return `${day}/${month}/${year}`;
-  }
-
   findProceeding(keyProceeding: string) {
-    //params.addFilter('typeProceedings', 'RGA');
-    //params.addFilter('keysProceedings', keyProceeding);
-
     let params = {
       ...this.params.getValue(),
     };
+
     params['filter.typeProceedings'] = `$ilike:RGA`;
+
     params['filter.keysProceedings'] = `$ilike:${keyProceeding}`;
+
     return this.proceedingsDeliveryReceptionService
       .getAllProceedingsDeliveryReception2(params)
       .pipe(
@@ -943,14 +1068,29 @@ export class DestructionAuthorizationComponent
           return throwError(() => error);
         }),
         map(response => response.data[0]),
-        tap((proceeding: any) => this.proceedingForm.patchValue(proceeding)),
-        switchMap(proceeding => {
-          const getGoods$ = this.getProceedingGoods(proceeding.id);
-          const searchActa$ = this.searchActa(proceeding.id);
-          const searchDicta$ = this.searchDicta(proceeding.id);
+        tap((proceeding: any) => {
+          proceeding.elaborationDate = moment(
+            proceeding.elaborationDate
+          ).format('DD/MM/YYYY');
+          proceeding.datePhysicalReception = moment(
+            proceeding.datePhysicalReception
+          ).format('DD/MM/YYYY');
+          proceeding.closeDate = moment(proceeding.closeDate).format(
+            'DD/MM/YYYY'
+          );
 
-          return forkJoin([getGoods$, searchActa$, searchDicta$]);
+          this.proceedingForm.patchValue(proceeding);
+          this.getProceedingGoods(proceeding.id);
+          this.searchActa(proceeding.id);
+          this.searchDicta(proceeding.id);
         })
+        // switchMap(proceeding => {
+        //   const getGoods$ = this.getProceedingGoods(proceeding.id);
+        //   const searchActa$ = this.searchActa(proceeding.id);
+        //   const searchDicta$ = this.searchDicta(proceeding.id);
+
+        //   return forkJoin([getGoods$, searchActa$, searchDicta$]);
+        // })
       );
   }
 
@@ -998,11 +1138,8 @@ export class DestructionAuthorizationComponent
       this.closeDate.nativeElement.focus();
       return;
     }
-    console.log(universalFolio.value);
 
     if (!universalFolio.value) {
-      console.log(!universalFolio.value);
-
       this.onLoadToast(
         'error',
         'Error',
@@ -1034,8 +1171,10 @@ export class DestructionAuthorizationComponent
           );
           return;
         }
-
+        const fecha = this.proceedingForm.get('closeDate').value;
+        const fechaFormateada = this.datePipe.transform(fecha, 'dd/MM/yyyy');
         const message = CLOSE_PROCEEDING_MESSAGE(
+          fechaFormateada,
           this.totalItems2,
           keysProceedings.value
         );
@@ -1073,28 +1212,39 @@ export class DestructionAuthorizationComponent
   // -----old
 
   //Trae todos los bienes con estado PDS
-  getGoodByStatusPDS() {
-    if (this.show2) this.filterParams2.getValue().removeAllFilters();
-    this.filterField2();
+  async getGoodByStatusPDS() {
     this.loadingGoods = true;
-    this.goodService
-      .getGoodByStatusPDS(this.filterParams2.getValue().getParams())
-      .subscribe({
-        next: response => {
-          this.show2 = false;
-          this.goodPDS = response.data;
-          this.totalItems3 = response.count;
-          this.loadingGoods = false;
-        },
-        error: error => (this.loadingGoods = false),
-      });
+
+    let params = {
+      ...this.params8.getValue(),
+      ...this.columnFilters,
+    };
+
+    params['filter.status'] = `$ilike:PDS`;
+    this.goodService.getGoodByStatusPDS(params).subscribe({
+      next: async (response: any) => {
+        let result = response.data.map(async (item: any) => {
+          let obj = {
+            vcScreen: 'FESTATUSRGA',
+            goodNumber: item.id,
+          };
+
+          const di_dispo = await this.goodStatus(obj);
+          item['di_disponible'] = di_dispo;
+          console.log(item['di_disponible']);
+        });
+        await Promise.all(result);
+        this.show2 = false;
+        this.goodPDS = response.data;
+        this.goodPDS1.load(response.data);
+        this.totalItems3 = response.count;
+        this.loadingGoods = false;
+      },
+      error: error => (this.loadingGoods = false),
+    });
   }
 
-  filterField2() {
-    this.filterParams2.getValue().addFilter('status', 'PDS');
-  }
-
-  searchActa(id: string) {
+  searchActa(id: string | number) {
     let params = {
       ...this.params5.getValue(),
     };
@@ -1105,13 +1255,11 @@ export class DestructionAuthorizationComponent
           this.actaList2.load(resp.data);
           this.totalItems5 = resp.count;
         },
-        error: err => {
-          console.log(err);
-        },
+        error: err => {},
       });
   }
 
-  searchDicta(id: string) {
+  searchDicta(id: string | number) {
     let params = {
       ...this.params6.getValue(),
     };
@@ -1122,9 +1270,7 @@ export class DestructionAuthorizationComponent
           this.dictaList2.load(resp.data);
           this.totalItems6 = resp.count;
         },
-        error: (err: any) => {
-          console.log(err);
-        },
+        error: (err: any) => {},
       });
   }
 
@@ -1137,16 +1283,33 @@ export class DestructionAuthorizationComponent
       .getGoodsByProceedings(proceedingId, params)
       .subscribe({
         next: resp => {
-          console.log(resp.data);
+          this.detailProceedingsList = resp.data;
           this.detailProceedingsList2.load(resp.data);
           this.totalItems2 = resp.count;
           this.loadingGoodsByP = false;
           this.goodTrackerGoods;
         },
         error: err => {
-          console.log(err);
           this.loadingGoodsByP = false;
         },
       });
+  }
+
+  //StatusBien
+  async goodStatus(id: any): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.goodprocessService.getScreenGood2(id).subscribe({
+        next: async (response: any) => {
+          if (response.data) {
+            resolve('S');
+          } else {
+            resolve('N');
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
   }
 }

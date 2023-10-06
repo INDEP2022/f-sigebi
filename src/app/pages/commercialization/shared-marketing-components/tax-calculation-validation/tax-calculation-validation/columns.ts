@@ -1,5 +1,3 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-
 export const COLUMNS = {
   id: {
     title: 'Id Avalúo',
@@ -61,11 +59,11 @@ export const COLUMNS2 = {
     sort: false,
   },
   terrainSurface: {
-    title: 'Superfice Terreno',
+    title: 'Superficie Terreno',
     sort: false,
   },
   surfaceConstru: {
-    title: 'Superfice Construcción',
+    title: 'Superficie Construcción',
     sort: false,
   },
   terrainPorcentage: {
@@ -89,7 +87,7 @@ export const COLUMNS2 = {
     sort: false,
   },
   porcentageTotal: {
-    title: 'Porcentaje Valor Otros',
+    title: 'Porcentaje Total',
     sort: false,
   },
   vri: {
@@ -169,33 +167,85 @@ export const COLUMNS2 = {
     sort: false,
   },
   totalAccount: {
-    title: 'Valor con Iva Icluido',
+    title: 'Valor con Iva Incluido',
     sort: false,
   },
   observation: {
     title: 'Observación',
     sort: false,
   },
-  validIVA: {
-    title: 'Validación IVA',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
+  // validIVA: {
+  //   title: 'Validación IVA',
+  //   type: 'custom',
+  //   sort: false,
+  //   /*renderComponent: CheckboxElementComponent,
+  //   onComponentInitFunction(instance: any) {
+  //     instance.toggle.subscribe((data: any) => {
+  //       data.row.to = data.toggle;
+  //     });
+  //   },*/
+  //   renderComponent: CheckboxElementComponent,
+  //   valuePrepareFunction: (isSelected: any, row: any) => {
+  //     console.log('valuePrepareFunction -> ', row);
+  //     return row.validIVA == 'N' ? true : false;
+  //   },
+  // },
+  // confirm: {
+  //   title: 'Confirmado',
+  //   type: 'custom',
+  //   sort: false,
+  //   /*renderComponent: CheckboxElementComponent,
+  //   onComponentInitFunction(instance: any) {
+  //     instance.toggle.subscribe((data: any) => {
+  //       data.row.to = data.toggle;
+  //     });
+  //   },
+  //   renderComponent: CheckboxElementComponent,
+  //   valuePrepareFunction: (isSelected: any, row: any) => {
+  //     return row.abbreviation == 'N' ? true : false;
+  //   },
+  // },
+};
+
+export const COLUMNS3 = {
+  totalRecords: {
+    title: 'Total de Registros',
     sort: false,
   },
-  confirm: {
-    title: 'Confirmado',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
+  totalAppraisal: {
+    title: 'Total Valor de Referencia o Avalúo',
+    sort: false,
+  },
+  totalTerrain: {
+    title: 'Total Valor Terreno',
+    sort: false,
+  },
+  totalHousing: {
+    title: 'Total Valor Construcción Habitacional',
+    sort: false,
+  },
+  totalCommercial: {
+    title: 'Total Valor Construcción Comercial',
+    sort: false,
+  },
+  totalSpecial: {
+    title: 'Total Valor Instalaciones Especiales',
+    sort: false,
+  },
+  totalOthers: {
+    title: 'Total Valor Otros',
+    sort: false,
+  },
+  totalDifference: {
+    title: 'Total Diferencia',
+    sort: false,
+  },
+  valueCalculated: {
+    title: 'Valor Total de Iva Calculado',
+    sort: false,
+  },
+  calueIncluding: {
+    title: 'Valor con Iva Incluido',
     sort: false,
   },
 };

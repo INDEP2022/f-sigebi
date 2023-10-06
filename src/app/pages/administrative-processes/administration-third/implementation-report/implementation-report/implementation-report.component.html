@@ -156,10 +156,10 @@
             [control]="serviceOrdersForm.get('status')"
             label="Estatus">
             <ng-select formControlName="status" class="form-control pt-1">
-              <ng-option value="Autorizda">AUTORIZADA</ng-option>
-              <ng-option value="Cancelada">CANCELADA</ng-option>
-              <ng-option value="Proceso">PROCESO</ng-option>
-              <ng-option value="Rechazado">RECHAZADO</ng-option>
+              <ng-option value="AUTORIZADA">AUTORIZADA</ng-option>
+              <ng-option value="CANCELADA">CANCELADA</ng-option>
+              <ng-option value="PROCESO">PROCESO</ng-option>
+              <ng-option value="RECHAZADO">RECHAZADO</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -226,13 +226,23 @@
               formControlName="observations"></textarea>
           </form-field>
         </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="serviceOrdersForm.get('justifications')"
+            label="Justificación"
+            *ngIf="mostrarJus">
+            <textarea
+              class="form-control"
+              formControlName="justifications"></textarea>
+          </form-field>
+        </div>
       </div>
     </form>
     <div footer>
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <button
-            (click)="bitacora()"
+            (click)="openHistoric($event)"
             type="button"
             class="btn btn-primary active btn-sm mr-3">
             Bitácora
@@ -294,12 +304,10 @@
       </div>
     </div>
 
-    <div class="col-md-12">
-      <h5 class="title">Reportes de Implementación</h5>
-      <div class="row">
+    <!-- <div class="row">
         <form-loader *ngIf="loading2"></form-loader>
         <div class="col-md-12">
-          <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+          <div [class]="loading ? 'table-loading' : ''"> 
           <ng-scrollbar
             [track]="'all'"
             [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
@@ -312,26 +320,115 @@
               [params]="params"
               [totalItems]="totalItems2"></app-pagination>
           </ng-scrollbar>
-          <!-- </div> -->
+          </div>
+        </div>
+      </div> -->
+    <form [formGroup]="form" class="form-material">
+      <h5 class="title">Reportes de Implementación</h5>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('DES_SERVICIO')"
+                        label="Servicio">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="DES_SERVICIO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('DES_TIPO')"
+                        label="Especificación">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="DES_TIPO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('DES_TURNO')"
+                        label="Turno">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="DES_TURNO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('DES_VARCOSTO')"
+                        label="Variable de Costo">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="DES_VARCOSTO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('TOT_IMP_COSTO')"
+                        label="Costo">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="TOT_IMP_COSTO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
     <div footer>
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <button
-            type="button"
+            type="submit"
             class="btn btn-primary active btn-sm"
-            (click)="pupGenera()">
+            (click)="onChangeStatus()">
             Generar <i class="fas fa-print bx-sm float-icon"></i>
           </button>
         </div>
         <div class="m-3">
           <button
-            type="button"
+            type="submit"
             class="btn btn-primary active btn-sm"
             (click)="incorporaCostos()">
-            Incorpora <i class="bx bx-search-alt bx-sm float-icon"></i>
+            Incorporar Costos <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
         <div class="m-3">

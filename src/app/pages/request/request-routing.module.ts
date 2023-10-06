@@ -38,6 +38,85 @@ const routes: Routes = [
       screen: 'MUESTREOBIENES',
     },
   },
+  {
+    path: 'ssampling-assets',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/generate-formats-verify-noncompliance/generate-formats-verify-noncompliance.module'
+        )
+      ).GenerateFormatsVerifyNoncomplianceModule,
+    data: {
+      title: 'Muestreo Bienes Generar Consulta',
+      screen: 'MUESTREOBIENES',
+    },
+  },
+  {
+    path: 'assets-clasification',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/assets-classification/assets-classification.module'
+        )
+      ).AssetsClassificationModule,
+    data: {
+      title: 'Muestreo Bienes Generar Consulta',
+      screen: 'MUESTREOBIENES',
+    },
+  },
+  {
+    path: 'warehouse-verification',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/warehouse-verification/warehouse-verification.module'
+        )
+      ).WarehouseVerificationModule,
+    data: {
+      title: 'Muestreo Bienes Generar Consulta',
+      screen: 'MUESTREOBIENES',
+    },
+  },
+  {
+    path: 'restitution-assets-numeric',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/restitution-assets-numeric-or-sort/restitution-assets-numeric-or-sort.module'
+        )
+      ).RestitutionAssetsNumericOrSortModule,
+    data: {
+      title: 'Muestreo Bienes Generar Consulta',
+      screen: 'MUESTREOBIENES',
+    },
+  },
+
+  {
+    path: 'deposit-payment-validations',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/deposit-payment-validations/deposit-payment-validations.module'
+        )
+      ).DepositPaymentValidationsModule,
+    data: {
+      title: 'Muestreo Bienes Generar Consulta',
+      screen: 'MUESTREOBIENES',
+    },
+  },
+  {
+    path: 'assets-approval',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/assets-approval/assets-approval.module'
+        )
+      ).AssetsApprovalModule,
+    data: {
+      title: 'Muestreo Bienes Generar Consulta',
+      screen: 'MUESTREOBIENES',
+    },
+  },
   //Solicitud de transferencia
   {
     path: 'transfer-request',

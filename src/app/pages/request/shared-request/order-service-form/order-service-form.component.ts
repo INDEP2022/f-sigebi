@@ -27,7 +27,7 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
   @Input() showForm: boolean;
   @Input() ordServform?: FormGroup = new FormGroup({});
   @Input() total: string = null;
-  readonly: boolean = false;
+  readonly: boolean = true;
   visitEye: boolean = false;
   consolideContainer: boolean = false;
 
@@ -37,11 +37,32 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     //this.prepareForm();
+    this.formReadOnly();
+  }
+
+  formReadOnly() {
+    if (this.op == 9) {
+      this.readonly = false;
+    }
+    /*this.readonly = this.op == 1 ? false : true;
+    this.readonly = this.op == 9 ? false : true; */
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('this.op', this.op);
-    console.log('this.showForm', this.showForm);
+    if (this.showForm == true) {
+      this.readonly = false;
+    }
+
+    if (
+      (this.showForm == true && this.op == 2) ||
+      (this.showForm == true && this.op == 3) ||
+      (this.showForm == true && this.op == 4) ||
+      (this.showForm == true && this.op == 5) ||
+      (this.showForm == true && this.op == 6) ||
+      (this.showForm == true && this.op == 7) ||
+      (this.showForm == true && this.op == 8)
+    )
+      this.readonly = true;
     this.orderService = this.ordServform.getRawValue();
 
     this.visitEye = this.orderService.eyeVisit == 'Y' ? true : false;

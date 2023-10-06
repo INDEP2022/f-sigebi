@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppraiseEndpoints } from 'src/app/common/constants/endpoints/ms-appraise.endpoints';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -27,6 +27,25 @@ export class AppraiseService extends HttpService {
       AppraiseEndpoints.EatAppraisalView,
       params
     );
+  }
+
+  exportAppraiseExcel(params: _Params) {
+    return this.get<{ base64: string }>(
+      AppraiseEndpoints.EatAppraisalViewExcel,
+      params
+    );
+  }
+
+  exportAppraiseSum(params: _Params) {
+    return this.get<{
+      total_vri: string;
+      total_vri_iva: string;
+      total_vri_redondeado: string;
+      total_vc: string;
+      tot_vc_iva: string;
+      tot_vri_con_desc: string;
+      tot_iva_vri_desc: string;
+    }>(AppraiseEndpoints.EatAppraisalViewSum, params);
   }
 
   getAll(params?: ListParams | string): Observable<IListResponse<IAppraisers>> {
@@ -63,8 +82,19 @@ export class AppraiseService extends HttpService {
 
   getComerDetAvaluo(appraisal: number, status: string, params: any) {
     return this.get(
-      `${AppraiseEndpoints.ComerDetAvaluo}?filter.idAppraisal=$eq:${appraisal}&filter.good.status=$ilike:${status}`,
+      `${AppraiseEndpoints.ComerDetAvaluo}?filter.idAppraisal=$eq:${appraisal}`, //&filter.good.status=$ilike:${status}
       params
     );
+  }
+
+  getComerAvaluoWhere(appraisal: number, address: string, params: any) {
+    return this.get(
+      `${AppraiseEndpoints.ComerAvaluoWhere}/${appraisal}/${address}`,
+      params
+    );
+  }
+
+  updateEatDetAppraisal(data: any) {
+    return this.put(AppraiseEndpoints.ComerDetAvaluo, data);
   }
 }

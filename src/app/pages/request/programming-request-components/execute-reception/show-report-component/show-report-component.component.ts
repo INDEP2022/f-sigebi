@@ -72,6 +72,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   proceedingInfo: IProceedings;
   userInfo: any;
   idOrderService: number = 0;
+  annexW: boolean = false;
+  process: string = '';
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -106,7 +108,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('idOrderService', this.idOrderService);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
@@ -202,6 +203,18 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
     if (this.idOrderService) {
       let linkDoc: string = `${this.urlBaseReport}orden_servicio.jasper&ordenServicioID=${this.idOrderService}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.idTypeDoc == 198 && this.annexW == true) {
+      let linkDoc: string = `${this.urlBaseReport}AnexoOrdenesW.jasper&ID_ORDE_SERVICIO=${this.idOrderService}&ID_TIPO_DOCTO=2`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.process == 'validation-report' && this.idOrderService) {
+      let linkDoc: string = `${this.urlBaseReport}reporte_implementacion.jasper&ordenServicioID=${this.idOrderService}`;
       this.src = linkDoc;
       this.formLoading = false;
     }

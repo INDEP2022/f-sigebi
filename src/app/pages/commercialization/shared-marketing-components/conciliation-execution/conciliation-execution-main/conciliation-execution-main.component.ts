@@ -957,7 +957,52 @@ export class ConciliationExecutionMainComponent
     }
   }
 
-  async PROCESA_FASE4_ACT() {}
+  async PROCESA_FASE4_ACT() {
+    let L_SIGUE = await this.VALIDA_LIQUIDACION();
+    let body = {
+      event: this.selectedEvent.eventId,
+      publicLot: this.selectedBatch.lotPublic,
+      phaseAct: 4,
+      lot: this.selectedBatch.idLot,
+      date: this.conciliationForm.get('date').value,
+      user: this.token.decodeToken().preferred_username,
+      description: this.selectedEvent.processKey,
+      validate: L_SIGUE,
+    };
+    const resp: any = await this.endpointPROCESA_FASE4_ACT(body);
+    if (resp.status != 200) {
+      this.loadingBtn = false;
+      this.alert(
+        'error',
+        'No se completó el proceso de ejecución',
+        resp.message
+      );
+    } else {
+      this.loadingBtn = false;
+      this.alert('success', 'Proceso de ejecución terminado correctamente', '');
+    }
+  }
+  endpointPROCESA_FASE4_ACT(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.PROCESA_FASE4_ACT(body).subscribe({
+        next: async data => {
+          console.log('data', data);
+          let obj = {
+            status: 200,
+            message: 'OK',
+          };
+          resolve(obj);
+        },
+        error: async err => {
+          let obj = {
+            status: err.status,
+            message: await this.capitalizarPrimeraLetra(err.error.message),
+          };
+          resolve(obj);
+        },
+      });
+    });
+  }
   async PROCESA_FASE5_ACT() {
     const constProcessPhase3Ant: any = await this.getProcessPhase3Ant();
     if (!constProcessPhase3Ant) {
@@ -1112,6 +1157,7 @@ export class ConciliationExecutionMainComponent
   // ------------------------------------------ // FUNCIONES PROCESOS ACTUALES //
 
   async functVALIDA_PAGOSREF_ACT(body: any, body2: any) {
+    console.log('body', body);
     await this.VALIDA_PAGOSREF_VENTA_INMU_ACT(body);
     await this.VALIDA_PAGOSREF_PREP_OINMU_ACT(body2);
 
@@ -1122,6 +1168,7 @@ export class ConciliationExecutionMainComponent
     return new Promise((resolve, reject) => {
       this.msDepositaryService.postCurrentRealStateSale(body).subscribe({
         next: data => {
+          console.log('data', data);
           resolve(data);
         },
         error: err => {
@@ -1173,7 +1220,8 @@ export class ConciliationExecutionMainComponent
       this.alert(
         'warning',
         'No se completó el proceso de ejecución',
-        'No hay clientes seleccionados para procesar, verifique la tabla Clientes del Evento'
+        ''
+        // 'No hay clientes seleccionados para procesar, verifique la tabla Clientes del Evento'
       );
     }
   }

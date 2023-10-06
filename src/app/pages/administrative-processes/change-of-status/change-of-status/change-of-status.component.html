@@ -94,10 +94,19 @@
     <div body>
       <form [formGroup]="formNew" class="form-material">
         <div class="row mt-5">
-          <div class="col-md-8 col-sm-12 col-xs-12">
-            <app-goods-status-shared
+          <div class="col-md-8 col-sm-12 col-xs-12 mt-3">
+            <form-field [control]="formNew.get('goodStatus')">
+              <ngx-select
+                (fetchItems)="getStatus($event)"
+                label="Nuevo Estatus"
+                [form]="formNew"
+                [data]="dataStatus"
+                bindLabel="labelEstatus"
+                control="goodStatus"></ngx-select>
+            </form-field>
+            <!-- <app-goods-status-shared
               [form]="formNew"
-              labelStatus="Nuevo Estatus"></app-goods-status-shared>
+              labelStatus="Nuevo Estatus"></app-goods-status-shared> -->
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
             <form-field [control]="formNew.get('dateStatus')" label="Fecha">

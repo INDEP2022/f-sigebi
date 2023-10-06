@@ -93,6 +93,7 @@ export enum GoodProcessPoints {
   ComerDetAvaluoAll = 'application/get-comer-det-avaluo-all',
   SpObtnxGood = 'application/spObtnxGood',
   SpObtnxGoodExcel = 'application/spObtnxGood-csv',
+  GoodxStatusXtypeNumber = 'application/getExistsGoodxStatusXtypeNumber',
 }
 
 export enum GoodFinderEndpoint {

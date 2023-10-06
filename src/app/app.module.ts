@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ROOT_REDUCERS } from './app.reducers';
+import { CentralizedExpensesModalComponent } from './centralized-expenses.modal/centralized-expenses.modal.component';
 import { ToastrComponent } from './common/components/toastr/toastr.component';
 import { AppInitializer } from './common/config/app-init.service';
 import { InputFormDirective } from './common/directives/input-form.directive';
@@ -44,6 +45,7 @@ export function servicesOnRun(app: AppInitializer) {
     LoadingComponent,
     ToastrComponent,
     LoadingPercentComponent,
+    CentralizedExpensesModalComponent,
   ],
   imports: [
     BrowserModule,

@@ -37,4 +37,14 @@ export class JobDictumTextsService extends HttpService {
   remove(body: any) {
     return this.delete(JobDictumTextsEndpoints.JobDictumTexts, body);
   }
+
+  pupExtractData(params: any) {
+    const route = `${JobDictumTextsEndpoints.pupExtraeData}`;
+    return this.post(route, params);
+  }
+
+  pupExtractDatas(params: any) {
+    const route = `${JobDictumTextsEndpoints.pupExtraeDatas}`;
+    return this.post(route, params);
+  }
 }

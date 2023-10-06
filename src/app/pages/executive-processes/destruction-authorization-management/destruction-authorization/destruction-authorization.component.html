@@ -4,7 +4,7 @@
       <h5 class="title">
         GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
       </h5>
-      <div class="col-md-5 buttons">
+      <div class="col-md-6 buttons">
         <div>
           <button
             class="btn btn-success active btn-sm mx-1"
@@ -12,14 +12,15 @@
             Nueva Acta
           </button>
           <button
-            class="btn btn-info active btn-sm mr-1"
+            class="btn btn-danger btn-sm active mr-3"
             (click)="queryProceeding()">
-            Consultar Acta
+            Limpiar <i class="fas fa-eraser"> </i>
           </button>
           <button
-            class="btn btn-info active btn-sm mr-1"
+            class="btn btn-primary btn-sm active m-1"
             (click)="keyProceedingchange()">
-            Consultar Acta 2
+            Consultar Acta
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
           <confirm-button
             [loading]="loading"
@@ -49,7 +50,7 @@
 
         <form-field
           class="col-md-4"
-          label="Oficio de solicitud"
+          label="Oficio de Solicitud"
           [control]="proceedingForm.get('keysProceedings')">
           <input
             type="text"
@@ -86,7 +87,7 @@
       <div class="row pt-4">
         <form-field
           class="col-md-4"
-          label="Fecha de recepción"
+          label="Fecha de Recepción"
           [control]="proceedingForm.get('elaborationDate')">
           <input
             type="text"
@@ -95,14 +96,11 @@
             bsDatepicker
             [bsConfig]="{
               dateInputFormat: 'DD/MM/YYYY'
-            }"
-            [value]="
-              formatDateForInput(proceedingForm.get('elaborationDate').value)
-            " />
+            }" />
         </form-field>
         <form-field
           class="col-md-4"
-          label="Fecha de alcance"
+          label="Fecha de Alcance"
           [control]="proceedingForm.get('datePhysicalReception')">
           <input
             type="text"
@@ -111,16 +109,11 @@
             bsDatepicker
             [bsConfig]="{
               dateInputFormat: 'DD/MM/YYYY'
-            }"
-            [value]="
-              formatDateForInput(
-                proceedingForm.get('datePhysicalReception').value
-              )
-            " />
+            }" />
         </form-field>
         <form-field
           class="col-md-4"
-          label="Fecha de intergracion"
+          label="Fecha de Intergracion"
           [control]="proceedingForm.get('closeDate')">
           <input
             type="text"
@@ -130,10 +123,7 @@
             bsDatepicker
             [bsConfig]="{
               dateInputFormat: 'DD/MM/YYYY'
-            }"
-            [value]="
-              formatDateForInput(proceedingForm.get('closeDate').value)
-            " />
+            }" />
         </form-field>
       </div>
       <div class="row pt-4">
@@ -165,15 +155,16 @@
     <div class="row">
       <div class="col d-flex justify-content-between">
         <div>
-          <h5>Folio de escaneo: {{ controls.universalFolio.value }}</h5>
+          <h5>Folio de Escaneo: {{ controls.universalFolio.value }}</h5>
         </div>
         <div>
           <button
             [disabled]="loadingReport"
-            class="btn btn-sm btn-danger active"
-            (click)="scanRequest()">
+            (click)="scanRequest()"
+            type="button"
+            class="btn btn-primary active btn-sm">
             {{ loadingReport ? 'Cargando' : 'Solicitud' }}
-            <i class="fa fa-print"></i>
+            <i class="bx bx-printer bx-sm float-icon"></i>
             <img
               [style.width.px]="20"
               *ngIf="loadingReport"
@@ -182,13 +173,19 @@
           </button>
         </div>
         <div>
-          <button class="btn btn-sm btn-danger active" (click)="scan()">
-            Escaneo <i class="fa fa-print"></i>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="scan()">
+            Escaneo <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
         </div>
         <div>
-          <button class="btn btn-sm btn-danger active" (click)="printReport()">
-            imprimir <i class="fa fa-print"></i>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="printReport()">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
         </div>
       </div>
@@ -198,10 +195,14 @@
       <div class="col-md-6">
         <div [class]="loadingActReception ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings4"
-              [source]="actaList2"></ng2-smart-table>
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loadingActReception ? '0px' : '250px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings4"
+                [source]="actaList2"></ng2-smart-table>
+            </ng-scrollbar>
           </div>
           <app-pagination
             [params]="params5"
@@ -211,10 +212,14 @@
       <div class="col-md-6">
         <div [class]="loadingDictation ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings5"
-              [source]="dictaList2"></ng2-smart-table>
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loadingDictation ? '0px' : '250px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings5"
+                [source]="dictaList2"></ng2-smart-table>
+            </ng-scrollbar>
           </div>
           <app-pagination
             [params]="params6"
@@ -224,43 +229,61 @@
     </div>
     <hr />
     <div class="row">
-      <div class="form-material col-md-6">
-        <search-bar
-          [filterParams]="filterParams2"
-          [filterField]="searchFilter2"></search-bar>
-      </div>
-
-      <div class="col-md-6">
-        <button class="btn btn-primary active btn-sm" (click)="deleteGood()">
-          Eliminar
-        </button>
+      <div class="col-md-12">
+        <div class="row pt-2">
+          <div class="col-md-12 text-center mt-4 mb-4">
+            <button
+              tooltip="Agregar Bien"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="insertDetailFromOn()">
+              <!-- Mover uno -->
+              <i class="bx bx-chevron-down bx-md"></i>
+            </button>
+            <button
+              tooltip="Quitar Bien"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="deleteGood()">
+              <!-- Quitar uno -->
+              <i class="bx bx-chevron-up bx-md"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="row pt-5">
-      <div class="col-md-6">
+      <div class="col-md-6 table-responsive">
         <div class="row">
           <div [class]="loadingGoods ? 'table-loading' : ''">
-            <!-- <div class="table-responsive"> -->
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings3"
-              [source]="goodPDS"></ng2-smart-table>
-            <!-- </div> -->
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loadingGoods ? '0px' : '350px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings3"
+                [source]="goodPDS1"></ng2-smart-table>
+            </ng-scrollbar>
             <app-pagination
-              [filterParams]="filterParams2"
+              [params]="params8"
               [totalItems]="totalItems3"></app-pagination>
           </div>
         </div>
       </div>
       <div class="col-md-6">
-        <div class="row">
+        <div class="row table-responsive">
           <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <!-- <div class="table-responsive"> -->
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings2"
-              [source]="detailProceedingsList2"></ng2-smart-table>
-            <!-- </div> -->
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loadingGoodsByP ? '0px' : '350px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="detailProceedingsList2"></ng2-smart-table>
+            </ng-scrollbar>
             <app-pagination
               [params]="params7"
               [totalItems]="totalItems2"></app-pagination>
@@ -270,16 +293,24 @@
         <div class="row pt-5">
           <div class="d-flex justify-content-center">
             <div class="m-3">
-              <button type="button" class="btn btn-secondary btn-sm active">
+              <button
+                type="button"
+                tooltip="Agregar"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2">
                 Insertar vía Archivo plano
+                <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
             <div class="m-3">
               <button
-                (click)="insertFromGoodsTracker()"
                 type="button"
-                class="btn btn-secondary btn-sm active">
+                tooltip="Agregar"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="insertFromGoodsTracker()">
                 Insertar vía rastreador
+                <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>

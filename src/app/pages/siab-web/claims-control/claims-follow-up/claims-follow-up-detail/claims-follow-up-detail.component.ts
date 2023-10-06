@@ -149,6 +149,16 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
           this.siniester.tiposiniestroid
         );
       }
+      if (this.siniester.datejobmail) {
+        this.claimsFollowUpDetailForm.controls['dateOfficeMailIn'].setValue(
+          this.dateConvert(this.siniester.datejobmail)
+        );
+      }
+      if (this.siniester.datejobconclusion) {
+        this.claimsFollowUpDetailForm.controls[
+          'dateOfficeMinConcluIn'
+        ].setValue(this.dateConvert(this.siniester.datejobconclusion));
+      }
       if (this.siniester.siniestro) {
         this.claimsFollowUpDetailForm.controls['sinisterIn'].setValue(
           this.siniester.siniestro
@@ -500,6 +510,25 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
         ? this.claimsFollowUpDetailForm.controls['statusIn'].value
         : ''
     );
+    formData.append(
+      'dateJobMail',
+      this.claimsFollowUpDetailForm.controls['dateOfficeMailIn'].value != null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['dateOfficeMailIn'].value
+          )
+        : ''
+    );
+
+    formData.append(
+      'dateJobConclusion',
+      this.claimsFollowUpDetailForm.controls['dateOfficeMinConcluIn'].value !=
+        null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['dateOfficeMinConcluIn']
+              .value
+          )
+        : ''
+    );
     console.log('fromdata' + formData);
     this.seraLogService.postSaveSinisterRecord(formData).subscribe({
       next: resp => {
@@ -658,6 +687,25 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
         : ''
     );
     formData.append(
+      'dateJobMail',
+      this.claimsFollowUpDetailForm.controls['dateOfficeMailIn'].value != null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['dateOfficeMailIn'].value
+          )
+        : ''
+    );
+
+    formData.append(
+      'dateJobConclusion',
+      this.claimsFollowUpDetailForm.controls['dateOfficeMinConcluIn'].value !=
+        null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['dateOfficeMinConcluIn']
+              .value
+          )
+        : ''
+    );
+    formData.append(
       'statusIn',
       this.claimsFollowUpDetailForm.controls['statusIn'].value != null &&
         this.claimsFollowUpDetailForm.controls['statusIn'].value != 'null'
@@ -745,8 +793,8 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     }
   }
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', 'Siniestros Seguimiento', `${message} Correctamente`);
+    const message: string = this.edit ? 'actualizado' : 'creado';
+    this.alert('success', `El registro ha sido ${message} `, ``);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

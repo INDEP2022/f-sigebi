@@ -107,7 +107,7 @@
 }
 
 .table-bordered {
-  border: none !important;
+  // border: none !important;
 }
 
 .modal-content {
@@ -781,4 +781,9 @@ custom-view-component {
   font-weight: 400;
   background-color: crimson !important;
   color: white;
+}
+.cell_right {
+  width: 100% !important;
+  height: 100% !important;
+  text-align: right !important;
 }

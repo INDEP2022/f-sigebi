@@ -81,6 +81,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   binaryExcel: string | ArrayBuffer;
   currentPage = 1;
   pageSize = 10;
+  flag: number = 0;
   paginatedData: any[] = [];
   fileReader = new FileReader();
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
@@ -373,8 +374,10 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
 
     // Crear un arreglo para almacenar los números de bien duplicados
     const duplicateNumbers = [];
+    const correctMoney = [];
     const mon: any = [];
     const data1: any = [];
+    const data2: any = [];
     for (let i = 0; i < this.dataExcel.length; i++) {
       data1.push([this.dataExcel[i].no_bien]);
       const data = this.dataExcel[i].no_bien;
@@ -395,6 +398,31 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       } catch (err) {}
     }
 
+    for (let i = 0; i < this.dataExcel.length; i++) {
+      data2.push([this.dataExcel[i].no_bien]);
+      const dat = this.dataExcel[i].no_bien;
+
+      // mon.push([this.dataExcel[i].money]);
+
+      let dato = {
+        screenkey: 'FRELDECOMISO',
+        no_bien: dat,
+        money: this.Only.get('radio').value,
+      };
+      try {
+        const resp = await this.detRelationConfiscationService
+          .money(dato)
+          .toPromise();
+
+        // Verificar si el número de bien ya existe en la respuesta
+      } catch (err: any) {
+        console.log(err);
+        if (err.status === 400) {
+          correctMoney.push(dat); // Agregar el número de bien duplicado al arreglo
+        }
+      }
+    }
+
     // console.log(mon);
 
     // if (!mon.includes(1424) && !mon.includes(1426) && !mon.includes(1590)) {
@@ -407,6 +435,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     // Si no se encontraron números de bien duplicados, continuar con la inserción
 
     let insertResp;
+
     try {
       insertResp = await this.detRelationConfiscationService
         .Insert(insertBody)
@@ -442,6 +471,18 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
         'warning',
         'El No. Bien que Intenta Ingresar ya Existe',
         duplicateNumbers.join(', ')
+      );
+      this.file.get('wrong').patchValue(insertResp['error']);
+      this.file.get('processed').patchValue('0');
+      this.file.get('recordsProcessed').patchValue(insertResp['total']);
+      return;
+    }
+
+    if (correctMoney.length > 0) {
+      this.alert(
+        'warning',
+        'Moneda incorrecta para los bienes:',
+        correctMoney.join(', ')
       );
       this.file.get('wrong').patchValue(insertResp['error']);
       this.file.get('processed').patchValue('0');
@@ -585,6 +626,32 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   onlyGood() {
     console.log(this.Only.get('radio').value);
     console.log(this.form.get('forfeitureKey').value);
+  }
+
+  validateMoney() {
+    let body = {
+      screenkey: 'FRELDECOMISO',
+      no_bien: this.Only.get('nobien').value,
+      money: this.Only.get('radio').value,
+    };
+
+    this.detRelationConfiscationService.money(body).subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        this.only();
+      },
+      error: err => {
+        console.log(err);
+        if (err.status === 400) {
+          console.log(err.status);
+          this.alert('warning', 'Modena incorrecta', '');
+          this.flag = 0;
+          return;
+        }
+      },
+    });
+
+    console.log(this.flag);
   }
 
   only() {
@@ -761,10 +828,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       }
     } catch (err) {
       // Verificar si err es de tipo HttpErrorResponse
-      if (err instanceof HttpErrorResponse) {
-      } else {
-        this.alert('error', 'Error desconocido.', '');
-      }
     }
     if (duplicateNumbers.length > 0) {
       this.alert(
@@ -776,6 +839,9 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       this.file.get('processed').patchValue('0');
       this.file.get('recordsProcessed').patchValue(insertResp['total']);
       return;
+    }
+    if (this.file.get('wrong').value > 0) {
+      this.alert('error', 'Error desconocido.', '');
     }
   }
 

@@ -21,6 +21,25 @@ const routes: Routes = [
       (await import('./loan-monitor/loan-monitor.module')).LoanMonitorModule,
     data: { title: 'Monitor de prestamos', screen: 'FACTARGMONPRESTAM' },
   },
+  {
+    path: 'loan-document',
+    loadChildren: async () =>
+      (await import('./loan-document/loan-document.module')).LoanDocumentModule,
+    data: { title: 'Préstamo de documentos', screen: 'FACTARGPRESTADOCS' },
+  },
+  {
+    path: 'report-document-location',
+    loadChildren: async () =>
+      (
+        await import(
+          './report-document-location/report-document-location.module'
+        )
+      ).ReportDocumentLocationModule,
+    data: {
+      title: 'Reporte de Ubicación de Documentos',
+      screen: 'FGERARGGUARDAVALO',
+    },
+  },
 ];
 
 @NgModule({

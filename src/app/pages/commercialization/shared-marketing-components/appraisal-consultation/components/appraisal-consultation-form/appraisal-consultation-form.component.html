@@ -1,0 +1,107 @@
+<div class="ch-content">
+  <h5 class="title">Parámetros de búsqueda</h5>
+</div>
+<form class="form-material" [formGroup]="form">
+  <div class="row pt-5">
+    <form-field
+      [control]="form.get('idAppraisal')"
+      class="col-md-3"
+      label="Id Avalúo">
+      <ng-select
+        addTagText="Agregar Elemento"
+        class="form-control scroll-line"
+        formControlName="idAppraisal"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true">
+      </ng-select>
+    </form-field>
+    <form-field
+      class="col-md-3"
+      label="Avaluo Estatus"
+      [control]="form.get('statusAppraisal')">
+      <ng-select
+        formControlName="statusAppraisal"
+        [searchable]="false"
+        class="form-control">
+        <ng-option value="VIGENTE">VIGENTE</ng-option>
+        <ng-option value="CADUCADO">CADUCADO</ng-option>
+      </ng-select>
+    </form-field>
+    <form-field
+      class="col-md-3"
+      label="Cve. Avaluo"
+      [control]="form.get('keyAppraisal')">
+      <input
+        [max-length]="100"
+        type="text"
+        class="form-control"
+        formControlName="keyAppraisal" />
+    </form-field>
+    <form-field
+      class="col-md-3"
+      label="Cve. oficio"
+      [control]="form.get('keyOffice')">
+      <input
+        [max-length]="100"
+        type="text"
+        class="form-control"
+        formControlName="keyOffice" />
+    </form-field>
+  </div>
+  <div class="row pt-5">
+    <form-field
+      class="col-md-3"
+      label="No. Bien"
+      [control]="form.get('noGood')">
+      <ng-select
+        addTagText="Agregar Elemento"
+        class="form-control scroll-line"
+        formControlName="noGood"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true">
+      </ng-select>
+    </form-field>
+    <div class="col-md-1">
+      <button
+        tooltip="Seleccionar desde archivo txt"
+        (click)="goodsInput.click()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+    </div>
+    <form-field
+      class="col-md-5"
+      label="Dictamen Desc"
+      [control]="form.get('opinion')">
+      <input
+        [max-length]="100"
+        type="text"
+        class="form-control"
+        formControlName="opinion" />
+    </form-field>
+    <div class="d-flex">
+      <div class="mr-2">
+        <button class="btn btn-sm btn-primary active" (click)="search()">
+          Buscar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="mr-2">
+        <button (click)="cleanForm()" class="btn btn-danger btn-sm active mr-3">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div [style.display]="'none'">
+  <input
+    #goodsInput
+    (change)="invFileChange($event)"
+    [formControl]="goodsControl"
+    type="file" />
+</div>

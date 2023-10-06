@@ -746,7 +746,6 @@ export class ConciliationDepositaryPaymentsComponent
       .execDeductions(params)
       .subscribe({
         next: res => {
-          this.loading = false;
           console.log(res.data);
           this.insertDispersionDB();
         },
@@ -776,7 +775,6 @@ export class ConciliationDepositaryPaymentsComponent
       .insertDispersionDB(params)
       .subscribe({
         next: res => {
-          this.loading = false;
           console.log(res.data);
           this.getPrepOI();
         },
@@ -803,6 +801,7 @@ export class ConciliationDepositaryPaymentsComponent
         next: res => {
           this.loading = false;
           console.log(res.data);
+          this.ngOnInit();
           this.alert('success', 'Proceso completado correctamente', '');
         },
         error: err => {

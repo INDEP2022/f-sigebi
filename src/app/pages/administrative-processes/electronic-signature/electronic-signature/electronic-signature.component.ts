@@ -127,6 +127,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
   getDictamen() {
     this.loading = true;
     this.params.getValue()['sortBy'] = `rulingdate:DESC`;
+    this.params.getValue()['statusof'] = null;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
