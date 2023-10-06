@@ -71,4 +71,17 @@ export class CityService extends HttpService implements ICrudMethods<ICity> {
   getAllFiltered(params: string): Observable<IListResponse<ICity>> {
     return this.get<IListResponse<ICity>>(CityEndpoints.City, params);
   }
+
+  getAllByCity(
+    city?: any,
+    params?: ListParams
+  ): Observable<IListResponse<ICity>> {
+    const route = `${ENDPOINT_LINKS.City}${city}`;
+    return this.cityRepository.getAllPaginated(route, params);
+  }
+
+  getCityQuery(city: any) {
+    const route = `${ENDPOINT_LINKS.City}?filter.nameCity=$ilike:${city}`;
+    return this.get(route);
+  }
 }

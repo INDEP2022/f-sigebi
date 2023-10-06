@@ -41,4 +41,5 @@ export enum GoodprocessEndpoints {
   ChangeStatusGood = 'application/changeStatusGood',
   UpdateGoodsByPackage = 'application/updateGoodByPackage',
   blokOffice3 = 'application/blokOffice3',
+  pupPortafolio = 'application/pup-portafolio',
 }

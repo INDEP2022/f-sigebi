@@ -47,4 +47,14 @@ export class JobDictumTextsService extends HttpService {
     const route = `${JobDictumTextsEndpoints.pupExtraeDatas}`;
     return this.post(route, params);
   }
+
+  getData(good: any) {
+    const route = `${JobDictumTextsEndpoints.getData}/${good}`;
+    return this.get(route);
+  }
+
+  getPupObtInfoPort(params: any) {
+    const route = `${JobDictumTextsEndpoints.pupObtInfoPort}`;
+    return this.post(route, params);
+  }
 }
