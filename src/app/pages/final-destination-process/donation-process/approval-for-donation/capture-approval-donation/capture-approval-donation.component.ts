@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -30,6 +30,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { DonAuthorizaService } from '../../donation-authorization-request/donation-authorization-request/service/don-authoriza.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
@@ -63,6 +64,8 @@ export class CaptureApprovalDonationComponent
   ngGlobal: any;
   deleteO: boolean = false;
   goods: any[] = [];
+  files: any = [];
+  changeDescription: string;
   dataTableGood_: any[] = [];
   valueChange: number = 0;
   totalItems: number = 0;
@@ -110,6 +113,7 @@ export class CaptureApprovalDonationComponent
   type = 'COMPDON';
   eventDonacion: IGoodDonation;
   origin = 'FMCOMDONAC_1';
+  @ViewChild('file') file: any;
   donationGood: IGoodDonation;
   paramsScreen: IParamsDonac = {
     origin: '',
@@ -130,7 +134,8 @@ export class CaptureApprovalDonationComponent
     private datePipe: DatePipe,
     private usersService: UsersService,
     private detailProceeDelRecService: DetailProceeDelRecService,
-    private globalVarService: GlobalVarsService
+    private globalVarService: GlobalVarsService,
+    private donAuthorizaService: DonAuthorizaService
   ) {
     super();
 
@@ -212,6 +217,7 @@ export class CaptureApprovalDonationComponent
           }
         },
       });
+
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -240,6 +246,9 @@ export class CaptureApprovalDonationComponent
     this.configDatePicker();
     this.initForm();
     this.regisForm.get('type').setValue(this.type);
+  }
+  oadGoods() {
+    this.donAuthorizaService.loadGoods.next(true);
   }
 
   initForm() {
@@ -684,8 +693,8 @@ export class CaptureApprovalDonationComponent
                 console.log('indexGood', indexGood);
                 if (indexGood != -1)
                   this.dataTableGood_[indexGood].di_disponible = 'N';
-                await this.updateBienDetalle(good.goodId, 'CPD');
                 await this.createDET(good);
+                await this.updateBienDetalle(good.goodId, 'CPD');
               }
             }
           });
@@ -833,13 +842,14 @@ export class CaptureApprovalDonationComponent
       amount: good.amount,
       received: 1,
       exchangeValue: this.regisForm.get('activeRadio').value | 0,
+      registrationId: good.registrationId,
     };
 
     await this.saveGoodDetail(obj);
   }
   async saveGoodDetail(body: any) {
     return new Promise((resolve, reject) => {
-      this.donationService.createAdmonDonation(body).subscribe({
+      this.donationService.createDetail(body).subscribe({
         next: data => {
           // this.alert('success', 'Bien agregado correctamente', '');
           resolve(true);
@@ -970,7 +980,7 @@ export class CaptureApprovalDonationComponent
         type: this.type,
         keyEvent: next.cveAct,
         mes: next.captureDate,
-        year: next.elaborationDate,
+        year: next.captureDate,
         testigoOne: next.witness1,
         testigoTree: next.witness2,
         elaboradate: formattedfecElaborate,
@@ -1348,6 +1358,7 @@ export class CaptureApprovalDonationComponent
         amount: good.amount,
         received: 1,
         exchangeValue: this.regisForm.get('activeRadio').value | 0,
+        registrationId: good.registrationId,
       };
       this.updateBienDetalle(good.goodId, 'CPD');
       // delete this.eventdetailDefault.numDelegation1Description;

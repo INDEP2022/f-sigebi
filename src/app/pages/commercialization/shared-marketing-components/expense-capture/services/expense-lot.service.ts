@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
+  ICancelVtaDTO,
   IDivideCommandsDTO,
   ILoadLotDTO,
   ILotDTO,
@@ -37,6 +38,10 @@ export class ExpenseLotService extends HttpService {
 
   CARGA_BIENES_LOTE(body: ILoadLotDTO) {
     return this.post('apps/load-goods-lot', body);
+  }
+
+  CANCELA_VTA_NORMAL(body: ICancelVtaDTO) {
+    return this.post('apps/post-cancela-vta-normal', body);
   }
   // update(id) {
   //   this.put(this.endpoint+'/'+,);

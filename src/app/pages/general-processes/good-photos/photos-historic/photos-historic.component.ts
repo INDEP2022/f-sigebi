@@ -51,6 +51,14 @@ export class PhotosHistoricComponent implements OnInit {
   // ];
   files: IHistoricalPhoto[] = [];
   @Input() goodNumber: string;
+  @Input() set refreshData(value: number) {
+    // this._goodNumber = value;
+    if (value > 0) {
+      this.getData();
+    } else {
+      this.files = [];
+    }
+  }
   slides: { image: string; usuarioElimina: string }[] = [];
   constructor(
     // private modalRef: BsModalRef,
@@ -58,7 +66,15 @@ export class PhotosHistoricComponent implements OnInit {
     private goodPhotoService: GoodPhotosService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.goodPhotoService.deleteEvent.subscribe({
+      next: response => {
+        if (response) {
+          this.getData();
+        }
+      },
+    });
+  }
 
   private getData() {
     if (this.goodNumber) {
@@ -79,13 +95,6 @@ export class PhotosHistoricComponent implements OnInit {
     if (changes['goodNumber']) {
       this.getData();
     }
-    this.goodPhotoService.deleteEvent.subscribe({
-      next: response => {
-        if (response) {
-          this.getData();
-        }
-      },
-    });
   }
 
   // close() {
