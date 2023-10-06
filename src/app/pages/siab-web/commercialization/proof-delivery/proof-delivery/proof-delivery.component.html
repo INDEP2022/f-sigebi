@@ -44,7 +44,7 @@
                 (change)="delegationChangeIndex()">
                 <option></option>
                 <option *ngFor="let item of delegations">
-                  {{ item.delegacion_desc }}
+                  {{ item.descDescription }}
                 </option>
               </select>
             </form-field>
@@ -61,7 +61,7 @@
                 (change)="publicChangeIndex()">
                 <option></option>
                 <option *ngFor="let item of public">
-                  {{ item.lote_publico }}
+                  {{ item.publicLot }}
                 </option>
               </select>
             </form-field>
@@ -86,14 +86,20 @@
     </div>
     <!--  -->
     <div class="d-flex mb-3">
-      <div class="ml-auto">
+      <div>
         <button class="btn btn-danger btn-sm active mr-3" (click)="resetForm()">
-          Limpiar Filtros <i class="fas fa-eraser"> </i>
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
         <button
           type="button"
           class="btn btn-primary active btn-sm"
-          [disabled]="!form.valid">
+          (click)="loadDataFilter()">
+          Buscar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="ml-auto">
+        <button type="button" class="btn btn-primary active btn-sm">
           Generar Constancia(s) de Entrega
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
