@@ -57,4 +57,19 @@ export class JobDictumTextsService extends HttpService {
     const route = `${JobDictumTextsEndpoints.pupObtInfoPort}`;
     return this.post(route, params);
   }
+
+  getCursorGoods(params: any) {
+    const route = `${JobDictumTextsEndpoints.cursorGoods}`;
+    return this.post(route, params);
+  }
+
+  getcursorCopys(gestion: any) {
+    const route = `${JobDictumTextsEndpoints.cursorCopys}/${gestion}`;
+    return this.get(route);
+  }
+
+  getCursorGoods2(NO_GESTION: any) {
+    const route = `${JobDictumTextsEndpoints.cursorGoods2}?limit=10&page=1&filter.id=${NO_GESTION}`;
+    return this.get(route);
+  }
 }
