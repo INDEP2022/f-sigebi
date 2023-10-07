@@ -56,4 +56,6 @@ export enum ENDPOINT_INVOICE {
   MaxPayment = 'application/get-max-request-payment',
   ComerFacPapel = 'comer-facpapel-vnr',
   ComerPaAdj = 'application/pa-adj-invoice-pag',
+  ComerVeatInovice = 'comer-invoices/get-data-veat-invoice',
+  ComerCountInvoice = 'application/get-count-eat-invoice-view',
 }

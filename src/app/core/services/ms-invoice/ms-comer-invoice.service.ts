@@ -301,4 +301,16 @@ export class ComerInvoiceService extends HttpService {
   }) {
     return this.post(ENDPOINT_INVOICE.ComerPaAdj, data);
   }
+
+  getCountInvoice(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ComerCountInvoice}?eventId=${event}&batchId=${batchId}`
+    );
+  }
+
+  getVeatInvoice(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ComerVeatInovice}?eventId=${event}&invoiceId=${batchId}`
+    );
+  }
 }
