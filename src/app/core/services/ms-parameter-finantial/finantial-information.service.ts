@@ -44,4 +44,8 @@ export class FinantialInformationService extends HttpService {
   // getEventAll(params?: ListParams): Observable<IListResponse<IEvent>> {
   //   return this.get<IListResponse<IEvent>>(this.evento, params);
   // }
+
+  getAttributesInfoFinancial(id: number) {
+    return this.get(`${ParameterFinantialEndpoints.AtributosInfoFinan}/${id}`);
+  }
 }

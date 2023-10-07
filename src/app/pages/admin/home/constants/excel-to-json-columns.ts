@@ -124,3 +124,56 @@ export const DATA_BY = {
     },
   },
 };
+
+export const DATA_BY_MULTIPLE = {
+  goodId: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  f_trnas: {
+    title: 'Fecha Transferencia',
+    sort: false,
+  },
+  f_sent: {
+    title: 'Fecha Sentencia',
+    sort: false,
+  },
+  Inte: {
+    title: 'Intereses',
+    sort: false,
+  },
+  tesofeDate: {
+    title: 'Fecha Tesofe',
+    sort: false,
+  },
+  tesofeFolio: {
+    title: 'Oficio Tesofe',
+    sort: false,
+  },
+  goodClassNumber: {
+    title: 'Moneda',
+    sort: false,
+  },
+  aut: {
+    title: 'Autoridad',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.expediente == null) {
+        return '';
+      } else {
+        return row.expediente.authorityNumber;
+      }
+    },
+  },
+  expedientecriminalCase: {
+    title: 'Causa Penal',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.expediente == null) {
+        return '';
+      } else {
+        return row.expediente.preliminaryInquiry;
+      }
+    },
+  },
+};

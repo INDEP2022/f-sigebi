@@ -40,6 +40,7 @@ export enum GoodprocessEndpoints {
   GetUniRegister = 'application/get-lnu-register',
   ChangeStatusGood = 'application/changeStatusGood',
   UpdateGoodsByPackage = 'application/updateGoodByPackage',
+  PostPupInsertGoods = 'fconadbmonavaluos/pup-insert-goods-aux-v2',
   blokOffice3 = 'application/blokOffice3',
   pupPortafolio = 'application/pup-portafolio',
   seqFolio = 'application/seqfol-univ',

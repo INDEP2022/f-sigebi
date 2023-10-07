@@ -55,7 +55,17 @@ export class PhotosListComponent extends BasePage implements OnInit {
       this.errorMessage = '';
     }
   }
-  @ViewChildren('photo') photos: QueryList<PhotoComponent>;
+  @Input() set refreshData(value: number) {
+    // this._goodNumber = value;
+    if (value > 0) {
+      this.getData();
+    } else {
+      this.files = [];
+      this.errorMessage = '';
+    }
+  }
+  @ViewChildren('photo')
+  photos: QueryList<PhotoComponent>;
   private _goodNumber: string | number;
   deleting = false;
   options = [
