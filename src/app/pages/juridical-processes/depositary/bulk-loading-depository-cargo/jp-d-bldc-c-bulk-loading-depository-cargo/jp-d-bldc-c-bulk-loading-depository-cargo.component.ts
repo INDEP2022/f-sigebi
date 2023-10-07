@@ -400,7 +400,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     this.dataTable.refresh();
     this.loading = false;
     setTimeout(() => {
-      this.alert('success', 'Proceso terminado', '');
+      this.alert('success', 'El proceso se ha completado', '');
     }, 500);
   }
   resetCountsAndVariables() {
@@ -812,7 +812,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         this.disableApplyRecords = true; // Enable button
       }
       setTimeout(() => {
-        this.alert('success', 'Proceso de validación terminado', '');
+        this.alert('success', 'El proceso se ha completado', '');
       }, 500);
     }
   }

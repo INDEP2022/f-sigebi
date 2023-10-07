@@ -107,7 +107,7 @@ export class ConciliationDepositaryPaymentsComponent
         this.btnSearchGood(Number(id));
       } else {
         this.loading = false;
-        this.alert('warning', 'No. de bien', ERROR_GOOD_PARAM);
+        this.alert('warning', 'No. Bien', ERROR_GOOD_PARAM);
       }
     } else {
       this.loading = false;
@@ -185,7 +185,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'No. de bien',
+        'No. Bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -269,7 +269,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'No. de bien',
+        'No. Bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -368,7 +368,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'No. de bien',
+        'No. Bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -479,13 +479,13 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alert(
               'warning',
-              'No. de bien',
+              'No. Bien',
               NOT_FOUND_GOOD_APPOINTMENT(err.error.message)
             );
           },
         });
     } else {
-      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. Bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -802,7 +802,7 @@ export class ConciliationDepositaryPaymentsComponent
           this.loading = false;
           console.log(res.data);
           this.ngOnInit();
-          this.alert('success', 'Proceso completado correctamente', '');
+          this.alert('success', 'El Proceso se ha completado', '');
         },
         error: err => {
           this.loading = false;
