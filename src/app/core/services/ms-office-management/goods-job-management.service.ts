@@ -153,4 +153,26 @@ export class GoodsJobManagementService extends HttpService {
     const route = `${GoodsJobManagementEndpoints.updateMJob}`;
     return this.post(route, params);
   }
+
+  getblokOffice1(good: any) {
+    const route = `${GoodsJobManagementEndpoints.blockOfficel}/${good}`;
+    return this.get(route);
+  }
+
+  getOficeJobManagementbyGood(good: any) {
+    const route = `${GoodsJobManagementEndpoints.getallV2}?filter.goods.goodId=$eq:${good}`;
+    return this.get(route);
+  }
+
+  getMJobJobManagement(managementNumber: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}?filter.refersTo=$ilike:OFCOMER&filter.managementNumber=$eq:${managementNumber}`;
+    return this.get(route);
+  }
+
+  getAllFilteredV2(params: _Params) {
+    return this.get<IListResponse<IGoodJobManagement>>(
+      GoodsJobManagementEndpoints.getallV2,
+      params
+    );
+  }
 }

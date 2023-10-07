@@ -9,6 +9,11 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
     //   return value?.description;
     // },
   },
+  description: {
+    title: 'Descripción',
+    type: 'text',
+    sort: false,
+  },
   value: {
     title: 'Valor',
     type: 'number',
@@ -16,11 +21,6 @@ export const FINANCIAL_INFORMATION_COLUMNS1 = {
     // valuePrepareFunction: (value: IGood) => {
     //   return value?.quantity;
     // },
-  },
-  description: {
-    title: 'Descripción',
-    type: 'text',
-    sort: false,
   },
 };
 

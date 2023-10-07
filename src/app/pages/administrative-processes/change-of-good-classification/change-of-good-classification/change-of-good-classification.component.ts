@@ -172,8 +172,10 @@ export class ChangeOfGoodClassificationComponent
       hideSubHeader: false,
       columns: { ...ATRIBUT_ACT_COLUMNS },
     };
+    let params = new FilterParams();
+    params.limit = 100;
     this.strategyService
-      .getUnitsMedXConv2()
+      .getUnitsMedXConv2(params.getParams())
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
@@ -488,10 +490,12 @@ export class ChangeOfGoodClassificationComponent
     this.numberFile.setValue(good.fileNumber);
     this.fileNumberNew.setValue(good.fileNumber);
     this.unit.setValue(good.unit);
+    debugger;
     this.medFilters =
       good.unit && this.meds
         ? this.meds.filter(x => x.unit === good.unit)
         : null;
+    console.log(this.medFilters);
     // this.onLoadToast(
     //   'success',
     //   'Éxitoso',

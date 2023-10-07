@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Confirmaci&oacute;n</h5>
+    <h5 class="modal-title">Enviar Justificación</h5>
   </div>
   <div body style="margin-top: -30px">
     <div class="row">
@@ -8,7 +8,8 @@
         <form-field [control]="form.get('justification')" label="{{ label }}">
           <textarea
             class="form-control"
-            formControlName="justification"></textarea>
+            formControlName="justification"
+            maxlength="500"></textarea>
         </form-field>
       </form>
     </div>
@@ -18,6 +19,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [disabled]="!form.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

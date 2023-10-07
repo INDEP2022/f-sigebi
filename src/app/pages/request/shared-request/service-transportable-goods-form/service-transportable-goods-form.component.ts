@@ -78,7 +78,9 @@ export class ServiceTransportableGoodsFormComponent
       this.op != 2 &&
       this.op != 3 &&
       this.op != 6 &&
-      this.op != 7
+      this.op != 7 &&
+      this.op != 8 &&
+      this.op != 9
     ) {
       this.columns = SERVICE_TRANSPORTABLE_COLUMNS;
       this.settings = {
@@ -179,7 +181,9 @@ export class ServiceTransportableGoodsFormComponent
       this.op == 2 ||
       this.op == 3 ||
       this.op == 6 ||
-      this.op == 7
+      this.op == 7 ||
+      this.op == 8 ||
+      this.op == 9
     ) {
       this.titleTab();
       this.showButtonServiceManual = true;
@@ -249,7 +253,9 @@ export class ServiceTransportableGoodsFormComponent
             this.op != 2 &&
             this.op != 3 &&
             this.op != 6 &&
-            this.op != 7
+            this.op != 7 &&
+            this.op != 8 &&
+            this.op != 9
           ) {
             this.setTableColumnsRows();
             this.setTableRowTotal();
@@ -265,6 +271,12 @@ export class ServiceTransportableGoodsFormComponent
             this.setTableRowTotal();
             this.setTableColumnsRows();
           } else if (this.op == 7) {
+            this.setTableRowTotal();
+            this.setTableColumnsRows();
+          } else if (this.op == 8) {
+            this.setTableRowTotal();
+            this.setTableColumnsRows();
+          } else if (this.op == 9) {
             this.setTableRowTotal();
             this.setTableColumnsRows();
           }
@@ -288,7 +300,7 @@ export class ServiceTransportableGoodsFormComponent
       );
 
       if (
-        this.op == 3 ||
+        (this.op == 3 && this.typeOrder == 'reception') ||
         this.op == 4 ||
         this.op == 10 ||
         this.op == 11 ||
@@ -335,6 +347,8 @@ export class ServiceTransportableGoodsFormComponent
 
       //readonly duracion
       if (
+        this.op == 1 ||
+        this.op == 2 ||
         this.op == 3 ||
         this.op == 4 ||
         this.op == 5 ||
@@ -347,19 +361,24 @@ export class ServiceTransportableGoodsFormComponent
         this.op == 12 ||
         this.op == 13 ||
         this.op == 14 ||
-        this.op == 15 ||
-        this.op == 2
+        this.op == 15
       ) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
           if (this.op != 2) {
-            if (this.op != 3 && this.op != 6 && this.op != 7) {
+            if (
+              this.op != 3 &&
+              this.op != 6 &&
+              this.op != 7 &&
+              this.op != 8 &&
+              this.op != 9
+            ) {
               ele.children[8].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
                 true;
               //ele.children[8].querySelector('#text-input').disabled = true;
               ele.children[9].querySelector('#text-input').disabled = true;
             }
-          } else if (this.op == 2) {
+          } else if (this.op == 2 || this.op == 1) {
             ele.children[4].querySelector('#text-input').disabled = true;
             ele.children[5].querySelector('#text-input').disabled = true;
             ele.children[6].querySelector('#text-input').disabled = true;
@@ -391,8 +410,8 @@ export class ServiceTransportableGoodsFormComponent
           if (
             (this.op == 6 && this.typeOrder == 'reception') ||
             (this.op == 7 && this.typeOrder == 'reception') ||
-            this.op == 8 ||
-            this.op == 9
+            (this.op == 8 && this.typeOrder == 'reception') ||
+            (this.op == 9 && this.typeOrder == 'reception')
           ) {
             //const select = ele.children[1].querySelector('#select-input');
             ele.children[2].querySelector('#text-input').disabled = true;
@@ -412,6 +431,24 @@ export class ServiceTransportableGoodsFormComponent
           }
 
           if (this.op == 7) {
+            //const select = ele.children[1].querySelector('#select-input');
+            ele.children[4].querySelector('#text-input').disabled = true;
+            ele.children[5].querySelector('#text-input').disabled = true;
+            ele.children[6].querySelector('#text-input').disabled = true;
+            //ele.children[10].querySelector('#text-input').disabled = true;
+            //ele.children[13].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 8) {
+            //const select = ele.children[1].querySelector('#select-input');
+            ele.children[4].querySelector('#text-input').disabled = true;
+            ele.children[5].querySelector('#text-input').disabled = true;
+            ele.children[6].querySelector('#text-input').disabled = true;
+            //ele.children[10].querySelector('#text-input').disabled = true;
+            //ele.children[13].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 9) {
             //const select = ele.children[1].querySelector('#select-input');
             ele.children[4].querySelector('#text-input').disabled = true;
             ele.children[5].querySelector('#text-input').disabled = true;
@@ -458,7 +495,9 @@ export class ServiceTransportableGoodsFormComponent
         this.op != 2 &&
         this.op != 3 &&
         this.op != 6 &&
-        this.op != 7
+        this.op != 7 &&
+        this.op != 8 &&
+        this.op != 9
       ) {
         const tableColumn = this.table.grid.getColumns();
         let noResources = tableColumn.find((x: any) => x.id == 'resourcesReal');
@@ -541,7 +580,9 @@ export class ServiceTransportableGoodsFormComponent
         this.op == 2 ||
         this.op == 3 ||
         this.op == 6 ||
-        this.op == 7
+        this.op == 7 ||
+        this.op == 8 ||
+        this.op == 9
       ) {
         const table = document.getElementById('table');
         const tbody = table.children[0].children[1].children;

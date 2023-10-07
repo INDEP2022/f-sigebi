@@ -328,4 +328,10 @@ export class GoodProcessService extends HttpService {
   getComerDetAvaluoAll(goodNumber: number) {
     return this.get(`${GoodProcessPoints.ComerDetAvaluoAll}/${goodNumber}`);
   }
+  getStatusNew(filters: any) {
+    return this.post<IListResponse<any>>(
+      `${GoodProcessPoints.GoodxStatusXtypeNumber}`,
+      filters
+    );
+  }
 }
