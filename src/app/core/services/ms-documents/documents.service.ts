@@ -385,4 +385,9 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.loanDocument}`;
     return this.post(route, params);
   }
+
+  getDocumentsattachment(id: any) {
+    const route = `${DocumentsEndpoints.attachedDocument}?filter.managementNumber=$eq:${id}`;
+    return this.get(route);
+  }
 }

@@ -28,7 +28,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGoodJobManagement } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
@@ -76,8 +75,9 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   // * Documents table & params
   documentsParams = new BehaviorSubject(new FilterParams());
   ccpParams = new BehaviorSubject(new FilterParams());
-  docs: IAttachedDocument[] = [];
-  //docs: any[] = [];
+  //docs: IAttachedDocument[] = [];
+  docs: any[] = [];
+  docsLocalData: LocalDataSource = new LocalDataSource();
   ccpData: LocalDataSource = new LocalDataSource();
   data3: any[] = [];
   totalDocuments = 0;
@@ -136,6 +136,11 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   M_DES: any;
   NO_VOLANTE: any;
   NO_EXPEDIENTE: any;
+  activeSol: boolean = false;
+  activeScan: boolean = false;
+  activeDelete: boolean = false;
+  activeDoc: boolean = false;
+  activeSend: boolean = false;
   //----------------
 
   usersCcp: any = [];
@@ -282,14 +287,16 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     } else if (portafolio == null) {
       this.alertQuestion(
         'info',
-        '¿El portafolio está vacío, desea ingresarlo?',
+        'El portafolio está vacío, debe ingresarlo!',
         '',
         'Aceptar',
         'Cancelar'
       ).then(res => {
         console.log(res);
         if (res.isConfirmed) {
-          this.portfolioInput.nativeElement.focus();
+          if (this.portfolioInput) {
+            this.portfolioInput.nativeElement.focus();
+          }
           V_VER_PORT = false;
         }
       });
@@ -340,7 +347,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             'Cancelar'
           ).then(res => {
             console.log(res);
-            if (res.isConfirmed) {
+            if (res.isDismissed) {
               this.goodsJobManagementService
                 .getOficeJobManagementbyGood(this.V_VALBIEN)
                 .subscribe({
@@ -363,55 +370,50 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                           });
                           //falta PUP_EXTRAE_DATO(:GLOBAL.V_OFICIO);
                           this.PupExtraeDato(this.V_OFICIO);
-                          if (VAL_TIPOF2 == 'ESCRITURACION') {
-                            TIPO_OF = 'ESC';
-                            //Falta PUP_AGREGA_TEXTO
-                            this.PupAgregaTexto();
-                          } else if (VAL_TIPOF2 == 'ENTREGA') {
-                            TIPO_OF = 'ENT';
-                            //Falta PUP_AGREGA_TEXTO
-                            this.PupAgregaTexto();
-                          }
-                          this.V_VALBIEN = null;
-                          if (this.V_VALBIEN == null) {
-                            this.BANDERA = 0;
-                            this.NO_BIEN = this.form.get('goodId').value;
-                            let VC_PANTALLA = 'FOFICIOCOMER';
-                            let params = {
-                              goodNo: this.NO_BIEN,
-                              screen: VC_PANTALLA,
-                            };
-                            this.goodprocessService
-                              .postBlokOffice3(params)
-                              .subscribe({
-                                next: resp => {
-                                  console.log(
-                                    'respuesta de BlokOFfice3 --> ',
-                                    resp
-                                  );
-                                  this.NO_VOLANTE = response.data[0].no_volante;
-                                  this.NO_EXPEDIENTE =
-                                    response.data[0].no_expediente;
-                                  this.form.patchValue({
-                                    status: resp.data[0].estatus,
-                                    desStatus: resp.data[0].descripcion,
-                                  });
-                                  this.BIEN = response.data[0].no_bien;
-                                  let param = {
-                                    goodId: response.data[0].no_bien,
-                                    description: response.data[0].descripcion,
-                                    amout: response.data[0].cantidad,
-                                    identifier: response.data[0].identificador,
-                                  };
-                                  this.goods.push(param);
-                                  this.localGoods.load(this.goodsData);
-                                },
-                              });
-                          }
                         },
                       });
                   },
                 });
+            } else {
+              if (VAL_TIPOF2 == 'ESCRITURACION') {
+                TIPO_OF = 'ESC';
+                //Falta PUP_AGREGA_TEXTO
+                this.PupAgregaTexto();
+              } else if (VAL_TIPOF2 == 'ENTREGA') {
+                TIPO_OF = 'ENT';
+                //Falta PUP_AGREGA_TEXTO
+                this.PupAgregaTexto();
+              }
+              this.V_VALBIEN = null;
+              if (this.V_VALBIEN == null) {
+                this.BANDERA = 0;
+                this.NO_BIEN = this.form.get('goodId').value;
+                let VC_PANTALLA = 'FOFICIOCOMER';
+                let params = {
+                  goodNo: this.NO_BIEN,
+                  screen: VC_PANTALLA,
+                };
+                this.goodprocessService.postBlokOffice3(params).subscribe({
+                  next: resp => {
+                    console.log('respuesta de BlokOFfice3 --> ', resp);
+                    this.NO_VOLANTE = response.data[0].no_volante;
+                    this.NO_EXPEDIENTE = response.data[0].no_expediente;
+                    this.form.patchValue({
+                      status: resp.data[0].estatus,
+                      desStatus: resp.data[0].descripcion,
+                    });
+                    this.BIEN = response.data[0].no_bien;
+                    let param = {
+                      goodId: response.data[0].no_bien,
+                      description: response.data[0].descripcion,
+                      amout: response.data[0].cantidad,
+                      identifier: response.data[0].identificador,
+                    };
+                    this.goods.push(param);
+                    this.localGoods.load(this.goodsData);
+                  },
+                });
+              }
             }
           });
         },
@@ -743,7 +745,21 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
 
-    modalRef.content.refresh.subscribe((data: any) => {});
+    modalRef.content.refresh.subscribe((data: any) => {
+      console.log('data111 ', data);
+      if (data != null) {
+        this.docs = [];
+        this.docsLocalData.load(this.docs);
+        for (let i = 0; i < data.length; i++) {
+          let params = {
+            cveDocument: data[i].key,
+            description: data[i].document,
+          };
+          this.docs.push(params);
+        }
+        this.docsLocalData.load(this.docs);
+      }
+    });
   }
 
   delete(event: any) {
@@ -785,41 +801,47 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
 
   solicitud() {
     let folio = this.formCcp.get('scannerFolio').value;
+    this.BIEN = this.form.get('goodId').value;
     let DESCRIPCION1: any;
     if (folio != null) {
       this.alert('error', 'Error', 'El Oficio ya tiene folio de escaneo');
       return;
     } else {
       let CONSULTA = this.form.get('recordCommerType').value;
-      let TIPO_OF = this.form.get('officeTypeCtrl').value;
+      let TIPO_OF = this.officeTypeCtrl.value;
 
       if (CONSULTA == 'bie') {
-        if (TIPO_OF == 'ent') {
+        if (TIPO_OF == 'ENT') {
           DESCRIPCION1 = 'Oficio de Entrega Fisica con el Bien: ' + this.BIEN;
-        } else if (TIPO_OF == 'esc') {
+        } else if (TIPO_OF == 'ESC') {
           DESCRIPCION1 = 'Oficio de Escrituracion con el  Bien: ' + this.BIEN;
         }
-        let params = {
-          natureDocument: 'ORIGINAL',
-          descriptionDocument: DESCRIPCION1,
-          significantDate: new Date(),
-          scanStatus: 'SOLICITADO',
-          userRequestsScan: this.user,
-          scanRequestDate: new Date(),
-          userRegistersScan: this.user,
-          dateRegistrationScan: new Date(),
-          keyTypeDocument: 'ENTRE',
-          keySeparator: 60,
-          numberProceedings: this.NoExpediente,
-          numberDelegationRequested: this.delegation,
-          numberSubdelegationRequests: 0,
-          numberDepartmentRequest: this.delegation,
-        };
-        this.documentsService.insertDocuments(params).subscribe({
+        this.goodprocessService.getSeqFolio().subscribe({
           next: response => {
-            console.log('respuesta post documento --> ', response);
-            this.folioScan = response.data[0];
-            this.PupLanzaReporteSolicDigt();
+            const formattedfecFin = this.formatDate(new Date());
+            let params = {
+              natureDocument: 'ORIGINAL',
+              descriptionDocument: DESCRIPCION1,
+              significantDate: formattedfecFin,
+              scanStatus: 'SOLICITADO',
+              userRequestsScan: this.user,
+              scanRequestDate: new Date(),
+              userRegistersScan: this.user,
+              dateRegistrationScan: new Date(),
+              keyTypeDocument: 'ENTRE',
+              keySeparator: 60,
+              numberProceedings: this.NoExpediente,
+              numberDelegationRequested: this.delegation,
+              numberSubdelegationRequests: 0,
+              numberDepartmentRequest: this.delegation,
+            };
+            this.documentsService.insertDocuments(params).subscribe({
+              next: response => {
+                console.log('respuesta post documento --> ', response);
+                this.folioScan = response.data[0];
+                this.PupLanzaReporteSolicDigt();
+              },
+            });
           },
         });
       }
@@ -834,6 +856,13 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         }
       }
     }
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${month}/${year}`;
   }
 
   PupGenFolioMas() {
@@ -904,12 +933,12 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let params = {
       no_of_ges: nogestion,
     };
-    let TIPO_OF = this.form.get('officeTypeCtrl').value;
+    let TIPO_OF = this.officeTypeCtrl.value;
     let report: any;
-    if (TIPO_OF == 'ent') {
+    if (TIPO_OF == 'ENT') {
       //FALTA PUP_ENT_LOTE
       report = 'REP_ENT_POR';
-    } else if (TIPO_OF == 'esc') {
+    } else if (TIPO_OF == 'ESC') {
       report = 'RGEROFGESTION_ESCAP';
     }
     if (params != null) {
@@ -959,12 +988,13 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let params = {
       no_of_ges: nogestion,
     };
-    let TIPO_OF = this.form.get('officeTypeCtrl').value;
+    let TIPO_OF = this.officeTypeCtrl.value;
     let report: any;
-    if (TIPO_OF == 'ent') {
+    if (TIPO_OF == 'ENT') {
       this.PupRemiEnt();
-      report = 'REP_ENTREGA';
-    } else if (TIPO_OF == 'esc') {
+      //REP_ENTREGA
+      report = 'blank';
+    } else if (TIPO_OF == 'ESC') {
       report = 'RGEROFGESTION_ESCA';
     }
     if (params != null) {
@@ -1422,6 +1452,15 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
 
   loadcity(city: string) {
     this.cityService.getCityQuery(city).subscribe({
+      next: response => {
+        this.cities = new DefaultSelect(response.data, response.count);
+        this.form.get('city').setValue(response.data[0].idCity);
+      },
+    });
+  }
+
+  loadcitybyid(city: string) {
+    this.cityService.getCityQueryByid(city).subscribe({
       next: response => {
         this.cities = new DefaultSelect(response.data, response.count);
         this.form.get('city').setValue(response.data[0].idCity);
@@ -2422,7 +2461,91 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     };
     this.jobDictumTextsService.pupExtractData(params).subscribe({
       next: response => {
+        this.loadcitybyid(response.CIUDAD);
+        this.loadAdress(response.DESTINATARIO);
+        this.loadsender(response.REMITENTE);
+        this.showJuridic = true;
+        if (response.ESTATUS_OF == 'ENVIADO') {
+          this.activeSol = true;
+          this.activeScan = true;
+          this.activeDelete = true;
+          this.activeDoc = true;
+          this.activeSend = true;
+        }
+        if (response.FOLIO_UNIVERSAL != null) {
+          this.formCcp.patchValue({
+            scannerFolio: response.FOLIO_UNIVERSAL,
+          });
+          this.activeSol = true;
+          this.folioScan = response.FOLIO_UNIVERSAL;
+        }
+        this.form.patchValue({
+          cveManagement: response.CVE_OF_GESTION,
+          salesProcess: response.OFICIO_POR,
+          text1: response.TEXTO1,
+          text2: response.TEXTO2,
+          text3: response.TEXTO3,
+          managementNumber: response.NO_OF_GESTION,
+          problematiclegal: response.PROBLEMATICA_JURIDICA,
+          statusOf: response.ESTATUS_OF,
+        });
         console.log('response Extrae Data--> ', response);
+        //falta el resto del flujo
+        //Documents docsLocalData docs
+        this.documentsService.getDocumentsattachment(OF_GESTION).subscribe({
+          next: response => {
+            this.docs = [];
+            this.docsLocalData.load(this.docs);
+            console.log('Respuesta Documents ', response);
+            for (let i = 0; i < response.data.length; i++) {
+              let params = {
+                cveDocument: response.data[i].cveDocument,
+                description: response.data[i].description,
+                managementNumber: response.data[i].managementNumber,
+                recordNumber: response.data[i].recordNumber,
+                opinionType: response.data[i].opinionType,
+              };
+              this.docs.push(params);
+            }
+            this.docsLocalData.load(this.docs);
+
+            //Bienes
+            this.jobDictumTextsService.getCursorGoods2(OF_GESTION).subscribe({
+              next: response => {
+                this.goods = [];
+                this.localGoods.load(this.goods);
+                console.log('respuesta del Get bienes --> ', response);
+                for (let i = 0; i < response.data.length; i++) {
+                  let params = {
+                    goodId: response.data[i].no_bien,
+                    description: response.data[i].descripcion,
+                    amout: response.data[i].cantidad,
+                    identifier: response.data[i].identificador,
+                  };
+                  this.goods.push(params);
+                }
+                this.localGoods.load(this.goods);
+              },
+            });
+
+            //COPIAS
+            this.jobDictumTextsService.getcursorCopys(OF_GESTION).subscribe({
+              next: response => {
+                this.data3 = [];
+                this.ccpData.load(this.data3);
+                console.log('respuesta COPIAS --> ', response);
+                for (let i = 0; i < response.data.length; i++) {
+                  let params = {
+                    destinatario: response.data[i].usuario,
+                    regional: response.data[i].nombre,
+                  };
+                  this.data3.push(params);
+                }
+                this.ccpData.load(this.data3);
+              },
+            });
+          },
+        });
       },
     });
   }
@@ -2431,14 +2554,70 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let lote = this.form.get('lot').value;
     let evento = this.form.get('event').value;
     let params = {
-      ofManagement: OF_GESTION,
-      lot: lote,
-      event: evento,
+      ofManagement: Number(OF_GESTION),
+      lot: Number(lote),
+      event: Number(evento),
     };
     this.jobDictumTextsService.pupExtractDatas(params).subscribe({
       next: response => {
         console.log('response Extrae Datas --> ', response);
-        //falta el resto del flujo
+        //Documents docsLocalData docs
+        this.documentsService.getDocumentsattachment(OF_GESTION).subscribe({
+          next: response => {
+            this.docs = [];
+            this.docsLocalData.load(this.docs);
+            console.log('Respuesta Documents ', response);
+            for (let i = 0; i < response.data.length; i++) {
+              let params = {
+                cveDocument: response.data[i].cveDocument,
+                description: response.data[i].description,
+                managementNumber: response.data[i].managementNumber,
+                recordNumber: response.data[i].recordNumber,
+                opinionType: response.data[i].opinionType,
+              };
+              this.docs.push(params);
+            }
+            this.docsLocalData.load(this.docs);
+          },
+        });
+
+        //Bienes
+        let param = {
+          vcScreen: 'FOFICIOCOMER',
+          lot: Number(lote),
+          event: Number(evento),
+        };
+        this.jobDictumTextsService.getCursorGoods(param).subscribe({
+          next: response => {
+            console.log('respuesta del Get bienes --> ', response);
+            for (let i = 0; i < response.data.length; i++) {
+              let params = {
+                goodId: response.data[i].no_bien,
+                description: response.data[i].descripcion,
+                amout: response.data[i].cantidad,
+                identifier: response.data[i].identificador,
+                no_expediente: response.data[i].no_expediente,
+              };
+              this.goods.push(params);
+            }
+            this.localGoods.load(this.goods);
+          },
+        });
+
+        //COPIAS
+        this.jobDictumTextsService.getcursorCopys(OF_GESTION).subscribe({
+          next: response => {
+            console.log('respuesta COPIAS --> ', response);
+            for (let i = 0; i < response.data.length; i++) {
+              let params = {
+                destinatario: response.data[i].usuario,
+                regional: response.data[i].nombre,
+              };
+              this.data3.push(params);
+            }
+            this.ccpData.load(this.data3);
+          },
+        });
       },
     });
   }
@@ -2451,15 +2630,20 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let VAL_TIPOF: any;
     let VAL_TIPOF2: any;
     let TIPO_OF: any;
+    let VAL_CONT: any;
     let params = {
       screenVc: 'FOFICIOCOMER',
-      portFolio: portafolio,
-      lot: lote,
-      event: Evento,
+      portFolio: Number(portafolio),
+      lot: Number(lote),
+      event: Number(Evento),
     };
     this.jobDictumTextsService.getPupObtInfoPort(params).subscribe({
       next: response => {
         console.log('Procedimiento PupObtieneInforPort ', response);
+        V_OFICIO = response.data[0].GLOBAL_V_OFICIO;
+        VAL_TIPOF = response.data[0].VAL_TIPOF;
+        VAL_TIPOF2 = response.data[0].VAL_TIPOF2;
+        VAL_CONT = response.data[0].VAL_CONT;
         if (V_OFICIO != null) {
           this.alertQuestion(
             'info',
@@ -2473,7 +2657,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             'Cancelar'
           ).then(res => {
             console.log(res);
-            if (res.isConfirmed) {
+            if (res.isDismissed) {
               //:PRUEBAS.NO_OF_GESTION := :M_OFICIO_GESTION.NO_OF_GESTION;
               this.NO_OF_GESTION = V_OFICIO;
               this.form.patchValue({
@@ -2481,19 +2665,20 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               });
               this.PupExtraeDatos(V_OFICIO);
               this.BANDERA = 1;
-            }
-            if (this.BANDERA == 0) {
-              if ((VAL_TIPOF2 = 'ESCRITURACION')) {
-                TIPO_OF = 'ESC';
-                this.PupAgregaTexto();
-              } else if ((VAL_TIPOF2 = 'ENTREGA')) {
-                TIPO_OF = 'ENT';
-                this.PupAgregaTexto();
-              }
-              this.V_OFICIO = null;
-              if (V_OFICIO == null) {
-                this.BANDERA = 0;
-                //falta PUP_PORTAFOLIO
+            } else {
+              if (this.BANDERA == 0) {
+                if ((VAL_TIPOF2 = 'ESCRITURACION')) {
+                  TIPO_OF = 'ESC';
+                  this.PupAgregaTexto();
+                } else if ((VAL_TIPOF2 = 'ENTREGA')) {
+                  TIPO_OF = 'ENT';
+                  this.PupAgregaTexto();
+                }
+                this.V_OFICIO = null;
+                if (V_OFICIO == null) {
+                  this.BANDERA = 0;
+                  //falta PUP_PORTAFOLIO
+                }
               }
             }
           });
