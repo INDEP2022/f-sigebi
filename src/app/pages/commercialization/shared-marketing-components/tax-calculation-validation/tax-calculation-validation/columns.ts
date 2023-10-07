@@ -1,14 +1,14 @@
 export const COLUMNS = {
   id: {
-    title: 'Id Avalúo',
+    title: 'No. Avalúo',
     sort: false,
   },
   appraisalKey: {
-    title: 'Clave Avalúo',
+    title: 'Cve. Avalúo',
     sort: false,
   },
   cveOffice: {
-    title: 'Clave Oficio',
+    title: 'Cve. Oficio',
     sort: false,
   },
   insertDate: {
@@ -19,7 +19,7 @@ export const COLUMNS = {
 
 export const COLUMNS2 = {
   idDetAppraisal: {
-    title: 'No.',
+    title: 'No. Avalúo',
     sort: false,
   },
   goodId: {
