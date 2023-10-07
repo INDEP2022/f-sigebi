@@ -21,12 +21,14 @@ import {
   takeUntil,
 } from 'rxjs';
 import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { _Params } from 'src/app/common/services/http.service';
 import { InvoiceFolioSeparate } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
@@ -45,6 +47,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
 import { AuthorizationModalComponent } from './authorization-modal/authorization-modal.component';
+import { ReferenceModalComponent } from './reference/reference.component';
 import { REGULAR_GOODS_COLUMN } from './regular-billing-invoice-goods-columns';
 
 @Component({
@@ -167,8 +170,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               clearTimeout(time);
             }, 300);
             instance.toggle.subscribe((data: any) => {
-              console.log(data.toggle);
-
               instance.rowData.select = data.toggle;
               if (data.toggle) {
                 this.isSelectComer(instance.rowData, 'add');
@@ -197,6 +198,33 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         customer: {
           title: 'Cliente',
           sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              const count = await this.getCountReference(
+                invoice.eventId,
+                invoice.batchId
+              );
+              if (count == 0) {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'El Lote aún no está liberado'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    data: invoice,
+                  },
+                  class: 'modal-md modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(ReferenceModalComponent, config);
+              }
+            });
+          },
         },
         delegationNumber: {
           title: 'Regional',
@@ -253,9 +281,18 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     };
   }
 
+  async getCountReference(event: number, batchId: number) {
+    return firstValueFrom(
+      this.comerInvoice.getCountInvoice(event, batchId).pipe(
+        map(resp => resp.contador),
+        catchError(() => of(0))
+      )
+    );
+  }
+
   ngOnInit(): void {
     this.paramsList.getValue().limit = 500;
-    this.paramsList.getValue().take = 500;
+    this.paramsList2.getValue().limit = 500;
     this.prepareForm();
 
     this.dataFilter
@@ -360,54 +397,32 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const params = {
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,
-      ...{ sortBy: 'batchId:ASC' },
+      // ...{ sortBy: 'batchId:ASC' },
     };
 
     this.loading2 = true;
-    this.comerDetInvoice.getAll(params).subscribe({
-      next: async resp => {
-        this.loading2 = false;
-        let sum1: number = 0,
-          sum2: number = 0,
-          sum3: number = 0,
-          sum4: number = 0;
-        for (let data of resp.data) {
-          const value = await this.postQueryDet({
-            cveProdservSat: data.prodservSatKey,
-            cveUnidSat: data.unitSatKey,
-            noTransferee: data.transfereeNot,
-          });
-
-          if (value) {
-            // data.tuitionMod = data.tuition;
-            data.downloadcvman = value.mandato;
-            data.desc_unidad_det = value.desc_unidad_det;
-            data.desc_producto_det = value.desc_producto_det;
-
-            if (value.mandato == 'SIN MANDATO') {
-              data.modmandato = data.tuition;
-            }
-          }
-
-          sum1 = sum1 + Number(data.price);
-          sum2 = sum2 + Number(data.vat);
-          sum3 = sum3 + Number(data.total);
-          sum4 = sum4 + Number(data.amount);
-        }
-
-        sum1 = Number(sum1.toFixed(2));
-        sum2 = Number(sum2.toFixed(2));
-        sum3 = Number(sum3.toFixed(2));
-        sum4 = Number(sum4.toFixed(2));
-
-        this.formDetalle.get('count').patchValue(resp.data.length);
-        this.formDetalle.get('totalI').patchValue(sum1);
-        this.formDetalle.get('totalIva').patchValue(sum2);
-        this.formDetalle.get('total').patchValue(sum3);
-        this.formDetalle.get('countTotal').patchValue(sum4);
+    this.comerDetInvoice.getAllCustom(params).subscribe({
+      next: async (resp: any) => {
+        const data = await this.postQuery(params);
+        this.formDetalle.get('count').patchValue(resp.count);
+        this.formDetalle.get('totalI').patchValue(resp.data[0].sum.importe);
+        this.formDetalle.get('totalIva').patchValue(resp.data[0].sum.iva);
+        this.formDetalle.get('total').patchValue(resp.data[0].sum.total);
+        this.formDetalle.get('countTotal').patchValue(resp.data[0].sum.amount);
         this.totalItems2 = resp.count;
-        this.dataFilter2.load(resp.data);
+
+        const result = resp.data[0].result;
+
+        result.map((value: any, index: number) => {
+          value.desc_producto_det = data[index].desc_producto_det;
+          value.desc_unidad_det = data[index].desc_unidad_det;
+          value.downloadcvman = data[index].mandato;
+          value.modmandato = data[index].matricula;
+        });
+
+        this.dataFilter2.load(result);
         this.dataFilter2.refresh();
+        this.loading2 = false;
       },
       error: () => {
         this.loading2 = false;
@@ -417,6 +432,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.formDetalle.reset();
       },
     });
+  }
+
+  async postQuery(params: _Params) {
+    return firstValueFrom(
+      this.comerDetInvoice.getAllPostQuery(params).pipe(
+        map(resp => resp.data),
+        catchError(() => of([]))
+      )
+    );
   }
 
   getAllComer() {
@@ -531,16 +555,35 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     ).then(async ans => {
       if (ans.isConfirmed) {
         //en espera de revision de creacion facturas e inconsitencias
-        await this.packageInvoice({});
+        const pk_comer = await this.packageInvoice({
+          eventId: event,
+          option: 0,
+          publicLot: idAllotment,
+          cveDisplay: 'FCOMER086_I',
+          invoiceId: null,
+          paymentId: null,
+          document: 'FAC',
+          secdoc: 'M',
+          indGendet: 1,
+          delegationNumber: null,
+          command: null,
+          partiality: null,
+          type: null,
+        });
+
+        console.log(pk_comer);
       } else {
       }
     });
   }
 
   async packageInvoice(data: any) {
-    // return firstValueFrom(
-    //   )
-    // )
+    return firstValueFrom(
+      this.comerInvoice.generatePreInvoice(data).pipe(
+        map(resp => resp),
+        catchError(() => of(null))
+      )
+    );
   }
 
   async getCountBatch(event: number, lote: number) {
@@ -1001,13 +1044,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       total: [0],
       countTotal: [null],
     });
-  }
-
-  onSubmit() {
-    if (this.form.valid) {
-      this.form.reset();
-    }
-    console.warn('Your order has been submitted');
   }
 
   disabledButtons() {

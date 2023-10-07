@@ -5,10 +5,6 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-        <div class="col-md-6">
-          <!--Service Component-->
-          <app-services-shared [form]="form"></app-services-shared>
-        </div>
         <div class="col-xs-12 col-12 col-md-3 align-self-center">
           <form-field
             label="Fecha de Solicitud"
@@ -18,6 +14,10 @@
               formControlName="requestDate"
               bsDatepicker />
           </form-field>
+        </div>
+        <div class="col-md-6">
+          <!--Service Component-->
+          <app-services-shared [form]="form"></app-services-shared>
         </div>
         <div class="col-xs-12 col-12 col-md-3 align-self-center">
           <form-field label="Importe" [control]="form.get('amount')">
@@ -45,7 +45,7 @@
           [disabled]="!form.valid"
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="close()">
+          (click)="newDate()">
           Aceptar
         </button>
       </div>

@@ -6,6 +6,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import {
   IComerExpense,
+  IComerExpenseDTO,
   IFillExpenseData,
   IFillExpensesDTO,
 } from '../../models/ms-spent/comer-expense';
@@ -31,6 +32,20 @@ export class SpentService extends HttpService {
     return self.get<IListResponseMessage<IComerExpense>>(
       SpentEndpoints.ExpenseComer,
       params
+    );
+  }
+
+  save(body: IComerExpenseDTO) {
+    return this.post<IListResponseMessage<IComerExpense>>(
+      SpentEndpoints.ExpenseComer,
+      body
+    );
+  }
+
+  edit(body: IComerExpenseDTO) {
+    return this.put<IListResponseMessage<IComerExpense>>(
+      SpentEndpoints.ExpenseComer + '/' + body.expenseNumber,
+      body
     );
   }
 

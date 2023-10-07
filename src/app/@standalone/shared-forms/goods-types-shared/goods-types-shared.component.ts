@@ -43,6 +43,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   @Input() ssubTypeShow: boolean = true;
   @Input() sssubTypeShow: boolean = true;
   @Input() goodselect: IGood;
+  @Input() initLoad = false;
   rowClass: string;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -86,6 +87,9 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     this.rowClass = this.inlineForm
       ? `col-md-${this.columns} mt-3`
       : `col-md-12 mt-3`;
+    if (this.initLoad) {
+      this.getTypes(new ListParams());
+    }
     if (
       (this.form.get('noBien').value !== null ||
         this.form.get('noBien').value !== '') &&
@@ -188,7 +192,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     const _params: any = params;
     if (id) {
       params['filter.id'] = id;
-    } else {
+    } else if (params.text) {
       _params['filter.nameGoodType'] = `$ilike:${params.text}`;
     }
     delete _params.search;
@@ -215,7 +219,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     const _params: any = params;
     if (id) {
       params['filter.id'] = id;
-    } else {
+    } else if (params.text) {
       _params['filter.nameSubtypeGood'] = `$ilike:${params.text}`;
     }
     delete _params.search;
@@ -238,7 +242,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     const _params: any = params;
     if (id) {
       params['filter.id'] = id;
-    } else {
+    } else if (params.text) {
       _params['filter.description'] = `$ilike:${params.text}`;
     }
     delete _params.search;
@@ -264,7 +268,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     const _params: any = params;
     if (id) {
       params['filter.id'] = id;
-    } else {
+    } else if (params.text) {
       _params['filter.description'] = `$ilike:${params.text}`;
     }
     delete _params.search;
@@ -311,15 +315,23 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   }
 
   onTypesChange(type: any) {
+    console.log(type);
+    if (type === undefined && this.initLoad) {
+      this.getTypes(new ListParams());
+    }
     this.resetFields([this.subtype, this.ssubtype, this.sssubtype]);
     this.subtypes = new DefaultSelect();
     this.ssubtypes = new DefaultSelect();
     this.sssubtypes = new DefaultSelect();
+    if (this.initLoad && type !== undefined) this.getSubtypes(new ListParams());
     this.form.updateValueAndValidity();
     this.goodTypeChange.emit(type);
   }
 
   onSubtypesChange(subtype: any) {
+    if (subtype === undefined && this.initLoad) {
+      this.getSubtypes(new ListParams());
+    }
     if (!this.type.value) {
       this.types = new DefaultSelect([subtype.idTypeGood], 1);
       this.type.setValue(subtype.idTypeGood.id);
@@ -327,10 +339,15 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     this.resetFields([this.ssubtype, this.sssubtype]);
     this.ssubtypes = new DefaultSelect();
     this.sssubtypes = new DefaultSelect();
+    if (this.initLoad && subtype !== undefined)
+      this.getSsubtypes(new ListParams());
     this.goodSubtypeChange.emit(subtype);
   }
 
   onSsubtypesChange(ssubtype: any) {
+    if (ssubtype === undefined && this.initLoad) {
+      this.getSsubtypes(new ListParams());
+    }
     if (!this.type.value || !this.subtype.value) {
       this.types = new DefaultSelect([ssubtype.noType], 1);
       this.subtypes = new DefaultSelect([ssubtype.noSubType], 1);
@@ -338,10 +355,15 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
       this.subtype.setValue(ssubtype.noSubType.id);
     }
     this.resetFields([this.sssubtype]);
+    if (ssubtype !== undefined && this.initLoad)
+      this.getSssubtypes(new ListParams());
     this.goodSsubtypeChange.emit(ssubtype);
   }
 
   onSssubtypesChange(sssubtype: any) {
+    if (sssubtype === undefined && this.initLoad) {
+      this.getSssubtypes(new ListParams());
+    }
     if (!this.type.value || !this.subtype.value || !this.ssubtype.value) {
       this.types = new DefaultSelect([sssubtype.numType], 1);
       this.subtypes = new DefaultSelect([sssubtype.numSubType], 1);
