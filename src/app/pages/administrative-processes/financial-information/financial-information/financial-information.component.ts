@@ -134,23 +134,37 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
       },
     });
   }
+
   loadFinancial(idGood: number | string) {
     this.finantialInformationService.findGood(idGood).subscribe({
       next: response => {
         console.log('loadFinancialTbl1-> ', response);
+        this.finantialList = response.data;
+        this.finantialList.forEach(date => {
+          this.date = this.datePipe.transform(date.idInfoDate, 'dd/MM/yyyy');
+        });
+        this.searchGoods(idGood);
+        this.form.controls['date'].setValue(this.date);
+        //console.log('send 1 -> ', response.data[0].idAttributeNumber);
+
         for (let i = 0; i < response.data.length; i++) {
-          this.finantialInformationService
-            .getAttributesInfoFinancial(response.data[0].idAttributeNumber)
-            .subscribe(resp => {
-              /*let data1 = {
-              idGoodNumber: ,
-              description: ,
-              value:
-            };*/
-            });
-          this.form.controls['date'].setValue(this.date);
-          this.totalItems2 = response.count;
+          if (response.data[i].idAttributeNumber != null) {
+            this.finantialInformationService
+              .getAttributesInfoFinancial(response.data[i].idAttributeNumber)
+              .subscribe(resp => {
+                console.log('getAttributesInfoFinancial resp ', resp);
+              });
+          }
         }
+
+        // this.finantialList = response.data;
+        // // console.log(this.finantialList);
+        // this.finantialList.forEach(date => {
+        //   this.date = this.datePipe.transform(date.idInfoDate, 'dd/MM/yyyy');
+        // });
+        // this.searchGoods(idGood);
+        // this.form.controls['date'].setValue(this.date);
+        // this.totalItems2 = response.count;
       },
       error: err => {
         this.onLoadToast(
@@ -162,6 +176,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
       },
     });
   }
+
   onUserRowSelect(event: any) {
     this.selectedRows = event.selected;
   }
