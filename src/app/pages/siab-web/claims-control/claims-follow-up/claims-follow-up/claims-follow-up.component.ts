@@ -205,9 +205,47 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         cartareclamacion: {
-          title: 'Carta Reclamación',
+          title: 'Fecha Carta Reclamación',
           type: 'string',
           sort: false,
+        },
+        datejobmail: {
+          title: 'Fecha Oficio/Correo',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (date: Date) => {
+            if (date != null) {
+              var raw = new Date(date);
+              var formatted = new DatePipe('en-EN').transform(
+                raw,
+                'dd/MM/yyyy',
+                'UTC'
+              );
+            } else {
+              var formatted = '';
+            }
+
+            return formatted;
+          },
+        },
+        datejobconclusion: {
+          title: 'Fecha Oficio Conclusión/Minuta',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (date: Date) => {
+            if (date != null) {
+              var raw = new Date(date);
+              var formatted = new DatePipe('en-EN').transform(
+                raw,
+                'dd/MM/yyyy',
+                'UTC'
+              );
+            } else {
+              var formatted = '';
+            }
+
+            return formatted;
+          },
         },
         ordendeingreso: {
           title: 'Orden de Ingreso',
@@ -441,11 +479,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         }
       },
       error => {
-        this.alert(
-          'warning',
-          'Siniestros Seguimiento',
-          'El Documento no Existe.'
-        );
+        this.alert('warning', 'El Documento no Existe.', '');
       }
     );
   }
@@ -459,11 +493,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         this._downloadExcelFromBase64(response, `SINIESTROS SEGUIMIENTO`);
       },
       error => {
-        this.alert(
-          'warning',
-          'Siniestros Seguimiento',
-          'Error al Generar el Archivo Excel.'
-        );
+        this.alert('warning', 'Error al Generar el Archivo Excel.', '');
       }
     );
   }
@@ -480,11 +510,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         );
       },
       error => {
-        this.alert(
-          'warning',
-          'Siniestros Seguimiento',
-          'Error al Generar el Archivo Excel.'
-        );
+        this.alert('warning', 'Error al Generar el Archivo Excel.', '');
       }
     );
   }

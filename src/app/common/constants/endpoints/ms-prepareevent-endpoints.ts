@@ -22,4 +22,5 @@ export enum PrepareEventEndpoints {
   GetValidLiquidation = 'application/get-valid-liquidation',
   UpdateBySubquery = 'comer-event/update-by-subquery',
   EnvFormalize = 'util-comer-v1/envformalize',
+  ApplicationValidationLiq = 'application/valid-liq-batch',
 }

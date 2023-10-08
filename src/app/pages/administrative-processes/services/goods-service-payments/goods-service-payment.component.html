@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-        <div class="form-material col-xs-12 col-12 col-md-3">
+        <div class="col-md-6">
           <form-field
             label="Fecha de Solicitud"
             [control]="form.get('applicationDate')">
@@ -15,13 +15,37 @@
               bsDatepicker />
           </form-field>
         </div>
+        <div class="col-md-6">
+          <app-services-shared
+            [form]="form"
+            [label]="'Servicios'"></app-services-shared>
+        </div>
       </div>
       <div class="row mb-3 mt-3">
         <!--Records Shared Component-->
-        <app-records-shared [form]="form"></app-records-shared>
+        <form-field [control]="form.get('record')">
+          <ngx-select
+            [form]="form"
+            [data]="expedientSelec"
+            (fetchItems)="getExpedient($event)"
+            bindLabel="name"
+            control="record"
+            [searchOnInit]="true"
+            label="Expediente"
+            termMaxLength="100"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+
         <!--Goods Shared Component-->
         <div class="col-md-12 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-goods-types-shared [form]="form"></app-goods-types-shared>
+          <app-goods-types-shared
+            [form]="form"
+            typeField="type"
+            subtypeField="subtype"
+            ssubtypeField="ssubtype"
+            sssubtypeField="sssubtype"
+            (goodSssubtypeChange)="getGoods($event)"></app-goods-types-shared>
         </div>
       </div>
     </form>
@@ -41,7 +65,7 @@
           [disabled]="!form.valid"
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="close()">
+          (click)="confirm()">
           Aceptar
         </button>
       </div>

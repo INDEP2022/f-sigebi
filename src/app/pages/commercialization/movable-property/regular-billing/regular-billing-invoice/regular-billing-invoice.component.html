@@ -193,15 +193,32 @@
           class="form-control"
           bsDatepicker
           [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
-          ControlName="date" />
+          formControlName="date" />
       </form-field>
     </div>
     <div class="col-12 col-md-auto">
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2"
-        (click)="exportAsXLSX()">
+        (click)="allSelect()">
         Selec. Todos <i class="fas fa-edit bx-sm float-icon"></i>
+      </button>
+    </div>
+    <div class="col-12 col-md-auto">
+      <form-check label="Solo Fact." for="label">
+        <input
+          id="label"
+          type="checkbox"
+          formControlName="check"
+          (change)="disabledButtons()" />
+      </form-check>
+    </div>
+    <div class="col-12 col-md-auto" *ngIf="isCancel">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2"
+        (click)="invoiceSP()">
+        SP
       </button>
     </div>
     <div class="col-12 col-md-3" *ngIf="isCancel">
@@ -245,20 +262,12 @@
     <div class="col-12 col-md-auto" *ngIf="isCancel">
       <button
         type="button"
-        class="btn btn-primary btn-sm active mr-2"
+        class="btn btn-primary btn-sm active"
         (click)="exportAsXLSX()">
         Anular
       </button>
     </div>
-    <div class="col-12 col-md-auto">
-      <form-check label="Solo Fact." for="label">
-        <input
-          id="label"
-          type="checkbox"
-          formControlName="check"
-          (change)="disabledButtons()" />
-      </form-check>
-    </div>
+
     <div class="col-12 col-md-auto">
       <button
         type="button"
@@ -289,13 +298,13 @@
         [disabled]="buttons"
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
-        (click)="generatePreFacture()">
+        (click)="viewInvoice()">
         Visualizar Factura <i class="bx bxs-file"></i>
       </button>
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
-        (click)="generatePreFacture()">
+        (click)="viewAnexo()">
         Visualiza Anexo <i class="bx bxs-file"></i>
       </button>
       <button
@@ -399,7 +408,10 @@
         (click)="track()">
         Tracto S/P <i class="bx bxs-file"></i>
       </button>
-      <button type="button" class="btn btn-sm btn-success active mr-2 mb-2">
+      <button
+        type="button"
+        class="btn btn-sm btn-success active mr-2 mb-2"
+        (click)="exportData()">
         Exportar a Excel
         <i class="bx bx-download float-icon"></i>
       </button>
@@ -420,14 +432,20 @@
     <form-loader *ngIf="loading"></form-loader>
     <div>
       <ng2-smart-table
-        [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+        [ngStyle]="{
+          height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
+        }"
         [attr.class]="'table-bordered table-responsive mb-4'"
         [settings]="settings"
         [source]="dataFilter"
-        (rowSelect)="getComerDetInvocie($event.data)">
+        (userRowSelect)="getComerDetInvocie($event.data)">
       </ng2-smart-table>
     </div>
-    <app-pagination [params]="paramsList" [totalItems]="totalItems">
+    <app-pagination
+      [params]="paramsList"
+      [limit]="limit"
+      [pageSizeOptions]="[500]"
+      [totalItems]="totalItems">
     </app-pagination>
   </div>
 
@@ -575,13 +593,19 @@
     <form-loader *ngIf="loading2"></form-loader>
     <div>
       <ng2-smart-table
-        [ngStyle]="{ height: loading2 ? '0px' : 'auto' }"
+        [ngStyle]="{
+          height: loading2 ? '0px' : totalItems2 > 10 ? '600px' : 'auto'
+        }"
         [attr.class]="'table-bordered table-responsive mb-4'"
         [settings]="settings2"
         [source]="dataFilter2">
       </ng2-smart-table>
     </div>
-    <app-pagination [params]="paramsList2" [totalItems]="totalItems2">
+    <app-pagination
+      [params]="paramsList2"
+      [totalItems]="totalItems2"
+      [limit]="limit"
+      [pageSizeOptions]="[500]">
     </app-pagination>
   </div>
 </div>

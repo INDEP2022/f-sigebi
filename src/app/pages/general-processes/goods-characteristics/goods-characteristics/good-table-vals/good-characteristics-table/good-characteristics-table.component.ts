@@ -36,11 +36,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   @Input() initValue = true;
   @Input() inventary: any[];
   @Input() loadInventary: boolean = false;
-  @Input() set goodChange(value: number) {
-    this._goodChange = value;
-    if (value > 0) this.getData();
-  }
-  private _goodChange: number;
+  @Input() goodChange: number;
   pageSizeOptions = [5, 10, 15, 20];
   limit: FormControl = new FormControl(5);
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -246,6 +242,13 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['service'] && changes['disabled']) {
       this.service.disabledTable = changes['disabled'].currentValue;
+    }
+    if (
+      changes['goodChange'] &&
+      changes['good'] &&
+      changes['good'].currentValue
+    ) {
+      if (changes['goodChange'].currentValue > 0) this.getData();
     }
   }
 

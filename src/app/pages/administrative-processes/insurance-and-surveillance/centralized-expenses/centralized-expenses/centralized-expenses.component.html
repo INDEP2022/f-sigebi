@@ -1,19 +1,51 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">GASTOS CENTRALIZADOS</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-    </div>
   </div>
 
   <div body>
+    <!-- <div class="d-flex justify-content-end mr-1">
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings">
+      </app-columns-select>
+      <div>
+        <button
+          class="btn btn-sm btn-success active me-2 font-size-14"
+          (click)="openModal()">
+          [disabled]="!searchForm.valid"
+          <i class="bx bx-plus text-light float-icon"></i>
+          Agregar Registro
+        </button>
+      </div>
+    </div> -->
+    <div class="col-sm-12 col-md-12">
+      <div class="d-flex flex-row-reverse my-3">
+        <div class="">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settingsCol"></app-columns-select>
+        </div>
+        <div>
+          <button
+            class="btn btn-sm btn-success active me-2 font-size-14"
+            (click)="openModal()">
+            <!-- [disabled]="!searchForm.valid" -->
+            <i class="bx bx-plus text-light float-icon"></i>
+            Agregar Registro
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="expenses">
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settingsCol"
+            [source]="data"
+            (edit)="openModal($event.data)">
           </ng2-smart-table>
         </div>
       </div>

@@ -1,1 +1,65 @@
-<p>appraisal-detail-list works!</p>
+<div class="row">
+  <h5>Detalle Avalúo</h5>
+</div>
+<div class="row">
+  <div class="col-md-12 d-flex justify-content-end">
+    <div>
+      <div class="btn-group mx-2" dropdown>
+        <button
+          id="button-basic"
+          dropdownToggle
+          type="button"
+          class="btn btn-primary dropdown-toggle btn-sm active"
+          aria-controls="dropdown-basic">
+          <div class="d-flex align-items-center">
+            Acciones <span class="caret ml-2"></span>
+          </div>
+        </button>
+        <ul
+          id="dropdown-basic"
+          *dropdownMenu
+          class="dropdown-menu dropdown-menu-right"
+          role="menu"
+          aria-labelledby="button-basic">
+          <appraisal-detail-actions
+            [comerEventForm]="comerEventForm"
+            [global]="global"
+            [$downloadGoodsFormat]="$downloadGoodsFormat"
+            [screen]="screen"
+            [searchGoods]="searchGoods"
+            [$selectedAppraisal]="$selectedAppraisal"
+            [$showRejected]="$showRejected"
+            [$rejectedDisscount]="$rejectedDisscount"
+            [$appraisedRejectedList]="$appraisedRejectedList"
+            [$appraisedRejectedDList]="$appraisedRejectedDList"
+            [$appraisedRejectedGoodsList]="$appraisedRejectedGoodsList"
+            [$appraisedRejectedGoodsDList]="
+              $appraisedRejectedGoodsDList
+            "></appraisal-detail-actions>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+</div>
+<div class="row pt-2">
+  <div class="col-md-12 table-responsive">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="appraisals">
+      </ng2-smart-table>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <app-pagination
+      [filterParams]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</div>

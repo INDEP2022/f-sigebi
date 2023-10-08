@@ -220,4 +220,19 @@ export class UsersService extends HttpService {
       _params
     );
   }
+
+  getUsersbyUsers(user: any) {
+    return this.get(`${UserEndpoints.SegUsers}?filter.id=$eq:${user}`);
+  }
+
+  getAllSegUsers4(name: any) {
+    return this.get<IListResponse<any>>(
+      `${UserEndpoints.GetAllSegUser}?filter.user=$ilike:${name}`
+    );
+  }
+
+  getBtnViewPrev(no_ofice: any) {
+    const route = `${UserEndpoints.viewPrev}/${no_ofice}`;
+    return this.get(route);
+  }
 }

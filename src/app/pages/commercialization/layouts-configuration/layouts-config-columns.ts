@@ -158,7 +158,7 @@ export const LAYOUTS_COLUMNS5 = {
     // },
   },
   table: {
-    title: 'Tabla o Vista',
+    title: 'TablaOVista',
     type: 'string',
     sort: false,
     // valuePrepareFunction: (cell: any, row: any) => {
@@ -184,14 +184,28 @@ export const LAYOUTS_COLUMNS5 = {
   status_active: {
     title: 'Activo',
     sort: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        console.log(data);
+    // type: 'custom',
+    type: 'html',
+    // renderComponent: CheckboxElementComponent,
+    // onComponentInitFunction(instance: any) {
+    //   instance.toggle.subscribe((data: any) => {
+    //     console.log(data);
 
-        // data.row.to = data.toggle;
-      });
+    //     // data.row.to = data.toggle;
+    //   });
+    // },
+
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        switch (value) {
+          case true:
+            value = `<div class="badge badge-pill bg-success text-wrap ml-2 mr-2">Activo</div>`;
+            return value;
+          default:
+            value = `<div class="badge badge-pill bg-danger text-wrap ml-2 mr-2">Inactivo</div>`;
+            return value;
+        }
+      }
     },
     // valuePrepareFunction: (cell: any, row: any) => {
     //   return row.idLayout.indActive;

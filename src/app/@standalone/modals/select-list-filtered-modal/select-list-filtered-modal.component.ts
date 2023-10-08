@@ -27,6 +27,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 import { IUserRowSelectEvent } from '../../../core/interfaces/ng2-smart-table.interface';
+
 @Component({
   selector: 'app-select-list-filtered-modal',
   standalone: true,
@@ -85,13 +86,13 @@ export class SelectListFilteredModalComponent
   searchFilterCompatible: boolean = true; // Input opcional para deshabilitar el filtro "search" en la busqueda cuando el endpoint no lo soporta
   selectOnClick: boolean = false; //Input opcional para seleccionar registro al dar click en la tabla
   placeholder: string = 'Buscar...'; //Input opcional para establecer el mensaje del input de busqueda
-
+  pageSelecteds: number[] = [];
   columnFilters: any = [];
   sortFilter: any = [];
   // equalFilters: string[] = ['id'];
   ilikeFilters: string[] = ['description'];
   dateFilters: string[] = [];
-
+  previousSelecteds: any[] = [];
   @Output() onSelect = new EventEmitter<any>();
   @ViewChild('table') table: Ng2SmartTableComponent;
 
@@ -215,6 +216,14 @@ export class SelectListFilteredModalComponent
 
   private fillSelectedRows() {
     setTimeout(() => {
+      console.log(this.selecteds, this.table);
+      const currentPage = this.params.getValue().page;
+      const selectedPage = this.pageSelecteds.find(
+        page => page === currentPage
+      );
+      this.table.isAllSelected = false;
+      let allSelected = true;
+
       if (
         this.selecteds &&
         this.selecteds.data &&
@@ -229,10 +238,14 @@ export class SelectListFilteredModalComponent
             )
           ) {
             this.table.grid.multipleSelectRow(row);
+            allSelected = allSelected && true;
+          } else {
+            allSelected = allSelected && false;
           }
           // if(row.getData())
           // this.table.grid.multipleSelectRow(row)
         });
+        this.table.isAllSelected = allSelected;
       }
     }, 500);
   }
@@ -307,25 +320,98 @@ export class SelectListFilteredModalComponent
   selectEvent(event: IUserRowSelectEvent<any>) {
     if (this.permitSelect) {
       if (this.settings.selectMode === 'multi') {
-        this.selectRow(event.selected);
+        this.selectRow(event);
       } else {
-        this.selectRow(event.data);
+        this.selectedRow = event.data;
+        this.rowSelected = true;
+        if (this.selectOnClick) {
+          this.onSelect.emit(this.selectedRow);
+          this.modalRef.hide();
+        }
       }
     }
   }
 
-  private selectRow(row: any) {
-    this.selectedRow = row;
-    this.rowSelected = true;
-    if (this.selectOnClick) {
-      this.onSelect.emit(this.selectedRow);
-      this.modalRef.hide();
+  private removeRow(item: any) {
+    [this.selecteds.column];
+    const row = this.selecteds.data.find(
+      x => x[this.selecteds.column] === item[this.selecteds.column]
+    );
+    if (row) {
+      this.selecteds.data = this.selecteds.data.filter(
+        x => x[this.selecteds.column] != row[this.selecteds.column]
+      );
     }
   }
 
+  private selectRow(event: {
+    selected: any[];
+    isSelected: boolean;
+    data: any;
+  }) {
+    console.log(event);
+    // debugger;
+    const selecteds = event.selected;
+
+    if (selecteds.length === 0) {
+      if (this.previousSelecteds.length > 0 && event.isSelected === null) {
+        this.previousSelecteds.forEach(selected => {
+          this.removeRow(selected);
+        });
+      }
+      if (event.isSelected === false) {
+        this.removeRow(event.data);
+      }
+    } else {
+      if (event.isSelected === null) {
+        const currentPage = this.params.getValue().page;
+        const selectedPage = this.pageSelecteds.find(
+          page => page === currentPage
+        );
+        if (!selectedPage) {
+          this.pageSelecteds.push(currentPage);
+        }
+        selecteds.forEach(selected => {
+          const item = this.selecteds.data.find(
+            x => x[this.selecteds.column] === selected[this.selecteds.column]
+          );
+          if (!item) {
+            this.selecteds.data.push(selected);
+          }
+        });
+      } else if (event.isSelected === true) {
+        // this.addGood(event.data);
+        const currentPage = this.params.getValue().page;
+        const selectedPage = this.pageSelecteds.find(
+          page => page === currentPage
+        );
+        if (!selectedPage) {
+          this.pageSelecteds.push(currentPage);
+        }
+        selecteds.forEach(selected => {
+          const item = this.selecteds.data.find(
+            x => x[this.selecteds.column] === selected[this.selecteds.column]
+          );
+          if (!item) {
+            this.selecteds.data.push(selected);
+          }
+        });
+      } else {
+        this.removeRow(event.data);
+      }
+    }
+    console.log(this.selecteds.data);
+    this.previousSelecteds = [...selecteds];
+  }
+
   confirm() {
-    if (!this.rowSelected) return;
-    this.onSelect.emit(this.selectedRow);
-    this.modalRef.hide();
+    // if (!this.rowSelected) return;
+    if (this.selectedRow) {
+      this.onSelect.emit(this.selectedRow);
+      this.modalRef.hide();
+    } else if (this.selecteds && this.selecteds.data) {
+      this.onSelect.emit(this.selecteds.data);
+      this.modalRef.hide();
+    }
   }
 }

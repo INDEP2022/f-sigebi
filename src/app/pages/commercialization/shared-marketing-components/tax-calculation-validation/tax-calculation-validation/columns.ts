@@ -1,14 +1,14 @@
 export const COLUMNS = {
   id: {
-    title: 'Id Avalúo',
+    title: 'No. Avalúo',
     sort: false,
   },
   appraisalKey: {
-    title: 'Clave Avalúo',
+    title: 'Cve. Avalúo',
     sort: false,
   },
   cveOffice: {
-    title: 'Clave Oficio',
+    title: 'Cve. Oficio',
     sort: false,
   },
   insertDate: {
@@ -19,7 +19,7 @@ export const COLUMNS = {
 
 export const COLUMNS2 = {
   idDetAppraisal: {
-    title: 'No.',
+    title: 'No. Avalúo',
     sort: false,
   },
   goodId: {
@@ -205,4 +205,47 @@ export const COLUMNS2 = {
   //     return row.abbreviation == 'N' ? true : false;
   //   },
   // },
+};
+
+export const COLUMNS3 = {
+  totalRecords: {
+    title: 'Total de Registros',
+    sort: false,
+  },
+  totalAppraisal: {
+    title: 'Total Valor de Referencia o Avalúo',
+    sort: false,
+  },
+  totalTerrain: {
+    title: 'Total Valor Terreno',
+    sort: false,
+  },
+  totalHousing: {
+    title: 'Total Valor Construcción Habitacional',
+    sort: false,
+  },
+  totalCommercial: {
+    title: 'Total Valor Construcción Comercial',
+    sort: false,
+  },
+  totalSpecial: {
+    title: 'Total Valor Instalaciones Especiales',
+    sort: false,
+  },
+  totalOthers: {
+    title: 'Total Valor Otros',
+    sort: false,
+  },
+  totalDifference: {
+    title: 'Total Diferencia',
+    sort: false,
+  },
+  valueCalculated: {
+    title: 'Valor Total de Iva Calculado',
+    sort: false,
+  },
+  calueIncluding: {
+    title: 'Valor con Iva Incluido',
+    sort: false,
+  },
 };
