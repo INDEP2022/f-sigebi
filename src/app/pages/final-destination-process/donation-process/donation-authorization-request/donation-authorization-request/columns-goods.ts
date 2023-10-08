@@ -12,7 +12,7 @@ export const COLUMNS_GOODS = {
     type: 'number',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.request.regionalDelegationId;
+      return row.request?.regionalDelegationId;
     },
   },
   goodId: {
@@ -28,7 +28,7 @@ export const COLUMNS_GOODS = {
     type: 'string',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.good.description;
+      return row.good?.description;
     },
   },
 
@@ -37,7 +37,7 @@ export const COLUMNS_GOODS = {
     type: 'string',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.good.status;
+      return row.good?.status;
     },
   },
   allotmentAmount: {

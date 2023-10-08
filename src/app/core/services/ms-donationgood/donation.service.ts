@@ -152,4 +152,7 @@ export class DonationService
   getInventaryGood(body: IInventaryRequest) {
     return this.post(DonationEndPoint.Inventary, body);
   }
+  createInventary(body: IInventaryRequest) {
+    return this.post(DonationEndPoint.CreateInventary, body);
+  }
 }

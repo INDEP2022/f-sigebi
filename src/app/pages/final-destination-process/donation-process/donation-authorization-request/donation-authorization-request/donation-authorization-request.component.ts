@@ -14,6 +14,7 @@ import {
   IRequest,
 } from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -24,6 +25,7 @@ import { ModalViewComponent } from '../modal-view/modal-view.component';
 import { ListParams } from './../../../../../common/repository/interfaces/list-params';
 import { COLUMNS_GOODS } from './columns-goods';
 import {
+  COLUMNS_INVENTARY,
   DISTRIBUTION_COLUMNS,
   REQUEST_GOOD_COLUMN,
 } from './distribution-columns';
@@ -45,10 +47,12 @@ export class DonationAuthorizationRequestComponent
   inventaryAll: IInventaryRequest[] = [];
   dataTableGood_: any[] = [];
   proposalCve: string = '';
+  dataReqest: any;
   request: any;
   donationGood: IGoodDonation[] = [];
   settings2: any;
   settings3: any;
+  totalItemsGood: number = 0;
   goods: any[];
   dataFactInventary: LocalDataSource = new LocalDataSource();
   requestModel: IRequest;
@@ -59,9 +63,11 @@ export class DonationAuthorizationRequestComponent
   columnFilters: any[] = [];
   totalItems: number = 0;
   loadingReq: boolean = true;
+  goodLoading: boolean = true;
   loading2: boolean = true;
   totalItemsIn: number = 0;
   itemRequest: number = 0;
+  settings4: any;
   proposal: IProposel;
   totalSunQuantity: number = 0;
   totalGoods: number = 0;
@@ -94,7 +100,8 @@ export class DonationAuthorizationRequestComponent
     private donAuthorizaService: DonAuthorizaService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private goodService: GoodService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -108,6 +115,15 @@ export class DonationAuthorizationRequestComponent
       actions: false,
       columns: {
         ...COLUMNS_GOODS,
+      },
+    };
+    this.settings4 = {
+      ...this.settings,
+      // selectMode: 'multi',
+      hideSubHeader: false,
+      actions: false,
+      columns: {
+        ...COLUMNS_INVENTARY,
       },
     };
   }
@@ -207,6 +223,11 @@ export class DonationAuthorizationRequestComponent
         );
       }
       this.form.reset();
+      this.formTable1.reset();
+      this.formTable2.reset();
+      this.formTable3.reset();
+      this.dataGoodsFact.load([]);
+      this.dataFactInventary.load([]);
       this.proposeDefault = next;
       localStorage.setItem('proposalId', this.proposeDefault.ID_PROPUESTA);
       localStorage.setItem('request', this.proposeDefault.ID_SOLICITUD);
@@ -244,8 +265,12 @@ export class DonationAuthorizationRequestComponent
     });
   }
   async getRequest(proposal: number) {
+    this.loadingReq = true;
+    this.loading2 = false;
+    this.goodLoading = false;
     this.donationProcessService.getRequestId(proposal).subscribe({
       next: data => {
+        this.loadingReq = false;
         this.request = data.data;
         this.dataFacRequest.load(this.request);
         this.dataFacRequest.refresh();
@@ -265,26 +290,31 @@ export class DonationAuthorizationRequestComponent
         });
         this.formTable1.get('totals').setValue(Number(this.totalSunQuantity));
       },
+      error: () => {
+        this.loadingReq = false;
+      },
     });
   }
   getRequestGood() {
-    this.loadingReq = true;
-    // this.params.getValue()['filter.numFile'] = this.expedienteNumber;
-    let params = new ListParams();
+    this.goodLoading = true;
+    let params: any = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     console.log(this.requestId);
-    params['sortBy'] = 'goodId:ASC';
+    params['sortBy'] = 'goodId:DESC';
     params['requestTypeId'] = 'SD';
-    params['good.noDelegation'] = this.authService.decodeToken().department;
+    params['good.noDelegation'] = this.requestModel.entFedKey;
     params['request.requestId'] = this.requestId;
     params['good.status'] = 'DON' || 'ADA';
     this.donationService.getGoodRequest(params).subscribe({
       next: data => {
-        this.loadingReq = false;
+        this.goodLoading = false;
         this.goods = data.data;
-        this.totalItems = data.count;
+        this.totalItemsGood = data.count;
         this.dataGoodsFact.load(this.goods);
-        console.log(data.data);
-        this.totalGoods = data.data.reduce(
+        console.log(this.goods);
+        this.totalGoods = this.goods.reduce(
           (acc: any, item: any) =>
             acc + this.convert(item.allotmentAmount) ?? 0,
           0
@@ -293,20 +323,22 @@ export class DonationAuthorizationRequestComponent
         this.formTable2.get('quantityToAssign').setValue(this.totalGoods);
       },
       error: () => {
-        this.loadingReq = false;
+        this.goodLoading = false;
       },
     });
   }
 
   getInventary() {
     this.loading2 = true;
+    console.log(this.inventaryModel);
     this.donationService.getInventaryGood(this.inventaryModel).subscribe({
       next: data => {
         this.loading2 = false;
-        this.inventaryAll = data.data;
-        console.log(this.inventaryAll);
+        this.inventaryModel = data;
+        console.log(data);
+        // console.log(this.inventaryAll);
         this.totalItemsIn = data.count;
-        this.dataFactInventary.load(this.inventaryAll);
+        this.dataFactInventary.load(data);
         this.dataFactInventary.refresh();
       },
       error: () => {
@@ -365,6 +397,112 @@ export class DonationAuthorizationRequestComponent
   selectedGooodsValid: any[] = [];
   selectedGooods: any[] = [];
   goodsValid: any;
+
+  async addSelect() {
+    if (this.selectedGooods.length > 0) {
+      if (this.proposeDefault == null) {
+        this.alert(
+          'warning',
+          'No existe una propuesta en la cual asignar el bien.',
+          'Debe capturar un acta.'
+        );
+        return;
+      } else {
+        if (this.status == 'A') {
+          this.alert(
+            'warning',
+            'La propuesta ya está autorizada, no puede realizar modificaciones',
+            ''
+          );
+          return;
+        } else {
+          // console.log('aaa', this.goods);
+          let result = this.selectedGooods.map(async (good: any) => {
+            if (good.di_acta != null) {
+              this.alert(
+                'warning',
+                `Ese bien ya se encuentra en la propuesta ${good.di_acta}`,
+                'Debe capturar una nueva propuesta.'
+              );
+            } else if (good.di_disponible == 'N') {
+              this.onLoadToast(
+                'warning',
+                `El bien ${good.id} tiene un estatus inválido para ser asignado a alguna propuesta`
+              );
+              return;
+            } else {
+              // console.log('GOOD', good);
+              this.loading2 = true;
+
+              if (!this.request.some((v: any) => v === good)) {
+                let indexGood = this.dataTableGood_.findIndex(
+                  _good => _good.id == good.id
+                );
+
+                this.Exportdate = true;
+                console.log('indexGood', indexGood);
+                if (indexGood != -1)
+                  this.dataTableGood_[indexGood].di_disponible = 'N';
+                let obj = {
+                  pActaNumber: this.requestId,
+                  pStatusActa: 'A',
+                  pVcScreen: 'FDONSOLAUTORIZA',
+                  pUser: this.authService.decodeToken().preferred_username,
+                };
+                await this.updateGoodEInsertHistoric(obj);
+                await this.updateBienDetalle(good.id, 'ADA');
+                await this.createDET(this.inventaryModel);
+              }
+            }
+          });
+          Promise.all(result).then(async item => {
+            //ACTUALIZA EL COLOR
+            this.dataTableGood_ = [];
+            this.dataTableGood.load(this.dataTableGood_);
+            this.dataTableGood.refresh();
+            //this.getGoodsByStatus(this.fileNumber);
+            await this.getRequest(Number(localStorage.getItem('proposal')));
+          });
+        }
+      }
+    } else {
+      this.alert('warning', 'Seleccione primero el bien a asignar.', '');
+    }
+  }
+  async createDET(good: IInventaryRequest) {
+    let obj: any = {
+      proposalKey: this.requestModel.proposalCve,
+      numberGood: good.goodNumber,
+    };
+
+    await this.saveGoodInventary(obj);
+  }
+
+  async saveGoodInventary(body: IInventaryRequest) {
+    return new Promise((resolve, reject) => {
+      this.donationService.createInventary(body).subscribe({
+        next: data => {
+          // this.alert('success', 'Bien agregado correctamente', '');
+          resolve(true);
+          this.Exportdate = true;
+        },
+        error: error => {
+          // this.authorityName = '';
+          resolve(false);
+        },
+      });
+    });
+  }
+  async updateBienDetalle(idGood: string | number, status: string) {
+    this.goodService.updateStatusActasRobo(idGood, status).subscribe({
+      next: data => {
+        console.log(data);
+        this.getRequestGood();
+      },
+      error: () => (this.loading = false),
+    });
+  }
+
   removeSelect() {
     if (this.proposal == null) {
       this.alert(
@@ -380,6 +518,13 @@ export class DonationAuthorizationRequestComponent
         'Debe capturar el bien.'
       );
       return;
+    } else if (this.status == 'A') {
+      this.alert(
+        'warning',
+        'La propuesta ya está autorizada, no puede realizar modificaciones',
+        ''
+      );
+      return;
     } else {
       this.alertQuestion(
         'question',
@@ -388,9 +533,9 @@ export class DonationAuthorizationRequestComponent
       ).then(async question => {
         if (question.isConfirmed) {
           this.loading = true;
-          if (this.goods.length > 0) {
+          if (this.selectedGooods.length > 0) {
             // this.goods = this.goods.concat(this.selectedGooodsValid);
-            let result = this.goods.map(async good => {
+            let result = this.selectedGooods.map(async good => {
               console.log('good', good);
               this.goods = this.goods.filter(
                 (_good: any) => _good.id != good.goodId.goodNumber
@@ -407,7 +552,7 @@ export class DonationAuthorizationRequestComponent
 
               let obj = {
                 pActaNumber: this.requestId,
-                pStatusActa: 'A',
+                pStatusActa: 'SD',
                 pVcScreen: 'FDONSOLAUTORIZA',
                 pUser: this.authService.decodeToken().preferred_username,
               };
@@ -447,8 +592,6 @@ export class DonationAuthorizationRequestComponent
         proposalKey: this.requestModel.proposalCve ?? '',
         goodNumber: this.selectedRow.goodId,
       };
-      console.log(this.inventaryModel);
-      this.getInventary();
     } else {
       this.selectedRow = null;
     }
