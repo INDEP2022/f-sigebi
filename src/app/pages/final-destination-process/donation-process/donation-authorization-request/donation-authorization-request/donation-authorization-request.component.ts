@@ -5,8 +5,8 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
-import { IGood } from 'src/app/core/models/ms-good/good';
 import {
   IDeleteGoodDon,
   IProposel,
@@ -49,6 +49,7 @@ export class DonationAuthorizationRequestComponent
   requestModel: IRequest;
   requestId: number = 0;
   data: any = [];
+  good: IGood;
   goodsTotals: number = 0;
   columnFilters: any[] = [];
   totalItems: number = 0;
@@ -114,6 +115,7 @@ export class DonationAuthorizationRequestComponent
       this.getProposalId(params);
       this.requestId = Number(r);
       this.getRequest(this.requestId);
+      localStorage.setItem('requestId', String(this.requestId));
     } else {
       console.log('sin paarametro', this.proposalId);
     }
@@ -263,9 +265,10 @@ export class DonationAuthorizationRequestComponent
     // this.params.getValue()['filter.numFile'] = this.expedienteNumber;
     let params = new ListParams();
     console.log(this.requestId);
-    params['requestTypeId'] = 'SD';
-    params['sunStatus'] = 'A';
-    this.donationService.getGoodRequest(this.requestId, params).subscribe({
+    params['requestId.requestTypeId'] = 'SD';
+    params['requestId.id'] = Number(localStorage.getItem('requestId'));
+    params['goodId.status'] = 'DON' || 'ADA';
+    this.donationService.getGoodRequest(params).subscribe({
       next: data => {
         this.loadingReq = false;
         this.goods = data.data;
@@ -277,6 +280,7 @@ export class DonationAuthorizationRequestComponent
           0
         );
         console.log(this.totalGoods);
+        this.formTable2.get('quantityToAssign').setValue(this.totalGoods);
       },
     });
   }
@@ -359,10 +363,10 @@ export class DonationAuthorizationRequestComponent
             let result = this.goods.map(async good => {
               console.log('good', good);
               this.goods = this.goods.filter(
-                (_good: any) => _good.id != good.goodId
+                (_good: any) => _good.id != good.goodId.goodNumber
               );
               let index = this.dataTableGood_.findIndex(
-                g => g.id === good.goodId
+                g => g.id === good.goodId.goodNumber
               );
               // await this.updateBienDetalle(good.goodId, 'ADA');
 
@@ -373,12 +377,12 @@ export class DonationAuthorizationRequestComponent
 
               let obj = {
                 pActaNumber: this.requestId,
-                pStatusActa: 'AUTORIZADA',
+                pStatusActa: 'A',
                 pVcScreen: 'FDONSOLAUTORIZA',
                 pUser: this.authService.decodeToken().preferred_username,
               };
               await this.updateGoodEInsertHistoric(obj);
-              await this.deleteDET(good);
+              await this.deleteDET(good.goodId);
             });
 
             Promise.all(result).then(async item => {
@@ -424,15 +428,14 @@ export class DonationAuthorizationRequestComponent
     }
   }
 
-  async deleteDET(good: any) {
+  async deleteDET(good: IDeleteGoodDon) {
     console.log(good);
-    const valid: any = await this.getGoodsDelete(good.numberGood);
+    const valid: any = await this.getGoodsDelete(good.goodId);
     if (valid != null) {
       let objDelete = {
-        pRequestId: this.requestId,
-        pGoodNumber: good.goodId.goodNumber,
-        pStatus: 'ADA',
-        pUser: this.authService.decodeToken().preferred_username,
+        requestId: this.requestId,
+        goodId: good.goodId,
+        requestTypeId: this.request.requestTypeId,
       };
 
       await this.deleteDetailProcee(objDelete);
@@ -440,9 +443,9 @@ export class DonationAuthorizationRequestComponent
   }
   async getGoodsDelete(id: any) {
     const params = new ListParams();
-    params['filter.requestId.id'] = `$eq:${id}`;
+    params['goodId'] = `$eq:${id}`;
     return new Promise((resolve, reject) => {
-      this.donationService.getGoodRequest(this.requestId, params).subscribe({
+      this.donationService.getGoodRequest(params).subscribe({
         next: data => {
           resolve(true);
         },

@@ -23,8 +23,7 @@ export interface IRequest {
 }
 
 export interface IDeleteGoodDon {
-  pRequestId: number;
-  pGoodNumber: number;
-  pStatus: string;
-  pUser: string;
+  requestId: number;
+  goodId: number;
+  requestTypeId: number;
 }

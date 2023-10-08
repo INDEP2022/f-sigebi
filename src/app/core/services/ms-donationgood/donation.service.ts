@@ -137,16 +137,13 @@ export class DonationService
   getGoodsDonation(params: ListParams) {
     return this.get(DonationEndPoint.GoodsForDonation, params);
   }
-  getGoodRequest(requestId: number, parmas: ListParams) {
-    return this.get(
-      `donac-request-good?filter.requestId.id=$eq:${requestId}`,
-      parmas
-    );
+  getGoodRequest(params: ListParams) {
+    return this.get(DonationEndPoint.RequestGoodDon, params);
   }
   createDetail(body: IDetailDonation) {
     return this.post(DonationEndPoint.DetailEventComDon, body);
   }
   deleteGoodDon(body: IDeleteGoodDon) {
-    return this.post(DonationEndPoint.DeleteGoodDon, body);
+    return this.delete(DonationEndPoint.DeleteGoodDon, body);
   }
 }

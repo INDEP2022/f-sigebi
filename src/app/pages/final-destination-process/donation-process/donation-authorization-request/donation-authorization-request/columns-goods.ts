@@ -4,7 +4,7 @@ export const COLUMNS_GOODS = {
     type: 'number',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.requestId.id;
+      return row.requestId;
     },
   },
   regionalDelegationId: {
@@ -12,15 +12,15 @@ export const COLUMNS_GOODS = {
     type: 'number',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.requestId.regionalDelegationId;
+      return row.request.regionalDelegationId;
     },
   },
-  goodNumb: {
+  goodId: {
     title: 'No. Bien Ent. Federal',
     type: 'number',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.goodId.goodNumber;
+      return row.goodId;
     },
   },
   description: {
@@ -28,24 +28,24 @@ export const COLUMNS_GOODS = {
     type: 'string',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.goodId.description;
+      return row.good.description;
     },
   },
 
-  SdoStatus: {
+  status: {
     title: 'Sdo./ Estatus',
     type: 'string',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.goodId.status;
+      return row.good.status;
     },
   },
-  quantity: {
+  allotmentAmount: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.goodId.quantity;
+      return row.allotmentAmount;
     },
   },
 
