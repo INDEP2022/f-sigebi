@@ -14,4 +14,5 @@ export enum DonationEndPoint {
   GoodsForDonation = 'admon-donation',
   RequestGoodDon = 'donac-request-good/getAllV2',
   DeleteGoodDon = 'donac-request-good',
+  Inventary = 'donate-invent-rel/invent-rel',
 }

@@ -99,16 +99,34 @@
     <app-divider></app-divider>
 
     <h5 class="mt-5">Solicitudes y Donatarios</h5>
+    <form-loader *ngIf="loadingReq"></form-loader>
+    <div class="col-md-12">
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{
+          height: loadingReq ? '0px' : '400px'
+        }">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="dataFacRequest"
+          (userRowSelect)="requestSelected($event)">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="itemRequest"></app-pagination>
+      <!-- </div> -->
+    </div>
 
-    <div class="row mt-5">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="dataFacRequest">
+    <!-- <div class="row mt-5">
+      <form-loader *ngIf="loading"></form-loader>
+      <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="dataFacRequest"
+        (userRowSelect)="requestSelected($event)">
       </ng2-smart-table>
       <app-pagination [params]="params" [totalItems]="itemRequest">
       </app-pagination>
-    </div>
+    </div> -->
     <div class="">
       <form class="form-material form-horizontal" [formGroup]="formTable1">
         <div class="row mt-5">
@@ -134,13 +152,31 @@
         </app-columns-select>
       </div>
     </div> -->
-    <div class="row mt-5">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings3"
-        [source]="dataGoodsFact"
+    <!-- <div class="row mt-5">
+      <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings3" [source]="dataGoodsFact"
         (userRowSelect)="onUserRowSelect($event)">
       </ng2-smart-table>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div> -->
+    <form-loader *ngIf="loading"></form-loader>
+    <div class="col-md-12">
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{
+          height: loading ? '0px' : '400px'
+        }">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings3"
+          [source]="dataGoodsFact"
+          (userRowSelect)="onUserRowSelect($event)">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+      <!-- </div> -->
     </div>
 
     <div class="">
@@ -179,14 +215,29 @@
       </div>
     </div> -->
 
-    <div class="row mt-5">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings3"
-        [source]="data">
+    <!-- <div class="row mt-5">
+      <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings3" [source]="data">
       </ng2-smart-table>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    </app-pagination> -->
+    <form-loader *ngIf="loading2"></form-loader>
+    <div class="col-md-12">
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{
+          height: loading2 ? '0px' : '400px'
+        }">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings3"
+          [source]="dataFactInventary">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItemsIn"></app-pagination>
+      <!-- </div> -->
+    </div>
   </div>
 </app-card>

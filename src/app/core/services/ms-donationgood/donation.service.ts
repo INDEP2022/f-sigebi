@@ -12,7 +12,10 @@ import {
   IFilterDonation,
   IGoodDonation,
 } from '../../models/ms-donation/donation.model';
-import { IDeleteGoodDon } from '../../models/sirsae-model/proposel-model/proposel-model';
+import {
+  IDeleteGoodDon,
+  IInventaryRequest,
+} from '../../models/sirsae-model/proposel-model/proposel-model';
 
 const api: string = DonationEndPoint.donation;
 const donationEvent = DonationEndPoint.eventComDonation;
@@ -145,5 +148,8 @@ export class DonationService
   }
   deleteGoodDon(body: IDeleteGoodDon) {
     return this.delete(DonationEndPoint.DeleteGoodDon, body);
+  }
+  getInventaryGood(body: IInventaryRequest) {
+    return this.post(DonationEndPoint.Inventary, body);
   }
 }

@@ -27,3 +27,8 @@ export interface IDeleteGoodDon {
   goodId: number;
   requestTypeId: number;
 }
+
+export interface IInventaryRequest {
+  proposalKey: string;
+  goodNumber: string | number;
+}

@@ -9,6 +9,7 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import {
   IDeleteGoodDon,
+  IInventaryRequest,
   IProposel,
   IRequest,
 } from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
@@ -40,12 +41,16 @@ export class DonationAuthorizationRequestComponent
   formTable1: FormGroup;
   formTable2: FormGroup;
   formTable3: FormGroup;
+  inventaryModel: IInventaryRequest;
+  inventaryAll: IInventaryRequest[] = [];
   dataTableGood_: any[] = [];
+  proposalCve: string = '';
   request: any;
   donationGood: IGoodDonation[] = [];
   settings2: any;
   settings3: any;
   goods: any[];
+  dataFactInventary: LocalDataSource = new LocalDataSource();
   requestModel: IRequest;
   requestId: number = 0;
   data: any = [];
@@ -54,6 +59,8 @@ export class DonationAuthorizationRequestComponent
   columnFilters: any[] = [];
   totalItems: number = 0;
   loadingReq: boolean = true;
+  loading2: boolean = true;
+  totalItemsIn: number = 0;
   itemRequest: number = 0;
   proposal: IProposel;
   totalSunQuantity: number = 0;
@@ -242,6 +249,7 @@ export class DonationAuthorizationRequestComponent
         this.request = data.data;
         this.dataFacRequest.load(this.request);
         this.dataFacRequest.refresh();
+        this.proposalCve = this.request.proposalKey;
         this.itemRequest = data.count;
         this.totalSunQuantity = this.request.reduce(
           (acc: any, item: any) => acc + item.sunQuantity,
@@ -256,7 +264,6 @@ export class DonationAuthorizationRequestComponent
           descripClassif: null,
         });
         this.formTable1.get('totals').setValue(Number(this.totalSunQuantity));
-        this.getRequestGood();
       },
     });
   }
@@ -265,22 +272,45 @@ export class DonationAuthorizationRequestComponent
     // this.params.getValue()['filter.numFile'] = this.expedienteNumber;
     let params = new ListParams();
     console.log(this.requestId);
-    params['requestId.requestTypeId'] = 'SD';
-    params['requestId.id'] = Number(localStorage.getItem('requestId'));
-    params['goodId.status'] = 'DON' || 'ADA';
+    params['sortBy'] = 'goodId:ASC';
+    params['requestTypeId'] = 'SD';
+    params['good.noDelegation'] = this.authService.decodeToken().department;
+    params['request.requestId'] = this.requestId;
+    params['good.status'] = 'DON' || 'ADA';
     this.donationService.getGoodRequest(params).subscribe({
       next: data => {
         this.loadingReq = false;
         this.goods = data.data;
+        this.totalItems = data.count;
         this.dataGoodsFact.load(this.goods);
         console.log(data.data);
         this.totalGoods = data.data.reduce(
           (acc: any, item: any) =>
-            acc + this.convert(item.goodId.quantity) ?? 0,
+            acc + this.convert(item.allotmentAmount) ?? 0,
           0
         );
         console.log(this.totalGoods);
         this.formTable2.get('quantityToAssign').setValue(this.totalGoods);
+      },
+      error: () => {
+        this.loadingReq = false;
+      },
+    });
+  }
+
+  getInventary() {
+    this.loading2 = true;
+    this.donationService.getInventaryGood(this.inventaryModel).subscribe({
+      next: data => {
+        this.loading2 = false;
+        this.inventaryAll = data.data;
+        console.log(this.inventaryAll);
+        this.totalItemsIn = data.count;
+        this.dataFactInventary.load(this.inventaryAll);
+        this.dataFactInventary.refresh();
+      },
+      error: () => {
+        this.loading2 = false;
       },
     });
   }
@@ -409,9 +439,28 @@ export class DonationAuthorizationRequestComponent
   onUserRowSelect(row: any): void {
     if (row.isSelected) {
       this.selectedRow = row.data;
-      console.log(this.selectedRow);
+      this.form
+        .get('classifNumbGood')
+        .setValue(this.selectedRow.clasifGoodNumber);
+      this.form.get('descripClassif').setValue(this.selectedRow.clasifGood);
+      this.inventaryModel = {
+        proposalKey: this.requestModel.proposalCve ?? '',
+        goodNumber: this.selectedRow.goodId,
+      };
+      console.log(this.inventaryModel);
+      this.getInventary();
     } else {
       this.selectedRow = null;
+    }
+  }
+  requestSelected(row: any): void {
+    if (row.isSelected) {
+      this.requestModel = row.data;
+      console.log(this.requestModel.proposalCve);
+      console.log(this.requestModel);
+      this.getRequestGood();
+    } else {
+      this.requestModel = null;
     }
   }
 
