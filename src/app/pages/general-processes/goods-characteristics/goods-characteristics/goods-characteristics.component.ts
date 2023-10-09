@@ -43,11 +43,9 @@ import {
 import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
-  firstFormatDate,
   firstFormatDateToSecondFormatDate,
   formatForIsoDate,
   secondFormatDate,
-  thirdFormatDate,
 } from 'src/app/shared/utils/date';
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
 import { GoodsCharacteristicsService } from '../services/goods-characteristics.service';
@@ -522,7 +520,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.goodDateVigency.value instanceof Date
         ? secondFormatDate(this.goodDateVigency.value)
         : firstFormatDateToSecondFormatDate(this.goodDateVigency.value);
-    body['cveCurrencyAppraisal'] = this.good.cveCurrencyAppraisal;
+    body['appraisalCurrencyKey'] = this.good.appraisalCurrencyKey;
     body['observationss'] = this.goodObservations.value;
     if (this.goodAppraisal2.value) {
       body['appraisal'] = 'Y';
@@ -718,21 +716,20 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   private async pupBuscaNumerario() {
     let vn_simb: number,
-      vf_fecha: string,
+      movementDate: string,
       vn_impor: number,
       lbln_encontro: boolean,
       lbln_conciliado: string;
-    vn_simb = this.nval(5).indexOf('/');
+    vn_simb = (this.nval(5) + '').indexOf('/');
+    // debugger;
+    console.log(this.nval(5));
     if (vn_simb > 0) {
-      vf_fecha = firstFormatDate(new Date(this.nval(5)));
+      movementDate = firstFormatDateToSecondFormatDate(this.nval(5));
     } else {
-      vn_simb = this.nval(5).indexOf('-');
-      if (vn_simb > 0) {
-        vf_fecha = secondFormatDate(new Date(this.nval(5)));
-      } else {
-        vf_fecha = thirdFormatDate(new Date(this.nval(5)));
-      }
+      movementDate = this.nval(5);
     }
+    const array = movementDate.split('-');
+    movementDate = array[2] + '-' + array[1] + '-' + array[0];
     try {
       vn_impor = +this.nval(2);
     } catch (x) {
@@ -754,11 +751,15 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           bankKey: this.nval(4),
           accountKey: this.nval(6),
           deposit: vn_impor,
-          vf_fecha,
+          movementDate,
           update: 'S',
         })
-        .pipe(catchError(x => of(null)))
+        .pipe(
+          catchError(x => of({ data: null })),
+          map(x => (x.data && x.fa_concilia_bien ? x.fa_concilia_bien : 'N'))
+        )
     );
+    console.log(lbln_conciliado);
     if (lbln_conciliado === 'S') {
       this.di_numerario_conciliado = 'Conciliado';
     } else {
@@ -874,20 +875,20 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
       const val3 = this.data.find(item => item.column === 'val3');
       if (this.numberClassification.value === vn_NumFis) {
-        this.good.cveCurrencyAppraisal = val3 ? val3.value : null;
+        this.good.appraisalCurrencyKey = val3 ? val3.value : null;
       } else {
-        this.good.cveCurrencyAppraisal = this.nval(1);
+        this.good.appraisalCurrencyKey = this.nval(1);
       }
     } else if (this.numberClassification.value === vn_Valores) {
       if (!this.fillValInNumerario(3, 1)) {
         return false;
       }
-      this.good.cveCurrencyAppraisal = this.nval(2);
+      this.good.appraisalCurrencyKey = this.nval(2);
     } else if (this.numberClassification.value === vn_Ctas) {
       if (!this.fillValInNumerario(7, 1)) {
         return false;
       }
-      this.good.cveCurrencyAppraisal = this.nval(6);
+      this.good.appraisalCurrencyKey = this.nval(6);
     }
     return true;
   }

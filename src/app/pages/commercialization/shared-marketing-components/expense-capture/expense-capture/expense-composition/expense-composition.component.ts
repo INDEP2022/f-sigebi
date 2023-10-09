@@ -266,7 +266,11 @@ export class ExpenseCompositionComponent
                 goodDescription: row.description,
               };
             });
-            this.expenseCaptureDataService.dataCompositionExpenses = this.data;
+            this.expenseCaptureDataService.dataCompositionExpenses = [
+              ...this.data,
+            ];
+            console.log(this.expenseCaptureDataService.dataCompositionExpenses);
+
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
@@ -511,7 +515,9 @@ export class ExpenseCompositionComponent
                 total,
               };
             });
-            this.expenseCaptureDataService.dataCompositionExpenses = this.data;
+            this.expenseCaptureDataService.dataCompositionExpenses = [
+              ...this.data,
+            ];
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
@@ -564,7 +570,9 @@ export class ExpenseCompositionComponent
                 total,
               };
             });
-            this.expenseCaptureDataService.dataCompositionExpenses = this.data;
+            this.expenseCaptureDataService.dataCompositionExpenses = [
+              ...this.data,
+            ];
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
