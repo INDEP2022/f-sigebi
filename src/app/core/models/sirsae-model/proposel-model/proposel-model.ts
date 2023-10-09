@@ -21,3 +21,14 @@ export interface IRequest {
   proposalCve: string;
   requestTypeId: string;
 }
+
+export interface IDeleteGoodDon {
+  requestId: number;
+  goodId: number;
+  requestTypeId: number;
+}
+
+export interface IInventaryRequest {
+  proposalKey: string;
+  goodNumber: string | number;
+}

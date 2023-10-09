@@ -1,6 +1,20 @@
 <div>
+  <div class="row">
+    <div class="col-md-12 d-flex">
+      <div class="mr-auto p-2"></div>
+      <div class="p-2">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="save()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+    </div>
+  </div>
   <div class="row pt-2">
-    <table class="table table-bordered">
+    <!-- <table class="table table-bordered">
       <thead>
         <tr style="text-align: center">
           <th scope="col">Descripción deductiva</th>
@@ -24,7 +38,29 @@
             <input type="checkbox" name="" id="" [readOnly]="isReadOnly" />
           </td>
         </tr>
+        <tr>
+          <td>Desguardo de expediente 25%</td>
+          <td>
+            <input type="text" name="" class="form-control" id="observation" style="width: 98%" [readOnly]="isReadOnly" />
+          </td>
+          <td style="text-align: center">
+            <input type="checkbox" name="" id="" [readOnly]="isReadOnly" />
+          </td>
+        </tr>
       </tbody>
-    </table>
+    </table> -->
+    <div class="row">
+      <div class="col-md-12">
+        <!-- <ng-scrollbar track="all" style="min-height: 300px; border: none"> -->
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs">
+          </ng2-smart-table>
+        </div>
+        <!-- </ng-scrollbar> -->
+      </div>
+    </div>
   </div>
 </div>
