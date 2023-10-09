@@ -141,6 +141,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   };
   tokenData: any;
   devolutionCtlDevPagId: number = null;
+  loadingreferenceRequest: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -883,5 +884,68 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       this.alert('warning', 'No se tienen eventos relacionados', '');
       return;
     }
+  }
+  referenceRequestExpensesPayments() {
+    // http://sigebimstest.indep.gob.mx/payment/api/v1/application/exp-ref-sol/42
+    console.log(this.selectedAccounts);
+
+    let nameTable = '"Cuentas de Banco Relacionadas"';
+    if (this.selectedAccounts.length == 0) {
+      this.alert(
+        'warning',
+        'No se tiene ' + nameTable + ' seleccionadas',
+        'Selecciona un registro de la tabla ' + nameTable
+      );
+      return;
+    }
+    if (this.selectedAccounts.length > 1) {
+      this.alert(
+        'warning',
+        'No se pueden seleccionar varias ' + nameTable + ' seleccionadas',
+        'Selecciona solo un registro de la tabla ' + nameTable
+      );
+      return;
+    }
+    // PUP_EXP_CSV_REFSOL
+    this.alertQuestion(
+      'warning',
+      '¿Desea continuar con la generación del archivo?',
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loadingreferenceRequest = true;
+        this.svPaymentService
+          .getExpRefSol(this.selectedAccounts[0].idCtldevpag)
+          .subscribe({
+            next: (data: any) => {
+              this.loadingreferenceRequest = false;
+              console.log(data);
+
+              this.alert('success', 'Archivo generado correctamente', ``);
+              this.downloadFile(
+                data.base64,
+                `Referencias_Solicitudes_Gastos_Pagos_${new Date().getTime()}`
+              );
+            },
+            error: error => {
+              this.loadingreferenceRequest = false;
+              this.alert(
+                'error',
+                'Error al generar el archivo',
+                'Ocurrió un error al generar el archivo'
+              );
+            },
+          });
+      }
+    });
+  }
+  downloadFile(base64: any, fileName: any) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    downloadLink.remove();
   }
 }

@@ -9,7 +9,7 @@ export const LIST_ASSETS_COPIES_COLUMN = {
     type: 'string',
     sort: false,
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
@@ -24,12 +24,12 @@ export const LIST_ASSETS_COPIES_COLUMN = {
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  unit: {
     title: 'Unidad',
     type: 'string',
     sort: false,
   },
-  resultTest: {
+  evaluationResult: {
     title: 'Resultado Evaluación',
     type: 'string',
     sort: false,

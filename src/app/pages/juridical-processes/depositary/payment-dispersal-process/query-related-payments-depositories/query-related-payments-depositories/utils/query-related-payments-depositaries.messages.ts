@@ -1,7 +1,7 @@
-const ERROR_GOOD_PARAM = `El número de bien ingresado como parámetro no es un número`;
-const ERROR_GOOD_NULL = `Ingresa un número de bien`;
+const ERROR_GOOD_PARAM = `El No. Bien ingresado como parámetro no es un número`;
+const ERROR_GOOD_NULL = `Ingresa un No. Bien`;
 const NOT_FOUND_GOOD_APPOINTMENT = (error: string) =>
-  `El número de bien no existe. ${error}`;
+  `El No. Bien no existe. ${error}`;
 const NOT_FOUND_GOOD = (error: string) =>
   `Error al cargar la información del bien. ${error}`;
 const NOT_FOUND_GOOD_DESCRIPTION = (error: string) =>

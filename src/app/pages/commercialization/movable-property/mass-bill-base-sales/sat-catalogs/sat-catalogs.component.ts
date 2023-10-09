@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { SAT_CATALOGS_COLUMNS } from './sat-catalogs-columns';
+import { UseModalComponent } from './use-comp/use-modal.component';
 
 @Component({
   selector: 'app-sat-catalogs',
@@ -37,12 +39,179 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
     return this.val;
   }
 
-  constructor(private comerInvoice: ComerInvoiceService) {
+  constructor(
+    private comerInvoice: ComerInvoiceService,
+    private modalService: BsModalService
+  ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: { ...SAT_CATALOGS_COLUMNS },
+      columns: {
+        batchId: {
+          title: 'Lote',
+          sort: false,
+        },
+        customer: {
+          title: 'Cliente',
+          sort: false,
+        },
+        usoComp: {
+          title: 'Uso Comprobante',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_USO_COM',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {},
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+        unite: {
+          title: 'Unidad',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_UNIDMED',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {},
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+        prod: {
+          title: 'Producto/Servicio',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_CLVPROSE',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {},
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+        payment: {
+          title: 'Método de Pago',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_F_PAGO',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {},
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+        relation: {
+          title: 'Tipo de Relación',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_TIPO_REL',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {},
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+      },
     };
   }
 
