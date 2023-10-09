@@ -24,6 +24,14 @@ export class GoodSpentService extends HttpService {
   ): Observable<IListResponse<IExpenseConcept>> {
     return this.get<IListResponse<IExpenseConcept>>(`/expense-concept`, params);
   }
+  getExpenseConceptGetAll(
+    params?: ListParams
+  ): Observable<IListResponse<IExpenseConcept>> {
+    return this.get<IListResponse<IExpenseConcept>>(
+      `/expense-concept/getAll`,
+      params
+    );
+  }
 
   getOpenCurReport(params: any) {
     const route = `aplication/openCursorReport`;
