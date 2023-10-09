@@ -9,27 +9,34 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  goodSiabNumber: {
+  /*goodSiabNumber: {
     title: 'Número Siab',
     type: 'string',
     sort: false,
-  },
+  }, */
   descriptiveValue: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  delRegionalId: {
+
+  transferentName: {
+    title: 'Transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  delegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
-  reserved: {
+  transactionQuantity: {
     title: 'cantidad',
     type: 'string',
     sort: false,
   },
-  transactionQuantity: {
+  uomCode: {
     title: 'Unidad',
     type: 'string',
     sort: false,

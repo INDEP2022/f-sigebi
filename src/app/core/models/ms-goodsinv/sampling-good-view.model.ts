@@ -33,9 +33,11 @@ export interface ISamplingGoodView {
   transferFile?: string;
   satUniqueKey?: number;
   startChapter?: number;
+  transferentName?: string;
+  delegationName?: string;
 }
 
-export interface ISamplingGood {
+export interface ISampleGood {
   sampleGoodId?: number;
   sampleId?: number;
   goodId?: string;
@@ -85,8 +87,5 @@ export interface ISamplingGood {
   locatorFinal?: string;
   subInventoryFinal?: string;
   transfereeId?: string;
-  creationDate: string;
-  modificationDate: string;
-  creationUser: string;
-  modificationUser: string;
+  nameTransferent?: string;
 }

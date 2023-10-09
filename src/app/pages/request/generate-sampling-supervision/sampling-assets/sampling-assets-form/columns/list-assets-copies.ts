@@ -14,8 +14,8 @@ export const LIST_ASSETS_COPIES_COLUMN = {
     type: 'string',
     sort: false,
   },
-  regionalDelegation: {
-    title: 'Delegación Regional',
+  nameTransferent: {
+    title: 'Transferente',
     type: 'string',
     sort: false,
   },
