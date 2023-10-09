@@ -43,7 +43,7 @@
               class="col-md-3"
               label="Lote"
               [control]="form.get('lot')">
-              <input class="form-control" formControlName="lot" type="text" />
+              <input class="form-control" formControlName="lot" type="number" />
             </form-field>
             <form-field
               class="col-md-5"
@@ -67,7 +67,7 @@
             </form-field>
             <form-field
               class="col-md-4"
-              label="Estatus"
+              label="Estado"
               [control]="form.get('statusOf')">
               <input
                 class="form-control"
@@ -85,7 +85,7 @@
               <input
                 class="form-control"
                 formControlName="event"
-                type="text"
+                type="number"
                 (input)="eventInput()" />
             </form-field>
 
@@ -97,7 +97,7 @@
               <input
                 class="form-control"
                 formControlName="portfolio"
-                type="text" />
+                type="number" />
             </form-field>
             <form-field
               *ngIf="false"
@@ -129,7 +129,7 @@
             (fetchItems)="getSenders($event)"
             [data]="senders"
             [form]="form"
-            value="id"
+            value="user"
             bindLabel="name"
             [searchOnInit]="true"
             label="Remitente"
@@ -142,7 +142,7 @@
             (fetchItems)="getReceivers($event)"
             [data]="receivers"
             [form]="form"
-            value="id"
+            value="user"
             bindLabel="name"
             [searchOnInit]="true"
             label="Destinatario"
@@ -166,12 +166,16 @@
           <form-field
             [control]="form.get('salesProcess')"
             label="Proceso de Venta">
-            <select class="form-control" formControlName="salesProcess">
+            <!-- <select class="form-control" formControlName="salesProcess">
               <option [value]="null">Seleccione un valor</option>
               <option value="process1">Subasta</option>
               <option value="process2">Proccess 2</option>
               <option value="process3">Proccess 3</option>
-            </select>
+            </select> -->
+            <input
+              class="form-control"
+              formControlName="salesProcess"
+              type="text" />
           </form-field>
         </div>
       </div>
@@ -289,7 +293,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="docSettings"
-            [source]="docs"
+            [source]="docsLocalData"
             (delete)="delete($event)">
           </ng2-smart-table>
         </div>
@@ -303,7 +307,8 @@
       <div class="col-2">
         <button
           class="btn btn-primary active btn-sm w-100"
-          (click)="openModal()">
+          (click)="openModal()"
+          [disabled]="!activeDoc">
           Doc.
         </button>
       </div>
@@ -365,14 +370,16 @@
                     tooltip="Generar Folio de Escaneo y Solicitud"
                     containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-1"
-                    (click)="solicitud()">
+                    (click)="solicitud()"
+                    [disabled]="!activeSol">
                     <i class="bx bxs-file-find"></i>
                   </button>
                   <button
                     tooltip="Escanear"
                     containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-1"
-                    (click)="openScannerPage()">
+                    (click)="openScannerPage()"
+                    [disabled]="!activeScan">
                     <i class="bx bxs-file"></i>
                   </button>
                 </div>
@@ -396,13 +403,15 @@
                     tooltip="Imprimir Solicitud de Escaneo"
                     containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-1"
-                    (click)="PupLanzaReporteSolicDigt()">
+                    (click)="PupLanzaReporteSolicDigt()"
+                    [disabled]="folioScan == null">
                     <i class="bx bxs-printer"></i>
                   </button>
                   <button
                     tooltip="Consulta de Imágenes Escaneadas"
                     containerClass="tooltip-style"
-                    class="btn btn-secondary btn-sm active m-1">
+                    class="btn btn-secondary btn-sm active m-1"
+                    [disabled]="folioScan == null">
                     <i class="bx bxs-file-find" (click)="insertListImg()"></i>
                   </button>
                 </div>
@@ -447,7 +456,8 @@
           <button
             type="button"
             class="btn btn-secondary btn-sm active w-100"
-            (click)="closeSend()">
+            (click)="closeSend()"
+            [disabled]="!activeSend">
             Cierre - Envío
           </button>
         </div>
@@ -455,7 +465,8 @@
           <button
             type="button"
             class="btn btn-secondary btn-sm active w-100"
-            (click)="btnDelete()">
+            (click)="btnDelete()"
+            [disabled]="!activeDelete">
             Borrar Oficio
           </button>
         </div>

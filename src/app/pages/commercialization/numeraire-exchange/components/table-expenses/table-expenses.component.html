@@ -52,11 +52,26 @@
     <!-- <form-field class="form-group" [control]="form.get('id')" label="Id Gasto">
       <input readonly type="text" formControlName="id" class="form-control" />
     </form-field> -->
-    <form-field
-      class="form-group"
-      [control]="form.get('id')"
-      label="Id Gasto - Descripción">
-      <ng-custom-select
+    <form-field class="form-group" [control]="form.get('id')">
+      <ngx-select
+        (fetchItems)="getExpenseConcept($event)"
+        [data]="expenseData"
+        [form]="form"
+        value="id"
+        bindLabel="description"
+        label="Id Gasto - Descripción"
+        control="id"
+        [labelTemplate]="expenLabel"
+        [optionTemplate]="expenOption"
+        (change)="selectedExpenseType($event)">
+      </ngx-select>
+      <ng-template #expenLabel let-item="item"
+        >{{ item.id }} - {{ item.description }}</ng-template
+      >
+      <ng-template #expenOption let-item="item"
+        >{{ item.id }} - {{ item.description }}</ng-template
+      >
+      <!-- <ng-custom-select
         class="form-control"
         path="spent/api/v1/expense-concept"
         value="id"
@@ -67,7 +82,7 @@
         <ng-template let-item>
           {{ item.id }} - {{ item.description }}
         </ng-template>
-      </ng-custom-select>
+      </ng-custom-select> -->
     </form-field>
     <form-field [control]="form.get('import')" label="Importe">
       <input type="number" formControlName="import" class="form-control" />
