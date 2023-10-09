@@ -591,7 +591,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         'Información',
-        'El Bien Consultado También Puede ser Convertido a Numerario por Valores y Divisas. \n Verifique su Tipo de Conversión antes de Continuar con el Proceso'
+        'El Bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
       );
     }
     if (!validateNumerary && !availableGood) {
@@ -887,84 +887,91 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   async pupCreateGood(): Promise<any> {
     const spent = this.getDataForTableExpenses();
+    if (
+      this.formGood.value.delegationNumber != null &&
+      this.formGood.value.subDelegationNumber != null
+    ) {
+      const body: any = {
+        screenKey: this.NAME_CURRENT_FORM,
+        // clasifGoodNumber: null,
+        // spentPlus: null,
+        // amounten: null,
+        description: this.formGood.value.description,
+        amountevta: this.formGood.value.importSell || 1,
+        typeConv: this.formBlkControl.value.typeConversion,
+        spentId: spent?.spentId || [],
+        amount: spent?.spentImport || [],
+        spentPlus: 0,
+        // totalAmount: null,
+        status: this.formGood.value.status,
+        identificator: this.formGood.value.identifier,
+        processExt: this.formGood.value.extDomProcess,
+        ivavta: this.formGood.value.taxSell || 0,
+        commission: this.formGood.value.commission || 0,
+        ivacom: this.formGood.value.taxCommission || 0,
+        goodId: this.formGood.value.id,
+        delegationNumber: this.formGood.value.delegationNumber.id,
+        subDelegationNumber: this.formGood.value.subDelegationNumber.id,
+        fileNumber: this.formGood.value.fileNumber,
+        flier: this.formGood.value.flyerNumber,
+        user: this.infoToken.preferred_username.toUpperCase(),
+        bankNew: this.formBlkControl.value.tiNewBank,
+        moneyNew: this.formBlkControl.value.diNewCurrency?.replaceAll("'", ''),
+        accountNew: this.formBlkControl.value.diNewAccount,
+        comment: this.formBlkControl.value.comment,
+        expAssociated: this.formGood.value.associatedFileNumber,
+        dateNew: this.formBlkControl.value.tiNewDate,
+        token: this.formBlkControl.value.tiNewFile,
+      };
+      console.log(body);
+      await firstValueFrom(
+        this.goodService.changeGoodToNumerary(body).pipe(
+          map((resp: any) => {
+            console.log(resp);
+            if (resp.data) {
+              const goodFather = resp.data.map((item: any) => {
+                return {
+                  goodNumberF: item.goodNumberF,
+                  goodStatusF: item.goodStatusF,
+                };
+              });
+              const goodGenerate = resp.data.map((item: any) => {
+                return {
+                  goodNumberS: item.goodNumberS,
+                  goodStatusS: item.goodStatusS,
+                };
+              });
+              this.openDialogGoodStatus(goodFather, goodGenerate);
+              this.clear();
+            } else {
+              this.alert('warning', 'Bienes no encontrados', '');
+            }
+            // const message =
+            //   // resp.message.length > 0
+            //   //   ? resp.message.join('.\n')
+            //   //   :
+            //   'Proceso Terminado correctamente';
 
-    const body: any = {
-      screenKey: this.NAME_CURRENT_FORM,
-      // clasifGoodNumber: null,
-      // spentPlus: null,
-      // amounten: null,
-      description: this.formGood.value.description,
-      amountevta: this.formGood.value.importSell || 1,
-      typeConv: this.formBlkControl.value.typeConversion,
-      spentId: spent?.spentId || [],
-      amount: spent?.spentImport || [],
-      spentPlus: 0,
-      // totalAmount: null,
-      status: this.formGood.value.status,
-      identificator: this.formGood.value.identifier,
-      processExt: this.formGood.value.extDomProcess,
-      ivavta: this.formGood.value.taxSell || 0,
-      commission: this.formGood.value.commission || 0,
-      ivacom: this.formGood.value.taxCommission || 0,
-      goodId: this.formGood.value.id,
-      delegationNumber: this.formGood.value.delegationNumber.id,
-      subDelegationNumber: this.formGood.value.subDelegationNumber.id,
-      fileNumber: this.formGood.value.fileNumber,
-      flier: this.formGood.value.flyerNumber,
-      user: this.infoToken.preferred_username.toUpperCase(),
-      bankNew: this.formBlkControl.value.tiNewBank,
-      moneyNew: this.formBlkControl.value.diNewCurrency?.replaceAll("'", ''),
-      accountNew: this.formBlkControl.value.diNewAccount,
-      comment: this.formBlkControl.value.comment,
-      expAssociated: this.formGood.value.associatedFileNumber,
-      dateNew: this.formBlkControl.value.tiNewDate,
-      token: this.formBlkControl.value.tiNewFile,
-    };
-    await firstValueFrom(
-      this.goodService.changeGoodToNumerary(body).pipe(
-        map((resp: any) => {
-          console.log(resp);
-          if (resp.data) {
-            const goodFather = resp.data.map((item: any) => {
-              return {
-                goodNumberF: item.goodNumberF,
-                goodStatusF: item.goodStatusF,
-              };
-            });
-            const goodGenerate = resp.data.map((item: any) => {
-              return {
-                goodNumberS: item.goodNumberS,
-                goodStatusS: item.goodStatusS,
-              };
-            });
-            this.openDialogGoodStatus(goodFather, goodGenerate);
-            this.clear();
-          } else {
-            this.alert('warning', 'Bienes no encontrados', '');
-          }
-          // const message =
-          //   // resp.message.length > 0
-          //   //   ? resp.message.join('.\n')
-          //   //   :
-          //   'Proceso Terminado correctamente';
-
-          // this.alert('success', message, '');
-          // this.clear();
-          this.loader.load = false;
-        }),
-        catchError(err => {
-          this.loader.load = false;
-          console.log('error', err);
-          const message = err.error.message;
-          this.alert(
-            'warning',
-            'Atención',
-            'El  No. Bien introducido es inválido'
-          );
-          throw err;
-        })
-      )
-    );
+            // this.alert('success', message, '');
+            // this.clear();
+            this.loader.load = false;
+          }),
+          catchError(err => {
+            this.loader.load = false;
+            console.log('error', err);
+            const message = err.error.message;
+            this.alert(
+              'warning',
+              'Atención',
+              'El  No. Bien introducido es inválido'
+            );
+            throw err;
+          })
+        )
+      );
+    } else {
+      this.alert('warning', 'Bien no valido', '');
+    }
   }
 
   pupLoadCsv(file: File): void {

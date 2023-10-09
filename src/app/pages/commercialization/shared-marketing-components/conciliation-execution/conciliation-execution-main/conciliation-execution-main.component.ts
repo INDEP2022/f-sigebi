@@ -1542,7 +1542,7 @@ export class ConciliationExecutionMainComponent
   }
   async VALIDA_PAGOSREF_VENTA_INMU(body: any) {
     return new Promise((resolve, reject) => {
-      this.msDepositaryService.postCurrentRealStateSale(body).subscribe({
+      this.msDepositaryService.postVentaInmu(body).subscribe({
         next: data => {
           resolve(data);
         },
