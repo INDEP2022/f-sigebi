@@ -1,11 +1,11 @@
 export const LIST_WAREHOUSE_COLUMNS = {
-  noWarehouse: {
+  organization: {
     title: 'No. Almacén',
     type: 'text',
     sort: false,
   },
   name: {
-    title: 'Name',
+    title: 'Nombre',
     type: 'text',
     sort: false,
   },
@@ -14,7 +14,7 @@ export const LIST_WAREHOUSE_COLUMNS = {
     type: 'text',
     sort: false,
   },
-  direction: {
+  address1: {
     title: 'Dirección',
     type: 'text',
     sort: false,

@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { ISamplingOrderService } from 'src/app/core/models/ms-order-service/sampling-order-service.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -29,6 +30,7 @@ export class ListServiceOrdersComponent
   implements OnInit, OnChanges
 {
   @Input() orders: any[];
+  @Input() SampleOrderId: number = null;
   sampleOrderId: number = 3;
   paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -38,6 +40,7 @@ export class ListServiceOrdersComponent
 
   private orderService = inject(OrderServiceService);
   private authService = inject(AuthService);
+  private excelService = inject(ExcelService);
 
   constructor(private modalService: BsModalService) {
     super();
@@ -154,7 +157,7 @@ export class ListServiceOrdersComponent
     return new Promise((resolve, reject) => {
       const user = this.authService.decodeToken();
       const body: ISamplingOrderService = {
-        sampleOrderId: 3,
+        sampleOrderId: this.sampleOrderId,
         orderServiceId: order.orderServiceId,
         userCreation: user.username,
         creationDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -180,7 +183,7 @@ export class ListServiceOrdersComponent
   getSamplingOrder() {
     this.loading = true;
     const params = new ListParams();
-    params['filter.sampleOrderId'] = `$eq:${3}`;
+    params['filter.sampleOrderId'] = `$eq:${this.sampleOrderId}`;
     this.orderService.getAllSamplingOrderService(params).subscribe({
       next: async (resp: any) => {
         let body: any = [];
@@ -194,7 +197,6 @@ export class ListServiceOrdersComponent
             requestId: ordServ.applicationId,
             costService: ordServ.serviceCost,
           });
-          console.log(body);
         });
 
         Promise.all(result).then(() => {
@@ -236,5 +238,12 @@ export class ListServiceOrdersComponent
           },
         });
     });
+  }
+
+  downloadExcel() {
+    const filename: string = 'MuestreoOrdenes';
+    const file = this.paragraphs['data'];
+    //type: 'csv'
+    this.excelService.export(file, { filename });
   }
 }
