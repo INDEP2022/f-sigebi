@@ -263,7 +263,6 @@ export class RegionalAccountTransferenceComponent
           );
         this.form.get('cveAccount').patchValue(data.accountKey);
         this.form.get('total').patchValue(data.amountAll);
-
         this.form.get('monto2').patchValue(data.amountAll);
 
         this.filterParams.getValue().removeAllFilters();
@@ -350,7 +349,6 @@ export class RegionalAccountTransferenceComponent
           trans.total = Number(trans.val14) + Number(trans.allInterest);
 
           const sum = Number(this.form.get('monto2').value ?? 0) + trans.total;
-
           this.form.get('monto2').patchValue(sum);
         });
 

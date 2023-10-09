@@ -594,14 +594,18 @@
     <div>
       <ng2-smart-table
         [ngStyle]="{
-          height: loading2 ? '0px' : 'auto'
+          height: loading2 ? '0px' : totalItems2 > 10 ? '600px' : 'auto'
         }"
         [attr.class]="'table-bordered table-responsive mb-4'"
         [settings]="settings2"
         [source]="dataFilter2">
       </ng2-smart-table>
     </div>
-    <app-pagination [params]="paramsList2" [totalItems]="totalItems2">
+    <app-pagination
+      [params]="paramsList2"
+      [totalItems]="totalItems2"
+      [limit]="limit"
+      [pageSizeOptions]="[500]">
     </app-pagination>
   </div>
 </div>

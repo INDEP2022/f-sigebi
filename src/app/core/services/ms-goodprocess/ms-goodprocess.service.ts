@@ -302,8 +302,22 @@ export class GoodprocessService extends HttpService {
     return this.post(`${GoodprocessEndpoints.UpdateGoodsByPackage}`, body);
   }
 
+  postPupInsertGoodsAux(body: any) {
+    return this.post(`${GoodprocessEndpoints.PostPupInsertGoods}`, body);
+  }
+
   postBlokOffice3(params: any) {
     const route = `${GoodprocessEndpoints.blokOffice3}`;
     return this.post(route, params);
+  }
+
+  postPupPortafolio(params: any) {
+    const route = `${GoodprocessEndpoints.pupPortafolio}`;
+    return this.post(route, params);
+  }
+
+  getSeqFolio() {
+    const route = `${GoodprocessEndpoints.seqFolio}`;
+    return this.get(route);
   }
 }
