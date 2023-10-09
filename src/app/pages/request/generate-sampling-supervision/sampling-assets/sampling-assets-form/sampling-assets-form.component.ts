@@ -711,4 +711,39 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       );
     }
   }
+
+  removeGood() {
+    if (this.listAssetsCopiedSelected.length > 0) {
+      this.listAssetsCopiedSelected.map(item => {
+        this.samplingGoodService
+          .deleteSamplingGood(item.sampleGoodId)
+          .subscribe({
+            next: response => {
+              this.alert(
+                'success',
+                'Acción Correcta',
+                'Bien muestreo eliminado correctamente'
+              );
+              this.paragraphs3 = new LocalDataSource();
+              this.params2
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getGoods());
+            },
+            error: error => {
+              this.alert(
+                'error',
+                'Error',
+                'Error al eliminar el bien muestreo'
+              );
+            },
+          });
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar al menos un bien muestreo'
+      );
+    }
+  }
 }
