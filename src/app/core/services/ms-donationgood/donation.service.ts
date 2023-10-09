@@ -155,4 +155,7 @@ export class DonationService
   createInventary(body: IInventaryRequest) {
     return this.post(DonationEndPoint.CreateInventary, body);
   }
+  deleteGoodReq(body: IInventaryRequest) {
+    return this.delete(DonationEndPoint.CreateInventary, body);
+  }
 }

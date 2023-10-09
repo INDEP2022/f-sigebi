@@ -419,7 +419,14 @@ export class DonationAuthorizationRequestComponent
   }
   cleanPropose() {
     this.form.reset();
+    this.formTable1.reset();
+    this.formTable2.reset();
+    this.formTable3.reset();
+    this.dataGoodsFact.load([]);
+    this.dataFactInventary.load([]);
+    this.dataFactInventary.refresh();
     this.proposeDefault = null;
+    this.dataGoodsFact.refresh();
     this.dataFacRequest.load([]);
     localStorage.removeItem('proposal');
     localStorage.removeItem('request');
@@ -427,6 +434,14 @@ export class DonationAuthorizationRequestComponent
 
   cleanForm() {
     this.form.reset();
+    this.formTable1.reset();
+    this.formTable2.reset();
+    this.formTable3.reset();
+    this.dataGoodsFact.load([]);
+    this.dataGoodsFact.refresh();
+    this.dataFactInventary.load([]);
+    this.dataFactInventary.refresh();
+
     this.file = [];
     this.dataFacRequest.load([]);
     localStorage.removeItem('proposal');
@@ -618,7 +633,7 @@ export class DonationAuthorizationRequestComponent
 
             if (!this.request.some((v: any) => v === good)) {
               let indexGood = this.dataTableGood_.findIndex(
-                _good => _good.id == good.id
+                _good => _good.id == good.goodNumber
               );
 
               this.Exportdate = true;
@@ -627,12 +642,12 @@ export class DonationAuthorizationRequestComponent
                 this.dataTableGood_[indexGood].di_disponible = 'N';
               let obj = {
                 pActaNumber: this.requestId,
-                pStatusActa: 'A',
+                pStatusActa: 'SD',
                 pVcScreen: 'FDONSOLAUTORIZA',
                 pUser: this.authService.decodeToken().preferred_username,
               };
               await this.updateGoodEInsertHistoric(obj);
-              await this.updateBienDetalle(good.id, 'ADA');
+              await this.updateBienDetalle(good.goodNumber, 'ADA');
               // await this.createDET(this.inventaryModel);
               this.getInventary();
             }
@@ -722,12 +737,10 @@ export class DonationAuthorizationRequestComponent
             let result = this.selectedGooods.map(async good => {
               console.log('good', good);
               this.goods = this.goods.filter(
-                (_good: any) => _good.id != good.goodId.goodNumber
+                (_good: any) => _good.id != good.id
               );
-              let index = this.dataTableGood_.findIndex(
-                g => g.id === good.goodId.goodNumber
-              );
-              await this.updateBienDetalle(good.goodId, 'DON');
+              let index = this.dataTableGood_.findIndex(g => g.id === good.id);
+              await this.updateBienDetalle(good.id, 'DON');
 
               //ACTUALIZA COLOR
               this.dataTableGood_ = [];
@@ -741,7 +754,7 @@ export class DonationAuthorizationRequestComponent
                 pUser: this.authService.decodeToken().preferred_username,
               };
               await this.updateGoodEInsertHistoric(obj);
-              await this.deleteDET(good.goodId);
+              await this.deleteDET(good.id);
             });
 
             Promise.all(result).then(async item => {
@@ -808,22 +821,14 @@ export class DonationAuthorizationRequestComponent
 
   async deleteDET(good: IDeleteGoodDon) {
     console.log(good);
-    const valid: any = await this.getGoodsDelete(good.goodId);
+    const valid: any = await this.getGoodsDelete(this.inventaryModel);
     if (valid != null) {
-      let objDelete = {
-        requestId: this.requestId,
-        goodId: good.goodId,
-        requestTypeId: this.request.requestTypeId,
-      };
-
-      await this.deleteDetailProcee(objDelete);
+      await this.deleteDetailProcee(this.inventaryModel);
     }
   }
-  async getGoodsDelete(id: any) {
-    const params = new ListParams();
-    params['goodId'] = `$eq:${id}`;
+  async getGoodsDelete(body: IInventaryRequest) {
     return new Promise((resolve, reject) => {
-      this.donationService.getGoodRequest(params).subscribe({
+      this.donationService.deleteGoodReq(body).subscribe({
         next: data => {
           resolve(true);
         },
@@ -834,9 +839,9 @@ export class DonationAuthorizationRequestComponent
     });
   }
 
-  async deleteDetailProcee(body: IDeleteGoodDon) {
+  async deleteDetailProcee(body: IInventaryRequest) {
     return new Promise((resolve, reject) => {
-      this.donationService.deleteGoodDon(body).subscribe({
+      this.donationService.deleteGoodReq(body).subscribe({
         next: data => {
           console.log('data', data);
           // this.loading2 = false;
