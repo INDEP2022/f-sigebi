@@ -8,7 +8,7 @@
       <div class="row mb-3 mt-3">
         <div class="col-12 col-sm-12">
           <div class="col-md-3">
-            <form-field label="Id" [control]="form.get('eventId')">
+            <form-field label="Id Evento" [control]="form.get('eventId')">
               <input
                 class="form-control"
                 formControlName="eventId"
@@ -16,9 +16,7 @@
             </form-field>
           </div>
           <div class="col-md-3">
-            <form-field
-              label="Clave Proceso"
-              [control]="form.get('processKey')">
+            <form-field label="Cve. Proceso" [control]="form.get('processKey')">
               <input
                 class="form-control"
                 formControlName="processKey"
@@ -97,19 +95,21 @@
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
       </div>
+      <div
+        class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="cleanForm()">
+          Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+        </button>
+      </div>
     </div>
     <!--Value Goods Table-->
     <div class="row justify-content-end mr-1">
       <div class="ch-content">
         <h5 class="title">Aval&uacute;os</h5>
       </div>
-    </div>
-    <div class="d-flex justify-content-end mr-1">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [leftList]="true"
-        [settings]="settings">
-      </app-columns-select>
     </div>
     <div class="row pt-4">
       <div class="col-md-12">
@@ -125,30 +125,30 @@
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
-    <div class="row mb-3 mt-3 justify-content-center">
+    <div class="row">
       <!--Actions-->
-      <div class="col-md-3">
+      <div class="col-sm-12 col-md-12 col-xs-12 text-center">
         <button
-          class="btn btn-secondary btn-sm active w-100"
+          class="btn btn-secondary btn-sm active m-3"
           (click)="openModalRate()"
           [disabled]="!flagCambio">
           Cambio Tasa
         </button>
-      </div>
-      <div class="col-md-4">
+
         <button
-          class="btn btn-secondary btn-sm active w-100"
+          class="btn btn-secondary btn-sm active m-3"
           (click)="openModalInconsistencies()"
+          data-toggle="tooltip"
+          [title]="'Inconsistencias en la val. del cal. I.V.A'"
           [disabled]="!flagCambio">
-          Incosistencias en la val. del cal. I.V.A
+          Inconsistencias
         </button>
-      </div>
-      <div class="col-md-3">
+
         <button
-          class="btn btn-sm btn-success active w-100"
+          class="btn btn-sm btn-success active m-3"
           [disabled]="flagDetail"
           (click)="generateExcel()">
-          Descargar Formato
+          Exportar Excel
           <i class="bx bx-download float-icon"></i>
         </button>
       </div>

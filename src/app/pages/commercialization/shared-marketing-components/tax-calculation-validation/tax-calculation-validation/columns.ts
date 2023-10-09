@@ -1,14 +1,14 @@
 export const COLUMNS = {
   id: {
-    title: 'Id Avalúo',
+    title: 'No. Avalúo',
     sort: false,
   },
   appraisalKey: {
-    title: 'Clave Avalúo',
+    title: 'Cve. Avalúo',
     sort: false,
   },
   cveOffice: {
-    title: 'Clave Oficio',
+    title: 'Cve. Oficio',
     sort: false,
   },
   insertDate: {
@@ -19,7 +19,7 @@ export const COLUMNS = {
 
 export const COLUMNS2 = {
   idDetAppraisal: {
-    title: 'No.',
+    title: 'No. Avalúo',
     sort: false,
   },
   goodId: {
@@ -93,30 +93,142 @@ export const COLUMNS2 = {
   vri: {
     title: 'Valor de Referencia o de Avalúo',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   vTerrain: {
     title: 'Valor Terreno',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   vConstruction: {
     title: 'Valor Construcción Habitacional',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   vConstructionEat: {
     title: 'Valor Construcción Comercial',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   vInstallationsEsp: {
     title: 'Valor Instalaciones Especiales',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   vOthers: {
     title: 'Valor Otros',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   product: {
     title: 'Valor Total Calculado sin Iva',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   difference: {
     title: 'Diferencia',
@@ -145,30 +257,142 @@ export const COLUMNS2 = {
   terrainIva: {
     title: 'Iva Terreno',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   ivaHousing: {
     title: 'Iva Construcción Habitacional',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   ivaCommercial: {
     title: 'Iva Construcción Comercial',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   ivaSpecial: {
     title: 'Iva Instancias Especiales',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   ivaOthers: {
     title: 'Iva Otros',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   valueIvaTotalCalculated: {
     title: 'Valor Total de Iva Calculado',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   totalAccount: {
     title: 'Valor con Iva Incluido',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   observation: {
     title: 'Observación',
@@ -215,37 +439,181 @@ export const COLUMNS3 = {
   totalAppraisal: {
     title: 'Total Valor de Referencia o Avalúo',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   totalTerrain: {
     title: 'Total Valor Terreno',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   totalHousing: {
     title: 'Total Valor Construcción Habitacional',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   totalCommercial: {
     title: 'Total Valor Construcción Comercial',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   totalSpecial: {
     title: 'Total Valor Instalaciones Especiales',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   totalOthers: {
     title: 'Total Valor Otros',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   totalDifference: {
     title: 'Total Diferencia',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   valueCalculated: {
     title: 'Valor Total de Iva Calculado',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   calueIncluding: {
     title: 'Valor con Iva Incluido',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
 };

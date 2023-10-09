@@ -593,6 +593,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
             console.log(next);
             this.idProcess.setValue(next);
             this.searchProcess();
+            this.fillNewData = false;
           }
         },
       },

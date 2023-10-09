@@ -28,6 +28,8 @@ export enum ENDPOINT_INVOICE {
   GetInvoice = 'application/get-invoice',
   GetInvoicePag = 'application/get-invoice-pag',
   ComerDetFactura = 'comer-detbills',
+  ComerDetFacturaLimit = 'comer-detbills/get-all-data-custom',
+  ComerDetFacturaPostQuery = 'comer-detbills/get-data-sum-postquery',
   ComerInconsistencies = 'application/get-data-eat-exists',
   ComerPostQuery = 'application/get-eat-invoice-query',
   ComerFactInvoiceIncons = 'comer-fact-inconsistencies',
@@ -53,4 +55,7 @@ export enum ENDPOINT_INVOICE {
   UpdateDateImpression = 'comer-invoices/update-dateimpresion-by-filter',
   MaxPayment = 'application/get-max-request-payment',
   ComerFacPapel = 'comer-facpapel-vnr',
+  ComerPaAdj = 'application/pa-adj-invoice-pag',
+  ComerVeatInovice = 'comer-invoices/get-data-veat-invoice',
+  ComerCountInvoice = 'application/get-count-eat-invoice-view',
 }
