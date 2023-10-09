@@ -209,7 +209,7 @@ export class TaxValidationCalculationComponent
       this.alertQuestion(
         'question',
         '',
-        '¿Está seguro de que no desea que el registro este  confirmado?'
+        '¿Está seguro de que no desea que el registro esté confirmado?'
       ).then(question => {
         if (question.isConfirmed) {
           data.toggle = false;
@@ -303,11 +303,15 @@ export class TaxValidationCalculationComponent
       resp => {
         if (resp != null && resp != undefined) {
           console.log('Resp postParametersMod-> ', resp);
-          this.alert('success', '', 'Registro Insertado');
+          this.alert(
+            'success',
+            '',
+            'El Registro ha sido Insertado Correctamente'
+          );
         }
       },
       error => {
-        this.alert('error', '', 'Registro no insertado');
+        this.alert('error', '', 'El Registro no ha sido insertado');
       }
     );
   }
@@ -318,10 +322,14 @@ export class TaxValidationCalculationComponent
       next: resp => {
         console.log('Resp updateDetailEval-> ', resp);
         this.getComerDetAvaluo(this.appraisal);
-        this.alert('success', '', 'Registro actualizado correctamente!');
+        this.alert(
+          'success',
+          '',
+          'El Registro ha sido actualizado correctamente!'
+        );
       },
       error: err => {
-        this.alert('error', '', 'Registro no actualizado!');
+        this.alert('error', '', 'El Registro no ha sido actualizado!');
       },
     });
   }
@@ -1393,5 +1401,15 @@ export class TaxValidationCalculationComponent
     } else {
       return null; // Devuelve null si no se pudo convertir
     }
+  }
+
+  cleanForm() {
+    this.form.reset();
+    this.data.load([]);
+    this.data.refresh();
+    this.data2.load([]);
+    this.data2.refresh();
+    this.data3.load([]);
+    this.data3.refresh();
   }
 }

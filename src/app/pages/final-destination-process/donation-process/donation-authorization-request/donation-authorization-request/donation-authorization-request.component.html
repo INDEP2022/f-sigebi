@@ -74,12 +74,13 @@
           Propuesta
           <i class="bx bx-search bx-sm float-icon"></i>
         </button>
+
         <button
-          (click)="agregarBienes()"
+          class="btn btn-success btn-sm active me-2"
           type="button"
-          class="btn btn-sucess active btn-sm mr-3">
+          (click)="agregarBienes()">
           Rastreador de Bienes
-          <i class="bx bx-plus bx-sm float-icon"></i>
+          <i class="bx bx-find float-icon"></i>
         </button>
         <button type="button" class="btn btn-info active btn-sm mr-3">
           Asociar
@@ -98,16 +99,26 @@
     <app-divider></app-divider>
 
     <h5 class="mt-5">Solicitudes y Donatarios</h5>
-
-    <div class="row mt-5">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="dataFacRequest">
-      </ng2-smart-table>
-      <app-pagination [params]="params" [totalItems]="itemRequest">
-      </app-pagination>
+    <form-loader *ngIf="loadingReq"></form-loader>
+    <div class="col-md-12">
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{
+          height: loadingReq ? '0px' : '200px'
+        }">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="dataFacRequest"
+          (userRowSelect)="requestSelected($event)">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="itemRequest"></app-pagination>
+      <!-- </div> -->
     </div>
+
     <div class="">
       <form class="form-material form-horizontal" [formGroup]="formTable1">
         <div class="row mt-5">
@@ -125,24 +136,29 @@
         </div>
       </form>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
 
     <h5 class="mt-5">Distribuci&oacute;n de Solicitudes con Bienes</h5>
-    <!-- <div class="row justify-content-end mt-3">
-      <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings2">
-        </app-columns-select>
-      </div>
-    </div> -->
-    <div class="row mt-5">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings3"
-        [source]="dataGoodsFact">
-      </ng2-smart-table>
+
+    <form-loader *ngIf="goodLoading"></form-loader>
+    <div class="col-md-12">
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{
+          height: goodLoading ? '0px' : '400px'
+        }">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings3"
+          [source]="dataGoodsFact"
+          (userRowSelect)="selectData($event)">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItemsGood"></app-pagination>
+      <!-- </div> -->
     </div>
-    <!-- <app-goods-list [files]="files" [changeDescription]="changeDescription"></app-goods-list> -->
+
     <div class="">
       <form class="form-material form-horizontal" [formGroup]="formTable2">
         <div class="row mt-5">
@@ -162,31 +178,49 @@
         </div>
       </form>
     </div>
-    <div class="row m-3">
-      <div class="col-4"></div>
-      <div class="col-md-12 text-center">
-        <button class="btn btn-warning btn-sm active" (click)="removeSelect()">
-          Elimina Bienes <i class="fa fa-trash-alt"></i>
+
+    <div class="row pt-2">
+      <div class="col-md-12 text-center mt-4 mb-4">
+        <button
+          tooltip="Agregar Bien al Acta"
+          containerClass="tooltip-style"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+          type="button"
+          (click)="addSelect()">
+          <!-- Mover uno -->
+          <i class="bx bx-chevron-down bx-md"></i>
+        </button>
+        <button
+          tooltip="Quitar Bien del Acta"
+          containerClass="tooltip-style"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+          type="button"
+          (click)="removeSelect()">
+          <!-- Quitar uno -->
+          <i class="bx bx-chevron-up bx-md"></i>
         </button>
       </div>
     </div>
+
     <h5 class="mt-5">Bienes del Inventario de Donaciones</h5>
 
-    <!-- <div class="row justify-content-end mt-3">
-      <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings3">
-        </app-columns-select>
-      </div>
-    </div> -->
-
-    <div class="row mt-5">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings3"
-        [source]="data">
-      </ng2-smart-table>
+    <form-loader *ngIf="loading2"></form-loader>
+    <div class="col-md-12">
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{
+          height: loading2 ? '0px' : '400px'
+        }">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings4"
+          [source]="dataFactInventary">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItemsIn"></app-pagination>
+      <!-- </div> -->
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
   </div>
 </app-card>

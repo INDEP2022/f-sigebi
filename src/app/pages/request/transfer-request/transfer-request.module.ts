@@ -8,6 +8,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { GoodsCharacteristicsModule } from '../../general-processes/goods-characteristics/goods-characteristics.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
 import { SharedRequestModule } from './../shared-request/shared-request.module';
 import { MotiveRefuseModalComponent } from './registration-of-requests/motive-refuse-modal/motive-refuse-modal.component';
@@ -115,6 +116,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     HttpClientModule,
     TooltipModule,
     TooltipModule,
+    GoodsCharacteristicsModule,
   ],
   exports: [VerifyComplianceTabComponent],
 })

@@ -1,15 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Muestreo Bienes</h5>
+    <h5 class="title">Muestreo Bienes&#58; Genera Consulta</h5>
   </div>
   <div body>
     <div class="row pt-4">
-      <div class="d-flex">
-        <div class="mr-auto p-2">
-          <h5>Muestreo Bienes&#58; Genera Consulta</h5>
-        </div>
+      <div class="d-flex justify-content-end">
         <div class="p-2">
-          <button class="btn btn-primary btn-sm active" (click)="turnForm()">
+          <button class="btn btn-primary btn-sm active">
             <i class="bx bx-arrow-from-left"></i> Turnar Muestreo
           </button>
         </div>
@@ -40,17 +37,19 @@
                 bsDatepicker />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <ngx-select
-              [form]="dateForm"
-              control="transferent"
-              (fetchItems)="getTransferent($event)"
-              [data]="selectTransferent"
-              bindLabel="nameTransferent"
-              [searchable]="false"
-              label="Transferente"
-              value="id"></ngx-select>
-          </div>
+          <!--
+            <div class="col-md-3">
+              <ngx-select
+                [form]="dateForm"
+                control="transferent"
+                (fetchItems)="getTransferent($event)"
+                [data]="selectTransferent"
+                bindLabel="nameTransferent"
+                [searchable]="false"
+                label="Transferente"
+                value="id"></ngx-select>
+            </div>
+          -->
         </div>
       </form>
     </div>
@@ -132,14 +131,18 @@
     </div>
     <div class="row">
       <div class="d-flex justify-content-end">
-        <div class="m-3">
-          <button class="btn btn-primary btn-sm active" (click)="search()">
-            Buscar
+        <div class="mr-auto p-2"></div>
+        <div class="p-2">
+          <button
+            (click)="search()"
+            class="btn btn-primary active btn-sm"
+            style="height: 36px">
+            Buscar <i class="bx bx-search-alt-2"></i>
           </button>
         </div>
-        <div class="m-3">
-          <button class="btn btn-danger btn-sm active" (click)="clean()">
-            Limpiar
+        <div class="p-2">
+          <button (click)="clean()" class="btn btn-danger active btn-sm">
+            Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
       </div>
@@ -148,7 +151,7 @@
       <div class="d-flex justify-content-end">
         <div class="m-3">
           <button class="btn btn-primary btn-sm active" (click)="goodSearch()">
-            <i class="bx bx-search-alt-2"></i> B&uacute;squeda Bienes
+            B&uacute;squeda Bienes <i class="bx bx-search-alt-2"></i>
           </button>
         </div>
       </div>
@@ -163,20 +166,18 @@
         </ng2-smart-table>
       </div>
       <app-pagination
-        [filterParams]="params"
+        [params]="params"
         [totalItems]="totalItems"></app-pagination>
     </div>
     <div class="row pt-4">
       <div class="d-flex justify-content-end">
         <div class="m-3">
           <button class="btn btn-primary btn-sm active" (click)="addAssets()">
-            <i class="bx bx-plus-circle"></i> Agregar
+            Agregar <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
         <div class="m-3">
-          <button class="btn btn-danger btn-sm active">
-            <i class="bx bx-minus-circle"></i> Separar
-          </button>
+          <button class="btn btn-danger btn-sm active">Separar</button>
         </div>
       </div>
     </div>
@@ -190,7 +191,7 @@
         (userRowSelect)="selectAssts($event)">
       </ng2-smart-table>
       <app-pagination
-        [filterParams]="params2"
+        [params]="params2"
         [totalItems]="totalItems2"></app-pagination>
     </div>
     <div>
@@ -215,17 +216,28 @@
                     role="menu"
                     aria-labelledby="button-alignment">
                     <li role="menuitem">
-                      <a class="dropdown-item" (click)="uploadExpedient()"
+                      <a
+                        class="dropdown-item"
+                        style="cursor: pointer"
+                        (click)="uploadExpedient()"
                         ><i class="bx bx-detail"></i> Expediente</a
                       >
                     </li>
+
                     <li role="menuitem">
-                      <a class="dropdown-item" (click)="uploadImages()"
+                      <a
+                        class="dropdown-item"
+                        style="cursor: pointer"
+                        (click)="uploadImages()"
                         ><i class="bx bx-images"></i> Fotograf&iacute;a</a
                       >
                     </li>
+
                     <li role="menuitem">
-                      <a class="dropdown-item" (click)="exportCsv()"
+                      <a
+                        class="dropdown-item"
+                        style="cursor: pointer"
+                        (click)="exportCsv()"
                         ><i class="bx bx-download"></i> Descarga Archivo</a
                       >
                     </li>
@@ -237,25 +249,17 @@
           <div class="row pt-4">
             <div class="d-flex justify-content-end">
               <div class="m-3">
-                <button
-                  class="btn btn-danger btn-sm active"
-                  (click)="removeGood()">
-                  <i class="bx bx-minus-circle"></i> Eliminar
+                <button class="btn btn-red btn-sm active">
+                  Eliminar <i class="fa fa-trash"></i>
                 </button>
               </div>
               <div class="m-3">
-                <button
-                  class="btn btn-success btn-sm active"
-                  (click)="meetGood('CUMPLE')">
-                  <i class="bx bx-check-circle"></i> Cumple
+                <button class="btn btn-primary btn-sm active">
+                  Cumple <i class="fa fa-check"></i>
                 </button>
               </div>
               <div class="m-3">
-                <button
-                  class="btn btn-danger btn-sm active"
-                  (click)="meetGood('NO CUMPLE')">
-                  <i class="bx bx-x-circle"></i> No cumple
-                </button>
+                <button class="btn btn-danger btn-sm active">No cumple</button>
               </div>
             </div>
           </div>

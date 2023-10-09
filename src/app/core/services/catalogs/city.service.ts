@@ -81,7 +81,12 @@ export class CityService extends HttpService implements ICrudMethods<ICity> {
   }
 
   getCityQuery(city: any) {
-    const route = `${ENDPOINT_LINKS.City}?filter.nameCity=$ilike:${city}`;
+    const route = `${CityEndpoints.City}?filter.nameCity=$ilike:${city}`;
+    return this.get(route);
+  }
+
+  getCityQueryByid(city: any) {
+    const route = `${CityEndpoints.City}?filter.idCity=$eq:${city}`;
     return this.get(route);
   }
 }
