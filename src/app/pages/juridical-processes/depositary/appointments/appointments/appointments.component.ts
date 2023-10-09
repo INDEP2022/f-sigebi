@@ -545,7 +545,7 @@ export class AppointmentsComponent
       } else {
         // AGREGAR MS FALTANTE QUE ESTA EN REVISION
         console.log('NO ESTA LISTO');
-        this.alert('warning', 'No se encontró bien disponible', '');
+        this.alert('warning', 'No se encontró No. Bien disponible', '');
       }
     } else {
       this.openModalGoods();
@@ -691,7 +691,8 @@ export class AppointmentsComponent
         this.alertInfo(
           'warning',
           'Error al obtener los datos del usuario de la sesión actual',
-          error.error.message
+          ''
+          // error.error.message
         );
       },
     });
@@ -702,7 +703,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -736,7 +737,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -772,7 +773,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -800,7 +801,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -831,7 +832,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -859,7 +860,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -983,8 +984,10 @@ export class AppointmentsComponent
           console.log(err);
           this.alert(
             'warning',
-            'Estatus del bien',
-            'El estatus no se obtuvo correctamente para el bien ' + noGood + ''
+            'Estatus del No. Bien',
+            'El estatus no se obtuvo correctamente para el No. Bien: ' +
+              noGood +
+              ''
           );
         },
       });
@@ -1673,7 +1676,7 @@ export class AppointmentsComponent
           this.alert(
             'warning',
             'Descripción del bien',
-            'Error al consultar la descripción del bien'
+            'Error al consultar la descripción del No. Bien'
           );
           // this.validFielddGoodNumber();
         },
@@ -2063,7 +2066,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2131,7 +2134,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2157,7 +2160,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2297,7 +2300,7 @@ export class AppointmentsComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'No se puede replicar el folio de escaneo si no existe un bien',
+          'No se puede replicar el folio de escaneo si no existe un No. Bien',
           ''
         );
         return;
@@ -2402,7 +2405,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2857,7 +2860,7 @@ export class AppointmentsComponent
           this.getPersonXNom();
           setTimeout(() => {
             this._saveDataDepositary = false;
-            this.alertInfo('success', 'Registro guardado correctamente', '');
+            this.alertInfo('success', 'El registro se ha guardado', '');
             if (data.data) {
               this.validGoodNumberInDepositaryAppointment(
                 true,
@@ -2940,11 +2943,7 @@ export class AppointmentsComponent
                   true,
                   body.appointmentNum
                 );
-                this.alertInfo(
-                  'success',
-                  'Registro guardado correctamente',
-                  ''
-                );
+                this.alertInfo('success', 'El registro se ha guardado', '');
               } else {
                 let _saveFolioDepositary = localStorage.getItem(
                   '_saveFolioDepositary'
@@ -2968,11 +2967,7 @@ export class AppointmentsComponent
                   true,
                   body.appointmentNum
                 );
-                this.alertInfo(
-                  'success',
-                  'Registro guardado correctamente',
-                  ''
-                );
+                this.alertInfo('success', 'El registro se ha guardado', '');
               }
             }, 500);
           });

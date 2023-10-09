@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DonationEndPoint } from 'src/app/common/constants/endpoints/ms-donation';
 import { HttpService } from 'src/app/common/services/http.service';
-import { IRequest } from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
+import {
+  IDeleteGoodDon,
+  IRequest,
+} from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
 import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
@@ -53,4 +56,5 @@ export class DonationProcessService extends HttpService {
     const route = `${this.requets}`;
     return this.post(route, model);
   }
+  deleteGoodDon(body: IDeleteGoodDon) {}
 }

@@ -138,16 +138,28 @@
         <tabset class="md-tabs">
           <tab heading="Ordenes Servicio" id="tab1">
             <app-list-service-orders
+              [SampleOrderId]="SampleOrderId"
               [orders]="sendData"></app-list-service-orders>
           </tab>
           <tab heading="Deductivas">
-            <app-create-deductives></app-create-deductives>
+            <app-create-deductives
+              [SampleOrderId]="SampleOrderId"
+              [typeComponent]="'generate-query'"
+              (deductivesSelected)="
+                getDeductives($event)
+              "></app-create-deductives>
           </tab>
           <tab heading="Datos Anexo">
-            <app-annex-data [dataAnnex]="dataAnnex"></app-annex-data>
+            <app-annex-data
+              [SampleOrderId]="SampleOrderId"
+              [sampleOrderForm]="sampleOrderForm"
+              [dataAnnex]="dataAnnex"
+              [typeComponent]="'generate-query'"></app-annex-data>
           </tab>
           <tab heading="Detalles Almacén">
-            <app-warehouse-detail></app-warehouse-detail>
+            <app-warehouse-detail
+              [SampleOrderId]="SampleOrderId"
+              (storeSelected)="getStoreSelected($event)"></app-warehouse-detail>
           </tab>
         </tabset>
       </div>

@@ -182,6 +182,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   selectAssts(event: any) {
     this.listAssetsSelected = event.selected;
+    console.log('this.listAssetsSelected', this.listAssetsSelected);
   }
 
   addAssets() {
@@ -202,7 +203,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           inventoryItemId: item.inventoryItemId,
           tranferRequest: item.transferRequest,
           authorityId: item.authorityId,
-
           transfereeFile: item.transferFile,
           keyUniqueSat: item.satUniqueKey,
           typeFile: item.fileType,
@@ -211,7 +211,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           subType: item.ssubType,
           sSubtype: item.ssubType,
           ssSubtype: item.sssubType,
-
           transfereeId: item.entTransferentId,
           requestDate: moment(item.requestDate).format('YYYY-MM-DD'),
           fileNumber: item.fileNumber,
@@ -336,7 +335,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     )
       this.params.getValue()['filter.descriptiveValue'] =
         this.searchForm.get('address').value;
-
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getCatAlmacenView();
     });
@@ -579,36 +577,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getCatAlmacenView();
     });
-  }
-
-  removeGood() {
-    if (this.listAssetsCopiedSelected.length == 0) {
-      this.alert(
-        'warning',
-        'Acción Invalida',
-        'Se requiere seleccionar al menos un bien'
-      );
-    } else {
-      this.paragraphs3 = new LocalDataSource();
-      this.listAssetsCopiedSelected.map(item => {
-        this.samplingGoodService
-          .deleteSamplingGood(item.sampleGoodId)
-          .subscribe({
-            next: response => {
-              this.params2
-                .pipe(takeUntil(this.$unSubscribe))
-                .subscribe(() => this.getGoods());
-            },
-            error: error => {
-              this.alert(
-                'error',
-                'Error',
-                'Error al eliminar el bien para muestreo'
-              );
-            },
-          });
-      });
-    }
   }
 
   unselectGoodRows() {

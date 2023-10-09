@@ -99,6 +99,32 @@ export class OrderServiceService extends HttpService {
     return this.delete(route);
   }
 
+  /* Muestreo Ordenes */
+  createSampleOrder(body: Object) {
+    const route = OrderServiceEndpoint.SampleOrders;
+    return this.post(route, body);
+  }
+
+  getAllSampleOrder(params: ListParams) {
+    const route = OrderServiceEndpoint.SampleOrders;
+    return this.get(route, params);
+  }
+
+  getSampleOrderById(id: number) {
+    const route = `${OrderServiceEndpoint.SampleOrders}/${id}`;
+    return this.get(route);
+  }
+
+  deleteSampleOrderById(id: number) {
+    const route = `${OrderServiceEndpoint.SampleOrders}/${id}`;
+    return this.delete(route);
+  }
+
+  updateSampleOrder(body: any) {
+    const route = `${OrderServiceEndpoint.SampleOrders}/${body.idSamplingOrder}`;
+    return this.put(route, body);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

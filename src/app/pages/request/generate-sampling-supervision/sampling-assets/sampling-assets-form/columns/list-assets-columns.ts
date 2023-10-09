@@ -36,6 +36,7 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
+
   uomCode: {
     title: 'Unidad',
     type: 'string',

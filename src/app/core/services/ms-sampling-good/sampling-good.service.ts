@@ -6,7 +6,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ISample } from '../../models/ms-goodsinv/sample.model';
+
 import { ISampleGood } from '../../models/ms-goodsinv/sampling-good-view.model';
+import { ISamplingDeductive } from '../../models/ms-sampling-good/sampling-deductive.model';
 
 @Injectable({ providedIn: 'root' })
 export class SamplingGoodService extends HttpService {
@@ -46,6 +48,34 @@ export class SamplingGoodService extends HttpService {
   }
   deleteSamplingGood(id: number) {
     return this.delete(`${this.samplingGoodEndpoint.SamplingGood}/${id}`);
+  }
+
+  /* DEDUCTIVER */
+  getAllSampleDeductives(
+    params?: ListParams | string
+  ): Observable<IListResponse<ISamplingDeductive>> {
+    const route = SamplingGoodEndpoint.SamplingDeductives;
+    return this.get<IListResponse<ISamplingDeductive>>(route, params);
+  }
+
+  getSampleDeductiveById(id: number) {
+    const route = `${SamplingGoodEndpoint.SamplingDeductives}/${id}`;
+    return this.get<IListResponse<ISamplingDeductive>>(route);
+  }
+
+  createSampleDeductive(body: ISamplingDeductive) {
+    const route = SamplingGoodEndpoint.SamplingDeductives;
+    return this.post<IListResponse<ISamplingDeductive>>(route, body);
+  }
+
+  updateSampleDeductive(body: ISamplingDeductive) {
+    const route = SamplingGoodEndpoint.SamplingDeductives;
+    return this.put<IListResponse<ISamplingDeductive>>(route, body);
+  }
+
+  deleteSampleDeductive(id: number) {
+    const route = `${SamplingGoodEndpoint.SamplingDeductives}/${id}`;
+    return this.put<IListResponse<ISamplingDeductive>>(route);
   }
 
   private makeParams(params: ListParams): HttpParams {
