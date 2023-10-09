@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -18,22 +18,78 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DonationProcessService } from '../../../shared-final-destination/view-donation-contracts/donation-process.service';
 import { CreateRequestComponent } from '../create-request/create-request.component';
 import { FindProposeComponent } from '../find-propose/find-propose.component';
 import { ModalViewComponent } from '../modal-view/modal-view.component';
 import { ListParams } from './../../../../../common/repository/interfaces/list-params';
-import { COLUMNS_GOODS } from './columns-goods';
 import {
   COLUMNS_INVENTARY,
   DISTRIBUTION_COLUMNS,
   REQUEST_GOOD_COLUMN,
 } from './distribution-columns';
 import { DonAuthorizaService } from './service/don-authoriza.service';
+
+export type IGoodAndAvailable = IGood & {
+  available: boolean;
+  selected: boolean;
+};
 @Component({
   selector: 'app-donation-authorization-request',
   templateUrl: './donation-authorization-request.component.html',
-  styles: [],
+  styles: [
+    `
+      :host ::ng-deep form-radio .form-group {
+        margin: 0;
+        padding-bottom: 0;
+        padding-top: 0;
+      }
+      .disabled[disabled] {
+        color: red;
+      }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
+      }
+      #bienes table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
+      .row-verde {
+        background-color: green;
+        font-weight: bold;
+      }
+
+      .row-negro {
+        background-color: black;
+        font-weight: bold;
+      }
+      .registros-movidos {
+        background-color: yellow;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class DonationAuthorizationRequestComponent
   extends BasePage
@@ -43,7 +99,9 @@ export class DonationAuthorizationRequestComponent
   formTable1: FormGroup;
   formTable2: FormGroup;
   formTable3: FormGroup;
+  selectedGood: IGoodAndAvailable;
   inventaryModel: IInventaryRequest;
+  dataTableGoods: IGoodAndAvailable[] = [];
   inventaryAll: IInventaryRequest[] = [];
   dataTableGood_: any[] = [];
   proposalCve: string = '';
@@ -101,7 +159,8 @@ export class DonationAuthorizationRequestComponent
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -110,11 +169,78 @@ export class DonationAuthorizationRequestComponent
     this.settings2.columns = REQUEST_GOOD_COLUMN;
     this.settings3 = {
       ...this.settings,
-      selectMode: 'multi',
+      // selectMode: 'multi',
       hideSubHeader: false,
       actions: false,
       columns: {
-        ...COLUMNS_GOODS,
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        requestId: {
+          title: 'No. Solicitud',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.requestId;
+          },
+        },
+        regionalDelegationId: {
+          title: 'DON. Entidad Federal',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.request?.regionalDelegationId;
+          },
+        },
+        goodId: {
+          title: 'No. Bien Ent. Federal',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.goodId;
+          },
+        },
+        description: {
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good?.description;
+          },
+        },
+
+        status: {
+          title: 'Sdo./ Estatus',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good?.status;
+          },
+        },
+        allotmentAmount: {
+          title: 'Cantidad',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.allotmentAmount;
+          },
+        },
+        rowClassFunction: (row: any) => {
+          if (row.data.di_disponible == 'S') {
+            return 'bg-success text-white';
+          } else {
+            return 'bg-dark text-white';
+          }
+        },
       },
     };
     this.settings4 = {
@@ -185,12 +311,62 @@ export class DonationAuthorizationRequestComponent
   }
 
   onSubmit() {}
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  onGoodSelectValid(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+  isGoodSelectedValid(_good: IGood) {
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChangeValid(good: IGood, selected?: boolean) {
+    if (selected) {
+      this.selectedGooodsValid.push(good);
+      console.log(this.selectedGooodsValid);
+    } else {
+      this.selectedGooodsValid = this.selectedGooodsValid.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
 
   settingsChange(event: any) {
     this.settings = event;
   }
   loadGoods() {
     this.donAuthorizaService.loadGoods.next(true);
+  }
+  async selectData(event: { data: IRequest; selected: any }) {
+    this.selectedRow = event.data;
+    this.form
+      .get('classifNumbGood')
+      .setValue(this.selectedRow.clasifGoodNumber);
+    this.form.get('descripClassif').setValue(this.selectedRow.clasifGood);
+    this.inventaryModel = {
+      proposalKey: this.requestModel.proposalCve ?? '',
+      goodNumber: this.selectedRow.goodId,
+    };
+    this.selectedGooods = event.selected;
+    this.changeDetectorRef.detectChanges();
   }
 
   openModal(op: number) {
@@ -330,16 +506,23 @@ export class DonationAuthorizationRequestComponent
 
   getInventary() {
     this.loading2 = true;
+
     console.log(this.inventaryModel);
     this.donationService.getInventaryGood(this.inventaryModel).subscribe({
       next: data => {
-        this.loading2 = false;
-        this.inventaryModel = data;
-        console.log(data);
-        // console.log(this.inventaryAll);
-        this.totalItemsIn = data.count;
-        this.dataFactInventary.load(data);
-        this.dataFactInventary.refresh();
+        if (data != null) {
+          this.loading2 = false;
+          this.goodLoading = false;
+          this.inventaryModel = data;
+          this.inventaryAll.push(this.inventaryModel);
+          console.log(this.inventaryAll);
+          this.totalItemsIn = data.count;
+          this.dataFactInventary.load(this.inventaryAll);
+          this.dataFactInventary.refresh();
+        } else {
+          this.goodLoading = false;
+          this.createDET(this.inventaryModel);
+        }
       },
       error: () => {
         this.loading2 = false;
@@ -399,82 +582,79 @@ export class DonationAuthorizationRequestComponent
   goodsValid: any;
 
   async addSelect() {
-    if (this.selectedGooods.length > 0) {
-      if (this.proposeDefault == null) {
+    if (localStorage.getItem('proposalId') == null) {
+      this.alert(
+        'warning',
+        'No existe una propuesta en la cual asignar el bien.',
+        'Debe capturar una propuesta.'
+      );
+      return;
+    } else {
+      if (this.status == 'A') {
         this.alert(
           'warning',
-          'No existe una propuesta en la cual asignar el bien.',
-          'Debe capturar un acta.'
+          'La propuesta ya está autorizada, no puede realizar modificaciones',
+          ''
         );
         return;
       } else {
-        if (this.status == 'A') {
-          this.alert(
-            'warning',
-            'La propuesta ya está autorizada, no puede realizar modificaciones',
-            ''
-          );
-          return;
-        } else {
-          // console.log('aaa', this.goods);
-          let result = this.selectedGooods.map(async (good: any) => {
-            if (good.di_acta != null) {
-              this.alert(
-                'warning',
-                `Ese bien ya se encuentra en la propuesta ${good.di_acta}`,
-                'Debe capturar una nueva propuesta.'
-              );
-            } else if (good.di_disponible == 'N') {
-              this.onLoadToast(
-                'warning',
-                `El bien ${good.id} tiene un estatus inválido para ser asignado a alguna propuesta`
-              );
-              return;
-            } else {
-              // console.log('GOOD', good);
-              this.loading2 = true;
+        // console.log('aaa', this.goods);
+        let result = this.selectedGooods.map(async (good: any) => {
+          if (good.di_acta != null) {
+            this.alert(
+              'warning',
+              `Ese bien ya se encuentra en la propuesta ${good.di_acta}`,
+              'Debe capturar una nueva propuesta.'
+            );
+          } else if (good.di_disponible == 'N') {
+            this.onLoadToast(
+              'warning',
+              `El bien ${good.id} tiene un estatus inválido para ser asignado a alguna propuesta`
+            );
+            return;
+          } else {
+            // console.log('GOOD', good);
+            this.loading2 = true;
 
-              if (!this.request.some((v: any) => v === good)) {
-                let indexGood = this.dataTableGood_.findIndex(
-                  _good => _good.id == good.id
-                );
+            if (!this.request.some((v: any) => v === good)) {
+              let indexGood = this.dataTableGood_.findIndex(
+                _good => _good.id == good.id
+              );
 
-                this.Exportdate = true;
-                console.log('indexGood', indexGood);
-                if (indexGood != -1)
-                  this.dataTableGood_[indexGood].di_disponible = 'N';
-                let obj = {
-                  pActaNumber: this.requestId,
-                  pStatusActa: 'A',
-                  pVcScreen: 'FDONSOLAUTORIZA',
-                  pUser: this.authService.decodeToken().preferred_username,
-                };
-                await this.updateGoodEInsertHistoric(obj);
-                await this.updateBienDetalle(good.id, 'ADA');
-                await this.createDET(this.inventaryModel);
-              }
+              this.Exportdate = true;
+              console.log('indexGood', indexGood);
+              if (indexGood != -1)
+                this.dataTableGood_[indexGood].di_disponible = 'N';
+              let obj = {
+                pActaNumber: this.requestId,
+                pStatusActa: 'A',
+                pVcScreen: 'FDONSOLAUTORIZA',
+                pUser: this.authService.decodeToken().preferred_username,
+              };
+              await this.updateGoodEInsertHistoric(obj);
+              await this.updateBienDetalle(good.id, 'ADA');
+              // await this.createDET(this.inventaryModel);
+              this.getInventary();
             }
-          });
-          Promise.all(result).then(async item => {
-            //ACTUALIZA EL COLOR
-            this.dataTableGood_ = [];
-            this.dataTableGood.load(this.dataTableGood_);
-            this.dataTableGood.refresh();
-            //this.getGoodsByStatus(this.fileNumber);
-            await this.getRequest(Number(localStorage.getItem('proposal')));
-          });
-        }
+          }
+        });
+        Promise.all(result).then(async item => {
+          //ACTUALIZA EL COLOR
+          this.dataTableGood_ = [];
+          this.dataTableGood.load(this.dataTableGood_);
+          this.dataTableGood.refresh();
+          //this.getGoodsByStatus(this.fileNumber);
+          // await this.getRequest(Number(localStorage.getItem('proposal')));
+        });
       }
-    } else {
-      this.alert('warning', 'Seleccione primero el bien a asignar.', '');
     }
   }
   async createDET(good: IInventaryRequest) {
     let obj: any = {
       proposalKey: this.requestModel.proposalCve,
-      numberGood: good.goodNumber,
+      goodNumber: good.goodNumber,
     };
-
+    console.log(obj);
     await this.saveGoodInventary(obj);
   }
 
@@ -487,14 +667,18 @@ export class DonationAuthorizationRequestComponent
           this.Exportdate = true;
         },
         error: error => {
-          // this.authorityName = '';
+          this.alert(
+            'warning',
+            'El Bien ya se encuentra registrado en el inventario',
+            ''
+          );
           resolve(false);
         },
       });
     });
   }
-  async updateBienDetalle(idGood: string | number, status: string) {
-    this.goodService.updateStatusActasRobo(idGood, status).subscribe({
+  async updateBienDetalle(idGood: number, status: string) {
+    this.goodService.putStatusGood(idGood, status).subscribe({
       next: data => {
         console.log(data);
         this.getRequestGood();
@@ -543,7 +727,7 @@ export class DonationAuthorizationRequestComponent
               let index = this.dataTableGood_.findIndex(
                 g => g.id === good.goodId.goodNumber
               );
-              // await this.updateBienDetalle(good.goodId, 'ADA');
+              await this.updateBienDetalle(good.goodId, 'DON');
 
               //ACTUALIZA COLOR
               this.dataTableGood_ = [];
@@ -584,6 +768,8 @@ export class DonationAuthorizationRequestComponent
   onUserRowSelect(row: any): void {
     if (row.isSelected) {
       this.selectedRow = row.data;
+      this.selectedGooods = row.isSelected;
+      this.changeDetectorRef.detectChanges();
       this.form
         .get('classifNumbGood')
         .setValue(this.selectedRow.clasifGoodNumber);
