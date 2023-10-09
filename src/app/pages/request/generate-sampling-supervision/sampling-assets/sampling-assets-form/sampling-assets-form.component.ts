@@ -1,34 +1,31 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
+import { ISamplingGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
-import {
-  FilterParams,
-  ListParams,
-  SearchFilter,
-} from '../../../../../common/repository/interfaces/list-params';
+import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
 import { UploadExpedientFormComponent } from '../../shared-component-gss/upload-expedient-form/upload-expedient-form.component';
 import { UploadImagesFormComponent } from '../../shared-component-gss/upload-images-form/upload-images-form.component';
-import { TurnModalComponent } from '../turn-modal/turn-modal.component';
 import { LIST_ASSETS_COLUMN } from './columns/list-assets-columns';
 import { LIST_ASSETS_COPIES_COLUMN } from './columns/list-assets-copies';
 import { LIST_DEDUCTIVES_COLUMNS } from './columns/list-deductivas-column';
@@ -54,10 +51,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   dateForm: ModelForm<any>;
   searchForm: ModelForm<any>;
   showSearchForm: boolean = true;
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any = [];
   totalItems: number = 0;
-
+  sampleId: number = 0;
   jsonToCsv = JSON_TO_CSV;
 
   displaySearchAssetsBtn: boolean = false;
@@ -67,7 +64,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     selectMode: 'multi',
     columns: LIST_ASSETS_COLUMN,
   };
-  params2 = new BehaviorSubject<FilterParams>(new FilterParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs2 = new LocalDataSource();
   totalItems2: number = 0;
   listAssetsSelected: any[] = [];
@@ -79,7 +76,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     columns: LIST_ASSETS_COPIES_COLUMN,
   };
   params3 = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs3: any[] = [];
+  paragraphs3 = new LocalDataSource();
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
 
@@ -95,19 +92,17 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   storeSelected: any = {};
 
   selectTransferent = new DefaultSelect();
-
-  //private domicilieService = inject(DomicileService);
-  private domicilieService = inject(GoodDomiciliesService);
-  private goodsqueryService = inject(GoodsQueryService);
-  private authService = inject(AuthService);
-  private goodService = inject(GoodService);
-  private transferentService = inject(TransferenteService);
-  private goodsinvService = inject(GoodsInvService);
-
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private domicilieService: GoodDomiciliesService,
+    private goodsqueryService: GoodsQueryService,
+    private authService: AuthService,
+    private goodService: GoodService,
+    private transferentService: TransferenteService,
+    private goodsInvService: GoodsInvService,
+    private samplingGoodService: SamplingGoodService
   ) {
     super();
   }
@@ -164,40 +159,68 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   selectWarehouse(event: any): any {
     this.displaySearchAssetsBtn = event.isSelected ? true : false;
-    console.log(event);
-    this.storeSelected = event;
+    this.storeSelected = event.data;
   }
 
   goodSearch() {
+    const startPeriod = this.dateForm.get('initialDate').value;
+    const endPeriod = this.dateForm.get('finalDate').value;
+
+    if (startPeriod && endPeriod) {
+      this.params2
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoods());
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se debe capturar una fecha de periodo inicial y final'
+      );
+    }
+    /*
+    console.log('this.storeSelected', this.storeSelected);
+
     const dates = this.dateForm.value;
     if (!dates.initialDate && !dates.finalDate) {
-      this.onLoadToast(
-        'info',
-        'Debe capturar los campos requeridos para el muestreo'
-      );
+      
       return;
     }
-
-    this.addParametersFilter(dates);
+    this.addParametersFilter(dates, this.storeSelected);
+    const filter = this.params2.getValue().getParams();
+    console.log('filter', filter);
+    this.addParametersFilter(dates, this.storeSelected);
 
     console.log(this.storeSelected);
 
     //this.params2.getValue().addFilter('requestId', event.data.requestId.id);
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getGoods();
-    });
+    }); */
   }
 
-  addParametersFilter(dates: any) {
+  /*addParametersFilter(dates: any, storeSelect: any) {
+    console.log('storeSelect', storeSelect);
     this.params2 = new BehaviorSubject<FilterParams>(new FilterParams());
     const initDate = moment(dates.initialDate).format('DD/MM/YYYY');
     const endDate = moment(dates.finalDate).format('DD/MM/YYYY');
 
     this.params2.getValue().addFilter3('sortBy', `organizationCode:ASC`);
 
-    this.params2.getValue().addFilter('organizationId', 191, SearchFilter.EQ);
+    this.params2
+      .getValue()
+      .addFilter(
+        'organizationId',
+        this.storeSelected.organizationId,
+        SearchFilter.EQ
+      );
 
-    this.params2.getValue().addFilter('entTransferentId', 643, SearchFilter.EQ);
+    this.params2
+      .getValue()
+      .addFilter(
+        'entTransferentId',
+        this.storeSelected.entTransferentId,
+        SearchFilter.EQ
+      );
 
     this.params2
       .getValue()
@@ -206,14 +229,74 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.params2
       .getValue()
       .addFilter('finalPeriod', `${initDate},${endDate}`, SearchFilter.BTW);
-  }
+  } */
 
   selectAssts(event: any) {
     this.listAssetsSelected = event.selected;
+    console.log('this.listAssetsSelected', this.listAssetsSelected);
   }
 
   addAssets() {
-    let ids: any = [];
+    if (this.listAssetsSelected.length > 0) {
+      this.listAssetsSelected.map(item => {
+        const sampligGood: ISamplingGood = {
+          sampleGoodId: 243,
+          sampleId: this.sampleId,
+          creationDate: moment().format('YYYY-MM-DD'),
+          modificationDate: moment().format('YYYY-MM-DD'),
+          creationUser: 'ggalindo',
+          modificationUser: 'ggalindo',
+          goodId: item.managementNumber,
+          goodSiabNumber: item.goodSiabNumber,
+          inventoryNumber: item.inventoryNumber,
+          version: 1,
+          description: item.description,
+          quantity: item.transactionQuantity,
+          unit: item.uomCode,
+          subInventoryCode: item.subinventoryCode,
+          locatorId: item.locatorId,
+          inventoryItemId: item.inventoryItemId,
+          tranferRequest: item.transferRequest,
+          authorityId: item.authorityId,
+          //emiterId: '1',
+          transfereeFile: item.transferFile,
+          keyUniqueSat: item.satUniqueKey,
+          typeFile: item.fileType,
+          tradeNumber: item.jobNumber,
+          type: item.type,
+          subType: item.ssubType,
+          sSubtype: item.ssubType,
+          ssSubtype: item.sssubType,
+          //chapterItem: '6309',
+          requestDate: moment(item.requestDate).format('YYYY-MM-DD'),
+          fileNumber: item.fileNumber,
+          fileDate: moment(item.fileDate).format('YYYY-MM-DD'),
+          //indVerification: 'N',
+        };
+        this.samplingGoodService.createSamplingGood(sampligGood).subscribe({
+          next: response => {
+            console.log('muestreo bien insertado', response);
+            this.getSampligGoods();
+          },
+        });
+        console.log('item', sampligGood);
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Selecciona bienes para el muestreo'
+      );
+    }
+    /*const storeInfo = {
+      organizationId: this.storeSelected.organizationCode,
+      entTransferentId: this.storeSelected.administratorName,
+      startPeriod: this.dateForm.get('initialDate').value,
+      endPeriod: this.dateForm.get('finalDate').value,
+    }; */
+
+    //this.goodsinvService.getSamplingGoodView()
+    /*let ids: any = [];
     this.listAssetsSelected.map((item: any) => {
       const index = this.paragraphs3.indexOf(item);
       if (index == -1) {
@@ -232,7 +315,19 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       );
       ids = [];
     }
-    this.unselectGoodRows();
+    this.unselectGoodRows(); */
+  }
+
+  getSampligGoods() {
+    this.params3.getValue()['filter.sampleId'] = this.sampleId;
+    this.samplingGoodService
+      .getSamplingGoods(this.params3.getValue())
+      .subscribe({
+        next: response => {
+          console.log('Bienes ya insertados', response);
+          this.paragraphs3.load(response.data);
+        },
+      });
   }
 
   selectAsstsCopy(event: any) {
@@ -267,13 +362,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   exportCsv() {
     const title = 'Muestreo de Bienes para Supervisión';
     const filename: string = 'MuestreoBienesSupervision';
-    this.jsonToCsv = this.generateJsonExcel();
+    //this.jsonToCsv = this.generateJsonExcel();
     //console.log(this.jsonToCsv)
     //{type: 'csv'}
     this.excelService.export(this.jsonToCsv, { filename });
   }
 
-  generateJsonExcel() {
+  /*generateJsonExcel() {
     let good: any = {};
     let jsonBody: any = [{}];
     this.paragraphs3.map((item: any) => {
@@ -288,13 +383,64 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
 
     return jsonBody;
-  }
+  } */
 
   close(): void {}
 
   search() {
+    if (
+      this.searchForm.get('id').value &&
+      !this.searchForm.get('code').value &&
+      !this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('address').value
+    )
+      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
+        this.searchForm.get('id').value
+      }`;
+
+    if (
+      this.searchForm.get('code').value &&
+      !this.searchForm.get('id').value &&
+      !this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('address').value
+    )
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+
+    if (
+      this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('id').value &&
+      !this.searchForm.get('code').value &&
+      !this.searchForm.get('address').value
+    )
+      this.params.getValue()['filter.name'] =
+        this.searchForm.get('nameWarehouse').value;
+
+    if (
+      this.searchForm.get('address').value &&
+      !this.searchForm.get('id').value &&
+      !this.searchForm.get('code').value &&
+      !this.searchForm.get('nameWarehouse').value
+    )
+      this.params.getValue()['filter.descriptiveValue'] =
+        this.searchForm.get('address').value;
+    /*this.params.getValue()['filter.initialPeriod'] = `$btw:${
+      this.dateForm.get('initialDate').value
+    }, ${this.dateForm.get('finalDate').value}`; */
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      //this.getDomicilies();
+      this.getCatAlmacenView();
+    });
+  }
+  /*search() {
     this.loading = true;
     this.params.getValue().addFilter('regionalDelegation', this.delegationId);
+    this.params
+      .getValue()
+      .addFilter('initialPeriod', this.dateForm.get('initialDate').value);
+    this.params.getValue()['filter.id'] = 1;
+
     const searchform = this.searchForm.value;
     for (const key in searchform) {
       if (searchform[key] != null) {
@@ -323,11 +469,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       }
     }
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      //this.getDomicilies();
-      this.getCatAlmacenView();
-    });
-  }
+    
+  } */
 
   getRegionalDelegationId() {
     const id = this.authService.decodeToken().department;
@@ -359,17 +502,19 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }*/
 
   getCatAlmacenView() {
-    const filter = this.params.getValue().getParams();
+    this.params.getValue()[
+      'filter.regionalDelegation'
+    ] = `$eq:${this.delegationId}`;
+    const filter = this.params.value;
+
     this.goodsqueryService.getCatStoresView(filter).subscribe({
       next: resp => {
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
-        this.params.getValue().removeAllFilters();
+
         this.loading = false;
       },
       error: error => {
-        this.params.getValue().removeAllFilters();
-        console.log('tabla domicilio ', error);
         this.onLoadToast('info', 'No se encontraron registros');
         this.loading = false;
       },
@@ -377,21 +522,87 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   getGoods() {
-    const filter = this.params2.getValue().getParams();
-    this.goodsinvService.getSamplingGoodView(filter).subscribe({
-      next: resp => {
-        console.log(resp.data);
-        this.paragraphs2.load(resp.data);
-        this.totalItems2 = resp.count;
-      },
-      error: error => {
-        console.log(error);
-        this.onLoadToast('info', 'No se encontraron registros');
-      },
+    this.params2.getValue()[
+      'filter.organizationId'
+    ] = `$eq:${this.storeSelected.organizationCode}`;
+    this.params2.getValue()['filter.initialPeriod'] = `$btw:${
+      this.dateForm.get('initialDate').value
+    }, ${this.dateForm.get('finalDate').value}`;
+
+    this.params2.getValue()['filter.finalPeriod'] = `$btw:${
+      this.dateForm.get('initialDate').value
+    }, ${this.dateForm.get('finalDate').value}`;
+
+    this.goodsInvService
+      .getSamplingGoodView(this.params2.getValue())
+      .subscribe({
+        next: async resp => {
+          this.paragraphs2.load(resp.data);
+          this.totalItems2 = resp.data.length;
+          const checkExistSamplingOrder = await this.checkSamplingOrder();
+          if (checkExistSamplingOrder) {
+            console.log('sampleId', this.sampleId);
+            this.params3
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getSampligGoods());
+          }
+          //this.samplingGoodService.postSamplingGood()
+        },
+        error: error => {},
+      });
+  }
+
+  checkSamplingOrder() {
+    return new Promise((resolve, reject) => {
+      const initialDate = moment(this.dateForm.get('initialDate').value).format(
+        'YYYY-MM-DD'
+      );
+      const finalDate = moment(this.dateForm.get('finalDate').value).format(
+        'YYYY-MM-DD'
+      );
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+
+      params.getValue()['filter.startDate'] = initialDate;
+      params.getValue()['filter.endDate'] = finalDate;
+
+      this.samplingGoodService.getSample(params.getValue()).subscribe({
+        next: response => {
+          console.log('muestreos', response);
+          this.sampleId = response.data[0].sampleId;
+          resolve(true);
+        },
+        error: error => {
+          const sample: ISample = {
+            sampleId: 302,
+            regionalDelegationId: this.delegationId,
+            startDate: initialDate,
+            endDate: finalDate,
+            speciesInstance: 'INSTANCIA_INICIADA',
+            numeraryInstance: 'INSTANCIA_INICIADA',
+            warehouseId: this.storeSelected.organizationCode,
+            version: 1,
+            userCreation: 'jcastro',
+            userModification: 'jcastro',
+            creationDate: moment().format('YYYY-MM-DD'),
+            modificationDate: moment().format('YYYY-MM-DD'),
+          };
+
+          this.samplingGoodService.createSample(sample).subscribe({
+            next: response => {
+              console.log('sample', response);
+              this.sampleId = response.sampleId;
+              resolve(true);
+            },
+            error: error => {
+              this.alert('error', 'Error', 'Error al crear Muestreo');
+            },
+          });
+        },
+      });
     });
   }
 
-  turnForm() {
+  /*turnForm() {
     Swal.fire({
       title: 'Confirmación Turnado',
       text: '¿Está seguro que la información es correcta para turnar?',
@@ -404,7 +615,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
-        console.log('Guardar solicitud');
         const size = this.paragraphs3.length;
         const evaResult = this.paragraphs3.filter(x => x.resultTest != null);
         debugger;
@@ -431,8 +641,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             x => x.selected == true
           );
 
-          console.log('Todos los bienes CUMPLEN');
-
           if (deductivesSelected.length == 0) {
             //popBienesCumplen
             this.openModals(
@@ -451,7 +659,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             );
           }
         } else {
-          console.log('No todos los bienes CUMPLEN');
           const deductivesSelected = this.paragraphsDeductivas.filter(
             x => x.selected == true
           );
@@ -465,7 +672,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         }
       }
     });
-  }
+  } */
 
   openModals(
     component: any,
@@ -490,10 +697,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   clean() {
     this.dateForm.reset();
     this.searchForm.reset();
-    this.paragraphs = [];
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getCatAlmacenView();
+    });
   }
 
-  removeGood() {
+  /*removeGood() {
     if (this.listAssetsCopiedSelected.length == 0) {
       this.onLoadToast('info', 'Seleccione al menos un bien');
       return;
@@ -505,12 +715,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.paragraphs3 = [...this.paragraphs3];
     this.listAssetsCopiedSelected = [];
 
-    /**
-     * todo: eliminar el bien de la tabla muestreo bien view
-     */
-  }
+  
+  } */
 
-  meetGood(value: string) {
+  /*meetGood(value: string) {
     if (this.listAssetsCopiedSelected.length == 0) {
       this.onLoadToast('info', 'Debe tener selecionado al menos un Bien');
       return;
@@ -522,7 +730,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
     this.paragraphs3 = [...this.paragraphs3];
     this.listAssetsCopiedSelected = [];
-  }
+  } */
 
   unselectGoodRows() {
     const a = this.table2.grid.getRows();
@@ -541,14 +749,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   deductiveSelected(event: any) {
-    event.toggle.subscribe((data: any) => {
-      console.log(data);
-    });
+    event.toggle.subscribe((data: any) => {});
   }
 
-  deductivesObservations(event: any) {
-    console.log(event);
-  }
+  deductivesObservations(event: any) {}
 
   getTransferent(params: ListParams) {
     params['sortBy'] = 'nameTransferent:ASC';
