@@ -4,32 +4,32 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  goodId: {
+  managementNumber: {
     title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  siabiInventoryId: {
+  goodSiabNumber: {
     title: 'Número Siab',
     type: 'string',
     sort: false,
   },
-  goodDescription: {
+  descriptiveValue: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  regionalDelegation: {
+  delRegionalId: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
-  quantity: {
+  reserved: {
     title: 'cantidad',
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  transactionQuantity: {
     title: 'Unidad',
     type: 'string',
     sort: false,
