@@ -1,3 +1,7 @@
+export enum FinancialInformation {
+  BasePage = 'financialinformation',
+}
+
 export enum BiddingEndPoint {
   BasePage = 'bidding',
   Tenders = 'tenders',

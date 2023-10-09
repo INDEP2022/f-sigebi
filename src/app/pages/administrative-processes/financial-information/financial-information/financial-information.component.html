@@ -11,13 +11,24 @@
             <input type="text" class="form-control" formControlName="noBien" />
           </form-field>
         </div> -->
-        <div class="row justify-content-center">
-          <div class="col-12 col-sm-12 col-md-5">
+        <div class="row">
+          <div class="col-md-6">
             <search-bar-simple
               (eventEmit)="loadFinancial($event)"
               [label]="''"
               [placeholder]="'N&uacute;mero de Bien'">
             </search-bar-simple>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('goodDescription')"
+              label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="goodDescription"
+                readonly />
+            </form-field>
           </div>
         </div>
         <br /><br /><br /><br />

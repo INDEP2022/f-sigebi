@@ -277,11 +277,7 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
   deleteFile(params: any) {
     console.log('paramsDelete->', params);
     if (params.paymentDate != null) {
-      this.alert(
-        'error',
-        'No puede eliminar una solicitud que ya fue atendida',
-        ''
-      );
+      this.alert('error', 'La solicitud no ha sido eliminada', '');
     } else {
       /**Delete */
       this.paymentServicesService.deletePayment(params.request).subscribe({

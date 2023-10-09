@@ -8,6 +8,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IApplicationFComerCtldPag3 } from 'src/app/core/services/ms-payment/payment-service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -128,7 +129,8 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
     );
     if (confirm.isConfirmed) {
       // PETICIONES AL REQUERIMIENTO FCOMERCTLDPAG-3
-      this.handleSuccess();
+      // this.handleSuccess();
+      this.createControlDevolutions();
     } else {
       this.handleSuccess();
     }
@@ -222,13 +224,15 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
         amount: 50,
       },
     ];
-    // CONSULTAR DEL REQUERIMIENTO FCOMERCTLDPAG-2
+    this.dataTableControl.load(this.testDataControl);
+    this.loadingControl = false;
+    // // CONSULTAR DEL REQUERIMIENTO FCOMERCTLDPAG-2
     // this.svPaymentDevolutionService.getCtlDevPagP(params).subscribe({
     //   next: (res: any) => {
     //     console.log('DATA Control', res);
     //     this.testDataControl = res.data;
-    this.dataTableControl.load(this.testDataControl);
-    this.loadingControl = false;
+    //     this.dataTableControl.load(this.testDataControl);
+    //     this.loadingControl = false;
     //   },
     //   error: error => {
     //     console.log(error);
@@ -237,5 +241,25 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
     //     this.loadingControl = false;
     //   },
     // });
+  }
+  createControlDevolutions() {
+    console.log(this.controlForm.value);
+    let params: IApplicationFComerCtldPag3 = {
+      dispTypeId: this.controlForm.get('dispersionType').value,
+      originId: this.controlForm.get('origin').value,
+      direction: this.controlForm.get('direction').value,
+      ctldevpagKey: this.controlForm.get('key').value,
+      cRelEvents: [],
+    };
+    console.log(params);
+
+    this.svPaymentDevolutionService.getFComerCtldPag3(params).subscribe({
+      next: (res: any) => {
+        console.log('Crear control', res);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 }

@@ -315,4 +315,9 @@ export class GoodprocessService extends HttpService {
     const route = `${GoodprocessEndpoints.pupPortafolio}`;
     return this.post(route, params);
   }
+
+  getSeqFolio() {
+    const route = `${GoodprocessEndpoints.seqFolio}`;
+    return this.get(route);
+  }
 }
