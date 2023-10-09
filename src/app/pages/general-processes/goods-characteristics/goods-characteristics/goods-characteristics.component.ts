@@ -337,6 +337,24 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     });
   }
 
+  updateQuantity(event: any) {
+    if (event === null) {
+      return;
+    }
+    this.resetValidatorsQuantity();
+    if (event.medUnitsEntity && event.medUnitsEntity[0]) {
+      if (event.medUnitsEntity[0].decimals === 'S') {
+        this.goodQuantity.addValidators(
+          Validators.pattern(DOUBLE_POSITIVE_PATTERN)
+        );
+      } else {
+        this.goodQuantity.addValidators(
+          Validators.pattern(POSITVE_NUMBERS_PATTERN)
+        );
+      }
+    }
+  }
+
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
     const selectedBadString = localStorage.getItem('selectedBad');
@@ -485,7 +503,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (!tableValid) {
       return;
     }
-    this.good.description;
+
+    const preUpdateValid = await this.preUpdate();
+    if (!preUpdateValid) {
+      return;
+    }
+    // this.good.description;
     body['description'] = this.descripcion.value;
     body['unit'] = this.goodUnit.value;
     body['delegationNumber'] = this.delegacion;
@@ -493,9 +516,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     body['quantity'] = this.goodQuantity.value;
     body['referenceValue'] = this.goodReference.value;
     body['appraisedValue'] = this.goodAppraisal.value;
-    body['appraisalVigDate'] = firstFormatDateToSecondFormatDate(
-      this.goodDateVigency.value
-    );
+    console.log(this.goodDateVigency.value);
+
+    body['appraisalVigDate'] =
+      this.goodDateVigency.value instanceof Date
+        ? secondFormatDate(this.goodDateVigency.value)
+        : firstFormatDateToSecondFormatDate(this.goodDateVigency.value);
     body['cveCurrencyAppraisal'] = this.good.cveCurrencyAppraisal;
     body['observationss'] = this.goodObservations.value;
     if (this.goodAppraisal2.value) {
@@ -506,10 +532,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         body.val14 = 'S';
       }
     }
-    const preUpdateValid = await this.preUpdate();
-    if (!preUpdateValid) {
-      return;
-    }
+    // return;
     if (this.selectedBad && this.selectedBad.motive) {
       if (
         this.selectedBad.motive.includes('SIN FOTOS') &&
@@ -552,6 +575,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.numberClassification.value &&
       clasificators.includes(this.numberClassification.value + '')
     ) {
+      this.di_numerario_conciliado = 'No Conciliado';
       const filterParams = new FilterParams();
       filterParams.addFilter('numberGood', this.good.goodid);
       const accounts = await firstValueFrom(
@@ -563,6 +587,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         this.di_numerario_conciliado = 'Conciliado';
       }
       this.showConciliado = true;
+    } else {
+      this.di_numerario_conciliado = null;
     }
   }
 
@@ -653,8 +679,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     // debugger;
     this.errorMessage = null;
     await this.postRecord(true);
-    this.loading = false;
-    this.loader.load = false;
+    // this.loading = false;
+
     setTimeout(() => {
       this.goodChange++;
     }, 100);
@@ -679,6 +705,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
     await this.fillConciliate();
     await this.checkPartialize();
+    this.loader.load = false;
+    this.loading = false;
   }
 
   private getNewApraisedValueForVnValores(vnPunto: number, val: string) {
@@ -718,16 +746,18 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     lbln_encontro = false;
     lbln_conciliado = 'N';
     lbln_conciliado = await firstValueFrom(
-      this.comerDetailService.faCoinciliationGood({
-        goodNumber: this.numberGood.value,
-        expedientNumber: this.good.fileNumber,
-        coinKey: this.nval(1),
-        bankKey: this.nval(4),
-        accountKey: this.nval(6),
-        deposit: vn_impor,
-        vf_fecha,
-        update: 'S',
-      })
+      this.comerDetailService
+        .faCoinciliationGood({
+          goodNumber: this.numberGood.value,
+          expedientNumber: this.good.fileNumber,
+          coinKey: this.nval(1),
+          bankKey: this.nval(4),
+          accountKey: this.nval(6),
+          deposit: vn_impor,
+          vf_fecha,
+          update: 'S',
+        })
+        .pipe(catchError(x => of(null)))
     );
     if (lbln_conciliado === 'S') {
       this.di_numerario_conciliado = 'Conciliado';
@@ -735,17 +765,23 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Conciliación',
-        'No se encontró un movimiento relacionado'
+        'No se encontró un movimiento relacionado para conciliar'
       );
     }
     return true;
   }
 
   private fillValInNumerario(column: number = 2, type: number = 0) {
+    // debugger;
     let index = this.data.findIndex(row => row.column === 'val' + column);
     if (index > -1) {
+      this.data;
       this.data[index].value =
-        this.pufQuitaCero((this.data[index] + '').replace(',', '.')) + '';
+        this.pufQuitaCero(
+          (this.data[index].value + '').includes(',')
+            ? (this.data[index].value + '').replace(',', '.')
+            : this.data[index].value + ''
+        ) + '';
       let vnPunto = (this.data[index] + '').indexOf('.');
       if (vnPunto != 0) {
         try {
@@ -785,6 +821,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return true;
   }
   private async excepNumerario() {
+    // debugger;
     const filterParams = new FilterParams();
     // filterParams.limit = 1000;
     filterParams.addFilter(
@@ -820,6 +857,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.numberClassification.value &&
       clasificators.includes(this.numberClassification.value + '')
     ) {
+      this.numberClassification.value;
+      this.di_numerario_conciliado;
       if (
         '62,1424,1426,1590'.includes(this.numberClassification.value + '') &&
         this.di_numerario_conciliado === 'No Conciliado'
@@ -862,6 +901,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     );
   }
   async preUpdate() {
+    // debugger;
     if (this.descripcion && this.descripcion.value) {
       const tamanio = this.descripcion.value.length;
       if (tamanio <= 1) {
@@ -902,10 +942,13 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   private fillParams(byPage = false) {
+    // debugger;
+    // this.bodyGoodCharacteristics = {};
     if (byPage) {
       this.filterParams.page = this.params.getValue().page;
       return true;
     }
+    let flag = false;
     this.filterParams = new FilterParams();
     this.filterParams.limit = 1;
     this.filterParams.page = this.params.getValue().page;
@@ -917,18 +960,22 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (this.type && this.type.value) {
       // this.filterParams.addFilter('goodTypeId', this.type.value);
       this.bodyGoodCharacteristics.noType = this.type.value;
+      flag = true;
     }
     if (this.subtype && this.subtype.value) {
       // this.filterParams.addFilter('subTypeId', this.subtype.value);
       this.bodyGoodCharacteristics.noSubType = this.subtype.value;
+      flag = true;
     }
     if (this.ssubtype && this.ssubtype.value) {
       // this.filterParams.addFilter('ssubTypeId', this.ssubtype.value);
       this.bodyGoodCharacteristics.noSsubType = this.ssubtype.value;
+      flag = true;
     }
     if (this.sssubtype && this.sssubtype.value) {
       // this.filterParams.addFilter('sssubTypeId', this.sssubtype.value);
       this.bodyGoodCharacteristics.noSssubType = this.sssubtype.value;
+      flag = true;
     }
     if (this.numberClassification && this.numberClassification.value) {
       this.filterParams.addFilter(
@@ -942,13 +989,14 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.filterParams.addFilter('status', this.status.value);
       // this.bodyGoodCharacteristics.status = this.status.value;
     }
-    if (this.filterParams.getFilterParams()) {
+    if (this.filterParams.getFilterParams() || flag) {
       return true;
     }
     return false;
   }
 
   private pufQuitaCero(pcValor: string) {
+    // debugger;
     let vcVal = pcValor;
     let vnPunto = pcValor.indexOf('.');
     let vnIni, vnFin;
@@ -971,26 +1019,30 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     );
   }
 
+  private resetValidatorsQuantity() {
+    if (
+      this.goodQuantity.hasValidator(
+        Validators.pattern(DOUBLE_POSITIVE_PATTERN)
+      )
+    ) {
+      this.goodQuantity.removeValidators(
+        Validators.pattern(DOUBLE_POSITIVE_PATTERN)
+      );
+    }
+    if (
+      this.goodQuantity.hasValidator(
+        Validators.pattern(POSITVE_NUMBERS_PATTERN)
+      )
+    ) {
+      this.goodQuantity.removeValidators(
+        Validators.pattern(POSITVE_NUMBERS_PATTERN)
+      );
+    }
+  }
+
   private setQuantity(item: any) {
     // debugger;
-    if (
-      this.goodQuantity.hasValidator(
-        Validators.pattern(DOUBLE_POSITIVE_PATTERN)
-      )
-    ) {
-      this.goodQuantity.removeValidators(
-        Validators.pattern(DOUBLE_POSITIVE_PATTERN)
-      );
-    }
-    if (
-      this.goodQuantity.hasValidator(
-        Validators.pattern(POSITVE_NUMBERS_PATTERN)
-      )
-    ) {
-      this.goodQuantity.removeValidators(
-        Validators.pattern(POSITVE_NUMBERS_PATTERN)
-      );
-    }
+    this.resetValidatorsQuantity();
 
     this.medFilters =
       item.unit && this.meds
@@ -1038,9 +1090,14 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   getMax() {
-    return this.medFilters
-      ? this.medFilters.length > 0
-        ? this.medFilters[0].tpUnitGreater === 'N'
+    let results = this.medFilters
+      ? [...this.medFilters].filter(
+          x => x.idUnitDestine === this.goodUnit.value
+        )
+      : null;
+    return results
+      ? results.length > 0
+        ? results[0].tpUnitGreater === 'N'
           ? this.good
             ? this.good.quantity
             : 9999999
@@ -1101,12 +1158,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   async searchGood(byPage = false) {
     // debugger;
     // this.reloadSubdelegation = false;
-    if (byPage) {
-      this.loader.load = true;
-    }
+    // if (byPage) {
+    //   this.loader.load = true;
+    // }
     this.di_numerario_conciliado = null;
+    this.loader.load = true;
     this.loading = true;
-
     if (this.fillParams(byPage)) {
       const response = await firstValueFrom(this.distincTypes());
       if (response && response.data && response.data.length > 0) {
@@ -1120,29 +1177,27 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           await this.postQuery();
         } else {
           this.loading = false;
-          if (byPage) {
-            this.loader.load = false;
-          }
+          this.loader.load = false;
           this.goodChange++;
-          this.alert('error', 'Error', 'No existe biene');
+          this.alert('error', 'Error', 'Bienes no encontrados');
           // this.service.goodChange.next(false);
         }
       } else {
         this.totalItems = 0;
         this.loading = false;
-        if (byPage) {
-          this.loader.load = false;
-        }
+        this.loader.load = false;
         this.goodChange++;
         this.alert('error', 'Error', 'No existen bienes');
         // this.service.goodChange.next(false);
         // this.onLoadToast('error', 'ERROR', 'No existen bienes');
       }
     } else {
+      // this.loading = false;
+      // if (byPage) {
+      //   this.loader.load = false;
+      // }
+      this.loader.load = false;
       this.loading = false;
-      if (byPage) {
-        this.loader.load = false;
-      }
       this.totalItems = 0;
       this.goodChange++;
       // this.service.goodChange.next(false);

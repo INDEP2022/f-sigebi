@@ -12,6 +12,10 @@ import {
   IFilterDonation,
   IGoodDonation,
 } from '../../models/ms-donation/donation.model';
+import {
+  IDeleteGoodDon,
+  IInventaryRequest,
+} from '../../models/sirsae-model/proposel-model/proposel-model';
 
 const api: string = DonationEndPoint.donation;
 const donationEvent = DonationEndPoint.eventComDonation;
@@ -136,13 +140,22 @@ export class DonationService
   getGoodsDonation(params: ListParams) {
     return this.get(DonationEndPoint.GoodsForDonation, params);
   }
-  getGoodRequest(requestId: number, parmas: ListParams) {
-    return this.get(
-      `donac-request-good?filter.requestId.id=$eq:${requestId}`,
-      parmas
-    );
+  getGoodRequest(params: ListParams) {
+    return this.get(DonationEndPoint.RequestGoodDon, params);
   }
   createDetail(body: IDetailDonation) {
     return this.post(DonationEndPoint.DetailEventComDon, body);
+  }
+  deleteGoodDon(body: IDeleteGoodDon) {
+    return this.delete(DonationEndPoint.DeleteGoodDon, body);
+  }
+  getInventaryGood(body: IInventaryRequest) {
+    return this.post(DonationEndPoint.Inventary, body);
+  }
+  createInventary(body: IInventaryRequest) {
+    return this.post(DonationEndPoint.CreateInventary, body);
+  }
+  deleteGoodReq(body: IInventaryRequest) {
+    return this.delete(DonationEndPoint.CreateInventary, body);
   }
 }
