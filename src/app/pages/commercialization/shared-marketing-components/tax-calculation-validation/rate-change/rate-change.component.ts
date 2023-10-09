@@ -370,12 +370,12 @@ export class RateChangeComponent extends BasePage implements OnInit {
         console.log('Resp updateDetailEval-> ', resp);
         this.alert(
           'success',
-          '',
-          'El Registro ha sido actualizado correctamente!'
+          'El registro ha sido actualizado correctamente',
+          ''
         );
       },
       error: err => {
-        this.alert('error', '', 'El Registro no ha sido actualizado!');
+        this.alert('error', 'El registro no ha sido actualizado', '');
       },
     });
   }

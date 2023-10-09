@@ -2,8 +2,11 @@ import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { showToast } from 'src/app/common/helpers/helpers';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISpentConcept } from 'src/app/core/models/ms-spent/spent.model';
+import { GoodSpentService } from 'src/app/core/services/ms-spent/good-spent.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 interface IExpense {
   id: string;
@@ -27,15 +30,19 @@ interface IExpense {
 })
 export class TableExpensesComponent extends ClassWidthAlert {
   @ViewChild('dialogExpense') dialogExpenseTemplateRef: TemplateRef<any>;
-  constructor(private dialogService: BsModalService) {
+  constructor(
+    private dialogService: BsModalService,
+    private goodSpentService: GoodSpentService
+  ) {
     super();
+    this.getExpenseConcept(new ListParams());
   }
 
   dialogExpenseRef: BsModalRef;
 
   expenses: IExpense[] = [];
   idExpense: string | null = null;
-
+  expenseData = new DefaultSelect<any>();
   form = new FormGroup({
     id: new FormControl('', [Validators.required]),
     description: new FormControl(null, [Validators.required]),
@@ -142,7 +149,27 @@ export class TableExpensesComponent extends ClassWidthAlert {
     }
     return true;
   }
-
+  getExpenseConcept(params: ListParams) {
+    delete params['search'];
+    if (!isNaN(parseFloat(params.text)) && isFinite(+params.text)) {
+      if (params.text != undefined && params.text != '') {
+        params['filter.id'] = `$eq:${params.text}`;
+      }
+    } else {
+      if (params.text != undefined && params.text != '') {
+        params['filter.description'] = `$ilike:${params.text}`;
+      }
+    }
+    this.goodSpentService.getExpenseConceptGetAll(params).subscribe({
+      next: (response: any) => {
+        console.log(response.data);
+        this.expenseData = new DefaultSelect(response.data, response.count);
+      },
+      error: (error: any) => {
+        this.expenseData = new DefaultSelect([], 0, true);
+      },
+    });
+  }
   isEdit(): boolean {
     return Boolean(this.idExpense);
   }
