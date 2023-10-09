@@ -591,7 +591,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         'Información',
-        'El Bien Consultado También Puede ser Convertido a Numerario por Valores y Divisas. \n Verifique su Tipo de Conversión antes de Continuar con el Proceso'
+        'El Bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
       );
     }
     if (!validateNumerary && !availableGood) {
