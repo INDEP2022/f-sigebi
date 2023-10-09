@@ -242,9 +242,8 @@
     <!-- Fin -->
 
     <!-- Detalle de bienes en caso de que este en clasificaciond de bienes -->
-    <div
-      class="row pt-4"
-      *ngIf="typeDoc == 'classify-assets' && typeTransfer == 'MANUAL'">
+    <!-- && typeTransfer == 'MANUAL' -->
+    <div class="row pt-4" *ngIf="typeDoc == 'classify-assets'">
       <hr style="color: black" />
       <app-detail-assets-tab-component
         *ngIf="classiGoodsForm.controls['id'].value != null"
