@@ -172,6 +172,7 @@ export class ModalRequestComponent extends BasePage implements OnInit {
               res => {
                 this.alert('success', 'Se agregó la Solicitud al Proceso', '');
                 this.modalRef.content.callback(this.process);
+                clearGoodCheck()
                 this.modalRef.hide();
                 console.log('SE CREO EL PROCESO');
               },
@@ -224,6 +225,7 @@ export class ModalRequestComponent extends BasePage implements OnInit {
           res => {
             this.alert('success', 'Se agregó la Solicitud al Proceso', '');
             this.modalRef.content.callback(this.process);
+            clearGoodCheck()
             this.modalRef.hide();
             console.log('SE ACTUALIZO EL PROCESO');
           },
