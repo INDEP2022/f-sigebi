@@ -13,6 +13,7 @@ import { BaseSalesPreInvoicingComponent } from './base-sales-pre-invoicing/base-
 import { ErrorsNullDataComponent } from './errors-null-data/errors-null-data.component';
 import { MassBillBaseSalesRoutingModule } from './mass-bill-base-sales-routing.module';
 import { SatCatalogsComponent } from './sat-catalogs/sat-catalogs.component';
+import { UseModalComponent } from './sat-catalogs/use-comp/use-modal.component';
 import { SeparateFoliosModalComponent } from './separate-folios-modal/separate-folios-modal.component';
 
 @NgModule({
@@ -21,6 +22,7 @@ import { SeparateFoliosModalComponent } from './separate-folios-modal/separate-f
     SatCatalogsComponent,
     ErrorsNullDataComponent,
     SeparateFoliosModalComponent,
+    UseModalComponent,
   ],
   imports: [
     CommonModule,
@@ -36,6 +38,7 @@ import { SeparateFoliosModalComponent } from './separate-folios-modal/separate-f
     BaseSalesPreInvoicingComponent,
     SatCatalogsComponent,
     ErrorsNullDataComponent,
+    UseModalComponent,
   ],
 })
 export class MassBillBaseSalesModule {}
