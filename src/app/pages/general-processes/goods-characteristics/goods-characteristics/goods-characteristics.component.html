@@ -111,8 +111,22 @@
                       {{ item.id }} - {{ item.description }}
                     </div>
                   </ng-template> -->
+                  <!-- <app-goods-types-shared-Good
+                    [reloadGood]="good"
+                    [loadOnChangesNoBien]="true"
+                    [goodselect]="good"
+                    [form]="form"
+                    typeField="type"
+                    subtypeField="subtype"
+                    ssubtypeField="ssubtype"
+                    sssubtypeField="sssubtype"
+                    (goodSssubtypeChange)="
+                      getGoods($event)
+                    "></app-goods-types-shared-Good> -->
+
                   <app-goods-types-shared
                     [form]="form"
+                    [initLoad]="true"
                     [(loadTypes)]="loadTypes"
                     typeField="type"
                     subtypeField="subtype"
@@ -277,7 +291,8 @@
                         value="unit"
                         bindLabel="unit"
                         paramSearch="filter.unit"
-                        prefixSearch="$ilike">
+                        prefixSearch="$ilike"
+                        (valueChange)="updateQuantity($event)">
                       </ng-custom-select-loading>
                     </div>
 
@@ -294,7 +309,7 @@
                     </form-field> -->
                     <form-field
                       class="col-md-4"
-                      [control]="form.get('cantidad')"
+                      [control]="goodQuantity"
                       label="Cantidad">
                       <input
                         type="number"

@@ -29,4 +29,6 @@ export class RequestServiceFormComponent implements OnInit {
   close() {
     this.modalRef.hide();
   }
+
+  newDate() {}
 }

@@ -38,9 +38,7 @@
         </div>
         <!--Crimes Component-->
         <div class="col-md-4 col-sm-12 col-xs-12 mb-3">
-          <form-field [control]="form.get('crime')">
-            <app-crimes-shared [form]="form"></app-crimes-shared>
-          </form-field>
+          <app-crimes-shared [form]="form"></app-crimes-shared>
         </div>
         <!--Goods Type Component-->
         <div class="col-md-4 col-sm-12 col-xs-12 mb-3 mt-3">
@@ -62,9 +60,7 @@
         </div>
         <!--Areas Component-->
         <div class="col-md-4 col-sm-12 col-xs-12 mb-3">
-          <form-field [control]="form.get('requestArea')">
-            <app-areas-shared [form]="form"> </app-areas-shared>
-          </form-field>
+          <app-areas-shared [form]="form"> </app-areas-shared>
         </div>
       </div>
     </form>

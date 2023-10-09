@@ -86,7 +86,9 @@ export class AppraisalConsultationFormComponent
     }
     const goodNumbersArrPlain = txt.split(',');
 
-    const goodNumbers = goodNumbersArrPlain.map(goodNum => goodNum.trim());
+    const goodNumbers = goodNumbersArrPlain
+      .map(goodNum => goodNum.trim())
+      .filter(gN => Number(gN) > 0);
     if (!goodNumbers.length) {
       this.alert(
         'error',

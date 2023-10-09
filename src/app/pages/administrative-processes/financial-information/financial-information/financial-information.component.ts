@@ -28,8 +28,8 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
   finantialList: IFinancialInformationT[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
-  settings1;
-  settings2;
+  settings1: any;
+  settings2: any;
   data2: any[] = [];
   datalocal: LocalDataSource = new LocalDataSource();
   ids: string;
@@ -101,6 +101,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
       dictaminatedBy: [null],
       avaluo: [null],
       observations: [null],
+      goodDescription: [null],
     });
   }
   onChangeGood() {
@@ -119,11 +120,12 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
         this.form.controls['dictaminatedBy'].setValue(this.proficientOpinion);
         this.form.controls['avaluo'].setValue(this.valuerOpinion);
         this.form.controls['observations'].setValue(this.observations);
+        this.form.controls['goodDescription'].setValue(this.description);
         this.goodList.push(this.good);
         this.goodList.map(function (data) {
           return { value: data, title: data };
         });
-        console.log(this.goodList);
+        console.log('data-> ', this.goodList);
       },
       error: err => {
         this.onLoadToast('error', 'ERROR', 'Bien no existe');
@@ -132,17 +134,37 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
       },
     });
   }
+
   loadFinancial(idGood: number | string) {
     this.finantialInformationService.findGood(idGood).subscribe({
       next: response => {
+        console.log('loadFinancialTbl1-> ', response);
         this.finantialList = response.data;
-        // console.log(this.finantialList);
         this.finantialList.forEach(date => {
           this.date = this.datePipe.transform(date.idInfoDate, 'dd/MM/yyyy');
         });
         this.searchGoods(idGood);
         this.form.controls['date'].setValue(this.date);
-        this.totalItems2 = response.count;
+        //console.log('send 1 -> ', response.data[0].idAttributeNumber);
+
+        for (let i = 0; i < response.data.length; i++) {
+          if (response.data[i].idAttributeNumber != null) {
+            this.finantialInformationService
+              .getAttributesInfoFinancial(response.data[i].idAttributeNumber)
+              .subscribe(resp => {
+                console.log('getAttributesInfoFinancial resp ', resp);
+              });
+          }
+        }
+
+        // this.finantialList = response.data;
+        // // console.log(this.finantialList);
+        // this.finantialList.forEach(date => {
+        //   this.date = this.datePipe.transform(date.idInfoDate, 'dd/MM/yyyy');
+        // });
+        // this.searchGoods(idGood);
+        // this.form.controls['date'].setValue(this.date);
+        // this.totalItems2 = response.count;
       },
       error: err => {
         this.onLoadToast(
@@ -154,6 +176,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
       },
     });
   }
+
   onUserRowSelect(event: any) {
     this.selectedRows = event.selected;
   }

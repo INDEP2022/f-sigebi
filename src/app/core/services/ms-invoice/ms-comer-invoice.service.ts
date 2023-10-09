@@ -283,4 +283,34 @@ export class ComerInvoiceService extends HttpService {
       `${ENDPOINT_INVOICE.MaxPayment}?eventId=${event}&publicLot=${batchId}`
     );
   }
+
+  generatePreInvoice(data: {
+    eventId: string;
+    option: string;
+    publicLot: number;
+    cveDisplay: string;
+    invoiceId: string;
+    paymentId: string;
+    document: string;
+    secdoc: string;
+    indGendet: string;
+    delegationNumber: string;
+    command: string;
+    partiality: string;
+    type: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.ComerPaAdj, data);
+  }
+
+  getCountInvoice(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ComerCountInvoice}?eventId=${event}&batchId=${batchId}`
+    );
+  }
+
+  getVeatInvoice(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ComerVeatInovice}?eventId=${event}&invoiceId=${batchId}`
+    );
+  }
 }

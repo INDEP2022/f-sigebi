@@ -605,6 +605,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   getFile(event: Event) {
     const files = (event.target as HTMLInputElement).files;
+    console.log(files);
     if (files.length != 1)
       throw 'No seleccionó ningún archivo o seleccionó más de la cantidad permitida (1)';
 
@@ -687,20 +688,20 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   }
 
   async pupValidNumerary() {
-    const body = {
-      whereIn: true,
-      good: this.formGood.value.id,
-      count: false,
-      screen: this.NAME_CURRENT_FORM,
-    };
+    // const body = {
+    //   whereIn: true,
+    //   good: ,
+    //   count: false,
+    //   screen: ,
+    // };
     //goodprocess/application/getExistsGoodxStatusXtypeNumber
-    // {
-    // "pVcScreem": "VTAINMUTOT",
-    // "goodNumber": 12215
-    // }
+    const body = {
+      pVcScreem: this.NAME_CURRENT_FORM,
+      goodNumber: this.formGood.value.id,
+    };
     //arreglo
     const numeraryAvailable = await firstValueFrom(
-      this.statusScreenService.getStatus(body).pipe(
+      this.goodProcessService.getStatusNew(body).pipe(
         map(res => (res.data.length > 0 ? true : false)),
         catchError(() => of(false))
       )
@@ -1115,12 +1116,22 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             this.loader.load = false;
           }),
           catchError(err => {
-            if (err.error.message.include('insertar')) {
+            if (
+              err.error.message ==
+                'Se requiere delegationNumber en el objeto 0' ||
+              err.error.message ==
+                'Se requiere subDelegationNumber en el objeto 0'
+            ) {
+              this.alert('warning', 'Bienes no validos', '');
+              this.clear();
+            } else {
               this.alert(
                 'error',
                 'Error',
                 'Ocurrió un error Insertar los Datos Asegúrese de que los Datos sean Correctos y no estén Duplicados'
               );
+            }
+            if (err.error.message.include('insertar')) {
               this.loader.load = false;
             }
             console.log('err', err);
@@ -1128,10 +1139,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           })
         )
       );
-    } catch (error) {
+    } catch (error: any) {
       this.loader.load = false;
       console.log('error', error);
-      this.alert('error', 'Error', 'Ocurrió un Error al Validar el Masivo');
+      // this.alert('error', 'Error', 'Ocurrió un Error al Validar el Masivo');
     }
   }
 
