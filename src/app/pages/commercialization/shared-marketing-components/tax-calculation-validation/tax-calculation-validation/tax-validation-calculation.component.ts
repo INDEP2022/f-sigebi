@@ -181,8 +181,8 @@ export class TaxValidationCalculationComponent
       if (data.row.validIVA == 'N') {
         this.alert(
           'warning',
-          '',
-          'Debe estar marcado la Validación IVA  para poder confirmar el registro.'
+          'Debe estar marcado la validación IVA  para poder confirmar el registro.',
+          ''
         );
         data.toggle = false;
       }
@@ -233,16 +233,16 @@ export class TaxValidationCalculationComponent
     if (dataIva.row.check == 'S') {
       this.alert(
         'error',
-        '',
-        'El registro ya está confirmado, sólo el administrador puede liberarlo'
+        'El registro ya está confirmado, sólo el administrador puede liberarlo',
+        ''
       );
       this.getComerDetAvaluo(this.appraisal);
       return;
     } else if (dataIva.row.validIVA == 'N' && dataIva.row.observation != null) {
       this.alert(
         'error',
-        '',
-        'El registro ya tiene inconsistencias no puede desmarcar hasta no quitar las inconsistencias.'
+        'El registro ya tiene inconsistencias no puede desmarcar hasta no quitar las inconsistencias.',
+        ''
       );
       this.getComerDetAvaluo(this.appraisal);
       return;
@@ -305,13 +305,13 @@ export class TaxValidationCalculationComponent
           console.log('Resp postParametersMod-> ', resp);
           this.alert(
             'success',
-            '',
-            'El Registro ha sido Insertado Correctamente'
+            'El registro ha sido Insertado Correctamente',
+            ''
           );
         }
       },
       error => {
-        this.alert('error', '', 'El Registro no ha sido insertado');
+        this.alert('error', 'El registro no ha sido insertado', '');
       }
     );
   }
@@ -324,12 +324,12 @@ export class TaxValidationCalculationComponent
         this.getComerDetAvaluo(this.appraisal);
         this.alert(
           'success',
-          '',
-          'El Registro ha sido actualizado correctamente!'
+          'El registro ha sido actualizado correctamente',
+          ''
         );
       },
       error: err => {
-        this.alert('error', '', 'El Registro no ha sido actualizado!');
+        this.alert('error', 'El registro no ha sido actualizado', '');
       },
     });
   }
