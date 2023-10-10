@@ -402,7 +402,7 @@ export class NumeraryMassiveConciliationComponent
     event
       ? paramsF.addFilter('cveAccount', event.text, SearchFilter.ILIKE)
       : '';
-      console.log(paramsF.getParams())
+    console.log(paramsF.getParams());
     this.accountBankService.getCveBankFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);

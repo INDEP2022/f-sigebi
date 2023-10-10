@@ -120,7 +120,21 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   save() {
     if (this.expenseNumber.value === null) {
       this.spentService2
-        .save(this.form.value)
+        .save({
+          ...this.form.value,
+          monthExpense: this.form.value.monthExpense ? '1' : null,
+          monthExpense2: this.form.value.monthExpense2 ? '2' : null,
+          monthExpense3: this.form.value.monthExpense3 ? '3' : null,
+          monthExpense4: this.form.value.monthExpense4 ? '4' : null,
+          monthExpense5: this.form.value.monthExpense5 ? '5' : null,
+          monthExpense6: this.form.value.monthExpense6 ? '6' : null,
+          monthExpense7: this.form.value.monthExpense7 ? '7' : null,
+          monthExpense8: this.form.value.monthExpense8 ? '8' : null,
+          monthExpense9: this.form.value.monthExpense9 ? '9' : null,
+          monthExpense10: this.form.value.monthExpense10 ? '10' : null,
+          monthExpense11: this.form.value.monthExpense11 ? '11' : null,
+          monthExpense12: this.form.value.monthExpense12 ? '12' : null,
+        })
         .pipe(take(1))
         .subscribe({
           next: response => {

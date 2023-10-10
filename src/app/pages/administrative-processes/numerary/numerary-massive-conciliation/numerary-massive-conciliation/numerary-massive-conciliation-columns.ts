@@ -112,7 +112,6 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.RSPTAQUERY && row.RSPTAQUERY.val2) {
-        
         const numericAmount = parseFloat(row.RSPTAQUERY.val2);
 
         if (!isNaN(numericAmount)) {
