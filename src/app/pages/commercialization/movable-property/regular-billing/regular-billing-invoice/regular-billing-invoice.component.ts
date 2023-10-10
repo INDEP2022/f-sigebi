@@ -293,6 +293,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.paramsList.getValue().limit = 500;
     this.paramsList2.getValue().limit = 500;
+    this.paramsList.getValue()['direction'] = `${SearchFilter.EQ}:M`;
+    this.paramsList.getValue()['sortBy'] = 'batchId,Invoice,customer:DESC';
     this.prepareForm();
 
     this.dataFilter
@@ -1107,7 +1109,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Atención',
-        'Esta Bien ya se encuentra como tractocamión sin placas federales'
+        'El Bien ya se encuentra como tractocamión sin placas federales'
       );
       this.removeSelect();
     } else if (this.selectInovice() == 1 && !desc) {
@@ -1120,15 +1122,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       delete invoice.prod;
       delete invoice.payment;
       delete invoice.relation;
-      delete invoice.totaleg;
-      delete invoice.totaling;
-      delete invoice.ivaeg;
-      delete invoice.ivaing;
-      delete invoice.precioing;
-      delete invoice.precioeg;
-      delete invoice.regional;
 
-      this.comerInvoice.update(this.isSelect[0]).subscribe({
+      this.comerInvoice.update(invoice).subscribe({
         next: () => {
           this.getAllComer();
         },
