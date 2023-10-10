@@ -265,6 +265,10 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       }
       this.edit = true;
       this.getTipeSiniester(new ListParams(), this.siniester.tiposiniestroid);
+      this.getObtnObtenUnidadesRespEdit(
+        new ListParams(),
+        this.siniester.delegationnumber
+      );
     } else if (this.good) {
       this.claimsFollowUpDetailForm.controls['numberInGood'].setValue(
         this.good.numberInGood
@@ -281,8 +285,9 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     }
     setTimeout(() => {
       this.getTipeSiniester(new ListParams());
+      this.getObtnObtenUnidadesResp(new ListParams());
     }, 1000);
-    this.getObtnObtenUnidadesResp(new ListParams());
+
     this.getshapeConclusion(new ListParams());
     this.getStatusSinister(new ListParams());
   }
@@ -321,6 +326,17 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     }
     params['sortBy'] = 'descripcion:ASC';
     // params['filter.no_delegacion'] = `$eq:${this.authService.decodeToken().department}`;
+    this.seraLogService.getObtnObtenUnidadesResp(params).subscribe({
+      next: response => {
+        this.unitAdminUser = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {
+        this.unitAdminUser = new DefaultSelect([], 0, true);
+      },
+    });
+  }
+  getObtnObtenUnidadesRespEdit(params: ListParams, delegationnumber: string) {
+    params['filter.no_delegacion'] = `$eq:${delegationnumber}`;
     this.seraLogService.getObtnObtenUnidadesResp(params).subscribe({
       next: response => {
         this.unitAdminUser = new DefaultSelect(response.data, response.count);
