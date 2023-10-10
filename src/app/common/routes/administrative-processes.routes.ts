@@ -268,6 +268,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Recepción de documentos en el archivo',
         link: '/pages/administrative-processes/receipt-documents-archive',
       },
+      {
+        label: 'Reporte de tipo de almacenes',
+        link: '/pages/administrative-processes/warehouse-type-report',
+      },
       /**
        * END ALEXANDER
        **/
