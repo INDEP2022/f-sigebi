@@ -1003,10 +1003,12 @@ export class DepositTokensComponent
     }
   }
   valTextError(str: string) {
-    if (str.includes('FECHA_DEPOSITO')) {
+    if (str.includes('FECHA_DEPOSITO') && str.includes('FECHA_TESOFE')) {
       return 1;
     } else if (str.includes('FECHA_DEPOSITO')) {
       return 2;
+    } else if (str.includes('FECHA_TESOFE')) {
+      return 3;
     } else {
       return 0;
     }
@@ -1021,13 +1023,18 @@ export class DepositTokensComponent
 
     // Reemplazar el número de fila en el string original
     const nuevoString = string_.replace(fila, filaRestada);
+    // console.log("🚀 ~ file: deposit-tokens.component.ts:1014 ~ transformarString ~ nuevoString:", nuevoString)
     // Reemplazar "FECHA_DEPOSITO" por "'Fecha Depósito'"
     let resultado = '';
 
     if (opt == 1) {
-      resultado = nuevoString.replace('FECHA_DEPOSITO', 'Fecha Depósito');
-    } else {
-      resultado = nuevoString.replace('FECHA_TESOFE', 'Fecha TESOFE');
+      resultado = `La Fecha TESOFE no puede ser menor a la Fecha Depósito (Fila ${filaRestada})`;
+    } else if (opt == 2) {
+      resultado = `La Fecha Depósito no puede ser mayor a la fecha actual (Fila ${filaRestada})`;
+      // resultado = nuevoString.replace('FECHA_DEPOSITO', 'Fecha Depósito');
+      // resultado = nuevoString.replace('FECHA_TESOFE', 'Fecha TESOFE');
+    } else if (opt == 3) {
+      resultado = `La Fecha TESOFE no puede ser mayor a la fecha actual (Fila ${filaRestada})`;
     }
 
     return resultado;
