@@ -277,6 +277,7 @@ export class RecordAccountStatementsComponent
       lparams?.text?.length > 0
         ? `?filter.accountNumber.cveAccount=${lparams.text}`
         : ``;
+    lparams['sortBy'] = 'cveBank: DESC';
     console.log(params__);
     return new Promise((resolve, reject) => {
       this.recordAccountStatementsAccountsService
