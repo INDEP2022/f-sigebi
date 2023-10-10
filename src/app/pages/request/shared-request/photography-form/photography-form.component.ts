@@ -8,6 +8,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPhotos } from 'src/app/core/models/catalogs/photograph-media.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -26,9 +27,11 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
   loadingTable: boolean = false;
   photographyForm: FormGroup = new FormGroup({});
   totalItems: number = 0;
-  good: number;
+  good: string = '';
+  process: string = '';
   formLoading: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  sampleGood: ISampleGood[] = [];
   private data: any[][] = [];
   constructor(
     private modalRef: BsModalRef,
@@ -48,10 +51,25 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getImageGood());
+    if (this.good) {
+      this.prepareForm();
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getImageGood());
+    } else if (this.process == 'sampling-assets') {
+      this.prepareForm();
+      this.showSampleGoodId();
+    }
+  }
+
+  showSampleGoodId() {
+    let goodId: string = '';
+    this.sampleGood.map(item => {
+      goodId += `${item.goodId}, `;
+    });
+    this.photographyForm.get('managementNumber').setValue(goodId);
+    this.good = goodId;
+    this.getImageGood();
   }
 
   prepareForm() {
@@ -118,32 +136,58 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
   }
 
   loadImages() {
-    console.log('loadImages photography');
-    let loadingPhotos = 0;
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      goodProg: this.good,
-      programming: this.programming,
-      process: 'programming',
-      callback: (next?: boolean) => {
-        if (next) {
-          this.formLoading = true;
-          loadingPhotos = loadingPhotos + 1;
-          setTimeout(() => {
-            this.getImageGood();
-            this.formLoading = false;
-          }, 8000);
-          if (loadingPhotos == 1) {
-            this.alertInfo(
-              'success',
-              'Acción correcta',
-              'Imagen agregada correctamente'
-            ).then();
+    if (this.process != 'sampling-assets') {
+      let loadingPhotos = 0;
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        goodProg: this.good,
+        programming: this.programming,
+        process: 'programming',
+        callback: (next?: boolean) => {
+          if (next) {
+            this.formLoading = true;
+            loadingPhotos = loadingPhotos + 1;
+            setTimeout(() => {
+              this.getImageGood();
+              this.formLoading = false;
+            }, 8000);
+            if (loadingPhotos == 1) {
+              this.alertInfo(
+                'success',
+                'Acción correcta',
+                'Imagen agregada correctamente'
+              ).then();
+            }
           }
-        }
-      },
-    };
-    this.modalService.show(UploadFileComponent, config);
+        },
+      };
+      this.modalService.show(UploadFileComponent, config);
+    } else {
+      let loadingPhotos = 0;
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        good: this.good,
+        process: 'sampling-assets',
+        callback: (next?: boolean) => {
+          if (next) {
+            this.formLoading = true;
+            loadingPhotos = loadingPhotos + 1;
+            setTimeout(() => {
+              this.getImageGood();
+              this.formLoading = false;
+            }, 8000);
+            if (loadingPhotos == 1) {
+              this.alertInfo(
+                'success',
+                'Acción correcta',
+                'Imagen agregada correctamente'
+              ).then();
+            }
+          }
+        },
+      };
+      this.modalService.show(UploadFileComponent, config);
+    }
   }
 
   viewImage(data: IPhotos) {

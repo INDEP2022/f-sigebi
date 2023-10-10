@@ -40,4 +40,9 @@ export class IndUserService extends HttpService {
     const route = `${UserEndpoints.GetAllSegUser}?filter.user=$eq:${user}`;
     return this.get(route);
   }
+
+  getUserByName(user: any) {
+    const route = `${UserEndpoints.GetAllSegUser}?filter.name=$ilike:${user}`;
+    return this.get(route);
+  }
 }

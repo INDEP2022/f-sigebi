@@ -99,7 +99,8 @@
               [control]="formProcessNum.get('totalInterest')"
               label="Total Interés">
               <input
-                type="number"
+              currencyMask
+                type="text"
                 class="form-control"
                 readOnly
                 formControlName="totalInterest"
@@ -112,7 +113,8 @@
               [control]="formProcessNum.get('totalImport')"
               label="Importe Total">
               <input
-                type="number"
+                currencyMask
+                type="text"
                 class="form-control"
                 readOnly
                 formControlName="totalImport"

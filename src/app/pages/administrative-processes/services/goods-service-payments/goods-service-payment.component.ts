@@ -48,8 +48,8 @@ export class GoodsServicePaymentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('dataModal-> ', this.modData.fechaSol);
-    console.log('FechaSol-> ', this.dateSet(this.modData.fechaSol));
+    console.log('dataModal-> ', this.modData);
+    //console.log('FechaSol-> ', this.dateSet(this.modData.fechaSol));
 
     this.prepareForm();
   }
@@ -110,19 +110,17 @@ export class GoodsServicePaymentComponent extends BasePage implements OnInit {
           const { applicationDate, service } = this.form.value;
           this.countCreate = 0;
           console.log('applicationDate send -> ', applicationDate);
-          console.log(
-            'FechaModal-> ',
-            this.formatDate(new Date(applicationDate))
-          );
+          console.log('FechaModal-> ', this.formatDate(applicationDate));
           for (let i = 0; i < resp.data.length; i++) {
             if (this.modData.goodNumber != null) {
               let create = {
-                applicationDate: this.formatDate(new Date(applicationDate)),
+                applicationDate: this.formatDate(applicationDate),
                 cost: 1,
                 goodNumber: resp.data[i].no_bien,
                 serviceKey: String(service) != null ? String(service) : '1100',
               };
-              //this.postPaymentRegister(create, i, resp.data.length);
+              console.log('BodyCreateServ-> ', create);
+              this.postPaymentRegister(create, i, resp.data.length);
             }
           }
         }
@@ -156,10 +154,18 @@ export class GoodsServicePaymentComponent extends BasePage implements OnInit {
     // this.good = ssssubType.numClasifGoods;
   }
 
-  formatDate(date: Date): string {
-    const day = date.getUTCDate().toString().padStart(2, '0');
-    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-    const year = date.getUTCFullYear().toString();
+  formatDate(applicationDate: string): string {
+    const [dayStr, monthStr, yearStr] = applicationDate.split('/');
+    const applicationDateObject = new Date(
+      parseInt(yearStr, 10),
+      parseInt(monthStr, 10) - 1,
+      parseInt(dayStr, 10)
+    );
+    const day = applicationDateObject.getUTCDate().toString().padStart(2, '0');
+    const month = (applicationDateObject.getUTCMonth() + 1)
+      .toString()
+      .padStart(2, '0');
+    const year = applicationDateObject.getUTCFullYear().toString();
     return `${year}-${month}-${day}`;
   }
 
@@ -190,6 +196,7 @@ export class GoodsServicePaymentComponent extends BasePage implements OnInit {
       console.log('contador i -> ', i);
       console.log('contador len -> ', len - 1);
       this.alert('success', `Se ha insertado ${auxNum} registros`, '');
+      this.modalRef.content.callback(true);
       this.close();
     }
   }

@@ -253,9 +253,15 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         primersegundacapa: {
-          title: 'Primer Segunda Capa',
+          title: '1er Capa/2da Capa',
           type: 'string',
           sort: false,
+          valuePrepareFunction: (value: string) => {
+            if (value == '1') return '1ER CAPA';
+            if (value == '2') return '2DA CAPA';
+            if (value == '3') return '1ER CAPA / 2DA CAPA';
+            return value;
+          },
         },
         estatus: {
           title: 'Estatus',

@@ -1,21 +1,32 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">CONSULTA DE BIENES EN PROCESO COMERCIAL</h5>
+      <h5 class="title">Facturación Masiva Venta de Bases</h5>
     </div>
   </div>
   <div body>
     <div class="md-tabs">
       <tabset>
         <tab heading="Prefacturación de Ventas de Bases" id="tab1">
-          <app-base-sales-pre-invoicing></app-base-sales-pre-invoicing>
+          <app-base-sales-pre-invoicing
+            (comer)="getEvent($event)"></app-base-sales-pre-invoicing>
         </tab>
         <tab heading="Catálogos SAT">
+          <app-sat-catalogs
+            [data]="invoices"
+            [count]="count"
+            [filter]="filter"
+            (countData)="values = $event"></app-sat-catalogs>
+        </tab>
+        <tab heading="Errores y datos nulos">
+          <app-errors-null-data [eventID]="event"></app-errors-null-data>
+        </tab>
+        <!-- <tab heading="Catálogos SAT">
           <app-sat-catalogs></app-sat-catalogs>
         </tab>
         <tab heading="Errores y datos nulos">
           <app-errors-null-data></app-errors-null-data>
-        </tab>
+        </tab> -->
       </tabset>
     </div>
   </div>
