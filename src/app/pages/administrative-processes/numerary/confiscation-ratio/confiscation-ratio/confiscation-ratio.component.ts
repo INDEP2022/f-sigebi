@@ -603,8 +603,10 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
 
   cleanOnly() {
     this.Only.get('radio').setValue(null);
-    this.Only.get('nobien').setValue(null);
+    this.Only.get('nobien').setValue([]);
     this.until = false;
+    this.dataOnly2 = [];
+    this.goodIds = [];
     this.dato.reset();
     this.file.get('recordsProcessed').setValue(null);
     this.file.get('processed').setValue(null);
