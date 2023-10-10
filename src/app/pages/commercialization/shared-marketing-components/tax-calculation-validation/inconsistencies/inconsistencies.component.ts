@@ -350,7 +350,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
         this.deleteParametersGood(body);
       }
     } else {
-      this.alert('error', 'El Registro no ha sido encontrado', '');
+      this.alert('error', 'El registro no ha sido encontrado', '');
     }
   }
 
@@ -359,13 +359,13 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
       next: resp => {
         this.alert(
           'success',
-          'El Registro ha sido Eliminado Correctamente',
+          'El registro ha sido eliminado correctamente',
           ''
         );
         console.log('registro eliminado');
       },
       error: err => {
-        this.alert('error', 'El Registro no ha sido Eliminado', '');
+        this.alert('error', 'El registro no ha sido eliminado', '');
         console.log('registro no eliminado');
       },
     });
@@ -378,12 +378,12 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
         console.log('Resp updateDetailEval-> ', resp);
         this.alert(
           'success',
-          '',
-          'El Registro ha sido actualizado correctamente!'
+          'El registro ha sido actualizado correctamente',
+          ''
         );
       },
       error: err => {
-        this.alert('error', '', 'El Registro no ha sido actualizado!');
+        this.alert('error', 'El registro no ha sido actualizado', '');
       },
     });
   }
@@ -449,10 +449,10 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
     };
     this.expenseParametercomerService.postComerParametersMod(body).subscribe({
       next: resp => {
-        this.alert('success', 'El Registro ha sido guardado correctamente', '');
+        this.alert('success', 'El registro ha sido guardado correctamente', '');
       },
       error: err => {
-        this.alert('error', 'El Registro no ha sido Guardado', '');
+        this.alert('error', 'El registro no ha sido guardado', '');
       },
     });
   }

@@ -116,8 +116,9 @@ export class ScanFilesComponent extends BasePage implements OnInit {
       this.expenseNumber +
       ' CANCELACION DE VENTA POR SOLICITUD DE AUTORIDAD';
     this.dataService.dataCompositionExpenses
-      .filter(row => row.expendientNumber)
+      .filter(row => row.expendientNumber !== null)
       .forEach(async (x, index) => {
+        console.log(x);
         const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${x.expendientNumber}&sortBy=wheelNumber:DESC`;
         const notifications = await firstValueFrom(
           this.serviceNotification
