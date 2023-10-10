@@ -1,0 +1,44 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row pt-3">
+      <form-loader *ngIf="loading"></form-loader>
+      <div>
+        <ng2-smart-table
+          [ngStyle]="{
+            height: loading ? '0px' : totalItems > 10 ? '300px' : 'auto'
+          }"
+          [attr.class]="'table-bordered table-responsive mb-4'"
+          [settings]="settings"
+          [source]="dataFilter"
+          (userRowSelect)="isSelect($event.data)">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="paramsList" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()"
+          [disabled]="!selectedRows">
+          Seleccionar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Regresar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

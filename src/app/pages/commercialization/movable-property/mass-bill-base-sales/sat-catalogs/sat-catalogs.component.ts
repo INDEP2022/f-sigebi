@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { SAT_CATALOGS_COLUMNS } from './sat-catalogs-columns';
+import { UseModalComponent } from './use-comp/use-modal.component';
 
 @Component({
   selector: 'app-sat-catalogs',
@@ -26,6 +28,7 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
   @Input() set filter(val: any) {
     if (val) {
       this.getAllComer(val);
+      this.val = val;
     } else {
       this.totalItems = 0;
       this.dataFilter.load([]);
@@ -37,13 +40,235 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
     return this.val;
   }
 
-  constructor(private comerInvoice: ComerInvoiceService) {
+  constructor(
+    private comerInvoice: ComerInvoiceService,
+    private modalService: BsModalService
+  ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: { ...SAT_CATALOGS_COLUMNS },
+      columns: {
+        batchId: {
+          title: 'Lote',
+          sort: false,
+        },
+        customer: {
+          title: 'Cliente',
+          sort: false,
+        },
+        usoComp: {
+          title: 'Uso Comprobante',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_USO_COM',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {
+                      this.updateCatalog(data, invoice, 1);
+                    },
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+        unite: {
+          title: 'Unidad',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_UNIDMED',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {
+                      this.updateCatalog(data, invoice, 2);
+                    },
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+        prod: {
+          title: 'Producto/Servicio',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_CLVPROSE',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {
+                      this.updateCatalog(data, invoice, 3);
+                    },
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+        payment: {
+          title: 'Método de Pago',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_F_PAGO',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {
+                      this.updateCatalog(data, invoice, 4);
+                    },
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+        relation: {
+          title: 'Tipo de Relación',
+          sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              if (invoice.factstatusId != 'PREF') {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Verifique el estatus de la factura'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    name: 'C_TIPO_REL',
+                    callback: (
+                      ans: boolean,
+                      data: { clave: string; descripcion: string }
+                    ) => {
+                      this.updateCatalog(data, invoice, 5);
+                    },
+                  },
+                  class: 'modal-lg modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(UseModalComponent, config);
+              }
+            });
+          },
+        },
+      },
     };
+  }
+
+  updateCatalog(
+    data: { clave: string; descripcion: string },
+    invoice: any,
+    type: number
+  ) {
+    console.log(data);
+    console.log(invoice);
+    console.log(this.filter);
+
+    switch (type) {
+      case 1:
+        invoice.usecompSat = data.clave;
+        break;
+      case 2:
+        invoice.unitSatKey = data.clave;
+        break;
+      case 3:
+        invoice.prodservSatKey = data.clave;
+        break;
+      case 4:
+        invoice.paymentform = data.clave;
+        break;
+      case 5:
+        invoice.relationshipSatType = data.clave;
+        break;
+      default:
+        break;
+    }
+
+    delete invoice.invoiceStatusId;
+    delete invoice.usoComp;
+    delete invoice.unite;
+    delete invoice.prod;
+    delete invoice.payment;
+    delete invoice.relation;
+
+    this.comerInvoice.update(invoice).subscribe({
+      next: () => {
+        this.getAllComer(this.filter);
+        this.alert('success', 'El Catálogo ha sido actualizado', '');
+      },
+      error: () => {},
+    });
   }
 
   async setData(data: any[], params: any) {

@@ -21,12 +21,14 @@ import {
   takeUntil,
 } from 'rxjs';
 import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { _Params } from 'src/app/common/services/http.service';
 import { InvoiceFolioSeparate } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
@@ -45,6 +47,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
 import { AuthorizationModalComponent } from './authorization-modal/authorization-modal.component';
+import { ReferenceModalComponent } from './reference/reference.component';
 import { REGULAR_GOODS_COLUMN } from './regular-billing-invoice-goods-columns';
 
 @Component({
@@ -167,8 +170,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               clearTimeout(time);
             }, 300);
             instance.toggle.subscribe((data: any) => {
-              console.log(data.toggle);
-
               instance.rowData.select = data.toggle;
               if (data.toggle) {
                 this.isSelectComer(instance.rowData, 'add');
@@ -197,6 +198,33 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         customer: {
           title: 'Cliente',
           sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              const count = await this.getCountReference(
+                invoice.eventId,
+                invoice.batchId
+              );
+              if (count == 0) {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'El Lote aún no está liberado'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    data: invoice,
+                  },
+                  class: 'modal-md modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(ReferenceModalComponent, config);
+              }
+            });
+          },
         },
         delegationNumber: {
           title: 'Regional',
@@ -253,9 +281,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     };
   }
 
+  async getCountReference(event: number, batchId: number) {
+    return firstValueFrom(
+      this.comerInvoice.getCountInvoice(event, batchId).pipe(
+        map(resp => resp.contador),
+        catchError(() => of(0))
+      )
+    );
+  }
+
   ngOnInit(): void {
     this.paramsList.getValue().limit = 500;
     this.paramsList2.getValue().limit = 500;
+    this.paramsList.getValue()['direction'] = `${SearchFilter.EQ}:M`;
+    this.paramsList.getValue()['sortBy'] = 'batchId,Invoice,customer:DESC';
     this.prepareForm();
 
     this.dataFilter
@@ -366,15 +405,26 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.loading2 = true;
     this.comerDetInvoice.getAllCustom(params).subscribe({
       next: async (resp: any) => {
-        this.loading2 = false;
+        const data = await this.postQuery(params);
         this.formDetalle.get('count').patchValue(resp.count);
         this.formDetalle.get('totalI').patchValue(resp.data[0].sum.importe);
         this.formDetalle.get('totalIva').patchValue(resp.data[0].sum.iva);
         this.formDetalle.get('total').patchValue(resp.data[0].sum.total);
         this.formDetalle.get('countTotal').patchValue(resp.data[0].sum.amount);
         this.totalItems2 = resp.count;
-        this.dataFilter2.load(resp.data[0].result);
+
+        const result = resp.data[0].result;
+
+        result.map((value: any, index: number) => {
+          value.desc_producto_det = data[index].desc_producto_det;
+          value.desc_unidad_det = data[index].desc_unidad_det;
+          value.downloadcvman = data[index].mandato;
+          value.modmandato = data[index].matricula;
+        });
+
+        this.dataFilter2.load(result);
         this.dataFilter2.refresh();
+        this.loading2 = false;
       },
       error: () => {
         this.loading2 = false;
@@ -384,6 +434,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.formDetalle.reset();
       },
     });
+  }
+
+  async postQuery(params: _Params) {
+    return firstValueFrom(
+      this.comerDetInvoice.getAllPostQuery(params).pipe(
+        map(resp => resp.data),
+        catchError(() => of([]))
+      )
+    );
   }
 
   getAllComer() {
@@ -989,13 +1048,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     });
   }
 
-  onSubmit() {
-    if (this.form.valid) {
-      this.form.reset();
-    }
-    console.warn('Your order has been submitted');
-  }
-
   disabledButtons() {
     const { check } = this.form.value;
     this.buttons = check;
@@ -1057,7 +1109,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Atención',
-        'Esta Bien ya se encuentra como tractocamión sin placas federales'
+        'El Bien ya se encuentra como tractocamión sin placas federales'
       );
       this.removeSelect();
     } else if (this.selectInovice() == 1 && !desc) {
@@ -1070,15 +1122,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       delete invoice.prod;
       delete invoice.payment;
       delete invoice.relation;
-      delete invoice.totaleg;
-      delete invoice.totaling;
-      delete invoice.ivaeg;
-      delete invoice.ivaing;
-      delete invoice.precioing;
-      delete invoice.precioeg;
-      delete invoice.regional;
 
-      this.comerInvoice.update(this.isSelect[0]).subscribe({
+      this.comerInvoice.update(invoice).subscribe({
         next: () => {
           this.getAllComer();
         },
@@ -1984,7 +2029,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Atención',
-        'No cuenta con los permisos para efectuar esta operación'
+        'No cuenta con los permisos para realizar esta operación'
       );
     } else {
       if (data.length == 0) {
@@ -2014,7 +2059,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               next: () => {
                 this.alert(
                   'success',
-                  'La Fecha de impresión ha sido actualizada',
+                  'La fecha de impresión ha sido actualizada',
                   ''
                 );
               },

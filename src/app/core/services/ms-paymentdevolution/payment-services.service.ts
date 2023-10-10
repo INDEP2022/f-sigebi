@@ -5,6 +5,7 @@ import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.i
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { AuthService } from '../authentication/auth.service';
+import { IApplicationFComerCtldPag3 } from '../ms-payment/payment-service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,5 +38,11 @@ export class PaymentDevolutionService extends HttpService {
   }
   getEatCtlCreate(user: string) {
     return this.get(`${PaymentDevolutionEndPoints.EatCtlCreate}/${user}`);
+  }
+  getFComerCtldPag3(body: IApplicationFComerCtldPag3) {
+    return this.post(
+      `${PaymentDevolutionEndPoints.ApplicationFComerCtldPag3}`,
+      body
+    );
   }
 }

@@ -148,7 +148,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         param.text = this.form.value.noBien;
         this.getGoodsSheard(param, true);
       } else {
-        this.alert('warning', 'No. de bien', ERROR_GOOD_PARAM);
+        this.alert('warning', 'No. Bien', ERROR_GOOD_PARAM);
       }
     }
     // Pagos Bancos
@@ -249,8 +249,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'No. de bien',
-          'Carga la información del bien primero para continuar'
+          'No. Bien',
+          'Carga la información del No. Bien primero para continuar'
         );
         return;
       }
@@ -270,7 +270,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingGoodAccount = false;
             this.alert(
               'warning',
-              'No. de bien',
+              'No. Bien',
               NOT_FOUND_GOOD(
                 err.error.message && err.status != 400
                   ? err.error.message
@@ -280,7 +280,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           },
         });
     } else {
-      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. Bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -331,8 +331,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'No. de bien',
-          'Carga la información del bien primero para continuar'
+          'No. Bien',
+          'Carga la información del No. Bien primero para continuar'
         );
         return;
       }
@@ -354,7 +354,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         }
       );
     } else {
-      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. Bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -416,7 +416,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingAppointment = false;
             this.alert(
               'warning',
-              'No. de bien',
+              'No. Bien',
               NOT_FOUND_GOOD_APPOINTMENT(
                 err.error.message && err.status != 400
                   ? err.error.message
@@ -426,7 +426,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           },
         });
     } else {
-      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. Bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -452,7 +452,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.loadingGood = false;
           this.alert(
             'warning',
-            'No. de bien',
+            'No. Bien',
             NOT_FOUND_GOOD(
               err.error.message && err.status != 400
                 ? err.error.message
@@ -800,7 +800,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'Se mostrará un excel con detalles de los errores por cada registro procesado'
           );
         } else {
-          this.alert('success', 'Proceso terminado ', '');
+          this.alert('success', 'El proceso se ha terminado ', '');
         }
       }
     }

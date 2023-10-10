@@ -350,18 +350,22 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
         this.deleteParametersGood(body);
       }
     } else {
-      this.alert('error', 'Registro no encontrado', '');
+      this.alert('error', 'El registro no ha sido encontrado', '');
     }
   }
 
   deleteParametersGood(body: any) {
     this.expenseParametercomerService.deleteParametersMod(body).subscribe({
       next: resp => {
-        this.alert('success', 'Registro Eliminado', '');
+        this.alert(
+          'success',
+          'El registro ha sido eliminado correctamente',
+          ''
+        );
         console.log('registro eliminado');
       },
       error: err => {
-        this.alert('error', 'Registro No Eliminado', '');
+        this.alert('error', 'El registro no ha sido eliminado', '');
         console.log('registro no eliminado');
       },
     });
@@ -372,10 +376,14 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
     this.appraiseService.updateEatDetAppraisal(valor).subscribe({
       next: resp => {
         console.log('Resp updateDetailEval-> ', resp);
-        this.alert('success', '', 'Registro actualizado correctamente!');
+        this.alert(
+          'success',
+          'El registro ha sido actualizado correctamente',
+          ''
+        );
       },
       error: err => {
-        this.alert('error', '', 'Registro no actualizado!');
+        this.alert('error', 'El registro no ha sido actualizado', '');
       },
     });
   }
@@ -441,10 +449,10 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
     };
     this.expenseParametercomerService.postComerParametersMod(body).subscribe({
       next: resp => {
-        this.alert('success', 'Registro guardado correctamente', '');
+        this.alert('success', 'El registro ha sido guardado correctamente', '');
       },
       error: err => {
-        this.alert('error', 'Error al guardar el registro', '');
+        this.alert('error', 'El registro no ha sido guardado', '');
       },
     });
   }

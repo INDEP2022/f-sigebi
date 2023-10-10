@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DynamicCatalogEndpoint } from 'src/app/common/constants/endpoints/ms-dynamiccatalog-endpoint';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -78,5 +78,12 @@ export class DinamicTablesService
   remove2(id: string | number) {
     const route = `${DynamicCatalogEndpoint.DinamicTables}/${id}`;
     return this.delete(route);
+  }
+
+  getKeyTable(
+    params: _Params,
+    name: string
+  ): Observable<IListResponse<ITables>> {
+    return this.get(`${DynamicCatalogEndpoint.Application}/${name}`, params);
   }
 }

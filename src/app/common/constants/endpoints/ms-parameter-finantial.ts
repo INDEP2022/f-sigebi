@@ -3,4 +3,5 @@ export enum ParameterFinantialEndpoints {
   FinancialInfo = 'financial-information',
   FindFinantial = '?search=&filter.idGoodNumber=',
   IndicatorGood = 'indicators-for-good',
+  AtributosInfoFinan = 'financial-inf-attributes',
 }

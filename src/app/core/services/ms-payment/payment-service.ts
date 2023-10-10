@@ -30,3 +30,11 @@ export interface IOI {
   devolucion: string;
   mandato: string;
 }
+
+export interface IApplicationFComerCtldPag3 {
+  dispTypeId: number;
+  originId: number;
+  direction: string;
+  ctldevpagKey: string;
+  cRelEvents: [];
+}

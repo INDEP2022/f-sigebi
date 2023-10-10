@@ -1,9 +1,9 @@
-const ERROR_GOOD_PARAM = `El número de bien ingresado como parámetro no es un número`;
-const ERROR_GOOD_NULL = `Ingresa un número de bien válido`;
-const ERROR_APOINTMENT_NUMBER_NULL = `Se requiere un número de nombramiento, realiza la búsqueda por número de bien para cargar los datos del nombramiento`;
+const ERROR_GOOD_PARAM = `El No. Bien ingresado como parámetro no es un número`;
+const ERROR_GOOD_NULL = `Ingresa un No. Bien válido`;
+const ERROR_APOINTMENT_NUMBER_NULL = `Se requiere un número de nombramiento, realiza la búsqueda por No. Bien para cargar los datos del nombramiento`;
 const ERROR_DATE_DISPERSAL_NULL = `Se requiere una fecha para realizar la eliminación de la dispersión`;
 const NOT_FOUND_GOOD_APPOINTMENT = (error: string) =>
-  `El número de bien no existe. ${error}`;
+  `El No. Bien no existe. ${error}`;
 const NOT_FOUND_PERSONS_DEPOSITARY = (error: string) =>
   `Error al cargar la información de nombramientos por depositarías. ${error}`;
 const NOT_FOUND_GOOD_DESCRIPTION = (error: string) =>

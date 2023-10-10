@@ -75,8 +75,14 @@ export class RateChangeComponent extends BasePage implements OnInit {
     this.prepareForm();
     if (this.dataDet) {
       console.log('data dataDet ', this.dataDet);
-      console.log('Tasa terreno ', this.dataDet.terrainRate);
-      console.log('Tasa constucción habitacional ', this.dataDet.rateHousing);
+      console.log(
+        'Tasa terreno ',
+        this.convertDecToInteger(this.dataDet.terrainRate)
+      );
+      console.log(
+        'Tasa constucción habitacional ',
+        this.convertDecToInteger(this.dataDet.rateHousing)
+      );
       console.log('Tasa construcción comercial ', this.dataDet.rateCommercial);
       console.log('Tasa Instalaciones espeaciales ', this.dataDet.rateSpecials);
       console.log('Tasa Otros ', this.dataDet.rateOthers);
@@ -85,15 +91,21 @@ export class RateChangeComponent extends BasePage implements OnInit {
         goodDescription: this.dataDet.goodDescription,
       });
 
-      this.form.get('rateBatch').patchValue(this.dataDet.terrainRate);
+      this.form
+        .get('rateBatch')
+        .patchValue(this.convertDecToInteger(this.dataDet.terrainRate));
       this.form
         .get('rateResiConstruction')
-        .patchValue(this.dataDet.rateHousing);
+        .patchValue(this.convertDecToInteger(this.dataDet.rateHousing));
       this.form
         .get('rateCommerConstruction')
-        .patchValue(this.dataDet.rateCommercial);
-      this.form.get('rateSpecialPlants').patchValue(this.dataDet.rateSpecials);
-      this.form.get('otherRate').patchValue(this.dataDet.rateOthers);
+        .patchValue(this.convertDecToInteger(this.dataDet.rateCommercial));
+      this.form
+        .get('rateSpecialPlants')
+        .patchValue(this.convertDecToInteger(this.dataDet.rateSpecials));
+      this.form
+        .get('otherRate')
+        .patchValue(this.convertDecToInteger(this.dataDet.rateOthers));
 
       if (
         this.dataDet.observations == null ||
@@ -356,16 +368,26 @@ export class RateChangeComponent extends BasePage implements OnInit {
     this.appraiseService.updateEatDetAppraisal(valor).subscribe({
       next: resp => {
         console.log('Resp updateDetailEval-> ', resp);
-        this.alert('success', '', 'Registro actualizado correctamente!');
+        this.alert(
+          'success',
+          'El registro ha sido actualizado correctamente',
+          ''
+        );
       },
       error: err => {
-        this.alert('error', '', 'Registro no actualizado!');
+        this.alert('error', 'El registro no ha sido actualizado', '');
       },
     });
   }
 
-  /*deletDecim(numero: number): number {
-    console.log('deletDecim-> ', Math.floor(numero));
-    return numero / 100;
-  }*/
+  convertDecToInteger(numero: number): number {
+    const parteDecimal = numero - Math.floor(numero);
+    if (Number.isInteger(numero) || parteDecimal === 0) {
+      // Si es un número entero o tiene una parte decimal igual a 0, lo dejamos sin cambios
+      return numero;
+    } else {
+      // Si tiene una parte decimal distinta de 0, la multiplicamos por 100 para convertirla en entero
+      return parteDecimal * 100;
+    }
+  }
 }
