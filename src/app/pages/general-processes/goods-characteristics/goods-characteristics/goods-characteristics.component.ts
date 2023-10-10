@@ -729,7 +729,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       movementDate = this.nval(5);
     }
     const array = movementDate.split('-');
-    movementDate = array[2] + '-' + array[1] + '-' + array[0];
+    // movementDate = array[2] + '-' + array[1] + '-' + array[0];
     try {
       vn_impor = +this.nval(2);
     } catch (x) {

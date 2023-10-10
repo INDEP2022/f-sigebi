@@ -779,7 +779,6 @@ export const routes: Routes = [
         data: { title: 'Información financiera', screen: 'FACTADBINFORFINAN' },
       },
       {
-        //!SIRVIO
         path: 'change-of-good-classification',
         loadChildren: async () =>
           (
@@ -804,6 +803,16 @@ export const routes: Routes = [
         data: {
           title: 'Recepción de documentos en el archivo',
           screen: 'FACTARGRECEPDOCS',
+        },
+      },
+      {
+        path: 'payment-services-good',
+        loadChildren: async () =>
+          (await import('./payment-services-good/payment-services-good.module'))
+            .PaymentServicesGoodModule,
+        data: {
+          title: 'Pago de servicios por Bien',
+          screen: 'FACTADBPAGOSERVIC',
         },
       },
     ],
