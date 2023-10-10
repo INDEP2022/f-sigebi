@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -34,6 +35,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   private pdf: PDFDocumentProxy;
   idTypeDoc: number = 0;
   idProg: number = 0;
+  idSampleOrder: number = 0;
   idprogDel: number = 0;
   typeNotification: number = 0;
   receiptId: number = 0;
@@ -73,6 +75,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   userInfo: any;
   idOrderService: number = 0;
   annexW: boolean = false;
+  annexk: boolean = false;
+  idRegionalDelegation: number = 0; //parametro pasado desde el padre
   process: string = '';
   constructor(
     private sanitizer: DomSanitizer,
@@ -120,7 +124,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.formLoading = true;
     this.showReportByTypeDoc();
 
-    if (this.idProg) {
+    if (this.idProg || this.idSampleOrder) {
       this.getReceipt();
       this.params
         .pipe(takeUntil(this.$unSubscribe))
@@ -218,6 +222,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.src = linkDoc;
       this.formLoading = false;
     }
+
+    if (this.idTypeDoc == 197 && this.annexk == true) {
+      let linkDoc: string = `${this.urlBaseReport}AnexoKOrdenes.jasper&ID_MUESTREO_ORDEN=3&ID_TIPO_DOCTO=197`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
   }
 
   getReceipt() {
@@ -239,9 +249,13 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   getSignatories() {
     const learnedType = this.idTypeDoc;
-    const learnedId = this.programming?.id;
+    let learnedId = null;
+    if (this.idTypeDoc == 197) {
+      learnedId = this.idSampleOrder;
+    } else {
+      learnedId = this.programming?.id;
+    }
     this.loading = true;
-
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learnedId)
       .subscribe({
@@ -324,7 +338,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 107 && this.typeFirm == 'electronica')
+      (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 197 && this.typeFirm == 'electronica')
     ) {
       if (!this.listSigns && this.printReport && !this.isAttachDoc) {
         this.printReport = false;
@@ -564,6 +579,33 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 },
               });
           }
+
+          if (this.idTypeDoc == 197) {
+            const idKeyDoc = this.idSampleOrder + '-K';
+            //nomReporte
+            this.gelectronicFirmService
+              .firmDocument(idKeyDoc, 'AnexoKMuestreoOrdenServicio', {})
+              .subscribe({
+                next: response => {
+                  this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Documento firmado correctamente'
+                  );
+                },
+                error: error => {
+                  //this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alertInfo(
+                    'error',
+                    'Acción Inválida',
+                    'No fue posible firmar el documento'
+                  ).then();
+                },
+              });
+          }
         }
       }
     );
@@ -625,7 +667,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
           (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
           (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
-          (this.idTypeDoc == 221 && this.typeFirm == 'electronica')
+          (this.idTypeDoc == 221 && this.typeFirm == 'electronica') ||
+          (this.idTypeDoc == 197 && this.typeFirm == 'electronica')
         ) {
           this.validAttachDoc();
         }
@@ -656,7 +699,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       const extension = '.pdf';
       const nombreDoc = `Oficio Programación Recepción${extension}`;
       const contentType: string = '.pdf';
-
       const formData = {
         keyDoc: this.programming?.id,
         xDelegacionRegional: this.programming?.regionalDelegationNumber,
@@ -934,6 +976,55 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     }
                   });
                 }
+              },
+              error: error => {},
+            });
+        });
+      } else if (this.idTypeDoc == 197 && this.typeFirm == 'electronica') {
+        const dDocTitle = this.idSampleOrder.toString() + '-K';
+        const formData = {
+          xNivelRegistroNSBDB: 'Solicitud',
+          xNombreProceso: 'Muestreo Ordenes',
+          xDelegacionRegional: this.idRegionalDelegation,
+          dDocTitle: dDocTitle,
+          dSecurityGroup: 'Public',
+          xTipoDocumento: 197,
+        };
+
+        const extension = '.pdf';
+        const docName = `MUESTREO_ORDENES${this.idSampleOrder}${moment(
+          new Date()
+        ).format('YYYYMMDD')}`;
+        const contentType: string = '.pdf';
+
+        this.pdf.getData().then(u8 => {
+          let blob = new Blob([u8.buffer], {
+            type: 'application/pdf',
+          });
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                //const updateReceipt = await this.procedding(response.dDocName);
+
+                // if (updateReceipt) {
+                this.alertInfo(
+                  'success',
+                  'Acción Correcta',
+                  'Documento adjuntado correctamente'
+                ).then(question => {
+                  if (question.isConfirmed) {
+                    this.close();
+                    this.modalRef.content.callback(true, this.typeFirm);
+                  }
+                });
+                //}
               },
               error: error => {},
             });

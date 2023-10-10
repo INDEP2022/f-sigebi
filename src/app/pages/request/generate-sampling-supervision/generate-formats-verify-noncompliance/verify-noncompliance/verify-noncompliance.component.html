@@ -4,46 +4,50 @@
       <div class="mr-auto p-2">
         <h5 class="title">Muestreo Bienes&#58; {{ title }}</h5>
       </div>
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
-          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
-        </button>
-      </div>
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active" (click)="save()">
-          <i class="bx bx-save"></i> Guardar
-        </button>
-      </div>
-      <div class="p-2">
-        <button class="btn btn-danger btn-sm active" (click)="goBack()">
-          <i class="bx bx-save"></i> Regresar
-        </button>
-      </div>
     </div>
   </div>
   <div body>
-    <div class="row pt-4" *ngIf="isEnableAnex">
-      <div class="d-flex justify-content-end">
-        <div class="m-3">
-          <button
-            class="btn btn-secondary btn-sm active"
-            (click)="openAnnexJ()">
-            <i class="bx bx-square-rounded"></i> Anexo J
-          </button>
-        </div>
-        <div class="m-3">
-          <button
-            class="btn btn-secondary btn-sm active"
-            (click)="opemAnnexK()">
-            <i class="bx bx-square-rounded"></i> Anexo K
-          </button>
-        </div>
-      </div>
-    </div>
+    <div class="row pt-4" *ngIf="isEnableAnex"></div>
     <div id="detail">
       <app-card [header]="false">
         <div body>
+          <div class="d-flex justify-content-end">
+            <div class="p-2">
+              <button class="btn btn-primary btn-sm active" (click)="save()">
+                Guardar <i class="bx bx-save"></i>
+              </button>
+            </div>
+            <div class="p-2">
+              <button
+                class="btn btn-success btn-sm active"
+                (click)="turnSampling()">
+                Turnar muestreo <i class="fa fa-share-square"></i>
+              </button>
+            </div>
+            <div class="p-2">
+              <button class="btn btn-primary btn-sm active" (click)="goBack()">
+                Regresar <i class="fas fa-arrow-circle-left"></i>
+              </button>
+            </div>
+            <!--<div class="m-3">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="openAnnexJ()">
+                <i class="bx bx-square-rounded"></i> Anexo J
+              </button>
+            </div>
+            <div class="m-3">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="opemAnnexK()">
+                <i class="bx bx-square-rounded"></i> Anexo K
+              </button>
+            </div> -->
+          </div>
           <div class="row">
+            <div class="justify-content-end"></div>
+          </div>
+          <div class="row pt-2">
             <div class="col-md-12">
               <h5 class="title">
                 <p>
@@ -69,7 +73,8 @@
             </div>
           </div>
           <div class="row pt-4" *ngIf="showSamplingDetail">
-            <app-sampling-detail></app-sampling-detail>
+            <app-sampling-detail
+              [sampleInfo]="sampleInfo"></app-sampling-detail>
           </div>
         </div>
       </app-card>
@@ -87,7 +92,7 @@
                 (click)="showFilterAssets = true"
                 *ngIf="!showFilterAssets">
                 <i class="fa fa-angle-right" aria-hidden="true"></i> Captura de
-                datos</a
+                Datos</a
               >
             </p>
 
@@ -141,13 +146,15 @@
         <div class="row pt-4">
           <div class="d-flex justify-content-end">
             <div class="m-3">
-              <button class="btn btn-primary btn-sm active">
-                <i class="bx bx-search-alt-2"></i> Buscar
+              <button
+                (click)="searchGoods()"
+                class="btn btn-primary btn-sm active">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
             <div class="m-3">
               <button class="btn btn-danger btn-sm active">
-                <i class="bx bx-trash"></i> Limpiar
+                Limpiar <i class="fas fa-eraser"></i>
               </button>
             </div>
           </div>
@@ -159,6 +166,8 @@
         <tab heading="Bienes" id="tab1">
           <app-assets-tab
             [willSave]="willSave"
+            [idSample]="idSample"
+            [filterObject]="filterObject"
             [typeTask]="'verify-noncompliance'"></app-assets-tab>
         </tab>
         <tab heading="Verificaciones">

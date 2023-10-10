@@ -2,20 +2,20 @@
   <div class="row">
     <div class="col-md-4">
       <label for=""
-        >N&uacute;mero Muestreo&#58;
-        <span>{{ this.detailForm.get('noSampling').value }}</span>
+        >No. Muestreo&#58;
+        <span>{{ sampleInfo?.sampleId }}</span>
       </label>
     </div>
     <div class="col-md-4">
       <label for=""
         >Nombre Alamac&eacute;n&#58;
-        <span>{{ this.detailForm.get('nameWarehouse').value }}</span>
+        <span>{{ nameWarehouse }}</span>
       </label>
     </div>
     <div class="col-md-4">
       <label for=""
         >Direcci&oacute;n Almac&eacute;n&#58;
-        <span>{{ this.detailForm.get('warehouseAddress').value }}</span>
+        <span>{{ addressWarehouse }}</span>
       </label>
     </div>
   </div>
@@ -23,27 +23,27 @@
     <div class="col-md-4">
       <label for=""
         >Delegaci&oacute;n Regional &#58;
-        <span>{{ this.detailForm.get('delegaRegional').value }}</span>
+        <span>{{ delegationName }}</span>
       </label>
     </div>
     <div class="col-md-4">
       <label for=""
         >Periodo Inicial&#58;
-        <span>{{ this.detailForm.get('initialDate').value }}</span>
+        <span>{{ sampleInfo?.startDate }}</span>
       </label>
     </div>
     <div class="col-md-4">
       <label for=""
         >Periodo Final &#58;
-        <span>{{ this.detailForm.get('finalDate').value }}</span>
+        <span>{{ sampleInfo?.endDate }}</span>
       </label>
     </div>
   </div>
   <div class="row pt-4">
-    <div class="col-md-4" *ngIf="this.detailForm.get('dateSampling').value">
+    <div class="col-md-4">
       <label for=""
-        >Fecha de elaboraci&oacute;n muestreo &#58;
-        <span>{{ this.detailForm.get('dateSampling').value }}</span>
+        >Fecha de Elaboraci&oacute;n Muestreo &#58;
+        <span>{{ sampleInfo?.creationDate }}</span>
       </label>
     </div>
   </div>

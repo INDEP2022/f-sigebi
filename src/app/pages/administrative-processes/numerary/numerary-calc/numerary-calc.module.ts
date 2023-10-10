@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgxCurrencyModule } from 'ngx-currency';
 import { SharedModule } from '../../../../shared/shared.module';
 import { ModalRequestComponent } from './modal-request/modal-request.component';
 import { NumeraryCalcRoutingModule } from './numerary-calc-routing.module';
 import { NumeraryCalcComponent } from './numerary-calc.component';
-import { NgxCurrencyModule } from 'ngx-currency'
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -27,7 +27,7 @@ export const customCurrencyMaskConfig = {
     NumeraryCalcRoutingModule,
     SharedModule,
     ReactiveFormsModule,
-    NgxCurrencyModule.forRoot(customCurrencyMaskConfig)
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
   ],
 })
 export class NumeraryCalcModule {}

@@ -180,7 +180,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         this.src = linkDoc;
         break;
       }
-
       default: {
         console.log('No hay ID tipo de documento');
         break;
