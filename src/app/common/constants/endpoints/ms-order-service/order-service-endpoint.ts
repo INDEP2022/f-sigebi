@@ -5,4 +5,5 @@ export enum OrderServiceEndpoint {
   ServiceVehicle = 'vehicles-order-service',
   SamplingOrderView = 'aplication/samplingOrdersView',
   SamplingOrderService = 'sample-order-service',
+  SampleOrders = 'sampling-orders',
 }

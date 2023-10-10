@@ -172,3 +172,20 @@ export const REQUEST_GOOD_COLUMN = {
     sort: false,
   },
 };
+
+export const COLUMNS_INVENTARY = {
+  proposalKey: {
+    title: 'Cve. Propuesta',
+    sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.proposalKey;
+    },
+  },
+  goodNumber: {
+    title: 'No. Bien',
+    sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.goodNumber;
+    },
+  },
+};

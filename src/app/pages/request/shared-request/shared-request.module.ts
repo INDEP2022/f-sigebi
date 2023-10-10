@@ -10,6 +10,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FileUploadModule } from 'src/app/utils/file-upload/file-upload.module';
+import { GoodsCharacteristicsModule } from '../../general-processes/goods-characteristics/goods-characteristics.module';
 import { SelectUnitModalComponent } from '../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/select-unit-modal/select-unit-modal.component';
 import { AssignReceiptFormComponent } from './assign-receipt-form/assign-receipt-form.component';
 import { AssociateFileButtonComponent } from './associate-file/associate-file-button/associate-file-button.component';
@@ -219,6 +220,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     FileUploadModule,
     PdfViewerModule,
     FormLoaderComponent,
+    GoodsCharacteristicsModule,
   ],
   exports: [
     RequestFormComponent,
