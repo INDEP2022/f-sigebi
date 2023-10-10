@@ -397,7 +397,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     }
     console.log(this.currency.value);
     if (this.currency.value === null) {
-      this.alert('warning', 'atención', 'Debe especificar el tipo de moneda');
+      this.alert('warning', 'Atención', 'Debe especificar el tipo de moneda');
       return;
     }
     const response = await this.alertQuestion(
@@ -480,7 +480,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'atención',
+        'Atención',
         'El proceso no presenta ninguna comisión bancaria'
       );
     }
