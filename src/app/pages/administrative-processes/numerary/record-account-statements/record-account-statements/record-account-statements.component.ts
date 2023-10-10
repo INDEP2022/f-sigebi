@@ -331,7 +331,8 @@ export class RecordAccountStatementsComponent
     this.current = currency;
     this.searchCurrent(currency);
     currency = currency.replace(/'/g, '');
-    this.getBanks({ text: value.banco.cveBank });
+    this.form.get('bankSelect').setValue(value.banco.name);
+    // this.getBanks({ text: value.cveBank });
     this.form.get('square').setValue(square);
     this.form.get('branch').setValue(branch);
     this.form.get('accountType').setValue(accountType);
