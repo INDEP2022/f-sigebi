@@ -8,6 +8,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
@@ -64,7 +65,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   paragraphs2 = new LocalDataSource();
   totalItems2: number = 0;
   listAssetsSelected: any[] = [];
-
+  deductivesSel: [] = [];
   settings3 = {
     ...TABLE_SETTINGS,
     actions: {
@@ -77,6 +78,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     columns: LIST_ASSETS_COPIES_COLUMN,
   };
   params3 = new BehaviorSubject<ListParams>(new ListParams());
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs3 = new LocalDataSource();
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
@@ -87,7 +89,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     selectMode: '',
   };
   columns4 = LIST_DEDUCTIVES_COLUMNS;
-  paragraphsDeductivas: any[] = [{}];
+  paragraphsDeductivas = new LocalDataSource();
 
   delegationId: string = '';
   storeSelected: any = {};
@@ -105,7 +107,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     private goodsInvService: GoodsInvService,
     private samplingGoodService: SamplingGoodService,
     private delegationService: RegionalDelegationService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private deductiveService: DeductiveVerificationService
   ) {
     super();
   }
@@ -500,6 +503,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
               this.params3
                 .pipe(takeUntil(this.$unSubscribe))
                 .subscribe(() => this.getSampligGoods());
+
+              this.params4
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getDeductives());
             }
           });
         },
@@ -507,6 +514,16 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           this.loadingGoodInv = false;
         },
       });
+  }
+
+  getDeductives() {
+    this.deductiveService.getAll(this.params4.getValue()).subscribe({
+      next: response => {
+        console.log('deductivas', response);
+        this.paragraphsDeductivas.load(response.data);
+      },
+      error: error => {},
+    });
   }
 
   getNameTransferent(transferentId: number) {
@@ -842,5 +859,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         'Se requiere seleccionar al menos un bien muestreo'
       );
     }
+  }
+
+  saveDeductives() {
+    console.log('this.paragraphsDeductivas', this.paragraphsDeductivas);
+  }
+
+  deductivesSelect(event: any) {
+    console.log('this.paragraphsDeductivas', event);
   }
 }
