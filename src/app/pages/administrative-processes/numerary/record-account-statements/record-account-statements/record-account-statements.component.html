@@ -17,14 +17,14 @@
               <ngx-select
                 [form]="form"
                 [data]="banks"
-                (unique)="(true)"
                 (fetchItems)="getBanks($event)"
                 bindLabel="bankAndNumber"
                 control="bankSelect"
                 label="Banco"
                 [searchOnInit]="true"
                 termMaxLength="30"
-                (change)="onBankSelectChange($event)">
+                (change)="onBankSelectChange($event)"
+                (clear)="onClearBankSelection()">
               </ngx-select>
             </form-field>
           </div>
@@ -38,7 +38,6 @@
             <form-field [control]="form.get('account')">
               <ngx-select
                 label="Cuenta"
-                (unique)="(true)"
                 [form]="form"
                 [data]="bankAccountSelect"
                 (fetchItems)="searchBankAccount($event)"
