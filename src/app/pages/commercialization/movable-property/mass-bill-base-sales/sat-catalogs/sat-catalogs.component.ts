@@ -28,6 +28,7 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
   @Input() set filter(val: any) {
     if (val) {
       this.getAllComer(val);
+      this.val = val;
     } else {
       this.totalItems = 0;
       this.dataFilter.load([]);
@@ -77,7 +78,9 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
                     callback: (
                       ans: boolean,
                       data: { clave: string; descripcion: string }
-                    ) => {},
+                    ) => {
+                      this.updateCatalog(data, invoice, 1);
+                    },
                   },
                   class: 'modal-lg modal-dialog-centered',
                   ignoreBackdropClick: true,
@@ -108,7 +111,9 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
                     callback: (
                       ans: boolean,
                       data: { clave: string; descripcion: string }
-                    ) => {},
+                    ) => {
+                      this.updateCatalog(data, invoice, 2);
+                    },
                   },
                   class: 'modal-lg modal-dialog-centered',
                   ignoreBackdropClick: true,
@@ -139,7 +144,9 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
                     callback: (
                       ans: boolean,
                       data: { clave: string; descripcion: string }
-                    ) => {},
+                    ) => {
+                      this.updateCatalog(data, invoice, 3);
+                    },
                   },
                   class: 'modal-lg modal-dialog-centered',
                   ignoreBackdropClick: true,
@@ -170,7 +177,9 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
                     callback: (
                       ans: boolean,
                       data: { clave: string; descripcion: string }
-                    ) => {},
+                    ) => {
+                      this.updateCatalog(data, invoice, 4);
+                    },
                   },
                   class: 'modal-lg modal-dialog-centered',
                   ignoreBackdropClick: true,
@@ -201,7 +210,9 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
                     callback: (
                       ans: boolean,
                       data: { clave: string; descripcion: string }
-                    ) => {},
+                    ) => {
+                      this.updateCatalog(data, invoice, 5);
+                    },
                   },
                   class: 'modal-lg modal-dialog-centered',
                   ignoreBackdropClick: true,
@@ -213,6 +224,51 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
         },
       },
     };
+  }
+
+  updateCatalog(
+    data: { clave: string; descripcion: string },
+    invoice: any,
+    type: number
+  ) {
+    console.log(data);
+    console.log(invoice);
+    console.log(this.filter);
+
+    switch (type) {
+      case 1:
+        invoice.usecompSat = data.clave;
+        break;
+      case 2:
+        invoice.unitSatKey = data.clave;
+        break;
+      case 3:
+        invoice.prodservSatKey = data.clave;
+        break;
+      case 4:
+        invoice.paymentform = data.clave;
+        break;
+      case 5:
+        invoice.relationshipSatType = data.clave;
+        break;
+      default:
+        break;
+    }
+
+    delete invoice.invoiceStatusId;
+    delete invoice.usoComp;
+    delete invoice.unite;
+    delete invoice.prod;
+    delete invoice.payment;
+    delete invoice.relation;
+
+    this.comerInvoice.update(invoice).subscribe({
+      next: () => {
+        this.getAllComer(this.filter);
+        this.alert('success', 'El Catálogo ha sido actualizado', '');
+      },
+      error: () => {},
+    });
   }
 
   async setData(data: any[], params: any) {

@@ -285,7 +285,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         value: 'CNE1',
       },
       {
-        text: 'Bien asegurado cambiado a numerario por siniestro.',
+        text: 'Bien asegurado cambiado a numerario por siniestro',
         value: 'CNS',
       },
       {
@@ -297,7 +297,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         value: 'CNR',
       },
       {
-        text: 'Bien cambiado a numerario por enajenación de valores y divisas.',
+        text: 'Bien cambiado a numerario por enajenación de valores y divisas',
         value: 'CNE',
       },
     ]);
@@ -363,7 +363,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   searchGood() {
     const goodId = this.formGood.get('id').value;
     if (!goodId) {
-      this.alert('warning', 'Debe Ingresar un Identificador de Bien', '');
+      this.alert('warning', 'Debe ingresar un identificador de Bien', '');
       // showToast({
       //   icon: 'warning',
       //   text: 'Debe Ingresar un Identificador de Bien',
@@ -385,7 +385,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       },
       error: () => {
         this.isLoadingGood = false;
-        this.onLoadToast('warning', 'No se Encontró el Bien', '');
+        this.onLoadToast('warning', 'No se encontró el Bien', '');
       },
     });
   }
@@ -443,14 +443,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           this.openMoreOneResults(res);
         } else {
           this.changeDeposit(res.data[0]);
-          this.onLoadToast('success', 'Depósito Encontrado', '');
+          this.onLoadToast('success', 'Depósito encontrado', '');
         }
       },
       error: () => {
         // this.formBlkControl.get('tiNewDate').setValue(null);
         this.onLoadToast(
           'warning',
-          'No se Encontró el Depósito en la Fecha Seleccionada',
+          'No se Encontró el depósito en la fecha seleccionada',
           ''
         );
       },
@@ -589,8 +589,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       (validateNumerary && !availableGood)
     ) {
       this.onLoadToast(
-        'info',
-        'Información',
+        'warning',
+        'Atención',
         'El Bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
       );
     }
@@ -598,7 +598,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'Estatus, Identificador o Clasificador Inválido para Cambio a Numerario/Valores y Divisas'
+        'Estatus, identificador o clasificador inválido para Cambio a numerario/valores y divisas'
       );
     }
   }
@@ -662,7 +662,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.pupLoadCsv(file);
     } catch (error) {
       this.loading = false;
-      this.alert('error', 'Ocurrió un Error al Leer el Archivo', '');
+      this.alert('error', 'Ocurrió un error al leer el archivo', '');
       // showToast({ icon: 'error', text: '' });
     }
   }
@@ -749,7 +749,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No Tiene Permiso de Escritura para Ejecutar el Cambio de Numerario'
+        'No tiene permiso de escritura para ejecutar el cambio de numerario'
       );
       this.loader.load = false;
       return;
@@ -758,7 +758,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'Debe Especificar el Bien que se quiere Cambiar a Numerario'
+        'Debe especificar el Bien que se quiere cambiar a numerario'
       );
       this.loader.load = false;
       return;
@@ -766,7 +766,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'Debe Cargar los Bienes que Desea Cambiar a Numerario'
+        'Debe cargar los Bienes que desea cambiar a numerario'
       );
       this.loader.load = false;
       return;
@@ -774,7 +774,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No hay Bienes para Cambiar a Numerario'
+        'No hay Bienes para cambiar a numerario'
       );
       this.loader.load = false;
       return;
@@ -782,7 +782,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
     if (this.formBlkControl.value.checkMovementBank) {
       if (!this.formBlkControl.value.tiNewBank) {
-        this.alert('warning', 'Advertencia', 'Debe Especificar el Banco');
+        this.alert('warning', 'Advertencia', 'Debe especificar el Banco');
         this.loader.load = false;
         return;
       }
@@ -790,7 +790,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'Debe Especificar la Fecha del Deposito'
+          'Debe especificar la fecha del depósito'
         );
         this.loader.load = false;
         return;
@@ -799,7 +799,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'No ha Seleccionado Debidamente del Deposito que Ampara el Cambio a Numerario'
+          'No ha seleccionado debidamente del depósito que ampara el cambio a numerario'
         );
         this.loader.load = false;
         return;
@@ -810,7 +810,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No ha Seleccionado el Tipo de Conversión'
+        'No ha seleccionado el tipo de conversión'
       );
       this.loader.load = false;
       return;
@@ -820,7 +820,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       const questionResponse3 = await this.alertQuestion(
         'question',
         'Advertencia',
-        '¿Seguro que Desea Cambiar los Bienes a Numerario?'
+        '¿Desea cambiar los Bienes a numerario?'
       );
       if (questionResponse3.isConfirmed) {
         await this.pupValidateMassive();
@@ -831,7 +831,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'Debe Especificar el Tipo de Moneda'
+          'Debe especificar el tipo de moneda'
         );
         this.loader.load = false;
         return;
@@ -844,7 +844,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'El Tipo de Conversión Seleccionado no es Permitido para este Bien.'
+          'El tipo de conversión seleccionado no es permitido para este Bien.'
         );
         this.loader.load = false;
         return;
@@ -855,7 +855,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         const questionResponse1 = await this.alertQuestion(
           'question',
           'Advertencia',
-          'El nuevo Bien se Generara con un Precio de Venta de 1. ¿Desea Continuar?'
+          'El nuevo Bien se generará con un precio de Venta de 1. ¿Desea Continuar?'
         );
         if (!questionResponse1.isConfirmed) {
           return;
@@ -864,7 +864,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         const questionResponse2 = await this.alertQuestion(
           'question',
           'Advertencia',
-          '¿Seguro que Desea Cambiar el Bien a Numerario?'
+          '¿Desea cambiar el Bien a numerario?'
         );
 
         if (questionResponse2.isConfirmed) {
@@ -875,7 +875,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         const questionResponse = await this.alertQuestion(
           'question',
           'Advertencia',
-          '¿Seguro que desea Cambiar el Bien a Numerario?'
+          '¿Desea cambiar el Bien a numerario?'
         );
 
         if (questionResponse.isConfirmed) {
@@ -970,7 +970,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         )
       );
     } else {
-      this.alert('warning', 'Bien no valido', '');
+      this.alert('warning', 'Bien no válido', '');
     }
   }
 
@@ -1094,7 +1094,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
                 this.alert(
                   'warning',
                   'Advertencia',
-                  'Verificar que el status de los Bienes sea Administración'
+                  'Verificar que el estatus de los Bienes sea Administración'
                 );
                 this.clear();
               } else {
@@ -1135,7 +1135,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
               this.alert(
                 'error',
                 'Error',
-                'Ocurrió un error Insertar los Datos Asegúrese de que los Datos sean Correctos y no estén Duplicados'
+                'Ocurrió un error al insertar los datos. Asegúrese de que los datos sean correctos y no estén duplicados'
               );
             }
             if (err.error.message.include('insertar')) {

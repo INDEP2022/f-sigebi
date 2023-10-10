@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -5,6 +6,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import {
@@ -16,6 +18,7 @@ import {
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
@@ -135,9 +138,11 @@ export class DonationAuthorizationRequestComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
   files: any = [];
+  fromF: string = '';
   Exportdate: boolean = false;
   goodNotValid: IGood[] = [];
   origin: string = null;
+  history: IHistoryGood;
   changeDescription: string;
   changeDescriptionAlterning: string;
   contador = 0;
@@ -160,7 +165,9 @@ export class DonationAuthorizationRequestComponent
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
     private goodService: GoodService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private historyGoodService: HistoryGoodService,
+    private datePipe: DatePipe
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -572,24 +579,21 @@ export class DonationAuthorizationRequestComponent
           'Se cargó la información de la solicitud',
           next.proposalCve
         );
+        //   this.requestModel = {
+        //     solQuantity: next.solQuantity,
+        //     requestId: next.requestId.id,
+        //     requestDate: this.fromF = this.datePipe.transform(
+        //       this.form.controls['from'].value,
+        //       'dd/MM/yyyy'
+        //     ),
+        //     clasifGood: this.request.classifNumbGood,
+        //     justification: this.request.justification,
+        //     sunStatus: this.request.totalSunQuantity,
+        //     proposalCve: thi
+        // requestTypeId: string;
+        //   }
       }
     });
-    // this.requestModel = {
-    //   solQuantity: this.totalItems,
-    //   requestId: number;
-    //   entFedKey: number;
-    //   requestDate: string;
-    //   clasifGood: number;
-    //   justification: string;
-    //   sunStatus: string;
-    //   proposalCve: string;
-    //   requestTypeId: string;
-    // }
-    // this.proposelServiceService.create().subscribe({
-    //   next: data => {
-    //     console.log(data)
-    //   }, error: () => console.log('no se guardó')
-    // })
   }
 
   selectedGooodsValid: any[] = [];
@@ -633,7 +637,7 @@ export class DonationAuthorizationRequestComponent
 
             if (!this.request.some((v: any) => v === good)) {
               let indexGood = this.dataTableGood_.findIndex(
-                _good => _good.id == good.goodNumber
+                _good => _good.id == good.goodId
               );
 
               this.Exportdate = true;
@@ -647,7 +651,7 @@ export class DonationAuthorizationRequestComponent
                 pUser: this.authService.decodeToken().preferred_username,
               };
               await this.updateGoodEInsertHistoric(obj);
-              await this.updateBienDetalle(good.goodNumber, 'ADA');
+              await this.updateBienDetalle(good.goodId, 'ADA');
               // await this.createDET(this.inventaryModel);
               this.getInventary();
             }
@@ -754,6 +758,7 @@ export class DonationAuthorizationRequestComponent
                 pUser: this.authService.decodeToken().preferred_username,
               };
               await this.updateGoodEInsertHistoric(obj);
+              await this.getHistory(good);
               await this.deleteDET(good.id);
             });
 
@@ -853,6 +858,25 @@ export class DonationAuthorizationRequestComponent
         },
       });
     });
+  }
+  async getHistory(good: any) {
+    this.history = {
+      propertyNum: null,
+      status: 'ADA',
+      changeDate: new Date(),
+      userChange: this.authService.decodeToken().username,
+      statusChangeProgram: 'AUTOMATICO',
+      reasonForChange: 'Parcializado en Autorización Inventario SD',
+      registryNum: null,
+      extDomProcess: good.extDomProcess,
+    };
+    this.historyGoodService
+      .createHistoricGoodsAsegExtdom(this.history)
+      .subscribe({
+        next: data => {
+          console.log('insertado en historicos');
+        },
+      });
   }
 }
 
