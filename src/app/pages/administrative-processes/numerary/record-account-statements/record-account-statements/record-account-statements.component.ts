@@ -258,7 +258,7 @@ export class RecordAccountStatementsComponent
     console.log('bancos', value);
     this.bankCode = value.accountNumber.cveBank;
     this.accountDate = value.accountNumber.dateInsertion;
-    // this.searchBankAccount({ text: value.accountNumber.cveBank });
+    this.searchBankAccount({ text: value.accountNumber.cveAccount });
     const square = value?.accountNumber.square;
     const branch = value?.accountNumber.branch;
     const accountType = value?.accountNumber.accountType;
@@ -276,7 +276,7 @@ export class RecordAccountStatementsComponent
     const params__ =
       lparams?.text?.length > 0
         ? `?filter.accountNumber.cveAccount=${lparams.text}`
-        : `?filter.accountNumber.cveBank=${this.bankCode}`;
+        : ``;
     console.log(params__);
     return new Promise((resolve, reject) => {
       this.recordAccountStatementsAccountsService
