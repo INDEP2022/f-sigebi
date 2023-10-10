@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -53,6 +53,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   dataRebill: DefaultSelect = new DefaultSelect();
   isSelect: any[] = [];
   delegation: number;
+  @Output() comer: EventEmitter<any> = new EventEmitter(null);
   get idAllotment() {
     return this.form.get('idAllotment');
   }
@@ -239,6 +240,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.paramsList.getValue()['filter.tpevent'] = `${SearchFilter.EQ}:${11}`;
+    this.paramsList.getValue()['sortBy'] = 'batchId,eventId,customer:ASC';
     this.prepareForm();
 
     this.dataFilter
@@ -290,16 +292,22 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     const params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
-      ...{ sortBy: 'batchId:ASC' },
     };
 
     this.loading = true;
-    this.comerInvoice.getAll(params).subscribe({
+    this.comerInvoice.getAllSumInvoice(params).subscribe({
       next: resp => {
         this.loading = false;
         this.totalItems = resp.count;
         this.dataFilter.load(resp.data);
         this.dataFilter.refresh();
+        this.getSum();
+        this.comer.emit({
+          val: resp.data[0].eventId,
+          count: resp.data.length,
+          data: [],
+          filter: params,
+        });
       },
       error: () => {
         this.loading = false;
@@ -307,6 +315,26 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         this.dataFilter.load([]);
         this.dataFilter.refresh();
       },
+    });
+  }
+
+  getSum() {
+    const params = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+    this.comerInvoice.getSumTotal(params).subscribe({
+      next: resp => {
+        console.log(resp);
+
+        // this.formFactura.get('importE').patchValue(resp.sumprecioeg);
+        // this.formFactura.get('ivaE').patchValue(resp.sumivaeg);
+        // this.formFactura.get('totalE').patchValue(resp.sumtotaleg);
+        // this.formFactura.get('importI').patchValue(resp.sumprecioing);
+        // this.formFactura.get('ivaI').patchValue(resp.sumivaing);
+        // this.formFactura.get('totalI').patchValue(resp.sumtotaling);
+      },
+      error: () => {},
     });
   }
 
