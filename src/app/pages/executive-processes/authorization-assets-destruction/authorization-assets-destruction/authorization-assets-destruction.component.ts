@@ -92,6 +92,17 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   ngOnInit(): void {
+    const localExpdeient = localStorage.getItem('expediente');
+    const folio = localStorage.getItem('folio');
+    if (localExpdeient) {
+      this.expediente = Number(localExpdeient);
+      if (folio) {
+        this.form.controls['universalFolio'].setValue(folio);
+      }
+      this.form.controls.idExpedient.setValue(Number(localExpdeient));
+      this.expedientChange();
+      localStorage.removeItem('expediente');
+    }
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.consult) {
         this.getDetailProceedingsDevolution(this.form.controls.noAuth.value);
