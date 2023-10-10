@@ -698,7 +698,7 @@ export class RegionalAccountTransferenceComponent
     this.transferRegService.create(body).subscribe({
       next: async resp => {
         this.form.get('transferenceReport').patchValue(resp.reportNumber);
-        this.alert('success', 'Reporte', 'Creado correctamente');
+        this.alert('success', 'El reporte se ha creado', '');
 
         for (let good of this.dataTable) {
           await this.procedure(Number(good.goodNumber));

@@ -34,7 +34,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   statusSelect: IStatusCode;
   endProcess: boolean = false;
 
-  dataStatus = new DefaultSelect()
+  dataStatus = new DefaultSelect();
   //Criterio por clasificación de bienes
   get numberGood() {
     return this.form.get('numberGood');
@@ -136,10 +136,10 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     this.formNew.get('extDomProcess').reset();
     this.formNew.get('issuingUser').reset();
     this.formNew.get('description').reset();
-    this.goodStatus.enabled
+    this.goodStatus.enabled;
   }
 
-  validateGood(){
+  validateGood() {
     return new Promise((resolve, reject) => {
       const paramsF = new FilterParams();
       paramsF.addFilter('status', 'ROP', SearchFilter.NOT);
@@ -148,21 +148,24 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         res => {
           this.goodServices.getStatusByGood(this.numberGood.value).subscribe(
             res => {
-              const paramsF2 = new FilterParams()
-                paramsF2.addFilter('status', res.status_estatus);
-                paramsF2.addFilter('screenKey', 'CAMMUEESTATUS');
-                this.screenStatusService
-                  .getAllFilterFree(paramsF2.getParams())
-                  .subscribe(
-                    res => {
-                      this.getStatus({text: JSON.parse(JSON.stringify(res.data[0])).status}, true)
-                      console.log(res.data[0])                     
-                      resolve(res);
-                    },
-                    err => {
-                      resolve({ message: 'Error' });
-                    }
-                  );
+              const paramsF2 = new FilterParams();
+              paramsF2.addFilter('status', res.status_estatus);
+              paramsF2.addFilter('screenKey', 'CAMMUEESTATUS');
+              this.screenStatusService
+                .getAllFilterFree(paramsF2.getParams())
+                .subscribe(
+                  res => {
+                    this.getStatus(
+                      { text: JSON.parse(JSON.stringify(res.data[0])).status },
+                      true
+                    );
+                    console.log(res.data[0]);
+                    resolve(res);
+                  },
+                  err => {
+                    resolve({ message: 'Error' });
+                  }
+                );
             },
             err => {
               resolve({ message: 'Error' });
@@ -170,10 +173,10 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           );
         },
         err => {
-          resolve({ message: 'Error' })
+          resolve({ message: 'Error' });
         }
-      )
-    })
+      );
+    });
   }
 
   /* validateGood() {
@@ -258,36 +261,36 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     });
   } */
 
-  getStatus(params: ListParams, research?: boolean){
-    console.log(params.text)
+  getStatus(params: ListParams, research?: boolean) {
+    console.log(params.text);
     const paramsF = new FilterParams();
-    paramsF.addFilter('status', params.text)
+    paramsF.addFilter('status', params.text);
     this.goodServices.getStatusGood(paramsF.getParams()).subscribe(
       res => {
-        console.log(res)
+        console.log(res);
         const newData = res.data.map((item: any) => {
           return {
             ...item,
-            labelEstatus: item.status + ' - ' + item.description
-          }
-        })
-        this.dataStatus = new DefaultSelect(newData, res.count)
-        if(research){
-          this.goodStatus.setValue(newData[0])
+            labelEstatus: item.status + ' - ' + item.description,
+          };
+        });
+        this.dataStatus = new DefaultSelect(newData, res.count);
+        if (research) {
+          this.goodStatus.setValue(newData[0]);
         }
       },
       err => {
-        console.log(err)
-        this.dataStatus = new DefaultSelect()
+        console.log(err);
+        this.dataStatus = new DefaultSelect();
       }
-    )
+    );
   }
 
   async loadGood() {
     this.loading = true;
-    this.goodStatus.enable()
+    this.goodStatus.enable();
     const resp = await this.validateGood();
-    console.log(resp)
+    console.log(resp);
     if (JSON.parse(JSON.stringify(resp)).message == 'Error') {
       this.alert('warning', 'El bien no es válido para cambio de estatus', '');
       this.loading = false;
@@ -305,8 +308,8 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         this.loadDescriptionStatus(this.good);
         this.loading = false;
         this.formNew.enable();
-        if(this.goodStatus.value != null){
-          this.goodStatus.disable()
+        if (this.goodStatus.value != null) {
+          this.goodStatus.disable();
         }
         this.dateStatus.disable();
         this.endProcess = true;

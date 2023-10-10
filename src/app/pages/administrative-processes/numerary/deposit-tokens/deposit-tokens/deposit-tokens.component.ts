@@ -972,19 +972,65 @@ export class DepositTokensComponent
           this.loading = false;
           if (err.error.message == 'No es el excel correcto') {
             this.alert(
-              'error',
+              'warning',
               'El archivo no cumple con las condiciones de inserción',
               ''
             );
           } else {
+            const text = this.valError(err.error.message)
+              ? this.transformarString(
+                  err.error.message,
+                  this.valTextError(err.error.message)
+                )
+              : 'Error al cargar el archivo';
             this.alert(
-              'error',
-              'Ha ocurrido un error al intentar cargar el archivo',
-              'Verifique el archivo e intente nuevamente'
+              this.valError(err.error.message) ? 'warning' : 'error',
+              text,
+              'Verifíquelo e intente nuevamente'
             );
           }
         },
       });
+  }
+
+  valError(string_: string) {
+    if (string_.includes('FECHA_DEPOSITO')) {
+      return true;
+    } else if (string_.includes('FECHA_TESOFE')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  valTextError(str: string) {
+    if (str.includes('FECHA_DEPOSITO')) {
+      return 1;
+    } else if (str.includes('FECHA_DEPOSITO')) {
+      return 2;
+    } else {
+      return 0;
+    }
+  }
+
+  transformarString(string_: any, opt: number) {
+    // Obtener el número de fila
+    const fila = parseInt(string_.match(/\d+/)[0]);
+
+    // Restar 1 al valor de la fila
+    const filaRestada = fila - 1;
+
+    // Reemplazar el número de fila en el string original
+    const nuevoString = string_.replace(fila, filaRestada);
+    // Reemplazar "FECHA_DEPOSITO" por "'Fecha Depósito'"
+    let resultado = '';
+
+    if (opt == 1) {
+      resultado = nuevoString.replace('FECHA_DEPOSITO', 'Fecha Depósito');
+    } else {
+      resultado = nuevoString.replace('FECHA_TESOFE', 'Fecha TESOFE');
+    }
+
+    return resultado;
   }
 
   async exportar() {

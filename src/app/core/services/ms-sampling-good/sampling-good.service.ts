@@ -6,7 +6,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ISample } from '../../models/ms-goodsinv/sample.model';
-import { ISamplingGood } from '../../models/ms-goodsinv/sampling-good-view.model';
+
+import { ISampleGood } from '../../models/ms-goodsinv/sampling-good-view.model';
 import { ISamplingDeductive } from '../../models/ms-sampling-good/sampling-deductive.model';
 
 @Injectable({ providedIn: 'root' })
@@ -25,21 +26,28 @@ export class SamplingGoodService extends HttpService {
     );
   }
 
+  createSample(sample: ISample) {
+    return this.post(this.samplingGoodEndpoint.Sample, sample);
+  }
+
   getSamplingGoods(
     _params: ListParams
-  ): Observable<IListResponse<ISamplingGood>> {
+  ): Observable<IListResponse<ISampleGood>> {
     const params = this.makeParams(_params);
-    return this.get<IListResponse<ISamplingGood>>(
+    return this.get<IListResponse<ISampleGood>>(
       `${this.samplingGoodEndpoint.SamplingGood}?${params}`
     );
   }
 
-  createSamplingGood(formData: ISamplingGood) {
+  createSamplingGood(formData: ISampleGood) {
     return this.post(this.samplingGoodEndpoint.SamplingGood, formData);
   }
 
-  createSample(sample: ISample) {
-    return this.post(this.samplingGoodEndpoint.Sample, sample);
+  editSamplingGood(sampleGood: ISampleGood) {
+    return this.put(this.samplingGoodEndpoint.SamplingGood, sampleGood);
+  }
+  deleteSamplingGood(id: number) {
+    return this.delete(`${this.samplingGoodEndpoint.SamplingGood}/${id}`);
   }
 
   /* DEDUCTIVER */
