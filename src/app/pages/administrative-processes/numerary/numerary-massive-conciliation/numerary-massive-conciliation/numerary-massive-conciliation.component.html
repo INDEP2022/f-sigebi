@@ -33,9 +33,9 @@
                 (fetchItems)="getBanks()"
                 [form]="form"></ngx-select>
             </div>
-
             <div class="col-md-4">
               <ngx-select
+                (fetchItems)="filterAccountsBank($event)"
                 class="form-group"
                 id="bankAccount"
                 [data]="bankAccountData"

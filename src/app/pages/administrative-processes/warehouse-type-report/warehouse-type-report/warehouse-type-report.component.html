@@ -1,0 +1,208 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Reporte de Costos de Almacenes">
+          <form class="form-material" [formGroup]="formCostWare">
+            <div class="row">
+              <div class="col-md-3">
+                <form-field
+                  [control]="formCostWare.get('numeroAlmacen')"
+                  label="No. de Almacen">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="numeroAlmacen" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="formCostWare.get('tipoAlmacen')"
+                  label="Tipo de Almacen">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="tipoAlmacen" />
+                </form-field>
+              </div>
+
+              <div class="col-md-3">
+                <form-field
+                  [control]="formCostWare.get('fechaReporte')"
+                  label="Fecha de Reporte">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="fechaReporte"
+                    bsDatepicker />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="formCostWare.get('numeroBien')"
+                  label="No. de Bien">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="numeroBien" />
+                </form-field>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="col-md-3">
+                <form-field
+                  [control]="formCostWare.get('fecha1')"
+                  label="Fecha 1">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="fecha1"
+                    bsDatepicker />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="formCostWare.get('fecha2')"
+                  label="Fecha 2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="fecha2"
+                    bsDatepicker />
+                </form-field>
+              </div>
+              <div class="col">
+                <div class="justify-content-start">
+                  <button
+                    type="button"
+                    [disabled]="formCostWare.invalid"
+                    class="btn btn-primary active btn-sm mr-3"
+                    (click)="onReport1()">
+                    Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm"
+                    (click)="cleanForm1()">
+                    Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </tab>
+
+        <tab heading="Reporte de Asignación de Almacenes">
+          <form class="form-material" [formGroup]="formAsigWare">
+            <div class="row">
+              <div class="col-md-3">
+                <form-field
+                  [control]="formAsigWare.get('numeroAlmacen')"
+                  label="No. de Almacen">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="numeroAlmacen" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="formAsigWare.get('idTipoAlmacen')"
+                  label="Tipo de Almacen">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="idTipoAlmacen" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="formAsigWare.get('numeroBien')"
+                  label="No. de Bien">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="numeroBien" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="formAsigWare.get('seccion')"
+                  label="Sección">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="seccion" />
+                </form-field>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="col-md-3">
+                <form-field
+                  [control]="formAsigWare.get('pocision')"
+                  label="Pocisión">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="pocision" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="formAsigWare.get('fecha1')"
+                  label="Fecha 1">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="fecha1"
+                    bsDatepicker />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="formAsigWare.get('fecha2')"
+                  label="Fecha 2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="fecha2"
+                    bsDatepicker />
+                </form-field>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="col">
+                <div class="justify-content-start">
+                  <button
+                    type="button"
+                    [disabled]="formAsigWare.invalid"
+                    class="btn btn-primary active btn-sm mr-3"
+                    (click)="onReport2()">
+                    Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                  <button
+                    type="button"
+                    [disabled]="formAsigWare.invalid"
+                    class="btn btn-primary active btn-sm mr-3"
+                    (click)="onReport2()">
+                    Imprimir Hitórico
+                    <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm"
+                    (click)="cleanForm2()">
+                    Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>
