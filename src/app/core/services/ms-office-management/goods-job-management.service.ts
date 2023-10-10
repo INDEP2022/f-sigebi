@@ -175,4 +175,14 @@ export class GoodsJobManagementService extends HttpService {
       params
     );
   }
+
+  pupSearchNumber(params: any) {
+    const route = `${GoodsJobManagementEndpoints.pupSearchNumber}`;
+    return this.post(route, params);
+  }
+
+  postMJob(params: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}`;
+    return this.post(route, params);
+  }
 }

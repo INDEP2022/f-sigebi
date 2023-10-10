@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -38,6 +38,7 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
   selectedRow: any;
   //Columns
   columns = COLUMNS;
+  modalParent: BsModalRef;
 
   constructor(
     private fb: FormBuilder,
@@ -176,6 +177,30 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
     let dateSol = this.form.get('fechaSol').value;
     this.selectedRow.fechaSol = dateSol;
     modData = this.selectedRow;
+    console.log('modData modal ', modData);
+    let config: ModalOptions = {
+      initialState: {
+        modData,
+        callback: (next: boolean) => {
+          if (next) {
+            console.log('respuesta exitosa ');
+            this.getTableData();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalParent = this.modalService.show(
+      GoodsServicePaymentComponent,
+      config
+    );
+  }
+
+  openModalBase(modData?: any) {
+    let dateSol = this.form.get('fechaSol').value;
+    this.selectedRow.fechaSol = dateSol;
+    modData = this.selectedRow;
     const modalRef = this.modalService.show(GoodsServicePaymentComponent, {
       initialState: {
         modData,
@@ -186,7 +211,7 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
 
     modalRef.content.data.subscribe(data => {
       if (data) {
-        /*...*/
+        console.log('DataReturnModal-> ', data);
       }
     });
   }

@@ -361,7 +361,8 @@ export class NumeraryMassiveConciliationComponent
   }
 
   //Trae cuentas bancarias
-  getAccountsBank() {
+  getAccountsBank(event?: ListParams) {
+    event ? console.log(event.text) : '';
     this.bank.valueChanges.subscribe(res => {
       if (res != null) {
         console.log(res);
@@ -369,6 +370,11 @@ export class NumeraryMassiveConciliationComponent
         paramsF.addFilter('cveCurrency', this.current.value);
         paramsF.addFilter('accountType', 'CONCENTRADORA');
         paramsF.addFilter('cveBank', res.cveBank);
+        event
+          ? event.text
+            ? paramsF.addFilter('cveAccount', event.text, SearchFilter.ILIKE)
+            : ''
+          : '';
         this.accountBankService.getCveBankFilter(paramsF.getParams()).subscribe(
           res => {
             console.log(res);
@@ -376,6 +382,7 @@ export class NumeraryMassiveConciliationComponent
           },
           err => {
             console.log(err);
+            this.bankAccountData = new DefaultSelect();
           }
         );
       } else {
@@ -383,6 +390,29 @@ export class NumeraryMassiveConciliationComponent
         this.bankAccountData = new DefaultSelect();
       }
     });
+  }
+
+  //Trae cuentas bancarias
+  filterAccountsBank(event?: ListParams) {
+    event ? console.log(event.text) : '';
+    const paramsF = new FilterParams();
+    paramsF.addFilter('cveCurrency', this.current.value);
+    paramsF.addFilter('accountType', 'CONCENTRADORA');
+    paramsF.addFilter('cveBank', this.bank.value.cveBank);
+    event
+      ? paramsF.addFilter('cveAccount', event.text, SearchFilter.ILIKE)
+      : '';
+    console.log(paramsF.getParams());
+    this.accountBankService.getCveBankFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.bankAccountData = new DefaultSelect(res.data, res.count);
+      },
+      err => {
+        console.log(err);
+        this.bankAccountData = new DefaultSelect();
+      }
+    );
   }
 
   //Trae cuentas bancarias de la forma 2

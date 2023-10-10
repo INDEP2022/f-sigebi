@@ -108,11 +108,23 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
   },
   'RSPTAQUERY.val2': {
     title: 'Depósito',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.RSPTAQUERY && row.RSPTAQUERY.val2) {
-        return row.RSPTAQUERY.val2;
+        const numericAmount = parseFloat(row.RSPTAQUERY.val2);
+
+        if (!isNaN(numericAmount)) {
+          const a = numericAmount.toLocaleString('en-US', {
+            // style: 'currency',
+            // currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+          return '<p class="cell_right">' + a + '</p>';
+        } else {
+          return row.RSPTAQUERY.val2;
+        }
       } else {
         return null;
       }
@@ -201,8 +213,26 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
   },
   deposit: {
     title: 'Depósito',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   motionDate: {
     title: 'Fecha Depósito',

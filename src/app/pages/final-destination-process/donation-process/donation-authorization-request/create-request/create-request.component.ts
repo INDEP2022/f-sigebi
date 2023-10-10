@@ -9,6 +9,7 @@ import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.mode
 import { IRequest } from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { HistoricalService } from 'src/app/core/services/ms-historical/historical.service';
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -25,6 +26,7 @@ export class CreateRequestComponent extends BasePage implements OnInit {
   disabledSend: boolean = false;
   arrayDele: any[] = [];
   delegationData = new DefaultSelect();
+  years: number[] = [];
   changeDescription: string;
   @Output() onSave = new EventEmitter<any>();
   get pathClasification() {
@@ -33,6 +35,21 @@ export class CreateRequestComponent extends BasePage implements OnInit {
   get classificationOfGoods() {
     return this.form.get('classificationOfGoods');
   }
+  currentYear: number = new Date().getFullYear();
+  months = [
+    { value: 1, label: 'Enero' },
+    { value: 2, label: 'Febrero' },
+    { value: 3, label: 'Marzo' },
+    { value: 4, label: 'Abril' },
+    { value: 5, label: 'Mayo' },
+    { value: 6, label: 'Junio' },
+    { value: 7, label: 'Julio' },
+    { value: 8, label: 'Agosto' },
+    { value: 9, label: 'Septiembre' },
+    { value: 10, label: 'Octubre' },
+    { value: 11, label: 'Noviembre' },
+    { value: 12, label: 'Diciembre' },
+  ];
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -40,13 +57,18 @@ export class CreateRequestComponent extends BasePage implements OnInit {
     private donationProcessService: DonationProcessService,
     private modalRef: BsModalRef,
     private delegationService: DelegationService,
-    private proposelServiceService: ProposelServiceService
+    private proposelServiceService: ProposelServiceService,
+    private historicalService: HistoricalService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.consulREG_DEL_ADMIN();
+    for (let i = 1900; i <= this.currentYear; i++) {
+      this.years.push(i);
+    }
   }
 
   async prepareForm() {
@@ -120,19 +142,35 @@ export class CreateRequestComponent extends BasePage implements OnInit {
         },
       });
   }
+  consulREG_DEL_ADMIN() {
+    let obj = {
+      gst_todo: 'TODO',
+      gnu_delegacion: 0,
+      gst_rec_adm: 'FILTRAR',
+    };
+    this.historicalService.getHistoricalConsultDelegation(obj).subscribe({
+      next: (data: any) => {
+        console.log('data', data);
+        this.arrayDele = data.data;
+      },
+      error: error => {
+        this.arrayDele = [];
+      },
+    });
+  }
   agregarRequst() {
-    const o = localStorage.getItem('proposalId');
+    const o = this.request.proposalCve;
     if (o) {
       const params = new ListParams();
-      params['filter.requestTypeId'] = `$eq:${o}`;
+      params['filter.requestId.'] = `$eq:${o}`;
       this.proposelServiceService.getAll(params).subscribe({
         next: (data: any) => {
           if (data.data.length == 1) {
-            this.alert('warning', 'Esa sol ya se tiene registrada', '');
+            this.alert('warning', 'Esa solicitud ya se tiene registrada', '');
           } else {
             this.alert(
               'warning',
-              'Actas duplicadas en ACTAS ENTREGA RECEPCION',
+              'Solicitud duplicadas en Donación Solicitud',
               ''
             );
           }

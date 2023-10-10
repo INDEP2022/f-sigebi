@@ -44,8 +44,4 @@ export interface ISample {
   numeraryInstance?: string;
   transfereeId?: number;
   dateTurnedReposition?: string;
-  userCreation: string;
-  userModification: string;
-  creationDate: string;
-  modificationDate: string;
 }
