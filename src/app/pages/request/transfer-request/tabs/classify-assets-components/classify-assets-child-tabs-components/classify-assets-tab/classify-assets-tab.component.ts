@@ -1044,7 +1044,10 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
-    if (goods.goodId) {
+    /**
+     * descomentar en caso de usar la tabla
+     */
+    /* if (goods.goodId) {
       let noCumply: boolean = false;
       if (this.dataAtribute.length > 0) {
         for (let index = 0; index < this.dataAtribute.length; index++) {
@@ -1068,7 +1071,7 @@ export class ClassifyAssetsTabComponent
           return;
         }
       }
-    }
+    } */
 
     // if (!goods.idGoodProperty) {
     //   goods.idGoodProperty =
@@ -1189,25 +1192,27 @@ export class ClassifyAssetsTabComponent
       this.updateGoodFindRecord(goodResult.result);
       //manda a guardar los campos de los bienes, domicilio, inmueble
       this.childSaveAction = true;
-      window.scrollBy(0, window.innerHeight);
+      //window.scrollBy(0, window.innerHeight);
     } else {
+      //const good = this.fillUpForm(goods);
+
       goodResult = await this.updateGood(goods);
       this.updateGoodFindRecord(goodResult.result);
       //manda a actualizar los campos de los bienes, domicilio, inmueble
       this.childSaveAction = true;
 
-      setTimeout(() => {
+      /* setTimeout(() => {
         this.refreshTable(true);
-      }, 5000);
+      }, 5000); */
     }
 
     if (this.process === 'classify-assets') {
       this.classifyChildSaveFraction.emit(goodResult.result);
-    } /* else {
+    } else {
       setTimeout(() => {
         this.refreshTable(true);
       }, 5000);
-    } */
+    }
   }
 
   createGood(good: any) {
@@ -1636,5 +1641,49 @@ export class ClassifyAssetsTabComponent
 
   get dataAtribute() {
     return this.service.data;
+  }
+
+  fillUpForm(good: IGood) {
+    for (let i = 0; i < this.dataAtribute.length; i++) {
+      const element = this.dataAtribute[i];
+      if (good.goodTypeId == 2) {
+        //if (element.column == 'val3') good.brand = element.value; //se necesita que sea tipo numerico
+        //if (element.column == 'val10') good.subBrand = element.value; //se necesita que sea tipo numerico
+        if (element.column == 'val8') good.serie = element.value;
+        if (element.column == 'val4') good.model = element.value;
+        if (element.column == 'val9') good.origin = element.value;
+        if (element.column == 'val5') good.axesNumber = +element.value;
+        if (element.column == 'val25') good.fitCircular = element.value;
+        if (element.column == 'val6') good.engineNumber = +element.value;
+        if (element.column == 'val26') good.theftReport = element.value;
+      } else if (good.goodTypeId == 3) {
+        if (element.column == 'val3') good.operationalState = element.value;
+        if (element.column == 'val18') good.engineNumber = +element.value;
+        if (element.column == 'val17') good.enginesNumber = element.value;
+        if (element.column == 'val13') good.tuition = element.value;
+        if (element.column == 'val8') good.flag = element.value;
+        if (element.column == 'val4') good.openwork = element.value;
+        if (element.column == 'val5') good.length = element.value;
+        if (element.column == 'val20') good.sleeve = element.value;
+        if (element.column == 'val15') good.shipName = element.value;
+        if (element.column == 'val2') good.manufacturingYear = element.value;
+        if (element.column == 'val21') good.publicRegistry = element.value;
+        if (element.column == 'val7') good.capacity = element.value;
+      } else if (good.goodTypeId == 4) {
+        if (element.column == 'val1') good.manufacturingYear = element.value;
+        if (element.column == 'val7') good.model = element.value;
+        if (element.column == 'val3') good.operationalState = element.value;
+        if (element.column == 'val10') good.engineNumber = +element.value;
+        if (element.column == 'val8') good.enginesNumber = element.value;
+        if (element.column == 'val5') good.tuition = element.value;
+        if (element.column == 'val15') good.dgacRegistry = element.value;
+        if (element.column == 'val9') good.serie = element.value;
+        if (element.column == 'val16') good.airplaneType = element.value;
+        if (element.column == 'val4') good.origin = element.value;
+      } else if (good.goodTypeId == 5) {
+      }
+    }
+
+    return good;
   }
 }
