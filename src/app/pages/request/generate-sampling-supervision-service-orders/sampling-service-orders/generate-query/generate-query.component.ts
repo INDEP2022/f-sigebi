@@ -239,14 +239,14 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     data?: any,
     typeAnnex?: string,
     store?: any,
-    annexForm?: any
+    annexData?: any
   ) {
     let config: ModalOptions = {
       initialState: {
         data: data,
         store: store,
         typeAnnex: typeAnnex,
-        annexForm: annexForm,
+        annexData: annexData,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
