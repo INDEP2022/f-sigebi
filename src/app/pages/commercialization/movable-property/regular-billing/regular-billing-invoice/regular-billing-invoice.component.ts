@@ -2029,7 +2029,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Atención',
-        'No cuenta con los permisos para efectuar esta operación'
+        'No cuenta con los permisos para realizar esta operación'
       );
     } else {
       if (data.length == 0) {
@@ -2059,7 +2059,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               next: () => {
                 this.alert(
                   'success',
-                  'La Fecha de impresión ha sido actualizada',
+                  'La fecha de impresión ha sido actualizada',
                   ''
                 );
               },
