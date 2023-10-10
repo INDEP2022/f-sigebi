@@ -8,26 +8,31 @@
     <form [formGroup]="form" class="form-material">
       <div class="col-12">
         <div class="row">
-          <!-- <div class="col-md-3 mt-2">
+          <!-- <div class="col-md-4 mt-2">
             <div>
               <form-field [control]="form.get('requestId')" label="No. Solicitud">
                 <input maxlength="6" type="text" class="form-control pt-1" formControlName="requestId" readonly />
               </form-field>
             </div>
-          </div> 
-          <div class="col-md-3 mt-2">
+          </div> -->
+          <div class="col-md-4 mt-2">
             <div>
-              <form-field [control]="form.get('solQuantity')" label="Cantidad de Solicitud">
-                <input maxlength="6" type="text" class="form-control pt-1" formControlName="solQuantity" />
+              <form-field
+                [control]="form.get('quantity')"
+                label="Cantidad de Solicitud">
+                <input
+                  maxlength="11"
+                  type="number"
+                  class="form-control pt-1"
+                  formControlName="quantity" />
               </form-field>
             </div>
           </div>
--->
-          <div class="col-md-3 mt-2">
+          <div class="col-md-5 mt-2">
             <div>
               <form-field
                 [control]="form.get('entFedKey')"
-                label="Entidad Federal">
+                label=" Entidad Federal">
                 <ng-select
                   formControlName="entFedKey"
                   class="form-control pt-1">
@@ -38,11 +43,23 @@
                     {{ item.delegacion }}</ng-option
                   >
                 </ng-select>
+                <!-- <input #inputValue type="text" class="form-control" formControlName="cveReceived"
+                                    readonly /> -->
               </form-field>
             </div>
           </div>
+          <!-- <div class="col-md-3 mt-2">
+            <div>
+              <form-field [control]="form.get('entFedKey')" label="Entidad Federal">
+                <ng-select formControlName="entFedKey" class="form-control pt-1">
+                  <ng-option *ngFor="let item of arrayDele" [value]="item.delegacion">{{ item.no_delegacion_2 }} -
+                    {{ item.delegacion }}</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+          </div> -->
 
-          <div class="col-md-3 mt-2">
+          <div class="col-md-4 mt-2">
             <div>
               <form-field
                 [control]="form.get('requestDate')"
@@ -59,7 +76,7 @@
             </div>
           </div>
 
-          <div class="col-md-3 mt-2">
+          <div class="col-md-4 mt-2">
             <div>
               <form-field
                 [control]="form.get('sunStatus')"
@@ -72,13 +89,13 @@
               </form-field>
             </div>
           </div>
-          <div class="col-md-3 mt-2">
+          <div class="col-md-4 mt-2">
             <div>
               <form-field
                 [control]="form.get('proposalCve')"
                 label="Cve. Propuesta">
                 <input
-                  maxlength="6"
+                  maxlength="30"
                   type="text"
                   class="form-control pt-1"
                   formControlName="proposalCve" />
@@ -149,7 +166,6 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="!form.valid"
           type="button"
           class="btn btn-primary active btn-sm mr-3"
           (click)="agregarRequst()">
