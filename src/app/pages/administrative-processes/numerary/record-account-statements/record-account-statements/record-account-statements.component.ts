@@ -276,7 +276,7 @@ export class RecordAccountStatementsComponent
     const params__ =
       lparams?.text?.length > 0
         ? `?filter.accountNumber.cveAccount=${lparams.text}`
-        : ``;
+        : `?filter.accountNumber.cveBank:$eq=${lparams.text}`;
     lparams['sortBy'] = 'cveBank: DESC';
     console.log(params__);
     return new Promise((resolve, reject) => {
@@ -288,7 +288,6 @@ export class RecordAccountStatementsComponent
               item['accountAndNumber'] = item.accountNumber.cveAccount;
             });
             this.bankAccountSelect = new DefaultSelect(data.data, data.count);
-            this.bankCode = '';
           },
           error: () => {
             this.bankAccountSelect = new DefaultSelect();
