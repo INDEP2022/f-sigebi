@@ -1,10 +1,10 @@
 export const LIST_PAYMENT_VALIDATIONS = {
-  noManagement: {
-    title: 'Número Gestión',
+  goodId: {
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  noInventory: {
+  inventoryNumber: {
     title: 'No. Inventario',
     type: 'string',
     sort: false,
@@ -19,27 +19,22 @@ export const LIST_PAYMENT_VALIDATIONS = {
     type: 'string',
     sort: false,
   },
-  unity: {
+  unit: {
     title: 'Unidad',
     type: 'string',
     sort: false,
   },
-  statusEvaluation: {
-    title: 'Estatus restitución',
-    type: 'string',
-    sort: false,
-  },
-  resultEvaluation: {
+  evaluationResult: {
     title: 'Resultado de evaluación',
     type: 'string',
     sort: false,
   },
-  statusAsset: {
+  goodStatus: {
     title: 'Estado del bien',
     type: 'string',
     sort: false,
   },
-  quantityMissingDamaged: {
+  quantityBreak: {
     title: 'Cantidad faltante/dañado',
     type: 'string',
     edit: true,

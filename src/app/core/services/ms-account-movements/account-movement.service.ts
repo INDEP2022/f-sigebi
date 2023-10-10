@@ -247,6 +247,7 @@ export class AccountMovementService extends HttpService {
   getMaxDate(body: any) {
     return this.post(AccountmvmntEndpoint.MaxDate, body);
   }
+  getAllAccounts(params?: _Params) {
+    return this.get('bank-account', params);
+  }
 }
-
-//``
