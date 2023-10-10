@@ -122,6 +122,7 @@ export class DonationRequestService
   udateDonacRequestGood(model: any) {
     return this.put(`donac-request-good`, model);
   }
-
-  ////donac-request-good
+  getContract(params: ListParams) {
+    return this.get(`donac-contract`, params);
+  }
 }

@@ -392,20 +392,12 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   async selectRequest() {
     if (this.type.value === null) {
-      this.alert(
-        'warning',
-        'Cálculo de Numerario',
-        'Debe Especificar el Tipo de Proceso.'
-      );
+      this.alert('warning', 'Atención', 'Debe especificar el tipo de proceso');
       return;
     }
     console.log(this.currency.value);
     if (this.currency.value === null) {
-      this.alert(
-        'warning',
-        'Cálculo de Numerario',
-        'Debe Especificar el Tipo de Moneda.'
-      );
+      this.alert('warning', 'Atención', 'Debe especificar el tipo de moneda');
       return;
     }
     const response = await this.alertQuestion(
@@ -488,8 +480,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Cálculo de Numerario',
-        'El proceso no presenta ninguna comisión bancaria.'
+        'Atención',
+        'El proceso no presenta ninguna comisión bancaria'
       );
     }
   }
@@ -532,8 +524,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   async deleteRequest() {
     const response = await this.alertQuestion(
       'question',
-      'Cálculo de Numerario',
-      'Se eliminará proceso de numerario. ¿Deseas continuar?'
+      'Se eliminará el proceso de numerario',
+      '¿Deseas continuar?'
     );
     if (response.isConfirmed) {
       const deleteExi: boolean = await this.deleteSoli(
@@ -541,16 +533,12 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       );
       if (deleteExi) {
         this.clearAll();
-        this.alert(
-          'success',
-          'Cálculo de Numerario',
-          'El cálculo solicitado fue eliminado'
-        );
+        this.alert('success', 'El cálculo solicitado fue eliminado', '');
       } else {
         this.alert(
           'error',
           'Ha ocurrido un error',
-          'No fue posible eliminar el cálculo colicitado'
+          'No fue posible eliminar el cálculo solicitado'
         );
       }
     }
@@ -593,6 +581,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
             console.log(next);
             this.idProcess.setValue(next);
             this.searchProcess();
+            this.fillNewData = false;
           }
         },
       },
@@ -605,7 +594,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   searchProcess() {
     console.log(this.idProcess.value);
     if (this.idProcess.value == null) {
-      return this.alert('warning', 'Debe especificar un proceso.', '');
+      return this.alert('warning', 'Atención', 'Debe especificar un proceso');
     }
     this.numeraryService.getProcessNumById(this.idProcess.value).subscribe({
       next: response => {
@@ -620,7 +609,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       error: () => {
         this.clean();
         this.searchedData = false;
-        this.alert('error', 'No se encontró el proceso.', '');
+        this.alert('error', 'No se encontró el proceso', '');
       },
     });
   }
@@ -655,7 +644,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeDet.solnumId !== null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Desea Ejecutar el Cálculo?',
+          '¿Desea ejecutar el cálculo?',
           '',
           'Ejecutar'
         );
@@ -666,23 +655,15 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           if (vResul === 'Error') {
             this.alert('error', 'Ha ocurrido un error', '');
           } else {
-            this.alert('success', 'Se eliminó el Cálculo de Numerario', '');
+            this.alert('success', 'Se eliminó el cálculo de numerario', '');
             this.searchProcess();
           }
         }
       } else {
-        this.alert(
-          'warning',
-          'Cálculo de Numerario',
-          'No se encontró la solicitud.'
-        );
+        this.alert('warning', 'No se encontró la solicitud', '');
       }
     } else {
-      this.alert(
-        'warning',
-        'Cálculo de Numerario',
-        'No se especificó el proceso a calcular.'
-      );
+      this.alert('warning', 'No se especificó el proceso a calcular', '');
     }
   }
 
@@ -779,7 +760,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeDet.solnumId != null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Desea Ejecutar el Cálculo?',
+          '¿Desea ejecutar el cálculo?',
           ''
         );
 
@@ -792,12 +773,12 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           if (vResul === 'Error') {
             this.alert('error', 'Ha Ocurrido un Error', '');
           } else {
-            this.alert('success', 'Se Realizó el Cálculo de Numerario', '');
+            this.alert('success', 'Se realizó el cálculo de numerario', '');
             this.searchProcess();
           }
         }
       } else {
-        this.alert('error', 'No se Encontró la Solicitud', '');
+        this.alert('error', 'No se encontró la solicitud', '');
       }
     } else {
       this.alert('error', 'No se especificó el proceso a calcular', '');
@@ -817,18 +798,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (res.registers === 0) {
         this.alert(
           'warning',
-          'Cálculo de Numerario',
-          'No se encontro el tipo de moneda en este proceso. \n Debe seleccionar uno para continuar con el proceso'
+          'Atención',
+          'No se encontró el tipo de moneda en este proceso. \n Debe seleccionar uno para continuar con el proceso'
         );
         this.currency.enable();
         return;
       }
       if (res.registers > 1) {
-        this.alert(
-          'warning',
-          'Cálculo de Numerario',
-          'Se encontraron más tipos de moneda.'
-        );
+        this.alert('warning', 'Atención', 'Se encontraron más tipos de moneda');
         return;
       }
       if (res.data.ind_moneda) {
@@ -866,7 +843,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.currency.value === 'P') {
       this.alert(
         'warning',
-        'Cálculo de numerario',
+        'Atención',
         'El proceso no presenta ninguna comisión bancaria'
       );
       return;
@@ -875,11 +852,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     const jsonToCsv = await this.returnJsonToCsv(Number(this.idProcess.value));
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
-      this.alert(
-        'warning',
-        'Cálculo de numerario',
-        'No hay información para descargar'
-      );
+      this.alert('warning', 'Atención', 'No hay información para descargar');
       return;
     }
     this.excelService.export(jsonToCsv, { type: 'csv', filename });
@@ -907,11 +880,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     );
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
-      this.alert(
-        'warning',
-        'Cálculo de numerario',
-        'No hay información para descargar'
-      );
+      this.alert('warning', 'Atención', 'No hay información para descargar');
       return;
     }
     this.excelService.export(jsonToCsv, { type: 'csv', filename });
@@ -1006,9 +975,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   newProcessFn() {
     if (this.type.value == null) {
-      this.alert('warning', 'Debe seleccionar un tipo', '');
+      this.alert('warning', 'Atención', 'Debe seleccionar un tipo');
     } else if (this.currency.value == null) {
-      this.alert('warning', 'Debe seleccionar un tipo de moneda', '');
+      this.alert('warning', 'Atención', 'Debe seleccionar un tipo de moneda');
     } else {
       const model: IProccesNum = {
         procnumDate: format(new Date(), 'yyyy-MM-dd'),

@@ -171,7 +171,6 @@ export class EmailModalComponent extends BasePage implements OnInit {
       next: data => {
         // Haz una copia del array antes de la acción de selección o deselección
         this.tempArray = [...this.array];
-        console.log(data.toggle, data.row.bookEmail);
         if (data.toggle) {
           // Si el checkbox se selecciona, agregar el elemento al array
           if (!this.array.includes(data.row.bookEmail)) {
@@ -184,8 +183,6 @@ export class EmailModalComponent extends BasePage implements OnInit {
             this.array.splice(index, 1);
           }
         }
-        console.log(this.array);
-
         // Ahora puedes realizar la consulta, teniendo en cuenta los cambios en this.array
       },
     });
@@ -197,7 +194,6 @@ export class EmailModalComponent extends BasePage implements OnInit {
       next: data => {
         // Haz una copia del array antes de la acción de selección o deselección
         this.tempArray2 = [...this.array2];
-        console.log(data.toggle, data.row.bookEmail);
         if (data.toggle) {
           // Si el checkbox se selecciona, agregar el elemento al array
           if (!this.array2.includes(data.row.bookEmail)) {
@@ -210,7 +206,6 @@ export class EmailModalComponent extends BasePage implements OnInit {
             this.array2.splice(index, 1);
           }
         }
-        console.log(this.array2);
 
         // Ahora puedes realizar la consulta, teniendo en cuenta los cambios en this.array
       },
@@ -331,7 +326,6 @@ export class EmailModalComponent extends BasePage implements OnInit {
         this.emailsBook.load(res.data);
         this.emailsBook.refresh();
         this.loading = false;
-        console.log(res);
       },
       error: () => {
         this.loading = false;
@@ -359,7 +353,6 @@ export class EmailModalComponent extends BasePage implements OnInit {
         this.emailsBook2.load(res.data);
         this.emailsBook2.refresh();
         this.loading2 = false;
-        console.log(res);
       },
       error: () => {
         this.loading2 = false;

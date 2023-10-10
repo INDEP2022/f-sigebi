@@ -41,7 +41,11 @@ export const REQUESTS_COLUMNS_MODAL = {
     filter: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return goodCheck.find((e: any) => e.row.id == row.id) ? true : false;
+      return goodCheck.find((e: any) => {
+        if (e.row) {
+          e.row.id == row.id ? true : false;
+        }
+      });
     },
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
@@ -49,9 +53,11 @@ export const REQUESTS_COLUMNS_MODAL = {
           console.log(goodCheck);
           goodCheck.push(data.row);
         } else {
+          console.log(data.row.id_solnum);
           goodCheck = goodCheck.filter(
             valor => valor.id_solnum != data.row.id_solnum
           );
+          console.log(goodCheck);
         }
       });
     },

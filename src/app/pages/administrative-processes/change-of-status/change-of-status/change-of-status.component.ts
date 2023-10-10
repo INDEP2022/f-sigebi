@@ -184,6 +184,46 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
       const paramsF = new FilterParams();
       paramsF.addFilter('status', 'ROP', SearchFilter.NOT);
       paramsF.addFilter('propertyNum', this.numberGood.value);
+      this.historyGoodService.getAllFilter(paramsF.getParams()).subscribe(
+        res => {
+          this.goodServices.getStatusByGood(this.numberGood.value).subscribe(
+            res => {
+              const paramsF2 = new FilterParams();
+              paramsF2.addFilter('status', res.status_estatus);
+              paramsF2.addFilter('screenKey', 'CAMMUEESTATUS');
+              this.screenStatusService
+                .getAllFilterFree(paramsF2.getParams())
+                .subscribe(
+                  res => {
+                    this.getStatus(
+                      { text: JSON.parse(JSON.stringify(res.data[0])).status },
+                      true
+                    );
+                    console.log(res.data[0]);
+                    resolve(res);
+                  },
+                  err => {
+                    resolve({ message: 'Error' });
+                  }
+                );
+            },
+            err => {
+              resolve({ message: 'Error' });
+            }
+          );
+        },
+        err => {
+          resolve({ message: 'Error' });
+        }
+      );
+    });
+  }
+
+  /* validateGood() {
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('status', 'ROP', SearchFilter.NOT);
+      paramsF.addFilter('propertyNum', this.numberGood.value);
 
       this.historyGoodService.getAllFilter(paramsF.getParams()).subscribe(
         res => {
