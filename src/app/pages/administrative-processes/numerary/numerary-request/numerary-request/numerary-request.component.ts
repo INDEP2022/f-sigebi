@@ -695,13 +695,13 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
 
     this.numEncServ.update(body).subscribe({
       next: async resp => {
-        this.alert('success', 'Solicitud', 'Ha sido actualizada');
+        this.alert('success', 'La solicitud ha sido actualizada', '');
       },
       error: () => {
         this.alert(
           'error',
           'ERROR',
-          'Ocurrio un error al actualizar la solicitud'
+          'Ocurrió un error al actualizar la solicitud'
         );
       },
     });
@@ -741,7 +741,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Eliminar',
-      `¿Estás seguro de eliminar el bien: ${goodNumber}?`
+      `¿Estás seguro de eliminar el Bien: ${goodNumber}?`
     ).then(async answ => {
       if (answ.isConfirmed) {
         if (valid) {
@@ -752,7 +752,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           this.data1 = [...this.data1];
           this.registers = this.data1.length;
           this.totalItems2 = this.data1.length;
-          this.alert('success', 'Bien', 'Ha sido eliminado');
+          this.alert('success', 'El Bien Ha sido eliminado', '');
         } else {
           await this.deleteGoodDet(removeData);
           this.filterParams2.getValue().removeAllFilters();

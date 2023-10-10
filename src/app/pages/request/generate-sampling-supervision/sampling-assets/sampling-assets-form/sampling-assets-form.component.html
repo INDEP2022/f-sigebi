@@ -182,17 +182,19 @@
       </div>
     </div>
     <div class="row pt-4">
-      <ng2-smart-table
-        #table2
-        id="table2"
-        [attr.class]="'table-bordered'"
-        [settings]="settings2"
-        [source]="paragraphs2"
-        (userRowSelect)="selectAssts($event)">
-      </ng2-smart-table>
-      <app-pagination
-        [params]="params2"
-        [totalItems]="totalItems2"></app-pagination>
+      <div [class]="loadingGoodInv ? 'table-loading' : ''">
+        <ng2-smart-table
+          #table2
+          id="table2"
+          [attr.class]="'table-bordered'"
+          [settings]="settings2"
+          [source]="paragraphs2"
+          (userRowSelect)="selectAssts($event)">
+        </ng2-smart-table>
+        <app-pagination
+          [params]="params2"
+          [totalItems]="totalItems2"></app-pagination>
+      </div>
     </div>
     <div>
       <tabset class="md-tabs">
@@ -249,27 +251,36 @@
           <div class="row pt-4">
             <div class="d-flex justify-content-end">
               <div class="m-3">
-                <button class="btn btn-red btn-sm active">
+                <button
+                  (click)="removeGood()"
+                  class="btn btn-red btn-sm active">
                   Eliminar <i class="fa fa-trash"></i>
                 </button>
               </div>
               <div class="m-3">
-                <button class="btn btn-primary btn-sm active">
+                <button
+                  (click)="meetsGoods()"
+                  class="btn btn-primary btn-sm active">
                   Cumple <i class="fa fa-check"></i>
                 </button>
               </div>
               <div class="m-3">
-                <button class="btn btn-danger btn-sm active">No cumple</button>
+                <button
+                  (click)="failsGoods()"
+                  class="btn btn-danger btn-sm active">
+                  No cumple
+                </button>
               </div>
             </div>
           </div>
           <div class="row pt-1">
-            <div [class]="loading ? 'table-loading' : ''">
+            <div [class]="loadingGoods ? 'table-loading' : ''">
               <ng-scrollbar track="all" style="min-height: 200px; border: none">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settings3"
                   [source]="paragraphs3"
+                  (edit)="editResultEvaluation($event.data)"
                   (userRowSelect)="selectAsstsCopy($event)">
                 </ng2-smart-table>
               </ng-scrollbar>
@@ -280,6 +291,15 @@
           </div>
         </tab>
         <tab heading="Deductivas">
+          <div class="justify-content-end btn-toolbar">
+            <button
+              (click)="saveDeductives()"
+              type="button"
+              class="btn btn-primary btn-sm active ml-2 mr-2">
+              Guardar
+              <i class="fa fa-save"></i>
+            </button>
+          </div>
           <div class="row pt-2">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
@@ -289,6 +309,7 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settings4"
+                  (userRowSelect)="deductivesSelect($event)"
                   [source]="paragraphsDeductivas">
                 </ng2-smart-table>
                 <!--  </ng-scrollbar> -->

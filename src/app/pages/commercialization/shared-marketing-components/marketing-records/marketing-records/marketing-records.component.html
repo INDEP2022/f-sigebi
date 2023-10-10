@@ -411,8 +411,9 @@
                     tooltip="Consulta de Imágenes Escaneadas"
                     containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-1"
-                    [disabled]="folioScan == null">
-                    <i class="bx bxs-file-find" (click)="insertListImg()"></i>
+                    [disabled]="folioScan == null"
+                    (click)="insertListImg()">
+                    <i class="bx bxs-file-find"></i>
                   </button>
                 </div>
                 <!-- (click)="getReportViewActa()" -->

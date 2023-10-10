@@ -566,9 +566,13 @@
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bxs-car"></i> Ficha T&eacute;cnica Vehículos
     </ng-template>
-    <div class="row d-flex justify-content-center">
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
-        <div>
+        <div
+          *ngIf="
+            process == 'classify-assets' || process == 'registration-request';
+            else disabledApp
+          ">
           <app-characteristics-legend></app-characteristics-legend>
           <app-good-characteristics-table
             [goodChange]="goodChange2"
@@ -580,10 +584,22 @@
             [good]="detailAssetsInfo"
             [service]="service"></app-good-characteristics-table>
         </div>
+        <ng-template #disabledApp>
+          <div>
+            <app-good-characteristics-table
+              [goodChange]="goodChange2"
+              [clasification]="classificationNumber"
+              [settings]="atributActSettings"
+              [avaluo]="false"
+              [good]="detailAssetsInfo"
+              [disabled]="true"
+              [service]="service"></app-good-characteristics-table>
+          </div>
+        </ng-template>
       </div>
-    </div>
+    </div> -->
 
-    <!-- <form [formGroup]="detailAssets" class="form-material">
+    <form [formGroup]="detailAssets" class="form-material">
       <div
         *ngIf="
           process == 'registration-request' || process == 'classify-assets'
@@ -602,7 +618,6 @@
               bindLabel="flexValueMeaning"
               [readonly]="isGoodTypeReadOnly"
               (change)="onValuesChange($event)"></ngx-select>
-           
           </div>
           <div class="col-md-3">
             <form-field
@@ -615,7 +630,6 @@
                 formControlName="tuition"
                 [readonly]="isGoodTypeReadOnly" />
             </form-field>
-           
           </div>
         </div>
 
@@ -631,7 +645,6 @@
               bindLabel="flexValueMeaningDependent"
               [readonly]="isGoodTypeReadOnly"
               (change)="onSubBranchChange($event)"></ngx-select>
-            
           </div>
           <div class="col-md-4">
             <form-field [control]="detailAssets.get('serie')" label="Serie">
@@ -641,7 +654,6 @@
                 formControlName="serie"
                 [readonly]="isGoodTypeReadOnly" />
             </form-field>
-            
           </div>
         </div>
         <div class="row pt-4">
@@ -655,7 +667,6 @@
                 [disabled]="isGoodTypeReadOnly"
                 (change)="handleArmor($event)" />
             </form-check>
-            
           </div>
           <div class="col-md-4">
             <form-field [control]="detailAssets.get('chassis')" label="Chasis">
@@ -666,7 +677,6 @@
                 [readOnly]="isGoodTypeReadOnly"
                 maxlength="40" />
             </form-field>
-           
           </div>
         </div>
 
@@ -681,7 +691,6 @@
                 min="0"
                 oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
             </form-field>
-            
           </div>
           <div class="col-md-4">
             <form-field [control]="detailAssets.get('cabin')" label="Cabina">
@@ -693,7 +702,6 @@
                 min="0"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
-            
           </div>
         </div>
 
@@ -710,7 +718,6 @@
                 min="0"
                 oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
-            
           </div>
           <div class="col-md-4">
             <form-field
@@ -723,7 +730,6 @@
                 maxlength="40"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
-            
           </div>
         </div>
         <div class="row pt-4">
@@ -739,7 +745,6 @@
                 min="0"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
-           
           </div>
           <div class="col-md-4">
             <form-check label="Apto para Circular" for="fitCircular">
@@ -751,7 +756,6 @@
                 (change)="handleCirculateEvent($event)"
                 [disabled]="isGoodTypeReadOnly" />
             </form-check>
-            
           </div>
         </div>
 
@@ -767,7 +771,6 @@
                 maxlength="40"
                 [readonly]="isGoodTypeReadOnly" />
             </form-field>
-            
           </div>
           <div class="col-md-4">
             <form-check label="Cuenta con reporte de robos" for="theftReport">
@@ -779,14 +782,13 @@
                 (change)="handleTheftReportEvent($event)"
                 [disabled]="isGoodTypeReadOnly" />
             </form-check>
-          
           </div>
         </div>
       </div>
     </form>
     <app-read-info-vehicle
       *ngIf="process != 'registration-request' && process != 'classify-assets'"
-      [vehicleObject]="detailAssetsInfo"></app-read-info-vehicle> -->
+      [vehicleObject]="detailAssetsInfo"></app-read-info-vehicle>
   </tab>
 
   <!-- Información de Embarcación  -->
@@ -797,9 +799,13 @@
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bx-anchor"></i> Ficha t&eacute;cnica Embarcaci&oacute;n
     </ng-template>
-    <div class="row d-flex justify-content-center">
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
-        <div>
+        <div
+          *ngIf="
+            process == 'classify-assets' || process == 'registration-request';
+            else disabledApp
+          ">
           <app-characteristics-legend></app-characteristics-legend>
           <app-good-characteristics-table
             [goodChange]="goodChange2"
@@ -811,9 +817,21 @@
             [good]="detailAssetsInfo"
             [service]="service"></app-good-characteristics-table>
         </div>
+        <ng-template #disabledApp>
+          <div>
+            <app-good-characteristics-table
+              [goodChange]="goodChange2"
+              [clasification]="classificationNumber"
+              [settings]="atributActSettings"
+              [avaluo]="false"
+              [good]="detailAssetsInfo"
+              [disabled]="true"
+              [service]="service"></app-good-characteristics-table>
+          </div>
+        </ng-template>
       </div>
-    </div>
-    <!-- <form [formGroup]="detailAssets" class="form-material">
+    </div> -->
+    <form [formGroup]="detailAssets" class="form-material">
       <div class="boatInformation">
         <p class="msg-required" *ngIf="process != 'classify-assets'">
           Los campos con <span>*</span> son requeridos
@@ -1273,7 +1291,7 @@
           </div>
         </div>
       </div>
-    </form> -->
+    </form>
   </tab>
 
   <!-- Informacion Joyeria -->
@@ -1284,9 +1302,13 @@
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bx-disc"></i> Informaci&oacute;n de Joya
     </ng-template>
-    <div class="row d-flex justify-content-center">
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
-        <div>
+        <div
+          *ngIf="
+            process == 'classify-assets' || process == 'registration-request';
+            else disabledApp
+          ">
           <app-characteristics-legend></app-characteristics-legend>
           <app-good-characteristics-table
             [goodChange]="goodChange2"
@@ -1298,9 +1320,21 @@
             [good]="detailAssetsInfo"
             [service]="service"></app-good-characteristics-table>
         </div>
+        <ng-template #disabledApp>
+          <div>
+            <app-good-characteristics-table
+              [goodChange]="goodChange2"
+              [clasification]="classificationNumber"
+              [settings]="atributActSettings"
+              [avaluo]="false"
+              [good]="detailAssetsInfo"
+              [disabled]="true"
+              [service]="service"></app-good-characteristics-table>
+          </div>
+        </ng-template>
       </div>
-    </div>
-    <!-- <form [formGroup]="detailAssets" class="form-material">
+    </div> -->
+    <form [formGroup]="detailAssets" class="form-material">
       <div class="jewelInformation">
         <p class="msg-required" *ngIf="process != 'classify-assets'">
           Los campos con <span>*</span> son requeridos
@@ -1375,7 +1409,7 @@
           </div>
         </div>
       </div>
-    </form> -->
+    </form>
   </tab>
 
   <!-- Informacion aereonaves -->
@@ -1387,9 +1421,13 @@
       <i class="bx bx-flag"></i> Ficha t&eacute;cnica Aeronaves
     </ng-template>
 
-    <div class="row d-flex justify-content-center">
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
-        <div>
+        <div
+          *ngIf="
+            process == 'classify-assets' || process == 'registration-request';
+            else disabledApp
+          ">
           <app-characteristics-legend></app-characteristics-legend>
           <app-good-characteristics-table
             [goodChange]="goodChange2"
@@ -1401,9 +1439,21 @@
             [good]="detailAssetsInfo"
             [service]="service"></app-good-characteristics-table>
         </div>
+        <ng-template #disabledApp>
+          <div>
+            <app-good-characteristics-table
+              [goodChange]="goodChange2"
+              [clasification]="classificationNumber"
+              [settings]="atributActSettings"
+              [avaluo]="false"
+              [good]="detailAssetsInfo"
+              [disabled]="true"
+              [service]="service"></app-good-characteristics-table>
+          </div>
+        </ng-template>
       </div>
-    </div>
-    <!-- <form [formGroup]="detailAssets" class="form-material">
+    </div> -->
+    <form [formGroup]="detailAssets" class="form-material">
       <div class="aircraftInformation">
         <p class="msg-required" *ngIf="process != 'classify-assets'">
           Los campos con <span>*</span> son requeridos
@@ -1731,7 +1781,7 @@
           </div>
         </div>
       </div>
-    </form> -->
+    </form>
   </tab>
 
   <!-- Informacion inmuebles -->
@@ -1743,9 +1793,13 @@
       <i class="bx bx-building"></i> Bien Inmueble
     </ng-template>
 
-    <div class="row d-flex justify-content-center">
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
-        <div>
+        <div
+          *ngIf="
+            process == 'classify-assets' || process == 'registration-request';
+            else disabledApp
+          ">
           <app-characteristics-legend></app-characteristics-legend>
           <app-good-characteristics-table
             [goodChange]="goodChange2"
@@ -1757,10 +1811,22 @@
             [good]="detailAssetsInfo"
             [service]="service"></app-good-characteristics-table>
         </div>
+        <ng-template #disabledApp>
+          <div>
+            <app-good-characteristics-table
+              [goodChange]="goodChange2"
+              [clasification]="classificationNumber"
+              [settings]="atributActSettings"
+              [avaluo]="false"
+              [good]="detailAssetsInfo"
+              [disabled]="true"
+              [service]="service"></app-good-characteristics-table>
+          </div>
+        </ng-template>
       </div>
-    </div>
+    </div> -->
 
-    <!-- <form [formGroup]="goodDomicilieForm" class="form-material">
+    <form [formGroup]="goodDomicilieForm" class="form-material">
       <div class="immovablestInformation">
         <p class="msg-required" *ngIf="process != 'classify-assets'">
           Los campos con <span>*</span> son requeridos
@@ -2887,6 +2953,6 @@
           </div>
         </div>
       </div>
-    </form> -->
+    </form>
   </tab>
 </tabset>
