@@ -140,6 +140,7 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     this.donationRequestService.getContractByType(body, param).subscribe({
       next: data => {
         this.contract = data.data[0];
+        console.log(this.contract);
         this.desaHabForms();
         this.setForm();
         this.postQueryContract();
