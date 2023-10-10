@@ -60,6 +60,7 @@ export class UploadExpedientFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('good', this.good);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,

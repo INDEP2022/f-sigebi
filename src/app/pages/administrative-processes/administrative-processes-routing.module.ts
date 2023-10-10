@@ -806,6 +806,17 @@ export const routes: Routes = [
           screen: 'FACTARGRECEPDOCS',
         },
       },
+      {
+        //!SIRVIO
+        path: 'warehouse-type-report',
+        loadChildren: async () =>
+          (await import('./warehouse-type-report/warehouse-type-report.module'))
+            .WarehouseTypeReportModule,
+        data: {
+          title: 'Reporte de tipo de almacenes',
+          screen: 'FTIPOREPALMACEN',
+        },
+      },
     ],
   },
 ];

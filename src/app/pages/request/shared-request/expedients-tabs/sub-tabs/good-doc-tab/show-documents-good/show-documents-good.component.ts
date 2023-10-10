@@ -9,6 +9,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -45,7 +46,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   programming: Iprogramming;
   process: string = '';
   paragraphs: any[] = [];
-  idGood: number;
+  idGood: string = '';
   idRequest: number = 0;
   recordId: number = 0;
   totalItems: number = 0;
@@ -56,7 +57,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   idState: string = '';
   task: any;
   statusTask: any;
-
+  sampleGood: ISampleGood[] = [];
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -103,13 +104,16 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('idGood', this.idGood);
-    this.prepareForm();
-    this.getDocType(new ListParams());
-    this.getDocuemntByGood();
-    this.getRegDelegation(new ListParams());
-    this.getState(new ListParams());
-    this.getTransfe(new ListParams());
+    console.log('sampleGood', this.sampleGood);
+    if (this.idGood && this.idRequest) {
+      this.prepareForm();
+      this.getDocType(new ListParams());
+      this.getDocuemntByGood();
+    } else if (this.sampleGood.length > 0) {
+      this.prepareForm();
+      this.goodData();
+      this.getDocType(new ListParams());
+    }
   }
 
   prepareForm(): void {
@@ -167,6 +171,18 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     });
 
     this.docRequestForm.get('noRequest').setValue(this.idGood);
+  }
+
+  goodData() {
+    let idGood: string = '';
+    this.sampleGood.map(item => {
+      idGood += `${item.goodId}, `;
+      console.log('idGood d', idGood);
+    });
+
+    console.log('idGood f', idGood);
+    this.docRequestForm.get('noRequest').setValue(idGood);
+    this.idGood = idGood;
   }
 
   getDocuemntByGood() {
