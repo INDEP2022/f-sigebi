@@ -157,14 +157,56 @@
     <form-loader *ngIf="loading"></form-loader>
     <div>
       <ng2-smart-table
-        [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+        [ngStyle]="{
+          height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
+        }"
         [attr.class]="'table-bordered table-responsive mb-4'"
         [settings]="settings"
         [source]="dataFilter">
       </ng2-smart-table>
     </div>
-    <app-pagination [params]="paramsList" [totalItems]="totalItems">
+    <app-pagination
+      [params]="paramsList"
+      [totalItems]="totalItems"
+      [limit]="limit"
+      [pageSizeOptions]="[500]">
     </app-pagination>
+  </div>
+  <div class="row">
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-end">
+        <div class="col-md-2">
+          <form-field [control]="form.get('price')">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="price"
+              currencyMask
+              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('ivaT')">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="ivaT"
+              currencyMask
+              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('total')">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="total"
+              currencyMask
+              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+          </form-field>
+        </div>
+      </div>
+    </form>
   </div>
 
   <div class="row pt-3">
