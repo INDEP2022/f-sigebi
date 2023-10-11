@@ -80,7 +80,7 @@ export class AddMovementComponent
       dateMovement: ['', [Validators.required]],
       category: [null],
     });
-    console.log('this.data', this.data);
+    // console.log('this.data', this.data);
     if (this.data) {
       this.minDate = this.data.motiondate;
       // const date1: string = this.datePipe.transform(this.data.calculationinterestsdate, 'yyyy-MM-dd');
@@ -141,17 +141,15 @@ export class AddMovementComponent
   }
 
   onDateChange(event: any) {
-    console.log('Fecha seleccionada:', this.dateMovem);
+    // console.log('Fecha seleccionada:', this.dateMovem);
     // Realiza las acciones deseadas al cambiar la fecha
   }
 
   dateMovement(event: any) {
-    console.log('ev', event);
-
-    console.log('dateMovem', this.dateMovem);
+    // console.log('ev', event);
+    // console.log('dateMovem', this.dateMovem);
     // this.form.get('dateCalculationInterests').setValue('');
     // if () {
-
     // }
     // this.dateMovem2 = null;1
     // this.dateMovem = event.target.value;
@@ -170,11 +168,6 @@ export class AddMovementComponent
   }
 
   saveRegister() {
-    console.log(
-      Date.parse(this.form.value.dateCalculationInterests),
-      'aaa',
-      Date.parse(this.form.value.dateMovement)
-    );
     if (
       Date.parse(this.form.value.dateCalculationInterests) <
       Date.parse(this.form.value.dateMovement)
@@ -186,7 +179,7 @@ export class AddMovementComponent
       );
       return;
     }
-    console.log('VALUE', this.form.value);
+    // console.log('VALUE', this.form.value);
     const SYSDATE = new Date();
     const USER = this.token.decodeToken().preferred_username;
     const CATEGORY = this.form.value.category;
@@ -220,11 +213,11 @@ export class AddMovementComponent
       isFileDeposit: 'S',
       numberReturnPayCheck: null,
     };
-    console.log('EN', obj);
+    // console.log('EN', obj);
 
     this.accountMovementService.create(obj).subscribe({
       next: response => {
-        console.log('response', response);
+        // console.log('response', response);
         this.modalRef.content.callback(true);
         this.close();
         this.alert('success', 'Movimiento creado correctamente', '');
@@ -241,7 +234,7 @@ export class AddMovementComponent
 
   async updateRegister() {
     if (
-      !(await this.compararFechas(
+      !(await this.compararFechas_FINAL(
         this.form.value.dateCalculationInterests,
         this.form.value.dateMovement
       ))
@@ -253,16 +246,12 @@ export class AddMovementComponent
       );
       return;
     }
-    // console.log('VALUE', this.form.value);
+    return;
+    // // console.log('VALUE', this.form.value);
     const SYSDATE = new Date();
     const USER = this.token.decodeToken().preferred_username;
     const CATEGORY = this.form.value.category;
     const BANK = this.form.value.bank;
-    console.log(
-      this.form.value.dateMovement,
-      '=======',
-      this.dateMovemRespDeposito
-    );
     let obj: any = {
       category: this.data.category,
       deposit: this.form.value.deposit,
@@ -279,11 +268,11 @@ export class AddMovementComponent
           : this.returnParseDate_(this.form.value.dateCalculationInterests),
       // this.convertirFecha(this.dateMovem2),
     };
-    console.log('EN', obj);
+    // console.log('EN', obj);
 
     this.accountMovementService.update(obj).subscribe({
       next: response => {
-        console.log('response', response);
+        // console.log('response', response);
         this.modalRef.content.callback(true);
         this.close();
         this.alert('success', 'Movimiento actualizado correctamente', '');
@@ -300,10 +289,12 @@ export class AddMovementComponent
 
   async compararFechas(fecha1: any, fecha2: any) {
     console.log(fecha1, 'eeeee', fecha2);
+
+    console.log('this.dateMovemRespTesofe', this.dateMovemRespTesofe);
     let fecha11 = null;
     let fecha22 = null;
 
-    if (fecha1)
+    if (!fecha1)
       // FECHA TESOFE //
       fecha11 =
         fecha1 == this.dateMovemRespTesofe
@@ -312,10 +303,27 @@ export class AddMovementComponent
     console.log('fecha11', fecha11);
     // if (fecha2) // FECHA DEL DEPOSITO //
     //   fecha22 = (fecha2 == this.dateMovemRespDeposito) ? this.datePipe.transform(new Date(fecha2), 'yyyy-dd-MM') : this.datePipe.transform(fecha2, 'yyyy-MM-dd');
-    // console.log(fecha11, 'iiii', fecha22);
+    // // console.log(fecha11, 'iiii', fecha22);
     const fecha1_ = Date.parse(fecha11);
     const fecha2_ = Date.parse(fecha2);
-    // console.log(fecha1_, 'ooooo', fecha2_);
+    // // console.log(fecha1_, 'ooooo', fecha2_);
+
+    if (fecha1_ < fecha2_) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  async compararFechas_FINAL(fecha1: any, fecha2: any) {
+    console.log(fecha1, 'eeeee', fecha2);
+
+    console.log('aaaa', this.detectarFormatoFecha(fecha1));
+    console.log('bbbb', this.detectarFormatoFecha(fecha2));
+
+    const fecha1_ = Date.parse(this.detectarFormatoFecha(fecha1));
+    const fecha2_ = Date.parse(this.detectarFormatoFecha(fecha2));
+    // // console.log(fecha1_, 'ooooo', fecha2_);
 
     if (fecha1_ < fecha2_) {
       return false;
@@ -333,11 +341,11 @@ export class AddMovementComponent
     let params__ = '';
     if (lparams?.text.length > 0)
       if (!isNaN(parseInt(lparams?.text))) {
-        console.log('SI');
+        // console.log('SI');
         params__ = `?filter.cve_cuenta=${lparams.text}`;
         // params.addFilter('no_cuenta', lparams.text);
       } else {
-        console.log('NO');
+        // console.log('NO');
 
         params__ = `?filter.cve_banco=${lparams.text}`;
         // params.addFilter('cve_banco', lparams.text);
@@ -347,7 +355,7 @@ export class AddMovementComponent
     return new Promise((resolve, reject) => {
       this.accountMovementService.getDataBank(params__).subscribe({
         next: response => {
-          console.log('ress1', response);
+          // console.log('ress1', response);
           let result = response.data.map(item => {
             item['bankAndNumber'] =
               item.cve_cuenta + ' - ' + item.cve_banco + ' - ' + item.nombre;
@@ -360,7 +368,7 @@ export class AddMovementComponent
         },
         error: err => {
           this.banks = new DefaultSelect();
-          console.log(err);
+          // console.log(err);
         },
       });
     });
@@ -380,7 +388,7 @@ export class AddMovementComponent
         .getCategorzacionAutomNumerario(params.getParams())
         .subscribe({
           next: (response: any) => {
-            console.log('response', response);
+            // console.log('response', response);
             let result = response.data.map(async (item: any) => {
               item['categoryAndDesc'] =
                 item.initialCategory + ' - ' + item.certificateType;
@@ -396,14 +404,14 @@ export class AddMovementComponent
           },
           error: err => {
             this.categories = new DefaultSelect();
-            console.log(err);
+            // console.log(err);
           },
         });
     });
   }
 
   returnParseDate_(data: Date) {
-    console.log('DATEEEE', data);
+    // console.log('DATEEEE', data);
     const formattedDate = moment(data).format('YYYY-MM-DD');
     return data ? formattedDate : null;
   }
@@ -417,14 +425,14 @@ export class AddMovementComponent
   }
 
   returnParseDateUpdate(data: string) {
-    console.log('DATEEEE', data);
+    // console.log('DATEEEE', data);
 
     const formattedDate = this.datePipe.transform(data, 'yyyy-MM-dd');
     return data ? formattedDate : null;
   }
   convertirFecha(fecha: any) {
     // Divide la fecha en sus componentes
-    console.log('fecha', fecha);
+    // console.log('fecha', fecha);
     if (fecha) {
       var partes = fecha.split('-');
 
@@ -438,7 +446,7 @@ export class AddMovementComponent
   }
   dateMovem2: string;
   dateMovement2(event: any) {
-    console.log('event22', event);
+    // console.log('event22', event);
   }
 
   getCategoryUpdate(cat: any) {
@@ -452,7 +460,7 @@ export class AddMovementComponent
         .getCategorzacionAutomNumerario(params.getParams())
         .subscribe({
           next: (response: any) => {
-            console.log('response', response);
+            // console.log('response', response);
             let result = response.data.map(async (item: any) => {
               item['categoryAndDesc'] =
                 item.initialCategory + ' - ' + item.certificateType;
@@ -469,5 +477,22 @@ export class AddMovementComponent
           },
         });
     });
+  }
+
+  detectarFormatoFecha(fecha: any) {
+    // const formato1 = /^\w{3} \w{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[-+]\d{2}:\d{2} \(hora de .+\)$/;
+    const formato1 =
+      /^[A-Za-z]{3} [A-Za-z]{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[-+]\d{4} \(hora de .+\)$/;
+    const formato2 = /^\d{2}-\d{2}-\d{4}$/;
+
+    if (formato1.test(fecha)) {
+      console.log('SI');
+      return this.datePipe.transform(fecha, 'yyyy-MM-dd');
+    } else if (formato2.test(fecha)) {
+      console.log('NO');
+      return this.datePipe.transform(fecha, 'yyyy-dd-MM');
+    } else {
+      return null;
+    }
   }
 }
