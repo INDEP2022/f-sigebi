@@ -313,4 +313,26 @@ export class ComerInvoiceService extends HttpService {
       `${ENDPOINT_INVOICE.ComerVeatInovice}?eventId=${event}&invoiceId=${batchId}`
     );
   }
+
+  getSumEat(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ComerInvoiceSum}?eventId=${event}&batchId=${batchId}`
+    );
+  }
+
+  getIndGroup(params: _Params) {
+    return this.get('comer-annexs-fact', params);
+  }
+
+  saveInvoiceProcedure(data: {
+    eventId: number;
+    batchId: number;
+    user: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.ComerSaveInvoice, data);
+  }
+
+  deleteInvoiceProcedure(data: { eventId: number; batchId: number }) {
+    return this.delete(ENDPOINT_INVOICE.ComerDeleteInvoice, data);
+  }
 }

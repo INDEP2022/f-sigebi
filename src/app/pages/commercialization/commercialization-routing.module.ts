@@ -574,6 +574,12 @@ const routes: Routes = [
         .CommercialFileModule,
     data: { title: 'Ficha comercial', screen: 'FINFFICHACOMERCIAL' },
   },
+  {
+    path: 'billing-i',
+    loadChildren: async () =>
+      (await import('./billing-m/billing-m.module')).BillingMModule,
+    data: { title: 'Facturación', screen: 'FCOMER086_I' },
+  },
 ];
 
 @NgModule({

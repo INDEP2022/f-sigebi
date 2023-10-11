@@ -1,7 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -10,35 +14,6 @@ import { listAssets } from '../../generate-formats-verify-noncompliance/store/ac
 import { Item } from '../../generate-formats-verify-noncompliance/store/item.module';
 import { LIST_PAYMENT_VALIDATIONS } from '../../sampling-assets/sampling-assets-form/columns/list-validation';
 import { LIST_VERIFY_NONCOMPLIANCE } from '../../sampling-assets/sampling-assets-form/columns/list-verify-noncompliance';
-import { UploadExpedientFormComponent } from '../upload-expedient-form/upload-expedient-form.component';
-import { UploadImagesFormComponent } from '../upload-images-form/upload-images-form.component';
-
-var data = [
-  {
-    id: 1,
-    noManagement: '154654',
-    noInventory: '000147',
-    description: 'AUTO ZERO KILOMETOS TOYOTA SUBARUN',
-    quantity: 1,
-    unity: 'PIEZA',
-    resultEvaluation: 'NO CUMPLE',
-    statusAsset: '',
-    quantityMissingDamaged: '',
-    observationsAsset: '',
-  },
-  {
-    id: 2,
-    noManagement: '154654',
-    noInventory: '000147',
-    description: 'AUTO ZERO KILOMETOS TOYOTA SUBARUN',
-    quantity: 1,
-    unity: 'PIEZA',
-    resultEvaluation: 'NO CUMPLE',
-    statusAsset: '',
-    quantityMissingDamaged: '',
-    observationsAsset: '',
-  },
-];
 
 @Component({
   selector: 'app-assets-tab',
@@ -48,15 +23,18 @@ var data = [
 export class AssetsTabComponent extends BasePage implements OnInit {
   @Input() willSave: boolean = false;
   @Input() typeTask: string = '';
+  @Input() idSample: number = 0;
+  @Input() filterObject: any;
   bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
   assetsArray: any[] = [];
   assetsSelected: Item[] = [];
-  paragraphs3: any[] = [];
+  paragraphs3 = new LocalDataSource();
   jsonToCsv = JSON_TO_CSV;
   isReadonly: boolean = false;
   isCheckboxReadonly: boolean = false;
   checkboxTitle: string = '';
+  params = new BehaviorSubject<ListParams>(new ListParams());
   settings3 = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -68,18 +46,122 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalService: BsModalService,
     private excelService: ExcelService,
-    private store: Store
+    private store: Store,
+    private samplingService: SamplingGoodService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    console.log(this.typeTask);
-    this.setEnableInputs();
-    this.assetsArray = data;
-    this.paragraphs3 = data;
+    this.getGoodsSampling();
+    //this.setEnableInputs();
+    //this.assetsArray = data;
+    //this.paragraphs3 = data;
     //console.log(this.willSave);
-    this.changeSettingTable();
+    //this.changeSettingTable();
+  }
+  ngOnChanges() {
+    if (this.filterObject) {
+      console.log('f', this.filterObject);
+      if (
+        !this.filterObject.noManagement &&
+        !this.filterObject.noInventory &&
+        !this.filterObject.descriptionAsset
+      ) {
+        this.getGoodsSampling();
+      }
+
+      if (
+        this.filterObject.noManagement &&
+        !this.filterObject.noInventory &&
+        !this.filterObject.descriptionAsset
+      ) {
+        this.params.getValue()['filter.goodId'] =
+          this.filterObject.noManagement;
+        this.getGoodsSampling();
+      }
+
+      if (
+        this.filterObject.noManagement &&
+        this.filterObject.noInventory &&
+        !this.filterObject.descriptionAsset
+      ) {
+        this.params.getValue()['filter.goodId'] =
+          this.filterObject.noManagement;
+        this.params.getValue()['filter.inventoryNumber'] =
+          this.filterObject.noInventory;
+        this.getGoodsSampling();
+      }
+
+      if (
+        !this.filterObject.noManagement &&
+        this.filterObject.noInventory &&
+        !this.filterObject.descriptionAsset
+      ) {
+        this.params.getValue()['filter.inventoryNumber'] =
+          this.filterObject.noInventory;
+        this.getGoodsSampling();
+      }
+
+      if (
+        !this.filterObject.noManagement &&
+        this.filterObject.noInventory &&
+        this.filterObject.descriptionAsset
+      ) {
+        this.params.getValue()['filter.inventoryNumber'] =
+          this.filterObject.noInventory;
+        this.params.getValue()['filter.description'] =
+          this.filterObject.descriptionAsset;
+        this.getGoodsSampling();
+      }
+
+      if (
+        !this.filterObject.noManagement &&
+        !this.filterObject.noInventory &&
+        this.filterObject.descriptionAsset
+      ) {
+        this.params.getValue()['filter.description'] =
+          this.filterObject.descriptionAsset;
+        this.getGoodsSampling();
+      }
+
+      if (
+        this.filterObject.noManagement &&
+        !this.filterObject.noInventory &&
+        this.filterObject.descriptionAsset
+      ) {
+        this.params.getValue()['filter.goodId'] =
+          this.filterObject.noManagement;
+        this.params.getValue()['filter.description'] =
+          this.filterObject.descriptionAsset;
+        this.getGoodsSampling();
+      }
+
+      if (
+        this.filterObject.noManagement &&
+        this.filterObject.noInventory &&
+        this.filterObject.descriptionAsset
+      ) {
+        this.params.getValue()['filter.goodId'] =
+          this.filterObject.noManagement;
+        this.params.getValue()['filter.description'] =
+          this.filterObject.descriptionAsset;
+        this.params.getValue()['filter.inventoryNumber'] =
+          this.filterObject.noInventory;
+        this.getGoodsSampling();
+      }
+    }
+  }
+
+  getGoodsSampling() {
+    this.params.getValue()['filter.sampleId'] = this.idSample;
+    this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
+      next: response => {
+        console.log('samplegfoods', response);
+        this.paragraphs3.load(response.data);
+      },
+      error: error => {},
+    });
   }
 
   initAssetForm(): void {
@@ -141,15 +223,15 @@ export class AssetsTabComponent extends BasePage implements OnInit {
 
   uploadExpedient() {
     //if (this.assetsSelected.length == 0) return;
-    this.openModals(UploadExpedientFormComponent, '');
+    //this.openModals(UploadExpedientFormComponent, '');
   }
 
   uploadImages(): void {
     //if (this.listAssetsCopiedSelected.length == 0) return;
-    this.openModals(UploadImagesFormComponent, '');
+    //this.openModals(UploadImagesFormComponent, '');
   }
 
-  changeStatusGood(value: string) {
+  /*changeStatusGood(value: string) {
     if (this.assetsSelected.length == 0) {
       this.onLoadToast('info', 'Debe tener selecionado al menos un Bien');
       return;
@@ -218,5 +300,5 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     //this.assetsForm.controls['address'].get('longitud').enable();
     //this.requestForm.get('receiUser').patchValue(res.user);
     //});
-  }
+  } */
 }

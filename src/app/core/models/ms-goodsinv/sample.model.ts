@@ -44,4 +44,5 @@ export interface ISample {
   numeraryInstance?: string;
   transfereeId?: number;
   dateTurnedReposition?: string;
+  creationDate?: string;
 }
