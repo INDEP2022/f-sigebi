@@ -1015,7 +1015,7 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    //this.generateScanRequestReport().subscribe();
+    this.generateScanRequestReport().subscribe();
   }
 
   getDictAndActs() {
@@ -1323,6 +1323,28 @@ export class DestructionAuthorizationComponent
           resolve('N');
         },
       });
+    });
+  }
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files[0];
+    let formData = new FormData();
+    formData.append('file', files);
+    this.getDataFile(formData);
+  }
+
+  getDataFile(data: FormData) {
+    let params = {
+      ...this.params8.getValue(),
+    };
+    let file = this.proceedingForm.get('id').value;
+    this.massiveGoodService.pupBienesPlano(data, file).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+      },
     });
   }
 }
