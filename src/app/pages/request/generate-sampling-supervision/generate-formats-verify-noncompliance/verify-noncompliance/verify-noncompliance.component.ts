@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { AppState } from '../../../../../app.reducers';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -17,31 +20,47 @@ import { selectListItems } from '../store/item.selectors';
   styleUrls: ['./verify-noncompliance.component.scss'],
 })
 export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
-  title: string = 'Verificación Incumplimiento 539';
+  title: string = `Verificación Incumplimiento ${302}`;
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
   filterForm: ModelForm<any>;
-
+  sampleInfo: ISample;
   isEnableAnex: boolean = false;
   willSave: boolean = false;
   //envia los datos para mostrarse en el detalle de anexo
   annexDetail: any[] = [];
-
+  filterObject: any;
   clasificationAnnex: boolean = true;
 
   listItems$: Observable<any> = new Observable();
-
+  idSample: number = 0;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private bsModalRef: BsModalRef,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private samplingGoodService: SamplingGoodService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.idSample = 302;
+    //El id de el muestreo se obtendra de la tarea
+    this.getSampleInfo();
     this.initFilterForm();
+  }
+
+  getSampleInfo() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.sampleId'] = `$eq:${302}`;
+    this.samplingGoodService.getSample(params.getValue()).subscribe({
+      next: response => {
+        console.log('response muestreo', response);
+        this.sampleInfo = response.data[0];
+      },
+      error: () => {},
+    });
   }
 
   initFilterForm() {
@@ -83,6 +102,10 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
         console.log('enviar mensaje');
       }
     });
+  }
+
+  searchGoods() {
+    this.filterObject = this.filterForm.value;
   }
 
   openModal(component: any, data?: any, typeAnnex?: string): void {

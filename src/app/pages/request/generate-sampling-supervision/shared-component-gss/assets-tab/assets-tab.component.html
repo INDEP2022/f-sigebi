@@ -10,17 +10,17 @@
         <button
           class="btn btn-primary btn-sm active"
           (click)="uploadExpedient()">
-          <i class="bx bx-detail"></i> Expediente
+          Expediente <i class="bx bx-detail"></i>
         </button>
       </div>
       <div class="m-3" *ngIf="typeTask != 'verify-warehouse-assets'">
         <button class="btn btn-primary btn-sm active" (click)="uploadImages()">
-          <i class="bx bx-images"></i> Fotograf&iacute;a
+          Fotograf&iacute;a <i class="bx bx-images"></i>
         </button>
       </div>
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active" (click)="exportCsv()">
-          <i class="bx bx-download"></i> Descargar Archivo
+        <button class="btn btn-success btn-sm active">
+          Descargar Archivo <i class="bx bx-download"></i>
         </button>
       </div>
     </div>
@@ -35,16 +35,12 @@
     <div class="row pt-4" *ngIf="typeTask === 'payment-validatios'">
       <div class="d-flex">
         <div class="p-2">
-          <button
-            class="btn btn-success btn-sm active"
-            (click)="changeStatusGoodAproval('A')">
+          <button class="btn btn-success btn-sm active">
             <i class="bx bx-check"></i> Aprobar
           </button>
         </div>
         <div class="p-2">
-          <button
-            class="btn btn-danger btn-sm active"
-            (click)="changeStatusGoodAproval('R')">
+          <button class="btn btn-danger btn-sm active">
             <i class="bx bx-x"></i> Rechazar
           </button>
         </div>
@@ -53,31 +49,26 @@
     <div class="row pt-4" *ngIf="typeTask === 'verify-noncompliance'">
       <div class="d-flex">
         <div class="p-2">
-          <button
-            class="btn btn-success btn-sm active"
-            (click)="changeStatusGood('F')">
-            <i class="bx bx-check"></i> Faltantes
+          <button class="btn btn-success btn-sm active">
+            Faltantes <i class="bx bx-check"></i>
           </button>
         </div>
         <div class="p-2">
-          <button
-            class="btn btn-danger btn-sm active"
-            (click)="changeStatusGood('D')">
-            <i class="bx bx-x"></i> Dañados
+          <button class="btn btn-danger btn-sm active">
+            Dañados <i class="bx bx-x"></i>
           </button>
         </div>
       </div>
     </div>
     <div class="col-md-12">
       <!--      <div [class]="loading ? 'table-loading' : ''">-->
-      <ng-scrollbar track="all" style="min-height: 200px; border: none">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings3"
-          [source]="paragraphs3"
-          (userRowSelect)="selectAsstsCopy($event)">
-        </ng2-smart-table>
-        <!--        <table class="table table-bordered" style="white-space: nowrap; overflow-x: auto">
+
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings3"
+        [source]="paragraphs3">
+      </ng2-smart-table>
+      <!--        <table class="table table-bordered" style="white-space: nowrap; overflow-x: auto">
           <thead>
             <tr>
               <th scope="col" style="text-align: center">
@@ -128,7 +119,6 @@
             </tr>
           </tbody>
         </table>-->
-      </ng-scrollbar>
     </div>
   </div>
 </div>

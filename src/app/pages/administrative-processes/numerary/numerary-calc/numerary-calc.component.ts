@@ -914,9 +914,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   //Format currency
-  formatCurrency(){
-    
-  }
+  formatCurrency() {}
 
   async postQuery() {
     if (this.data3['data'].length > 0) {

@@ -25,7 +25,7 @@ export class ExpenseLotService extends HttpService {
   }
 
   PUF_VALIDA_PAGOXEVENTO(body: ILotDTO) {
-    return this.post('puf-valid-payment-event', body);
+    return this.post('apps/puf-valid-payment-event', body);
   }
 
   VALIDA_CAMBIO_ESTATUS(body: IValidStatusChangeDTO) {

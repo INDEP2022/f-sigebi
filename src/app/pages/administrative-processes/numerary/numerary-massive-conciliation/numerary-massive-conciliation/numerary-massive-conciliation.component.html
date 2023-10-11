@@ -214,8 +214,16 @@
             <button
               type="button"
               (click)="disconnectButton()"
-              class="btn btn-primary btn-sm active ml-1">
+              class="btn btn-primary btn-sm active ml-1 mr-3">
               Desconcilia
+            </button>
+
+            <button
+              type="button"
+              [disabled]="dataMsgErr.length <= 0"
+              (click)="seeErrors()"
+              class="btn btn-primary btn-sm active ml-1">
+              Ver errores <i class="fa fa-eye" aria-hidden="true"></i>
             </button>
           </div>
         </div>

@@ -8,11 +8,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { NumeraryMassiveConciliationRoutingModule } from './numerary-massive-conciliation-routing.module';
 import { NumeraryMassiveConciliationComponent } from './numerary-massive-conciliation/numerary-massive-conciliation.component';
 import { NumerarySolicitudeComponent } from './numerary-solicitude/numerary-solicitude.component';
+import { NumeraryErrorsComponent } from './numerary-errors/numerary-errors.component'
 
 @NgModule({
   declarations: [
     NumeraryMassiveConciliationComponent,
     NumerarySolicitudeComponent,
+    NumeraryErrorsComponent
   ],
   imports: [
     CommonModule,
