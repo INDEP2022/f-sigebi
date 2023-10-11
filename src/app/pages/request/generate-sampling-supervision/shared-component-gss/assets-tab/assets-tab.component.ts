@@ -4,12 +4,16 @@ import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
+import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
+import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import { listAssets } from '../../generate-formats-verify-noncompliance/store/actions';
 import { Item } from '../../generate-formats-verify-noncompliance/store/item.module';
 import { LIST_PAYMENT_VALIDATIONS } from '../../sampling-assets/sampling-assets-form/columns/list-validation';
@@ -47,7 +51,8 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private excelService: ExcelService,
     private store: Store,
-    private samplingService: SamplingGoodService
+    private samplingService: SamplingGoodService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
   }
@@ -221,14 +226,75 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     this.store.dispatch(listAssets({ items: this.assetsSelected }));
   }
 
+  goodsSamplingSelect(event: any) {
+    this.assetsSelected = event.selected;
+  }
+
   uploadExpedient() {
+    if (this.assetsSelected.length > 0) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modalSizeXL modal-dialog-centered',
+      };
+
+      config.initialState = {
+        sampleGood: this.assetsSelected,
+        typeDoc: 'good',
+        process: 'sampling-assets',
+        callback: (next: boolean) => {},
+      };
+
+      this.modalService.show(ShowDocumentsGoodComponent, config);
+    } else {
+      this.alert('warning', 'Acción Invalida', 'Seleccione un bien');
+    }
     //if (this.assetsSelected.length == 0) return;
     //this.openModals(UploadExpedientFormComponent, '');
   }
 
   uploadImages(): void {
+    if (this.assetsSelected.length > 0) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modalSizeXL modal-dialog-centered',
+      };
+
+      config.initialState = {
+        sampleGood: this.assetsSelected,
+        typeDoc: 'good',
+        process: 'sampling-assets',
+        callback: (next: boolean) => {},
+      };
+
+      this.modalService.show(PhotographyFormComponent, config);
+    } else {
+      this.alert('warning', 'Acción Invalida', 'Seleccione un bien');
+    }
     //if (this.listAssetsCopiedSelected.length == 0) return;
     //this.openModals(UploadImagesFormComponent, '');
+  }
+
+  generateReport() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.sampleId'] = `$eq:${this.idSample}`;
+    this.massiveGoodService.exportSampleGoods(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+      error: error => {
+        this.alert('warning', 'Advertencia', 'Error al generar reporte');
+      },
+    });
+  }
+
+  downloadExcel(excel: any) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = 'Muestreo_Bienes.xlsx';
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 
   /*changeStatusGood(value: string) {
@@ -269,10 +335,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     this.assetsSelected = [];
   }
 
-  selectAsstsCopy(event: any) {
-    this.assetsSelected = event.selected;
-  }
-
+  
   exportCsv() {
     const filename: string = 'Nombre del archivo';
     this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
