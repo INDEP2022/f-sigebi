@@ -16,7 +16,7 @@
       <div body>
         <!--CAN WORK1 TABLE-->
         <div class="row">
-          <div class="col-6">
+          <!-- <div class="col-6">
             <button
               (click)="add()"
               [disabled]="!showFilters"
@@ -26,9 +26,19 @@
               class="btn btn-info btn-sm active ml-2 mr-2">
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-          </div>
+          </div> -->
 
-          <div class="col-6 d-flex justify-content-end">
+          <div class="col-12 d-flex justify-content-end">
+            <button
+              (click)="add()"
+              [disabled]="!showFilters"
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2"
+              style="min-width: 100px">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
             <app-columns-select
               [leftList]="true"
               [(settings)]="settings"
