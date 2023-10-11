@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -53,6 +53,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   dataRebill: DefaultSelect = new DefaultSelect();
   isSelect: any[] = [];
   delegation: number;
+  @Output() comer: EventEmitter<any> = new EventEmitter(null);
+  limit: FormControl = new FormControl(500);
   get idAllotment() {
     return this.form.get('idAllotment');
   }
@@ -199,6 +201,14 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             type: 'custom',
             component: CustomFilterComponent,
           },
+          valuePrepareFunction: (val: string) => {
+            const formatter = new Intl.NumberFormat('en-US', {
+              currency: 'USD',
+              minimumFractionDigits: 2,
+            });
+
+            return formatter.format(Number(val));
+          },
         },
         vat: {
           title: 'IVA',
@@ -207,6 +217,14 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             type: 'custom',
             component: CustomFilterComponent,
           },
+          valuePrepareFunction: (val: string) => {
+            const formatter = new Intl.NumberFormat('en-US', {
+              currency: 'USD',
+              minimumFractionDigits: 2,
+            });
+
+            return formatter.format(Number(val));
+          },
         },
         total: {
           title: 'Total',
@@ -214,6 +232,14 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           filter: {
             type: 'custom',
             component: CustomFilterComponent,
+          },
+          valuePrepareFunction: (val: string) => {
+            const formatter = new Intl.NumberFormat('en-US', {
+              currency: 'USD',
+              minimumFractionDigits: 2,
+            });
+
+            return formatter.format(Number(val));
           },
         },
       },
@@ -238,7 +264,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.paramsList.getValue().limit = 500;
     this.paramsList.getValue()['filter.tpevent'] = `${SearchFilter.EQ}:${11}`;
+    this.paramsList.getValue()['sortBy'] = 'batchId,eventId,customer:ASC';
     this.prepareForm();
 
     this.dataFilter
@@ -290,22 +318,63 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     const params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
-      ...{ sortBy: 'batchId:ASC' },
     };
 
     this.loading = true;
-    this.comerInvoice.getAll(params).subscribe({
+    this.comerInvoice.getAllSumInvoice(params).subscribe({
       next: resp => {
         this.loading = false;
+
+        if (resp.count == 0) {
+          this.totalItems = 0;
+          this.dataFilter.load([]);
+          this.dataFilter.refresh();
+          this.form.get('price').patchValue(null);
+          this.form.get('ivaT').patchValue(null);
+          this.form.get('total').patchValue(null);
+          return;
+        }
+
         this.totalItems = resp.count;
         this.dataFilter.load(resp.data);
         this.dataFilter.refresh();
+        this.getSum();
+        this.comer.emit({
+          val: resp.data[0].eventId,
+          count: resp.data.length,
+          data: [],
+          filter: params,
+        });
       },
       error: () => {
         this.loading = false;
         this.totalItems = 0;
         this.dataFilter.load([]);
         this.dataFilter.refresh();
+        this.form.get('price').patchValue(null);
+        this.form.get('ivaT').patchValue(null);
+        this.form.get('total').patchValue(null);
+      },
+    });
+  }
+
+  getSum() {
+    const params = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+    this.comerInvoice.getSumTotal(params).subscribe({
+      next: resp => {
+        this.form.get('price').patchValue(resp.sumprecioeg);
+        this.form.get('ivaT').patchValue(resp.sumivaeg);
+        this.form
+          .get('total')
+          .patchValue(Number(resp.sumtotaleg) + Number(resp.sumtotaling));
+      },
+      error: () => {
+        this.form.get('price').patchValue(null);
+        this.form.get('ivaT').patchValue(null);
+        this.form.get('total').patchValue(null);
       },
     });
   }
@@ -330,6 +399,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       iva: [0],
       date: [null],
       causerebillId: [null],
+      price: [null],
+      ivaT: [null],
+      total: [null],
     });
   }
 
@@ -393,8 +465,6 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     this.totalItems = 0;
 
     next = await this.validatePreFactura();
-
-    console.log(next);
 
     if (next == 1) {
       const { event, idAllotment, iva } = this.form.value;

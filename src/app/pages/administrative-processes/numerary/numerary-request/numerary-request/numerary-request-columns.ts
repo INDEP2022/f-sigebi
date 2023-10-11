@@ -16,9 +16,8 @@ export const REQUEST_NUMERARY_COLUMNS = {
     sort: false,
     valuePrepareFunction: (val: string) => {
       const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
         currency: 'USD',
-        minimumFractionDigits: 0,
+        minimumFractionDigits: 2,
       });
 
       return formatter.format(Number(val));
@@ -29,8 +28,6 @@ export const REQUEST_NUMERARY_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: string) => {
-      console.log(value);
-
       return value
         ? value.includes('T')
           ? value.split('T')[0].split('-').reverse().join('/')

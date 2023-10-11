@@ -11,7 +11,9 @@
     <div body>
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('idExpedient')" label="No. Exp.">
+          <form-field
+            [control]="form.get('idExpedient')"
+            label="No. Expediente">
             <input
               type="number"
               class="form-control"
@@ -210,7 +212,7 @@
           [formControlName]="'universalFolio'"
           [cveDocument]="form.get('act').value"
           [noExpedient]="expediente"
-          [actaSC]="true"
+          [actaSC]="false"
           [statusProceeding]="form.get('statusAct').value"
           [cveScreen]="'FACTDIRAPROBDESTR'"
           [reportPrint]="'RGERGENSOLICDIGIT'">

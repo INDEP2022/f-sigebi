@@ -13,11 +13,11 @@ export const PHOTOGRAPHY_COLUMNS = {
     sort: false,
   },
 
-  xtipoDocumento: {
+  /*xtipoDocumento: {
     title: 'Tipo de Documento',
     type: 'string',
     sort: false,
-  },
+  }, */
 
   ddocTitle: {
     title: 'Título del Documento',

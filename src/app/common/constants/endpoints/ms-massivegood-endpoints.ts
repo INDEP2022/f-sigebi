@@ -21,4 +21,5 @@ export enum MassiveGoodEndpoints {
   ExportDataExcel = 'application/exportDataExcel',
   ImportGoodsInvoice = 'application/pup-ins-goods-excel',
   pupBienesPlano = 'application/pupBienesPlano',
+  ExportSampleGoods = 'application/exportDataSampleGoods',
 }

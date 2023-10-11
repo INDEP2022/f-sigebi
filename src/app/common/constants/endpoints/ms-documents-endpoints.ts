@@ -28,4 +28,5 @@ export enum DocumentsEndpoints {
   InvoiceUniversal = 'application/get-documents-invoice-universal',
   InvoiceUniversalAsoc = 'application/get-documents-invoice-universal-asoc',
   loanDocument = 'documents-loans',
+  deleteFolio = 'application/delete-documents-invoice-universal-asoc',
 }
