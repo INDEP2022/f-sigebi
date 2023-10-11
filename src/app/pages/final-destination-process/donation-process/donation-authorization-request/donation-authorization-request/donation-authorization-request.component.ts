@@ -1,8 +1,14 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocalDataSource } from 'ng2-smart-table';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -38,6 +44,10 @@ export type IGoodAndAvailable = IGood & {
   available: boolean;
   selected: boolean;
 };
+interface NotData {
+  id: number;
+  reason: string;
+}
 @Component({
   selector: 'app-donation-authorization-request',
   templateUrl: './donation-authorization-request.component.html',
@@ -102,6 +112,8 @@ export class DonationAuthorizationRequestComponent
   formTable1: FormGroup;
   formTable2: FormGroup;
   formTable3: FormGroup;
+  showError: boolean = false;
+  idsNotExist: NotData[] = [];
   selectedGood: IGoodAndAvailable;
   inventaryModel: IInventaryRequest;
   dataTableGoods: IGoodAndAvailable[] = [];
@@ -120,6 +132,8 @@ export class DonationAuthorizationRequestComponent
   requestId: number = 0;
   data: any = [];
   good: IGood;
+  previousSelecteds: IGood[] = [];
+  pageSelecteds: number[] = [];
   goodsTotals: number = 0;
   columnFilters: any[] = [];
   totalItems: number = 0;
@@ -137,7 +151,7 @@ export class DonationAuthorizationRequestComponent
   status: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
-  files: any = [];
+  // files: any = [];
   fromF: string = '';
   Exportdate: boolean = false;
   goodNotValid: IGood[] = [];
@@ -150,6 +164,31 @@ export class DonationAuthorizationRequestComponent
   selectedRow: any | null = null;
   proposalId: string = '';
   @ViewChild('file') file: any;
+  @Input() set files(files: any[]) {
+    // debugger;
+    if (files.length === 0) return;
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+  @ViewChild('table') table: Ng2SmartTableComponent;
+
+  get ids() {
+    return this.donAuthorizaService.ids;
+  }
+
+  set ids(value) {
+    this.donAuthorizaService.ids = value;
+  }
+
+  get selectedGooods() {
+    return this.donAuthorizaService.selectedGooods;
+  }
+
+  set selectedGooods(value) {
+    this.donAuthorizaService.selectedGooods = value;
+  }
+
   paramsScreen: IParamsAuth = {
     origin: '',
     proposal: '',
@@ -463,12 +502,11 @@ export class DonationAuthorizationRequestComponent
   }
   async getRequest(proposal: number) {
     this.loadingReq = true;
-    this.loading2 = false;
-    this.goodLoading = false;
     this.donationProcessService.getRequestId(proposal).subscribe({
       next: data => {
         this.loadingReq = false;
         this.request = data.data;
+        this.loading2 = false;
         this.dataFacRequest.load(this.request);
         this.dataFacRequest.refresh();
         this.proposalCve = this.request.proposalKey;
@@ -598,7 +636,6 @@ export class DonationAuthorizationRequestComponent
   }
 
   selectedGooodsValid: any[] = [];
-  selectedGooods: any[] = [];
   goodsValid: any;
 
   async addSelect() {
@@ -879,6 +916,62 @@ export class DonationAuthorizationRequestComponent
           console.log('insertado en historicos');
         },
       });
+  }
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      // debugger;
+      this.data.load([]);
+      this.totalItems = 0;
+      this.selectedGooodsValid = [];
+      this.idsNotExist = [];
+      this.showError = false;
+
+      this.ids = this.excelService.getData(binaryExcel);
+      if (this.ids[0].no_bien === undefined) {
+        this.alert(
+          'error',
+          'Ocurrio un error al leer el archivo',
+          'El archivo no cuenta con la estructura requerida'
+        );
+        return;
+      } else {
+        // this.loadGood(this.ids);
+        this.fillData(this.ids);
+        this.alert('success', 'Se ha cargado el archivo', '');
+      }
+    } catch (error) {
+      this.alert('error', 'Ocurrio un error al leer el archivo', '');
+    }
+  }
+
+  private fillSelectedRows() {
+    setTimeout(() => {
+      // debugger;
+      console.log(this.selectedGooods, this.table);
+      const currentPage = this.params.getValue().page;
+      const selectedPage = this.pageSelecteds.find(
+        page => page === currentPage
+      );
+      this.table.isAllSelected = false;
+      let allSelected = true;
+      if (this.selectedGooods && this.selectedGooods.length > 0) {
+        this.table.grid.getRows().forEach(row => {
+          // console.log(row);
+
+          if (
+            this.selectedGooods.find(item => row.getData()['id'] === item.id)
+          ) {
+            this.table.grid.multipleSelectRow(row);
+            allSelected = allSelected && true;
+          } else {
+            allSelected = allSelected && false;
+          }
+          // if(row.getData())
+          // this.table.grid.multipleSelectRow(row)
+        });
+        this.table.isAllSelected = allSelected;
+      }
+    }, 300);
   }
 }
 
