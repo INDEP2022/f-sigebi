@@ -1665,16 +1665,26 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           clientId: this.idClientCustomer,
           typeDispId: this.id_tipo_disp,
           rfc: this.rfcClientCustomer,
-          saleStatusId: '',
+          saleStatusId: this.statusVtaId,
           address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
-          comerLotsEventId: '',
-          publicLot: '',
+          comerLotsEventId: this.event.value,
+          publicLot: this.lote_publico,
           comerEventsEventId: this.event.value,
           rgTotalLots: this.formRbButton.get('allBatch').value,
           typeEventId: this.eventTpId,
         };
 
         console.log(model);
+        this.comerLotsService.pupProcEnvSirsae(model).subscribe(
+          res => {
+            console.log(res);
+            this.alert('success', 'Se envió a SIRSAE', '');
+          },
+          err => {
+            console.log(err);
+            this.alert('error', 'Se presentó un error inesperado', '');
+          }
+        );
       }
     });
 
@@ -1747,9 +1757,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.comerLotsService.pupProcDisp(model).subscribe(
           res => {
             console.log(res);
+            this.alert('success', 'Se ejecutó el proceso de dispersión', '');
           },
           err => {
             console.log(err);
+            this.alert('warning', 'Se presentó un error inesperado', '');
           }
         );
       }

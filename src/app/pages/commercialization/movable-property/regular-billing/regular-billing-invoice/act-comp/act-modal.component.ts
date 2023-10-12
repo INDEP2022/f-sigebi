@@ -103,10 +103,10 @@ export class ActModalComponent extends BasePage implements OnInit {
             );
           } else if (pk_comer.p_RESUL == 'Correcto.') {
             this.alert('success', 'Proceso terminado', '');
-            this.modalRef.hide();
           }
         }
       }
+      this.modalRef.hide();
     }
   }
 

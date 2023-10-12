@@ -20,4 +20,5 @@ export enum LotEndpoints {
   PupCambioMasv = 'apps/pup-cambio-masiv',
   GetCursor = 'apps/get-cursor',
   EatEstLot = 'eat-est-lot',
+  pupRemiEntLote = 'apps/pupRemiEntLote',
 }

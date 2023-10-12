@@ -32,6 +32,7 @@ import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.serv
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { NumeraryErrorsComponent } from '../numerary-errors/numerary-errors.component';
 import { NumerarySolicitudeComponent } from '../numerary-solicitude/numerary-solicitude.component';
 import {
   clearGoodCheck,
@@ -42,7 +43,6 @@ import {
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
 } from './numerary-massive-conciliation-columns';
-import { NumeraryErrorsComponent } from '../numerary-errors/numerary-errors.component';
 
 @Component({
   selector: 'app-numerary-massive-conciliation',
@@ -88,6 +88,8 @@ export class NumeraryMassiveConciliationComponent
   minDate: Date;
 
   dataMsgErr: any[] = [];
+  errors = 0;
+  corrects = 0;
 
   override settings: any = {
     rowClassFunction: (row: { data: { VISUAL_ATTRIBUTE: any } }) =>
@@ -895,12 +897,10 @@ export class NumeraryMassiveConciliationComponent
   //Funcion de boton conciliar
 
   //Boton conciliar
-  reconcileButton() {
-    console.log('Entró');
-
-    let errors = 0;
-    let corrects = 0;
-    this.dataMsgErr = []
+  async reconcileButton() {
+    this.errors = 0;
+    this.corrects = 0;
+    this.dataMsgErr = [];
 
     this.loading = true;
     if (goodCheck.length < 1) {
@@ -932,10 +932,10 @@ export class NumeraryMassiveConciliationComponent
             this.numeraryService.pupSearchNumerary(model).subscribe(
               res => {
                 console.log(res);
-                corrects = corrects + 1;
+                this.corrects = this.corrects + 1;
               },
               err => {
-                errors = errors + 1;
+                this.errors = this.errors + 1;
 
                 console.log(err.error.message);
                 if (
@@ -946,6 +946,11 @@ export class NumeraryMassiveConciliationComponent
                     good_id: item.RSPTAQUERY.no_bien,
                     message: 'No tiene fecha Tesofe',
                   });
+                } else {
+                  this.dataMsgErr.push({
+                    good_id: item.RSPTAQUERY.no_bien,
+                    message: err.error.message,
+                  });
                 }
               }
             );
@@ -955,7 +960,7 @@ export class NumeraryMassiveConciliationComponent
               message: 'Falló al transformar la cantidad numerica del importe',
             });
 
-            errors = errors + 1;
+            this.errors = this.errors + 1;
           }
         } else {
           const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
@@ -978,12 +983,12 @@ export class NumeraryMassiveConciliationComponent
               this.numeraryService.pupSearchNumerary(model).subscribe(
                 res => {
                   console.log(res);
-                  corrects = corrects + 1;
+                  this.corrects = this.corrects + 1;
                 },
                 err => {
                   console.log(err);
-                  errors = errors + 1;
-
+                  this.errors = this.errors + 1;
+                  console.log(`Conteo: ${this.errors + this.corrects}`);
                   if (
                     err.error.message ==
                     'La Propiedad "fecTesofe" Debe Ser una Fecha'
@@ -991,6 +996,11 @@ export class NumeraryMassiveConciliationComponent
                     this.dataMsgErr.push({
                       good_id: item.RSPTAQUERY.no_bien,
                       message: 'No tiene fecha Tesofe',
+                    });
+                  } else {
+                    this.dataMsgErr.push({
+                      good_id: item.RSPTAQUERY.no_bien,
+                      message: err.error.message,
                     });
                   }
                 }
@@ -1002,35 +1012,45 @@ export class NumeraryMassiveConciliationComponent
                   'Falló al transformar la cantidad numerica del importe',
               });
 
-              errors = errors + 1;
+              this.errors = this.errors + 1;
             }
           } else {
             this.dataMsgErr.push({
               good_id: item.RSPTAQUERY.no_bien,
               message: 'Falló al generar el formato de fecha',
             });
-            errors = errors + 1;
+            this.errors = this.errors + 1;
           }
         }
-      }
 
-      if (errors + corrects == goodCheck.length && errors + corrects > 0) {
-        if (errors == goodCheck.length) {
-          this.alert('warning', 'No se concilió ningun registro', '');
-        } else if (corrects == goodCheck.length) {
-          this.alert('success', 'Todos los registros fueron conciliados', '');
-        } else {
-          this.alert('warning', 'Algunos registros no se conciliaron', '');
-        }
-        this.loading = false;
-        console.log(this.dataMsgErr)
-        this.searchFilterGood();
+        console.log(`Conteo: ${this.errors + this.corrects}`);
       }
     }
   }
 
+  async newReconcilate() {
+    await this.reconcileButton();
+
+    console.log(`Está en el then: ${this.errors + this.corrects}`);
+    if (
+      this.errors + this.corrects == goodCheck.length &&
+      this.errors + this.corrects > 0
+    ) {
+      if (this.errors == goodCheck.length) {
+        this.alert('warning', 'No se concilió ningun registro', '');
+      } else if (this.corrects == goodCheck.length) {
+        this.alert('success', 'Todos los registros fueron conciliados', '');
+      } else {
+        this.alert('warning', 'Algunos registros no se conciliaron', '');
+      }
+      this.loading = false;
+      console.log(this.dataMsgErr);
+      this.searchFilterGood();
+    }
+  }
+
   //Ver errores
-  seeErrors(){
+  seeErrors() {
     let modalConfig: ModalOptions = {
       initialState: {
         data: this.dataMsgErr,
