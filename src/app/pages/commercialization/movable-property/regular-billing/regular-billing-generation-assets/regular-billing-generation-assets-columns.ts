@@ -34,7 +34,7 @@ export const REGULAR_BILLING_GENERATION_ASSETS_COLUMNS = {
     },
   },
   lotPublic: {
-    title: 'lote',
+    title: 'Lote',
     sort: false,
     filter: {
       type: 'custom',
@@ -44,6 +44,19 @@ export const REGULAR_BILLING_GENERATION_ASSETS_COLUMNS = {
   status: {
     title: 'Estatus',
     sort: false,
+    valuePrepareFunction: (state: string) => {
+      const val: any = {
+        '1': () => 'Procesado',
+        '3': () => 'No procesado por validación',
+        '0': () => 'No procesado',
+      };
+
+      return val[state]();
+    },
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
   downloadValidation: {
     title: 'Validación/Motivo',

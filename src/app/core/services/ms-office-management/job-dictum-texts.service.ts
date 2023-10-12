@@ -72,4 +72,9 @@ export class JobDictumTextsService extends HttpService {
     const route = `${JobDictumTextsEndpoints.cursorGoods2}?limit=10&page=1&filter.id=${NO_GESTION}`;
     return this.get(route);
   }
+
+  getDatas(lote: any, event: any) {
+    const route = `${JobDictumTextsEndpoints.getDatas}/${lote}/${event}`;
+    return this.get(route);
+  }
 }

@@ -396,6 +396,9 @@ export class TaxValidationCalculationComponent
 
             this.IVA_TERRENO = data.IVA_TERRENO;
 
+            this.data.load([]);
+            this.data.refresh();
+
             this.data2.load([]);
             this.data2.refresh();
             this.getallCondition();

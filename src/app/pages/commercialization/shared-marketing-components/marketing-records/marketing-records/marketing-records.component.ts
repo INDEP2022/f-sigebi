@@ -68,7 +68,7 @@ import { DocsData, GoodsData } from './data';
 })
 export class MarketingRecordsComponent extends BasePage implements OnInit {
   showJuridic: boolean = false;
-  problematicRadios = new FormControl<1 | 2>(null);
+  problematicRadios = new FormControl<1 | 2>(1);
   form = new FormGroup(new MarketingRecordsForm());
   documents: IGoodJobManagement[] = [];
   formCcp: FormGroup = new FormGroup({});
@@ -271,6 +271,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       localStorage.removeItem('goodId');
       this.formCcp.get('scannerFolio').setValue(this.folioScan);
       localStorage.removeItem('folio');
+      localStorage.removeItem('bie');
       this.goodNumChange();
     } else if (this.bieStatus == 0) {
       this.form.get('recordCommerType').patchValue('por');
@@ -282,6 +283,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       localStorage.removeItem('portfolio');
       this.formCcp.get('scannerFolio').setValue(this.folioScan);
       localStorage.removeItem('folio');
+      localStorage.removeItem('bie');
       this.eventInput();
     }
   }
@@ -868,6 +870,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   settingsChange($event: any): void {
     this.settings = $event;
   }
+
   getUserLogin() {
     let token = this.authService.decodeToken();
     console.log('token --> ', token);
@@ -916,7 +919,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             this.documentsService.insertDocuments(params).subscribe({
               next: response => {
                 console.log('respuesta post documento --> ', response);
-                this.folioScan = response.id;
+                this.folioScan = response.numberProceedings;
                 this.formCcp.get('scannerFolio').patchValue(response.id);
                 this.PupLanzaReporteSolicDigt();
               },
@@ -926,10 +929,8 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       }
       if (CONSULTA == 'por') {
         if (this.goods.length > 0) {
-          for (let i = 0; i < this.goods.length; i++) {
-            this.pupGenFolio(this.goods[0].goodId);
-            this.PupGenFolioMas();
-          }
+          this.pupGenFolio(this.goods[0].goodId);
+          this.PupGenFolioMas();
           //this.PupLanzaReporteSolicDigt();
         } else {
           this.alert('error', 'Error', 'No existen Bienes');
@@ -1016,8 +1017,19 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let TIPO_OF = this.officeTypeCtrl.value;
     let report: any;
     if (TIPO_OF == 'ENT') {
-      //FALTA PUP_ENT_LOTE
-      report = 'REP_ENT_POR';
+      let lote = this.form.get('lot').value;
+      let evento = this.form.get('event').value;
+      let params = {
+        lotId: Number(lote),
+        eventId: Number(evento),
+      };
+      this.lotService.pupEntLote(params).subscribe({
+        next: response => {
+          console.log('PupEntLote ', response);
+        },
+      });
+      report = 'blank';
+      //report = 'REP_ENT_POR';
     } else if (TIPO_OF == 'ESC') {
       report = 'RGEROFGESTION_ESCAP';
     }
@@ -1191,7 +1203,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             localStorage.setItem('goodId', this.form.get('goodId').value);
           } else {
             localStorage.setItem('bie', '0');
-            localStorage.setItem('event', this.form.get('goodId').value);
+            localStorage.setItem('event', this.form.get('event').value);
             localStorage.setItem('lot', this.form.get('lot').value);
             localStorage.setItem('portfolio', this.form.get('portfolio').value);
           }
@@ -1472,6 +1484,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                             this.V_VALIDA = response.count;
                             if (this.V_VALIDA == 1) {
                               PJURIDICA = 1;
+                              this.problematicRadios.setValue(1);
                             }
                           },
                           error: err => {
@@ -1485,6 +1498,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                             this.V_VALIDA = response.count;
                             if (this.V_VALIDA == 2) {
                               PJURIDICA = 2;
+                              this.problematicRadios.setValue(2);
                             }
                           },
                           error: err => {
@@ -1832,7 +1846,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           this.alert('error', 'Error', 'Es necesario un folio de escaneo');
           return;
         }
-        this.documentsService.getDocumentsCursor(this.folioScan).subscribe({
+        this.documentsService.getDocumentsScan(this.folioScan).subscribe({
           next: response => {},
           error: err => {
             this.alert(
@@ -1851,7 +1865,9 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                 this.documentsService
                   .getDocumentInvoiceFolioAsoc(this.folioScan)
                   .subscribe({
-                    next: response => {},
+                    next: response => {
+                      console.log('getDocumentInvoiceFolioAsoc ', response);
+                    },
                   });
               },
             });
@@ -1880,7 +1896,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           this.activeScan = true;
           this.activeSend = true;
           this.form.get('statusOf').patchValue('ENVIADO');
-          this.PupLanzaReporte();
+          //this.PupLanzaReporte();
           this.PupExtraeDato(NO_OF_GESTION);
         }
         if (
@@ -2045,10 +2061,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       forkJoin(requests).subscribe({
         next: responses => {
           responses.forEach((response, i) => {
-            const destination = response.data.email;
-            copydestinationarray.push(destination);
+            console.log('response destination ', response);
+            const destinati = response.data[0].email;
+            copydestinationarray.push(destinati);
           });
-
           // Ahora que todas las copias se han cargado, envía el correo.
           this.sendEmail(destination, copydestinationarray, mesaje);
         },
@@ -2064,17 +2080,28 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     copydestinationarray: string[],
     mesaje: string
   ) {
-    let params = {
-      header: '',
-      destination: destination,
-      copy: copydestinationarray,
-      subject: 'OFICIO COMER',
-      message: mesaje,
-    };
-
-    this.tranfergoodService.sendEmail(params).subscribe({
+    this.usersService.getUsersbyUSer(destination).subscribe({
       next: response => {
-        console.log('Se envió el correo ', response);
+        let destinatario: any;
+        destinatario.push(response.data[0].email);
+        this.usersService.getUsersbyUSer(this.user).subscribe({
+          next: respon => {
+            destinatario.push(respon.data[0].email);
+            let params = {
+              header: '',
+              destination: destinatario,
+              copy: copydestinationarray,
+              subject: 'OFICIO COMER',
+              message: mesaje,
+            };
+
+            this.tranfergoodService.sendEmail(params).subscribe({
+              next: response => {
+                console.log('Se envió el correo ', response);
+              },
+            });
+          },
+        });
       },
     });
   }
@@ -2187,7 +2214,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let noBien = this.form.get('goodId').value;
     this.eventAppService.getPupRemiEnt(noBien).subscribe({
       next: response => {
-        console.log('response -----> ', response);
+        console.log('response PupRemiEnt-----> ', response);
       },
     });
   }
@@ -2593,6 +2620,11 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     };
     this.jobDictumTextsService.pupExtractDatas(params).subscribe({
       next: response => {
+        if (response.PJURIDICA == 1) {
+          this.problematicRadios.setValue(1);
+        } else if (response.PJURIDICA == 2) {
+          this.problematicRadios.setValue(2);
+        }
         console.log('response Extrae Datas --> ', response);
         this.loadcitybyid(response.CIUDAD);
         this.loadAdress(response.DESTINATARIO);
@@ -2652,18 +2684,20 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         this.jobDictumTextsService.getCursorGoods(param).subscribe({
           next: response => {
             console.log('respuesta del Get bienes --> ', response);
-            for (let i = 0; i < response.data.length; i++) {
-              let params = {
-                goodId: response.data[i].no_bien,
-                description: response.data[i].descripcion,
-                amout: response.data[i].cantidad,
-                identifier: response.data[i].identificador,
-                no_expediente: response.data[i].no_expediente,
-              };
-              this.goods.push(params);
+            if (response.data != null) {
+              for (let i = 0; i < response.data.length; i++) {
+                let params = {
+                  goodId: response.data[i].no_bien,
+                  description: response.data[i].descripcion,
+                  amout: response.data[i].cantidad,
+                  identifier: response.data[i].identificador,
+                  no_expediente: response.data[i].no_expediente,
+                };
+                this.goods.push(params);
+              }
+              this.totalGoods = response.data.length;
+              this.localGoods.load(this.goods);
             }
-            this.totalGoods = response.data.length;
-            this.localGoods.load(this.goods);
           },
         });
 
@@ -2671,6 +2705,8 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         this.jobDictumTextsService.getcursorCopys(OF_GESTION).subscribe({
           next: response => {
             console.log('respuesta COPIAS --> ', response);
+            this.data3 = [];
+            this.ccpData.load(this.data3);
             for (let i = 0; i < response.data.length; i++) {
               let params = {
                 destinatario: response.data[i].usuario,
@@ -2810,11 +2846,46 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       });
     }
   }
+  validSave() {
+    let consult = this.form.get('recordCommerType').value;
+    if (consult == 'por') {
+      let lote = this.form.get('lot').value;
+      let event = this.form.get('event').value;
+      if (lote == null) {
+        this.alert('error', 'Error', 'Es necesario un número de Lote');
+      } else if (event == null) {
+        this.alert('error', 'Error', 'Es necesario un número de Evento');
+      } else {
+        this.jobDictumTextsService.getDatas(lote, event).subscribe({
+          next: response => {
+            console.log('response getDatas--> ', response);
+            let managementNumber: any = response.data[0].no_of_gestion;
+            this.SaveMJob(managementNumber);
+          },
+        });
+      }
+    } else if (consult == 'bie') {
+      let good = this.form.get('goodId').value;
+      if (good == null) {
+        this.alert('error', 'Error', 'Es necesario el número de bien');
+      } else {
+        this.goodsJobManagementService
+          .getOficeJobManagementbyGood(good)
+          .subscribe({
+            next: respon => {
+              console.log('response getOficeJobManagementbyGood--> ', respon);
+              let managementNumber: any = respon.data[0].managementNumber;
+              this.SaveMJob(managementNumber);
+            },
+          });
+      }
+    }
+  }
 
-  SaveMJob() {
+  SaveMJob(managementNumber: any) {
     let params = {
       cveManagement: this.form.get('cveManagement').value,
-      managementNumber: this.form.get('NO_OF_GESTION').value,
+      managementNumber: managementNumber,
       sender: this.form.get('sender').value,
       addressee: this.form.get('addressee').value,
       city: this.form.get('city').value,

@@ -9,4 +9,5 @@ export enum AuthorityEndpoints {
   getAllAutoritiesV2 = 'authority/getAllAuthoritiesV2',
   getDataQuery = 'apps/get-tdata-query',
   ServiceCat = 'service-cat',
+  getCityQuery = 'apps/obtn-cityquery',
 }
