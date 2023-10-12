@@ -240,14 +240,11 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    debugger;
     if (changes['service'] && changes['disabled']) {
       this.service.disabledTable = changes['disabled'].currentValue;
     }
-    if (
-      changes['goodChange'] &&
-      changes['good'] &&
-      changes['good'].currentValue
-    ) {
+    if (this.good) {
       if (changes['goodChange'].currentValue > 0) this.getData();
     }
   }
