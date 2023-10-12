@@ -58,4 +58,9 @@ export enum ENDPOINT_INVOICE {
   ComerPaAdj = 'application/pa-adj-invoice-pag',
   ComerVeatInovice = 'comer-invoices/get-data-veat-invoice',
   ComerCountInvoice = 'application/get-count-eat-invoice-view',
+  ComerInvoiceSum = 'application/get-count-sum-eat',
+  ComerSaveInvoice = 'procedure-sera/pup-nvo-save-folios',
+  ComerDeleteInvoice = 'procedure-sera/pup-nvo-delete-fact',
+  ComerInconsistencies_ = 'comer-inconsistencies',
+  ComerCetinvoices = 'comer-detinvoices',
 }

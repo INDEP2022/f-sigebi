@@ -265,7 +265,6 @@ export class DonationAuthorizationRequestComponent
     if (typeof Storage !== 'undefined') {
       const o = localStorage.getItem('proposalId');
       const r = localStorage.getItem('request');
-      console.log(o);
       let params = new ListParams();
       params['proposal'] = o;
       this.getProposalId(params);
@@ -369,7 +368,7 @@ export class DonationAuthorizationRequestComponent
       .setValue(this.selectedRow.clasifGoodNumber);
     this.form.get('descripClassif').setValue(this.selectedRow.clasifGood);
     this.inventaryModel = {
-      proposalKey: this.requestModel.proposalCve ?? '',
+      proposalKey: this.request.proposalCve ?? '',
       goodNumber: this.selectedRow.goodId,
     };
     this.selectedGooods = event.selected;
@@ -487,6 +486,7 @@ export class DonationAuthorizationRequestComponent
           descripClassif: null,
         });
         this.formTable1.get('totals').setValue(Number(this.totalSunQuantity));
+        this.getRequestGood();
       },
       error: () => {
         this.loadingReq = false;
@@ -502,7 +502,7 @@ export class DonationAuthorizationRequestComponent
     console.log(this.requestId);
     params['sortBy'] = 'goodId:DESC';
     params['requestTypeId'] = 'SD';
-    params['good.noDelegation'] = this.requestModel.entFedKey;
+    params['good.noDelegation'] = this.request.cveEvent ?? 0;
     params['request.requestId'] = this.requestId;
     params['good.status'] = 'DON' || 'ADA';
     this.donationService.getGoodRequest(params).subscribe({
@@ -517,8 +517,9 @@ export class DonationAuthorizationRequestComponent
             acc + this.convert(item.allotmentAmount) ?? 0,
           0
         );
-        console.log(this.totalGoods);
-        this.formTable2.get('quantityToAssign').setValue(this.totalGoods);
+        this.formTable2
+          .get('quantityToAssign')
+          .setValue(Number(this.totalGoods));
       },
       error: () => {
         this.goodLoading = false;
@@ -652,8 +653,7 @@ export class DonationAuthorizationRequestComponent
               };
               await this.updateGoodEInsertHistoric(obj);
               await this.updateBienDetalle(good.goodId, 'ADA');
-              // await this.createDET(this.inventaryModel);
-              this.getInventary();
+              await this.createDET(this.inventaryModel);
             }
           }
         });
@@ -788,14 +788,17 @@ export class DonationAuthorizationRequestComponent
       this.selectedRow = row.data;
       this.selectedGooods = row.isSelected;
       this.changeDetectorRef.detectChanges();
-      this.form
-        .get('classifNumbGood')
-        .setValue(this.selectedRow.clasifGoodNumber);
-      this.form.get('descripClassif').setValue(this.selectedRow.clasifGood);
+      this.form.get('classifNumbGood').setValue(row.good.noClasifGood);
+      this.form.get('descripClassif').setValue(row.good.clasificationGood);
       this.inventaryModel = {
-        proposalKey: this.requestModel.proposalCve ?? '',
+        proposalKey: this.request.proposalCve ?? '',
         goodNumber: this.selectedRow.goodId,
       };
+      // this.form.patchValue({
+      //   proposal: this.request.proposalCve,
+      //   classifNumbGood: this.selectedRow.good.noClasifGood,
+      //   descripClassif: this.selectedRow.good.clasificationGood,
+      // });
     } else {
       this.selectedRow = null;
     }
@@ -805,7 +808,6 @@ export class DonationAuthorizationRequestComponent
       this.requestModel = row.data;
       console.log(this.requestModel.proposalCve);
       console.log(this.requestModel);
-      this.getRequestGood();
     } else {
       this.requestModel = null;
     }

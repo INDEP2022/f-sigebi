@@ -390,4 +390,14 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.attachedDocument}?filter.managementNumber=$eq:${id}`;
     return this.get(route);
   }
+
+  deleteByFolio(folio: any) {
+    const route = `${DocumentsEndpoints.deleteFolio}/${folio}`;
+    return this.get(route);
+  }
+
+  getDocumentsScan(folio: any) {
+    const route = `${DocumentsEndpoints.document}?filter.scanStatus=$ilike:ESCANEADO&filter.id=$eq:${folio}`;
+    return this.get(route);
+  }
 }

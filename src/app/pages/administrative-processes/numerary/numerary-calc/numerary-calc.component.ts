@@ -913,6 +913,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     return fecha.split('T')[0].split('-').reverse().join('/');
   }
 
+  //Format currency
+  formatCurrency() {}
+
   async postQuery() {
     if (this.data3['data'].length > 0) {
       this.valido = await this.vValido(

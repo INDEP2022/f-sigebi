@@ -140,9 +140,9 @@
         <div class="col-md-3">
           <button
             (click)="closeProceeding()"
-            class="btn btn-secondary btn-sm active"
+            class="btn btn-primary btn-sm active"
             *ngIf="controls.statusProceedings.value != 'CERRADA'">
-            Cerrar Acta
+            Cerrar Acta <i class="fa fa-check" aria-hidden="true"></i>
           </button>
           <button
             class="btn btn-secondary btn-sm active"
@@ -272,8 +272,8 @@
           </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="row table-responsive">
+      <div class="col-md-6 table-responsive">
+        <div class="row">
           <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <!-- <div class="table-responsive"> -->
             <ng-scrollbar
@@ -293,13 +293,21 @@
         <div class="row pt-5">
           <div class="d-flex justify-content-center">
             <div class="m-3">
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                (change)="onFileChange($event)" />
               <button
                 type="button"
                 tooltip="Agregar"
                 containerClass="tooltip-style"
-                class="btn btn-info btn-sm active ml-2 mr-2">
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="file.click()">
                 Insertar vía Archivo plano
-                <i class="bx bx-plus bx-sm float-icon"></i>
+                <i class="bi bi-file-earmark-excel-fill"></i>
               </button>
             </div>
             <div class="m-3">

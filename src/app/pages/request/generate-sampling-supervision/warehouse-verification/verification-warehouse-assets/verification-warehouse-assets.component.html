@@ -6,12 +6,12 @@
       </div>
       <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="verifyTurn()">
-          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
+          Turnar muestreo <i class="fa fa-share-square"></i>
         </button>
       </div>
       <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="save()">
-          <i class="bx bx-save"></i> Guardar
+          Guardar <i class="fa fa-save"></i>
         </button>
       </div>
     </div>
@@ -46,7 +46,8 @@
             </div>
           </div>
           <div class="row pt-4" *ngIf="showSamplingDetail">
-            <app-sampling-detail></app-sampling-detail>
+            <app-sampling-detail
+              [sampleInfo]="sampleInfo"></app-sampling-detail>
           </div>
         </div>
       </app-card>
@@ -64,7 +65,7 @@
                 (click)="showFilterAssets = true"
                 *ngIf="!showFilterAssets">
                 <i class="fa fa-angle-right" aria-hidden="true"></i> Captura de
-                datos</a
+                Datos</a
               >
             </p>
 
@@ -74,7 +75,7 @@
                 (click)="showFilterAssets = false"
                 *ngIf="showFilterAssets">
                 <i class="fa fa-angle-down" aria-hidden="true"></i> Captura de
-                datos</a
+                Datos</a
               >
             </p>
           </h6>
@@ -88,8 +89,34 @@
     <div class="tabs">
       <tabset class="md-tabs">
         <tab heading="Bienes" id="tab1">
-          <app-assets-tab
-            [typeTask]="'verify-warehouse-assets'"></app-assets-tab>
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <h5>Bienes</h5>
+            </div>
+          </div>
+          <div class="row pt-3">
+            <div class="col-md-12">
+              <p style="color: rgba(0, 0, 255, 0.8)">
+                Seleccione la casilla en caso de haber encontrado los bienes en
+                el almac&eacute;n
+              </p>
+            </div>
+          </div>
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (userRowSelect)="goodsSamplingSelect($event)">
+          </ng2-smart-table>
+
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+          <!--<app-assets-tab
+            [willSave]="willSave"
+            [idSample]="idSample"
+            [filterObject]="filterObject"
+            [typeTask]="'verify-warehouse-assets'"></app-assets-tab> -->
         </tab>
         <tab heading="Deductivas">
           <app-deductives
