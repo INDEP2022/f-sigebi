@@ -7,19 +7,24 @@
       <div class="row">
         <h5>Captura datos del firmante</h5>
       </div>
-      <form [formGroup]="signDataForm" class="form-material">
+      <form [formGroup]="annexKForm" class="form-material">
         <div class="row pt-4">
           <div class="col-md-5">
-            <form-field [control]="signDataForm.get('name')" label="Nombre">
-              <input type="text" class="form-control" formControlName="name" />
-            </form-field>
-          </div>
-          <div class="col-md-5">
-            <form-field [control]="signDataForm.get('charge')" label="Cargo">
+            <form-field
+              [control]="annexKForm.get('responsiblesae')"
+              label="Nombre">
               <input
                 type="text"
                 class="form-control"
-                formControlName="charge" />
+                formControlName="responsiblesae" />
+            </form-field>
+          </div>
+          <div class="col-md-5">
+            <form-field [control]="annexKForm.get('postsae')" label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="postsae" />
             </form-field>
           </div>
         </div>
@@ -29,42 +34,48 @@
       <div class="row pt-4">
         <h5>Captura datos de los participantes</h5>
       </div>
-      <form [formGroup]="participantsDataForm" class="form-material">
+      <form [formGroup]="annexKForm" class="form-material">
         <div class="row pt-4">
           <div class="col-md-5">
             <form-field
-              [control]="participantsDataForm.get('name1')"
+              [control]="annexKForm.get('competitor1')"
               label="Nombre">
-              <input type="text" class="form-control" formControlName="name1" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="competitor1" />
             </form-field>
           </div>
           <div class="col-md-5">
             <form-field
-              [control]="participantsDataForm.get('charge1')"
+              [control]="annexKForm.get('postCompetitor1')"
               label="Cargo">
               <input
                 type="text"
                 class="form-control"
-                formControlName="charge1" />
+                formControlName="postCompetitor1" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-5">
             <form-field
-              [control]="participantsDataForm.get('name2')"
+              [control]="annexKForm.get('competitor2')"
               label="Nombre">
-              <input type="text" class="form-control" formControlName="name2" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="competitor2" />
             </form-field>
           </div>
           <div class="col-md-5">
             <form-field
-              [control]="participantsDataForm.get('charge2')"
+              [control]="annexKForm.get('postCompetitor2')"
               label="Cargo">
               <input
                 type="text"
                 class="form-control"
-                formControlName="charge2" />
+                formControlName="postCompetitor2" />
             </form-field>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ENDPOINT_INVOICE } from 'src/app/common/constants/endpoints/ms-invoice-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
 @Injectable({
@@ -43,5 +43,9 @@ export class MsInvoiceService extends HttpService {
   lotifyExcelCount(eventId: string | number) {
     const url = `application/lotifica-excel-count/event/${eventId}`;
     return this.get<{ totlot: string; catlot: number }>(url);
+  }
+
+  getAllBillings(params: _Params) {
+    return this.get<IListResponse>(`${ENDPOINT_INVOICE.ComerInovice}`, params);
   }
 }
