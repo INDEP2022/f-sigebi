@@ -58,6 +58,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('this.idSample', this.idSample);
     this.getGoodsSampling();
     //this.setEnableInputs();
     //this.assetsArray = data;
