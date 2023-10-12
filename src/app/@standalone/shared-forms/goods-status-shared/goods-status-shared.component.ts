@@ -40,6 +40,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getGoodStatus()
     if (this.approb) {
       this.getSelectedGoodStatus(this.form.get(this.goodStatusField).value);
     } else {
@@ -81,9 +82,10 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
     );
   }
 
-  getGoodStatus(params: ListParams) {
+  getGoodStatus(params?: ListParams) {
     //Provisional data
-    this.service.getStatusAll(params).subscribe({
+    console.log('Llamó')
+    this.service.getStatusAll(params ? params : '').subscribe({
       next: data => {
         const newData = data.data.map(status => {
           return {

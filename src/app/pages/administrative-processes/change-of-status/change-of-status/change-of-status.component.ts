@@ -155,10 +155,10 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
                 .getAllFilterFree(paramsF2.getParams())
                 .subscribe(
                   res => {
-                    this.getStatus(
+                    res.data[0].statusfinal != null ? this.getStatus(
                       { text: JSON.parse(JSON.stringify(res.data[0])).status },
                       true
-                    );
+                    ) : ''
                     console.log(res.data[0]);
                     resolve(res);
                   },
@@ -301,11 +301,12 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     });
   } */
 
-  getStatus(params: ListParams, research?: boolean) {
-    console.log(params.text);
+  getStatus(params?: ListParams, research?: boolean) {
     const paramsF = new FilterParams();
-    paramsF.addFilter('status', params.text);
-    this.goodServices.getStatusGood(paramsF.getParams()).subscribe(
+    params ? paramsF.addFilter('status', params.text, SearchFilter.ILIKE) : '';
+    paramsF.addFilter('screenKey', 'CAMMUEESTATUS');
+    this.screenStatusService
+                .getAllFilterFree(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
         const newData = res.data.map((item: any) => {
@@ -329,6 +330,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   async loadGood() {
     this.loading = true;
     this.goodStatus.enable();
+    this.getStatus()
     const resp = await this.validateGood();
     console.log(resp);
     if (JSON.parse(JSON.stringify(resp)).message == 'Error') {
@@ -410,7 +412,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           status:
             this.goodStatus.value === null
               ? this.good.status
-              : this.goodStatus.value,
+              : this.goodStatus.value.status,
           extDomProcess:
             this.extDomProcess.value === null
               ? this.good.extDomProcess
@@ -444,7 +446,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   postHistoryGood() {
     const historyGood: IHistoryGood = {
       propertyNum: this.numberGood.value,
-      status: this.goodStatus.value,
+      status: this.goodStatus.value.status,
       changeDate: this.correctDate(new Date().toISOString()),
       userChange: this.token.decodeToken().preferred_username,
       statusChangeProgram: 'CAMMUEESTATUS',
