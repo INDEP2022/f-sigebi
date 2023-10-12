@@ -175,7 +175,7 @@ export class MassiveReclassificationGoodsComponent
         this.alert(
           'success',
           'Reclasificación Masiva',
-          'Se han reclasificado los Bienes Seleccionados.'
+          'Se han reclasificado los Bienes seleccionados'
         );
         this.loading = false;
         this.loadGoods();
