@@ -347,12 +347,6 @@
         Imprime Anexo <i class="bx bxs-file"></i>
       </button>
       <button
-        type="button"
-        class="btn btn-primary btn-sm active mr-2 mb-2"
-        (click)="generatePreFacture()">
-        Visualiza Anexo <i class="bx bxs-file"></i>
-      </button>
-      <button
         [disabled]="buttons"
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
@@ -424,6 +418,7 @@
     <h5 class="title">PREFACTURAS DEL EVENTO</h5>
     <div class="row justify-content-end mr-3">
       <app-columns-select
+        [defaultColumns]="7"
         [(settings)]="settings"
         [leftList]="true"></app-columns-select>
     </div>
