@@ -221,4 +221,8 @@ export class MassiveGoodService extends HttpService {
     });
     return httpParams;
   }
+
+  getCSVStatus(status: number) {
+    return this.get(`${MassiveGoodEndpoints.ApplicationCSV}?status=${status}`);
+  }
 }
