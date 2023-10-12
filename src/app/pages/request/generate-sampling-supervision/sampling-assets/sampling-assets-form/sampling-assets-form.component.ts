@@ -8,12 +8,14 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import {
   POSITVE_NUMBERS_PATTERN,
@@ -26,8 +28,8 @@ import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
-import { UploadExpedientFormComponent } from '../../shared-component-gss/upload-expedient-form/upload-expedient-form.component';
-import { UploadImagesFormComponent } from '../../shared-component-gss/upload-images-form/upload-images-form.component';
+import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
+import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import { EditSampleGoodComponent } from '../edit-sample-good/edit-sample-good.component';
 import { LIST_ASSETS_COLUMN } from './columns/list-assets-columns';
 import { LIST_ASSETS_COPIES_COLUMN } from './columns/list-assets-copies';
@@ -63,7 +65,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   paragraphs2 = new LocalDataSource();
   totalItems2: number = 0;
   listAssetsSelected: any[] = [];
-
+  deductivesSel: [] = [];
   settings3 = {
     ...TABLE_SETTINGS,
     actions: {
@@ -76,6 +78,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     columns: LIST_ASSETS_COPIES_COLUMN,
   };
   params3 = new BehaviorSubject<ListParams>(new ListParams());
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs3 = new LocalDataSource();
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
@@ -86,7 +89,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     selectMode: '',
   };
   columns4 = LIST_DEDUCTIVES_COLUMNS;
-  paragraphsDeductivas: any[] = [{}];
+  paragraphsDeductivas = new LocalDataSource();
 
   delegationId: string = '';
   storeSelected: any = {};
@@ -103,7 +106,9 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     private transferentService: TransferenteService,
     private goodsInvService: GoodsInvService,
     private samplingGoodService: SamplingGoodService,
-    private delegationService: RegionalDelegationService
+    private delegationService: RegionalDelegationService,
+    private massiveGoodService: MassiveGoodService,
+    private deductiveService: DeductiveVerificationService
   ) {
     super();
   }
@@ -265,17 +270,18 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   uploadExpedient() {
-    if (this.listAssetsCopiedSelected.length == 0) {
-      this.onLoadToast(
-        'info',
-        'Se tiene que tener seleccionado al menos un registro'
+    if (this.listAssetsCopiedSelected.length > 0) {
+      this.openModals(
+        ShowDocumentsGoodComponent,
+        this.listAssetsCopiedSelected
       );
-      return;
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar al menos un bien'
+      );
     }
-    this.openModals(
-      UploadExpedientFormComponent,
-      this.listAssetsCopiedSelected
-    );
   }
 
   uploadImages(): void {
@@ -286,16 +292,30 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.openModals(UploadImagesFormComponent, this.listAssetsCopiedSelected);
+    this.openModals(PhotographyFormComponent, this.listAssetsCopiedSelected);
   }
 
   exportCsv() {
-    const title = 'Muestreo de Bienes para Supervisión';
-    const filename: string = 'MuestreoBienesSupervision';
-    //this.jsonToCsv = this.generateJsonExcel();
-    //console.log(this.jsonToCsv)
-    //{type: 'csv'}
-    this.excelService.export(this.jsonToCsv, { filename });
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.sampleId'] = `$eq:${this.sampleId}`;
+    this.massiveGoodService.exportSampleGoods(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+      error: error => {
+        this.alert('warning', 'Advertencia', 'Error al generar reporte');
+      },
+    });
+  }
+
+  downloadExcel(excel: any) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = 'Muestreo_Bienes.xlsx';
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 
   search() {
@@ -338,6 +358,84 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getCatAlmacenView();
     });
+
+    //
+    if (
+      this.searchForm.get('id').value &&
+      this.searchForm.get('code').value &&
+      !this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
+        this.searchForm.get('id').value
+      }`;
+
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+    }
+
+    if (
+      this.searchForm.get('id').value &&
+      this.searchForm.get('code').value &&
+      this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
+        this.searchForm.get('id').value
+      }`;
+
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+
+      this.params.getValue()['filter.name'] =
+        this.searchForm.get('nameWarehouse').value;
+    }
+
+    if (
+      this.searchForm.get('id').value &&
+      this.searchForm.get('code').value &&
+      this.searchForm.get('nameWarehouse').value &&
+      this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
+        this.searchForm.get('id').value
+      }`;
+
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+
+      this.params.getValue()['filter.name'] =
+        this.searchForm.get('nameWarehouse').value;
+
+      this.params.getValue()['filter.descriptiveValue'] =
+        this.searchForm.get('address').value;
+    }
+
+    if (
+      !this.searchForm.get('id').value &&
+      this.searchForm.get('code').value &&
+      !this.searchForm.get('nameWarehouse').value &&
+      this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+
+      this.params.getValue()['filter.descriptiveValue'] =
+        this.searchForm.get('address').value;
+    }
+
+    if (
+      !this.searchForm.get('id').value &&
+      !this.searchForm.get('code').value &&
+      this.searchForm.get('nameWarehouse').value &&
+      this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.name'] =
+        this.searchForm.get('nameWarehouse').value;
+
+      this.params.getValue()['filter.descriptiveValue'] =
+        this.searchForm.get('address').value;
+    }
   }
 
   getRegionalDelegationId() {
@@ -405,6 +503,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
               this.params3
                 .pipe(takeUntil(this.$unSubscribe))
                 .subscribe(() => this.getSampligGoods());
+
+              this.params4
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getDeductives());
             }
           });
         },
@@ -412,6 +514,16 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           this.loadingGoodInv = false;
         },
       });
+  }
+
+  getDeductives() {
+    this.deductiveService.getAll(this.params4.getValue()).subscribe({
+      next: response => {
+        console.log('deductivas', response);
+        this.paragraphsDeductivas.load(response.data);
+      },
+      error: error => {},
+    });
   }
 
   getNameTransferent(transferentId: number) {
@@ -558,8 +670,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   ): void {
     let config: ModalOptions = {
       initialState: {
-        good: good,
+        sampleGood: good,
         typeModal: type,
+        typeDoc: 'good',
+        process: 'sampling-assets',
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
@@ -745,5 +859,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         'Se requiere seleccionar al menos un bien muestreo'
       );
     }
+  }
+
+  saveDeductives() {
+    console.log('this.paragraphsDeductivas', this.paragraphsDeductivas);
+  }
+
+  deductivesSelect(event: any) {
+    console.log('this.paragraphsDeductivas', event);
   }
 }

@@ -90,7 +90,10 @@ export class DestructionAuthorizationComponent
   totalItems5: number = 0;
   totalItems6: number = 0;
   columnFilters: any = [];
+  goodIds: any = [];
+  numberPro: any = [];
   array: any = [];
+  array1: any = [];
   $state = this.store.select(getDestructionAuth);
   state: IDestructionAuth;
   modalRef: BsModalRef;
@@ -244,7 +247,7 @@ export class DestructionAuthorizationComponent
 
     this.settings2 = {
       //Bienes por actas
-      ...this.settings2,
+      ...this.settings,
       actions: false,
       columns: {
         ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
@@ -263,7 +266,7 @@ export class DestructionAuthorizationComponent
 
     this.settings3 = {
       //Bienes en estatus PDS
-      ...this.settings3,
+      ...this.settings,
       actions: false,
       columns: {
         ...GOODS_COLUMNS,
@@ -280,8 +283,6 @@ export class DestructionAuthorizationComponent
       hideSubHeader: false,
       rowClassFunction: (row: any) => {
         const di_disponible = row.data.di_disponible;
-        console.log(row.data);
-
         if (di_disponible === 'S') {
           return 'bg-success text-white';
         } else {
@@ -292,7 +293,7 @@ export class DestructionAuthorizationComponent
 
     this.settings4 = {
       //Actas de recepción
-      ...this.settings4,
+      ...this.settings,
       actions: false,
       columns: { ...ACTA_RECEPTION_COLUMNS },
       hideSubHeader: false,
@@ -300,7 +301,7 @@ export class DestructionAuthorizationComponent
 
     this.settings5 = {
       //dictaminaciones
-      ...this.settings5,
+      ...this.settings,
       actions: false,
       columns: { ...DICTATION_COLUMNS },
       hideSubHeader: false,
@@ -315,12 +316,47 @@ export class DestructionAuthorizationComponent
     return `${day}/${month}/${year}`;
   }
 
+  private tempArrayGood: any = [];
+  private selectedGood: any = null;
+
   onSelectGood(instance: CheckboxElementComponent) {
     if (this.controls.statusProceedings.value == 'CERRADA') {
       instance.disabled = true;
     }
+
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => this.selectGood(data.row, data.toggle),
+      next: data => {
+        this.selectGood(data.row, data.toggle);
+
+        // Desseleccionar el elemento previamente seleccionado
+        if (this.selectedGood && this.selectedGood !== data.row) {
+          this.selectedGood.toggle = false;
+          const index = this.array1.indexOf(this.selectedGood);
+          if (index !== -1) {
+            this.array1.splice(index, 1);
+          }
+        }
+
+        this.tempArrayGood = [...this.array1];
+        console.log(this.array1);
+
+        if (data.toggle) {
+          // Si el checkbox se selecciona, agregar el elemento al array
+          if (!this.array1.includes(data.row)) {
+            this.array1.push(data.row);
+          }
+          // Establecer el elemento seleccionado actual
+          this.selectedGood = data.row;
+        } else {
+          // Si el checkbox se deselecciona, eliminar el elemento del array
+          const index = this.array1.indexOf(data.row);
+          if (index !== -1) {
+            this.array1.splice(index, 1);
+          }
+          // Limpiar el elemento seleccionado actual
+          this.selectedGood = null;
+        }
+      },
     });
   }
 
@@ -377,56 +413,31 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    const offlineGoods = this.selectedGoods.filter(
-      detail => !detail.numberProceedings
-    );
-    const onlineGoods = this.selectedGoods.filter(
-      detail => detail.numberProceedings != null
-    );
-    offlineGoods.forEach(detail => {
-      this.detailProceedingsList = this.detailProceedingsList.filter(
-        _d => _d.numberGood != detail.numberGood
-      );
-      this.selectedGoods = this.selectedGoods.filter(
-        _d => _d.numberGood != detail.numberGood
-      );
-      this.goodTrackerGoods = this.goodTrackerGoods.filter(
-        _d => _d.numberGood != detail.numberGood
-      );
-    });
-    if (onlineGoods.length == 0 && offlineGoods.length > 0) {
-      this.onLoadToast('success', 'Bienes eliminados del acta');
-    }
-    if (onlineGoods.length == 0) {
-      return;
-    }
-    this.loadingGoodsByP = true;
-    const $obs = onlineGoods.map(detail => this.deleteDetail(detail));
-    forkJoin($obs).subscribe({
-      next: () => {
-        this.loadingGoodsByP = false;
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodIds = this.array1[0].numberGood;
+        this.numberPro = this.array1[0].numberProceedings;
 
-        this.onLoadToast('success', 'Bienes eliminados del acta');
-
-        this.getProceedingGoods(id.value);
-      },
-      error: () => {
-        this.loadingGoodsByP = false;
-        this.onLoadToast(
-          'error',
-          'Error',
-          'Ocurrió un error al eliminar los bienes del acta'
-        );
-        this.getProceedingGoods(id.value);
-      },
+        console.log(this.goodIds, this.numberPro);
+        this.deleteDetail();
+      }
     });
   }
 
-  deleteDetail(detail: IDetailProceedingsDeliveryReception) {
-    return this.detailProceeDelRecService.remove(
-      detail.numberGood,
-      detail.numberProceedings
-    );
+  deleteDetail() {
+    this.detailProceeDelRecService
+      .remove(this.goodIds, this.numberPro)
+      .subscribe({
+        next: () => {
+          this.getProceedingGoods();
+          this.alert('success', 'Bienes eliminados correctamente', '');
+        },
+        error: err => {},
+      });
   }
 
   selectGood(good: IDetailProceedingsDeliveryReception, selected: boolean) {
@@ -434,7 +445,7 @@ export class DestructionAuthorizationComponent
       this.selectedGoods.push(good);
     } else {
       this.selectedGoods = this.selectedGoods.filter(
-        _detail => _detail.good.id != good.good.id
+        _detail => _detail['numberGood'] != good['numberGood']
       );
     }
   }
@@ -483,9 +494,9 @@ export class DestructionAuthorizationComponent
         return;
       }
       this.goodTrackerGoods = trackerGoods;
-      this.getProceedingGoods(id.value);
-      this.searchActa(id.value);
-      this.searchDicta(id.value);
+      //this.getProceedingGoods();
+      //this.searchActa(id.value);
+      //this.searchDicta(id.value);
     });
   }
 
@@ -773,7 +784,7 @@ export class DestructionAuthorizationComponent
           this.goodTrackerGoods = [];
           this.loading = false;
           this.proceedingForm.patchValue(proceeding);
-          this.getProceedingGoods(proceeding.id);
+          //this.getProceedingGoods();
           this.onLoadToast('success', 'Acta generada correctamente', '');
         },
         error: error => {
@@ -824,7 +835,7 @@ export class DestructionAuthorizationComponent
         this.goodTrackerGoods = [];
         this.onLoadToast('success', 'Acta actualizada correctamente');
         this.findProceeding(keysProceedings.value).subscribe();
-        this.getProceedingGoods(id.value);
+        //this.getProceedingGoods();
       },
       error: () => {
         this.loading = false;
@@ -1004,7 +1015,7 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    //this.generateScanRequestReport().subscribe();
+    this.generateScanRequestReport().subscribe();
   }
 
   getDictAndActs() {
@@ -1080,7 +1091,7 @@ export class DestructionAuthorizationComponent
           );
 
           this.proceedingForm.patchValue(proceeding);
-          this.getProceedingGoods(proceeding.id);
+          this.getProceedingGoods();
           this.searchActa(proceeding.id);
           this.searchDicta(proceeding.id);
         })
@@ -1228,10 +1239,8 @@ export class DestructionAuthorizationComponent
             vcScreen: 'FESTATUSRGA',
             goodNumber: item.id,
           };
-
           const di_dispo = await this.goodStatus(obj);
           item['di_disponible'] = di_dispo;
-          console.log(item['di_disponible']);
         });
         await Promise.all(result);
         this.show2 = false;
@@ -1274,11 +1283,13 @@ export class DestructionAuthorizationComponent
       });
   }
 
-  getProceedingGoods(proceedingId: number | string) {
+  getProceedingGoods() {
+    const proceedingId = this.proceedingForm.get('id').value;
     this.loadingGoodsByP = true;
     let params = {
-      ...this.params2.getValue(),
+      ...this.params7.getValue(),
     };
+    params['filter.numberProceedings'] = `$eq:${proceedingId}`;
     this.detailProceeDelRecService
       .getGoodsByProceedings(proceedingId, params)
       .subscribe({
@@ -1287,9 +1298,11 @@ export class DestructionAuthorizationComponent
           this.detailProceedingsList2.load(resp.data);
           this.totalItems2 = resp.count;
           this.loadingGoodsByP = false;
-          this.goodTrackerGoods;
+          //this.goodTrackerGoods;
         },
         error: err => {
+          console.log(err);
+
           this.loadingGoodsByP = false;
         },
       });
@@ -1310,6 +1323,28 @@ export class DestructionAuthorizationComponent
           resolve('N');
         },
       });
+    });
+  }
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files[0];
+    let formData = new FormData();
+    formData.append('file', files);
+    this.getDataFile(formData);
+  }
+
+  getDataFile(data: FormData) {
+    let params = {
+      ...this.params8.getValue(),
+    };
+    let file = this.proceedingForm.get('id').value;
+    this.massiveGoodService.pupBienesPlano(data, file).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+      },
     });
   }
 }

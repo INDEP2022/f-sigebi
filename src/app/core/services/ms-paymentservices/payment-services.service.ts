@@ -28,4 +28,23 @@ export class PaymentServicesService extends HttpService {
   postPayment(body: any) {
     return this.post(PaymentServicesEndPoints.Payment, body);
   }
+
+  getPaymentServiceId(id: number) {
+    return this.get(`${PaymentServicesEndPoints.Payment}/${id}`);
+  }
+
+  getAll(params?: _Params) {
+    return this.get(PaymentServicesEndPoints.GetData, params);
+  }
+
+  inserGoodsAux(body: any) {
+    return this.post(PaymentServicesEndPoints.InserGoodsAux, body);
+  }
+
+  inserGoodsReq(body: any) {
+    return this.post(PaymentServicesEndPoints.InserGoodsReq, body);
+  }
+  pupSpent(body: any) {
+    return this.post(PaymentServicesEndPoints.PupSpent, body);
+  }
 }

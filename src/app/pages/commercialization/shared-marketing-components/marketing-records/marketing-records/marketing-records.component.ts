@@ -141,6 +141,11 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   activeDelete: boolean = false;
   activeDoc: boolean = false;
   activeSend: boolean = false;
+  goodId: any;
+  bieStatus: any;
+  eventId: any;
+  lotId: any;
+  portfolioId: any;
   //----------------
 
   usersCcp: any = [];
@@ -219,6 +224,27 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       // actions: { add: false, delete: true, edit: false },
       columns: COLUMNS3,
     };
+
+    this.goodId =
+      localStorage.getItem('goodId') != null
+        ? localStorage.getItem('goodId')
+        : null;
+    this.folioScan =
+      localStorage.getItem('folio') != null
+        ? localStorage.getItem('folio')
+        : null;
+    this.bieStatus =
+      localStorage.getItem('bie') != null ? localStorage.getItem('bie') : null;
+    this.eventId =
+      localStorage.getItem('event') != null
+        ? localStorage.getItem('event')
+        : null;
+    this.lotId =
+      localStorage.getItem('lot') != null ? localStorage.getItem('lot') : null;
+    this.portfolioId =
+      localStorage.getItem('portfolio') != null
+        ? localStorage.getItem('portfolio')
+        : null;
   }
 
   ngOnInit(): void {
@@ -239,6 +265,25 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         switchMap(params => this.getGoods(params))
       )
       .subscribe();
+
+    if (this.bieStatus == 1) {
+      this.form.get('goodId').setValue(this.goodId);
+      localStorage.removeItem('goodId');
+      this.formCcp.get('scannerFolio').setValue(this.folioScan);
+      localStorage.removeItem('folio');
+      this.goodNumChange();
+    } else if (this.bieStatus == 0) {
+      this.form.get('recordCommerType').patchValue('por');
+      this.form.get('event').setValue(this.eventId);
+      localStorage.removeItem('event');
+      this.form.get('lot').setValue(this.lotId);
+      localStorage.removeItem('lot');
+      this.form.get('portfolio').setValue(this.lotId);
+      localStorage.removeItem('portfolio');
+      this.formCcp.get('scannerFolio').setValue(this.folioScan);
+      localStorage.removeItem('folio');
+      this.eventInput();
+    }
   }
 
   goodNumChange() {
@@ -315,6 +360,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     if (count == 2) {
       this.chooseDocument(documents);
     } else if (count == 1) {
+      this.NoExpediente = documents[0].proceedingsNumber;
       this.jobDictumTextsService.getData(good).subscribe({
         next: response => {
           VAL_TIPOF = response.data[0].getword;
@@ -362,13 +408,14 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                             'respuensta GetMJobJobManagement --> ',
                             response
                           );
+                          this.flyerNumber = response.data[0].flyerNumber;
+                          this.wheelNumber = response.data[0].flyerNumber;
                           this.V_OFICIO = response.data[0].managementNumber;
                           this.BANDERA = 1;
                           this.NO_OF_GESTION = this.V_OFICIO;
                           this.form.patchValue({
                             managementNumber: this.V_OFICIO,
                           });
-                          //falta PUP_EXTRAE_DATO(:GLOBAL.V_OFICIO);
                           this.PupExtraeDato(this.V_OFICIO);
                         },
                       });
@@ -377,14 +424,11 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             } else {
               if (VAL_TIPOF2 == 'ESCRITURACION') {
                 TIPO_OF = 'ESC';
-                //Falta PUP_AGREGA_TEXTO
                 this.PupAgregaTexto();
               } else if (VAL_TIPOF2 == 'ENTREGA') {
                 TIPO_OF = 'ENT';
-                //Falta PUP_AGREGA_TEXTO
                 this.PupAgregaTexto();
               }
-              this.V_VALBIEN = null;
               if (this.V_VALBIEN == null) {
                 this.BANDERA = 0;
                 this.NO_BIEN = this.form.get('goodId').value;
@@ -393,23 +437,25 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   goodNo: this.NO_BIEN,
                   screen: VC_PANTALLA,
                 };
+                this.V_VALBIEN = null;
                 this.goodprocessService.postBlokOffice3(params).subscribe({
                   next: resp => {
                     console.log('respuesta de BlokOFfice3 --> ', resp);
-                    this.NO_VOLANTE = response.data[0].no_volante;
-                    this.NO_EXPEDIENTE = response.data[0].no_expediente;
+                    this.NO_VOLANTE = resp.data[0].no_volante;
+                    this.NO_EXPEDIENTE = resp.data[0].no_expediente;
                     this.form.patchValue({
                       status: resp.data[0].estatus,
                       desStatus: resp.data[0].descripcion,
                     });
-                    this.BIEN = response.data[0].no_bien;
+                    this.BIEN = resp.data[0].no_bien;
                     let param = {
-                      goodId: response.data[0].no_bien,
-                      description: response.data[0].descripcion,
-                      amout: response.data[0].cantidad,
-                      identifier: response.data[0].identificador,
+                      goodId: resp.data[0].no_bien,
+                      description: resp.data[0].descripcion,
+                      amout: resp.data[0].cantidad,
+                      identifier: resp.data[0].identificador,
                     };
                     this.goods.push(param);
+                    this.totalGoods = resp.data.length;
                     this.localGoods.load(this.goodsData);
                   },
                 });
@@ -419,6 +465,36 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         },
         error: err => {
           this.V_VALBIEN = null;
+          if (this.V_VALBIEN == null) {
+            this.BANDERA = 0;
+            this.NO_BIEN = this.form.get('goodId').value;
+            let VC_PANTALLA = 'FOFICIOCOMER';
+            let params = {
+              goodNo: this.NO_BIEN,
+              screen: VC_PANTALLA,
+            };
+            this.goodprocessService.postBlokOffice3(params).subscribe({
+              next: resp => {
+                console.log('respuesta de BlokOFfice3 --> ', resp);
+                this.NO_VOLANTE = resp.data[0].no_volante;
+                this.NO_EXPEDIENTE = resp.data[0].no_expediente;
+                this.form.patchValue({
+                  status: resp.data[0].estatus,
+                  desStatus: resp.data[0].descripcion,
+                });
+                this.BIEN = resp.data[0].no_bien;
+                let param = {
+                  goodId: resp.data[0].no_bien,
+                  description: resp.data[0].descripcion,
+                  amout: resp.data[0].cantidad,
+                  identifier: resp.data[0].identificador,
+                };
+                this.goods.push(param);
+                this.totalGoods = resp.data.length;
+                this.localGoods.load(this.goodsData);
+              },
+            });
+          }
         },
       });
     }
@@ -757,6 +833,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           };
           this.docs.push(params);
         }
+        this.totalDocuments = data.length;
         this.docsLocalData.load(this.docs);
       }
     });
@@ -830,15 +907,17 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               dateRegistrationScan: new Date(),
               keyTypeDocument: 'ENTRE',
               keySeparator: 60,
-              numberProceedings: this.NoExpediente,
+              numberProceedings: Number(this.NoExpediente),
               numberDelegationRequested: this.delegation,
               numberSubdelegationRequests: 0,
               numberDepartmentRequest: this.delegation,
+              flyerNumber: this.flyerNumber,
             };
             this.documentsService.insertDocuments(params).subscribe({
               next: response => {
                 console.log('respuesta post documento --> ', response);
-                this.folioScan = response.data[0];
+                this.folioScan = response.id;
+                this.formCcp.get('scannerFolio').patchValue(response.id);
                 this.PupLanzaReporteSolicDigt();
               },
             });
@@ -848,11 +927,12 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       if (CONSULTA == 'por') {
         if (this.goods.length > 0) {
           for (let i = 0; i < this.goods.length; i++) {
-            this.pupGenFolio(this.goods[i].goodId);
-            //falta el PUP_GEN_FOLIO_MAS
+            this.pupGenFolio(this.goods[0].goodId);
             this.PupGenFolioMas();
           }
-          this.PupLanzaReporteSolicDigt();
+          //this.PupLanzaReporteSolicDigt();
+        } else {
+          this.alert('error', 'Error', 'No existen Bienes');
         }
       }
     }
@@ -1042,23 +1122,60 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   pupGenFolio(good: any) {
     let expediente: any;
     let TIPO_OF: any;
-    let DESCRIPCION1: any;
+    let DESCRIPCION2: any;
     this.goodService.getGoodByNoGood(good).subscribe({
       next: response => {
         expediente = response.data[0].fileNumber;
         if (TIPO_OF == 'ent') {
-          DESCRIPCION1 = 'Oficio de Entrega Fisica con el Bien: ' + this.BIEN;
+          DESCRIPCION2 =
+            'Oficio Entrega Física, Pflio: ' +
+            this.PORTAFOLIO +
+            ' lote: ' +
+            this.LOTE +
+            ' Evento: ' +
+            this.EVENTO;
         } else if (TIPO_OF == 'esc') {
-          DESCRIPCION1 = 'Oficio de Escrituracion con el  Bien: ' + this.BIEN;
+          DESCRIPCION2 =
+            'Oficio Escrituración, Pflio: ' +
+            this.PORTAFOLIO +
+            ' lote: ' +
+            this.LOTE +
+            ' Evento: ' +
+            this.EVENTO;
         }
-        let params = {};
         //Falta Integrar el insert into Document, esta en los archivos pedidos a back
+        const formattedfecFin = this.formatDate(new Date());
+        let params = {
+          natureDocument: 'ORIGINAL',
+          descriptionDocument: DESCRIPCION2,
+          significantDate: formattedfecFin,
+          scanStatus: 'SOLICITADO',
+          userRequestsScan: this.user,
+          scanRequestDate: new Date(),
+          userRegistersScan: this.user,
+          dateRegistrationScan: new Date(),
+          keyTypeDocument: 'ENTRE',
+          keySeparator: 60,
+          numberProceedings: expediente,
+          numberDelegationRequested: this.delegation,
+          numberSubdelegationRequests: 0,
+          numberDepartmentRequest: this.delegation,
+          flyerNumber: this.flyerNumber,
+        };
+        this.documentsService.insertDocuments(params).subscribe({
+          next: response => {
+            console.log('respuesta post documento --> ', response);
+            this.folioScan = response.id;
+            this.formCcp.get('scannerFolio').patchValue(response.id);
+            this.PupLanzaReporteSolicDigt();
+          },
+        });
       },
     });
   }
 
   openScannerPage() {
-    if (this.form.get('scannerFolio').value != null) {
+    if (this.formCcp.get('scannerFolio').value != null) {
       this.alertQuestion(
         'info',
         'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Dictamen. ¿Deseas continuar?',
@@ -1068,12 +1185,19 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       ).then(res => {
         console.log(res);
         if (res.isConfirmed) {
-          //localStorage.setItem('folio', this.folioScan);
-          //localStorage.setItem('expedient', this.expedient);
-          //localStorage.setItem('acta', this.idProceeding);
+          localStorage.setItem('folio', this.folioScan);
+          if (this.form.get('recordCommerType').value == 'bie') {
+            localStorage.setItem('bie', '1');
+            localStorage.setItem('goodId', this.form.get('goodId').value);
+          } else {
+            localStorage.setItem('bie', '0');
+            localStorage.setItem('event', this.form.get('goodId').value);
+            localStorage.setItem('lot', this.form.get('lot').value);
+            localStorage.setItem('portfolio', this.form.get('portfolio').value);
+          }
           this.router.navigate([`/pages/general-processes/scan-documents`], {
             queryParams: {
-              origin: 'FACTCONST_0001',
+              origin: 'FOFICIOCOMER',
               folio: this.folioScan,
             },
           });
@@ -1089,6 +1213,8 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   }
 
   insertListImg() {
+    console.log('flyer Number', this.flyerNumber);
+    console.log('wheel Number', this.wheelNumber);
     this.getDocumentsByFlyer(this.wheelNumber);
   }
 
@@ -1109,7 +1235,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     const columns = RELATED_FOLIO_COLUMNS;
     const body = {
       proceedingsNum: this.NoExpediente,
-      flierNum: this.wheelNumber,
+      flierNum: this.flyerNumber,
     };
     const config = {
       ...MODAL_CONFIG,
@@ -1131,7 +1257,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   }
 
   getPicturesFromFolio(document: IDocuments) {
-    let folio = document.id;
+    let folio = this.folioScan;
     /*if (document.id != this.dictationData.folioUniversal) {
       folio = this.dictationData.folioUniversal;
     }*/
@@ -1180,26 +1306,13 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               }
             },
           });
+        this.PupActualiza(this.V_OFICIO);
         this.PupLanzaReporte();
       } else if (this.BANDERA == 0) {
         let NO_OF_GESTION = this.form.get('managementNumber').value;
         if (this.V_BANDERA > 1) {
           if (ESTATUS_OF == 'REVISION') {
-            //FALTA HACER ESTO, SE ESPERAN ENDPOINTS
-            //GO_BLOCK('M_OFICIO_GESTION');
-            //SET_BLOCK_PROPERTY('M_OFICIO_GESTION', DEFAULT_WHERE, 'NO_OF_GESTION = ' ||: M_OFICIO_GESTION.NO_OF_GESTION);
-            //EXECUTE_QUERY;
-            this.goodsJobManagementService
-              .getMJobManagement(NO_OF_GESTION)
-              .subscribe({
-                next: response1 => {
-                  console.log(
-                    'respuesta del servicio en el primero boton ',
-                    response1
-                  );
-                },
-              });
-            //Crear una funcion para mapear con este endpoint
+            this.refresh(NO_OF_GESTION);
           }
           this.goodsJobManagementService
             .getMJobManagement(ESTATUS_OF)
@@ -1324,23 +1437,17 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           this.DEV_DES = null;
 
           this.PupLanzaReporte();
-
-          //Falta Hacer Esto
-          /*
-          GO_BLOCK('M_OFICIO_GESTION');
-          SET_BLOCK_PROPERTY('M_OFICIO_GESTION',DEFAULT_WHERE,'NO_OF_GESTION = '||:M_OFICIO_GESTION.NO_OF_GESTION);
-          EXECUTE_QUERY;
-          */
-          this.goodsJobManagementService
-            .getMJobManagement(NO_OF_GESTION)
-            .subscribe({
-              next: response1 => {
-                console.log(
-                  'respuesta del servicio en el primero boton ',
-                  response1
-                );
-              },
-            });
+          this.refresh(NO_OF_GESTION);
+          // this.goodsJobManagementService
+          //   .getMJobManagement(NO_OF_GESTION)
+          //   .subscribe({
+          //     next: response1 => {
+          //       console.log(
+          //         'respuesta del servicio en el primero boton ',
+          //         response1
+          //       );
+          //     },
+          //   });
           //----------------------------------------
 
           this.goodsJobManagementService
@@ -1400,25 +1507,12 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                               .patchValue(response.data[0].problematiclegal);
                           },
                         });
-                      //FALTAN ESTOS ENDPOINTS
-                      /*
-                    select nombre into :nom_rem
-                      from seg_usuarios 
-                     where usuario in(select remitente
-                                        from m_oficio_gestion
-                                       where no_of_gestion=:M_OFICIO_GESTION.NO_OF_GESTION);
-                       select nombre into :nom_des
-                        from seg_usuarios 
-                       where usuario in(select destinatario
-                                          from m_oficio_gestion
-                                         where no_of_gestion=:M_OFICIO_GESTION.NO_OF_GESTION);
-                    */
                       this.usersService
                         .getBtnViewPrev(NO_OF_GESTION)
                         .subscribe({
                           next: response => {
-                            this.loadAdress(response.data[0].destinatario);
-                            this.loadsender(response.data[0].remitente);
+                            this.loadAdressName(response.data[0].destinatario);
+                            this.loadsenderName(response.data[0].remitente);
                           },
                         });
                       this.V_BANDERA = this.V_BANDERA + 1;
@@ -1432,11 +1526,27 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     }
   }
 
+  loadAdressName(name: string) {
+    this.indUserService.getUserByName(name).subscribe({
+      next: response => {
+        this.loadAdress(response.data[0].user);
+      },
+    });
+  }
+
   loadAdress(user: string) {
     this.indUserService.getUser(user).subscribe({
       next: response => {
         this.receivers = new DefaultSelect(response.data, response.count);
         this.form.get('addressee').setValue(response.data[0].user);
+      },
+    });
+  }
+
+  loadsenderName(name: string) {
+    this.indUserService.getUserByName(name).subscribe({
+      next: response => {
+        this.loadsender(response.data[0].user);
       },
     });
   }
@@ -1504,49 +1614,16 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               }
             },
           });
-        //FALTA PUP_ACTUALIZA(:GLOBAL.V_OFICIO);
         this.PupActualiza(this.V_OFICIO);
         this.PupLanzaReportes();
       } else if (this.BANDERA == 0) {
         if (this.V_BANDERA == 1) {
           if (ESTATUS_OF == 'REVISION') {
-            /*
-            IF :M_OFICIO_GESTION.ESTATUS_OF='REVISION' THEN  
-                    GO_BLOCK('M_OFICIO_GESTION');
-                    SET_BLOCK_PROPERTY('M_OFICIO_GESTION',DEFAULT_WHERE,'NO_OF_GESTION = '||:M_OFICIO_GESTION.NO_OF_GESTION);
-                    EXECUTE_QUERY;
-
-                    select nombre 
-                      into :nom_rem
-                        from seg_usuarios 
-                          where usuario in(select remitente
-                                          from m_oficio_gestion
-                                         where no_of_gestion=:M_OFICIO_GESTION.NO_OF_GESTION);
-                               
-                      select nombre 
-                        into :nom_des
-                        from seg_usuarios 
-                          where usuario in(select destinatario
-                                            from m_oficio_gestion
-                                           where no_of_gestion=:M_OFICIO_GESTION.NO_OF_GESTION);  
-            */
-
-            this.goodsJobManagementService
-              .getMJobManagement(NO_OF_GESTION)
-              .subscribe({
-                next: response1 => {
-                  console.log(
-                    'respuesta del servicio en el primero boton ',
-                    response1
-                  );
-                },
-              });
-            //Crear una funcion para mapear con este endpoint
-
+            this.refresh(NO_OF_GESTION);
             this.usersService.getBtnViewPrev(NO_OF_GESTION).subscribe({
               next: response => {
-                this.loadAdress(response.data[0].destinatario);
-                this.loadsender(response.data[0].remitente);
+                this.loadAdressName(response.data[0].destinatario);
+                this.loadsenderName(response.data[0].remitente);
               },
             });
 
@@ -1724,29 +1801,12 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               }
             }
             this.DEV_DES = null;
-
             this.PupLanzaReportes();
-            //FALTA
-            /*
-              GO_BLOCK('M_OFICIO_GESTION');
-                SET_BLOCK_PROPERTY('M_OFICIO_GESTION',DEFAULT_WHERE,'NO_OF_GESTION = '||:M_OFICIO_GESTION.NO_OF_GESTION);
-                EXECUTE_QUERY;
-                PUP_EXTRAE_DATOS(:GLOBAL.NO_OF_GESTION);
-            */
-            this.goodsJobManagementService
-              .getMJobManagement(NO_OF_GESTION)
-              .subscribe({
-                next: response1 => {
-                  console.log(
-                    'respuesta del servicio en el primero boton ',
-                    response1
-                  );
-                },
-              });
-            //Crear una funcion para mapear con este endpoint
+            this.refresh(NO_OF_GESTION);
             this.PupExtraeDatos(NO_OF_GESTION);
             this.V_BANDERA = this.V_BANDERA + 1;
-            //Activar biton cerrar-Enviar y el de Borrar Oficio
+            this.activeDelete = true;
+            this.activeSend = true;
           }
         }
       }
@@ -1778,28 +1838,12 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             this.alert(
               'error',
               'Error',
-              'No se puede cerrar el oficio, no tiene imagenesw escaneadas'
+              'No se puede cerrar el oficio, no tiene imagenes escaneadas'
             );
             return;
           },
         });
         if (consulta == 'por') {
-          /*
-          SELECT DISTINCT(1) INTO FOLIO
-           FROM DOCUMENTOS 
-          WHERE FOLIO_UNIVERSAL=:FOLIO_UNIVERSAL
-             OR FOLIO_UNIVERSAL_ASOC=:FOLIO_UNIVERSAL;
-          
-                      	
-           IF FOLIO=1 THEN       
-          
-             UPDATE DOCUMENTOS 
-             SET ESTATUS_ESCANEO='ESCANEADO'
-             WHERE FOLIO_UNIVERSAL_ASOC=:GLOBAL.LN_folio;
-
-           ENDIF
-          */
-          //son los de abajo ya integrados falta probar
           this.documentsService
             .getDocumentInvoiceFolio(this.folioScan)
             .subscribe({
@@ -1812,39 +1856,12 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               },
             });
         }
-        /*
-                NO_OF_GESTION  := :M_OFICIO_GESTION.NO_OF_GESTION;
-           
-           GO_BLOCK('M_OFICIO_GESTION');
-           SET_BLOCK_PROPERTY('M_OFICIO_GESTION',DEFAULT_WHERE,'NO_OF_GESTION = '||NO_OF_GESTION);
-           EXECUTE_QUERY;
-        */
-
-        /*
-          SELECT NOMBRE INTO :M_OFICIO_GESTION.NOM_REM
-        FROM SEG_USUARIOS WHERE USUARIO IN(
-        SELECT REMITENTE
-        FROM M_OFICIO_GESTION 
-        WHERE NO_OF_GESTION=:GLOBAL.NO_OF_GESTION);
-        
-        SELECT NOMBRE INTO :M_OFICIO_GESTION.NOM_DES
-        FROM SEG_USUARIOS WHERE USUARIO IN(
-        SELECT DESTINATARIO
-        FROM M_OFICIO_GESTION 
-        WHERE NO_OF_GESTION=:GLOBAL.NO_OF_GESTION);
-        
-        
-        SELECT leyenda_oficio INTO :M_OFICIO_GESTION.DES_CIDAD
-        FROM cat_ciudades
-        WHERE NO_CIUDAD IN(SELECT CIUDAD 
-                           FROM M_OFICIO_GESTION
-                           WHERE NO_OF_GESTION=:GLOBAL.NO_OF_GESTION);
-        */
+        this.refresh(NO_OF_GESTION);
 
         this.usersService.getBtnViewPrev(NO_OF_GESTION).subscribe({
           next: response => {
-            this.loadAdress(response.data[0].destinatario);
-            this.loadsender(response.data[0].remitente);
+            this.loadAdressName(response.data[0].destinatario);
+            this.loadsenderName(response.data[0].remitente);
           },
         });
         this.authorityService.getobtnCityQuery(NO_OF_GESTION).subscribe({
@@ -1858,35 +1875,38 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           (ESTATUS_OF == 'EN REVISION' && consulta == 'bie') ||
           this.CONSULTA == 1
         ) {
-          //FALTA PUP_BUSCA_NUMERO
+          this.PupBuscaNumero();
+          this.activeSol = true;
+          this.activeScan = true;
+          this.activeSend = true;
           this.form.get('statusOf').patchValue('ENVIADO');
-          /*
-            LIP_COMMIT_SILENCIOSO;
-            Set_Item_Property('enviar',ICON_NAME,'../iconos/rt_lock');
-            SET_ITEM_PROPERTY('ENVIAR',ENABLED,PROPERTY_FALSE);
-            --SET_ITEM_PROPERTY('oficio',ENABLED,PROPERTY_TRUE);
-            SET_ITEM_PROPERTY('BORRAR',ENABLED,PROPERTY_FALSE);
-            --SET_ITEM_PROPERTY('IMPR',ENABLED,PROPERTY_TRUE);
-            SET_ITEM_PROPERTY('DOC',ENABLED,PROPERTY_FALSE);
-            SET_ITEM_PROPERTY('IMG_SOLICITUD',ENABLED,PROPERTY_FALSE);
-            SET_ITEM_PROPERTY('IMG_ESCANEO',ENABLED,PROPERTY_FALSE);
-            --SET_ITEM_PROPERTY('IMG_VER_IMAGENES',ENABLED,PROPERTY_FALSE);
-            SET_ITEM_PROPERTY('IMG_IMP_SOL_DIGIT',ENABLED,PROPERTY_FALSE);
-            Set_Item_Property('enviar',ICON_NAME,'../iconos/rt_lock');
-          */
           this.PupLanzaReporte();
-          //FALTA PUP_EXTRAE_DATO(:GLOBAL.NO_OF_GESTION);
+          this.PupExtraeDato(NO_OF_GESTION);
         }
         if (
           (ESTATUS_OF == 'EN REVISION' && consulta == 'por') ||
           this.CONSULTA == 2
         ) {
-          //FALTA PUP_BUSCA_NUMERO
-          /*
-           UPDATE M_OFICIO_GESTION
-           SET CVE_OF_GESTION=:M_OFICIO_GESTION.CVE_OF_GESTION
-           WHERE NO_OF_GESTION=:M_OFICIO_GESTION.NO_OF_GESTION;
-          */
+          this.PupBuscaNumero();
+          let paramsPut = {
+            cveManagement: this.form.get('cveManagement').value,
+            managementNumber: this.form.get('managementNumber').value,
+            sender: this.form.get('sender').value,
+            addressee: this.form.get('addressee').value,
+            city: this.form.get('city').value,
+            text1: this.form.get('text1').value,
+            text2: this.form.get('text2').value,
+            text3: this.form.get('text3').value,
+            jobBy: this.form.get('salesProcess').value,
+            statusOf: this.form.get('statusOf').value,
+          };
+          this.goodsJobManagementService
+            .updateMJobManagement(paramsPut)
+            .subscribe({
+              next: response => {
+                console.log('respuesta update Job ', response);
+              },
+            });
           let params = {
             cveOfGestion: cveDocument,
             numberOfGestion: NO_OF_GESTION,
@@ -1897,19 +1917,12 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               next: response => {},
             });
           this.form.get('statusOf').patchValue('ENVIADO');
-          /*
-            Set_Item_Property('ENVIAR',ICON_NAME,'../iconos/rt_lock');
-          SET_ITEM_PROPERTY('ENVIAR',ENABLED,PROPERTY_FALSE);
-          SET_ITEM_PROPERTY('BORRAR',ENABLED,PROPERTY_FALSE);
-          SET_ITEM_PROPERTY('IMPR',ENABLED,PROPERTY_FALSE);
-          SET_ITEM_PROPERTY('DOC',ENABLED,PROPERTY_FALSE);
-          SET_ITEM_PROPERTY('IMG_SOLICITUD',ENABLED,PROPERTY_FALSE);
-          SET_ITEM_PROPERTY('IMG_ESCANEO',ENABLED,PROPERTY_FALSE);
-           -- SET_ITEM_PROPERTY('IMG_VER_IMAGENES',ENABLED,PROPERTY_FALSE);
-          SET_ITEM_PROPERTY('IMG_IMP_SOL_DIGIT',ENABLED,PROPERTY_FALSE); */
-
+          this.activeSol = true;
+          this.activeScan = true;
+          this.activeDelete = true;
+          this.activeSend = true;
           this.PupLanzaReportes();
-          // FALTA PUP_EXTRAE_DATOS(:GLOBAL.NO_OF_GESTION);
+          this.PupExtraeDatos(NO_OF_GESTION);
         }
 
         //---------------------COPIAS------------------------
@@ -1919,6 +1932,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             this.COPIAS1 = this.COPIAS + ';' + this.COPIAS1;
           }
           //FALTA PUP_CONVIERTE
+          this.PupConvierte();
           this.PupMail();
         }
       }
@@ -1996,8 +2010,14 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             console.log('document delete error', err);
           },
         });
-        //FALTA INTEGRAR DELETE FROM DOCUMENTOS WHERE FOLIO_UNIVERSAL=:FOLIO_UNIVERSAL OR FOLIO_UNIVERSAL_ASOC=:FOLIO_UNIVERSAL;
-        //PEDIDO A YELTSIN
+        this.documentsService.deleteByFolio(this.folioScan).subscribe({
+          next: response => {
+            console.log('folio delete Ok', response);
+          },
+          error: err => {
+            console.log('folio delete error', err);
+          },
+        });
         this.form.reset();
         this.data3 = [];
         this.ccpData.load(this.data3);
@@ -2067,13 +2087,23 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       managementNumber: NO_OF_GESTION,
       cveDocument: cveDocument,
     };
-    //FALTA
-    /*
-    UPDATE M_OFICIO_GESTION 
-    SET CVE_OF_GESTION=:M_OFICIO_GESTION.CVE_OF_GESTION,REMITENTE=REMITENTE,DESTINATARIO=DESTINATARIO,CIUDAD=CIUDAD,
-    TEXTO1=TEXTO1,TEXTO2=TEXTO2,OFICIO_POR=OFICIO_POR,TEXTO3=TEXTO3
-    WHERE NO_OF_GESTION=OF_GESTION;
-    */
+    let paramsPut = {
+      cveManagement: this.form.get('cveManagement').value,
+      managementNumber: this.form.get('NO_OF_GESTION').value,
+      sender: this.form.get('sender').value,
+      addressee: this.form.get('addressee').value,
+      city: this.form.get('city').value,
+      text1: this.form.get('text1').value,
+      text2: this.form.get('text2').value,
+      text3: this.form.get('text3').value,
+      jobBy: this.form.get('salesProcess').value,
+      statusOf: this.form.get('statusOf').value,
+    };
+    this.goodsJobManagementService.updateMJobManagement(paramsPut).subscribe({
+      next: response => {
+        console.log('respuesta update Job ', response);
+      },
+    });
 
     //------------------DOCUMENTOS-----------------------
     this.documentsService.deleteDocumentHAttached(NO_OF_GESTION).subscribe({
@@ -2507,6 +2537,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               };
               this.docs.push(params);
             }
+            this.totalDocuments = response.count;
             this.docsLocalData.load(this.docs);
 
             //Bienes
@@ -2524,6 +2555,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   };
                   this.goods.push(params);
                 }
+                this.totalGoods = response.count;
                 this.localGoods.load(this.goods);
               },
             });
@@ -2541,6 +2573,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   };
                   this.data3.push(params);
                 }
+                this.totalCcp = response.count;
                 this.ccpData.load(this.data3);
               },
             });
@@ -2561,6 +2594,34 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     this.jobDictumTextsService.pupExtractDatas(params).subscribe({
       next: response => {
         console.log('response Extrae Datas --> ', response);
+        this.loadcitybyid(response.CIUDAD);
+        this.loadAdress(response.DESTINATARIO);
+        this.loadsender(response.REMITENTE);
+        this.showJuridic = true;
+        if (response.ESTATUS_OF == 'ENVIADO') {
+          this.activeSol = true;
+          this.activeScan = true;
+          this.activeDelete = true;
+          this.activeDoc = true;
+          this.activeSend = true;
+        }
+        if (response.FOLIO_UNIVERSAL != null) {
+          this.formCcp.patchValue({
+            scannerFolio: response.FOLIO_UNIVERSAL,
+          });
+          this.activeSol = true;
+          this.folioScan = response.FOLIO_UNIVERSAL;
+        }
+        this.form.patchValue({
+          cveManagement: response.CVE_OF_GESTION,
+          salesProcess: response.OFICIO_POR,
+          text1: response.TEXTO1,
+          text2: response.TEXTO2,
+          text3: response.TEXTO3,
+          managementNumber: response.NO_OF_GESTION,
+          problematiclegal: response.PROBLEMATICA_JURIDICA,
+          statusOf: response.ESTATUS_OF,
+        });
         //Documents docsLocalData docs
         this.documentsService.getDocumentsattachment(OF_GESTION).subscribe({
           next: response => {
@@ -2577,6 +2638,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               };
               this.docs.push(params);
             }
+            this.totalDocuments = response.count;
             this.docsLocalData.load(this.docs);
           },
         });
@@ -2600,6 +2662,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               };
               this.goods.push(params);
             }
+            this.totalGoods = response.data.length;
             this.localGoods.load(this.goods);
           },
         });
@@ -2615,6 +2678,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               };
               this.data3.push(params);
             }
+            this.totalCcp = response.data.length;
             this.ccpData.load(this.data3);
           },
         });
@@ -2677,7 +2741,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                 this.V_OFICIO = null;
                 if (V_OFICIO == null) {
                   this.BANDERA = 0;
-                  //falta PUP_PORTAFOLIO
+                  this.PupPortafolio();
                 }
               }
             }
@@ -2707,6 +2771,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           identifier: response.data[0].identificador,
         };
         this.goods.push(param);
+        this.totalGoods = response.count;
         this.localGoods.load(this.goodsData);
         //FALTA
         /*
@@ -2717,6 +2782,112 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             NEXT_RECORD;
             END LOOP;
         */
+      },
+    });
+  }
+
+  refresh(NO_OF_GESTION: any) {
+    this.goodsJobManagementService.getMJobManagement(NO_OF_GESTION).subscribe({
+      next: response1 => {
+        console.log('respuesta del servicio en el primer boton ', response1);
+      },
+    });
+  }
+
+  PupBuscaNumero() {
+    if (this.form.get('cveManagement').value == null) {
+      this.alert('error', 'Error', 'Es necesaría la clave de oficio.');
+    } else if (this.form.get('managementNumber').value == null) {
+      this.alert('error', 'Error', 'Es necesario un número de gestion.');
+    } else {
+      let params = {
+        pCveOfManagement: this.form.get('cveManagement').value,
+        pManagementOfNumber: Number(this.form.get('managementNumber').value),
+        pDelegationNumber: Number(this.delegation),
+      };
+      this.goodsJobManagementService.pupSearchNumber(params).subscribe({
+        next: response => {},
+      });
+    }
+  }
+
+  SaveMJob() {
+    let params = {
+      cveManagement: this.form.get('cveManagement').value,
+      managementNumber: this.form.get('NO_OF_GESTION').value,
+      sender: this.form.get('sender').value,
+      addressee: this.form.get('addressee').value,
+      city: this.form.get('city').value,
+      text1: this.form.get('text1').value,
+      text2: this.form.get('text2').value,
+      text3: this.form.get('text3').value,
+      jobBy: this.form.get('salesProcess').value,
+      statusOf: this.form.get('statusOf').value,
+    };
+    this.goodsJobManagementService.postMJob(params).subscribe({
+      next: response => {},
+    });
+  }
+
+  PupConvierte() {
+    let CONSULTA = this.form.get('recordCommerType').value;
+    let TIPO_OF = this.officeTypeCtrl.value;
+    if (CONSULTA == 'por' && TIPO_OF == 'ENT') {
+      let report = 'REPPORENT';
+      let params = {};
+      this.lanzaReport('blank', params);
+    } else if (CONSULTA == 'por' && TIPO_OF == 'ESC') {
+      let report = 'REPPORESC';
+      let params = {};
+      this.lanzaReport('blank', params);
+    } else if (CONSULTA == 'bie' && TIPO_OF == 'ENT') {
+      let report = 'REPENT';
+      let params = {};
+      this.lanzaReport('blank', params);
+    } else if (CONSULTA == 'bie' && TIPO_OF == 'ESC') {
+      let report = 'REPESC';
+      let params = {};
+      this.lanzaReport('blank', params);
+    }
+  }
+
+  lanzaReport(report: any, params: any) {
+    this.siabService.fetchReport(report, params).subscribe({
+      next: res => {
+        if (res !== null) {
+          const blob = new Blob([res], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([res], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      },
+      error: (error: any) => {
+        console.log('error', error);
       },
     });
   }

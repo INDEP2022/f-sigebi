@@ -1462,15 +1462,14 @@ export class DetailAssetsTabComponentComponent
     }
   }
   displayTypeTapInformation(typeRelevantId: number) {
-    if (this.detailAssets.get('id').value == null) {
+    /*if (this.detailAssets.get('id').value == null) {
       return;
     }
     this.detailAssetsInfo = this.detailAssets.value;
     this.classificationNumber = +this.detailAssetsInfo.goodClassNumber;
     this.initValue = true;
-    setTimeout(() => {
-      this.goodChange2++;
-    }, 2000);
+    this.goodChange2++;*/
+
     switch (typeRelevantId) {
       case 1:
         this.getGoodEstateTab();
@@ -1628,7 +1627,8 @@ export class DetailAssetsTabComponentComponent
   //guardar el bien inmueble
   saveGoodRealState() {
     return new Promise((resolve, reject) => {
-      let domicilio = this.goodDomicilieForm.getRawValue();
+      //let domicilio = this.goodDomicilieForm.getRawValue();
+      let domicilio = this.fillUpForm();
       domicilio.addressId = this.domicileForm.controls['id'].value;
       domicilio.creationDate = new Date().toISOString();
       domicilio.modificationDate = new Date().toISOString();
@@ -1636,7 +1636,7 @@ export class DetailAssetsTabComponentComponent
       const username = this.authService.decodeToken().preferred_username;
       domicilio.userCreation = username;
       domicilio.userModification = username;
-      domicilio.id = this.detailAssets.controls['id'].value;
+      domicilio.id = this.detailAssets.controls['id'].value; //id good
 
       this.goodEstateService.create(domicilio).subscribe({
         next: resp => {
@@ -1847,11 +1847,14 @@ export class DetailAssetsTabComponentComponent
         this.detailAssets.controls['appraisal'].value === 'Y' ? true : false;
     }
 
-    this.detailAssets.controls['id'].valueChanges.subscribe((data: any) => {
+    /**
+     * descomentar en caso de usar la tabla
+     */
+    /* this.detailAssets.controls['id'].valueChanges.subscribe((data: any) => {
       const goodType = this.detailAssets.controls['goodTypeId'].value;
       this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
       this.displayTypeTapInformation(Number(goodType));
-    });
+    }); */
   }
 
   getGoodEstate() {
@@ -1944,5 +1947,33 @@ export class DetailAssetsTabComponentComponent
         },
       });
     });
+  }
+
+  get dataAtribute() {
+    return this.service.data;
+  }
+
+  fillUpForm() {
+    const realState: IGoodRealState = this.goodDomicilieForm.value;
+    console.log(this.dataAtribute);
+    for (let i = 0; i < this.dataAtribute.length; i++) {
+      const element = this.dataAtribute[i];
+      if (element.column == 'val40') realState.description = element.value;
+
+      if (element.column == 'val23')
+        realState.vigilanceRequired = element.value;
+      if (element.column == 'val7') realState.propertyType = element.value;
+      if (element.column == 'val5') realState.surfaceMts = +element.value; //valor positivo
+      if (element.column == 'val6') realState.consSurfaceMts = +element.value; //valor positivo
+      if (element.column == 'val45') realState.publicDeed = element.value;
+      if (element.column == 'val20') realState.pubRegProperty = element.value;
+      if (element.column == 'val14') realState.appraisalValue = +element.value; //valor del avaluo
+      if (element.column == 'val35') realState.appraisalDate = element.value;
+      if (element.column == 'val10') realState.propTitleFolio = element.value;
+      if (element.column == 'val26') realState.vouchersWater = element.value;
+      if (element.column == 'val26') realState.vouchersWater = element.value;
+    }
+
+    return realState;
   }
 }
