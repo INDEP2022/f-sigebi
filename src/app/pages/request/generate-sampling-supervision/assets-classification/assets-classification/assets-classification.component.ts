@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { AnnexKFormComponent } from '../../generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
 import { AnnexJAssetsClassificationComponent } from '../annex-j-assets-classification/annex-j-assets-classification.component';
@@ -10,19 +15,36 @@ import { AnnexJAssetsClassificationComponent } from '../annex-j-assets-classific
   styleUrls: ['./assets-classification.component.scss'],
 })
 export class AssetsClassificationComponent extends BasePage implements OnInit {
-  title: string = 'Clasificación de bienes (Firma Anexos)601';
+  title: string = `Clasificación de bienes ${302}`;
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
   willSave: boolean = true;
-
+  sampleInfo: ISample;
+  idSample: number = 0;
+  filterObject: any;
   constructor(
     private modalService: BsModalService,
-    private bsModalRef: BsModalRef
+    private bsModalRef: BsModalRef,
+    private samplingGoodService: SamplingGoodService
   ) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.idSample = 302;
+    this.getInfoSample();
+  }
+
+  getInfoSample() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.sampleId'] = `$eq:${302}`;
+    this.samplingGoodService.getSample(params.getValue()).subscribe({
+      next: response => {
+        console.log('sampledsa', response);
+        this.sampleInfo = response.data[0];
+      },
+    });
+  }
 
   turnSampling() {
     let message =
@@ -44,7 +66,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
   openAnnexJ() {
     this.openModal(
       AnnexJAssetsClassificationComponent,
-      '',
+      this.idSample,
       'annexJ-assets-classification'
     );
   }
@@ -53,16 +75,22 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
     this.openModal(AnnexKFormComponent, '', 'annexK-assets-classification');
   }
 
-  getSearchForm(event: any) {
-    console.log(event);
+  getSearchForm(searchForm: any) {
+    this.filterObject = searchForm;
   }
 
-  openModal(component: any, data?: any, typeAnnex?: string): void {
+  openModal(component: any, idSample?: any, typeAnnex?: string): void {
     let config: ModalOptions = {
       initialState: {
-        data: data,
+        idSample: idSample,
         typeAnnex: typeAnnex,
-        callback: (next: boolean) => {
+        callback: async (next: boolean, signatureInfo: ISignatories) => {
+          if (next) {
+            console.log('signature', signatureInfo);
+            const validateSignature = await this.checkRegSignature(
+              signatureInfo
+            );
+          }
           //if (next){ this.getData();}
         },
       },
@@ -78,4 +106,6 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
     //this.requestForm.get('receiUser').patchValue(res.user);
     //});
   }
+
+  checkRegSignature(signatureInfo: ISignatories) {}
 }

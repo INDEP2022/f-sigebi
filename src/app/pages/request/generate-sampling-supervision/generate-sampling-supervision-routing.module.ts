@@ -17,7 +17,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./assets-classification/assets-classification.module'))
         .AssetsClassificationModule,
-    data: { title: 'Clasificación de Bienes (Formato J Y K)' },
+    data: { title: 'Clasificación de Bienes' },
   },
   {
     path: 'verify-warehouse-assets',
