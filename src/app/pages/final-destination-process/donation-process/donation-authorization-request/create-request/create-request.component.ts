@@ -159,10 +159,9 @@ export class CreateRequestComponent extends BasePage implements OnInit {
     });
   }
   agregarRequst() {
-    const o = this.request.proposalCve;
-    if (o) {
+    if (localStorage.getItem('proposalCve')) {
       const params = new ListParams();
-      params['filter.requestId.'] = `$eq:${o}`;
+      params['proposalCve'] = `$eq:${localStorage.getItem('proposalCve')}`;
       this.proposelServiceService.getAll(params).subscribe({
         next: (data: any) => {
           if (data.data.length == 1) {
@@ -177,17 +176,16 @@ export class CreateRequestComponent extends BasePage implements OnInit {
           return;
         },
         error: error => {
-          this.guardarRegistro(o);
+          this.guardarRegistro(localStorage.getItem('proposalCve'));
         },
       });
     }
   }
   newRegister: any;
   guardarRegistro(cve: any) {
-    const r = localStorage.getItem('request');
     let obj: any = {
       solQuantity: this.form.value.quantity,
-      requestId: r,
+      requestId: localStorage.getItem('requestId'),
       entFedKey: this.form.value.entFedKey,
       requestDate: this.form.value.requestDate,
       clasifGood: this.form.value.clasifGood,
