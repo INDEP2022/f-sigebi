@@ -67,12 +67,14 @@
                       <div class="row mt-5">
                         <div class="col-3">
                           <button
+                            [disabled]="!disabledGenPreFac100"
                             class="btn btn-sm btn-block btn-primary active">
                             Prefacturar Fallo
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            [disabled]="!disabledUpdate"
                             class="btn btn-sm btn-block btn-primary active">
                             Act Datos Fallo
                           </button>
@@ -115,12 +117,14 @@
                         </div>
                         <div class="col-3">
                           <button
+                            [disabled]="!disabledGenXPays"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Pref Pagos Parciales
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            [disabled]="!disabledUpdate2"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Act Datos Pagos
                           </button>
@@ -133,12 +137,14 @@
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="deleteFact()"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Rest. Todos
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="deleteSelect()"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Elimina x Selección
                           </button>
@@ -194,6 +200,7 @@
                             [control]="form.get('cause')"
                             label="Causa">
                             <input
+                              [readonly]="!disabledCause"
                               type="text"
                               class="form-control"
                               formControlName="cause" />
@@ -204,6 +211,7 @@
                             [control]="form.get('descause')"
                             label="Causa">
                             <input
+                              [readonly]="!disabledDescause"
                               type="text"
                               class="form-control"
                               formControlName="descause" />
@@ -211,6 +219,8 @@
                         </div>
                         <div class="col-md-2">
                           <button
+                            [disabled]="!disabledRegCanc"
+                            (click)="regCanc()"
                             class="btn btn-sm btn-block btn-primary active">
                             Anular
                           </button>
@@ -491,7 +501,6 @@
                 </accordion>
               </div>
             </app-card>
-
             <app-card [header]="false" [footer]="false">
               <div class="row" body>
                 <div class="ch-content" header>
@@ -506,8 +515,8 @@
                   <div
                     class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
                     <app-columns-select
-                      [defaultColumns]="9"
-                      [(settings)]="settings"
+                      [defaultColumns]="7"
+                      [(settings)]="settings2"
                       [leftList]="true"></app-columns-select>
                     <div>
                       <button
@@ -522,28 +531,118 @@
                   </div>
                 </div>
                 <div class="col-12">
-                  <form-loader *ngIf="loading"></form-loader>
+                  <form-loader *ngIf="loading2"></form-loader>
                   <ng-scrollbar
                     [track]="'all'"
-                    [ngStyle]="{ height: loading ? '0px' : '300px' }">
+                    [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
                     <ng2-smart-table
                       #myTable
                       [attr.class]="'table-bordered'"
-                      [settings]="settings"
-                      [source]="data"
-                      (userRowSelect)="rowsSelected($event)">
+                      [settings]="settings2"
+                      [source]="data2">
                     </ng2-smart-table>
                   </ng-scrollbar>
-                  <app-pagination [params]="params" [totalItems]="totalItems">
+                  <app-pagination [params]="params2" [totalItems]="totalItems2">
                   </app-pagination>
                 </div>
               </div>
             </app-card>
           </section>
         </tab>
-        <tab id="B" heading="ERRORES Y DATOS NULOS"> </tab>
-        <tab id="C" heading="SIN FOLIO EN SIRSAE"> </tab>
-        <tab id="D" heading="ACTUALIZACIÓN DE EVENTOS"> </tab>
+        <tab id="B" heading="ERRORES Y DATOS NULOS">
+          <section>
+            <app-card [header]="false" [footer]="false">
+              <div class="row" body>
+                <div class="ch-content" header>
+                  <div
+                    class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="title">ERRORES Y DATOS NULOS</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <form-loader *ngIf="loading3"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loading3 ? '0px' : '300px' }">
+                    <ng2-smart-table
+                      #myTable
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings3"
+                      [source]="data3">
+                    </ng2-smart-table>
+                  </ng-scrollbar>
+                  <app-pagination [params]="params3" [totalItems]="totalItems3">
+                  </app-pagination>
+                </div>
+              </div>
+            </app-card>
+          </section>
+        </tab>
+        <tab id="C" heading="SIN FOLIO EN SIRSAE">
+          <section>
+            <app-card [header]="false" [footer]="false">
+              <div class="row" body>
+                <div class="ch-content" header>
+                  <div
+                    class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="title">ERRORES AL OBTENER FOLIOS EN SIRSAE</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <form-loader *ngIf="loading4"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loading4 ? '0px' : '300px' }">
+                    <ng2-smart-table
+                      #myTable
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings4"
+                      [source]="data4">
+                    </ng2-smart-table>
+                  </ng-scrollbar>
+                  <app-pagination [params]="params4" [totalItems]="totalItems4">
+                  </app-pagination>
+                </div>
+              </div>
+            </app-card>
+          </section>
+        </tab>
+        <tab id="D" heading="ACTUALIZACIÓN DE EVENTOS">
+          <section>
+            <app-card [header]="false" [footer]="false">
+              <div class="row" body>
+                <div class="row text-end justify-content-end">
+                  <div
+                    class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+                    <app-columns-select
+                      [defaultColumns]="7"
+                      [(settings)]="settings5"
+                      [leftList]="true"></app-columns-select>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <form-loader *ngIf="loading5"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loading5 ? '0px' : '300px' }">
+                    <ng2-smart-table
+                      #myTable
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings5"
+                      [source]="data5">
+                    </ng2-smart-table>
+                  </ng-scrollbar>
+                  <app-pagination [params]="params5" [totalItems]="totalItems5">
+                  </app-pagination>
+                </div>
+              </div>
+            </app-card>
+          </section>
+        </tab>
       </tabset>
     </div>
   </div>
