@@ -26,6 +26,13 @@ export class MassiveGoodService extends HttpService {
     this.microservice = this.route.MassiveGood;
   }
 
+  pupBienesPlano(request: any, fileNumber: any) {
+    return this.post<any>(
+      `application/pupBienesPlano?fileNumber=${fileNumber}`,
+      request
+    );
+  }
+
   getAll(params?: ListParams): Observable<IListResponse<IMassiveGood>> {
     return this.get<IListResponse<IMassiveGood>>(
       this.route.MassiveChargeGoods,
@@ -213,5 +220,9 @@ export class MassiveGoodService extends HttpService {
       httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;
+  }
+
+  getCSVStatus(status: number) {
+    return this.get(`${MassiveGoodEndpoints.ApplicationCSV}?status=${status}`);
   }
 }

@@ -30,6 +30,10 @@ export class SamplingGoodService extends HttpService {
     return this.post(this.samplingGoodEndpoint.Sample, sample);
   }
 
+  updateSample(sample: ISample) {
+    return this.put(this.samplingGoodEndpoint.Sample, sample);
+  }
+
   getSamplingGoods(
     _params: ListParams
   ): Observable<IListResponse<ISampleGood>> {

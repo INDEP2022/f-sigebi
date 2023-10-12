@@ -222,7 +222,7 @@ export class AuthorityService
   }
 
   getobtnCityQuery(Nogestion: any) {
-    const route = `${AuthorityEndpoints.getDataQuery}/${Nogestion}`;
+    const route = `${AuthorityEndpoints.getCityQuery}/${Nogestion}`;
     return this.get(route);
   }
 }
