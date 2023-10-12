@@ -561,7 +561,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       let tituloOficio: any;
 
       body.eventId = this.event;
-      body.officeType = this.returnOfOffice();
+      body.officeType = this.form.get('radio').value;
       dataOffice = await this.getOfficeRequest(body);
       for (const x of dataOffice) {
         type.description = x.direccion;
@@ -571,24 +571,24 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
 
       if (type.typeOffice == 2) {
-        if (this.returnOfOffice() == 2) {
+        if (this.form.get('radio').value == 2) {
           tituloOficio = this.getDescriptionParameters('OFI_RES_V');
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio;
           this.generateReport(myBody, type.address);
-        } else if (this.returnOfOffice() == 3) {
+        } else if (this.form.get('radio').value == 3) {
           tituloOficio = this.getDescriptionParameters('OFI_CAN_V');
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio;
           this.generateReport(myBody, type.address);
         }
       } else if (type.typeOffice == 3) {
-        if (this.returnOfOffice() == 2) {
+        if (this.form.get('radio').value == 2) {
           tituloOficio = this.getDescriptionParameters('OFI_RES_A');
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio;
           this.generateReport(myBody, type.address);
-        } else if (this.returnOfOffice() == 3) {
+        } else if (this.form.get('radio').value == 3) {
           tituloOficio = this.getDescriptionParameters('OFI_CAN_A');
           myBody = await this.getDataByOffice();
           myBody.subject = tituloOficio;
@@ -610,7 +610,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let listGoods: string = '';
 
     body.eventId = this.event;
-    body.officeType = this.returnOfOffice();
+    body.officeType = this.form.get('radio').value;
     arrayDataOffice = await this.getOfficeResponseTwo(body);
 
     for (const x of arrayDataOffice) {
@@ -759,13 +759,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.resetVariables();
       this.pnlControles = true;
       this.pnlControles2 = true;
-      if (this.returnOfOffice() == 2) {
+      if (this.form.get('radio').value == 2) {
         this.settings = {
           ...this.settings,
           actions: false,
           columns: { ...VALUATION_REQUEST_COLUMNS },
         };
-      } else if (this.returnOfOffice() == 3) {
+      } else if (this.form.get('radio').value == 3) {
         this.settingsTwo = {
           ...this.settingsTwo,
           actions: false,
@@ -780,13 +780,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.pnlControles = false;
       this.pnlControles2 = false;
       this.setButtons(1);
-      if (this.returnOfOffice() == 2) {
+      if (this.form.get('radio').value == 2) {
         this.settings = {
           ...this.settings,
           actions: false,
           columns: { ...VALUATION_REQUEST_COLUMNS_VALIDATED },
         };
-      } else if (this.returnOfOffice() == 3) {
+      } else if (this.form.get('radio').value == 3) {
         this.settingsTwo = {
           ...this.settingsTwo,
           actions: false,
@@ -797,13 +797,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.pnlControles = true;
       this.pnlControles2 = true;
       this.setButtons(2);
-      if (this.returnOfOffice() == 2) {
+      if (this.form.get('radio').value == 2) {
         this.settings = {
           ...this.settings,
           actions: false,
           columns: { ...VALUATION_REQUEST_COLUMNS },
         };
-      } else if (this.returnOfOffice() == 3) {
+      } else if (this.form.get('radio').value == 3) {
         this.settingsTwo = {
           ...this.settingsTwo,
           actions: false,
@@ -812,9 +812,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     }
     this.idOficio = this.form.controls['office'].value?.jobId;
-    if (this.returnOfOffice() == 2) {
+    if (this.form.get('radio').value == 2) {
       this.obtainsValuedAssets(4, this.idOficio);
-    } else if (this.returnOfOffice() == 3) {
+    } else if (this.form.get('radio').value == 3) {
       this.obtainsCancelAssets(5, this.idOficio);
     }
   }
@@ -971,15 +971,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
   }
 
-  returnOfOffice(): number {
-    let num: number = 0;
-    if (this.form.get('radio').value == 'E') {
-      num = 2;
-    } else if (this.form.get('radio').value == 'I') {
-      num = 3;
-    }
-    return num;
-  }
+  // returnOfOffice(): number {
+  //   let num: number = 0;
+  //   if (this.form.get('radio').value == '2') {
+  //     num = 2;
+  //   } else if (this.form.get('radio').value == 'I') {
+  //     num = 3;
+  //   }
+  //   return num;
+  // }
 
   updateHour(): void {
     this.dateNow = new Date();
@@ -1056,7 +1056,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   updateOffice() {}
 
   countGoodsSelected() {
-    let typeOffice: number = this.returnOfOffice();
+    let typeOffice: number = this.form.get('radio').value;
     if (typeOffice == 2) {
       if (this.selectedRowsCancel.length == 0) {
         this.alert(
@@ -1103,7 +1103,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   validatedReasons() {
-    if (this.returnOfOffice() == 3) {
+    if (this.form.get('radio').value == 3) {
       if (this.selectedRowsCancel.length == 0) {
         this.alert(
           'warning',
