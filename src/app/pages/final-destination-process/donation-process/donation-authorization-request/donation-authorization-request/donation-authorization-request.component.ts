@@ -18,6 +18,7 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import {
   IDeleteGoodDon,
+  IInventaryDelete,
   IInventaryRequest,
   IProposel,
   IRequest,
@@ -118,6 +119,7 @@ export class DonationAuthorizationRequestComponent
   showError: boolean = false;
   idsNotExist: NotData[] = [];
   selectedGood: IGoodAndAvailable;
+  deleteInv: IInventaryDelete;
   inventaryModel: IInventaryRequest;
   dataTableGoods: IGoodAndAvailable[] = [];
   inventaryAll: IInventaryRequest[] = [];
@@ -419,8 +421,9 @@ export class DonationAuthorizationRequestComponent
       .setValue(this.selectedRow.clasifGoodNumber);
     this.form.get('descripClassif').setValue(this.selectedRow.clasifGood);
     this.inventaryModel = {
-      proposalKey: this.request.proposalCve ?? '',
+      proposalKey: this.proposalCve ?? '',
       goodNumber: this.selectedRow.goodId,
+      goodEntity: this.selectedRow.goodId,
     };
     this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
@@ -847,6 +850,11 @@ export class DonationAuthorizationRequestComponent
       this.inventaryModel = {
         proposalKey: this.request.proposalCve ?? '',
         goodNumber: this.selectedRow.goodId,
+        goodEntity: this.selectedRow.goodId,
+      };
+      this.deleteInv = {
+        proposalKey: this.request.proposalCve ?? '',
+        goodNumber: this.selectedRow.goodId,
       };
       // this.form.patchValue({
       //   proposal: this.request.proposalCve,
@@ -869,8 +877,8 @@ export class DonationAuthorizationRequestComponent
   selectInventory(row: any): void {
     if (row.isSelected) {
       this.inventaryModel = row.data;
-      console.log(this.requestModel.proposalCve);
-      console.log(this.requestModel);
+      console.log(this.inventaryModel.proposalKey);
+      console.log(this.inventaryModel);
     } else {
       this.requestModel = null;
     }
@@ -889,14 +897,14 @@ export class DonationAuthorizationRequestComponent
     }
   }
 
-  async deleteDET(good: IInventaryRequest) {
+  async deleteDET(good: IInventaryDelete) {
     console.log(good);
     const valid: any = await this.getGoodsDelete(this.inventaryModel);
     if (valid != null) {
       await this.deleteDetailProcee(this.inventaryModel);
     }
   }
-  async getGoodsDelete(body: IInventaryRequest) {
+  async getGoodsDelete(body: IInventaryDelete) {
     return new Promise((resolve, reject) => {
       this.donationService.deleteGoodReq(body).subscribe({
         next: data => {

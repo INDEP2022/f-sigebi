@@ -14,6 +14,7 @@ import {
 } from '../../models/ms-donation/donation.model';
 import {
   IDeleteGoodDon,
+  IInventaryDelete,
   IInventaryRequest,
 } from '../../models/sirsae-model/proposel-model/proposel-model';
 
@@ -155,7 +156,7 @@ export class DonationService
   createInventary(body: IInventaryRequest) {
     return this.post(DonationEndPoint.CreateInventary, body);
   }
-  deleteGoodReq(body: IInventaryRequest) {
+  deleteGoodReq(body: IInventaryDelete) {
     return this.delete(DonationEndPoint.CreateInventary, body);
   }
   getInventory(params: ListParams) {

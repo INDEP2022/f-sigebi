@@ -31,4 +31,10 @@ export interface IDeleteGoodDon {
 export interface IInventaryRequest {
   proposalKey: string;
   goodNumber: string | number;
+  goodEntity: string | number;
+}
+
+export interface IInventaryDelete {
+  proposalKey: string;
+  goodNumber: string | number;
 }
