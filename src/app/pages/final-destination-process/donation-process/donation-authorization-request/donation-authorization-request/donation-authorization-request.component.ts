@@ -148,11 +148,13 @@ export class DonationAuthorizationRequestComponent
   settings4: any;
   proposal: IProposel;
   totalSunQuantity: number = 0;
-  totalGoods: number = 0;
+  totalGoods: number[];
   dataFacRequest: LocalDataSource = new LocalDataSource();
   dataGoodsFact: LocalDataSource = new LocalDataSource();
   status: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
   // files: any = [];
   fromF: string = '';
@@ -298,7 +300,7 @@ export class DonationAuthorizationRequestComponent
     };
     this.settings4 = {
       ...this.settings,
-      // selectMode: 'multi',
+      selectMode: 'multi',
       hideSubHeader: false,
       actions: false,
       columns: {
@@ -544,17 +546,17 @@ export class DonationAuthorizationRequestComponent
   }
   getRequestGood() {
     this.goodLoading = true;
-    let params: any = {
-      ...this.params.getValue(),
+    let params2: any = {
+      ...this.params2.getValue(),
       ...this.columnFilters,
     };
     console.log(this.requestId);
-    params['sortBy'] = 'goodId:DESC';
-    params['requestTypeId'] = 'SD';
-    params['good.noDelegation'] = this.request.cveEvent ?? 0;
-    params['request.requestId'] = this.requestId;
-    params['good.status'] = 'DON' || 'ADA';
-    this.donationService.getGoodRequest(params).subscribe({
+    params2['sortBy'] = 'goodId:DESC';
+    params2['requestTypeId'] = 'SD';
+    params2['good.noDelegation'] = this.request.cveEvent ?? 0;
+    params2['request.requestId'] = this.requestId;
+    params2['good.status'] = 'DON' || 'ADA';
+    this.donationService.getGoodRequest(params2).subscribe({
       next: data => {
         this.goodLoading = false;
         this.goods = data.data;
@@ -566,6 +568,7 @@ export class DonationAuthorizationRequestComponent
             acc + this.convert(item.allotmentAmount) ?? 0,
           0
         );
+        this.getInventary();
         this.formTable2
           .get('quantityToAssign')
           .setValue(Number(this.totalGoods));
@@ -578,23 +581,22 @@ export class DonationAuthorizationRequestComponent
 
   getInventary() {
     this.loading2 = true;
-
-    console.log(this.inventaryModel);
-    this.donationService.getInventaryGood(this.inventaryModel).subscribe({
+    let params3: any = {
+      ...this.params3.getValue(),
+      ...this.columnFilters,
+    };
+    console.log(this.requestId);
+    params3['sortBy'] = 'goodNumber:DESC';
+    params3['proposalKey'] = localStorage.getItem('cvePropose');
+    this.donationService.getInventory(params3).subscribe({
       next: data => {
-        if (data != null) {
-          this.loading2 = false;
-          this.goodLoading = false;
-          this.inventaryModel = data;
-          this.inventaryAll.push(this.inventaryModel);
-          console.log(this.inventaryAll);
-          this.totalItemsIn = data.count;
-          this.dataFactInventary.load(this.inventaryAll);
-          this.dataFactInventary.refresh();
-        } else {
-          this.goodLoading = false;
-          this.createDET(this.inventaryModel);
-        }
+        this.loading2 = false;
+        this.goodLoading = false;
+        this.inventaryAll = data.data;
+        console.log(this.inventaryAll);
+        this.totalItemsIn = data.count;
+        this.dataFactInventary.load(this.inventaryAll);
+        this.dataFactInventary.refresh();
       },
       error: () => {
         this.loading2 = false;
@@ -608,11 +610,10 @@ export class DonationAuthorizationRequestComponent
     });
   }
   addrequest(request?: any) {
-    const o = localStorage.getItem('proposalId');
-    if (o == null) {
+    if (this.proposalId == null) {
       this.alertInfo(
         'warning',
-        'No se puede crear una nueva solicitud sin selecccionar ela propuesta',
+        'No se puede crear una nueva solicitud sin selecccionar la propuesta',
         ''
       );
       return;
@@ -652,7 +653,7 @@ export class DonationAuthorizationRequestComponent
   goodsValid: any;
 
   async addSelect() {
-    if (localStorage.getItem('proposalId') == null) {
+    if (this.proposalId == null) {
       this.alert(
         'warning',
         'No existe una propuesta en la cual asignar el bien.',
@@ -720,8 +721,9 @@ export class DonationAuthorizationRequestComponent
   }
   async createDET(good: IInventaryRequest) {
     let obj: any = {
-      proposalKey: this.requestModel.proposalCve,
+      proposalKey: this.proposalCve,
       goodNumber: good.goodNumber,
+      goodEntity: null,
     };
     console.log(obj);
     await this.saveGoodInventary(obj);

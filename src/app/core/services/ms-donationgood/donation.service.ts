@@ -158,4 +158,7 @@ export class DonationService
   deleteGoodReq(body: IInventaryRequest) {
     return this.delete(DonationEndPoint.CreateInventary, body);
   }
+  getInventory(params: ListParams) {
+    return this.get(DonationEndPoint.CreateInventary, params);
+  }
 }

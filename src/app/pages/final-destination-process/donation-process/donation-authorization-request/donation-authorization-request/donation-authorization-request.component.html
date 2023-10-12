@@ -154,7 +154,7 @@
         </ng2-smart-table>
       </ng-scrollbar>
       <app-pagination
-        [params]="params"
+        [params]="params2"
         [totalItems]="totalItemsGood"></app-pagination>
       <!-- </div> -->
     </div>
@@ -214,11 +214,12 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings4"
-          [source]="dataFactInventary">
+          [source]="dataFactInventary"
+          (userRowSelect)="selectData($event)">
         </ng2-smart-table>
       </ng-scrollbar>
       <app-pagination
-        [params]="params"
+        [params]="params3"
         [totalItems]="totalItemsIn"></app-pagination>
       <!-- </div> -->
     </div>
