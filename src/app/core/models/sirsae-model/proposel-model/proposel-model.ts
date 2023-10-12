@@ -24,11 +24,17 @@ export interface IRequest {
 
 export interface IDeleteGoodDon {
   requestId: number;
-  goodId: number;
+  goodId: number | string;
   requestTypeId: number;
 }
 
 export interface IInventaryRequest {
+  proposalKey: string;
+  goodNumber: string | number;
+  goodEntity: string | number;
+}
+
+export interface IInventaryDelete {
   proposalKey: string;
   goodNumber: string | number;
 }
