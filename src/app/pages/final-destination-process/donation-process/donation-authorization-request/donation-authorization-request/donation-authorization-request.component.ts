@@ -462,10 +462,10 @@ export class DonationAuthorizationRequestComponent
       this.dataGoodsFact.load([]);
       this.dataFactInventary.load([]);
       this.proposeDefault = next;
-      localStorage.setItem('proposalId', this.proposeDefault.ID_PROPUESTA);
-      localStorage.setItem('request', this.proposeDefault.ID_SOLICITUD);
-      await this.getProposalId(this.proposeDefault.ID_PROPUESTA);
-      this.requestId = this.proposeDefault.ID_SOLICITUD;
+      localStorage.setItem('proposalId', next.ID_PROPUESTA);
+      localStorage.setItem('request', next.ID_SOLICITUD);
+      await this.getProposalId(next.ID_PROPUESTA);
+      this.requestId = next.ID_SOLICITUD;
       await this.getRequest(this.requestId);
     });
     modalRef.content.cleanForm.subscribe(async (next: any) => {
@@ -485,7 +485,7 @@ export class DonationAuthorizationRequestComponent
     this.proposeDefault = null;
     this.dataGoodsFact.refresh();
     this.dataFacRequest.load([]);
-    localStorage.removeItem('proposal');
+    localStorage.removeItem('proposalId');
     localStorage.removeItem('request');
   }
 
@@ -517,6 +517,7 @@ export class DonationAuthorizationRequestComponent
     this.donationProcessService.getRequestId(proposal).subscribe({
       next: data => {
         this.loadingReq = false;
+        console.log(data.data);
         this.request = data.data;
         this.loading2 = false;
         this.dataFacRequest.load(this.request);
@@ -653,11 +654,11 @@ export class DonationAuthorizationRequestComponent
   goodsValid: any;
 
   async addSelect() {
-    if (this.proposalId == null) {
+    if (this.proposeDefault == null) {
       this.alert(
         'warning',
         'No existe una propuesta en la cual asignar el bien.',
-        'Debe capturar una propuesta.'
+        'Debe capturar una propuesta y solicitud'
       );
       return;
     } else {
@@ -859,6 +860,15 @@ export class DonationAuthorizationRequestComponent
   requestSelected(row: any): void {
     if (row.isSelected) {
       this.requestModel = row.data;
+      console.log(this.requestModel.proposalCve);
+      console.log(this.requestModel);
+    } else {
+      this.requestModel = null;
+    }
+  }
+  selectInventory(row: any): void {
+    if (row.isSelected) {
+      this.inventaryModel = row.data;
       console.log(this.requestModel.proposalCve);
       console.log(this.requestModel);
     } else {
