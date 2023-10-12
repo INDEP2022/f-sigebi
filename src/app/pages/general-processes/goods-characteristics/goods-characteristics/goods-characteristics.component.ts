@@ -1353,7 +1353,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     } else {
       this.disactivateForStatus();
     }
-    this.activateForEdit();
+    // this.activateForEdit();
     // this.disabledBienes = false;
   }
 
