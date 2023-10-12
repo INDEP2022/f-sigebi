@@ -449,6 +449,7 @@ export class LotService extends HttpService {
     return this.post(LotEndpoints.GetCursor, body);
   }
 
+
   pupEntLote(body: any) {
     return this.post(LotEndpoints.pupRemiEntLote, body);
   }
