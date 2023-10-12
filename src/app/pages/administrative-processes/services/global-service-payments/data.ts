@@ -24,10 +24,6 @@ export const COLUMNSDATA = {
     title: 'Fecha de Solicitud',
     sort: false,
   },
-  // paymentDate: {
-  //   title: 'Fecha de Pago',
-  //   sort: false,
-  // },
   amount: {
     title: 'Importe',
     sort: false,
