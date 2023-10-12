@@ -61,4 +61,6 @@ export enum ENDPOINT_INVOICE {
   ComerInvoiceSum = 'application/get-count-sum-eat',
   ComerSaveInvoice = 'procedure-sera/pup-nvo-save-folios',
   ComerDeleteInvoice = 'procedure-sera/pup-nvo-delete-fact',
+  ComerInconsistencies_ = 'comer-inconsistencies',
+  ComerCetinvoices = 'comer-detinvoices',
 }
