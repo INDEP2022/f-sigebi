@@ -63,4 +63,6 @@ export enum ENDPOINT_INVOICE {
   ComerDeleteInvoice = 'procedure-sera/pup-nvo-delete-fact',
   ComerInconsistencies_ = 'comer-inconsistencies',
   ComerCetinvoices = 'comer-detinvoices',
+  PkComerVNR = 'pk-comer-vnr/insert-lot',
+  PKComerVNRCancel = 'pk-comer-vnr/cancel-paper-vnr',
 }

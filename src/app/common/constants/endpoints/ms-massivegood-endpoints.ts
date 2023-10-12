@@ -22,4 +22,5 @@ export enum MassiveGoodEndpoints {
   ImportGoodsInvoice = 'application/pup-ins-goods-excel',
   pupBienesPlano = 'application/pupBienesPlano',
   ExportSampleGoods = 'application/exportDataSampleGoods',
+  ApplicationCSV = 'application/generate-cvs-by-status',
 }
