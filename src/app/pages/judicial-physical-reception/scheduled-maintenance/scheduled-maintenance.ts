@@ -219,7 +219,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   }
 
   override ngOnInit(): void {
-    debugger;
+    // debugger;
     this.dinamicFilterUpdate();
     this.prepareForm();
     // this.searchParams();
@@ -301,7 +301,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   }
 
   setForm() {
-    debugger;
+    // debugger;
     const filtersActa = window.localStorage.getItem(this.formStorage);
     if (filtersActa) {
       const newData = JSON.parse(filtersActa);
