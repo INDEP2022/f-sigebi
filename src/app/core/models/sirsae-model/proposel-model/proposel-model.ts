@@ -24,7 +24,7 @@ export interface IRequest {
 
 export interface IDeleteGoodDon {
   requestId: number;
-  goodId: number;
+  goodId: number | string;
   requestTypeId: number;
 }
 

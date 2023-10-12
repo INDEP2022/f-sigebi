@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -27,6 +28,7 @@ import { DonationService } from 'src/app/core/services/ms-donationgood/donation.
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DonationProcessService } from '../../../shared-final-destination/view-donation-contracts/donation-process.service';
 import { CreateRequestComponent } from '../create-request/create-request.component';
@@ -112,6 +114,7 @@ export class DonationAuthorizationRequestComponent
   formTable1: FormGroup;
   formTable2: FormGroup;
   formTable3: FormGroup;
+  delGood: IDeleteGoodDon;
   showError: boolean = false;
   idsNotExist: NotData[] = [];
   selectedGood: IGoodAndAvailable;
@@ -163,6 +166,9 @@ export class DonationAuthorizationRequestComponent
   dataTableGood: LocalDataSource = new LocalDataSource();
   selectedRow: any | null = null;
   proposalId: string = '';
+  $trackedGoods = this.store.select(getTrackedGoods);
+  ngGlobal: any;
+  @Input() fillData: Function;
   @ViewChild('file') file: any;
   @Input() set files(files: any[]) {
     // debugger;
@@ -201,6 +207,7 @@ export class DonationAuthorizationRequestComponent
     private donationProcessService: DonationProcessService,
     private donAuthorizaService: DonAuthorizaService,
     private router: Router,
+    private store: Store,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
     private goodService: GoodService,
@@ -301,13 +308,15 @@ export class DonationAuthorizationRequestComponent
   }
 
   ngOnInit(): void {
+    console.log(this.data);
+    console.log(this.files);
+    console.log(this.fillSelectedRows);
     if (typeof Storage !== 'undefined') {
-      const o = localStorage.getItem('proposalId');
-      const r = localStorage.getItem('request');
       let params = new ListParams();
-      params['proposal'] = o;
+      params['proposal'] = localStorage.getItem('proposalId');
+      this.proposalId = localStorage.getItem('proposalId');
       this.getProposalId(params);
-      this.requestId = Number(r);
+      this.requestId = Number(localStorage.getItem('request'));
       this.getRequest(this.requestId);
       localStorage.setItem('requestId', String(this.requestId));
     } else {
@@ -362,15 +371,16 @@ export class DonationAuthorizationRequestComponent
     });
   }
   isGoodSelected(_good: IGood) {
-    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    const exists = this.selectedGooods.find(good => good.goodId == _good.id);
     return !exists ? false : true;
   }
   goodSelectedChange(good: IGood, selected: boolean) {
     if (selected) {
+      console.log(good);
       this.selectedGooods.push(good);
     } else {
       this.selectedGooods = this.selectedGooods.filter(
-        _good => _good.id != good.id
+        _good => _good.id != good.goodId
       );
     }
   }
@@ -510,6 +520,7 @@ export class DonationAuthorizationRequestComponent
         this.dataFacRequest.load(this.request);
         this.dataFacRequest.refresh();
         this.proposalCve = this.request.proposalKey;
+        localStorage.setItem('cvePropose', this.request.proposalKey);
         this.itemRequest = data.count;
         this.totalSunQuantity = this.request.reduce(
           (acc: any, item: any) => acc + item.sunQuantity,
@@ -618,6 +629,8 @@ export class DonationAuthorizationRequestComponent
           'Se cargó la información de la solicitud',
           next.proposalCve
         );
+        localStorage.setItem('cvePropose', next.proposalCve);
+
         //   this.requestModel = {
         //     solQuantity: next.solQuantity,
         //     requestId: next.requestId.id,
@@ -744,14 +757,14 @@ export class DonationAuthorizationRequestComponent
   }
 
   removeSelect() {
-    if (this.proposal == null) {
+    if (this.proposeDefault == null) {
       this.alert(
         'warning',
         'Debe especificar/buscar la propuesta para luego eliminar el bien.',
         ''
       );
       return;
-    } else if (this.goods.length == 0) {
+    } else if (this.selectedGooods.length == 0) {
       this.alert(
         'warning',
         'Debe seleccionar un bien que Forme parte de la solicitud primero',
@@ -768,7 +781,7 @@ export class DonationAuthorizationRequestComponent
     } else {
       this.alertQuestion(
         'question',
-        '¿Seguro que desea eliminar el bien de la solicitud?',
+        '¿Seguro que desea eliminar el bien del Inventario?',
         ''
       ).then(async question => {
         if (question.isConfirmed) {
@@ -796,7 +809,8 @@ export class DonationAuthorizationRequestComponent
               };
               await this.updateGoodEInsertHistoric(obj);
               await this.getHistory(good);
-              await this.deleteDET(good.id);
+
+              await this.deleteDET(good);
             });
 
             Promise.all(result).then(async item => {
@@ -863,7 +877,7 @@ export class DonationAuthorizationRequestComponent
     }
   }
 
-  async deleteDET(good: IDeleteGoodDon) {
+  async deleteDET(good: IInventaryRequest) {
     console.log(good);
     const valid: any = await this.getGoodsDelete(this.inventaryModel);
     if (valid != null) {
@@ -926,7 +940,7 @@ export class DonationAuthorizationRequestComponent
       this.idsNotExist = [];
       this.showError = false;
 
-      this.ids = this.excelService.getData(binaryExcel);
+      // this.ids = this.excelService.getData(binaryExcel);
       if (this.ids[0].no_bien === undefined) {
         this.alert(
           'error',
