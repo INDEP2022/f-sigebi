@@ -1,0 +1,58 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Bienes por Servicio Global</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <ng-custom-select-loading
+          [form]="form"
+          formControlName="code"
+          [multiple]="false"
+          label="Servicio"
+          value="code"
+          bindLabel="description"
+          paramSearch="search"
+          path="catalog/api/v1/service-cat"
+          [labelTemplate]="label"
+          [optionTemplate]="option"
+          (valueChange)="getData()">
+        </ng-custom-select-loading>
+        <ng-template #label let-item="item">
+          {{ item.code }} - {{ item.description }}
+        </ng-template>
+        <ng-template #option let-item="item">
+          <div [title]="item.code + '-' + item.description">
+            {{ item.code }} - {{ item.description }}
+          </div>
+        </ng-template>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div>Importe Global</div>
+          <div>{{ ti_sum_global }}</div>
+        </div>
+        <div class="col-md-6">
+          <div>Fecha de Pago</div>
+          <div>{{ ti_fecha_global }}</div>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <button
+        (click)="equivalent()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-info btn-sm active ml-2 mr-2">
+        Equivalente
+      </button>
+      <button
+        (click)="proportional()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-info btn-sm active ml-2 mr-2">
+        Proporcional
+      </button>
+    </div>
+  </div>
+</app-modal>

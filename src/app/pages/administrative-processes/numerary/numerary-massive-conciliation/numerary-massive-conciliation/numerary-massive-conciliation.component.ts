@@ -32,6 +32,7 @@ import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.serv
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { NumeraryErrorsComponent } from '../numerary-errors/numerary-errors.component';
 import { NumerarySolicitudeComponent } from '../numerary-solicitude/numerary-solicitude.component';
 import {
   clearGoodCheck,
@@ -42,7 +43,6 @@ import {
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
 } from './numerary-massive-conciliation-columns';
-import { NumeraryErrorsComponent } from '../numerary-errors/numerary-errors.component';
 
 @Component({
   selector: 'app-numerary-massive-conciliation',
@@ -900,7 +900,7 @@ export class NumeraryMassiveConciliationComponent
 
     let errors = 0;
     let corrects = 0;
-    this.dataMsgErr = []
+    this.dataMsgErr = [];
 
     this.loading = true;
     if (goodCheck.length < 1) {
@@ -1023,14 +1023,14 @@ export class NumeraryMassiveConciliationComponent
           this.alert('warning', 'Algunos registros no se conciliaron', '');
         }
         this.loading = false;
-        console.log(this.dataMsgErr)
+        console.log(this.dataMsgErr);
         this.searchFilterGood();
       }
     }
   }
 
   //Ver errores
-  seeErrors(){
+  seeErrors() {
     let modalConfig: ModalOptions = {
       initialState: {
         data: this.dataMsgErr,
