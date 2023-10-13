@@ -20,6 +20,8 @@ export enum MassiveGoodEndpoints {
   ObtnGoodPag = 'application/obtn-good-pag',
   ExportDataExcel = 'application/exportDataExcel',
   ImportGoodsInvoice = 'application/pup-ins-goods-excel',
+  ExportDataExcelMenaje = 'application/exportDataExcelMenaje',
   pupBienesPlano = 'application/pupBienesPlano',
   ExportSampleGoods = 'application/exportDataSampleGoods',
+  ApplicationCSV = 'application/generate-cvs-by-status',
 }
