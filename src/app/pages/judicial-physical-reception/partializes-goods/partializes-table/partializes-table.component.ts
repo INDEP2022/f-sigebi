@@ -18,7 +18,10 @@ export class PartializesTableComponent
     return this._noBien;
   }
   set noBien(value) {
-    if (!value) return;
+    if (!value) {
+      this.notGetData();
+      return;
+    }
     this._noBien = value;
     this.getData();
   }

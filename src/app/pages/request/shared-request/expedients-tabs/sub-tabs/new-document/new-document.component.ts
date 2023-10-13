@@ -5,9 +5,12 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { ITypeDocument } from 'src/app/core/models/ms-wcontent/type-document';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -15,7 +18,7 @@ import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -46,7 +49,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   process: string = '';
   date: string = '';
   typesDocuments: any = [];
+  transferences = new DefaultSelect<ITransferente>();
   typeDocument: number = 0;
+  states = new DefaultSelect<IDelegationState>();
   validateSizePDF: boolean = false;
   constructor(
     public fb: FormBuilder,
@@ -58,7 +63,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     private wContentService: WContentService,
     private programmingService: ProgrammingRequestService,
     private datePipe: DatePipe,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private stateService: DelegationStateService
   ) {
     super();
   }
@@ -84,7 +90,12 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   getInfoUserLog() {
     this.programmingService.getUserInfo().subscribe((data: any) => {
+      console.log('data', data);
       this.userLogName = data.preferred_username;
+      if (this.process == 'sampling-assets') {
+        this.getTransferentSelect(new ListParams());
+        this.getRegionalDelegation(data.department);
+      }
     });
   }
 
@@ -158,6 +169,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       oficioNoSolAvaluo: [null, [Validators.pattern(STRING_PATTERN)]],
       noOfNotification: [null, [Validators.pattern(STRING_PATTERN)]],
       noRegistro: [null, [Validators.pattern(STRING_PATTERN)]],
+      stateKey: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      tranferId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
   }
 
@@ -183,9 +196,12 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   getRegionalDelegation(id: number) {
+    this.regionalDelId = id;
     this.regionalDelService.getById(id).subscribe(data => {
       this.regDelName = data.description;
     });
+
+    this.getStateSelect(new ListParams());
   }
 
   getstate(id: number) {
@@ -329,7 +345,11 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         });
     }
 
-    if (this.typeDoc == 'good' && this.process != 'programming') {
+    if (
+      this.typeDoc == 'good' &&
+      this.process != 'programming' &&
+      this.process != 'sampling-assets'
+    ) {
       this.loading = true;
       const formData = {
         dInDate: new Date(),
@@ -415,7 +435,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         });
     }
 
-    if (this.typeDoc == 'doc-request') {
+    if (this.typeDoc == 'doc-request' && this.process != 'sampling-assets') {
       this.loading = true;
       const formData = {
         dDocAuthor: this.userLogName,
@@ -498,7 +518,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         });
     }
 
-    if (this.typeDoc == 'doc-expedient') {
+    if (this.typeDoc == 'doc-expedient' && this.process != 'sampling-assets') {
       const formData = {
         dInDate: new Date(),
         dSecurityGroup: 'Public',
@@ -579,6 +599,91 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           error: error => {},
         });
     }
+
+    if (this.process == 'sampling-assets') {
+      const formData = {
+        dInDate: new Date(),
+        dDocAuthor: this.userLogName,
+        dSecurityGroup: 'Public',
+        xidExpediente: this.idExpedient,
+        ddocCreator: this.userLogName,
+        xidcProfile: 'NSBDB_Gral',
+        xidSolicitud: this.idRequest,
+        xidTransferente: this.newDocForm.get('tranferId').value,
+        xdelegacionRegional: this.regionalDelId,
+        xnivelRegistroNSBDB: 'bien',
+        xidBien: this.idGood,
+        xestado: this.newDocForm.get('stateKey').value,
+        xtipoDocumento: this.newDocForm.get('docType').value,
+        dDocTitle: this.newDocForm.get('docTit').value,
+        xremitente: this.newDocForm.get('sender').value,
+        xcargoRemitente: this.newDocForm.get('senderCharge').value,
+        xresponsable: this.newDocForm.get('responsible').value,
+        xComments: this.newDocForm.get('observations').value,
+        xNombreProceso: 'Aclaración Bien',
+        xnoOficio: this.newDocForm.get('noOfi').value,
+        xfolioDictamenDevolucion:
+          this.newDocForm.get('returnOpinionFolio').value,
+        xcontribuyente: this.newDocForm.get('contributor').value,
+
+        //Información adicional
+        xbanco: this.newDocForm.get('bank').value,
+        xclaveValidacion: this.newDocForm.get('keyValidate').value,
+        xcuenta: this.newDocForm.get('count').value,
+        xdependenciaEmiteDoc: this.newDocForm.get('dependecyEmitDoc').value,
+        xfechaDeposito: this.newDocForm.get('depositDate').value,
+        xfolioActa: this.newDocForm.get('folioAct').value,
+        xfolioActaDestruccion: this.newDocForm.get('folioActDes').value,
+        xfolioActaDevolucion: this.newDocForm.get('folioActDev').value,
+        xfolioContrato: this.newDocForm.get('contractFolio').value,
+        xfolioDenuncia: this.newDocForm.get('folioDen').value,
+        xfolioDictamenDestruccion: this.newDocForm.get('folioDicDes').value,
+        xfolioFactura: this.newDocForm.get('folioFac').value,
+        xfolioNombramiento: this.newDocForm.get('folioNomb').value,
+        xfolioSISE: this.newDocForm.get('folioSISE').value,
+        xmonto: this.newDocForm.get('amount').value,
+        xnoAcuerdo: this.newDocForm.get('noAgreement').value,
+        xnoAutorizacionDestruccion: this.newDocForm.get('noAutDes').value,
+        xnoConvenioColaboracion: this.newDocForm.get('noConvColb').value,
+        xnoFolioRegistro: this.newDocForm.get('folioReg').value,
+        xnoOficioAutorizacion: this.newDocForm.get('oficioNoAuth').value,
+        xnoOficioAvaluo: this.newDocForm.get('oficioNoAvaluo').value,
+        xnoOficioCancelacion: this.newDocForm.get('oficioNoCan').value,
+        xnoOficioProgramacion: this.newDocForm.get('oficioNoProg').value,
+        xnoOficioSolAvaluo: this.newDocForm.get('oficioNoSolAvaluo').value,
+        xnoOficoNotificacion: this.newDocForm.get('noOfNotification').value,
+        xnoRegistro: this.newDocForm.get('noRegistro').value,
+      };
+
+      const extension = '.pdf';
+      const docName = this.newDocForm.get('docTit').value;
+
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: resp => {
+            this.alertInfo(
+              'success',
+              'El Documento ha sido Agregado',
+              `ID: ${resp.dDocName}`
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.modalRef.content.callback(true);
+                this.loading = false;
+                this.loader.load = false;
+                this.modalRef.hide();
+              }
+            });
+          },
+          error: error => {},
+        });
+    }
   }
 
   close() {
@@ -586,4 +691,42 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {}
+
+  getStateSelect(params?: ListParams) {
+    params['filter.sortBy'] = 'descCondition:ASC';
+    params['filter.regionalDelegation'] = this.regionalDelId;
+    this.stateService.getAll(params).subscribe({
+      next: data => {
+        const filterStates = data.data.filter(_states => {
+          return _states.stateCode;
+        });
+
+        const states = filterStates.map(items => {
+          return items.stateCode;
+        });
+
+        this.states = new DefaultSelect(states, data.count);
+      },
+      error: error => {
+        this.states = new DefaultSelect();
+      },
+    });
+  }
+
+  getTransferentSelect(params?: ListParams) {
+    params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.status'] = `$eq:${1}`;
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+          return data;
+        });
+        this.transferences = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.transferences = new DefaultSelect();
+      },
+    });
+  }
 }

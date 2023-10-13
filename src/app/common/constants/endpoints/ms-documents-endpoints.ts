@@ -30,4 +30,5 @@ export enum DocumentsEndpoints {
   loanDocument = 'documents-loans',
   applicationGetDatas = 'application/getDatas',
   applicationGetDatas2 = 'application/getDatas2',
+  deleteFolio = 'application/delete-documents-invoice-universal-asoc',
 }

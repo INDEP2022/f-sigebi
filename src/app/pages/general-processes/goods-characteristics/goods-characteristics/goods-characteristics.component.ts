@@ -728,8 +728,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     } else {
       movementDate = this.nval(5);
     }
-    const array = movementDate.split('-');
-    movementDate = array[2] + '-' + array[1] + '-' + array[0];
+    // const array = movementDate.split('-');
+    // movementDate = array[2] + '-' + array[1] + '-' + array[0];
     try {
       vn_impor = +this.nval(2);
     } catch (x) {
@@ -1221,6 +1221,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     const filterParams = new FilterParams();
     filterParams.addFilter('screenKey', 'FACTDIRDATOSBIEN');
     filterParams.addFilter('status', this.good.status);
+    filterParams.limit = 10000;
     return this.statusScreenService
       .getList(filterParams.getFilterParams())
       .pipe(map(x => (x.data ? x.data : [])));

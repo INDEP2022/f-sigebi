@@ -176,6 +176,7 @@ export class PartialityDirectAdjudicationMainComponent
   }
 
   ngOnInit(): void {
+    this.getuser();
     this.prepareForm();
     this.adjudicationForm.get('partialityQuantity').patchValue(40);
   }

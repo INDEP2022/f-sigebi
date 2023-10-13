@@ -1,12 +1,12 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title pull-left">Captura detalles del anexo</h5>
+    <h5 class="modal-title pull-left">Anexo K</h5>
   </div>
   <div body class="body">
     <div id="signatoryData">
       <div class="row">
         <div class="col-md-12">
-          <h5>Capturar datos del firmante</h5>
+          <h5>Capturar Datos del Firmante</h5>
         </div>
       </div>
       <form
@@ -15,26 +15,31 @@
         style="margin-top: 2rem">
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="detailForm.get('name')" label="&#42;Nombre">
-              <input type="text" class="form-control" formControlName="name" />
+            <form-field
+              [control]="detailForm.get('saeResponsibleK')"
+              label="Nombre">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="saeResponsibleK" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="detailForm.get('position')"
-              label="&#42;Cargo">
+              [control]="detailForm.get('positionSaeK')"
+              label="Cargo">
               <input
                 type="text"
                 class="form-control"
-                formControlName="position" />
+                formControlName="positionSaeK" />
             </form-field>
           </div>
         </div>
 
-        <div class="row pt-4">
+        <!--<div class="row pt-4">
           <div class="col-md-12" style="display: flex">
             <div style="line-height: 3">
-              <label for="electronica">&#42;Tipo de firma</label>
+              <label for="electronica">Tipo de firma</label>
             </div>
             <div style="padding-left: 7px">
               <div>
@@ -61,13 +66,13 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </form>
     </div>
     <div id="participantData">
       <div class="row pt-4">
         <div class="col-md-12">
-          <h5>Capturar de datos de los participantes</h5>
+          <h5>Capturar de Datos de los Participantes</h5>
         </div>
       </div>
       <form
@@ -77,38 +82,44 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
-              [control]="participantDataForm.get('name1')"
-              label="&#42;Nombre">
-              <input type="text" class="form-control" formControlName="name1" />
+              [control]="participantDataForm.get('competitorOne')"
+              label="Nombre">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="competitorOne" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
-              [control]="participantDataForm.get('position1')"
-              label="&#42;Cargo">
+              [control]="participantDataForm.get('positionCompetitorOne')"
+              label="Cargo">
               <input
                 type="text"
                 class="form-control"
-                formControlName="position1" />
+                formControlName="positionCompetitorOne" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
-              [control]="participantDataForm.get('name2')"
-              label="&#42;Nombre">
-              <input type="text" class="form-control" formControlName="name2" />
+              [control]="participantDataForm.get('competitorTwo')"
+              label="Nombre">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="competitorTwo" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
-              [control]="participantDataForm.get('position2')"
-              label="&#42;Cargo">
+              [control]="participantDataForm.get('positionCompetitorTwo')"
+              label="Cargo">
               <input
                 type="text"
                 class="form-control"
-                formControlName="position2" />
+                formControlName="positionCompetitorTwo" />
             </form-field>
           </div>
         </div>
@@ -117,7 +128,7 @@
     <div id="annexDetail" *ngIf="displayDetailAnnex()">
       <div class="row pt-4">
         <div class="col-md-12">
-          <h5>Capturar detalles del anexo</h5>
+          <h5>Capturar Detalles del Anexo</h5>
         </div>
       </div>
       <form
@@ -127,12 +138,12 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
-              [control]="detailAnnexForm.get('warehouseManager')"
+              [control]="detailAnnexForm.get('managerNameAlm')"
               label="Gerente de Almac&eacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="warehouseManager" />
+                formControlName="managerNameAlm" />
             </form-field>
           </div>
           <div class="col-md-6">
@@ -166,12 +177,21 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
+        <confirm-button
+          [disabled]="!detailForm.valid"
+          [loading]="loading"
+          [text]="'Firmar Anexo'"
+          [loadingText]="'Firmando Anexo'"
+          [btnSmall]="true"
+          class="mr-2"
+          (confirm)="signAnnex()"></confirm-button>
+
+        <!--<button
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="signAnnex()">
           Firmar Anexo
-        </button>
+        </button> -->
       </div>
       <div class="m-3">
         <button

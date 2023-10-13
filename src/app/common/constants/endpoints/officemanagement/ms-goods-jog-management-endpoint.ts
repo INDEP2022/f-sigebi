@@ -11,4 +11,5 @@ export enum GoodsJobManagementEndpoints {
   updateMJob = 'application/get-m-job-management-update',
   blockOfficel = 'application/blokOffice1',
   getallV2 = 'goods-job-management/getAllV2',
+  pupSearchNumber = 'm-job-management/pupSearchNumber',
 }

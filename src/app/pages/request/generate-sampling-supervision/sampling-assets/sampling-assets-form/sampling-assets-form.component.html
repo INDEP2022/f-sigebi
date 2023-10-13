@@ -239,8 +239,8 @@
                       <a
                         class="dropdown-item"
                         style="cursor: pointer"
-                        (click)="exportCsv()"
-                        ><i class="bx bx-download"></i> Descarga Archivo</a
+                        (click)="exportCsv()">
+                        Descarga Archivo</a
                       >
                     </li>
                   </ul>
@@ -291,6 +291,15 @@
           </div>
         </tab>
         <tab heading="Deductivas">
+          <div class="justify-content-end btn-toolbar">
+            <button
+              (click)="saveDeductives()"
+              type="button"
+              class="btn btn-primary btn-sm active ml-2 mr-2">
+              Guardar
+              <i class="fa fa-save"></i>
+            </button>
+          </div>
           <div class="row pt-2">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
@@ -300,6 +309,7 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settings4"
+                  (userRowSelect)="deductivesSelect($event)"
                   [source]="paragraphsDeductivas">
                 </ng2-smart-table>
                 <!--  </ng-scrollbar> -->

@@ -1,27 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
+import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
-import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
-import { PrintReportRestitutionModalComponent } from '../../restitution-assets-numeric-or-sort/print-report-restitution-modal/print-report-restitution-modal.component';
 
 @Component({
   selector: 'app-annex-k-form',
   templateUrl: './annex-k-form.component.html',
   styleUrls: ['./annex-k-form.component.scss'],
 })
-export class AnnexKFormComponent implements OnInit {
+export class AnnexKFormComponent extends BasePage implements OnInit {
   detailForm: ModelForm<any>;
   participantDataForm: ModelForm<any>;
   detailAnnexForm: ModelForm<any>;
   typeAnnex: string = '';
-
+  idSample: number = 0;
   constructor(
     private fb: FormBuilder,
     private bsModalRef: BsModalRef,
     private modalService: BsModalService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     console.log(this.typeAnnex);
@@ -32,24 +34,30 @@ export class AnnexKFormComponent implements OnInit {
 
   initDetailForm(): void {
     this.detailForm = this.fb.group({
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      position: [null, [Validators.pattern(STRING_PATTERN)]],
+      saeResponsibleK: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      positionSaeK: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       typeSign: [null],
     });
   }
 
   initParicipantForm(): void {
     this.participantDataForm = this.fb.group({
-      name1: [null, [Validators.pattern(STRING_PATTERN)]],
-      position1: [null, [Validators.pattern(STRING_PATTERN)]],
-      name2: [null, [Validators.pattern(STRING_PATTERN)]],
-      position2: [null, [Validators.pattern(STRING_PATTERN)]],
+      competitorOne: [null, [Validators.pattern(STRING_PATTERN)]],
+      positionCompetitorOne: [null, [Validators.pattern(STRING_PATTERN)]],
+      competitorTwo: [null, [Validators.pattern(STRING_PATTERN)]],
+      positionCompetitorTwo: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   initAnnexDetailForm(): void {
     this.detailAnnexForm = this.fb.group({
-      warehouseManager: [null, [Validators.pattern(STRING_PATTERN)]],
+      managerNameAlm: [null, [Validators.pattern(STRING_PATTERN)]],
       relevantFacts: [null, [Validators.pattern(STRING_PATTERN)]],
       agreements: [null, [Validators.pattern(STRING_PATTERN)]],
     });
@@ -67,7 +75,20 @@ export class AnnexKFormComponent implements OnInit {
   }
 
   signAnnex(): void {
-    if (
+    const infoSample: ISample = {
+      sampleId: this.idSample,
+      saeResponsibleK: this.detailForm.get('saeResponsibleK').value,
+      positionSaeK: this.detailForm.get('positionSaeK').value,
+      competitorOne: this.detailForm.get('competitorOne').value,
+      positionCompetitorOne: this.detailForm.get('positionCompetitorOne').value,
+      competitorTwo: this.detailForm.get('competitorTwo').value,
+      positionCompetitorTwo: this.detailForm.get('positionCompetitorTwo').value,
+      managerNameAlm: this.detailForm.get('managerNameAlm').value,
+      relevantFacts: this.detailForm.get('relevantFacts').value,
+      agreements: this.detailForm.get('agreements').value,
+    };
+
+    /* if (
       this.typeAnnex === 'annexK-restitution-of-assets' ||
       this.typeAnnex === 'annex-k-review-results'
     ) {
@@ -75,7 +96,7 @@ export class AnnexKFormComponent implements OnInit {
     } else {
       this.openModal(PrintReportModalComponent, '', this.typeAnnex);
     }
-    this.close();
+    this.close(); */
   }
 
   close(): void {

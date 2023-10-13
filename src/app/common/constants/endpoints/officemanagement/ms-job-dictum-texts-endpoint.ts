@@ -9,4 +9,5 @@ export enum JobDictumTextsEndpoints {
   cursorGoods = 'application/cursorGoods',
   cursorCopys = 'application/cursorCopys',
   cursorGoods2 = 'application/cursorGoods2',
+  getDatas = 'application/getDatas',
 }

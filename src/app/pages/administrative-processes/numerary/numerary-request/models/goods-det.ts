@@ -3,6 +3,7 @@ export interface NumDetGood {
   valid: string;
   description: string;
   deposit: string;
+  fec_tesofe: string;
   bankInsertionDate?: string;
 }
 

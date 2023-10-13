@@ -16,7 +16,6 @@ export class GssInputFieldComponent implements OnInit {
   ngOnInit(): void {}
 
   keyUp() {
-    console.log(this.value);
     this.input.emit({ data: this.rowData, text: this.value });
   }
 }

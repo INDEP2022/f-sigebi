@@ -18,6 +18,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { KitchenwareModalGoodComponent } from '../kitchenware-modal-good/kitchenware-modal-good.component';
@@ -77,7 +78,8 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     private readonly goodFinderService: GoodFinderService,
     private repositoryService: Repository<IGood>,
     private service: GoodFinderService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings.columns = PROPERTY_REGISTRATION_COLUMNS;
@@ -470,5 +472,20 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.addGood
       ? (this.textButton = 'Ocultar registro')
       : (this.textButton = 'Agregar menaje');
+  }
+  exportMenajes() {
+    const filter = new ListParams();
+    delete filter.limit;
+    delete filter.page;
+    filter['filter.goodNumber'] = `$eq:${this.numberGoodSelect}`;
+    this.massiveGoodService.GetExportDataExcelMenaje(filter).subscribe(
+      response => {
+        console.log();
+        this._downloadExcelFromBase64(response.base64File, response.nameFile);
+      },
+      error => {
+        this.alert('warning', 'Error al Generar el Archivo Excel.', '');
+      }
+    );
   }
 }

@@ -36,10 +36,13 @@ export class UsersSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getUsers();
+  }
 
-  getUsers(params: ListParams) {
-    const routeUser = `?filter.name=$ilike:${params.text}`;
+  getUsers(params?: ListParams) {
+    let routeUser = '';
+    params ? (routeUser = `?filter.name=$ilike:${params.text}`) : '';
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
       this.users = new DefaultSelect(res.data, res.count);
     });
