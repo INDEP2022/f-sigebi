@@ -94,6 +94,7 @@ export enum GoodProcessPoints {
   SpObtnxGood = 'application/spObtnxGood',
   SpObtnxGoodExcel = 'application/spObtnxGood-csv',
   GoodxStatusXtypeNumber = 'application/getExistsGoodxStatusXtypeNumber',
+  ConsultQuery = 'application/consultQuery',
 }
 
 export enum GoodFinderEndpoint {

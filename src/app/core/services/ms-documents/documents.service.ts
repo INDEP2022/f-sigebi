@@ -390,4 +390,14 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.attachedDocument}?filter.managementNumber=$eq:${id}`;
     return this.get(route);
   }
+
+  getExpedient(params: ListParams, model: any) {
+    const route = `${DocumentsEndpoints.applicationGetDatas2}`;
+    return this.post(route, model, params);
+  }
+
+  getDatas(params: ListParams, model: any) {
+    const route = `${DocumentsEndpoints.applicationGetDatas}`;
+    return this.post(route, model, params);
+  }
 }

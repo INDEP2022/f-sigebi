@@ -23,4 +23,6 @@ export enum UserEndpoints {
   SpInsertWithcopyOfficial = 'seg-users/sp-insert-withcopy-official',
   ComerUser = 'comer-usersautxcanc',
   viewPrev = 'application/btnViewPrev',
+  consultationQuery1 = 'application/consultationQuery1',
+  consultationQuery2 = 'application/consultationQuery2',
 }
