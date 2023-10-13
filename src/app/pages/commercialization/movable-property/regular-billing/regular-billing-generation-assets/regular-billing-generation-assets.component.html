@@ -5,32 +5,53 @@
     </h5>
   </div>
 </div>
-<div class="row text-end">
-  <div class="d-inline">
-    <button
-      type="button"
-      class="btn btn-sm btn-success active m-2"
-      (click)="fileExcel.click()">
-      Carga CSV
-      <i class="bi bi-file-earmark-excel-fill"></i>
-    </button>
-    <input
-      type="file"
-      (change)="importExcell($event)"
-      name="fileExcel"
-      #fileExcel
-      class="d-none"
-      accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
-    <button class="btn btn-sm btn-success active mr-2" (click)="exportAsXLSX()">
-      Exportar a Excel
-      <i class="bx bx-download float-icon"></i>
-    </button>
+<div class="row">
+  <div class="col-md-2">
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field [control]="form.get('status')">
+          <ngx-select
+            [form]="form"
+            control="status"
+            [data]="status"
+            value="id"
+            bindLabel="description"
+            label="Estatus"></ngx-select>
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-10 d-flex justify-content-end">
+    <div>
+      <button
+        type="button"
+        class="btn btn-sm btn-success active mr-2"
+        (click)="fileExcel.click()">
+        Carga CSV
+        <i class="bi bi-file-earmark-excel-fill"></i>
+      </button>
+    </div>
+    <div>
+      <input
+        type="file"
+        (change)="importExcell($event)"
+        name="fileExcel"
+        #fileExcel
+        class="d-none"
+        accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
+      <button
+        class="btn btn-sm btn-success active mr-2"
+        (click)="exportAsXLSX()">
+        Exportar a Excel
+        <i class="bx bx-download float-icon"></i>
+      </button>
+    </div>
     <app-columns-select
       [(settings)]="settings"
       [leftList]="true"></app-columns-select>
   </div>
 </div>
-<div class="row pt-3">
+<div class="row">
   <form-loader *ngIf="loading"></form-loader>
   <div>
     <ng2-smart-table

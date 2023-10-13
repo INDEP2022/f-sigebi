@@ -335,4 +335,16 @@ export class ComerInvoiceService extends HttpService {
   deleteInvoiceProcedure(data: { eventId: number; batchId: number }) {
     return this.delete(ENDPOINT_INVOICE.ComerDeleteInvoice, data);
   }
+
+  pkComerVNR(sesion: number) {
+    return this.get(`${ENDPOINT_INVOICE.PkComerVNR}/${sesion}`);
+  }
+
+  pkComerVNRCancel(data: {
+    pScreen: string;
+    pAction: string;
+    pSession: number;
+  }) {
+    return this.post(ENDPOINT_INVOICE.PKComerVNRCancel, data);
+  }
 }

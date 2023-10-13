@@ -155,10 +155,15 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
                 .getAllFilterFree(paramsF2.getParams())
                 .subscribe(
                   res => {
-                    res.data[0].statusfinal != null ? this.getStatus(
-                      { text: JSON.parse(JSON.stringify(res.data[0])).status },
-                      true
-                    ) : ''
+                    res.data[0].statusfinal != null
+                      ? this.getStatus(
+                          {
+                            text: JSON.parse(JSON.stringify(res.data[0]))
+                              .status,
+                          },
+                          true
+                        )
+                      : '';
                     console.log(res.data[0]);
                     resolve(res);
                   },
@@ -305,8 +310,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     params ? paramsF.addFilter('status', params.text, SearchFilter.ILIKE) : '';
     paramsF.addFilter('screenKey', 'CAMMUEESTATUS');
-    this.screenStatusService
-                .getAllFilterFree(paramsF.getParams()).subscribe(
+    this.screenStatusService.getAllFilterFree(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
         const newData = res.data.map((item: any) => {
@@ -330,7 +334,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   async loadGood() {
     this.loading = true;
     this.goodStatus.enable();
-    this.getStatus()
+    this.getStatus();
     const resp = await this.validateGood();
     console.log(resp);
     if (JSON.parse(JSON.stringify(resp)).message == 'Error') {
