@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -53,6 +53,8 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   };
 
   position: any = null;
+
+  dataArray: any[];
 
   constructor(
     private fb: FormBuilder,
@@ -234,6 +236,17 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     this.bsModel.hide();
   }
 
+  //Params navigate
+  navigateParamsLocal(data: any[]) {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      const startIndex = (params.page - 1) * params.limit;
+      const array_new = data.slice(startIndex, startIndex + params.limit);
+      console.log(array_new);
+      this.data.load(array_new);
+    });
+  }
+
   //Open Modal Dividir
   timesToDivide() {
     if (this.dataPaymentVirt != null) {
@@ -257,7 +270,9 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
                 return e;
               }
             });
-            this.data.load(newData.concat(data.data));
+            this.dataArray = newData.concat(data.data);
+            this.navigateParamsLocal(this.dataArray);
+            this.totalItems = this.dataArray.length;
           },
         },
         class: 'modal-dialog-centered',
@@ -289,8 +304,8 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
               return {
                 ...e,
                 batchId: data.data.idLot,
-                description: data.data[0].description,
-                publicBatch: data.data[0].lotPublic,
+                description: data.data.description,
+                publicBatch: data.data.lotPublic,
               };
             } else {
               return e;

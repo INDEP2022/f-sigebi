@@ -86,6 +86,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     copias: 1,
     numfactimp: 1,
     numfactele: 1,
+    autorizo: 0,
   };
   blk_actdat: any[] = [];
   limit: FormControl = new FormControl(500);
@@ -1960,6 +1961,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           form: this.form,
           data: this.isSelect,
           global: this.global,
+          parameter: this.parameter,
           callback: (data: boolean, val: number) => {
             this.isVisibleField(val);
           },
@@ -2324,5 +2326,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         catchError(() => of(null))
       )
     );
+  }
+
+  CancelInvoice() {
+    this.parameter.autorizo = 0;
+    this.isVisibleField(0);
   }
 }

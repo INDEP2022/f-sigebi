@@ -23,4 +23,5 @@ export enum MassiveGoodEndpoints {
   ExportDataExcelMenaje = 'application/exportDataExcelMenaje',
   pupBienesPlano = 'application/pupBienesPlano',
   ExportSampleGoods = 'application/exportDataSampleGoods',
+  ApplicationCSV = 'application/generate-cvs-by-status',
 }

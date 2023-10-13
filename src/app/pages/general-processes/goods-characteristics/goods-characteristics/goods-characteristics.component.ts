@@ -1221,6 +1221,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     const filterParams = new FilterParams();
     filterParams.addFilter('screenKey', 'FACTDIRDATOSBIEN');
     filterParams.addFilter('status', this.good.status);
+    filterParams.limit = 10000;
     return this.statusScreenService
       .getList(filterParams.getFilterParams())
       .pipe(map(x => (x.data ? x.data : [])));

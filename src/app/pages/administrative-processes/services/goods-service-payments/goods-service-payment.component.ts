@@ -35,6 +35,9 @@ export class GoodsServicePaymentComponent extends BasePage implements OnInit {
 
   modData: any;
 
+  edit: any;
+  title: String;
+
   countCreate: number = 0;
 
   constructor(
@@ -49,6 +52,14 @@ export class GoodsServicePaymentComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log('dataModal-> ', this.modData);
+    console.log('Data Edit-> ', this.edit);
+    console.log('Fecha Edit-> ', this.dateSet(this.edit.fechaSol));
+    if (this.modData != null) {
+      this.title = 'Agregar solicitud';
+    }
+    if (this.edit != null) {
+      this.title = 'Editar solicitud';
+    }
     //console.log('FechaSol-> ', this.dateSet(this.modData.fechaSol));
 
     this.prepareForm();
@@ -80,6 +91,11 @@ export class GoodsServicePaymentComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    this.edit != null ? this.update() : this.create();
+  }
+
+  create() {
+    console.log('Entra Create');
     const { record, type, subtype, ssubtype, sssubtype } = this.form.value;
 
     console.log('Confirm', record.id);
@@ -206,5 +222,12 @@ export class GoodsServicePaymentComponent extends BasePage implements OnInit {
     const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
     const year = date.getUTCFullYear().toString();
     return `${day}/${month}/${year}`;
+  }
+
+  update() {
+    console.log('Entra Update');
+    /*this.form.patchValue({
+      applicationDate: this.dateSet(this.modData.fechaSol),
+    });*/
   }
 }
