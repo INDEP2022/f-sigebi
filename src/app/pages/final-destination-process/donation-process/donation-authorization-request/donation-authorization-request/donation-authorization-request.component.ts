@@ -1,8 +1,15 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocalDataSource } from 'ng2-smart-table';
+import { Store } from '@ngrx/store';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -11,6 +18,7 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import {
   IDeleteGoodDon,
+  IInventaryDelete,
   IInventaryRequest,
   IProposel,
   IRequest,
@@ -21,6 +29,7 @@ import { DonationService } from 'src/app/core/services/ms-donationgood/donation.
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DonationProcessService } from '../../../shared-final-destination/view-donation-contracts/donation-process.service';
 import { CreateRequestComponent } from '../create-request/create-request.component';
@@ -38,6 +47,10 @@ export type IGoodAndAvailable = IGood & {
   available: boolean;
   selected: boolean;
 };
+interface NotData {
+  id: number;
+  reason: string;
+}
 @Component({
   selector: 'app-donation-authorization-request',
   templateUrl: './donation-authorization-request.component.html',
@@ -102,7 +115,11 @@ export class DonationAuthorizationRequestComponent
   formTable1: FormGroup;
   formTable2: FormGroup;
   formTable3: FormGroup;
+  delGood: IDeleteGoodDon;
+  showError: boolean = false;
+  idsNotExist: NotData[] = [];
   selectedGood: IGoodAndAvailable;
+  deleteInv: IInventaryDelete;
   inventaryModel: IInventaryRequest;
   dataTableGoods: IGoodAndAvailable[] = [];
   inventaryAll: IInventaryRequest[] = [];
@@ -120,8 +137,12 @@ export class DonationAuthorizationRequestComponent
   requestId: number = 0;
   data: any = [];
   good: IGood;
+  previousSelecteds: IGood[] = [];
+  pageSelecteds: number[] = [];
   goodsTotals: number = 0;
   columnFilters: any[] = [];
+  columnFilters2: any[] = [];
+  columnFilters3: any[] = [];
   totalItems: number = 0;
   loadingReq: boolean = true;
   goodLoading: boolean = true;
@@ -131,13 +152,15 @@ export class DonationAuthorizationRequestComponent
   settings4: any;
   proposal: IProposel;
   totalSunQuantity: number = 0;
-  totalGoods: number = 0;
+  totalGoods: number[];
   dataFacRequest: LocalDataSource = new LocalDataSource();
   dataGoodsFact: LocalDataSource = new LocalDataSource();
   status: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
-  files: any = [];
+  // files: any = [];
   fromF: string = '';
   Exportdate: boolean = false;
   goodNotValid: IGood[] = [];
@@ -149,7 +172,35 @@ export class DonationAuthorizationRequestComponent
   dataTableGood: LocalDataSource = new LocalDataSource();
   selectedRow: any | null = null;
   proposalId: string = '';
+  $trackedGoods = this.store.select(getTrackedGoods);
+  ngGlobal: any;
+  @Input() fillData: Function;
   @ViewChild('file') file: any;
+  @Input() set files(files: any[]) {
+    // debugger;
+    if (files.length === 0) return;
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+  @ViewChild('table') table: Ng2SmartTableComponent;
+
+  get ids() {
+    return this.donAuthorizaService.ids;
+  }
+
+  set ids(value) {
+    this.donAuthorizaService.ids = value;
+  }
+
+  get selectedGooods() {
+    return this.donAuthorizaService.selectedGooods;
+  }
+
+  set selectedGooods(value) {
+    this.donAuthorizaService.selectedGooods = value;
+  }
+
   paramsScreen: IParamsAuth = {
     origin: '',
     proposal: '',
@@ -162,6 +213,7 @@ export class DonationAuthorizationRequestComponent
     private donationProcessService: DonationProcessService,
     private donAuthorizaService: DonAuthorizaService,
     private router: Router,
+    private store: Store,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
     private goodService: GoodService,
@@ -252,7 +304,7 @@ export class DonationAuthorizationRequestComponent
     };
     this.settings4 = {
       ...this.settings,
-      // selectMode: 'multi',
+      selectMode: 'multi',
       hideSubHeader: false,
       actions: false,
       columns: {
@@ -262,13 +314,15 @@ export class DonationAuthorizationRequestComponent
   }
 
   ngOnInit(): void {
+    console.log(this.data);
+    console.log(this.files);
+    console.log(this.fillSelectedRows);
     if (typeof Storage !== 'undefined') {
-      const o = localStorage.getItem('proposalId');
-      const r = localStorage.getItem('request');
       let params = new ListParams();
-      params['proposal'] = o;
+      params['proposal'] = localStorage.getItem('proposalId');
+      this.proposalId = localStorage.getItem('proposalId');
       this.getProposalId(params);
-      this.requestId = Number(r);
+      this.requestId = Number(localStorage.getItem('request'));
       this.getRequest(this.requestId);
       localStorage.setItem('requestId', String(this.requestId));
     } else {
@@ -323,15 +377,16 @@ export class DonationAuthorizationRequestComponent
     });
   }
   isGoodSelected(_good: IGood) {
-    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    const exists = this.selectedGooods.find(good => good.goodId == _good.id);
     return !exists ? false : true;
   }
   goodSelectedChange(good: IGood, selected: boolean) {
     if (selected) {
+      console.log(good);
       this.selectedGooods.push(good);
     } else {
       this.selectedGooods = this.selectedGooods.filter(
-        _good => _good.id != good.id
+        _good => _good.id != good.goodId
       );
     }
   }
@@ -368,8 +423,9 @@ export class DonationAuthorizationRequestComponent
       .setValue(this.selectedRow.clasifGoodNumber);
     this.form.get('descripClassif').setValue(this.selectedRow.clasifGood);
     this.inventaryModel = {
-      proposalKey: this.request.proposalCve ?? '',
+      proposalKey: this.proposalCve ?? '',
       goodNumber: this.selectedRow.goodId,
+      goodEntity: this.selectedRow.goodId,
     };
     this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
@@ -411,10 +467,10 @@ export class DonationAuthorizationRequestComponent
       this.dataGoodsFact.load([]);
       this.dataFactInventary.load([]);
       this.proposeDefault = next;
-      localStorage.setItem('proposalId', this.proposeDefault.ID_PROPUESTA);
-      localStorage.setItem('request', this.proposeDefault.ID_SOLICITUD);
-      await this.getProposalId(this.proposeDefault.ID_PROPUESTA);
-      this.requestId = this.proposeDefault.ID_SOLICITUD;
+      localStorage.setItem('proposalId', next.ID_PROPUESTA);
+      localStorage.setItem('request', next.ID_SOLICITUD);
+      await this.getProposalId(next.ID_PROPUESTA);
+      this.requestId = next.ID_SOLICITUD;
       await this.getRequest(this.requestId);
     });
     modalRef.content.cleanForm.subscribe(async (next: any) => {
@@ -434,7 +490,7 @@ export class DonationAuthorizationRequestComponent
     this.proposeDefault = null;
     this.dataGoodsFact.refresh();
     this.dataFacRequest.load([]);
-    localStorage.removeItem('proposal');
+    localStorage.removeItem('proposalId');
     localStorage.removeItem('request');
   }
 
@@ -463,15 +519,16 @@ export class DonationAuthorizationRequestComponent
   }
   async getRequest(proposal: number) {
     this.loadingReq = true;
-    this.loading2 = false;
-    this.goodLoading = false;
     this.donationProcessService.getRequestId(proposal).subscribe({
       next: data => {
         this.loadingReq = false;
+        console.log(data.data);
         this.request = data.data;
+        this.loading2 = false;
         this.dataFacRequest.load(this.request);
         this.dataFacRequest.refresh();
         this.proposalCve = this.request.proposalKey;
+        localStorage.setItem('cvePropose', this.request.proposalKey);
         this.itemRequest = data.count;
         this.totalSunQuantity = this.request.reduce(
           (acc: any, item: any) => acc + item.sunQuantity,
@@ -495,17 +552,17 @@ export class DonationAuthorizationRequestComponent
   }
   getRequestGood() {
     this.goodLoading = true;
-    let params: any = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
+    let params2: any = {
+      ...this.params2.getValue(),
+      ...this.columnFilters2,
     };
     console.log(this.requestId);
-    params['sortBy'] = 'goodId:DESC';
-    params['requestTypeId'] = 'SD';
-    params['good.noDelegation'] = this.request.cveEvent ?? 0;
-    params['request.requestId'] = this.requestId;
-    params['good.status'] = 'DON' || 'ADA';
-    this.donationService.getGoodRequest(params).subscribe({
+    params2['sortBy'] = 'goodId:DESC';
+    params2['requestTypeId'] = 'SD';
+    params2['good.noDelegation'] = this.request.cveEvent ?? 0;
+    params2['request.requestId'] = this.requestId;
+    params2['good.status'] = 'DON' || 'ADA';
+    this.donationService.getGoodRequest(params2).subscribe({
       next: data => {
         this.goodLoading = false;
         this.goods = data.data;
@@ -513,10 +570,10 @@ export class DonationAuthorizationRequestComponent
         this.dataGoodsFact.load(this.goods);
         console.log(this.goods);
         this.totalGoods = this.goods.reduce(
-          (acc: any, item: any) =>
-            acc + this.convert(item.allotmentAmount) ?? 0,
+          (acc: any, item: any) => acc + item.allotmentAmount ?? 0,
           0
         );
+        this.getInventary();
         this.formTable2
           .get('quantityToAssign')
           .setValue(Number(this.totalGoods));
@@ -529,23 +586,22 @@ export class DonationAuthorizationRequestComponent
 
   getInventary() {
     this.loading2 = true;
-
-    console.log(this.inventaryModel);
-    this.donationService.getInventaryGood(this.inventaryModel).subscribe({
+    let params3: any = {
+      ...this.params3.getValue(),
+      ...this.columnFilters3,
+    };
+    console.log(this.requestId);
+    params3['sortBy'] = 'goodNumber:DESC';
+    params3['proposalKey'] = localStorage.getItem('cvePropose');
+    this.donationService.getInventory(params3).subscribe({
       next: data => {
-        if (data != null) {
-          this.loading2 = false;
-          this.goodLoading = false;
-          this.inventaryModel = data;
-          this.inventaryAll.push(this.inventaryModel);
-          console.log(this.inventaryAll);
-          this.totalItemsIn = data.count;
-          this.dataFactInventary.load(this.inventaryAll);
-          this.dataFactInventary.refresh();
-        } else {
-          this.goodLoading = false;
-          this.createDET(this.inventaryModel);
-        }
+        this.loading2 = false;
+        this.goodLoading = false;
+        this.inventaryAll = data.data;
+        console.log(this.inventaryAll);
+        this.totalItemsIn = data.count;
+        this.dataFactInventary.load(this.inventaryAll);
+        this.dataFactInventary.refresh();
       },
       error: () => {
         this.loading2 = false;
@@ -559,11 +615,10 @@ export class DonationAuthorizationRequestComponent
     });
   }
   addrequest(request?: any) {
-    const o = localStorage.getItem('proposalId');
-    if (o == null) {
+    if (this.proposalId == null) {
       this.alertInfo(
         'warning',
-        'No se puede crear una nueva solicitud sin selecccionar ela propuesta',
+        'No se puede crear una nueva solicitud sin selecccionar la propuesta',
         ''
       );
       return;
@@ -580,6 +635,8 @@ export class DonationAuthorizationRequestComponent
           'Se cargó la información de la solicitud',
           next.proposalCve
         );
+        localStorage.setItem('cvePropose', next.proposalCve);
+
         //   this.requestModel = {
         //     solQuantity: next.solQuantity,
         //     requestId: next.requestId.id,
@@ -598,15 +655,14 @@ export class DonationAuthorizationRequestComponent
   }
 
   selectedGooodsValid: any[] = [];
-  selectedGooods: any[] = [];
   goodsValid: any;
 
   async addSelect() {
-    if (localStorage.getItem('proposalId') == null) {
+    if (this.proposeDefault == null) {
       this.alert(
         'warning',
         'No existe una propuesta en la cual asignar el bien.',
-        'Debe capturar una propuesta.'
+        'Debe capturar una propuesta y solicitud'
       );
       return;
     } else {
@@ -670,8 +726,9 @@ export class DonationAuthorizationRequestComponent
   }
   async createDET(good: IInventaryRequest) {
     let obj: any = {
-      proposalKey: this.requestModel.proposalCve,
+      proposalKey: this.proposalCve,
       goodNumber: good.goodNumber,
+      goodEntity: null,
     };
     console.log(obj);
     await this.saveGoodInventary(obj);
@@ -707,14 +764,14 @@ export class DonationAuthorizationRequestComponent
   }
 
   removeSelect() {
-    if (this.proposal == null) {
+    if (this.proposeDefault == null) {
       this.alert(
         'warning',
         'Debe especificar/buscar la propuesta para luego eliminar el bien.',
         ''
       );
       return;
-    } else if (this.goods.length == 0) {
+    } else if (this.selectedGooods.length == 0) {
       this.alert(
         'warning',
         'Debe seleccionar un bien que Forme parte de la solicitud primero',
@@ -731,7 +788,7 @@ export class DonationAuthorizationRequestComponent
     } else {
       this.alertQuestion(
         'question',
-        '¿Seguro que desea eliminar el bien de la solicitud?',
+        '¿Seguro que desea eliminar el bien del Inventario?',
         ''
       ).then(async question => {
         if (question.isConfirmed) {
@@ -759,7 +816,8 @@ export class DonationAuthorizationRequestComponent
               };
               await this.updateGoodEInsertHistoric(obj);
               await this.getHistory(good);
-              await this.deleteDET(good.id);
+
+              await this.deleteDET(good);
             });
 
             Promise.all(result).then(async item => {
@@ -793,6 +851,11 @@ export class DonationAuthorizationRequestComponent
       this.inventaryModel = {
         proposalKey: this.request.proposalCve ?? '',
         goodNumber: this.selectedRow.goodId,
+        goodEntity: this.selectedRow.goodId,
+      };
+      this.deleteInv = {
+        proposalKey: this.request.proposalCve ?? '',
+        goodNumber: this.selectedRow.goodId,
       };
       // this.form.patchValue({
       //   proposal: this.request.proposalCve,
@@ -812,6 +875,14 @@ export class DonationAuthorizationRequestComponent
       this.requestModel = null;
     }
   }
+  selectInventory(row: any): void {
+    if (row.isSelected) {
+      this.inventaryModel = row.data;
+      console.log(this.inventaryModel.proposalKey);
+    } else {
+      this.requestModel = null;
+    }
+  }
 
   convert(amount: number) {
     const numericAmount = parseFloat(String(amount));
@@ -826,14 +897,14 @@ export class DonationAuthorizationRequestComponent
     }
   }
 
-  async deleteDET(good: IDeleteGoodDon) {
+  async deleteDET(good: IInventaryDelete) {
     console.log(good);
     const valid: any = await this.getGoodsDelete(this.inventaryModel);
     if (valid != null) {
       await this.deleteDetailProcee(this.inventaryModel);
     }
   }
-  async getGoodsDelete(body: IInventaryRequest) {
+  async getGoodsDelete(body: IInventaryDelete) {
     return new Promise((resolve, reject) => {
       this.donationService.deleteGoodReq(body).subscribe({
         next: data => {
@@ -863,7 +934,7 @@ export class DonationAuthorizationRequestComponent
   }
   async getHistory(good: any) {
     this.history = {
-      propertyNum: null,
+      propertyNum: good.id,
       status: 'ADA',
       changeDate: new Date(),
       userChange: this.authService.decodeToken().username,
@@ -879,6 +950,62 @@ export class DonationAuthorizationRequestComponent
           console.log('insertado en historicos');
         },
       });
+  }
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      // debugger;
+      this.data.load([]);
+      this.totalItems = 0;
+      this.selectedGooodsValid = [];
+      this.idsNotExist = [];
+      this.showError = false;
+
+      // this.ids = this.excelService.getData(binaryExcel);
+      if (this.ids[0].no_bien === undefined) {
+        this.alert(
+          'error',
+          'Ocurrio un error al leer el archivo',
+          'El archivo no cuenta con la estructura requerida'
+        );
+        return;
+      } else {
+        // this.loadGood(this.ids);
+        this.fillData(this.ids);
+        this.alert('success', 'Se ha cargado el archivo', '');
+      }
+    } catch (error) {
+      this.alert('error', 'Ocurrio un error al leer el archivo', '');
+    }
+  }
+
+  private fillSelectedRows() {
+    setTimeout(() => {
+      // debugger;
+      console.log(this.selectedGooods, this.table);
+      const currentPage = this.params.getValue().page;
+      const selectedPage = this.pageSelecteds.find(
+        page => page === currentPage
+      );
+      this.table.isAllSelected = false;
+      let allSelected = true;
+      if (this.selectedGooods && this.selectedGooods.length > 0) {
+        this.table.grid.getRows().forEach(row => {
+          // console.log(row);
+
+          if (
+            this.selectedGooods.find(item => row.getData()['id'] === item.id)
+          ) {
+            this.table.grid.multipleSelectRow(row);
+            allSelected = allSelected && true;
+          } else {
+            allSelected = allSelected && false;
+          }
+          // if(row.getData())
+          // this.table.grid.multipleSelectRow(row)
+        });
+        this.table.isAllSelected = allSelected;
+      }
+    }, 300);
   }
 }
 

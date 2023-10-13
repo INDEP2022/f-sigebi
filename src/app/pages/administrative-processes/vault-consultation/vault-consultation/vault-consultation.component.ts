@@ -26,6 +26,7 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
   idSelected: number = 0;
   vaults: ISafe[] = [];
   columnFilters: any = [];
+  excelLoading: boolean = true;
   vault: ISafe;
   origin: string = '';
   origin2: string = '';
@@ -140,7 +141,6 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
       },
     });
   }
-  exportAll() {}
 
   openForm(provider?: ISafe) {
     const modalConfig = MODAL_CONFIG;
@@ -165,6 +165,22 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
         console.log(this.vaults);
         this.dataFactGen.load(data.data);
         this.dataFactGen.refresh();
+        this.vaults = data.data.map((vault: ISafe) => {
+          return {
+            idSafe: vault.idSafe,
+            description: vault.description,
+            localityCode: vault.localityCode ? vault.localityCode : null,
+            cityCode: vault.cityCode ? vault.cityCode : 0,
+            manager: vault.manager,
+            municipalityCode: vault.municipalityCode
+              ? vault.municipalityCode
+              : null,
+            registerNumber: vault.registerNumber,
+
+            stateCode: vault.stateCode ? vault.stateCode : '',
+            ubication: vault.ubication,
+          };
+        });
       },
       error: () => {
         this.loading = false;
@@ -177,6 +193,74 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
     event.data
       ? this.openForm(event.data)
       : this.alert('info', 'Esta Bóveda no contiene Bienes', '');
+  }
+  exportToExcel(): void {
+    this.excelLoading = true;
+    this.safeService.exportExcel().subscribe({
+      next: data => {
+        this.excelLoading = false;
+        this.alert(
+          'warning',
+          'El archivo se esta generando, favor de esperar la descarga',
+          ''
+        );
+
+        this.downloadDocument('-Detalle-Bovedas', 'excel', data.base64File);
+        // this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.excelLoading = true;
+    this.alert('success', 'El reporte se ha descargado', '');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    // this.fullService.generatingFileFlag.next({
+    //   progress: 100,
+    //   showText: false,
+    // });
+
+    return bytes.buffer;
   }
 }
 
