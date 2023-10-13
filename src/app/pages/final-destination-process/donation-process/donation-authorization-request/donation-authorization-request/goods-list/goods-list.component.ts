@@ -132,7 +132,7 @@ export class GoodsListComponent
         return;
       } else {
         // this.loadGood(this.ids);
-        this.fillData(this.ids);
+        this.filldata(this.ids);
         this.alert('success', 'Se ha cargado el archivo', '');
       }
     } catch (error) {
@@ -251,7 +251,7 @@ export class GoodsListComponent
       next: response => {
         if (response) {
           this.selectedGooods = [];
-          this.fillData(this.ids);
+          this.filldata(this.ids);
         } else {
           this.ids = null;
           this.data.load([]);
@@ -268,7 +268,7 @@ export class GoodsListComponent
               no_bien: +x.goodNumber,
             };
           });
-          this.fillData(this.ids);
+          this.filldata(this.ids);
         }
       },
     });
@@ -295,7 +295,7 @@ export class GoodsListComponent
                         no_bien: +x.goodNumber,
                       };
                     });
-                    this.fillData(this.ids);
+                    this.filldata(this.ids);
                   }
                 },
                 error: err => {
@@ -311,7 +311,22 @@ export class GoodsListComponent
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 
-  private fillData(ids: IDs[] = null) {
+  formatNumber(amount: string) {
+    const numericAmount = parseFloat(amount);
+    if (!isNaN(numericAmount)) {
+      return numericAmount.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    } else {
+      return amount;
+    }
+  }
+
+  override getData() {
+    this.filldata();
+  }
+  private filldata(ids: IDs[] = null) {
     this.loading = true;
     // console.log(this.goodStatus.value);
     const filterParams = new FilterParams();
@@ -414,20 +429,5 @@ export class GoodsListComponent
           this.loading = false;
         },
       });
-  }
-  formatNumber(amount: string) {
-    const numericAmount = parseFloat(amount);
-    if (!isNaN(numericAmount)) {
-      return numericAmount.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    } else {
-      return amount;
-    }
-  }
-
-  override getData() {
-    this.fillData();
   }
 }
