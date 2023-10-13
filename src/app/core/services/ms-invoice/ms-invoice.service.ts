@@ -48,4 +48,18 @@ export class MsInvoiceService extends HttpService {
   getAllBillings(params: _Params) {
     return this.get<IListResponse>(`${ENDPOINT_INVOICE.ComerInovice}`, params);
   }
+
+  getComerCetinvoices(params: _Params) {
+    return this.get<IListResponse>(
+      `${ENDPOINT_INVOICE.ComerCetinvoices}`,
+      params
+    );
+  }
+
+  getInconsistencies_(params: _Params) {
+    return this.get<IListResponse>(
+      `${ENDPOINT_INVOICE.ComerInconsistencies_}`,
+      params
+    );
+  }
 }
