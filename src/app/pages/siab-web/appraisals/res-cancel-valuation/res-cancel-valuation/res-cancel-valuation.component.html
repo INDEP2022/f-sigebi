@@ -34,9 +34,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="event"
-                [(ngModel)]="event"
-                (change)="resetVariables()" />
+                formControlName="event" />
             </form-field>
           </div>
           <div class="col-md-7">
@@ -58,24 +56,12 @@
           <div class="col-md-3"></div>
           <div class="col-md-4" style="margin-left: -20px">
             <form-radio label="Oficio de Respuesta">
-              <input
-                type="radio"
-                value="cat"
-                [(ngModel)]="radioValueOne"
-                (change)="onRadioChange()"
-                [value]="true"
-                formControlName="radioOne" />
+              <input type="radio" value="2" formControlName="radio" />
             </form-radio>
           </div>
           <div class="col-md-4 ml-auto">
             <form-radio label="Oficio de Cancelación">
-              <input
-                type="radio"
-                value="dog"
-                formControlName="radioTwo"
-                [(ngModel)]="redioValueTwo"
-                (change)="onRadioChangeTwo()"
-                [value]="true" />
+              <input type="radio" value="3" formControlName="radio" />
             </form-radio>
           </div>
           <div class="col-md-2"></div>
@@ -84,7 +70,7 @@
         <div class="row mt-3">
           <div class="col-md-4">
             <form-field [control]="form.get('fol')" label="Folio">
-              <input type="text" class="form-control" formControlName="key" />
+              <input type="text" class="form-control" formControlName="fol" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -151,7 +137,29 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('dest')">
+            <ng-custom-select-loading
+              [form]="form"
+              [path]="pathDest"
+              [bodyPost]="bodyDest"
+              [updateValues]="true"
+              typeInput="post"
+              label="Destinatario"
+              formControlName="dest"
+              paramSearch="filter.usuario"
+              prefixSearch="$eq"
+              value="usuario"
+              bindLabel="nombre"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ng-custom-select-loading>
+            <ng-template #userLabel let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+            <ng-template #userOption let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+
+            <!-- <form-field [control]="form.get('dest')">
               <ngx-select
                 (fetchItems)="queryAllUsersTwo($event)"
                 [searchOnInit]="true"
@@ -169,7 +177,7 @@
                   >{{ item.usuario }} - {{ item.nombre }}</ng-template
                 >
               </ngx-select>
-            </form-field>
+            </form-field> -->
           </div>
         </div>
         <!--  -->
@@ -396,7 +404,7 @@
                           containerClass="tooltip-style"
                           class="btn btn-info btn-sm active"
                           (click)="getAddUser()">
-                          Agregar Usuario
+                          Agregar
                           <i class="bx bx-plus bx-sm float-icon"></i>
                         </button>
                       </div>
@@ -407,7 +415,7 @@
                           type="button"
                           class="btn btn-red btn-sm active"
                           (click)="removeUserCopy()">
-                          Quitar Usuario
+                          Eliminar
                           <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
                       </div>
