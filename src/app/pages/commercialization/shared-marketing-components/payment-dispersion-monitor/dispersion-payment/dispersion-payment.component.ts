@@ -1677,14 +1677,14 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         console.log(model);
         this.comerLotsService.pupProcEnvSirsae(model).subscribe(
           res => {
-            console.log(res)
-            this.alert('success','Se envió a SIRSAE','')
+            console.log(res);
+            this.alert('success', 'Se envió a SIRSAE', '');
           },
           err => {
-            console.log(err)
-            this.alert('error','Se presentó un error inesperado','')
+            console.log(err);
+            this.alert('error', 'Se presentó un error inesperado', '');
           }
-        )
+        );
       }
     });
 
@@ -1757,11 +1757,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.comerLotsService.pupProcDisp(model).subscribe(
           res => {
             console.log(res);
-            this.alert('success','Se ejecutó el proceso de dispersión','')
+            this.alert('success', 'Se ejecutó el proceso de dispersión', '');
           },
           err => {
             console.log(err);
-            this.alert('warning','Se presentó un error inesperado','')
+            this.alert('warning', 'Se presentó un error inesperado', '');
           }
         );
       }

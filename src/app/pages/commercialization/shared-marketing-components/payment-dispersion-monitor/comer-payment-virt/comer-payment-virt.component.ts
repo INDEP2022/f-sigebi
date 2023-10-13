@@ -54,7 +54,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
 
   position: any = null;
 
-  dataArray: any[]
+  dataArray: any[];
 
   constructor(
     private fb: FormBuilder,
@@ -242,7 +242,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
       console.log(params);
       const startIndex = (params.page - 1) * params.limit;
       const array_new = data.slice(startIndex, startIndex + params.limit);
-      console.log(array_new)
+      console.log(array_new);
       this.data.load(array_new);
     });
   }
@@ -270,8 +270,8 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
                 return e;
               }
             });
-            this.dataArray = newData.concat(data.data)
-            this.navigateParamsLocal(this.dataArray)
+            this.dataArray = newData.concat(data.data);
+            this.navigateParamsLocal(this.dataArray);
             this.totalItems = this.dataArray.length;
           },
         },

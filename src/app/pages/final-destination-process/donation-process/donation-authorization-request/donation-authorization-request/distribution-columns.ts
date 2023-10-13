@@ -188,4 +188,18 @@ export const COLUMNS_INVENTARY = {
       return row.goodNumber;
     },
   },
+  goodEntity: {
+    title: 'No. Bien Entidad ',
+    sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.goodEntity?.id;
+    },
+  },
+  cant: {
+    title: 'Cant. Bien Entidad ',
+    sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.goodEntity?.cant;
+    },
+  },
 };

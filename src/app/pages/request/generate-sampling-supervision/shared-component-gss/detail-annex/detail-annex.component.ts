@@ -8,13 +8,15 @@ import { ModelForm } from '../../../../../core/interfaces/model-form';
   styles: [],
 })
 export class DetailAnnexComponent implements OnInit {
-  @Input() annexData: any | null = null;
+  @Input() annexData: any;
+  @Input() idSample: number = 0;
   dataForm: ModelForm<any>;
   isReadOnly: boolean = true;
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    console.log('idSample desde detalle anexo', this.idSample);
     this.initForm();
   }
 
