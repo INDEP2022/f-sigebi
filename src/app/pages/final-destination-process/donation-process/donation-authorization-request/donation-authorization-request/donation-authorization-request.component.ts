@@ -141,6 +141,8 @@ export class DonationAuthorizationRequestComponent
   pageSelecteds: number[] = [];
   goodsTotals: number = 0;
   columnFilters: any[] = [];
+  columnFilters2: any[] = [];
+  columnFilters3: any[] = [];
   totalItems: number = 0;
   loadingReq: boolean = true;
   goodLoading: boolean = true;
@@ -552,7 +554,7 @@ export class DonationAuthorizationRequestComponent
     this.goodLoading = true;
     let params2: any = {
       ...this.params2.getValue(),
-      ...this.columnFilters,
+      ...this.columnFilters2,
     };
     console.log(this.requestId);
     params2['sortBy'] = 'goodId:DESC';
@@ -568,8 +570,7 @@ export class DonationAuthorizationRequestComponent
         this.dataGoodsFact.load(this.goods);
         console.log(this.goods);
         this.totalGoods = this.goods.reduce(
-          (acc: any, item: any) =>
-            acc + this.convert(item.allotmentAmount) ?? 0,
+          (acc: any, item: any) => acc + item.allotmentAmount ?? 0,
           0
         );
         this.getInventary();
@@ -587,7 +588,7 @@ export class DonationAuthorizationRequestComponent
     this.loading2 = true;
     let params3: any = {
       ...this.params3.getValue(),
-      ...this.columnFilters,
+      ...this.columnFilters3,
     };
     console.log(this.requestId);
     params3['sortBy'] = 'goodNumber:DESC';
@@ -878,7 +879,6 @@ export class DonationAuthorizationRequestComponent
     if (row.isSelected) {
       this.inventaryModel = row.data;
       console.log(this.inventaryModel.proposalKey);
-      console.log(this.inventaryModel);
     } else {
       this.requestModel = null;
     }
@@ -934,7 +934,7 @@ export class DonationAuthorizationRequestComponent
   }
   async getHistory(good: any) {
     this.history = {
-      propertyNum: null,
+      propertyNum: good.id,
       status: 'ADA',
       changeDate: new Date(),
       userChange: this.authService.decodeToken().username,
