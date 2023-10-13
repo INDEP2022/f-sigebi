@@ -563,8 +563,9 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   }
 
   onSubmit() {
-    if (this.form.valid) {
+    if (this.form.valid || this.form3.valid) {
       this.form.reset();
+      this.form3.reset();
 
       this.data7.load([]);
       this.data7.refresh();

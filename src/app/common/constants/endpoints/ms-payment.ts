@@ -23,4 +23,5 @@ export enum PaymentEndPoints {
   ComerCtldevpagBfindAllRegistersV2 = `comer-ctldevpag-b/findAllRegistersV2`,
   PaymentsxConfirm = 'views/v-comer-paymentsxconfirm',
   GetDataFromView = 'application/getDataFromView',
+  InsComerpagrefweb = 'application/ins-comerpagrefweb',
 }

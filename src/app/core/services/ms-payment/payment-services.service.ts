@@ -226,4 +226,8 @@ export class PaymentService extends HttpService {
   getDataFromView(params: any) {
     return this.post(PaymentEndPoints.GetDataFromView, params);
   }
+
+  postComerpagrefweb(body: any) {
+    return this.post(PaymentEndPoints.InsComerpagrefweb, body);
+  }
 }
