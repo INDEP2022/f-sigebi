@@ -9,5 +9,6 @@ export interface IDeductive {
   modificationDate?: Date;
   version: number;
   status: number;
-  contractNumber: number;
+  contractNumber?: number;
+  observations?: string;
 }
