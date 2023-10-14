@@ -5,8 +5,11 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
+import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
+import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -30,6 +33,7 @@ import { BasePage } from '../../../../../core/shared/base-page';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
 import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
+import { EditDeductiveComponent } from '../edit-deductive/edit-deductive.component';
 import { EditSampleGoodComponent } from '../edit-sample-good/edit-sample-good.component';
 import { LIST_ASSETS_COLUMN } from './columns/list-assets-columns';
 import { LIST_ASSETS_COPIES_COLUMN } from './columns/list-assets-copies';
@@ -65,7 +69,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   paragraphs2 = new LocalDataSource();
   totalItems2: number = 0;
   listAssetsSelected: any[] = [];
-  deductivesSel: [] = [];
+  deductivesSel: IDeductive[] = [];
   settings3 = {
     ...TABLE_SETTINGS,
     actions: {
@@ -82,11 +86,16 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   paragraphs3 = new LocalDataSource();
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
-
+  allDeductives: IDeductiveVerification[] = [];
   settings4 = {
     ...TABLE_SETTINGS,
-    actions: false,
-    selectMode: '',
+    actions: {
+      edit: true,
+      delete: false,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+    selectMode: 'multi',
   };
   columns4 = LIST_DEDUCTIVES_COLUMNS;
   paragraphsDeductivas = new LocalDataSource();
@@ -111,30 +120,34 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     private deductiveService: DeductiveVerificationService
   ) {
     super();
+
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: 'multi',
+      columns: LIST_WAREHOUSE_COLUMN,
+    };
   }
 
   ngOnInit(): void {
     this.delegationId = this.getRegionalDelegationId();
-    this.settings = {
-      ...TABLE_SETTINGS,
-      actions: false,
-      selectMode: '',
-      columns: LIST_WAREHOUSE_COLUMN,
-    };
 
     this.initDateForm();
     this.initSearchForm();
 
     this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
 
-    this.columns4.observation = {
+    /*this.columns4.observation = {
       ...this.columns4.observation,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
+          console.log('Observaciones?', data);
           this.deductivesObservations(data);
         });
       },
     };
+     */
+
     this.columns4.selected = {
       ...this.columns4.selected,
       onComponentInitFunction: this.deductiveSelected.bind(this),
@@ -226,6 +239,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             this.params3
               .pipe(takeUntil(this.$unSubscribe))
               .subscribe(() => this.getSampligGoods());
+
+            this.params2
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getGoods());
           },
         });
       });
@@ -476,10 +493,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       this.dateForm.get('initialDate').value
     }, ${this.dateForm.get('finalDate').value}`;
 
-    this.goodsInvService
-      .getSamplingGoodView(this.params2.getValue())
+    this.samplingGoodService
+      .getSamplingGoodFilter(this.params2.getValue())
       .subscribe({
-        next: async resp => {
+        next: resp => {
           const showInfo = resp.data.map(async item => {
             const showNameTransferent: any = await this.getNameTransferent(
               item.entTransferentId
@@ -504,23 +521,57 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
                 .pipe(takeUntil(this.$unSubscribe))
                 .subscribe(() => this.getSampligGoods());
 
+              const deductivesRelSample: any =
+                await this.checkExistDeductives();
+
               this.params4
                 .pipe(takeUntil(this.$unSubscribe))
-                .subscribe(() => this.getDeductives());
+                .subscribe(() => this.getDeductives(deductivesRelSample));
             }
           });
         },
         error: error => {
+          this.alert(
+            'warning',
+            'Datos no Encontrados',
+            'No hay bienes relacionados a el almacén seleccionado'
+          );
           this.loadingGoodInv = false;
+          this.paragraphs2 = new LocalDataSource();
         },
       });
   }
 
-  getDeductives() {
+  checkExistDeductives() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.sampleId'] = `$eq:${this.sampleId}`;
+      this.samplingGoodService
+        .getAllSampleDeductives(params.getValue())
+        .subscribe({
+          next: response => {
+            resolve(response.data);
+          },
+          error: error => {},
+        });
+    });
+  }
+
+  getDeductives(deductivesRelSample: ISamplingDeductive[]) {
     this.deductiveService.getAll(this.params4.getValue()).subscribe({
       next: response => {
-        console.log('deductivas', response);
-        this.paragraphsDeductivas.load(response.data);
+        const infoDeductives = response.data.map(item => {
+          deductivesRelSample.map(deductiveEx => {
+            if (deductiveEx.deductiveVerificationId == item.id) {
+              item.observations = deductiveEx.observations;
+              item.selected = true;
+            }
+          });
+          return item;
+        });
+
+        this.paragraphsDeductivas.load(infoDeductives);
+        this.allDeductives = response.data;
       },
       error: error => {},
     });
@@ -701,10 +752,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   deductiveSelected(event: any) {
-    event.toggle.subscribe((data: any) => {});
+    console.log('event', event);
+    //event.toggle.subscribe((data: any) => {});
   }
 
-  deductivesObservations(event: any) {}
+  deductivesObservations(event: any) {
+    console.log('Observaciones?', event);
+  }
 
   getTransferent(params: ListParams) {
     params['sortBy'] = 'nameTransferent:ASC';
@@ -862,10 +916,79 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   saveDeductives() {
-    console.log('this.paragraphsDeductivas', this.paragraphsDeductivas);
+    if (this.deductivesSel.length > 0) {
+      let count: number = 0;
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea guardar las deductivas seleccionadas?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.deductivesSel.map(item => {
+            count = count + 1;
+            const sampleDeductive: ISamplingDeductive = {
+              //sampleDeductiveId: '357',
+              sampleId: this.sampleId,
+              //orderSampleId: '3',
+              deductiveVerificationId: item.id,
+              indDedictiva: 'N',
+              //userCreation: 'sigebiadmon',
+              //creationDate: null,
+              //userModification: '2023-10-04',
+              //modificationDate: null,
+              version: 1,
+              observations: item.observations,
+            };
+
+            this.samplingGoodService
+              .createSampleDeductive(sampleDeductive)
+              .subscribe({
+                next: response => {},
+                error: error => {
+                  this.alert('error', 'Error', 'Error al guardar la deductiva');
+                },
+              });
+          });
+
+          if (count == 1) {
+            this.alert(
+              'success',
+              'Correcto',
+              'Deductivas guardadas correctamente'
+            );
+          }
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar una deductiva'
+      );
+    }
   }
 
   deductivesSelect(event: any) {
-    console.log('this.paragraphsDeductivas', event);
+    this.deductivesSel = event.selected;
+  }
+
+  addDeductive(deductive: IDeductive) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      deductive,
+      callback: (next: boolean, deductive: IDeductiveVerification) => {
+        if (next) {
+          //this.paragraphsDeductivas.load([deductive]);
+          const deductives = this.allDeductives.map((item: any) => {
+            if (deductive.id == item.id)
+              item.description = deductive.description;
+            return item;
+          });
+          this.paragraphsDeductivas.load(deductives);
+        }
+      },
+    };
+
+    this.modalService.show(EditDeductiveComponent, config);
   }
 }

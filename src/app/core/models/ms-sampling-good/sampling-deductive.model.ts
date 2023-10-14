@@ -1,6 +1,6 @@
 export interface ISamplingDeductive {
   sampleDeductiveId?: number;
-  sampleId?: string;
+  sampleId?: number;
   orderSampleId?: number;
   deductiveVerificationId?: number;
   indDedictiva?: string;
