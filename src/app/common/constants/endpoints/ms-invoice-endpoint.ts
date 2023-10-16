@@ -84,4 +84,6 @@ export enum ENDPOINT_INVOICE {
   ApplicationProcFailed = 'application/proc-failed',
   ApplicationConsFailed = 'application/cons-failed',
   ApplicationConsPupEminFact = 'application/cons-pup-emin-fact',
+  PkComerVNR = 'pk-comer-vnr/insert-lot',
+  PKComerVNRCancel = 'pk-comer-vnr/cancel-paper-vnr',
 }

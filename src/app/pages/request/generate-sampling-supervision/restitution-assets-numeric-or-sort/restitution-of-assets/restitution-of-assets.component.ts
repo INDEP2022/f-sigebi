@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { AnnexKFormComponent } from '../../generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
 import { AnnexJRestitutionFormComponent } from '../annex-j-restitution-form/annex-j-restitution-form.component';
@@ -15,14 +19,33 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
   showFilterAssets: boolean = true;
   //datos para el detalle de anexo
   annexDetail: any[] = [];
-
+  sampleInfo: ISample;
   bsModalRef: BsModalRef;
-
-  constructor(private modalService: BsModalService) {
+  idSample: number = 0;
+  constructor(
+    private modalService: BsModalService,
+    private samplingGoodService: SamplingGoodService
+  ) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    //El id de el muestreo saldra la tarea
+    this.idSample = 302;
+    this.getSampleInfo();
+  }
+
+  getSampleInfo() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.sampleId'] = `$eq:${302}`;
+    this.samplingGoodService.getSample(params.getValue()).subscribe({
+      next: response => {
+        console.log('response', response);
+        this.sampleInfo = response.data[0];
+      },
+      error: error => {},
+    });
+  }
 
   getSearchForm(event: any): void {
     console.log(event);
