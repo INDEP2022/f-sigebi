@@ -97,22 +97,27 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
+        // console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = ``;
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'idSafe' ||
-            filter.field == 'description' ||
-            filter.field == 'ubication' ||
-            filter.field == 'manager' ||
-            filter.field == 'stateCode' ||
-            filter.field == 'municipalityCode' ||
-            filter.field == 'cityCode' ||
-            filter.field == ' localityCode'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              idSafe: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              ubication: () => (searchFilter = SearchFilter.ILIKE),
+              manager: () => (searchFilter = SearchFilter.ILIKE),
+              stateDetail: () => (searchFilter = SearchFilter.ILIKE),
+              municipalityDetail: () => (searchFilter = SearchFilter.ILIKE),
+              cityDetail: () => (searchFilter = SearchFilter.ILIKE),
+              localityDetail: () => (searchFilter = SearchFilter.ILIKE),
+            };
+            search[filter.field]();
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -152,32 +157,37 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
 
   search() {
     this.loading = true;
-    this.params.getValue()['sortBy'] = `idSafe:DESC`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.safeService.getAll(params).subscribe({
+    this.safeService.getAllNew(params).subscribe({
       next: (data: any) => {
         this.loading = false;
         this.totalItems = data.count;
         this.vaults = data.data;
         console.log(this.vaults);
-        this.dataFactGen.load(data.data);
+        this.dataFactGen.load(this.vaults);
         this.dataFactGen.refresh();
         this.vaults = data.data.map((vault: ISafe) => {
           return {
             idSafe: vault.idSafe,
             description: vault.description,
-            localityCode: vault.localityCode ? vault.localityCode : null,
-            cityCode: vault.cityCode ? vault.cityCode : 0,
+            localityDetail: vault.localityDetail.nameLocation
+              ? vault.localityDetail.nameLocation
+              : null,
+            cityDetail: vault.cityDetail.nameCity
+              ? vault.cityDetail.nameCity
+              : 0,
             manager: vault.manager,
-            municipalityCode: vault.municipalityCode
-              ? vault.municipalityCode
+            municipalityDetail: vault.municipalityDetail.nameMunicipality
+              ? vault.municipalityDetail.nameMunicipality
               : null,
             registerNumber: vault.registerNumber,
 
-            stateCode: vault.stateCode ? vault.stateCode : '',
+            stateDetail: vault.stateDetail.descCondition
+              ? vault.stateDetail.descCondition
+              : '',
             ubication: vault.ubication,
           };
         });
