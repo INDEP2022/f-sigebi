@@ -1,0 +1,136 @@
+<app-modal>
+  <!-- <div header>
+        <h5 class="modal-title">{{ edit ? 'Editar' : 'Agregar' }} {{ title }}</h5>
+    </div> -->
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <!-- EVENTOS -->
+        <div class="col-md-3">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="event"
+              [data]="events"
+              value="idEvent"
+              bindLabel="idEvent"
+              label="Evento"
+              (fetchItems)="getEvents($event)"
+              (change)="selectEvent($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field [control]="form.get('keyProcess')" label="Clave">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="keyProcess" />
+          </form-field>
+        </div>
+
+        <!-- LOTES -->
+        <div class="col-md-3">
+          <form-field [control]="form.get('idLot')">
+            <ngx-select
+              [readonly]="!readonlyLot"
+              [form]="form"
+              control="idLot"
+              [data]="batchs"
+              value="idLot"
+              bindLabel="idLot"
+              label="Lote"
+              (fetchItems)="getLotes($event)"
+              (change)="selectLot($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field [control]="form.get('desLote')" label="Descripción">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="desLote" />
+          </form-field>
+        </div>
+
+        <!-- DELEGACIÓN -->
+        <div class="col-md-3">
+          <form-field [control]="form.get('noDelegation')">
+            <ngx-select
+              [form]="form"
+              [readonly]="!readonlyDele"
+              control="noDelegation"
+              [data]="delegations"
+              value="idDelegation"
+              bindLabel="idDelegation"
+              label="No."
+              (fetchItems)="getDelegacion($event)"
+              (change)="selectDele($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field [control]="form.get('descDelegation')" label="Delegación">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="descDelegation" />
+          </form-field>
+        </div>
+
+        <!-- MANDATOS -->
+        <div class="col-md-3">
+          <form-field [control]="form.get('cvman')">
+            <ngx-select
+              [form]="form"
+              [readonly]="!readonlyMan"
+              control="cvman"
+              [data]="cvmans"
+              value="cvman"
+              bindLabel="cvman"
+              label="Mandato"
+              (fetchItems)="getMandatos($event)"
+              (change)="selectMan($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field [control]="form.get('descCvman')" label="Denominación">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="descCvman" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Valida y Selecciona
+          <span><i class="fas fa-edit bx-sm float-icon"></i></span>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

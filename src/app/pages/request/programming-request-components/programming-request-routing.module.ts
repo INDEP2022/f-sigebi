@@ -4,6 +4,14 @@ import { WarehouseShowComponent } from '../shared-request/warehouse-show/warehou
 
 const routes: Routes = [
   {
+    path: 'execute-reception-programming/:id',
+    loadChildren: async () =>
+      (await import('./execute-reception/execute-reception-programming.module'))
+        .ExecuteReceptionProgrammingModule,
+    data: { title: 'Ejecutar Recepción' },
+  },
+
+  {
     path: 'acept-programming/:id',
     loadChildren: async () =>
       (await import('./acept-programming/acept-programming.module'))
@@ -11,13 +19,13 @@ const routes: Routes = [
     data: { title: 'Aceptar Programación' },
   },
 
-  {
-    path: 'execute-reception/:id',
+  /*{
+    path: 'execute-reception-programming/:id',
     loadChildren: async () =>
       (await import('./execute-reception/execute-reception.module'))
         .ExecuteReceptionModule,
     data: { title: 'Ejecutar Recepción' },
-  },
+  }, */
 
   {
     path: 'formalize-programming/:id',

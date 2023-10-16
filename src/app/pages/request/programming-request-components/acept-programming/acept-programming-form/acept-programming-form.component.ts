@@ -200,7 +200,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   getProgrammingId() {
-    this.formLoading = true;
+    //this.formLoading = true;
     this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
@@ -788,7 +788,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   showWarehouseEmail() {
     return new Promise((resolve, reject) => {
-      let count: number = 0;
       const params = new BehaviorSubject<ListParams>(new ListParams());
       params.getValue()['filter.programmingId'] = this.programmingId;
       params.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
@@ -796,7 +795,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
         next: async data => {
           data.data.map(async good => {
-            count = count + 1;
             const paramsGood = new BehaviorSubject<ListParams>(
               new ListParams()
             );
@@ -814,10 +812,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
                   unitMeasure: data.data[0].unitMeasure,
                   storeId: infotrans,
                 };
-                if (count == 2) {
-                  this.warehouseGoods.push(transObject);
-                  resolve(true);
-                }
+                this.warehouseGoods.push(transObject);
+                resolve(true);
               },
             });
             //this.goodService.getAll;
@@ -891,7 +887,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     //task['requestId'] = this.programmingId;
     task['expedientId'] = 0;
     task['idDelegationRegional'] = user.department;
-    task['urlNb'] = 'pages/request/programming-request/execute-reception';
+    task['urlNb'] =
+      'pages/request/programming-request/execute-reception-programming';
     task['processName'] = 'SolicitudProgramacion';
     task['idAuthority'] = this.programming.autorityId;
     task['idStore'] = this.programming.storeId;
@@ -959,12 +956,14 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   warehouseNameT(idWarehouse: number) {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.organizationCode'] = idWarehouse;
+      params.getValue()['filter.organization'] = idWarehouse;
       this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
         next: response => {
           resolve(response.data[0].name);
         },
-        error: error => {},
+        error: error => {
+          resolve('Almacén no capturado');
+        },
       });
       /*this.warehouseService.getById(idWarehouse).subscribe({
         next: response => {
