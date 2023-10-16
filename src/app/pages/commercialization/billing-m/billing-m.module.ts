@@ -7,9 +7,10 @@ import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BillingMRoutingModule } from './billing-m-routing.module';
 import { BillingScreenComponent } from './billing-screen/billing-screen.component';
+import { DatCancComponent } from './billing-screen/dat-canc/dat-canc.component';
 
 @NgModule({
-  declarations: [BillingScreenComponent],
+  declarations: [BillingScreenComponent, DatCancComponent],
   imports: [
     CommonModule,
     SharedModule,
