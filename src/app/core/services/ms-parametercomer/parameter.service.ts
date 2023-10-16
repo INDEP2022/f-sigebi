@@ -205,4 +205,9 @@ export class ParameterModService
       formData
     );
   }
+
+  f_validUser(data: any) {
+    // F_VALIDA_USUARIO
+    return this.post(ParameterComerEndpoints.ParameterMod + '/find-one', data);
+  }
 }
