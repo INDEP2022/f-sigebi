@@ -21,7 +21,7 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
   annexForm: ModelForm<any>;
   typeAnnex: string = ''; // tipo de formulario para diferenciar en la logica
   readonly: boolean = false;
-  annexData: any = null; // formulario del muestreo orden pasado desde el padre
+  annexData: ISamplingOrder = null; // formulario del muestreo orden pasado desde el padre
 
   idSample: number = 0;
 
@@ -107,7 +107,7 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
         this.annexForm.get('guySignatureSupplierk').value == 'Y'
           ? 'electronica'
           : 'autografa';
-      const samplerOrder = this.annexData;
+      const samplerOrder: ISamplingOrder = this.annexData;
 
       const signForm = {
         learnedType: typeDoc,
