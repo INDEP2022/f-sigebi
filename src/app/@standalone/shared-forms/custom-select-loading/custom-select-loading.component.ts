@@ -79,6 +79,8 @@ export class CustomSelectWidthLoading
   @Input() termMaxLength: string = null;
   @Input() readonly: boolean = false;
   @Input() updateValues: boolean = false;
+  @Input() typeInput: 'get' | 'post' = 'get';
+  @Input() bodyPost: any;
   @Output()
   valueChange = new EventEmitter<any>();
   @Output() getObject = new EventEmitter<any>();
@@ -262,21 +264,37 @@ export class CustomSelectWidthLoading
     const mParams =
       this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
     // console.log(params, mParams);
-    return this.http
-      .get(`${this.url}${this.path}` + mParams, {
-        params,
-      })
-      .pipe(
-        takeUntil(this.destroy$),
-        tap((x: any) => {
-          if (x && x.count) {
-            this.totalItems = x.count;
-          } else {
-            this.totalItems = 0;
-          }
-        }),
-        catchError(() => of(this.items))
-      );
+    return this.typeInput === 'get'
+      ? this.http
+          .get(`${this.url}${this.path}` + mParams, {
+            params,
+          })
+          .pipe(
+            takeUntil(this.destroy$),
+            tap((x: any) => {
+              if (x && x.count) {
+                this.totalItems = x.count;
+              } else {
+                this.totalItems = 0;
+              }
+            }),
+            catchError(() => of(this.items))
+          )
+      : this.http
+          .post(`${this.url}${this.path}` + mParams, this.bodyPost, {
+            params,
+          })
+          .pipe(
+            takeUntil(this.destroy$),
+            tap((x: any) => {
+              if (x && x.count) {
+                this.totalItems = x.count;
+              } else {
+                this.totalItems = 0;
+              }
+            }),
+            catchError(() => of(this.items))
+          );
   }
 
   getDataForPath(data: any): any[] {

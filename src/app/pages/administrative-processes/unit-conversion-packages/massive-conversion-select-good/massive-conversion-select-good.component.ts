@@ -15,6 +15,7 @@ import {
   firstValueFrom,
   map,
   of,
+  take,
   takeUntil,
 } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -31,6 +32,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
@@ -60,6 +62,7 @@ export class MassiveConversionSelectGoodComponent
   totalItems: number = 0;
   limit = new FormControl(10);
   contador = 0;
+  readonly = false;
   //Forma
   form: FormGroup;
   dataExcel: IExcelToJson[] = [];
@@ -125,6 +128,7 @@ export class MassiveConversionSelectGoodComponent
     private transferentService: TransferenteService,
     private survillanceService: SurvillanceService,
     private excelService: ExcelService,
+    private goodProcessService: GoodprocessService,
     private expedientService: ExpedientService,
     private goodService: GoodService,
     private bsModel: BsModalRef
@@ -142,6 +146,7 @@ export class MassiveConversionSelectGoodComponent
       this.contador++;
     });
     let packageEnc: IPackageGoodEnc = this.noPackage.value;
+    if (!packageEnc) return;
     if (packageEnc.cat_etiqueta_bien) {
       let labelData = packageEnc.cat_etiqueta_bien;
       this.targetTag.setValue(
@@ -557,10 +562,30 @@ export class MassiveConversionSelectGoodComponent
         if (message.length > 0) {
           this.alert('error', 'ERROR', message);
         } else {
-          this.unitConversionPackagesDataService.updatePrevisualizationData.next(
-            true
-          );
-          this.closeModal();
+          this.goodProcessService
+            .updateGoodsByPackage({
+              pacakgeNumber: +this.selectedPackage,
+              goodNumber: goodCheck.map(x => x.goodNumber).toString(),
+            })
+            .pipe(take(1))
+            .subscribe({
+              next: response => {
+                console.log(response);
+                this.unitConversionPackagesDataService.updatePrevisualizationData.next(
+                  true
+                );
+                this.alert('success', 'Bienes ingresados', '');
+                this.closeModal();
+              },
+              error: err => {
+                this.alert(
+                  'success',
+                  'Bienes ingresados',
+                  'Descripciones no actualizada'
+                );
+                this.closeModal();
+              },
+            });
         }
       })
       .catch(error => {

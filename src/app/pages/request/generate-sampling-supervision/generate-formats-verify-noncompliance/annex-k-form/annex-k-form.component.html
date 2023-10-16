@@ -1,12 +1,12 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title pull-left">Captura detalles del anexo</h5>
+    <h5 class="modal-title pull-left">Anexo K</h5>
   </div>
   <div body class="body">
     <div id="signatoryData">
       <div class="row">
         <div class="col-md-12">
-          <h5>Capturar datos del firmante</h5>
+          <h5>Capturar Datos del Firmante</h5>
         </div>
       </div>
       <form
@@ -36,10 +36,10 @@
           </div>
         </div>
 
-        <div class="row pt-4">
+        <div class="row pt-4" *ngIf="typeAnnex === 'revition-results'">
           <div class="col-md-12" style="display: flex">
             <div style="line-height: 3">
-              <label for="electronica">&#42;Tipo de firma</label>
+              <label for="electronica">Tipo de firma</label>
             </div>
             <div style="padding-left: 7px">
               <div>
@@ -72,7 +72,7 @@
     <div id="participantData">
       <div class="row pt-4">
         <div class="col-md-12">
-          <h5>Capturar de datos de los participantes</h5>
+          <h5>Capturar de Datos de los Participantes</h5>
         </div>
       </div>
       <form
@@ -132,7 +132,7 @@
     <div id="annexDetail" *ngIf="displayDetailAnnex()">
       <div class="row pt-4">
         <div class="col-md-12">
-          <h5>Capturar detalles del anexo</h5>
+          <h5>Capturar Detalles del Anexo</h5>
         </div>
       </div>
       <form
@@ -195,12 +195,21 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
+        <confirm-button
+          [disabled]="!annexForm.valid"
+          [loading]="loading"
+          [text]="'Firmar Anexo'"
+          [loadingText]="'Firmando Anexo'"
+          [btnSmall]="true"
+          class="mr-2"
+          (confirm)="signAnnex()"></confirm-button>
+
+        <!--<button
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="signAnnex()">
           Firmar Anexo
-        </button>
+        </button> -->
       </div>
       <div class="m-3">
         <button

@@ -1,24 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <div class="d-flex">
-      <div class="mr-auto p-2">
-        <h5 class="title">Muestreo Bienes&#58; {{ title }}</h5>
-      </div>
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
-          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
-        </button>
-      </div>
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active" (click)="save()">
-          <i class="bx bx-save"></i> Guardar
-        </button>
-      </div>
+    <div class="mr-auto p-2">
+      <h5 class="title">Muestreo Bienes&#58; {{ title }}</h5>
     </div>
   </div>
   <div body>
     <div class="row pt-4">
-      <div class="d-flex justify-content-end">
+      <!--<div class="d-flex justify-content-end">
         <div class="m-3">
           <button
             class="btn btn-secondary btn-sm active"
@@ -32,12 +20,54 @@
             (click)="opemAnnexK()">
             <i class="bx bx-square-rounded"></i> Anexo K
           </button>
+        </div> 
+
+        <div class="p-2">
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="turnSampling()">
+            <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
+          </button>
         </div>
-      </div>
+        <div class="p-2">
+          <button class="btn btn-primary btn-sm active" (click)="save()">
+            <i class="bx bx-save"></i> Guardar
+          </button>
+        </div>
+      </div> -->
     </div>
     <div id="detail">
       <app-card [header]="false">
         <div body>
+          <div class="d-flex justify-content-end">
+            <div class="p-2">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="turnSampling()">
+                Turnar muestreo <i class="fa fa-share-square"></i>
+              </button>
+            </div>
+            <div class="p-2">
+              <button class="btn btn-primary btn-sm active" (click)="save()">
+                Guardar <i class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="p-2">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="openAnnexJ()">
+                Anexo J <i class="bx bxs-file"></i>
+              </button>
+            </div>
+            <div class="p-2">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="opemAnnexK()">
+                Anexo K <i class="bx bxs-file"></i>
+              </button>
+            </div>
+          </div>
+
           <div class="row">
             <div class="col-md-12">
               <h5 class="title">
@@ -64,7 +94,8 @@
             </div>
           </div>
           <div class="row pt-4" *ngIf="showSamplingDetail">
-            <app-sampling-detail></app-sampling-detail>
+            <app-sampling-detail
+              [sampleInfo]="sampleInfo"></app-sampling-detail>
           </div>
         </div>
       </app-card>
@@ -82,7 +113,7 @@
                 (click)="showFilterAssets = true"
                 *ngIf="!showFilterAssets">
                 <i class="fa fa-angle-right" aria-hidden="true"></i> Captura de
-                datos</a
+                Datos</a
               >
             </p>
 
@@ -92,7 +123,7 @@
                 (click)="showFilterAssets = false"
                 *ngIf="showFilterAssets">
                 <i class="fa fa-angle-down" aria-hidden="true"></i> Captura de
-                datos</a
+                Datos</a
               >
             </p>
           </h6>
@@ -108,6 +139,8 @@
         <tab heading="Bienes" id="tab1">
           <app-assets-tab
             [willSave]="willSave"
+            [idSample]="idSample"
+            [filterObject]="filterObject"
             [typeTask]="'assets-classification'"></app-assets-tab>
         </tab>
         <tab heading="Deductivas">

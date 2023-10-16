@@ -7,7 +7,10 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ISample } from '../../models/ms-goodsinv/sample.model';
 
-import { ISampleGood } from '../../models/ms-goodsinv/sampling-good-view.model';
+import {
+  ISampleGood,
+  ISamplingGoodView,
+} from '../../models/ms-goodsinv/sampling-good-view.model';
 import { ISamplingDeductive } from '../../models/ms-sampling-good/sampling-deductive.model';
 
 @Injectable({ providedIn: 'root' })
@@ -28,6 +31,10 @@ export class SamplingGoodService extends HttpService {
 
   createSample(sample: ISample) {
     return this.post(this.samplingGoodEndpoint.Sample, sample);
+  }
+
+  updateSample(sample: ISample) {
+    return this.put(this.samplingGoodEndpoint.Sample, sample);
   }
 
   getSamplingGoods(
@@ -76,6 +83,14 @@ export class SamplingGoodService extends HttpService {
   deleteSampleDeductive(id: number) {
     const route = `${SamplingGoodEndpoint.SamplingDeductives}/${id}`;
     return this.put<IListResponse<ISamplingDeductive>>(route);
+  }
+
+  getSamplingGoodFilter(
+    _params: ListParams
+  ): Observable<IListResponse<ISamplingGoodView>> {
+    const params = this.makeParams(_params);
+    const route = `${SamplingGoodEndpoint.SamplingGoodFilter}?${params}`;
+    return this.get<IListResponse<ISamplingGoodView>>(route);
   }
 
   private makeParams(params: ListParams): HttpParams {

@@ -72,4 +72,8 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
     const route = `${SafeEndpoints.Safe}/${id}`;
     return this.delete(route);
   }
+  exportExcel() {
+    const route = `${SafeEndpoints.Safe}/safes-export-excel`;
+    return this.get(route);
+  }
 }

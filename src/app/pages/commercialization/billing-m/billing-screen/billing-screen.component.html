@@ -1,0 +1,680 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="title">FACTURACIÓN</h5>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <tabset #myTabset>
+        <tab id="A" heading="FACTURAS">
+          <section>
+            <app-card [header]="false" [footer]="false">
+              <div body style="margin-bottom: 0px !important">
+                <accordion
+                  style="margin-bottom: 0px !important"
+                  [isAnimated]="true">
+                  <accordion-group
+                    id="testAcc"
+                    style="margin-bottom: 0px !important"
+                    [isOpen]="true"
+                    [class.disabled]="false">
+                    <div
+                      accordion-heading
+                      class="d-flex justify-content-between">
+                      <h5>ACCIONES</h5>
+                    </div>
+                    <form
+                      class="form-material"
+                      style="margin-bottom: 0px !important"
+                      [formGroup]="form">
+                      <div class="row text-center justify-content-center mt-2">
+                        <div class="col-md-3">
+                          <form-field
+                            [control]="form.get('idEvent')"
+                            label="Id Evento">
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="idEvent" />
+                          </form-field>
+                        </div>
+                        <div class="col-md-3">
+                          <form-field
+                            [control]="form.get('idLotPublic')"
+                            label="Id Lote">
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="idLotPublic" />
+                          </form-field>
+                        </div>
+                        <div class="col-md-3">
+                          <form-field
+                            [control]="form.get('date')"
+                            label="Fecha">
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="date"
+                              bsDatepicker
+                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                          </form-field>
+                        </div>
+                      </div>
+                      <div class="row mt-5">
+                        <div class="col-3">
+                          <button
+                            (click)="genPrefacHundred()"
+                            [disabled]="!disabledGenPreFac100"
+                            class="btn btn-sm btn-block btn-primary active">
+                            Prefacturar Fallo
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="update()"
+                            [disabled]="!disabledUpdate"
+                            class="btn btn-sm btn-block btn-primary active">
+                            Act Datos Fallo
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="generateInvoices()"
+                            class="btn btn-sm btn-block btn-primary active">
+                            Genera Folios
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="visualBilling()"
+                            class="btn btn-sm btn-block btn-primary active">
+                            Visualiza Factura
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="cancelBilling()"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Cancelar Factura
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="attentionCustomer()"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Atención a Clientes
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="CFDI()"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Genera CFDI
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="faile()"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Actualiza a VEN
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="prefPaysParc()"
+                            [disabled]="!disabledGenXPays"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Pref Pagos Parciales
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="update2()"
+                            [disabled]="!disabledUpdate2"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Act Datos Pagos
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="selectAll()"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Selec. Todos
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="deleteFact()"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Rest. Todos
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="deleteSelect()"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Elimina x Selección
+                            <span
+                              ><i aria-hidden="true" class="fa fa-trash"></i
+                            ></span>
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="deleteEventLote()"
+                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            Elimina x Evento/Lote
+                            <span
+                              ><i aria-hidden="true" class="fa fa-trash"></i
+                            ></span>
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="export()"
+                            class="btn btn-sm btn-block btn-success active mt-2">
+                            Exporta <i class="bx bx-upload float-icon"></i>
+                          </button>
+                        </div>
+                        <div class="col-3">
+                          <button
+                            (click)="getDate()"
+                            class="btn btn-sm btn-block btn-info active mt-2">
+                            Consulta x Fecha
+                          </button>
+                        </div>
+                      </div>
+                      <div class="row text-center justify-content-center mt-5">
+                        <div class="col-md-3">
+                          <form-field
+                            [control]="form.get('fec')"
+                            label="Fecha Inicial:">
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="fec"
+                              bsDatepicker
+                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                          </form-field>
+                        </div>
+                        <div class="col-md-3">
+                          <form-field
+                            [control]="form.get('fec2')"
+                            label="Fecha Final:">
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="fec2"
+                              bsDatepicker
+                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                          </form-field>
+                        </div>
+                      </div>
+                      <div class="row text-center justify-content-center mt-5">
+                        <div class="col-md-2">
+                          <form-field
+                            *ngIf="disabledCause"
+                            [control]="form.get('cause')">
+                            <ngx-select
+                              [searchOnInit]="true"
+                              (change)="setValuesCause($event)"
+                              [form]="form"
+                              control="cause"
+                              [data]="causeSelect"
+                              value="id"
+                              bindLabel="id"
+                              label="Causa"
+                              (fetchItems)="getCauses($event)">
+                            </ngx-select>
+                            <!-- <input [readonly]="!disabledCause" type="text" class="form-control"
+                              formControlName="cause" /> -->
+                          </form-field>
+                        </div>
+                        <div class="col-md-6">
+                          <form-field
+                            *ngIf="disabledDescause"
+                            [control]="form.get('descause')"
+                            label="Causa">
+                            <input
+                              [readonly]="!disabledDescause"
+                              type="text"
+                              class="form-control"
+                              formControlName="descause" />
+                          </form-field>
+                        </div>
+                        <div class="col-md-2">
+                          <button
+                            *ngIf="disabledRegCanc"
+                            [disabled]="!disabledRegCanc"
+                            (click)="regCanc()"
+                            class="btn btn-sm btn-block btn-primary active">
+                            Anular
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </accordion-group>
+                </accordion>
+              </div>
+            </app-card>
+            <app-card [header]="false" [footer]="true">
+              <div class="row" body>
+                <div class="ch-content" header>
+                  <div
+                    class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="title">FACTURAS</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="row text-end justify-content-end">
+                  <div
+                    class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+                    <app-columns-select
+                      [defaultColumns]="8"
+                      [(settings)]="settings"></app-columns-select>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <form-loader *ngIf="loading"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loading ? '0px' : '300px' }">
+                    <ng2-smart-table
+                      #myTable
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings"
+                      [source]="data"
+                      (userRowSelect)="rowsSelected($event)">
+                    </ng2-smart-table>
+                  </ng-scrollbar>
+                  <app-pagination [params]="params" [totalItems]="totalItems">
+                  </app-pagination>
+                </div>
+              </div>
+              <div footer>
+                <accordion
+                  style="margin-bottom: 0px !important"
+                  [isAnimated]="true">
+                  <accordion-group
+                    id="testAcc"
+                    style="margin-bottom: 0px !important"
+                    [isOpen]="true"
+                    [class.disabled]="false">
+                    <div
+                      accordion-heading
+                      class="d-flex justify-content-between">
+                      <h5>ACCIONES</h5>
+                    </div>
+                    <form class="form-material" [formGroup]="form2">
+                      <div class="row m-1">
+                        <div class="col-12">
+                          <div class="row">
+                            <div class="col-md-1">
+                              <form-field [control]="form2.get('xLote')">
+                                <form-check
+                                  id="checkbox_fcomer"
+                                  label="X Lote"
+                                  for="Xlote">
+                                  <input
+                                    id="Xlote"
+                                    formControlName="xLote"
+                                    class="form-control"
+                                    type="checkbox" />
+                                </form-check>
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('order')"
+                                label="Ordenar">
+                                <ng-select
+                                  (change)="changeOpt($event)"
+                                  formControlName="order"
+                                  class="form-control pt-1">
+                                  <ng-option value="1">LOTE</ng-option>
+                                  <ng-option value="2">REGIONAL</ng-option>
+                                  <ng-option value="4">FOLIO</ng-option>
+                                </ng-select>
+                                <!-- <input type="text" class="form-control" formControlName="order" /> -->
+                              </form-field>
+                            </div>
+                            <div class="col-md-4">
+                              <form-field
+                                [control]="form2.get('txtErrorRFC')"
+                                label="TXT Error RFC">
+                                <input
+                                  readonly
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="txtErrorRFC" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-4">
+                              <form-field
+                                [control]="form2.get('legend1')"
+                                label="Leyenda 1">
+                                <input
+                                  readonly
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="legend1" />
+                              </form-field>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12 mt-5">
+                          <div class="row">
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('counter')"
+                                label="Número de Facturas:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="counter" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('amountE')"
+                                label="Importe Egresos:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="amountE" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('ivaE')"
+                                label="IVA Egresos">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="ivaE" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('totalE')"
+                                label="Total Egresos">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="totalE" />
+                              </form-field>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12 mt-5">
+                          <div class="row">
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('counter2')"
+                                label="Total de Bienes:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="counter2" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('amountI')"
+                                label="Importe Ingresos:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="amountI" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('ivaI')"
+                                label="IVA Ingresos:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="ivaI" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('totalI')"
+                                label="Total Ingresos:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="totalI" />
+                              </form-field>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12 mt-5">
+                          <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('total8')"
+                                label="Total Importe:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="total8" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('total7')"
+                                label="Total IVA:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="total7" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('total3')"
+                                label="Total:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="total3" />
+                              </form-field>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <hr />
+                          <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('amountPay')"
+                                label="Total Pago:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="amountPay" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('ivaPay')"
+                                label="Total Pago:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="ivaPay" />
+                              </form-field>
+                            </div>
+                            <div class="col-md-3">
+                              <form-field
+                                [control]="form2.get('totalPay')"
+                                label="Total Pago:">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  formControlName="totalPay" />
+                              </form-field>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </accordion-group>
+                </accordion>
+              </div>
+            </app-card>
+            <app-card [header]="false" [footer]="false">
+              <div class="row" body>
+                <div class="ch-content" header>
+                  <div
+                    class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="title">DETALLE DE LA FACTURA</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="row text-end justify-content-end">
+                  <div
+                    class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+                    <app-columns-select
+                      [defaultColumns]="7"
+                      [(settings)]="settings2"
+                      [leftList]="true"></app-columns-select>
+                    <div>
+                      <button
+                        type="button"
+                        class="btn btn-primary btn-sm active mb-3 mr-3">
+                        Eliminar
+                        <span
+                          ><i aria-hidden="true" class="fa fa-trash"></i
+                        ></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <form-loader *ngIf="loading2"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+                    <ng2-smart-table
+                      #myTable
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings2"
+                      [source]="data2">
+                    </ng2-smart-table>
+                  </ng-scrollbar>
+                  <app-pagination [params]="params2" [totalItems]="totalItems2">
+                  </app-pagination>
+                </div>
+              </div>
+            </app-card>
+          </section>
+        </tab>
+        <tab id="B" heading="ERRORES Y DATOS NULOS">
+          <section>
+            <app-card [header]="false" [footer]="false">
+              <div class="row" body>
+                <div class="ch-content" header>
+                  <div
+                    class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="title">ERRORES Y DATOS NULOS</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <form-loader *ngIf="loading3"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loading3 ? '0px' : '300px' }">
+                    <ng2-smart-table
+                      #myTable
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings3"
+                      [source]="data3">
+                    </ng2-smart-table>
+                  </ng-scrollbar>
+                  <app-pagination [params]="params3" [totalItems]="totalItems3">
+                  </app-pagination>
+                </div>
+              </div>
+            </app-card>
+          </section>
+        </tab>
+        <tab id="C" heading="SIN FOLIO EN SIRSAE">
+          <section>
+            <app-card [header]="false" [footer]="false">
+              <div class="row" body>
+                <div class="ch-content" header>
+                  <div
+                    class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="title">ERRORES AL OBTENER FOLIOS EN SIRSAE</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <form-loader *ngIf="loading4"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loading4 ? '0px' : '300px' }">
+                    <ng2-smart-table
+                      #myTable
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings4"
+                      [source]="data4">
+                    </ng2-smart-table>
+                  </ng-scrollbar>
+                  <app-pagination [params]="params4" [totalItems]="totalItems4">
+                  </app-pagination>
+                </div>
+              </div>
+            </app-card>
+          </section>
+        </tab>
+        <tab id="D" heading="ACTUALIZACIÓN DE EVENTOS">
+          <section>
+            <app-card [header]="false" [footer]="false">
+              <div class="row" body>
+                <div class="row text-end justify-content-end">
+                  <div
+                    class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+                    <app-columns-select
+                      [defaultColumns]="7"
+                      [(settings)]="settings5"
+                      [leftList]="true"></app-columns-select>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <form-loader *ngIf="loading5"></form-loader>
+                  <ng-scrollbar
+                    [track]="'all'"
+                    [ngStyle]="{ height: loading5 ? '0px' : '300px' }">
+                    <ng2-smart-table
+                      #myTable
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings5"
+                      [source]="data5">
+                    </ng2-smart-table>
+                  </ng-scrollbar>
+                  <app-pagination [params]="params5" [totalItems]="totalItems5">
+                  </app-pagination>
+                </div>
+              </div>
+            </app-card>
+          </section>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

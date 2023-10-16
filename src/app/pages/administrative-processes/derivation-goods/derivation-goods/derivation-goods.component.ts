@@ -868,10 +868,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       if (q.isConfirmed) {
         this.loader.load = true;
         let good = this.good;
+        console.log(this.good);
         delete good.id;
         delete good.goodId;
         delete good.statusDetails;
         delete good.menaje;
+        delete good.agreementDate;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
         good.almacen =
           this.good.almacen != null ? this.good.almacen.idWarehouse : '';
