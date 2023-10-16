@@ -1359,7 +1359,7 @@ export class PerformProgrammingFormComponent
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idTransferer'] = `$eq:${this.transferentId}`;
     //params['filter.cveStatus'] = `$eq:${this.stateKey}`;
-    params['filter.cveStatus'] = `$eq:${this.idState}`;
+    //params['filter.cveStatus'] = `$eq:${this.idState}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
     params['sortBy'] = 'authorityName:ASC';
     delete params['search'];
