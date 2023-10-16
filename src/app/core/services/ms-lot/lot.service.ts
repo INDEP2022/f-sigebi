@@ -450,7 +450,7 @@ export class LotService extends HttpService {
   }
 
   getEatEstLot(params: _Params) {
-    return this.get(LotEndpoints.EatEstLot, params);
+    return this.get<IListResponse>(LotEndpoints.EatEstLot, params);
   }
   pupEntLote(body: any) {
     return this.post(LotEndpoints.pupRemiEntLote, body);
