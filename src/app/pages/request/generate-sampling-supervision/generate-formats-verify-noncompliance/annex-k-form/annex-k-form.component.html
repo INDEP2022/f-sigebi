@@ -10,23 +10,28 @@
         </div>
       </div>
       <form
-        [formGroup]="detailForm"
+        [formGroup]="annexForm"
         class="form-material"
         style="margin-top: 2rem">
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="detailForm.get('name')" label="&#42;Nombre">
-              <input type="text" class="form-control" formControlName="name" />
+            <form-field
+              [control]="annexForm.get('supplierk')"
+              label="&#42;Nombre">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="supplierk" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="detailForm.get('position')"
+              [control]="annexForm.get('postSupplierk')"
               label="&#42;Cargo">
               <input
                 type="text"
                 class="form-control"
-                formControlName="position" />
+                formControlName="postSupplierk" />
             </form-field>
           </div>
         </div>
@@ -42,8 +47,8 @@
                   type="radio"
                   id="electronica"
                   style="height: 1.5rem !important"
-                  formControlName="typeSign"
-                  value="electronica" />
+                  formControlName="guySignatureSupplierk"
+                  value="Y" />
                 <label class="label-annexk" for="electronica"
                   >Electr&oacute;nica</label
                 >
@@ -51,12 +56,12 @@
               <div>
                 <input
                   type="radio"
-                  id="autograma"
+                  id="autografa"
                   style="height: 1.5rem !important"
-                  formControlName="typeSign"
-                  value="autograma" />
-                <label class="label-annexk" for="autograma"
-                  >Aut&oacute;grama</label
+                  formControlName="guySignatureSupplierk"
+                  value="N" />
+                <label class="label-annexk" for="autografa"
+                  >Aut&oacute;grafa</label
                 >
               </div>
             </div>
@@ -71,44 +76,54 @@
         </div>
       </div>
       <form
-        [formGroup]="participantDataForm"
+        [formGroup]="annexForm"
         class="form-material"
         style="margin-top: 2rem">
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
-              [control]="participantDataForm.get('name1')"
+              [control]="annexForm.get('competitor1')"
               label="&#42;Nombre">
-              <input type="text" class="form-control" formControlName="name1" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="competitor1"
+                [readOnly]="readonly" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
-              [control]="participantDataForm.get('position1')"
+              [control]="annexForm.get('postCompetitor1')"
               label="&#42;Cargo">
               <input
                 type="text"
                 class="form-control"
-                formControlName="position1" />
+                formControlName="postCompetitor1"
+                [readOnly]="readonly" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
-              [control]="participantDataForm.get('name2')"
+              [control]="annexForm.get('competitor2')"
               label="&#42;Nombre">
-              <input type="text" class="form-control" formControlName="name2" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="competitor2"
+                [readOnly]="readonly" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
-              [control]="participantDataForm.get('position2')"
+              [control]="annexForm.get('postCompetitor2')"
               label="&#42;Cargo">
               <input
                 type="text"
                 class="form-control"
-                formControlName="position2" />
+                formControlName="postCompetitor2"
+                [readOnly]="readonly" />
             </form-field>
           </div>
         </div>
@@ -121,28 +136,28 @@
         </div>
       </div>
       <form
-        [formGroup]="detailAnnexForm"
+        [formGroup]="annexForm"
         class="form-material"
         style="margin-top: 2rem">
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
-              [control]="detailAnnexForm.get('warehouseManager')"
+              [control]="annexForm.get('nameManagersoul')"
               label="Gerente de Almac&eacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="warehouseManager" />
+                formControlName="nameManagersoul" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
-              [control]="detailAnnexForm.get('relevantFacts')"
+              [control]="annexForm.get('factsrelevant')"
               label="Hechos Relevantes">
               <textarea
                 type="text"
                 class="form-control"
-                formControlName="relevantFacts">
+                formControlName="factsrelevant">
               </textarea>
             </form-field>
           </div>
@@ -150,13 +165,27 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
-              [control]="detailAnnexForm.get('agreements')"
+              [control]="annexForm.get('agreements')"
               label="Acuerdos">
               <textarea
                 type="text"
                 class="form-control"
                 formControlName="agreements">
               </textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="annexForm?.get('daterepService')"
+              label="Fecha reposici&oacute;n servicios">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="daterepService"
+                placeholder=""
+                bsDatepicker />
             </form-field>
           </div>
         </div>

@@ -26,7 +26,6 @@ export class AnnexDataComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     //this.initForm();
-    console.log(this.sampleOrderForm);
     if (this.typeComponent != 'generate-query') {
       this.readonly = true;
     }
@@ -50,7 +49,6 @@ export class AnnexDataComponent extends BasePage implements OnInit {
     params['filter.idSamplingOrder'] = `$eq:${this.SampleOrderId}`;
     this.orderService.getAllSampleOrder(params).subscribe({
       next: resp => {
-        console.log(resp.data[0]);
         this.sampleOrderForm.patchValue(resp.data[0]);
 
         if (resp.data[0].datebreaches && resp.data[0].daterepService) {
