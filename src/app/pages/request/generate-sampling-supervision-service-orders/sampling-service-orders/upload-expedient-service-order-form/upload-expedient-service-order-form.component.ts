@@ -1,8 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -37,6 +40,7 @@ export class UploadExpedientServiceOrderFormComponent
   extends BasePage
   implements OnInit
 {
+  @ViewChild('table', { static: false }) table: any;
   showSearchForm: boolean = false;
   expedientForm: ModelForm<any>;
   typeDocSelected: any = [];
@@ -72,7 +76,6 @@ export class UploadExpedientServiceOrderFormComponent
       ...this.columns.button,
       onComponentInitFunction: (instance?: any) => {
         instance.btnclick1.subscribe((data: any) => {
-          console.log(data);
           this.openDetail(data);
         }),
           instance.btnclick2.subscribe((data: any) => {
@@ -100,6 +103,7 @@ export class UploadExpedientServiceOrderFormComponent
       xnoOficio: [null],
       xtipoTransferencia: [null, [Validators.pattern(STRING_PATTERN)]],
       xComments: [null, [Validators.pattern(STRING_PATTERN)]],
+      xidExpediente: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
     });
 
     this.setValues();
@@ -208,8 +212,17 @@ export class UploadExpedientServiceOrderFormComponent
         });
 
         this.paragraphs = resp.data;
+
+        this.setColumnsTable();
       },
     });
+  }
+
+  setColumnsTable() {
+    const table = this.table.grid.getColumns();
+    if (this.typeComponent == 'sample-request') {
+      table[2].hide = true;
+    }
   }
 
   close() {
@@ -218,6 +231,11 @@ export class UploadExpedientServiceOrderFormComponent
 
   setValues() {
     if (this.typeComponent == 'sample-request') {
+      this.expedientForm.controls['xidSolicitud'].setValue(
+        this.data[0].requestId
+      );
+    }
+    if (this.typeComponent == 'review-results') {
       this.expedientForm.controls['xidSolicitud'].setValue(
         this.data[0].requestId
       );
