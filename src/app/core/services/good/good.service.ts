@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
 import { IAttribGoodBad, IGoodSiab } from '../../models/ms-good/good';
+
 @Injectable({
   providedIn: 'root',
 })
