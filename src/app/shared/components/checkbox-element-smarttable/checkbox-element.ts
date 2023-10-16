@@ -13,7 +13,7 @@ import {
   template: `
     <div class="row justify-content-center">
       <input
-        [disabled]="disabled"
+        [disabled]="true"
         #box
         id="checkbox-input"
         class="common-check custom-checkbox"
