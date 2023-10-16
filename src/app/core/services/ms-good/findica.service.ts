@@ -38,4 +38,15 @@ export class FIndicaService extends HttpService {
   postGetListGood(body: Object, params: ListParams) {
     return this.post('update-good-status/getListGood', body, params);
   }
+  getMethoPagof(body: any) {
+    return this.post(GoodProcessPoints.FnMethodPagof, body);
+  }
+
+  getRegFinalFile(body: any, params: ListParams) {
+    return this.post(GoodProcessPoints.RegFinalFile, body, params);
+  }
+
+  getRegFile(body: any, params: ListParams) {
+    return this.post(GoodProcessPoints.RegFile, body, params);
+  }
 }

@@ -43,7 +43,7 @@ export const BILLING_PAYMENTS_INVOICE_COLUMNS = {
     sort: false,
   },
   id_factura: {
-    title: 'ID de Factura',
+    title: 'Id de Factura',
     sort: false,
   },
 };
