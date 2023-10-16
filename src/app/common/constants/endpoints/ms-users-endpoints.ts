@@ -25,4 +25,5 @@ export enum UserEndpoints {
   RecDeleg = 'application/recDeleg',
   RecSubDel = 'application/recSubdel',
   RecVault = 'application/recVault',
+  viewPrev = 'application/btnViewPrev',
 }

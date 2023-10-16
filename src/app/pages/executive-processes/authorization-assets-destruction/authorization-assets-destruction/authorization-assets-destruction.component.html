@@ -11,7 +11,9 @@
     <div body>
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('idExpedient')" label="Expediente">
+          <form-field
+            [control]="form.get('idExpedient')"
+            label="No. Expediente">
             <input
               type="number"
               class="form-control"
@@ -65,7 +67,7 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="form.get('keyPenalty')" label="Toca penal">
+          <form-field [control]="form.get('keyPenalty')" label="Toca Penal">
             <input
               type="text"
               class="form-control"
@@ -75,12 +77,13 @@
 
         <div class="col">
           <button
+            [disabled]="textDisabled"
             (click)="addGood()"
             type="button"
             tooltip="Agregar"
             containerClass="tooltip-style"
             class="btn btn-info btn-sm active ml-2 mr-2">
-            Agregar Bienes <i class="bx bx-plus bx-sm float-icon"></i>
+            Agregar <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
@@ -91,7 +94,7 @@
     <div body>
       <div class="row pt-5">
         <div class="col-md-2">
-          <form-field [control]="form.get('noAuth')" label="No">
+          <form-field [control]="form.get('noAuth')" label="No. Acta">
             <input
               type="text"
               class="form-control"
@@ -103,7 +106,7 @@
         <div class="col-md-4">
           <form-field
             [control]="form.get('authNotice')"
-            label="Oficio de autorizaci&oacute;n">
+            label="Oficio de Autorizaci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -121,18 +124,18 @@
           </form-field>
         </div>
         <div class="col">
-          <button (click)="masive()" class="btn btn-sm btn-info">
-            <i class="fa fa-arrow-down"></i>
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button
-            (click)="closed()"
-            type="button"
-            class="btn btn-sm btn-danger active"
-            [disabled]="textDisabled">
-            {{ textButton }}
-          </button>
+          <div class="justify-content-start">
+            <button (click)="masive()" class="btn btn-sm btn-info mr-3">
+              <i class="fa fa-arrow-down"></i>
+            </button>
+            <button
+              (click)="closed()"
+              type="button"
+              class="btn btn-sm btn-danger active"
+              [disabled]="textDisabled">
+              {{ textButton }}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -209,7 +212,7 @@
           [formControlName]="'universalFolio'"
           [cveDocument]="form.get('act').value"
           [noExpedient]="expediente"
-          [actaSC]="true"
+          [actaSC]="false"
           [statusProceeding]="form.get('statusAct').value"
           [cveScreen]="'FACTDIRAPROBDESTR'"
           [reportPrint]="'RGERGENSOLICDIGIT'">

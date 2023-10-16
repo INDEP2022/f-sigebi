@@ -54,6 +54,10 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { CharacteristicGoodCellComponent } from 'src/app/pages/administrative-processes/change-of-good-classification/change-of-good-classification/characteristicGoodCell/characteristic-good-cell.component';
+import { ATRIBUT_ACT_COLUMNS } from 'src/app/pages/administrative-processes/change-of-good-classification/change-of-good-classification/columns';
+import { ChangeOfGoodCharacteristicService } from 'src/app/pages/administrative-processes/change-of-good-classification/services/change-of-good-classification.service';
+import { getClassColour } from 'src/app/pages/general-processes/goods-characteristics/goods-characteristics/good-table-vals/good-table-vals.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
@@ -145,6 +149,15 @@ export class DetailAssetsTabComponentComponent
   selectTypeAirplane = new DefaultSelect<any>();
   selectTypeUseAirCrafte = new DefaultSelect<any>();
 
+  atributActSettings: any;
+  atributNewSettings: any;
+  initValue = false;
+  goodChange = 0;
+  goodChange2 = 0;
+  classificationNumber: number = null;
+
+  service = inject(ChangeOfGoodCharacteristicService);
+
   router = inject(ActivatedRoute);
   typeRelevantSevice = inject(TypeRelevantService);
   genericService = inject(GenericService);
@@ -188,6 +201,12 @@ export class DetailAssetsTabComponentComponent
     private strategyService: StrategyServiceService
   ) {
     super();
+    this.atributActSettings = {
+      ...this.settings,
+      actions: null,
+      hideSubHeader: false,
+      columns: { ...ATRIBUT_ACT_COLUMNS },
+    };
   }
 
   getDomicilieGood(id: number) {
@@ -369,12 +388,23 @@ export class DetailAssetsTabComponentComponent
 
   ngOnInit(): void {
     this.detailAssetsInfo = this.detailAssets.value;
+    this.classificationNumber = +this.detailAssetsInfo.goodClassNumber;
     this.initForm();
     this.getDestinyTransfer(new ListParams(), this.detailAssetsInfo.requestId);
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
     //this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
+
+    /**
+     * Se inicializa el value de la tabla
+     */
+    if (this.detailAssetsInfo != undefined) {
+      this.initValue = true;
+      setTimeout(() => {
+        this.goodChange2++;
+      }, 2000);
+    }
 
     if (
       this.requestObject != undefined &&
@@ -386,6 +416,39 @@ export class DetailAssetsTabComponentComponent
     if (this.detailAssets.controls['brand'].value == null) {
       this.getBrand(new ListParams());
     }
+
+    /**
+     * Se settea las columnas de la tabla Val
+     */
+    this.atributNewSettings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: '',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: false,
+      },
+      columns: {
+        ...ATRIBUT_ACT_COLUMNS,
+        value: {
+          ...ATRIBUT_ACT_COLUMNS.value,
+          type: 'custom',
+          valuePrepareFunction: (cell: any, row: any) => {
+            return { value: row, good: this.detailAssetsInfo };
+          },
+          renderComponent: CharacteristicGoodCellComponent,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        return (
+          getClassColour(row.data, false) +
+          ' ' +
+          (row.data.tableCd ? '' : 'notTableCd')
+        );
+      },
+    };
   }
 
   initForm() {
@@ -1399,6 +1462,14 @@ export class DetailAssetsTabComponentComponent
     }
   }
   displayTypeTapInformation(typeRelevantId: number) {
+    /*if (this.detailAssets.get('id').value == null) {
+      return;
+    }
+    this.detailAssetsInfo = this.detailAssets.value;
+    this.classificationNumber = +this.detailAssetsInfo.goodClassNumber;
+    this.initValue = true;
+    this.goodChange2++;*/
+
     switch (typeRelevantId) {
       case 1:
         this.getGoodEstateTab();
@@ -1424,6 +1495,9 @@ export class DetailAssetsTabComponentComponent
         break;
       case 8:
         this.closeTabs();
+        this.detailAssetsInfo = [];
+        this.classificationNumber = null;
+        this.service.data = [];
         this.otherAssets = true;
         break;
       default:
@@ -1442,6 +1516,9 @@ export class DetailAssetsTabComponentComponent
   }
 
   async save() {
+    setTimeout(() => {
+      this.goodChange2++;
+    }, 100);
     const domicilie = this.domicileForm.getRawValue();
     //se guarda bien domicilio
     if (domicilie.id !== null) {
@@ -1550,7 +1627,8 @@ export class DetailAssetsTabComponentComponent
   //guardar el bien inmueble
   saveGoodRealState() {
     return new Promise((resolve, reject) => {
-      let domicilio = this.goodDomicilieForm.getRawValue();
+      //let domicilio = this.goodDomicilieForm.getRawValue();
+      let domicilio = this.fillUpForm();
       domicilio.addressId = this.domicileForm.controls['id'].value;
       domicilio.creationDate = new Date().toISOString();
       domicilio.modificationDate = new Date().toISOString();
@@ -1558,7 +1636,7 @@ export class DetailAssetsTabComponentComponent
       const username = this.authService.decodeToken().preferred_username;
       domicilio.userCreation = username;
       domicilio.userModification = username;
-      domicilio.id = this.detailAssets.controls['id'].value;
+      domicilio.id = this.detailAssets.controls['id'].value; //id good
 
       this.goodEstateService.create(domicilio).subscribe({
         next: resp => {
@@ -1768,6 +1846,15 @@ export class DetailAssetsTabComponentComponent
       this.appraisal =
         this.detailAssets.controls['appraisal'].value === 'Y' ? true : false;
     }
+
+    /**
+     * descomentar en caso de usar la tabla
+     */
+    /* this.detailAssets.controls['id'].valueChanges.subscribe((data: any) => {
+      const goodType = this.detailAssets.controls['goodTypeId'].value;
+      this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
+      this.displayTypeTapInformation(Number(goodType));
+    }); */
   }
 
   getGoodEstate() {
@@ -1860,5 +1947,33 @@ export class DetailAssetsTabComponentComponent
         },
       });
     });
+  }
+
+  get dataAtribute() {
+    return this.service.data;
+  }
+
+  fillUpForm() {
+    const realState: IGoodRealState = this.goodDomicilieForm.value;
+    console.log(this.dataAtribute);
+    for (let i = 0; i < this.dataAtribute.length; i++) {
+      const element = this.dataAtribute[i];
+      if (element.column == 'val40') realState.description = element.value;
+
+      if (element.column == 'val23')
+        realState.vigilanceRequired = element.value;
+      if (element.column == 'val7') realState.propertyType = element.value;
+      if (element.column == 'val5') realState.surfaceMts = +element.value; //valor positivo
+      if (element.column == 'val6') realState.consSurfaceMts = +element.value; //valor positivo
+      if (element.column == 'val45') realState.publicDeed = element.value;
+      if (element.column == 'val20') realState.pubRegProperty = element.value;
+      if (element.column == 'val14') realState.appraisalValue = +element.value; //valor del avaluo
+      if (element.column == 'val35') realState.appraisalDate = element.value;
+      if (element.column == 'val10') realState.propTitleFolio = element.value;
+      if (element.column == 'val26') realState.vouchersWater = element.value;
+      if (element.column == 'val26') realState.vouchersWater = element.value;
+    }
+
+    return realState;
   }
 }

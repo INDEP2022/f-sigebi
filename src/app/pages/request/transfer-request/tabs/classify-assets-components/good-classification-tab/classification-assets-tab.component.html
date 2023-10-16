@@ -55,10 +55,8 @@
     class="pt-4"
     *ngIf="goodSelect.length === 1 && isGoodSelected === true && !formLoading">
     <tabset class="md-tabs">
-      <tab
-        heading="Clasificación del Bien"
-        id="tab1"
-        *ngIf="typeTransfer == 'MANUAL'">
+      <!-- *ngIf="typeTransfer == 'MANUAL'" -->
+      <tab heading="Clasificación del Bien" id="tab1">
         <app-classify-assets-tab
           [requestObject]="request"
           [typeDoc]="typeDoc"
@@ -71,7 +69,7 @@
             updateTableEvent($event)
           "></app-classify-assets-tab>
       </tab>
-      <tab
+      <!-- <tab
         heading="Clasificación del Bien"
         id="tab11"
         *ngIf="typeTransfer != 'MANUAL'">
@@ -81,8 +79,8 @@
           [process]="process"
           (classifyChildSaveFraction)="updateTableEvent($event)"
           [typeOfTransfer]="typeTransfer"></app-classify-assets-tab>
-      </tab>
-      <tab heading="Atributos del Bien" *ngIf="typeTransfer != 'MANUAL'">
+      </tab> -->
+      <!-- <tab heading="Atributos del Bien" *ngIf="typeTransfer != 'MANUAL'">
         <div
           *ngIf="
             goodSelect.length === 1 && isGoodSelected === true && !formLoading
@@ -97,7 +95,7 @@
               updateTableInfo($event)
             "></app-detail-assets-tab-component>
         </div>
-      </tab>
+      </tab> -->
 
       <tab heading="Aclaraciones">
         <app-clarification-list-tab

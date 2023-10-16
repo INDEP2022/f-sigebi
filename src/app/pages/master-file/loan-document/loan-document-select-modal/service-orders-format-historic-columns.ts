@@ -1,26 +1,21 @@
 export const SERVICEORDERSFORMASELECT_COLUMNS = {
-  id: {
-    title: 'id',
+  loanNumber: {
+    title: 'No. de Préstamo',
     width: '10%',
     sort: false,
   },
-  processNumber: {
-    title: 'No. Proceso',
-    width: '30%',
-    sort: false,
-  },
-  status: {
-    title: 'Estado',
+  // recordNumber: {
+  //   title: 'No. de Registro',
+  //   width: '30%',
+  //   sort: false,
+  // },
+  loanUser: {
+    title: 'Usuario de Préstamo',
     width: '10%',
     sort: false,
   },
-  formatKey: {
-    title: 'Cve. Formato',
-    width: '10%',
-    sort: false,
-  },
-  recordNumber: {
-    title: 'No. Registro',
+  observations: {
+    title: 'Observaciones',
     width: '10%',
     sort: false,
   },

@@ -7,14 +7,21 @@ import { DonationRepository } from 'src/app/common/repository/repositories/ms-do
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IDetailDonation,
   IDonationGood,
   IFilterDonation,
   IGoodDonation,
 } from '../../models/ms-donation/donation.model';
+import {
+  IDeleteGoodDon,
+  IInventaryDelete,
+  IInventaryRequest,
+} from '../../models/sirsae-model/proposel-model/proposel-model';
 
 const api: string = DonationEndPoint.donation;
 const donationEvent = DonationEndPoint.eventComDonation;
 const endpoint: string = DonationEndPoint.eventComDonation;
+const route: string = DonationEndPoint.RequestGoodDon;
 @Injectable({
   providedIn: 'root',
 })
@@ -133,5 +140,26 @@ export class DonationService
   }
   getGoodsDonation(params: ListParams) {
     return this.get(DonationEndPoint.GoodsForDonation, params);
+  }
+  getGoodRequest(params: ListParams) {
+    return this.get(DonationEndPoint.RequestGoodDon, params);
+  }
+  createDetail(body: IDetailDonation) {
+    return this.post(DonationEndPoint.DetailEventComDon, body);
+  }
+  deleteGoodDon(body: IDeleteGoodDon) {
+    return this.delete(DonationEndPoint.DeleteGoodDon, body);
+  }
+  getInventaryGood(body: IInventaryRequest) {
+    return this.post(DonationEndPoint.Inventary, body);
+  }
+  createInventary(body: IInventaryRequest) {
+    return this.post(DonationEndPoint.CreateInventary, body);
+  }
+  deleteGoodReq(body: IInventaryDelete) {
+    return this.delete(DonationEndPoint.CreateInventary, body);
+  }
+  getInventory(params: ListParams) {
+    return this.get(DonationEndPoint.CreateInventary, params);
   }
 }

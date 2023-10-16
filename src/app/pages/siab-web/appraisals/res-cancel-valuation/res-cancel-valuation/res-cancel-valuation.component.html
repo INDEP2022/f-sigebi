@@ -34,9 +34,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="event"
-                [(ngModel)]="event"
-                (change)="resetVariables()" />
+                formControlName="event" />
             </form-field>
           </div>
           <div class="col-md-7">
@@ -58,24 +56,12 @@
           <div class="col-md-3"></div>
           <div class="col-md-4" style="margin-left: -20px">
             <form-radio label="Oficio de Respuesta">
-              <input
-                type="radio"
-                value="cat"
-                [(ngModel)]="radioValueOne"
-                (change)="onRadioChange()"
-                [value]="true"
-                formControlName="radioOne" />
+              <input type="radio" value="2" formControlName="radio" />
             </form-radio>
           </div>
           <div class="col-md-4 ml-auto">
             <form-radio label="Oficio de Cancelación">
-              <input
-                type="radio"
-                value="dog"
-                formControlName="radioTwo"
-                [(ngModel)]="redioValueTwo"
-                (change)="onRadioChangeTwo()"
-                [value]="true" />
+              <input type="radio" value="3" formControlName="radio" />
             </form-radio>
           </div>
           <div class="col-md-2"></div>
@@ -84,7 +70,7 @@
         <div class="row mt-3">
           <div class="col-md-4">
             <form-field [control]="form.get('fol')" label="Folio">
-              <input type="text" class="form-control" formControlName="key" />
+              <input type="text" class="form-control" formControlName="fol" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -151,7 +137,29 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('dest')">
+            <ng-custom-select-loading
+              [form]="form"
+              [path]="pathDest"
+              [bodyPost]="bodyDest"
+              [updateValues]="true"
+              typeInput="post"
+              label="Destinatario"
+              formControlName="dest"
+              paramSearch="filter.usuario"
+              prefixSearch="$eq"
+              value="usuario"
+              bindLabel="nombre"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ng-custom-select-loading>
+            <ng-template #userLabel let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+            <ng-template #userOption let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+
+            <!-- <form-field [control]="form.get('dest')">
               <ngx-select
                 (fetchItems)="queryAllUsersTwo($event)"
                 [searchOnInit]="true"
@@ -169,7 +177,7 @@
                   >{{ item.usuario }} - {{ item.nombre }}</ng-template
                 >
               </ngx-select>
-            </form-field>
+            </form-field> -->
           </div>
         </div>
         <!--  -->
@@ -200,6 +208,14 @@
       </form>
     </div>
     <br />
+    <!--  -->
+    <div class="d-flex justify-content-end">
+      <div class="ml-auto">
+        <button class="btn btn-danger btn-sm active" (click)="reset()">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
+    </div>
     <!--  -->
     <div class="mt-5">
       <div>
@@ -321,7 +337,7 @@
                         [(ngModel)]="radioValueThree"
                         (change)="onRadioChangeThree()"
                         [value]="true"
-                        formControlName="C" />
+                        formControlName="radioThree" />
                     </form-radio>
                   </div>
                   <!--  -->
@@ -336,6 +352,7 @@
                           value="usuario"
                           label="Usuario y Nombre"
                           bindLabel="nombre"
+                          [(ngModel)]="rowCopySelect"
                           control="user"
                           (change)="getUsersDesList()"
                           [labelTemplate]="userLabel"
@@ -358,6 +375,7 @@
                           [data]="fullDelegations"
                           [form]="formThree"
                           bindLabel="description"
+                          [(ngModel)]="rowCopySelect"
                           control="del"
                           (change)="getDepartments()">
                         </ngx-select>
@@ -386,42 +404,32 @@
                           containerClass="tooltip-style"
                           class="btn btn-info btn-sm active"
                           (click)="getAddUser()">
-                          Agregar Usuario
+                          Agregar
                           <i class="bx bx-plus bx-sm float-icon"></i>
                         </button>
                       </div>
                     </div>
                     <div class="ml-3">
                       <div class="justify-content-center">
-                        <button type="button" class="btn btn-red btn-sm active">
-                          Quitar Usuario
+                        <button
+                          type="button"
+                          class="btn btn-red btn-sm active"
+                          (click)="removeUserCopy()">
+                          Eliminar
                           <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
                       </div>
                     </div>
                   </div>
                   <!--  -->
-                  <div *ngIf="visibleTxtCopy">
-                    <form-field [control]="formThree.get('copy')">
-                      <ngx-select
-                        (fetchItems)="getUsersDesList($event)"
-                        [searchOnInit]="true"
-                        [data]="usersList"
-                        [form]="formThree"
-                        value="usuario"
-                        label="Usuario y Nombre Copia"
-                        bindLabel="nombre"
-                        control="copy"
-                        (change)="getUsersDesList()"
-                        [labelTemplate]="userLabel"
-                        [optionTemplate]="userOption">
-                      </ngx-select>
-                      <ng-template #userLabel let-item="item"
-                        >{{ item.usuario }} - {{ item.nombre }}</ng-template
-                      >
-                      <ng-template #userOption let-item="item"
-                        >{{ item.usuario }} - {{ item.nombre }}</ng-template
-                      >
+                  <div>
+                    <form-field [control]="formThree.get('copy')" label="Copia">
+                      <select class="form-control" formControlName="copy">
+                        <option><small> Seleccione </small></option>
+                        <option *ngFor="let item of arrayCopy">
+                          {{ item }}
+                        </option>
+                      </select>
                     </form-field>
                   </div>
                   <!--  -->

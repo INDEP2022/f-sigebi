@@ -1,89 +1,161 @@
+import { DecimalPipe } from '@angular/common';
+import { format } from 'date-fns';
+
 export const APPRAISAL_COLUMNS = {
-  idEvent: {
-    title: 'ID Evento',
-    type: 'string',
-    sort: false,
-  },
+  // idEvent: {
+  //   title: 'ID Evento',
+  //
+  //   sort: false,
+  // },
   idAppraisal: {
-    title: 'ID Avalúo',
-    type: 'string',
+    title: 'Id Avalúo',
     sort: false,
   },
   keyAppraisal: {
-    title: 'Clave de Avalúo',
-    type: 'string',
+    title: 'Cve. Avalúo',
     sort: false,
   },
   keyOffice: {
-    title: 'Clave de Descripción',
-    type: 'string',
-    sort: false,
-  },
-  description: {
-    title: 'Descripción',
-    type: 'string',
+    title: 'Cve. Oficio',
     sort: false,
   },
   userInsert: {
-    title: 'Usuario que captura',
-    type: 'string',
+    title: 'Usuario Captura',
     sort: false,
   },
   insertDate: {
-    title: 'Fecha de captura',
-    type: 'string',
+    title: 'Fecha captura',
+    sort: false,
+    valuePrepareFunction: (value: string) =>
+      value ? format(new Date(value), 'dd/MM/yyyy') : '',
+  },
+  idDetAppraisal: {
+    title: 'No.',
     sort: false,
   },
   noGood: {
     title: 'No. Bien',
-    type: 'string',
     sort: false,
   },
-
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
   status: {
     title: 'Estatus',
-    type: 'string',
     sort: false,
   },
   noClasifGood: {
-    title: 'No clasif',
-    type: 'string',
+    title: 'No. Clasif.',
     sort: false,
   },
   descSssubType: {
     title: 'Descripción Sub Sub Sub Tipo',
-    type: 'string',
     sort: false,
   },
   descSsubtype: {
     title: 'Descripción Sub Sub Tipo',
-    type: 'string',
     sort: false,
   },
   descSubtype: {
     title: 'Descripción Sub Tipo',
-    type: 'string',
     sort: false,
   },
   descType: {
     title: 'Descripción Tipo',
-    type: 'string',
     sort: false,
   },
   apraisalDate: {
-    title: 'Fecha de Avaluo',
-    type: 'string',
+    title: 'Fecha de Avalúo',
     sort: false,
+    valuePrepareFunction: (value: string) =>
+      value ? format(new Date(value), 'dd/MM/yyyy') : '',
   },
   dateVigAppraisal: {
-    title: 'Fecha Vigente de Avaluo',
-    type: 'string',
+    title: 'Fecha Vigente de Avalúo',
     sort: false,
+    valuePrepareFunction: (value: string) =>
+      value ? format(new Date(value), 'dd/MM/yyyy') : '',
   },
   statusAppraisal: {
-    title: 'Estado de Avaluo',
-    type: 'string',
+    title: 'Estado de Avalúo',
     sort: false,
+  },
+  daysLeft: {
+    title: 'Días Restantes',
+    sort: false,
+  },
+  nameAppraiser: {
+    title: 'Nombre Valuador',
+    sort: false,
+  },
+  typeReference: {
+    title: 'Tipo Referencia',
+    sort: false,
+  },
+  descApt: {
+    title: 'Desc. Apto.',
+    sort: false,
+  },
+  iva: {
+    title: 'IVA',
+    sort: false,
+  },
+  valorRefInmediate: {
+    title: 'Valor Referencia Inmediata',
+    sort: false,
+    valuePrepareFunction: (value: string) =>
+      new DecimalPipe('en-US').transform(value),
+  },
+  valor_ref_inmediata_iva: {
+    title: 'Valor Referencia Inmediata IVA',
+    sort: false,
+    valuePrepareFunction: (value: string) =>
+      new DecimalPipe('en-US').transform(value),
+  },
+  valor_ref_inmediata_redondeado: {
+    title: 'Valor Referencia Inmediata Redondeado',
+    sort: false,
+    valuePrepareFunction: (value: string) =>
+      new DecimalPipe('en-US').transform(value),
+  },
+  valueCommercial: {
+    title: 'Valor Comercial',
+    sort: false,
+    valuePrepareFunction: (value: string) =>
+      new DecimalPipe('en-US').transform(value),
+  },
+  valueCommercialIva: {
+    title: 'Valor Comercial IVA',
+    sort: false,
+    valuePrepareFunction: (value: string) =>
+      new DecimalPipe('en-US').transform(value),
+  },
+  opinion: {
+    title: 'Dictamen',
+    sort: false,
+  },
+  opinionDate: {
+    title: 'Fecha Dictamen',
+    sort: false,
+    valuePrepareFunction: (value: string) =>
+      value ? format(new Date(value), 'dd/MM/yyyy') : '',
+  },
+  vigOpenDate: {
+    title: 'Fecha Vig. Dictamen',
+    sort: false,
+  },
+  discountVri: {
+    title: 'VRI con Descuento',
+    sort: false,
+    valuePrepareFunction: (value: string) =>
+      new DecimalPipe('en-US').transform(value),
+  },
+  discountIva: {
+    title: 'IVA VRI con Descuento',
+    sort: false,
+    valuePrepareFunction: (value: string) =>
+      new DecimalPipe('en-US').transform(value),
   },
   //Faltan más columnas por agregar
 };

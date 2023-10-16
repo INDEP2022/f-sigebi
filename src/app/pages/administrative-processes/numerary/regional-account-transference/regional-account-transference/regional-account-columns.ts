@@ -1,4 +1,4 @@
-import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/input-cell.component';
+import { InputMaskCellComponent } from 'src/app/@standalone/smart-table/mask-cell/input-mask-cell.component';
 
 export const REGIONAL_ACCOUNT_COLUMNS = {
   file: {
@@ -29,6 +29,7 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
       const formatter = new Intl.NumberFormat('en-US', {
         currency: 'USD',
         minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
       });
 
       return formatter.format(Number(val));
@@ -39,9 +40,9 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     sort: false,
     type: 'custom',
     showAlways: true,
-    renderComponent: InputCellComponent<any>,
-    onComponentInitFunction: (instance: InputCellComponent) => {
-      instance.inputType = 'number';
+    renderComponent: InputMaskCellComponent<any>,
+    onComponentInitFunction: (instance: InputMaskCellComponent) => {
+      instance.inputType = 'text';
       //instance.value = instance.rowData.allInterest ?? 0
       instance.inputChange.subscribe({
         next: (resp: any) => {
@@ -63,6 +64,7 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
       const formatter = new Intl.NumberFormat('en-US', {
         currency: 'USD',
         minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
       });
 
       return formatter.format(Number(val));

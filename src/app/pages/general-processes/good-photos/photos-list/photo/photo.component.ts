@@ -96,7 +96,8 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        accept: 'image/*',
+        accept:
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg, image/heif, .heic, .heif',
         uploadFiles: false,
         service: this.editService,
         multiple: false,

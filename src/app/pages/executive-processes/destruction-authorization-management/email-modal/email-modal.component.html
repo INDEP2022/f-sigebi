@@ -4,62 +4,46 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="emailForm">
-      <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="emailForm.get('email')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="emailForm"
-              control="email"
-              [data]="users"
-              value="bookEmail"
-              bindLabel="bookEmail"
-              label="Para: "
-              (fetchItems)="getEmailIndep($event)"
-              (change)="onValuesChange($event)"></ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field label="Usuario" [control]="emailForm.get('userSirsae')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userSirsae" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field label="Nombre" [control]="emailForm.get('name')">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
+      <div class="ch-content" header>
+        <h5 class="title">Para:</h5>
+      </div>
+      <div class="row pt-4 table-container">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading ? '0px' : '250px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="emailsBook">
+              </ng2-smart-table>
+            </ng-scrollbar>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
         </div>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-4">
-          <form-field label="CC Usuario" [control]="emailForm.get('ccUser')">
-            <input
-              type="text"
-              [max-length]="30"
-              class="form-control"
-              formControlName="ccUser" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field label="CC Nombre" [control]="emailForm.get('ccName')">
-            <input
-              type="text"
-              [max-length]="100"
-              class="form-control"
-              formControlName="ccName" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field label="Email" [control]="emailForm.get('ccEmail')">
-            <input
-              type="text"
-              [max-length]="50"
-              class="form-control"
-              formControlName="ccEmail" />
-          </form-field>
+      <div class="ch-content" header>
+        <h5 class="title">CC:</h5>
+      </div>
+      <div class="row pt-4 table-container">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading2 ? 'table-loading' : ''">
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading2 ? '0px' : '250px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings1"
+                [source]="emailsBook2">
+              </ng2-smart-table>
+            </ng-scrollbar>
+            <app-pagination
+              [params]="params2"
+              [totalItems]="totalItems2"></app-pagination>
+          </div>
         </div>
       </div>
       <div class="row pt-5">
@@ -101,7 +85,7 @@
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
           Cancelar
         </button>
       </div>

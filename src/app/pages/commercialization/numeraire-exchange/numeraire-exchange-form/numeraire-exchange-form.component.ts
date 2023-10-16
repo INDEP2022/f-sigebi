@@ -285,7 +285,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         value: 'CNE1',
       },
       {
-        text: 'Bien asegurado cambiado a numerario por siniestro.',
+        text: 'Bien asegurado cambiado a numerario por siniestro',
         value: 'CNS',
       },
       {
@@ -297,7 +297,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         value: 'CNR',
       },
       {
-        text: 'Bien cambiado a numerario por enajenación de valores y divisas.',
+        text: 'Bien cambiado a numerario por enajenación de valores y divisas',
         value: 'CNE',
       },
     ]);
@@ -363,7 +363,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   searchGood() {
     const goodId = this.formGood.get('id').value;
     if (!goodId) {
-      this.alert('warning', 'Debe Ingresar un Identificador de Bien', '');
+      this.alert('warning', 'Debe ingresar un identificador de Bien', '');
       // showToast({
       //   icon: 'warning',
       //   text: 'Debe Ingresar un Identificador de Bien',
@@ -385,7 +385,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       },
       error: () => {
         this.isLoadingGood = false;
-        this.onLoadToast('warning', 'No se Encontró el Bien', '');
+        this.onLoadToast('warning', 'No se encontró el Bien', '');
       },
     });
   }
@@ -443,14 +443,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           this.openMoreOneResults(res);
         } else {
           this.changeDeposit(res.data[0]);
-          this.onLoadToast('success', 'Depósito Encontrado', '');
+          this.onLoadToast('success', 'Depósito encontrado', '');
         }
       },
       error: () => {
         // this.formBlkControl.get('tiNewDate').setValue(null);
         this.onLoadToast(
           'warning',
-          'No se Encontró el Depósito en la Fecha Seleccionada',
+          'No se Encontró el depósito en la fecha seleccionada',
           ''
         );
       },
@@ -589,22 +589,23 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       (validateNumerary && !availableGood)
     ) {
       this.onLoadToast(
-        'info',
-        'Información',
-        'El Bien Consultado También Puede ser Convertido a Numerario por Valores y Divisas. \n Verifique su Tipo de Conversión antes de Continuar con el Proceso'
+        'warning',
+        'Atención',
+        'El Bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
       );
     }
     if (!validateNumerary && !availableGood) {
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'Estatus, Identificador o Clasificador Inválido para Cambio a Numerario/Valores y Divisas'
+        'Estatus, identificador o clasificador inválido para Cambio a numerario/valores y divisas'
       );
     }
   }
 
   getFile(event: Event) {
     const files = (event.target as HTMLInputElement).files;
+    console.log(files);
     if (files.length != 1)
       throw 'No seleccionó ningún archivo o seleccionó más de la cantidad permitida (1)';
 
@@ -661,7 +662,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.pupLoadCsv(file);
     } catch (error) {
       this.loading = false;
-      this.alert('error', 'Ocurrió un Error al Leer el Archivo', '');
+      this.alert('error', 'Ocurrió un error al leer el archivo', '');
       // showToast({ icon: 'error', text: '' });
     }
   }
@@ -687,14 +688,20 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   }
 
   async pupValidNumerary() {
+    // const body = {
+    //   whereIn: true,
+    //   good: ,
+    //   count: false,
+    //   screen: ,
+    // };
+    //goodprocess/application/getExistsGoodxStatusXtypeNumber
     const body = {
-      whereIn: true,
-      good: this.formGood.value.id,
-      count: false,
-      screen: this.NAME_CURRENT_FORM,
+      pVcScreem: this.NAME_CURRENT_FORM,
+      goodNumber: this.formGood.value.id,
     };
+    //arreglo
     const numeraryAvailable = await firstValueFrom(
-      this.statusScreenService.getStatus(body).pipe(
+      this.goodProcessService.getStatusNew(body).pipe(
         map(res => (res.data.length > 0 ? true : false)),
         catchError(() => of(false))
       )
@@ -742,7 +749,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No Tiene Permiso de Escritura para Ejecutar el Cambio de Numerario'
+        'No tiene permiso de escritura para ejecutar el cambio de numerario'
       );
       this.loader.load = false;
       return;
@@ -751,7 +758,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'Debe Especificar el Bien que se quiere Cambiar a Numerario'
+        'Debe especificar el Bien que se quiere cambiar a numerario'
       );
       this.loader.load = false;
       return;
@@ -759,7 +766,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'Debe Cargar los Bienes que Desea Cambiar a Numerario'
+        'Debe cargar los Bienes que desea cambiar a numerario'
       );
       this.loader.load = false;
       return;
@@ -767,7 +774,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No hay Bienes para Cambiar a Numerario'
+        'No hay Bienes para cambiar a numerario'
       );
       this.loader.load = false;
       return;
@@ -775,7 +782,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
     if (this.formBlkControl.value.checkMovementBank) {
       if (!this.formBlkControl.value.tiNewBank) {
-        this.alert('warning', 'Advertencia', 'Debe Especificar el Banco');
+        this.alert('warning', 'Advertencia', 'Debe especificar el Banco');
         this.loader.load = false;
         return;
       }
@@ -783,7 +790,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'Debe Especificar la Fecha del Deposito'
+          'Debe especificar la fecha del depósito'
         );
         this.loader.load = false;
         return;
@@ -792,7 +799,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'No ha Seleccionado Debidamente del Deposito que Ampara el Cambio a Numerario'
+          'No ha seleccionado debidamente del depósito que ampara el cambio a numerario'
         );
         this.loader.load = false;
         return;
@@ -803,7 +810,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No ha Seleccionado el Tipo de Conversión'
+        'No ha seleccionado el tipo de conversión'
       );
       this.loader.load = false;
       return;
@@ -813,7 +820,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       const questionResponse3 = await this.alertQuestion(
         'question',
         'Advertencia',
-        '¿Seguro que Desea Cambiar los Bienes a Numerario?'
+        '¿Desea cambiar los Bienes a numerario?'
       );
       if (questionResponse3.isConfirmed) {
         await this.pupValidateMassive();
@@ -824,7 +831,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'Debe Especificar el Tipo de Moneda'
+          'Debe especificar el tipo de moneda'
         );
         this.loader.load = false;
         return;
@@ -837,7 +844,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'El Tipo de Conversión Seleccionado no es Permitido para este Bien.'
+          'El tipo de conversión seleccionado no es permitido para este Bien.'
         );
         this.loader.load = false;
         return;
@@ -848,7 +855,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         const questionResponse1 = await this.alertQuestion(
           'question',
           'Advertencia',
-          'El nuevo Bien se Generara con un Precio de Venta de 1. ¿Desea Continuar?'
+          'El nuevo Bien se generará con un precio de Venta de 1. ¿Desea Continuar?'
         );
         if (!questionResponse1.isConfirmed) {
           return;
@@ -857,7 +864,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         const questionResponse2 = await this.alertQuestion(
           'question',
           'Advertencia',
-          '¿Seguro que Desea Cambiar el Bien a Numerario?'
+          '¿Desea cambiar el Bien a numerario?'
         );
 
         if (questionResponse2.isConfirmed) {
@@ -868,7 +875,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         const questionResponse = await this.alertQuestion(
           'question',
           'Advertencia',
-          '¿Seguro que desea Cambiar el Bien a Numerario?'
+          '¿Desea cambiar el Bien a numerario?'
         );
 
         if (questionResponse.isConfirmed) {
@@ -880,84 +887,91 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   async pupCreateGood(): Promise<any> {
     const spent = this.getDataForTableExpenses();
+    if (
+      this.formGood.value.delegationNumber != null &&
+      this.formGood.value.subDelegationNumber != null
+    ) {
+      const body: any = {
+        screenKey: this.NAME_CURRENT_FORM,
+        // clasifGoodNumber: null,
+        // spentPlus: null,
+        // amounten: null,
+        description: this.formGood.value.description,
+        amountevta: this.formGood.value.importSell || 1,
+        typeConv: this.formBlkControl.value.typeConversion,
+        spentId: spent?.spentId || [],
+        amount: spent?.spentImport || [],
+        spentPlus: 0,
+        // totalAmount: null,
+        status: this.formGood.value.status,
+        identificator: this.formGood.value.identifier,
+        processExt: this.formGood.value.extDomProcess,
+        ivavta: this.formGood.value.taxSell || 0,
+        commission: this.formGood.value.commission || 0,
+        ivacom: this.formGood.value.taxCommission || 0,
+        goodId: this.formGood.value.id,
+        delegationNumber: this.formGood.value.delegationNumber.id,
+        subDelegationNumber: this.formGood.value.subDelegationNumber.id,
+        fileNumber: this.formGood.value.fileNumber,
+        flier: this.formGood.value.flyerNumber,
+        user: this.infoToken.preferred_username.toUpperCase(),
+        bankNew: this.formBlkControl.value.tiNewBank,
+        moneyNew: this.formBlkControl.value.diNewCurrency?.replaceAll("'", ''),
+        accountNew: this.formBlkControl.value.diNewAccount,
+        comment: this.formBlkControl.value.comment,
+        expAssociated: this.formGood.value.associatedFileNumber,
+        dateNew: this.formBlkControl.value.tiNewDate,
+        token: this.formBlkControl.value.tiNewFile,
+      };
+      console.log(body);
+      await firstValueFrom(
+        this.goodService.changeGoodToNumerary(body).pipe(
+          map((resp: any) => {
+            console.log(resp);
+            if (resp.data) {
+              const goodFather = resp.data.map((item: any) => {
+                return {
+                  goodNumberF: item.goodNumberF,
+                  goodStatusF: item.goodStatusF,
+                };
+              });
+              const goodGenerate = resp.data.map((item: any) => {
+                return {
+                  goodNumberS: item.goodNumberS,
+                  goodStatusS: item.goodStatusS,
+                };
+              });
+              this.openDialogGoodStatus(goodFather, goodGenerate);
+              this.clear();
+            } else {
+              this.alert('warning', 'Bienes no encontrados', '');
+            }
+            // const message =
+            //   // resp.message.length > 0
+            //   //   ? resp.message.join('.\n')
+            //   //   :
+            //   'Proceso Terminado correctamente';
 
-    const body: any = {
-      screenKey: this.NAME_CURRENT_FORM,
-      // clasifGoodNumber: null,
-      // spentPlus: null,
-      // amounten: null,
-      description: this.formGood.value.description,
-      amountevta: this.formGood.value.importSell || 1,
-      typeConv: this.formBlkControl.value.typeConversion,
-      spentId: spent?.spentId || [],
-      amount: spent?.spentImport || [],
-      spentPlus: 0,
-      // totalAmount: null,
-      status: this.formGood.value.status,
-      identificator: this.formGood.value.identifier,
-      processExt: this.formGood.value.extDomProcess,
-      ivavta: this.formGood.value.taxSell || 0,
-      commission: this.formGood.value.commission || 0,
-      ivacom: this.formGood.value.taxCommission || 0,
-      goodId: this.formGood.value.id,
-      delegationNumber: this.formGood.value.delegationNumber.id,
-      subDelegationNumber: this.formGood.value.subDelegationNumber.id,
-      fileNumber: this.formGood.value.fileNumber,
-      flier: this.formGood.value.flyerNumber,
-      user: this.infoToken.preferred_username.toUpperCase(),
-      bankNew: this.formBlkControl.value.tiNewBank,
-      moneyNew: this.formBlkControl.value.diNewCurrency?.replaceAll("'", ''),
-      accountNew: this.formBlkControl.value.diNewAccount,
-      comment: this.formBlkControl.value.comment,
-      expAssociated: this.formGood.value.associatedFileNumber,
-      dateNew: this.formBlkControl.value.tiNewDate,
-      token: this.formBlkControl.value.tiNewFile,
-    };
-    await firstValueFrom(
-      this.goodService.changeGoodToNumerary(body).pipe(
-        map((resp: any) => {
-          console.log(resp);
-          if (resp.data) {
-            const goodFather = resp.data.map((item: any) => {
-              return {
-                goodNumberF: item.goodNumberF,
-                goodStatusF: item.goodStatusF,
-              };
-            });
-            const goodGenerate = resp.data.map((item: any) => {
-              return {
-                goodNumberS: item.goodNumberS,
-                goodStatusS: item.goodStatusS,
-              };
-            });
-            this.openDialogGoodStatus(goodFather, goodGenerate);
-            this.clear();
-          } else {
-            this.alert('warning', 'Bienes no encontrados', '');
-          }
-          // const message =
-          //   // resp.message.length > 0
-          //   //   ? resp.message.join('.\n')
-          //   //   :
-          //   'Proceso Terminado correctamente';
-
-          // this.alert('success', message, '');
-          // this.clear();
-          this.loader.load = false;
-        }),
-        catchError(err => {
-          this.loader.load = false;
-          console.log('error', err);
-          const message = err.error.message;
-          this.alert(
-            'warning',
-            'Atención',
-            'El  No. Bien introducido es inválido'
-          );
-          throw err;
-        })
-      )
-    );
+            // this.alert('success', message, '');
+            // this.clear();
+            this.loader.load = false;
+          }),
+          catchError(err => {
+            this.loader.load = false;
+            console.log('error', err);
+            const message = err.error.message;
+            this.alert(
+              'warning',
+              'Atención',
+              'El  No. Bien introducido es inválido'
+            );
+            throw err;
+          })
+        )
+      );
+    } else {
+      this.alert('warning', 'Bien no válido', '');
+    }
   }
 
   pupLoadCsv(file: File): void {
@@ -1030,42 +1044,6 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   async pupValidateMassive(): Promise<void> {
     try {
       this.loader.load = true;
-      // const body = {
-      //   availableMasive: this.dataTableMassive.map(item => {
-      //     return {
-      //       available: item.disponible,
-      //       goodNumber: item.no_bien,
-      //       sellPrice: item.precio_venta,
-      //       screenKey: 'FACTADBCAMBIONUME',
-      //       salePrice: item.precio_venta,
-      //       typeConv: this.formBlkControl.value.typeConversion,
-      //       // spentId,
-      //       ivavta: item.ivavta,
-      //       amount: item.importe,
-      //       commission: item.comision,
-      //       ivacom: item.ivacom,
-      //       goodTransP: this.getTransGood(),
-      //       identificator: item.identificador,
-      //       description: item.descripcion,
-      //       statusGood: item.estatus,
-      //       Comment: item.comentario,
-      //       bankNew: this.formBlkControl.value.tiNewBank,
-      //       moneyNew: this.formBlkControl.value.diNewCurrency.replaceAll(
-      //         "'",
-      //         ''
-      //       ),
-      //       accountNew: this.formBlkControl.value.diNewAccount,
-      //       user: this.infoToken.preferred_username.toUpperCase(),
-      //       token: this.formBlkControl.value.tiNewFile,
-      //       // amountevta,
-      //       // fileNumber
-      //     };
-      //   }),
-      //   diCoinNew: this.formBlkControl.value.diNewCurrency.replaceAll("'", ''),
-      //   screenKey: 'FACTADBCAMBIONUME',
-      //   convType: this.formBlkControl.value.typeConversion,
-      //   pTransGood: this.getTransGood(),
-      // };
       const body = {
         availableMasive: this.dataTableMassive.map(item => {
           return {
@@ -1082,8 +1060,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             user: this.infoToken.preferred_username.toUpperCase(),
             fileNumber: item.no_expediente,
             spentId: '',
-            delegationNumber: item.no_delegacion,
-            subDelegationNumber: item.no_subdelegacion,
+            delegationNumber:
+              item.no_delegacion != null ? item.no_delegacion : null,
+            subDelegationNumber:
+              item.no_subdelegacion != null ? item.no_subdelegacion : null,
             flyerNumber: item.no_volante,
             associatedExpNumber: item.no_exp_asociado,
             moneyNew:
@@ -1114,7 +1094,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
                 this.alert(
                   'warning',
                   'Advertencia',
-                  'Verificar que el status de los Bienes sea Administración'
+                  'Verificar que el estatus de los Bienes sea Administración'
                 );
                 this.clear();
               } else {
@@ -1143,12 +1123,22 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             this.loader.load = false;
           }),
           catchError(err => {
-            if (err.error.message.include('insertar')) {
+            if (
+              err.error.message ==
+                'Se requiere delegationNumber en el objeto 0' ||
+              err.error.message ==
+                'Se requiere subDelegationNumber en el objeto 0'
+            ) {
+              this.alert('warning', 'Bienes no validos', '');
+              this.clear();
+            } else {
               this.alert(
                 'error',
                 'Error',
-                'Ocurrió un error Insertar los Datos Asegúrese de que los Datos sean Correctos y no estén Duplicados'
+                'Ocurrió un error al insertar los datos. Asegúrese de que los datos sean correctos y no estén duplicados'
               );
+            }
+            if (err.error.message.include('insertar')) {
               this.loader.load = false;
             }
             console.log('err', err);
@@ -1156,10 +1146,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           })
         )
       );
-    } catch (error) {
+    } catch (error: any) {
       this.loader.load = false;
       console.log('error', error);
-      this.alert('error', 'Error', 'Ocurrió un Error al Validar el Masivo');
+      // this.alert('error', 'Error', 'Ocurrió un Error al Validar el Masivo');
     }
   }
 

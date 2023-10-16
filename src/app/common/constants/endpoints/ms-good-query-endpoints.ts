@@ -20,4 +20,5 @@ export enum GoodsQueryEndpoints {
   OrderWarehouse = 'views/orderServiceExpensesGood/AlmView',
   OrderManual = 'views/orderServiceExpensesGood/ManualView',
   OrderReubGood = 'views/orderServiceExpensesGood/ReubicaView',
+  CatStoresView2 = 'views/cat-store-view',
 }

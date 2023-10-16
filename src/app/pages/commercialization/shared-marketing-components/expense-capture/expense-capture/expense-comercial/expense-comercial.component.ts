@@ -24,6 +24,7 @@ import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/p
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
+import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
@@ -79,6 +80,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private dataService: ExpenseCaptureDataService,
     private spentMService: SpentMService,
     private spentIService: SpentIService,
+    private spentService2: SpentService,
     private comerEventService: ComerEventosService,
     private screenService: ExpenseScreenService,
     private modalService: BsModalService,
@@ -113,6 +115,60 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       });
     // console.log(user);
     this.prepareForm();
+  }
+
+  save() {
+    if (this.expenseNumber.value === null) {
+      this.spentService2
+        .save({
+          ...this.form.value,
+          monthExpense: this.form.value.monthExpense ? '1' : null,
+          monthExpense2: this.form.value.monthExpense2 ? '2' : null,
+          monthExpense3: this.form.value.monthExpense3 ? '3' : null,
+          monthExpense4: this.form.value.monthExpense4 ? '4' : null,
+          monthExpense5: this.form.value.monthExpense5 ? '5' : null,
+          monthExpense6: this.form.value.monthExpense6 ? '6' : null,
+          monthExpense7: this.form.value.monthExpense7 ? '7' : null,
+          monthExpense8: this.form.value.monthExpense8 ? '8' : null,
+          monthExpense9: this.form.value.monthExpense9 ? '9' : null,
+          monthExpense10: this.form.value.monthExpense10 ? '10' : null,
+          monthExpense11: this.form.value.monthExpense11 ? '11' : null,
+          monthExpense12: this.form.value.monthExpense12 ? '12' : null,
+        })
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response && response.data) {
+              this.alert(
+                'success',
+                'Captura de Gastos',
+                'Gasto creado correctamente'
+              );
+            }
+          },
+          error: err => {
+            this.alert('error', 'Creación de Gasto', err.error.message);
+          },
+        });
+    } else {
+      this.spentService2
+        .edit(this.form.value)
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response && response.data) {
+              this.alert(
+                'success',
+                'Captura de Gastos',
+                'Gasto actualizado correctamente'
+              );
+            }
+          },
+          error: err => {
+            this.alert('error', 'Actualización de Gasto', err.error.message);
+          },
+        });
+    }
   }
 
   get spentService() {

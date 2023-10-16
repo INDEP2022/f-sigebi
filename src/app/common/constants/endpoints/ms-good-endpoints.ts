@@ -96,6 +96,7 @@ export enum GoodProcessPoints {
   FnMethodPagof = 'application/fn-methodpagof',
   RegFinalFile = 'application/regFinalFile',
   RegFile = 'application/regFile',
+  GoodxStatusXtypeNumber = 'application/getExistsGoodxStatusXtypeNumber',
 }
 
 export enum GoodFinderEndpoint {

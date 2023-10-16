@@ -8,4 +8,6 @@ export enum AuthorityEndpoints {
   getTdsau = 'apps/get-tdsau-query',
   getAllAutoritiesV2 = 'authority/getAllAuthoritiesV2',
   getDataQuery = 'apps/get-tdata-query',
+  ServiceCat = 'service-cat',
+  getCityQuery = 'apps/obtn-cityquery',
 }

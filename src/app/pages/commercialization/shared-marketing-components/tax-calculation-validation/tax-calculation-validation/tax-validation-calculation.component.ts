@@ -17,13 +17,14 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { ComerUsuauTxEventService } from 'src/app/core/services/ms-event/comer-usuautxevento.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ComerGoodsRejectedService } from 'src/app/core/services/ms-prepareevent/comer-goods-rejected.service';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { ERROR_EXPORT } from 'src/app/pages/documents-reception/goods-bulk-load/utils/goods-bulk-load.message';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import * as XLSX from 'xlsx';
 import { ExpenseParametercomerService } from '../../expense-capture/services/expense-parametercomer.service';
-import { COLUMNS, COLUMNS2 } from './columns';
+import { COLUMNS, COLUMNS2, COLUMNS3 } from './columns';
 
 @Component({
   selector: 'app-tax-validation-calculation',
@@ -72,6 +73,30 @@ export class TaxValidationCalculationComponent
   headerString: string =
     'NO., NO._BIEN, DESCRIPCION, ESTATUS, CLASIF,  TIPO, FECHA, FECHA_VIG, NOMBRE_VAL., TIPO_REF, SUPERFICIE_TERRENO,  SUPERFICIE_CONSTRUCCION, %_TERRENO,   %_CONSTR_HAB, %_CONSTR_COMER, %_INST_ESP, %_OTROS, %_TOTAL, VALOR_REF_CALCULADO, VALOR_TERRENO,  VALOR_CONSTR_HAB, VALOR_CONSTR_COMER, VALOR_INST_ESP, VALOR_OTROS, DIFERENCIA,   TASA_IVA_TERRENO,  TASA_IVA_CONSTR_HAB,  TASA_IVA_CONSTR_COMERCIAL,  TASA_IVA_INSTALACIONES_ESP,  TASA_IVA_OTROS, IVA_TERRENO,  IVA_CONSTR_HAB,  IVA_CONST_COMERCIAL,  IVA_INSTALACIONES_ESP,  IVA_OTROS,  VALOR_TOTAL_IVA_CALCULADO, VALOR_CON_IVA_INCLUIDO,  OBSERVACIONES,  VALIDACION_IVA, CONFIRMADO';
 
+  flagDetail: boolean = true;
+
+  flagCount: boolean = false;
+
+  settings3 = { ...this.settings, actions: false };
+  data3: LocalDataSource = new LocalDataSource();
+  totalItems3: number = 0;
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
+
+  flagTotal: boolean = false;
+  flagCambio: boolean = false;
+
+  rateCommercial: number;
+  rateHousing: number;
+  rateOthers: number;
+  rateSpecials: number;
+  terrainRate: number;
+
+  IVA_CONSTRUCION: number;
+  IVA_CONS_HABITACIONAL: number;
+  IVA_INSTALACIONES_ESP: number;
+  IVA_OTROS: number;
+  IVA_TERRENO: number;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -82,7 +107,8 @@ export class TaxValidationCalculationComponent
     private officeManagementService: OfficeManagementService,
     private appraiseService: AppraiseService,
     private goodProcessService: GoodProcessService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private goodService: GoodService
   ) {
     super();
     let objBase = this;
@@ -140,6 +166,12 @@ export class TaxValidationCalculationComponent
         },
       },
     };
+    this.settings3 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      columns: { ...COLUMNS3 },
+    };
   }
 
   accion(data: any) {
@@ -149,8 +181,8 @@ export class TaxValidationCalculationComponent
       if (data.row.validIVA == 'N') {
         this.alert(
           'warning',
-          '',
-          'Debe estar marcado la Validación IVA  para poder confirmar el registro.'
+          'Debe estar marcado la validación IVA  para poder confirmar el registro.',
+          ''
         );
         data.toggle = false;
       }
@@ -177,7 +209,7 @@ export class TaxValidationCalculationComponent
       this.alertQuestion(
         'question',
         '',
-        '¿Está seguro de que no desea que el registro este  confirmado?'
+        '¿Está seguro de que no desea que el registro esté confirmado?'
       ).then(question => {
         if (question.isConfirmed) {
           data.toggle = false;
@@ -201,16 +233,18 @@ export class TaxValidationCalculationComponent
     if (dataIva.row.check == 'S') {
       this.alert(
         'error',
-        '',
-        'El registro ya está confirmado, sólo el administrador puede liberarlo'
+        'El registro ya está confirmado, sólo el administrador puede liberarlo',
+        ''
       );
+      this.getComerDetAvaluo(this.appraisal);
       return;
     } else if (dataIva.row.validIVA == 'N' && dataIva.row.observation != null) {
       this.alert(
         'error',
-        '',
-        'El registro ya tiene inconsistencias no puede desmarcar hasta no quitar las inconsistencias.'
+        'El registro ya tiene inconsistencias no puede desmarcar hasta no quitar las inconsistencias.',
+        ''
       );
+      this.getComerDetAvaluo(this.appraisal);
       return;
     } else {
       this.getParametersGood(this.appraisal, dataIva.row.goodId, dataIva);
@@ -235,6 +269,7 @@ export class TaxValidationCalculationComponent
           };
           console.log('delete getParametersGood -> ', this.countParamaterGood);
           this.deleteParametersGood(body);
+          this.getComerDetAvaluo(this.appraisal);
         }
       },
       error: err => {
@@ -268,11 +303,15 @@ export class TaxValidationCalculationComponent
       resp => {
         if (resp != null && resp != undefined) {
           console.log('Resp postParametersMod-> ', resp);
-          this.alert('success', '', 'Registro Insertado');
+          this.alert(
+            'success',
+            'El registro ha sido Insertado Correctamente',
+            ''
+          );
         }
       },
       error => {
-        this.alert('error', '', 'Registro no insertado');
+        this.alert('error', 'El registro no ha sido insertado', '');
       }
     );
   }
@@ -282,10 +321,15 @@ export class TaxValidationCalculationComponent
     this.appraiseService.updateEatDetAppraisal(valor).subscribe({
       next: resp => {
         console.log('Resp updateDetailEval-> ', resp);
-        this.alert('success', '', 'Registro actualizado correctamente!');
+        this.getComerDetAvaluo(this.appraisal);
+        this.alert(
+          'success',
+          'El registro ha sido actualizado correctamente',
+          ''
+        );
       },
       error: err => {
-        this.alert('error', '', 'Registro no actualizado!');
+        this.alert('error', 'El registro no ha sido actualizado', '');
       },
     });
   }
@@ -300,6 +344,8 @@ export class TaxValidationCalculationComponent
       .subscribe(() => this.getExample());*/
     this.prepareForm();
     this.getValueIva();
+
+    this.filterTable();
 
     //this.filterTable2();
     //let token = this.authService.decodeToken();
@@ -338,8 +384,25 @@ export class TaxValidationCalculationComponent
     let config: ModalOptions = {
       initialState: {
         dataDet: this.dataDet,
-        callback: (next: boolean) => {
-          //if (next) this.find();
+        callback: (next: boolean, data: any) => {
+          if (next) {
+            console.log('DataCallBack->', data);
+            console.log('DataPASAR-> ', data.rateCommercial);
+            this.rateCommercial = data.rateCommercial;
+            this.rateHousing = data.rateHousing;
+            this.rateOthers = data.rateOthers;
+            this.rateSpecials = data.rateSpecials;
+            this.terrainRate = data.terrainRate;
+
+            this.IVA_TERRENO = data.IVA_TERRENO;
+
+            this.data.load([]);
+            this.data.refresh();
+
+            this.data2.load([]);
+            this.data2.refresh();
+            this.getallCondition();
+          }
         },
       },
       class: 'modal-xl modal-dialog-centered',
@@ -350,6 +413,21 @@ export class TaxValidationCalculationComponent
   }
 
   openModalInconsistencies(context?: Partial<InconsistenciesComponent>): void {
+    let config: ModalOptions = {
+      initialState: {
+        dataDet: this.dataDet,
+        callback: (next: boolean) => {
+          //if (next) this.find();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    // console.log('Config: ', config);
+    this.modalService.show(InconsistenciesComponent, config);
+  }
+
+  openModalInconsistencies2(context?: Partial<InconsistenciesComponent>): void {
     const modalRef = this.modalService.show(InconsistenciesComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
@@ -370,6 +448,10 @@ export class TaxValidationCalculationComponent
     this.settings2 = $event;
   }
 
+  settingsChange3($event: any): void {
+    this.settings3 = $event;
+  }
+
   getValueIva() {
     this.expenseParametercomerService.getParameterMod().subscribe(
       resp => {
@@ -386,6 +468,8 @@ export class TaxValidationCalculationComponent
   }
 
   search() {
+    this.getComerAvaluo();
+
     this.getComerEvent(this.form.get('eventId').value);
 
     this.form.get('processKey').patchValue(null);
@@ -395,8 +479,6 @@ export class TaxValidationCalculationComponent
     this.form.get('requestType').patchValue(null);
     this.form.get('status').patchValue(null);
     this.form.get('reference').patchValue(null);
-
-    this.getComerAvaluo();
   }
 
   getComerEvent(idEvent: number) {
@@ -502,10 +584,10 @@ export class TaxValidationCalculationComponent
       ...this.columnFilters,
     };
     //?filter.type=$eq:${type}
-    params['filter.type'] = `$eq:I`;
+    //params['filter.type'] = `$eq:I`;
     console.log('params 1 -> ', params);
     this.appraiseService
-      .getComerAvaluoWhere(this.form.get('eventId').value, 'I')
+      .getComerAvaluoWhere(this.form.get('eventId').value, 'I', params)
       .subscribe(
         resp => {
           console.log('Resp comerAvaluo', resp);
@@ -539,13 +621,56 @@ export class TaxValidationCalculationComponent
     this.dataDetArr = [];
     console.log('row ', rows);
     if (rows.length > 0) {
+      //this.flagDetail = false;
+      this.flagCambio = true;
       this.selectedRows = rows;
       console.log('Rows Selected->', this.selectedRows);
       console.log('SelectRows', this.selectedRows[0].id);
       this.appraisal = this.selectedRows[0].id;
       this.getComerDetAvaluo(this.appraisal);
     } else {
+      this.flagCambio = false;
       this.selectedRows = [];
+      //this.flagDetail = true;
+    }
+  }
+
+  selectRows2(rows: any[]) {
+    this.dataDetArr = [];
+    this.selectedRows = null;
+    console.log('row ', rows);
+    if (rows.length > 0) {
+      this.flagTotal = true;
+      this.flagDetail = false;
+      this.selectedRows = rows;
+      console.log('Rows Selected->', this.selectedRows);
+      //console.log('SelectRows', this.selectedRows[0].id);
+      //.appraisal = this.selectedRows[0].id;
+      //this.getComerDetAvaluo(this.appraisal);
+      let push3 = {
+        totalRecords: this.selectedRows.length,
+        totalAppraisal: this.selectedRows[0].vri,
+        totalTerrain: this.selectedRows[0].vTerrain,
+        totalHousing: this.selectedRows[0].vConstruction,
+        totalCommercial: this.selectedRows[0].vConstructionEat,
+        totalSpecial: this.selectedRows[0].vInstallationsEsp,
+        totalOthers: this.selectedRows[0].vOthers,
+        totalDifference: this.selectedRows[0].difference,
+        valueCalculated: this.selectedRows[0].valueIvaTotalCalculated,
+        calueIncluding: this.selectedRows[0].totalAccount,
+      };
+      let aux: any[] = [];
+      aux.push(push3);
+      this.data3.load(aux);
+      this.data3.refresh;
+    } else {
+      this.flagTotal = false;
+      console.log('row ', this.selectedRows);
+      this.selectedRows = [];
+      this.flagDetail = true;
+      let aux: any[] = [];
+      this.data3.load(aux);
+      this.data3.refresh;
     }
   }
 
@@ -562,7 +687,7 @@ export class TaxValidationCalculationComponent
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
-                field = 'filter.id';
+                field = 'filter.avaluoId';
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'valueKey':
@@ -585,14 +710,27 @@ export class TaxValidationCalculationComponent
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getComerAvaluo();
+          this.listAppraisal(this.flagCount);
           let i = 0;
           console.log('entra ', i++);
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getComerAvaluo());
+      .subscribe(() => this.listAppraisal(this.flagCount));
+  }
+
+  getallCondition() {
+    this.flagCount = true;
+    this.listAppraisal(this.flagCount);
+    this.flagCambio = false;
+  }
+
+  listAppraisal(flagCount: boolean) {
+    if (flagCount != true) {
+      return;
+    }
+    this.search();
   }
 
   getComerDetAvaluo(appraisal: number) {
@@ -600,6 +738,7 @@ export class TaxValidationCalculationComponent
     this.data2.load(this.Detavaluos);
     this.data2.refresh();
     this.totalItems2 = 0;
+    console.log('this.appraisal', this.appraisal);
     let params2 = {
       ...this.params2.getValue(),
       ...this.columnFilters,
@@ -1004,8 +1143,8 @@ export class TaxValidationCalculationComponent
                 ),
                 nameAppraiser: resp.data[0].nameAppraiser,
                 refAppraisal: resp.data[0].refAppraisal,
-                terrainSurface: resp.data[0].good.val5,
-                surfaceConstru: resp.data[0].good.val5,
+                terrainSurface: this.split(resp.data[0].good.val5),
+                surfaceConstru: this.split(resp.data[0].good.val5),
                 terrainPorcentage: porcentTerrain,
                 porcentageHousing: porcentHousing,
                 porcentageCommercial: porcentCommercial,
@@ -1020,24 +1159,51 @@ export class TaxValidationCalculationComponent
                 vOthers: resp.data[0].vOthers,
                 product: product,
                 difference: difference,
-                terrainRate: terrainRate,
-                rateHousing: rateHousing,
-                rateCommercial: rateCommercial,
-                rateSpecials: rateSpecials,
-                rateOthers: rateOthers,
-                terrainIva: terrainIva,
-                ivaHousing: ivaHousing,
-                ivaCommercial: ivaCommercial,
-                ivaSpecial: ivaSpecial,
-                ivaOthers: ivaOthers,
+                terrainRate:
+                  this.terrainRate != null
+                    ? this.rateCommercial
+                    : this.deletDecim(rateCommercial),
+                rateHousing:
+                  this.rateHousing != null
+                    ? this.rateCommercial
+                    : this.deletDecim(rateCommercial),
+                rateCommercial:
+                  this.rateCommercial != null
+                    ? this.rateCommercial
+                    : this.deletDecim(terrainRate),
+                rateSpecials:
+                  this.rateSpecials != null
+                    ? this.rateCommercial
+                    : this.deletDecim(rateCommercial),
+                rateOthers:
+                  this.rateOthers != null
+                    ? this.rateCommercial
+                    : this.deletDecim(rateCommercial),
+                terrainIva:
+                  this.IVA_TERRENO != null ? this.IVA_TERRENO : terrainIva,
+                ivaHousing:
+                  this.IVA_CONS_HABITACIONAL != null
+                    ? this.IVA_CONS_HABITACIONAL
+                    : ivaHousing,
+                ivaCommercial:
+                  this.IVA_CONSTRUCION != null
+                    ? this.IVA_CONSTRUCION
+                    : ivaCommercial,
+                ivaSpecial:
+                  this.IVA_INSTALACIONES_ESP != null
+                    ? this.IVA_INSTALACIONES_ESP
+                    : ivaSpecial,
+                ivaOthers: this.IVA_OTROS != null ? this.IVA_OTROS : ivaOthers,
                 valueIvaTotalCalculated: valueIvaTotalCalculated,
                 totalAccount: totalAccount,
                 observation: resp.data[0].observations,
                 validIVA: this.v_valor,
                 check: resp.data[0].approved,
-                goodDescription: resp.data[0].good.goodId,
+                goodDescription: resp.data[0].good.description,
                 auxTasaIvaTerren: terrainRate,
                 auxTerrainIva: terrainIva,
+                vriIva: resp.data[0].vriIva,
+                //auxObservations:
               };
               this.dataDet = params2;
               this.dataDetArr.push(params2);
@@ -1120,14 +1286,87 @@ export class TaxValidationCalculationComponent
   }
 
   generateExcel() {
-    const headerArray = this.headerString.split(',');
-    let aux: any[] = [];
-    aux.push(headerArray);
-    aux.push(this.dataDet);
-    this.exportXlsx('export', aux);
+    this.alertQuestion(
+      'question',
+      '¿Descargar el Formato de Avaluo? ',
+      '¿Está de acuerdo?'
+    ).then(q => {
+      if (q.isConfirmed) {
+        const headerArray = this.headerString.split(',');
+        console.log('Const headerArray-> ', headerArray);
+        let aux: any[] = [];
+        //aux.push(headerArray);
+        //aux.push({ name: 'John', city: 'Seattle' });
+        //aux.push({ name: 'Mike', city: 'Los Angeles' });
+        //aux.push({ name: 'Zach', city: 'New York' });
+        //aux.push(headerArray);
+        let item = {
+          'NO.': 12,
+          'NO._BIEN': 150,
+        };
+
+        //aux.push(item);
+        console.log('selected impr ', this.selectedRows[0]);
+        aux = [
+          {
+            'NO.': this.selectedRows[0].idDetAppraisal,
+            'NO._BIEN': this.selectedRows[0].goodId,
+            DESCRIPCION: this.selectedRows[0].description,
+            ESTATUS: this.selectedRows[0].status,
+            CLASIF: this.selectedRows[0].goodClassNumber,
+            TIPO: this.selectedRows[0].desc_tipo,
+            FECHA: this.selectedRows[0].appraisalDate,
+            FECHA_VIG: this.selectedRows[0].vigAppraisalDate,
+            'NOMBRE_VAL.': this.selectedRows[0].nameAppraiser,
+            TIPO_REF: this.selectedRows[0].refAppraisal,
+            SUPERFICIE_TERRENO: this.selectedRows[0].terrainSurface,
+            SUPERFICIE_CONSTRUCCION: this.selectedRows[0].surfaceConstru,
+            '%_TERRENO': this.selectedRows[0].terrainPorcentage,
+            '%_CONSTR_HAB': this.selectedRows[0].porcentageHousing,
+            '%_CONSTR_COMER': this.selectedRows[0].porcentageCommercial,
+            '%_INST_ESP': this.selectedRows[0].porcentageSpecials,
+            '%_OTROS': this.selectedRows[0].porcentageOthers,
+            '%_TOTAL': this.selectedRows[0].porcentageTotal,
+            VALOR_REF_CALCULADO: this.selectedRows[0].vri,
+            VALOR_TERRENO: this.selectedRows[0].vTerrain,
+            VALOR_CONSTR_HAB: this.selectedRows[0].vConstruction,
+            VALOR_CONSTR_COMER: this.selectedRows[0].vConstructionEat,
+            VALOR_INST_ESP: this.selectedRows[0].vInstallationsEsp,
+            VALOR_OTROS: this.selectedRows[0].vOthers,
+            DIFERENCIA: this.selectedRows[0].difference,
+            TASA_IVA_TERRENO: this.selectedRows[0].terrainRate,
+            TASA_IVA_CONSTR_HAB: this.selectedRows[0].rateHousing,
+            TASA_IVA_CONSTR_COMERCIAL: this.selectedRows[0].rateCommercial,
+            TASA_IVA_INSTALACIONES_ESP: this.selectedRows[0].rateSpecials,
+            TASA_IVA_OTROS: this.selectedRows[0].rateOthers,
+            IVA_TERRENO: this.selectedRows[0].terrainIva,
+            IVA_CONSTR_HAB: this.selectedRows[0].ivaHousing,
+            IVA_CONST_COMERCIAL: this.selectedRows[0].ivaCommercial,
+            IVA_INSTALACIONES_ESP: this.selectedRows[0].ivaSpecial,
+            IVA_OTROS: this.selectedRows[0].ivaOthers,
+            VALOR_TOTAL_IVA_CALCULADO:
+              this.selectedRows[0].valueIvaTotalCalculated,
+            VALOR_CON_IVA_INCLUIDO: this.selectedRows[0].totalAccount,
+            OBSERVACIONES: this.selectedRows[0].dataDetobservation,
+            VALIDACION_IVA:
+              this.selectedRows[0].validIVA != null
+                ? this.dataDet.validIVA
+                : 'N',
+            CONFIRMADO:
+              this.selectedRows[0].check != null ? this.dataDet.check : 'N',
+          },
+        ];
+        console.log('Data let Aux-> ', aux);
+        console.log('Data let Aux-> ', this.dataDet);
+        this.exportXlsx('export', aux);
+      } else {
+        return;
+      }
+    });
   }
 
   exportXlsx(opcion: string, data: any[]) {
+    console.log('exportXlsx Data-> ', data);
     if (data.length == 0) {
       this.onLoadToast('warning', 'Archivo', ERROR_EXPORT);
     } else {
@@ -1136,13 +1375,44 @@ export class TaxValidationCalculationComponent
       // });
 
       //this.getFilterProceedings();
+
       const workSheet = XLSX.utils.json_to_sheet(data, {
-        skipHeader: true,
+        skipHeader: false,
       });
       const workBook: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');
-      let aux = 'export' + '.xlsx';
+      let aux = 'Avalúos' + '.xlsx';
       XLSX.writeFile(workBook, aux);
     }
+  }
+
+  deletDecim(numero: number): number {
+    console.log('deletDecim-> ', Math.floor(numero));
+    return numero / 100;
+  }
+
+  split(cadena: string): number | null {
+    console.log('Split sin proc-> ', cadena);
+    const cadenaSinGuiones = cadena.replace(/-/g, '');
+
+    // Convierte la cadena en un número decimal
+    const numero: number = parseFloat(cadenaSinGuiones);
+    console.log('Split Numero-> ', numero);
+    // Verifica si la conversión fue exitosa
+    if (!isNaN(numero)) {
+      return numero;
+    } else {
+      return null; // Devuelve null si no se pudo convertir
+    }
+  }
+
+  cleanForm() {
+    this.form.reset();
+    this.data.load([]);
+    this.data.refresh();
+    this.data2.load([]);
+    this.data2.refresh();
+    this.data3.load([]);
+    this.data3.refresh();
   }
 }

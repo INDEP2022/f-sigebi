@@ -235,4 +235,18 @@ export class UsersService extends HttpService {
   getRecVault(body: any, params: ListParams) {
     return this.post<IListResponse<any>>(UserEndpoints.RecVault, body, params);
   }
+  getUsersbyUsers(user: any) {
+    return this.get(`${UserEndpoints.SegUsers}?filter.id=$eq:${user}`);
+  }
+
+  getAllSegUsers4(name: any) {
+    return this.get<IListResponse<any>>(
+      `${UserEndpoints.GetAllSegUser}?filter.user=$ilike:${name}`
+    );
+  }
+
+  getBtnViewPrev(no_ofice: any) {
+    const route = `${UserEndpoints.viewPrev}/${no_ofice}`;
+    return this.get(route);
+  }
 }

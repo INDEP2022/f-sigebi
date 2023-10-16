@@ -6,8 +6,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, skip } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, skip, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -49,14 +52,48 @@ export class EmailBookConfigComponent
     super();
     this.settings.columns = BOOK_EMAIL_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
   ngOnInit(): void {
+    this.emailsBook
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'bookType':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getVigMailBook();
+        }
+      });
     this.params.pipe(skip(1)).subscribe(params => {
       if (this.form.get('delegation').value) {
         console.log(this.formControlRegionalDelegation);
         return;
       }
-      this.getVigMailBook(params);
+      this.getVigMailBook();
     });
     this.path = 'survillance/api/v1/views/v-vig-delegations';
     this.prepareForm();
@@ -76,8 +113,8 @@ export class EmailBookConfigComponent
       this.alert(
         'success',
         res.action === 'create'
-          ? 'Se ha creado el libro de correos correctamente'
-          : 'Se ha editado el libro de correos correctamente',
+          ? 'El libro de correos se ha creado'
+          : 'El libro de correos ha sido editado',
         ''
       );
       if (res.newData.delegationNumber !== this.form.get('delegation').value) {
@@ -121,17 +158,24 @@ export class EmailBookConfigComponent
     console.log(event);
     this.delegationRegional = event;
   }
-  getVigMailBook(listParams = new ListParams()): void {
+  getVigMailBook(): void {
     if (!this.form.get('delegation').value) {
-      this.alert('error', 'Debe Seleccionar una Delegación Regional', '');
+      this.alert('warning', 'Debe seleccionar una Delegación Regional', '');
       this.emailsBook.load([]);
       return;
     }
     console.log(this.form.get('delegation').value);
 
     this.loading = true;
-    listParams['filter.delegationNumber'] = this.form.get('delegation').value;
-    this.emailService.getVigMailBook(listParams).subscribe({
+
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    params['filter.delegationNumber'] = this.form.get('delegation').value;
+
+    this.emailService.getVigMailBook(params).subscribe({
       next: res => {
         this.parameterData = res.data;
         this.totalItems = res.count || 0;
@@ -154,7 +198,7 @@ export class EmailBookConfigComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar este Registro?'
+      '¿Desea eliminar este registro?'
     ).then(result => {
       if (!result?.isConfirmed) {
         return;

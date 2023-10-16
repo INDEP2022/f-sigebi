@@ -6,6 +6,7 @@ import { catchError, of } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -356,81 +357,124 @@ export class OrderServiceDeliveryFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
+      orderServiceId: 516,
       callback: (data: any) => {
         if (data) {
         }
       },
     };
 
-    const rejectionComment = this.modalService.show(
-      RejectionCommentFormComponent,
-      config
-    );
+    this.modalService.show(RejectionCommentFormComponent, config);
   }
 
   generateReport() {
-    if (this.task != 5 && this.task != 6) {
-      if (this.task == 2) {
-        let config = {
-          ...MODAL_CONFIG,
-          class: 'modal-lg modal-dialog-centered',
-        };
+    if (this.task == 2) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modal-lg modal-dialog-centered',
+      };
 
-        config.initialState = {
-          callback: async (next: boolean, infoSign: any) => {
-            if (next) {
-              if (infoSign.electronicSignature == true) {
-                const createSign = await this.createSignature(infoSign);
-                if (createSign) {
-                  this.showReport();
-                } else {
-                  this.alert('error', 'Error', 'Error al crear el firmante');
-                }
-              } else {
+      config.initialState = {
+        callback: async (next: boolean, infoSign: any) => {
+          if (next) {
+            if (infoSign.electronicSignature == true) {
+              const createSign = await this.createSignature(infoSign, 245);
+              if (createSign) {
                 this.showReport();
-              }
-            }
-          },
-        };
-
-        this.modalService.show(GenerateReportFormComponent, config);
-      } else if (this.task == 3) {
-        let config = {
-          ...MODAL_CONFIG,
-          class: 'modal-lg modal-dialog-centered',
-        };
-
-        config.initialState = {
-          processFirm: 'firmRegionalDelegation',
-          callback: async (next: boolean, infoSign: any) => {
-            if (next) {
-              if (infoSign.electronicSignature == true) {
-                const createSign = await this.createSignature(infoSign);
-                if (createSign) {
-                  this.showReport();
-                } else {
-                  this.alert('error', 'Error', 'Error al crear el firmante');
-                }
               } else {
-                this.showReport();
+                this.alert('error', 'Error', 'Error al crear el firmante');
               }
+            } else {
+              this.showReport();
             }
-          },
-        };
+          }
+        },
+      };
 
-        const createService = this.modalService.show(
-          GenerateReportFormComponent,
-          config
-        );
-      }
-    } else {
-      this.showReport();
+      this.modalService.show(GenerateReportFormComponent, config);
+    } else if (this.task == 3) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modal-lg modal-dialog-centered',
+      };
+
+      config.initialState = {
+        processFirm: 'firmRegionalDelegation',
+        callback: async (next: boolean, infoSign: any) => {
+          if (next) {
+            if (infoSign.electronicSignature == true) {
+              const createSign = await this.createSignature(infoSign, 245);
+              if (createSign) {
+                this.showReport();
+              } else {
+                this.alert('error', 'Error', 'Error al crear el firmante');
+              }
+            } else {
+              this.showReport();
+            }
+          }
+        },
+      };
+
+      const createService = this.modalService.show(
+        GenerateReportFormComponent,
+        config
+      );
+    } else if (this.task == 5) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modal-lg modal-dialog-centered',
+      };
+
+      config.initialState = {
+        task: this.op,
+        callback: async (next: boolean, infoSign: any) => {
+          if (next) {
+            const createSign = await this.createSignature(infoSign, 246);
+            if (createSign) {
+              this.showReport('validation-report');
+            } else {
+              this.alert('error', 'Error', 'Error al crear el firmante');
+            }
+          }
+        },
+      };
+
+      this.modalService.show(GenerateReportFormComponent, config);
+    } else if (this.task == 6) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modal-lg modal-dialog-centered',
+      };
+
+      config.initialState = {
+        processFirm: 'firmRegionalDelegation',
+        callback: async (next: boolean, infoSign: any) => {
+          if (next) {
+            if (infoSign.electronicSignature == true) {
+              const createSign = await this.createSignature(infoSign, 246);
+              if (createSign) {
+                this.showReport();
+              } else {
+                this.alert('error', 'Error', 'Error al crear el firmante');
+              }
+            } else {
+              this.showReport();
+            }
+          }
+        },
+      };
+
+      const createService = this.modalService.show(
+        GenerateReportFormComponent,
+        config
+      );
     }
   }
 
-  createSignature(infoSign: any) {
+  createSignature(infoSign: any, _learnedType: number) {
     return new Promise((resolve, reject) => {
-      const learnedType = 245;
+      const learnedType = _learnedType;
       const learndedId = 516; // Id Orden de Servicio
 
       this.signatoriesService
@@ -447,7 +491,7 @@ export class OrderServiceDeliveryFormComponent
 
             const formData: Object = {
               learnedId: 516, // Orden de servicio
-              learnedType: 245,
+              learnedType: learnedType,
               boardSignatory: 'ORDEN_SERVICIO',
               columnSignatory: 'TIPO_FIRMA',
               name: infoSign.responsible,
@@ -463,7 +507,7 @@ export class OrderServiceDeliveryFormComponent
           error: error => {
             const formData: Object = {
               learnedId: 516, // Orden de servicio
-              learnedType: 245,
+              learnedType: learnedType,
               boardSignatory: 'ORDEN_SERVICIO',
               columnSignatory: 'TIPO_FIRMA',
               name: infoSign.responsible,
@@ -480,10 +524,11 @@ export class OrderServiceDeliveryFormComponent
     });
   }
 
-  showReport() {
+  showReport(process?: string) {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       idOrderService: 516,
+      process,
       callback: (data: any) => {
         if (data) {
           //this.electronicSignture();
@@ -497,6 +542,46 @@ export class OrderServiceDeliveryFormComponent
       config
     );
   }
+
+  showReportAnnexW() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      idOrderService: 516,
+      idTypeDoc: 198,
+      annexW: true,
+      callback: (data: any) => {
+        if (data) {
+          //this.electronicSignture();
+        }
+      },
+    };
+
+    //const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    const showReport = this.modalService.show(
+      ShowReportComponentComponent,
+      config
+    );
+  }
+
+  /*showReportAnnexW() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      idOrderService: 516,
+      idTypeDoc: 198,
+      annexW: true,
+      callback: (data: any) => {
+        if (data) {
+          //this.electronicSignture();
+        }
+      },
+    };
+
+    //const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    const showReport = this.modalService.show(
+      ShowReportComponentComponent,
+      config
+    );
+  } */
 
   electronicSignture() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
@@ -533,35 +618,164 @@ export class OrderServiceDeliveryFormComponent
   }
 
   createAnnexedW() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    if (this.op != 7) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
-    config.initialState = {
-      callback: (data: any) => {
-        if (data) {
-          this.showReport();
-        }
-      },
-    };
+      config.initialState = {
+        processFirm: 'AnnexW',
+        callback: async (next: boolean, signatorie: ISignatories) => {
+          if (next) {
+            const createSignatureAnnexW = await this.createSignatureAnnexW(
+              signatorie
+            );
 
-    const showReport = this.modalService.show(
-      GenerateReportFormComponent,
-      config
-    );
+            if (createSignatureAnnexW) {
+              this.showReport();
+            }
+          }
+        },
+      };
+
+      this.modalService.show(GenerateReportFormComponent, config);
+    } else {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+      config.initialState = {
+        processFirm: 'AnnexW',
+        typeSig: 'TE',
+        callback: async (next: boolean, signatorie: ISignatories) => {
+          if (next) {
+            const createSignatureAnnexW = await this.createSignatureAnnexW(
+              signatorie
+            );
+
+            if (createSignatureAnnexW) {
+              this.showReport();
+            }
+          }
+        },
+      };
+
+      this.modalService.show(GenerateReportFormComponent, config);
+    }
   }
+
+  createSignatureAnnexW(infoSign: any) {
+    return new Promise((resolve, reject) => {
+      const learnedType = 198;
+      const learndedId = 516; // Id Orden de Servicio
+
+      this.signatoriesService
+        .getSignatoriesFilter(learnedType, learndedId)
+        .subscribe({
+          next: response => {
+            /*this.signatoriesService
+              .deleteFirmante(Number(response.data[0].signatoryId))
+              .subscribe({
+                next: () => {
+                  
+                },
+              }); */
+
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 198,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+          error: error => {
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 198,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+        });
+    });
+  }
+
+  /*createSignatureAnnexW(infoSign: any) {
+    return new Promise((resolve, reject) => {
+      const learnedType = 198;
+      const learndedId = 516; // Id Orden de Servicio
+
+      this.signatoriesService
+        .getSignatoriesFilter(learnedType, learndedId)
+        .subscribe({
+          next: response => {
+            /*this.signatoriesService
+              .deleteFirmante(Number(response.data[0].signatoryId))
+              .subscribe({
+                next: () => {
+                  
+                },
+              }); 
+
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 198,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+          error: error => {
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 198,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+        });
+    });
+  } */
 
   sendJustify() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
+      orderServiceId: this.orderServiceId,
+      folioOrderservice: this.orderserviceData.serviceOrderFolio,
       callback: (data: any) => {
         if (data) {
         }
       },
     };
 
-    const showReport = this.modalService.show(
-      RejectionJustifyFormComponent,
-      config
-    );
+    this.modalService.show(RejectionJustifyFormComponent, config);
   }
 }

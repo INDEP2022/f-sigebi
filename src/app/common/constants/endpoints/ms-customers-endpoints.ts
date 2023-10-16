@@ -8,4 +8,10 @@ export enum CustomersEndpoints {
   PFmcomr612ClientxEvent2 = 'application/pFmcomr612ClientxEvent2',
   Fcomer612Get1 = 'application/fcomer612Get1',
   ApplicationDataCustomers = 'application/getDataCustomers',
+  cursorA = 'application/cursorA',
+  cursorB = 'application/cursorB',
+  cursorDesBienes = 'application/cursorDesBienes',
+  cursorBB = 'application/cursorBB',
+  cursorAptFolio = 'application/cursorAptFolio',
+  cursor1 = 'application/cursor1',
 }

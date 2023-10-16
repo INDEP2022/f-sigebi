@@ -464,11 +464,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
 
       console.log(this.dataFormatPercentage);
     } else {
-      this.alert(
-        'warning',
-        'No se Encontraron Facturas',
-        `Con los criterios especificados`
-      );
+      this.alert('warning', 'No se encontraron registros', ``);
     }
   }
 

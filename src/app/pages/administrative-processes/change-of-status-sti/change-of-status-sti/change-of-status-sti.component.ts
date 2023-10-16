@@ -173,7 +173,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         this.searchByFilter();
         this.alert(
           'success',
-          'Se cambio el estatus a los Bienes seleccionados',
+          'Se cambió el estatus a los Bienes seleccionados',
           ''
         );
       } else {

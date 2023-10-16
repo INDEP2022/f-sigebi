@@ -263,7 +263,6 @@ export class RegionalAccountTransferenceComponent
           );
         this.form.get('cveAccount').patchValue(data.accountKey);
         this.form.get('total').patchValue(data.amountAll);
-
         this.form.get('monto2').patchValue(data.amountAll);
 
         this.filterParams.getValue().removeAllFilters();
@@ -350,7 +349,6 @@ export class RegionalAccountTransferenceComponent
           trans.total = Number(trans.val14) + Number(trans.allInterest);
 
           const sum = Number(this.form.get('monto2').value ?? 0) + trans.total;
-
           this.form.get('monto2').patchValue(sum);
         });
 
@@ -700,7 +698,7 @@ export class RegionalAccountTransferenceComponent
     this.transferRegService.create(body).subscribe({
       next: async resp => {
         this.form.get('transferenceReport').patchValue(resp.reportNumber);
-        this.alert('success', 'Reporte', 'Creado correctamente');
+        this.alert('success', 'El reporte se ha creado', '');
 
         for (let good of this.dataTable) {
           await this.procedure(Number(good.goodNumber));

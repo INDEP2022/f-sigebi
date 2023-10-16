@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { _Params } from 'src/app/common/services/http-wcontet.service';
@@ -23,6 +24,13 @@ export class MassiveGoodService extends HttpService {
   constructor() {
     super();
     this.microservice = this.route.MassiveGood;
+  }
+
+  pupBienesPlano(request: any, fileNumber: any) {
+    return this.post<any>(
+      `application/pupBienesPlano?fileNumber=${fileNumber}`,
+      request
+    );
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IMassiveGood>> {
@@ -176,6 +184,10 @@ export class MassiveGoodService extends HttpService {
     return this.get(this.route.GetAllGoodsMotivesRevExcel, params);
   }
 
+  GetExportDataExcelMenaje(params: _Params) {
+    return this.get(this.route.ExportDataExcelMenaje, params);
+  }
+
   AttendedPorGoodReasonRev(formData: any) {
     return this.post(this.route.PorGoodReasonRev, formData);
   }
@@ -185,5 +197,36 @@ export class MassiveGoodService extends HttpService {
 
   postExportDataExcel(params: any) {
     return this.post(MassiveGoodEndpoints.ExportDataExcel, params);
+  }
+
+  importExcellGoodsInvoice(data: {
+    pSession: number;
+    user: string;
+    file: any;
+  }) {
+    const formData = new FormData();
+
+    formData.append('file', data.file);
+    formData.append('user', data.user);
+    formData.append('pSession', String(data.pSession));
+
+    return this.post(MassiveGoodEndpoints.ImportGoodsInvoice, formData);
+  }
+
+  exportSampleGoods(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.get(`${MassiveGoodEndpoints.ExportSampleGoods}?${params}`);
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
+  }
+
+  getCSVStatus(status: number) {
+    return this.get(`${MassiveGoodEndpoints.ApplicationCSV}?status=${status}`);
   }
 }

@@ -205,9 +205,49 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         cartareclamacion: {
-          title: 'Carta Reclamación',
+          title: 'Fecha Carta Reclamación',
           type: 'string',
           sort: false,
+        },
+        datejobmail: {
+          title: 'Fecha Oficio/Correo',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (date: Date) => {
+          //   console.log(date);
+          //   if (date != null) {
+          //     var raw = new Date(date);
+          //     var formatted = new DatePipe('en-EN').transform(
+          //       raw,
+          //       'dd/MM/yyyy',
+          //       'UTC'
+          //     );
+          //   } else {
+          //     var formatted = '';
+          //   }
+
+          //   return formatted;
+          // },
+        },
+        datejobconclusion: {
+          title: 'Fecha Oficio Conclusión/Minuta',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (date: Date) => {
+          //   console.log(date);
+          //   if (date != null) {
+          //     var raw = new Date(date);
+          //     var formatted = new DatePipe('en-EN').transform(
+          //       raw,
+          //       'dd/MM/yyyy',
+          //       'UTC'
+          //     );
+          //   } else {
+          //     var formatted = '';
+          //   }
+
+          //   return formatted;
+          // },
         },
         ordendeingreso: {
           title: 'Orden de Ingreso',
@@ -215,9 +255,15 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         primersegundacapa: {
-          title: 'Primer Segunda Capa',
+          title: '1er Capa/2da Capa',
           type: 'string',
           sort: false,
+          valuePrepareFunction: (value: string) => {
+            if (value == '1') return '1ER CAPA';
+            if (value == '2') return '2DA CAPA';
+            if (value == '3') return '1ER CAPA / 2DA CAPA';
+            return value;
+          },
         },
         estatus: {
           title: 'Estatus',
@@ -278,7 +324,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'warning',
-              'No se encontró el número de bien buscado.',
+              'No se Encontró el Número de Bien Buscado.',
               ''
             );
           }
@@ -286,7 +332,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           this.claimsFollowUpForm.controls['description'].setValue('');
           this.alert(
             'warning',
-            'No se encontró el número de bien buscado.',
+            'No se Encontró el Número de Bien Buscado.',
             ''
           );
         }
@@ -355,7 +401,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      'Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -441,11 +487,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         }
       },
       error => {
-        this.alert(
-          'warning',
-          'Siniestros Seguimiento',
-          'El documento no existe.'
-        );
+        this.alert('warning', 'El Documento no Existe.', '');
       }
     );
   }
@@ -459,11 +501,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         this._downloadExcelFromBase64(response, `SINIESTROS SEGUIMIENTO`);
       },
       error => {
-        this.alert(
-          'warning',
-          'Siniestros Seguimiento',
-          'Error al generar el archivo excel.'
-        );
+        this.alert('warning', 'Error al Generar el Archivo Excel.', '');
       }
     );
   }
@@ -480,11 +518,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         );
       },
       error => {
-        this.alert(
-          'warning',
-          'Siniestros Seguimiento',
-          'Error al generar el archivo excel.'
-        );
+        this.alert('warning', 'Error al Generar el Archivo Excel.', '');
       }
     );
   }

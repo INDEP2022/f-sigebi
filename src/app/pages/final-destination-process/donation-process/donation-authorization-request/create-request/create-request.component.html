@@ -1,0 +1,185 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <div>
+      <h5 class="modal-title">CREACIÓN DE SOLICITUD</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="col-12">
+        <div class="row">
+          <!-- <div class="col-md-4 mt-2">
+            <div>
+              <form-field [control]="form.get('requestId')" label="No. Solicitud">
+                <input maxlength="6" type="text" class="form-control pt-1" formControlName="requestId" readonly />
+              </form-field>
+            </div>
+          </div> -->
+          <div class="col-md-4 mt-2">
+            <div>
+              <form-field
+                [control]="form.get('quantity')"
+                label="Cantidad de Solicitud">
+                <input
+                  maxlength="11"
+                  type="number"
+                  class="form-control pt-1"
+                  formControlName="quantity" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-5 mt-2">
+            <div>
+              <form-field
+                [control]="form.get('entFedKey')"
+                label=" Entidad Federal">
+                <ng-select
+                  formControlName="entFedKey"
+                  class="form-control pt-1">
+                  <ng-option
+                    *ngFor="let item of arrayDele"
+                    [value]="item.delegacion"
+                    >{{ item.no_delegacion_2 }} -
+                    {{ item.delegacion }}</ng-option
+                  >
+                </ng-select>
+                <!-- <input #inputValue type="text" class="form-control" formControlName="cveReceived"
+                                    readonly /> -->
+              </form-field>
+            </div>
+          </div>
+          <!-- <div class="col-md-3 mt-2">
+            <div>
+              <form-field [control]="form.get('entFedKey')" label="Entidad Federal">
+                <ng-select formControlName="entFedKey" class="form-control pt-1">
+                  <ng-option *ngFor="let item of arrayDele" [value]="item.delegacion">{{ item.no_delegacion_2 }} -
+                    {{ item.delegacion }}</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+          </div> -->
+
+          <div class="col-md-4 mt-2">
+            <div>
+              <form-field
+                [control]="form.get('requestDate')"
+                label="Fecha Solicitud">
+                <input
+                  [ngClass]="{ 'not-press bg-gray': !disabledSend }"
+                  #datepickerElement
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="requestDate"
+                  bsDatepicker
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="col-md-4 mt-2">
+            <div>
+              <form-field
+                [control]="form.get('sunStatus')"
+                label="Estatus de Solicitud">
+                <input
+                  maxlength="6"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="sunStatus" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-4 mt-2">
+            <div>
+              <form-field
+                [control]="form.get('proposalCve')"
+                label="Cve. Propuesta">
+                <input
+                  maxlength="30"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="proposalCve" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="col-md-4 mt-2">
+            <div>
+              <form-field
+                [control]="form.get('requestTypeId')"
+                label="Tipo de Solicitud">
+                <ng-select
+                  formControlName="requestTypeId"
+                  class="form-control pt-1">
+                  <ng-option value="SD">SD</ng-option>
+                  <ng-option value="DD">DD</ng-option>
+                  <ng-option value="D">D</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-4 mt-2">
+            <ng-custom-select-loading
+              [form]="form"
+              [path]="pathClasification"
+              label="Clasificación del Bien"
+              formControlName="clasifGood"
+              value="numClasifGoods"
+              bindLabel="description"
+              paramSearch="filter.description"
+              prefixSearch="$ilike"
+              secondParamSearch="filter.numClasifGoods"
+              [labelTemplate]="clasLabel"
+              [optionTemplate]="clasOption"
+              (valueChange)="onChange($event)"></ng-custom-select-loading>
+            <ng-template #clasLabel let-item="item">
+              {{ item.numClasifGoods }} - {{ item.description }}
+            </ng-template>
+            <ng-template #clasOption let-item="item">
+              <div [title]="item.numClasifGoods + '-' + item.description">
+                {{ item.numClasifGoods }} - {{ item.description }}
+              </div>
+            </ng-template>
+            <!-- <app-classification-of-goods-shared [form]="form" [patchValue]="true" (descriptionClasification)="
+                                              onChage($event)
+                                            "></app-classification-of-goods-shared> -->
+          </div>
+
+          <div class="col-md-4 mt-2">
+            <div>
+              <form-field
+                [control]="form.get('justification')"
+                label="Justificación">
+                <textarea
+                  maxlength="1000"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="justification"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="agregarRequst()">
+          Guardar <i class="fas fa-save bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active mr-3"
+          (click)="return()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

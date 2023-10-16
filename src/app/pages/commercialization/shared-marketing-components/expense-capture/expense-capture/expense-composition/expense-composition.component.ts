@@ -176,7 +176,7 @@ export class ExpenseCompositionComponent
   add() {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      expenseNumber: this.expenseNumber,
+      expenseNumber: this.expenseNumber.value,
       callback: (next: boolean) => {
         if (next) {
           this.getData();
@@ -189,7 +189,7 @@ export class ExpenseCompositionComponent
   edit(row: IComerDetExpense2) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      expenseNumber: this.expenseNumber,
+      expenseNumber: this.expenseNumber.value,
       comerDetExpense: row,
       callback: (next: boolean) => {
         if (next) {
@@ -266,7 +266,11 @@ export class ExpenseCompositionComponent
                 goodDescription: row.description,
               };
             });
-            this.expenseCaptureDataService.dataCompositionExpenses = this.data;
+            this.expenseCaptureDataService.dataCompositionExpenses = [
+              ...this.data,
+            ];
+            console.log(this.expenseCaptureDataService.dataCompositionExpenses);
+
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
@@ -431,32 +435,153 @@ export class ExpenseCompositionComponent
     }
   }
 
-  loadExcel() {
-    let filterParams = new FilterParams();
-    filterParams.addFilter('parameter', 'VAL_CONCEPTO');
-    if (this.conceptNumber) {
-      filterParams.addFilter('value', this.conceptNumber.value);
+  loadGoods(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const file = files[0];
+    console.log(file.name);
+    if (file.name.includes('csv')) {
+      // this.CARGA_BIENES_CSV(file);
+      // return;
+      let filterParams = new FilterParams();
+      filterParams.addFilter('parameter', 'VAL_CONCEPTO');
+      if (this.conceptNumber) {
+        filterParams.addFilter('value', this.conceptNumber.value);
+      }
+      this.parametersModService
+        .getAll(filterParams.getParams())
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: response => {
+            if (response && response.data && response.data.length > 0) {
+              this.CARGA_BIENES_CSV_VALIDADOS(file);
+            } else {
+              this.CARGA_BIENES_CSV(file);
+            }
+          },
+          error: err => {
+            this.CARGA_BIENES_CSV(file);
+          },
+        });
     }
-    this.parametersModService
-      .getAll(filterParams.getParams())
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: response => {
-          if (response && response.data && response.data.length > 0) {
-            this.CARGA_BIENES_CSV_VALIDADOS();
-          } else {
-            this.CARGA_BIENES_CSV();
+  }
+
+  private CARGA_BIENES_CSV_VALIDADOS(file: File) {
+    this.parametercomerService
+      .pupChargeValidateGoods(file, {
+        conceptId: this.conceptNumber.value,
+        amount2: this.amount + '',
+        iva2: this.vat + '',
+        retentionISR: this.isrWithholding + '',
+        retentionIva2: this.vatWithholding + '',
+      })
+      .pipe(take(1))
+      .subscribe((event: any) => {
+        console.log(event);
+        if (typeof event === 'object') {
+          console.log(event.body);
+          if (event.CONT > 0) {
+            this.amount = 0;
+            this.vat = 0;
+            this.isrWithholding = 0;
+            this.vatWithholding = 0;
+            this.total = 0;
+            this.data = event.messages.map((row: any) => {
+              this.amount += row.COL_IMPORTE ? +row.COL_IMPORTE : 0;
+              this.vat += row.COL_IVA ? +row.COL_IVA : 0;
+              this.isrWithholding += row.COL_RETISR ? +row.COL_RETISR : 0;
+              this.vatWithholding += row.COL_RETIVA ? +row.COL_RETIVA : 0;
+              let total =
+                row.COL_IMPORTE + row.COL_IVA
+                  ? row.COL_IVA
+                  : 0 - row.COL_RETISR
+                  ? row.COL_RETISR
+                  : 0 - row.COL_RETIVA
+                  ? row.COL_RETIVA
+                  : 0;
+              this.total += total;
+              return {
+                iva: row.COL_IVA,
+                amount2: row.COL_IMPORTE,
+                goodNumber: row.COL_SIAB,
+                transferorNumber: row.LNU_MANDATO,
+                manCV: row.LST_CVMAN,
+                retencionIsr: row.COL_RETISR,
+                retencionIva: row.COL_RETIVA,
+                changeStatus: false,
+                reportDelit: false,
+                description: row.DESCRIPCION,
+                mandato: row.CLAVE,
+                total,
+              };
+            });
+            this.expenseCaptureDataService.dataCompositionExpenses = [
+              ...this.data,
+            ];
+            this.totalItems = this.data.length;
+            this.dataTemp = [...this.data];
+            this.getPaginated(this.params.value);
+            this.GRABA_TOTALES();
           }
-        },
+        }
       });
   }
 
-  private CARGA_BIENES_CSV_VALIDADOS() {
-    this.GRABA_TOTALES();
-  }
+  private CARGA_BIENES_CSV(file: File) {
+    this.parametercomerService
+      .pupChargeGoods(file)
+      .pipe(take(1))
+      .subscribe((event: any) => {
+        console.log(event);
+        if (typeof event === 'object') {
+          console.log(event.body);
+          if (event.CONT > 0) {
+            this.amount = 0;
+            this.vat = 0;
+            this.isrWithholding = 0;
+            this.vatWithholding = 0;
+            this.total = 0;
+            this.data = event.messages.map((row: any) => {
+              this.amount += row.COL_IMPORTE ? +row.COL_IMPORTE : 0;
+              this.vat += row.COL_IVA ? +row.COL_IVA : 0;
+              this.isrWithholding += row.COL_RETISR ? +row.COL_RETISR : 0;
+              this.vatWithholding += row.COL_RETIVA ? +row.COL_RETIVA : 0;
+              let total =
+                row.COL_IMPORTE + row.COL_IVA
+                  ? row.COL_IVA
+                  : 0 - row.COL_RETISR
+                  ? row.COL_RETISR
+                  : 0 - row.COL_RETIVA
+                  ? row.COL_RETIVA
+                  : 0;
+              this.total += total;
+              return {
+                iva: row.COL_IVA,
+                amount2: row.COL_IMPORTE,
+                goodNumber: row.COL_SIAB,
+                transferorNumber: row.LNU_MANDATO,
+                manCV: row.LST_CVMAN,
+                retencionIsr: row.COL_RETISR,
+                retencionIva: row.COL_RETIVA,
+                description: row.DESCRIPCION,
+                mandato: row.CLAVE,
+                changeStatus: false,
+                reportDelit: false,
+                total,
+              };
+            });
+            this.expenseCaptureDataService.dataCompositionExpenses = [
+              ...this.data,
+            ];
+            this.totalItems = this.data.length;
+            this.dataTemp = [...this.data];
+            this.getPaginated(this.params.value);
+            this.GRABA_TOTALES();
+          }
+        }
+      });
 
-  private CARGA_BIENES_CSV() {
-    this.GRABA_TOTALES();
+    // this.GRABA_TOTALES();
   }
 
   private GRABA_TOTALES() {

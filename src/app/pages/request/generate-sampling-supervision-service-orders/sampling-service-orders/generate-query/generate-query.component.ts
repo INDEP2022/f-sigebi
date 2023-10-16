@@ -1,13 +1,15 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ISamplingOrder } from 'src/app/core/models/ms-order-service/sampling-order.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ZonesService } from 'src/app/core/services/zones/zones.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -31,6 +33,16 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   totalItems: number = 0;
+  storeSelected: any = null;
+  deductives: any = [];
+
+  sampleOrderForm: FormGroup = new FormGroup({});
+  /**
+   * La orden de servicio se crea en una vista anterior
+   * se utiliza para crear le muestreo orden servicio
+   * se utiliza para crear deductivas
+   */
+  SampleOrderId: number = 3;
 
   sendData: any[] = [];
   //Datos Anexo para pasar
@@ -58,7 +70,12 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       columns: LIST_ORDERS_COLUMNS,
     };
     this.initForm();
+    this.initAnexForm();
     this.getgeographicalAreaSelect(new ListParams());
+
+    //obtener muestreo orden
+    //create a muestreo de orden solo una ves cuando se inicializa el componente
+    //this.newSampleOrder();
   }
 
   initForm() {
@@ -66,6 +83,30 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       geographicalArea: [null],
       samplingPeriod: [null],
       contractNumber: ['SAE/00084/2018'],
+    });
+  }
+
+  initAnexForm() {
+    this.sampleOrderForm = this.fb.group({
+      idSamplingOrder: [null],
+      factsrelevant: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.required],
+      ],
+      downloadbreaches: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.required],
+      ],
+      datebreaches: [null, [Validators.required]],
+      agreements: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.required],
+      ],
+      daterepService: [null, [Validators.required]],
+      nameManagersoul: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.required],
+      ],
     });
   }
 
@@ -158,18 +199,54 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   }
 
   openAnnexK() {
-    this.openModal(AnnexKComponent, '', 'generate-query');
+    this.deductives;
+    const deductivesSelected = this.deductives.filter(
+      (x: any) => x.selected == true
+    );
+    console.log(deductivesSelected);
+
+    if (deductivesSelected.length == 0) {
+      this.onLoadToast(
+        'info',
+        'Para generar el Anexo K es necesario seleccionar alguna deductiva'
+      );
+      return;
+    }
+    if (this.storeSelected == null) {
+      this.onLoadToast(
+        'info',
+        'Debe seleccionar un almacén para generar el Anexo K'
+      );
+      return;
+    }
+
+    const annextForm = this.sampleOrderForm.getRawValue();
+    this.openModal(
+      AnnexKComponent,
+      '',
+      'generate-query',
+      this.storeSelected,
+      annextForm
+    );
   }
 
   turnSampling() {}
 
   save() {}
 
-  openModal(component: any, data?: any, typeAnnex?: string) {
+  openModal(
+    component: any,
+    data?: any,
+    typeAnnex?: string,
+    store?: any,
+    annexData?: any
+  ) {
     let config: ModalOptions = {
       initialState: {
         data: data,
+        store: store,
         typeAnnex: typeAnnex,
+        annexData: annexData,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
@@ -188,5 +265,37 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  newSampleOrder() {
+    const body: ISamplingOrder = {
+      idSamplingOrder: 3,
+      dateCreation: moment(new Date()).format('YYYY-MM-DD'),
+      dateModification: moment(new Date()).format('YYYY-MM-DD'),
+      userCreation: this.authService.decodeToken().username,
+      userModification: this.authService.decodeToken().username,
+      idDelegationRegional: +this.authService.decodeToken().department,
+      dateturned: moment(new Date()).format('YYYY-MM-DD'),
+    };
+    this.orderService.createSampleOrder(body).subscribe({
+      next: resp => {
+        debugger;
+        console.log(resp);
+        this.SampleOrderId = resp.data.id;
+      },
+      error: error => {
+        debugger;
+        console.log(error);
+      },
+    });
+  }
+
+  getStoreSelected(event: any) {
+    console.log(event);
+    this.storeSelected = event;
+  }
+
+  getDeductives(event: any) {
+    this.deductives = event;
   }
 }

@@ -370,4 +370,34 @@ export class DocumentsService extends HttpService {
   deleteDocumentsInvoice(folio: any) {
     return this.delete(`${DocumentsEndpoints.attachedDocument}/${folio}`);
   }
+
+  getAllDocumentsLoan(params: any) {
+    const route = `${DocumentsEndpoints.loanDocument}`;
+    return this.get(route, params);
+  }
+
+  getDocumentLoanByRecordAndLoan(loanNumber: number, recordNumber: number) {
+    const route = `${DocumentsEndpoints.loanDocument}?filter.loanNumber=$eq:${loanNumber}`;
+    return this.get(route);
+  }
+
+  postDocumentsLoan(params: any) {
+    const route = `${DocumentsEndpoints.loanDocument}`;
+    return this.post(route, params);
+  }
+
+  getDocumentsattachment(id: any) {
+    const route = `${DocumentsEndpoints.attachedDocument}?filter.managementNumber=$eq:${id}`;
+    return this.get(route);
+  }
+
+  deleteByFolio(folio: any) {
+    const route = `${DocumentsEndpoints.deleteFolio}/${folio}`;
+    return this.get(route);
+  }
+
+  getDocumentsScan(folio: any) {
+    const route = `${DocumentsEndpoints.document}?filter.scanStatus=$ilike:ESCANEADO&filter.id=$eq:${folio}`;
+    return this.get(route);
+  }
 }

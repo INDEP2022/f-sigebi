@@ -447,7 +447,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.flagCargaImagenes = true;
             this.flagFinConversion = true;
             this.flagCambia = true;
-            this.flagUpdate = true;
+            this.flagUpdate = false;
             this.flagGoodNew = true;
             this.flagGoodDelete = true;
             this.flagCargMasiva = true;
@@ -693,7 +693,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       id: id,
       goodId: goodId,
       status: 'CVD',
-      description: description + '(Bien Convertido)',
     };
     this.serviceGood.update(dataBien).subscribe(
       async res => {
@@ -706,7 +705,24 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       }
     );
   }
-
+  finishConversionActa() {
+    let dataBien = {
+      id: this.goodData.id,
+      goodId: this.goodData.goodId,
+      description: this.goodData.description + '(Bien Convertido)',
+    };
+    this.serviceGood.update(dataBien).subscribe(
+      async res => {
+        if (res) {
+          this.searchGoodSon(this.goodData.goodId);
+          this.searchGoods(this.goodData.goodId);
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   insertHistoryGood(goodId: any) {
     let user = localStorage.getItem('username');
     let dataBien = {
@@ -738,7 +754,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       id: parseInt(idConversion),
       cveActaConv: this.form.get('actConvertion').value,
       statusConv: 2,
-      typeConv: 2,
     };
     console.log('ress conversions :', conversions);
 
@@ -853,10 +868,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       if (q.isConfirmed) {
         this.loader.load = true;
         let good = this.good;
+        console.log(this.good);
         delete good.id;
         delete good.goodId;
         delete good.statusDetails;
         delete good.menaje;
+        delete good.agreementDate;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
         good.almacen =
           this.good.almacen != null ? this.good.almacen.idWarehouse : '';
@@ -1042,8 +1059,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         pGoodFatherNumber: this.numberGoodFather.value,
         expedientNumber: this.numberDossier.value,
         idConversion: this.form.get('idConversion').value,
-        callback: (receipt: any, keyDoc: string) => {
-          if (receipt && keyDoc) {
+        callback: (receipt: any) => {
+          console.log(receipt);
+          if (receipt) {
+            console.log(this.goodData.goodId);
+            this.finishConversionActa();
           }
         },
       };

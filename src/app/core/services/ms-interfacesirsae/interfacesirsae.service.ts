@@ -8,6 +8,7 @@ import {
   ISendSirsae,
   ISendSirsaeLot,
   ISendSirsaeOIScrapDTO,
+  ISirsaeDTO,
   ISirsaeScrapDTO,
   IValidPaymentsDTO,
 } from './interfacesirsae-model';
@@ -83,5 +84,9 @@ export class InterfacesirsaeService extends HttpService {
 
   loadPayments(params: ListParams) {
     return this.get(`application/selectReference/11998905403245735568`);
+  }
+
+  sendSirsae2(body: ISirsaeDTO) {
+    return this.post('sirsae/sendSirsae3', body);
   }
 }

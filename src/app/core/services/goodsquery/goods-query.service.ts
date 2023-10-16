@@ -348,6 +348,12 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
+  getCatStoresView2(_params: ListParams): Observable<IListResponse<any>> {
+    const params = this.makeParams(_params);
+    const route = `${GoodsQueryEndpoints.CatStoresView2}?${params}`;
+    return this.get<IListResponse<IOrderManual>>(route);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

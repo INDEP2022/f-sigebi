@@ -3,7 +3,77 @@
     <h5 class="modal-title pull-left">Capturar datos para el firmante</h5>
   </div>
   <div body class="body">
-    <div>
+    <form [formGroup]="signForm" class="form-material" style="margin-top: 2rem">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="signForm.get('nameSignatore')" label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameSignatore" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="signForm.get('chargeSignatore')" label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="chargeSignatore" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="signForm.get('thirdSpecialized')"
+            label="Tercero Especializado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="thirdSpecialized" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="signForm.get('relevantFacts')"
+            label="Hechos Relevantes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="relevantFacts" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="signForm.get('dateBreak')"
+            label="Fecha Incumplimiento">
+            <input
+              class="form-control"
+              formControlName="dateBreak"
+              [minDate]="minDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="signForm.get('dateRepServices')"
+            label="Fecha Reposición Servicios">
+            <input
+              class="form-control"
+              formControlName="dateRepServices"
+              [minDate]="minDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <!--<div>
       <form
         [formGroup]="signForm"
         class="form-material"
@@ -56,22 +126,18 @@
           </div>
         </div>
       </form>
-    </div>
+    </div> -->
     <div footer>
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            (click)="signAnnex()">
-            Aceptar
-          </button>
+          <confirm-button
+            [disabled]="!signForm.valid"
+            [loading]="loading"
+            class="mr-2"
+            (confirm)="signAnnex()"></confirm-button>
         </div>
         <div class="m-3">
-          <button
-            type="button"
-            class="btn btn-danger btn-sm active"
-            (click)="close()">
+          <button type="button" class="btn btn-danger active" (click)="close()">
             Cancelar
           </button>
         </div>
