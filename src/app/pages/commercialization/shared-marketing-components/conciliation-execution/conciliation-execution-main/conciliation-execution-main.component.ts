@@ -1211,19 +1211,19 @@ export class ConciliationExecutionMainComponent
     }
 
     const resp: any = await this.putUpdateBySubquery(obj);
-    if (resp) {
-      this.loadingBtn = false;
-      this.getComerClientsXEvent('no');
-      this.alert('success', 'Proceso de ejecución terminado correctamente', '');
-    } else {
-      this.loadingBtn = false;
-      this.alert(
-        'warning',
-        'No se completó el proceso de ejecución',
-        ''
-        // 'No hay clientes seleccionados para procesar, verifique la tabla Clientes del Evento'
-      );
-    }
+    // if (resp) {
+    this.loadingBtn = false;
+    this.getComerClientsXEvent('no');
+    this.alert('success', 'Proceso de ejecución terminado correctamente', '');
+    // } else {
+    //   this.loadingBtn = false;
+    //   this.alert(
+    //     'warning',
+    //     'No se completó el proceso de ejecución',
+    //     ''
+    //     // 'No hay clientes seleccionados para procesar, verifique la tabla Clientes del Evento'
+    //   );
+    // }
   }
   async putUpdateBySubquery(body: any) {
     return new Promise((resolve, reject) => {
@@ -2373,14 +2373,14 @@ export class ConciliationExecutionMainComponent
           const varFullErase: any = await this.functFullErase(obj); //   VALIDA_PAGOSREF.BORRA_COMPLETO(: BLK_CTRL.EVENTO, NULL, : BLK_CTRL.FASE_ANT);
           this.alertModal(varFullErase);
         } else if (
-          (PFASE != 1 && this.selectedBatch == undefined) ||
+          (!(PFASE === 1) && this.selectedBatch == undefined) ||
           this.selectedBatch == null
         ) {
           this.loadingBtn3 = false;
           this.alert('warning', 'Es necesario definir un  lote', '');
           return;
         } else if (
-          PFASE != 1 &&
+          !(PFASE === 1) &&
           this.selectedBatch != undefined &&
           this.selectedBatch != null
         ) {
@@ -2398,14 +2398,14 @@ export class ConciliationExecutionMainComponent
         phase: PFASE ? PFASE : null,
       };
       if (PFASE) {
+        console.log('this.selectedBatch', this.selectedBatch);
         if (PFASE == 1 || PFASE == 2) {
           const varCurrentFullErase: any = await this.functCurrentFullErase(
             obj
           ); // VALIDA_PAGOSREF.BORRA_COMPLETO_ACT(:BLK_CTRL.EVENTO, NULL, :BLK_CTRL.FASE_ACT);
           this.alertModal(varCurrentFullErase);
         } else if (
-          PFASE != 1 ||
-          (PFASE != 2 && this.selectedBatch == undefined) ||
+          (!(PFASE === 1 || PFASE === 2) && this.selectedBatch == undefined) ||
           this.selectedBatch == null
         ) {
           this.loadingBtn3 = false;

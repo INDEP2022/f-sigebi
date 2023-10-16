@@ -246,7 +246,6 @@ export class AddMovementComponent
       );
       return;
     }
-    return;
     // // console.log('VALUE', this.form.value);
     const SYSDATE = new Date();
     const USER = this.token.decodeToken().preferred_username;
@@ -482,7 +481,7 @@ export class AddMovementComponent
   detectarFormatoFecha(fecha: any) {
     // const formato1 = /^\w{3} \w{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[-+]\d{2}:\d{2} \(hora de .+\)$/;
     const formato1 =
-      /^[A-Za-z]{3} [A-Za-z]{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[-+]\d{4} \(hora de .+\)$/;
+      /^[A-Za-z]{3} [A-Za-z]{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[-+]\d{4} \(hora +\)$/;
     const formato2 = /^\d{2}-\d{2}-\d{4}$/;
 
     if (formato1.test(fecha)) {
@@ -492,7 +491,7 @@ export class AddMovementComponent
       console.log('NO');
       return this.datePipe.transform(fecha, 'yyyy-dd-MM');
     } else {
-      return null;
+      return fecha;
     }
   }
 }
