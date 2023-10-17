@@ -107,7 +107,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            switch (filters.field) {
+            switch (filter.field) {
               case 'processNumber':
                 searchFilter = SearchFilter.EQ;
                 field = `filter.${filter.field}.description`;
@@ -127,6 +127,9 @@ export class UnitCostComponent extends BasePage implements OnInit {
               case 'varCostNumber':
                 searchFilter = SearchFilter.EQ;
                 field = `filter.${filter.field}.description`;
+                break;
+              case 'costId':
+                searchFilter = SearchFilter.EQ;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;

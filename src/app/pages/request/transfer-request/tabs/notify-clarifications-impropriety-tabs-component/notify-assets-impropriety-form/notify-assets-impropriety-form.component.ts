@@ -107,26 +107,25 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.clarificationForm = this.fb.group({
       addresseeName: [
-        //Nombre Destinatario - Titular de la solicitud
-        null,
+        this.infoRequest?.nameOfOwner || null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       positionAddressee: [
         //Cargo Destinatario - Titular de la solicitud
-        null,
+        this.infoRequest?.holderCharge || null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderName: [
         //Nombre Remitente - DELEGADO
-        this.infoRequest?.nameOfOwner || null,
+        null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderCharge: [
         //Cargo Remitente - DELEGADO
-        this.infoRequest?.holderCharge || null,
+        null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
@@ -750,6 +749,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
             this.loading = false;
+
             //his.onLoadToast('success', 'Actualizado', '');
             this.modalRef.content.callback(true, data.goodId);
             this.modalRef.hide();
@@ -919,11 +919,17 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
 
         //Actualiza el Bien
         this.goodService.update(obj).subscribe({
-          next: resp => {},
-          error: error => {},
+          next: resp => {
+            console.log('Se actualizó el bien', resp);
+          },
+          error: error => {
+            console.log('No se actualizó el bien', error);
+          },
         });
       },
-      error: error => {},
+      error: error => {
+        console.log('No hay bien', error);
+      },
     });
   }
 

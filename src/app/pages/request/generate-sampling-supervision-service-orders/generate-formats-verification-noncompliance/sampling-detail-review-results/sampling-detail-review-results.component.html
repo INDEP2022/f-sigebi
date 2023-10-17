@@ -2,20 +2,20 @@
   <div class="row">
     <div class="col-md-4">
       <label for=""
-        >N&uacute;mero Muestreo&#58;
-        <span>{{ this.detailForm.get('noSampling').value }}</span>
+        >No. Muestreo&#58;
+        <span>{{ sampleOrderForm?.idSamplingOrder }}</span>
       </label>
     </div>
     <div class="col-md-4">
       <label for=""
         >No&#46; Contrato&#58;
-        <span>{{ this.detailForm.get('noContract').value }}</span>
+        <span>{{ sampleOrderForm?.numberContract }}</span>
       </label>
     </div>
     <div class="col-md-4">
       <label for=""
         >Zona Geogr&aacute;fica&#58;
-        <span>{{ this.detailForm.get('geographicalArea').value }}</span>
+        <span>{{ sampleOrderForm?.cveZone }}</span>
       </label>
     </div>
   </div>
@@ -23,13 +23,13 @@
     <div class="col-md-4">
       <label for=""
         >Periodo Muestreo&#58;
-        <span>{{ this.detailForm.get('periodSampling').value }}</span>
+        <span>{{ sampleOrderForm?.periodSampling }}</span>
       </label>
     </div>
     <div class="col-md-4">
       <label for=""
         >Delegaci&oacute;n Regional&#58;
-        <span>{{ this.detailForm.get('regionalDelegation').value }}</span>
+        <span>{{ delegationRegional }}</span>
       </label>
     </div>
   </div>

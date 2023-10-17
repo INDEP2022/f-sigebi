@@ -1,0 +1,182 @@
+<app-modal>
+  <div header>
+    <div class="ch-content">
+      <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('NoMovimiento')"
+            label="No Movimiento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="NoMovimiento" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('FechaMov')" label="Fecha Movimiento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="FechaMov" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('Movimiento')" label="Movimiento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="Movimiento" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('Cuenta')" label="Cuenta">
+            <input type="text" class="form-control" formControlName="Cuenta" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('Referencia')" label="Referencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="Referencia" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('ReferenciaOrdenIngreso')"
+            label="Referencia Orden Ingreso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ReferenciaOrdenIngreso" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('Banco')" label="Banco">
+            <input type="text" class="form-control" formControlName="Banco" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('Sucursal')" label="Sucursal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="Sucursal" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('Monto')" label="Monto">
+            <input type="text" class="form-control" formControlName="Monto" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('Resultado')" label="Resultado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="Resultado" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field label="Documentos" [control]="form.get('Valido')">
+            <ng-select
+              formControlName="Valido"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="R">Rechazado</ng-option>
+              <ng-option value="N">No Invalido</ng-option>
+              <ng-option value="A">Aplicado</ng-option>
+              <ng-option value="B">Pago de Bases</ng-option>
+              <ng-option value="D">Devuelto</ng-option>
+              <ng-option value="C">Contabilizado</ng-option>
+              <ng-option value="P">Penalizado</ng-option>
+              <ng-option value="Z">Devuelto al Cliente</ng-option>
+            </ng-select>
+          </form-field>
+          <!--<form-field [control]="form.get('ValidoText')" label="Valido">
+            <input type="text" class="form-control" formControlName="ValidoText" />
+          </form-field>-->
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('idPago')" label="Id Pago">
+            <input type="text" class="form-control" formControlName="idPago" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('LotePublico')" label="Lote Publico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="LotePublico" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('Evento')" label="Evento">
+            <input type="text" class="form-control" formControlName="Evento" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('OrdenIngreso')"
+            label="Orden de Ingreso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="OrdenIngreso" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('Fecha')" label="Fecha">
+            <input type="text" class="form-control" formControlName="Fecha" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('DescripcionSAT')"
+            label="Descripcion SAT">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="DescripcionSAT" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

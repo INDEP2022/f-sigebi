@@ -70,10 +70,11 @@ export class QueryInterconnectionFormComponent
       this.alert('warning', 'No se encontraron registros', ``);
     } else {
       this.totalRepeated = this.findDuplicateKeys(this.records);
-      this.totalExcelRecords = this.records.length - 1;
+      this.totalExcelRecords = this.records.length;
       let totCve = this.totalABuscar(this.records);
       let splitCve = totCve.split(',');
       this.splitCveUnicas = splitCve.length;
+      console.log(totCve, splitCve);
       /*let result = 
       console.log(result);*/
     }

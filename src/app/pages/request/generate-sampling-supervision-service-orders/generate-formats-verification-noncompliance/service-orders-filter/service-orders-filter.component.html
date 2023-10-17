@@ -3,29 +3,33 @@
     <div class="row pt-4">
       <div class="col-md-2">
         <form-field
-          [control]="filterForm.get('noServiceOrder')"
+          [control]="filterForm.get('id')"
           label="No&#46; Orden de Servicio">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="noServiceOrder" />
+          <input type="text" class="form-control" formControlName="id" />
         </form-field>
       </div>
+    </div>
+    <div class="row pt-4">
       <div class="col-md-4">
         <form-field
-          [control]="filterForm.get('folioServiseOrder')"
+          [control]="filterForm.get('serviceOrderFolio')"
           label="Folio Orden de Servicio">
           <input
             type="text"
             class="form-control"
-            formControlName="folioServiseOrder" />
+            formControlName="serviceOrderFolio" />
         </form-field>
       </div>
+    </div>
+    <div class="row pt-4">
       <div class="col-md-2">
         <form-field
-          [control]="filterForm.get('noRequest')"
+          [control]="filterForm.get('applicationId')"
           label="No&#46; Solicitud">
-          <input type="text" class="form-control" formControlName="noRequest" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="applicationId" />
         </form-field>
       </div>
     </div>
