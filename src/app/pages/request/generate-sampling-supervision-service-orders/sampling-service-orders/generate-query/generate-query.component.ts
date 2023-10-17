@@ -2,14 +2,16 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
 import { ISamplingOrder } from 'src/app/core/models/ms-order-service/sampling-order.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { ZonesService } from 'src/app/core/services/zones/zones.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -35,6 +37,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   storeSelected: any = null;
   deductives: any = [];
+  allDeductives: any = [];
 
   sampleOrderForm: FormGroup = new FormGroup({});
   /**
@@ -53,6 +56,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   private orderService = inject(OrderServiceService);
   private authService = inject(AuthService);
   private deleRegService = inject(RegionalDelegationService);
+  private samplinggoodService = inject(SamplingGoodService);
 
   constructor(
     private fb: FormBuilder,
@@ -133,22 +137,30 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     };
     const page = params.page;
     const limit = params.limit;
-    this.orderService.getSamplingOrderView(body, page, limit).subscribe({
-      next: resp => {
-        const result = resp.data.map(async (item: any) => {
-          const delegation: any = await this.getDelegationRegional(
-            item.regionalDelegation
-          );
-          item['delegationName'] = delegation;
-        });
+    this.orderService
+      .getSamplingOrderView(body, page, limit)
+      .pipe(
+        catchError((e: any) => {
+          if (e.status == 400) return of({ data: [], count: 0 });
+          return e;
+        })
+      )
+      .subscribe({
+        next: resp => {
+          const result = resp.data.map(async (item: any) => {
+            const delegation: any = await this.getDelegationRegional(
+              item.regionalDelegation
+            );
+            item['delegationName'] = delegation;
+          });
 
-        Promise.all(result).then(() => {
-          this.paragraphs = resp.data;
-          this.totalItems = resp.count;
-          this.loading = false;
-        });
-      },
-    });
+          Promise.all(result).then(() => {
+            this.paragraphs = resp.data;
+            this.totalItems = resp.count;
+            this.loading = false;
+          });
+        },
+      });
   }
 
   addOrders(): void {
@@ -230,7 +242,29 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     );
   }
 
-  turnSampling() {}
+  async turnSampling() {
+    this.allDeductives = await this.getAllDeductives();
+    const sampleOrder: any = await this.getSampleOrder();
+    const totalDeductives = this.allDeductives.length;
+    const noSelectedDeductives: any = this.allDeductives.filter(
+      (x: any) => x.indDedictiva == 'N'
+    ).length;
+    let message = '';
+
+    if (noSelectedDeductives == totalDeductives) {
+      message =
+        'No ha seleccionado alguna deductiva para las ordenes de servicio.';
+    } else {
+      if (sampleOrder.idcontentk == null) {
+        this.onLoadToast(
+          'info',
+          'Ha agregado deductivas al muestreo, debe generar el Anexo K'
+        );
+        return;
+      }
+    }
+    this.turnModal(message);
+  }
 
   save() {}
 
@@ -279,12 +313,10 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     };
     this.orderService.createSampleOrder(body).subscribe({
       next: resp => {
-        debugger;
         console.log(resp);
         this.SampleOrderId = resp.data.id;
       },
       error: error => {
-        debugger;
         console.log(error);
       },
     });
@@ -297,5 +329,68 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
 
   getDeductives(event: any) {
     this.deductives = event;
+  }
+
+  getAllDeductives() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.orderSampleId'] = `$eq:${this.SampleOrderId}`;
+      this.samplinggoodService
+        .getAllSampleDeductives(params)
+        .pipe(
+          catchError((e: any) => {
+            if (e.status == 400) {
+              return of({ data: [], count: 0 });
+            }
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp.data);
+          },
+        });
+    });
+  }
+
+  getSampleOrder() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.idSamplingOrder'] = `$eq:${this.SampleOrderId}`;
+      this.orderService.getAllSampleOrder(params).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+      });
+    });
+  }
+
+  turnModal(message: string) {
+    Swal.fire({
+      title: 'Confirmación',
+      html:
+        'Esta seguro de enviar la información a turnar? <br/><br/>' +
+        `<p style="color:red;">${message}<p>`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#B38E5D',
+      confirmButtonText: 'Enviar',
+      cancelButtonText: 'Cancelar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        let lsEstatusMuestreo = '';
+        if (message == null || message == '') {
+          lsEstatusMuestreo = 'MUESTREO_NO_CUMPLE';
+        } else {
+          lsEstatusMuestreo = 'MUESTREO_TERMINA';
+        }
+        const lsDelReg = '';
+        const lsUsuario = '';
+        const lsUsuarioSAE = '';
+
+        Swal.fire('Turnado', 'El muestreo fue turnado', 'success');
+      }
+    });
   }
 }

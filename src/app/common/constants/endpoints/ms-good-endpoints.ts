@@ -93,6 +93,9 @@ export enum GoodProcessPoints {
   ComerDetAvaluoAll = 'application/get-comer-det-avaluo-all',
   SpObtnxGood = 'application/spObtnxGood',
   SpObtnxGoodExcel = 'application/spObtnxGood-csv',
+  FnMethodPagof = 'application/fn-methodpagof',
+  RegFinalFile = 'application/regFinalFile',
+  RegFile = 'application/regFile',
   GoodxStatusXtypeNumber = 'application/getExistsGoodxStatusXtypeNumber',
 }
 

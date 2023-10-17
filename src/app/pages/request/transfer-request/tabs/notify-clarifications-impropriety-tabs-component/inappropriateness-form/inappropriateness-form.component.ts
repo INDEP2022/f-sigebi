@@ -55,7 +55,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Delegación de la solicitud', this.delegationUser);
+    this.getInfoDoc();
     this.dictamenSeq();
     this.prepareForm();
 
@@ -67,6 +67,71 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         console.log('Respuesta de la delegación', error.regionalDelegate);
       },
     })*/
+  }
+
+  getInfoDoc() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.applicationId'] = this.idSolicitud;
+      this.documentService
+        .getAllClarificationDocImpro(params.getValue())
+        .subscribe({
+          next: response => {
+            resolve(response.data[0].id);
+
+            const clarificationImpro: IClarificationDocumentsImpro =
+              response.data[0];
+            if (clarificationImpro?.managedTo) {
+              this.form
+                .get('addresseeName')
+                .setValue(clarificationImpro?.managedTo);
+            }
+
+            if (clarificationImpro?.positionAddressee) {
+              this.form
+                .get('positionAddressee')
+                .setValue(clarificationImpro?.positionAddressee);
+            }
+
+            if (clarificationImpro?.sender) {
+              this.form.get('senderName').setValue(clarificationImpro?.sender);
+            }
+
+            if (clarificationImpro?.positionSender) {
+              this.form
+                .get('senderCharge')
+                .setValue(clarificationImpro?.positionSender);
+            }
+
+            if (clarificationImpro?.consistentIn) {
+              this.form
+                .get('consistentIn')
+                .setValue(clarificationImpro?.consistentIn);
+            }
+
+            if (clarificationImpro?.clarification) {
+              this.form
+                .get('clarification')
+                .setValue(clarificationImpro?.clarification);
+            }
+
+            if (clarificationImpro?.paragraphInitial) {
+              this.form
+                .get('paragraphInitial')
+                .setValue(clarificationImpro?.paragraphInitial);
+            }
+
+            if (clarificationImpro?.paragraphFinal) {
+              this.form
+                .get('paragraphFinal')
+                .setValue(clarificationImpro?.paragraphFinal);
+            }
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
+    });
   }
 
   prepareForm() {
@@ -90,62 +155,79 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {
-    console.log('improcedenciaTransferentesVoluntarias DESDE EL PEQUEÑO');
-    //Recupera información del usuario logeando para luego registrarlo como firmante
+  async confirm() {
     let token = this.authService.decodeToken();
-
-    //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.form.controls['clarification'].value,
       sender: this.form.controls['senderName'].value,
-      //foundation: this.form.controls['foundation'].value,
-      //id: 1, //ID primaria
       version: 1,
-      //transmitterId: this.form.controls['transmitterId'].value,
-      paragraphInitial: this.form.controls['paragraphInitial'].value, //no tiene limite en BD
+      paragraphInitial: this.form.controls['paragraphInitial'].value,
       applicationId: this.request.id,
       positionSender: this.form.controls['senderCharge'].value,
-      paragraphFinal: this.form.controls['paragraphFinal'].value, //no tiene limite en BD
-      consistentIn: this.form.controls['consistentIn'].value, //no tiene limite en BD
+      paragraphFinal: this.form.controls['paragraphFinal'].value,
+      consistentIn: this.form.controls['consistentIn'].value,
       managedTo: this.form.controls['addresseeName'].value,
       invoiceLearned: this.folioReporte,
-      //invoiceNumber: 1,
       positionAddressee: this.form.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
-      documentTypeId: '216', //Aclaración tipo 2 -> ImprocedenciaTransferentesVoluntarias
+      documentTypeId: '216',
       modificationUser: token.name,
-      //worthAppraisal: this.form.controls['worthAppraisal'].value,
       creationDate: new Date(),
-      //rejectNoticeId: 1,
       assignmentInvoiceDate: new Date(),
-      //mailNotification: this.form.controls['webMail'].value,
-      /*areaUserCapture:
-          this.form.controls['userAreaCaptures'].value,*/
       rejectNoticeId: this.notification.rejectNotificationId,
     };
-
-    this.loading = true;
-    this.documentService.createClarDocImp(modelReport).subscribe({
-      next: data => {
-        const createClarGoodDoc = this.createClarGoodDoc(data);
-
-        console.log('Tabla de bienes en reporte generado');
-
-        setTimeout(() => {
-          if (createClarGoodDoc) {
-            this.openReport(data);
+    const checkExistDocImp: any = await this.checkDataExist();
+    if (checkExistDocImp?.id != 0) {
+      this.documentService
+        .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
+        .subscribe({
+          next: data => {
+            this.openReport(checkExistDocImp);
             this.loading = false;
             this.close();
-          }
-        }, 250);
-      },
-      error: error => {
-        this.loading = false;
+          },
+          error: error => {
+            this.loading = false;
+            this.onLoadToast('error', 'No se pudo guardar', '');
+          },
+        });
+    }
 
-        //this.onLoadToast('error', 'No se pudo guardar', '');
-      },
+    if (checkExistDocImp == 0) {
+      this.loading = true;
+      this.documentService.createClarDocImp(modelReport).subscribe({
+        next: data => {
+          const createClarGoodDoc = this.createClarGoodDoc(data);
+          setTimeout(() => {
+            if (createClarGoodDoc) {
+              this.openReport(data);
+              this.loading = false;
+              this.close();
+            }
+          }, 250);
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+    }
+  }
+
+  checkDataExist() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.applicationId'] = this.idSolicitud;
+      this.documentService
+        .getAllClarificationDocImpro(params.getValue())
+        .subscribe({
+          next: response => {
+            resolve(response.data[0]);
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
     });
   }
 
@@ -210,7 +292,6 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     goodId?: number,
     observations?: string
   ) {
-    console.log('actualizando... 1');
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
@@ -230,9 +311,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
             this.modalRef.content.callback(true, data.goodId);
             this.modalRef.hide();
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       },
     });
@@ -258,10 +337,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         notificationValidate,
         callback: (next: boolean) => {
           if (next) {
-            console.log('Modal cerrado');
             this.changeStatusAnswered();
           } else {
-            console.log('Modal no cerrado');
           }
         },
       },
@@ -283,9 +360,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
       },
-      error: error => {
-        console.log('Error al generar secuencia de dictamen', error.error);
-      },
+      error: error => {},
     });
   }
 
