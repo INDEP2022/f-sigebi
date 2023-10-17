@@ -188,11 +188,10 @@ export class ReadInfoGoodComponent
         this.uniqueKey = good.uniqueKey ? good.uniqueKey : '';
 
         this.unitTrans = good.measureUnitTransferent;
-        this.getUnitMeasureSae(
-          new ListParams(),
-          this.goodData.saeMeasureUnit,
-          good.measureUnitTransferent
-        );
+
+        const unitIndep =
+          good.saeMeasureUnit != null ? good.saeMeasureUnit : good.ligieUnit;
+        this.getUnitMeasureSae(new ListParams(), unitIndep);
       },
       error: error => {
         console.log(error);
@@ -375,7 +374,6 @@ export class ReadInfoGoodComponent
     });
   }
 
-  //ver
   getUnitMeasureSae(params: ListParams, id?: string | number, unit?: string) {
     if (id && this.process != 'classify-assets') {
       params['filter.nbCode'] = `$eq:${id}`;
@@ -397,6 +395,9 @@ export class ReadInfoGoodComponent
             this.selectMeasureUnitSae = new DefaultSelect(
               resp.data,
               resp.count
+            );
+            this.goodForm.controls['saeMeasureUnit'].setValue(
+              resp.data[0].nbCode
             );
           }
         }

@@ -31,7 +31,7 @@ export class ListServiceOrdersComponent
 {
   @Input() orders: any[];
   @Input() SampleOrderId: number = null;
-  sampleOrderId: number = 3;
+  //sampleOrderId: number = 3;
   paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -115,7 +115,7 @@ export class ListServiceOrdersComponent
       this.paragraphs['data'].splice(index, 1);
 
       const del = await this.deleteSamplingOrderService(
-        this.sampleOrderId,
+        this.SampleOrderId,
         item.orderServiceId
       );
       if (this.rowSelected.length == i) {
@@ -126,7 +126,7 @@ export class ListServiceOrdersComponent
   }
 
   uploadExpedient() {
-    if (this.rowSelected.length > 1) {
+    if (this.rowSelected.length == 0 || this.rowSelected.length > 1) {
       this.onLoadToast('info', 'Seleccione solo un registro');
       return;
     }
@@ -157,7 +157,7 @@ export class ListServiceOrdersComponent
     return new Promise((resolve, reject) => {
       const user = this.authService.decodeToken();
       const body: ISamplingOrderService = {
-        sampleOrderId: this.sampleOrderId,
+        sampleOrderId: this.SampleOrderId,
         orderServiceId: order.orderServiceId,
         userCreation: user.username,
         creationDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -183,7 +183,7 @@ export class ListServiceOrdersComponent
   getSamplingOrder() {
     this.loading = true;
     const params = new ListParams();
-    params['filter.sampleOrderId'] = `$eq:${this.sampleOrderId}`;
+    params['filter.sampleOrderId'] = `$eq:${this.SampleOrderId}`;
     this.orderService.getAllSamplingOrderService(params).subscribe({
       next: async (resp: any) => {
         let body: any = [];

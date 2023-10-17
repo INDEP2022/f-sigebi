@@ -111,6 +111,9 @@ export class billingPaymentsComponent extends BasePage implements OnInit {
               case 'total':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'id_factura':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;

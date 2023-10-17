@@ -13,6 +13,7 @@ import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/samplin
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
+import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { DATA } from './columns/deductive-data';
 import { DEDUCTIVE_COLUMN } from './columns/deductives-columns';
 
@@ -33,6 +34,7 @@ export class CreateDeductivesComponent extends BasePage implements OnInit {
 
   private samplinggoodService = inject(SamplingGoodService);
   private authService = inject(AuthService);
+  private requestHelpService = inject(RequestHelperService);
 
   constructor() {
     super();
@@ -58,20 +60,21 @@ export class CreateDeductivesComponent extends BasePage implements OnInit {
         });
       },
     };
-    console.log(this.typeComponent);
-    console.log(this.deductives);
 
     this.setInputs();
-    if (this.typeComponent == 'generate-query') {
+    if (
+      this.typeComponent == 'generate-query' ||
+      this.typeComponent == 'revition-results'
+    ) {
       this.getDeductives();
     }
   }
 
   setInputs() {
+    this.paragraphs = DATA;
     if (this.typeComponent === 'revition-results') {
-      this.isReadOnly = false;
+      this.isReadOnly = true;
     } else if (this.typeComponent == 'generate-query') {
-      this.paragraphs = DATA;
       this.deductivesSelected.emit(this.paragraphs);
     }
   }
@@ -157,7 +160,6 @@ export class CreateDeductivesComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           if (resp.count > 0) {
-            console.log(resp.data[0]);
             resp.data.map((item: any) => {
               for (let index = 0; index < this.paragraphs.length; index++) {
                 const element = this.paragraphs[index];
@@ -170,8 +172,25 @@ export class CreateDeductivesComponent extends BasePage implements OnInit {
               }
               this.paragraphs = [...this.paragraphs];
             });
+            if (this.typeComponent == 'revition-results') {
+              this.setTableColumns();
+            }
           }
         },
       });
+  }
+
+  setTableColumns() {
+    setTimeout(() => {
+      const table = document.getElementById('table');
+      const tbody = table.children[0].children[1].children;
+      for (let i = 0; i < tbody.length; i++) {
+        const ele: any = tbody[i];
+        const input = ele.children[1].querySelector('#text-input');
+        input.disabled = true;
+        const check = ele.children[2].querySelector('#checkbox-input');
+        check.disabled = true;
+      }
+    }, 500);
   }
 }
