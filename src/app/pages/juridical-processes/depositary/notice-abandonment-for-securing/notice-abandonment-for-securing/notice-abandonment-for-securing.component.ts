@@ -105,6 +105,8 @@ export class NoticeAbandonmentForSecuringComponent
         tap(() => {})
       )
       .subscribe();
+
+    this.getGoodIdDescription(new ListParams());
   }
 
   getGoodsxnotification() {
@@ -140,7 +142,7 @@ export class NoticeAbandonmentForSecuringComponent
   }
 
   getGoodIdDescription(lparams: ListParams) {
-    const params = new FilterParams();
+    /*const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
     let paramDinamyc = '';
@@ -150,8 +152,9 @@ export class NoticeAbandonmentForSecuringComponent
         ? (paramDinamyc = `filter.goodId=$eq:${lparams.text}`)
         : (paramDinamyc = `filter.description=$ilike:${lparams.text}`);
     }
+    `${params.getParams()}&${paramDinamyc}`*/
 
-    this.goodService.getAll(`${params.getParams()}&${paramDinamyc}`).subscribe({
+    this.goodService.getAll(lparams).subscribe({
       next: data => {
         console.log(data);
         this.good = new DefaultSelect(data.data, data.count);
