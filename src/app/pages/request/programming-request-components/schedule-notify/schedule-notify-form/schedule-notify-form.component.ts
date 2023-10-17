@@ -30,6 +30,7 @@ import { estates, users } from './schedule-notify-data';
 import { takeUntil } from 'rxjs';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 
 @Component({
@@ -71,11 +72,18 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   programming: Iprogramming;
   usersToProgramming: LocalDataSource = new LocalDataSource();
+  paramsShowTransportable = new BehaviorSubject<ListParams>(new ListParams());
+  paramsShowWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+
   totalItemsUsers: number = 0;
   headingTransportable: string = `Transportables(0)`;
   headingGuard: string = `Resguardo(0)`;
   headingWarehouse: string = `Almacén INDEP(0)`;
   formLoading: boolean = false;
+  formLoadingTransportable: boolean = false;
+  formLoadingGuard: boolean = false;
+  formLoadingWarehouse: boolean = false;
+  loadingReportGoods: boolean = false;
   stateName: string = '';
   settingsTransportableGoods = {
     ...this.settings,
@@ -137,7 +145,8 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private router: Router,
     private stateService: StateOfRepublicService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.idProgramming = Number(
@@ -148,7 +157,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getProgrammingData();
     this.usersToProg();
-    this.getGoodProgramming();
+    //this.getGoodProgramming();
   }
 
   getProgrammingData() {
@@ -167,6 +176,18 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
         );
         this.getTypeRelevant(this.programming.typeRelevantId);
         this.getStore(this.programming.storeId);
+
+        this.paramsTransportableGoods
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.filterStatusTrans());
+
+        this.paramsGuardGoods
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.showGuard());
+
+        this.paramsWarehouseGoods
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.showWarehouseGoods());
       });
   }
 
@@ -280,61 +301,6 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
       });
   }
 
-  getGoodProgramming() {
-    this.params.getValue()['filter.programmingId'] = this.idProgramming;
-    this.programmingService
-      .getGoodsProgramming(this.params.getValue())
-      .subscribe({
-        next: async data => {
-          this.paramsTransportableGoods
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showTransportable(data.data));
-
-          this.paramsGuardGoods
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showGuard(data.data));
-
-          this.paramsWarehouseGoods
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.showWarehouseGoods(data.data));
-          this.params = new BehaviorSubject<ListParams>(new ListParams());
-        },
-        error: error => {},
-      });
-  }
-
-  showTransportable(goodsProg: IGoodProgramming[]) {
-    const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_TRANSPORTABLE';
-    });
-    const showTransportable: any = [];
-    filterTrans.map((item: IGoodProgramming) => {
-      this.paramsTransportableGoods.getValue()['filter.id'] = item.goodId;
-      this.goodService
-        .getAll(this.paramsTransportableGoods.getValue())
-        .subscribe({
-          next: async data => {
-            data.data.map(async item => {
-              const aliasWarehouse: any = await this.getAliasWarehouse(
-                item.addressId
-              );
-              item['aliasWarehouse'] = aliasWarehouse;
-
-              if (item.physicalStatus == 1) item['physicalStatus'] = 'BUENO';
-              if (item.physicalStatus == 2) item['physicalStatus'] = 'MALO';
-              showTransportable.push(item);
-
-              this.goodsTranportables.load(showTransportable);
-              this.totalItemsTransportableGoods =
-                this.goodsTranportables.count();
-              this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
-              this.formLoading = false;
-            });
-          },
-        });
-    });
-  }
-
   getAliasWarehouse(idAddress: number) {
     return new Promise((resolve, reject) => {
       this.domicilieService.getById(idAddress).subscribe({
@@ -357,58 +323,244 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
   }
 
-  showGuard(goodsProg: IGoodProgramming[]) {
-    const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_RESGUARDO_TMP';
-    });
-    const showGuard: any = [];
-    filterTrans.map((item: IGoodProgramming) => {
-      this.paramsGuardGoods.getValue()['filter.id'] = item.goodId;
-      this.goodService.getAll(this.paramsGuardGoods.getValue()).subscribe({
-        next: async data => {
-          data.data.map(async item => {
-            const aliasWarehouse: any = await this.getAliasWarehouse(
-              item.addressId
-            );
-            item['aliasWarehouse'] = aliasWarehouse;
+  filterStatusTrans() {
+    this.formLoadingTransportable = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.idProgramming;
+    params.getValue()['filter.status'] = 'EN_TRANSPORTABLE';
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async data => {
+        this.totalItemsTransportableGoods = data.count;
+        this.headingTransportable = `Transportable(${data.count})`;
+        const showTransportable: any = [];
+        data.data.map((item: IGoodProgramming) => {
+          this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+          this.goodService
+            .getAll(this.paramsShowTransportable.getValue())
+            .subscribe({
+              next: async data => {
+                data.data.map(async item => {
+                  const aliasWarehouse: any = await this.getAliasWarehouse(
+                    item.addressId
+                  );
+                  item['aliasWarehouse'] = aliasWarehouse;
 
-            if (item.statePhysicalSae == 1) item['statePhysicalSae'] = 'BUENO';
-            if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
-            showGuard.push(item);
-            this.goodsGuards.load(showGuard);
-            this.totalItemsGuardGood = this.goodsGuards.count();
-            this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
-          });
-        },
-      });
+                  if (item.physicalStatus == 1)
+                    item['physicalStatus'] = 'BUENO';
+                  if (item.physicalStatus == 2) item['physicalStatus'] = 'MALO';
+                  showTransportable.push(item);
+
+                  this.goodsTranportables.load(showTransportable);
+                  this.totalItemsTransportableGoods =
+                    this.goodsTranportables.count();
+                  this.formLoadingTransportable = false;
+                });
+              },
+            });
+        });
+      },
+      error: error => {
+        this.formLoadingTransportable = false;
+      },
     });
   }
 
-  showWarehouseGoods(goodsProg: IGoodProgramming[]) {
-    const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_ALMACEN_TMP';
-    });
-    const showWarehouse: any = [];
-    filterTrans.map((item: IGoodProgramming) => {
-      this.paramsWarehouseGoods.getValue()['filter.id'] = item.goodId;
-      this.goodService.getAll(this.paramsWarehouseGoods.getValue()).subscribe({
-        next: async data => {
-          data.data.map(async item => {
-            const aliasWarehouse: any = await this.getAliasWarehouse(
-              item.addressId
-            );
-            item['aliasWarehouse'] = aliasWarehouse;
+  showGuard() {
+    this.formLoadingGuard = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.idProgramming;
+    params.getValue()['filter.status'] = 'EN_RESGUARDO_TMP';
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async data => {
+        this.totalItemsGuardGood = data.count;
+        this.headingGuard = `Resguardo(${data.count})`;
+        const showGuard: any = [];
+        data.data.map((item: IGoodProgramming) => {
+          this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+          this.goodService
+            .getAll(this.paramsShowTransportable.getValue())
+            .subscribe({
+              next: async data => {
+                data.data.map(async item => {
+                  const aliasWarehouse: any = await this.getAliasWarehouse(
+                    item.addressId
+                  );
+                  item['aliasWarehouse'] = aliasWarehouse;
 
-            if (item.statePhysicalSae == 1) item['statePhysicalSae'] = 'BUENO';
-            if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
-            showWarehouse.push(item);
-            this.goodsWarehouse.load(showWarehouse);
-            this.totalItemsWarehouse = this.goodsWarehouse.count();
-            this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
-          });
-        },
-      });
+                  if (item.statePhysicalSae == 1)
+                    item['statePhysicalSae'] = 'BUENO';
+                  if (item.statePhysicalSae == 2)
+                    item['statePhysicalSae'] = 'MALO';
+                  showGuard.push(item);
+                  this.goodsGuards.load(showGuard);
+                  this.formLoadingGuard = false;
+                });
+              },
+            });
+        });
+      },
+      error: error => {
+        this.formLoadingGuard = false;
+      },
     });
+  }
+
+  showWarehouseGoods() {
+    this.formLoadingWarehouse = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.idProgramming;
+    params.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
+
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async data => {
+        this.totalItemsWarehouse = data.count;
+        this.headingWarehouse = `Almacén INDEP(${data.count})`;
+        const showWarehouse: any = [];
+        data.data.map((item: IGoodProgramming) => {
+          this.paramsShowWarehouse.getValue()['filter.id'] = item.goodId;
+          this.goodService
+            .getAll(this.paramsShowWarehouse.getValue())
+            .subscribe({
+              next: async data => {
+                data.data.map(async item => {
+                  const aliasWarehouse: any = await this.getAliasWarehouse(
+                    item.addressId
+                  );
+                  item['aliasWarehouse'] = aliasWarehouse;
+
+                  if (item.statePhysicalSae == 1)
+                    item['statePhysicalSae'] = 'BUENO';
+                  if (item.statePhysicalSae == 2)
+                    item['statePhysicalSae'] = 'MALO';
+                  showWarehouse.push(item);
+                  this.goodsWarehouse.load(showWarehouse);
+                  this.formLoadingWarehouse = false;
+                });
+              },
+            });
+        });
+      },
+      error: error => {
+        this.formLoadingWarehouse = false;
+      },
+    });
+  }
+
+  generateReport(statusGoood: string, nameExcel: string) {
+    if (statusGoood == 'EN_TRANSPORTABLE') {
+      this.goodsTranportables.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.idProgramming}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+
+    if (statusGoood == 'EN_RESGUARDO_TMP') {
+      this.goodsGuards.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.idProgramming}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+
+    if (statusGoood == 'EN_ALMACEN_TMP') {
+      this.goodsWarehouse.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.idProgramming}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+  }
+
+  downloadExcel(excel: any, nameReport: string) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = nameReport;
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 
   backTask() {

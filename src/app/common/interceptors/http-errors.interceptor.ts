@@ -124,8 +124,6 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       this.router.navigate(['/auth/login']);
       return;
     } else if (status === 401 && error.url.indexOf('firebase') >= 0) {
-      console.log('ERROR FIREBASE');
-
       return;
     }
     if (status === 403) {
