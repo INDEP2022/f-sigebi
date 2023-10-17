@@ -37,11 +37,7 @@ export class AuthService {
     const tokenCreation = new Date(decodedToken.iat * 1000);
     const timeOut = new Date((decodedToken.exp - 300) * 1000);
     const _timeout = Math.abs(timeOut.getTime() - new Date().getTime());
-    console.log(
-      `El token se genero a las ${tokenCreation}, expira a las ${new Date(
-        decodedToken.exp * 1000
-      )}, se refrescara el token a las ${timeOut}, en ${_timeout} milisegundos`
-    );
+
     this.tokenTimeOut = setTimeout(() => {
       const refresh_token = localStorage.getItem('r_token');
       if (!refresh_token) {

@@ -19,7 +19,9 @@
         </button>
       </div>
       <div class="m-3">
-        <button class="btn btn-success btn-sm active">
+        <button
+          (click)="generateReport()"
+          class="btn btn-success btn-sm active">
           Descargar Archivo <i class="bx bx-download"></i>
         </button>
       </div>
@@ -66,7 +68,8 @@
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settings3"
-        [source]="paragraphs3">
+        [source]="paragraphs3"
+        (userRowSelect)="goodsSamplingSelect($event)">
       </ng2-smart-table>
       <!--        <table class="table table-bordered" style="white-space: nowrap; overflow-x: auto">
           <thead>

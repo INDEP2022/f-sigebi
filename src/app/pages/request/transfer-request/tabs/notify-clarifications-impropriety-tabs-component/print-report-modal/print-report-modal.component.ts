@@ -523,6 +523,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         xDelegacionRegional: this.requestInfo?.regionalDelegationId,
         xremitente: this.requestInfo?.sender,
         xcargoRemitente: this.requestInfo?.holderCharge,
+        texto: 'prueba_unir', //propiedad que se ocupara para traer las notificaciones. Para un solo ciclo
       };
       console.log('Data a guardar: ', formData);
       this.attachDoc(formData);

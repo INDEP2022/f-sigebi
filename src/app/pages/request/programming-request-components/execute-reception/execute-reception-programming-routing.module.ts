@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ExecuteReceptionFormComponent } from './execute-reception-form/execute-reception-form.component';
+import { ExecuteReceptionFormComponent } from '../execute-reception/execute-reception-form/execute-reception-form.component';
 
 const routes: Routes = [
   {
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ExecuteReceptionRoutingModule {}
+export class ExecuteReceptionProgrammingRoutingModule {}

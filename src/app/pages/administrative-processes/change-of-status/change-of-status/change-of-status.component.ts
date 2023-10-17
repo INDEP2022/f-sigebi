@@ -151,28 +151,34 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
               const paramsF2 = new FilterParams();
               paramsF2.addFilter('status', res.status_estatus);
               paramsF2.addFilter('screenKey', 'CAMMUEESTATUS');
+              //this.getStatus(res.status_estatus)
               this.screenStatusService
                 .getAllFilterFree(paramsF2.getParams())
                 .subscribe(
                   res => {
-                    this.getStatus(
-                      { text: JSON.parse(JSON.stringify(res.data[0])).status },
-                      true
-                    );
+                    const data = JSON.parse(JSON.stringify(res.data[0]));
+
+                    console.log(data.statusFinal);
+                    data.statusFinal != null
+                      ? this.getStatus({ text: data.statusFinal.status }, true)
+                      : console.log('No hizo getStatus');
                     console.log(res.data[0]);
-                    resolve(res);
+                    resolve(data);
                   },
                   err => {
+                    console.log(err);
                     resolve({ message: 'Error' });
                   }
                 );
             },
             err => {
+              console.log(err);
               resolve({ message: 'Error' });
             }
           );
         },
         err => {
+          console.log(err);
           resolve({ message: 'Error' });
         }
       );
@@ -301,29 +307,42 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     });
   } */
 
-  getStatus(params: ListParams, research?: boolean) {
-    console.log(params.text);
-    const paramsF = new FilterParams();
-    paramsF.addFilter('status', params.text);
-    this.goodServices.getStatusGood(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res);
-        const newData = res.data.map((item: any) => {
-          return {
-            ...item,
-            labelEstatus: item.status + ' - ' + item.description,
-          };
-        });
-        this.dataStatus = new DefaultSelect(newData, res.count);
-        if (research) {
-          this.goodStatus.setValue(newData[0]);
+  //BUSCAR EL ESTATUS PARA NGX-SELECT
+  searchStatus(params: string) {
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('status', params, SearchFilter.ILIKE);
+      paramsF.addFilter('screenKey', 'CAMMUEESTATUS');
+      this.screenStatusService.getAllFilterFree(paramsF.getParams()).subscribe(
+        res => {
+          console.log(res);
+          const newData = res.data.map((item: any) => {
+            return {
+              ...item,
+              labelEstatus: item.status + ' - ' + item.description,
+            };
+          });
+          resolve({ newData, count: res.count });
+        },
+        err => {
+          console.log(err);
+          this.dataStatus = new DefaultSelect();
         }
-      },
-      err => {
-        console.log(err);
-        this.dataStatus = new DefaultSelect();
-      }
-    );
+      );
+    });
+  }
+
+  async getStatus(params?: ListParams, research?: boolean) {
+    console.log({ parametro_estatus: params });
+    const resp = await this.searchStatus(params.text);
+    console.log({ Nueva_respuesta: resp });
+    if (research) {
+      const jsonRsp = JSON.parse(JSON.stringify(resp));
+      this.dataStatus = new DefaultSelect(jsonRsp.newData, jsonRsp.count);
+      console.log(jsonRsp.newData[0]);
+      this.goodStatus.setValue(jsonRsp.newData[0]);
+    } else {
+    }
   }
 
   async loadGood() {
@@ -410,7 +429,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           status:
             this.goodStatus.value === null
               ? this.good.status
-              : this.goodStatus.value,
+              : this.goodStatus.value.status,
           extDomProcess:
             this.extDomProcess.value === null
               ? this.good.extDomProcess
@@ -444,7 +463,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   postHistoryGood() {
     const historyGood: IHistoryGood = {
       propertyNum: this.numberGood.value,
-      status: this.goodStatus.value,
+      status: this.goodStatus.value.status,
       changeDate: this.correctDate(new Date().toISOString()),
       userChange: this.token.decodeToken().preferred_username,
       statusChangeProgram: 'CAMMUEESTATUS',

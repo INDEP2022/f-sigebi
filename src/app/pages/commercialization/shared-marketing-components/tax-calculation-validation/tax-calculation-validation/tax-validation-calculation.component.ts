@@ -343,7 +343,7 @@ export class TaxValidationCalculationComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());*/
     this.prepareForm();
-    this.getValueIva();
+    this.getValueIva(new ListParams());
 
     this.filterTable();
 
@@ -395,6 +395,9 @@ export class TaxValidationCalculationComponent
             this.terrainRate = data.terrainRate;
 
             this.IVA_TERRENO = data.IVA_TERRENO;
+
+            this.data.load([]);
+            this.data.refresh();
 
             this.data2.load([]);
             this.data2.refresh();
@@ -449,8 +452,9 @@ export class TaxValidationCalculationComponent
     this.settings3 = $event;
   }
 
-  getValueIva() {
-    this.expenseParametercomerService.getParameterMod().subscribe(
+  getValueIva(params: ListParams) {
+    params['filter.parameter'] = 'IVA';
+    this.expenseParametercomerService.getParameterMod(params).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
           console.log('Resp getValueIva-> ', resp);

@@ -41,6 +41,10 @@ export class AccountMovementService extends HttpService {
     return this.post(AccountmvmntEndpoint.GetCtrlPago, body);
   }
 
+  getSeqComerPago(body: any) {
+    return this.post(AccountmvmntEndpoint.GetSeqComerPago, body);
+  }
+
   getAllFilterSelf(self?: AccountMovementService, params?: _Params) {
     return self.get<IListResponse<IAccountMovement>>(
       'account-movements',
