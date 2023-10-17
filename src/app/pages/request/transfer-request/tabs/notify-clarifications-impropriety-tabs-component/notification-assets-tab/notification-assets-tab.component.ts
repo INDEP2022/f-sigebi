@@ -968,7 +968,7 @@ export class NotificationAssetsTabComponent
 
       if (
         notification.clarificationType == 'SOLICITAR_ACLARACION' &&
-        notification.clarification.clarification !=
+        notification.clarification?.clarification !=
           'INDIVIDUALIZACIÓN DE BIENES'
       ) {
         if (notification.answered == 'EN ACLARACION') {
@@ -982,7 +982,7 @@ export class NotificationAssetsTabComponent
         }
       } else if (
         notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA' &&
-        notification.clarification.clarification !=
+        notification.clarification?.clarification !=
           'INDIVIDUALIZACIÓN DE BIENES'
       ) {
         if (notification.answered == 'EN ACLARACION') {
@@ -1021,7 +1021,7 @@ export class NotificationAssetsTabComponent
       }
 
       if (
-        notification.clarification.clarification ==
+        notification.clarification?.clarification ==
         'INDIVIDUALIZACIÓN DE BIENES'
       ) {
         if (notification.answered == 'EN ACLARACION') {
