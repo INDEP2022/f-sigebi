@@ -86,4 +86,10 @@ export enum ENDPOINT_INVOICE {
   ApplicationConsPupEminFact = 'application/cons-pup-emin-fact',
   PkComerVNR = 'pk-comer-vnr/insert-lot',
   PKComerVNRCancel = 'pk-comer-vnr/cancel-paper-vnr',
+  ComerTpinvoices = 'comer-tpinvoices',
+  ApplicationFaValidCurpRfc = 'application/fa-valid-curp-rfc',
+  ApplicationComerBillsTotal = 'application/comer-bills-total',
+  ApplicationComerBillsIva = 'application/comer-bills-iva',
+  ApplicationComerBillsPrice = 'application/comer-bills-price',
+  ApplicationComerBillsAmount = 'application/comer-bills-amount',
 }

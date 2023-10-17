@@ -118,6 +118,7 @@ export class ScanFileComponent extends BasePage implements OnInit {
               user: this.user,
               noPackage: this.package.numberPackage,
             };
+            console.log(model)
             this.serviceDocuments
               .generateFolioMassiveConversion(model)
               .subscribe(
