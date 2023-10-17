@@ -185,7 +185,7 @@ export const BANK_ACCOUNTS_COLUMNS = {
   },
   datePay: {
     title: 'Fecha Pago',
-    type: 'number',
+    type: 'string',
     sort: false,
     filter: false,
     valuePrepareFunction: (value: string) => {
