@@ -310,7 +310,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                               );
                           },
                           err => {
-                            console.log(err)
+                            console.log(err);
                             this.loading = false;
                             this.alert(
                               'error',
@@ -321,7 +321,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                         );
                     },
                     err => {
-                      console.log(err)
+                      console.log(err);
                       this.alert(
                         'error',
                         'Se presentó un error inesperado',

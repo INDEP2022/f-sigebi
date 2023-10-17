@@ -494,9 +494,9 @@ export class DestructionAuthorizationComponent
         return;
       }
       this.goodTrackerGoods = trackerGoods;
-      //this.getProceedingGoods();
-      //this.searchActa(id.value);
-      //this.searchDicta(id.value);
+      this.getProceedingGoods();
+      this.searchActa(id.value);
+      this.searchDicta(id.value);
     });
   }
 
@@ -529,7 +529,6 @@ export class DestructionAuthorizationComponent
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
             this.insertDetailFromGoodsTracker();
-            this.getDictAndActs().subscribe();
           }
         },
       });
@@ -583,7 +582,14 @@ export class DestructionAuthorizationComponent
     });
   }
 
+  private isInsertDetailRunning: boolean = false;
+
   insertDetailFromGoodsTracker() {
+    if (this.isInsertDetailRunning) {
+      return;
+    }
+
+    this.isInsertDetailRunning = true;
     const body = {
       keyAct: this.controls.keysProceedings.value,
       statusAct: 'RGA',
@@ -603,6 +609,9 @@ export class DestructionAuthorizationComponent
             numberProceedings: null,
           };
         });
+        console.log(goods);
+        console.log(response);
+
         if (
           response.bienes_aceptados.length > 0 &&
           !this.controls.numFile.value
@@ -618,33 +627,42 @@ export class DestructionAuthorizationComponent
         ];
         this.refusedGoods = response.bienes_rechazados;
         this.goodsTrackerLoading = false;
-        let message = `<p>Se ingresaron <b>${response.aceptados}</b> bienes</p>`;
-        if (response.rechazados > 0) {
-          message += `<p>Se rechazaron <b>${response.rechazados}</b> bienes</p>`;
+        let alertAcep: boolean = true;
+        if (response.bienes_aceptados.length > 0) {
+          this.alert(
+            'success',
+            'Info',
+            `Se ingresaron: ${response.aceptados} bienes`
+          );
+          alertAcep = false;
         }
-        this.alert('info', 'Info', null, message);
+
+        let alertRech: boolean = true;
+        if (response.rechazados > 0) {
+          this.alert(
+            'error',
+            'Info',
+            `Se rechazaron: ${response.rechazados} bienes`
+          );
+          alertRech = false;
+          return;
+        }
+
         this.keyProceedingchange();
-        this.getDictAndActs().subscribe(result => {
-          // Manejar los datos de result aquí
-          console.log(result);
-        });
 
-        console.log(this.getDictAndActs());
+        this.isInsertDetailRunning = false;
 
-        if (response.rechazados > 0) {
-          const modalConfig = {
-            ...MODAL_CONFIG,
-            class: 'modal-dialog-centered',
-          };
-          this.modalRef = this.modalService.show(this.modal, modalConfig);
-        }
+        // if (response.rechazados > 0) {
+        //   const modalConfig = {
+        //     ...MODAL_CONFIG,
+        //     class: 'modal-dialog-centered',
+        //   };
+        //   this.modalRef = this.modalService.show(this.modal, modalConfig);
+        // }
       },
       error: () => {
         this.goodsTrackerLoading = false;
-        this.getDictAndActs().subscribe(result => {
-          // Manejar los datos de result aquí
-          console.log(result);
-        });
+        this.isInsertDetailRunning = false;
       },
     });
   }
@@ -746,11 +764,7 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (!this.controls.id.value) {
-      this.create();
-    } else {
-      this.update();
-    }
+    this.create();
   }
 
   create() {
@@ -811,36 +825,48 @@ export class DestructionAuthorizationComponent
           numberProceedings,
         };
       });
+    console.log(forms);
+
     const $obs = forms.map(form =>
       this.detailProceeDelRecService.addGoodToProceedings(form)
     );
+    console.info($obs);
+
     return forkJoin($obs);
   }
 
-  update() {
+  async update() {
     this.loading = true;
     const { id, keysProceedings } = this.controls;
-    forkJoin([
-      this.updateProceeding(id.value, this.proceedingForm.value),
-      this.saveDetail(id.value),
-    ]).subscribe({
-      next: () => {
-        const destructionAuth: IDestructionAuth = {
-          ...this.state,
-          form: this.proceedingForm.value,
-          trackerGoods: [],
-        };
-        this.store.dispatch(SetDestructionAuth({ destructionAuth }));
-        this.loading = false;
-        this.goodTrackerGoods = [];
-        this.onLoadToast('success', 'Acta actualizada correctamente');
-        this.findProceeding(keysProceedings.value).subscribe();
-        //this.getProceedingGoods();
-      },
-      error: () => {
-        this.loading = false;
-      },
-    });
+
+    try {
+      // Ejecutar ambas operaciones asincrónicas y esperar a que se completen
+      await this.updateProceeding(
+        id.value,
+        this.proceedingForm.value
+      ).toPromise();
+      await this.saveDetail(id.value).toPromise();
+      console.log(await this.saveDetail(id.value).toPromise());
+
+      // Realizar acciones una vez que ambas operaciones asincrónicas se completen con éxito
+      const destructionAuth: IDestructionAuth = {
+        ...this.state,
+        form: this.proceedingForm.value,
+        trackerGoods: [],
+      };
+      this.store.dispatch(SetDestructionAuth({ destructionAuth }));
+      this.goodTrackerGoods = [];
+      this.onLoadToast('success', 'Acta actualizada correctamente');
+
+      // Puedes seguir con otras operaciones sincrónicas aquí
+      this.findProceeding(keysProceedings.value).subscribe();
+      this.getProceedingGoods();
+    } catch (error) {
+      // Manejar errores si alguna de las operaciones asincrónicas falla
+      console.error('Error en update:', error);
+    } finally {
+      this.loading = false;
+    }
   }
 
   async scanRequest() {
@@ -1298,7 +1324,7 @@ export class DestructionAuthorizationComponent
           this.detailProceedingsList2.load(resp.data);
           this.totalItems2 = resp.count;
           this.loadingGoodsByP = false;
-          //this.goodTrackerGoods;
+          this.goodTrackerGoods;
         },
         error: err => {
           console.log(err);
