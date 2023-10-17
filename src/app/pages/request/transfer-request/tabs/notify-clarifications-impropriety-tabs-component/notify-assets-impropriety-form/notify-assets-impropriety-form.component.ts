@@ -121,7 +121,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.clarificationForm = this.fb.group({
       addresseeName: [
         this.infoRequest?.nameOfOwner || null,
-        null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
@@ -933,11 +932,17 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
 
         //Actualiza el Bien
         this.goodService.update(obj).subscribe({
-          next: resp => {},
-          error: error => {},
+          next: resp => {
+            console.log('Se actualizó el bien', resp);
+          },
+          error: error => {
+            console.log('No se actualizó el bien', error);
+          },
         });
       },
-      error: error => {},
+      error: error => {
+        console.log('No hay bien', error);
+      },
     });
   }
 
