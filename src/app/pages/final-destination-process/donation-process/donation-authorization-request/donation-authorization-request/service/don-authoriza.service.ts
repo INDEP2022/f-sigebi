@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { IGood } from 'src/app/core/models/ms-good/good';
 
 export interface IDs {
-  no_bien: number;
+  no_bien: number | string;
 }
 
 @Injectable({
@@ -12,14 +11,14 @@ export interface IDs {
 })
 export class DonAuthorizaService {
   form: FormGroup;
-  selectedGooods: IGood[] = [];
+  selectedGooods: any[] = [];
   loadGoods = new Subject();
   ids: IDs[];
   constructor(private fb: FormBuilder) {}
 
   buildForm() {
     this.form = this.fb.group({
-      mode: [null, [Validators.required]],
+      mode: [null],
       classificationOfGoods: [null],
       goodStatus: [null],
       classificationGoodAlterning: [null],

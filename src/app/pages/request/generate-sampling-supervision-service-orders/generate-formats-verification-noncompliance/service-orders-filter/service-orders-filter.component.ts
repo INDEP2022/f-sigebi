@@ -20,9 +20,9 @@ export class ServiceOrdersFilterComponent implements OnInit {
 
   initFilterForm() {
     this.filterForm = this.fb.group({
-      noServiceOrder: [null],
-      folioServiseOrder: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [null],
+      id: [null],
+      serviceOrderFolio: [null, [Validators.pattern(STRING_PATTERN)]],
+      applicationId: [null],
     });
   }
 

@@ -6,6 +6,7 @@ export interface IUnits {
 
 export interface IUnitsMedConv {
   unit: string;
+  uomCode: string;
   description: string;
   decimals: string;
   idUnitDestine: string;

@@ -40,21 +40,6 @@
       <app-card [header]="false">
         <div body>
           <div class="d-flex justify-content-end">
-            <!--<div class="m-3">
-          <button
-            class="btn btn-secondary btn-sm active"
-            (click)="openAnnexJ()">
-            <i class="bx bx-square-rounded"></i> Anexo J
-          </button>
-        </div>
-        <div class="m-3">
-          <button
-            class="btn btn-secondary btn-sm active"
-            (click)="opemAnnexK()">
-            <i class="bx bx-square-rounded"></i> Anexo K
-          </button>
-        </div> -->
-
             <div class="p-2">
               <button
                 class="btn btn-primary btn-sm active"
@@ -79,6 +64,12 @@
                 class="btn btn-secondary btn-sm active"
                 (click)="opemAnnexK()">
                 Anexo K <i class="bx bxs-file"></i>
+              </button>
+            </div>
+
+            <div class="p-2">
+              <button class="btn btn-primary btn-sm active" (click)="goBack()">
+                Regresar <i class="fas fa-arrow-circle-left"></i>
               </button>
             </div>
           </div>
@@ -159,7 +150,19 @@
             [typeTask]="'assets-classification'"></app-assets-tab>
         </tab>
         <tab heading="Deductivas">
-          <app-deductives [typeTask]="'assets-classification'"></app-deductives>
+          <div class="row pt-2">
+            <div class="col-md-12">
+              <div [class]="loadingDeductives ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings"
+                  (edit)="addDeductive($event.data)"
+                  (userRowSelect)="deductivesSelect($event)"
+                  [source]="paragraphsDeductivas">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
         </tab>
       </tabset>
     </div>
