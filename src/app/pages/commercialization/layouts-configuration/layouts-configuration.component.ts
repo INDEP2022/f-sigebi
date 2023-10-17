@@ -359,8 +359,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              email: () => (searchFilter = SearchFilter.ILIKE),
-              name: () => (searchFilter = SearchFilter.ILIKE),
+              length: () => (searchFilter = SearchFilter.EQ),
+              justification: () => (searchFilter = SearchFilter.ILIKE),
             };
             search[filter.field]();
 

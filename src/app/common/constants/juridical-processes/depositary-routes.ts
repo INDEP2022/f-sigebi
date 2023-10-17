@@ -9,6 +9,7 @@ import {
 const DISPERSION_PAGOS: string[] = [
   'conciliation-depositary-payments',
   'query-related-payments-depositories',
+  'dispersal-depositary-payments',
   // 'conciliacion-pagos-depositaria',
   // 'consulta-pagos-relacionados-depositaria',
 ];
