@@ -402,6 +402,7 @@ export class BillingsService {
   }
 
   async getDelegation(params: any) {
+    // CAT_DELEGACIONES
     return new Promise((resolve, reject) => {
       this.delegationService.getAll2(params).subscribe({
         next: async (response: any) => {
@@ -413,4 +414,91 @@ export class BillingsService {
       });
     });
   }
+
+  async getComerTpinvoices(params: any) {
+    // COMER_TPFACTURAS
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getComerTpinvoices(params).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  async getApplicationFaValidCurpRfc(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getComerTpinvoices(body).subscribe({
+        next: response => {
+          resolve(response.data[0].faValidCurpRfc);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  // ============================================================================== //
+
+  async getApplicationComerBillsTotal(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationComerBillsTotal(body).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          let objReturn = {
+            totaling: 0,
+            totaleg: 0,
+          };
+          resolve(objReturn);
+        },
+      });
+    });
+  }
+
+  async getApplicationComerBillsIva(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationComerBillsIva(body).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getApplicationComerBillsPrice(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationComerBillsPrice(body).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getApplicationComerBillsAmount(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationComerBillsAmount(body).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  // ============================================================================== //
 }
