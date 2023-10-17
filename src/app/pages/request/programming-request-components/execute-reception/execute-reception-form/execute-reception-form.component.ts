@@ -44,6 +44,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -361,7 +362,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private stateService: StateOfRepublicService,
     private domicilieService: DomicileService,
     private historyGoodService: HistoryGoodService,
-    private strategyService: StrategyServiceService
+    private strategyService: StrategyServiceService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -5364,6 +5366,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   generateReportTransportable() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_TRANSPORTABLE';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*
     this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_TRANSPORTABLE')
       .subscribe({
@@ -5377,11 +5388,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportReception() {
-    this.programmingService
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_RECEPCION_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_RECEPCION_TMP')
       .subscribe({
         next: (response: any) => {
@@ -5394,11 +5413,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportGuard() {
-    this.programmingService
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_RESGUARDO_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_RESGUARDO_TMP')
       .subscribe({
         next: (response: any) => {
@@ -5411,11 +5438,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportWarehouse() {
-    this.programmingService
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_ALMACEN_TMP')
       .subscribe({
         next: (response: any) => {
@@ -5428,10 +5463,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportReprog() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_PROGRAMACION_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*
     this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_PROGRAMACION_TMP')
       .subscribe({
@@ -5445,10 +5489,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportCancelation() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_CANCELACION_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*
     this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_CANCELACION_TMP')
       .subscribe({
@@ -5462,7 +5515,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   downloadExcel(excel: any) {
