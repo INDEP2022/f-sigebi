@@ -118,7 +118,29 @@
         <!--  -->
         <div class="row mt-3">
           <div class="col-md-6">
-            <form-field [control]="form.get('remi')">
+            <ng-custom-select-loading
+              [form]="form"
+              [path]="pathDest"
+              [bodyPost]="bodyRemi"
+              [updateValues]="true"
+              typeInput="post"
+              label="Remitente"
+              formControlName="remi"
+              paramSearch="filter.usuario"
+              prefixSearch="$eq"
+              value="usuario"
+              bindLabel="nombre"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ng-custom-select-loading>
+            <ng-template #userLabel let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+            <ng-template #userOption let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+
+            <!-- <form-field [control]="form.get('remi')">
               <ngx-select
                 (fetchItems)="queryAllUsers($event)"
                 [searchOnInit]="true"
@@ -134,7 +156,7 @@
                   >{{ item.usuario }} - {{ item.nombre }}</ng-template
                 >
               </ngx-select>
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-6">
             <ng-custom-select-loading
@@ -343,7 +365,29 @@
                   <!--  -->
                   <div class="row pt-5">
                     <div class="col-md-4" *ngIf="visibleUserName">
-                      <form-field [control]="formThree.get('user')">
+                      <ng-custom-select-loading
+                        [form]="formThree"
+                        [path]="pathDest"
+                        [bodyPost]="bodyDest"
+                        [updateValues]="true"
+                        typeInput="post"
+                        label="Destinatario"
+                        formControlName="user"
+                        paramSearch="filter.usuario"
+                        prefixSearch="$eq"
+                        value="usuario"
+                        bindLabel="nombre"
+                        [labelTemplate]="userLabel"
+                        [optionTemplate]="userOption">
+                      </ng-custom-select-loading>
+                      <ng-template #userLabel let-item="item"
+                        >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                      >
+                      <ng-template #userOption let-item="item"
+                        >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                      >
+
+                      <!-- <form-field [control]="formThree.get('user')">
                         <ngx-select
                           (fetchItems)="getUsersDesList($event)"
                           [searchOnInit]="true"
@@ -364,7 +408,7 @@
                         <ng-template #userOption let-item="item"
                           >{{ item.usuario }} - {{ item.nombre }}</ng-template
                         >
-                      </form-field>
+                      </form-field> -->
                     </div>
                     <div class="col-md-4" *ngIf="visibleDelegation">
                       <form-field [control]="formThree.get('del')">
@@ -445,7 +489,10 @@
               </button>
             </div>
             <div class="m-3" *ngIf="btnVerOficio">
-              <button type="button" class="btn btn-primary btn-sm active">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="viewOffice()">
                 Visualizar Oficio
               </button>
             </div>
@@ -507,7 +554,7 @@
                     </div>
                   </div>
                   <!--  -->
-                  <div class="m-3 ml-1">
+                  <div class="m-3">
                     <div>
                       <p><strong>Motivos de Cancelación</strong></p>
                     </div>
@@ -529,22 +576,19 @@
                     </div>
                   </div>
                   <!--  -->
-                  <div class="d-flex justify-content-center">
-                    <div class="m-3">
-                      <!--  -->
-
-                      <!--  -->
-                      <button
-                        class="btn btn-primary btn-sm active"
-                        (click)="modifySelectedRows()">
-                        Aceptar
-                      </button>
-                      <button
-                        class="btn btn-primary btn-sm active mr-3"
-                        (click)="closeModalSubtype()">
-                        Cerrar
-                      </button>
-                    </div>
+                  <div class="d-flex justify-content-center mb-3">
+                    <button
+                      class="btn btn-primary btn-sm active mr-3"
+                      style="min-width: 100px"
+                      (click)="modifySelectedRows()">
+                      Aceptar
+                    </button>
+                    <button
+                      class="btn btn-primary btn-sm active"
+                      style="min-width: 100px"
+                      (click)="closeModalSubtype()">
+                      Cerrar
+                    </button>
                   </div>
                 </div>
               </div>

@@ -16,11 +16,11 @@ import {
   debounceTime,
   firstValueFrom,
   map,
-  Observable,
   of,
   Subscription,
   take,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -36,7 +36,6 @@ import {
   MyBody,
   OfficesSend,
   SendObtainGoodValued,
-  UserFind,
   ValidationResponseFile,
 } from './res-cancel-valuation-class/class-service';
 import {
@@ -60,9 +59,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   @ViewChild('modalRev', { static: true })
   miModalRev: TemplateRef<any>;
 
-  arrayResponseOffice: any[] = [];
   arrayResponseOfficeTwo: any[] = [];
-  array: any[] = [];
 
   //Forms
   form: FormGroup;
@@ -194,7 +191,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         next: response => {
           console.log(response);
 
-          if (response) {
+          if (response && this.form.get('event').value) {
             this.changeRatio(response);
           }
         },
@@ -204,7 +201,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   private changeRatio(radioValue: any) {
     if (this.event != '' && this.event != null) {
       this.btnMotCan = false;
-      this.resetVariables();
+      // this.resetVariables();
       this.loadOffice(this.event, radioValue);
       this.setButtons(3);
     } else {
@@ -227,9 +224,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
     this.setButtons(3);
 
-    this.queryAllUsers();
+    // this.queryAllUsers();
 
-    this.queryAllUsersTwo();
+    // this.queryAllUsersTwo();
 
     this.queryCyties();
 
@@ -291,8 +288,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   removeUserCopy() {
     this.alertQuestion(
       'question',
-      'Agregar Usuario',
-      '¿Desea agregar un usuario?'
+      'Eliminar Usuario',
+      '¿Desea eliminar un usuario?'
     ).then(x => {
       if (x.isConfirmed) {
         if (this.formThree.controls['copy'].value != null) {
@@ -322,50 +319,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
   }
 
-  //#region Users
-  getUserService(body: any, event: any): Observable<any> {
-    return new Observable(observer => {
-      this.serviceUser.postSpUserAppraisal(body, event).subscribe({
-        next: response => {
-          observer.next(response);
-          observer.complete();
-        },
-        error: error => {
-          observer.error(error);
-        },
-      });
-    });
-  }
-
-  getUsersDesList(params?: ListParams) {
-    let userBody: UserFind = new UserFind();
-    userBody.flagIn = 2;
-    if (params !== undefined) {
-      if (params?.text != '') {
-        params['filter.usuario'] = `$eq:${params?.text.toUpperCase()}`;
-      }
-    }
-    this.getUserService(userBody, params).subscribe(userList => {
-      this.usersList = new DefaultSelect(userList?.data, userList?.count || 0);
-    });
-  }
-
-  queryAllUsers(params?: ListParams) {
-    let userBody: UserFind = new UserFind();
-    userBody.flagIn = 1;
-    if (params !== undefined) {
-      if (params?.text != '') {
-        params['filter.usuario'] = `$eq:${params?.text.toUpperCase()}`;
-      }
-    }
-    this.getUserService(userBody, params).subscribe(arrayRemi => {
-      this.fullUsers = new DefaultSelect(
-        arrayRemi?.data,
-        arrayRemi?.count || 0
-      );
-    });
-  }
-
   get pathDest() {
     return 'security/api/v1/application/spUserAppraisal';
   }
@@ -376,20 +329,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     };
   }
 
-  queryAllUsersTwo(params?: ListParams) {
-    let userBody: UserFind = new UserFind();
-    userBody.flagIn = 2;
-    if (params !== undefined) {
-      if (params.text != '') {
-        params['filter.usuario'] = `$eq:${params.text.toUpperCase()}`;
-      }
-    }
-    this.getUserService(userBody, params).subscribe(arrayDes => {
-      this.fullUsersTwo = new DefaultSelect(
-        arrayDes?.data,
-        arrayDes?.count || 0
-      );
-    });
+  get bodyRemi() {
+    return {
+      flagIn: 1,
+    };
   }
   //#endregion
 
@@ -506,20 +449,18 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.countCopy = 0;
   }
 
-  getCityById(id: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.cityService.getId(id).subscribe({
-        next: response => {
-          this.city = response;
-          resolve(this.city);
-        },
-        error: error => {
-          this.loader.load = false;
-          this.fullCyties = new DefaultSelect([], 0, true);
-          reject(error);
-        },
-      });
-    });
+  getCityById(id: any) {
+    return this.cityService.getId(id).pipe(
+      catchError(x => {
+        this.fullCyties = new DefaultSelect([], 0, true);
+        return of(null);
+      }),
+      tap(x => {
+        if (x) {
+          this.city = x;
+        }
+      })
+    );
   }
 
   getOfficeResponseTwo(body: OfficesSend): Promise<any[]> {
@@ -536,20 +477,33 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async findOfficeService(data: any) {
+    // debugger;
     let valorObjeto: any;
     valorObjeto = data;
-    let body: OfficesSend = new OfficesSend();
+    let body: any = {};
     body.eventId = valorObjeto?.eventId;
-    body.officeType = valorObjeto?.jobType;
-    this.arrayResponseOffice = await this.getOfficeResponseTwo(body);
-    this.findOffice(this.arrayResponseOffice);
+    body.officeId = valorObjeto?.jobType;
+    this.form
+      .get('event')
+      .setValue(valorObjeto?.eventId, { onlySelf: true, emitEvent: false });
+    this.findOffice(body);
   }
 
   loadOffice(event: number, num: number, arrayLength?: number) {
     let body: OfficesSend = new OfficesSend();
     body.eventId = event;
-    body.officeType = num;
+    body.officeType = num ? num : 0;
     this.getOfficeResponse(body, num, arrayLength);
+  }
+
+  get officeType() {
+    return this.form
+      ? this.form.get('radio')
+        ? this.form.get('radio').value
+          ? this.form.get('radio').value
+          : 0
+        : 0
+      : 0;
   }
 
   async viewOffice() {
@@ -561,7 +515,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       let tituloOficio: any;
 
       body.eventId = this.event;
-      body.officeType = this.form.get('radio').value;
+      body.officeType = this.officeType;
       dataOffice = await this.getOfficeRequest(body);
       for (const x of dataOffice) {
         type.description = x.direccion;
@@ -610,7 +564,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let listGoods: string = '';
 
     body.eventId = this.event;
-    body.officeType = this.form.get('radio').value;
+    body.officeType = this.officeType;
     arrayDataOffice = await this.getOfficeResponseTwo(body);
 
     for (const x of arrayDataOffice) {
@@ -666,9 +620,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async getOfficeResponse(body: any, type?: number, arrayLength?: number) {
-    this.array = await this.getOfficeRequest(body);
-    if (this.array.length > 0) {
-      for (const i of this.array) {
+    // debugger;
+    let array = [];
+    array = await this.getOfficeRequest(body);
+    if (array.length > 0) {
+      for (const i of array) {
         this.lblTipoAccOficio = String(i?.des_tipo_oficio).toUpperCase();
         if (i?.tipo == 'VALOR') {
           this.lbltipOficio = ' DE REFERENCIA DE ' + i?.tipo;
@@ -683,8 +639,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.lblDireccion = ' ACTIVOS FINANCIEROS ';
         }
         this.lblCvlOfocio = i?.cve_oficio;
-        // this.event = i?.id_evento;
-
+        this.form
+          .get('event')
+          .setValue(i?.id_evento, { onlySelf: true, emitEvent: false });
         this.form.controls['dateRec'].setValue(this.dateFormat(i?.fecha_envia));
         this.form.controls['dateEla'].setValue(
           this.dateFormat(i?.fecha_insert)
@@ -704,15 +661,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             this.lblCvlOfocio
         );
         this.form.controls['fol'].setValue(i?.fol);
-        if (type == 2) {
-          this.obtainsValuedAssets(2, 0);
-          // this.radioValueOne = true;
-          this.btnMotCan = false;
-        } else if (type == 3) {
-          this.obtainsValuedAssets(3, 0);
-          // this.redioValueTwo = true;
-          this.btnMotCan = true;
-        }
+      }
+      if (type == 2) {
+        this.obtainsValuedAssets(2, 0);
+        // this.radioValueOne = true;
+        this.btnMotCan = false;
+      } else if (type == 3) {
+        this.obtainsValuedAssets(3, 0);
+        // this.redioValueTwo = true;
+        this.btnMotCan = true;
       }
     } else {
       this.alert(
@@ -723,37 +680,55 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     }
   }
 
-  async findOffice(array: any[]) {
-    if ((this.idOficio = this.form.controls['office'].value?.jobId > 0)) {
-      for (const i of array) {
-        try {
-          await this.getCityById(i?.ciudad);
-          if (this.city) {
-            if (i?.tipo_oficio == 2) {
-              this.form.get('radio').setValue('2');
-            } else if (i?.tipo_oficio == 3) {
-              this.form.get('radio').setValue('3');
-            }
-            // this.loadOffice(
-            //   this.form.controls['event'].value,
-            //   this.returnOfOffice(),
-            //   array.length
-            // );
-            this.form.patchValue({
-              dest: i?.destinatario,
-              key: i?.cve_oficio,
-              remi: i?.remitente,
-              cityCi: this.city.legendOffice,
-              ref: i?.texto1,
-              aten: i?.texto2,
-              espe: i?.texto3,
-              fol: i?.num_cv_armada,
-            });
+  async findOffice(body: any) {
+    this.idOficio = this.form.controls['office'].value?.jobId;
+    this.form.patchValue({
+      dest: null,
+      key: null,
+      remi: null,
+      cityCi: null,
+      ref: null,
+      aten: null,
+      espe: null,
+      fol: null,
+    });
+    // debugger;
+    if (this.idOficio > 0) {
+      let array = await this.getOfficeResponseTwo(body);
+      let statusOffice: string;
+      for (const [index, i] of array.entries()) {
+        await firstValueFrom(this.getCityById(i?.ciudad));
+        if (this.city) {
+          if (i?.tipo_oficio == 2) {
+            this.form
+              .get('radio')
+              .setValue('2', { onlySelf: true, emitEvent: false });
+          } else if (i?.tipo_oficio == 3) {
+            this.form
+              .get('radio')
+              .setValue('3', { onlySelf: true, emitEvent: false });
           }
-        } catch (error) {}
-        let statusOffice: string = i?.estatus_of;
-        this.validateFindOfficeOne(statusOffice);
+          if (index === array.length - 1) {
+            await this.loadOffice(
+              this.event.value,
+              body.officeType,
+              array.length
+            );
+          }
+          this.form.patchValue({
+            dest: i?.destinatario,
+            key: i?.cve_oficio,
+            remi: i?.remitente,
+            cityCi: this.city.legendOffice,
+            ref: i?.texto1,
+            aten: i?.texto2,
+            espe: i?.texto3,
+            fol: i?.num_cv_armada,
+          });
+        }
+        statusOffice = i?.estatus_of;
       }
+      this.validateFindOfficeOne(statusOffice);
     } else {
       this.setButtons(3);
       this.resetVariables();
@@ -776,6 +751,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   validateFindOfficeOne(status: any) {
+    // debugger;
     if (status == 'ENVIADO') {
       this.pnlControles = false;
       this.pnlControles2 = false;
@@ -811,6 +787,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         };
       }
     }
+    console.log(this.form.get('radio').value);
+
     this.idOficio = this.form.controls['office'].value?.jobId;
     if (this.form.get('radio').value == 2) {
       this.obtainsValuedAssets(4, this.idOficio);
@@ -886,54 +864,42 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       });
   }
 
-  getUsersList(params: ListParams) {
-    let data = {
-      flagIn: 1,
-    };
-    this.generateCveService.postSpUserAppraisal(data, params).subscribe({
-      next: resp => {
-        this.sender = new DefaultSelect(resp.data, resp.count);
-      },
-      error: eror => {
-        this.loader.load = false;
-        this.sender = new DefaultSelect([], 0, true);
-      },
-    });
-  }
-
   obtainsValuedAssets(numOne: number, numTwo: number) {
     let body: SendObtainGoodValued = new SendObtainGoodValued();
     body.idEventIn = this.event;
     body.idJobIn = numTwo;
     body.tpJobIn = numOne;
-    this.serviceAppraise.postGetAppraise(body).subscribe({
-      next: response => {
-        if (response.data && Array.isArray(response.data)) {
-          this.data.load(response.data);
-          this.data.refresh();
-          this.totalItems = response.count || 0;
+    this.serviceAppraise
+      .postGetAppraise(body)
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response.data && Array.isArray(response.data)) {
+            this.data.load(response.data);
+            this.data.refresh();
+            this.totalItems = response.count || 0;
+            this.loading = false;
+          } else {
+            this.data.load(response);
+            this.data.refresh();
+            this.totalItems = response.count || 0;
+            this.loading = false;
+          }
+        },
+        error: error => {
+          if (error.status == 400) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para realizar el oficio de respuesta'
+            );
+          }
+          this.loader.load = false;
           this.loading = false;
-        } else {
-          this.data.load(response);
+          this.data.load([]);
           this.data.refresh();
-          this.totalItems = response.count || 0;
-          this.loading = false;
-        }
-      },
-      error: error => {
-        if (error.status == 400) {
-          this.alert(
-            'warning',
-            'Advertencia',
-            'No hay bienes para realizar el oficio de respuesta'
-          );
-        }
-        this.loader.load = false;
-        this.loading = false;
-        this.data.load([]);
-        this.data.refresh();
-      },
-    });
+        },
+      });
   }
 
   obtainsCancelAssets(numOne: number, numTwo: number) {
@@ -941,34 +907,37 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     body.idEventIn = this.event;
     body.idJobIn = numTwo;
     body.tpJobIn = numOne;
-    this.serviceAppraise.postGetAppraise(body).subscribe({
-      next: response => {
-        if (response.data && Array.isArray(response.data)) {
-          this.dataTwo.load(response.data);
-          this.dataTwo.refresh();
-          this.totalItemsTwo = response.count || 0;
+    this.serviceAppraise
+      .postGetAppraise(body)
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response.data && Array.isArray(response.data)) {
+            this.dataTwo.load(response.data);
+            this.dataTwo.refresh();
+            this.totalItemsTwo = response.count || 0;
+            this.loading = false;
+          } else {
+            this.dataTwo.load(response);
+            this.dataTwo.refresh();
+            this.totalItemsTwo = response.count || 0;
+            this.loading = false;
+          }
+        },
+        error: error => {
+          if (error.status == 400) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para realizar el oficio de cancelación'
+            );
+          }
+          this.loader.load = false;
           this.loading = false;
-        } else {
-          this.dataTwo.load(response);
+          this.dataTwo.load([]);
           this.dataTwo.refresh();
-          this.totalItemsTwo = response.count || 0;
-          this.loading = false;
-        }
-      },
-      error: error => {
-        if (error.status == 400) {
-          this.alert(
-            'warning',
-            'Advertencia',
-            'No hay bienes para realizar el oficio de cancelación'
-          );
-        }
-        this.loader.load = false;
-        this.loading = false;
-        this.dataTwo.load([]);
-        this.dataTwo.refresh();
-      },
-    });
+        },
+      });
   }
 
   // returnOfOffice(): number {
@@ -1034,9 +1003,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       noMot += row.id_motivo + ',';
       motivos += row.descripcion_motivo + '/';
     });
+    console.log(this.selectedRowsCancel);
 
     this.selectedRowsCancel.forEach(row => {
-      if (row.motivos == ' ') {
+      if (row.motivos + ''.trim() === '') {
         row.motivos += motivos;
       }
     });
@@ -1056,7 +1026,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   updateOffice() {}
 
   countGoodsSelected() {
-    let typeOffice: number = this.form.get('radio').value;
+    let typeOffice: number = this.officeType;
     if (typeOffice == 2) {
       if (this.selectedRowsCancel.length == 0) {
         this.alert(
@@ -1168,10 +1138,18 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   reset() {
-    this.form.reset();
-    this.formTwo.reset();
-    this.formThree.reset();
+    this.form.reset({}, { onlySelf: true, emitEvent: false });
+    this.formTwo.reset({}, { onlySelf: true, emitEvent: false });
+    this.formThree.reset({}, { onlySelf: true, emitEvent: false });
+    this.lblTipoAccOficio = '-';
+    this.lbltipOficio = '-';
+    this.lblDireccion = '-';
+    this.lblCvlOfocio = '-';
     this.pnlControles = true;
+    this.data.load([]);
+    this.data.refresh();
+    this.dataTwo.load([]);
+    this.dataTwo.refresh();
   }
 
   //
