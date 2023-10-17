@@ -25,6 +25,10 @@ export class CopiesOfficialOpinionService extends HttpService {
     );
   }
 
+  getAllDictation(params?: _Params) {
+    return this.get(DictationEndpoints.Dictation, params);
+  }
+
   create(body: ICopiesOfficialOpinion) {
     return this.post(this.route.CopiesOfficialOpinion, body);
   }

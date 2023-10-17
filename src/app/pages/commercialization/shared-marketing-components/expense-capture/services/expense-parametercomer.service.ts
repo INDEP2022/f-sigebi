@@ -24,10 +24,8 @@ export class ExpenseParametercomerService extends HttpService {
     return this.post('aplication/get-bienes-validados', body);
   }
 
-  getParameterMod() {
-    return this.get(
-      `${ParameterComerEndpoints.ParameterMod}?limit=0&filter.parameter=$eq:IVA`
-    );
+  getParameterMod(params: ListParams) {
+    return this.get(`${ParameterComerEndpoints.ParameterMod}`, params);
   }
 
   getComerStatusVta(statusVta: string) {
