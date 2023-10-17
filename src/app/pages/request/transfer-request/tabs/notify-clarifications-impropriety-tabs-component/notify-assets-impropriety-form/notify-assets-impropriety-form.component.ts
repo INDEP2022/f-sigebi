@@ -750,6 +750,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
             this.loading = false;
+
             //his.onLoadToast('success', 'Actualizado', '');
             this.modalRef.content.callback(true, data.goodId);
             this.modalRef.hide();
