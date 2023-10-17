@@ -85,6 +85,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    this.getInfoDoc();
     //Actualiza Bien, de prueba
     //this.changeSimulateGood()
     this.modalService.onHide.subscribe(key => {});
@@ -94,6 +95,18 @@ export class NotifyAssetsImproprietyFormComponent
     this.initForm1();
     const applicationId = this.idRequest;
     const rejectNoticeId = this.dataClarifications2.rejectNotificationId;
+  }
+
+  getInfoDoc() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.applicationId'] = this.idRequest;
+    this.documentService
+      .getAllClarificationDocImpro(params.getValue())
+      .subscribe({
+        next: response => {
+          console.log('response', response);
+        },
+      });
   }
 
   initForm1(): void {
