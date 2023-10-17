@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { ISamplingOrder } from 'src/app/core/models/ms-order-service/sampling-order.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import {
   IReceipt,
@@ -14,6 +15,7 @@ import {
 } from 'src/app/core/models/receipt/receipt.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -40,6 +42,8 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   actId: number;
   folioPro: string = '';
   userInfo: any;
+  sampleOrder: ISamplingOrder = null;
+
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -51,7 +55,8 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     private proceedingService: ProceedingsService,
     private programminGoodService: ProgrammingGoodService,
     private goodService: GoodService,
-    private historyGoodService: HistoryGoodService
+    private historyGoodService: HistoryGoodService,
+    private orderService: OrderServiceService
   ) {
     super();
   }
@@ -470,6 +475,52 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
         });
     }
+
+    if (this.typeDoc == 197) {
+      const formData = {
+        xNivelRegistroNSBDB: 'Solicitud',
+        xNombreProceso: 'Muestreo Ordenes',
+        xDelegacionRegional: this.sampleOrder.idDelegationRegional,
+        ddocTitle: 'Anexo K',
+        dSecurityGroup: 'Public',
+        dDocName: this.sampleOrder.idcontentk,
+        xTipoDocumento: 197,
+      };
+
+      const extension = '.pdf';
+      const docName = this.sampleOrder.idcontentk;
+
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: response => {
+            const idcontentksae = response.dDocName;
+            const body = {
+              idSamplingOrder: this.sampleOrder.idSamplingOrder,
+              idcontentksae: idcontentksae,
+            };
+            const updateSampleOrder = this.updateSampleOrder(body);
+            if (updateSampleOrder) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
   }
 
   updateReceiptGuard(docName: string) {
@@ -588,6 +639,23 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
+      });
+    });
+  }
+
+  updateSampleOrder(body: any) {
+    return new Promise((resolve, reject) => {
+      this.orderService.updateSampleOrder(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'No se pudo guardar el documento en el content'
+          );
+          reject(error);
+        },
       });
     });
   }

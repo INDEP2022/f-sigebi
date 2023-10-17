@@ -56,9 +56,11 @@
               </h5>
             </div>
           </div>
-          <div class="row pt-4" *ngIf="showSamplingDetail">
+          <div class="row pt-4" *ngIf="sampleOrderId">
             <app-sampling-detail-review-results
-              [data]="samplingDetailData"></app-sampling-detail-review-results>
+              [sampleOrderId]="
+                sampleOrderId
+              "></app-sampling-detail-review-results>
           </div>
         </div>
       </app-card>
@@ -97,18 +99,24 @@
           (searchEvent)="searchEvent($event)"></app-service-orders-filter>
       </div>
     </div>
-    <div class="tabs">
+    <div class="tabs" *ngIf="sampleOrderId != null">
       <tabset class="md-tabs">
         <tab heading="Ordenes Servicio" id="tab1">
           <app-list-service-orders
+            [sampleOrderId]="sampleOrderId"
             [searchForm]="searchForm"></app-list-service-orders>
         </tab>
         <tab heading="Verificaciones">
           <app-create-deductives
+            [SampleOrderId]="sampleOrderId"
             [typeComponent]="'revition-results'"></app-create-deductives>
         </tab>
         <tab heading="Datos Anexo">
-          <app-annex-data [dataAnnex]="dataAnnex"></app-annex-data>
+          <app-annex-data
+            [SampleOrderId]="sampleOrderId"
+            [sampleOrderForm]="sampleOrderForm"
+            [dataAnnex]="dataAnnex"
+            [typeComponent]="'revition-results'"></app-annex-data>
         </tab>
       </tabset>
     </div>

@@ -171,7 +171,18 @@
             [typeTask]="'verify-noncompliance'"></app-assets-tab>
         </tab>
         <tab heading="Verificaciones">
-          <app-verifications></app-verifications>
+          <div class="row pt-2">
+            <div class="col-md-12">
+              <div [class]="loadingDeductives ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings"
+                  [source]="paragraphsDeductivas">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+          <!--<app-verifications></app-verifications> -->
         </tab>
         <tab heading="Detalle Anexo">
           <app-detail-annex [annexData]="annexDetail"></app-detail-annex>

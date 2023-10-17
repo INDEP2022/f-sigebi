@@ -1,32 +1,32 @@
 import { BtnRequestComponent } from '../../../../shared-request/expedients-tabs/sub-tabs/btn-request/btn-request.component';
 
 export const SERVICE_ORDERS_COLUMNS = {
-  noServiceOrder: {
+  orderServiceId: {
     title: 'No. Ordern Servicio',
     type: 'text',
     sort: false,
   },
-  folioServiceOrder: {
+  orderServiceFolio: {
     title: 'Folio orden de servicio',
     type: 'text',
     sort: false,
   },
-  typeServiceOrder: {
-    title: 'Folio orden de servicio',
+  orderServiceType: {
+    title: 'Tipo orden de servicio',
     type: 'text',
     sort: false,
   },
-  noRequest: {
+  requestId: {
     title: 'No. Solicitud',
     type: 'text',
     sort: false,
   },
-  noContract: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'text',
     sort: false,
   },
-  serviceCost: {
+  costService: {
     title: 'Costo Servicio',
     type: 'text',
     sort: false,

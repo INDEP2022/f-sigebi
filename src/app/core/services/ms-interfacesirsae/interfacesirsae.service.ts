@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { InterfaceSirsaeEndpoints } from 'src/app/common/constants/endpoints/ms-interfacesirsae';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ISirsaeStateAccountDetail } from '../../models/ms-interfacesirsae/interfacesirsae';
@@ -17,6 +18,7 @@ import {
 })
 export class InterfacesirsaeService extends HttpService {
   private readonly route = InterfaceSirsaeEndpoints;
+  private readonly route1 = InterfaceSirsaeEndpoints.Interfaceesirsae;
   constructor() {
     super();
     this.microservice = this.route.InterfaceSirsae;
@@ -78,6 +80,10 @@ export class InterfacesirsaeService extends HttpService {
 
   sendSirsaeScrapOi(body: ISendSirsaeOIScrapDTO) {
     return this.post<{ lst_order: any }>(`sirsae/send-sirsae-scrap-oi`, body);
+  }
+
+  loadPayments(params: ListParams) {
+    return this.get(`application/selectReference/11998905403245735568`);
   }
 
   sendSirsae2(body: ISirsaeDTO) {

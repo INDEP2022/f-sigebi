@@ -97,6 +97,9 @@ export class NewDocumentServiceOrderFormComponent
       xremitente: [null, [Validators.pattern(STRING_PATTERN)]],
       xComments: [null, [Validators.pattern(STRING_PATTERN)]],
       xcargoRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
+      xidExpediente: [null, [Validators.pattern(STRING_PATTERN)]],
+      xidBien: [null, [Validators.pattern(STRING_PATTERN)]],
+      xIdSIAB: [null, [Validators.pattern(STRING_PATTERN)]],
       //author: [null],
       //version: [null],
     });
