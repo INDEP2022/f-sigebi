@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { IZoneContract } from 'src/app/core/models/catalogs/zone-contract.model';
 import { IStrategyProcess } from 'src/app/core/models/ms-strategy-process/strategy-process.model';
 import { IStrategyServiceType } from 'src/app/core/models/ms-strategy-service-type/strategy-service-type.model';
@@ -150,19 +151,29 @@ export const VALIDITYCOST_COLUMNS = {
     },
   },
   startDate: {
-    title: 'Fecha inicial',
+    title: 'Fecha Inicial',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
   },
   finalDate: {
-    title: 'Fecha final',
+    title: 'Fecha Final',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
   },
   costUnitarian: {
-    title: 'Costo unitario',
+    title: 'Costo Unitario',
     sort: false,
   },
   porceInflation: {
-    title: '% Indice inflación',
+    title: '% Indice Inflación',
     sort: false,
   },
   validity: {

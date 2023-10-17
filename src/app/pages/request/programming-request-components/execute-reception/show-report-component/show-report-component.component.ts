@@ -16,6 +16,7 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -78,6 +79,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   annexk: boolean = false;
   idRegionalDelegation: number = 0; //parametro pasado desde el padre
   process: string = '';
+
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -91,7 +93,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     private programminGoodService: ProgrammingGoodService,
     private goodService: GoodService,
     private proceedingService: ProceedingsService,
-    private historyGoodService: HistoryGoodService
+    private historyGoodService: HistoryGoodService,
+    private orderService: OrderServiceService
   ) {
     super();
     this.settings = {
@@ -329,6 +332,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.idTypeDoc == 187 ||
       this.idTypeDoc == 185
     ) {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.modalRef.hide();
+    }
+
+    if (this.idTypeDoc == 197 && this.typeFirm == 'autografa') {
       this.modalRef.content.callback(true, this.typeFirm);
       this.modalRef.hide();
     }
@@ -1012,19 +1020,21 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             .subscribe({
               next: async response => {
                 //const updateReceipt = await this.procedding(response.dDocName);
-
-                // if (updateReceipt) {
-                this.alertInfo(
-                  'success',
-                  'Acción Correcta',
-                  'Documento adjuntado correctamente'
-                ).then(question => {
-                  if (question.isConfirmed) {
-                    this.close();
-                    this.modalRef.content.callback(true, this.typeFirm);
-                  }
-                });
-                //}
+                const updateSampleOrder = await this.updateSampleOrder(
+                  response.dDocName
+                );
+                if (updateSampleOrder) {
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true, this.typeFirm);
+                    }
+                  });
+                }
               },
               error: error => {},
             });
@@ -1206,5 +1216,27 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.listSigns = false;
     this.isAttachDoc = false;
     this.printReport = true;
+  }
+
+  updateSampleOrder(dDocName: string) {
+    return new Promise((resolve, reject) => {
+      const body = {
+        idSamplingOrder: this.idSampleOrder,
+        idcontentk: dDocName,
+      };
+      this.orderService.updateSampleOrder(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'error al actualizar el muestreo de ordenes'
+          );
+          reject(error);
+        },
+      });
+    });
   }
 }

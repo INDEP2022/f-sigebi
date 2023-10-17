@@ -16,7 +16,6 @@ export class ExpedientsTabsComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('Activando tab: expedientes-tabs');
     this.requestSelected(1);
     this.updateInfo = true;
   }

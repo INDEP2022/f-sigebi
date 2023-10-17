@@ -165,7 +165,6 @@ export class DocRequestTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('typeDoc', this.typeDoc);
     this.idRequest = this.idRequest || this.requestId;
     if (
       this.typeModule != '' &&

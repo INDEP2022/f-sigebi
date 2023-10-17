@@ -4,66 +4,142 @@
   </div>
 
   <div body>
-    <form
-      [formGroup]="concentrateGoodsTypeForm"
-      (ngSubmit)="onSubmit()"
-      class="form-material">
+    <form [formGroup]="concentrateGoodsTypeForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field
+          <form-field [control]="concentrateGoodsTypeForm.get('delegation')">
+            <ngx-select
+              [form]="concentrateGoodsTypeForm"
+              control="delegation"
+              (fetchItems)="getCatalogDelegation($event)"
+              label="Delegación"
+              [data]="delegations"
+              bindLabel="noDelDesc"
+              [searchOnInit]="true"
+              value="id"
+              (change)="changeDelegation($event)">
+            </ngx-select>
+          </form-field>
+
+          <!--<form-field
             [control]="concentrateGoodsTypeForm.get('delegation')"
             label="Delegación">
             <input
               type="text"
               class="form-control"
               formControlName="delegation" />
-          </form-field>
+          </form-field>-->
         </div>
         <div class="col-md-4">
-          <form-field
+          <form-field [control]="concentrateGoodsTypeForm.get('subDelegation')">
+            <ngx-select
+              [form]="concentrateGoodsTypeForm"
+              control="subDelegation"
+              (fetchItems)="getSubDelegation($event)"
+              label="Sub Delegación"
+              [data]="subDelegations"
+              bindLabel="noSubDelDesc"
+              value="id"
+              (change)="changeSubDelegation($event)">
+            </ngx-select>
+          </form-field>
+
+          <!--<form-field
             [control]="concentrateGoodsTypeForm.get('subDelegation')"
             label="Sub Delegación">
             <input
               type="text"
               class="form-control"
               formControlName="subDelegation" />
-          </form-field>
+          </form-field>-->
         </div>
         <div class="col-md-4">
-          <form-field
+          <form-field [control]="concentrateGoodsTypeForm.get('area')">
+            <ngx-select
+              [form]="concentrateGoodsTypeForm"
+              control="area"
+              (fetchItems)="getGoodType($event)"
+              label="Área"
+              [data]="goodType"
+              bindLabel="idName"
+              [searchOnInit]="true"
+              value="id"
+              (change)="changeGoodType($event)">
+            </ngx-select>
+          </form-field>
+          <!--<form-field
             [control]="concentrateGoodsTypeForm.get('area')"
             label="Área">
             <input type="text" class="form-control" formControlName="area" />
-          </form-field>
+          </form-field>-->
         </div>
       </div>
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field
+          <form-field [control]="concentrateGoodsTypeForm.get('type')">
+            <ngx-select
+              [form]="concentrateGoodsTypeForm"
+              control="type"
+              (fetchItems)="getGoodSubTypes($event)"
+              label="Tipo"
+              [data]="goodSubType"
+              bindLabel="idNameSub"
+              value="id"
+              (change)="changeGoodSubType($event)">
+            </ngx-select>
+          </form-field>
+
+          <!--<form-field
             [control]="concentrateGoodsTypeForm.get('type')"
             label="Tipo">
             <input type="text" class="form-control" formControlName="type" />
-          </form-field>
+          </form-field>-->
         </div>
         <div class="col-md-4">
-          <form-field
+          <form-field [control]="concentrateGoodsTypeForm.get('initialFile')">
+            <ngx-select
+              [form]="concentrateGoodsTypeForm"
+              control="initialFile"
+              (fetchItems)="getNumberExp($event)"
+              label="No. Expediente Inicial"
+              [data]="numberExp"
+              bindLabel="fileNumber"
+              value="fileNumber"
+              (change)="changeNumberExp($event)">
+            </ngx-select>
+          </form-field>
+
+          <!--<form-field
             [control]="concentrateGoodsTypeForm.get('initialFile')"
             label="No Expediente Inicial">
             <input
               type="text"
               class="form-control"
               formControlName="initialFile" />
-          </form-field>
+          </form-field>-->
         </div>
         <div class="col-md-4">
-          <form-field
+          <form-field [control]="concentrateGoodsTypeForm.get('finalFile')">
+            <ngx-select
+              [form]="concentrateGoodsTypeForm"
+              control="finalFile"
+              (fetchItems)="getNumberEndExp($event)"
+              label="No. Expendiente Final"
+              [data]="numberEndExp"
+              bindLabel="fileNumber"
+              value="fileNumber"
+              (change)="changeNumberEndExp($event)">
+            </ngx-select>
+          </form-field>
+
+          <!--<form-field
             [control]="concentrateGoodsTypeForm.get('finalFile')"
             label="No Expendiente Final">
             <input
               type="text"
               class="form-control"
               formControlName="finalFile" />
-          </form-field>
+          </form-field>-->
         </div>
       </div>
       <div class="row margin-input">
@@ -72,10 +148,11 @@
             [control]="concentrateGoodsTypeForm.get('ReceptionDateOf')"
             label="Fecha de Recepción del">
             <input
+              [maxDate]="maxDate"
               type="text"
               formControlName="ReceptionDateOf"
-              placeholder="Fecha de Recepción del"
               class="form-control"
+              (bsValueChange)="validateDate($event)"
               bsDatepicker />
           </form-field>
         </div>
@@ -84,18 +161,23 @@
             [control]="concentrateGoodsTypeForm.get('ReceptionDateTo')"
             label="Fecha de Recepción al">
             <input
+              [minDate]="minDate"
+              [maxDate]="maxDate"
               type="text"
               formControlName="ReceptionDateTo"
-              placeholder="Fecha de Recepción al"
               class="form-control"
               bsDatepicker />
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
+      <div class="row margin-input">
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="justify-content-center">
-            <button type="submit" class="btn btn-primary btn-sm active">
+            <button
+              [type]="'button'"
+              (click)="report()"
+              [disabled]="concentrateGoodsTypeForm.invalid"
+              class="btn btn-primary btn-sm active">
               Reporte
             </button>
           </div>

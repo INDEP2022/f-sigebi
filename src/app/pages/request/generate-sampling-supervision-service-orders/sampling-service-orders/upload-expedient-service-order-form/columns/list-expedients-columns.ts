@@ -11,6 +11,11 @@ export const LIST_EXPEDIENTS_COLUMN = {
     type: 'string',
     sort: false,
   },
+  xidExpediente: {
+    title: 'No. Expediente',
+    type: 'string',
+    sort: false,
+  },
   ddocTitle: {
     title: 'Título del Documento',
     type: 'string',
