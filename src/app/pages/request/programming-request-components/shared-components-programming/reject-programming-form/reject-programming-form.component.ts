@@ -60,8 +60,7 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
         response.endDate = moment(response.endDate).format(
           'DD/MM/YYYY HH:mm:ss'
         );
-        console.log('response', response);
-        this.form.get('concurrentMsg').setValue(response?.concurrentMsg);
+        this.form.get('concurrentMsg').setValue(response.concurrentMsg);
         this.form.get('endDate').setValue(response.endDate);
         this.form.get('startDate').setValue(response.startDate);
         //this.form.patchValue(response);
@@ -74,8 +73,14 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
     const formData = {
       id: this.idProgramming,
 
-      startDate: new Date(this.form.get('startDate').value),
-      endDate: new Date(this.form.get('endDate').value),
+      startDate: moment(
+        this.form.get('startDate').value,
+        'DD/MM/YYYY HH:mm:ss'
+      ).toDate(),
+      endDate: moment(
+        this.form.get('endDate').value,
+        'DD/MM/YYYY HH:mm:ss'
+      ).toDate(),
       concurrentMsg: this.form.get('concurrentMsg').value,
     };
     this.programmingService
@@ -117,7 +122,7 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       const task = JSON.parse(localStorage.getItem('Task'));
       const taskForm: ITask = {
-        State: null,
+        State: 'PROCESO',
       };
 
       const params = new BehaviorSubject<ListParams>(new ListParams());
