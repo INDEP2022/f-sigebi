@@ -13,6 +13,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, skip, take, takeUntil } from 'rxjs';
 import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { getDataFromExcel, showToast } from 'src/app/common/helpers/helpers';
 import {
   ListParams,
@@ -32,12 +33,13 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { MassRulingModalComponent } from '../mass-ruling-modal/mass-ruling-modal.component';
 import { MassRullingResponses } from '../tools/mass-rulling-responses';
 
 @Component({
   selector: 'app-mass-ruling',
   templateUrl: './mass-ruling.component.html',
-  styleUrls: ['./mass-ruling.component.scss'],
+  styleUrls: [],
 })
 export class MassRulingComponent
   extends MassRullingResponses
@@ -285,9 +287,15 @@ export class MassRulingComponent
 
   searchDictation() {
     const id = this.form.get('id').value;
-    const wheelNumber = this.form.get('wheelNumber').value as any;
+    const wheelNumber = this.form.get('wheelNumber').value;
+    const noExp = this.form.get('expedientNumber').value;
     //this.getDictations(parseInt(id), wheelNumber);
-    this.getDictationForId('find');
+    console.log(id, wheelNumber, noExp);
+    if (id === '' && wheelNumber === '' && noExp === '') {
+      this.getDictationForId('find');
+    } else {
+      this.getDictationForId('');
+    }
   }
 
   close() {
@@ -383,6 +391,9 @@ export class MassRulingComponent
     this.totalItemsErrors = 0;
     this.formCargaMasiva.reset();
     this.form.reset();
+    this.form.get('id').setValue('');
+    this.form.get('wheelNumber').setValue('');
+    this.form.get('expedientNumber').setValue('');
     this.form.get('delete').setValue(false);
     this.form.get('delete').disable();
     this.isFileLoad = false;
@@ -770,7 +781,7 @@ export class MassRulingComponent
     });
     if (type == 'find') {
       // console.log(this.form);
-      this.openMoreOneResults();
+      this.openMoreOneResults2();
     }
   }
 
@@ -1013,6 +1024,17 @@ export class MassRulingComponent
     wheelNumber && (params['filter.wheelNumber'] = wheelNumber);
     console.log(params);
     return params;
+  }
+
+  openMoreOneResults2() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        if (next) {
+        }
+      },
+    };
+    this.modalService.show(MassRulingModalComponent, modalConfig);
   }
 
   openMoreOneResults(data?: any) {
