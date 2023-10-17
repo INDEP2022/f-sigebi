@@ -64,7 +64,6 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
       .subscribe({
         next: base64 => {
           this.base64 = base64;
-          this.loading = false;
           this.error = false;
           this.base64Change(base64);
           // console.log(this.error);
@@ -97,7 +96,8 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        accept: 'image/*',
+        accept:
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg, image/heif, .heic, .heif',
         uploadFiles: false,
         service: this.editService,
         multiple: false,

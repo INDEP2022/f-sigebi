@@ -104,7 +104,7 @@
                 <li role="menuitem">
                   <a
                     class="dropdown-item bg-success text-light"
-                    (click)="(true)"
+                    (click)="referenceRequestExpensesPayments()"
                     >Archivo CSV de Referencias de Solicitudes de Gastos y
                     Pagos</a
                   >
@@ -143,7 +143,7 @@
                       id="controlTable"
                       [settings]="controlSettings"
                       [source]="dataTableControl"
-                      (userRowSelect)="selectControl($event.selected)">
+                      (userRowSelect)="selectControl($event)">
                     </ng2-smart-table>
                   </div>
                 </div>
@@ -213,6 +213,11 @@
               <div class="row mt-3">
                 <div class="col-sm-12 col-md-12">
                   <h5 class="title">Eventos Relacionados</h5>
+                </div>
+                <div class="col-md-12" *ngIf="!devolutionCtlDevPagId">
+                  <div class="alert alert-info">
+                    Selecciona un registro de la tabla "Control de Devoluciones"
+                  </div>
                 </div>
                 <div
                   class="col-sm-12 col-12 col-md-12 table-responsive p-5"
@@ -389,10 +394,11 @@
               <div class="col">
                 <button
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
-                  (click)="changeLayout('EXPENSE REQUEST')"
+                  (click)="requestSpentGenerator()"
                   [disabled]="">
                   Generar Solicitudes Gastos
                 </button>
+                <!-- (click)="changeLayout('EXPENSE REQUEST')" -->
               </div>
               <div class="col">
                 <button

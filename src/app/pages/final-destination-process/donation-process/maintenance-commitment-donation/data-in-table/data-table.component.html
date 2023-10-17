@@ -1,13 +1,34 @@
-<!-- <div class="d-flex justify-content-end mt-5">
-  <app-columns-select [(settings)]="settings" class="row justify-content-end">
+<div class="d-flex justify-content-end">
+  <div>
+    <button
+      button
+      type="button"
+      tooltip="Nuevo"
+      containerClass="tooltip-style"
+      class="btn btn-info btn-sm active ml-2 mr-2"
+      (click)="loadModal(false, $event)">
+      Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+    </button>
+  </div>
+  <app-columns-select [(settings)]="settings" class="mx-1" [leftList]="true">
   </app-columns-select>
-</div> -->
-
-<div class="row mt-5">
-  <ng2-smart-table
-    [attr.class]="'table-bordered'"
-    [settings]="settings"
-    [source]="data">
-  </ng2-smart-table>
 </div>
-<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+
+<div class="row mt-2">
+  <div [class]="loading ? 'table-loading' : ''">
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settings"
+      (edit)="loadModal(true, $event)"
+      [source]="dataTable1">
+    </ng2-smart-table>
+  </div>
+</div>
+<div class="row" *ngIf="this.type == 1 || this.type == 2 || this.type == 3">
+  <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+</div>
+
+<!-- TYPE 4   -->
+<div class="row" *ngIf="this.type == 4">
+  <app-pagination [params]="params" [totalItems]="totalItem4"> </app-pagination>
+</div>

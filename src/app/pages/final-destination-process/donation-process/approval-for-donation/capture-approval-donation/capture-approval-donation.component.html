@@ -9,18 +9,16 @@
       [formGroup]="regisForm"
       (ngSubmit)="onSubmit()">
       <div class="row mt-5">
-        <div class="col-md-5 border-right border-secondary" id="column">
+        <div class="col-md-6 border-right border-secondary" id="column">
           <div class="row">
             <div class="col-12">
               <h5>Registro</h5>
             </div>
           </div>
-          <div class="row">
-            <div class="col-12 text-md-start">
-              <span class="badge rounded-pill badge-soft-success">
-                Estatus
-              </span>
-              <div>{{ estatus || '' }}</div>
+          <div class="row mt-5">
+            <div class="col-5 d-flex align-items-center justify-content-start">
+              <span class="badge rounded-pill badge-soft-success">Estatus</span>
+              <div style="font-weight: bold">{{ estatus || '' }}</div>
             </div>
           </div>
           <div class="row mt-5">
@@ -117,37 +115,32 @@
                 </form-field>
               </div>
             </div>
-            <!-- <div class="col-md-6 text-md-right">
-              <button class="btn btn-primary btn-sm active">
-                Cerrar Evento
-              </button>
-            </div> -->
             <div class="row m-3">
               <div class="col-4"></div>
-              <div class="col-md-3 text-end">
+              <div class="col-md-12 text-center">
                 <button
                   (click)="agregarCaptura()"
                   type="button"
                   class="btn btn-info active btn-sm mr-3">
-                  Nueva Captura
+                  Nuevo Evento
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
                   class="btn btn-primary active btn-sm mr-3"
-                  (click)="searchEventos()">
-                  Estatus Actas
+                  (click)="searchActas()">
+                  Buscar Evento
                   <i class="bx bx-search bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
                   class="btn btn-primary active btn-sm mr-3"
-                  (click)="cerrarEvento()">
+                  (click)="cerrarActa()">
                   Cerrar Evento
                   <i class="fas fa-close bx-sm float-icon"></i>
                 </button>
                 <button
-                  (click)="clean()"
+                  (click)="cleanActa()"
                   type="button"
                   class="btn btn-danger active btn-sm mr-3">
                   Limpiar
@@ -157,7 +150,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-4">
           <div class="row">
             <div class="col-12">
               <h5>Par&aacute;metros para Traer Informaci&oacute;n de SIAB</h5>
@@ -167,46 +160,35 @@
             <div class="col-md-12">
               <div class="row">
                 <div class="col-md-12">
-                  <div class="card">
-                    <div class="card-body mt-4 mb-4">
+                  <div class="card justify-content-center">
+                    <div class="col-md-6 d-flex flex-column">
                       <div
-                        class="form-group row p-4 d-flex justify-content-center align-items-center">
-                        <div class="col-md-3">
-                          <button
-                            class="btn btn-secondary btn-sm active"
-                            (click)="ValidGoods()">
-                            Valida Bienes <i class="bx bx-check float-icon"></i>
-                          </button>
-                        </div>
-                        <div class="col-md-3">
-                          <button
-                            class="btn btn-success btn-sm active"
-                            type="button"
-                            (click)="exportToExcel()">
-                            Exportar a Excel
-                            <i class="bx bx-download float-icon"></i>
-                          </button>
-                        </div>
-                      </div>
-                      <div
-                        class="form-group row p-4 d-flex justify-content-center align-items-center">
-                        <div class="col-md-3">
-                          <button
-                            class="btn btn-primary btn-sm active"
-                            (click)="ubicaGood()">
-                            Consulta Bienes
-                            <i class="bx bx-search float-icon"></i>
-                          </button>
-                        </div>
-
-                        <div class="col-md-3">
-                          <button
-                            class="btn btn-info active btn-sm active"
-                            (click)="exportToExcel()">
-                            Rastreador de Bienes&nbsp;
-                            <i class="fas fa-map-marker bx-sm float-icon"></i>
-                          </button>
-                        </div>
+                        class="row ps-4"
+                        [ngClass]="{ 'not-press': !activeRadio }">
+                        <form-radio label="Consulta de Bienes">
+                          <input
+                            type="radio"
+                            formControlName="activeRadio"
+                            value="0" />
+                        </form-radio>
+                        <form-radio label="Com. Exterior KG">
+                          <input
+                            type="radio"
+                            formControlName="activeRadio"
+                            value="1" />
+                        </form-radio>
+                        <form-radio label="Delitos Federales">
+                          <input
+                            type="radio"
+                            formControlName="activeRadio"
+                            value="2" />
+                        </form-radio>
+                        <form-radio label="Otros Trans.">
+                          <input
+                            type="radio"
+                            formControlName="activeRadio"
+                            value="3" />
+                        </form-radio>
                       </div>
                     </div>
                   </div>
@@ -214,78 +196,74 @@
               </div>
             </div>
           </div>
+          <div class="row m-3">
+            <div class="col-4"></div>
+            <div class="col-md-12 text-center">
+              <!-- <button
+                class="btn btn-secondary btn-sm active me-2"
+                (click)="validaGood()">
+                Valida Bienes <i class="bx bx-check float-icon"></i>
+              </button> -->
+              <button
+                class="btn btn-success btn-sm active me-2"
+                type="button"
+                (click)="exportToExcel()">
+                Exportar a Excel
+                <i class="bx bx-download float-icon"></i>
+              </button>
+              <button
+                class="btn btn-primary btn-sm active me-2"
+                (click)="ubicaGood()">
+                Consulta Bienes
+                <i class="bx bx-search float-icon"></i>
+              </button>
+              <button
+                class="btn btn-info active btn-sm active"
+                (click)="findRast()">
+                Rastreador de Bienes&nbsp;
+                <i class="fas fa-map-marker bx-sm float-icon"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       <app-divider></app-divider>
-
-      <div class="d-flex justify-content-end mt-5">
-        <app-columns-select
-          [(settings)]="settings"
-          class="row justify-content-end">
-        </app-columns-select>
+      <div class="row pt-3">
+        <div class="col-md-12 d-flex justify-content-between">
+          <span class="text-success">
+            <i class="fa fa-check" aria-hidden="true"></i> Cantidad de
+            Bienes&#58; <b>{{ TOTAL_REPORTE }}</b>
+          </span>
+          <span class="text-danger"
+            ><i class="fa fa-ban" aria-hidden="true"></i> Cantidad de Bienes con
+            Error&#58;
+            <b>{{ BIEN_ERROR }}</b>
+          </span>
+          <span class="text-info">
+            Suma de Cantidades
+            <b>{{ SUM_BIEN | currency }}</b>
+          </span>
+        </div>
       </div>
-
-      <div class="row mt-3 pt-2 scroll-table">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          class="col-md-12"
-          [settings]="settings"
-          [source]="dataTableGood">
-        </ng2-smart-table>
-      </div>
-
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
-
-      <div class="row"></div>
       <div class="row p-3">
         <div class="col-md-3"></div>
-
         <div class="row mt-12 d-flex justify-content-center">
-          <div class="col-md-12 justify-content-center">
+          <div class="col-md-12">
+            <h6>BIENES RELACIONADOS CON EL EVENTO</h6>
+            <div class="row"></div>
             <div class="row">
               <div class="d-flex justify-content-end mb-2">
                 <app-columns-select
                   [(settings)]="settings"></app-columns-select>
-                <div>
-                  <!-- <button type="button" tooltip="Nuevo" containerClass="tooltip-style"
-                                              class="btn btn-primary btn-sm active ml-2 mr-2" (click)="goBack()" *ngIf="origin != null">
-                                              Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
-                                            </button> -->
-                </div>
               </div>
             </div>
-          </div>
-
-          <!-- <div class="row pt-2">
-            <div class="col-md-12 text-center mt-4 mb-4">
-              <button tooltip="Agregar Bien al Acta" containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addSelect()">
-                <i class="bx bx-chevron-down bx-md"></i>
-              </button>
-              <button tooltip="Agregar Bienes al Acta" containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addAll()">
-                <i class="bx bx-chevrons-down bx-md"></i>
-              </button>
-              <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeAll()">
-                <i class="bx bx-chevrons-up bx-md"></i>
-              </button>
-              <button tooltip="Quitar Bien del Acta" containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeSelect()">
-                <i class="bx bx-chevron-up bx-md"></i>
-              </button>
-            </div>
-          </div> -->
-
-          <div class="col-md-12">
-            <h6>BIENES RELACIONADOS CON EL EVENTO</h6>
             <div class="row">
               <form-loader *ngIf="loading3"></form-loader>
               <div class="col-md-12">
                 <ng-scrollbar
                   [track]="'all'"
-                  [ngStyle]="{ height: loading3 ? '0px' : '400px' }">
+                  [ngStyle]="{ height: loading3 ? '0px' : '600px' }">
                   <ng2-smart-table
                     class="table-responsive"
                     [attr.class]="'table-bordered table-responsive'"
@@ -293,66 +271,95 @@
                     (userRowSelect)="rowsSelected($event)"
                     [source]="dataDetailDonationGood">
                   </ng2-smart-table>
-                  <app-pagination
-                    [params]="paramsList2"
-                    [totalItems]="totalItems2"></app-pagination>
                 </ng-scrollbar>
+                <app-pagination
+                  [params]="paramsList2"
+                  [totalItems]="totalItems2"></app-pagination>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div>
+                    <form-field
+                      [control]="regisForm.get('observaciones')"
+                      label="Observaciones">
+                      <textarea
+                        maxlength="1000"
+                        type="text"
+                        class="form-control"
+                        [disabled]="!deleteO"
+                        formControlName="observaciones"></textarea>
+                    </form-field>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="row">
+                    <form-field
+                      [control]="regisForm.get('observaElimina')"
+                      [hidden]="!inputVisible"
+                      label="Observaciones Eliminación de Bienes por">
+                      <textarea
+                        maxlength="1000"
+                        type="text"
+                        class="form-control"
+                        formControlName="observaElimina"></textarea>
+                    </form-field>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <div class="row p-3">
+        <div class="col-md-3"></div>
+        <div class="row mt-12 d-flex justify-content-center">
+          <div class="col-md-12">
+            <h6>BIENES DEL RASTREADOR</h6>
+            <div class="row"></div>
+            <div class="row justify-content-end mt-3">
+              <div class="col-md-5 buttons pt-3 text-right">
+                <app-columns-select
+                  (settingsChange)="settingsChange($event)"
+                  [settings]="settings2">
+                </app-columns-select>
+              </div>
+            </div>
+            <div class="row">
+              <form-loader *ngIf="loading3"></form-loader>
+              <div class="col-md-12">
+                <app-goods-list
+                  [files]="files"
+                  [changeDescription]="changeDescription"></app-goods-list>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div footer>
         <div class="d-flex justify-content-center">
           <div class="m-3">
             <button
               class="btn btn-secondary btn-sm active"
-              (click)="ubicaGood()">
+              (click)="searchGoodError()">
               Ver Error
             </button>
           </div>
           <div class="m-3">
-            <button class="btn btn-danger btn-sm active">
+            <button
+              class="btn btn-danger btn-sm active"
+              (click)="removeSelect()">
               Elimina Bienes <i class="fa fa-trash-alt"></i>
             </button>
           </div>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="d-flex align-items-center">
-                <div>
-                  <h5 class="font-size-14">Cantidad de Bienes:</h5>
-                </div>
-                <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="d-flex align-items-center">
-                <div>
-                  <h5 class="font-size-14">Cantidad de Bienes con Error:</h5>
-                </div>
-                <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-md-6">
-              <div class="d-flex align-items-center">
-                <div>
-                  <h5 class="font-size-14">Suma de Cantidades:</h5>
-                </div>
-                <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
-                </div>
-              </div>
-            </div>
+          <div class="m-3">
+            <button
+              (click)="actualizarActa()"
+              type="button"
+              class="btn btn-primary active btn-sm mr-3">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
           </div>
         </div>
       </div>

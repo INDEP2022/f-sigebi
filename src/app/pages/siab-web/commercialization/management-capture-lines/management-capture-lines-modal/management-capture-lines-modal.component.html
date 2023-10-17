@@ -7,11 +7,6 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <!-- <div class="col-md-2">
-          <form-field [control]="form.get('id')" label="ID">
-            <input type="text" class="form-control" formControlName="id" />
-          </form-field>
-        </div> -->
         <div class="col-md-2">
           <form-field [control]="form.get('lote_publico')" label="Lote Público">
             <input
@@ -73,14 +68,6 @@
             <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
         </div>
-        <!-- <div class="col-md-3">
-          <form-field [control]="form.get('idClient')" label="ID Cliente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idClient" />
-          </form-field>
-        </div> -->
         <div class="col-md-6">
           <form-field [control]="form.get('cliente')" label="Cliente">
             <input type="text" class="form-control" formControlName="cliente" />
@@ -94,18 +81,21 @@
               formControlName="monto_pena" />
           </form-field>
         </div>
-        <!-- <div class="col-md-3">
-          <form-field [control]="form.get('note')" label="Nota">
-            <input type="text" class="form-control" formControlName="note" />
+        <div class="col-md-3">
+          <form-field [control]="form.get('note')" label="Numero Tipo">
+            <input type="number" class="form-control" formControlName="note" />
           </form-field>
-        </div> -->
+        </div>
       </div>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'" (click)="close()"></confirm-button>
+        <confirm-button
+          [type]="'button'"
+          (confirm)="update()"
+          [disabled]="form.invalid"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

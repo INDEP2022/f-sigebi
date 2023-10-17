@@ -107,7 +107,7 @@
 }
 
 .table-bordered {
-  border: none !important;
+  // border: none !important;
 }
 
 .modal-content {
@@ -781,4 +781,25 @@ custom-view-component {
   font-weight: 400;
   background-color: crimson !important;
   color: white;
+}
+
+.cell_right {
+  width: 100% !important;
+  height: 100% !important;
+  text-align: right !important;
+}
+
+#testAcc div {
+  margin-bottom: 0px !important;
+}
+
+#checkbox_fcomer div div {
+  margin-top: -21px;
+  margin-left: 15px;
+}
+
+.red-column-fcomer086-I {
+  // background: crimson;
+  font-weight: 500;
+  color: crimson;
 }

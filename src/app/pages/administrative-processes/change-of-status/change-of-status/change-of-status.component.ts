@@ -33,6 +33,8 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   statusSelect: IStatusCode;
   endProcess: boolean = false;
+
+  dataStatus = new DefaultSelect();
   //Criterio por clasificación de bienes
   get numberGood() {
     return this.form.get('numberGood');
@@ -134,9 +136,136 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     this.formNew.get('extDomProcess').reset();
     this.formNew.get('issuingUser').reset();
     this.formNew.get('description').reset();
+    this.goodStatus.enabled;
   }
 
   validateGood() {
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('status', 'ROP', SearchFilter.NOT);
+      paramsF.addFilter('propertyNum', this.numberGood.value);
+      this.historyGoodService.getAllFilter(paramsF.getParams()).subscribe(
+        res => {
+          this.goodServices.getStatusByGood(this.numberGood.value).subscribe(
+            res => {
+              const paramsF2 = new FilterParams();
+              paramsF2.addFilter('status', res.status_estatus);
+              paramsF2.addFilter('screenKey', 'CAMMUEESTATUS');
+              //this.getStatus(res.status_estatus)
+              this.screenStatusService
+                .getAllFilterFree(paramsF2.getParams())
+                .subscribe(
+                  res => {
+                    const data = JSON.parse(JSON.stringify(res.data[0]));
+
+                    console.log(data.statusFinal);
+                    data.statusFinal != null
+                      ? this.getStatus({ text: data.statusFinal.status }, true)
+                      : console.log('No hizo getStatus');
+                    console.log(res.data[0]);
+                    resolve(data);
+                  },
+                  err => {
+                    console.log(err);
+                    resolve({ message: 'Error' });
+                  }
+                );
+            },
+            err => {
+              console.log(err);
+              resolve({ message: 'Error' });
+            }
+          );
+        },
+        err => {
+          console.log(err);
+          resolve({ message: 'Error' });
+        }
+      );
+    });
+  }
+
+  /* validateGood() {
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('status', 'ROP', SearchFilter.NOT);
+      paramsF.addFilter('propertyNum', this.numberGood.value);
+      this.historyGoodService.getAllFilter(paramsF.getParams()).subscribe(
+        res => {
+          this.goodServices.getStatusByGood(this.numberGood.value).subscribe(
+            res => {
+              const paramsF2 = new FilterParams();
+              paramsF2.addFilter('status', res.status_estatus);
+              paramsF2.addFilter('screenKey', 'CAMMUEESTATUS');
+              this.screenStatusService
+                .getAllFilterFree(paramsF2.getParams())
+                .subscribe(
+                  res => {
+                    this.getStatus(
+                      { text: JSON.parse(JSON.stringify(res.data[0])).status },
+                      true
+                    );
+                    console.log(res.data[0]);
+                    resolve(res);
+                  },
+                  err => {
+                    resolve({ message: 'Error' });
+                  }
+                );
+            },
+            err => {
+              resolve({ message: 'Error' });
+            }
+          );
+        },
+        err => {
+          resolve({ message: 'Error' });
+        }
+      );
+    });
+  }
+
+  /* validateGood() {
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('status', 'ROP', SearchFilter.NOT);
+      paramsF.addFilter('propertyNum', this.numberGood.value);
+      this.historyGoodService.getAllFilter(paramsF.getParams()).subscribe(
+        res => {
+          this.goodServices.getStatusByGood(this.numberGood.value).subscribe(
+            res => {
+              const paramsF2 = new FilterParams();
+              paramsF2.addFilter('status', res.status_estatus);
+              paramsF2.addFilter('screenKey', 'CAMMUEESTATUS');
+              this.screenStatusService
+                .getAllFilterFree(paramsF2.getParams())
+                .subscribe(
+                  res => {
+                    this.getStatus(
+                      { text: JSON.parse(JSON.stringify(res.data[0])).status },
+                      true
+                    );
+                    console.log(res.data[0]);
+                    resolve(res);
+                  },
+                  err => {
+                    resolve({ message: 'Error' });
+                  }
+                );
+            },
+            err => {
+              resolve({ message: 'Error' });
+            }
+          );
+        },
+        err => {
+          resolve({ message: 'Error' });
+        }
+      );
+    });
+  }
+
+  /* validateGood() {
     return new Promise((resolve, reject) => {
       const paramsF = new FilterParams();
       paramsF.addFilter('status', 'ROP', SearchFilter.NOT);
@@ -176,10 +305,49 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         }
       );
     });
+  } */
+
+  //BUSCAR EL ESTATUS PARA NGX-SELECT
+  searchStatus(params: string) {
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('status', params, SearchFilter.ILIKE);
+      paramsF.addFilter('screenKey', 'CAMMUEESTATUS');
+      this.screenStatusService.getAllFilterFree(paramsF.getParams()).subscribe(
+        res => {
+          console.log(res);
+          const newData = res.data.map((item: any) => {
+            return {
+              ...item,
+              labelEstatus: item.status + ' - ' + item.description,
+            };
+          });
+          resolve({ newData, count: res.count });
+        },
+        err => {
+          console.log(err);
+          this.dataStatus = new DefaultSelect();
+        }
+      );
+    });
+  }
+
+  async getStatus(params?: ListParams, research?: boolean) {
+    console.log({ parametro_estatus: params });
+    const resp = await this.searchStatus(params.text);
+    console.log({ Nueva_respuesta: resp });
+    if (research) {
+      const jsonRsp = JSON.parse(JSON.stringify(resp));
+      this.dataStatus = new DefaultSelect(jsonRsp.newData, jsonRsp.count);
+      console.log(jsonRsp.newData[0]);
+      this.goodStatus.setValue(jsonRsp.newData[0]);
+    } else {
+    }
   }
 
   async loadGood() {
     this.loading = true;
+    this.goodStatus.enable();
     const resp = await this.validateGood();
     console.log(resp);
     if (JSON.parse(JSON.stringify(resp)).message == 'Error') {
@@ -199,6 +367,9 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         this.loadDescriptionStatus(this.good);
         this.loading = false;
         this.formNew.enable();
+        if (this.goodStatus.value != null) {
+          this.goodStatus.disable();
+        }
         this.dateStatus.disable();
         this.endProcess = true;
       },
@@ -258,7 +429,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           status:
             this.goodStatus.value === null
               ? this.good.status
-              : this.goodStatus.value,
+              : this.goodStatus.value.status,
           extDomProcess:
             this.extDomProcess.value === null
               ? this.good.extDomProcess
@@ -292,7 +463,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   postHistoryGood() {
     const historyGood: IHistoryGood = {
       propertyNum: this.numberGood.value,
-      status: this.goodStatus.value,
+      status: this.goodStatus.value.status,
       changeDate: this.correctDate(new Date().toISOString()),
       userChange: this.token.decodeToken().preferred_username,
       statusChangeProgram: 'CAMMUEESTATUS',

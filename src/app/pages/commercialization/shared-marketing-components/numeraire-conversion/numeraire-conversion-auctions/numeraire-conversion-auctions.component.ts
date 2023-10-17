@@ -1,48 +1,80 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { catchError, firstValueFrom, of, take } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { BILLS_COLUMNS } from './bills-columns';
-import { DISPERSION_COLUMNS } from './dispersion-columns';
+import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
+import { ComerieventosService } from '../services/comerieventos.service';
+import { ComermeventosService } from '../services/comermeventos.service';
+import { NumerarieService } from '../services/numerarie.service';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-numeraire-conversion-auctions',
   templateUrl: './numeraire-conversion-auctions.component.html',
-  styles: [],
+  styleUrls: ['./numeraire-conversion-auctions.component.scss'],
 })
 export class NumeraireConversionAuctionsComponent
   extends BasePage
   implements OnInit
 {
   @Input() address: string;
-  settings2 = {
-    ...this.settings,
-    actions: false,
-  };
-
+  reloadExpenses = 0;
   form: FormGroup = new FormGroup({});
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  totalItems: number = 0;
-  selectedEvent: any = null;
-  eventItems = new DefaultSelect();
-  showDisperstion = false;
-
-  constructor(private fb: FormBuilder) {
+  selectedExpenseData: IFillExpenseDataCombined;
+  nameEvent = '';
+  showParcial = true;
+  ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
+  dateFilters = ['eventDate', 'failureDate'];
+  eventColumns = { ...COLUMNS };
+  constructor(
+    private fb: FormBuilder,
+    private convNumeraryService: ConvNumeraryService,
+    private comertpEventService: ComerTpEventosService,
+    private lotService: LotService,
+    private modalService: BsModalService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private numerarieService: NumerarieService,
+    private eventMService: ComermeventosService,
+    private eventIService: ComerieventosService
+  ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: { ...BILLS_COLUMNS },
-    };
-
-    this.settings2.columns = DISPERSION_COLUMNS;
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getEvents({ page: 1, text: '' });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['address'] && changes['address'].currentValue) {
+      if (changes['address'].currentValue === 'M') {
+        this.showParcial = false;
+      } else {
+        this.showParcial = true;
+      }
+    }
+  }
+
+  get eventService() {
+    return this.address
+      ? this.address === 'M'
+        ? this.eventMService
+        : this.eventIService
+      : null;
+  }
+
+  get updateAllowed() {
+    return this.numerarieService.updateAllowed;
   }
 
   private prepareForm() {
@@ -57,58 +89,6 @@ export class NumeraireConversionAuctionsComponent
     });
   }
 
-  //Datos de las tablas
-  data1 = [
-    {
-      idGasto: '159',
-      descrIdGasto: 'Gastos 159',
-      monto: ' 132564',
-      solPago: '147',
-      mandato: 'mandato 1',
-      total: '132711',
-    },
-  ];
-  data2 = [
-    {
-      noBien: '147',
-      monto: '7894',
-      partConver: 'mxn',
-      solPago: '147',
-      fecha: '31-05-2020',
-    },
-  ];
-
-  //Datos de prueba para autorrellenar los campos
-  data: any = [
-    {
-      idEvent: 1,
-      nameEvent: 'SUBASTA',
-      cveEvent: 'DECBM 01/07',
-      obsEvent: 'SI ESTOY ENTRANDO 3M',
-      place: 'TOLUCA',
-      eventDate: '19-05-2021',
-      failureDate: '01-07-2022',
-    },
-    {
-      idEvent: 2,
-      nameEvent: 'PREPARACIÓN',
-      cveEvent: 'SEBM0107 SEV0107',
-      obsEvent: 'SI ESTOY ENTRANDO 2 4',
-      place: 'VERACRUZ',
-      eventDate: '10-05-2018',
-      failureDate: '10-05-2020',
-    },
-    {
-      idEvent: 3,
-      nameEvent: 'REMESAS',
-      cveEvent: 'SEBM0207 Y SEV020',
-      obsEvent: 'SI ESTOY ENTRANDO 4M',
-      place: 'CDMX',
-      eventDate: '14-01-2011',
-      failureDate: '04-10-2014',
-    },
-  ];
-
   get pathEvent() {
     return (
       'event/api/v1/comer-event?filter.eventTpId=$in:0,1,2,3,4,5&sortBy=id:ASC' +
@@ -116,18 +96,207 @@ export class NumeraireConversionAuctionsComponent
     );
   }
 
-  getEvents(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.data, 3);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.data.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
+  get selectedEvent() {
+    return this.numerarieService.selectedEvent;
+  }
+
+  set selectedEvent(value) {
+    this.numerarieService.selectedEvent = value;
+  }
+
+  selectEvent(event: IComerEvent) {
+    console.log(event);
+    this.selectedExpenseData = null;
+    this.nameEvent = '';
+    this.reloadExpenses++;
+    this.selectedEvent = {
+      ...event,
+      failureDate: secondFormatDateTofirstFormatDate(event.failureDate),
+      eventDate: secondFormatDateTofirstFormatDate(event.eventDate as string),
+    };
+    this.numerarieService.selectedEventSubject.next(this.selectedEvent);
+    const filterParams = new FilterParams();
+    filterParams.addFilter('id', event.eventTpId);
+    this.comertpEventService
+      .getAllComerTpEvent(filterParams.getParams())
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response && response.data) {
+            this.nameEvent = response.data[0].description;
+          }
+        },
+      });
+    this.validateParcialButtons(event);
+  }
+
+  validateParcialButtons(event: IComerEvent) {
+    if (this.address === 'I') {
+      this.showParcial = true;
+      const filterParams = new FilterParams();
+      filterParams.addFilter('idStatusVta', 'GARA');
+      filterParams.addFilter('idEvent', event.id);
+      this.lotService
+        .getAll(filterParams.getParams())
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response && response.data && response.data.length === 0) {
+              this.showParcial = false;
+            }
+          },
+        });
     }
   }
 
-  selectEvent(event: any) {
-    console.log(event);
-    this.selectedEvent = event;
+  calcula() {
+    if (this.selectedEvent.statusVtaId !== 'CNE') {
+      this.loader.load = true;
+      this.convNumeraryService
+        .getCentralNumera(this.selectedEvent.id)
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.reloadExpenses++;
+            this.loader.load = false;
+            this.alert('success', 'Proceso Cálculo terminado', '');
+          },
+          error: err => {
+            console.log(err);
+            this.loader.load = false;
+            this.alert('error', 'Proceso Cálculo', err.error.message);
+          },
+        });
+    } else {
+      this.alert(
+        'warning',
+        'Este evento ya fue convertido a numerario, no se puede volver a procesar',
+        ''
+      );
+    }
+  }
+
+  async calculaParc() {
+    if (this.selectedEvent.statusVtaId === 'VEN') {
+      this.loader.load = true;
+      let resultBorra = await firstValueFrom(
+        this.convNumeraryService
+          .SPBorraNumera(this.selectedEvent.id)
+          .pipe(catchError(x => of(x.error)))
+      );
+      if (resultBorra.statusCode !== 200) {
+        this.alert('error', 'Proceso Cálculo Parcial', resultBorra.message);
+        this.loader.load = false;
+        return;
+      }
+      console.log(resultBorra);
+      let resultParcial = await firstValueFrom(
+        this.convNumeraryService
+          .getSPGastosEventoParcial(this.selectedEvent.id)
+          .pipe(catchError(x => of(x.error)))
+      );
+      if (resultParcial.statusCode !== 200) {
+        this.alert('error', 'Proceso Cálculo Parcial', resultParcial.message);
+        this.loader.load = false;
+        return;
+      }
+
+      this.loader.load = false;
+      this.reloadExpenses++;
+      this.alert('success', 'Proceso Cálculo Parcial terminado', '');
+    } else {
+      this.alert(
+        'warning',
+        'Solo el estatus del evento VEN es válido para procesar',
+        ''
+      );
+    }
+  }
+
+  convierte() {
+    if (this.selectedEvent.statusVtaId !== 'CNE') {
+      this.loader.load = true;
+      this.convNumeraryService
+        .convert({ idEvent: this.selectedEvent.id, screen: 'FCOMER087' })
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.reloadExpenses++;
+            this.loader.load = false;
+            this.alert('success', 'Proceso Convierte terminado', '');
+          },
+          error: err => {
+            console.log(err);
+            this.loader.load = false;
+            this.alert('error', 'Proceso Convierte', err.error.message);
+          },
+        });
+    } else {
+      this.alert(
+        'warning',
+        'Este evento ya fue convertido a numerario, no se puede volver a procesar',
+        ''
+      );
+    }
+  }
+
+  convierteParcial() {
+    if (this.selectedEvent.statusVtaId === 'VEN') {
+      this.loader.load = true;
+      this.convNumeraryService
+        .SP_CONVERSION_ASEG_PARCIAL({
+          idEvent: this.selectedEvent.id,
+          pScreen: 'FCOMER087',
+        })
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.reloadExpenses++;
+            this.alert('success', 'Proceso Convierte Parcial terminado', '');
+          },
+          error: err => {
+            console.log(err);
+            this.loader.load = false;
+            this.alert('error', 'Proceso Convierte Parcial', err.error.message);
+          },
+        });
+    } else {
+      this.alert(
+        'warning',
+        'Solo el estatus del evento VEN es válido para procesar',
+        ''
+      );
+    }
+  }
+
+  reporte() {
+    let params = {
+      DESTYPE: 'SCREEN',
+      PARAMFORM: 'NO',
+      PEVENTO: this.selectedEvent.id,
+      PCVEPROCESO: this.selectedEvent.processKey,
+    };
+    this.siabService.fetchReport('RCOMER_NUMERARIO', params).subscribe({
+      next: response => {
+        this.loading = false;
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
   }
 }

@@ -21,6 +21,10 @@ export class ComerEventService extends HttpService {
     return this.get<IListResponse<IComerEvent>>('comer-event', params);
   }
 
+  getAllFilter2(params?: ListParams) {
+    return this.get<IListResponse<IComerEvent>>('comer-event', params);
+  }
+
   getEatEvents(params: _Params) {
     return this.get<IListResponse<IComerEvent>>(
       'comer-event/getEatEvents',
@@ -98,6 +102,45 @@ export class ComerEventService extends HttpService {
   getNotification(idEvent: number, idLote: number) {
     return this.get<IListResponse<any>>(
       `${PrepareEventEndpoints.ShowNotification}?pEvent=${idEvent}&pBatch=${idLote}`
+    );
+  }
+
+  getProcessPhaseAnt(idEvent: any) {
+    return this.get(
+      `${PrepareEventEndpoints.GetProcessPhaseAnt}?event=${idEvent}`
+    );
+  }
+  updatePhase(body: any) {
+    return this.patch(`${PrepareEventEndpoints.UpdatePhase}`, body);
+  }
+
+  getComerLotes(params: _Params) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.ComerLot}`,
+      params
+    );
+  }
+  getProcessPhase3Ant(event: any, batch: any) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.GetProcessPhase3Ant}?event=${event}&batch=${batch}`
+    );
+  }
+  getValidLiquidation(event: any, batchPublic: any) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.GetValidLiquidation}?eventId=${event}&batchPublic=${batchPublic}`
+    );
+  }
+  putUpdateBySubquery(body: any) {
+    return this.post(PrepareEventEndpoints.UpdateBySubquery, body);
+  }
+
+  getEnvFormalize(body: any) {
+    return this.post(PrepareEventEndpoints.EnvFormalize, body);
+  }
+
+  validateLiq(eventId: number, batchId: number) {
+    return this.get(
+      `${PrepareEventEndpoints.ApplicationValidationLiq}?eventId=${eventId}&batchId=${batchId}`
     );
   }
 }

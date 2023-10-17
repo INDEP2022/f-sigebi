@@ -20,6 +20,7 @@ export class NewComerPaymentVirt extends BasePage implements OnInit {
 
   incomeData: any;
   data = new DefaultSelect();
+  batchSelect: any;
 
   constructor(
     private fb: FormBuilder,
@@ -62,6 +63,7 @@ export class NewComerPaymentVirt extends BasePage implements OnInit {
       if (res != null) {
         this.idBatch.setValue(res.idLot);
         this.description.setValue(res.description);
+        this.batchSelect = res;
       } else {
         this.idBatch.reset();
         this.description.reset();
@@ -119,5 +121,12 @@ export class NewComerPaymentVirt extends BasePage implements OnInit {
   }
 
   //Generar nuevo
-  saveNew() {}
+  saveNew() {
+    console.log(this.data['data']);
+    this.bsModel.content.callback({
+      data: this.batchSelect,
+    });
+
+    this.bsModel.hide();
+  }
 }

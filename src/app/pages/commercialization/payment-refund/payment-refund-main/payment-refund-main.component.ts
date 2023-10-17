@@ -104,12 +104,30 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     hideSubHeader: false,
+    // selectMode: 'multi',
+    rowClassFunction: (row: any) => {
+      if (row.data.seleccion == false) {
+        return 'bg-success text-white';
+      } else {
+        return 'bg-dark text-white';
+      }
+    },
   };
+  selectedControl: any[] = [];
   eventSettings = {
     ...TABLE_SETTINGS,
     actions: false,
     hideSubHeader: false,
+    // selectMode: 'multi',
+    rowClassFunction: (row: any) => {
+      if (row.data.seleccion == false) {
+        return 'bg-success text-white';
+      } else {
+        return 'bg-dark text-white';
+      }
+    },
   };
+  selectedEvents: any[] = [];
   accountSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -122,6 +140,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     hideSubHeader: false,
   };
   tokenData: any;
+  devolutionCtlDevPagId: number = null;
+  loadingreferenceRequest: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -131,8 +151,38 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     private authService: AuthService
   ) {
     super();
+    this.controlSettings = {
+      ...this.controlSettings,
+      rowClassFunction: (row: any) => {
+        if (row.data.seleccion == 0) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
+    };
     this.controlSettings.columns = REFUND_CONTROL_COLUMNS;
+    REFUND_CONTROL_COLUMNS.seleccion = {
+      ...REFUND_CONTROL_COLUMNS.seleccion,
+      onComponentInitFunction: this.onClickSelect.bind(this),
+    };
+    // this.eventSettings.columns = RELATED_EVENT_COLUMNS;
+    this.eventSettings = {
+      ...this.eventSettings,
+      rowClassFunction: (row: any) => {
+        if (row.data.seleccion == 0) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
+    };
     this.eventSettings.columns = RELATED_EVENT_COLUMNS;
+    RELATED_EVENT_COLUMNS.seleccion = {
+      ...RELATED_EVENT_COLUMNS.seleccion,
+      onComponentInitFunction: this.onClickSelectEvents.bind(this),
+    };
+
     this.accountSettings.columns = BANK_ACCOUNTS_COLUMNS;
     this.paymentSettings.columns = PAYMENT_COLUMNS;
   }
@@ -156,9 +206,74 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.getData();
     this.loadingDataTableControl();
-    this.loadingDataTableRelationEvent();
     this.loadingDataTableBank();
     this.loadingDataTableBankAccount();
+  }
+
+  onClickSelect(event: any) {
+    if (event != undefined) {
+      event.toggle.subscribe((data: any) => {
+        data.row.selection = data.toggle;
+        if (data.row.seleccion == false) {
+          let row: any = data.row;
+          const index = this.selectedControl.findIndex(
+            _data => _data.ctlDevPagId == row.ctlDevPagId
+          );
+          if (index == -1 && data.toggle == true) {
+            this.selectedControl.push(row);
+          } else if (index != -1 && data.toggle == false) {
+            this.selectedControl.splice(index, 1);
+          }
+          const index_1: number = this.selectedControl.findIndex(
+            _data => _data.ctlDevPagId == data.row.ctlDevPagId
+          );
+          this.testDataControl[index_1].seleccion = 1;
+          this.dataTableControl.load(this.testDataControl);
+          this.dataTableControl.refresh();
+        } else {
+          const index: number = this.selectedControl.findIndex(
+            _data => _data.ctlDevPagId == data.row.ctlDevPagId
+          );
+          this.testDataControl[index].seleccion = 0;
+          this.dataTableControl.load(this.testDataControl);
+          this.dataTableControl.refresh();
+        }
+        console.log('SELECIONADOS AL MOMENTO ###### ', this.selectedControl);
+      });
+    }
+  }
+
+  onClickSelectEvents(event: any) {
+    if (event != undefined) {
+      event.toggle.subscribe((data: any) => {
+        data.row.selection = data.toggle;
+        if (data.row.seleccion == false) {
+          let row: any = data.row;
+          const index = this.selectedEvents.findIndex(
+            _data => _data.eventId == row.eventId
+          );
+          if (index == -1 && data.toggle == true) {
+            this.selectedEvents.push(row);
+          } else if (index != -1 && data.toggle == false) {
+            this.selectedEvents.splice(index, 1);
+          }
+          const index_1: number = this.selectedEvents.findIndex(
+            _data => _data.eventId == data.row.eventId
+          );
+          // this.testDataRelationEvent[index_1].seleccion = 1;
+          this.dataTableRelationEvent.load(this.testDataRelationEvent);
+          this.dataTableRelationEvent.refresh();
+        } else {
+          const index: number = this.selectedEvents.findIndex(
+            _data => _data.eventId == data.row.eventId
+          );
+          this.testDataRelationEvent[index].seleccion = 0;
+          this.dataTableRelationEvent.load(this.testDataRelationEvent);
+          this.dataTableRelationEvent.refresh();
+        }
+        console.log('SELECIONADOS AL MOMENTO ###### ', this.selectedEvents);
+      });
+    }
   }
 
   private prepareForm(): void {
@@ -270,7 +385,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     return total;
   }
 
-  selectControl(rows: any[]) {
+  selectControl(event: any) {
     // this.eventColumns = this.eventTestData;
     // this.eventTotalItems = this.eventColumns.length;
     // this.eventsTotalQuantity = this.getTotalQuantity(this.eventColumns);
@@ -279,6 +394,23 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     // let { x, y } = this.tabsContainer.nativeElement.getBoundingClientRect();
     // y = y - 300;
     // window.scrollTo(x, y);
+    if (event.isSelected) {
+      this.devolutionCtlDevPagId = event.data.ctlDevPagId;
+      this.loadingDataTableRelationEvent();
+    } else {
+      this.devolutionCtlDevPagId = null;
+      this.testDataRelationEvent = [];
+      this.dataTableRelationEvent.load([]);
+      this.totalRelationEvent = 0;
+      this.eventsTotalQuantity = 0;
+      this.eventsTotalAmount = 0;
+    }
+    console.log(
+      'CONTROL SELECTED ',
+      event,
+      this.dataTableControl,
+      this.devolutionCtlDevPagId
+    );
   }
 
   selectRelatedEvent(rows: any[]) {
@@ -291,6 +423,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     // this.paymentTotalItems = this.paymentColumns.length;
     // this.paymentsTotalAmount = this.getTotalAmount(this.paymentColumns);
     // this.refundTabs.tabs[1].active = true;
+    console.log('EVENTS SELECTED ', rows);
   }
 
   selectAccounts(rows: any[]) {
@@ -454,7 +587,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           ? '$eq:PROC'
           : this.controlForm.get('filter').value == 'C'
           ? '$eq:CONC'
-          : '$null'
+          : '$ilike:'
       }`;
     }
     // this.columnFiltersControl['filter.creationdate'] = `$order:desc`;
@@ -474,7 +607,18 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.svPaymentDevolutionService.getCtlDevPagH(params).subscribe({
       next: res => {
         console.log('DATA Control', res);
-        this.testDataControl = res.data;
+        this.testDataControl = res.data.map((i: any) => {
+          const index2: number = this.selectedControl.findIndex(
+            (_data: any) => _data.ctlDevPagId == i.ctlDevPagId
+          );
+          if (index2 > -1) {
+            i['seleccion'] = 1;
+            return i;
+          } else {
+            i['seleccion'] = 0;
+            return i;
+          }
+        });
         this.dataTableControl.load(this.testDataControl);
         this.totalControl = res.count;
         this.totalControl_Count = res.totalLength;
@@ -527,7 +671,11 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           this.getRelationEventData();
         }
       });
-    // this.columnFiltersRelationEvent['filter.creationdate'] = `$order:desc`;
+    if (this.devolutionCtlDevPagId) {
+      this.columnFiltersRelationEvent[
+        'filter.ctlDevPagId'
+      ] = `$eq:${this.devolutionCtlDevPagId}`;
+    }
     //observador para el paginado
     this.dataTableParamsRelationEvent
       .pipe(takeUntil(this.$unSubscribe))
@@ -546,7 +694,18 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.svPaymentDevolutionService.getEatCtlPagE(params).subscribe({
       next: (res: any) => {
         console.log('DATA RelationEvent', res);
-        this.testDataRelationEvent = res.data;
+        this.testDataRelationEvent = res.data.map((i: any) => {
+          const index2: number = this.selectedEvents.findIndex(
+            (_data: any) => _data.ctlDevPagId == i.ctlDevPagId
+          );
+          if (index2 > -1) {
+            i['seleccion'] = 1;
+            return i;
+          } else {
+            i['seleccion'] = 0;
+            return i;
+          }
+        });
         this.dataTableRelationEvent.load(this.testDataRelationEvent);
         this.totalRelationEvent = res.count;
         this.eventsTotalQuantity = res.numPaymentsTotal;
@@ -711,5 +870,82 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         this.loadingBankAccount = false;
       },
     });
+  }
+  requestSpentGenerator() {
+    if (this.selectedControl.length == 0) {
+      this.alert(
+        'warning',
+        'No se tienen registros de bancos a procesar',
+        'Selecciona por lo menos un registro de la tabla "Control de Devoluciones"'
+      );
+      return;
+    }
+    if (this.selectedEvents.length == 0) {
+      this.alert('warning', 'No se tienen eventos relacionados', '');
+      return;
+    }
+  }
+  referenceRequestExpensesPayments() {
+    // http://sigebimstest.indep.gob.mx/payment/api/v1/application/exp-ref-sol/42
+    console.log(this.selectedAccounts);
+
+    let nameTable = '"Cuentas de Banco Relacionadas"';
+    if (this.selectedAccounts.length == 0) {
+      this.alert(
+        'warning',
+        'No se tiene ' + nameTable + ' seleccionadas',
+        'Selecciona un registro de la tabla ' + nameTable
+      );
+      return;
+    }
+    if (this.selectedAccounts.length > 1) {
+      this.alert(
+        'warning',
+        'No se pueden seleccionar varias ' + nameTable + ' seleccionadas',
+        'Selecciona solo un registro de la tabla ' + nameTable
+      );
+      return;
+    }
+    // PUP_EXP_CSV_REFSOL
+    this.alertQuestion(
+      'warning',
+      '¿Desea continuar con la generación del archivo?',
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loadingreferenceRequest = true;
+        this.svPaymentService
+          .getExpRefSol(this.selectedAccounts[0].idCtldevpag)
+          .subscribe({
+            next: (data: any) => {
+              this.loadingreferenceRequest = false;
+              console.log(data);
+
+              this.alert('success', 'Archivo generado correctamente', ``);
+              this.downloadFile(
+                data.base64,
+                `Referencias_Solicitudes_Gastos_Pagos_${new Date().getTime()}`
+              );
+            },
+            error: error => {
+              this.loadingreferenceRequest = false;
+              this.alert(
+                'error',
+                'Error al generar el archivo',
+                'Ocurrió un error al generar el archivo'
+              );
+            },
+          });
+      }
+    });
+  }
+  downloadFile(base64: any, fileName: any) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    downloadLink.remove();
   }
 }

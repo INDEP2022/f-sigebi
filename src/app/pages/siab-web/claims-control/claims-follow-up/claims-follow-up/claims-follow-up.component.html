@@ -80,16 +80,18 @@
       <div class="ch-content">
         <h5 class="title"></h5>
         <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <button
+            type="button"
+            (click)="add()"
+            tooltip="Nuevo"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
           <div>
-            <button
-              type="button"
-              (click)="add()"
-              tooltip="Nuevo"
-              containerClass="tooltip-style"
-              class="btn btn-info btn-sm active ml-2 mr-2">
-              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
+            <app-columns-select
+              [(settings)]="settings"
+              [leftList]="true"></app-columns-select>
           </div>
         </div>
       </div>

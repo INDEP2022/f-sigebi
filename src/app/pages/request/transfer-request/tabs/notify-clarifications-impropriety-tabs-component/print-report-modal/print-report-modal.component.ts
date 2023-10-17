@@ -180,7 +180,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         this.src = linkDoc;
         break;
       }
-
       default: {
         console.log('No hay ID tipo de documento');
         break;
@@ -505,7 +504,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         dInDate: new Date(), //Fecha de creación del documento
         xidSolicitud: this.requestInfo.id,
         xtipoDocumento: this.idTypeDoc,
-        xdelegacionRegional: this.idRegionalDelegation,
+        xDelegacionRegional: this.idRegionalDelegation,
       };
       this.attachDoc(formData);
     } else {
@@ -520,6 +519,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         xidSolicitud: this.idSolicitud,
         xtipoDocumento: this.idTypeDoc,
         xidBien: this.noBien,
+        xestado: this.requestInfo?.keyStateOfRepublic,
+        xDelegacionRegional: this.requestInfo?.regionalDelegationId,
+        xremitente: this.requestInfo?.sender,
+        xcargoRemitente: this.requestInfo?.holderCharge,
+        texto: 'prueba_unir', //propiedad que se ocupara para traer las notificaciones. Para un solo ciclo
       };
       console.log('Data a guardar: ', formData);
       this.attachDoc(formData);

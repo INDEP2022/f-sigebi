@@ -12,6 +12,21 @@ export interface INumerary {
   euro: number;
 }
 
+export interface INumeraryxGoods {
+  eventId: string;
+  numeraryxGoodId: string;
+  goodNumber: string;
+  date: string;
+  amount: string;
+  public_lot: string;
+  spentId: string;
+  apply: string;
+  cvman: string;
+  origin: string;
+  conversionType: string;
+  indicted: number;
+}
+
 export interface INumeraryEnc {
   dateRequestNumerary: string;
   description: string;

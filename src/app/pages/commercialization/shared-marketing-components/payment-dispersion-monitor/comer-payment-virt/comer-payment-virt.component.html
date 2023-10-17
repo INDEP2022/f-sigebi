@@ -72,12 +72,11 @@
           <div class="col-md-12">
             <button
               type="button"
-              tooltip="Nuevo"
               [disabled]="!actionsBool"
               (click)="newPayment()"
               containerClass="tooltip-style"
-              class="btn btn-info btn-sm active ml-2 mr-2">
-              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              class="btn btn-primary btn-sm active ml-2 mr-2">
+              Asignar Lote
             </button>
           </div>
         </div>
@@ -135,13 +134,18 @@
               Dividir <i class="fa fa-divide"></i>
             </button>
             <!-- [disabled]="data['data'].length < 1" -->
-            <button class="btn btn-red btn-sm active mr-3">
+            <button class="btn btn-red btn-sm active mr-3" (click)="deleteFn()">
               Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
-            <button type="button" class="btn btn-primary active btn-sm mr-3">
+            <button
+              type="button"
+              (click)="restaurar()"
+              class="btn btn-primary active btn-sm mr-3">
               Restaurar <i class="fa fa-rotate-left"></i>
             </button>
-            <button class="btn btn-primary btn-sm active mr-3">
+            <button
+              class="btn btn-primary btn-sm active mr-3"
+              (click)="aplicar()">
               Aplicar <i class="fa fa-check" aria-hidden="true"></i>
             </button>
             <button class="btn btn-danger btn-sm active" (click)="close()">

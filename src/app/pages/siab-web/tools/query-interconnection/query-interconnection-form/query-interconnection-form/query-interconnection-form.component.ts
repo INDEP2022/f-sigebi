@@ -65,14 +65,16 @@ export class QueryInterconnectionFormComponent
     }
   }
   consult() {
+    console.log(this.records);
     if (this.records.length === 0) {
       this.alert('warning', 'No se encontraron registros', ``);
     } else {
       this.totalRepeated = this.findDuplicateKeys(this.records);
-      this.totalExcelRecords = this.records.length - 1;
+      this.totalExcelRecords = this.records.length;
       let totCve = this.totalABuscar(this.records);
       let splitCve = totCve.split(',');
       this.splitCveUnicas = splitCve.length;
+      console.log(totCve, splitCve);
       /*let result = 
       console.log(result);*/
     }
@@ -95,7 +97,7 @@ export class QueryInterconnectionFormComponent
 
       for (let r = 0; r < dtCveUnicas.length; r++) {
         CveUnicaRecorrido = dtCveUnicas[r][0].toString();
-        //console.log(CveUnicaRecorrido);
+        console.log(CveUnicaRecorrido);
         if (r !== i) {
           console.log(CveUnicaExcel, CveUnicaRecorrido);
           if (CveUnicaExcel === CveUnicaRecorrido) {

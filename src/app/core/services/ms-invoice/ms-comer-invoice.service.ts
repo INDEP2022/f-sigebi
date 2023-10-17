@@ -17,6 +17,14 @@ export class ComerInvoiceService extends HttpService {
     return this.get<IListResponse<any>>(ENDPOINT_INVOICE.ComerInovice, params);
   }
 
+  getInvoiceForniture(year: string, params: ListParams) {
+    return this.get(`${ENDPOINT_INVOICE.GetInvoiceForniture}${year}`, params);
+  }
+
+  getInvoiceByEvent(event: number) {
+    return this.get(`${ENDPOINT_INVOICE.GetInvoiceEvent}${event}`);
+  }
+
   getAllInvoicePag(params: ListParams) {
     return this.get<IListResponse<any>>(ENDPOINT_INVOICE.GetInvoicePag, params);
   }
@@ -56,7 +64,18 @@ export class ComerInvoiceService extends HttpService {
     return this.get(`${ENDPOINT_INVOICE.UpdateByEvemt}/${eventId}`);
   }
 
-  copyInvoice(data: Object) {
+  copyInvoice(data: {
+    pEventO: number;
+    pInvoiceO: number;
+    pLegend: string;
+    pAuthorized: string;
+    pStatus: string;
+    pImagen: string;
+    pCfdi: string;
+    pLot: number;
+    pCause: number;
+    pDeletedEmits: number;
+  }) {
     return this.post(ENDPOINT_INVOICE.CopyInvoice, data);
   }
 
@@ -65,6 +84,10 @@ export class ComerInvoiceService extends HttpService {
   }
 
   getValidPayments(params?: _Params) {
+    return this.get(ENDPOINT_INVOICE.ComerHeadboard, params);
+  }
+
+  getValidPayments2(params?: ListParams) {
     return this.get(ENDPOINT_INVOICE.ComerHeadboard, params);
   }
 
@@ -154,5 +177,174 @@ export class ComerInvoiceService extends HttpService {
     return this.get(
       `${ENDPOINT_INVOICE.ComerCount}?eventId${event}&invoiceId=${factura}`
     );
+  }
+
+  pufValidaInvoiceSP(event: number, folioSp: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationFolioSP}?eventId=${event}&invoiceSb=${folioSp}`
+    );
+  }
+
+  getEats(event: number, expend: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationEats}?eventId=${event}&expenseId=${expend}`
+    );
+  }
+
+  pkComerVnr(data: {
+    pEvent: string;
+    pLot: string;
+    pInvoice: string;
+    pLegend: string;
+    pAuthorized: string;
+    pStatus: string;
+    pCauseA: string;
+    pOption: string;
+    pDelEmits: string;
+    pOcionCan: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.PkComerVnr, data);
+  }
+
+  invoicePValuesSat(data: {
+    pEventId: string;
+    pLot: string;
+    pInvoice: string;
+    pOption: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.PValueSat, data);
+  }
+
+  cancelInvoice(data: { invoiceId: number; eventId: number; batchId: number }) {
+    return this.put(ENDPOINT_INVOICE.CancelInvoice, data);
+  }
+
+  getCountBatch(event: number, batch: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.CountBatch}?eventId=${event}&batch=${batch}`
+    );
+  }
+
+  getValidBatch(event: number, batch: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ValidBatch}?eventId=${event}&batch=${batch}`
+    );
+  }
+
+  updateEvent(event: number) {
+    return this.put(`${ENDPOINT_INVOICE.UpdateEvent}/${event}`);
+  }
+
+  getCursosData(event: number, status: string, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.CursorData}?eventId=${event}&statusFact=${status}&batchId=${batchId}`
+    );
+  }
+
+  updateEventCursor(data: {
+    billId: number;
+    eventId: number;
+    process: string;
+  }) {
+    return this.put(ENDPOINT_INVOICE.UpdateProcess, data);
+  }
+
+  checkFolSubTotal(data: { eventId: number; batchId: number }) {
+    return this.post(ENDPOINT_INVOICE.ApplicationSubTotal, data);
+  }
+
+  exportExcell(eventId: number) {
+    return this.post(ENDPOINT_INVOICE.ExportExcellFcomer, { eventId });
+  }
+
+  getAllSumInvoice(params: _Params) {
+    return this.get(ENDPOINT_INVOICE.ApplicationInvoice, params);
+  }
+
+  getSumTotal(params: _Params) {
+    return this.get(ENDPOINT_INVOICE.ApplicationSum, params);
+  }
+
+  getDescInvoice(params: _Params) {
+    return this.get(ENDPOINT_INVOICE.ApplicationDescInvoice, params);
+  }
+
+  updateEventByDate(
+    params: _Params,
+    data: {
+      impressionDate: string;
+    }
+  ) {
+    return this.put(ENDPOINT_INVOICE.UpdateDateImpression, data, params);
+  }
+
+  maxPayment(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.MaxPayment}?eventId=${event}&publicLot=${batchId}`
+    );
+  }
+
+  generatePreInvoice(data: {
+    eventId: string;
+    option: string;
+    publicLot: number;
+    cveDisplay: string;
+    invoiceId: string;
+    paymentId: string;
+    document: string;
+    secdoc: string;
+    indGendet: string;
+    delegationNumber: string;
+    command: string;
+    partiality: string;
+    type: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.ComerPaAdj, data);
+  }
+
+  getCountInvoice(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ComerCountInvoice}?eventId=${event}&batchId=${batchId}`
+    );
+  }
+
+  getVeatInvoice(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ComerVeatInovice}?eventId=${event}&invoiceId=${batchId}`
+    );
+  }
+
+  getSumEat(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ComerInvoiceSum}?eventId=${event}&batchId=${batchId}`
+    );
+  }
+
+  getIndGroup(params: _Params) {
+    return this.get('comer-annexs-fact', params);
+  }
+
+  saveInvoiceProcedure(data: {
+    eventId: number;
+    batchId: number;
+    user: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.ComerSaveInvoice, data);
+  }
+
+  deleteInvoiceProcedure(data: { eventId: number; batchId: number }) {
+    return this.delete(ENDPOINT_INVOICE.ComerDeleteInvoice, data);
+  }
+
+  pkComerVNR(sesion: number) {
+    return this.get(`${ENDPOINT_INVOICE.PkComerVNR}/${sesion}`);
+  }
+
+  pkComerVNRCancel(data: {
+    pScreen: string;
+    pAction: string;
+    pSession: number;
+  }) {
+    return this.post(ENDPOINT_INVOICE.PKComerVNRCancel, data);
   }
 }

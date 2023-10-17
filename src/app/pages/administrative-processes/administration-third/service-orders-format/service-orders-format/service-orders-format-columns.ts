@@ -1,22 +1,17 @@
 export const SERVICEORDERSFORMAT_COLUMNS = {
   noGoods: {
-    title: 'No.Bien',
-    width: '10%',
+    title: 'No. Bien',
+    width: '25%',
     sort: false,
   },
   description: {
     title: 'Descripción',
-    width: '30%',
+    width: '50%',
     sort: false,
   },
   quantity: {
     title: 'Cantidad',
-    width: '10%',
-    sort: false,
-  },
-  volumetry: {
-    title: 'Volumetría',
-    width: '10%',
+    width: '25%',
     sort: false,
   },
 };
@@ -26,38 +21,38 @@ export const CONTROLSERVICEORDERS_COLUMNS = {
     width: '10%',
     sort: false,
   },
-  specification: {
+  typeServiceNumber: {
     title: 'Especificación',
     width: '10%',
     sort: false,
   },
-  turnType: {
+  turnNumber: {
     title: 'Turno/Tipo',
     width: '10%',
     sort: false,
   },
-  costVariable: {
+  varCostNumber: {
     title: 'Variable de costo',
     width: '10%',
     sort: false,
   },
-  observations: {
+  observation: {
     title: 'Observaciones',
     width: '20%',
     sort: false,
   },
-  cost: {
+  totAmount: {
     title: 'Costo',
     width: '10%',
     sort: false,
   },
-  quantity: {
-    title: 'Costo',
+  totQuantity: {
+    title: 'Cantidad',
     width: '10%',
     sort: false,
   },
   amount: {
-    title: 'Costo',
+    title: 'Importe',
     width: '10%',
     sort: false,
   },

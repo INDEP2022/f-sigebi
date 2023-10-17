@@ -56,7 +56,10 @@ const routes: Routes = [
               './../insurance-and-surveillance/costs-resume/costs-resume.module'
             )
           ).CostsResumeModule,
-        data: { title: 'Resumen de Gastos' },
+        data: {
+          title: 'Resumen de Gastos',
+          screen: 'FRESUMENCOSTOS',
+        },
       },
       {
         path: 'expenses-format',
@@ -103,6 +106,16 @@ const routes: Routes = [
         data: {
           title: 'Clasificación de Costos',
           screen: 'CLASIFICACIÓN_COSTOS',
+        },
+      },
+      {
+        path: 'closure-monthly',
+        loadChildren: async () =>
+          (await import('./closure-monthly/closure-monthly.module'))
+            .ClosureMonthlyModule,
+        data: {
+          title: 'Cierre Mensual',
+          screen: 'FGERADBPROCCOSTOS',
         },
       },
     ],

@@ -271,6 +271,22 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
+  getAllProceedingsDeliveryReception2(
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      ProceedingsEndpoints.ProceedingsDeliveryReception,
+      params
+    );
+  }
+
+  ProceedingsDetailActa(id: string | number, params: ListParams) {
+    return this.get<IListResponse<any>>(
+      'aplication/get-detail-acta-ent-recep-closed/' + id,
+      params
+    );
+  }
+
   getProceedingsByKey(
     id: string | number
   ): Observable<IListResponse<IProceedings>> {
@@ -367,12 +383,20 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get(`${ProceedingsEndpoints.ActasDeliveryReception2}/${id}`);
   }
 
-  //tipo_acta in ('ACIRVEN','ACIRDES','ACIRDEV','ACIRDON','ACIRRES','ACIRSUS')
+  //tipo_acta in ('ACIRVEN','ACIRDES','ACIRDEV','ACIRDON','ACIRRES','AXD')
   getProceeding2(
     id: number
   ): Observable<IListResponse<IProceedingDeliveryReception>> {
     return this.get<IListResponse<IProceedingDeliveryReception>>(
       `${this.endpoint}?filter.numFile=${id}&filter.typeProceedings=$in:ACIRVEN,ACIRDES,ACIRDEV,ACIRDON,ACIRRES,ACIRSUS` //  &filter.typeProceedings='DESTINO'`
+    );
+  }
+
+  getProceeding3(
+    id: number
+  ): Observable<IListResponse<IProceedingDeliveryReception>> {
+    return this.get<IListResponse<IProceedingDeliveryReception>>(
+      `${this.endpoint}?filter.numFile=${id}&filter.typeProceedings=$eq:AXD` //  &filter.typeProceedings='DESTINO'`
     );
   }
 }

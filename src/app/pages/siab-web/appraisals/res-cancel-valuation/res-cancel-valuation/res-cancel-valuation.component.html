@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-end">
       <div class="ml-auto" style="margin-top: -20px">
         <p class="font-weight-bold" style="border-bottom: 1px solid black">
-          {{ dateNow | date : 'dd/MM/yyyy - HH:mm:ss' }}
+          {{ dateNow | date: 'dd/MM/yyyy - HH:mm:ss' }}
         </p>
       </div>
     </div>
@@ -34,8 +34,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="event"
-                [(ngModel)]="event" />
+                formControlName="event" />
             </form-field>
           </div>
           <div class="col-md-7">
@@ -46,7 +45,7 @@
                 [data]="offices"
                 [form]="form"
                 bindLabel="cveJob"
-                label="Folios de oficios de Avalúos"
+                label="Folios de Oficios de Avalúos"
                 control="office">
               </ngx-select>
             </form-field>
@@ -57,24 +56,12 @@
           <div class="col-md-3"></div>
           <div class="col-md-4" style="margin-left: -20px">
             <form-radio label="Oficio de Respuesta">
-              <input
-                type="radio"
-                value="cat"
-                [(ngModel)]="radioValueOne"
-                (change)="onRadioChange()"
-                [value]="true"
-                formControlName="radioOne" />
+              <input type="radio" value="2" formControlName="radio" />
             </form-radio>
           </div>
           <div class="col-md-4 ml-auto">
             <form-radio label="Oficio de Cancelación">
-              <input
-                type="radio"
-                value="dog"
-                formControlName="radioTwo"
-                [(ngModel)]="redioValueTwo"
-                (change)="onRadioChangeTwo()"
-                [value]="true" />
+              <input type="radio" value="3" formControlName="radio" />
             </form-radio>
           </div>
           <div class="col-md-2"></div>
@@ -83,7 +70,7 @@
         <div class="row mt-3">
           <div class="col-md-4">
             <form-field [control]="form.get('fol')" label="Folio">
-              <input type="text" class="form-control" formControlName="key" />
+              <input type="text" class="form-control" formControlName="fol" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -92,21 +79,16 @@
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="form.get('cityCi')" label="Ciudad">
-              <!-- <ngx-select
+            <form-field [control]="form.get('cityCi')">
+              <ngx-select
+                (fetchItems)="queryCyties($event)"
                 [searchOnInit]="true"
-                (fetchItems)="getCitiesList($event)"
-                [data]="cityList"
-                [form]="form"
-                value="idCity"
                 label="Ciudad"
-                bindLabel="legendOffice"
+                [data]="fullCyties"
+                [form]="form"
+                bindLabel="nameCity"
                 control="cityCi">
-              </ngx-select> -->
-              <input
-                type="text"
-                class="form-control"
-                formControlName="cityCi" />
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -136,14 +118,66 @@
         <!--  -->
         <div class="row mt-3">
           <div class="col-md-6">
-            <form-field [control]="form.get('remi')" label="Remitente">
-              <input type="text" class="form-control" formControlName="remi" />
+            <form-field [control]="form.get('remi')">
+              <ngx-select
+                (fetchItems)="queryAllUsers($event)"
+                [searchOnInit]="true"
+                label="Remitente"
+                [data]="fullUsers"
+                [form]="form"
+                bindLabel="usuario"
+                control="remi">
+                <ng-template #userLabel let-item="item"
+                  >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                >
+                <ng-template #userOption let-item="item"
+                  >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                >
+              </ngx-select>
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('dest')" label="Destinatario">
-              <input type="text" class="form-control" formControlName="dest" />
-            </form-field>
+            <ng-custom-select-loading
+              [form]="form"
+              [path]="pathDest"
+              [bodyPost]="bodyDest"
+              [updateValues]="true"
+              typeInput="post"
+              label="Destinatario"
+              formControlName="dest"
+              paramSearch="filter.usuario"
+              prefixSearch="$eq"
+              value="usuario"
+              bindLabel="nombre"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ng-custom-select-loading>
+            <ng-template #userLabel let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+            <ng-template #userOption let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+
+            <!-- <form-field [control]="form.get('dest')">
+              <ngx-select
+                (fetchItems)="queryAllUsersTwo($event)"
+                [searchOnInit]="true"
+                label="Destinatario"
+                [data]="fullUsersTwo"
+                [form]="form"
+                bindLabel="usuario"
+                control="dest"
+                [labelTemplate]="userLabel"
+                [optionTemplate]="userOption">
+                <ng-template #userLabel let-item="item"
+                  >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                >
+                <ng-template #userOption let-item="item"
+                  >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                >
+              </ngx-select>
+            </form-field> -->
           </div>
         </div>
         <!--  -->
@@ -173,73 +207,15 @@
         <!--  -->
       </form>
     </div>
-    <!--  -->
-    <div>
-      <app-card [header]="true">
-        <div header>
-          <div class="ch-content">
-            <h5 class="title">Con Copia Para:</h5>
-          </div>
-        </div>
-        <div body>
-          <form class="form-material" [formGroup]="formThree">
-            <div>
-              <div>
-                <form-radio label="Por Delegación">
-                  <input type="radio" [value]="true" formControlName="byDel" />
-                </form-radio>
-              </div>
-            </div>
-            <div>
-              <div class="row mt-3">
-                <div class="col-md-6">
-                  <form-field
-                    [control]="formThree.get('user')"
-                    label="Usuario y Nombre">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="user" />
-                  </form-field>
-                </div>
-                <div class="col-md-6">
-                  <form-field
-                    [control]="formThree.get('del')"
-                    label="Delegación">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="del" />
-                  </form-field>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-5"></div>
-              <div class="col-md-3">
-                <button id="btnAgregar" class="btn btn-default btn-block">
-                  Agregar Usuario
-                </button>
-              </div>
-              <div class="col-md-3">
-                <button id="Button2" class="btn btn-danger btn-block">
-                  Quitar Usuario
-                </button>
-              </div>
-              <div class="col-md-1"></div>
-            </div>
-            <div class="row">
-              <div class="col-md-1"></div>
-              <div class="col-md-10">
-                <select multiple class="form-control" id="lsbConCopia"></select>
-              </div>
-              <div class="col-md-1"></div>
-            </div>
-          </form>
-        </div>
-      </app-card>
-    </div>
     <br />
+    <!--  -->
+    <div class="d-flex justify-content-end">
+      <div class="ml-auto">
+        <button class="btn btn-danger btn-sm active" (click)="reset()">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
+    </div>
     <!--  -->
     <div class="mt-5">
       <div>
@@ -257,7 +233,8 @@
       <div>
         <ng2-smart-table
           [settings]="settingsTwo"
-          [source]="dataTwo"></ng2-smart-table>
+          [source]="dataTwo"
+          (userRowSelect)="onUserRowSelectCancel($event)"></ng2-smart-table>
       </div>
       <div>
         <app-pagination [params]="paramsTwo" [totalItems]="totalItemsTwo">
@@ -269,43 +246,39 @@
       <div>
         <form class="form-material" [formGroup]="formTwo">
           <!--  -->
-          <!-- <div class="row" *ngIf="pnlControles2"> -->
-          <div class="row" *ngIf="true">
-            <div class="col-md-4">
+          <div class="row" *ngIf="pnlControles2">
+            <div class="col-md-6">
               <form-field
                 [control]="formTwo.get('allGood')"
                 label="Total de Bienes">
-                <input
-                  type="text"
+                <textarea
                   class="form-control"
-                  formControlName="allGood" />
+                  formControlName="allGood"></textarea>
               </form-field>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-6">
               <form-field
                 [control]="formTwo.get('selectedGood')"
                 label="Bienes Seleccionados">
-                <ng-select
-                  addTagText="Agregar Elemento"
-                  formControlName="selectedGood"
-                  class="form-control scroll-line"
-                  bindValue="value"
-                  bindLabel="label"
-                  [items]="listKeyOffice">
-                </ng-select>
+                <textarea
+                  class="form-control"
+                  formControlName="selectedGood"></textarea>
               </form-field>
             </div>
-            <!-- <div class="col-md-3" *ngIf="btnMotCan"> -->
-            <div class="col-md-3" *ngIf="true">
-              <button
-                class="btn btn-primary btn-sm active mr-3"
-                (click)="reasonsForChange()">
-                Motivos de Cambio a REV
-              </button>
+          </div>
+          <div clas="row">
+            <div class="d-flex">
+              <div class="ml-auto" *ngIf="btnMotCan">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="reasonsForChange()">
+                  Motivos de Cambio a REV
+                </button>
+              </div>
             </div>
           </div>
           <!--  -->
-          <div class="row">
+          <div class="row mb-3">
             <div class="col-md-6">
               <button
                 class="btn btn-sm btn-success active"
@@ -345,29 +318,145 @@
                     </div>
                   </div> -->
           <!--  -->
+          <!--  -->
+          <div>
+            <app-card [header]="true">
+              <div header>
+                <div class="ch-content">
+                  <h5 class="title">Con Copia Para:</h5>
+                </div>
+              </div>
+              <div body>
+                <form class="form-material" [formGroup]="formThree">
+                  <!--  -->
+                  <div class="row" style="margin-left: -20px">
+                    <form-radio label="Por Delegación">
+                      <input
+                        type="radio"
+                        value="cat"
+                        [(ngModel)]="radioValueThree"
+                        (change)="onRadioChangeThree()"
+                        [value]="true"
+                        formControlName="radioThree" />
+                    </form-radio>
+                  </div>
+                  <!--  -->
+                  <div class="row pt-5">
+                    <div class="col-md-4" *ngIf="visibleUserName">
+                      <form-field [control]="formThree.get('user')">
+                        <ngx-select
+                          (fetchItems)="getUsersDesList($event)"
+                          [searchOnInit]="true"
+                          [data]="usersList"
+                          [form]="formThree"
+                          value="usuario"
+                          label="Usuario y Nombre"
+                          bindLabel="nombre"
+                          [(ngModel)]="rowCopySelect"
+                          control="user"
+                          (change)="getUsersDesList()"
+                          [labelTemplate]="userLabel"
+                          [optionTemplate]="userOption">
+                        </ngx-select>
+                        <ng-template #userLabel let-item="item"
+                          >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                        >
+                        <ng-template #userOption let-item="item"
+                          >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                        >
+                      </form-field>
+                    </div>
+                    <div class="col-md-4" *ngIf="visibleDelegation">
+                      <form-field [control]="formThree.get('del')">
+                        <ngx-select
+                          (fetchItems)="queryDelegations($event)"
+                          [searchOnInit]="true"
+                          label="Delegación"
+                          [data]="fullDelegations"
+                          [form]="formThree"
+                          bindLabel="description"
+                          [(ngModel)]="rowCopySelect"
+                          control="del"
+                          (change)="getDepartments()">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+                    <div class="col-md-4" *ngIf="visibleDepartments">
+                      <form-field [control]="formThree.get('depar')">
+                        <ngx-select
+                          (fetchItems)="getDepartments($event)"
+                          [searchOnInit]="true"
+                          [data]="fullDepartments"
+                          [form]="formThree"
+                          label="Departamentos"
+                          bindLabel="descripcion"
+                          control="depar">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="d-flex">
+                    <div class="ml-auto">
+                      <div class="justify-content-center">
+                        <button
+                          type="button"
+                          tooltip="Agregar"
+                          containerClass="tooltip-style"
+                          class="btn btn-info btn-sm active"
+                          (click)="getAddUser()">
+                          Agregar
+                          <i class="bx bx-plus bx-sm float-icon"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="ml-3">
+                      <div class="justify-content-center">
+                        <button
+                          type="button"
+                          class="btn btn-red btn-sm active"
+                          (click)="removeUserCopy()">
+                          Eliminar
+                          <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!--  -->
+                  <div>
+                    <form-field [control]="formThree.get('copy')" label="Copia">
+                      <select class="form-control" formControlName="copy">
+                        <option><small> Seleccione </small></option>
+                        <option *ngFor="let item of arrayCopy">
+                          {{ item }}
+                        </option>
+                      </select>
+                    </form-field>
+                  </div>
+                  <!--  -->
+                  <!--  -->
+                </form>
+              </div>
+            </app-card>
+          </div>
           <div class="d-flex justify-content-center">
             <div class="m-3" *ngIf="btnModificar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Modificar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
             <div class="m-3" *ngIf="btnVerOficio">
               <button type="button" class="btn btn-primary btn-sm active">
                 Visualizar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
             <div class="m-3" *ngIf="btnGuardar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Guardar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
             <div class="m-3" *ngIf="btnEnviar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Enviar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
           </div>
@@ -375,23 +464,18 @@
 
           <!--  -->
           <!-- Modal #1 -->
-          <div
-            style="border: 1px solid black; padding: 10px; border-radius: 20px">
+          <!-- <div style="border: 1px solid black; padding: 10px; border-radius: 20px">
             <p>Este es el modal #1</p>
             <div>
               <form class="form-material" [formGroup]="formDialogOne">
                 <div class="row mt-5">
                   <div class="col-md-12">
-                    <form-field
-                      [control]="formDialogOne.get('noti')"
-                      label="Notificaciones">
-                      <textarea
-                        class="form-control"
-                        formControlName="noti"></textarea>
+                    <form-field [control]="formDialogOne.get('noti')" label="Notificaciones">
+                      <textarea class="form-control" formControlName="noti"></textarea>
                     </form-field>
                   </div>
                 </div>
-                <!--  -->
+                
               </form>
               <div class="d-flex justify-content-center">
                 <div class="m-3">
@@ -408,55 +492,64 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
           <!--  -->
           <!-- Modal #2 -->
-          <div
-            style="border: 1px solid black; padding: 10px; border-radius: 20px"
-            class="mt-5">
-            <p>Este es el modal #2</p>
+          <!-- <div style="border: 1px solid black; padding: 10px; border-radius: 20px" class="mt-5"> -->
+          <ng-template #modalRev>
             <div>
-              <div class="row mt-5">
-                <div class="col-md-12">
-                  <p>Notificaciones</p>
-                </div>
-              </div>
-              <!--  -->
-              <div class="mt-5">
+              <div>
+                <!-- <p>Este es el modal #2</p> -->
                 <div>
-                  <p>Motivos de Cancelación</p>
-                </div>
-                <div>
-                  <ng2-smart-table
-                    [settings]="settingsModal"
-                    [source]="dataModal"
-                    (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
-                </div>
-                <div>
-                  <app-pagination
-                    [params]="paramsModal"
-                    [totalItems]="totalItemsModal">
-                  </app-pagination>
-                </div>
-              </div>
-              <!--  -->
-              <div class="d-flex justify-content-center">
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-primary btn-sm active"
-                    (click)="modifySelectedRows()">
-                    Aceptar
-                  </button>
-                </div>
-                <div class="m-3">
-                  <button type="button" class="btn btn-primary btn-sm active">
-                    Cerrar
-                  </button>
+                  <div class="row mt-5">
+                    <div class="col-md-12">
+                      <!-- <p>Notificaciones</p> -->
+                    </div>
+                  </div>
+                  <!--  -->
+                  <div class="m-3 ml-1">
+                    <div>
+                      <p><strong>Motivos de Cancelación</strong></p>
+                    </div>
+                    <div class="m-3">
+                      <div>
+                        <ng2-smart-table
+                          [settings]="settingsModal"
+                          [source]="dataModal"
+                          (userRowSelect)="
+                            onUserRowSelect($event)
+                          "></ng2-smart-table>
+                      </div>
+                      <div>
+                        <app-pagination
+                          [params]="paramsModal"
+                          [totalItems]="totalItemsModal">
+                        </app-pagination>
+                      </div>
+                    </div>
+                  </div>
+                  <!--  -->
+                  <div class="d-flex justify-content-center">
+                    <div class="m-3">
+                      <!--  -->
+
+                      <!--  -->
+                      <button
+                        class="btn btn-primary btn-sm active"
+                        (click)="modifySelectedRows()">
+                        Aceptar
+                      </button>
+                      <button
+                        class="btn btn-primary btn-sm active mr-3"
+                        (click)="closeModalSubtype()">
+                        Cerrar
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </ng-template>
         </form>
       </div>
     </div>

@@ -1,48 +1,44 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
+import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
+import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
+import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
+import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
-import {
-  FilterParams,
-  ListParams,
-  SearchFilter,
-} from '../../../../../common/repository/interfaces/list-params';
+import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
-import { UploadExpedientFormComponent } from '../../shared-component-gss/upload-expedient-form/upload-expedient-form.component';
-import { UploadImagesFormComponent } from '../../shared-component-gss/upload-images-form/upload-images-form.component';
-import { TurnModalComponent } from '../turn-modal/turn-modal.component';
+import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
+import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
+import { EditDeductiveComponent } from '../edit-deductive/edit-deductive.component';
+import { EditSampleGoodComponent } from '../edit-sample-good/edit-sample-good.component';
 import { LIST_ASSETS_COLUMN } from './columns/list-assets-columns';
 import { LIST_ASSETS_COPIES_COLUMN } from './columns/list-assets-copies';
 import { LIST_DEDUCTIVES_COLUMNS } from './columns/list-deductivas-column';
 import { LIST_WAREHOUSE_COLUMN } from './columns/list-warehouse-columns';
-
-var data = [
-  {
-    id: 1,
-    deductDescription:
-      'Recepcion documenta, electronica y validadion de requisitos (17%)',
-    observation: 'Observacion',
-    selected: true,
-  },
-];
 
 @Component({
   selector: 'app-sampling-assets-form',
@@ -54,12 +50,14 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   dateForm: ModelForm<any>;
   searchForm: ModelForm<any>;
   showSearchForm: boolean = true;
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  loadingGoods: boolean = false;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any = [];
   totalItems: number = 0;
-
+  sampleId: number = 0;
   jsonToCsv = JSON_TO_CSV;
 
+  loadingGoodInv: boolean = false;
   displaySearchAssetsBtn: boolean = false;
   settings2 = {
     ...TABLE_SETTINGS,
@@ -67,80 +65,96 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     selectMode: 'multi',
     columns: LIST_ASSETS_COLUMN,
   };
-  params2 = new BehaviorSubject<FilterParams>(new FilterParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs2 = new LocalDataSource();
   totalItems2: number = 0;
   listAssetsSelected: any[] = [];
-
+  deductivesSel: IDeductive[] = [];
   settings3 = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      edit: true,
+      delete: false,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
     selectMode: 'multi',
     columns: LIST_ASSETS_COPIES_COLUMN,
   };
   params3 = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs3: any[] = [];
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
+  paragraphs3 = new LocalDataSource();
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
-
+  allDeductives: IDeductiveVerification[] = [];
   settings4 = {
     ...TABLE_SETTINGS,
-    actions: false,
-    selectMode: '',
+    actions: {
+      edit: true,
+      delete: false,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+    selectMode: 'multi',
   };
   columns4 = LIST_DEDUCTIVES_COLUMNS;
-  paragraphsDeductivas: any[] = [{}];
+  paragraphsDeductivas = new LocalDataSource();
 
   delegationId: string = '';
   storeSelected: any = {};
 
   selectTransferent = new DefaultSelect();
-
-  //private domicilieService = inject(DomicileService);
-  private domicilieService = inject(GoodDomiciliesService);
-  private goodsqueryService = inject(GoodsQueryService);
-  private authService = inject(AuthService);
-  private goodService = inject(GoodService);
-  private transferentService = inject(TransferenteService);
-  private goodsinvService = inject(GoodsInvService);
-
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private domicilieService: GoodDomiciliesService,
+    private goodsqueryService: GoodsQueryService,
+    private authService: AuthService,
+    private goodService: GoodService,
+    private transferentService: TransferenteService,
+    private goodsInvService: GoodsInvService,
+    private samplingGoodService: SamplingGoodService,
+    private delegationService: RegionalDelegationService,
+    private massiveGoodService: MassiveGoodService,
+    private deductiveService: DeductiveVerificationService
   ) {
     super();
+
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: 'multi',
+      columns: LIST_WAREHOUSE_COLUMN,
+    };
   }
 
   ngOnInit(): void {
     this.delegationId = this.getRegionalDelegationId();
-    this.settings = {
-      ...TABLE_SETTINGS,
-      actions: false,
-      selectMode: '',
-      columns: LIST_WAREHOUSE_COLUMN,
-    };
 
     this.initDateForm();
     this.initSearchForm();
 
     this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
 
-    this.columns4.observation = {
+    /*this.columns4.observation = {
       ...this.columns4.observation,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
+          console.log('Observaciones?', data);
           this.deductivesObservations(data);
         });
       },
     };
+     */
+
     this.columns4.selected = {
       ...this.columns4.selected,
       onComponentInitFunction: this.deductiveSelected.bind(this),
     };
 
     this.getTransferent(new ListParams());
-    this.paragraphsDeductivas = data;
+    //this.paragraphsDeductivas = data;
   }
 
   initDateForm() {
@@ -164,58 +178,108 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   selectWarehouse(event: any): any {
     this.displaySearchAssetsBtn = event.isSelected ? true : false;
-    console.log(event);
-    this.storeSelected = event;
+    this.storeSelected = event.data;
   }
 
   goodSearch() {
-    const dates = this.dateForm.value;
-    if (!dates.initialDate && !dates.finalDate) {
-      this.onLoadToast(
-        'info',
-        'Debe capturar los campos requeridos para el muestreo'
+    const startPeriod = this.dateForm.get('initialDate').value;
+    const endPeriod = this.dateForm.get('finalDate').value;
+
+    if (startPeriod && endPeriod) {
+      this.params2
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoods());
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se debe capturar una fecha de periodo inicial y final'
       );
-      return;
     }
-    const initDate = moment(dates.initialDate).format('YYYY-MM-DD');
-    const endDate = moment(dates.finalDate).format('YYYY-MM-DD');
-
-    this.params2
-      .getValue()
-      .addFilter('creationDate', `${initDate},${endDate}`, SearchFilter.BTW);
-    console.log(this.storeSelected);
-
-    //this.params2.getValue().addFilter('requestId', event.data.requestId.id);
-    /*this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getGoods();
-    });*/
   }
 
   selectAssts(event: any) {
     this.listAssetsSelected = event.selected;
+    console.log('this.listAssetsSelected', this.listAssetsSelected);
   }
 
   addAssets() {
-    let ids: any = [];
-    this.listAssetsSelected.map((item: any) => {
-      const index = this.paragraphs3.indexOf(item);
-      if (index == -1) {
-        this.paragraphs3.push(item);
-      } else {
-        ids.push(item.goodId);
-      }
-      this.paragraphs3 = [...this.paragraphs3];
-    });
+    if (this.listAssetsSelected.length > 0) {
+      this.listAssetsSelected.map(item => {
+        const sampligGood: ISampleGood = {
+          sampleGoodId: 243,
+          sampleId: this.sampleId,
+          goodId: item.managementNumber,
+          goodSiabNumber: item.goodSiabNumber,
+          inventoryNumber: item.inventoryNumber,
+          version: 1,
+          description: item.descriptiveValue,
+          quantity: item.transactionQuantity,
+          unit: item.uomCode,
+          subInventoryCode: item.subinventoryCode,
+          locatorId: item.locatorId,
+          inventoryItemId: item.inventoryItemId,
+          tranferRequest: item.transferRequest,
+          authorityId: item.authorityId,
+          transfereeFile: item.transferFile,
+          keyUniqueSat: item.satUniqueKey,
+          typeFile: item.fileType,
+          tradeNumber: item.jobNumber,
+          type: item.type,
+          subType: item.ssubType,
+          sSubtype: item.ssubType,
+          ssSubtype: item.sssubType,
+          transfereeId: item.entTransferentId,
+          requestDate: moment(item.requestDate).format('YYYY-MM-DD'),
+          fileNumber: item.fileNumber,
+          fileDate: moment(item.fileDate).format('YYYY-MM-DD'),
+        };
+        this.samplingGoodService.createSamplingGood(sampligGood).subscribe({
+          next: response => {
+            this.params3
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getSampligGoods());
 
-    if (ids.length > 0) {
-      const idsg = ids.join(',');
-      this.onLoadToast(
-        'info',
-        `Los bienes con el No. de Gestion ${idsg}, ya se encuantran agregados`
+            this.params2
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getGoods());
+          },
+        });
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Selecciona bienes para el muestreo'
       );
-      ids = [];
     }
-    this.unselectGoodRows();
+  }
+
+  getSampligGoods() {
+    this.loadingGoods = true;
+    this.params3.getValue()['filter.sampleId'] = this.sampleId;
+    this.samplingGoodService
+      .getSamplingGoods(this.params3.getValue())
+      .subscribe({
+        next: response => {
+          const showInfo = response.data.map(async item => {
+            const nameTransferent: any = await this.getNameTransferent(
+              Number(item.transfereeId)
+            );
+            item.nameTransferent = nameTransferent;
+            return item;
+          });
+
+          Promise.all(showInfo).then(info => {
+            this.loadingGoods = false;
+            this.paragraphs3.load(info);
+            this.totalItems3 = info.length;
+          });
+        },
+        error: error => {
+          this.loadingGoods = false;
+        },
+      });
   }
 
   selectAsstsCopy(event: any) {
@@ -223,17 +287,18 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   uploadExpedient() {
-    if (this.listAssetsCopiedSelected.length == 0) {
-      this.onLoadToast(
-        'info',
-        'Se tiene que tener seleccionado al menos un registro'
+    if (this.listAssetsCopiedSelected.length > 0) {
+      this.openModals(
+        ShowDocumentsGoodComponent,
+        this.listAssetsCopiedSelected
       );
-      return;
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar al menos un bien'
+      );
     }
-    this.openModals(
-      UploadExpedientFormComponent,
-      this.listAssetsCopiedSelected
-    );
   }
 
   uploadImages(): void {
@@ -244,72 +309,150 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.openModals(UploadImagesFormComponent, this.listAssetsCopiedSelected);
+    this.openModals(PhotographyFormComponent, this.listAssetsCopiedSelected);
   }
 
   exportCsv() {
-    const title = 'Muestreo de Bienes para Supervisión';
-    const filename: string = 'MuestreoBienesSupervision';
-    this.jsonToCsv = this.generateJsonExcel();
-    //console.log(this.jsonToCsv)
-    //{type: 'csv'}
-    this.excelService.export(this.jsonToCsv, { filename });
-  }
-
-  generateJsonExcel() {
-    let good: any = {};
-    let jsonBody: any = [{}];
-    this.paragraphs3.map((item: any) => {
-      (good.NomInventario = item.inventoryNumber),
-        (good.NoGestion = item.goodId),
-        (good.Descripcion = item.goodDescription),
-        (good.DelegaRegional = item.regionalDelegation),
-        (good.Cantidad = item.quantity),
-        (good.ResultEvaluación = item.resultTest);
-
-      jsonBody.push(good);
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.sampleId'] = `$eq:${this.sampleId}`;
+    this.massiveGoodService.exportSampleGoods(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+      error: error => {
+        this.alert('warning', 'Advertencia', 'Error al generar reporte');
+      },
     });
-
-    return jsonBody;
   }
 
-  close(): void {}
+  downloadExcel(excel: any) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = 'Muestreo_Bienes.xlsx';
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
+  }
 
   search() {
-    this.loading = true;
-    this.params.getValue().addFilter('regionalDelegation', this.delegationId);
-    const searchform = this.searchForm.value;
-    for (const key in searchform) {
-      if (searchform[key] != null) {
-        switch (key) {
-          case 'id':
-            this.params
-              .getValue()
-              .addFilter('stockSiabNumber', searchform[key]);
-            break;
-          case 'code':
-            this.params.getValue().addFilter('postalCode', searchform[key]);
-            break;
-          case 'nameWarehouse':
-            this.params
-              .getValue()
-              .addFilter('name', searchform[key], SearchFilter.ILIKE);
-            break;
-          case 'address':
-            this.params
-              .getValue()
-              .addFilter('address1', searchform[key], SearchFilter.ILIKE);
-            break;
-          default:
-            break;
-        }
-      }
-    }
+    if (
+      this.searchForm.get('id').value &&
+      !this.searchForm.get('code').value &&
+      !this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('address').value
+    )
+      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
+        this.searchForm.get('id').value
+      }`;
 
+    if (
+      this.searchForm.get('code').value &&
+      !this.searchForm.get('id').value &&
+      !this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('address').value
+    )
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+
+    if (
+      this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('id').value &&
+      !this.searchForm.get('code').value &&
+      !this.searchForm.get('address').value
+    )
+      this.params.getValue()['filter.name'] =
+        this.searchForm.get('nameWarehouse').value;
+
+    if (
+      this.searchForm.get('address').value &&
+      !this.searchForm.get('id').value &&
+      !this.searchForm.get('code').value &&
+      !this.searchForm.get('nameWarehouse').value
+    )
+      this.params.getValue()['filter.descriptiveValue'] =
+        this.searchForm.get('address').value;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      //this.getDomicilies();
       this.getCatAlmacenView();
     });
+
+    //
+    if (
+      this.searchForm.get('id').value &&
+      this.searchForm.get('code').value &&
+      !this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
+        this.searchForm.get('id').value
+      }`;
+
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+    }
+
+    if (
+      this.searchForm.get('id').value &&
+      this.searchForm.get('code').value &&
+      this.searchForm.get('nameWarehouse').value &&
+      !this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
+        this.searchForm.get('id').value
+      }`;
+
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+
+      this.params.getValue()['filter.name'] =
+        this.searchForm.get('nameWarehouse').value;
+    }
+
+    if (
+      this.searchForm.get('id').value &&
+      this.searchForm.get('code').value &&
+      this.searchForm.get('nameWarehouse').value &&
+      this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
+        this.searchForm.get('id').value
+      }`;
+
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+
+      this.params.getValue()['filter.name'] =
+        this.searchForm.get('nameWarehouse').value;
+
+      this.params.getValue()['filter.descriptiveValue'] =
+        this.searchForm.get('address').value;
+    }
+
+    if (
+      !this.searchForm.get('id').value &&
+      this.searchForm.get('code').value &&
+      !this.searchForm.get('nameWarehouse').value &&
+      this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.postalCode'] =
+        this.searchForm.get('code').value;
+
+      this.params.getValue()['filter.descriptiveValue'] =
+        this.searchForm.get('address').value;
+    }
+
+    if (
+      !this.searchForm.get('id').value &&
+      !this.searchForm.get('code').value &&
+      this.searchForm.get('nameWarehouse').value &&
+      this.searchForm.get('address').value
+    ) {
+      this.params.getValue()['filter.name'] =
+        this.searchForm.get('nameWarehouse').value;
+
+      this.params.getValue()['filter.descriptiveValue'] =
+        this.searchForm.get('address').value;
+    }
   }
 
   getRegionalDelegationId() {
@@ -317,42 +460,20 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     return id;
   }
 
-  /*getDomicilies() {
-    const filter = this.params.getValue().getParams();
-    this.paragraphs = [];
-    this.domicilieService.getAll(filter).subscribe({
-      next: resp => {
-        resp.data.map((item: any) => {
-          item['aliasWarehouseName'] = item.warehouseAlias.id;
-          item['keyState'] = item.regionalDelegationId.keyState;
-        });
-
-        this.paragraphs = resp.data;
-        this.totalItems = resp.count;
-        this.params.getValue().removeAllFilters();
-        this.loading = false;
-      },
-      error: error => {
-        this.params.getValue().removeAllFilters();
-        console.log('tabla domicilio ', error);
-        this.onLoadToast('info', 'No se encontraron registros');
-        this.loading = false;
-      },
-    });
-  }*/
-
   getCatAlmacenView() {
-    const filter = this.params.getValue().getParams();
+    this.params.getValue()[
+      'filter.regionalDelegation'
+    ] = `$eq:${this.delegationId}`;
+    const filter = this.params.value;
+
     this.goodsqueryService.getCatStoresView(filter).subscribe({
       next: resp => {
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
-        this.params.getValue().removeAllFilters();
+
         this.loading = false;
       },
       error: error => {
-        this.params.getValue().removeAllFilters();
-        console.log('tabla domicilio ', error);
         this.onLoadToast('info', 'No se encontraron registros');
         this.loading = false;
       },
@@ -360,21 +481,167 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   getGoods() {
-    const filter = this.params2.getValue().getParams();
-    this.goodsinvService.getSamplingGoodView(filter).subscribe({
-      next: resp => {
-        console.log(resp.data);
-        this.paragraphs2.load(resp.data);
-        this.totalItems2 = resp.count;
-      },
-      error: error => {
-        console.log(error);
-        this.onLoadToast('info', 'No se encontraron registros');
-      },
+    this.loadingGoodInv = true;
+    this.params2.getValue()[
+      'filter.organizationId'
+    ] = `$eq:${this.storeSelected.organizationCode}`;
+    this.params2.getValue()['filter.initialPeriod'] = `$btw:${
+      this.dateForm.get('initialDate').value
+    }, ${this.dateForm.get('finalDate').value}`;
+
+    this.params2.getValue()['filter.finalPeriod'] = `$btw:${
+      this.dateForm.get('initialDate').value
+    }, ${this.dateForm.get('finalDate').value}`;
+
+    this.samplingGoodService
+      .getSamplingGoodFilter(this.params2.getValue())
+      .subscribe({
+        next: resp => {
+          const showInfo = resp.data.map(async item => {
+            const showNameTransferent: any = await this.getNameTransferent(
+              item.entTransferentId
+            );
+            item.transferentName = showNameTransferent;
+
+            const showNameDelegation: any = await this.getNameDelegation(
+              item.delRegionalId
+            );
+
+            item.delegationName = showNameDelegation;
+            return item;
+          });
+
+          Promise.all(showInfo).then(async info => {
+            this.paragraphs2.load(info);
+            this.loadingGoodInv = false;
+            this.totalItems2 = resp.data.length;
+            const checkExistSamplingOrder = await this.checkSamplingOrder();
+            if (checkExistSamplingOrder) {
+              this.params3
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getSampligGoods());
+
+              const deductivesRelSample: any =
+                await this.checkExistDeductives();
+
+              this.params4
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getDeductives(deductivesRelSample));
+            }
+          });
+        },
+        error: error => {
+          this.alert(
+            'warning',
+            'Datos no Encontrados',
+            'No hay bienes relacionados a el almacén seleccionado'
+          );
+          this.loadingGoodInv = false;
+          this.paragraphs2 = new LocalDataSource();
+        },
+      });
+  }
+
+  checkExistDeductives() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.sampleId'] = `$eq:${this.sampleId}`;
+      this.samplingGoodService
+        .getAllSampleDeductives(params.getValue())
+        .subscribe({
+          next: response => {
+            resolve(response.data);
+          },
+          error: error => {},
+        });
     });
   }
 
-  turnForm() {
+  getDeductives(deductivesRelSample: ISamplingDeductive[]) {
+    this.deductiveService.getAll(this.params4.getValue()).subscribe({
+      next: response => {
+        const infoDeductives = response.data.map(item => {
+          deductivesRelSample.map(deductiveEx => {
+            if (deductiveEx.deductiveVerificationId == item.id) {
+              item.observations = deductiveEx.observations;
+              item.selected = true;
+            }
+          });
+          return item;
+        });
+
+        this.paragraphsDeductivas.load(infoDeductives);
+        this.allDeductives = response.data;
+      },
+      error: error => {},
+    });
+  }
+
+  getNameTransferent(transferentId: number) {
+    return new Promise((resolve, reject) => {
+      this.transferentService.getById(transferentId).subscribe({
+        next: response => {
+          resolve(response.nameTransferent);
+        },
+      });
+    });
+  }
+
+  getNameDelegation(delegationId: number) {
+    return new Promise((resolve, reject) => {
+      this.delegationService.getById(delegationId).subscribe({
+        next: response => {
+          resolve(response.description);
+        },
+      });
+    });
+  }
+
+  checkSamplingOrder() {
+    return new Promise((resolve, reject) => {
+      const initialDate = moment(this.dateForm.get('initialDate').value).format(
+        'YYYY-MM-DD'
+      );
+      const finalDate = moment(this.dateForm.get('finalDate').value).format(
+        'YYYY-MM-DD'
+      );
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+
+      params.getValue()['filter.startDate'] = initialDate;
+      params.getValue()['filter.endDate'] = finalDate;
+
+      this.samplingGoodService.getSample(params.getValue()).subscribe({
+        next: response => {
+          this.sampleId = response.data[0].sampleId;
+          resolve(true);
+        },
+        error: error => {
+          const sample: ISample = {
+            sampleId: this.sampleId,
+            regionalDelegationId: this.delegationId,
+            startDate: initialDate,
+            endDate: finalDate,
+            speciesInstance: 'INSTANCIA_INICIADA',
+            numeraryInstance: 'INSTANCIA_INICIADA',
+            warehouseId: this.storeSelected.organizationCode,
+            version: 1,
+          };
+
+          this.samplingGoodService.createSample(sample).subscribe({
+            next: response => {
+              this.sampleId = response.sampleId;
+              resolve(true);
+            },
+            error: error => {
+              this.alert('error', 'Error', 'Error al crear Muestreo');
+            },
+          });
+        },
+      });
+    });
+  }
+
+  /*turnForm() {
     Swal.fire({
       title: 'Confirmación Turnado',
       text: '¿Está seguro que la información es correcta para turnar?',
@@ -387,7 +654,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
-        console.log('Guardar solicitud');
         const size = this.paragraphs3.length;
         const evaResult = this.paragraphs3.filter(x => x.resultTest != null);
         debugger;
@@ -414,8 +680,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             x => x.selected == true
           );
 
-          console.log('Todos los bienes CUMPLEN');
-
           if (deductivesSelected.length == 0) {
             //popBienesCumplen
             this.openModals(
@@ -434,7 +698,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             );
           }
         } else {
-          console.log('No todos los bienes CUMPLEN');
           const deductivesSelected = this.paragraphsDeductivas.filter(
             x => x.selected == true
           );
@@ -448,7 +711,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         }
       }
     });
-  }
+  } */
 
   openModals(
     component: any,
@@ -458,8 +721,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   ): void {
     let config: ModalOptions = {
       initialState: {
-        good: good,
+        sampleGood: good,
         typeModal: type,
+        typeDoc: 'good',
+        process: 'sampling-assets',
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
@@ -473,38 +738,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   clean() {
     this.dateForm.reset();
     this.searchForm.reset();
-    this.paragraphs = [];
-  }
-
-  removeGood() {
-    if (this.listAssetsCopiedSelected.length == 0) {
-      this.onLoadToast('info', 'Seleccione al menos un bien');
-      return;
-    }
-    this.listAssetsCopiedSelected.map(item => {
-      const index = this.paragraphs3.indexOf(item);
-      this.paragraphs3.splice(index, 1);
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getCatAlmacenView();
     });
-    this.paragraphs3 = [...this.paragraphs3];
-    this.listAssetsCopiedSelected = [];
-
-    /**
-     * todo: eliminar el bien de la tabla muestreo bien view
-     */
-  }
-
-  meetGood(value: string) {
-    if (this.listAssetsCopiedSelected.length == 0) {
-      this.onLoadToast('info', 'Debe tener selecionado al menos un Bien');
-      return;
-    }
-
-    this.listAssetsCopiedSelected.map(item => {
-      const index = this.paragraphs3.indexOf(item);
-      this.paragraphs3[index].resultTest = value;
-    });
-    this.paragraphs3 = [...this.paragraphs3];
-    this.listAssetsCopiedSelected = [];
   }
 
   unselectGoodRows() {
@@ -512,25 +749,15 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     a.map((item: any) => {
       item.isSelected = false;
     });
-    /*const table = document.getElementById('table2');
-    const tbody = table.children[0].children[1].children;
-
-    for (let index = 0; index < tbody.length; index++) {
-      const ele:any = tbody[index];
-      
-      console.log(ele.children[0].checked )
-      ele.children[0].children[0].checked = false
-    }*/
   }
 
   deductiveSelected(event: any) {
-    event.toggle.subscribe((data: any) => {
-      console.log(data);
-    });
+    console.log('event', event);
+    //event.toggle.subscribe((data: any) => {});
   }
 
   deductivesObservations(event: any) {
-    console.log(event);
+    console.log('Observaciones?', event);
   }
 
   getTransferent(params: ListParams) {
@@ -542,5 +769,226 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         this.selectTransferent = new DefaultSelect(data.data, data.count);
       },
     });
+  }
+
+  editResultEvaluation(sampleGood: ISampleGood) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      sampleGood,
+      callback: (next: boolean) => {
+        if (next) {
+          this.params3
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getSampligGoods());
+        }
+      },
+    };
+
+    this.modalService.show(EditSampleGoodComponent, config);
+  }
+
+  meetsGoods() {
+    if (this.listAssetsCopiedSelected.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea modificar el resultado de evaluación?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.listAssetsCopiedSelected.map(item => {
+            const sampleGood: ISampleGood = {
+              sampleGoodId: item.sampleGoodId,
+              sampleId: item.sampleId,
+              evaluationResult: 'CUMPLE',
+            };
+
+            this.samplingGoodService.editSamplingGood(sampleGood).subscribe({
+              next: response => {
+                this.alert(
+                  'success',
+                  'Acción Correcta',
+                  'Resultado de evaluación actualizado correctamente'
+                );
+                this.params3
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getSampligGoods());
+              },
+              error: error => {
+                this.alert(
+                  'error',
+                  'Error',
+                  'Error al actualizar el resultado de evaluación'
+                );
+              },
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar al menos un bien muestreo'
+      );
+    }
+  }
+
+  failsGoods() {
+    if (this.listAssetsCopiedSelected.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea modificar el resultado de evaluación?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.listAssetsCopiedSelected.map(item => {
+            const sampleGood: ISampleGood = {
+              sampleGoodId: item.sampleGoodId,
+              sampleId: item.sampleId,
+              evaluationResult: 'NO CUMPLE',
+            };
+
+            this.samplingGoodService.editSamplingGood(sampleGood).subscribe({
+              next: response => {
+                this.alert(
+                  'success',
+                  'Acción Correcta',
+                  'Resultado de evaluación actualizado correctamente'
+                );
+                this.params3
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getSampligGoods());
+              },
+              error: error => {
+                this.alert(
+                  'error',
+                  'Error',
+                  'Error al actualizar el resultado de evaluación'
+                );
+              },
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar al menos un bien muestreo'
+      );
+    }
+  }
+
+  removeGood() {
+    if (this.listAssetsCopiedSelected.length > 0) {
+      this.listAssetsCopiedSelected.map(item => {
+        this.samplingGoodService
+          .deleteSamplingGood(item.sampleGoodId)
+          .subscribe({
+            next: response => {
+              this.alert(
+                'success',
+                'Acción Correcta',
+                'Bien muestreo eliminado correctamente'
+              );
+              this.paragraphs3 = new LocalDataSource();
+              this.params2
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getGoods());
+            },
+            error: error => {
+              this.alert(
+                'error',
+                'Error',
+                'Error al eliminar el bien muestreo'
+              );
+            },
+          });
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar al menos un bien muestreo'
+      );
+    }
+  }
+
+  saveDeductives() {
+    if (this.deductivesSel.length > 0) {
+      let count: number = 0;
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea guardar las deductivas seleccionadas?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.deductivesSel.map(item => {
+            count = count + 1;
+            const sampleDeductive: ISamplingDeductive = {
+              //sampleDeductiveId: '357',
+              sampleId: this.sampleId,
+              //orderSampleId: '3',
+              deductiveVerificationId: item.id,
+              indDedictiva: 'N',
+              //userCreation: 'sigebiadmon',
+              //creationDate: null,
+              //userModification: '2023-10-04',
+              //modificationDate: null,
+              version: 1,
+              observations: item.observations,
+            };
+
+            this.samplingGoodService
+              .createSampleDeductive(sampleDeductive)
+              .subscribe({
+                next: response => {},
+                error: error => {
+                  this.alert('error', 'Error', 'Error al guardar la deductiva');
+                },
+              });
+          });
+
+          if (count == 1) {
+            this.alert(
+              'success',
+              'Correcto',
+              'Deductivas guardadas correctamente'
+            );
+          }
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar una deductiva'
+      );
+    }
+  }
+
+  deductivesSelect(event: any) {
+    this.deductivesSel = event.selected;
+  }
+
+  addDeductive(deductive: IDeductive) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      deductive,
+      callback: (next: boolean, deductive: IDeductiveVerification) => {
+        if (next) {
+          //this.paragraphsDeductivas.load([deductive]);
+          const deductives = this.allDeductives.map((item: any) => {
+            if (deductive.id == item.id)
+              item.description = deductive.description;
+            return item;
+          });
+          this.paragraphsDeductivas.load(deductives);
+        }
+      },
+    };
+
+    this.modalService.show(EditDeductiveComponent, config);
   }
 }

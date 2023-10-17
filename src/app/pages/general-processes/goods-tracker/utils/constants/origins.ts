@@ -10,6 +10,9 @@ export enum GOOD_TRACKER_ORIGINS {
   ProofDelivery = 'FACTCONST_0001',
   GoodDeliveryMain = 'FCOMERCAMESTBIEN',
   ExportGoodsDonation = 'FDONACIONES',
+  DirectDonationInventoryRecord = 'FDONAC_DIRECT',
+  DonationGood = 'FMCOMDONAC_1',
+  DonationAuthorization = 'FDONSOLAUTORIZA',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
@@ -23,4 +26,7 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FACTCONST_0001' = 'Constancias de Entrega',
   'FCOMERCAMESTBIEN' = 'Entrega de Bienes',
   'FDONACIONES' = 'Exp.Bienes para Donación Excel',
+  'FDONAC_DIRECT' = 'Registro para inventarios y donacion directa',
+  'FMCOMDONAC_1' = 'Captura de Eventos por Donación',
+  'FDONSOLAUTORIZA' = 'Solicitud y Autorización de Donaciones',
 }

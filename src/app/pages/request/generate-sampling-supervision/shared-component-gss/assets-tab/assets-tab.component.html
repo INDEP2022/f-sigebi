@@ -10,17 +10,19 @@
         <button
           class="btn btn-primary btn-sm active"
           (click)="uploadExpedient()">
-          <i class="bx bx-detail"></i> Expediente
+          Expediente <i class="bx bx-detail"></i>
         </button>
       </div>
       <div class="m-3" *ngIf="typeTask != 'verify-warehouse-assets'">
         <button class="btn btn-primary btn-sm active" (click)="uploadImages()">
-          <i class="bx bx-images"></i> Fotograf&iacute;a
+          Fotograf&iacute;a <i class="bx bx-images"></i>
         </button>
       </div>
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active" (click)="exportCsv()">
-          <i class="bx bx-download"></i> Descargar Archivo
+        <button
+          (click)="generateReport()"
+          class="btn btn-success btn-sm active">
+          Descargar Archivo <i class="bx bx-download"></i>
         </button>
       </div>
     </div>
@@ -36,7 +38,7 @@
       <div class="d-flex">
         <div class="p-2">
           <button class="btn btn-success btn-sm active">
-            <i class="bx bx-check"></i> Aprovar
+            <i class="bx bx-check"></i> Aprobar
           </button>
         </div>
         <div class="p-2">
@@ -46,24 +48,38 @@
         </div>
       </div>
     </div>
+    <div class="row pt-4" *ngIf="typeTask === 'verify-noncompliance'">
+      <div class="d-flex">
+        <div class="p-2">
+          <button class="btn btn-success btn-sm active">
+            Faltantes <i class="bx bx-check"></i>
+          </button>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-danger btn-sm active">
+            Dañados <i class="bx bx-x"></i>
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="col-md-12">
       <!--      <div [class]="loading ? 'table-loading' : ''">-->
-      <ng-scrollbar track="all" style="min-height: 200px; border: none">
-        <table
-          class="table table-bordered"
-          style="white-space: nowrap; overflow-x: auto">
+
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings3"
+        [source]="paragraphs3"
+        (userRowSelect)="goodsSamplingSelect($event)">
+      </ng2-smart-table>
+      <!--        <table class="table table-bordered" style="white-space: nowrap; overflow-x: auto">
           <thead>
             <tr>
               <th scope="col" style="text-align: center">
-                <input
-                  *ngIf="typeTask != 'verify-warehouse-assets'"
-                  type="checkbox"
-                  name=""
-                  id=""
+                <input *ngIf="typeTask != 'verify-warehouse-assets'" type="checkbox" name="" id=""
                   [disabled]="isReadonly" />
                 <span *ngIf="typeTask === 'verify-warehouse-assets'">{{
                   checkboxTitle
-                }}</span>
+                  }}</span>
               </th>
               <th scope="col">N&uacute;mero Gesti&oacute;n</th>
               <th scope="col">N&uacute;mero Inventario</th>
@@ -79,13 +95,8 @@
           <tbody>
             <tr *ngFor="let asset of assetsArray; let i = index">
               <th scope="row" style="text-align: center">
-                <input
-                  [ngClass]="isCheckboxReadonly ? 'disable-input' : ''"
-                  type="checkbox"
-                  value="{{ asset.id }}"
-                  [(ngModel)]="asset.checked"
-                  id="selectOne"
-                  (change)="selectOne($event, asset)" />
+                <input [ngClass]="isCheckboxReadonly ? 'disable-input' : ''" type="checkbox" value="{{ asset.id }}"
+                  [(ngModel)]="asset.checked" id="selectOne" (change)="selectOne($event, asset)" />
               </th>
               <td>{{ asset.noManagement }}</td>
               <td>{{ asset.noInventory }}</td>
@@ -94,36 +105,23 @@
               <td>{{ asset.unity }}</td>
               <td>{{ asset.resultEvaluation }}</td>
               <td>
-                <select
-                  class="form-control"
-                  style="width: 150px; height: 40px; font-size: 13px !important"
+                <select class="form-control" style="width: 150px; height: 40px; font-size: 13px !important"
                   [disabled]="isReadonly">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="1">Pieza</option>
                 </select>
               </td>
               <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="asset.quantityMissingDamaged"
-                  value="{{ asset.quantityMissingDamaged }}"
-                  style="width: 150px"
-                  [disabled]="isReadonly" />
+                <input type="text" class="form-control" [(ngModel)]="asset.quantityMissingDamaged"
+                  value="{{ asset.quantityMissingDamaged }}" style="width: 150px" [disabled]="isReadonly" />
               </td>
               <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="asset.observationsAsset"
-                  value="{{ asset.observationsAsset }}"
-                  style="width: 150px"
-                  [disabled]="isReadonly" />
+                <input type="text" class="form-control" [(ngModel)]="asset.observationsAsset"
+                  value="{{ asset.observationsAsset }}" style="width: 150px" [disabled]="isReadonly" />
               </td>
             </tr>
           </tbody>
-        </table>
-      </ng-scrollbar>
+        </table>-->
     </div>
   </div>
 </div>

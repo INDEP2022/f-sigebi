@@ -4,7 +4,10 @@ import { StrategyEndpoints } from 'src/app/common/constants/endpoints/ms-strateg
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IStrategyProcess } from '../../models/ms-strategy-process/strategy-process.model';
+import {
+  IStrategyProcess,
+  IStrategyReport,
+} from '../../models/ms-strategy-process/strategy-process.model';
 
 @Injectable({
   providedIn: 'root',
@@ -61,5 +64,64 @@ export class StrategyProcessService extends HttpService {
   ByFormatNumber(params: any) {
     const route = `${StrategyEndpoints.PaEstGood}`;
     return this.post(route, params);
+  }
+
+  ByFormats(params: any) {
+    const route = `${StrategyEndpoints.FEstFormat}`;
+    return this.post(route, params);
+  }
+
+  ByIdActaNoGood(proceeding: number, good: number) {
+    const route = `${StrategyEndpoints.FestFormat2}?limit=1000&page=1&filter.proceedingNumber=$eq:${proceeding}&filter.goodNumber=$eq:${good}`;
+    return this.get(route);
+  }
+
+  ByIdProces(process: number) {
+    const route = `${StrategyEndpoints.StrategyProcess}?filter.processNumber=$eq:${process}`;
+    return this.get(route);
+  }
+
+  getAllStrategyIndicator(params: any) {
+    const route = `${StrategyEndpoints.strategyIndicator}`;
+    return this.get(route, params);
+  }
+
+  getStrategyIndicatorByRegister(noFormat: any) {
+    const route = `${StrategyEndpoints.strategyIndicator}?filter.registerNumber=$eq:${noFormat}`;
+    return this.get(route);
+  }
+
+  PutStrategyIndicator(params: any) {
+    const route = `${StrategyEndpoints.strategyIndicator}`;
+    return this.put(route, params);
+  }
+
+  getStrategyRepImplementation(noFormat: any) {
+    const route = `${StrategyEndpoints.StrategyRepIm}?filter.formatNumber=$eq:${noFormat}`;
+    return this.get(route);
+  }
+
+  getStrategyProcess(noProcess: any) {
+    const route = `${StrategyEndpoints.StrategyProcess}?filter.processNumber=$eq:${noProcess}`;
+    return this.get(route);
+  }
+
+  PaEstGoodProgTrans(params: any) {
+    const route = `${StrategyEndpoints.paEstGoodsProgTrans}`;
+    return this.post(route, params);
+  }
+
+  PaEstGoodIncor(params: any) {
+    const route = `${StrategyEndpoints.paEstGoodIncor}`;
+    return this.post(route, params);
+  }
+
+  getStrategiProcess(id: any) {
+    const route = `${StrategyEndpoints.StrategyProcess}?filter.processNumber=$eq:${id}`;
+    return this.get(route);
+  }
+  updateStrategyReport(model: IStrategyReport) {
+    const route = `${StrategyEndpoints.StrategyRepIm}`;
+    return this.put(route, model);
   }
 }

@@ -779,7 +779,6 @@ export const routes: Routes = [
         data: { title: 'Información financiera', screen: 'FACTADBINFORFINAN' },
       },
       {
-        //!SIRVIO
         path: 'change-of-good-classification',
         loadChildren: async () =>
           (
@@ -790,6 +789,40 @@ export const routes: Routes = [
         data: {
           title: 'Cambio de Clasificación del Bien',
           screen: 'FCAMNOCLASIFBIEN',
+        },
+      },
+      {
+        //!SIRVIO
+        path: 'receipt-documents-archive',
+        loadChildren: async () =>
+          (
+            await import(
+              './receipt-documents-archivep/receipt-documents-archivep.module'
+            )
+          ).ReceiptDocumentsArchivepModule,
+        data: {
+          title: 'Recepción de documentos en el archivo',
+          screen: 'FACTARGRECEPDOCS',
+        },
+      },
+      {
+        path: 'payment-services-good',
+        loadChildren: async () =>
+          (await import('./payment-services-good/payment-services-good.module'))
+            .PaymentServicesGoodModule,
+        data: {
+          title: 'Pago de servicios por Bien',
+          screen: 'FACTADBPAGOSERVIC',
+        },
+      },
+      {
+        path: 'warehouse-type-report',
+        loadChildren: async () =>
+          (await import('./warehouse-type-report/warehouse-type-report.module'))
+            .WarehouseTypeReportModule,
+        data: {
+          title: 'Reporte de tipo de almacenes',
+          screen: 'FTIPOREPALMACEN',
         },
       },
     ],

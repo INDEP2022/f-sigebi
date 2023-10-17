@@ -36,11 +36,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   @Input() initValue = true;
   @Input() inventary: any[];
   @Input() loadInventary: boolean = false;
-  @Input() set goodChange(value: number) {
-    this._goodChange = value;
-    if (value > 0) this.getData();
-  }
-  private _goodChange: number;
+  @Input() goodChange: number;
   pageSizeOptions = [5, 10, 15, 20];
   limit: FormControl = new FormControl(5);
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -244,8 +240,12 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    // debugger;
     if (changes['service'] && changes['disabled']) {
       this.service.disabledTable = changes['disabled'].currentValue;
+    }
+    if (this.good) {
+      if (changes['goodChange'].currentValue > 0) this.getData();
     }
   }
 
@@ -273,7 +273,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   }
 
   private selectSituations(vals: any, self: GoodCharacteristicsTable) {
-    // console.log(vals);
+    console.log(vals);
     let newString = '';
     if (isArray(vals)) {
       vals.forEach((val: any, index) => {
@@ -313,13 +313,22 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
         title2: isNormal
           ? 'Seleccione el valor para el atributo'
           : 'Seleccionar los valores para el atributo',
-        columnsType: {
-          otvalor: {
-            title: row.attribute,
-            type: 'string',
-            sort: false,
-          },
-        },
+        columnsType:
+          this.dynamicTablesService.selectedTable === 'CAT_CIUDAD'
+            ? {
+                legendjob: {
+                  title: row.attribute,
+                  type: 'string',
+                  sort: false,
+                },
+              }
+            : {
+                otvalor: {
+                  title: row.attribute,
+                  type: 'string',
+                  sort: false,
+                },
+              },
         type: 'text',
         multi: isNormal ? '' : 'multi',
         permitSelect: this.disabled ? false : true,

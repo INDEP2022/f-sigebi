@@ -1,5 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -16,14 +21,17 @@ import {
   takeUntil,
 } from 'rxjs';
 import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { _Params } from 'src/app/common/services/http.service';
 import { InvoiceFolioSeparate } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -32,10 +40,15 @@ import { ComerElecBillService } from 'src/app/core/services/ms-invoice/ms-comer-
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
+import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
+import { ActModalComponent } from './act-comp/act-modal.component';
+import { AuthorizationModalComponent } from './authorization-modal/authorization-modal.component';
+import { ReferenceModalComponent } from './reference/reference.component';
 import { REGULAR_GOODS_COLUMN } from './regular-billing-invoice-goods-columns';
 
 @Component({
@@ -45,9 +58,6 @@ import { REGULAR_GOODS_COLUMN } from './regular-billing-invoice-goods-columns';
 })
 export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   show1 = false;
-
-  pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
-
   form: FormGroup = new FormGroup({});
   formDetalle: FormGroup = new FormGroup({});
   formFactura: FormGroup;
@@ -63,6 +73,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   dataRebill: DefaultSelect = new DefaultSelect();
   loading2: boolean = false;
   buttons: boolean = false;
+  isCancel: boolean = false;
+  global: any = {
+    canxp: '',
+    pidgasto: '',
+  };
   settings2 = {
     ...this.settings,
     actions: false,
@@ -71,21 +86,24 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     copias: 1,
     numfactimp: 1,
     numfactele: 1,
+    autorizo: 0,
   };
+  blk_actdat: any[] = [];
+  limit: FormControl = new FormControl(500);
 
   @Output() comer: EventEmitter<any> = new EventEmitter(null);
   @Output() formG: EventEmitter<FormGroup> = new EventEmitter();
   @Input() set sum(values: any) {
     if (values) {
-      const time = setTimeout(() => {
-        this.formFactura.get('importE').patchValue(values.sum5);
-        this.formFactura.get('ivaE').patchValue(values.sum3);
-        this.formFactura.get('totalE').patchValue(values.sum1);
-        this.formFactura.get('importI').patchValue(values.sum6);
-        this.formFactura.get('ivaI').patchValue(values.sum4);
-        this.formFactura.get('totalI').patchValue(values.sum2);
-        clearTimeout(time);
-      }, 0);
+      // const time = setTimeout(() => {
+      //   this.formFactura.get('importE').patchValue(values.sum5);
+      //   this.formFactura.get('ivaE').patchValue(values.sum3);
+      //   this.formFactura.get('totalE').patchValue(values.sum1);
+      //   this.formFactura.get('importI').patchValue(values.sum6);
+      //   this.formFactura.get('ivaI').patchValue(values.sum4);
+      //   this.formFactura.get('totalI').patchValue(values.sum2);
+      //   clearTimeout(time);
+      // }, 0);
     }
   }
 
@@ -114,7 +132,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     private dynamicService: DynamicCatalogsService,
     private parameterModService: ParameterModService,
     private goodProccess: GoodprocessService,
-    private comerEleBillService: ComerElecBillService
+    private comerEleBillService: ComerElecBillService,
+    private comerSpenService: SpentService,
+    private comerEventService: ComerEventService,
+    private parameterGoodService: ParameterCatService
   ) {
     super();
 
@@ -179,6 +200,33 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         customer: {
           title: 'Cliente',
           sort: false,
+          type: 'custom',
+          renderComponent: LinkCellComponent<any>,
+          onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+            instance.validateValue = false;
+            instance.onNavigate.subscribe(async invoice => {
+              const count = await this.getCountReference(
+                invoice.eventId,
+                invoice.batchId
+              );
+              if (count == 0) {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'El Lote aún no está liberado'
+                );
+              } else {
+                let config = {
+                  initialState: {
+                    data: invoice,
+                  },
+                  class: 'modal-md modal-dialog-centered',
+                  ignoreBackdropClick: true,
+                };
+                this.modalService.show(ReferenceModalComponent, config);
+              }
+            });
+          },
         },
         delegationNumber: {
           title: 'Regional',
@@ -204,6 +252,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             return values.filter(m => m.id == val)[0]?.desc ?? '';
           },
         },
+        factstatusId: {
+          title: 'Estatus',
+          sort: false,
+        },
         series: {
           title: 'Serie',
           sort: false,
@@ -215,10 +267,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             type: 'custom',
             component: CustomFilterComponent,
           },
-        },
-        factstatusId: {
-          title: 'Estatus',
-          sort: false,
         },
         document: {
           title: 'Tipo',
@@ -235,8 +283,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     };
   }
 
+  async getCountReference(event: number, batchId: number) {
+    return firstValueFrom(
+      this.comerInvoice.getCountInvoice(event, batchId).pipe(
+        map(resp => resp.contador),
+        catchError(() => of(0))
+      )
+    );
+  }
+
   ngOnInit(): void {
-    this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
+    this.paramsList.getValue().limit = 500;
+    this.paramsList2.getValue().limit = 500;
+    this.paramsList.getValue()['direction'] = `${SearchFilter.EQ}:M`;
+    this.paramsList.getValue()['sortBy'] = 'batchId,Invoice,customer:DESC';
     this.prepareForm();
 
     this.dataFilter
@@ -341,54 +401,32 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const params = {
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,
-      ...{ sortBy: 'batchId:ASC' },
+      // ...{ sortBy: 'batchId:ASC' },
     };
 
     this.loading2 = true;
-    this.comerDetInvoice.getAll(params).subscribe({
-      next: async resp => {
-        this.loading2 = false;
-        let sum1: number = 0,
-          sum2: number = 0,
-          sum3: number = 0,
-          sum4: number = 0;
-        for (let data of resp.data) {
-          const value = await this.postQueryDet({
-            cveProdservSat: data.prodservSatKey,
-            cveUnidSat: data.unitSatKey,
-            noTransferee: data.transfereeNot,
-          });
-
-          if (value) {
-            // data.tuitionMod = data.tuition;
-            data.downloadcvman = value.mandato;
-            data.desc_unidad_det = value.desc_unidad_det;
-            data.desc_producto_det = value.desc_producto_det;
-
-            if (value.mandato == 'SIN MANDATO') {
-              data.modmandato = data.tuition;
-            }
-          }
-
-          sum1 = sum1 + Number(data.price);
-          sum2 = sum2 + Number(data.vat);
-          sum3 = sum3 + Number(data.total);
-          sum4 = sum4 + Number(data.amount);
-        }
-
-        sum1 = Number(sum1.toFixed(2));
-        sum2 = Number(sum2.toFixed(2));
-        sum3 = Number(sum3.toFixed(2));
-        sum4 = Number(sum4.toFixed(2));
-
-        this.formDetalle.get('count').patchValue(resp.data.length);
-        this.formDetalle.get('totalI').patchValue(sum1);
-        this.formDetalle.get('totalIva').patchValue(sum2);
-        this.formDetalle.get('total').patchValue(sum3);
-        this.formDetalle.get('countTotal').patchValue(sum4);
+    this.comerDetInvoice.getAllCustom(params).subscribe({
+      next: async (resp: any) => {
+        const data = await this.postQuery(params);
+        this.formDetalle.get('count').patchValue(resp.count);
+        this.formDetalle.get('totalI').patchValue(resp.data[0].sum.importe);
+        this.formDetalle.get('totalIva').patchValue(resp.data[0].sum.iva);
+        this.formDetalle.get('total').patchValue(resp.data[0].sum.total);
+        this.formDetalle.get('countTotal').patchValue(resp.data[0].sum.amount);
         this.totalItems2 = resp.count;
-        this.dataFilter2.load(resp.data);
+
+        const result = resp.data[0].result;
+
+        result.map((value: any, index: number) => {
+          value.desc_producto_det = data[index].desc_producto_det;
+          value.desc_unidad_det = data[index].desc_unidad_det;
+          value.downloadcvman = data[index].mandato;
+          value.modmandato = data[index].matricula;
+        });
+
+        this.dataFilter2.load(result);
         this.dataFilter2.refresh();
+        this.loading2 = false;
       },
       error: () => {
         this.loading2 = false;
@@ -400,23 +438,27 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     });
   }
 
+  async postQuery(params: _Params) {
+    return firstValueFrom(
+      this.comerDetInvoice.getAllPostQuery(params).pipe(
+        map(resp => resp.data),
+        catchError(() => of([]))
+      )
+    );
+  }
+
   getAllComer() {
     const params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
-      ...{ sortBy: 'batchId:ASC' },
+      //...{ sortBy: 'batchId:ASC' },
     };
 
     this.loading = true;
-    this.comerInvoice.getAll(params).subscribe({
+    this.comerInvoice.getAllSumInvoice(params).subscribe({
       next: resp => {
         this.loading = false;
-        this.comer.emit({
-          val: resp.data[0].eventId,
-          count: resp.count,
-          data: resp.data,
-          filter: params,
-        });
+        this.formFactura.get('count').patchValue(resp.count);
         this.totalItems = resp.count;
         this.dataFilter.load(resp.data);
         this.dataFilter.refresh();
@@ -427,7 +469,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           'filter.billId'
         ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
         this.getComerDetInovice();
-        this.formFactura.get('count').patchValue(resp.data.length);
+        this.getSum();
+        this.comer.emit({
+          val: resp.data[0].eventId,
+          count: resp.data.length,
+          data: [],
+          filter: params,
+        });
       },
       error: () => {
         this.loading = false;
@@ -443,10 +491,681 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     });
   }
 
-  generatePreFacture() {}
-  updateData() {}
-  generateInvoice() {}
-  removeInvoice() {}
+  getSum() {
+    const params = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+      //...{ sortBy: 'batchId:ASC' },
+    };
+    this.comerInvoice.getSumTotal(params).subscribe({
+      next: resp => {
+        this.formFactura.get('importE').patchValue(resp.sumprecioeg);
+        this.formFactura.get('ivaE').patchValue(resp.sumivaeg);
+        this.formFactura.get('totalE').patchValue(resp.sumtotaleg);
+        this.formFactura.get('importI').patchValue(resp.sumprecioing);
+        this.formFactura.get('ivaI').patchValue(resp.sumivaing);
+        this.formFactura.get('totalI').patchValue(resp.sumtotaling);
+      },
+      error: () => {},
+    });
+  }
+
+  async generatePreFacture() {
+    const { event, idAllotment } = this.form.value;
+
+    if (!event) {
+      this.alert(
+        'warning',
+        'Atención',
+        'Ingrese un evento para generar prefacturas'
+      );
+      return;
+    }
+
+    const count = await this.getCountBatch(event, idAllotment);
+
+    if (count == 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        'No se encontraron Lotes con estatus válidos para facturar'
+      );
+      return;
+    }
+
+    const valid = await this.getValidBatch(event, idAllotment);
+
+    if (valid.cont_nofact > 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        `No se generan ${valid.cont_nofact} factura(s) por Mandatos no facturables.`
+      );
+    }
+
+    if (valid.contador == 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        'No se encontraron Lotes para facturar'
+      );
+      return;
+    }
+
+    this.alertQuestion(
+      'warning',
+      `Se generarán ${valid.contador} factura(s)`,
+      '¿Desea continuar?'
+    ).then(async ans => {
+      if (ans.isConfirmed) {
+        //en espera de revision de creacion facturas e inconsitencias
+        const pk_comer: any = await this.packageInvoice({
+          eventId: event,
+          option: 0,
+          publicLot: idAllotment,
+          cveDisplay: 'FCOMER086_I',
+          invoiceId: null,
+          paymentId: null,
+          document: 'FAC',
+          secdoc: 'M',
+          indGendet: 1,
+          delegationNumber: null,
+          command: null,
+          partiality: null,
+          type: null,
+        });
+
+        if (!pk_comer) {
+          this.alert(
+            'warning',
+            'Atención',
+            'Ha ocurrido un fallo en la operación'
+          );
+        } else if (pk_comer.p_RESUL == 'Correcto.') {
+          this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+          this.paramsList.getValue()['limit'] = 500;
+          this.paramsList.getValue()[
+            'filter.direction'
+          ] = `${SearchFilter.EQ}:M`;
+          this.paramsList.getValue()[
+            'filter.eventId'
+          ] = `${SearchFilter.EQ}:${event}`;
+          this.getAllComer();
+        }
+      } else {
+      }
+    });
+  }
+
+  async packageInvoice(data: any) {
+    return firstValueFrom(
+      this.comerInvoice.generatePreInvoice(data).pipe(
+        map(resp => resp),
+        catchError(() => of(null))
+      )
+    );
+  }
+
+  async getCountBatch(event: number, lote: number) {
+    return firstValueFrom(
+      this.comerInvoice.getCountBatch(event, lote).pipe(
+        map(resp => resp.contador),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async getValidBatch(event: number, lote: number) {
+    return firstValueFrom(
+      this.comerInvoice.getValidBatch(event, lote).pipe(
+        map(resp => resp),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async updateData() {
+    let l_ban: boolean = false;
+    this.blk_actdat = [];
+    let n_cont: number = 0;
+    let n_cone: number = 0;
+    let n_conf: number = 0;
+    const data = await this.dataFilter.getAll();
+    if (data.length == 0) {
+      this.alert('warning', 'Atención', 'Sin Factura(s) a trabajar');
+      return;
+    }
+
+    for (const invoice of this.isSelect) {
+      l_ban = true;
+
+      if (this.blk_actdat[0]?.eventId) {
+        for (const act of this.blk_actdat) {
+          if (
+            act.batchId == invoice.batchId &&
+            act.eventId == invoice.eventId
+          ) {
+            l_ban = false;
+            break;
+          }
+        }
+      }
+
+      if (l_ban) {
+        n_cont++;
+        const fact: any = {
+          batchId: invoice.batchId,
+          eventId: invoice.eventId,
+          ind_con: 'S',
+          cause: null,
+        };
+        this.blk_actdat.push(fact);
+      }
+    }
+
+    if (n_cont == 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        'No se realizo selección de Factura(s)'
+      );
+      return;
+    }
+
+    for (const act of this.blk_actdat) {
+      const sumEat = await this.getSumEat(act.eventId, act.batchId);
+      if (sumEat) {
+        const { n_fac_tot, n_fac_cfdi, n_fac_fol, n_fac_imp, n_fac_pref } =
+          sumEat;
+        act.cause = `Facturas, Total: ${n_fac_tot ?? 0}, PREF: ${
+          n_fac_pref ?? 0
+        }, FOL: ${n_fac_fol ?? 0}, CFDI: ${n_fac_cfdi ?? 0}, IMP: ${
+          n_fac_imp ?? 0
+        }`;
+        act.n_fac_cfdi = n_fac_cfdi ?? 0;
+        act.n_fac_fol = n_fac_fol ?? 0;
+        act.n_fac_imp = n_fac_imp ?? 0;
+        act.n_fac_pref = n_fac_pref ?? 0;
+        act.n_fac_tot = n_fac_tot ?? 0;
+
+        if (
+          n_fac_tot !=
+          (n_fac_pref ?? 0) +
+            (n_fac_imp ?? 0) +
+            (n_fac_fol ?? 0) +
+            (n_fac_cfdi ?? 0)
+        ) {
+          act.ind_con = 'N';
+          act.cause = `Inconsistencia en Número de Facturas (Total: ${
+            n_fac_tot ?? 0
+          }, PREF: ${n_fac_pref ?? 0}, FOL: ${n_fac_fol ?? 0}, CFDI: ${
+            n_fac_cfdi ?? 0
+          }, IMP: ${n_fac_imp ?? 0})`;
+          n_cone++;
+        } else if ((n_fac_fol ?? 0) + (n_fac_pref ?? 0) == 0) {
+          act.ind_con = 'N';
+          act.cause = `Sin Factura(s) a actualizar (PREF: ${
+            n_fac_pref ?? 0
+          }, FOL: ${n_fac_fol ?? 0})`;
+          n_cone++;
+        } else {
+          if ((n_fac_cfdi ?? 0) > 0) {
+            l_ban = false;
+            const type: any[] = await this.getType(act.eventId, act.batchId);
+
+            for (const invoice of type) {
+              const n_ind_group = await this.group(invoice.Type);
+              if (n_ind_group == 1) {
+                l_ban = true;
+                break;
+              }
+            }
+
+            if (l_ban) {
+              act.ind_con = 'N';
+              act.cause = `Se tienen Facturas en CFDI con anexo, Total: ${
+                n_fac_tot ?? 0
+              }, PREF: ${n_fac_pref ?? 0}, FOL: ${n_fac_fol ?? 0}, CFDI: ${
+                n_fac_cfdi ?? 0
+              }, IMP: ${n_fac_imp ?? 0}`;
+              n_cone++;
+            }
+          }
+
+          if (act.ind_con == 'S') {
+            if ((n_fac_fol ?? 0) > 0) {
+              if ((n_fac_imp ?? 0) > 0) {
+                act.cause = `Se tienen Facturas con Folio e impresas, Total: ${
+                  n_fac_tot ?? 0
+                }, PREF: ${n_fac_pref ?? 0}, FOL: ${n_fac_fol ?? 0}, CFDI: ${
+                  n_fac_cfdi ?? 0
+                }, IMP: ${n_fac_imp ?? 0}`;
+              } else {
+                act.cause = `Se tienen Facturas con Folio, Total: ${
+                  n_fac_tot ?? 0
+                }, PREF: ${n_fac_pref ?? 0}, FOL: ${n_fac_fol ?? 0}, CFDI: ${
+                  n_fac_cfdi ?? 0
+                }, IMP: ${n_fac_imp ?? 0}`;
+              }
+              n_conf++;
+            } else if ((n_fac_imp ?? 0) > 0) {
+              act.cause = `Se tienen Facturas impresas, Total: ${
+                n_fac_tot ?? 0
+              }, PREF: ${n_fac_pref ?? 0}, FOL: ${n_fac_fol ?? 0}, CFDI: ${
+                n_fac_cfdi ?? 0
+              }, IMP: ${n_fac_imp ?? 0}`;
+            }
+          }
+        }
+      }
+    }
+
+    let config: ModalOptions = {
+      initialState: {
+        data: this.blk_actdat,
+        totalItems: this.blk_actdat.length,
+        callback: async (next: boolean) => {
+          if (next) {
+            //llamar los datos de nuevo
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ActModalComponent, config);
+  }
+
+  async group(type: number) {
+    const params = new FilterParams();
+    params.addFilter('type', type, SearchFilter.EQ);
+    return firstValueFrom(
+      this.comerInvoice.getIndGroup(params.getParams()).pipe(
+        map(resp => (resp.data.length > 0 ? resp.data[0].indgroup : null)),
+        catchError(() => of(null))
+      )
+    );
+  }
+
+  async getType(event: number, batchId: number) {
+    const params = new FilterParams();
+    params.addFilter('eventId', event, SearchFilter.EQ);
+    params.addFilter('batchId', batchId, SearchFilter.EQ);
+    params.addFilter('factstatusId', 'CFDI', SearchFilter.EQ);
+    params.addFilter('document', 'FAC', SearchFilter.EQ);
+    return firstValueFrom(
+      this.comerInvoice.getAll(params.getParams()).pipe(
+        map(resp => resp.data),
+        catchError(() => of([]))
+      )
+    );
+  }
+
+  async getSumEat(event: number, batchId: number) {
+    return firstValueFrom(
+      this.comerInvoice.getSumEat(event, batchId).pipe(
+        map(resp => resp),
+        catchError(() => of(null))
+      )
+    );
+  }
+
+  async generateInvoice() {
+    const user = this.authService.decodeToken();
+    const userValid = await this.validUser(user.preferred_username);
+    let n_cont: number;
+    let c_ind: string;
+    let n_id_event: number;
+    const { event, idAllotment } = this.form.value;
+
+    if (userValid == 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        'No cuenta con permisos para efectuar esta operación'
+      );
+    } else {
+      n_cont = 0;
+
+      if (event) {
+        c_ind = 'F';
+        n_id_event = event;
+        n_cont = await this.countComerInvoice(event, idAllotment);
+      } else {
+        c_ind = 'S';
+
+        let data: any[] = await this.dataFilter.getAll();
+
+        if (data.length == 0) {
+          this.alertInfo('warning', 'Atención', 'Sin factura(s) para trabajar');
+          return;
+        }
+
+        for (const invoice of this.isSelect) {
+          if (!n_id_event) {
+            n_id_event = invoice.eventId;
+          }
+          if (invoice.factstatusId == 'PREF') {
+            n_cont++;
+          }
+        }
+      }
+
+      if (n_cont == 0) {
+        this.alert(
+          'warning',
+          'Atención',
+          'Sin prefacturas para asignar folios'
+        );
+        return;
+      }
+
+      this.alertQuestion(
+        'warning',
+        `Se asignarán ${n_cont} folio(s)`,
+        '¿Desea continuar?'
+      ).then(ans => {
+        if (ans.isConfirmed) {
+          this.newGenerateInvoice(c_ind, n_id_event);
+        }
+      });
+    }
+  }
+
+  async newGenerateInvoice(c_ind: string, n_id_event: number) {
+    let departament = this.authService.decodeToken().department;
+    let c_indN = c_ind;
+    let event = n_id_event;
+
+    const tp_event = await this.getIdTpEvent(event);
+
+    const valid = await this.validaFolAvaliable(
+      String(n_id_event),
+      this.isSelect[0]?.tpevent ?? tp_event
+    );
+
+    if (valid == 1) {
+      await this.updateDoc(n_id_event);
+
+      await this.newMarkProcess('EL', 'PREF', c_indN);
+
+      //commit guardar cambios
+
+      await this.generateInvoiceCtrl(String(event), tp_event);
+
+      if (c_indN == 'F') {
+        this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+        this.paramsList.getValue()[
+          'filter.eventId'
+        ] = `${SearchFilter.EQ}:${event}`;
+        this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
+        this.getAllComer();
+      }
+
+      //procedimiento verifica prov cance
+      this.verifyProv();
+    } else {
+      this.alert('warning', 'Atención', 'No existen folios disponibles');
+    }
+  }
+
+  async verifyProv() {
+    const data = await this.dataFilter.getAll();
+    for (const invoice of data) {
+      if (
+        invoice.archImgtemp &&
+        invoice.billId &&
+        invoice.factstatusId != 'CAN'
+      ) {
+        invoice.factstatusId = 'FOL';
+        //hacer update
+      }
+    }
+  }
+
+  async generateInvoiceCtrl(pEvent: string, ptpevento: string) {
+    return firstValueFrom(
+      this.comerInvoice.generateFolio({ pEvent, ptpevento }).pipe(
+        map(() => true),
+        catchError(() => of(false))
+      )
+    );
+  }
+
+  async newMarkProcess(process: string, statusValid: string, p_ind: string) {
+    let c_nd = p_ind;
+    let aux_status = statusValid;
+    let aux_valgasto: number;
+    let aux_val_liq: number;
+    let cont: number = 0;
+    let contg: number = 0;
+    const { event, idAllotment } = this.form.value;
+
+    if (c_nd == 'F') {
+      const re_facts = await this.invoiceF(event, idAllotment, aux_status);
+      for (const invoice of re_facts) {
+        if (!invoice.billRelimagId && !invoice.eventRelimagId) {
+          aux_valgasto = await this.subTotalPrice(
+            invoice.eventId,
+            invoice.batchId
+          );
+          if (aux_valgasto == 0) {
+            aux_val_liq = await this.batchLiq(invoice.eventId, invoice.batchId);
+            if (aux_val_liq == 1) {
+              await this.updateProcess(
+                invoice.eventId,
+                invoice.billId,
+                process
+              );
+            } else {
+              cont++;
+            }
+          } else if (aux_valgasto >= 1) {
+            contg++;
+          }
+        } else {
+          await this.updateProcess(invoice.eventId, invoice.billId, process);
+        }
+      }
+    } else {
+      for (const invoice of this.isSelect) {
+        if (!invoice.billRelimagId && !invoice.eventRelimagId) {
+          aux_valgasto = await this.subTotalPrice(
+            invoice.eventId,
+            invoice.batchId
+          );
+          if (aux_valgasto == 0) {
+            aux_val_liq = await this.batchLiq(invoice.eventId, invoice.batchId);
+            if (aux_val_liq == 1) {
+              invoice.process = process;
+            } else {
+              cont++;
+            }
+          } else if (aux_valgasto >= 1) {
+            contg++;
+          }
+        } else {
+          invoice.process = process;
+        }
+      }
+
+      if (cont == 1 && aux_val_liq == 0) {
+        this.alert(
+          'warning',
+          'Atención',
+          `No se generara el folio de la factura. El lote ${
+            this.isSelect[this.isSelect.length - 1].batchId
+          } no ha sido afectado`
+        );
+      } else if (cont > 1 && aux_val_liq == 0) {
+        this.alert(
+          'warning',
+          'Atención',
+          `${cont} facturas no pueden ser foliadas, sus lotes no han sido afectados`
+        );
+      }
+
+      if (contg == 1 && aux_valgasto == 1) {
+        this.alert(
+          'warning',
+          'Atención',
+          `No se generara el folio de la factura. El lote ${
+            this.isSelect[this.isSelect.length - 1].batchId
+          } no cumple las validaciones de los montos(chatarra)`
+        );
+      } else if (cont > 1 && aux_val_liq == 0) {
+        this.alert(
+          'warning',
+          'Atención',
+          `${contg} facturas no pueden ser foliadas, no cumplen las validaciones de los montos(chatarra)`
+        );
+      }
+    }
+
+    return true;
+  }
+
+  async updateProcess(eventId: number, billId: number, process: string) {
+    return firstValueFrom(
+      this.comerInvoice.updateEventCursor({ eventId, billId, process }).pipe(
+        map(resp => {
+          return true;
+        }),
+        catchError(() => of(false))
+      )
+    );
+  }
+
+  async subTotalPrice(eventId: number, batchId: number) {
+    return firstValueFrom(
+      this.comerInvoice.checkFolSubTotal({ eventId, batchId }).pipe(
+        map(resp => resp.vRes),
+        catchError(() => of(1))
+      )
+    );
+  }
+
+  async batchLiq(event: number, batchId: number) {
+    return firstValueFrom(
+      this.comerEventService.validateLiq(event, batchId).pipe(
+        map(resp => resp.valLiq),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async invoiceF(event: number, batchId: number, status: string) {
+    return firstValueFrom(
+      this.comerInvoice.getCursosData(event, status, batchId).pipe(
+        map(resp => resp.data),
+        catchError(() => of([]))
+      )
+    );
+  }
+
+  async updateDoc(event: number) {
+    return firstValueFrom(
+      this.comerInvoice.updateEvent(event).pipe(
+        map(resp => {
+          return true;
+        }),
+        catchError(() => of(false))
+      )
+    );
+  }
+
+  async validaFolAvaliable(event: string, tpevent: string) {
+    return firstValueFrom(
+      this.comerInvoice
+        .validateFolio({
+          id_evento: event,
+          tpEvento: tpevent,
+        })
+        .pipe(
+          map(resp => resp.rspta),
+          catchError(() => of(0))
+        )
+    );
+  }
+
+  async getIdTpEvent(event: number) {
+    const params = new FilterParams();
+    params.addFilter('eventId', event, SearchFilter.EQ);
+
+    return firstValueFrom(
+      this.comerInvoice.getAll(params.getParams()).pipe(
+        map(resp => resp.data[0].tpevent),
+        catchError(() => of(null))
+      )
+    );
+  }
+
+  async countComerInvoice(event: number, batchId: number) {
+    const params = new FilterParams();
+
+    params.addFilter('eventId', event, SearchFilter.EQ);
+    if (batchId) params.addFilter('batchId', batchId, SearchFilter.EQ);
+    params.addFilter('factstatusId', 'PREF', SearchFilter.EQ);
+    return firstValueFrom(
+      this.comerInvoice.getAll(params.getParams()).pipe(
+        map(resp => resp.count),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async removeInvoice() {
+    const data: any[] = await this.dataFilter.getAll();
+
+    if (data.length == 0) {
+      this.alert('warning', 'Atención', 'Debe seleccionar un evento');
+      return;
+    }
+
+    let aux = 0;
+
+    aux = this.validateRemoveInvoice();
+
+    if (aux == 1) {
+      await this.markProcess('EF', 'FOL');
+      //update seleccionados
+    }
+
+    this.comerInvoice
+      .deleteFolio({ eventId: data[0].eventId, invoiceId: null })
+      .subscribe({
+        next: () => {
+          this.alert('success', 'Folios', 'Eliminados Correctamente');
+
+          // this.comerInvoice.update(this.billingForm.value).subscribe({
+          //   next: () => {
+          //     this.getAllComer()
+          //   },
+          //   error: err => {
+          //     this.alert('error', 'Error', err.error.message);
+          //   },
+          // });
+        },
+        error: err => {
+          this.alert('error', 'Error', err.error.message);
+        },
+      });
+  }
+
+  validateRemoveInvoice(): number {
+    for (const invoice of this.isSelect) {
+      if (invoice.factstatusId != 'FOL') {
+        this.alert(
+          'warning',
+          'Atención',
+          'Soló se puede eliminar folios de facturas con estatus FOL, si lo desea puede cancelarla'
+        );
+        return 0;
+      }
+    }
+
+    return 1;
+  }
 
   isSelectComer(data: any, operation: string) {
     if (operation == 'add') {
@@ -467,7 +1186,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   getRebillData(params?: ListParams) {
     params['filter.apply'] = `${SearchFilter.IN}:F,A`;
-    params['filter.id'] = `${SearchFilter.EQ}:41`;
+    params['filter.valid'] = `${SearchFilter.EQ}:S`;
+    params['sortBy'] = 'id:ASC';
+
     this.comerRebilService.getAll(params).subscribe({
       next: resp => {
         this.dataRebill = new DefaultSelect(resp.data, resp.count);
@@ -487,6 +1208,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       causerebillId: [null],
       check: [null],
       delegation: [null],
+      userV: [null, Validators.required],
+      passwordV: [null, Validators.required],
+      folio: [null],
+      refactura: [null],
     });
 
     this.formFactura = this.fb.group({
@@ -501,40 +1226,16 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
     this.formDetalle = this.fb.group({
       count: [null],
-      totalI: [null],
-      totalIva: [null],
-      total: [null],
+      totalI: [0],
+      totalIva: [0],
+      total: [0],
       countTotal: [null],
     });
-  }
-
-  onSubmit() {
-    if (this.form.valid) {
-      this.form.reset();
-    }
-    console.warn('Your order has been submitted');
   }
 
   disabledButtons() {
     const { check } = this.form.value;
     this.buttons = check;
-  }
-
-  openPrevPdf() {
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   exportAsXLSX(): void {
@@ -593,7 +1294,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Atención',
-        'Esta Bien ya se encuentra como tractocamión sin placas federales'
+        'El Bien ya se encuentra como tractocamión sin placas federales'
       );
       this.removeSelect();
     } else if (this.selectInovice() == 1 && !desc) {
@@ -606,15 +1307,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       delete invoice.prod;
       delete invoice.payment;
       delete invoice.relation;
-      delete invoice.totaleg;
-      delete invoice.totaling;
-      delete invoice.ivaeg;
-      delete invoice.ivaing;
-      delete invoice.precioing;
-      delete invoice.precioeg;
-      delete invoice.regional;
 
-      this.comerInvoice.update(this.isSelect[0]).subscribe({
+      this.comerInvoice.update(invoice).subscribe({
         next: () => {
           this.getAllComer();
         },
@@ -865,7 +1559,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     return firstValueFrom<number>(
       this.comerInvoice.validUser2(user).pipe(
         map(resp => resp.lValUsu),
-        catchError(error => of(-1))
+        catchError(error => of(0))
       )
     );
   }
@@ -879,7 +1573,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.callReport(
       12,
       2,
-      this.isSelect[0].Type,
+      Number(this.isSelect[0].Type),
       1,
       this.isSelect[0].eventId,
       this.isSelect[0].billId,
@@ -1132,7 +1826,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   clientSend() {
     this.alertQuestion(
       'question',
-      'Se enviara el nuevo CDFI para Atención de Clientes',
+      'Se enviara el nuevo CFDI para Atención de Clientes',
       '¿Desea continuar?'
     ).then(answer => {
       if (answer.isConfirmed) {
@@ -1152,7 +1846,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
         v_uuid = await this.getBill(invoice);
 
-        if (['CDFI', 'IMP'].includes(invoice.factstatusId) && v_uuid == 1) {
+        if (['CFDI', 'IMP'].includes(invoice.factstatusId) && v_uuid == 1) {
           this.alert(
             'warning',
             'Atención',
@@ -1165,7 +1859,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       break;
     }
 
-    this.alert('success', 'El CDFI nuevo fue enviado', '');
+    this.alert('success', 'El CFDI nuevo fue enviado', '');
   }
 
   async getBill(invoice: any) {
@@ -1182,5 +1876,460 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         catchError(() => of(0))
       )
     );
+  }
+
+  cancelInvoice() {
+    this.form.get('userV').patchValue(null);
+    this.form.get('passwordV').patchValue(null);
+    let count: number = 0;
+
+    for (const invoice of this.isSelect) {
+      if (!['CFDI', 'IMP'].includes(invoice.factstatusId)) {
+        count++;
+      }
+    }
+
+    if (count == 1) {
+      this.alert(
+        'warning',
+        'Atención',
+        'La Factura no tiene un estatus válido para cancelación'
+      );
+      return;
+    } else if (count > 1) {
+      this.alert(
+        'warning',
+        'Atención',
+        `La Selección contiene ${count} Facturas que no tienen un estatus válido para cancelación`
+      );
+      return;
+    }
+
+    this.validateCancel();
+  }
+
+  async validateCancel() {
+    const { causerebillId, folio, refactura } = this.form.value;
+    if (!causerebillId) {
+      this.isVisibleField(1);
+    } else if (causerebillId) {
+      if (this.isSelect[0].factstatusId == 'CAN') {
+        this.alert(
+          'warning',
+          'Atención',
+          'No puede procesar una factura cancelada'
+        );
+        this.isVisibleField(0);
+        return;
+      }
+      if (!folio && refactura == 'P') {
+        this.alert('warning', 'Atención', 'Introduzca la solicitud de pago');
+        return;
+      } else if (folio && refactura == 'P') {
+        const puf_valid = await this.validaFolSp(this.isSelect[0].eventId);
+        if (puf_valid == 0) {
+          this.alert(
+            'warning',
+            'Atención',
+            'El Folio de la solicitud de pago no corresponden a la factura, favor de verificar'
+          );
+          return;
+        } else if (puf_valid == 1) {
+          this.alert(
+            'warning',
+            'Atención',
+            'Los montos de la solicitud de pago no corresponden a la factura, favor de verificar'
+          );
+          return;
+        } else {
+          if (this.isSelect[0].factstatusId == 'CAN') {
+            this.alert(
+              'warning',
+              'Atención',
+              'No puede procesar una factura cancelada'
+            );
+            this.isVisibleField(0);
+            return;
+          } else {
+            await this.pup_invoice();
+          }
+        }
+      }
+
+      let config: ModalOptions = {
+        initialState: {
+          form: this.form,
+          data: this.isSelect,
+          global: this.global,
+          parameter: this.parameter,
+          callback: (data: boolean, val: number) => {
+            this.isVisibleField(val);
+          },
+        },
+        class: 'modal-md modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(AuthorizationModalComponent, config);
+    }
+  }
+
+  async pup_invoice() {
+    const { folio } = this.form.value;
+    const idpayment = await this.checkIdGasto(folio, this.isSelect[0].eventId);
+
+    if (idpayment) {
+      this.global.canxp = 'S';
+      this.global.pidgasto = idpayment;
+      const data = await this.getData(
+        this.isSelect[0].eventId,
+        Number(idpayment)
+      );
+      //guardar datos cancelados
+      console.log(data);
+    }
+  }
+
+  async checkIdGasto(idSol: number, idEvent: number) {
+    const filter = new FilterParams();
+    filter.addFilter('paymentRequestNumber', idSol, SearchFilter.EQ);
+    filter.addFilter('eventNumber', idEvent, SearchFilter.EQ);
+    return firstValueFrom(
+      this.comerSpenService.getAll(filter.getParams()).pipe(
+        map(resp => resp.data[0].expenseNumber),
+        catchError(() => of(null))
+      )
+    );
+  }
+
+  async getData(event: number, expend: number) {
+    return firstValueFrom(
+      this.comerInvoice.getEats(event, expend).pipe(
+        map(resp => resp.data),
+        catchError(() => of([]))
+      )
+    );
+  }
+
+  isVisibleField(option: number) {
+    if (option == 1) {
+      this.isCancel = true;
+    } else if (option == 0) {
+      this.isCancel = false;
+      this.form.get('causerebillId').patchValue(null);
+      this.form.get('folio').patchValue(null);
+    }
+  }
+
+  async validaFolSp(event: number) {
+    const { folio } = this.form.value;
+    return firstValueFrom(
+      this.comerInvoice.pufValidaInvoiceSP(event, folio).pipe(
+        map(resp => resp.lv_valdida),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  setDataCause(data: any) {
+    this.form.get('refactura').patchValue(data.rebill);
+  }
+
+  async exportData() {
+    const data: any[] = await this.dataFilter.getAll();
+
+    if (data.length == 0) {
+      this.alert('warning', 'Atención', 'Debe consultar un evento');
+      return;
+    }
+
+    await this.markProcess('EX', null);
+    //update los seleccionados
+
+    this.comerInvoice.exportExcell(data[0].eventId).subscribe({
+      next: resp => {
+        console.log(resp);
+        const linkSource = `data:application/xlsx;base64,${resp.resultExcel.base64File}`;
+        const downloadLink = document.createElement('a');
+        downloadLink.href = linkSource;
+        downloadLink.download = 'facturas' + '.xlsx';
+        downloadLink.target = '_blank';
+        downloadLink.click();
+        downloadLink.remove();
+      },
+      error: () => {
+        this.alert(
+          'error',
+          'Ha ocurrio un fallo en la exportación del archivo',
+          ''
+        );
+      },
+    });
+  }
+
+  async markProcess(process: string, statusValid: string) {
+    let aux_valgasto: number;
+    let aux_val_liq: number;
+    let cont: number = 0;
+    let contg: number = 0;
+    let aux_status: string;
+    if (!statusValid) {
+      aux_status = null;
+    } else {
+      aux_status = statusValid;
+    }
+
+    for (const invoice of this.isSelect) {
+      if (invoice.factstatusId == (aux_status ?? invoice.factstatusId)) {
+        if (!invoice.billRelimagId && !invoice.eventRelimagId) {
+          aux_valgasto = await this.subTotalPrice(
+            invoice.eventId,
+            invoice.batchId
+          );
+          if (aux_valgasto == 0) {
+            aux_val_liq = await this.batchLiq(invoice.eventId, invoice.batchId);
+            if (aux_val_liq == 1) {
+              invoice.process = process;
+            } else {
+              cont++;
+            }
+          } else if (aux_valgasto >= 1) {
+            contg++;
+          }
+        } else {
+          invoice.process = process;
+        }
+      }
+    }
+
+    if (cont == 1 && aux_val_liq == 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        `No se generara el folio de la factura. El lote ${
+          this.isSelect[this.isSelect.length - 1].batchId
+        } no ha sido afectado`
+      );
+    } else if (cont > 1 && aux_val_liq == 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        `${cont} facturas no pueden ser foliadas, sus lotes no han sido afectados`
+      );
+    }
+
+    if (contg == 1 && aux_valgasto == 1) {
+      this.alert(
+        'warning',
+        'Atención',
+        `No se generara el folio de la factura. El lote ${
+          this.isSelect[this.isSelect.length - 1].batchId
+        } no cumple las validaciones de los montos(chatarra)`
+      );
+    } else if (cont > 1 && aux_val_liq > 1) {
+      this.alert(
+        'warning',
+        'Atención',
+        `${contg} facturas no pueden ser foliadas, no cumplen las validaciones de los montos(chatarra)`
+      );
+    }
+
+    return true;
+  }
+
+  async viewInvoice() {
+    if (this.isSelect.length == 0) {
+      this.alert('warning', 'Atención', 'Debe seleccionar algun evento');
+      return;
+    }
+    this.callReport(
+      Number(this.isSelect[0].Type),
+      2,
+      null,
+      1,
+      this.isSelect[0].eventId,
+      this.isSelect[0].billId,
+      this.isSelect[0].impressionDate
+    );
+
+    this.isSelect = [];
+  }
+
+  async viewAnexo() {
+    if (this.isSelect.length == 0) {
+      this.alert('warning', 'Atención', 'Debe seleccionar algun evento');
+      return;
+    }
+
+    const date = await this.getDateParameter();
+
+    const val = await this.etapaNexo(this.isSelect[0].impressionDate);
+
+    if (val == 1) {
+      for (const inv of this.isSelect) {
+        if (inv.exhibit == 'S' && [2, 5].includes(Number(inv.Type))) {
+          this.callReport(
+            10,
+            2,
+            null,
+            1,
+            this.isSelect[0].eventId,
+            this.isSelect[0].billId,
+            this.isSelect[0].impressionDate
+          );
+        } else {
+          this.alert('warning', 'Atención', 'La factura no tiene anexo');
+        }
+        break;
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Atención',
+        `No se puede visualizar el anexo, la fecha de impresión es nula o es mayor al ${this.datePipe.transform(
+          date,
+          'dd/MM/yyyy'
+        )}`
+      );
+    }
+  }
+
+  async getDateParameter() {
+    const filter = new FilterParams();
+    filter.addFilter('id', 'PLEANEXO', SearchFilter.EQ);
+    return firstValueFrom(
+      this.parameterGoodService.getAllWithFilters(filter.getParams()).pipe(
+        map(resp => resp.data[0].startDate),
+        catchError(() => of(null))
+      )
+    );
+  }
+
+  async allSelect() {
+    const user = this.authService.decodeToken().preferred_username;
+    const userValid = await this.validUser('LGONZALEZG' ?? user);
+    const data = await this.dataFilter.getAll();
+    const { date } = this.form.value;
+
+    if (userValid == 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        'No cuenta con los permisos para realizar esta operación'
+      );
+    } else {
+      if (data.length == 0) {
+        this.alert('warning', 'Atención', 'Debe consultar un evento');
+        return;
+      }
+      if (date) {
+        const newDate = this.datePipe.transform(date, 'yyyy-MM-dd');
+        const data = await this.dataFilter.getAll();
+        let exist: boolean = false;
+        for (const invoice of data) {
+          if (!invoice.impressionDate) {
+            invoice.impressionDate = newDate;
+            exist = true;
+          }
+        }
+        this.dataFilter.load([...data]);
+        this.dataFilter.refresh();
+        if (exist) {
+          const params = {
+            ...this.paramsList.getValue(),
+            ...this.columnFilters,
+          };
+          this.comerInvoice
+            .updateEventByDate(params, { impressionDate: newDate })
+            .subscribe({
+              next: () => {
+                this.alert(
+                  'success',
+                  'La fecha de impresión ha sido actualizada',
+                  ''
+                );
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Atención',
+            'No hay fechas de impresión para actualizar'
+          );
+        }
+
+        this.form.get('date').patchValue(null);
+      } else {
+        this.selectAllInvoice(userValid);
+      }
+    }
+  }
+
+  async selectAllInvoice(user: number) {
+    const { delegation } = this.form.value;
+    const reg = Number(this.authService.decodeToken().department);
+    const data = await this.dataFilter.getAll();
+
+    if (user == 2) {
+      for (const invoice of data) {
+        if (Number(invoice.delegationNumber) == reg) {
+          const index = this.isSelect.findIndex(
+            comer =>
+              comer.eventId == invoice.eventId && comer.billId == invoice.billId
+          );
+          if (index == -1) this.isSelect.push(invoice);
+          if (index > -1) this.isSelect.splice(index, 1);
+        }
+      }
+    } else if (user == 1) {
+      for (const invoice of data) {
+        if (
+          Number(invoice.delegationNumber) ==
+          (delegation ?? Number(invoice.delegationNumber))
+        ) {
+          const index = this.isSelect.findIndex(
+            comer =>
+              comer.eventId == invoice.eventId && comer.billId == invoice.billId
+          );
+          if (index == -1) this.isSelect.push(invoice);
+          if (index > -1) this.isSelect.splice(index, 1);
+        }
+      }
+      this.dataFilter.add(data);
+      this.dataFilter.refresh();
+    }
+  }
+
+  async invoiceSP() {
+    const { causerebillId } = this.form.value;
+    let ban: boolean = false;
+    let vid_lote: number;
+
+    if (causerebillId == 41 || causerebillId == 141) {
+      vid_lote = null;
+      ban = true;
+
+      for (const invoice of this.isSelect) {
+        vid_lote = invoice.batchId;
+      }
+
+      const folio = await this.maxPay(this.isSelect[0].eventId, vid_lote);
+      this.form.get('folio').patchValue(folio);
+    } else {
+      this.form.get('folio').patchValue(null);
+    }
+  }
+
+  async maxPay(event: number, batchId: number) {
+    return firstValueFrom(
+      this.comerInvoice.maxPayment(event, batchId).pipe(
+        map(resp => resp.folio_sp),
+        catchError(() => of(null))
+      )
+    );
+  }
+
+  CancelInvoice() {
+    this.parameter.autorizo = 0;
+    this.isVisibleField(0);
   }
 }

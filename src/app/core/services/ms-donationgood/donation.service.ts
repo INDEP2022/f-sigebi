@@ -7,14 +7,21 @@ import { DonationRepository } from 'src/app/common/repository/repositories/ms-do
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IDetailDonation,
   IDonationGood,
   IFilterDonation,
   IGoodDonation,
 } from '../../models/ms-donation/donation.model';
+import {
+  IDeleteGoodDon,
+  IInventaryDelete,
+  IInventaryRequest,
+} from '../../models/sirsae-model/proposel-model/proposel-model';
 
 const api: string = DonationEndPoint.donation;
 const donationEvent = DonationEndPoint.eventComDonation;
 const endpoint: string = DonationEndPoint.eventComDonation;
+const route: string = DonationEndPoint.RequestGoodDon;
 @Injectable({
   providedIn: 'root',
 })
@@ -85,5 +92,74 @@ export class DonationService
   }
   getTempGood(params: ListParams) {
     return this.get(DonationEndPoint.TempDonationGood, params);
+  }
+
+  createApproveDonation(data: any) {
+    return this.post(DonationEndPoint.ApproveDonation, data);
+  }
+  editApproveDonation(data: any) {
+    return this.put(DonationEndPoint.ApproveDonation, data);
+  }
+  getDonationRequest(requestId: number) {
+    return this.get(`/donac-request-good?filter.requestId.id=$eq:${requestId}`);
+  }
+
+  postUpdateStore(data: any) {
+    return this.post(`application/update-store`, data);
+  }
+
+  postDeleteDetail(data: any) {
+    return this.post(`application/pup-delete-detail`, data);
+  }
+  getEventGood(params: ListParams) {
+    return this.get(DonationEndPoint.eventComDonation, params);
+  }
+  getApprove(params: ListParams) {
+    return this.get(DonationEndPoint.ApproveDnation, params);
+  }
+
+  putEventComDonationDetail(body: Object) {
+    return this.put(DonationEndPoint.DetailEventComDon, body);
+  }
+  createEventComDonationDetail(body: Object) {
+    return this.post(DonationEndPoint.DetailEventComDon, body);
+  }
+  getByIdEvent(id: number) {
+    return this.get(`/${DonationEndPoint.eventComDonation}/${id}`);
+  }
+
+  putEvent(goodDon: IGoodDonation, id: number) {
+    const route = `${DonationEndPoint.eventComDonation}/${id}`;
+    return this.put(route, goodDon);
+  }
+  deleteDetailDona(model: any) {
+    return this.delete(DonationEndPoint.DetailEventComDon, model);
+  }
+  putDetailDona(model: any) {
+    return this.put(DonationEndPoint.DetailEventComDon, model);
+  }
+  getGoodsDonation(params: ListParams) {
+    return this.get(DonationEndPoint.GoodsForDonation, params);
+  }
+  getGoodRequest(params: ListParams) {
+    return this.get(DonationEndPoint.RequestGoodDon, params);
+  }
+  createDetail(body: IDetailDonation) {
+    return this.post(DonationEndPoint.DetailEventComDon, body);
+  }
+  deleteGoodDon(body: IDeleteGoodDon) {
+    return this.delete(DonationEndPoint.DeleteGoodDon, body);
+  }
+  getInventaryGood(body: IInventaryRequest) {
+    return this.post(DonationEndPoint.Inventary, body);
+  }
+  createInventary(body: IInventaryRequest) {
+    return this.post(DonationEndPoint.CreateInventary, body);
+  }
+  deleteGoodReq(body: IInventaryDelete) {
+    return this.delete(DonationEndPoint.CreateInventary, body);
+  }
+  getInventory(params: ListParams) {
+    return this.get(DonationEndPoint.CreateInventary, params);
   }
 }

@@ -41,13 +41,9 @@ export const COLUMNS = {
       const nombreMes = meses[mes];
 
       // Crear la nueva fecha en el formato deseado
-      const fechaTransformada = `${dia}-${nombreMes}-${ano}`;
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
       // console.log("fechaTransformada", fechaTransformada)
-      return `${
-        fechaTransformada
-          ? fechaTransformada.split('T')[0].split('-').reverse().join('/')
-          : ''
-      }`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -73,7 +69,7 @@ export const COLUMNS = {
     sort: false,
   },
   referenceOri: {
-    title: 'Referencia Orden Ingreso',
+    title: 'Referencia OI',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -93,21 +89,25 @@ export const COLUMNS = {
   amount: {
     title: 'Monto',
     // width: '15%',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   result: {
@@ -163,7 +163,7 @@ export const COLUMNS = {
     },
   },
   paymentId: {
-    title: 'Id. Pago',
+    title: 'Id Pago',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -207,13 +207,9 @@ export const COLUMNS = {
       const nombreMes = meses[mes];
 
       // Crear la nueva fecha en el formato deseado
-      const fechaTransformada = `${dia}-${nombreMes}-${ano}`;
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
       // console.log("fechaTransformada", fechaTransformada)
-      return `${
-        fechaTransformada
-          ? fechaTransformada.split('T')[0].split('-').reverse().join('/')
-          : ''
-      }`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -305,12 +301,8 @@ export const COLUMNS_CARGADOS = {
       const nombreMes = meses[mes];
 
       // Crear la nueva fecha en el formato deseado
-      const fechaTransformada = `${dia}-${nombreMes}-${ano}`;
-      return `${
-        fechaTransformada
-          ? fechaTransformada.split('T')[0].split('-').reverse().join('/')
-          : ''
-      }`;
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -323,7 +315,12 @@ export const COLUMNS_CARGADOS = {
     type: 'string',
     sort: false,
   },
-
+  bill: {
+    title: 'Cuenta',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
   reference: {
     title: 'Referencia',
     // width: '15%',
@@ -331,7 +328,7 @@ export const COLUMNS_CARGADOS = {
     sort: false,
   },
   referenceOri: {
-    title: 'Referencia Orden Ingreso',
+    title: 'Referencia OI',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -345,29 +342,28 @@ export const COLUMNS_CARGADOS = {
   amount: {
     title: 'Monto',
     // width: '15%',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
-  bill: {
-    title: 'Cuenta',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
+
   branchOffice: {
     title: 'Sucursal',
     // width: '15%',
@@ -428,7 +424,7 @@ export const COLUMNS_CARGADOS = {
     },
   },
   paymentId: {
-    title: 'Id. Pago',
+    title: 'Id Pago',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -471,12 +467,8 @@ export const COLUMNS_CARGADOS = {
       const nombreMes = meses[mes];
 
       // Crear la nueva fecha en el formato deseado
-      const fechaTransformada = `${dia}-${nombreMes}-${ano}`;
-      return `${
-        fechaTransformada
-          ? fechaTransformada.split('T')[0].split('-').reverse().join('/')
-          : ''
-      }`;
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',

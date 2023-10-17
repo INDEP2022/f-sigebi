@@ -7,13 +7,74 @@
   <div body>
     <div class="md-tabs">
       <tabset>
+        <!-- Actualmente trabajando en este componente -->
         <tab heading="Inconsistencias CPs" id="tab1">
-          <app-monitoring-cps></app-monitoring-cps>
+          <app-monitoring-cps
+            (dataSiabParamsFilter)="
+              fullDataTableSiabOrSirsae($event)
+            "></app-monitoring-cps>
         </tab>
+        <!--  -->
         <tab heading="Afectaciones SPs">
-          <app-monitoring-sps></app-monitoring-sps>
+          <app-monitoring-sps
+            (fullExpensesEmit)="fullExpenses($event)"></app-monitoring-sps>
         </tab>
+        <!--  -->
       </tabset>
+    </div>
+    <div class="mt-3">
+      <div class="d-flex">
+        <div class="ml-auto mb-3">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <!--  -->
+        </div>
+      </div>
+      <div>
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="dataSiab"></ng2-smart-table>
+        <!--  -->
+        <app-pagination
+          [params]="paramsSiab"
+          [totalItems]="totalItemsSiab"></app-pagination>
+      </div>
+    </div>
+    <div class="mt-3">
+      <div class="d-flex">
+        <div class="ml-auto mb-3">
+          <app-columns-select [(settings)]="settingsOne"></app-columns-select>
+          <!--  -->
+        </div>
+      </div>
+      <div>
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settingsOne"
+          [source]="dataSirsae"></ng2-smart-table>
+        <!--  -->
+        <app-pagination
+          [params]="paramsSirsae"
+          [totalItems]="totalItemsSirsae"></app-pagination>
+      </div>
+    </div>
+    <div class="mt-3">
+      <div class="d-flex">
+        <div class="ml-auto mb-3">
+          <app-columns-select [(settings)]="settingsTwo"></app-columns-select>
+          <!--  -->
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settingsTwo"
+          [source]="dataExpenses"></ng2-smart-table>
+        <!--  -->
+        <app-pagination
+          [params]="paramsExpenses"
+          [totalItems]="totalItemsExpenses"></app-pagination>
+      </div>
     </div>
   </div>
 </app-card>

@@ -87,15 +87,15 @@ export const GOODS_COLUMNS = {
 };
 
 export const DICTATION_COLUMNS = {
-  clave_oficio_armada: {
-    title: 'DICTAMINACIONES',
+  armed_office_key: {
+    title: 'Dictaminaciones',
     sort: false,
   },
 };
 
 export const ACTA_RECEPTION_COLUMNS = {
-  cve_acta: {
-    title: 'ACTAS DE RECEPCIÓN',
+  actaCve: {
+    title: 'Actas de Recepción',
     sort: false,
   },
 };

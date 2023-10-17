@@ -16,4 +16,11 @@ export enum PrepareEventEndpoints {
   FindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
   ResumenEvento = 'application/eventResume',
   ShowNotification = 'application/pup-show-notification',
+  GetProcessPhaseAnt = 'application/get-process-phase-ant',
+  UpdatePhase = 'comer-event/update-phase',
+  GetProcessPhase3Ant = 'application/get-process-phase3-ant',
+  GetValidLiquidation = 'application/get-valid-liquidation',
+  UpdateBySubquery = 'comer-event/update-by-subquery',
+  EnvFormalize = 'util-comer-v1/envformalize',
+  ApplicationValidationLiq = 'application/valid-liq-batch',
 }

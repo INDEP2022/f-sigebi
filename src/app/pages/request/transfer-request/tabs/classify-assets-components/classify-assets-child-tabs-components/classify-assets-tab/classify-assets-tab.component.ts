@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -10,7 +11,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
+import { catchError, of, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
@@ -24,6 +25,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { GoodDataAsetService } from 'src/app/core/services/ms-good/good-data-aset.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -32,6 +34,7 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { ChangeOfGoodCharacteristicService } from 'src/app/pages/administrative-processes/change-of-good-classification/services/change-of-good-classification.service';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
 
@@ -81,6 +84,9 @@ export class ClassifyAssetsTabComponent
   childSaveAction: boolean = false;
   canClean: boolean = false;
   typeTransfer: string = '';
+  domicileSelected: any = null;
+
+  service = inject(ChangeOfGoodCharacteristicService);
 
   constructor(
     private fb: FormBuilder,
@@ -94,7 +100,8 @@ export class ClassifyAssetsTabComponent
     private goodFinderService: GoodFinderService,
     private goodDataAsetService: GoodDataAsetService,
     private authService: AuthService,
-    private historyGoodService: HistoryGoodService
+    private historyGoodService: HistoryGoodService,
+    private goodsInvService: GoodsInvService
   ) {
     super();
   }
@@ -127,7 +134,6 @@ export class ClassifyAssetsTabComponent
     if (this.process === 'classify-assets' && this.typeTransfer != 'MANUAL') {
       this.isClassifyAsset = true;
     }
-
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
@@ -428,7 +434,126 @@ export class ClassifyAssetsTabComponent
       duplicatedGood: [null],
       admissionDate: [null],
       federalEntity: [null],
+      val1: [null],
+      val2: [null],
+      val3: [null],
+      val4: [null],
+      val5: [null],
+      val6: [null],
+      val7: [null],
+      val8: [null],
+      val9: [null],
+      val10: [null],
+      val11: [null],
+      val12: [null],
+      val13: [null],
+      val14: [null],
+      val15: [null],
+      val16: [null],
+      val17: [null],
+      val18: [null],
+      val19: [null],
+      val20: [null],
+      val21: [null],
+      val22: [null],
+      val23: [null],
+      val24: [null],
       val25: [null],
+      val26: [null],
+      val27: [null],
+      val28: [null],
+      val29: [null],
+      val30: [null],
+      val31: [null],
+      val32: [null],
+      val33: [null],
+      val34: [null],
+      val35: [null],
+      val36: [null],
+      val37: [null],
+      val38: [null],
+      val39: [null],
+      val40: [null],
+      val41: [null],
+      val42: [null],
+      val43: [null],
+      val44: [null],
+      val45: [null],
+      val46: [null],
+      val47: [null],
+      val48: [null],
+      val49: [null],
+      val50: [null],
+      val51: [null],
+      val52: [null],
+      val53: [null],
+      val54: [null],
+      val55: [null],
+      val56: [null],
+      val57: [null],
+      val58: [null],
+      val59: [null],
+      val60: [null],
+      val61: [null],
+      val62: [null],
+      val63: [null],
+      val64: [null],
+      val65: [null],
+      val66: [null],
+      val67: [null],
+      val68: [null],
+      val69: [null],
+      val70: [null],
+      val71: [null],
+      val72: [null],
+      val73: [null],
+      val74: [null],
+      val75: [null],
+      val76: [null],
+      val77: [null],
+      val78: [null],
+      val79: [null],
+      val80: [null],
+      val81: [null],
+      val82: [null],
+      val83: [null],
+      val84: [null],
+      val85: [null],
+      val86: [null],
+      val87: [null],
+      val88: [null],
+      val89: [null],
+      val90: [null],
+      val91: [null],
+      val92: [null],
+      val93: [null],
+      val94: [null],
+      val95: [null],
+      val96: [null],
+      val97: [null],
+      val98: [null],
+      val99: [null],
+      val100: [null],
+      val101: [null],
+      val102: [null],
+      val103: [null],
+      val104: [null],
+      val105: [null],
+      val106: [null],
+      val107: [null],
+      val108: [null],
+      val109: [null],
+      val110: [null],
+      val111: [null],
+      val112: [null],
+      val113: [null],
+      val114: [null],
+      val115: [null],
+      val116: [null],
+      val117: [null],
+      val118: [null],
+      val119: [null],
+      val120: [null],
     });
 
     if (this.goodObject != null) {
@@ -700,7 +825,13 @@ export class ClassifyAssetsTabComponent
     params.limit = 100;
     this.fractionService
       .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        catchError((e: any) => {
+          if (e.status == 400) return of({ data: [], count: 0 });
+          throw e;
+        })
+      )
       .subscribe({
         next: (data: any) => {
           this.selectLevel1 = data.data; //= new DefaultSelect(data.data, data.count);
@@ -892,6 +1023,8 @@ export class ClassifyAssetsTabComponent
   }
 
   async saveRequest(): Promise<void> {
+    console.log(this.dataAtribute);
+
     const goods = this.classiGoodsForm.getRawValue();
     if (goods.addressId === null) {
       this.message(
@@ -910,6 +1043,35 @@ export class ClassifyAssetsTabComponent
       );
       return;
     }
+
+    /**
+     * descomentar en caso de usar la tabla
+     */
+    /* if (goods.goodId) {
+      let noCumply: boolean = false;
+      if (this.dataAtribute.length > 0) {
+        for (let index = 0; index < this.dataAtribute.length; index++) {
+          const element = this.dataAtribute[index];
+          if (element.required == true && element.value == null) {
+            this.onLoadToast(
+              'info',
+              `El tributo ${element.attribute.toLowerCase()} es requerido`
+            );
+            noCumply = true;
+            break;
+          }
+        }
+        if (noCumply == false) {
+          this.dataAtribute.map((item: any) => {
+            if (item.value != null) {
+              goods[item.column] = item.value;
+            }
+          });
+        } else {
+          return;
+        }
+      }
+    } */
 
     // if (!goods.idGoodProperty) {
     //   goods.idGoodProperty =
@@ -1006,24 +1168,44 @@ export class ClassifyAssetsTabComponent
     }
 
     let goodResult: any = null;
-
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
       goods.status = 'ROP';
 
+      //Agrega los vals en caso de ser inmueble
+      if (goods.goodTypeId == 1) {
+        goods.val1 =
+          this.domicileSelected.wayName != null
+            ? this.domicileSelected.wayName
+            : ' ';
+        goods.val2 =
+          this.domicileSelected.colonia != null
+            ? this.domicileSelected.colonia
+            : ' ';
+        goods.val3 = this.domicileSelected.regionalDelegationId.description;
+        goods.val4 = this.domicileSelected.stateOfRepublicName;
+      }
+
       goodResult = await this.createGood(goods);
-      //CREA HISTORICO DEL STATUS DEL BIEN
-      //const history = await this.createHistoricGood('ROP', goodResult.result.id);
+
       this.updateGoodFindRecord(goodResult.result);
       //manda a guardar los campos de los bienes, domicilio, inmueble
       this.childSaveAction = true;
+      //window.scrollBy(0, window.innerHeight);
     } else {
+      //const good = this.fillUpForm(goods);
+
       goodResult = await this.updateGood(goods);
       this.updateGoodFindRecord(goodResult.result);
       //manda a actualizar los campos de los bienes, domicilio, inmueble
       this.childSaveAction = true;
+
+      /* setTimeout(() => {
+        this.refreshTable(true);
+      }, 5000); */
     }
+
     if (this.process === 'classify-assets') {
       this.classifyChildSaveFraction.emit(goodResult.result);
     } else {
@@ -1046,6 +1228,7 @@ export class ClassifyAssetsTabComponent
               `El registro se guardó exitosamente`
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
+            this.classiGoodsForm.controls['goodId'].setValue(data.goodId);
 
             resolve({ saved: true, result: data });
           },
@@ -1418,61 +1601,6 @@ export class ClassifyAssetsTabComponent
       });
     });
   }
-  //obtenien la unidad de medida
-  /*getUnidMeasure(value: string) {
-    if (value) {
-      if (value.length === 8) {
-        const fractionCode = { fraction: value };
-        this.goodsQueryService
-          .getUnitLigie(fractionCode)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: (data: any) => {
-              //guarda el no_clasify_good numero clasificacion del bien
-              if (data.clasifGoodNumber !== null) {
-                this.classiGoodsForm.controls['goodClassNumber'].setValue(
-                  data.clasifGoodNumber
-                );
-              } else {
-                this.message(
-                  'warning',
-                  'clasificación de bien nula',
-                  'el bien seleccionado no tiene numero de clasificación de bien'
-                );
-              }
-              //guarda el tipo de unidad
-              this.goodsQueryService
-                .getLigieUnitDescription(data.ligieUnit)
-                .pipe(takeUntil(this.$unSubscribe))
-                .subscribe((data: any) => {
-                  this.classiGoodsForm.controls['ligieUnit'].setValue(
-                    data.description
-                  );
-
-                  if (
-                    this.classiGoodsForm.controls['unitMeasure'].value === null
-                  ) {
-                    const ligieUnit =
-                      this.classiGoodsForm.controls['ligieUnit'].value;
-                    this.classiGoodsForm.controls['unitMeasure'].setValue(
-                      ligieUnit
-                    );
-                  }
-                });
-            },
-            error: error => {
-              console.log('codigo de graccion', value);
-              console.log(error.error.message);
-              this.onLoadToast(
-                'error',
-                '',
-                'El bien no cuenta con su clasificacion del bien'
-              );
-            },
-          });
-      } 
-    }
-  }*/
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
@@ -1484,5 +1612,78 @@ export class ClassifyAssetsTabComponent
 
   getDetailInfoEvent(event: any) {
     this.updateClassifyAssetTableEvent.emit(event);
+  }
+
+  getDomicile(event: any) {
+    this.domicileSelected = event;
+    console.log(this.domicileSelected);
+    const stateOfRepId = this.domicileSelected.statusKey;
+    const municipalityId = this.domicileSelected.municipalityKey;
+    const localityKey = this.domicileSelected.localityKey;
+    this.getLocality(Number(municipalityId), stateOfRepId, localityKey);
+  }
+
+  getLocality(municipalityId: number, stateKey: number, localityKey: number) {
+    const params = new ListParams();
+    params['sortBy'] = 'township:ASC';
+    params['filter.municipalityKey'] = `$eq:${municipalityId}`;
+    params['filter.stateKey'] = `$eq:${stateKey}`;
+    params['filter.townshipKey'] = `$eq:${localityKey}`;
+    this.goodsInvService
+      .getAllTownshipByFilter(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          this.domicileSelected['colonia'] = resp.data[0].township;
+        },
+      });
+  }
+
+  get dataAtribute() {
+    return this.service.data;
+  }
+
+  fillUpForm(good: IGood) {
+    for (let i = 0; i < this.dataAtribute.length; i++) {
+      const element = this.dataAtribute[i];
+      if (good.goodTypeId == 2) {
+        //if (element.column == 'val3') good.brand = element.value; //se necesita que sea tipo numerico
+        //if (element.column == 'val10') good.subBrand = element.value; //se necesita que sea tipo numerico
+        if (element.column == 'val8') good.serie = element.value;
+        if (element.column == 'val4') good.model = element.value;
+        if (element.column == 'val9') good.origin = element.value;
+        if (element.column == 'val5') good.axesNumber = +element.value;
+        if (element.column == 'val25') good.fitCircular = element.value;
+        if (element.column == 'val6') good.engineNumber = +element.value;
+        if (element.column == 'val26') good.theftReport = element.value;
+      } else if (good.goodTypeId == 3) {
+        if (element.column == 'val3') good.operationalState = element.value;
+        if (element.column == 'val18') good.engineNumber = +element.value;
+        if (element.column == 'val17') good.enginesNumber = element.value;
+        if (element.column == 'val13') good.tuition = element.value;
+        if (element.column == 'val8') good.flag = element.value;
+        if (element.column == 'val4') good.openwork = element.value;
+        if (element.column == 'val5') good.length = element.value;
+        if (element.column == 'val20') good.sleeve = element.value;
+        if (element.column == 'val15') good.shipName = element.value;
+        if (element.column == 'val2') good.manufacturingYear = element.value;
+        if (element.column == 'val21') good.publicRegistry = element.value;
+        if (element.column == 'val7') good.capacity = element.value;
+      } else if (good.goodTypeId == 4) {
+        if (element.column == 'val1') good.manufacturingYear = element.value;
+        if (element.column == 'val7') good.model = element.value;
+        if (element.column == 'val3') good.operationalState = element.value;
+        if (element.column == 'val10') good.engineNumber = +element.value;
+        if (element.column == 'val8') good.enginesNumber = element.value;
+        if (element.column == 'val5') good.tuition = element.value;
+        if (element.column == 'val15') good.dgacRegistry = element.value;
+        if (element.column == 'val9') good.serie = element.value;
+        if (element.column == 'val16') good.airplaneType = element.value;
+        if (element.column == 'val4') good.origin = element.value;
+      } else if (good.goodTypeId == 5) {
+      }
+    }
+
+    return good;
   }
 }

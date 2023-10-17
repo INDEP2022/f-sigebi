@@ -99,7 +99,7 @@
           <label
             for=""
             style="font-size: 10px; font-weight: 600; color: #74788d"
-            >Oficio/Correo (pdf)</label
+            >Oficio/Correo (PDF)</label
           >
           <form-field
             label=""
@@ -226,7 +226,7 @@
           <label
             for=""
             style="font-size: 10px; font-weight: 600; color: #74788d"
-            >Carta Reclamación (pdf)</label
+            >Carta Reclamación (PDF)</label
           >
           <form-field
             [control]="claimsFollowUpDetailForm.get('docLetterRelcamationIn')">
@@ -235,13 +235,13 @@
               accept="application/pdf"
               formControlName="docLetterRelcamationIn"
               (change)="chargeFileLetterClaimIn($event)"
-              id="botonFileReal"
+              id="botonFileReal1"
               style="display: none" />
             <input
               type="button"
               class="file"
               value="Seleccionar archivo"
-              onclick="document.getElementById('botonFileReal').click();" />
+              onclick="document.getElementById('botonFileReal1').click();" />
             <span id="filePlaceholder1" class="ellipsis">
               <span>Sin archivo seleccionado</span>
             </span>
@@ -278,7 +278,7 @@
           <label
             for=""
             style="font-size: 10px; font-weight: 600; color: #74788d"
-            >Oficio de Conclusión/Minuta de Conclusión (pdf)</label
+            >Oficio de Conclusión/Minuta de Conclusión (PDF)</label
           >
           <form-field
             [control]="claimsFollowUpDetailForm.get('docOfficeMinConcluIn')">
@@ -287,13 +287,13 @@
               accept="application/pdf"
               formControlName="docOfficeMinConcluIn"
               (change)="chargeFileDocOfficeMinConcluIn($event)"
-              id="botonFileReal"
+              id="botonFileReal2"
               style="display: none" />
             <input
               type="button"
               class="file"
               value="Seleccionar archivo"
-              onclick="document.getElementById('botonFileReal').click();" />
+              onclick="document.getElementById('botonFileReal2').click();" />
             <span id="filePlaceholder2" class="ellipsis">
               <span>Sin archivo seleccionado</span>
             </span>

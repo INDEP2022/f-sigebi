@@ -141,37 +141,41 @@
                 <button
                   class="btn btn-secondary btn-sm active"
                   (click)="authorize()"
-                  [ngClass]="{ disabled: !PB_CONFIRMAR }">
+                  [disabled]="!flagConf">
                   Autorizar
                 </button>
               </div>
               <div class="col-12 br-card">
                 <div
-                  class="d-flex flex-wrap justify-content-between buttons align-items-center p-3">
-                  <div class="col-auto">
+                  class="col-12 d-flex flex-wrap justify-content-between buttons p-3">
+                  <div class="col-md-3">
                     <button
                       class="btn btn-secondary btn-sm active mb-2"
+                      [disabled]="!flagFilter"
                       (click)="callFilterDonation()">
                       Definir Filtro
                     </button>
                   </div>
-                  <div class="col-auto">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-3">
                     <confirm-button
                       [btnSmall]="true"
                       loadingText="Bienes"
-                      [disabled]="false"
+                      [disabled]="!flagGoods"
                       [loading]="loadingGood"
                       text="Bienes"
-                      (confirm)="listGoods()">
+                      (confirm)="getallCondition()">
                     </confirm-button>
                   </div>
-                  <div class="col-auto">
+                  <div class="col-md-3">
                     <button
                       class="btn btn-secondary btn-sm active mb-2"
+                      [disabled]="!flagTracker"
                       (click)="callRastreador()">
                       Por Rastreador
                     </button>
                   </div>
+                  <div class="col-md-1"></div>
                 </div>
               </div>
             </div>
@@ -201,6 +205,7 @@
             <ng2-smart-table
               id="selectedGoodsTable"
               [settings]="settings"
+              [attr.class]="'table-bordered table-responsive'"
               [source]="data"
               (userRowSelect)="selectRows($event.selected)">
             </ng2-smart-table>
@@ -214,13 +219,9 @@
         <div class="col-12 col-md-6">
           <form class="form-material" [formGroup]="formTable">
             <div class="row mt-5">
-              <div class="col-6">
+              <div class="col-2">
                 <div class="mb-3 pl-4 pr-4">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="totalGoods"
-                    readonly />
+                  {{ totalItems2 }}
                 </div>
               </div>
               <div class="col-6">
@@ -229,19 +230,22 @@
             </div>
           </form>
         </div>
-        <div class="col-12 col-md-6">
-          <div class="row pt-4">
-            <div class="col-12 col-md-6 pl-4 pr-4 text-center">
-              <button
-                class="btn btn-secondary btn-sm active"
-                (click)="generateRequest()"
-                [disabled]="!flag">
-                Generar/Modifica Solicitud
-              </button>
-            </div>
+
+        <div class="col-12 col-md-6 pl-4 pr-4">
+          <div class="col-md-5">
             <button
               class="btn btn-secondary btn-sm active"
-              [ngClass]="{ disabled: !PB_REGISTRAR }">
+              (click)="generateRequest()"
+              [disabled]="!flagGenera">
+              Generar/Modifica Solicitud
+            </button>
+          </div>
+          <div class="col-md-2"></div>
+          <div class="col-md-5">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="register()"
+              [disabled]="!flagTrigger">
               Registrar
             </button>
           </div>

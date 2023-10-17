@@ -1,0 +1,86 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">ELEGIR LOS VALORES CORRESPONDIENTES</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('guardador')">
+            <ngx-select
+              (fetchItems)="getGuardador($event)"
+              [data]="guardadores"
+              [form]="form"
+              value="id"
+              bindLabel="description"
+              label="Guardavalor"
+              [control]="'guardador'"
+              (change)="onGuardadorChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('bateria')">
+            <ngx-select
+              (fetchItems)="getBaterias($event)"
+              [data]="baterias"
+              [form]="form"
+              value="idBattery"
+              bindLabel="description"
+              label="Bateria"
+              [control]="'bateria'"
+              (change)="onBateriaChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('empanio')">
+            <ngx-select
+              (fetchItems)="getEmpanios($event)"
+              [data]="empanios"
+              [form]="form"
+              value="id"
+              bindLabel="description"
+              label="Entrepaño"
+              [control]="'empanio'"
+              (change)="onEmpanioChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('anaquel')">
+            <ngx-select
+              (fetchItems)="getAnaqueles($event)"
+              [data]="anaqueles"
+              [form]="form"
+              value="areaKey"
+              bindLabel="description"
+              label="Anaquel"
+              [control]="'anaquel'"
+              (change)="onAnaquelChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,179 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">PRÉSTAMO DE DOCUMENTOS</h5>
+  </div>
+  <div body>
+    <div class="row mt-4 d-flex justify-content-end">
+      <div class="col-md-2">
+        <button
+          class="btn btn-danger btn-sm active mr-3"
+          *ngIf="neworsave == 'Guardar'"
+          (click)="cancelSave()">
+          Cancelar
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button
+          type="button"
+          tooltip="Nuevo"
+          containerClass="tooltip-style"
+          class="btn btn-info btn-sm active ml-2 mr-2"
+          (click)="newOrden()">
+          {{ neworsave }} <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="openSelect('')"
+          [disabled]="neworsave == 'Guardar'">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row mt-4 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <!-- <form-field [control]="form.get('loanFor')"> -->
+            <ngx-select
+              [form]="form"
+              [data]="user1"
+              value="user"
+              bindLabel="name"
+              label="Préstamos para"
+              (fetchItems)="getAllSegUser1($event)"
+              control="loanFor">
+            </ngx-select>
+            <!-- </form-field> -->
+          </div>
+          <div class="col-md-4">
+            <!-- <form-field [control]="form.get('loanTo')"> -->
+            <ngx-select
+              [form]="form"
+              [data]="user2"
+              value="user"
+              bindLabel="name"
+              label="Recibe"
+              (fetchItems)="getAllSegUser2($event)"
+              control="loanTo">
+            </ngx-select>
+            <!-- </form-field> -->
+          </div>
+          <div class="col-md-4">
+            <!-- <form-field [control]="form.get('area')" label="Area">
+              <input type="text" class="form-control" formControlName="area" />
+            </form-field> -->
+            <!-- <form-field [control]="form.get('area')"> -->
+            <ngx-select
+              [form]="form"
+              [data]="areaSele"
+              value="dsarea"
+              bindLabel="description"
+              label="Área"
+              (fetchItems)="getAllAreaDepataments($event)"
+              control="area">
+            </ngx-select>
+            <!-- </form-field> -->
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <!-- <form-field [control]="form.get('AssignedTo')" label="Adscrito A">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="AssignedTo" />
+            </form-field> -->
+            <!-- <form-field [control]="form.get('AssignedTo')"> -->
+            <ngx-select
+              [form]="form"
+              [data]="departament"
+              value="id"
+              bindLabel="dsarea"
+              label="Adscrito A"
+              (fetchItems)="getAllCatDepataments($event)"
+              control="AssignedTo">
+            </ngx-select>
+            <!-- </form-field> -->
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('NoLoans')" label="No. Préstamo">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="NoLoans"
+                readOnly />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('loanDate')" label="Fecha Préstamo">
+              <input
+                type="date"
+                class="form-control"
+                formControlName="loanDate"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <form-field
+              [control]="form.get('observations')"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="observations"
+                maxlength="600"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="d-flex justify-content-end">
+          <div class="m-3">
+            <button
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2"
+              (click)="openNew()"
+              [disabled]="idloan == null">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="dataLocal"
+              (edit)="formData($event.data)">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+        <div class="form-group">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="validImpresion()"
+            [disabled]="idloan == null">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

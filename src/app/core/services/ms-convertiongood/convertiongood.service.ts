@@ -63,6 +63,9 @@ export class ConvertiongoodService extends HttpService {
       assetConversions
     );
   }
+  putAssetConversions(assetConversions: any) {
+    return this.put(ConvertiongoodEndpoints.AssetConversions, assetConversions);
+  }
   getRegSender(params?: ListParams) {
     const route = `${ConvertiongoodEndpoints.RtdictaAarusr}`;
     return this.get(route, params);

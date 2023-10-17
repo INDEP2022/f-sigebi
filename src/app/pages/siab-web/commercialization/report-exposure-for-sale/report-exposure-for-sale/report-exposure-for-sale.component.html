@@ -37,7 +37,7 @@
           <form-field [control]="form2.get('filterText')">
             <input
               type="file"
-              accept="txt"
+              accept=".txt"
               formControlName="filterText"
               (change)="chargeFile($event)" />
           </form-field>
@@ -46,49 +46,44 @@
           <div class="justify-content-center">
             <button
               type="button"
+              (click)="reporGood()"
               class="btn btn-primary btn-sm active"
-              [disabled]="validTxt"
-              (click)="show = !show">
-              Buscar bienes
+              [disabled]="validTxt">
+              Buscar Bienes <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
         </div>
       </div>
     </form>
 
-    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="row" *ngIf="goodSearch">
+    <div class="row" *ngIf="goodSearch">
+      <form class="form-material" [formGroup]="form3">
         <div class="ch-content">
           <h5 class="title">Filtros de B&uacute;squeda</h5>
         </div>
 
-        <div class="row pt-3">
-          <div class="col-md-3">
-            <form-field [control]="form.get('typeGood')">
+        <div class="row pt-5">
+          <div class="col-md-4">
+            <form-field [control]="form3.get('typeGood')">
               <ngx-select
-                [form]="form"
+                [form]="form3"
                 control="typeGood"
                 (fetchItems)="getTypeGood($event)"
                 label="Tipo Bien"
                 [data]="typeGood"
-                bindLabel="nameGoodType"
+                bindLabel="numDesc"
                 [searchOnInit]="true"
-                value="id"
+                value="typeNumber"
                 (change)="changeTypeGood($event)">
               </ngx-select>
             </form-field>
-            <!--<form-field [control]="form.get('typeGood')" label="Tipo Bien">
-              <ng-select
-                formControlName="typeGood"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false">
-                <ng-option value="M">Bienes Muebles</ng-option>
-                <ng-option value="I">Bienes Inmuebles</ng-option>
-              </ng-select>
-            </form-field>-->
           </div>
-          <div class="col-md-3">
+        </div>
+      </form>
+
+      <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row pt-4">
+          <div class="col-md-4">
             <form-field [control]="form.get('subtype')">
               <ngx-select
                 [form]="form"
@@ -96,19 +91,13 @@
                 (fetchItems)="getSubTypeGood($event)"
                 label="Sub Tipo"
                 [data]="subType"
-                bindLabel="nameSubtypeGood"
-                value="id"
+                bindLabel="numSubDesc"
+                value="subTypeNumber"
                 (change)="changeSubTypeGood($event)">
               </ngx-select>
             </form-field>
-            <!--<form-field [control]="form.get('subtype')" label="Sub Tipo">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="subtype" />
-            </form-field>-->
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <form-field [control]="form.get('delegation')">
               <ngx-select
                 [form]="form"
@@ -116,22 +105,14 @@
                 (fetchItems)="getDelegation($event)"
                 label="Delegaci&oacute;n Regional"
                 [data]="delegation"
-                bindLabel="description"
+                bindLabel="idDescription"
                 [searchOnInit]="true"
                 value="id"
                 (change)="changeDelegation($event)">
               </ngx-select>
             </form-field>
-            <!--<form-field
-              [control]="form.get('delegation')"
-              label="Delegaci&oacute;n Regional">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="delegation" />
-            </form-field>-->
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <form-field [control]="form.get('status')">
               <ngx-select
                 [form]="form"
@@ -139,18 +120,12 @@
                 (fetchItems)="getStatusGood($event)"
                 label="Estatus"
                 [data]="state"
-                bindLabel="description"
+                bindLabel="statusDescription"
                 [searchOnInit]="true"
                 value="status"
                 (change)="changeStatusGood($event)">
               </ngx-select>
             </form-field>
-            <!--<form-field [control]="form.get('status')" label="Estatus">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="status" />
-            </form-field>-->
           </div>
         </div>
 
@@ -160,38 +135,36 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active mr-3"
-                [disabled]="!form.valid"
+                [disabled]="!form3.valid"
                 (click)="reportNoAttempt()">
                 Reporte Ning&uacute;n Intento
               </button>
-
               <button
                 type="button"
                 class="btn btn-primary btn-sm active mr-3"
                 (click)="reporTwoMonths()"
-                [disabled]="!form.valid">
+                [disabled]="!form3.valid">
                 Reporte 2 Meses
               </button>
-
               <button
                 class="btn btn-danger btn-sm active mr-3"
-                [disabled]="!form.valid">
+                [disabled]="!form3.valid">
                 Limpiar <i class="fas fa-eraser"></i>
               </button>
-
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
                 [disabled]="!form.valid"
                 (click)="consult()">
-                Consultar
+                Consultar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
           </div>
         </div>
-      </div>
-    </form>
-    <div *ngIf="show" class="pt-5">
+      </form>
+    </div>
+
+    <div *ngIf="showGood" class="pt-5">
       <div class="row">
         <div class="ch-content">
           <h5 class="title">
@@ -201,16 +174,36 @@
         <div class="col-md-8 mb-3"></div>
         <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
           <app-columns-select
-            [(settings)]="settings"
+            [(settings)]="settings7"
             [leftList]="true"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-sm btn-success active mr-3"
+              [disabled]="!validate3"
+              (click)="onExportExcelGood()">
+              Exportar
+              <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
-      <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings7"
+              [source]="data7"
+              (userRowSelect)="rowsSelected($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params7"
+          [totalItems]="totalItems7"></app-pagination>
       </div>
-      <div class="row pt-5">
+      <!--<div class="row pt-5">
         <div class="col-md-3">
           <label>Total de bienes encontrados</label>
         </div>
@@ -227,7 +220,184 @@
             </form-field>
           </form>
         </div>
+      </div>-->
+    </div>
+
+    <div *ngIf="show" class="pt-5">
+      <div class="row">
+        <div class="ch-content">
+          <h5 class="title">
+            Bienes que no han sido expuestos a evento comercial
+          </h5>
+        </div>
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-sm btn-success active mr-3"
+              [disabled]="!validate"
+              (click)="onExportExcel()">
+              Exportar
+              <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
+        </div>
       </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data"
+              (userRowSelect)="rowsSelected($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+      <!--<div class="row pt-5">
+        <div class="col-md-3">
+          <label>Total de bienes encontrados</label>
+        </div>
+        <div class="col-md-2">
+          <form
+            class="form-material"
+            [formGroup]="form"
+            (ngSubmit)="onSubmit()">
+            <form-field [control]="form.get('totalAssets')">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="totalAssets" />
+            </form-field>
+          </form>
+        </div>
+      </div>-->
+    </div>
+
+    <div *ngIf="showMonth" class="pt-5">
+      <div class="row">
+        <div class="ch-content">
+          <h5 class="title">
+            Bienes que no han sido expuestos a evento comercial
+          </h5>
+        </div>
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings1"
+            [leftList]="true"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-sm btn-success active mr-3"
+              [disabled]="!validate1"
+              (click)="onExportExcelMonth()">
+              Exportar
+              <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings1"
+              [source]="data1"
+              (userRowSelect)="rowsSelected1($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params1"
+          [totalItems]="totalItems1"></app-pagination>
+      </div>
+      <!--<div class="row pt-5">
+        <div class="col-md-3">
+          <label>Total de bienes encontrados</label>
+        </div>
+        <div class="col-md-2">
+          <form
+            class="form-material"
+            [formGroup]="form"
+            (ngSubmit)="onSubmit()">
+            <form-field [control]="form.get('totalAssets')">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="totalAssets" />
+            </form-field>
+          </form>
+        </div>
+      </div>-->
+    </div>
+
+    <div *ngIf="showConsult" class="pt-5">
+      <div class="row">
+        <div class="ch-content">
+          <h5 class="title">
+            Bienes que no han sido expuestos a evento comercial
+          </h5>
+        </div>
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings5"
+            [leftList]="true"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-sm btn-success active mr-3"
+              [disabled]="!validate2"
+              (click)="onExportExcelConsult()">
+              Exportar
+              <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings5"
+              [source]="data5"
+              (userRowSelect)="rowsSelected1($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params5"
+          [totalItems]="totalItems5"></app-pagination>
+      </div>
+      <!--<div class="row pt-5">
+        <div class="col-md-3">
+          <label>Total de bienes encontrados</label>
+        </div>
+        <div class="col-md-2">
+          <form
+            class="form-material"
+            [formGroup]="form"
+            (ngSubmit)="onSubmit()">
+            <form-field [control]="form.get('totalAssets')">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="totalAssets" />
+            </form-field>
+          </form>
+        </div>
+      </div>-->
     </div>
   </div>
 </app-card>

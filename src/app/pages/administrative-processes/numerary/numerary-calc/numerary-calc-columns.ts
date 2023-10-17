@@ -50,28 +50,103 @@ export const GOODS_COLUMNS = {
   },
   allInterest: {
     title: 'Intereses',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   allNumerary: {
     title: 'Total',
-    type: 'number',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   commission: {
     title: 'Comisión Bancaria',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   allintPay: {
     title: 'Intereses a Pagar',
-    type: 'number',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   allPayNumber: {
     title: 'Total a Pagar',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
 };
 
@@ -93,17 +168,62 @@ export const TOTALS_COLUMNS = {
   },
   amount: {
     title: 'Importe',
-    type: 'number',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   interest: {
     title: 'Interés',
-    type: 'number',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
   total: {
     title: 'Total',
-    type: 'number',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
   },
 };

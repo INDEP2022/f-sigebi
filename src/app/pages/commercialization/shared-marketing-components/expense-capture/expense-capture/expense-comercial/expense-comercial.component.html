@@ -35,6 +35,15 @@
                 title="Gastos del Área Comercial"
                 (selectRow)="fillForm($event)"></app-select-modal-table-shared>
             </div>
+            <div class="col-md-8 col-6" style="text-align: right">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mt-2 active"
+                [disabled]="form.invalid"
+                (click)="save()">
+                Guardar
+              </button>
+            </div>
           </div>
           <div class="row mt-4 ml-0">
             <ng-custom-select-loading
@@ -62,7 +71,7 @@
           </div>
           <div class="row mt-4">
             <div class="col-6">
-              <form-field
+              <!-- <form-field
                 [control]="paymentRequestNumber"
                 label="Solicitud Pago">
                 <input
@@ -70,15 +79,27 @@
                   class="form-control"
                   formControlName="paymentRequestNumber"
                   maxlength="11" />
-              </form-field>
+              </form-field> -->
+              <ng-custom-select-loading
+                [form]="form"
+                [updateValues]="true"
+                formControlName="paymentRequestNumber"
+                label="Solicitud Pago"
+                path="payment/api/v1/comer-payment-ref/getAllV2"
+                value="paymentId"
+                bindLabel="paymentId"
+                paramSearch="filter.paymentId"
+                prefixSearch="$eq">
+              </ng-custom-select-loading>
             </div>
-            <div class="col-6">
+            <div class="col-6" style="margin-top: 25px">
               <form-field [control]="idOrdinginter" label="OI Intercambio">
                 <input
                   type="text"
                   class="form-control"
                   formControlName="idOrdinginter"
-                  maxlength="11" />
+                  maxlength="11"
+                  readonly />
               </form-field>
             </div>
           </div>
@@ -179,7 +200,8 @@
               secondParamSearch="filter.clkPv"
               secondPrefixSearch="$eq"
               [labelTemplate]="providerLabel"
-              [optionTemplate]="providerOption">
+              [optionTemplate]="providerOption"
+              (valueChange)="updateProvider($event)">
             </ng-custom-select-loading>
             <ng-template #providerLabel let-item="item">
               {{ item.clkPv }} - {{ item.pvName }}

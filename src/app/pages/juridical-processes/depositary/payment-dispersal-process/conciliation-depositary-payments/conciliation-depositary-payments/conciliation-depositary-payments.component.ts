@@ -107,7 +107,7 @@ export class ConciliationDepositaryPaymentsComponent
         this.btnSearchGood(Number(id));
       } else {
         this.loading = false;
-        this.alert('warning', 'No. de bien', ERROR_GOOD_PARAM);
+        this.alert('warning', 'No. Bien', ERROR_GOOD_PARAM);
       }
     } else {
       this.loading = false;
@@ -185,7 +185,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'No. de bien',
+        'No. Bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -269,7 +269,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'No. de bien',
+        'No. Bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -368,7 +368,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'No. de bien',
+        'No. Bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -479,13 +479,13 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alert(
               'warning',
-              'No. de bien',
+              'No. Bien',
               NOT_FOUND_GOOD_APPOINTMENT(err.error.message)
             );
           },
         });
     } else {
-      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. Bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -726,11 +726,39 @@ export class ConciliationDepositaryPaymentsComponent
       'Esta pantalla no esta disponible por el momento',
       'De igual manera el proceso continuará al cerrar este mensaje'
     ).then(() => {
-      this.getPrepOI();
-      // this.insertDispersionDB();
+      // this.getPrepOI();
+      this.execDeductions();
     });
     // this.getPrepOI();
     // FCONDEPOCONDISPAG
+  }
+
+  async execDeductions() {
+    let date = new DatePipe('en-US').transform(new Date(), 'yyyy-MM-dd');
+    console.log(new Date(), date);
+    let params: any = {
+      pOne: Number(this.depositaryAppointment.appointmentNum),
+      pTwo: this.depositaryAppointment.personNumber.id,
+      pDate: date,
+    };
+    console.log(params);
+    await this.svConciliationDepositaryPaymentsService
+      .execDeductions(params)
+      .subscribe({
+        next: res => {
+          console.log(res.data);
+          this.insertDispersionDB();
+        },
+        error: err => {
+          this.loading = false;
+          console.log(err);
+          this.alertInfo(
+            'warning',
+            'Dispersión de pagos',
+            'Error al procesar la dispersión de pagos'
+          );
+        },
+      });
   }
 
   async insertDispersionDB() {
@@ -747,7 +775,6 @@ export class ConciliationDepositaryPaymentsComponent
       .insertDispersionDB(params)
       .subscribe({
         next: res => {
-          this.loading = false;
           console.log(res.data);
           this.getPrepOI();
         },
@@ -774,7 +801,8 @@ export class ConciliationDepositaryPaymentsComponent
         next: res => {
           this.loading = false;
           console.log(res.data);
-          this.alert('success', 'Proceso completado correctamente', '');
+          this.ngOnInit();
+          this.alert('success', 'El Proceso se ha completado', '');
         },
         error: err => {
           this.loading = false;

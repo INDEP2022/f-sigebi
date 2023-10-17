@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IUserNameOtval } from '../../models/ms-users/user-access';
@@ -28,5 +29,20 @@ export class IndUserService extends HttpService {
     return this.get(
       `${UserEndpoints.SegAccessAreas}?filter.user=$eq:${params}`
     );
+  }
+
+  getAllUser(params?: ListParams | string): Observable<IListResponse<any>> {
+    const route = `${UserEndpoints.GetAllSegUser}`;
+    return this.get(route, params);
+  }
+
+  getUser(user: any) {
+    const route = `${UserEndpoints.GetAllSegUser}?filter.user=$eq:${user}`;
+    return this.get(route);
+  }
+
+  getUserByName(user: any) {
+    const route = `${UserEndpoints.GetAllSegUser}?filter.name=$ilike:${user}`;
+    return this.get(route);
   }
 }

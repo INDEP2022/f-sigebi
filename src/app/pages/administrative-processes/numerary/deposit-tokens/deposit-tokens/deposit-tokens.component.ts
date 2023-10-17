@@ -171,12 +171,7 @@ export class DepositTokensComponent
           filterFunction(cell?: any, search?: string): boolean {
             let column = cell;
             console.log(column, '==', search);
-            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
-            // ) {
             return true;
-            // } else {
-            //   return false;
-            // }
           },
         },
         calculationInterestsDate_: {
@@ -216,6 +211,11 @@ export class DepositTokensComponent
             instance.loadingConciliar.subscribe(() => {
               this.miSegundaFuncion(); // Nueva segunda función independiente
             });
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            let column = cell;
+            console.log(column, '==', search);
+            return true;
           },
         },
         goodnumber: {
@@ -284,11 +284,6 @@ export class DepositTokensComponent
       // },
       // hideSubHeader: false,
       columns: {
-        // TI_BANCO: {
-        //   title: 'No. Movimiento',
-        //   type: 'string',
-        //   sort: false,
-        // },
         TI_BANCO: {
           title: 'Banco',
           type: 'string',
@@ -315,35 +310,6 @@ export class DepositTokensComponent
             type: 'custom',
             component: CustomDateFilterComponent,
           },
-          // type: 'html',
-          // valuePrepareFunction: (text: string) => {
-          //   console.log('text', text);
-          //   if (typeof text === 'number') {
-          //     let date = new Date((Number(text) - 25569) * 86400 * 1000);
-          //     let fechaString = date.toString();
-
-          //     let fecha = new Date(fechaString);
-
-          //     let dia = fecha.getDate();
-          //     let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
-          //     let año = fecha.getFullYear();
-
-          //     // Asegurarse de que el día y el mes tengan dos dígitos
-          //     let diaString = dia < 10 ? '0' + dia : dia;
-          //     let mesString = mes < 10 ? '0' + mes : mes;
-
-          //     let fechaFormateada = `${diaString}/${mesString}/${año}`;
-
-          //     return `${fechaFormateada}`;
-          //   } else {
-          //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
-          //       }`;
-          //   }
-          // },
-          // filter: {
-          //   type: 'custom',
-          //   component: CustomDateFilterComponent,
-          // },
         },
         FOLIO_FICHA: {
           title: 'Folio',
@@ -366,35 +332,6 @@ export class DepositTokensComponent
             type: 'custom',
             component: CustomDateFilterComponent,
           },
-          // type: 'html',
-          // valuePrepareFunction: (text: string) => {
-          //   console.log('text', text);
-          //   if (typeof text === 'number') {
-          //     let date = new Date((Number(text) - 25569) * 86400 * 1000);
-          //     let fechaString = date.toString();
-
-          //     let fecha = new Date(fechaString);
-
-          //     let dia = fecha.getDate();
-          //     let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
-          //     let año = fecha.getFullYear();
-
-          //     // Asegurarse de que el día y el mes tengan dos dígitos
-          //     let diaString = dia < 10 ? '0' + dia : dia;
-          //     let mesString = mes < 10 ? '0' + mes : mes;
-
-          //     let fechaFormateada = `${diaString}/${mesString}/${año}`;
-
-          //     return `${fechaFormateada}`;
-          //   } else {
-          //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
-          //       }`;
-          //   }
-          // },
-          // filter: {
-          //   type: 'custom',
-          //   component: CustomDateFilterComponent,
-          // },
         },
         DI_MONEDA: {
           title: 'Moneda',
@@ -408,12 +345,20 @@ export class DepositTokensComponent
           title: 'Cantidad',
           type: 'string',
           sort: false,
-          // renderComponent: CustomdbclickdepositComponent,
-          // onComponentInitFunction: (instance: any) => {
-          //   instance.funcionEjecutada.subscribe(() => {
-          //     this.miFuncion();
-          //   });
-          // },
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              return numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            } else {
+              return amount;
+            }
+          },
         },
         di_expediente2: {
           title: 'Expediente',
@@ -487,7 +432,15 @@ export class DepositTokensComponent
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${filter.search}`;
+              if (filter.field == 'deposit') {
+                this.columnFilters[field] = `${filter.search.replace(
+                  /,/g,
+                  ''
+                )}`;
+              } else {
+                this.columnFilters[field] = `${filter.search}`;
+              }
               // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
 
               // console.log(
@@ -888,6 +841,7 @@ export class DepositTokensComponent
     this.excelFile = null;
     this.form.get('descriptionGood').setValue('');
     this.getAccount();
+    this.settingColumns();
     if (this.dataMovements) {
       if (this.dataMovements.bank) {
         this.cleanDataBank();
@@ -1018,19 +972,72 @@ export class DepositTokensComponent
           this.loading = false;
           if (err.error.message == 'No es el excel correcto') {
             this.alert(
-              'error',
+              'warning',
               'El archivo no cumple con las condiciones de inserción',
               ''
             );
           } else {
+            const text = this.valError(err.error.message)
+              ? this.transformarString(
+                  err.error.message,
+                  this.valTextError(err.error.message)
+                )
+              : 'Error al cargar el archivo';
             this.alert(
-              'error',
-              'Ha ocurrido un error al intentar cargar el archivo',
-              'Verifique el archivo e intente nuevamente'
+              this.valError(err.error.message) ? 'warning' : 'error',
+              text,
+              'Verifíquelo e intente nuevamente'
             );
           }
         },
       });
+  }
+
+  valError(string_: string) {
+    if (string_.includes('FECHA_DEPOSITO')) {
+      return true;
+    } else if (string_.includes('FECHA_TESOFE')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  valTextError(str: string) {
+    if (str.includes('FECHA_DEPOSITO') && str.includes('FECHA_TESOFE')) {
+      return 1;
+    } else if (str.includes('FECHA_DEPOSITO')) {
+      return 2;
+    } else if (str.includes('FECHA_TESOFE')) {
+      return 3;
+    } else {
+      return 0;
+    }
+  }
+
+  transformarString(string_: any, opt: number) {
+    // Obtener el número de fila
+    const fila = parseInt(string_.match(/\d+/)[0]);
+
+    // Restar 1 al valor de la fila
+    const filaRestada = fila - 1;
+
+    // Reemplazar el número de fila en el string original
+    const nuevoString = string_.replace(fila, filaRestada);
+    // console.log("🚀 ~ file: deposit-tokens.component.ts:1014 ~ transformarString ~ nuevoString:", nuevoString)
+    // Reemplazar "FECHA_DEPOSITO" por "'Fecha Depósito'"
+    let resultado = '';
+
+    if (opt == 1) {
+      resultado = `La Fecha TESOFE no puede ser menor a la Fecha Depósito (Fila ${filaRestada})`;
+    } else if (opt == 2) {
+      resultado = `La Fecha Depósito no puede ser mayor a la fecha actual (Fila ${filaRestada})`;
+      // resultado = nuevoString.replace('FECHA_DEPOSITO', 'Fecha Depósito');
+      // resultado = nuevoString.replace('FECHA_TESOFE', 'Fecha TESOFE');
+    } else if (opt == 3) {
+      resultado = `La Fecha TESOFE no puede ser mayor a la fecha actual (Fila ${filaRestada})`;
+    }
+
+    return resultado;
   }
 
   async exportar() {
@@ -1468,5 +1475,222 @@ export class DepositTokensComponent
 
     const formattedDate = moment(data).format('YYYY-MM-DD');
     return formattedDate;
+  }
+
+  settingColumns() {
+    this.settings.columns = {
+      bank: {
+        title: 'Banco',
+        type: 'string',
+        sort: false,
+      },
+      accountkey: {
+        title: 'Cuenta',
+        filter: {
+          type: 'custom',
+          component: CustomMultiSelectFilterComponent,
+          config: {
+            options: this.getUniqueValues('accountkey'),
+          },
+        },
+        valuePrepareFunction: (value: any) => {
+          console.log('value', value);
+          return value != null ? value : '';
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+          let column = cell;
+          console.log(column, '==', search);
+          return true;
+        },
+        sort: false,
+      },
+      motionDate_: {
+        title: 'Fecha Depósito',
+        // type: 'string',
+        sort: false,
+        // width: '13%',
+        // type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent_,
+          // component: CustomDateFilterComponent,
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+          let column = cell;
+          console.log(column, '==', search);
+          return true;
+        },
+      },
+      calculationInterestsDate_: {
+        title: 'Fecha TESOFE',
+        // type: 'string',
+        sort: false,
+        // width: '13%',
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          // console.log('text', text);
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
+      },
+      currency: {
+        title: 'Moneda',
+        type: 'string',
+        sort: false,
+        valuePrepareFunction: (_cell: any, row: any) => {
+          return row.currency == "'M'" ? 'M' : row.currency;
+        },
+      },
+      deposit: {
+        title: 'Cantidad',
+        type: 'custom',
+        sort: false,
+        renderComponent: CustomdbclickdepositComponent,
+        onComponentInitFunction: (instance: any) => {
+          instance.funcionEjecutada.subscribe(() => {
+            this.miFuncion();
+          });
+          instance.loadingConciliar.subscribe(() => {
+            this.miSegundaFuncion(); // Nueva segunda función independiente
+          });
+        },
+      },
+      goodnumber: {
+        title: 'No. Bien',
+        type: 'custom',
+        sort: false,
+        renderComponent: CustomdbclickComponent,
+        onComponentInitFunction: (instance: any) => {
+          instance.funcionEjecutada.subscribe(() => {
+            this.miFuncion();
+          });
+          instance.loadingConciliar.subscribe(() => {
+            this.miSegundaFuncion(); // Nueva segunda función independiente
+          });
+        },
+      },
+      proceedingsnumber: {
+        title: 'Expediente',
+        type: 'string',
+        sort: false,
+      },
+
+      invoicefile: {
+        title: 'Folio',
+        type: 'string',
+        sort: false,
+      },
+      category: {
+        title: 'Categoría',
+        type: 'string',
+        sort: false,
+      },
+      ispartialization: {
+        title: 'Parcial',
+        type: 'string',
+        sort: false,
+      },
+      motionnumber: {
+        title: 'No. Movimiento',
+        type: 'string',
+        sort: false,
+      },
+    };
+    this.settings2.columns = {
+      TI_BANCO: {
+        title: 'Banco',
+        type: 'string',
+        sort: false,
+      },
+      DI_CUENTA: {
+        title: 'Cuenta',
+        type: 'string',
+        sort: false,
+      },
+      FEC_MOVIMIENTO: {
+        title: 'Fecha Depósito',
+        // type: 'string',
+        sort: false,
+        // width: '13%',
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          console.log('text', text);
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
+      },
+      FOLIO_FICHA: {
+        title: 'Folio',
+        type: 'string',
+        sort: false,
+      },
+      FEC_CALCULO_INTERESES: {
+        title: 'Fecha TESOFE',
+        sort: false,
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          console.log('text', text);
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
+      },
+      DI_MONEDA: {
+        title: 'Moneda',
+        type: 'string',
+        sort: false,
+        valuePrepareFunction: (_cell: any, row: any) => {
+          return row.currency == "'M'" ? 'M' : row.currency;
+        },
+      },
+      DEPOSITO: {
+        title: 'Cantidad',
+        type: 'string',
+        sort: false,
+        valuePrepareFunction: (amount: string) => {
+          const numericAmount = parseFloat(amount);
+
+          if (!isNaN(numericAmount)) {
+            return numericAmount.toLocaleString('en-US', {
+              // style: 'currency',
+              // currency: 'USD',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+          } else {
+            return amount;
+          }
+        },
+      },
+      di_expediente2: {
+        title: 'Expediente',
+        type: 'string',
+        sort: false,
+      },
+      no_bien: {
+        title: 'No. Bien',
+        type: 'string',
+        sort: false,
+      },
+    };
   }
 }

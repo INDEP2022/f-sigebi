@@ -6,6 +6,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from '../../../../shared/shared.module';
 import { SharedComponentGssModule } from '../shared-component-gss/shared-component-gss.module';
+import { EditDeductiveComponent } from './edit-deductive/edit-deductive.component';
+import { EditSampleGoodComponent } from './edit-sample-good/edit-sample-good.component';
 import { SamplingAssetsFormComponent } from './sampling-assets-form/sampling-assets-form.component';
 import { SamplingAssetsRoutingModule } from './sampling-assets-routing.module';
 import { SelectInputComponent } from './select-input/select-input.component';
@@ -16,6 +18,8 @@ import { TurnModalComponent } from './turn-modal/turn-modal.component';
     SamplingAssetsFormComponent,
     SelectInputComponent,
     TurnModalComponent,
+    EditSampleGoodComponent,
+    EditDeductiveComponent,
   ],
   imports: [
     CommonModule,

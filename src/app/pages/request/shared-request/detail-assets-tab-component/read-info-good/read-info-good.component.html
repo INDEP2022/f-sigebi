@@ -524,8 +524,8 @@
                 [data]="selectMeasureUnitSae"
                 label=""
                 [searchable]="true"
-                bindLabel="measureTlUnit"
-                value="uomCode"
+                bindLabel="idUnitDestine"
+                value="nbCode"
                 [readonly]="false"
                 (change)="unidMediIndep($event)"></ngx-select>
             </div>
@@ -644,7 +644,7 @@
           <div class="col-md-6">
             <label>Fecha ingreso: </label>
             <span class="fs-4">
-              {{ goodData?.admissionDate | date : 'dd/MM/yyyy' }}
+              {{ goodData?.admissionDate | date: 'dd/MM/yyyy' }}
             </span>
           </div>
           <div class="col-md-6">

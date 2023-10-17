@@ -149,6 +149,34 @@
             </form-field>
           </div>
         </div>
+        <div class="row pt-4" *ngIf="process == 'sampling-assets'">
+          <div class="col-md-6">
+            <form-field [control]="newDocForm.get('stateKey')">
+              <ngx-select
+                [form]="newDocForm"
+                control="stateKey"
+                [data]="states"
+                [loading]="loading"
+                value="id"
+                bindLabel="descCondition"
+                label="Estado"
+                (fetchItems)="getStateSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="newDocForm.get('tranferId')">
+              <ngx-select
+                [form]="newDocForm"
+                control="tranferId"
+                [showTooltip]="true"
+                [data]="transferences"
+                value="id"
+                bindLabel="nameAndId"
+                label="Transferente"
+                (fetchItems)="getTransferentSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
         <div class="row pt-4">
           <div class="col-md-6">
             <p for="">
@@ -169,7 +197,7 @@
             </p>
           </div>
         </div>
-        <div class="row pt-4">
+        <div class="row pt-4" *ngIf="process != 'sampling-assets'">
           <div class="col-md-6">
             <p for="">
               Estado&#58; <span>{{ stateName }}</span>

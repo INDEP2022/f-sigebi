@@ -2,73 +2,95 @@
   <div class="row">
     <h5>Captura de datos para Anexo K</h5>
   </div>
+  <div class="row">
+    <div class="col-md-12 d-flex" *ngIf="typeComponent == 'generate-query'">
+      <div class="mr-auto p-2"></div>
+      <div class="p-2">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="save()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+    </div>
+  </div>
   <div>
-    <form [formGroup]="annexForm" class="form-material">
+    <form [formGroup]="sampleOrderForm" class="form-material">
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="annexForm.get('relevantFacts')"
-            label="Cargo Hechos Relevantes">
+            [control]="sampleOrderForm?.get('factsrelevant')"
+            label="Hechos Relevantes">
             <input
               type="text"
               class="form-control"
-              formControlName="relevantFacts" />
+              formControlName="factsrelevant"
+              [readOnly]="readonly" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="annexForm.get('noncomplianceDescription')"
+            [control]="sampleOrderForm?.get('downloadbreaches')"
             label="Descripci&oacute;n Incumplimiento">
             <input
               type="text"
               class="form-control"
-              formControlName="noncomplianceDescription" />
+              formControlName="downloadbreaches"
+              [readOnly]="readonly" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="annexForm.get('datenoncompliance')"
+            [control]="sampleOrderForm?.get('datebreaches')"
             label="Fecha Incumplimiento">
             <input
               type="text"
               class="form-control"
-              formControlName="datenoncompliance"
+              formControlName="datebreaches"
               placeholder=""
-              bsDatepicker />
+              bsDatepicker
+              [isDisabled]="readonly" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="annexForm.get('agreements')" label="Acuerdos">
+          <form-field
+            [control]="sampleOrderForm?.get('agreements')"
+            label="Acuerdos">
             <input
               type="text"
               class="form-control"
-              formControlName="agreements" />
+              formControlName="agreements"
+              [readOnly]="readonly" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="annexForm.get('dateRepositionServices')"
+            [control]="sampleOrderForm?.get('daterepService')"
             label="Fecha reposici&oacute;n servicios">
             <input
               type="text"
               class="form-control"
-              formControlName="dateRepositionServices"
+              formControlName="daterepService"
               placeholder=""
-              bsDatepicker />
+              bsDatepicker
+              [isDisabled]="readonly" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="annexForm.get('warehouseManagement')"
+            [control]="sampleOrderForm?.get('nameManagersoul')"
             label="Gerente almac&eacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="warehouseManagement" />
+              formControlName="nameManagersoul"
+              [readOnly]="readonly" />
           </form-field>
         </div>
       </div>

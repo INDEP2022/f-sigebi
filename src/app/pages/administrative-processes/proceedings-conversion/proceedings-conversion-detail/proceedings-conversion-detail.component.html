@@ -103,9 +103,7 @@
       </div>
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field
-            [control]="header.get('officeNumber')"
-            label="Número Oficio">
+          <form-field [control]="header.get('officeNumber')" label="No. Oficio">
             <input
               maxlength="32"
               type="text"
@@ -530,7 +528,10 @@
         </button>
       </div>
       <div class="m-3">
-        <button (click)="salvar()" class="btn btn-primary btn-sm active">
+        <button
+          [disabled]="!valForm"
+          (click)="salvar()"
+          class="btn btn-primary btn-sm active">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>

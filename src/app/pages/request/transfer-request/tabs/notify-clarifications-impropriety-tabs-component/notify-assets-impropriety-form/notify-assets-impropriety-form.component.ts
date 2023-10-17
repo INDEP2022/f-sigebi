@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
@@ -34,8 +35,8 @@ export class NotifyAssetsImproprietyFormComponent
 {
   title: string = 'Aclaración';
   clarificationForm: FormGroup = new FormGroup({});
-  clarification: any;
-
+  clarification: IClarification;
+  notification: any;
   //en el caso de que una aclaracion llege sin documentacion
   withDocumentation: boolean = false;
 
@@ -84,8 +85,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    console.log('Información de la solicitud', this.infoRequest);
-
+    this.getInfoDoc();
     //Actualiza Bien, de prueba
     //this.changeSimulateGood()
     this.modalService.onHide.subscribe(key => {});
@@ -95,6 +95,73 @@ export class NotifyAssetsImproprietyFormComponent
     this.initForm1();
     const applicationId = this.idRequest;
     const rejectNoticeId = this.dataClarifications2.rejectNotificationId;
+  }
+
+  getInfoDoc() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.applicationId'] = this.idRequest;
+      this.documentService
+        .getAllClarificationDocImpro(params.getValue())
+        .subscribe({
+          next: response => {
+            console.log('response', response);
+            resolve(response.data[0].id);
+            const clarificationImpro: IClarificationDocumentsImpro =
+              response.data[0];
+            if (clarificationImpro?.managedTo) {
+              this.clarificationForm
+                .get('addresseeName')
+                .setValue(clarificationImpro?.managedTo);
+            }
+
+            if (clarificationImpro?.positionAddressee) {
+              this.clarificationForm
+                .get('positionAddressee')
+                .setValue(clarificationImpro?.positionAddressee);
+            }
+
+            if (clarificationImpro?.sender) {
+              this.clarificationForm
+                .get('senderName')
+                .setValue(clarificationImpro?.sender);
+            }
+
+            if (clarificationImpro?.positionSender) {
+              this.clarificationForm
+                .get('senderCharge')
+                .setValue(clarificationImpro?.positionSender);
+            }
+
+            if (clarificationImpro?.consistentIn) {
+              this.clarificationForm
+                .get('consistentIn')
+                .setValue(clarificationImpro?.consistentIn);
+            }
+
+            if (clarificationImpro?.clarification) {
+              this.clarificationForm
+                .get('clarification')
+                .setValue(clarificationImpro?.clarification);
+            }
+
+            if (clarificationImpro?.areaUserCapture) {
+              this.clarificationForm
+                .get('userAreaCaptures')
+                .setValue(clarificationImpro?.areaUserCapture);
+            }
+
+            if (clarificationImpro?.mailNotification) {
+              this.clarificationForm
+                .get('webMail')
+                .setValue(clarificationImpro?.mailNotification);
+            }
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
+    });
   }
 
   initForm1(): void {
@@ -108,26 +175,25 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.clarificationForm = this.fb.group({
       addresseeName: [
-        //Nombre Destinatario - Titular de la solicitud
-        null,
+        this.infoRequest?.nameOfOwner || null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       positionAddressee: [
         //Cargo Destinatario - Titular de la solicitud
-        null,
+        this.infoRequest?.holderCharge || null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderName: [
         //Nombre Remitente - DELEGADO
-        this.infoRequest?.nameOfOwner || null,
+        null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderCharge: [
         //Cargo Remitente - DELEGADO
-        this.infoRequest?.holderCharge || null,
+        null,
         [Validators.pattern(STRING_PATTERN)],
       ],
 
@@ -151,6 +217,8 @@ export class NotifyAssetsImproprietyFormComponent
       webMail: [null, [Validators.pattern(EMAIL_PATTERN)]],
       unit: [null, [Validators.pattern(STRING_PATTERN)]],
       amount: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      keyClarificationPaper: [null],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -158,6 +226,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   async confirm() {
     const typeTransference = this.infoRequest.typeOfTransfer;
+
     let generaXML: boolean = false;
     if (
       typeTransference == 'SAT_SAE' &&
@@ -182,33 +251,18 @@ export class NotifyAssetsImproprietyFormComponent
       if (obtainTypeDocument) {
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
-            console.log('AclaracionAsegurados');
             this.aclaracionAsegurados(); //Aclaración PGR tipo 1 y 2
 
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
-            console.log('AclaracionTransferentesVoluntarias');
             this.countAclaraManual = this.countAclaraManual + 1;
-            this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
+            //this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
           }
         }
       }
-
-      /*if (
-        this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
-        (this.dataClarifications2.chatClarification.idClarificationType ==
-          '2' ||
-          this.dataClarifications2.chatClarification.idClarificationType ==
-            '1') &&
-        typeTransference == 'MANUAL'
-      ) {
-        console.log('Se ejecutará aclaracionTransferentesVoluntarias segundo')
-        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1 y 2
-
-      }*/
 
       if (
         this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
@@ -220,12 +274,29 @@ export class NotifyAssetsImproprietyFormComponent
       }
     }
 
-    if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.typeClarifications == 2 &&
+      this.notification.reason != 'INDIVIDUALIZACIÓN DE BIENES'
+    ) {
       this.oficioAclaracionTransferente();
     }
-    if (typeTransference == 'SAT_SAE' && this.typeClarifications == 1) {
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.typeClarifications == 1 &&
+      this.notification.reason != 'INDIVIDUALIZACIÓN DE BIENES'
+    ) {
       this.aclaracionComercioExterior();
     }
+
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.notification?.clarification?.clarification ==
+        'INDIVIDUALIZACIÓN DE BIENES'
+    ) {
+      this.aclaracionComercioExterior();
+    }
+
     //this.saveClarificationsAcept();
   }
 
@@ -373,12 +444,23 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        const createClarGoodDoc = this.createClarGoodDoc(data);
+        if (
+          this.notification?.clarification?.clarification ==
+          'INDIVIDUALIZACIÓN DE BIENES'
+        ) {
+          this.updateAnsweredAcla(
+            this.notification.rejectNotificationId,
+            this.notification.chatClarification.idClarification,
+            this.notification.goodId
+          );
+        } else {
+          const createClarGoodDoc = this.createClarGoodDoc(data);
 
-        if (createClarGoodDoc) {
-          this.openReport(data);
-          this.loading = false;
-          this.close();
+          if (createClarGoodDoc) {
+            this.openReport(data);
+            this.loading = false;
+            this.close();
+          }
         }
       },
       error: error => {
@@ -516,45 +598,54 @@ export class NotifyAssetsImproprietyFormComponent
     });
   }
 
-  aclaracionTransferentesVoluntarias() {
-    if (this.countAclaraManual === 1) {
-      //Recupera información del usuario logeando para luego registrarlo como firmante
-      let token = this.authService.decodeToken();
+  async aclaracionTransferentesVoluntarias() {
+    let token = this.authService.decodeToken();
+    const modelReport: IClarificationDocumentsImpro = {
+      clarification: this.clarificationForm.controls['clarification'].value,
+      sender: this.clarificationForm.controls['senderName'].value,
+      version: 1,
+      paragraphInitial:
+        this.clarificationForm.controls['paragraphInitial'].value,
+      applicationId: this.idRequest,
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      invoiceLearned: this.folioReporte,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value,
+      modificationDate: new Date(),
+      creationUser: token.name,
+      documentTypeId: '213',
+      modificationUser: token.name,
+      creationDate: new Date(),
+      assignmentInvoiceDate: new Date(),
+      mailNotification: this.clarificationForm.controls['webMail'].value,
+      areaUserCapture:
+        this.clarificationForm.controls['userAreaCaptures'].value,
+      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+    };
+    this.loading = true;
 
-      //Crear objeto para generar el reporte
-      const modelReport: IClarificationDocumentsImpro = {
-        clarification: this.clarificationForm.controls['clarification'].value,
-        sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
-        //foundation: ",",
-        //id: 1, //ID primaria
-        version: 1,
-        //transmitterId: ",",
-        paragraphInitial:
-          this.clarificationForm.controls['paragraphInitial'].value,
-        applicationId: this.idRequest,
-        positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
-        paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
-        consistentIn: this.clarificationForm.controls['consistentIn'].value,
-        managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
-        invoiceLearned: this.folioReporte,
-        //invoiceNumber: 1,
-        positionAddressee:
-          this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
-        modificationDate: new Date(),
-        creationUser: token.name,
-        documentTypeId: '213',
-        modificationUser: token.name,
-        //worthAppraisal: 1,
-        creationDate: new Date(),
-        //rejectNoticeId: 1,
-        assignmentInvoiceDate: new Date(),
-        mailNotification: this.clarificationForm.controls['webMail'].value,
-        areaUserCapture:
-          this.clarificationForm.controls['userAreaCaptures'].value,
-        rejectNoticeId: this.dataClarifications2.rejectNotificationId,
-      };
+    const checkExistDocImp: any = await this.checkDataExist();
 
-      this.loading = true;
+    if (checkExistDocImp?.id != 0) {
+      this.documentService
+        .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
+        .subscribe({
+          next: data => {
+            this.openReport(checkExistDocImp);
+            this.loading = false;
+            this.close();
+          },
+          error: error => {
+            this.loading = false;
+            this.onLoadToast('error', 'No se pudo guardar', '');
+          },
+        });
+    }
+
+    if (checkExistDocImp == 0) {
       this.documentService.createClarDocImp(modelReport).subscribe({
         next: data => {
           const createClarGoodDoc = this.createClarGoodDoc(data);
@@ -569,13 +660,10 @@ export class NotifyAssetsImproprietyFormComponent
           this.onLoadToast('error', 'No se pudo guardar', '');
         },
       });
-    } else {
-      console.log('Ya se generó un reporte aclaracionTransferentesVoluntarias');
     }
   }
 
   changeStatusAnswered(xml: string) {
-    console.log('xml recibido: ', xml);
     this.loading = true;
     this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
       this.dataClarifications2.rejectNotificationId;
@@ -586,6 +674,23 @@ export class NotifyAssetsImproprietyFormComponent
         this.updateChatClarification(this.dataChatClarifications[0], xml);
       },
       error: error => {},
+    });
+  }
+
+  checkDataExist() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.applicationId'] = this.idRequest;
+      this.documentService
+        .getAllClarificationDocImpro(params.getValue())
+        .subscribe({
+          next: response => {
+            resolve(response.data[0]);
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
     });
   }
 
@@ -709,7 +814,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
           }
         },
         error: error => {
-          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
+          this.onLoadToast('error', 'No se pudo actualizar', '');
         },
       });
   }
@@ -737,7 +842,8 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
             this.loading = false;
-            this.onLoadToast('success', 'Actualizado', '');
+
+            //his.onLoadToast('success', 'Actualizado', '');
             this.modalRef.content.callback(true, data.goodId);
             this.modalRef.hide();
           },
@@ -863,10 +969,14 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         noBien,
         callback: (next: boolean, xml?: string) => {
           if (next) {
-            const typeTransference = this.infoRequest.typeOfTransfer;
-
             this.changeStatusAnswered(xml);
-            this.changeSimulateGood;
+            if (
+              this.clarificationForm?.controls['amount'].value != null ||
+              this.clarificationForm?.controls['unit'].value != null ||
+              this.clarificationForm?.controls['description'].value != null
+            ) {
+              this.changeSimulateGood();
+            }
           } else {
           }
         },
@@ -879,7 +989,6 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
 
   //Modifica atributos del bien
   changeSimulateGood() {
-    console.log('Se cambian los atributos del bien');
     //Obtiene noBien
     const noGood = this.dataClarifications2.goodId;
     //Establecer Cantidad
@@ -891,8 +1000,6 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
     //Traer información del Bien
     this.goodService.getById(noGood).subscribe({
       next: resp => {
-        console.log('Información del Bien Seleccionado: ', resp);
-
         const obj = {
           id: noGood,
           goodId: noGood,
@@ -900,23 +1007,16 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
           quantity: this.clarificationForm?.controls['amount'].value,
           unitMeasure: this.clarificationForm?.controls['unit'].value,
           unit: this.clarificationForm?.controls['unit'].value,
+          description: this.clarificationForm?.controls['description'].value,
         };
-
-        console.log('Objeto a enviar por body', obj);
 
         //Actualiza el Bien
         this.goodService.update(obj).subscribe({
-          next: resp => {
-            console.log('Bien Actualizado: ', resp.data);
-          },
-          error: error => {
-            console.log('No se pudo actualizar: ', error);
-          },
+          next: resp => {},
+          error: error => {},
         });
       },
-      error: error => {
-        console.log('No se pudo actualizar: ', error);
-      },
+      error: error => {},
     });
   }
 
@@ -946,10 +1046,16 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
-      console.log('CLAVE ARMADA: ', this.folioReporte);
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
-      console.log('CLAVE ARMADA: ', this.folioReporte);
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
     }
   }
 

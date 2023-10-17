@@ -15,6 +15,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
+import { IUnitsMedConv } from 'src/app/core/models/administrative-processes/siab-sami-interaction/measurement-units';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
@@ -27,9 +28,11 @@ import { LabelGoodService } from 'src/app/core/services/catalogs/label-good.serv
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -74,6 +77,8 @@ export class ChangeOfGoodClassificationComponent
   service = inject(ChangeOfGoodCharacteristicService);
   initValue = false;
   showExpedient = false;
+  meds: IUnitsMedConv[];
+  medFilters: IUnitsMedConv[];
   // atributActSettings = { ...this.settings };
   // pageSizeOptions = [5, 10, 15, 20];
   // limit: FormControl = new FormControl(5);
@@ -106,6 +111,10 @@ export class ChangeOfGoodClassificationComponent
 
   get numberFile() {
     return this.form.get('numberFile');
+  }
+
+  get unit() {
+    return this.form.get('unit');
   }
 
   //Reactive Forms
@@ -144,12 +153,14 @@ export class ChangeOfGoodClassificationComponent
     private readonly classifyGoodServices: ClassifyGoodService,
     private readonly labeGoodServices: LabelGoodService,
     private goodFinderService: GoodFinderService,
+    private expedientService: ExpedientService,
     private readonly goodsQueryServices: GoodsQueryService,
     private readonly dynamicCatalogsService: DynamicCatalogsService,
     private readonly goodSssubtypeService: GoodSssubtypeService,
     private previousRouteService: PreviousRouteService,
     private statusScreenService: StatusXScreenService,
     private segAcessXAreasService: SegAcessXAreasService,
+    private strategyService: StrategyServiceService,
     private router: Router
   ) {
     super();
@@ -161,6 +172,19 @@ export class ChangeOfGoodClassificationComponent
       hideSubHeader: false,
       columns: { ...ATRIBUT_ACT_COLUMNS },
     };
+    let params = new FilterParams();
+    params.limit = 100;
+    this.strategyService
+      .getUnitsMedXConv2(params.getParams())
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response && response.data) {
+            this.meds = response.data;
+          }
+        },
+        error: err => {},
+      });
     // this.params.value.limit = 5;
     // this.params2.value.limit = 5;
     // this.atributActSettings.actions = false;
@@ -334,6 +358,7 @@ export class ChangeOfGoodClassificationComponent
       currentClasification: [null, [Validators.pattern(STRING_PATTERN)]],
       descriptionClasification: [null, [Validators.pattern(STRING_PATTERN)]],
       numberFile: [null, [Validators.pattern(STRING_PATTERN)]],
+      unit: [null],
     });
   }
 
@@ -417,11 +442,12 @@ export class ChangeOfGoodClassificationComponent
       }
     } else {
       this.loading = false;
-      this.alert('error', 'Error', 'Bien no encontrado');
+      this.alert('warning', 'Bien no encontrado', '');
       this.numberGood.setValue(null);
       this.descriptionGood.setValue(null);
       this.clasification.setValue(null);
       this.numberFile.setValue(null);
+      this.unit.setValue(null);
     }
   }
 
@@ -463,6 +489,13 @@ export class ChangeOfGoodClassificationComponent
     this.descriptionClasification.setValue(clasif.description);
     this.numberFile.setValue(good.fileNumber);
     this.fileNumberNew.setValue(good.fileNumber);
+    this.unit.setValue(good.unit);
+    debugger;
+    this.medFilters =
+      good.unit && this.meds
+        ? this.meds.filter(x => x.unit === good.unit)
+        : null;
+    console.log(this.medFilters);
     // this.onLoadToast(
     //   'success',
     //   'Éxitoso',
@@ -527,6 +560,13 @@ export class ChangeOfGoodClassificationComponent
       this.classificationOfGoods.value,
       SearchFilter.EQ
     );
+    if (this.medFilters && this.medFilters.length > 0) {
+      params.addFilter(
+        'unit',
+        this.medFilters.map(x => x.unit).toString(),
+        SearchFilter.IN
+      );
+    }
     params.addFilter3('sortBy', 'unit:ASC');
     this.classifyGoodServices
       .getUnitiXClasif(params.getParams())
@@ -639,6 +679,29 @@ export class ChangeOfGoodClassificationComponent
   }
 
   async addAtribut() {
+    if (this.formNew.invalid) {
+      this.alert('warning', 'Complete los campos requeridos', '');
+      return;
+    }
+    if (this.fileNumberNew.value) {
+      let filterParams = new FilterParams();
+      filterParams.addFilter('id', this.fileNumberNew.value);
+      let IDENT_EXP = await firstValueFrom(
+        this.expedientService.getAll(filterParams.getParams()).pipe(
+          catchError(x => of({ data: [] })),
+          map(x => (x.data.length > 0 ? x.data[0].identifier : null))
+        )
+      );
+      if (this.good.identifier !== IDENT_EXP) {
+        this.alert(
+          'warning',
+          'Cambio de clasificación del bien ' + this.good.goodId,
+          'El identificador del expediente no coincide con el identificador del bien, favor de verificar...'
+        );
+        return;
+      }
+    }
+
     const putGood: any = {
       id: Number(this.good.id),
       goodId: Number(this.good.goodId),

@@ -41,6 +41,10 @@ export class AccountMovementService extends HttpService {
     return this.post(AccountmvmntEndpoint.GetCtrlPago, body);
   }
 
+  getSeqComerPago(body: any) {
+    return this.post(AccountmvmntEndpoint.GetSeqComerPago, body);
+  }
+
   getAllFilterSelf(self?: AccountMovementService, params?: _Params) {
     return self.get<IListResponse<IAccountMovement>>(
       'account-movements',
@@ -56,6 +60,14 @@ export class AccountMovementService extends HttpService {
 
   getMetodoPago(params: ListParams) {
     return this.post(AccountmvmntEndpoint.MetodoDePago, params);
+  }
+
+  getSucursal(body: any) {
+    return this.post(AccountmvmntEndpoint.GetSucursalByCveBanco, body);
+  }
+
+  getExiste(body: any) {
+    return this.post(AccountmvmntEndpoint.GetCountMovimiento, body);
   }
 
   getDevolutionsBanks() {
@@ -239,6 +251,7 @@ export class AccountMovementService extends HttpService {
   getMaxDate(body: any) {
     return this.post(AccountmvmntEndpoint.MaxDate, body);
   }
+  getAllAccounts(params?: _Params) {
+    return this.get('bank-account', params);
+  }
 }
-
-//``

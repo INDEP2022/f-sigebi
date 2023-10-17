@@ -18,4 +18,7 @@ export enum LotEndpoints {
   querywinners = 'apps/query-winners-report',
   AppsConsultPayLots = 'apps/consult-pay-lots-pag',
   PupCambioMasv = 'apps/pup-cambio-masiv',
+  GetCursor = 'apps/get-cursor',
+  EatEstLot = 'eat-est-lot',
+  pupRemiEntLote = 'apps/pupRemiEntLote',
 }

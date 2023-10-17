@@ -6,7 +6,15 @@ import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.i
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IPupProcSeldisp, IPupValidateMandatoNfac } from './models-lots';
+import {
+  IPupProcDisp,
+  IPupProcEnvSirsae,
+  IPupProcReproc,
+  IPupProcSeldisp,
+  IPupProcSelReproceso,
+  IPupProcSelsirsae,
+  IPupValidateMandatoNfac,
+} from './models-lots';
 
 interface IValidateStatus {
   val: string | number;
@@ -21,8 +29,16 @@ export class LotService extends HttpService {
     this.microservice = LotEndpoints.BasePath;
   }
 
+  getAll(params: _Params) {
+    return this.get('eat-lots', params);
+  }
+
   getAllComerLotsFilter(params?: string) {
     return this.get('eat-lots', params);
+  }
+
+  getAllComerLotsFilter2(params?: ListParams) {
+    return this.get('eat-lots?filter.idClient=$null', params);
   }
 
   getAllComerLotsByFilter(params: HttpParams) {
@@ -139,6 +155,13 @@ export class LotService extends HttpService {
     return this.get('apps/get-comer-lots-clients-payref', params);
   }
 
+  getComerLotsClientsPayref2(params?: ListParams) {
+    return this.get(
+      'apps/get-comer-lots-clients-payref?&filter.clientId=$not:null',
+      params
+    );
+  }
+
   getLotById(id: string | number) {
     const route = `eat-lots/${id}`;
     return this.get(route);
@@ -179,6 +202,10 @@ export class LotService extends HttpService {
   }
 
   getLotComerPayRef(params?: string) {
+    return this.get('apps/get-lot-comer-pay-ref', params);
+  }
+
+  getLotComerPayRef2(params?: ListParams) {
     return this.get('apps/get-lot-comer-pay-ref', params);
   }
 
@@ -392,5 +419,40 @@ export class LotService extends HttpService {
     const formData = new FormData();
     formData.append('file', file, file.name);
     return this.post(LotEndpoints.PupCambioMasv, formData);
+  }
+
+  pupProcDisp(body: IPupProcDisp) {
+    return this.post('apps/pup-proc-disp', body);
+  }
+
+  comerLotsClientsPayrefSum(idEvent: string | number) {
+    return this.get(`apps/get-comer-lots-clients-payref-sum/${idEvent}`);
+  }
+
+  pupProcEnvSirsae(body: IPupProcEnvSirsae) {
+    return this.post(`apps/pup-proc-env-sirsae`, body);
+  }
+
+  pupProcReproc(body: IPupProcReproc) {
+    return this.post('apps/pup-proc-reproc', body);
+  }
+
+  pupProcSelsirsae(body: IPupProcSelsirsae) {
+    return this.post('apps/pup-proc-selsirsae', body);
+  }
+
+  pupProcSelReproceso(body: IPupProcSelReproceso) {
+    return this.post('apps/pup-proc-selreproceso', body);
+  }
+
+  GetCursor(body: any) {
+    return this.post(LotEndpoints.GetCursor, body);
+  }
+
+  getEatEstLot(params: _Params) {
+    return this.get<IListResponse>(LotEndpoints.EatEstLot, params);
+  }
+  pupEntLote(body: any) {
+    return this.post(LotEndpoints.pupRemiEntLote, body);
   }
 }

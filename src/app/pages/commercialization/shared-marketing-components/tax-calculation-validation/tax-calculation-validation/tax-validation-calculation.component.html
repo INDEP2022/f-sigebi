@@ -2,90 +2,106 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">VALIDACIÓN DE C&Aacute;LCULO I.V.A INMUEBLES</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings"></app-columns-select>
-    </div>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
-          <form-field label="Id" [control]="form.get('eventId')">
-            <input
-              class="form-control"
-              formControlName="eventId"
-              type="number" />
-          </form-field>
-        </div>
-        <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
-          <form-field label="Clave Proceso" [control]="form.get('processKey')">
-            <input
-              class="form-control"
-              formControlName="processKey"
-              type="text" />
-          </form-field>
-        </div>
-        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
-          <form-field label="Fecha Evento" [control]="form.get('eventDate')">
-            <input
-              class="form-control"
-              formControlName="eventDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
-          <form-field
-            label="Observaciones"
-            [control]="form.get('observations')">
-            <input
-              class="form-control"
-              formControlName="observations"
-              type="text" />
-          </form-field>
+        <div class="col-12 col-sm-12">
+          <div class="col-md-3">
+            <form-field label="Id Evento" [control]="form.get('eventId')">
+              <input
+                class="form-control"
+                formControlName="eventId"
+                type="number" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field label="Cve. Proceso" [control]="form.get('processKey')">
+              <input
+                class="form-control"
+                formControlName="processKey"
+                type="text" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field label="Fecha Evento" [control]="form.get('eventDate')">
+              <input
+                class="form-control"
+                formControlName="eventDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              label="Observaciones"
+              [control]="form.get('observations')">
+              <input
+                class="form-control"
+                formControlName="observations"
+                type="text" />
+            </form-field>
+          </div>
         </div>
       </div>
       <div class="row mb-3 mt-3">
-        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
-          <form-field
-            label="Fecha de Solicitud"
-            [control]="form.get('requestDate')">
-            <input
-              class="form-control"
-              formControlName="requestDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
-          <form-field label="Tipo" [control]="form.get('requestType')">
-            <input
-              class="form-control"
-              formControlName="requestType"
-              type="text" />
-          </form-field>
-        </div>
-        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
-          <form-field label="Estatus" [control]="form.get('status')">
-            <input class="form-control" formControlName="status" type="text" />
-          </form-field>
-        </div>
-        <div class="col-xs-12 col-12 col-md-2 mb-3 mt-3">
-          <form-field label="Referencia" [control]="form.get('reference')">
-            <input
-              class="form-control"
-              formControlName="reference"
-              type="text" />
-          </form-field>
+        <div class="col-12 col-sm-12">
+          <div class="col-md-3">
+            <form-field
+              label="Fecha de Solicitud"
+              [control]="form.get('requestDate')">
+              <input
+                class="form-control"
+                formControlName="requestDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field label="Tipo" [control]="form.get('requestType')">
+              <input
+                class="form-control"
+                formControlName="requestType"
+                type="text" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field label="Estatus" [control]="form.get('status')">
+              <input
+                class="form-control"
+                formControlName="status"
+                type="text" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field label="Referencia" [control]="form.get('reference')">
+              <input
+                class="form-control"
+                formControlName="reference"
+                type="text" />
+            </form-field>
+          </div>
         </div>
       </div>
     </form>
     <!--Actions-->
-    <div class="row mb-3 mt-3 justify-content-end">
+    <div class="row mb-3 mt-3 justify-content-center">
       <div
         class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
-        <button type="button" class="btn btn-primary btn-sm active w-100">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active w-100"
+          (click)="getallCondition()"
+          [disabled]="this.form.invalid">
           Consultar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div
+        class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="cleanForm()">
+          Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
         </button>
       </div>
     </div>
@@ -95,54 +111,56 @@
         <h5 class="title">Aval&uacute;os</h5>
       </div>
     </div>
-    <div class="d-flex justify-content-end mr-1">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings">
-      </app-columns-select>
-    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="data">
+            [source]="data"
+            (userRowSelect)="selectRows($event.selected)">
           </ng2-smart-table>
         </div>
       </div>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
-    <!--Actions-->
-    <div class="row mb-3 mt-3 justify-content-end">
+    <div class="row">
       <!--Actions-->
-      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+      <div class="col-sm-12 col-md-12 col-xs-12 text-center">
         <button
-          class="btn btn-secondary btn-sm active w-100"
-          (click)="openModalRateChange()">
+          class="btn btn-secondary btn-sm active m-3"
+          (click)="openModalRate()"
+          [disabled]="!flagCambio">
           Cambio Tasa
         </button>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+
         <button
-          class="btn btn-secondary btn-sm active w-100"
-          (click)="openModalInconsistencies()">
-          Incosistencias en la val. del cal. I.V.A
+          class="btn btn-secondary btn-sm active m-3"
+          (click)="openModalInconsistencies()"
+          data-toggle="tooltip"
+          [title]="'Inconsistencias en la val. del cal. I.V.A'"
+          [disabled]="!flagCambio">
+          Inconsistencias
         </button>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
-        <button class="btn btn-secondary btn-sm active w-100">
-          Descargar Formato
+
+        <button
+          class="btn btn-sm btn-success active m-3"
+          [disabled]="flagDetail"
+          (click)="generateExcel()">
+          Exportar Excel
+          <i class="bx bx-download float-icon"></i>
         </button>
       </div>
     </div>
-    <!--Value Goods Details Table-->
     <div class="row justify-content-end mr-1">
       <div class="ch-content">
         <h5 class="title">Detalle de Aval&uacute;os</h5>
       </div>
     </div>
+    <!--Actions-->
+    <!--Value Goods Details Table-->
+
     <div class="d-flex justify-content-end mr-1">
       <app-columns-select
         (settingsChange)="settingsChange2($event)"
@@ -153,14 +171,42 @@
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings2"
-            [source]="data2">
+            [source]="data2"
+            (userRowSelect)="selectRows2($event.selected)">
           </ng2-smart-table>
         </div>
       </div>
     </div>
     <app-pagination [params]="params2" [totalItems]="totalItems2">
     </app-pagination>
+    <div class="row" *ngIf="flagTotal">
+      <div class="row justify-content-end mr-1">
+        <div class="ch-content">
+          <h5 class="title">Total</h5>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mr-1">
+        <app-columns-select
+          (settingsChange)="settingsChange3($event)"
+          [settings]="settings3"
+          [leftList]="true">
+        </app-columns-select>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings3"
+              [source]="data3">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params3" [totalItems]="totalItems3">
+      </app-pagination>
+    </div>
   </div>
 </app-card>

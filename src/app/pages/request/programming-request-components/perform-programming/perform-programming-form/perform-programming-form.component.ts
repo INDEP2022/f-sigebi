@@ -1259,6 +1259,7 @@ export class PerformProgrammingFormComponent
 
   stateSelect(state: IStateOfRepublic) {
     this.idState = Number(state.id);
+
     this.getWarehouseSelect(new ListParams());
     if (this.transferentId) this.getStations(new ListParams());
   }
@@ -1357,6 +1358,7 @@ export class PerformProgrammingFormComponent
   getAuthoritySelect(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idTransferer'] = `$eq:${this.transferentId}`;
+    //params['filter.cveStatus'] = `$eq:${this.stateKey}`;
     //params['filter.cveStatus'] = `$eq:${this.idState}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
     params['sortBy'] = 'authorityName:ASC';
@@ -1437,7 +1439,7 @@ export class PerformProgrammingFormComponent
     params['filter.stateKey'] = this.stateKey;
     this.municipalityService.getAll(params).subscribe({
       next: response => {
-        console.log('mun', response);
+       
         this.municipailitites = new DefaultSelect(
           response.data,
           response.count
@@ -2275,7 +2277,7 @@ export class PerformProgrammingFormComponent
           storeId: warehouse,
           status: 'VXP',
         };
-        console.log('formData', formData);
+
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
             resolve(true);

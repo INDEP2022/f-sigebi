@@ -31,6 +31,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
   goodProg: any;
   nomProcess?: string = '';
   typeDoc?: any = null;
+  good: string = '';
 
   constructor(
     private bsModalRef: BsModalRef,
@@ -136,7 +137,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
               error: error => {},
             });
         });
-      } else {
+      } else if (this.process != 'sampling-assets') {
         const { index, fileEvents } = uploadEvent;
         this.idGood = this.data.id;
         fileEvents.forEach(fileEvent => {
@@ -167,6 +168,36 @@ export class UploadFileComponent extends BasePage implements OnInit {
             });
         });
       }
+    }
+    if (this.process == 'sampling-assets') {
+      const { index, fileEvents } = uploadEvent;
+      fileEvents.forEach(fileEvent => {
+        const formData = {
+          xidcProfile: 'NSBDB_Gral',
+          dDocAuthor: this.userLogName,
+          xidSolicitud: this.idRequest,
+          xidBien: this.good,
+          xnombreProceso: this.nomProcess,
+          xtipoDocumento: 1,
+        };
+        const contentType = 'img';
+        const docName = `IMG_${this.date}${contentType}`;
+
+        this.wContentService
+          .addImagesToContent(
+            docName,
+            contentType,
+            JSON.stringify(formData),
+            fileEvent.file
+          )
+          .subscribe({
+            next: data => {
+              this.bsModalRef.content.callback(true);
+              this.close();
+            },
+            error: error => {},
+          });
+      });
     }
   }
 }

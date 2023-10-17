@@ -216,7 +216,18 @@
     </div>
     <!--   </div> -->
 
-    <!-- Detalle de bienes enc aso de que este en registro de bienes -->
+    <!-- <div *ngIf="classiGoodsForm.get('goodClassNumber').value && good2">
+      <app-good-characteristics-table [goodChange]="goodChange2" [initValue]="initValue"
+        [clasification]="classiGoodsForm.get('goodClassNumber').value" [settings]="atributNewSettings" [avaluo]="false"
+         [disabled]="false"
+         [good]="good2"
+         [service]="service"></app-good-characteristics-table> -->
+    <!-- <app-good-characteristics-table [goodChange]="goodChange2" [clasification]="classiGoodsForm.get('goodClassNumber').value"
+          [settings]="atributActSettings" [avaluo]="false" [good]="good2" [disabled]="true"
+          [service]="service"></app-good-characteristics-table> 
+    </div>-->
+
+    <!-- Detalle de bienes en caso de que este en registro de bienes -->
     <div class="row pt-4" *ngIf="typeDoc === 'assets'">
       <hr style="color: black" />
       <app-detail-assets-tab-component
@@ -225,14 +236,14 @@
         [domicilieObject]="domicilieObject"
         [process]="process"
         [childSaveAction]="childSaveAction"
+        (sendDomicileSelectedEvent)="getDomicile($event)"
         [typeDoc]="typeDoc"></app-detail-assets-tab-component>
     </div>
     <!-- Fin -->
 
     <!-- Detalle de bienes en caso de que este en clasificaciond de bienes -->
-    <div
-      class="row pt-4"
-      *ngIf="typeDoc == 'classify-assets' && typeTransfer == 'MANUAL'">
+    <!-- && typeTransfer == 'MANUAL' -->
+    <div class="row pt-4" *ngIf="typeDoc == 'classify-assets'">
       <hr style="color: black" />
       <app-detail-assets-tab-component
         *ngIf="classiGoodsForm.controls['id'].value != null"

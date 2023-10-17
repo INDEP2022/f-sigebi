@@ -4,14 +4,17 @@ import { Observable } from 'rxjs';
 import { StrategyEndpoints } from 'src/app/common/constants/endpoints/ms-strategy-endpoint';
 import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IUnitsMedConv } from '../../models/administrative-processes/siab-sami-interaction/measurement-units';
 import { IMeasurementUnits } from '../../models/catalogs/measurement-units.model';
 import {
+  IStrategyLovSer,
   IStrategyService,
+  IStrategyTurn,
   IStrategyType,
   IStrategyTypeService,
+  IStrateyCost,
 } from '../../models/ms-strategy-service/strategy-service.model';
 
 @Injectable({
@@ -132,6 +135,15 @@ export class StrategyServiceService extends HttpService {
     return this.delete(route);
   }
 
+  getUnitsMedXConv2(
+    _params?: _Params
+  ): Observable<IListResponse<IUnitsMedConv>> {
+    return this.get<IListResponse<IUnitsMedConv>>(
+      `${StrategyEndpoints.UnitsMedConv}`,
+      _params
+    );
+  }
+
   getUnitsMedXConv(
     _params?: ListParams | string
   ): Observable<IListResponse<IUnitsMedConv>> {
@@ -149,6 +161,18 @@ export class StrategyServiceService extends HttpService {
     return httpParams;
   }
   getServiceType(model: IStrategyType) {
-    return this.post(StrategyEndpoints.StrategyService, model);
+    return this.post(StrategyEndpoints.StrategyType, model);
+  }
+  getServiceLov(ser: IStrategyLovSer) {
+    return this.post(StrategyEndpoints.StrategySer, ser);
+  }
+  getProcess(params: _Params) {
+    return this.get(StrategyEndpoints.StrategyPro, params);
+  }
+  getTurn(ser: IStrategyTurn) {
+    return this.post(StrategyEndpoints.StrategyTurn, ser);
+  }
+  getCosts(costo: IStrateyCost) {
+    return this.post(StrategyEndpoints.StrategyCost, costo);
   }
 }

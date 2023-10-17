@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
 import { IAttribGoodBad, IGoodSiab } from '../../models/ms-good/good';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -67,6 +68,10 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
           : null;
       })
     );
+  }
+
+  getAllStatusGood(params: ListParams) {
+    return this.get(`${GoodEndpoints.OnlyStatus}`, params);
   }
 
   getGoodByIds(id: string | number): Observable<any> {
@@ -253,6 +258,20 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
 
   getGoodCount() {
     const route = `${GoodEndpoints.goodSec}`;
+    return this.get(route);
+  }
+  getByGood2(params: ListParams) {
+    const route = `${GoodEndpoints.GetAllGoodQuery}`;
+    return this.get(route, params);
+  }
+
+  getStatus(status: any) {
+    const route = `${GoodEndpoints.OnlyStatus}/${status}`;
+    return this.get(route);
+  }
+
+  getDescriptionGoods(good: number) {
+    const route = `${GoodEndpoints.GoodDescription}/${good}`;
     return this.get(route);
   }
 }

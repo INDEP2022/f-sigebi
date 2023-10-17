@@ -1,0 +1,104 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
+
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Recepción">
+          <div class="row">
+            <div class="d-flex justify-content-end mb-2">
+              <app-columns-select [(settings)]="settings"></app-columns-select>
+            </div>
+          </div>
+          <div class="row pt-4 mb-4 table-container">
+            <div class="col-md-12 table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  (userRowSelect)="select($event.data)"
+                  [source]="dataFactGen">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+          <form class="form-material" [formGroup]="form">
+            <div class="row">
+              <div class="col-md-6">
+                <form-field
+                  [control]="form.get('descriptionDocument')"
+                  label="Descripción">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="descriptionDocument" />
+                </form-field>
+              </div>
+              <div class="col-md-6">
+                <p class="d-flex justify-content-center">
+                  <span class="text-success mr-5"
+                    ><i class="fa fa-square"></i> Digitilizado</span
+                  >
+                  <span class="text-danger"
+                    ><i class="fa fa-square"></i> No Digitilizado</span
+                  >
+                </p>
+              </div>
+            </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </form>
+        </tab>
+        <tab heading="Recibidos">
+          <div class="row">
+            <div class="d-flex justify-content-end mb-2">
+              <app-columns-select [(settings)]="settings"></app-columns-select>
+            </div>
+          </div>
+          <div class="row pt-4 mb-4 table-container">
+            <div class="col-md-12 table-responsive">
+              <div [class]="loadingRecib ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingsRecib"
+                  (userRowSelect)="selectRecib($event.data)"
+                  [source]="dataRecib">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+          <form class="form-material" [formGroup]="formRecib">
+            <div class="row">
+              <div class="col-md-6">
+                <form-field
+                  [control]="formRecib.get('descriptionDocument')"
+                  label="Descripción">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="descriptionDocument" />
+                </form-field>
+              </div>
+              <div class="col-md-6">
+                <p class="d-flex justify-content-center">
+                  <span class="text-success mr-5"
+                    ><i class="fa fa-square"></i> Digitilizado</span
+                  >
+                  <span class="text-danger"
+                    ><i class="fa fa-square"></i> No Digitilizado</span
+                  >
+                </p>
+              </div>
+            </div>
+            <app-pagination
+              [params]="paramsRecib"
+              [totalItems]="totalItemsRecib"></app-pagination>
+          </form>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

@@ -1,12 +1,25 @@
 //Components
 
 export const COLUMNS = {
-  good: {
-    title: 'Bien',
+  goodNumber: {
+    title: 'No. Bien',
     sort: false,
   },
-  goodValue: {
-    title: 'Valor del Bien',
+  descriptionGood: {
+    title: 'Descripción',
+    sort: false,
+  },
+  service: {
+    title: 'Servicio',
+    sort: false,
+  },
+  descriptionService: {
+    title: 'Descripción',
+    sort: false,
+  },
+
+  requestDate: {
+    title: 'Fecha de Solicitud',
     sort: false,
   },
   amount: {

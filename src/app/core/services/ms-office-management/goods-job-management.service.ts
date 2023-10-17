@@ -94,4 +94,95 @@ export class GoodsJobManagementService extends HttpService {
   }) {
     return this.post<IListResponse<any>>(`goods-job-management`, obj);
   }
+
+  getMJobManagement(proceedingsNumber: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}?filter.managementNumber=$eq:${proceedingsNumber}`;
+    return this.get(route);
+  }
+
+  getSeq() {
+    return this.get(GoodsJobManagementEndpoints.nextval);
+  }
+
+  postJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.goodsManagement}`;
+    return this.post(route, params);
+  }
+
+  postDocumentJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.documentJobMan}`;
+    return this.post(route, params);
+  }
+
+  postOficeJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.copiesJobMana}`;
+    return this.post(route, params);
+  }
+
+  getMJobJuridica3(proceedingsNumber: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}?filter.managementNumber=$eq:${proceedingsNumber}&filter.problematiclegal=$ilike:juridica 3`;
+    return this.get(route);
+  }
+
+  getMJobJuridica4(proceedingsNumber: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}?filter.managementNumber=$eq:${proceedingsNumber}&filter.problematiclegal=$ilike:juridica 4`;
+    return this.get(route);
+  }
+
+  deleteOficeJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.goodsManagement}`;
+    return this.delete(route, params);
+  }
+
+  deleteCopiesJob(id: any) {
+    const route = `${GoodsJobManagementEndpoints.copiesJobMana}/${id}`;
+    return this.delete(route);
+  }
+
+  deleteDocumentJob(params: any) {
+    const route = `${GoodsJobManagementEndpoints.documentJobMan}`;
+    return this.delete(route, params);
+  }
+
+  deleteMJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}`;
+    return this.delete(route, params);
+  }
+
+  updateMJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.updateMJob}`;
+    return this.post(route, params);
+  }
+
+  getblokOffice1(good: any) {
+    const route = `${GoodsJobManagementEndpoints.blockOfficel}/${good}`;
+    return this.get(route);
+  }
+
+  getOficeJobManagementbyGood(good: any) {
+    const route = `${GoodsJobManagementEndpoints.getallV2}?filter.goods.goodId=$eq:${good}`;
+    return this.get(route);
+  }
+
+  getMJobJobManagement(managementNumber: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}?filter.refersTo=$ilike:OFCOMER&filter.managementNumber=$eq:${managementNumber}`;
+    return this.get(route);
+  }
+
+  getAllFilteredV2(params: _Params) {
+    return this.get<IListResponse<IGoodJobManagement>>(
+      GoodsJobManagementEndpoints.getallV2,
+      params
+    );
+  }
+
+  pupSearchNumber(params: any) {
+    const route = `${GoodsJobManagementEndpoints.pupSearchNumber}`;
+    return this.post(route, params);
+  }
+
+  postMJob(params: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}`;
+    return this.post(route, params);
+  }
 }

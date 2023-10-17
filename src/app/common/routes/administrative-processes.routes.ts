@@ -192,6 +192,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Clasificación costos',
             link: '/pages/administrative-processes/costs-clasification',
           },
+          {
+            label: 'Cierre mensual',
+            link: '/pages/administrative-processes/closure-monthly',
+          },
         ],
       },
       /**
@@ -259,6 +263,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
       {
         label: 'Cambio de Clasificación del Bien',
         link: '/pages/administrative-processes/change-of-good-classification',
+      },
+      {
+        label: 'Recepción de documentos en el archivo',
+        link: '/pages/administrative-processes/receipt-documents-archive',
+      },
+      {
+        label: 'Reporte de tipo de almacenes',
+        link: '/pages/administrative-processes/warehouse-type-report',
       },
       /**
        * END ALEXANDER

@@ -8,11 +8,6 @@
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-6">
-            <!-- <form-field [control]="form.get('bankSelect')">
-              <ngx-select [data]="banks" [form]="form" bindLabel="name" label="Seleccione un Banco"
-                [control]="'bankSelect'" (change)="onBankSelectChange($event)" (fetchItems)="searchBanks($event)"
-                (input)="onSearchName($event.target)"></ngx-select>
-            </form-field> -->
             <form-field [control]="form.get('bankSelect')">
               <ngx-select
                 [form]="form"
@@ -24,17 +19,13 @@
                 [searchOnInit]="true"
                 termMaxLength="30"
                 (change)="onBankSelectChange($event)"
+                (clear)="onClearBankSelection()"
                 (input)="onSearchNameAccount($event.target)">
               </ngx-select>
             </form-field>
           </div>
 
           <div class="col-6">
-            <!-- <form-field [control]="form.get('account')">
-              <ngx-select [data]="bankAccountSelect" [form]="form" bindLabel="accountAndNumber" label="Cuenta"
-                [control]="'account'" (change)="onBankAccountSelectChange($event)" (fetchItems)="getEvent($event)
-                " (input)="onSearchAccount($event.target)"></ngx-select>
-            </form-field> -->
             <form-field [control]="form.get('account')">
               <ngx-select
                 label="Cuenta"
@@ -47,19 +38,9 @@
                 [showTooltip]="true"
                 termMaxLength="50"
                 (input)="onSearchAccount($event.target)"
-                [labelTemplate]="bankLabel"
-                [optionTemplate]="bankOption"
                 (change)="onBankAccountSelectChange($event)"
                 (clear)="onClearSelection()">
               </ngx-select>
-              <ng-template #bankLabel let-item="item">
-                {{ item.accountNumber.cveAccount }}
-              </ng-template>
-              <ng-template #bankOption let-item="item">
-                <div [title]="item.accountNumber.cveAccount">
-                  {{ item.accountNumber.cveAccount }}
-                </div>
-              </ng-template>
             </form-field>
           </div>
         </div>

@@ -13,4 +13,8 @@ export enum ParameterComerEndpoints {
   Entities = 'type-entity-gov',
   ApplicationUser = 'aplication/get-lval-usu',
   ApplicationSigna = 'aplication/get-full-signatories',
+  ComerStatusVta = 'comer-status-vta',
+  ChargeGoods = 'aplication/pup-charge-goods',
+  ChargeValidateGoods = 'aplication/pup-charge-validate-goods',
+  GetvValue = 'aplication/get-v-value',
 }

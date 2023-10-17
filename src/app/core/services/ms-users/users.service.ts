@@ -205,4 +205,48 @@ export class UsersService extends HttpService {
       `${UserEndpoints.GetAllSegUser}?filter.user=$ilike:${user}`
     );
   }
+
+  getComerUserXCan(params: _Params) {
+    return this.get(UserEndpoints.ComerUser, params);
+  }
+
+  getUsersbyUSer(user: any) {
+    return this.get(`${UserEndpoints.SegUsers}?filter.id=$eq:${user}`);
+  }
+
+  getAllSegUsers3(_params: _Params, name: any) {
+    return this.get<IListResponse<any>>(
+      `${UserEndpoints.GetAllSegUser}?filter.name=$ilike:${name}`,
+      _params
+    );
+  }
+
+  getGetRecDeleg(body: any, params: ListParams) {
+    return this.post<IListResponse<any>>(UserEndpoints.RecDeleg, body, params);
+  }
+
+  getGetRecSubDel(noDel: string | number, params: ListParams) {
+    return this.get<IListResponse<any>>(
+      `${UserEndpoints.RecSubDel}/${noDel}`,
+      params
+    );
+  }
+
+  getRecVault(body: any, params: ListParams) {
+    return this.post<IListResponse<any>>(UserEndpoints.RecVault, body, params);
+  }
+  getUsersbyUsers(user: any) {
+    return this.get(`${UserEndpoints.SegUsers}?filter.id=$eq:${user}`);
+  }
+
+  getAllSegUsers4(name: any) {
+    return this.get<IListResponse<any>>(
+      `${UserEndpoints.GetAllSegUser}?filter.user=$ilike:${name}`
+    );
+  }
+
+  getBtnViewPrev(no_ofice: any) {
+    const route = `${UserEndpoints.viewPrev}/${no_ofice}`;
+    return this.get(route);
+  }
 }

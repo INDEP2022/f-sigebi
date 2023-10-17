@@ -13,10 +13,11 @@ import { MassRulingRoutingModule } from './mass-ruling-routing.module';
 
 /** COMPONENTS IMPORTS */
 import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-select/custom-select.component';
+import { MassRulingModalComponent } from './mass-ruling-modal/mass-ruling-modal.component';
 import { MassRulingComponent } from './mass-ruling/mass-ruling.component';
 
 @NgModule({
-  declarations: [MassRulingComponent],
+  declarations: [MassRulingComponent, MassRulingModalComponent],
   imports: [
     CommonModule,
     MassRulingRoutingModule,

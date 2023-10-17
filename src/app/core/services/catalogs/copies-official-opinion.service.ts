@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DictationEndpoints } from 'src/app/common/constants/endpoints/ms-dictation-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ICopiesOfficialOpinion,
   IDataCopiasOficio,
@@ -24,6 +25,10 @@ export class CopiesOfficialOpinionService extends HttpService {
     );
   }
 
+  getAllDictation(params?: _Params) {
+    return this.get(DictationEndpoints.Dictation, params);
+  }
+
   create(body: ICopiesOfficialOpinion) {
     return this.post(this.route.CopiesOfficialOpinion, body);
   }
@@ -38,5 +43,11 @@ export class CopiesOfficialOpinionService extends HttpService {
     typeDict: string;
   }) {
     return this.delete(this.route.CopiesOfficialOpinion, body);
+  }
+
+  ProceedingsDetailDicta(id: string | number) {
+    return this.get<IListResponse<any>>(
+      'application/get-detail-acta-ent-recep-ruling/' + id
+    );
   }
 }

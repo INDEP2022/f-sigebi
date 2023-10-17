@@ -3,6 +3,7 @@ export enum ProceedingsEndpoints {
   Proceedings = 'proceedings',
   ProeedingsDevolution = 'proceedings-devolution',
   ProeedingsDevolutionCustome = 'proceedings-devolution/getAllCustom',
+  ActasRecptionImp = 'detail-proceedings-delivery-reception/all',
   //ProceedingsDeliveryReception = 'proceedings-delivery-reception',
   DetailProceedingsDevollution = 'detail-proceedings-devolution',
   ActasDeliveryReception = 'aplication/get-actas-delivery-reception',
@@ -10,6 +11,7 @@ export enum ProceedingsEndpoints {
   DetailProceedingsDeliveryReception = 'detail-proceedings-delivery-reception',
   ProceedingsValidations = 'proceedings-validations',
   ProceedingsDeliveryReception = 'proceedings-delivery-reception',
+  ProceedingsDetailActa = 'aplication/get-detail-acta-ent-recep-closed/',
   ProceedingDeliveryReceptionTranfer = 'proceedings-delivery-reception/get-transferent-number-key-and-name',
   PADelActaEntrega = 'aplication/pa-of-act-delivery',
   MaximunClosingTime = 'maximun-closing-time',
@@ -48,4 +50,5 @@ export enum ProceedingsEndpoints {
   constDelivery = 'aplication/pa-const-delivery',
   AplicationGetTypeActa = 'aplication/getTypeActa',
   AplicationGetTypeActaDetail = 'aplication/getDetalleActaByNoActaPag',
+  TmpEspPrograming = 'tmp-est-programming',
 }

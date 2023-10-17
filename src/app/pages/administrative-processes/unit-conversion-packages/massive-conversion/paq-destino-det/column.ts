@@ -1,6 +1,6 @@
 export const COLUMNS = {
   numberGood: {
-    title: 'Bien',
+    title: 'No. Bien',
     sort: false,
     editable: false,
   },
@@ -11,6 +11,12 @@ export const COLUMNS = {
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.bienes && row.bienes.description) {
         return row.bienes.description;
+        // return (
+        //   'BIEN INTEGRADO A PAQUETE DE CONVERSIÓN NO. ' +
+        //   row.numberPackage +
+        //   '. ' +
+        //   row.bienes.description
+        // );
       } else {
         return null;
       }

@@ -25,4 +25,8 @@ export class ComerUsuauTxEventService extends HttpService {
     const route = `${EventEndpoints.ComerUsuaTxEvent}?filter.idEvent=${id}`;
     return this.get(route);
   }
+
+  getComerTpEvent(idEvent: number) {
+    return this.get(`${EventEndpoints.ComerTevents}?filter.id=$eq:${idEvent}`);
+  }
 }

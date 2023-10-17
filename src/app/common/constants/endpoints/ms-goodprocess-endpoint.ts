@@ -33,6 +33,15 @@ export enum GoodprocessEndpoints {
   GoodsDetActaRecep = 'application/goods-det-acta-ent-recep',
   GetCount = 'application/get-count-ncont',
   UpdateGoodStatusVal5 = 'update-good-status/update-val',
+  GetBlkCtrlGood = 'application/get-blkctrl-good',
   //Classification View
   GetVsigLigie = 'application/vsigLigie',
+  GetTypesGoods = 'application/spobtn-typesubtypegoods',
+  GetUniRegister = 'application/get-lnu-register',
+  ChangeStatusGood = 'application/changeStatusGood',
+  UpdateGoodsByPackage = 'application/updateGoodByPackage',
+  PostPupInsertGoods = 'fconadbmonavaluos/pup-insert-goods-aux-v2',
+  blokOffice3 = 'application/blokOffice3',
+  pupPortafolio = 'application/pup-portafolio',
+  seqFolio = 'application/seqfol-univ',
 }

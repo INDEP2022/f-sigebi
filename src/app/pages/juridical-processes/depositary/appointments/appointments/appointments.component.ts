@@ -545,7 +545,7 @@ export class AppointmentsComponent
       } else {
         // AGREGAR MS FALTANTE QUE ESTA EN REVISION
         console.log('NO ESTA LISTO');
-        this.alert('warning', 'No se encontró bien disponible', '');
+        this.alert('warning', 'No se encontró No. Bien disponible', '');
       }
     } else {
       this.openModalGoods();
@@ -691,7 +691,8 @@ export class AppointmentsComponent
         this.alertInfo(
           'warning',
           'Error al obtener los datos del usuario de la sesión actual',
-          error.error.message
+          ''
+          // error.error.message
         );
       },
     });
@@ -702,7 +703,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -736,7 +737,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -772,7 +773,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -800,7 +801,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -831,7 +832,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -859,7 +860,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -983,8 +984,10 @@ export class AppointmentsComponent
           console.log(err);
           this.alert(
             'warning',
-            'Estatus del bien',
-            'El estatus no se obtuvo correctamente para el bien ' + noGood + ''
+            'Estatus del No. Bien',
+            'El estatus no se obtuvo correctamente para el No. Bien: ' +
+              noGood +
+              ''
           );
         },
       });
@@ -1673,7 +1676,7 @@ export class AppointmentsComponent
           this.alert(
             'warning',
             'Descripción del bien',
-            'Error al consultar la descripción del bien'
+            'Error al consultar la descripción del No. Bien'
           );
           // this.validFielddGoodNumber();
         },
@@ -2063,7 +2066,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2131,7 +2134,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2157,7 +2160,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2297,7 +2300,7 @@ export class AppointmentsComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'No se puede replicar el folio de escaneo si no existe un bien',
+          'No se puede replicar el folio de escaneo si no existe un No. Bien',
           ''
         );
         return;
@@ -2402,7 +2405,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se requiere de una búsqueda de bien primero para poder ver está opción',
+        'Se requiere de una búsqueda de No. Bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2656,7 +2659,7 @@ export class AppointmentsComponent
     });
   }
   getSaeUserChange(event: any) {
-    console.log(event);
+    console.log('USER DATA', event);
     if (event) {
       this.form.get('nombre').setValue(event.name);
       this.mailSAE = event.email;
@@ -2853,21 +2856,23 @@ export class AppointmentsComponent
       }
       this.appointmentsService.createAppointment(bodySave).subscribe({
         next: (data: any) => {
-          this._saveDataDepositary = false;
           console.log(data);
-          this.alertInfo('success', 'Registro guardado correctamente', '');
-          if (data.data) {
-            this.validGoodNumberInDepositaryAppointment(
-              true,
-              data.data[0].appointmentNum
-            );
-          } else {
-            this.validGoodNumberInDepositaryAppointment(
-              true,
-              data.appointmentNum
-            );
-          }
           this.getPersonXNom();
+          setTimeout(() => {
+            this._saveDataDepositary = false;
+            this.alertInfo('success', 'El registro se ha guardado', '');
+            if (data.data) {
+              this.validGoodNumberInDepositaryAppointment(
+                true,
+                data.data[0].appointmentNum
+              );
+            } else {
+              this.validGoodNumberInDepositaryAppointment(
+                true,
+                data.appointmentNum
+              );
+            }
+          }, 500);
         },
         error: error => {
           console.log(error);
@@ -2930,40 +2935,41 @@ export class AppointmentsComponent
             this.folios.universalFolio
           );
           this.getDocumentsCount().subscribe(count => {
-            console.log('COUNT ', count);
-            if (count == 0) {
-              this.validGoodNumberInDepositaryAppointment(
-                true,
-                body.appointmentNum
-              );
-              this.alertInfo('success', 'Registro guardado correctamente', '');
-              this.getPersonXNom();
-            } else {
-              let _saveFolioDepositary = localStorage.getItem(
-                '_saveFolioDepositary'
-              );
-              console.log(_saveFolioDepositary);
-              if (
-                this.good.status == 'ADM' &&
-                this.folios.universalFolio &&
-                _saveFolioDepositary == 'A'
-              ) {
-                this.updateGoodStatus('DEP', true);
+            this.getPersonXNom();
+            setTimeout(() => {
+              console.log('COUNT ', count);
+              if (count == 0) {
+                this.validGoodNumberInDepositaryAppointment(
+                  true,
+                  body.appointmentNum
+                );
+                this.alertInfo('success', 'El registro se ha guardado', '');
+              } else {
+                let _saveFolioDepositary = localStorage.getItem(
+                  '_saveFolioDepositary'
+                );
+                console.log(_saveFolioDepositary);
+                if (
+                  this.good.status == 'ADM' &&
+                  this.folios.universalFolio &&
+                  _saveFolioDepositary == 'A'
+                ) {
+                  this.updateGoodStatus('DEP', true);
+                }
+                if (
+                  this.good.status == 'DEP' &&
+                  this.folios.returnFolio &&
+                  _saveFolioDepositary == 'R'
+                ) {
+                  this.updateGoodStatus('ADM');
+                }
+                this.validGoodNumberInDepositaryAppointment(
+                  true,
+                  body.appointmentNum
+                );
+                this.alertInfo('success', 'El registro se ha guardado', '');
               }
-              if (
-                this.good.status == 'DEP' &&
-                this.folios.returnFolio &&
-                _saveFolioDepositary == 'R'
-              ) {
-                this.updateGoodStatus('ADM');
-              }
-              this.validGoodNumberInDepositaryAppointment(
-                true,
-                body.appointmentNum
-              );
-              this.alertInfo('success', 'Registro guardado correctamente', '');
-              this.getPersonXNom();
-            }
+            }, 500);
           });
         },
         error: error => {
@@ -3033,6 +3039,16 @@ export class AppointmentsComponent
   }
 
   openModalMail() {
+    let desc = '';
+    if (this.good) {
+      desc = this.good.description;
+    }
+    let person = '';
+    if (this.depositaryAppointment) {
+      if (this.depositaryAppointment.personNumber) {
+        person = this.depositaryAppointment.personNumber.personName + '';
+      }
+    }
     const config = {
       ...MODAL_CONFIG,
       initialState: {
@@ -3044,11 +3060,9 @@ export class AppointmentsComponent
           'Por este Conducto se le Informa que el Bien: ' +
           this.noBienReadOnly +
           ' con Descripción: ' +
-          this.good
-            ? this.good.description
-            : '' +
-              '. Está en la Depositaría: ' +
-              this.depositaryAppointment.personNumber.personName,
+          desc +
+          '. Está en la Depositaría: ' +
+          person,
         asunto: 'Bien: ' + this.noBienReadOnly + ' en Depositaría',
       },
     };
@@ -3056,6 +3070,8 @@ export class AppointmentsComponent
   }
 
   getPersonXNom() {
+    console.log('PERSON X NOM ', this.depositaryAppointment);
+
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter(

@@ -17,4 +17,39 @@ export class BiddingService extends HttpService {
   getAllTenders(params: _Params): Observable<IListResponse<ITenders>> {
     return this.get<IListResponse<ITenders>>(BiddingEndPoint.Tenders, params);
   }
+
+  getBigging(id: number) {
+    const route = `${BiddingEndPoint.biddingGood}/custom?filter.biddingId=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getComerTender(id: number) {
+    const route = `${BiddingEndPoint.comerTender}?filter.biddingId=$eq:${id}`;
+    return this.get(route);
+  }
+
+  postGenerateBiddingGood(params: any) {
+    const route = `${BiddingEndPoint.comerBidding}`;
+    return this.post(route, params);
+  }
+
+  postAutorizeTender(params: any) {
+    const route = `${BiddingEndPoint.autorizeTender}`;
+    return this.post(route, params);
+  }
+
+  postGenerateLineCap(params: any) {
+    const route = `${BiddingEndPoint.generateLineCap}`;
+    return this.post(route, params);
+  }
+
+  postRecalculateLineCap(params: any) {
+    const route = `${BiddingEndPoint.recalculateLineCap}`;
+    return this.post(route, params);
+  }
+
+  postDeleteBidding(params: any) {
+    const route = `${BiddingEndPoint.deleteBigging}`;
+    return this.post(route, params);
+  }
 }

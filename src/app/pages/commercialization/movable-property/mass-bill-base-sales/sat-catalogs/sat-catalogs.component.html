@@ -12,11 +12,13 @@
   <form-loader *ngIf="loading"></form-loader>
   <div>
     <ng2-smart-table
-      [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+      [ngStyle]="{
+        height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
+      }"
       [attr.class]="'table-bordered table-responsive mb-4'"
       [settings]="settings"
       [source]="dataFilter">
     </ng2-smart-table>
   </div>
-  <app-pagination [params]="paramsList" [totalItems]="count"> </app-pagination>
+  <!-- <app-pagination [params]="paramsList" [totalItems]="count"> </app-pagination> -->
 </div>

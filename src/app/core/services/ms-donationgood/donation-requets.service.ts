@@ -7,6 +7,7 @@ import { DonationRepository } from 'src/app/common/repository/repositories/ms-do
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IDonacContract,
   IDonationGoodRequest,
   IDonationPropolsal,
   IRequestDonation,
@@ -66,5 +67,62 @@ export class DonationRequestService
 
   updateRequestDonation(data: IRequestDonation) {
     return this.put(apiUpdateRequest, data);
+  }
+
+  getDonacContract(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get('donac-contract', params);
+  }
+
+  getDonacRequest(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get('donac-request', params);
+  }
+
+  getDonacRequestGood(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get('donac-request-good', params);
+  }
+
+  udateDonacContract(model: IDonacContract): Observable<IListResponse<any>> {
+    return this.put(`donac-contract/${model.id}`, model);
+  }
+
+  getDonationSoli(id: string | number): Observable<IListResponse<any>> {
+    return this.get(`application/getDonationSoli/${id}`);
+  }
+
+  pupGetFolio(model: Object) {
+    return this.post(`application/pupGetFolio`, model);
+  }
+
+  getDonationData2(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get(`application/getDonationData2`, params);
+  }
+
+  closeContract(model: Object) {
+    return this.post(`application/closeContract`, model);
+  }
+
+  getContractByType(
+    body: Object,
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.post(`application/getContractByType`, body, params);
+  }
+
+  getDonationData(
+    model: Object,
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      `application/getDonationData`,
+      model,
+      params
+    );
+  }
+
+  udateDonacRequestGood(model: any) {
+    return this.put(`donac-request-good`, model);
+  }
+  getContract(params: ListParams) {
+    return this.get(`donac-contract`, params);
   }
 }

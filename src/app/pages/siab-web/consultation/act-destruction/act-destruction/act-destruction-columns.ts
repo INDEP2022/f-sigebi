@@ -52,7 +52,7 @@ export const ACT_DESTRUCTION_COLUMNS = {
 
 export const ACT_DESTRUCTION_DETAIL_COLUMNS = {
   good: {
-    title: 'Bien',
+    title: 'No. Bien',
     sort: false,
   },
   description: {

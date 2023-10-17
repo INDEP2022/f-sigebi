@@ -1,13 +1,19 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { GssInputFieldComponent } from '../../../shared-component-gss/gss-input-field/gss-input-field.component';
 
 export const LIST_DEDUCTIVES_COLUMNS = {
-  deductDescription: {
+  description: {
     title: 'Descripción Deductiva',
     type: 'string',
     sort: false,
   },
-  observation: {
+
+  observations: {
+    title: 'Observaciones',
+    type: 'string',
+    sort: false,
+  },
+
+  /*observation: {
     title: 'Observaciones',
     type: 'custom',
     class: 'custom-field',
@@ -15,12 +21,14 @@ export const LIST_DEDUCTIVES_COLUMNS = {
     renderComponent: GssInputFieldComponent,
     onComponentInitFunction(instance: any) {},
     sort: false,
-  },
+  }, */
+
   selected: {
     title: 'Selección',
     type: 'custom',
     class: 'custom-field',
     filter: false,
+    disabled: true,
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {},
     sort: false,

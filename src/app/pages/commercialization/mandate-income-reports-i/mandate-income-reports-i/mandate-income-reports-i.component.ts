@@ -39,6 +39,8 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
   user2 = new DefaultSelect();
   user3 = new DefaultSelect();
   selectLot = new DefaultSelect();
+  result: any;
+  result1: any;
 
   constructor(
     private fb: FormBuilder,
@@ -104,9 +106,16 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
   }
 
   getEvent(params: ListParams) {
+    if (params.text) {
+      params['search'] = `${params.text}`;
+      //params['filter.status'] = `$ilike:${params.text}`;
+    }
     this.comerEventService.getAllEvent(params).subscribe({
-      next: data => {
-        this.eventSelect = new DefaultSelect(data.data, data.count);
+      next: resp => {
+        this.result1 = resp.data.map(async (item: any) => {
+          item['keyObservation'] = item.processKey + ' - ' + item.observations;
+        });
+        this.eventSelect = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
         this.eventSelect = new DefaultSelect();
@@ -157,8 +166,15 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
   }
 
   getAllSegUser1(params: ListParams) {
+    if (params.text) {
+      params['filter.name'] = `$ilike:${params.text}`;
+      //params['filter.status'] = `$ilike:${params.text}`;
+    }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.user1 = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -175,8 +191,15 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
   }
 
   getAllSegUser2(params: ListParams) {
+    if (params.text) {
+      params['filter.name'] = `$ilike:${params.text}`;
+      //params['filter.status'] = `$ilike:${params.text}`;
+    }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.user2 = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -192,8 +215,15 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
   }
 
   getAllSegUser3(params: ListParams) {
+    if (params.text) {
+      params['filter.name'] = `$ilike:${params.text}`;
+      //params['filter.status'] = `$ilike:${params.text}`;
+    }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.user3 = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -209,8 +239,20 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
   }
 
   getLot(params: ListParams) {
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.idLot'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.description'] = `$ilike:${params.text}`;
+      }
+    }
     this.lotService.getAllComerLot(params).subscribe({
       next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['idLotDescription'] = item.idLot + ' - ' + item.description;
+        });
+        console.log(resp.data);
         this.selectLot = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {

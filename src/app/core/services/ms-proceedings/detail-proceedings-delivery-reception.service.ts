@@ -20,7 +20,7 @@ export class DetailProceeDelRecService extends HttpService {
   }
 
   getGoodsByProceedings(id: string | number, params?: ListParams) {
-    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=${id}`;
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=$eq:${id}`;
     return this.get(route, params);
   }
 
@@ -204,5 +204,16 @@ export class DetailProceeDelRecService extends HttpService {
   PutProcedingbyIdAct(id: any, params?: any) {
     const route = `${ProceedingsEndpoints.proceedingDelivery}/${id}`;
     return this.put(route, params);
+  }
+
+  getByUserTmpEst(user: any, params?: any) {
+    const route = `${ProceedingsEndpoints.TmpEspPrograming}?filter.userEst=$ilike:${user}`;
+    return this.get(route, params);
+  }
+
+  getProcedingImp(params: ListParams) {
+    const receive = 'S';
+    const route = `${ProceedingsEndpoints.ActasRecptionImp}?filter.received=${receive}`;
+    return this.get(route, params);
   }
 }

@@ -16,7 +16,7 @@
       <div body>
         <!--CAN WORK1 TABLE-->
         <div class="row">
-          <div class="col-6">
+          <!-- <div class="col-6">
             <button
               (click)="add()"
               [disabled]="!showFilters"
@@ -26,9 +26,19 @@
               class="btn btn-info btn-sm active ml-2 mr-2">
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-          </div>
+          </div> -->
 
-          <div class="col-6 d-flex justify-content-end">
+          <div class="col-12 d-flex justify-content-end">
+            <button
+              (click)="add()"
+              [disabled]="!showFilters"
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2"
+              style="min-width: 100px">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
             <app-columns-select
               [leftList]="true"
               [(settings)]="settings"
@@ -46,7 +56,8 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
                   [source]="dataPaginated"
-                  (userRowSelect)="selectRow($event.data)">
+                  (userRowSelect)="selectRow($event.data)"
+                  (edit)="edit($event.data)">
                 </ng2-smart-table>
               </div>
             </div>
@@ -101,11 +112,27 @@
             </button>
             <button
               type="button"
+              class="btn btn-success btn-sm active mr-3"
+              [disabled]="!showFilters"
+              (click)="file.click()">
+              Cargar Excel/CSV
+              <i aria-hidden="true" class="fa fa-upload"></i>
+            </button>
+            <input
+              #file
+              type="file"
+              name="file"
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="loadGoods($event)" />
+
+            <!-- <button
+              type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showFilters"
               (click)="loadExcel()">
               Cargar Bienes Excel
-            </button>
+            </button> -->
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"

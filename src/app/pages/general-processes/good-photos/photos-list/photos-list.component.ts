@@ -11,9 +11,10 @@ import * as FileSaver from 'file-saver';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   catchError,
-  debounceTime,
   firstValueFrom,
+  forkJoin,
   map,
+  Observable,
   of,
   takeUntil,
 } from 'rxjs';
@@ -54,8 +55,19 @@ export class PhotosListComponent extends BasePage implements OnInit {
       this.errorMessage = '';
     }
   }
-  @ViewChildren('photo') photos: QueryList<PhotoComponent>;
+  @Input() set refreshData(value: number) {
+    // this._goodNumber = value;
+    if (value > 0) {
+      this.getData();
+    } else {
+      this.files = [];
+      this.errorMessage = '';
+    }
+  }
+  @ViewChildren('photo')
+  photos: QueryList<PhotoComponent>;
   private _goodNumber: string | number;
+  deleting = false;
   options = [
     { value: 1, label: 'Visualizar' },
     { value: 2, label: 'Editar' },
@@ -225,6 +237,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
     } else {
       this.filesToDelete = this.filesToDelete.filter(file => file != image);
     }
+    // console.log(this.filesToDelete);
   }
 
   private async getData() {
@@ -240,7 +253,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
               // console.log(response);
               if (response) {
                 this.files = [...response];
-                // this.errorMessage = null;
+                this.errorMessage = null;
                 // return;
                 if (!this.errorMessage) {
                   const pufValidaUsuario = await this.pufValidaUsuario();
@@ -271,13 +284,16 @@ export class PhotosListComponent extends BasePage implements OnInit {
   async confirmDelete(all = false) {
     // if (this.disabledDeletePhotos()) return;
     console.log(this.files, this.filesToDelete);
+    this.deleting = true;
     if (all) {
       if (this.disabledDeleteAllPhotos()) {
+        this.deleting = false;
         return;
       }
       this.filesToDelete = [...this.validFilesToDelete];
     }
     if (this.disabledDeletePhotos()) {
+      this.deleting = false;
       return;
     }
     if (this.filesToDelete.length < 1) {
@@ -286,6 +302,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         'Advertencia',
         'Debes seleccionar mínimo un archivo'
       );
+      this.deleting = false;
       return;
     }
 
@@ -298,56 +315,99 @@ export class PhotosListComponent extends BasePage implements OnInit {
     );
     if (result.isConfirmed) {
       this.deleteSelectedFiles();
+    } else {
+      this.deleting = false;
     }
   }
 
   validationUser(file: IPhotoFile) {
+    if (this.errorMessage && this.errorMessage.length > 0) return false;
     if (!file.usuario_creacion) return true;
     if (file.usuario_creacion.length === 0) return true;
     if (file.usuario_creacion.toUpperCase() === this.userName) return true;
     return false;
   }
 
-  private async deleteSelectedFiles() {
-    this.errorImages = [];
-    this.loader.load = true;
-    const results = await Promise.all(
-      this.filesToDelete.map(async file => {
-        const index = file.name.indexOf('F');
-        const finish = file.name.indexOf('.');
-        return await firstValueFrom(
-          this.deleteFile(
-            +file.name.substring(index + 1, finish),
-            file.name
-          ).pipe(debounceTime(500))
-        );
-      })
-    );
-    if (this.errorImages.length === this.filesToDelete.length) {
-      this.alert(
-        'error',
-        'ERROR',
-        'No se pudieron cambiar a histórico las fotos'
-      );
-    } else {
-      if (this.errorImages.length > 0) {
-        this.alert(
-          'warning',
-          'Fotos a Histórico',
-          'Pero no se puedieron cambiar todas las fotos'
-        );
-      } else {
-        this.alert(
-          'success',
-          'Eliminación de Fotos',
-          'Las fotos seleccionadas se han eliminado'
-        );
-      }
-    }
+  private validationObs(obs: Observable<any>[]) {
+    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
+  }
+
+  private lastProcessDeletePhotos() {
     this.loader.load = false;
     this.filesToDelete = [];
     this.service.deleteEvent.next(true);
+    this.deleting = false;
     this.getData();
+  }
+
+  private async deleteSelectedFiles() {
+    this.errorImages = [];
+    let files = this.filesToDelete.map(file => {
+      const index = file.name.indexOf('F');
+      const finish = file.name.indexOf('.');
+      return +file.name.substring(index + 1, finish);
+    });
+    // this.deletePhotoDefinitive(this.filesToDelete[0].name).subscribe({
+    //   next: response => {},
+    //   error: err => {
+    //     console.log(err);
+    //   },
+    // });
+    // return;
+    this.deleteFile(files.toString()).subscribe({
+      next: response => {
+        console.log(response);
+        if (response) {
+          if (response.error && response.error.length > 0) {
+            if (response.correct && response.correct.length > 0) {
+              this.alert(
+                'warning',
+                'Fotos a Histórico',
+                'No se pudieron cambiar todas las fotos'
+              );
+            } else {
+              this.alert(
+                'error',
+                'Fotos a Histórico',
+                'No se pudieron cambiar a histórico las fotos'
+              );
+            }
+            this.loader.load = false;
+            this.deleting = false;
+            return;
+          }
+          if (response.correct && response.correct.length > 0) {
+            this.alert(
+              'success',
+              'Fotos a Histórico',
+              'Las fotos seleccionadas se han enviado a histórico'
+            );
+          }
+        }
+        this.lastProcessDeletePhotos();
+      },
+      error: err => {
+        this.alert(
+          'error',
+          'Fotos a Histórico',
+          'No se pudieron cambiar a histórico las fotos'
+        );
+        this.lastProcessDeletePhotos();
+      },
+    });
+    // const results = await Promise.all(
+    //   this.filesToDelete.map(async file => {
+    //     const index = file.name.indexOf('F');
+    //     const finish = file.name.indexOf('.');
+    //     return await firstValueFrom(
+    //       this.deleteFile(
+    //         +file.name.substring(index + 1, finish),
+    //         file.name
+    //       ).pipe(debounceTime(500))
+    //     );
+    //   })
+    // );
+
     // const obs = this.filesToDelete.map(filename => {
     //   const index = filename.indexOf('F');
     //   const finish = filename.indexOf('.');
@@ -385,21 +445,31 @@ export class PhotosListComponent extends BasePage implements OnInit {
     //   });
   }
 
-  private deleteFile(consecNumber: number, filename: string) {
-    return this.filePhotoService
-      .deletePhoto(this.goodNumber + '', consecNumber)
-      .pipe(
-        catchError(error => {
-          console.log(error);
-          // this.alert(
-          //   'error',
-          //   'Error',
-          //   'Ocurrió un error al eliminar la imagen'
-          // );
-          this.errorImages.push(error.error.message);
-          return of(null);
-        })
-      );
+  private deletePhotoDefinitive(name: string) {
+    return this.filePhotoService.deletePhotoDefinitive(
+      this.goodNumber + '',
+      name
+    );
+  }
+
+  private deleteFile(consecNumber: string) {
+    return this.filePhotoService.deletePhoto(
+      this.goodNumber + '',
+      consecNumber
+    );
+    // .pipe(
+    //   tap(x => console.log('Eliminando ' + consecNumber)),
+    //   catchError(error => {
+    //     console.log(error);
+    //     // this.alert(
+    //     //   'error',
+    //     //   'Error',
+    //     //   'Ocurrió un error al eliminar la imagen'
+    //     // );
+    //     this.errorImages.push(error.error.message);
+    //     return of(null);
+    //   })
+    // );
   }
 
   openFileUploader() {
@@ -408,7 +478,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       initialState: {
         accept:
-          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg, image/heif, .heic, .heif',
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
@@ -429,7 +499,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       initialState: {
         accept: '.zip',
         accept2:
-          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg, image/heif',
         uploadFiles: false,
         service: this.filePhotoSaveZipService,
         identificator: [this.goodNumber],
