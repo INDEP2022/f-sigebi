@@ -63,8 +63,38 @@
             </form-field>
           </div>
         </div>
-        <div class="row pt-4">
-          <div class="col-md-4">
+        <div class="row">
+          <div class="col-md-4 pt-4" *ngIf="typeComponent == 'review-results'">
+            <form-field
+              [control]="documentForm.get('xidExpediente')"
+              label="No&#46; Expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xidExpediente" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-4" *ngIf="typeComponent == 'review-results'">
+            <form-field
+              [control]="documentForm.get('xidBien')"
+              label="No&#46; Bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xidBien" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-4" *ngIf="typeComponent == 'review-results'">
+            <form-field
+              [control]="documentForm.get('xIdSIAB')"
+              label="No&#46; Siab">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xIdSIAB" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-4">
             <form-field
               [control]="documentForm.get('xidSolicitud')"
               label="No&#46; Solicitud">
@@ -75,7 +105,7 @@
             </form-field>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-4 pt-4">
             <form-field
               [control]="documentForm.get('xcontribuyente')"
               label="Contribuyente">
@@ -85,7 +115,7 @@
                 formControlName="xcontribuyente" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 pt-4">
             <form-field [control]="documentForm.get('xDelegacionRegional')">
               <ngx-select
                 [form]="documentForm"
@@ -99,10 +129,10 @@
               </ngx-select>
             </form-field>
           </div>
-        </div>
+          <!-- </div>
 
-        <div class="row pt-4">
-          <div class="col-md-4">
+        <div class="row pt-4"> -->
+          <div class="col-md-4 pt-4">
             <form-field
               [control]="documentForm.get('xnoOficio')"
               label="No&#46; Oficio">
@@ -112,7 +142,7 @@
                 formControlName="xnoOficio" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 pt-4">
             <form-field [control]="documentForm.get('xestado')">
               <ngx-select
                 [form]="documentForm"
@@ -126,7 +156,7 @@
               </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 pt-4">
             <form-field
               [control]="documentForm.get('xNoProgramacion')"
               label="No&#46; Programaci&oacute;n">
@@ -136,9 +166,9 @@
                 formControlName="xNoProgramacion" />
             </form-field>
           </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-4">
+          <!-- </div>
+        <div class="row pt-4"> -->
+          <div class="col-md-4 pt-4">
             <form-field [control]="documentForm.get('xidTransferente')">
               <ngx-select
                 [form]="documentForm"
@@ -151,7 +181,7 @@
               </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 pt-4">
             <form-field
               [control]="documentForm.get('xFolioProgramacion')"
               label="Folio Programaci&oacute;n">
@@ -161,7 +191,7 @@
                 formControlName="xFolioProgramacion" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 pt-4">
             <form-field
               [control]="documentForm.get('xremitente')"
               label="Remitente">
@@ -171,9 +201,9 @@
                 formControlName="xremitente" />
             </form-field>
           </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-4">
+          <!--  </div>
+        <div class="row pt-4"> -->
+          <div class="col-md-4 pt-4">
             <form-field
               [control]="documentForm.get('xcargoRemitente')"
               label="Cargo Remitente">
@@ -183,7 +213,7 @@
                 formControlName="xcargoRemitente" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 pt-4">
             <form-field
               [control]="documentForm.get('xresponsable')"
               label="Responsable">
@@ -193,7 +223,7 @@
                 formControlName="xresponsable" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 pt-4">
             <form-field
               [control]="documentForm.get('xComments')"
               label="Comentarios">

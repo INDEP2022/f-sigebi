@@ -400,4 +400,9 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.document}?filter.scanStatus=$ilike:ESCANEADO&filter.id=$eq:${folio}`;
     return this.get(route);
   }
+
+  updateClarDocImp(id: number, model: IClarificationDocumentsImpro) {
+    const route = `${DocumentsEndpoints.ClarificationDocumentsImpro}/${id}`;
+    return this.put<IClarificationDocumentsImpro>(route, model);
+  }
 }

@@ -30,6 +30,7 @@
         </div>
       </form>
     </div>
+
     <div id="participants-data">
       <div class="row pt-4">
         <h5>Captura datos de los participantes</h5>
@@ -43,7 +44,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="competitor1" />
+                formControlName="competitor1"
+                [readOnly]="readonly" />
             </form-field>
           </div>
           <div class="col-md-5">
@@ -53,7 +55,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="postCompetitor1" />
+                formControlName="postCompetitor1"
+                [readOnly]="readonly" />
             </form-field>
           </div>
         </div>
@@ -65,7 +68,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="competitor2" />
+                formControlName="competitor2"
+                [readOnly]="readonly" />
             </form-field>
           </div>
           <div class="col-md-5">
@@ -75,7 +79,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="postCompetitor2" />
+                formControlName="postCompetitor2"
+                [readOnly]="readonly" />
             </form-field>
           </div>
         </div>

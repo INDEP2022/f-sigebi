@@ -1,78 +1,93 @@
+import { DatePipe } from '@angular/common';
+
 export const DATA_COLUMNS = {
-  noMovement: {
+  NoMovimiento: {
     title: 'No. Movimiento',
     sort: false,
   },
-  dateMov: {
+  FechaMov: {
     title: 'Fecha Movimiento',
     sort: false,
+    valuePrepareFunction: (date: number): string => {
+      const fechaString = date.toString();
+      const año = fechaString.substring(0, 4);
+      const mes = fechaString.substring(4, 6);
+      const dia = fechaString.substring(6, 8);
+      const fecha = new Date(`${año}-${mes}-${dia}`);
+      var formatted = new DatePipe('en-EN').transform(
+        fecha,
+        'dd/MM/yyyy',
+        'UTC'
+      );
+      return formatted;
+    },
   },
-  movement: {
+  Movimiento: {
     title: 'Movimiento',
     sort: false,
   },
-  account: {
+  Cuenta: {
     title: 'cuenta',
     sort: false,
   },
-  reference: {
+  Referencia: {
     title: 'Referencia',
     sort: false,
   },
-  referenteOI: {
+  ReferenciaOrdenIngreso: {
     title: 'Referencia Orden Ingreso',
     sort: false,
   },
-  bank: {
+  Banco: {
     title: 'Banco',
     sort: false,
   },
-  branchOffice: {
+  Sucursal: {
     title: 'Sucursal',
     sort: false,
   },
-  amount: {
+  Monto: {
     title: 'Monto',
     sort: false,
   },
-  result: {
+  Resultado: {
     title: 'Resultado',
     sort: false,
   },
-  valid: {
+  /*valid: {
     title: 'Validar',
     sort: false,
-  },
-  validTxt: {
-    title: 'Validar Texto',
+  },*/
+  ValidoText: {
+    title: 'Valido',
     sort: false,
   },
-  idPayment: {
-    title: 'ID Pago',
+  idPago: {
+    title: 'Id Pago',
     sort: false,
   },
-  allotment: {
+  LotePublico: {
     title: 'Lote Público',
     sort: false,
   },
-  event: {
+  Evento: {
     title: 'Evento',
     sort: false,
   },
-  entryOrder: {
+  OrdenIngreso: {
     title: 'Orden de Ingreso',
     sort: false,
   },
-  date: {
+  Fecha: {
     title: 'Fecha',
     sort: false,
   },
-  descriptionSAT: {
+  DescripcionSAT: {
     title: 'Descripción SAT',
     sort: false,
   },
-  counter: {
-    title: 'Contador',
+  Contador: {
+    title: 'Id Recorrido',
     sort: false,
   },
 };

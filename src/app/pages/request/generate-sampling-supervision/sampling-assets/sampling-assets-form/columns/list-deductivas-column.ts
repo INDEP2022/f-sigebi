@@ -28,6 +28,7 @@ export const LIST_DEDUCTIVES_COLUMNS = {
     type: 'custom',
     class: 'custom-field',
     filter: false,
+    disabled: true,
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {},
     sort: false,

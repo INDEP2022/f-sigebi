@@ -1738,15 +1738,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   getUnitMeasure(unit: string) {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
+    /*const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.nbCode'] = `$eq:${unit}`;
     this.strategyService.getUnitsMedXConv(params.getValue()).subscribe({
       next: response => {
+        console.log('response', response);
         this.measureUnits = response.data;
       },
       error: error => {},
-    });
-    /*this.params.getValue()['filter.measureTlUnit'] = `$ilike:${
+    }); */
+    this.params.getValue()['filter.measureTlUnit'] = `$ilike:${
       this.params.getValue().text
     }`;
     this.params.getValue().limit = 20;
@@ -1755,11 +1756,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          console.log('de aqui', resp);
           this.measureUnits = resp.data;
         },
         error: error => {},
-      }); */
+      });
   }
 
   getConcervationState() {
