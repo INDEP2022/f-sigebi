@@ -33,6 +33,7 @@ import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedeposi
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { NgSelectElementComponent } from 'src/app/shared/components/select-element-smarttable/ng-select-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import * as XLSX from 'xlsx';
@@ -157,9 +158,12 @@ export class DepositaryPaymentChargesComponent
    */
   private buildForm() {
     this.form = this.fb.group({
-      numberGood: [null, [Validators.required]],
+      numberGood: [
+        null,
+        [Validators.pattern(NUM_POSITIVE), Validators.required],
+      ],
       event: [null, null],
-      cve_bank: [null, [Validators.required]],
+      cve_bank: [null],
       loand: [null, null],
     });
   }
