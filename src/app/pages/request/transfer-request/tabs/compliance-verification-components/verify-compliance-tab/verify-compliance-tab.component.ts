@@ -747,7 +747,6 @@ export class VerifyComplianceTabComponent
       SearchFilter.IN
     );
     const filter = this.params.getValue().getParams();
-    debugger;
     this.goodFinderService.goodFinder(filter).subscribe({
       next: resp => {
         resp.data.map((item: any) => {

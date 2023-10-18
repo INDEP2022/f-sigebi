@@ -93,7 +93,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
         this.dictumForm.controls['postRecipientRuling'].value,
       postSignatoryRuling:
         this.dictumForm.controls['postSignatoryRuling'].value,
-      reportSheet: this.folioReporte,
+      reportSheet: ' ',
       rulingCreatorName: name,
       recordId: this.requestData.recordId,
     };
@@ -131,6 +131,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
         const typeAnnex = 'approval-request';
         const idTypeDoc = this.idTypeDoc;
         const nameTypeDoc = 'DictamenProcendecia';
+        const nomenglatura = this.folioReporte;
 
         let config: ModalOptions = {
           initialState: {
@@ -139,6 +140,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
             typeAnnex,
             requestInfo,
             nameTypeDoc,
+            nomenglatura,
             callback: (next: boolean) => {},
           },
           class: 'modal-lg modal-dialog-centered',
