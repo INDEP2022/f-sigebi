@@ -1,0 +1,85 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="providerForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="providerForm.get('paymentAct')"
+            label="Pago Actual ($)">
+            <input
+              currencyMask
+              class="form-control"
+              formControlName="paymentAct"
+              maxlength="11"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="providerForm.get('xcentdedu')"
+            label="Reconocimiento de Gastos (%)">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xcentdedu"
+              (change)="changeXcent()"
+              maxlength="10" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="providerForm.get('valuededu')"
+            label="Reconocimiento de Gastos (Valor $)">
+            <input
+              currencyMask
+              class="form-control"
+              formControlName="valuededu"
+              maxlength="18" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="providerForm.get('paymentObserv')"
+            label="Observaciones del Pago">
+            <textarea
+              class="form-control"
+              formControlName="paymentObserv"
+              rows="5"
+              maxlength="1000">
+            </textarea>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="providerForm.get('deduObserv')"
+            label="Observaciones del Reconocimiento de Gastos">
+            <textarea
+              class="form-control"
+              formControlName="deduObserv"
+              rows="5"
+              maxlength="1000">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="providerForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

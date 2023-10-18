@@ -142,6 +142,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   tokenData: any;
   devolutionCtlDevPagId: number = null;
   loadingreferenceRequest: boolean = false;
+  countVerifPay: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -948,4 +949,58 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     downloadLink.click();
     downloadLink.remove();
   }
+  verifyPaysSirsae() {
+    let nameTable = '"Cuentas de Banco Relacionadas"';
+    if (this.selectedAccounts.length == 0) {
+      this.alert(
+        'warning',
+        'No se tiene ' + nameTable + ' seleccionadas',
+        'Selecciona un registro de la tabla ' + nameTable
+      );
+      return;
+    }
+    if (this.selectedAccounts.length > 1) {
+      this.alert(
+        'warning',
+        'No se pueden seleccionar varias ' + nameTable + ' seleccionadas',
+        'Selecciona solo un registro de la tabla ' + nameTable
+      );
+      return;
+    }
+    // PUP_EXP_CSV_REFSOL
+    this.alertQuestion(
+      'warning',
+      '¿Desea continuar con la generación del archivo?',
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.startVariableVerifyPays();
+      }
+    });
+  }
+  startVariableVerifyPays() {
+    this.countVerifPay = 1;
+    this.loadingreferenceRequest = true;
+    this.sendVerifyPays();
+  }
+  sendVerifyPays() {
+    this.svPaymentService
+      .getExpRefSol(this.selectedAccounts[0].idCtldevpag)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          if (this.selectAccounts.length == this.countVerifPay) {
+            this.loadingreferenceRequest = false;
+            this.endSendVerifyPays();
+          }
+        },
+        error: error => {
+          if (this.selectAccounts.length == this.countVerifPay) {
+            this.loadingreferenceRequest = false;
+            this.endSendVerifyPays();
+          }
+        },
+      });
+  }
+  endSendVerifyPays() {}
 }
