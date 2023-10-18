@@ -199,8 +199,14 @@
       <div class="form-inline justify-content-end">
         <div class="btn-toolbar">
           <button
+            *ngIf="task?.State == 'PROCESO'"
             (click)="saveInfoGoodTransportable()"
             class="btn btn-primary btn-sm active">
+            Guardar <i class="fa fa-save"></i>
+          </button>
+          <button
+            *ngIf="task?.State == 'FINALIZADA'"
+            class="btn btn-primary disabled btn-sm active">
             Guardar <i class="fa fa-save"></i>
           </button>
         </div>
@@ -475,8 +481,8 @@
                           formControlName="saeMeasureUnit">
                           <option
                             *ngFor="let measureUnit of measureUnits"
-                            [value]="measureUnit.uomCode">
-                            {{ measureUnit.uomCode }}
+                            [value]="measureUnit.measureTlUnit">
+                            {{ measureUnit.measureTlUnit }}
                           </option>
                         </select>
                       </td>
@@ -655,8 +661,14 @@
                 <div class="form-inline justify-content-end">
                   <div class="btn-toolbar">
                     <button
+                      *ngIf="task?.State == 'PROCESO'"
                       (click)="saveInfoGoodReception()"
                       class="btn btn-primary btn-sm active">
+                      Guardar <i class="fa fa-save"></i>
+                    </button>
+                    <button
+                      *ngIf="task?.State == 'FINALIZADA'"
+                      class="btn btn-primary disabled btn-sm active">
                       Guardar <i class="fa fa-save"></i>
                     </button>
                   </div>
@@ -904,8 +916,8 @@
                                       formControlName="saeMeasureUnit">
                                       <option
                                         *ngFor="let measureUnit of measureUnits"
-                                        [value]="measureUnit.uomCode">
-                                        {{ measureUnit.uomCode }}
+                                        [value]="measureUnit.measureTlUnit">
+                                        {{ measureUnit.measureTlUnit }}
                                       </option>
                                     </select>
                                   </td>
@@ -1064,8 +1076,14 @@
               <div class="form-inline justify-content-end">
                 <div class="btn-toolbar">
                   <button
+                    *ngIf="task?.State == 'PROCESO'"
                     (click)="saveInfoGoodGuard()"
                     class="btn btn-primary btn-sm active">
+                    Guardar <i class="fa fa-save"></i>
+                  </button>
+                  <button
+                    *ngIf="task?.State == 'FINALIZADA'"
+                    class="btn btn-primary disabled btn-sm active">
                     Guardar <i class="fa fa-save"></i>
                   </button>
                 </div>
@@ -1317,8 +1335,8 @@
                                   formControlName="saeMeasureUnit">
                                   <option
                                     *ngFor="let measureUnit of measureUnits"
-                                    [value]="measureUnit.uomCode">
-                                    {{ measureUnit.uomCode }}
+                                    [value]="measureUnit.measureTlUnit">
+                                    {{ measureUnit.measureTlUnit }}
                                   </option>
                                 </select>
                               </td>
@@ -1498,8 +1516,14 @@
               <div class="form-inline justify-content-end">
                 <div class="btn-toolbar">
                   <button
+                    *ngIf="task?.State == 'PROCESO'"
                     (click)="saveInfoGoodWarehouse()"
                     class="btn btn-primary btn-sm active">
+                    Guardar <i class="fa fa-save"></i>
+                  </button>
+                  <button
+                    *ngIf="task?.State == 'FINALIZADA'"
+                    class="btn btn-primary disabled btn-sm active">
                     Guardar <i class="fa fa-save"></i>
                   </button>
                 </div>
@@ -1757,8 +1781,8 @@
                                     formControlName="saeMeasureUnit">
                                     <option
                                       *ngFor="let measureUnit of measureUnits"
-                                      [value]="measureUnit.uomCode">
-                                      {{ measureUnit.uomCode }}
+                                      [value]="measureUnit.measureTlUnit">
+                                      {{ measureUnit.measureTlUnit }}
                                     </option>
                                   </select>
                                 </td>
@@ -1935,8 +1959,14 @@
                 <div class="form-inline justify-content-end">
                   <div class="btn-toolbar">
                     <button
+                      *ngIf="task?.State == 'PROCESO'"
                       (click)="saveInfoGoodReprog()"
                       class="btn btn-primary btn-sm active">
+                      Guardar <i class="fa fa-save"></i>
+                    </button>
+                    <button
+                      *ngIf="task?.State == 'FINALIZADA'"
+                      class="btn btn-primary disabled btn-sm active">
                       Guardar <i class="fa fa-save"></i>
                     </button>
                   </div>
@@ -2178,8 +2208,8 @@
                                     formControlName="saeMeasureUnit">
                                     <option
                                       *ngFor="let measureUnit of measureUnits"
-                                      [value]="measureUnit.uomCode">
-                                      {{ measureUnit.uomCode }}
+                                      [value]="measureUnit.measureTlUnit">
+                                      {{ measureUnit.measureTlUnit }}
                                     </option>
                                   </select>
                                 </td>
@@ -2301,8 +2331,14 @@
               <div class="form-inline justify-content-end">
                 <div class="btn-toolbar">
                   <button
+                    *ngIf="task?.State == 'PROCESO'"
                     (click)="saveInfoGoodCancelation()"
                     class="btn btn-primary btn-sm active">
+                    Guardar <i class="fa fa-save"></i>
+                  </button>
+                  <button
+                    *ngIf="task?.State == 'FINALIZADA'"
+                    class="btn btn-primary disabled btn-sm active">
                     Guardar <i class="fa fa-save"></i>
                   </button>
                 </div>
@@ -2532,8 +2568,8 @@
                                   formControlName="saeMeasureUnit">
                                   <option
                                     *ngFor="let measureUnit of measureUnits"
-                                    [value]="measureUnit.uomCode">
-                                    {{ measureUnit.uomCode }}
+                                    [value]="measureUnit.measureTlUnit">
+                                    {{ measureUnit.measureTlUnit }}
                                   </option>
                                 </select>
                               </td>

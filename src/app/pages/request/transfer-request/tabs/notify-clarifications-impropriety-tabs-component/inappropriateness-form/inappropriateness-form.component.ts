@@ -70,68 +70,62 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   }
 
   getInfoDoc() {
-    return new Promise((resolve, reject) => {
-      const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.applicationId'] = this.idSolicitud;
-      this.documentService
-        .getAllClarificationDocImpro(params.getValue())
-        .subscribe({
-          next: response => {
-            resolve(response.data[0].id);
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.applicationId'] = this.idSolicitud;
+    this.documentService
+      .getAllClarificationDocImpro(params.getValue())
+      .subscribe({
+        next: response => {
+          const clarificationImpro: IClarificationDocumentsImpro =
+            response.data[0];
+          if (clarificationImpro?.managedTo) {
+            this.form
+              .get('addresseeName')
+              .setValue(clarificationImpro?.managedTo);
+          }
 
-            const clarificationImpro: IClarificationDocumentsImpro =
-              response.data[0];
-            if (clarificationImpro?.managedTo) {
-              this.form
-                .get('addresseeName')
-                .setValue(clarificationImpro?.managedTo);
-            }
+          if (clarificationImpro?.positionAddressee) {
+            this.form
+              .get('positionAddressee')
+              .setValue(clarificationImpro?.positionAddressee);
+          }
 
-            if (clarificationImpro?.positionAddressee) {
-              this.form
-                .get('positionAddressee')
-                .setValue(clarificationImpro?.positionAddressee);
-            }
+          if (clarificationImpro?.sender) {
+            this.form.get('senderName').setValue(clarificationImpro?.sender);
+          }
 
-            if (clarificationImpro?.sender) {
-              this.form.get('senderName').setValue(clarificationImpro?.sender);
-            }
+          if (clarificationImpro?.positionSender) {
+            this.form
+              .get('senderCharge')
+              .setValue(clarificationImpro?.positionSender);
+          }
 
-            if (clarificationImpro?.positionSender) {
-              this.form
-                .get('senderCharge')
-                .setValue(clarificationImpro?.positionSender);
-            }
+          if (clarificationImpro?.consistentIn) {
+            this.form
+              .get('consistentIn')
+              .setValue(clarificationImpro?.consistentIn);
+          }
 
-            if (clarificationImpro?.consistentIn) {
-              this.form
-                .get('consistentIn')
-                .setValue(clarificationImpro?.consistentIn);
-            }
+          if (clarificationImpro?.clarification) {
+            this.form
+              .get('clarification')
+              .setValue(clarificationImpro?.clarification);
+          }
 
-            if (clarificationImpro?.clarification) {
-              this.form
-                .get('clarification')
-                .setValue(clarificationImpro?.clarification);
-            }
+          if (clarificationImpro?.paragraphInitial) {
+            this.form
+              .get('paragraphInitial')
+              .setValue(clarificationImpro?.paragraphInitial);
+          }
 
-            if (clarificationImpro?.paragraphInitial) {
-              this.form
-                .get('paragraphInitial')
-                .setValue(clarificationImpro?.paragraphInitial);
-            }
-
-            if (clarificationImpro?.paragraphFinal) {
-              this.form
-                .get('paragraphFinal')
-                .setValue(clarificationImpro?.paragraphFinal);
-            }
-          },
-          error: error => {
-            resolve(0);
-          },
-        });
-    });
+          if (clarificationImpro?.paragraphFinal) {
+            this.form
+              .get('paragraphFinal')
+              .setValue(clarificationImpro?.paragraphFinal);
+          }
+        },
+        error: error => {},
+      });
   }
 
   prepareForm() {

@@ -163,12 +163,10 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       idTransferee: Number(this.consultTasksForm.value.txtNoTransferente),
     };
 
-    console.log('Objeto', obj);
-
     this.taskService.downloadReport(obj).subscribe({
       next: resp => {
         const data = resp.base64File;
-        console.log('Base64: ', data);
+
         if (data != '') {
           const base64String = data;
           const binaryData = atob(base64String);
@@ -457,7 +455,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     }
 
     if (this.consultTasksForm.value.txtNoTransferente) {
-      console.log('Filtro de transferente activado');
       isfilterUsed = true;
       this.filterParams
         .getValue()
@@ -622,7 +619,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       );
     }
     if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
-      console.log('txtNoProgramacion');
       isfilterUsed = true;
       this.filterParams
         .getValue()
@@ -672,7 +668,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
             item.requestId =
               item.requestId != null ? item.requestId : item.programmingId;
           });
-          console.log(response);
+
           resolve(response);
         },
         error: () => {

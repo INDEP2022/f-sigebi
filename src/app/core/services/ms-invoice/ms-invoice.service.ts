@@ -192,4 +192,43 @@ export class MsInvoiceService extends HttpService {
       body
     );
   }
+
+  getComerTpinvoices(params: _Params) {
+    return this.get<IListResponse>(
+      `${ENDPOINT_INVOICE.ComerTpinvoices}`,
+      params
+    );
+  }
+
+  getApplicationFaValidCurpRfc(body: any) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationFaValidCurpRfc}`,
+      body
+    );
+  }
+  // ==================================================== //
+  getApplicationComerBillsTotal(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationComerBillsTotal}`,
+      body
+    );
+  }
+  getApplicationComerBillsIva(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationComerBillsIva}`,
+      body
+    );
+  }
+  getApplicationComerBillsPrice(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationComerBillsPrice}`,
+      body
+    );
+  }
+  getApplicationComerBillsAmount(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationComerBillsAmount}`,
+      body
+    );
+  }
 }

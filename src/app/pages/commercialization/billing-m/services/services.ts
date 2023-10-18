@@ -4,6 +4,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
@@ -21,7 +22,8 @@ export class BillingsService {
     private segAcessXAreasService: SegAcessXAreasService,
     private parametersService: ParametersService,
     private parameterModService: ParameterModService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private dinamicTablesService: DinamicTablesService
   ) {}
 
   async getEventDataById(id: any) {
@@ -402,12 +404,140 @@ export class BillingsService {
   }
 
   async getDelegation(params: any) {
+    // CAT_DELEGACIONES
     return new Promise((resolve, reject) => {
       this.delegationService.getAll2(params).subscribe({
         next: async (response: any) => {
           resolve(response.data[0]);
         },
         error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getComerTpinvoices(params: any) {
+    // COMER_TPFACTURAS
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getComerTpinvoices(params).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  async getApplicationFaValidCurpRfc(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationFaValidCurpRfc(body).subscribe({
+        next: response => {
+          resolve(response.data[0].faValidCurpRfc);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  // ============================================================================== //
+
+  async getApplicationComerBillsTotal(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationComerBillsTotal(body).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          let objReturn = {
+            totaling: 0,
+            totaleg: 0,
+          };
+          resolve(objReturn);
+        },
+      });
+    });
+  }
+
+  async getApplicationComerBillsIva(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationComerBillsIva(body).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          let objReturn = {
+            ivaing: 0,
+            ivaeg: 0,
+          };
+          resolve(objReturn);
+        },
+      });
+    });
+  }
+
+  async getApplicationComerBillsPrice(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationComerBillsPrice(body).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          let objReturn = {
+            priceing: 0,
+            priceeg: 0,
+          };
+          resolve(objReturn);
+        },
+      });
+    });
+  }
+
+  async getApplicationComerBillsAmount(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationComerBillsAmount(body).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getParamterMod(params: any) {
+    return new Promise((resolve, reject) => {
+      this.parameterModService.getParamterMod(params).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  // ============================================================================== //
+
+  async getKeyTable(params: any, name: string) {
+    return new Promise((resolve, reject) => {
+      this.dinamicTablesService.getKeyTable(params, name).subscribe({
+        next: response => {
+          let result = response.data.map((item: any) => {
+            item['cveAndDesc'] = item.clave + ' - ' + item.descripcion;
+          });
+
+          Promise.all(result).then(resp => {
+            resolve(response);
+          });
+        },
+        error: error => {
           resolve(null);
         },
       });

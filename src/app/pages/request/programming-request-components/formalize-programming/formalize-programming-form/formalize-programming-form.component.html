@@ -322,6 +322,18 @@
               <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsRecepGoods"></app-columns-select>
+
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport('EN_RECEPCION', 'Bienes_Recepción.xlsx')
+                  "></confirm-button>
               </div>
               <div class="row pt-4 table-container">
                 <div class="col-md-12 table-responsive">
@@ -356,6 +368,18 @@
               <div class="d-flex justify-content-end pt-5">
                 <app-columns-select
                   [(settings)]="settingsGuardGoods"></app-columns-select>
+
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport('EN_RESGUARDO', 'Bienes_Resguardo.xlsx')
+                  "></confirm-button>
               </div>
               <div class="row pt-4 table-container">
                 <div class="col-md-12 table-responsive">
@@ -401,6 +425,18 @@
               <div class="d-flex justify-content-end pt-5">
                 <app-columns-select
                   [(settings)]="settingsWarehouseGoods"></app-columns-select>
+
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport('EN_ALMACEN', 'Bienes_Almacén.xlsx')
+                  "></confirm-button>
               </div>
               <div class="row pt-4 table-container">
                 <div class="col-md-12 table-responsive">
@@ -424,6 +460,21 @@
               <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsReprog"></app-columns-select>
+
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport(
+                      'EN_PROGRAMACION',
+                      'Bienes_Programación.xlsx'
+                    )
+                  "></confirm-button>
               </div>
               <div class="row pt-4 table-container">
                 <div class="col-md-12 table-responsive">
@@ -444,6 +495,18 @@
             <div class="d-flex justify-content-end">
               <app-columns-select
                 [(settings)]="settingsCancelation"></app-columns-select>
+
+              <confirm-button
+                [loading]="loadingReportGoods"
+                [btnSmall]="true"
+                [text]="'Generar reporte'"
+                [loadingText]="'Generando reporte'"
+                [className]="'btn-success'"
+                [icon]="'bx bx-download float-icon'"
+                class="ml-2"
+                (confirm)="
+                  generateReport('CANCELADO', 'Bienes_Cancelados.xlsx')
+                "></confirm-button>
             </div>
             <div class="row pt-4 table-container">
               <div class="col-md-12 table-responsive">
