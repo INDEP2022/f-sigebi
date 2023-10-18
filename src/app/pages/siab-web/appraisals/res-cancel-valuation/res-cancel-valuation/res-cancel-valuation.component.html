@@ -239,30 +239,12 @@
       </div>
     </div>
     <!--  -->
-    <div class="mt-5">
-      <div>
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
-      </div>
-      <div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
-      </div>
-    </div>
+    <app-valued-table [body]="body1" [settings1]="settings"></app-valued-table>
     <!--  -->
-    <div class="mt-5">
-      <div>
-        <ng2-smart-table
-          [settings]="settingsTwo"
-          [source]="dataTwo"
-          (userRowSelect)="onUserRowSelectCancel($event)"></ng2-smart-table>
-      </div>
-      <div>
-        <app-pagination [params]="paramsTwo" [totalItems]="totalItemsTwo">
-        </app-pagination>
-      </div>
-    </div>
+    <app-cancel-table
+      [body]="body2"
+      [officeType]="officeType"
+      [showModalCambioRev]="showModalCambioRev"></app-cancel-table>
     <!--  -->
     <div>
       <div>
@@ -293,7 +275,7 @@
               <div class="ml-auto" *ngIf="btnMotCan">
                 <button
                   class="btn btn-primary btn-sm active"
-                  (click)="reasonsForChange()">
+                  (click)="showModal()">
                   Motivos de Cambio a REV
                 </button>
               </div>
@@ -302,12 +284,15 @@
           <!--  -->
           <div class="row mb-3">
             <div class="col-md-6">
-              <button
-                class="btn btn-sm btn-success active"
+              <div
+                [class]="loadingExcel ? 'disabled' : ''"
                 (click)="exportExcel()">
-                Exportar a Excel
-                <i class="bx bx-download float-icon"></i>
-              </button>
+                <app-excel-report
+                  [elementToExport]="elementsToExport"
+                  [externalClick]="flagDownload"
+                  [nameExcel]="nameExcel"
+                  text="Exportar a Excel"></app-excel-report>
+              </div>
             </div>
             <div class="col-md-6">
               <button type="button" class="btn btn-sm btn-success active">
@@ -497,7 +482,11 @@
               </button>
             </div>
             <div class="m-3" *ngIf="btnGuardar">
-              <button type="button" class="btn btn-primary btn-sm active">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                [disabled]="form.invalid"
+                (click)="save()">
                 Guardar Oficio
               </button>
             </div>
@@ -541,59 +530,6 @@
             </div>
           </div> -->
           <!--  -->
-          <!-- Modal #2 -->
-          <!-- <div style="border: 1px solid black; padding: 10px; border-radius: 20px" class="mt-5"> -->
-          <ng-template #modalRev>
-            <div>
-              <div>
-                <!-- <p>Este es el modal #2</p> -->
-                <div>
-                  <div class="row mt-5">
-                    <div class="col-md-12">
-                      <!-- <p>Notificaciones</p> -->
-                    </div>
-                  </div>
-                  <!--  -->
-                  <div class="m-3">
-                    <div>
-                      <p><strong>Motivos de Cancelación</strong></p>
-                    </div>
-                    <div class="m-3">
-                      <div>
-                        <ng2-smart-table
-                          [settings]="settingsModal"
-                          [source]="dataModal"
-                          (userRowSelect)="
-                            onUserRowSelect($event)
-                          "></ng2-smart-table>
-                      </div>
-                      <div>
-                        <app-pagination
-                          [params]="paramsModal"
-                          [totalItems]="totalItemsModal">
-                        </app-pagination>
-                      </div>
-                    </div>
-                  </div>
-                  <!--  -->
-                  <div class="d-flex justify-content-center mb-3">
-                    <button
-                      class="btn btn-primary btn-sm active mr-3"
-                      style="min-width: 100px"
-                      (click)="modifySelectedRows()">
-                      Aceptar
-                    </button>
-                    <button
-                      class="btn btn-primary btn-sm active"
-                      style="min-width: 100px"
-                      (click)="closeModalSubtype()">
-                      Cerrar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ng-template>
         </form>
       </div>
     </div>
