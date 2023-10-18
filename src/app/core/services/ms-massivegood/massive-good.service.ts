@@ -52,6 +52,10 @@ export class MassiveGoodService extends HttpService {
     );
   }
 
+  getIdentifier(params: ListParams) {
+    return this.get(MassiveGoodEndpoints.getIdentifierCount, params);
+  }
+
   getById(id: string | number): Observable<IMassiveGood> {
     const route = `${this.route.MassiveChargeGoods}/${id}`;
     return this.get(route);
@@ -216,6 +220,11 @@ export class MassiveGoodService extends HttpService {
   exportSampleGoods(_params: ListParams) {
     const params = this.makeParams(_params);
     return this.get(`${MassiveGoodEndpoints.ExportSampleGoods}?${params}`);
+  }
+
+  exportGoodProgramming(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.get(`${MassiveGoodEndpoints.ExportGoodProgramming}?${params}`);
   }
 
   private makeParams(params: ListParams): HttpParams {

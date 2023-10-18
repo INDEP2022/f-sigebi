@@ -168,11 +168,11 @@ export class DocReceivedSeraComponent extends BasePage implements OnInit {
 
     console.log(reportParams);
     //TODO: VALIDAR REPORTE
-    this.getReport('RCONDIRRECEPDOCTO', reportParams);
+    // this.getReport('RCONDIRRECEPDOCTO', reportParams);
   }
 
   getReport(report: string, params: any): void {
-    this.siabService.fetchReport(report, params).subscribe({
+    this.siabService.fetchReportBlank('blank').subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);

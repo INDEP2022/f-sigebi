@@ -31,6 +31,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -117,6 +118,7 @@ export class FormalizeProgrammingFormComponent
   authorityName: string = '';
   typeRelevantName: string = '';
   formLoading: boolean = false;
+  loadingReportGoods: boolean = false;
   goodData: IGood;
   actId: number = 0;
   observation: string = '';
@@ -281,7 +283,8 @@ export class FormalizeProgrammingFormComponent
     private authService: AuthService,
     private emailService: EmailService,
     private goodsProcessService: GoodprocessService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -2015,5 +2018,192 @@ export class FormalizeProgrammingFormComponent
         },
         error: error => {},
       });
+  }
+
+  generateReport(statusGoood: string, nameExcel: string) {
+    if (statusGoood == 'EN_RECEPCION') {
+      this.goodsRecepcion.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.programmingId}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+
+    if (statusGoood == 'EN_RESGUARDO') {
+      this.goodsGuards.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.programmingId}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+
+    if (statusGoood == 'EN_ALMACEN') {
+      this.goodsWarehouse.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.programmingId}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+
+    if (statusGoood == 'EN_PROGRAMACION') {
+      this.goodsReprog.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.programmingId}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+
+    if (statusGoood == 'CANCELADO') {
+      this.goodsCancel.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.programmingId}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+  }
+
+  downloadExcel(excel: any, nameReport: string) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = nameReport;
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 }
