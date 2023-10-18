@@ -24,4 +24,5 @@ export enum MassiveGoodEndpoints {
   pupBienesPlano = 'application/pupBienesPlano',
   ExportSampleGoods = 'application/exportDataSampleGoods',
   ApplicationCSV = 'application/generate-cvs-by-status',
+  getIdentifierCount = 'application/getIdentifierCount',
 }

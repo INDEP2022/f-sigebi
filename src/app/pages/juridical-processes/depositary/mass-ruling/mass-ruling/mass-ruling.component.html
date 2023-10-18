@@ -41,10 +41,18 @@
               type="submit"
               class="btn btn-primary active btn-sm active mr-3"
               (click)="searchDictation()">
+              Crear Dictámenes
+            </button>
+            <button
+              type="submit"
+              [disabled]="!form.valid"
+              class="btn btn-primary active btn-sm active mr-3"
+              (click)="searchDictation()">
               Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
             <button
               class="btn btn-danger active btn-sm active mr-3"
+              [disabled]="!form.valid"
               (click)="onClickBtnClear()">
               Limpiar <i class="fas fa-eraser"> </i>
             </button>
@@ -126,7 +134,7 @@
                   formControlName="delete" />
               </form-check>
             </div>
-            <div class="row pt-4">
+            <div class="row">
               <div class="col-md-12 d-flex justify-content-center">
                 <div>
                   <button
@@ -162,7 +170,40 @@
       </div>
     </form>
     <hr />
-    <div class="row margin-input">
+
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center">
+        <div>
+          <button
+            type="button"
+            [disabled]="!validate"
+            class="btn btn-primary active btn-sm active mr-3"
+            (click)="onClickPrintOffice()">
+            Imprimir Oficio <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+          <button
+            [disabled]="!validate"
+            type="button"
+            class="btn btn-primary active btn-sm active mr-3"
+            (click)="onClickPrintRelationGood()">
+            Imprimir Relación Bienes
+            <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+          <button
+            [disabled]="!validate"
+            type="button"
+            class="btn btn-primary active btn-sm active mr-3"
+            (click)="onClickPrintRelationExpedient()">
+            Imprimir Relación Expediente
+            <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="row margin-input pt-4">
       <form [formGroup]="formCargaMasiva" class="form-material">
         <!-- <form-field
                           [control]="formCargaMasiva.get('identificadorCargaMasiva')"
@@ -171,11 +212,10 @@
                             class="form-control"
                             formControlName="identificadorCargaMasiva" />
                         </form-field> -->
-        <div class="col-md-4">
+        <div class="col-md-5">
           <form-field
-            label="Identificador Carga Masiva"
             [control]="formCargaMasiva.get('identificadorCargaMasiva')">
-            <ng-custom-select
+            <!--<ng-custom-select
               class="form-control"
               formControlName="identificadorCargaMasiva"
               [isLoadInOnInit]="true"
@@ -186,7 +226,18 @@
                 {{ item?.fec_cargamasiv | date : 'shortDate' }} -
                 {{ item?.count }}
               </ng-template>
-            </ng-custom-select>
+            </ng-custom-select>-->
+            <ngx-select
+              [form]="formCargaMasiva"
+              control="identificadorCargaMasiva"
+              (fetchItems)="getIdentifier($event)"
+              label="Identificador Carga Masiva"
+              [data]="identifier"
+              bindLabel="idCargMasiv"
+              [searchOnInit]="true"
+              value="identificador"
+              (change)="changeIdentifier($event)">
+            </ngx-select>
           </form-field>
         </div>
       </form>
@@ -217,7 +268,8 @@
                     </div>
                 </div>
             </div>-->
-    <div class="row">
+
+    <!--<div class="row">
       <div class="col-md-8 mb-3"></div>
       <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
         <div class="p-2">
@@ -225,7 +277,7 @@
             <button
               id="button-alignment"
               dropdownToggle
-              [disabled]="formCargaMasiva.invalid"
+              [disabled]="!formCargaMasiva.valid"
               type="button"
               class="btn btn-info btn-sm active dropdown-toggle"
               aria-controls="dropdown-alignment">
@@ -237,11 +289,15 @@
               class="dropdown-menu dropdown-menu-right"
               role="menu"
               aria-labelledby="button-alignment">
-              <!---  <li role="menuitem">
-                                <a class="dropdown-item" style="color: green" #fileExpedient (click)="fileExpedient.click()">
-                                    <i class="bx bx-import"></i> Cargar Expediente
-                                </a>
-                            </li>-->
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  style="color: green"
+                  #fileExpedient
+                  (click)="fileExpedient.click()">
+                  <i class="bx bx-import"></i> Cargar Expediente
+                </a>
+              </li>
               <li role="menuitem">
                 <a
                   class="dropdown-item"
@@ -286,7 +342,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
 
     <!--<div class="d-flex justify-content-end">
         <div class="btn-group" dropdown placement="bottom right">
@@ -352,6 +408,22 @@
           </ul>
         </div>
       </div>-->
+
+    <div class="row">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            containerclass="tooltip-style"
+            [disabled]="!formCargaMasiva.valid || !form.valid"
+            class="btn btn-primary btn-sm active ml-2 mr-4"
+            (click)="onClickLoadByIdentifier()">
+            Cargar Identificador
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- TABLAS  -->
     <div class="row">
