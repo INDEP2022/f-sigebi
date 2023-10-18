@@ -132,7 +132,7 @@ export class InappropriatenessPgrSatFormComponent
       paragraphInitial: this.form.controls['paragraphInitial'].value,
       applicationId: this.request.id,
 
-      invoiceLearned: this.folioReporte,
+      invoiceLearned: ' ',
       managedTo: this.request?.nameOfOwner
         ? this.request?.nameOfOwner
         : this.form.controls['managedTo'].value,
@@ -345,6 +345,8 @@ export class InappropriatenessPgrSatFormComponent
     const idTypeDoc = Number(data.documentTypeId);
     const requestInfo = this.request;
     const idSolicitud = this.idSolicitud;
+    const nomenglatura = this.folioReporte;
+    const infoReport = data;
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -354,6 +356,8 @@ export class InappropriatenessPgrSatFormComponent
         idReportAclara,
         idSolicitud,
         notificationValidate,
+        nomenglatura,
+        infoReport,
         callback: (next: boolean) => {
           if (next) {
             this.changeStatusAnswered();
