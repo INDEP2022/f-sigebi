@@ -1166,6 +1166,7 @@ export class DocumentVerificationRevisionResourcesComponent
     this.aprevia = '';
     this.transfer = 0;
     this.pKey = '';
+    this.dataTableDocument.data = [];
   }
   async getStatusGoodService(status: any) {
     this.statusGoodService.getById(status).subscribe({
