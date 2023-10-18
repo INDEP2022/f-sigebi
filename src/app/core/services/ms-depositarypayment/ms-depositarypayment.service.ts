@@ -99,4 +99,23 @@ export class MsDepositaryPaymentService extends HttpService {
   putPaymentsGensDepositories(model: IPaymentsGensDepositary) {
     return this.put(DepositaryPaymentEndPoints.PaymentsGensDepositories, model);
   }
+
+  updateTmpPagosGensDep(
+    id: string,
+    body: IRefPayDepositary
+  ): Observable<IRefPayDepositary> {
+    return this.put<IRefPayDepositary>(
+      `${DepositaryPaymentEndPoints.TmpPagosGensDep}/${id}`,
+      body
+    );
+  }
+
+  getTmpPagosGensDep(
+    params?: ListParams
+  ): Observable<IListResponse<IPaymentsGensDepositary>> {
+    return this.get<IListResponse<IPaymentsGensDepositary>>(
+      DepositaryPaymentEndPoints.TmpPagosGensDep,
+      params
+    );
+  }
 }

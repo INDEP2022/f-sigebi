@@ -5,4 +5,5 @@ export enum DepositaryPaymentEndPoints {
   PaymentsGensDepositories = 'paymentsgens-depositary',
   PaymentsGensDepositoriesTotals = 'paymentsgens-depositary/getTotalIva',
   RefPayDepositoriesTotals = 'refpay-depositories/getTotalAmount',
+  TmpPagosGensDep = 'tmp-pagosgens-dep',
 }

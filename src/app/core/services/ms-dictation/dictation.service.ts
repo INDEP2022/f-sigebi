@@ -448,4 +448,10 @@ export class DictationService extends HttpService {
   pupReport(data: Object) {
     return this.post(DictationEndpoints.PupReport, data);
   }
+
+  getDictationXGoodGetIden(typeDic: string, numberDic: number) {
+    return this.get(
+      `${DictationEndpoints.DictationXGoodGetIden}/${typeDic}/${numberDic}`
+    );
+  }
 }
