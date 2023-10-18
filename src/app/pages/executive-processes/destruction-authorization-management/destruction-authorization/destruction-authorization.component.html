@@ -7,29 +7,28 @@
       <div class="col-md-6 buttons">
         <div>
           <button
-            class="btn btn-success active btn-sm mx-1"
-            (click)="newProceeding()">
-            Nueva Acta
-          </button>
-          <button
-            class="btn btn-danger btn-sm active mr-3"
-            (click)="queryProceeding()">
-            Limpiar <i class="fas fa-eraser"> </i>
-          </button>
-          <button
             class="btn btn-primary btn-sm active m-1"
             (click)="keyProceedingchange()">
             Consultar Acta
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
           <confirm-button
-            [loading]="loading"
             [disabled]="controls.statusProceedings.value == 'CERRADA'"
             text="Guardar"
             loadingText="Guardando"
             [btnSmall]="true"
+            class="m-1"
             type="button"
             (confirm)="save()"></confirm-button>
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="queryProceeding()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+          <button class="btn btn-primary btn-sm active m-1" (click)="update()">
+            Actualizar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
     </div>

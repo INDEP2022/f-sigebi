@@ -222,6 +222,11 @@ export class MassiveGoodService extends HttpService {
     return this.get(`${MassiveGoodEndpoints.ExportSampleGoods}?${params}`);
   }
 
+  exportGoodProgramming(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.get(`${MassiveGoodEndpoints.ExportGoodProgramming}?${params}`);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
