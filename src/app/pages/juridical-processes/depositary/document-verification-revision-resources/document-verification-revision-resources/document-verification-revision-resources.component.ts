@@ -747,7 +747,7 @@ export class DocumentVerificationRevisionResourcesComponent
                 di_situacion_bien != 'DICTAMINADO'
               ) {
                 this.activeBlocDoc = true;
-                // this.createDocumentDicta();
+                this.createDocumentDicta();
                 this.getDataWihtVquery(vquery.join(', '));
               } else {
                 this.activeBlocDoc = true;
@@ -1224,7 +1224,7 @@ export class DocumentVerificationRevisionResourcesComponent
       goodNumber: this.form.get('goodId').value,
       // key: 'RCV',
       key: 'RCV',
-      typeDictum: 'PROCEDENCIA',
+      typeDictum: 'RECREVISION',
       dateReceipt: this.form.get('agreementDate').value,
       userReceipt: this.user.decodeToken().username,
       insertionDate: new Date(),
