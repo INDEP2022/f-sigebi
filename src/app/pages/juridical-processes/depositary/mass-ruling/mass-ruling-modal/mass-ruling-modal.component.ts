@@ -23,6 +23,7 @@ export class MassRulingModalComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
   validate: boolean = false;
+  dataConfirm: any;
   constructor(
     private copiesOfficialOpinionService: CopiesOfficialOpinionService,
     private modalRef: BsModalRef,
@@ -50,7 +51,13 @@ export class MassRulingModalComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'clasifGoodNumber':
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'wheelNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'expedientNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -95,13 +102,19 @@ export class MassRulingModalComponent extends BasePage implements OnInit {
   }
 
   rowsSelected(event: any) {
-    this.validate = true;
-    console.log(event);
+    if (event) {
+      this.validate = true;
+      this.dataConfirm = event.data;
+    }
   }
 
   close() {
     this.modalRef.hide();
   }
 
-  confirm() {}
+  confirm() {
+    this.loading = false;
+    this.modalRef.content.callback(this.dataConfirm);
+    this.modalRef.hide();
+  }
 }

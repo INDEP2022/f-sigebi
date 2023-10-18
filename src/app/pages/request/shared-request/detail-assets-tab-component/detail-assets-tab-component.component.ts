@@ -1279,11 +1279,11 @@ export class DetailAssetsTabComponentComponent
     this.brandId = this.brandId
       ? this.brandId[0].toUpperCase() + this.brandId.substring(1)
       : brandId[0].toUpperCase() + brandId.substring(1);
-    filter['filter.carBrand'] = `$eq:${this.brandId}`;
+    filter['filter.carBrand'] = `$ilike:${this.brandId}`;
     if (description != null) {
       description = description.toLowerCase();
       description = description[0].toUpperCase() + description.substring(1);
-      filter['filter.flexValueMeaningDependent'] = `$eq:${description}`;
+      filter['filter.flexValueMeaningDependent'] = `$ilike:${description}`;
     }
     if (params.text) {
       filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
