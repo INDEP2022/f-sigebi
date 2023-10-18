@@ -201,7 +201,7 @@ export class MsInvoiceService extends HttpService {
   }
 
   getApplicationFaValidCurpRfc(body: any) {
-    return this.put<IListResponse>(
+    return this.post<IListResponse>(
       `${ENDPOINT_INVOICE.ApplicationFaValidCurpRfc}`,
       body
     );
