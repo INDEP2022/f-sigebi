@@ -138,7 +138,7 @@ export class DocumentVerificationRevisionResourcesComponent
                     data.row.situacion_documentos = null;
                   }
                 } else {
-                  this.alert('info', 'Seleccione primero el Documento', '');
+                  this.alert('warning', 'Seleccione primero el Documento', '');
                   data.row.cb_solicitar_doctos = 'N';
                 }
               } else {
@@ -613,8 +613,8 @@ export class DocumentVerificationRevisionResourcesComponent
     if (di_situacion_bien == 'DICTAMINADO') {
       this.alert('info', 'Bien ya dictaminado', '');
     } else {
-      if (!this.fileNumber) {
-        this.alert('info', 'Falta seleccionar Expediente', '');
+      if (!this.fileNumber && this.form.get('goodId').value == null) {
+        this.alert('warning', 'Seleccione el Bien', '');
       } else {
         if (!this.dateToday) {
           this.alert(
@@ -677,7 +677,7 @@ export class DocumentVerificationRevisionResourcesComponent
     } else {
       this.alert(
         'info',
-        'Debe iniciar el proceso de Dictaminación y elegir al menos un Documento',
+        'Inicie el proceso de Dictaminación y elegir al menos un Documento',
         ''
       );
     }
@@ -687,7 +687,7 @@ export class DocumentVerificationRevisionResourcesComponent
     // const { id } = this.formExp.value;
     const { goodId } = this.form.value;
     if (!this.fileNumber) {
-      this.onLoadToast('info', 'Favor de seleccionar un expediente');
+      this.onLoadToast('info', 'Seleccione un expediente');
     } else {
       this.formInforme.patchValue({ id: this.fileNumber, goodId: goodId });
       this.informes = true;
