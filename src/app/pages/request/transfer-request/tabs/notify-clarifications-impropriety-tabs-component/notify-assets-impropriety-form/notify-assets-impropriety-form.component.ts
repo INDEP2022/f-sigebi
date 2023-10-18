@@ -318,11 +318,14 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.infoRequest?.nameOfOwner, //Nombre Destinatario - Titular de la solicitud
+      managedTo: this.infoRequest?.nameOfOwner
+        ? this.infoRequest?.nameOfOwner
+        : this.clarificationForm.controls['managedTo'].value, //Nombre Destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value, //Cargo Destinatario - Titular de la solicitud
+      positionAddressee: this.infoRequest?.holderCharge
+        ? this.infoRequest?.holderCharge
+        : this.clarificationForm.controls['positionAddressee'].value, //Cargo Destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '216',

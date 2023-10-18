@@ -1,1 +1,77 @@
-<p>update-factura works!</p>
+<app-modal>
+  <!-- <div header>
+        <h5 class="modal-title">{{ edit ? 'Editar' : 'Agregar' }} {{ title }}</h5>
+    </div> -->
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <!-- RG_TIPO_REL -->
+        <div class="col-md-12">
+          <form-field [control]="form.get('RG_TIPO_REL')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="RG_TIPO_REL"
+              [data]="selectTabla1"
+              bindLabel="cveAndDesc"
+              label="Tipo Rel."
+              (fetchItems)="getSelect1($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <!-- RG_USO_COM -->
+        <div class="col-md-12 mt-3">
+          <form-field [control]="form.get('RG_USO_COM')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="RG_USO_COM"
+              [data]="selectTabla2"
+              bindLabel="cveAndDesc"
+              label="Uso Comp."
+              (fetchItems)="getSelect2($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <!-- RG_F_PAGO -->
+        <div class="col-md-12 mt-3">
+          <form-field [control]="form.get('RG_F_PAGO')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="RG_F_PAGO"
+              [data]="selectTabla3"
+              bindLabel="cveAndDesc"
+              label="F. Pago"
+              (fetchItems)="getSelect3($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
