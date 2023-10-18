@@ -113,5 +113,11 @@ export const DEPOSITARY_ROUTES_1: any[] = [
     link: 'generation-files-trades',
     menu: 'Generación de Procesión de Oficios',
   },
+  {
+    // DISPERSION DE PAGOS DEPOSITARIAS
+    label: 'Dispersión de Pagos Depositarias',
+    link: 'dispersal-depositary-payments',
+    menu: 'Disperción de Pagos Depositarias',
+  },
   // DEPOSITARIA
 ];
