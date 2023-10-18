@@ -410,6 +410,14 @@
               </div>
               <div class="col">
                 <button
+                  class="btn btn-sm btn-success btn-block active me-2 font-size-13"
+                  (click)="verifyPaysSirsae()"
+                  [disabled]="">
+                  Verificar pagos SIRSAE
+                </button>
+              </div>
+              <div class="col">
+                <button
                   class="btn btn-sm btn-secondary btn-block active me-2 font-size-13"
                   (click)="changeLayout('MAINTENANCE')">
                   Mantenimiento de Layouts

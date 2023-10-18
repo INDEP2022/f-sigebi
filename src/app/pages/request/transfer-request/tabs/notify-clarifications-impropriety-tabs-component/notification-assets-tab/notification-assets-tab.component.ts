@@ -559,8 +559,12 @@ export class NotificationAssetsTabComponent
                     notification.clarificationType == 'SOLICITAR_ACLARACION'
                   ) {
                     if (
-                      notification.answered == 'ACLARADA' ||
-                      notification.answered == 'RECHAZADA'
+                      (notification.answered == 'ACLARADA' &&
+                        notification.clarification.clarification !=
+                          'INDIVIDUALIZACIÓN DE BIENES') ||
+                      (notification.answered == 'RECHAZADA' &&
+                        notification.clarification.clarification !=
+                          'INDIVIDUALIZACIÓN DE BIENES')
                     ) {
                       const updateStatusGood = await this.updateStatusGood(
                         'ACLARADO',
@@ -569,6 +573,25 @@ export class NotificationAssetsTabComponent
                         bien.goodresdev,
                         bien.typeorigin,
                         'ROP'
+                      );
+                      if (updateStatusGood === true) {
+                        resolve(true);
+                      }
+                    } else if (
+                      (notification.answered == 'ACLARADA' &&
+                        notification.clarification.clarification ==
+                          'INDIVIDUALIZACIÓN DE BIENES') ||
+                      (notification.answered == 'RECHAZADA' &&
+                        notification.clarification.clarification ==
+                          'INDIVIDUALIZACIÓN DE BIENES')
+                    ) {
+                      const updateStatusGood = await this.updateStatusGood(
+                        'IMPROCEDENTE',
+                        'IMPROCEDENTE',
+                        bien.goodid,
+                        bien.goodresdev,
+                        bien.typeorigin,
+                        'STI'
                       );
                       if (updateStatusGood === true) {
                         resolve(true);
@@ -778,7 +801,7 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  acceptClarification() {
+  aceptClarification() {
     if (this.rowSelected) {
       const notification = this.selectedRow;
       let aclaration: boolean = false;
@@ -945,7 +968,7 @@ export class NotificationAssetsTabComponent
 
       if (
         notification.clarificationType == 'SOLICITAR_ACLARACION' &&
-        notification.clarification.clarification !=
+        notification.clarification?.clarification !=
           'INDIVIDUALIZACIÓN DE BIENES'
       ) {
         if (notification.answered == 'EN ACLARACION') {
@@ -959,7 +982,7 @@ export class NotificationAssetsTabComponent
         }
       } else if (
         notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA' &&
-        notification.clarification.clarification !=
+        notification.clarification?.clarification !=
           'INDIVIDUALIZACIÓN DE BIENES'
       ) {
         if (notification.answered == 'EN ACLARACION') {
@@ -998,27 +1021,35 @@ export class NotificationAssetsTabComponent
       }
 
       if (
-        notification.clarification.clarification ==
+        notification.clarification?.clarification ==
         'INDIVIDUALIZACIÓN DE BIENES'
       ) {
         if (notification.answered == 'EN ACLARACION') {
           this.alertQuestion(
             'question',
             'Confirmación',
-            '¿Desea Finalizar la Aclaración?'
+            '¿Desea Finalizar la Aclaraciónes?'
           ).then(async question => {
             if (question.isConfirmed) {
               const goodCreate = await this.createIndividualizacion(
                 notification.good
               );
+
               if (goodCreate) {
                 const updateGoodInitial = await this.updateGoodInitial(
                   notification.good
                 );
+                if (updateGoodInitial) this.endAclaration();
+              }
+              /*if (goodCreate) {
+                const updateGoodInitial = await this.updateGoodInitial(
+                  notification.good
+                );
                 if (updateGoodInitial) {
+                  console.log('actualizar');
                   this.endAclarationInd();
                 }
-              }
+              } */
             }
           });
         } else {
@@ -1269,7 +1300,7 @@ export class NotificationAssetsTabComponent
             });
           },
           error: error => {
-            resolve(false);
+            resolve(true);
           },
         });
       }
@@ -1282,7 +1313,6 @@ export class NotificationAssetsTabComponent
         id: good.id,
         goodId: good.goodId,
         goodStatus: 'CANCELADO',
-        processStatus: 'CANCELADO',
       };
 
       this.goodService.updateByBody(_good).subscribe({
@@ -1452,6 +1482,7 @@ export class NotificationAssetsTabComponent
         idSolicitud,
         delegationUser,
         notification: notification,
+        typeForm: 'aclaration-sat',
         callback: (next: boolean, idGood: number) => {
           if (next) {
             if (
@@ -1817,7 +1848,7 @@ export class NotificationAssetsTabComponent
   }
 
   endClarification() {
-    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+    //this.router.navigate(['pages/siab-web/sami/consult-tasks']);
     /*this.data.getElements().then(data => {
       data.map((good: IGoodresdev) => {
         if (

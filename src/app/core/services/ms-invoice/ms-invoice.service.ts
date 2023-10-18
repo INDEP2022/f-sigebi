@@ -62,4 +62,173 @@ export class MsInvoiceService extends HttpService {
       params
     );
   }
+
+  getApplicationLotCounter(body: any) {
+    return this.post<IListResponse>(
+      ENDPOINT_INVOICE.ApplicationLotCounter,
+      body
+    );
+  }
+
+  getApplicationBugInfoCounter(body: any) {
+    return this.post<IListResponse>(
+      ENDPOINT_INVOICE.ApplicationBugInfoCounter,
+      body
+    );
+  }
+
+  getApplicationNofactCounter(body: any) {
+    return this.post<IListResponse>(
+      ENDPOINT_INVOICE.ApplicationNofactCounter,
+      body
+    );
+  }
+
+  getApplicationCounter1(body: any) {
+    return this.post<IListResponse>(ENDPOINT_INVOICE.ApplicationCounter1, body);
+  }
+
+  getPaNvoFacturaPag(body: any) {
+    return this.post<IListResponse>(ENDPOINT_INVOICE.PaNvoFacturaPag, body);
+  }
+
+  getPupActstatusLot(event: any) {
+    return this.get<IListResponse>(
+      `${ENDPOINT_INVOICE.PupActstatusLot}/${event}`
+    );
+  }
+
+  getFValidateUser(body: any) {
+    return this.post<IListResponse>(`${ENDPOINT_INVOICE.FValidateUser}`, body);
+  }
+
+  getPaNvoDeleteInvoice(body: any) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.PaNvoDeleteInvoice}`,
+      body
+    );
+  }
+
+  getCtrlInvoiceRegLot(body: any) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.CtrlInvoiceRegLot}`,
+      body
+    );
+  }
+
+  getApplicationLovsCanbacEvent(params: _Params) {
+    return this.get<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationLovsCanbacEvent}`,
+      params
+    );
+  }
+  getApplicationLovsCanbaccTransfer(body: any, params: _Params) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationLovsCanbaccTransfer}`,
+      body,
+      params
+    );
+  }
+  getApplicationlovsCanbaccDelegation(body: any, params: _Params) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationlovsCanbaccDelegation}`,
+      body,
+      params
+    );
+  }
+
+  getCursor1(body: any) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationValidSelectionFact}`,
+      body
+    );
+  }
+  getCursor2(body: any) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationvalidSelectionFactSat}`,
+      body
+    );
+  }
+
+  getApplicationValidSelectionCountfact(body: any) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationValidSelectionCountfact}`,
+      body
+    );
+  }
+
+  getApplicationValidSelectionCountfactFol(body: any) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationValidSelectionCountfactFol}`,
+      body
+    );
+  }
+
+  getPaNvoGenerarPag(body: any) {
+    return this.post<IListResponse>(ENDPOINT_INVOICE.PaNvoGenerarPag, body);
+  }
+
+  getProcFailed(body: any) {
+    return this.post<IListResponse>(
+      ENDPOINT_INVOICE.ApplicationProcFailed,
+      body
+    );
+  }
+
+  getConsFailed(body: any) {
+    return this.post<IListResponse>(
+      ENDPOINT_INVOICE.ApplicationConsFailed,
+      body
+    );
+  }
+
+  updateBillings(body: any) {
+    return this.put<IListResponse>(`${ENDPOINT_INVOICE.ComerInovice}`, body);
+  }
+
+  getApplicationConsPupEminFact(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationConsPupEminFact}`,
+      body
+    );
+  }
+
+  getComerTpinvoices(params: _Params) {
+    return this.get<IListResponse>(
+      `${ENDPOINT_INVOICE.ComerTpinvoices}`,
+      params
+    );
+  }
+
+  getApplicationFaValidCurpRfc(body: any) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationFaValidCurpRfc}`,
+      body
+    );
+  }
+  // ==================================================== //
+  getApplicationComerBillsTotal(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationComerBillsTotal}`,
+      body
+    );
+  }
+  getApplicationComerBillsIva(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationComerBillsIva}`,
+      body
+    );
+  }
+  getApplicationComerBillsPrice(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationComerBillsPrice}`,
+      body
+    );
+  }
+  getApplicationComerBillsAmount(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationComerBillsAmount}`,
+      body
+    );
+  }
 }

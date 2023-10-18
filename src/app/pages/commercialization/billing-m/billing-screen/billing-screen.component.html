@@ -67,6 +67,7 @@
                       <div class="row mt-5">
                         <div class="col-3">
                           <button
+                            (click)="genPrefacHundred()"
                             [disabled]="!disabledGenPreFac100"
                             class="btn btn-sm btn-block btn-primary active">
                             Prefacturar Fallo
@@ -74,6 +75,7 @@
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="update()"
                             [disabled]="!disabledUpdate"
                             class="btn btn-sm btn-block btn-primary active">
                             Act Datos Fallo
@@ -81,42 +83,49 @@
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="generateInvoices()"
                             class="btn btn-sm btn-block btn-primary active">
                             Genera Folios
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="visualBilling()"
                             class="btn btn-sm btn-block btn-primary active">
                             Visualiza Factura
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="cancelBilling()"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Cancelar Factura
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="attentionCustomer()"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Atención a Clientes
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="CFDI()"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Genera CFDI
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="faile()"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Actualiza a VEN
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="prefPaysParc()"
                             [disabled]="!disabledGenXPays"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Pref Pagos Parciales
@@ -124,6 +133,7 @@
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="update2()"
                             [disabled]="!disabledUpdate2"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Act Datos Pagos
@@ -131,6 +141,7 @@
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="selectAll()"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Selec. Todos
                           </button>
@@ -147,23 +158,32 @@
                             (click)="deleteSelect()"
                             class="btn btn-sm btn-block btn-primary active mt-2">
                             Elimina x Selección
+                            <span
+                              ><i aria-hidden="true" class="fa fa-trash"></i
+                            ></span>
                           </button>
                         </div>
                         <div class="col-3">
                           <button
+                            (click)="deleteEventLote()"
                             class="btn btn-sm btn-block btn-primary active mt-2">
-                            Elimina x Even/Lote
+                            Elimina x Evento/Lote
+                            <span
+                              ><i aria-hidden="true" class="fa fa-trash"></i
+                            ></span>
                           </button>
                         </div>
                         <div class="col-3">
                           <button
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Exporta
+                            (click)="export()"
+                            class="btn btn-sm btn-block btn-success active mt-2">
+                            Exporta <i class="bx bx-upload float-icon"></i>
                           </button>
                         </div>
                         <div class="col-3">
                           <button
-                            class="btn btn-sm btn-block btn-primary active mt-2">
+                            (click)="getDate()"
+                            class="btn btn-sm btn-block btn-info active mt-2">
                             Consulta x Fecha
                           </button>
                         </div>
@@ -197,17 +217,26 @@
                       <div class="row text-center justify-content-center mt-5">
                         <div class="col-md-2">
                           <form-field
-                            [control]="form.get('cause')"
-                            label="Causa">
-                            <input
-                              [readonly]="!disabledCause"
-                              type="text"
-                              class="form-control"
-                              formControlName="cause" />
+                            *ngIf="disabledCause"
+                            [control]="form.get('cause')">
+                            <ngx-select
+                              [searchOnInit]="true"
+                              (change)="setValuesCause($event)"
+                              [form]="form"
+                              control="cause"
+                              [data]="causeSelect"
+                              value="id"
+                              bindLabel="id"
+                              label="Causa"
+                              (fetchItems)="getCauses($event)">
+                            </ngx-select>
+                            <!-- <input [readonly]="!disabledCause" type="text" class="form-control"
+                              formControlName="cause" /> -->
                           </form-field>
                         </div>
                         <div class="col-md-6">
                           <form-field
+                            *ngIf="disabledDescause"
                             [control]="form.get('descause')"
                             label="Causa">
                             <input
@@ -219,6 +248,7 @@
                         </div>
                         <div class="col-md-2">
                           <button
+                            *ngIf="disabledRegCanc"
                             [disabled]="!disabledRegCanc"
                             (click)="regCanc()"
                             class="btn btn-sm btn-block btn-primary active">
@@ -245,7 +275,7 @@
                   <div
                     class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
                     <app-columns-select
-                      [defaultColumns]="9"
+                      [defaultColumns]="8"
                       [(settings)]="settings"></app-columns-select>
                   </div>
                 </div>
@@ -259,6 +289,7 @@
                       [attr.class]="'table-bordered'"
                       [settings]="settings"
                       [source]="data"
+                      (edit)="edit($event)"
                       (userRowSelect)="rowsSelected($event)">
                     </ng2-smart-table>
                   </ng-scrollbar>
@@ -303,6 +334,7 @@
                                 [control]="form2.get('order')"
                                 label="Ordenar">
                                 <ng-select
+                                  (change)="changeOpt($event)"
                                   formControlName="order"
                                   class="form-control pt-1">
                                   <ng-option value="1">LOTE</ng-option>
@@ -312,7 +344,7 @@
                                 <!-- <input type="text" class="form-control" formControlName="order" /> -->
                               </form-field>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                               <form-field
                                 [control]="form2.get('txtErrorRFC')"
                                 label="TXT Error RFC">
@@ -323,7 +355,7 @@
                                   formControlName="txtErrorRFC" />
                               </form-field>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                               <form-field
                                 [control]="form2.get('legend1')"
                                 label="Leyenda 1">
@@ -343,6 +375,7 @@
                                 [control]="form2.get('counter')"
                                 label="Número de Facturas:">
                                 <input
+                                  readonly
                                   type="text"
                                   class="form-control"
                                   formControlName="counter" />
@@ -353,6 +386,8 @@
                                 [control]="form2.get('amountE')"
                                 label="Importe Egresos:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="amountE" />
@@ -361,8 +396,10 @@
                             <div class="col-md-3">
                               <form-field
                                 [control]="form2.get('ivaE')"
-                                label="IVA Egresos">
+                                label="IVA Egresos:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="ivaE" />
@@ -371,8 +408,10 @@
                             <div class="col-md-3">
                               <form-field
                                 [control]="form2.get('totalE')"
-                                label="Total Egresos">
+                                label="Total Egresos:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="totalE" />
@@ -387,6 +426,8 @@
                                 [control]="form2.get('counter2')"
                                 label="Total de Bienes:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="counter2" />
@@ -397,6 +438,8 @@
                                 [control]="form2.get('amountI')"
                                 label="Importe Ingresos:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="amountI" />
@@ -407,6 +450,8 @@
                                 [control]="form2.get('ivaI')"
                                 label="IVA Ingresos:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="ivaI" />
@@ -417,6 +462,8 @@
                                 [control]="form2.get('totalI')"
                                 label="Total Ingresos:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="totalI" />
@@ -432,6 +479,8 @@
                                 [control]="form2.get('total8')"
                                 label="Total Importe:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="total8" />
@@ -442,6 +491,8 @@
                                 [control]="form2.get('total7')"
                                 label="Total IVA:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="total7" />
@@ -452,6 +503,8 @@
                                 [control]="form2.get('total3')"
                                 label="Total:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="total3" />
@@ -468,6 +521,8 @@
                                 [control]="form2.get('amountPay')"
                                 label="Total Pago:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="amountPay" />
@@ -478,6 +533,8 @@
                                 [control]="form2.get('ivaPay')"
                                 label="Total Pago:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="ivaPay" />
@@ -488,6 +545,8 @@
                                 [control]="form2.get('totalPay')"
                                 label="Total Pago:">
                                 <input
+                                  readonly
+                                  currencyMask
                                   type="text"
                                   class="form-control"
                                   formControlName="totalPay" />

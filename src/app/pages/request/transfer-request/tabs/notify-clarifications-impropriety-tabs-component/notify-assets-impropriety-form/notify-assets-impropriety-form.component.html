@@ -193,13 +193,17 @@
               onkeyup="javascript:this.value=this.value.toLowerCase();"
               type="text"
               class="form-control"
-              [readOnly]="true"
               maxlength="100"
               formControlName="keyClarificationPaper" />
           </form-field>
         </div>
       </div>
-      <div class="row" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
+      <div
+        class="row"
+        *ngIf="
+          infoRequest.typeOfTransfer == 'SAT_SAE' &&
+          dataClarifications2.chatClarification.idClarificationType == '1'
+        ">
         <div class="col-md-12">
           <p>
             <a

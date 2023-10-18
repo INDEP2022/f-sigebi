@@ -144,6 +144,8 @@ export class PerformProgrammingFormComponent
   loadingTrans: boolean = false;
   loadingGuard: boolean = false;
   selectMasiveGood: boolean = false;
+  loadingGuardButton: boolean = false;
+  loadingReportGoods: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   paramsState = new BehaviorSubject<ListParams>(new ListParams());
@@ -190,6 +192,7 @@ export class PerformProgrammingFormComponent
   otValors = new DefaultSelect();
   idMunicipality: string = '';
   authorityName: string = '';
+  loadingDelMassive: boolean = false;
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
   settingsTransportableGoodsClose = {
     ...this.settings,
@@ -1359,7 +1362,7 @@ export class PerformProgrammingFormComponent
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idTransferer'] = `$eq:${this.transferentId}`;
     //params['filter.cveStatus'] = `$eq:${this.stateKey}`;
-    params['filter.cveStatus'] = `$eq:${this.idState}`;
+    //params['filter.cveStatus'] = `$eq:${this.idState}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
     params['sortBy'] = 'authorityName:ASC';
     delete params['search'];
@@ -1490,7 +1493,7 @@ export class PerformProgrammingFormComponent
   }
 
   getWarehouseSelect(params: ListParams) {
-    const user: any = this.authService.decodeToken();
+    /* const user: any = this.authService.decodeToken();
 
     params['sortBy'] = 'name:ASC';
     this.showWarehouseInfo = true;
@@ -1506,19 +1509,18 @@ export class PerformProgrammingFormComponent
       error: error => {
         this.warehouse = new DefaultSelect();
       },
-    });
-    /* params['filter.regionalDelegation'] = this.delegationId;
+    }); */
+    params['filter.regionalDelegation'] = this.delegationId;
     params['sortBy'] = 'name:ASC';
     this.showWarehouseInfo = true;
     this.goodsQueryService.getCatStoresView(params).subscribe({
       next: response => {
-        console.log('almacenes', response);
         this.warehouse = new DefaultSelect(response.data, response.count);
       },
       error: error => {
         this.warehouse = new DefaultSelect();
       },
-    }); */
+    });
   }
 
   //Visualizar bienes transportables //
@@ -2054,6 +2056,7 @@ export class PerformProgrammingFormComponent
         'Todos los Bienes serán enviados a resguardo'
       ).then(question => {
         if (question.isConfirmed) {
+          this.loadingGuardButton = true;
           let config = {
             ...MODAL_CONFIG,
             class: 'modal-lg modal-dialog-centered',
@@ -2119,6 +2122,7 @@ export class PerformProgrammingFormComponent
                         'Acción Correcta',
                         'Bienes agregados a almacén correctamente'
                       );
+                      this.loadingGuardButton = false;
                     },
                     error: error => {},
                   });
@@ -2183,10 +2187,13 @@ export class PerformProgrammingFormComponent
                               .pipe(takeUntil(this.$unSubscribe))
                               .subscribe(() => this.showGuard());
                             this.goodSelect = [];
+                            this.loadingGuardButton = false;
                           }
                         }
                       }
                     }
+                  } else {
+                    this.loadingGuardButton = false;
                   }
                 },
               };
@@ -2856,7 +2863,17 @@ export class PerformProgrammingFormComponent
                   this.newTransferent = false;
                 }
               },
-              error: error => {},
+              error: error => {
+                this.alert(
+                  'error',
+                  'Error',
+                  'Error al guardar la información de programación verifica'
+                );
+                this.getProgrammingData();
+                this.formLoading = false;
+                this.newTransferent = false;
+                this.loading = false;
+              },
             });
         }
       }
@@ -3209,7 +3226,7 @@ export class PerformProgrammingFormComponent
       .showReportGoodProgramming(dataObject)
       .subscribe({
         next: (response: any) => {
-          this.downloadExcel(response.base64File);
+          this.downloadExcel(response.base64File, 'Bienes_Programables.xlsx');
           this.loadingReport = false;
         },
         error: error => {
@@ -3219,12 +3236,12 @@ export class PerformProgrammingFormComponent
       });
   }
 
-  downloadExcel(excel: any) {
+  downloadExcel(excel: any, nameReport: string) {
     const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
     const downloadLink = document.createElement('a');
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
-    downloadLink.download = 'Bienes_Programables.xlsx';
+    downloadLink.download = nameReport;
     downloadLink.click();
     this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
@@ -3771,6 +3788,7 @@ export class PerformProgrammingFormComponent
       '¿Desea eliminar todos los Bienes de transportable?'
     ).then(question => {
       if (question.isConfirmed) {
+        this.loadingDelMassive = true;
         const data = {
           schedulesId: this.idProgramming,
           status: 'EN_TRANSPORTABLE',
@@ -3795,8 +3813,11 @@ export class PerformProgrammingFormComponent
             const deleteGood = this.goodsTranportables.count();
             this.headingTransportable = `Transportable(${deleteGood})`;
             this.totalItemsTransportableGoods = deleteGood;
+            this.loadingDelMassive = false;
           },
-          error: error => {},
+          error: error => {
+            this.loadingDelMassive = false;
+          },
         });
       }
     });
@@ -3808,6 +3829,7 @@ export class PerformProgrammingFormComponent
       '¿Desea eliminar todos los Bienes de resguardo?'
     ).then(question => {
       if (question.isConfirmed) {
+        this.loadingDelMassive = true;
         const data = {
           schedulesId: this.idProgramming,
           status: 'EN_RESGUARDO_TMP',
@@ -3831,8 +3853,11 @@ export class PerformProgrammingFormComponent
             const deleteGood = this.goodsGuards.count();
             this.headingGuard = `Resguardo(${deleteGood})`;
             this.totalItemsTransportableGuard = deleteGood;
+            this.loadingDelMassive = false;
           },
-          error: error => {},
+          error: error => {
+            this.loadingDelMassive = false;
+          },
         });
       }
     });
@@ -3845,6 +3870,7 @@ export class PerformProgrammingFormComponent
       '¿Desea eliminar todos los Bienes de almacén?'
     ).then(question => {
       if (question.isConfirmed) {
+        this.loadingDelMassive = true;
         const data = {
           schedulesId: this.idProgramming,
           status: 'EN_ALMACEN_TMP',
@@ -3869,10 +3895,130 @@ export class PerformProgrammingFormComponent
             const deleteGood = this.goodsWarehouse.count();
             this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
             this.totalItemsTransportableWarehouse = deleteGood;
+            this.loadingDelMassive = false;
           },
-          error: error => {},
+          error: error => {
+            this.loadingDelMassive = false;
+          },
         });
       }
     });
+  }
+
+  generateReportTrans(statusGoood: string) {
+    if (statusGoood == 'EN_TRANSPORTABLE') {
+      this.goodsTranportables.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.idProgramming}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(
+                  response.base64File,
+                  'Bienes_Transportables.xlsx'
+                );
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+  }
+
+  generateReportGuard(statusGoood: string) {
+    if (statusGoood == 'EN_RESGUARDO_TMP') {
+      this.goodsGuards.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.idProgramming}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(
+                  response.base64File,
+                  'Bienes_Resguardo.xlsx'
+                );
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+  }
+
+  generateReportWarehouse(statusGoood: string) {
+    if (statusGoood == 'EN_ALMACEN_TMP') {
+      this.goodsWarehouse.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.idProgramming}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, 'Bienes_Almacén.xlsx');
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
   }
 }

@@ -41,7 +41,8 @@ export class UnitCostDetFormComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private zoneContractService: ZoneContractService,
     private unitCostDetService: UnitCostDetService,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -67,6 +68,22 @@ export class UnitCostDetFormComponent extends BasePage implements OnInit {
       this.edit = true;
       console.log(this.unitCostDet1);
       this.unitCostDetForm.patchValue(this.unitCostDet1);
+      //const date = new Date(this.unitCostDet1.startDate);
+      var formatted = new DatePipe('en-EN').transform(
+        this.unitCostDet1.startDate,
+        'dd/MM/yyyy',
+        'UTC'
+      );
+      //const date1 = new Date(this.unitCostDet1.endDate);
+      var formatted1 = new DatePipe('en-EN').transform(
+        this.unitCostDet1.finalDate,
+        'dd/MM/yyyy',
+        'UTC'
+      );
+      console.log(this.unitCostDet1.finalDate, formatted1);
+      this.unitCostDetForm.controls['startDate'].setValue(formatted);
+      this.unitCostDetForm.controls['finalDate'].setValue(formatted1);
+
       this.unitCostDetForm.controls['costId'].setValue(this.idCost);
       console.log(this.unitCostDet1.cveZoneContract);
       this.getContractFilter(this.unitCostDet1.cveZoneContract);
@@ -119,15 +136,21 @@ export class UnitCostDetFormComponent extends BasePage implements OnInit {
   changeContract(event: any) {
     console.log(event.startDate);
     const date = new Date(event.startDate);
-    const datePipe = new DatePipe('en-US');
-    const formatTrans = datePipe.transform(date, 'yyyy/MM/dd', 'UTC');
-    this.unitCostDetForm.controls['startDate'].setValue(formatTrans);
-    this.minDate = new Date(formatTrans);
-    const date1 = new Date(event.endDate);
-    const datePipe1 = new DatePipe('en-US');
-    const formatTrans1 = datePipe1.transform(date1, 'yyyy/MM/dd', 'UTC');
-    this.unitCostDetForm.controls['finalDate'].setValue(formatTrans1);
-    this.maxDate = new Date(formatTrans1);
+    /*const datePipe = new DatePipe('en-US');
+    const formatTrans = datePipe.transform(date, 'yyyy/MM/dd', 'UTC');*/
+    var formatted = new DatePipe('en-EN').transform(date, 'dd/MM/yyyy', 'UTC');
+    this.unitCostDetForm.controls['startDate'].setValue(formatted);
+    this.minDate = new Date(formatted);
+    const date1 = new Date(event.finalDate);
+    //const datePipe1 = new DatePipe('en-US');
+    //const formatTrans1 = datePipe1.transform(date1, 'yyyy/MM/dd', 'UTC');
+    var formatted1 = new DatePipe('en-EN').transform(
+      date1,
+      'dd/MM/yyyy',
+      'UTC'
+    );
+    this.unitCostDetForm.controls['finalDate'].setValue(formatted1);
+    this.maxDate = new Date(formatted1);
   }
 
   create() {
