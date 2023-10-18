@@ -1482,6 +1482,7 @@ export class NotificationAssetsTabComponent
         idSolicitud,
         delegationUser,
         notification: notification,
+        typeForm: 'aclaration-sat',
         callback: (next: boolean, idGood: number) => {
           if (next) {
             if (
