@@ -165,7 +165,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       },
       edit: {
         editButtonContent:
-          '<i disabled class="fa fa-pencil-alt text-warning mx-2 pl-3"></i>',
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-3"></i>',
+        editButtonCallback: (row: any) => {
+          console.log('rowrowrow', row);
+          // lógica para determinar si el botón de edición debe estar habilitado o deshabilitado para la fila actual
+          return row.data.columnName === 'valor habilitado';
+        },
       },
       columns: {
         name: {
@@ -180,7 +185,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onBillingSelect(instance),
         },
-
         eventId: {
           title: 'Evento',
           type: 'string',
@@ -222,7 +226,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           },
           filterFunction(cell?: any, search?: string): boolean {
             let column = cell;
-            console.log(column, '==', search);
+            // console.log(column, '==', search);
             return true;
           },
         },
@@ -238,13 +242,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           type: 'html',
           sort: false,
           width: '30%',
-          cellStyle: (rowData: any) => {
-            console.log('rowData', rowData);
-            if (!['F', 'M'].includes(rowData.valRFC)) {
-              return 'red-column-fcomer086-I'; // Clase CSS para cambiar el fondo del td
-            }
-            return '';
-          },
           valuePrepareFunction: (cell: any, row: any, h: any, a: any) => {
             if (!['F', 'M'].includes(row.valRFC)) {
               // 'red-column-fcomer086-I'
@@ -264,6 +261,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
           width: '20%',
+          filter: false,
         },
         cvman: {
           title: 'Mandato',
@@ -981,11 +979,26 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             type: 'RFC',
             data: item.rfc,
           };
-          const FaValidCurpRfc =
-            this.billingsService.getApplicationFaValidCurpRfc(obj);
+          const FaValidCurpRfc: any =
+            await this.billingsService.getApplicationFaValidCurpRfc(obj);
           item['valRFC'] = FaValidCurpRfc ? FaValidCurpRfc : null;
+
+          let obj_ = {
+            idEvent: item.eventId,
+            idBill: item.billId,
+          };
+          const total = await this.getBillsTotal(item, obj_);
+          item['totaling'] = total.totaling;
+          item['totaleg'] = total.totaleg;
+          const vat = await this.getBillsIva(item, obj_);
+          item['ivaing'] = vat.ivaing;
+          item['ivaeg'] = vat.ivaeg;
+          const price = await this.getBillsPrice(item, obj_);
+          item['priceing'] = price.priceing;
+          item['priceeg'] = price.priceeg;
         });
-        Promise.all(result).then(resp => {
+        Promise.all(result).then(async resp => {
+          await this.funcPriceVatTotal(response.data[0]);
           this.data.load(response.data);
           this.data.refresh();
           this.totalItems = response.count;
@@ -1132,20 +1145,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       idEvent: factura.eventId,
       idBill: factura.billId,
     };
-    await this.getBillsTotal(factura, obj);
-
-    if (factura.vouchertype != 'NCR' && !factura.vat) {
-    } else if (factura.vouchertype != 'NCR' && factura.vat) {
-    } else if (factura.vouchertype == 'NCR' && !factura.vat) {
-    } else if (factura.vouchertype == 'NCR' && factura.vat) {
-    }
-
-    if (factura.vouchertype != 'NCR' && !factura.price) {
-    } else if (factura.vouchertype != 'NCR' && factura.price) {
-    } else if (factura.vouchertype == 'NCR' && !factura.price) {
-    } else if (factura.vouchertype == 'NCR' && factura.price) {
-    }
-
     if ([10, 11].includes(factura.Type)) {
       const enterAmountInputs: any =
         await this.billingsService.getApplicationComerBillsAmount(obj);
@@ -1188,25 +1187,50 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   async getBillsIva(factura: any, obj: any) {
     let objReturn = {
-      totaling: 0,
-      totaleg: 0,
+      ivaing: 0,
+      ivaeg: 0,
     };
-    if (factura.vouchertype != 'NCR' && !factura.total) {
+    if (factura.vouchertype != 'NCR' && !factura.vat) {
       const enterBillTotal: any =
         await this.billingsService.getApplicationComerBillsIva(obj);
-      objReturn.totaling = enterBillTotal.totaling;
-      objReturn.totaleg = enterBillTotal.totaleg;
-    } else if (factura.vouchertype != 'NCR' && factura.total) {
-      objReturn.totaling = factura.total;
-      objReturn.totaleg = 0;
-    } else if (factura.vouchertype == 'NCR' && !factura.total) {
+      objReturn.ivaing = enterBillTotal.ivaing;
+      objReturn.ivaeg = enterBillTotal.ivaeg;
+    } else if (factura.vouchertype != 'NCR' && factura.vat) {
+      objReturn.ivaing = factura.vat;
+      objReturn.ivaeg = 0;
+    } else if (factura.vouchertype == 'NCR' && !factura.vat) {
       const enterBillTotal: any =
         await this.billingsService.getApplicationComerBillsIva(obj);
-      objReturn.totaling = enterBillTotal.totaling;
-      objReturn.totaleg = enterBillTotal.totaleg;
-    } else if (factura.vouchertype == 'NCR' && factura.total) {
-      objReturn.totaling = 0;
-      objReturn.totaleg = factura.total;
+      objReturn.ivaing = enterBillTotal.ivaing;
+      objReturn.ivaeg = enterBillTotal.ivaeg;
+    } else if (factura.vouchertype == 'NCR' && factura.vat) {
+      objReturn.ivaing = 0;
+      objReturn.ivaeg = factura.vat;
+    }
+    return objReturn;
+  }
+
+  async getBillsPrice(factura: any, obj: any) {
+    let objReturn = {
+      priceing: 0,
+      priceeg: 0,
+    };
+    if (factura.vouchertype != 'NCR' && !factura.price) {
+      const enterBillTotal: any =
+        await this.billingsService.getApplicationComerBillsPrice(obj);
+      objReturn.priceing = enterBillTotal.priceing;
+      objReturn.priceeg = enterBillTotal.ivaeg;
+    } else if (factura.vouchertype != 'NCR' && factura.price) {
+      objReturn.priceing = factura.price;
+      objReturn.priceeg = 0;
+    } else if (factura.vouchertype == 'NCR' && !factura.price) {
+      const enterBillTotal: any =
+        await this.billingsService.getApplicationComerBillsPrice(obj);
+      objReturn.priceing = enterBillTotal.priceing;
+      objReturn.priceeg = enterBillTotal.ivaeg;
+    } else if (factura.vouchertype == 'NCR' && factura.price) {
+      objReturn.priceing = 0;
+      objReturn.priceeg = factura.price;
     }
     return objReturn;
   }
@@ -1829,7 +1853,20 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     return result;
   }
 
-  getCauses(event: any) {
+  async getCauses(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    const causes: any = await this.billingsService.getParamterMod(
+      params.getParams()
+    );
+    if (!causes) {
+      this.causeSelect = new DefaultSelect();
+    } else {
+      this.causeSelect = new DefaultSelect(causes.data, causes.count);
+    }
     // select parametro, descripcion
     // from comer_parametrosmod
     // where  valor = 'CAN_FACT_INM'
@@ -2519,7 +2556,11 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   }
 
   openModalEdit(data?: any) {
-    const modalConfig = MODAL_CONFIG;
+    const modalConfig = {
+      initialState: {},
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
     modalConfig.initialState = {
       data,
       callback: (next: boolean) => {
