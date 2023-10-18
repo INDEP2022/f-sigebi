@@ -161,7 +161,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       paragraphFinal: this.form.controls['paragraphFinal'].value,
       consistentIn: this.form.controls['consistentIn'].value,
       managedTo: this.form.controls['addresseeName'].value,
-      invoiceLearned: this.folioReporte,
+      invoiceLearned: ' ',
       positionAddressee: this.form.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
@@ -319,6 +319,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     const idTypeDoc = 216;
     const requestInfo = this.request;
     const idSolicitud = this.idSolicitud;
+    const nomenglatura = this.folioReporte;
+    const infoReport = data;
 
     //Modal que genera el reporte
     let config: ModalOptions = {
@@ -329,6 +331,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         idReportAclara,
         idSolicitud,
         notificationValidate,
+        nomenglatura,
+        infoReport,
         callback: (next: boolean) => {
           if (next) {
             this.changeStatusAnswered();
