@@ -272,7 +272,7 @@ export class DepositaryPaymentChargesComponent
               this.alertInfo(
                 'info',
                 'No se cargaron los pagos',
-                'El numero de movimiento ya esta registrado'
+                'El número de movimiento ya esta registrado'
               );
               return;
             }
