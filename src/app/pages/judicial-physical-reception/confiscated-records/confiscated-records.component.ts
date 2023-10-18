@@ -1565,7 +1565,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             }
           }
         } else {
-          if (res.delegation != 'CCB') {
+          const paramsF = new FilterParams();
+          paramsF.addFilter('delegation', 'CCB', SearchFilter.ILIKE);
+          this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(
+            res => {
+              this.adminSelect = new DefaultSelect(res.data, res.count);
+              this.form.get('admin').setValue(res.data[0]);
+            },
+            err => {
+              this.adminSelect = new DefaultSelect();
+            }
+          );
+          /* if (res.delegation != 'CCB') {
             if (res != null && res != undefined && res.numberDelegation2) {
               if (res.numberDelegation2 != this.delUser) {
                 this.alert(
@@ -1579,7 +1590,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.fillActTwo();
               }
             }
-          }
+          } */
         }
       });
       this.form.get('folio').valueChanges.subscribe(res => {
