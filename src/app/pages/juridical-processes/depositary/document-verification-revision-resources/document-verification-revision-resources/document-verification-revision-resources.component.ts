@@ -1055,6 +1055,14 @@ export class DocumentVerificationRevisionResourcesComponent
     });
   }
   searchGoods(good?: IGood) {
+    if (this.fileNumber == null || this.fileNumber == undefined) {
+      this.alert(
+        'warning',
+        'Debe seleccionar el expediente para ubicar el Bien',
+        ''
+      );
+      return;
+    }
     this.loadingGood = true;
     const filenumber = this.fileNumber;
     const dateAgreementAssurance = this.dateAgreementAssurance;

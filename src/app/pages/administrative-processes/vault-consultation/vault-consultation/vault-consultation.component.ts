@@ -96,28 +96,44 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
     this.dataFactGen
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
+
       .subscribe(change => {
-        // console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = '';
-            //Default busqueda SearchFilter.ILIKE
-            let searchFilter = SearchFilter.ILIKE;
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
-
-            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
-            const search: any = {
-              idSafe: () => (searchFilter = SearchFilter.EQ),
-              description: () => (searchFilter = SearchFilter.ILIKE),
-              ubication: () => (searchFilter = SearchFilter.ILIKE),
-              manager: () => (searchFilter = SearchFilter.ILIKE),
-              stateDetail: () => (searchFilter = SearchFilter.ILIKE),
-              municipalityDetail: () => (searchFilter = SearchFilter.ILIKE),
-              cityDetail: () => (searchFilter = SearchFilter.ILIKE),
-              localityDetail: () => (searchFilter = SearchFilter.ILIKE),
-            };
-            search[filter.field]();
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case ' idSafe':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'ubication':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'manager':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'localityDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'stateDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'cityDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'municipalityDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -161,6 +177,7 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['text'] = params.text;
     this.safeService.getAllNew(params).subscribe({
       next: (data: any) => {
         this.loading = false;
@@ -173,19 +190,16 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
           return {
             idSafe: vault.idSafe,
             description: vault.description,
-            localityDetail: vault.localityDetail.nameLocation
+            localityDetail: vault.localityDetail
               ? vault.localityDetail.nameLocation
               : null,
-            cityDetail: vault.cityDetail.nameCity
-              ? vault.cityDetail.nameCity
-              : 0,
+            cityDetail: vault.cityDetail ? vault.cityDetail.nameCity : '',
             manager: vault.manager,
-            municipalityDetail: vault.municipalityDetail.nameMunicipality
+            municipalityDetail: vault.municipalityDetail
               ? vault.municipalityDetail.nameMunicipality
               : null,
             registerNumber: vault.registerNumber,
-
-            stateDetail: vault.stateDetail.descCondition
+            stateDetail: vault.stateDetail
               ? vault.stateDetail.descCondition
               : '',
             ubication: vault.ubication,

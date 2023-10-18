@@ -77,7 +77,7 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
     return this.get(route);
   }
   getAllNew(params?: ListParams) {
-    const route = `${SafeEndpoints.Safe}`;
+    const route = `${SafeEndpoints.Safe}/get-all`;
     return this.get(route, params);
   }
 }
