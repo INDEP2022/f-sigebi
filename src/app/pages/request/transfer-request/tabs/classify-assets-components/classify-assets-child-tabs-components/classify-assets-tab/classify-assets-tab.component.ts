@@ -1188,7 +1188,7 @@ export class ClassifyAssetsTabComponent
       }
 
       goodResult = await this.createGood(goods);
-
+      debugger;
       this.updateGoodFindRecord(goodResult.result);
       //manda a guardar los campos de los bienes, domicilio, inmueble
       this.childSaveAction = true;
