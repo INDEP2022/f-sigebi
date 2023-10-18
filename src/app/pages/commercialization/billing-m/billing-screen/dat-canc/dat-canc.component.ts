@@ -19,6 +19,7 @@ import { BillingsService } from '../../services/services';
   styles: [],
 })
 export class DatCancComponent extends BasePage implements OnInit {
+  title: 'Cancelar Factura';
   form: FormGroup;
   events = new DefaultSelect<any>();
   batchs = new DefaultSelect<any>();

@@ -344,7 +344,7 @@
                                 <!-- <input type="text" class="form-control" formControlName="order" /> -->
                               </form-field>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                               <form-field
                                 [control]="form2.get('txtErrorRFC')"
                                 label="TXT Error RFC">
@@ -355,7 +355,7 @@
                                   formControlName="txtErrorRFC" />
                               </form-field>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                               <form-field
                                 [control]="form2.get('legend1')"
                                 label="Leyenda 1">
@@ -375,6 +375,7 @@
                                 [control]="form2.get('counter')"
                                 label="Número de Facturas:">
                                 <input
+                                  readonly
                                   type="text"
                                   class="form-control"
                                   formControlName="counter" />
@@ -385,6 +386,7 @@
                                 [control]="form2.get('amountE')"
                                 label="Importe Egresos:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -396,6 +398,7 @@
                                 [control]="form2.get('ivaE')"
                                 label="IVA Egresos:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -407,6 +410,7 @@
                                 [control]="form2.get('totalE')"
                                 label="Total Egresos:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -422,6 +426,7 @@
                                 [control]="form2.get('counter2')"
                                 label="Total de Bienes:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -433,6 +438,7 @@
                                 [control]="form2.get('amountI')"
                                 label="Importe Ingresos:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -444,6 +450,7 @@
                                 [control]="form2.get('ivaI')"
                                 label="IVA Ingresos:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -455,6 +462,7 @@
                                 [control]="form2.get('totalI')"
                                 label="Total Ingresos:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -471,6 +479,7 @@
                                 [control]="form2.get('total8')"
                                 label="Total Importe:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -482,6 +491,7 @@
                                 [control]="form2.get('total7')"
                                 label="Total IVA:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -493,6 +503,7 @@
                                 [control]="form2.get('total3')"
                                 label="Total:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -510,6 +521,7 @@
                                 [control]="form2.get('amountPay')"
                                 label="Total Pago:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -521,6 +533,7 @@
                                 [control]="form2.get('ivaPay')"
                                 label="Total Pago:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
@@ -532,6 +545,7 @@
                                 [control]="form2.get('totalPay')"
                                 label="Total Pago:">
                                 <input
+                                  readonly
                                   currencyMask
                                   type="text"
                                   class="form-control"
