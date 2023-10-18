@@ -1055,7 +1055,7 @@ export class DocumentVerificationRevisionResourcesComponent
     });
   }
   searchGoods(good?: IGood) {
-    if (this.fileNumber == null || this.fileNumber == undefined) {
+    if (this.fileNumber == 0 || this.fileNumber == null) {
       this.alert(
         'warning',
         'Debe seleccionar el expediente para ubicar el Bien',

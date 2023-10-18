@@ -87,64 +87,6 @@
             </div>
           </div>
         </div>
-
-        <!-- <div class="col-sm-12 col-12 col-md-4">
-          <app-expedient-shared
-            expedientField="id"
-            [form]="formExp"
-            (selectExpedient)="expedientSelect($event)"></app-expedient-shared>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-3">
-          <form-field
-            [control]="formExp.get('criminalCase')"
-            label="Causa Penal">
-            <input
-              class="form-control"
-              formControlName="criminalCase"
-              [readOnly]="true"
-              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-3">
-          <form-field [control]="formExp.get('protectionKey')">
-            <ngx-select
-              (fetchItems)="getExpedient($event)"
-              [data]="expedient"
-              [form]="formExp"
-              value="protectionKey"
-              bindLabel="protectionKey"
-              (change)="expedientSelect($event)"
-              label="No&#46; Amparo"
-              [searchOnInit]="true"
-              [control]="'protectionKey'">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-3">
-          <form-field
-            [control]="formExp.get('preliminaryInquiry')"
-            label="Averiguaci&oacute;n Previa">
-            <input
-              class="form-control"
-              [readOnly]="true"
-              formControlName="preliminaryInquiry"
-              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-3">
-          <form-field
-            [control]="formExp.get('dateAgreementAssurance')"
-            label="Fecha Presentaci&oacute;n Recurso Revisi&oacute;n">
-            <input
-              class="form-control"
-              formControlName="dateAgreementAssurance"
-              bsDatepicker
-              [bsConfig]="{
-                dateInputFormat: 'DD-MM-YYYY'
-              }"
-              (ngModelChange)="validateItem($event)" />
-          </form-field>
-        </div> -->
       </div>
       <div class="row m-3">
         <div class="col-4"></div>
@@ -401,7 +343,7 @@
 
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">DOCUMENTACI&Oacute;N</h5>
+    <h5 class="title">DOCUMENTOS PARA DICTAMEN</h5>
   </div>
 
   <div body>
@@ -490,7 +432,7 @@
   </div>
 </app-card>
 
-<div #docTable>
+<!-- <div #docTable>
   <app-card *ngIf="activeBlocDoc" [header]="true" [footer]="true">
     <div class="ch-content" header>
       <h5 class="title">DOCUMENTOS PARA DICTAMEN</h5>
@@ -499,22 +441,14 @@
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
           <div [class]="loadingDoc ? 'table-loading' : ''">
-            <ng2-smart-table
-              id="table"
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="tableSettings"
+            <ng2-smart-table id="table" [attr.class]="'table-bordered table-responsive'" [settings]="tableSettings"
               [source]="dataTable.data"></ng2-smart-table>
-            <app-pagination
-              [totalItems]="totalItemsDic"
-              [filterParams]="paramsDoc"></app-pagination>
+            <app-pagination [totalItems]="totalItemsDic" [filterParams]="paramsDoc"></app-pagination>
           </div>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
           <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active ml-2 mr-2"
-              (click)="btnSalirDoc()">
+            <button type="button" class="btn btn-primary btn-sm active ml-2 mr-2" (click)="btnSalirDoc()">
               Salir de selección de documentos
             </button>
           </div>
@@ -522,4 +456,4 @@
       </div>
     </div>
   </app-card>
-</div>
+</div> -->
