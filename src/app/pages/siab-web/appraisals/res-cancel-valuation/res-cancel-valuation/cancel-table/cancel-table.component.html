@@ -1,0 +1,70 @@
+<div class="mt-5">
+  <div class="row pt-4 pl-0 pr-0 m-0">
+    <div class="col-md-12 p-0">
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            #table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="dataPaginated"
+            (userRowSelect)="onUserRowSelectCancel($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+</div>
+
+<!-- Modal #2 -->
+<!-- <div style="border: 1px solid black; padding: 10px; border-radius: 20px" class="mt-5"> -->
+<ng-template #modalRev>
+  <div>
+    <div>
+      <!-- <p>Este es el modal #2</p> -->
+      <div>
+        <div class="row mt-5">
+          <div class="col-md-12">
+            <!-- <p>Notificaciones</p> -->
+          </div>
+        </div>
+        <!--  -->
+        <div class="m-3">
+          <div>
+            <p><strong>Motivos de Cancelación</strong></p>
+          </div>
+          <div class="m-3">
+            <div>
+              <ng2-smart-table
+                [settings]="settingsModal"
+                [source]="dataModal"
+                (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
+            </div>
+            <div>
+              <app-pagination
+                [params]="paramsModal"
+                [totalItems]="totalItemsModal">
+              </app-pagination>
+            </div>
+          </div>
+        </div>
+        <!--  -->
+        <div class="d-flex justify-content-center mb-3">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            style="min-width: 100px"
+            (click)="modifySelectedRows()">
+            Aceptar
+          </button>
+          <button
+            class="btn btn-primary btn-sm active"
+            style="min-width: 100px"
+            (click)="closeModalSubtype()">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

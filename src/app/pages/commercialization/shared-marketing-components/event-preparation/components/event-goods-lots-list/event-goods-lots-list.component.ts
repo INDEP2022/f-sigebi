@@ -35,6 +35,7 @@ import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared';
 import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import Swal from 'sweetalert2';
+import { EventPreparationService } from '../../event-preparation.service';
 import { GroundsStatusModalComponent } from '../../grounds-status-modal/grounds-status-modal.component';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
@@ -64,7 +65,8 @@ export class EventGoodsLotsListComponent
     private comerGoodsXLotService: ComerGoodsXLotService,
     private modalService: BsModalService,
     private lotService: LotService,
-    private eventAppService: EventAppService
+    private eventAppService: EventAppService,
+    private eventPreparationService: EventPreparationService
   ) {
     super();
     const columns = EVENT_LOT_GOODS_LIST_COLUMNS;
@@ -117,6 +119,14 @@ export class EventGoodsLotsListComponent
   }
 
   ngOnInit(): void {
+    this.eventPreparationService.$refreshLotGoods
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          this.refreshTable();
+        })
+      )
+      .subscribe();
     if (this.parameters.pDirection == 'I') {
       const columns = this.settings.columns as any;
       columns.field8 = {
