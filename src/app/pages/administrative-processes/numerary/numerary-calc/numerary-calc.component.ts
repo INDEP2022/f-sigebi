@@ -533,12 +533,12 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       );
       if (deleteExi) {
         this.clearAll();
-        this.alert('success', 'El cálculo solicitado fue eliminado', '');
+        this.alert('success', 'El proceso solicitado fue eliminado', '');
       } else {
         this.alert(
           'error',
           'Ha ocurrido un error',
-          'No fue posible eliminar el cálculo solicitado'
+          'No fue posible eliminar el proceso solicitado'
         );
       }
     }

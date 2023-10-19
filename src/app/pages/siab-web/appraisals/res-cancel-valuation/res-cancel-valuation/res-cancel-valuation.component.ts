@@ -1,28 +1,19 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
-  BehaviorSubject,
   catchError,
   debounceTime,
   firstValueFrom,
   map,
-  Observable,
   of,
   Subscription,
   take,
   takeUntil,
+  tap,
 } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -32,19 +23,16 @@ import { JobsService } from 'src/app/core/services/ms-office-management/jobs.ser
 import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AppraisalsDataService } from '../../appraisals-data.service';
 import {
   MyBody,
   OfficesSend,
   SendObtainGoodValued,
-  UserFind,
   ValidationResponseFile,
 } from './res-cancel-valuation-class/class-service';
 import {
-  MOT_CAN,
   VALUATION_REQUEST_COLUMNS,
-  VALUATION_REQUEST_COLUMNS_TWO,
   VALUATION_REQUEST_COLUMNS_VALIDATED,
-  VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
 } from './res-cancel-valuation-columns';
 
 @Component({
@@ -56,13 +44,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   //
 
   //#region Vars
-  // Modal
-  @ViewChild('modalRev', { static: true })
-  miModalRev: TemplateRef<any>;
 
-  arrayResponseOffice: any[] = [];
   arrayResponseOfficeTwo: any[] = [];
-  array: any[] = [];
 
   //Forms
   form: FormGroup;
@@ -83,25 +66,24 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   arrayCopy: string[] = [];
 
   columns: any[] = [];
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  totalItemsTwo: number = 0;
-  paramsTwo = new BehaviorSubject<ListParams>(new ListParams());
   dateNow: Date;
   intervalId: any;
   listCitys: any;
   listKeyOffice: any;
-  settingsTwo: any;
   subscribeDelete: Subscription;
   city: any;
   rowCopySelect: any;
   varCount: number = 0;
   idOficio: any = 0;
-
+  loadingTable1 = false;
+  loadingTable2 = false;
+  showModalCambioRev = 0;
   //Var Data Table
-  data: LocalDataSource = new LocalDataSource();
-  dataTwo: LocalDataSource = new LocalDataSource();
-
+  // dataTwo: LocalDataSource = new LocalDataSource();
+  nameExcel = '';
+  elementsToExport: any[];
+  loadingExcel = false;
+  flagDownload = false;
   //Var asiggn
   lblTipoAccOficio: any = '-';
   lbltipOficio: any = '-';
@@ -124,15 +106,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   visibleDelegation: boolean = false;
   visibleTxtCopy: boolean = true;
   visibleDepartments: boolean = false;
-
+  body1: SendObtainGoodValued = null;
+  body2: SendObtainGoodValued = null;
   // Modal #1
   formDialogOne: FormGroup;
 
-  // Modal #2
-  dataModal: LocalDataSource = new LocalDataSource();
-  settingsModal: any;
-  paramsModal = new BehaviorSubject<ListParams>(new ListParams());
-  totalItemsModal: number = 0;
   //#endregion
 
   //
@@ -143,6 +121,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private serviceJobs: JobsService,
     private cityService: CityService,
     private datePipe: DatePipe,
+    private dataService: AppraisalsDataService,
     private serviceAppraise: AppraiseService,
     private generateCveService: GenerateCveService,
     private route: ActivatedRoute,
@@ -161,20 +140,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       columns: { ...VALUATION_REQUEST_COLUMNS },
     };
 
-    this.settingsTwo = {
-      ...this.settings,
-      selectMode: 'multi',
-      actions: false,
-      columns: { ...VALUATION_REQUEST_COLUMNS_TWO },
-    };
-
-    // Modal #2
-    this.settingsModal = {
-      ...this.settings,
-      selectMode: 'multi',
-      actions: false,
-      columns: { ...MOT_CAN },
-    };
     this.prepareForm();
     this.form
       .get('event')
@@ -194,7 +159,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         next: response => {
           console.log(response);
 
-          if (response) {
+          if (response && this.form.get('event').value) {
             this.changeRatio(response);
           }
         },
@@ -204,7 +169,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   private changeRatio(radioValue: any) {
     if (this.event != '' && this.event != null) {
       this.btnMotCan = false;
-      this.resetVariables();
+      // this.resetVariables();
       this.loadOffice(this.event, radioValue);
       this.setButtons(3);
     } else {
@@ -227,9 +192,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
     this.setButtons(3);
 
-    this.queryAllUsers();
+    // this.queryAllUsers();
 
-    this.queryAllUsersTwo();
+    // this.queryAllUsersTwo();
 
     this.queryCyties();
 
@@ -291,8 +256,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   removeUserCopy() {
     this.alertQuestion(
       'question',
-      'Agregar Usuario',
-      '¿Desea agregar un usuario?'
+      'Eliminar Usuario',
+      '¿Desea eliminar un usuario?'
     ).then(x => {
       if (x.isConfirmed) {
         if (this.formThree.controls['copy'].value != null) {
@@ -322,50 +287,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
   }
 
-  //#region Users
-  getUserService(body: any, event: any): Observable<any> {
-    return new Observable(observer => {
-      this.serviceUser.postSpUserAppraisal(body, event).subscribe({
-        next: response => {
-          observer.next(response);
-          observer.complete();
-        },
-        error: error => {
-          observer.error(error);
-        },
-      });
-    });
-  }
-
-  getUsersDesList(params?: ListParams) {
-    let userBody: UserFind = new UserFind();
-    userBody.flagIn = 2;
-    if (params !== undefined) {
-      if (params?.text != '') {
-        params['filter.usuario'] = `$eq:${params?.text.toUpperCase()}`;
-      }
-    }
-    this.getUserService(userBody, params).subscribe(userList => {
-      this.usersList = new DefaultSelect(userList?.data, userList?.count || 0);
-    });
-  }
-
-  queryAllUsers(params?: ListParams) {
-    let userBody: UserFind = new UserFind();
-    userBody.flagIn = 1;
-    if (params !== undefined) {
-      if (params?.text != '') {
-        params['filter.usuario'] = `$eq:${params?.text.toUpperCase()}`;
-      }
-    }
-    this.getUserService(userBody, params).subscribe(arrayRemi => {
-      this.fullUsers = new DefaultSelect(
-        arrayRemi?.data,
-        arrayRemi?.count || 0
-      );
-    });
-  }
-
   get pathDest() {
     return 'security/api/v1/application/spUserAppraisal';
   }
@@ -376,20 +297,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     };
   }
 
-  queryAllUsersTwo(params?: ListParams) {
-    let userBody: UserFind = new UserFind();
-    userBody.flagIn = 2;
-    if (params !== undefined) {
-      if (params.text != '') {
-        params['filter.usuario'] = `$eq:${params.text.toUpperCase()}`;
-      }
-    }
-    this.getUserService(userBody, params).subscribe(arrayDes => {
-      this.fullUsersTwo = new DefaultSelect(
-        arrayDes?.data,
-        arrayDes?.count || 0
-      );
-    });
+  get bodyRemi() {
+    return {
+      flagIn: 1,
+    };
   }
   //#endregion
 
@@ -506,20 +417,18 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.countCopy = 0;
   }
 
-  getCityById(id: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.cityService.getId(id).subscribe({
-        next: response => {
-          this.city = response;
-          resolve(this.city);
-        },
-        error: error => {
-          this.loader.load = false;
-          this.fullCyties = new DefaultSelect([], 0, true);
-          reject(error);
-        },
-      });
-    });
+  getCityById(id: any) {
+    return this.cityService.getId(id).pipe(
+      catchError(x => {
+        this.fullCyties = new DefaultSelect([], 0, true);
+        return of(null);
+      }),
+      tap(x => {
+        if (x) {
+          this.city = x;
+        }
+      })
+    );
   }
 
   getOfficeResponseTwo(body: OfficesSend): Promise<any[]> {
@@ -536,20 +445,35 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async findOfficeService(data: any) {
+    // debugger;
     let valorObjeto: any;
     valorObjeto = data;
-    let body: OfficesSend = new OfficesSend();
+    console.log(data);
+
+    let body: any = {};
     body.eventId = valorObjeto?.eventId;
-    body.officeType = valorObjeto?.jobType;
-    this.arrayResponseOffice = await this.getOfficeResponseTwo(body);
-    this.findOffice(this.arrayResponseOffice);
+    body.officeId = valorObjeto?.jobType;
+    this.form
+      .get('event')
+      .setValue(valorObjeto?.eventId, { onlySelf: true, emitEvent: false });
+    this.findOffice(body);
   }
 
   loadOffice(event: number, num: number, arrayLength?: number) {
     let body: OfficesSend = new OfficesSend();
     body.eventId = event;
-    body.officeType = num;
+    body.officeType = num ? num : 0;
     this.getOfficeResponse(body, num, arrayLength);
+  }
+
+  get officeType() {
+    return this.form
+      ? this.form.get('radio')
+        ? this.form.get('radio').value
+          ? this.form.get('radio').value
+          : 0
+        : 0
+      : 0;
   }
 
   async viewOffice() {
@@ -561,7 +485,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       let tituloOficio: any;
 
       body.eventId = this.event;
-      body.officeType = this.form.get('radio').value;
+      body.officeType = this.officeType;
       dataOffice = await this.getOfficeRequest(body);
       for (const x of dataOffice) {
         type.description = x.direccion;
@@ -610,7 +534,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let listGoods: string = '';
 
     body.eventId = this.event;
-    body.officeType = this.form.get('radio').value;
+    body.officeType = this.officeType;
     arrayDataOffice = await this.getOfficeResponseTwo(body);
 
     for (const x of arrayDataOffice) {
@@ -666,10 +590,16 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async getOfficeResponse(body: any, type?: number, arrayLength?: number) {
-    this.array = await this.getOfficeRequest(body);
-    if (this.array.length > 0) {
-      for (const i of this.array) {
-        this.lblTipoAccOficio = String(i?.des_tipo_oficio).toUpperCase();
+    // debugger;
+    let array = [];
+    array = await this.getOfficeRequest(body);
+    if (array.length > 0) {
+      for (const i of array) {
+        this.lblTipoAccOficio = i
+          ? i.des_tipo_oficio
+            ? String(i.des_tipo_oficio).toUpperCase()
+            : ''
+          : '';
         if (i?.tipo == 'VALOR') {
           this.lbltipOficio = ' DE REFERENCIA DE ' + i?.tipo;
         } else if (i?.tipo == 'AVALUO') {
@@ -683,8 +613,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.lblDireccion = ' ACTIVOS FINANCIEROS ';
         }
         this.lblCvlOfocio = i?.cve_oficio;
-        // this.event = i?.id_evento;
-
+        this.form
+          .get('event')
+          .setValue(i?.id_evento, { onlySelf: true, emitEvent: false });
         this.form.controls['dateRec'].setValue(this.dateFormat(i?.fecha_envia));
         this.form.controls['dateEla'].setValue(
           this.dateFormat(i?.fecha_insert)
@@ -703,16 +634,18 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
             ' ' +
             this.lblCvlOfocio
         );
-        this.form.controls['fol'].setValue(i?.fol);
-        if (type == 2) {
-          this.obtainsValuedAssets(2, 0);
-          // this.radioValueOne = true;
-          this.btnMotCan = false;
-        } else if (type == 3) {
-          this.obtainsValuedAssets(3, 0);
-          // this.redioValueTwo = true;
-          this.btnMotCan = true;
+        if (i.fol) {
+          this.form.controls['fol'].setValue(i.fol);
         }
+      }
+      if (type == 2) {
+        this.obtainsValuedAssets(2, 0);
+        // this.radioValueOne = true;
+        this.btnMotCan = false;
+      } else if (type == 3) {
+        this.obtainsValuedAssets(3, 0);
+        // this.redioValueTwo = true;
+        this.btnMotCan = true;
       }
     } else {
       this.alert(
@@ -723,37 +656,52 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     }
   }
 
-  async findOffice(array: any[]) {
-    if ((this.idOficio = this.form.controls['office'].value?.jobId > 0)) {
-      for (const i of array) {
-        try {
-          await this.getCityById(i?.ciudad);
-          if (this.city) {
-            if (i?.tipo_oficio == 2) {
-              this.form.get('radio').setValue('2');
-            } else if (i?.tipo_oficio == 3) {
-              this.form.get('radio').setValue('3');
-            }
-            // this.loadOffice(
-            //   this.form.controls['event'].value,
-            //   this.returnOfOffice(),
-            //   array.length
-            // );
-            this.form.patchValue({
-              dest: i?.destinatario,
-              key: i?.cve_oficio,
-              remi: i?.remitente,
-              cityCi: this.city.legendOffice,
-              ref: i?.texto1,
-              aten: i?.texto2,
-              espe: i?.texto3,
-              fol: i?.num_cv_armada,
-            });
+  async findOffice(body: any) {
+    this.idOficio = this.form.controls['office'].value?.jobId;
+    this.form.patchValue({
+      dest: null,
+      key: null,
+      remi: null,
+      cityCi: null,
+      ref: null,
+      aten: null,
+      espe: null,
+      fol: null,
+    });
+    // debugger;
+    if (this.idOficio > 0) {
+      let array = await this.getOfficeResponseTwo(body);
+      let statusOffice: string;
+      for (const [index, i] of array.entries()) {
+        await firstValueFrom(this.getCityById(i?.ciudad));
+        if (this.city) {
+          if (i?.tipo_oficio == 2) {
+            this.form
+              .get('radio')
+              .setValue('2', { onlySelf: true, emitEvent: false });
+          } else if (i?.tipo_oficio == 3) {
+            this.form
+              .get('radio')
+              .setValue('3', { onlySelf: true, emitEvent: false });
           }
-        } catch (error) {}
-        let statusOffice: string = i?.estatus_of;
-        this.validateFindOfficeOne(statusOffice);
+          if (index === array.length - 1) {
+            await this.loadOffice(body.eventId, body.officeId, array.length);
+          }
+          console.log(i);
+          this.form.patchValue({
+            dest: i?.destinatario,
+            key: i?.cve_oficio,
+            remi: i?.remitente,
+            cityCi: this.city.legendOffice,
+            ref: i?.texto1,
+            aten: i?.texto2,
+            espe: i?.texto3,
+            fol: i?.num_cv_armada,
+          });
+        }
+        statusOffice = i?.estatus_of;
       }
+      this.validateFindOfficeOne(statusOffice);
     } else {
       this.setButtons(3);
       this.resetVariables();
@@ -766,16 +714,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           columns: { ...VALUATION_REQUEST_COLUMNS },
         };
       } else if (this.form.get('radio').value == 3) {
-        this.settingsTwo = {
-          ...this.settingsTwo,
-          actions: false,
-          columns: { ...VALUATION_REQUEST_COLUMNS_TWO },
-        };
       }
     }
   }
 
   validateFindOfficeOne(status: any) {
+    // debugger;
     if (status == 'ENVIADO') {
       this.pnlControles = false;
       this.pnlControles2 = false;
@@ -787,11 +731,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           columns: { ...VALUATION_REQUEST_COLUMNS_VALIDATED },
         };
       } else if (this.form.get('radio').value == 3) {
-        this.settingsTwo = {
-          ...this.settingsTwo,
-          actions: false,
-          columns: { ...VALUATION_REQUEST_COLUMNS_VALIDATED_TWO },
-        };
       }
     } else {
       this.pnlControles = true;
@@ -804,13 +743,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           columns: { ...VALUATION_REQUEST_COLUMNS },
         };
       } else if (this.form.get('radio').value == 3) {
-        this.settingsTwo = {
-          ...this.settingsTwo,
-          actions: false,
-          columns: { ...VALUATION_REQUEST_COLUMNS_TWO },
-        };
       }
     }
+    console.log(this.form.get('radio').value);
+
     this.idOficio = this.form.controls['office'].value?.jobId;
     if (this.form.get('radio').value == 2) {
       this.obtainsValuedAssets(4, this.idOficio);
@@ -850,15 +786,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      event: [null],
+      event: [null, Validators.required],
       cveService: [null],
-      fol: [null],
+      fol: [null, Validators.required],
       key: [null],
-      cityCi: [null],
+      cityCi: [null, Validators.required],
       dateRec: [null],
       dateEla: [null],
-      remi: [null],
-      dest: [null],
+      remi: [null, Validators.required],
+      dest: [null, Validators.required],
       office: [null],
       ref: [null],
       aten: [null],
@@ -886,100 +822,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       });
   }
 
-  getUsersList(params: ListParams) {
-    let data = {
-      flagIn: 1,
-    };
-    this.generateCveService.postSpUserAppraisal(data, params).subscribe({
-      next: resp => {
-        this.sender = new DefaultSelect(resp.data, resp.count);
-      },
-      error: eror => {
-        this.loader.load = false;
-        this.sender = new DefaultSelect([], 0, true);
-      },
-    });
-  }
-
   obtainsValuedAssets(numOne: number, numTwo: number) {
-    let body: SendObtainGoodValued = new SendObtainGoodValued();
-    body.idEventIn = this.event;
-    body.idJobIn = numTwo;
-    body.tpJobIn = numOne;
-    this.serviceAppraise.postGetAppraise(body).subscribe({
-      next: response => {
-        if (response.data && Array.isArray(response.data)) {
-          this.data.load(response.data);
-          this.data.refresh();
-          this.totalItems = response.count || 0;
-          this.loading = false;
-        } else {
-          this.data.load(response);
-          this.data.refresh();
-          this.totalItems = response.count || 0;
-          this.loading = false;
-        }
-      },
-      error: error => {
-        if (error.status == 400) {
-          this.alert(
-            'warning',
-            'Advertencia',
-            'No hay bienes para realizar el oficio de respuesta'
-          );
-        }
-        this.loader.load = false;
-        this.loading = false;
-        this.data.load([]);
-        this.data.refresh();
-      },
-    });
+    this.body1 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
   }
 
   obtainsCancelAssets(numOne: number, numTwo: number) {
-    let body: SendObtainGoodValued = new SendObtainGoodValued();
-    body.idEventIn = this.event;
-    body.idJobIn = numTwo;
-    body.tpJobIn = numOne;
-    this.serviceAppraise.postGetAppraise(body).subscribe({
-      next: response => {
-        if (response.data && Array.isArray(response.data)) {
-          this.dataTwo.load(response.data);
-          this.dataTwo.refresh();
-          this.totalItemsTwo = response.count || 0;
-          this.loading = false;
-        } else {
-          this.dataTwo.load(response);
-          this.dataTwo.refresh();
-          this.totalItemsTwo = response.count || 0;
-          this.loading = false;
-        }
-      },
-      error: error => {
-        if (error.status == 400) {
-          this.alert(
-            'warning',
-            'Advertencia',
-            'No hay bienes para realizar el oficio de cancelación'
-          );
-        }
-        this.loader.load = false;
-        this.loading = false;
-        this.dataTwo.load([]);
-        this.dataTwo.refresh();
-      },
-    });
+    this.body2 = { idEventIn: this.event, tpJobIn: numOne, idJobIn: numTwo };
   }
-
-  // returnOfOffice(): number {
-  //   let num: number = 0;
-  //   if (this.form.get('radio').value == '2') {
-  //     num = 2;
-  //   } else if (this.form.get('radio').value == 'I') {
-  //     num = 3;
-  //   }
-  //   return num;
-  // }
 
   updateHour(): void {
     this.dateNow = new Date();
@@ -991,187 +840,152 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     return dateLocal;
   }
 
+  get cancelData() {
+    return this.dataService.cancelsData;
+  }
+
+  get valuedData() {
+    return this.dataService.valuedsData;
+  }
+
+  get selectedRowsCancel() {
+    return this.dataService.selectedRowsCancel;
+  }
+
+  get selectedRowsValueds() {
+    return this.dataService.selectedRowsValueds;
+  }
+
   //#region Excel
   //Export and Import Excel
-  exportExcel() {}
+  exportExcel() {
+    // debugger;
+    this.loadingExcel = true;
+    if (this.officeType + '' === '3') {
+      if (this.cancelData.length > 0) {
+        let haveMotives = false;
+        this.nameExcel = 'Bienes Cancelación';
+        if (haveMotives) {
+          this.nameExcel += ' Motivos de AVA a REV';
+        }
+        this.nameExcel += '.xlsx';
+        this.elementsToExport = this.cancelData.map((x: any) => {
+          let motives = x.motivos;
+          let motivesArray = [];
+          if (motives.includes('/')) {
+            motivesArray = motives
+              .split('/')
+              .filter((x: string) => x.trim().length > 0);
+          } else if (motives.trim().length > 0) {
+            motivesArray.push(motives);
+          }
+          let newRow: any = { ID_EVENTO: x.id_evento };
+          motivesArray.forEach((motive: string, index: number) => {
+            let title = 'MOTIVO_' + (index + 1);
+            newRow[title] = motive;
+            haveMotives = true;
+          });
+          return newRow;
+        });
+        console.log(this.elementsToExport);
+
+        console.log(this.nameExcel);
+        this.flagDownload = !this.flagDownload;
+        this.loadingExcel = false;
+      } else {
+        this.loadingExcel = false;
+        this.alert('warning', 'Sin bienes para descargar', '');
+      }
+    } else if (this.officeType + '' === '2') {
+      if (this.valuedData.length > 0) {
+        this.nameExcel = 'Bienes Respuesta.xlsx';
+        this.elementsToExport = this.valuedData.map((x: any) => {
+          let newRow: any = { ID_EVENTO: x.eventId, MOTIVOS: x.motivos };
+          return newRow;
+        });
+        this.flagDownload = !this.flagDownload;
+        this.loadingExcel = false;
+      } else {
+        this.loadingExcel = false;
+        this.alert('warning', 'Sin bienes para descargar', '');
+      }
+    }
+  }
   //#endregion
 
   // Metodo del modal #2
-  getReasonsChange() {
-    let eventGlobal: number;
-    eventGlobal = this.event;
-    this.serviceJobs.getMoCanById(eventGlobal).subscribe({
-      next: response => {
-        this.dataModal.load(response.data[0]);
-        this.dataModal.refresh();
-        this.totalItemsModal = response.count || 0;
-        this.loading = false;
-      },
-      error: error => {
-        this.loader.load = false;
-        this.loading = false;
-        this.dataModal.load([]);
-        this.dataModal.refresh();
-      },
-    });
-  }
-  selectedRowsCancel: Array<any> = [];
-  selectedRows: Array<any> = [];
-
-  onUserRowSelect(event: any): void {
-    this.selectedRows = event.selected; // Aquí, event.selected te dará todas las filas seleccionadas
-  }
-
-  onUserRowSelectCancel(event: any): void {
-    this.selectedRowsCancel = event.selected; // Aquí, event.selected te dará todas las filas seleccionadas
-  }
-
-  modifySelectedRows(): void {
-    let motivos = '';
-    let noMot = '';
-    let noCaracteres = '';
-    this.selectedRows.forEach(row => {
-      noMot += row.id_motivo + ',';
-      motivos += row.descripcion_motivo + '/';
-    });
-
-    this.selectedRowsCancel.forEach(row => {
-      if (row.motivos == ' ') {
-        row.motivos += motivos;
-      }
-    });
-
-    this.dataTwo.refresh();
-  }
-  //
-
-  reasonsForChange() {
-    this.modalService.show(this.miModalRev, {
-      ...MODAL_CONFIG,
-      class: 'modal-xl modal-dialog-centered',
-    });
-    this.getReasonsChange();
-  }
+  // selectedRowsCancel: Array<any> = [];
 
   updateOffice() {}
 
-  countGoodsSelected() {
-    let typeOffice: number = this.form.get('radio').value;
-    if (typeOffice == 2) {
-      if (this.selectedRowsCancel.length == 0) {
+  private validateSelectes(array: any[]) {
+    if (array.length === 0) {
+      this.alert(
+        'warning',
+        'Para continuar es necesario seleccionar bienes',
+        ''
+      );
+      return false;
+    }
+    for (let x of array) {
+      if (!x.motivos) {
         this.alert(
           'warning',
-          'Advertencia',
-          'Para continuar es necesario seleccionar bienes'
+          'Para continuar es necesario que seleccione los motivos por los cuales se va a enviar a REV el bien',
+          ''
         );
+        return false;
       }
-    } else if (typeOffice == 3) {
-      this.addReasons();
-      if (this.selectedRowsCancel.length == 0) {
-        this.alert(
-          'warning',
-          'Advertencia',
-          'Para continuar es necesario seleccionar bienes'
-        );
-      }
-      let countOne: number = 0;
-      let countTwo: number = 0;
-      for (const x of this.selectedRowsCancel) {
-        countOne++;
-        if (x.motivos != ' ') {
-          countTwo++;
+      if (x.motivos) {
+        if (x.motivos.trim() === '') {
+          this.alert(
+            'warning',
+            'Para continuar es necesario que seleccione los motivos por los cuales se va a enviar a REV el bien',
+            ''
+          );
+          return false;
         }
       }
-      if (countOne != countTwo) {
-        this.alert(
-          'warning',
-          'Advertencia',
-          'Para continuar es necesario que seleccione los motivos por los cuales se va a enviar a REV el bien'
-        );
-      }
     }
+    return true;
   }
 
-  addReasons() {
-    this.validatedReasons();
-    let arrayChange: any[] = [];
-    for (const x of this.selectedRowsCancel) {
-      this.changeChar(x.motivos);
-      arrayChange = x;
+  save() {
+    if (this.fol.value === null) {
+      this.alert('warning', 'Es necesario capturar el folio', '');
+      return;
     }
-    this.selectedRowsCancel = arrayChange;
+    let tpOfi = this.officeType();
+    if (
+      (tpOfi === 3 || tpOfi === 2) &&
+      !this.validateSelectes(
+        tpOfi === 3 ? this.selectedRowsCancel : this.selectedRowsValueds
+      )
+    ) {
+      return;
+    }
+    // add setButtons(2) edit setButtons(4)
   }
 
-  validatedReasons() {
-    if (this.form.get('radio').value == 3) {
-      if (this.selectedRowsCancel.length == 0) {
-        this.alert(
-          'warning',
-          'Advertencia',
-          'Para continuar es necesario que seleccione los motivos por los cuales se va a enviar a REV el bien'
-        );
-      }
-    }
+  get fol() {
+    return this.form.get('fol');
   }
 
-  changeChar(chain: string): string {
-    let replacements = [
-      { from: '&nbsp;', to: '' },
-      { from: 'nbsp;', to: '' },
-      { from: 'amp;NBSP;', to: '' },
-      { from: '&amp;nbsp;', to: '' },
-      { from: '&amp;amp;nbsp;', to: '' },
-      { from: '&AMP;AMP;NBSP;', to: '' },
-      { from: '&amp;', to: '' },
-      { from: '&AMP;', to: '' },
-      { from: '&#193;', to: 'Á' },
-      { from: '#193;', to: 'Á' },
-      { from: '&#225;', to: 'á' },
-      { from: '#225;', to: 'á' },
-      { from: '&#201;', to: 'É' },
-      { from: '#201;', to: 'É' },
-      { from: '&#233;', to: 'é' },
-      { from: '#233;', to: 'é' },
-      { from: '&#205;', to: 'Í' },
-      { from: '&#237;', to: 'í' },
-      { from: '&#211;', to: 'Ó' },
-      { from: '#211;', to: 'Ó' },
-      { from: '&#243;', to: 'ó' },
-      { from: '#243;', to: 'ó' },
-      { from: '&#218;', to: 'Ú' },
-      { from: '#218;', to: 'Ú' },
-      { from: '&#250;', to: 'ú' },
-      { from: '#250;', to: 'ú' },
-      { from: '&amp;amp;#225;', to: 'á' },
-      { from: '&amp;amp;#233;', to: 'é' },
-      { from: '&amp;amp;#237;', to: 'í' },
-      { from: '&amp;amp;#243;', to: 'ó' },
-      { from: '&amp;amp;#250;', to: 'ú' },
-      { from: '&#241;', to: 'ñ' },
-      { from: '&#209;', to: 'Ñ' },
-      { from: '&amp;#209;', to: 'Ñ' },
-      { from: '&#220;', to: 'Ü' },
-      { from: '&#252;', to: 'ü' },
-      { from: '&quot;', to: '' },
-      { from: "'", to: '' },
-    ];
-
-    for (let replacement of replacements) {
-      chain = chain.split(replacement.from).join(replacement.to);
-    }
-
-    return chain;
-  }
-
-  closeModalSubtype() {
-    this.modalService.hide();
+  showModal() {
+    this.showModalCambioRev++;
   }
 
   reset() {
-    this.form.reset();
-    this.formTwo.reset();
-    this.formThree.reset();
+    this.form.reset({}, { onlySelf: true, emitEvent: false });
+    this.formTwo.reset({}, { onlySelf: true, emitEvent: false });
+    this.formThree.reset({}, { onlySelf: true, emitEvent: false });
+    this.lblTipoAccOficio = '-';
+    this.lbltipOficio = '-';
+    this.lblDireccion = '-';
+    this.lblCvlOfocio = '-';
     this.pnlControles = true;
+    this.body1 = null;
+    this.body2 = null;
   }
 
   //

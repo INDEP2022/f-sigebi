@@ -1683,6 +1683,7 @@ export class PerformProgrammingFormComponent
             this.loadingGoods = false;
             this.alert('warning', 'Advertencia', 'No se econtraron bienes');
             this.estatesList = new LocalDataSource();
+            this.totalItems = 0;
           } else {
             let goodsFilter = response.data.map(async item => {
               const showMunicipality: any = await this.showMunicipality(
@@ -1693,6 +1694,8 @@ export class PerformProgrammingFormComponent
 
               if (showMunicipality) {
                 item.municipalityName = showMunicipality;
+              } else {
+                this.loadingGoods = false;
               }
 
               const showStateKey: any = await this.showStateOfRepublic(
@@ -1700,6 +1703,8 @@ export class PerformProgrammingFormComponent
               );
               if (showStateKey) {
                 item.stateKeyName = showStateKey;
+              } else {
+                this.loadingGoods = false;
               }
               if (item.physicalState) {
                 if (item.physicalState == 1) {
@@ -1727,6 +1732,7 @@ export class PerformProgrammingFormComponent
           this.alert('warning', 'Advertencia', 'No se econtraron bienes');
           this.loadingGoods = false;
           this.estatesList = new LocalDataSource();
+          this.totalItems = 0;
         },
       });
   }
@@ -1743,6 +1749,9 @@ export class PerformProgrammingFormComponent
         next: resp => {
           resolve(resp.data[0]?.municipality);
         },
+        error: error => {
+          resolve(null);
+        },
       });
     });
   }
@@ -1754,6 +1763,9 @@ export class PerformProgrammingFormComponent
       this.statesService.getAll(params.getValue()).subscribe({
         next: response => {
           resolve(response.data[0].descCondition);
+        },
+        error: error => {
+          resolve(null);
         },
       });
     });
