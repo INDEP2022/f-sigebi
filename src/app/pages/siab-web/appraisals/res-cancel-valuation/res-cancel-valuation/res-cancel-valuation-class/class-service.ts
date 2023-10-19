@@ -1,4 +1,4 @@
-export class SendObtainGoodValued {
+export interface SendObtainGoodValued {
   idEventIn: any;
   tpJobIn: any;
   idJobIn: any;
