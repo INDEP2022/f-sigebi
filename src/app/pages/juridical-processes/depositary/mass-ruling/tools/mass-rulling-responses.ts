@@ -39,8 +39,8 @@ export abstract class MassRullingResponses extends BasePage {
     // 	 WHERE nO_TIPO ='ELIMINAR'
     // 		 AND USUARIO   =:TOOLBAR_USUARIO;
     const params = new ListParams();
-    params['filter.typeNumber'] = 'ELIMINAR';
-    params['filter.user'] = toolbarUser;
+    params['filter.typeNumber'] = '$eq:ELIMINAR';
+    params['filter.user'] = `$eq:${toolbarUser}`;
     params.limit = 1;
     const result = await firstValueFrom(
       this.dictationService.getRTdictaAarusr(params)

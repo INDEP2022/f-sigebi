@@ -231,4 +231,20 @@ export class MsInvoiceService extends HttpService {
       body
     );
   }
+  getApplicationGenerateFolio(body: any) {
+    return this.post<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationGenerateFolio}`,
+      body
+    );
+  }
+
+  getApplicationGetCountSumbyTypes(params: any) {
+    return this.get(
+      `${ENDPOINT_INVOICE.GetCountSumbyTypes}?eventId=${params.eventId}&batchId=${params.batchId}&types=${params.types}`
+    );
+  }
+
+  updateDetBillings(body: any) {
+    return this.put(`${ENDPOINT_INVOICE.ComerCetinvoices}`, body);
+  }
 }
