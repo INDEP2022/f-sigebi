@@ -68,8 +68,8 @@ export class AppraiseService extends HttpService {
     return this.get<IListResponse<any>>('proficient?limit=5&page=1', params);
   }
 
-  postGetAppraise(body: any) {
-    return this.post(AppraiseEndpoints.PostAppraise, body);
+  postGetAppraise(body: any, params?: _Params) {
+    return this.post(AppraiseEndpoints.PostAppraise, body, params);
   }
 
   getDelegation(coordination: number) {
