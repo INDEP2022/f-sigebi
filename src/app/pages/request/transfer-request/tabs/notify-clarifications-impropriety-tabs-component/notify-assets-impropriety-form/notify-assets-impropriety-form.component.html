@@ -198,7 +198,12 @@
           </form-field>
         </div>
       </div>
-      <div class="row" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
+      <div
+        class="row"
+        *ngIf="
+          infoRequest.typeOfTransfer == 'SAT_SAE' &&
+          dataClarifications2.chatClarification.idClarificationType == '1'
+        ">
         <div class="col-md-12">
           <p>
             <a

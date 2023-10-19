@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { catchError, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
@@ -47,20 +48,29 @@ export class RegistrationHelper extends BasePage {
         if (newLimit) {
           params.limit = newLimit;
         }
-        this.goodService.getAll(params).subscribe({
-          next: resp => {
-            resolve(resp);
-          },
-          error: error => {
-            if (error.error.message === 'No se encontraron registros.') {
+        this.goodService
+          .getAll(params)
+          .pipe(
+            catchError(e => {
+              if (e.status == 400) return of({ data: [], count: 0 });
+              return e;
+            })
+          )
+          .subscribe({
+            next: resp => {
+              resolve(resp);
+            },
+            error: error => {
+              /* if (error.error.message === 'No se encontraron registros.') {
               let good: any = {};
               good['count'] = 0;
               resolve(good);
-            } else {
+            } else { */
+              this.onLoadToast('error', 'Error al validar los bienes');
               reject(error.error.message);
-            }
-          },
-        });
+              /*  } */
+            },
+          });
       }
     });
   }
