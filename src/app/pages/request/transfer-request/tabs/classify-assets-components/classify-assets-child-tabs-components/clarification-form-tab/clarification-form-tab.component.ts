@@ -133,7 +133,6 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   getClarification(params?: ListParams): void {
     //Mostrar individualización de bienes solo para los de Comercio Exterior
     params['sortBy'] = `clarification:ASC`;
-    //console.log('requesy', this.request);
     if (
       this.request.transferenceId != '942' &&
       this.request.transferenceId != '120' &&

@@ -13,6 +13,7 @@ import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifi
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
 
@@ -52,7 +53,8 @@ export class InappropriatenessPgrSatFormComponent
     private documentService: DocumentsService,
     private chatService: ChatClarificationsService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
-    private rejectedGoodService: RejectedGoodService
+    private rejectedGoodService: RejectedGoodService,
+    private requestService: RequestService
   ) {
     super();
     this.today = new Date();
@@ -65,8 +67,18 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   getInfoDoc() {
+    let documentTypeId: number = 0;
+    const idClarType = this.notification.chatClarification.idClarificationType;
+    if (
+      (this.request.typeOfTransfer == 'PGR_SAE' && idClarType == '2') ||
+      (this.request.typeOfTransfer == 'SAT_SAE' && idClarType == '2')
+    ) {
+      documentTypeId = 111;
+    }
+
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.applicationId'] = this.idSolicitud;
+    params.getValue()['filter.documentTypeId'] = documentTypeId;
     this.documentService
       .getAllClarificationDocImpro(params.getValue())
       .subscribe({
@@ -100,9 +112,7 @@ export class InappropriatenessPgrSatFormComponent
             }
           }
         },
-        error: error => {
-          console.log('response error', error);
-        },
+        error: error => {},
       });
   }
 
@@ -151,13 +161,14 @@ export class InappropriatenessPgrSatFormComponent
 
     this.loading = true;
 
-    const checkExistDocImp: any = await this.checkDataExist();
-    if (checkExistDocImp?.id != 0) {
+    const checkExistDocImp: any = await this.checkDataExist(111);
+    if (checkExistDocImp.id != 0) {
       this.documentService
         .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
         .subscribe({
-          next: data => {
+          next: async data => {
             this.openReport(checkExistDocImp);
+            await this.updateObservation(this.form.get('observations').value);
             this.loading = false;
             this.close();
           },
@@ -173,11 +184,22 @@ export class InappropriatenessPgrSatFormComponent
       this.documentService.createClarDocImp(modelReport).subscribe({
         next: data => {
           const createClarGoodDoc = this.createClarGoodDoc(data);
-          setTimeout(() => {
+          setTimeout(async () => {
             if (createClarGoodDoc) {
-              this.openReport(data);
-              this.loading = false;
-              this.close();
+              const updateObservations = await this.updateObservation(
+                this.form.get('observations').value
+              );
+              if (updateObservations) {
+                const updateObservations = await this.updateObservation(
+                  this.form.get('observations').value
+                );
+
+                if (updateObservations) {
+                  this.openReport(data);
+                  this.loading = false;
+                  this.close();
+                }
+              }
             }
           }, 250);
         },
@@ -216,10 +238,11 @@ export class InappropriatenessPgrSatFormComponent
     });
   }
 
-  checkDataExist() {
+  checkDataExist(documentTypeId: number) {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
       params.getValue()['filter.applicationId'] = this.idSolicitud;
+      params.getValue()['filter.documentTypeId'] = documentTypeId;
       this.documentService
         .getAllClarificationDocImpro(params.getValue())
         .subscribe({
@@ -230,6 +253,23 @@ export class InappropriatenessPgrSatFormComponent
             resolve(0);
           },
         });
+    });
+  }
+
+  updateObservation(observation: string) {
+    return new Promise((resolve, reject) => {
+      const modalRequest: IRequest = {
+        id: this.idSolicitud,
+        observations: observation,
+      };
+      this.requestService.update(this.idSolicitud, modalRequest).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
     });
   }
 
