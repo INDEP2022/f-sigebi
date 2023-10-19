@@ -192,27 +192,24 @@
                         <div class="col-md-3">
                           <form-field
                             [control]="form.get('fec')"
-                            label="Fecha Inicial:">
+                            label="Fecha Inicial y Fecha Final: ">
                             <input
                               type="text"
                               class="form-control"
                               formControlName="fec"
-                              bsDatepicker
-                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                              bsDaterangepicker
+                              [bsConfig]="{
+                                dateInputFormat: 'DD-MM-YYYY',
+                                displayOneMonthRange: true
+                              }" />
                           </form-field>
                         </div>
-                        <div class="col-md-3">
-                          <form-field
-                            [control]="form.get('fec2')"
-                            label="Fecha Final:">
-                            <input
-                              type="text"
-                              class="form-control"
-                              formControlName="fec2"
-                              bsDatepicker
+                        <!-- <div class="col-md-3">
+                          <form-field [control]="form.get('fec2')" label="Fecha Final:">
+                            <input type="text" class="form-control" formControlName="fec2" bsDatepicker
                               [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
                           </form-field>
-                        </div>
+                        </div> -->
                       </div>
                       <div class="row text-center justify-content-center mt-5">
                         <div class="col-md-2">
@@ -293,7 +290,11 @@
                       (userRowSelect)="rowsSelected($event)">
                     </ng2-smart-table>
                   </ng-scrollbar>
-                  <app-pagination [params]="params" [totalItems]="totalItems">
+                  <app-pagination
+                    [params]="params"
+                    [limit]="limit"
+                    [pageSizeOptions]="[500]"
+                    [totalItems]="totalItems">
                   </app-pagination>
                 </div>
               </div>
@@ -309,7 +310,7 @@
                     <div
                       accordion-heading
                       class="d-flex justify-content-between">
-                      <h5>ACCIONES</h5>
+                      <h5>INFORMACIÓN</h5>
                     </div>
                     <form class="form-material" [formGroup]="form2">
                       <div class="row m-1">
@@ -595,6 +596,7 @@
                     [track]="'all'"
                     [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
                     <ng2-smart-table
+                      (edit)="editDetalleFact($event)"
                       #myTable
                       [attr.class]="'table-bordered'"
                       [settings]="settings2"

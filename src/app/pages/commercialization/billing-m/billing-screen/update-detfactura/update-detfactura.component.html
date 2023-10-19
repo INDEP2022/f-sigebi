@@ -5,17 +5,17 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <!-- RG_TIPO_REL -->
+        <!-- C_CLVPROSE -->
         <div class="col-md-12">
-          <form-field [control]="form.get('RG_TIPO_REL')">
+          <form-field [control]="form.get('C_CLVPROSE')">
             <ngx-select
               [searchOnInit]="true"
               [form]="form"
-              control="RG_TIPO_REL"
+              control="C_CLVPROSE"
               [data]="selectTabla1"
               value="clave"
               bindLabel="cveAndDesc"
-              label="Tipo Rel."
+              label="Prod./Serv."
               (fetchItems)="getSelect1($event)">
             </ngx-select>
           </form-field>
@@ -23,32 +23,16 @@
 
         <!-- RG_USO_COM -->
         <div class="col-md-12 mt-3">
-          <form-field [control]="form.get('RG_USO_COM')">
+          <form-field [control]="form.get('C_UNIDMED')">
             <ngx-select
               [searchOnInit]="true"
               [form]="form"
-              control="RG_USO_COM"
+              control="C_UNIDMED"
               [data]="selectTabla2"
               value="clave"
               bindLabel="cveAndDesc"
-              label="Uso Comp."
+              label="Unidad"
               (fetchItems)="getSelect2($event)">
-            </ngx-select>
-          </form-field>
-        </div>
-
-        <!-- RG_F_PAGO -->
-        <div class="col-md-12 mt-3">
-          <form-field [control]="form.get('RG_F_PAGO')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="form"
-              control="RG_F_PAGO"
-              [data]="selectTabla3"
-              value="clave"
-              bindLabel="cveAndDesc"
-              label="F. Pago"
-              (fetchItems)="getSelect3($event)">
             </ngx-select>
           </form-field>
         </div>

@@ -18,8 +18,8 @@ export class BillingCommunicationService {
     this.params.next(params);
   }
 
-  enviarParams(val: any) {
-    console.log('data', val);
-    return this.ejecutarFuncionSource.next(val);
+  enviarParams(params: any) {
+    console.log('data', params);
+    return this.ejecutarFuncionSource.next(params);
   }
 }
