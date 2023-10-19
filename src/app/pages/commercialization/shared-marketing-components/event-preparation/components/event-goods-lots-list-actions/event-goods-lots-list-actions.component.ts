@@ -13,6 +13,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
+  finalize,
   firstValueFrom,
   of,
   switchMap,
@@ -529,17 +530,65 @@ export class EventGoodsLotsListActionsComponent
     return !(eventTpId.value == 6);
   }
 
-  onCustomersImport(event: Event) {
+  async onCustomersImport(event: Event) {
     if (!this.isValidFile(event)) {
       this.customersImportControl.reset();
       return;
     }
-    this.importCustomersLots();
+    const validFile = this.isValidFile(event);
+    if (!validFile) {
+      return;
+    }
+    const file = this.getFileFromEvent(event);
+    const resp = await this.alertQuestion(
+      'info',
+      '¿El evento es desierto?',
+      ''
+    );
+    let lifMessageYesNo: string = null;
+    const { isConfirmed, dismiss } = resp;
+    if (isConfirmed) {
+      lifMessageYesNo = 'S';
+    }
+    if (dismiss == Swal.DismissReason.cancel) {
+      lifMessageYesNo = 'N';
+    }
+    if (!lifMessageYesNo) {
+      this.customersImportControl.reset();
+      return;
+    }
+    this.importCustomersLots(file, lifMessageYesNo).subscribe();
   }
 
   /**PUP_IMP_EXCEL_LOTES_CLIENTE */
-  importCustomersLots() {
-    console.warn('PUP_IMP_EXCEL_LOTES_CLIENTE');
+  importCustomersLots(file: File, lifMessageYesNo: string) {
+    const { id, eventTpId } = this.eventForm.getRawValue();
+    this.loader.load = true;
+    return this.lotService
+      .pupImpExcelBatchesCustomer({
+        file,
+        lifMessageYesNo,
+        eventId: id,
+        direction: this.parameters.pDirection,
+        tpEventId: eventTpId,
+        pClientId: '',
+        pLotId: '',
+      })
+      .pipe(
+        catchError(error => {
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.eventPreparationService.$refreshLots.next();
+          this.eventPreparationService.$fillStadistics.next();
+          this.alert('success', 'Proceso Terminado', '');
+        }),
+        finalize(() => {
+          this.loader.load = false;
+          this.customersImportControl.reset();
+        })
+      );
   }
 
   // ? ---------------------- Biens no Cargados

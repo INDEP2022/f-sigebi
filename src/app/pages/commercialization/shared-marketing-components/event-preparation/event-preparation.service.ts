@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { firstValueFrom, take } from 'rxjs';
+import { firstValueFrom, Subject, take } from 'rxjs';
 import { IEventPreparationState } from './store/event-preparation-state.interface';
 import * as Actions from './store/event-preparation.actions';
 import * as Selectors from './store/event-preparation.selector';
 @Injectable({ providedIn: 'root' })
 export class EventPreparationService {
+  $refreshLots = new Subject<void>();
+  $fillStadistics = new Subject<void>();
   constructor(private store: Store<IEventPreparationState>) {}
 
   updateState(eventPreparation: IEventPreparationState) {

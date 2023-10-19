@@ -35,6 +35,7 @@ import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot
 import { BasePage } from 'src/app/core/shared';
 import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import Swal, { SweetAlertResult } from 'sweetalert2';
+import { EventPreparationService } from '../../event-preparation.service';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { EVENT_LOT_LIST_COLUMNS } from '../../utils/table-columns/event-lots-list-columns';
@@ -71,7 +72,8 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     private comerLotService: ComerLotService,
     private modalService: BsModalService,
     private lotService: LotService,
-    private comerGoodsXLotService: ComerGoodsXLotService
+    private comerGoodsXLotService: ComerGoodsXLotService,
+    private eventPreparationService: EventPreparationService
   ) {
     super();
     this.settings = {
@@ -98,6 +100,15 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.eventPreparationService.$refreshLots
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          const params = this.params.getValue();
+          this.params.next(params);
+        })
+      )
+      .subscribe();
     this.columnsFilter().subscribe();
     this.params
       .pipe(

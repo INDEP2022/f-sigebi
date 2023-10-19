@@ -429,6 +429,26 @@ export class LotService extends HttpService {
     return this.get(`apps/get-comer-lots-clients-payref-sum/${idEvent}`);
   }
 
+  pupImpExcelBatchesCustomer(body: {
+    file: File;
+    lifMessageYesNo: string;
+    eventId: number | string;
+    direction: 'M' | 'I';
+    tpEventId: string | number;
+    pClientId: string | number;
+    pLotId: string | number;
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file);
+    formData.append('lifMessageYesNo', body.lifMessageYesNo as string);
+    formData.append('eventId', body.eventId as string);
+    formData.append('direction', body.direction as string);
+    formData.append('tpEventId', body.tpEventId as string);
+    formData.append('pClientId', body.pClientId as string);
+    formData.append('pLotId', body.pLotId as string);
+    return this.post('apps/pup-imp-excel-batches-customer', formData);
+  }
+
   pupProcEnvSirsae(body: IPupProcEnvSirsae) {
     return this.post(`apps/pup-proc-env-sirsae`, body);
   }
