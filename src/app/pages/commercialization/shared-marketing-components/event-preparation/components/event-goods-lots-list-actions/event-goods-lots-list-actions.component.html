@@ -34,11 +34,12 @@
       Carga Facturas
     </button>
   </li>
-  <li role="menuitem">
+  <!-- !NO HACE NADA -->
+  <!-- <li role="menuitem">
     <button type="button" class="dropdown-item" (click)="onTrasp()">
       Traspasar Bienes
     </button>
-  </li>
+  </li> -->
   <li role="menuitem">
     <button type="button" class="dropdown-item" (click)="onInvoiceData()">
       Datos para Facturación
@@ -118,11 +119,19 @@
 
 <input
   type="file"
-  (change)="loadInvoiceDataChange($event)"
-  [formControl]="invoiceDataControl"
+  (change)="onCustomersTc($event)"
+  [formControl]="customersTccontrol"
   [style.display]="'none'"
   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-  #invoiceDataInput />
+  #customersTcInput />
+
+<input
+  type="file"
+  (change)="lotifyGoodsChange($event)"
+  [formControl]="goodsLotifyControl"
+  [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  #goodsLotifyInput />
 
 <!-- ? BASES -->
 

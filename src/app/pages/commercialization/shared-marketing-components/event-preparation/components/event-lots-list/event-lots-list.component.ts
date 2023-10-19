@@ -341,14 +341,14 @@ export class EventLotsListComponent extends BasePage implements OnInit {
           return;
         }
         if (response.message[0]) {
-          await this.successValCSV(this.getFileFromEvent(event));
+          await this.successValCSV(event);
           return;
         }
       })
     );
   }
 
-  async successValCSV(file: File) {
+  async successValCSV(event: Event) {
     this.excelControl.reset();
 
     const { isConfirmed } = await this.alertQuestion(
@@ -357,7 +357,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       '¿Desea Lotificar el evento?'
     );
     if (isConfirmed) {
-      // TODO: MANDAR A LLAMAR A PUP_IMP_EXCEL_LOTES
+      this.eventPreparationService.$lotifyGoods.next(event);
     }
   }
 
@@ -385,14 +385,14 @@ export class EventLotsListComponent extends BasePage implements OnInit {
           return;
         }
         if (response.message[0]) {
-          await this.successValCsvCustomer(this.getFileFromEvent(event));
+          await this.successValCsvCustomer(event);
           return;
         }
       })
     );
   }
 
-  async successValCsvCustomer(file: File) {
+  async successValCsvCustomer(event: Event) {
     this.excelControl.reset();
 
     const { isConfirmed } = await this.alertQuestion(
@@ -401,7 +401,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       '¿Desea Realiza la Carga de Clientes en el evento?'
     );
     if (isConfirmed) {
-      // TODO: MANDAR A LLAMAR A PUP_IMP_EXCEL_LOTES_CLIENTE¿
+      this.eventPreparationService.$lotifyCustomers.next(event);
     }
   }
 

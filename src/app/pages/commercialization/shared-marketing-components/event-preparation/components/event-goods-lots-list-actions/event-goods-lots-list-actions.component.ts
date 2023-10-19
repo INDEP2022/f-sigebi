@@ -17,6 +17,7 @@ import {
   firstValueFrom,
   of,
   switchMap,
+  takeUntil,
   tap,
   throwError,
 } from 'rxjs';
@@ -65,6 +66,8 @@ export class EventGoodsLotsListActionsComponent
   saleBaseInput: ElementRef<HTMLInputElement>;
   @ViewChild('customersBaseInput', { static: true })
   customersBaseInput: ElementRef<HTMLInputElement>;
+  @ViewChild('customersTcInput', { static: true })
+  customersTcInput: ElementRef<HTMLInputElement>;
   @Input() params: BehaviorSubject<FilterParams>;
   goodsLotifyControl = new FormControl(null);
   customersImportControl = new FormControl(null);
@@ -72,6 +75,7 @@ export class EventGoodsLotsListActionsComponent
   invoiceDataControl = new FormControl(null);
   saleBasesControl = new FormControl(null);
   customersBasecontrol = new FormControl(null);
+  customersTccontrol = new FormControl(null);
   @Input() onlyBase = false;
   get controls() {
     return this.eventForm.controls;
@@ -93,7 +97,25 @@ export class EventGoodsLotsListActionsComponent
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.eventPreparationService.$lotifyGoods
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(event => {
+          this.lotifyGoods(event);
+        })
+      )
+      .subscribe();
+
+    this.eventPreparationService.$lotifyCustomers
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(async event => {
+          await this.onCustomersImport(event);
+        })
+      )
+      .subscribe();
+  }
 
   private getFileFromEvent(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -630,8 +652,7 @@ export class EventGoodsLotsListActionsComponent
         this.loader.load = false;
         this.alert('success', 'Proceso Terminado', '');
         this.invoiceControl.reset();
-        const params = this.params.getValue();
-        this.params.next(params);
+        this.eventPreparationService.$refreshLotGoods.next();
       })
     );
   }
@@ -730,7 +751,7 @@ export class EventGoodsLotsListActionsComponent
     }
 
     if (dismiss == Swal.DismissReason.cancel) {
-      this.customersTc();
+      this.customersTcInput.nativeElement.click();
       return;
     }
   }
@@ -762,10 +783,57 @@ export class EventGoodsLotsListActionsComponent
     );
   }
 
+  async onCustomersTc(event: Event) {
+    if (this.isValidFile(event)) {
+      this.customersTccontrol.reset();
+      return;
+    }
+    const response = await this.alertQuestion(
+      'question',
+      '¿El evento es desierto?',
+      ''
+    );
+    let lifMessageYesNo: string = null;
+    const { isConfirmed, dismiss } = response;
+    if (isConfirmed) {
+      lifMessageYesNo = 'S';
+    }
+    if (dismiss == Swal.DismissReason.cancel) {
+      lifMessageYesNo = 'N';
+    }
+    if (!lifMessageYesNo) {
+      this.customersTccontrol.reset();
+      return;
+    }
+    const file = this.getFileFromEvent(event);
+    this.customersTc(file, lifMessageYesNo).subscribe();
+  }
+
   /**CLIENTES_TC */
-  customersTc() {
-    // TODO: IMPLEMTENTAR CUANDO SE TENGA
-    console.warn('CLIENTES_TC');
+  customersTc(file: File, lifMessageYesNo: string) {
+    const { id } = this.eventForm.getRawValue();
+    this.loader.load = true;
+    return this.lotService
+      .clientsTc({
+        file,
+        lifMessageYesNo,
+        eventId: id,
+      })
+      .pipe(
+        catchError(error => {
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.alert('success', 'Proceso Terminado', '');
+          const params = new FilterParams();
+          this.params.next(params);
+        }),
+        finalize(() => {
+          this.loader.load = false;
+          this.customersTccontrol.reset();
+        })
+      );
   }
 
   // ? ---------------- Valida Bienes
