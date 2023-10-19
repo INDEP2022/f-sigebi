@@ -97,6 +97,14 @@ export class EventPreparationComponent
   }
 
   async ngOnInit() {
+    this.eventPreparationService.$fillStadistics
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          this.fillStadistics();
+        })
+      )
+      .subscribe();
     this.initForm();
     this.getUserInfo();
     this.newEventSelected().subscribe();

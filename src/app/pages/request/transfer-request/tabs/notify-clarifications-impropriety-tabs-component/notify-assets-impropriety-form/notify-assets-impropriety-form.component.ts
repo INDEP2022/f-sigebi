@@ -342,7 +342,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   async confirm() {
     const typeTransference = this.infoRequest.typeOfTransfer;
-
+    console.log('typeTransference', typeTransference);
     let generaXML: boolean = false;
     if (
       typeTransference == 'SAT_SAE' &&
@@ -415,6 +415,14 @@ export class NotifyAssetsImproprietyFormComponent
         'INDIVIDUALIZACIÓN DE BIENES'
     ) {
       this.aclaracionComercioExteriorInd();
+    }
+
+    if (
+      typeTransference == 'MANUAL' &&
+      this.notification?.clarification?.clarification ==
+        'INDIVIDUALIZACIÓN DE BIENES'
+    ) {
+      this.aclaracionAnam();
     }
 
     if (

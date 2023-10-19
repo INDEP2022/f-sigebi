@@ -1,13 +1,13 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Reporte de recepci&oacute;n documental</h5>
+    <h5 class="title">Control Diario de Recepción de Expedientes</h5>
   </div>
 
   <div body>
     <form [formGroup]="reportForm" class="form-material">
       <div class="row justify-content-center">
-        <div class="col-md-5">
-          <div class="row pt-3">
+        <div class="col-md-6">
+          <div class="row pt-4">
             <form-field [control]="reportForm.get('delegation')">
               <ngx-select
                 [form]="reportForm"
@@ -20,7 +20,7 @@
               </ngx-select>
             </form-field>
           </div>
-          <div class="row pt-3">
+          <div class="row pt-4">
             <form-field [control]="reportForm.get('subdelegation')">
               <ngx-select
                 [form]="reportForm"
@@ -34,9 +34,8 @@
             </form-field>
           </div>
         </div>
-
-        <div class="col-md-5">
-          <div class="row pt-3">
+        <div class="col-md-6">
+          <div class="row pt-4">
             <form-field [control]="reportForm.get('PF_MES')" label="Mes">
               <!-- <input formControlName="PF_MES" class="form-control" bsDatepicker /> -->
               <input
@@ -49,8 +48,7 @@
                 class="form-control ng-pristine ng-valid ng-touched" />
             </form-field>
           </div>
-
-          <div class="row pt-3">
+          <div class="row pt-4">
             <form-field [control]="reportForm.get('PF_ANIO')" label="Año">
               <input
                 type="number"
@@ -65,28 +63,30 @@
         </div>
       </div>
     </form>
-  </div>
-  <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <!-- <confirm-button
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <!-- <confirm-button
           text="Imprimir"
           
           [loading]="loading"
           (confirm)="Generar()">
         </confirm-button> -->
-        <button
-          type="button"
-          class="btn btn-primary active btn-sm"
-          (click)="Generar()"
-          [disabled]="reportForm.invalid">
-          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
-        </button>
-      </div>
-      <div class="m-3">
-        <button class="btn btn-danger btn-sm active mr-3" (click)="cleanForm()">
-          Limpiar <i class="fas fa-eraser"> </i>
-        </button>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="Generar()"
+            [disabled]="reportForm.invalid">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
