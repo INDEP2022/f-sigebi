@@ -1,5 +1,5 @@
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -8,6 +8,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -45,6 +46,7 @@ export class NotificationsFileComponent
   dataTable: LocalDataSource = new LocalDataSource();
   public form: FormGroup;
   fileNumber: number = null;
+  columnFilter: any = [];
   fileNumberParam: number = null;
   origin: string = null;
   notificationByExpedient = new BehaviorSubject<ListParams>(new ListParams());
@@ -125,9 +127,71 @@ export class NotificationsFileComponent
   }
 
   setPaginationRefresh() {
+    // this.notificationByExpedient
+    //   .pipe(takeUntil(this.$unSubscribe))
+    // .subscribe(() => this.getDataExpedientByFileNumber());
+    this.dataTable
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'wheelNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'captureDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'receiptDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'officeExternalKey':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'affairDescription':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'protectionKey':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'departmentDescription':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              this.notificationByExpedient.value.page = 1;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+          this.notificationByExpedient = this.pageFilter(
+            this.notificationByExpedient
+          );
+          this.getDataExpedientByFileNumber();
+        }
+      });
+
     this.notificationByExpedient
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDataExpedientByFileNumber());
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes) {
+      this.getDataExpedientByFileNumber();
+    }
   }
 
   setDataTable(dataTable: any[] = []) {
