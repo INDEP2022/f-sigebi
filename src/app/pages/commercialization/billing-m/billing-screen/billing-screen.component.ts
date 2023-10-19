@@ -1,6 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -16,6 +21,8 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
+import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -28,6 +35,7 @@ import { BillingsService } from '../services/services';
 import { COMER_EST_LOTES, INCONSISTENCIAS, INCONSISTENCIAS1 } from './columns';
 import { BillingCommunicationService } from './communication/communication.services';
 import { DatCancComponent } from './dat-canc/dat-canc.component';
+import { UpdateDetfacturaComponent } from './update-detfactura/update-detfactura.component';
 import { UpdateFacturaComponent } from './update-factura/update-factura.component';
 @Component({
   selector: 'app-billing-screen',
@@ -130,6 +138,14 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     return this.form.get('date');
   }
 
+  get fecBlkCtrl() {
+    return this.form.get('fec');
+  }
+
+  get fec2BlkCtrl() {
+    return this.form.get('fec2');
+  }
+
   get causeBlkCtrl() {
     return this.form.get('cause');
   }
@@ -137,6 +153,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   @ViewChild('tabB', { static: true }) tabB: ElementRef;
   @ViewChild('myTabset', { static: true }) tabset: TabsetComponent;
   valFiltros: boolean;
+
+  limit: FormControl = new FormControl(500);
   constructor(
     private fb: FormBuilder,
     private msInvoiceService: MsInvoiceService,
@@ -149,7 +167,9 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private billingCommunicationService: BillingCommunicationService,
     private datePipe: DatePipe,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private comerInvoiceService: ComerInvoiceService,
+    private comerDetInvoice: ComerDetailInvoiceService
   ) {
     super();
 
@@ -165,7 +185,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       },
       edit: {
         editButtonContent:
-          '<i disabled class="fa fa-pencil-alt text-warning mx-2 pl-3"></i>',
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
       },
       columns: {
         name: {
@@ -180,7 +200,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onBillingSelect(instance),
         },
-
         eventId: {
           title: 'Evento',
           type: 'string',
@@ -222,7 +241,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           },
           filterFunction(cell?: any, search?: string): boolean {
             let column = cell;
-            console.log(column, '==', search);
+            // console.log(column, '==', search);
             return true;
           },
         },
@@ -238,13 +257,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           type: 'html',
           sort: false,
           width: '30%',
-          cellStyle: (rowData: any) => {
-            console.log('rowData', rowData);
-            if (!['F', 'M'].includes(rowData.valRFC)) {
-              return 'red-column-fcomer086-I'; // Clase CSS para cambiar el fondo del td
-            }
-            return '';
-          },
           valuePrepareFunction: (cell: any, row: any, h: any, a: any) => {
             if (!['F', 'M'].includes(row.valRFC)) {
               // 'red-column-fcomer086-I'
@@ -264,6 +276,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
           width: '20%',
+          filter: false,
         },
         cvman: {
           title: 'Mandato',
@@ -279,6 +292,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           title: 'Factura para',
           type: 'string',
           sort: false,
+          filter: false,
         },
         Invoice: {
           title: 'Folio',
@@ -317,7 +331,17 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     this.settings2 = {
       ...this.settings,
       hideSubHeader: false,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        delete: false,
+        edit: true,
+        add: false,
+        position: 'right',
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
+      },
       columns: {
         name: {
           filter: false,
@@ -331,7 +355,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onBillingDetSelect(instance),
         },
-        notGood: {
+        goodNot: {
           title: 'No. Bien',
           type: 'string',
           sort: false,
@@ -590,14 +614,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.params.getValue().limit = 500;
     this.prepareForm();
-
-    // this.billingCommunicationService.ejecutarFuncion$.subscribe(
-    //   (next: any) => {
-    //     // console.log('SI WILM', next);
-    //     this.ejecutarFuncion();
-    //   }
-    // );
+    this.billingCommunicationService.ejecutarFuncion$.subscribe((next: any) => {
+      this.params = next;
+      console.log('SI WILM', next);
+      this.getBillings('no');
+    });
     // ------------- PREPARAMOS FILTRADOS DE LAS TABLAS ------------- //
     this.filterTable1(); // Facturas - COMER_FACTURAS
     this.filterTable2(); // Detalle de la Factura - COMER_DETFACTURAS
@@ -657,23 +680,22 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           });
           this.params = this.pageFilter(this.params);
           //Su respectivo metodo de busqueda de datos
-          this.getBillings();
+          this.getBillings('no');
         }
       });
 
-    // this.params
-    //   .pipe(
-    //     skip(1),
-    //     tap(() => { // aquí colocas la función que deseas ejecutar
-    //       this.getBillings();
-    //     }),
-    //     takeUntil(this.$unSubscribe)
-    //   )
-    //   .subscribe(() => {
-    //   });
     this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getBillings());
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getBillings('no');
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {});
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getBillings('no'));
   }
   filterTable2() {
     this.data2
@@ -691,7 +713,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              notGood: () => (searchFilter = SearchFilter.EQ),
+              goodNot: () => (searchFilter = SearchFilter.EQ),
               amount: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.ILIKE),
               unit: () => (searchFilter = SearchFilter.EQ),
@@ -918,7 +940,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       totalPay: [null],
     });
   }
-  async getBillings() {
+  async getBillings(filter: string) {
     // Facturas - COMER_FACTURAS
     this.loading = true;
     this.totalItems = 0;
@@ -951,12 +973,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       ] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
     }
 
-    if (this.valDefaultWhere)
-      params['filter.eventId'] = `$eq:${this.idEventBlkCtrl.value}`;
+    // if (this.valDefaultWhere)
+    //   params['filter.eventId'] = `$eq:${this.idEventBlkCtrl.value}`;
 
     params['filter.address'] = `$eq:I`;
     if (!this.valSortBy) params['sortBy'] = `eventId:DESC`;
-    this.msInvoiceService.getAllBillings(params).subscribe({
+    // this.msInvoiceService.getAllBillings
+    this.comerInvoiceService.getAllSumInvoice(params).subscribe({
       next: response => {
         console.log(response);
 
@@ -970,22 +993,39 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             ? null
             : delegationDes.description;
 
-          const params_ = new ListParams();
-          params['filter.tpinvoiceId'] = `$eq:${item.Type}`;
-          const comerTpinvoice: any =
-            await this.billingsService.getComerTpinvoices(params_);
-          item['txtDescTipo'] = comerTpinvoice
-            ? comerTpinvoice.description
-            : 'NO IDENTIFICADA';
+          // const params_ = new ListParams();
+          // params['filter.tpinvoiceId'] = `$eq:${item.Type}`;
+          // const comerTpinvoice: any =
+          //   await this.billingsService.getComerTpinvoices(params_);
+          // item['txtDescTipo'] = comerTpinvoice
+          //   ? comerTpinvoice.description
+          //   : 'NO IDENTIFICADA';
           let obj = {
             type: 'RFC',
             data: item.rfc,
           };
-          const FaValidCurpRfc =
-            this.billingsService.getApplicationFaValidCurpRfc(obj);
+          const FaValidCurpRfc: any =
+            await this.billingsService.getApplicationFaValidCurpRfc(obj);
           item['valRFC'] = FaValidCurpRfc ? FaValidCurpRfc : null;
+
+          // let obj_ = {
+          //   idEvent: item.eventId,
+          //   idBill: item.billId,
+          // };
+          // const total = await this.getBillsTotal(item, obj_);
+          // item['totaling'] = total.totaling;
+          // item['totaleg'] = total.totaleg;
+          // const vat = await this.getBillsIva(item, obj_);
+          // item['ivaing'] = vat.ivaing;
+          // item['ivaeg'] = vat.ivaeg;
+          // const price = await this.getBillsPrice(item, obj_);
+          // item['priceing'] = price.priceing;
+          // item['priceeg'] = price.priceeg;
         });
-        Promise.all(result).then(resp => {
+        Promise.all(result).then(async resp => {
+          this.form2.get('counter').patchValue(response.count);
+          await this.funcPriceVatTotal(response.data[0]);
+          this.getSum(); // OBTENER SUMAS TOTALES
           this.data.load(response.data);
           this.data.refresh();
           this.totalItems = response.count;
@@ -997,8 +1037,20 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.totalItems = 0;
         this.loading = false;
+        if (filter == 'si')
+          this.alert('warning', 'No se encontraron facturas', '');
       },
     });
+  }
+
+  getComerDetInvocie(data: any) {
+    this.params2.getValue()[
+      'filter.eventId'
+    ] = `${SearchFilter.EQ}:${data.eventId}`;
+    this.params2.getValue()[
+      'filter.billId'
+    ] = `${SearchFilter.EQ}:${data.billId}`;
+    this.getDetailsFacturas();
   }
 
   async getDetailsFacturas() {
@@ -1010,15 +1062,21 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       ...this.columnFilters2,
     };
 
-    this.msInvoiceService.getComerCetinvoices(params).subscribe({
+    // this.msInvoiceService.getComerCetinvoices(params)
+    this.comerDetInvoice.getAllCustom(params).subscribe({
       next: response => {
         console.log(response);
-
         // let result = response.data.map(async (item: any) => {
         //   // item['rfc'] = item.customers ? item.customers.rfc : null;
         // });
         // Promise.all(result).then(resp => {
-        this.data2.load(response.data);
+        this.form2.get('counter2').patchValue(response.count);
+        this.form2.get('total8').patchValue(response.data[0].sum.importe);
+        this.form2.get('total7').patchValue(response.data[0].sum.iva);
+        this.form2.get('total3').patchValue(response.data[0].sum.total);
+        // this.form2.get('countTotal').patchValue(response.data[0].sum.amount);
+
+        this.data2.load(response.data[0].result);
         this.data2.refresh();
         this.totalItems2 = response.count;
         this.loading2 = false;
@@ -1132,20 +1190,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       idEvent: factura.eventId,
       idBill: factura.billId,
     };
-    await this.getBillsTotal(factura, obj);
-
-    if (factura.vouchertype != 'NCR' && !factura.vat) {
-    } else if (factura.vouchertype != 'NCR' && factura.vat) {
-    } else if (factura.vouchertype == 'NCR' && !factura.vat) {
-    } else if (factura.vouchertype == 'NCR' && factura.vat) {
-    }
-
-    if (factura.vouchertype != 'NCR' && !factura.price) {
-    } else if (factura.vouchertype != 'NCR' && factura.price) {
-    } else if (factura.vouchertype == 'NCR' && !factura.price) {
-    } else if (factura.vouchertype == 'NCR' && factura.price) {
-    }
-
     if ([10, 11].includes(factura.Type)) {
       const enterAmountInputs: any =
         await this.billingsService.getApplicationComerBillsAmount(obj);
@@ -1188,25 +1232,50 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   async getBillsIva(factura: any, obj: any) {
     let objReturn = {
-      totaling: 0,
-      totaleg: 0,
+      ivaing: 0,
+      ivaeg: 0,
     };
-    if (factura.vouchertype != 'NCR' && !factura.total) {
+    if (factura.vouchertype != 'NCR' && !factura.vat) {
       const enterBillTotal: any =
         await this.billingsService.getApplicationComerBillsIva(obj);
-      objReturn.totaling = enterBillTotal.totaling;
-      objReturn.totaleg = enterBillTotal.totaleg;
-    } else if (factura.vouchertype != 'NCR' && factura.total) {
-      objReturn.totaling = factura.total;
-      objReturn.totaleg = 0;
-    } else if (factura.vouchertype == 'NCR' && !factura.total) {
+      objReturn.ivaing = enterBillTotal.ivaing;
+      objReturn.ivaeg = enterBillTotal.ivaeg;
+    } else if (factura.vouchertype != 'NCR' && factura.vat) {
+      objReturn.ivaing = factura.vat;
+      objReturn.ivaeg = 0;
+    } else if (factura.vouchertype == 'NCR' && !factura.vat) {
       const enterBillTotal: any =
         await this.billingsService.getApplicationComerBillsIva(obj);
-      objReturn.totaling = enterBillTotal.totaling;
-      objReturn.totaleg = enterBillTotal.totaleg;
-    } else if (factura.vouchertype == 'NCR' && factura.total) {
-      objReturn.totaling = 0;
-      objReturn.totaleg = factura.total;
+      objReturn.ivaing = enterBillTotal.ivaing;
+      objReturn.ivaeg = enterBillTotal.ivaeg;
+    } else if (factura.vouchertype == 'NCR' && factura.vat) {
+      objReturn.ivaing = 0;
+      objReturn.ivaeg = factura.vat;
+    }
+    return objReturn;
+  }
+
+  async getBillsPrice(factura: any, obj: any) {
+    let objReturn = {
+      priceing: 0,
+      priceeg: 0,
+    };
+    if (factura.vouchertype != 'NCR' && !factura.price) {
+      const enterBillTotal: any =
+        await this.billingsService.getApplicationComerBillsPrice(obj);
+      objReturn.priceing = enterBillTotal.priceing;
+      objReturn.priceeg = enterBillTotal.ivaeg;
+    } else if (factura.vouchertype != 'NCR' && factura.price) {
+      objReturn.priceing = factura.price;
+      objReturn.priceeg = 0;
+    } else if (factura.vouchertype == 'NCR' && !factura.price) {
+      const enterBillTotal: any =
+        await this.billingsService.getApplicationComerBillsPrice(obj);
+      objReturn.priceing = enterBillTotal.priceing;
+      objReturn.priceeg = enterBillTotal.ivaeg;
+    } else if (factura.vouchertype == 'NCR' && factura.price) {
+      objReturn.priceing = 0;
+      objReturn.priceeg = factura.price;
     }
     return objReturn;
   }
@@ -1221,6 +1290,26 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       const txt = `${this.billingSelected.rfc} -> ${this.billingSelected.valRFC}`;
       this.form2.get('txtErrorRFC').setValue(txt);
     }
+
+    this.getComerDetInvocie(this.billingSelected);
+    this.funcPriceVatTotal(this.billingSelected);
+  }
+
+  async getSum() {
+    const params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+      //...{ sortBy: 'batchId:ASC' },
+    };
+
+    const resp: any = await this.billingsService.getSumTotal(params);
+    if (!resp) return;
+    this.form2.get('amountE').setValue(resp.sumprecioeg);
+    this.form2.get('ivaE').setValue(resp.sumivaeg);
+    this.form2.get('totalE').setValue(resp.sumtotaleg);
+    this.form2.get('amountI').setValue(resp.sumprecioing);
+    this.form2.get('ivaI').setValue(resp.sumivaing);
+    this.form2.get('totalI').setValue(resp.sumtotaling);
   }
 
   async genPrefacHundred() {
@@ -1358,7 +1447,10 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         const c_result = newBillingPay;
         if (c_result == 'Correcto.') {
           this.valDefaultWhere = true;
-          await this.getBillings(); // GO_BLOCK('COMER_FACTURAS');
+          this.params.getValue()[
+            'filter.eventId'
+          ] = `$eq:${this.idEventBlkCtrl.value}`;
+          await this.getBillings('si'); // GO_BLOCK('COMER_FACTURAS');
           await this.visualProcess(0, 1); // VISUALIZA_PROCESO(0, 1);
 
           this.alert('success', 'Proceso terminado correctamente', '');
@@ -1522,7 +1614,10 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           });
           Promise.all(result).then(async resp_ => {
             this.valDefaultWhere = true;
-            await this.getBillings(); // GO_BLOCK('COMER_FACTURAS');
+            this.params.getValue()[
+              'filter.eventId'
+            ] = `$eq:${this.idEventBlkCtrl.value}`;
+            await this.getBillings('si'); // GO_BLOCK('COMER_FACTURAS');
             this.alert('success', 'Proceso terminado correctamente', '');
           });
         }
@@ -1592,7 +1687,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   async faile() {
     // Actualiza a VEN - FALLO
-    if (!this.idEventBlkCtrl)
+    if (!this.idEventBlkCtrl.value)
       return (
         this.form.get('idEvent').markAsTouched(),
         this.alert('warning', 'Debe ingresar el No. Evento', '')
@@ -1811,7 +1906,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
           Promise.all(result_).then(resp => {
             // this.valDefaultWhere = true;
-            this.getBillings();
+            // this.params.getValue()['filter.eventId'] = `$eq:${this.idEventBlkCtrl.value}`;
+            this.getBillings('no');
             this.alert('success', 'Proceso terminado correctamente', '');
           });
         }
@@ -1829,7 +1925,20 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     return result;
   }
 
-  getCauses(event: any) {
+  async getCauses(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    const causes: any = await this.billingsService.getParamterMod(
+      params.getParams()
+    );
+    if (!causes) {
+      this.causeSelect = new DefaultSelect();
+    } else {
+      this.causeSelect = new DefaultSelect(causes.data, causes.count);
+    }
     // select parametro, descripcion
     // from comer_parametrosmod
     // where  valor = 'CAN_FACT_INM'
@@ -1986,7 +2095,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           this.visualCancelYesNot(0);
         } else {
           // this.valDefaultWhere = true;
-          this.getBillings();
+          this.getBillings('no');
         }
 
         console.log('AQUI', next);
@@ -2196,8 +2305,11 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           );
         const c_result = newBillingPay;
         if (c_result == 'Correcto.') {
+          this.params.getValue()[
+            'filter.eventId'
+          ] = `$eq:${this.idEventBlkCtrl.value}`;
           this.valDefaultWhere = true;
-          await this.getBillings(); // GO_BLOCK('COMER_FACTURAS');
+          await this.getBillings('si'); // GO_BLOCK('COMER_FACTURAS');
           await this.visualProcess(0, 2); // VISUALIZA_PROCESO(0, 1);
 
           const params = new FilterParams();
@@ -2237,6 +2349,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       );
     } else {
       if (!this.dateBlkCtrl.value) {
+        console.log('this.dateBlkCtrl.value', this.dateBlkCtrl.value);
         if (!(await this.valBillingsSelects()))
           return (
             this.form.get('idEvent').markAsTouched(),
@@ -2308,6 +2421,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
     let cont = 0;
     const result = this.data.getElements().then(async item => {
+      let arr: any[] = [];
       let result_ = item.map(async (item_: any) => {
         if (
           !item_.impressionDate &&
@@ -2315,17 +2429,18 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         ) {
           if (c_Reg == 'S') {
             if (item_.delegationNumber == this.token.decodeToken().department) {
-              this.selectedbillings.push(item);
+              arr.push(item_);
               cont = cont + 1;
             }
           } else {
-            this.selectedbillings.push(item);
+            arr.push(item_);
             cont = cont + 1;
           }
         }
       });
 
       Promise.all(result_).then(resp => {
+        this.selectedbillings = arr;
         this.data.refresh();
         this.alert('success', `Se seleccionaron ${cont} facturas.`, '');
       });
@@ -2360,25 +2475,27 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         'No se tienen facturas para este Evento/Lote',
         ''
       );
+    let objF = {
+      eventId: this.idEventBlkCtrl.value,
+      batchId: this.idLotPublicBlkCtrl.value,
+      types: '8,9',
+    };
+    const F_: any = await this.billingsService.getApplicationGetCountSumbyTypes(
+      objF
+    );
+    n_COFT = F_.contador;
+    n_COFP = F_.suma;
 
-    //   SELECT COUNT(0), SUM(DECODE(ID_ESTATUSFACT, 'PREF', 1, 0))
-    //  INTO n_COFT, n_COFP
-    //  FROM COMER_FACTURAS
-    // WHERE ID_EVENTO = : BLK_CTRL.ID_EVENTO
-    //   AND ID_LOTE = NVL(: BLK_CTRL.ID_LOTE_PUB, ID_LOTE)
-    //   AND TIPOCOMPROBANTE = 'FAC'
-    //   AND ID_ESTATUSFACT <> 'CAN'
-    //   AND TIPO IN(8, 9);
-    // --Se obtiene el total de facturas de pago y las que estén en PREF--
-
-    //  SELECT COUNT(0), SUM(DECODE(ID_ESTATUSFACT, 'PREF', 1, 0))
-    //     INTO n_COPT, n_COPP
-    //    FROM COMER_FACTURAS
-    //   WHERE ID_EVENTO = : BLK_CTRL.ID_EVENTO
-    //     AND ID_LOTE = NVL(: BLK_CTRL.ID_LOTE_PUB, ID_LOTE)
-    //     AND TIPOCOMPROBANTE = 'FAC'
-    //     AND ID_ESTATUSFACT <> 'CAN'
-    //     AND TIPO IN(10, 11);
+    let objP = {
+      eventId: this.idEventBlkCtrl.value,
+      batchId: this.idLotPublicBlkCtrl.value,
+      types: '10,11',
+    };
+    const P_: any = await this.billingsService.getApplicationGetCountSumbyTypes(
+      objP
+    );
+    n_COPT = P_.contador;
+    n_COPP = P_.suma;
 
     if (n_COPT == 0) {
       // --Si no hay facturas de pago y todas las de fallo están en PREF se habilita el borrado--
@@ -2400,7 +2517,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'question',
         `Se eliminarán ${Number(n_COFP) + Number(n_COPP)} factura(s)`,
-        ''
+        '¿Desea continuar con el proceso?'
       ).then(async question => {
         if (question.isConfirmed) {
           // PK_COMER_FACTINM.PA_ELIMINA_FAC
@@ -2414,8 +2531,10 @@ export class BillingScreenComponent extends BasePage implements OnInit {
               ''
             );
           if (paDeleteFac == 'Correcto.') {
-            this.valDefaultWhere = true;
-            this.getBillings();
+            this.params.getValue()[
+              'filter.eventId'
+            ] = `$eq:${this.idEventBlkCtrl.value}`;
+            this.getBillings('si');
             this.alert('success', 'Proceso Terminado Correctamente', '');
           }
         }
@@ -2483,9 +2602,139 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   generateInvoices() {
     // Genera Folios - FOLIOS
     // EN ESPERA DEL ENDPOINT DE EDWIN
+    let arr: any = [];
+    if (this.selectedbillings.length == 0)
+      return this.alert(
+        'warning',
+        'Debe seleccionar facturas para generar folios',
+        ''
+      );
+
+    let result = this.selectedbillings.map(item => {
+      let obj: any = {
+        selected: 'S',
+        idStatusFact: item.factstatusId,
+        valFol: item.valFolio,
+        typeVoucher: item.vouchertype,
+        idEvent: item.eventId,
+        idLot: item.batchId,
+        idBill: item.billId,
+        type: item.Type,
+      };
+      arr.push(obj);
+    });
+
+    Promise.all(result).then(async resp => {
+      const foliosGenerated: any =
+        await this.billingsService.getApplicationGenerateFolio(arr);
+      if (foliosGenerated.status != 200) {
+        if (
+          foliosGenerated.msg ==
+          'Factura(s) no tienen estatus correcto o sus importes son diferentes y no fueron foliadas'
+        ) {
+          this.alert(
+            'error',
+            'Factura(s) no tienen estatus correcto o sus importes son diferentes y no fueron foliadas',
+            ''
+          );
+        } else {
+          this.alert(
+            'error',
+            'Ocurrió un error al intentar generar folios',
+            ''
+          );
+        }
+      } else {
+        this.alert('success', 'Proceso terminado correctamente', '');
+      }
+    });
   }
-  valDate: boolean = false;
-  getDate() {}
+
+  async getDate() {
+    if (
+      !this.idEventBlkCtrl.value &&
+      !this.idLotPublicBlkCtrl.value &&
+      !this.fecBlkCtrl.value &&
+      !this.dateBlkCtrl.value
+    )
+      return this.alert(
+        'warning',
+        'Ingrese datos para filtrar en la tabla de Facturas',
+        ''
+      );
+
+    if (this.idEventBlkCtrl.value) {
+      this.params.getValue()[
+        'filter.eventId'
+      ] = `$eq:${this.idEventBlkCtrl.value}`;
+    } else {
+      delete this.params.getValue()['filter.eventId'];
+    }
+
+    if (this.idLotPublicBlkCtrl.value) {
+      this.params.getValue()[
+        'filter.batchId'
+      ] = `$eq:${this.idLotPublicBlkCtrl.value}`;
+    } else {
+      delete this.params.getValue()['filter.batchId'];
+    }
+
+    if (this.fecBlkCtrl.value && !this.dateBlkCtrl.value) {
+      console.log('this.fecBlkCtrl.value', this.fecBlkCtrl.value);
+      const fechas = this.fecBlkCtrl.value;
+      console.log('fechas', fechas);
+      var fecha1 = new Date(fechas[0]);
+      var fecha2 = new Date(fechas[1]);
+
+      // var fecha1 = new Date(this.fecBlkCtrl.value);
+      // var fecha2 = new Date(this.fec2BlkCtrl.value);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano2 = fecha2.getFullYear();
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia2 = ('0' + fecha2.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+      this.params.getValue()[
+        'filter.impressionDate'
+      ] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
+    }
+
+    if (!this.fecBlkCtrl.value && this.dateBlkCtrl.value) {
+      var fecha1 = new Date(this.dateBlkCtrl.value);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      this.params.getValue()[
+        'filter.impressionDate'
+      ] = `$btw:${fechaFormateada1},${fechaFormateada1}`;
+    }
+
+    if (this.fecBlkCtrl.value && this.dateBlkCtrl.value) {
+      var fecha1 = new Date(this.dateBlkCtrl.value);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      this.params.getValue()[
+        'filter.impressionDate'
+      ] = `$btw:${fechaFormateada1},${fechaFormateada1}`;
+    }
+
+    if (!this.fecBlkCtrl.value && !this.dateBlkCtrl.value) {
+      delete this.params.getValue()['filter.impressionDate'];
+    }
+
+    this.getBillings('si');
+  }
 
   optSortBy: number;
   valSortBy: boolean = false;
@@ -2496,13 +2745,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     // this.optSortBy = event;
     this.valSortBy = true;
     if (!event) this.valSortBy = false;
-    this.getBillings();
+    this.getBillings('no');
     // this.valDefaultWhere
   }
 
   edit(event: any) {
     const factura = event.data;
-
     if (factura.factstatusId === 'PREF') {
       this.openModalEdit(factura);
     } else {
@@ -2512,22 +2760,60 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         ''
       );
     }
-    //         IF: COMER_FACTURAS.ID_ESTATUSFACT = 'PREF' THEN
-    //         SET_ITEM_INSTANCE_PROPERTY('COMER_FACTURAS.CVE_TIPO_RELACION_SAT', CURRENT_RECORD, UPDATE_ALLOWED, PROPERTY_TRUE);
-    //         SET_ITEM_INSTANCE_PROPERTY('COMER_FACTURAS.USO_COMP_SAT', CURRENT_RECORD, UPDATE_ALLOWED, PROPERTY_TRUE);
-    //         SET_ITEM_INSTANCE_PROPERTY('COMER_FACTURAS.FORMAPAGO_BSAT', CURRENT_RECORD, UPDATE_ALLOWED, PROPERTY_TRUE);
   }
 
   openModalEdit(data?: any) {
-    const modalConfig = MODAL_CONFIG;
+    const modalConfig = {
+      initialState: {},
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
     modalConfig.initialState = {
       data,
       callback: (next: boolean) => {
-        if (!next) {
-          this.getBillings();
+        if (next) {
+          this.getBillings('no');
         }
       },
     };
     this.modalService.show(UpdateFacturaComponent, modalConfig);
+  }
+
+  editDetalleFact(event: any) {
+    const factura = this.billingSelected;
+    console.log('event.data', event.data);
+    if (factura.factstatusId === 'PREF') {
+      this.openModalEditDetalleFact(event.data);
+    } else {
+      this.alert(
+        'warning',
+        'La factura tiene un estatus inválido, no se puede editar',
+        ''
+      );
+    }
+  }
+
+  openModalEditDetalleFact(data?: any) {
+    const modalConfig = {
+      initialState: {},
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    modalConfig.initialState = {
+      data,
+      callback: (next: boolean) => {
+        if (next) {
+          this.getDetailsFacturas();
+        }
+      },
+    };
+    this.modalService.show(UpdateDetfacturaComponent, modalConfig);
+  }
+
+  communicationService() {
+    this.billingCommunicationService.ejecutarFuncion$.subscribe((next: any) => {
+      console.log('SI WILM', next);
+      //  this.ejecutarFuncion();
+    });
   }
 }

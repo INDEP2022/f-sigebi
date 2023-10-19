@@ -25,4 +25,6 @@ export enum MassiveGoodEndpoints {
   ExportSampleGoods = 'application/exportDataSampleGoods',
   ApplicationCSV = 'application/generate-cvs-by-status',
   InsertGoodDetail = 'application/insert-good-detail-is',
+  getIdentifierCount = 'application/getIdentifierCount',
+  ExportGoodProgramming = 'application/exportDataGoodsProgramming',
 }

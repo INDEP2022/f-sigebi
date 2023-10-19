@@ -118,7 +118,29 @@
         <!--  -->
         <div class="row mt-3">
           <div class="col-md-6">
-            <form-field [control]="form.get('remi')">
+            <ng-custom-select-loading
+              [form]="form"
+              [path]="pathDest"
+              [bodyPost]="bodyRemi"
+              [updateValues]="true"
+              typeInput="post"
+              label="Remitente"
+              formControlName="remi"
+              paramSearch="filter.usuario"
+              prefixSearch="$eq"
+              value="usuario"
+              bindLabel="nombre"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ng-custom-select-loading>
+            <ng-template #userLabel let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+            <ng-template #userOption let-item="item"
+              >{{ item.usuario }} - {{ item.nombre }}</ng-template
+            >
+
+            <!-- <form-field [control]="form.get('remi')">
               <ngx-select
                 (fetchItems)="queryAllUsers($event)"
                 [searchOnInit]="true"
@@ -134,7 +156,7 @@
                   >{{ item.usuario }} - {{ item.nombre }}</ng-template
                 >
               </ngx-select>
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-6">
             <ng-custom-select-loading
@@ -217,30 +239,12 @@
       </div>
     </div>
     <!--  -->
-    <div class="mt-5">
-      <div>
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
-      </div>
-      <div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
-      </div>
-    </div>
+    <app-valued-table [body]="body1" [settings1]="settings"></app-valued-table>
     <!--  -->
-    <div class="mt-5">
-      <div>
-        <ng2-smart-table
-          [settings]="settingsTwo"
-          [source]="dataTwo"
-          (userRowSelect)="onUserRowSelectCancel($event)"></ng2-smart-table>
-      </div>
-      <div>
-        <app-pagination [params]="paramsTwo" [totalItems]="totalItemsTwo">
-        </app-pagination>
-      </div>
-    </div>
+    <app-cancel-table
+      [body]="body2"
+      [officeType]="officeType"
+      [showModalCambioRev]="showModalCambioRev"></app-cancel-table>
     <!--  -->
     <div>
       <div>
@@ -271,7 +275,7 @@
               <div class="ml-auto" *ngIf="btnMotCan">
                 <button
                   class="btn btn-primary btn-sm active"
-                  (click)="reasonsForChange()">
+                  (click)="showModal()">
                   Motivos de Cambio a REV
                 </button>
               </div>
@@ -280,12 +284,15 @@
           <!--  -->
           <div class="row mb-3">
             <div class="col-md-6">
-              <button
-                class="btn btn-sm btn-success active"
+              <div
+                [class]="loadingExcel ? 'disabled' : ''"
                 (click)="exportExcel()">
-                Exportar a Excel
-                <i class="bx bx-download float-icon"></i>
-              </button>
+                <app-excel-report
+                  [elementToExport]="elementsToExport"
+                  [externalClick]="flagDownload"
+                  [nameExcel]="nameExcel"
+                  text="Exportar a Excel"></app-excel-report>
+              </div>
             </div>
             <div class="col-md-6">
               <button type="button" class="btn btn-sm btn-success active">
@@ -343,7 +350,29 @@
                   <!--  -->
                   <div class="row pt-5">
                     <div class="col-md-4" *ngIf="visibleUserName">
-                      <form-field [control]="formThree.get('user')">
+                      <ng-custom-select-loading
+                        [form]="formThree"
+                        [path]="pathDest"
+                        [bodyPost]="bodyDest"
+                        [updateValues]="true"
+                        typeInput="post"
+                        label="Destinatario"
+                        formControlName="user"
+                        paramSearch="filter.usuario"
+                        prefixSearch="$eq"
+                        value="usuario"
+                        bindLabel="nombre"
+                        [labelTemplate]="userLabel"
+                        [optionTemplate]="userOption">
+                      </ng-custom-select-loading>
+                      <ng-template #userLabel let-item="item"
+                        >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                      >
+                      <ng-template #userOption let-item="item"
+                        >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                      >
+
+                      <!-- <form-field [control]="formThree.get('user')">
                         <ngx-select
                           (fetchItems)="getUsersDesList($event)"
                           [searchOnInit]="true"
@@ -364,7 +393,7 @@
                         <ng-template #userOption let-item="item"
                           >{{ item.usuario }} - {{ item.nombre }}</ng-template
                         >
-                      </form-field>
+                      </form-field> -->
                     </div>
                     <div class="col-md-4" *ngIf="visibleDelegation">
                       <form-field [control]="formThree.get('del')">
@@ -445,12 +474,19 @@
               </button>
             </div>
             <div class="m-3" *ngIf="btnVerOficio">
-              <button type="button" class="btn btn-primary btn-sm active">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="viewOffice()">
                 Visualizar Oficio
               </button>
             </div>
             <div class="m-3" *ngIf="btnGuardar">
-              <button type="button" class="btn btn-primary btn-sm active">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                [disabled]="form.invalid"
+                (click)="save()">
                 Guardar Oficio
               </button>
             </div>
@@ -494,62 +530,6 @@
             </div>
           </div> -->
           <!--  -->
-          <!-- Modal #2 -->
-          <!-- <div style="border: 1px solid black; padding: 10px; border-radius: 20px" class="mt-5"> -->
-          <ng-template #modalRev>
-            <div>
-              <div>
-                <!-- <p>Este es el modal #2</p> -->
-                <div>
-                  <div class="row mt-5">
-                    <div class="col-md-12">
-                      <!-- <p>Notificaciones</p> -->
-                    </div>
-                  </div>
-                  <!--  -->
-                  <div class="m-3 ml-1">
-                    <div>
-                      <p><strong>Motivos de Cancelación</strong></p>
-                    </div>
-                    <div class="m-3">
-                      <div>
-                        <ng2-smart-table
-                          [settings]="settingsModal"
-                          [source]="dataModal"
-                          (userRowSelect)="
-                            onUserRowSelect($event)
-                          "></ng2-smart-table>
-                      </div>
-                      <div>
-                        <app-pagination
-                          [params]="paramsModal"
-                          [totalItems]="totalItemsModal">
-                        </app-pagination>
-                      </div>
-                    </div>
-                  </div>
-                  <!--  -->
-                  <div class="d-flex justify-content-center">
-                    <div class="m-3">
-                      <!--  -->
-
-                      <!--  -->
-                      <button
-                        class="btn btn-primary btn-sm active"
-                        (click)="modifySelectedRows()">
-                        Aceptar
-                      </button>
-                      <button
-                        class="btn btn-primary btn-sm active mr-3"
-                        (click)="closeModalSubtype()">
-                        Cerrar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ng-template>
         </form>
       </div>
     </div>

@@ -721,10 +721,20 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       lbln_encontro: boolean,
       lbln_conciliado: string;
     vn_simb = (this.nval(5) + '').indexOf('/');
-    // debugger;
+    debugger;
     console.log(this.nval(5));
     if (vn_simb > 0) {
-      movementDate = firstFormatDateToSecondFormatDate(this.nval(5));
+      const array = this.nval(5).split('/');
+      let dia = 0;
+      let año = 0;
+      if (array[0] > 31) {
+        año = array[0];
+        dia = array[2];
+      } else {
+        año = array[2];
+        dia = array[0];
+      }
+      movementDate = año + '-' + array[1] + '-' + dia;
     } else {
       movementDate = this.nval(5);
     }
@@ -822,7 +832,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return true;
   }
   private async excepNumerario() {
-    // debugger;
+    debugger;
     const filterParams = new FilterParams();
     // filterParams.limit = 1000;
     filterParams.addFilter(
@@ -1353,7 +1363,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     } else {
       this.disactivateForStatus();
     }
-    // this.activateForEdit();
+    this.activateForEdit();
     // this.disabledBienes = false;
   }
 

@@ -4,6 +4,9 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
+import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
+import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
@@ -21,7 +24,10 @@ export class BillingsService {
     private segAcessXAreasService: SegAcessXAreasService,
     private parametersService: ParametersService,
     private parameterModService: ParameterModService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private dinamicTablesService: DinamicTablesService,
+    private comerInvoice: ComerInvoiceService,
+    private comerDetailInvoiceService: ComerDetailInvoiceService
   ) {}
 
   async getEventDataById(id: any) {
@@ -431,7 +437,7 @@ export class BillingsService {
 
   async getApplicationFaValidCurpRfc(body: any) {
     return new Promise((resolve, reject) => {
-      this.msInvoiceService.getComerTpinvoices(body).subscribe({
+      this.msInvoiceService.getApplicationFaValidCurpRfc(body).subscribe({
         next: response => {
           resolve(response.data[0].faValidCurpRfc);
         },
@@ -468,7 +474,11 @@ export class BillingsService {
           resolve(response.data[0]);
         },
         error: error => {
-          resolve(null);
+          let objReturn = {
+            ivaing: 0,
+            ivaeg: 0,
+          };
+          resolve(objReturn);
         },
       });
     });
@@ -481,7 +491,11 @@ export class BillingsService {
           resolve(response.data[0]);
         },
         error: error => {
-          resolve(null);
+          let objReturn = {
+            priceing: 0,
+            priceeg: 0,
+          };
+          resolve(objReturn);
         },
       });
     });
@@ -500,5 +514,99 @@ export class BillingsService {
     });
   }
 
+  async getParamterMod(params: any) {
+    return new Promise((resolve, reject) => {
+      this.parameterModService.getParamterMod(params).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
   // ============================================================================== //
+
+  async getKeyTable(params: any, name: string) {
+    return new Promise((resolve, reject) => {
+      this.dinamicTablesService.getKeyTable(params, name).subscribe({
+        next: response => {
+          let result = response.data.map((item: any) => {
+            item['cveAndDesc'] = item.clave + ' - ' + item.descripcion;
+          });
+
+          Promise.all(result).then(resp => {
+            resolve(response);
+          });
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getApplicationGenerateFolio(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationGenerateFolio(body).subscribe({
+        next: response => {
+          let obj = {
+            msg: response.data[0],
+            status: 200,
+          };
+          resolve(obj);
+        },
+        error: error => {
+          let obj = {
+            msg: error.error.message,
+            status: error.status,
+          };
+          resolve(obj);
+        },
+      });
+    });
+  }
+
+  async getApplicationGetCountSumbyTypes(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationGetCountSumbyTypes(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve({
+            contador: 0,
+            suma: 0,
+          });
+        },
+      });
+    });
+  }
+  async getSumTotal(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoice.getSumTotal(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async updateDetBillings(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailInvoiceService.update(body).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
 }

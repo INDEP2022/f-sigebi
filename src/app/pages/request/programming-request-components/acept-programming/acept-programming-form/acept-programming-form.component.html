@@ -45,7 +45,7 @@
             Aprobar <i class="fa fa-check" aria-hidden="true"></i>
           </button>
           <button
-            class="btn btn-primary btn-sm active"
+            class="btn btn-primary disabled btn-sm active"
             *ngIf="task?.State == 'FINALIZADA'"
             (click)="aprobateProgramming()">
             Aprobar <i class="fa fa-check" aria-hidden="true"></i>
@@ -175,6 +175,21 @@
                   [(settings)]="
                     settingsTransportableGoods
                   "></app-columns-select>
+
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport(
+                      'EN_TRANSPORTABLE',
+                      'Bienes_Transportables.xlsx'
+                    )
+                  "></confirm-button>
               </div>
 
               <div
@@ -201,6 +216,18 @@
               <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
+
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport('EN_RESGUARDO_TMP', 'Bienes_Resguardo.xlsx')
+                  "></confirm-button>
               </div>
               <div
                 class="row"
@@ -225,6 +252,17 @@
               <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport('EN_ALMACEN_TMP', 'Bienes_Almacén.xlsx')
+                  "></confirm-button>
               </div>
               <div
                 class="row"
