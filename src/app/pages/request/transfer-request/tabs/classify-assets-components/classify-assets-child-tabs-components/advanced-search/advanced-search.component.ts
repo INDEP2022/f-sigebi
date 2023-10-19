@@ -108,7 +108,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
     params['sortBy'] = `id:DESC`;
 
     if (code != null) {
-      params['filter.code'] = `$eq:${code}`;
+      params['filter.code'] = `$ilike:${code}`;
     }
     if (description != null) {
       params['filter.description'] = `$ilike:${description}`;

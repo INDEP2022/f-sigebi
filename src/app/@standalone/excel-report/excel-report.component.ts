@@ -48,7 +48,7 @@ export class ExcelReportComponent implements OnInit {
   }
 
   exportToExcel() {
-    if (this.elementToExport) {
+    if (this.elementToExport && this.elementToExport.length > 0) {
       this.loading = true;
       this.onLoadToast('info', 'Descargando Excel', this.nameExcel, 1000);
       // let element = document.getElementById(this.elementToExport);
@@ -57,6 +57,7 @@ export class ExcelReportComponent implements OnInit {
       const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
         this.elementToExport
       );
+      // console.log(this.nameExcel);
       // console.log(worksheet);
 
       // const max_width = this.elementToExport.reduce((w, r) => Math.max(w, r.name.length), 10);

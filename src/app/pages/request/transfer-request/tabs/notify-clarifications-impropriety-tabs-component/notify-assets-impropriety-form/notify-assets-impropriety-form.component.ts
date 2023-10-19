@@ -512,7 +512,7 @@ export class NotifyAssetsImproprietyFormComponent
       managedTo: this.infoRequest?.nameOfOwner
         ? this.infoRequest?.nameOfOwner
         : this.clarificationForm.controls['managedTo'].value, //Nombre Destinatario - Titular de la solicitud
-      invoiceLearned: this.folioReporte,
+      invoiceLearned: ' ',
       //invoiceNumber: 1,
       positionAddressee: this.infoRequest?.holderCharge
         ? this.infoRequest?.holderCharge
@@ -565,7 +565,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre Destinatario - Titular de la solicitud
-      invoiceLearned: this.folioReporte,
+      invoiceLearned: ' ',
       //invoiceNumber: 1,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value, //cargo Destinatario - Titular de la solicitud
@@ -610,8 +610,9 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['observations'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value,
-      invoiceLearned: this.folioReporte,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
+      invoiceLearned: ' ',
+      //invoiceNumber: 1,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
@@ -720,8 +721,9 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value,
-      invoiceLearned: this.folioReporte,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
+      invoiceLearned: ' ',
+      //invoiceNumber: 1,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
@@ -807,7 +809,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
-      invoiceLearned: this.folioReporte,
+      invoiceLearned: ' ',
       //invoiceNumber: 1,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
@@ -872,7 +874,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value,
-      invoiceLearned: this.folioReporte,
+      invoiceLearned: ' ',
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
@@ -901,6 +903,8 @@ export class NotifyAssetsImproprietyFormComponent
           },
           error: error => {
             this.loading = false;
+            console.log('No se pudo guardar', error);
+            //this.onLoadToast('error', 'No se pudo guardar', '');
           },
         });
     }
@@ -1215,6 +1219,8 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
     const requestInfo = this.infoRequest;
     const idSolicitud = this.idSolicitud;
     const noBien = this.dataClarifications2.goodId;
+    const nomenglatura = this.folioReporte;
+    const infoReport = data;
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -1225,6 +1231,8 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         idSolicitud,
         notificationValidate,
         noBien,
+        nomenglatura,
+        infoReport,
         callback: (next: boolean, xml?: string) => {
           if (next) {
             this.changeStatusAnswered(xml);

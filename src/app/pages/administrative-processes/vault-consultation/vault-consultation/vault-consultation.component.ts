@@ -96,23 +96,44 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
     this.dataFactGen
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
+
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
+            let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
-            filter.field == 'idSafe' ||
-            filter.field == 'description' ||
-            filter.field == 'ubication' ||
-            filter.field == 'manager' ||
-            filter.field == 'stateCode' ||
-            filter.field == 'municipalityCode' ||
-            filter.field == 'cityCode' ||
-            filter.field == ' localityCode'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case ' idSafe':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'ubication':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'manager':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'localityDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'stateDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'cityDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'municipalityDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -152,32 +173,35 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
 
   search() {
     this.loading = true;
-    this.params.getValue()['sortBy'] = `idSafe:DESC`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.safeService.getAll(params).subscribe({
+    params['text'] = params.text;
+    this.safeService.getAllNew(params).subscribe({
       next: (data: any) => {
         this.loading = false;
         this.totalItems = data.count;
         this.vaults = data.data;
         console.log(this.vaults);
-        this.dataFactGen.load(data.data);
+        this.dataFactGen.load(this.vaults);
         this.dataFactGen.refresh();
         this.vaults = data.data.map((vault: ISafe) => {
           return {
             idSafe: vault.idSafe,
             description: vault.description,
-            localityCode: vault.localityCode ? vault.localityCode : null,
-            cityCode: vault.cityCode ? vault.cityCode : 0,
+            localityDetail: vault.localityDetail
+              ? vault.localityDetail.nameLocation
+              : null,
+            cityDetail: vault.cityDetail ? vault.cityDetail.nameCity : '',
             manager: vault.manager,
-            municipalityCode: vault.municipalityCode
-              ? vault.municipalityCode
+            municipalityDetail: vault.municipalityDetail
+              ? vault.municipalityDetail.nameMunicipality
               : null,
             registerNumber: vault.registerNumber,
-
-            stateCode: vault.stateCode ? vault.stateCode : '',
+            stateDetail: vault.stateDetail
+              ? vault.stateDetail.descCondition
+              : '',
             ubication: vault.ubication,
           };
         });
