@@ -334,4 +334,8 @@ export class GoodProcessService extends HttpService {
       filters
     );
   }
+
+  getApplicationData(body: any) {
+    return this.post(GoodProcessPoints.ApplicationGetData, body);
+  }
 }
