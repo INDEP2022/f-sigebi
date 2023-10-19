@@ -135,36 +135,57 @@ export const FORMALIZACION_COLUMNS = {
     title: 'ID',
     type: 'number',
     sort: false,
+    valuePrepareFuncton(cell: any, row: any) {
+      return row.eventDetails?.idEvent;
+    },
   },
   processKey: {
     title: 'Evento Clave',
     type: 'string',
     sort: false,
+    valuePrepareFuncton(cell: any, row: any) {
+      return row.eventDetails?.processKey;
+    },
   },
   goodNumber: {
     title: 'No. Bien',
     sort: false,
     type: 'string',
+    valuePrepareFuncton(cell: any, row: any) {
+      return row.goodDetails?.goodId;
+    },
   },
   description: {
     title: 'No. Bien Detalle',
     type: 'string',
     sort: false,
+    valuePrepareFuncton(cell: any, row: any) {
+      return row.goodDetails?.description;
+    },
   },
   status: {
     title: 'Estatus Comercial',
     type: 'string',
     sort: false,
+    valuePrepareFuncton(cell: any, row: any) {
+      return row.goodDetails?.status;
+    },
   },
   idClient: {
     title: 'Cliente',
     type: 'number',
     sort: false,
+    valuePrepareFuncton(cell: any, row: any) {
+      return row.lotDetails?.idClient;
+    },
   },
   dateIncorporado: {
     title: 'Incorporado',
     type: 'string',
     sort: false,
+    valuePrepareFuncton(cell: any, row: any) {
+      return row.goodDetails?.dateIn;
+    },
   },
   jobNumber: {
     title: 'Oficio DCBI',
