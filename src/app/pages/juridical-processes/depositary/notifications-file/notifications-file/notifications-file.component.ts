@@ -119,7 +119,7 @@ export class NotificationsFileComponent
         edit: false,
         delete: false,
       },
-      hideSubHeader: true, //oculta subheaader de filtro
+      hideSubHeader: false, //oculta subheaader de filtro
       columns: NOTIFICATIONS_FILE_LOAD_COLUMNS,
     };
   }
