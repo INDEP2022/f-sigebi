@@ -42,6 +42,11 @@ export class MassiveGoodService extends HttpService {
   postGoodsSchedules(body: any) {
     return this.post(this.route.GoodsShedules, body);
   }
+
+  InsertGood(body: any) {
+    return this.post(this.route.InsertGoodDetail, body);
+  }
+
   getAllWithFilters(
     params2?: string,
     params?: ListParams
