@@ -35,6 +35,7 @@ import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot
 import { BasePage } from 'src/app/core/shared';
 import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import Swal, { SweetAlertResult } from 'sweetalert2';
+import { EventPreparationService } from '../../event-preparation.service';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { EVENT_LOT_LIST_COLUMNS } from '../../utils/table-columns/event-lots-list-columns';
@@ -71,7 +72,8 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     private comerLotService: ComerLotService,
     private modalService: BsModalService,
     private lotService: LotService,
-    private comerGoodsXLotService: ComerGoodsXLotService
+    private comerGoodsXLotService: ComerGoodsXLotService,
+    private eventPreparationService: EventPreparationService
   ) {
     super();
     this.settings = {
@@ -98,6 +100,15 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.eventPreparationService.$refreshLots
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          const params = this.params.getValue();
+          this.params.next(params);
+        })
+      )
+      .subscribe();
     this.columnsFilter().subscribe();
     this.params
       .pipe(
@@ -330,14 +341,14 @@ export class EventLotsListComponent extends BasePage implements OnInit {
           return;
         }
         if (response.message[0]) {
-          await this.successValCSV(this.getFileFromEvent(event));
+          await this.successValCSV(event);
           return;
         }
       })
     );
   }
 
-  async successValCSV(file: File) {
+  async successValCSV(event: Event) {
     this.excelControl.reset();
 
     const { isConfirmed } = await this.alertQuestion(
@@ -346,7 +357,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       '¿Desea Lotificar el evento?'
     );
     if (isConfirmed) {
-      // TODO: MANDAR A LLAMAR A PUP_IMP_EXCEL_LOTES
+      this.eventPreparationService.$lotifyGoods.next(event);
     }
   }
 
@@ -374,14 +385,14 @@ export class EventLotsListComponent extends BasePage implements OnInit {
           return;
         }
         if (response.message[0]) {
-          await this.successValCsvCustomer(this.getFileFromEvent(event));
+          await this.successValCsvCustomer(event);
           return;
         }
       })
     );
   }
 
-  async successValCsvCustomer(file: File) {
+  async successValCsvCustomer(event: Event) {
     this.excelControl.reset();
 
     const { isConfirmed } = await this.alertQuestion(
@@ -390,7 +401,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       '¿Desea Realiza la Carga de Clientes en el evento?'
     );
     if (isConfirmed) {
-      // TODO: MANDAR A LLAMAR A PUP_IMP_EXCEL_LOTES_CLIENTE¿
+      this.eventPreparationService.$lotifyCustomers.next(event);
     }
   }
 

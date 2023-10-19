@@ -401,10 +401,10 @@ export class FormalGoodsEstateComponent
             item.eventId == null ? '' : item.eventDetails.processKey;
           item['idClient'] = client == null ? '' : client;
           item['description'] =
-            item.goodDetails.description == null
+            item.goodDetails?.description == null
               ? 'SIN DESCRIPCIÓN'
-              : item.goodDetails.description;
-          console.log('ENTRA DES -->', item.goodDetails.description);
+              : item.goodDetails?.description;
+          console.log('ENTRA DES -->', item.goodDetails?.description);
           // if (item.goodDetails && item.goodDetails.description != null) {
           //   item['description'] = item.goodDetails.description;
           // } else {

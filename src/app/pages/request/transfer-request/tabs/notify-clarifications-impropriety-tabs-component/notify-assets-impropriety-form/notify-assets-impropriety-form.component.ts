@@ -417,7 +417,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   async confirm() {
     const typeTransference = this.infoRequest.typeOfTransfer;
-
+    console.log('typeTransference', typeTransference);
     let generaXML: boolean = false;
     if (
       typeTransference == 'SAT_SAE' &&
@@ -430,7 +430,9 @@ export class NotifyAssetsImproprietyFormComponent
       //this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
       if (
         (this.typeClarifications == 1 || this.typeClarifications == 2) &&
-        typeTransference === 'MANUAL'
+        typeTransference === 'MANUAL' &&
+        this.notification?.clarification?.clarification !=
+          'INDIVIDUALIZACIÓN DE BIENES'
       ) {
         this.countAclaraManual = this.countAclaraManual + 1;
         this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
@@ -468,14 +470,16 @@ export class NotifyAssetsImproprietyFormComponent
     if (
       typeTransference == 'SAT_SAE' &&
       this.typeClarifications == 2 &&
-      this.notification.reason != 'INDIVIDUALIZACIÓN DE BIENES'
+      this.notification?.clarification?.clarification !=
+        'INDIVIDUALIZACIÓN DE BIENES'
     ) {
       this.oficioAclaracionTransferente();
     }
     if (
       typeTransference == 'SAT_SAE' &&
       this.typeClarifications == 1 &&
-      this.notification.reason != 'INDIVIDUALIZACIÓN DE BIENES'
+      this.notification?.clarification?.clarification !=
+        'INDIVIDUALIZACIÓN DE BIENES'
     ) {
       this.aclaracionComercioExterior();
     }
@@ -486,6 +490,14 @@ export class NotifyAssetsImproprietyFormComponent
         'INDIVIDUALIZACIÓN DE BIENES'
     ) {
       this.aclaracionComercioExterior();
+    }
+
+    if (
+      typeTransference == 'MANUAL' &&
+      this.notification?.clarification?.clarification ==
+        'INDIVIDUALIZACIÓN DE BIENES'
+    ) {
+      this.aclaracionAnam();
     }
 
     //this.saveClarificationsAcept();
@@ -635,7 +647,7 @@ export class NotifyAssetsImproprietyFormComponent
         .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
         .subscribe({
           next: data => {
-            this.openReport(checkExistDocImp);
+            //this.openReport(checkExistDocImp);
             this.loading = false;
             this.close();
           },
@@ -658,8 +670,124 @@ export class NotifyAssetsImproprietyFormComponent
               this.notification.chatClarification.idClarification,
               this.notification.goodId
             );
-          } else {
-            const createClarGoodDoc = this.createClarGoodDoc(data);
+          } else if (
+            this.notification?.clarification?.clarification !=
+            'INDIVIDUALIZACIÓN DE BIENES'
+          ) {
+            const createClarGoodDoc = this.createClarGoodDoc(checkExistDocImp);
+
+            if (createClarGoodDoc) {
+              this.openReport(data);
+              this.loading = false;
+              this.close();
+            }
+          }
+        },
+        error: error => {
+          this.loading = false;
+
+          //this.onLoadToast('error', 'No se pudo guardar', '');
+        },
+      });
+    }
+
+    /*
+
+    this.loading = true;
+    this.documentService.createClarDocImp(modelReport).subscribe({
+      next: data => {
+        if (
+          this.notification?.clarification?.clarification ==
+          'INDIVIDUALIZACIÓN DE BIENES'
+        ) {
+          this.updateAnsweredAcla(
+            this.notification.rejectNotificationId,
+            this.notification.chatClarification.idClarification,
+            this.notification.goodId
+          );
+        } else {
+          const createClarGoodDoc = this.createClarGoodDoc(data);
+
+          if (createClarGoodDoc) {
+            this.openReport(data);
+            this.loading = false;
+            this.close();
+          }
+        }
+      },
+      error: error => {
+        this.loading = false;
+
+        //this.onLoadToast('error', 'No se pudo guardar', '');
+      },
+    }); */
+  }
+
+  async aclaracionAnam() {
+    let token = this.authService.decodeToken();
+    const modelReport: IClarificationDocumentsImpro = {
+      clarification: this.clarificationForm.controls['clarification'].value,
+      sender: this.clarificationForm.controls['senderName'].value,
+      version: 1,
+      paragraphInitial:
+        this.clarificationForm.controls['paragraphInitial'].value,
+      applicationId: this.idRequest,
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+      consistentIn: this.clarificationForm.controls['observations'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
+      invoiceLearned: ' ',
+      //invoiceNumber: 1,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value,
+      modificationDate: new Date(),
+      creationUser: token.name,
+      documentTypeId: '213',
+      modificationUser: token.name,
+      creationDate: new Date(),
+      assignmentInvoiceDate: new Date(),
+      mailNotification: this.clarificationForm.controls['webMail'].value,
+      areaUserCapture:
+        this.clarificationForm.controls['userAreaCaptures'].value,
+      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+    };
+    const checkExistDocImp: any = await this.checkDataExist(212);
+
+    console.log('checkExistDocImp', checkExistDocImp);
+
+    if (checkExistDocImp?.id != 0) {
+      this.documentService
+        .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
+        .subscribe({
+          next: data => {
+            //this.openReport(checkExistDocImp);
+            this.loading = false;
+            this.close();
+          },
+          error: error => {
+            this.loading = false;
+          },
+        });
+    }
+
+    if (checkExistDocImp == 0) {
+      this.loading = true;
+      this.documentService.createClarDocImp(modelReport).subscribe({
+        next: data => {
+          if (
+            this.notification?.clarification?.clarification ==
+            'INDIVIDUALIZACIÓN DE BIENES'
+          ) {
+            this.updateAnsweredAcla(
+              this.notification.rejectNotificationId,
+              this.notification.chatClarification.idClarification,
+              this.notification.goodId
+            );
+          } else if (
+            this.notification?.clarification?.clarification !=
+            'INDIVIDUALIZACIÓN DE BIENES'
+          ) {
+            const createClarGoodDoc = this.createClarGoodDoc(checkExistDocImp);
 
             if (createClarGoodDoc) {
               this.openReport(data);
@@ -760,7 +888,7 @@ export class NotifyAssetsImproprietyFormComponent
     if (checkExistDocImp == 0) {
       this.documentService.createClarDocImp(modelReport).subscribe({
         next: data => {
-          const createClarGoodDoc = this.createClarGoodDoc(data);
+          const createClarGoodDoc = this.createClarGoodDoc(checkExistDocImp);
           if (createClarGoodDoc) {
             this.openReport(data);
             this.loading = false;
@@ -912,7 +1040,7 @@ export class NotifyAssetsImproprietyFormComponent
     if (checkExistDocImp == 0) {
       this.documentService.createClarDocImp(modelReport).subscribe({
         next: data => {
-          const createClarGoodDoc = this.createClarGoodDoc(data);
+          const createClarGoodDoc = this.createClarGoodDoc(checkExistDocImp);
           if (createClarGoodDoc) {
             this.openReport(data);
             this.loading = false;
