@@ -231,10 +231,6 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
     invoice: any,
     type: number
   ) {
-    console.log(data);
-    console.log(invoice);
-    console.log(this.filter);
-
     switch (type) {
       case 1:
         invoice.usecompSat = data.clave;

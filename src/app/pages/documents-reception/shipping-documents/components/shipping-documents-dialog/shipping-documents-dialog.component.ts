@@ -20,7 +20,7 @@ export class ShippingDocumentsDialogComponent
   implements OnInit
 {
   params = new FilterParams();
-  jobNumber = new FormControl<number | string>(45907);
+  jobNumber = new FormControl<number | string>(null);
   queryMode: boolean = null;
   form = this.fb.group(SHIPPING_DOCUMENTS_FORM);
 

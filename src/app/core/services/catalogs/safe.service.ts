@@ -23,7 +23,7 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
   }
 
   getAllFilterSelf(self?: SafeService, params?: _Params) {
-    return self.get<IListResponse<ISafe>>('safe', params);
+    return self.get<IListResponse<ISafe>>('safe/get-all', params);
   }
 
   getAll(params?: ListParams): Observable<IListResponse<ISafe>> {
@@ -75,5 +75,9 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
   exportExcel() {
     const route = `${SafeEndpoints.Safe}/safes-export-excel`;
     return this.get(route);
+  }
+  getAllNew(params?: ListParams) {
+    const route = `${SafeEndpoints.Safe}/get-all`;
+    return this.get(route, params);
   }
 }
