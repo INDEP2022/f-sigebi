@@ -627,7 +627,6 @@ export class DocumentVerificationRevisionResourcesComponent
 
       if (this.fileNumber && this.dateToday) {
         this.lookNotReceived();
-        // this.updateGood();
       }
     }
   }
@@ -748,7 +747,7 @@ export class DocumentVerificationRevisionResourcesComponent
                 di_situacion_bien != 'DICTAMINADO'
               ) {
                 this.activeBlocDoc = true;
-                // this.createDocumentDicta();
+                this.createDocumentDicta();
                 this.getDataWihtVquery(vquery.join(', '));
               } else {
                 this.activeBlocDoc = true;
@@ -942,6 +941,13 @@ export class DocumentVerificationRevisionResourcesComponent
       observations,
     } = this.form.value;
     let existData: any = {};
+    if (
+      this.form.get('goodId').value == null ||
+      this.form.get('goodId').value == 0
+    ) {
+      this.alert('warning', 'Seleccione el Bien', '');
+      return;
+    }
     if (di_fec_dictaminacion) {
       this.form
         .get('descriptionStatus')
@@ -957,7 +963,6 @@ export class DocumentVerificationRevisionResourcesComponent
         next: resp => {
           existData = resp.data[0];
           console.log(existData);
-          this.updateGood();
           resolve(resp.count);
         },
         error: error => {
@@ -999,6 +1004,7 @@ export class DocumentVerificationRevisionResourcesComponent
       delete existData.goods;
       this.dictaminationServ.update(existData, existData.goodNumber).subscribe({
         next: () => {
+          this.updateGood();
           this.alert('success', 'Dictamen', 'Actualizado Correctamente');
         },
         error: error => {
@@ -1056,11 +1062,7 @@ export class DocumentVerificationRevisionResourcesComponent
   }
   searchGoods(good?: IGood) {
     if (this.fileNumber == 0 || this.fileNumber == null) {
-      this.alert(
-        'warning',
-        'Debe seleccionar el expediente para ubicar el Bien',
-        ''
-      );
+      this.alert('warning', 'Seleccione el expediente para ubicar el Bien', '');
       return;
     }
     this.loadingGood = true;
@@ -1131,7 +1133,9 @@ export class DocumentVerificationRevisionResourcesComponent
         this.form
           .get('agreementDate')
           .patchValue(
-            good.admissionAgreementDate ? good.admissionAgreementDate : ''
+            good.admissionAgreementDate
+              ? good.admissionAgreementDate
+              : new Date()
           );
         this.form
           .get('initialAgreement')
@@ -1186,6 +1190,7 @@ export class DocumentVerificationRevisionResourcesComponent
       id: this.form.get('goodId').value,
       goodId: this.form.get('goodId').value,
       fileNumber: this.fileNumber,
+      status: 'VXR',
       associatedFileNumber: this.fileNumber,
       goodClassNumber: this.good.goodClassNumber,
       revRecObservations: this.form.get('observations').value,
@@ -1219,7 +1224,7 @@ export class DocumentVerificationRevisionResourcesComponent
       goodNumber: this.form.get('goodId').value,
       // key: 'RCV',
       key: 'RCV',
-      typeDictum: 'PROCEDENCIA',
+      typeDictum: 'RECREVISION',
       dateReceipt: this.form.get('agreementDate').value,
       userReceipt: this.user.decodeToken().username,
       insertionDate: new Date(),
@@ -1261,6 +1266,7 @@ export interface IGoodRevision {
   id: number | string;
   goodId: number;
   fileNumber: number;
+  status: string;
   associatedFileNumber: number;
   goodClassNumber: number;
   revRecObservations: string;

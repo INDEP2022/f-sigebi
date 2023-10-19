@@ -152,28 +152,14 @@ export class FormalizeProgrammingFormComponent
 
   settingsReprog = {
     ...this.settings,
-    actions: {
-      columnTitle: 'Generar recibo',
-      position: 'right',
-      delete: false,
-    },
+    actions: false,
     columns: ESTATE_COLUMNS_VIEW,
-    edit: {
-      editButtonContent: '<i class="fa fa-file text-primary mx-2"></i>',
-    },
   };
 
   settingsCancelation = {
     ...this.settings,
-    actions: {
-      columnTitle: 'Generar recibo',
-      position: 'right',
-      delete: false,
-    },
+    actions: false,
     columns: ESTATE_COLUMNS_VIEW,
-    edit: {
-      editButtonContent: '<i class="fa fa-file text-primary mx-2"></i>',
-    },
   };
 
   settingsReceiptsGuards = {
