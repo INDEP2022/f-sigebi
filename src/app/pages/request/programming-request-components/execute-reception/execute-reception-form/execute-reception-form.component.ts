@@ -420,6 +420,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.getTask();
     this.getDestinyIndep();
     this.getOpenProceeding();
+    this.getUnitMeasure();
   }
 
   getInfoUserLog() {
@@ -897,10 +898,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       item.unitMeasureName = 'KILOGRAMOS';
                     } else if (item.unitMeasure == 'MT') {
                       item.unitMeasureName = 'METRO';
-                    } else if (
-                      item.unitMeasure == 'PZ' ||
-                      item.unitMeasure == 'PIEZA'
-                    ) {
+                    } else if (item.unitMeasure == 'PZ') {
                       item.unitMeasureName = 'PIEZA';
                     } else if (item.unitMeasure == 'CZA') {
                       item.unitMeasureName = 'CABEZA';
@@ -936,7 +934,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     } else if (item.ligieUnit == 'LT') {
                       item.unitLigieName = 'LITRO';
                     }
-                    this.getUnitMeasure(item.unitMeasure);
+                    //this.getUnitMeasure(item.unitMeasure);
                     //item.transferentDestiny = showDestinyTransferent;
                     this.goodData = item;
                     const form = this.fb.group({
@@ -946,8 +944,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       fileNumber: [item?.fileNumber],
                       goodDescription: [item?.goodDescription],
                       quantity: [item?.quantity],
-                      unitMeasure: [item?.unitMeasure],
-                      unitMeasureName: [item?.unitMeasureName],
+                      unitMeasure: [item?.unitMeasureName],
+
                       descriptionGoodSae: [item?.descriptionGoodSae],
                       quantitySae: [item?.quantitySae],
                       saeMeasureUnit: [item?.saeMeasureUnit],
@@ -1699,7 +1697,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     fileNumber: [response?.fileNumber],
                     goodDescription: [response?.goodDescription],
                     quantity: [response?.quantity],
-                    unitMeasure: [response?.unitMeasure],
+                    unitMeasure: [response?.unitMeasureName],
                     descriptionGoodSae: [response?.descriptionGoodSae],
                     quantitySae: [response?.quantitySae],
                     saeMeasureUnit: [response?.saeMeasureUnit],
@@ -1739,7 +1737,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
   }
 
-  getUnitMeasure(unit: string) {
+  getUnitMeasure() {
     /*const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.nbCode'] = `$eq:${unit}`;
     this.strategyService.getUnitsMedXConv(params.getValue()).subscribe({
@@ -1757,6 +1755,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
+          console.log('resp', resp);
           this.measureUnits = resp.data;
         },
         error: error => {},

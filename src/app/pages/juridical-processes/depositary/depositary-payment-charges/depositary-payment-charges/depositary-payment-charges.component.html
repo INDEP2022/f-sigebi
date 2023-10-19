@@ -88,6 +88,7 @@
         <div class="m-3">
           <button
             type="button"
+            [disabled]="form.invalid"
             class="btn btn-primary btn-sm active"
             (click)="onSearch()">
             Buscar<i class="fa fa-search ml-2"></i>

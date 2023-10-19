@@ -5,6 +5,8 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
+import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
+import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
@@ -23,7 +25,9 @@ export class BillingsService {
     private parametersService: ParametersService,
     private parameterModService: ParameterModService,
     private delegationService: DelegationService,
-    private dinamicTablesService: DinamicTablesService
+    private dinamicTablesService: DinamicTablesService,
+    private comerInvoice: ComerInvoiceService,
+    private comerDetailInvoiceService: ComerDetailInvoiceService
   ) {}
 
   async getEventDataById(id: any) {
@@ -536,6 +540,68 @@ export class BillingsService {
           Promise.all(result).then(resp => {
             resolve(response);
           });
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getApplicationGenerateFolio(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationGenerateFolio(body).subscribe({
+        next: response => {
+          let obj = {
+            msg: response.data[0],
+            status: 200,
+          };
+          resolve(obj);
+        },
+        error: error => {
+          let obj = {
+            msg: error.error.message,
+            status: error.status,
+          };
+          resolve(obj);
+        },
+      });
+    });
+  }
+
+  async getApplicationGetCountSumbyTypes(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.getApplicationGetCountSumbyTypes(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve({
+            contador: 0,
+            suma: 0,
+          });
+        },
+      });
+    });
+  }
+  async getSumTotal(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoice.getSumTotal(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async updateDetBillings(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailInvoiceService.update(body).subscribe({
+        next: response => {
+          resolve(true);
         },
         error: error => {
           resolve(null);

@@ -141,26 +141,18 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
       return;
     }
 
-    this.eventForm.patchValue(
-      {
-        ...this.eventSelected,
-        eventDate: this.eventSelected?.eventDate
-          ? new Date(this.eventSelected?.eventDate)
-          : null,
-        eventClosingDate: this.eventSelected?.eventClosingDate
-          ? new Date(this.eventSelected?.eventClosingDate)
-          : null,
-        failureDate: this.eventSelected?.failureDate
-          ? new Date(this.eventSelected?.failureDate)
-          : null,
-      }
-      // { emitEvent: false }
-    );
-    console.warn('SETEO DEL FORMULARIO');
-    console.log(this.eventSelected);
-
-    console.log(this.eventForm.value);
-
+    this.eventForm.patchValue({
+      ...this.eventSelected,
+      eventDate: this.eventSelected?.eventDate
+        ? new Date(this.eventSelected?.eventDate)
+        : null,
+      eventClosingDate: this.eventSelected?.eventClosingDate
+        ? new Date(this.eventSelected?.eventClosingDate)
+        : null,
+      failureDate: this.eventSelected?.failureDate
+        ? new Date(this.eventSelected?.failureDate)
+        : null,
+    });
     this.onOpenEvent.emit();
   }
 
