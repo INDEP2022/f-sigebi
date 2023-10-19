@@ -34,8 +34,8 @@ export class JobsService extends HttpService {
     );
   }
 
-  getMoCanById(id: number | string) {
-    return this.get(`application/getReasonsCan/${id}`);
+  getMoCanById(id: number | string, params?: _Params) {
+    return this.get(`application/getReasonsCan/${id}`, params);
   }
 
   create(job: any) {

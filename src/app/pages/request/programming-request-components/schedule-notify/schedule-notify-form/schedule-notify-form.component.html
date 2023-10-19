@@ -230,6 +230,21 @@
                   [(settings)]="
                     settingsTransportableGoods
                   "></app-columns-select>
+
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport(
+                      'EN_TRANSPORTABLE',
+                      'Bienes_Transportables.xlsx'
+                    )
+                  "></confirm-button>
               </div>
               <div class="row pt-3">
                 <ng2-smart-table
@@ -247,6 +262,18 @@
               <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
+
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport('EN_RESGUARDO_TMP', 'Bienes_Resguardo.xlsx')
+                  "></confirm-button>
               </div>
               <div class="row pt-3">
                 <ng2-smart-table
@@ -264,6 +291,18 @@
               <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
+
+                <confirm-button
+                  [loading]="loadingReportGoods"
+                  [btnSmall]="true"
+                  [text]="'Generar reporte'"
+                  [loadingText]="'Generando reporte'"
+                  [className]="'btn-success'"
+                  [icon]="'bx bx-download float-icon'"
+                  class="ml-2"
+                  (confirm)="
+                    generateReport('EN_ALMACEN_TMP', 'Bienes_Almacén.xlsx')
+                  "></confirm-button>
               </div>
 
               <div class="row pt-3">

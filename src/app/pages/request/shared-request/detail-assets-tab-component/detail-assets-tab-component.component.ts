@@ -1279,11 +1279,11 @@ export class DetailAssetsTabComponentComponent
     this.brandId = this.brandId
       ? this.brandId[0].toUpperCase() + this.brandId.substring(1)
       : brandId[0].toUpperCase() + brandId.substring(1);
-    filter['filter.carBrand'] = `$eq:${this.brandId}`;
+    filter['filter.carBrand'] = `$ilike:${this.brandId}`;
     if (description != null) {
       description = description.toLowerCase();
       description = description[0].toUpperCase() + description.substring(1);
-      filter['filter.flexValueMeaningDependent'] = `$eq:${description}`;
+      filter['filter.flexValueMeaningDependent'] = `$ilike:${description}`;
     }
     if (params.text) {
       filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
@@ -1627,8 +1627,8 @@ export class DetailAssetsTabComponentComponent
   //guardar el bien inmueble
   saveGoodRealState() {
     return new Promise((resolve, reject) => {
-      //let domicilio = this.goodDomicilieForm.getRawValue();
-      let domicilio = this.fillUpForm();
+      let domicilio = this.goodDomicilieForm.getRawValue();
+      //let domicilio = this.fillUpForm(); en caso de que se este usando la tabla
       domicilio.addressId = this.domicileForm.controls['id'].value;
       domicilio.creationDate = new Date().toISOString();
       domicilio.modificationDate = new Date().toISOString();

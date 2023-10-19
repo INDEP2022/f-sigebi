@@ -963,7 +963,7 @@ export class ClassifyAssetsTabComponent
           //if(next) this.getExample();
         },
       },
-      class: ' modal-dialog-centered',
+      class: 'modalSizeXL modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(AdvancedSearchComponent, config);

@@ -708,27 +708,35 @@ export class ConciliationDepositaryPaymentsComponent
 
   gotToConciliationPays() {
     // this.alertInfo('info', '', 'LLAMAR LA PANTALLA FCONDEPOCONDISPAG');
-    // this.router
-    //   .navigate(['PENDIENTE'], {
-    //     queryParams: {
-    //       origin: this.screenKey,
-    //       P_CONTRA: this.depositaryAppointment.importConsideration,
-    //       P_FECHA: this.form.get('fecha').value,
-    //       P_PERSONA: this.depositaryAppointment.personNumber.id,
-    //     },
-    //   })
-    //   .then(() => {
-    //     this.getPrepOI();
-    //   });
-    this.alertInfo(
-      'warning',
-      // 'La siguiente pantalla no se migra: FCONDEPOCONDISPAG - dispersion de pagos depositarias',
-      'Esta pantalla no esta disponible por el momento',
-      'De igual manera el proceso continuará al cerrar este mensaje'
-    ).then(() => {
-      // this.getPrepOI();
-      this.execDeductions();
-    });
+    this.router
+      .navigate(
+        [
+          '/pages/juridical/depositary/payment-dispersion-process/dispersal-depositary-payments/' +
+            this.noBienReadOnly,
+        ],
+        {
+          queryParams: {
+            origin: this.screenKey,
+            p_nom_bien: this.noBienReadOnly,
+            P_APPOINTMENT: this.depositaryAppointment.appointmentNum,
+            P_CONTRA: this.depositaryAppointment.amountConsideration,
+            P_FECHA: this.form.get('fecha').value,
+            P_PERSONA: this.depositaryAppointment.personNumber.id,
+          },
+        }
+      )
+      .then(() => {
+        // this.getPrepOI();
+      });
+    // this.alertInfo(
+    //   'warning',
+    //   // 'La siguiente pantalla no se migra: FCONDEPOCONDISPAG - dispersion de pagos depositarias',
+    //   'Esta pantalla no esta disponible por el momento',
+    //   'De igual manera el proceso continuará al cerrar este mensaje'
+    // ).then(() => {
+    //   // this.getPrepOI();
+    //   this.execDeductions();
+    // });
     // this.getPrepOI();
     // FCONDEPOCONDISPAG
   }

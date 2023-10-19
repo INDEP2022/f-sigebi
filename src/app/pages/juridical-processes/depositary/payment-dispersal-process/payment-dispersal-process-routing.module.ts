@@ -32,7 +32,18 @@ const routes: Routes = [
           './conciliation-depositary-payments/conciliation-depositary-payments.module'
         )
       ).ConciliationDepositaryPaymentsModule,
-    data: { title: DEPOSITARY_ROUTES_1[1].label, screen: 'FCONDEPOCONCILPAG' },
+    data: { title: DEPOSITARY_ROUTES_1[16].label, screen: 'FCONDEPOCONCILPAG' },
+  },
+  // DISPERCION DE PAGOS DEPOSITARIAS
+  {
+    path: DEPOSITARY_ROUTES_1[16].link + '/:id', //+ '/:P_CONTRA/:P_FECHA/:P_PERSONA',
+    loadChildren: async () =>
+      (
+        await import(
+          './dispersal-depositary-payments/dispersal-depositary-payments.module'
+        )
+      ).DispersalDepositaryPaymentsModule,
+    data: { title: DEPOSITARY_ROUTES_1[16].label, screen: 'FCONDEPOCONDISPAG' },
   },
   {
     // VALIDACION DE PAGOS SIN PARAMETROS

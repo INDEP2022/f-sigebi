@@ -522,4 +522,13 @@ export class GoodService extends HttpService {
     const route = `good/api/v1/good`;
     return this.http.put(`${environment.API_URL}/${route}`, formData);
   }
+  /**
+   *
+   * @param idRequest Update the identificador and proceso_ext_dom field
+   * @returns
+   */
+  updateGoodFieldsByTransferent(idRequest: number) {
+    const route = `${GoodEndpoints.updateGoodByTransferent}/${idRequest}`;
+    return this.get<any>(route);
+  }
 }

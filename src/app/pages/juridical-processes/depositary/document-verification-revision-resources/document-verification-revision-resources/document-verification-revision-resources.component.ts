@@ -138,7 +138,7 @@ export class DocumentVerificationRevisionResourcesComponent
                     data.row.situacion_documentos = null;
                   }
                 } else {
-                  this.alert('info', 'Seleccione primero el Documento', '');
+                  this.alert('warning', 'Seleccione primero el Documento', '');
                   data.row.cb_solicitar_doctos = 'N';
                 }
               } else {
@@ -613,8 +613,8 @@ export class DocumentVerificationRevisionResourcesComponent
     if (di_situacion_bien == 'DICTAMINADO') {
       this.alert('info', 'Bien ya dictaminado', '');
     } else {
-      if (!this.fileNumber) {
-        this.alert('info', 'Falta seleccionar Expediente', '');
+      if (!this.fileNumber && this.form.get('goodId').value == null) {
+        this.alert('warning', 'Seleccione el Bien', '');
       } else {
         if (!this.dateToday) {
           this.alert(
@@ -627,7 +627,6 @@ export class DocumentVerificationRevisionResourcesComponent
 
       if (this.fileNumber && this.dateToday) {
         this.lookNotReceived();
-        // this.updateGood();
       }
     }
   }
@@ -677,7 +676,7 @@ export class DocumentVerificationRevisionResourcesComponent
     } else {
       this.alert(
         'info',
-        'Debe iniciar el proceso de Dictaminación y elegir al menos un Documento',
+        'Inicie el proceso de Dictaminación y elegir al menos un Documento',
         ''
       );
     }
@@ -687,7 +686,7 @@ export class DocumentVerificationRevisionResourcesComponent
     // const { id } = this.formExp.value;
     const { goodId } = this.form.value;
     if (!this.fileNumber) {
-      this.onLoadToast('info', 'Favor de seleccionar un expediente');
+      this.onLoadToast('info', 'Seleccione un expediente');
     } else {
       this.formInforme.patchValue({ id: this.fileNumber, goodId: goodId });
       this.informes = true;
@@ -748,7 +747,7 @@ export class DocumentVerificationRevisionResourcesComponent
                 di_situacion_bien != 'DICTAMINADO'
               ) {
                 this.activeBlocDoc = true;
-                // this.createDocumentDicta();
+                this.createDocumentDicta();
                 this.getDataWihtVquery(vquery.join(', '));
               } else {
                 this.activeBlocDoc = true;
@@ -942,6 +941,13 @@ export class DocumentVerificationRevisionResourcesComponent
       observations,
     } = this.form.value;
     let existData: any = {};
+    if (
+      this.form.get('goodId').value == null ||
+      this.form.get('goodId').value == 0
+    ) {
+      this.alert('warning', 'Seleccione el Bien', '');
+      return;
+    }
     if (di_fec_dictaminacion) {
       this.form
         .get('descriptionStatus')
@@ -957,7 +963,6 @@ export class DocumentVerificationRevisionResourcesComponent
         next: resp => {
           existData = resp.data[0];
           console.log(existData);
-          this.updateGood();
           resolve(resp.count);
         },
         error: error => {
@@ -999,6 +1004,7 @@ export class DocumentVerificationRevisionResourcesComponent
       delete existData.goods;
       this.dictaminationServ.update(existData, existData.goodNumber).subscribe({
         next: () => {
+          this.updateGood();
           this.alert('success', 'Dictamen', 'Actualizado Correctamente');
         },
         error: error => {
@@ -1055,6 +1061,10 @@ export class DocumentVerificationRevisionResourcesComponent
     });
   }
   searchGoods(good?: IGood) {
+    if (this.fileNumber == 0 || this.fileNumber == null) {
+      this.alert('warning', 'Seleccione el expediente para ubicar el Bien', '');
+      return;
+    }
     this.loadingGood = true;
     const filenumber = this.fileNumber;
     const dateAgreementAssurance = this.dateAgreementAssurance;
@@ -1123,7 +1133,9 @@ export class DocumentVerificationRevisionResourcesComponent
         this.form
           .get('agreementDate')
           .patchValue(
-            good.admissionAgreementDate ? good.admissionAgreementDate : ''
+            good.admissionAgreementDate
+              ? good.admissionAgreementDate
+              : new Date()
           );
         this.form
           .get('initialAgreement')
@@ -1158,6 +1170,7 @@ export class DocumentVerificationRevisionResourcesComponent
     this.aprevia = '';
     this.transfer = 0;
     this.pKey = '';
+    this.dataTableDocument.data = [];
   }
   async getStatusGoodService(status: any) {
     this.statusGoodService.getById(status).subscribe({
@@ -1177,6 +1190,7 @@ export class DocumentVerificationRevisionResourcesComponent
       id: this.form.get('goodId').value,
       goodId: this.form.get('goodId').value,
       fileNumber: this.fileNumber,
+      status: 'VXR',
       associatedFileNumber: this.fileNumber,
       goodClassNumber: this.good.goodClassNumber,
       revRecObservations: this.form.get('observations').value,
@@ -1210,7 +1224,7 @@ export class DocumentVerificationRevisionResourcesComponent
       goodNumber: this.form.get('goodId').value,
       // key: 'RCV',
       key: 'RCV',
-      typeDictum: 'PROCEDENCIA',
+      typeDictum: 'RECREVISION',
       dateReceipt: this.form.get('agreementDate').value,
       userReceipt: this.user.decodeToken().username,
       insertionDate: new Date(),
@@ -1252,6 +1266,7 @@ export interface IGoodRevision {
   id: number | string;
   goodId: number;
   fileNumber: number;
+  status: string;
   associatedFileNumber: number;
   goodClassNumber: number;
   revRecObservations: string;
