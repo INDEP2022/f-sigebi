@@ -54,53 +54,57 @@
             </ng-template>
           </form-field>
         </div>
-
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('dateInitRatification')"
-            label="Fecha page de Ratificaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dateInitRatification"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('dateFinish')" label="Fecha Final">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dateFinish"
-              [min]="form.get('dateInitRatification').value"
-              [minDate]="form.get('dateInitRatification').value"
-              [ngModel]="
-                form.get('dateFinish').value <
-                form.get('dateInitRatification').value
-                  ? form.get('dateInitRatification').value
-                  : form.get('dateFinish').value
-              "
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('ofFile')" label="Del Expediente">
-            <input type="text" class="form-control" formControlName="ofFile" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('atFile')" label="al Expediente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="atFile"
-              [min]="form.get('ofFile').value"
-              [ngModel]="
-                form.get('atFile').value < form.get('ofFile').value
-                  ? form.get('ofFile').value
-                  : form.get('atFile').value
-              " />
-          </form-field>
+        <div class="row mt-5">
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('dateInitRatification')"
+              label="Fecha page de Ratificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateInitRatification"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('dateFinish')" label="Fecha Final">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateFinish"
+                [min]="form.get('dateInitRatification').value"
+                [minDate]="form.get('dateInitRatification').value"
+                [ngModel]="
+                  form.get('dateFinish').value <
+                  form.get('dateInitRatification').value
+                    ? form.get('dateInitRatification').value
+                    : form.get('dateFinish').value
+                "
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('ofFile')" label="Del Expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ofFile" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('atFile')" label="al Expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="atFile"
+                [min]="form.get('ofFile').value"
+                [ngModel]="
+                  form.get('atFile').value < form.get('ofFile').value
+                    ? form.get('ofFile').value
+                    : form.get('atFile').value
+                " />
+            </form-field>
+          </div>
         </div>
       </div>
       <div class="row mt-5">
