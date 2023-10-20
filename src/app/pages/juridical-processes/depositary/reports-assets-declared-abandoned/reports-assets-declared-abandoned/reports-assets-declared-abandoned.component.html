@@ -5,34 +5,6 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <!-- <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('delegation')">
-            <ngx-select
-              [form]="form"
-              (fetchItems)="getDelegations($event)"
-              [data]="delegations"
-              value="id"
-              bindLabel="description"
-              label="Delegaci&oacute;n"
-              [control]="'delegation'"
-              (change)="getDelegations($event)">
-            </ngx-select>
-          </form-field>
-        </div> -->
-        <!-- <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('subdelegation')">
-            <ngx-select
-              [form]="form"
-              (fetchItems)="getSubdelegations($event)"
-              [data]="subdelegations"
-              value="id"
-              bindLabel="description"
-              label="Sub Delegaci&oacute;n"
-              [control]="'subdelegation'"
-              (change)="getSubdelegations($event)">
-            </ngx-select>
-          </form-field>
-        </div> -->
         <div class="col-md-6">
           <form-field [control]="form.get('delegation')">
             <ngx-select
@@ -82,9 +54,8 @@
             </ng-template>
           </form-field>
         </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-md-3 col-sm-12 col-xs-12">
+
+        <div class="col-md-3">
           <form-field
             [control]="form.get('dateInitRatification')"
             label="Fecha page de Ratificaci&oacute;n">
@@ -95,7 +66,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-3">
           <form-field [control]="form.get('dateFinish')" label="Fecha Final">
             <input
               type="text"
@@ -112,12 +83,12 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-3">
           <form-field [control]="form.get('ofFile')" label="Del Expediente">
             <input type="text" class="form-control" formControlName="ofFile" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-3">
           <form-field [control]="form.get('atFile')" label="al Expediente">
             <input
               type="text"
@@ -182,37 +153,17 @@
       </div>
     </form>
   </div>
-  <!-- <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <button
-          type="submit"
-          class="btn btn-primary active"
-          [disabled]="!form.valid"
-          (click)="confirm()">
-          Imprimir
-        </button>
-      </div>
-      <div class="m-3">
-        <button
-          (click)="cleanForm()"
-          type="button"
-          class="btn btn-danger active">
-          Limpiar
-        </button>
-      </div>
-    </div>
-  </div> -->
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <!-- <button
+        <button
           type="button"
           [disabled]="form.invalid"
           class="btn btn-primary active btn-sm"
           (click)="confirm()">
           Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
-        </button> -->
+        </button>
       </div>
       <div class="m-3">
         <button
