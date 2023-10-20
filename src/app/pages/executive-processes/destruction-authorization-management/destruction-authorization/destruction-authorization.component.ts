@@ -361,24 +361,26 @@ export class DestructionAuthorizationComponent
   }
 
   private tempArray: any[] = [];
+
   onSelectGoodPSD(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => {
-        this.selectGoodPSD(data.row.goodId, data.toggle);
+        this.selectGoodPSD(data.row, data.toggle);
 
         this.tempArray = [...this.array];
 
         if (data.toggle) {
           // Si el checkbox se selecciona, agregar el elemento al array
-          if (!this.array.includes(data.row.goodId)) {
-            this.array.push(data.row.goodId);
+          if (!this.array.includes(data.row)) {
+            this.array.push(data.row);
           }
         } else {
           // Si el checkbox se deselecciona, eliminar el elemento del array
-          const index = this.array.indexOf(data.row.goodId);
+          const index = this.array.indexOf(data.row);
           if (index !== -1) {
             this.array.splice(index, 1);
           }
+          console.log(this.array);
         }
       },
     });
@@ -1328,7 +1330,8 @@ export class DestructionAuthorizationComponent
         },
         error: err => {
           console.log(err);
-
+          this.totalItems2 = 0;
+          this.detailProceedingsList2.load([]);
           this.loadingGoodsByP = false;
         },
       });
@@ -1370,6 +1373,50 @@ export class DestructionAuthorizationComponent
       },
       error: err => {
         console.log(err);
+      },
+    });
+  }
+
+  insertGood() {
+    console.log(this.array);
+    console.log(this.array[0].goodId);
+    if (this.array.length === 0) {
+      this.alert('warning', 'Debe seleccionar un Bien', '');
+      return;
+    }
+
+    if (!this.proceedingForm.get('id').value) {
+      this.alert('warning', 'Es necesario contar con el No. de Acta', '');
+      return;
+    }
+    let body = {
+      pVcScreem: 'FESTATUSRGA',
+      pActaNumber: this.proceedingForm.get('id').value,
+      pStatusActa: this.proceedingForm.get('statusProceedings').value,
+      pGoodNumber: this.array[0].id,
+      pDiAvailable: '',
+      pDiActa: this.array[0].requestFolio,
+      pCveActa: this.proceedingForm.get('keysProceedings').value,
+      pAmount: this.array[0].quantity,
+    };
+    this.massiveGoodService.InsertGood(body).subscribe({
+      next: data => {
+        console.log(data);
+        if (data.message === true) {
+          this.alert('warning', 'Bien insertado con exito', '');
+          this.getProceedingGoods();
+        } else {
+          this.alert('warning', data.message[0], '');
+        }
+      },
+      error: err => {
+        console.log(err);
+        this.alert(
+          'warning',
+          `El Bien: ${this.array[0].id}, ya ha sido ingresado en una solicitud`,
+          ''
+        ); // Asumiendo que 'alert' se encarga de mostrar la alerta
+        this.array = [...this.tempArray];
       },
     });
   }
