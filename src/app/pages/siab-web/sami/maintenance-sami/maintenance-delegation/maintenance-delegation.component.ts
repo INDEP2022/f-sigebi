@@ -80,7 +80,7 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
         );
         if (!res) {
           this.loader.load = false;
-          this.alert('error', 'Actualización de Delegación', 'No realizada');
+          this.alert('warning', 'Error al Actualizar', '');
           return;
         }
         const res2 = await firstValueFrom(
@@ -94,14 +94,10 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
         );
         if (!res2) {
           this.loader.load = false;
-          this.alert('error', 'Actualización de Delegación', 'No realizada');
+          this.alert('error', 'Error al Actualizar', '');
           return;
         } else {
-          this.alert(
-            'success',
-            'Actualización de Delegación',
-            'Realizada Correctamente'
-          );
+          this.alert('success', 'Actualización Correctamente', '');
           this.updateTable++;
           // this.clear();
         }
