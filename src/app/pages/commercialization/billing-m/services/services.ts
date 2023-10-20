@@ -609,4 +609,87 @@ export class BillingsService {
       });
     });
   }
+
+  getCountBatch(event: number, batch: number) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoice.getCountBatch(event, batch).subscribe({
+        next: response => {
+          resolve(response.contador);
+        },
+        error: error => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  getApplicationGetCountbyMandatoin(event: number, batch: number) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService
+        .getApplicationGetCountbyMandatoin(event, batch)
+        .subscribe({
+          next: response => {
+            resolve(response.contador);
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
+    });
+  }
+
+  getApplicationGetCountbyMandatoNotin(event: number, batch: number) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService
+        .getApplicationGetCountbyMandatoNotin(event, batch)
+        .subscribe({
+          next: response => {
+            resolve(response.contador);
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
+    });
+  }
+  getApplicationGetCount1GenXpago(event: number, batch: number) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService
+        .getApplicationGetCount1GenXpago(event, batch)
+        .subscribe({
+          next: response => {
+            resolve(response.contador);
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
+    });
+  }
+
+  deleteApplicationDeleteIfExists(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.deleteApplicationDeleteIfExists(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  putApplicationComerBillsAmount(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.putApplicationComerBillsAmount(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
 }
