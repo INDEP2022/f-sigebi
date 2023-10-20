@@ -61,13 +61,33 @@ const routes: Routes = [
       (await import('./report/report.module')).ReportModule,
   },
   {
+    path: 'report-x-month',
+    data: {
+      screen: 'FGEROFPESTADIXMES',
+      title: 'Recepción Documental x Mes',
+    },
+    loadChildren: async () =>
+      (await import('./report-x-month/report-x-month.module'))
+        .ReportXMonthModule,
+  },
+  {
     path: 'summary',
     data: {
-      screen: 'FGEROFPRESUMENDIAA',
+      screen: 'FGEROFPRESUMENDIA',
       title: 'Resumen Diario de Recepción Documental',
     },
     loadChildren: async () =>
       (await import('./summary/summary.module')).SummaryModule,
+  },
+  {
+    path: 'summary-destination',
+    data: {
+      screen: 'FGEROFPRESUMENDIAA',
+      title: 'Resumen Diario de Recepción Documental Destino',
+    },
+    loadChildren: async () =>
+      (await import('./summary-destination/summary-destination.module'))
+        .SummaryDestinationModule,
   },
   {
     path: 'notifications-flat-file',
