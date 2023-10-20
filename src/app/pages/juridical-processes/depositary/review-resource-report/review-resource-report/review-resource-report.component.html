@@ -6,7 +6,7 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-md-6">
           <form-field [control]="form.get('delegation')">
             <ngx-select
               [searchOnInit]="true"
@@ -21,7 +21,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-md-6">
           <form-field [control]="form.get('subdelegation')">
             <ngx-select
               [form]="form"
@@ -35,7 +35,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-md-6">
           <form-field [control]="form.get('delBien')">
             <ngx-select
               (fetchItems)="getGoodIdDescription($event)"
@@ -58,7 +58,7 @@
             >{{ item.id }} - {{ item.description }}</ng-template
           >
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-md-6">
           <form-field [control]="form.get('alBien')">
             <ngx-select
               (fetchItems)="getGoodAlIdDescription($event)"
@@ -84,7 +84,7 @@
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <h6>Fecha Presentaci&oacute;n Recurso&#58;</h6>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-md-6">
           <form-field
             [control]="form.get('startDate')"
             label="Fecha desde&#58;">
@@ -96,7 +96,7 @@
               [maxDate]="maxDate" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-md-6">
           <form-field [control]="form.get('endDate')" label="Fecha hasta&#58;">
             <input
               class="form-control"
