@@ -60,6 +60,7 @@ export class NotifyAssetsImproprietyFormComponent
   folio: IDictamenSeq;
   folioReporte: string;
   typeDoc: string = '';
+  idclarGoodDoc: number = 0;
 
   //Parámetro para detectar que tipo de aclaración es
   typeClarifications: any;
@@ -84,37 +85,55 @@ export class NotifyAssetsImproprietyFormComponent
     this.today = new Date();
   }
 
-  //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    if (
-      this.typeForm == 'aclaration-sat' &&
-      this.dataClarifications2.chatClarification.idClarificationType == '1'
-    ) {
-      this.getInfoDocAclaration();
+    const clarType: string =
+      this.dataClarifications2.chatClarification.idClarificationType;
+
+    if (this.infoRequest?.typeOfTransfer == 'PGR_SAE' && clarType == '1') {
+      this.getInfoDocAclaration(this.infoRequest.typeOfTransfer, clarType);
+    }
+    if (this.infoRequest?.typeOfTransfer == 'MANUAL' && clarType == '1') {
+      this.getInfoDocAclaration(this.infoRequest.typeOfTransfer, clarType);
     }
 
     if (
-      this.typeForm == 'aclaration-sat' &&
-      this.dataClarifications2.chatClarification.idClarificationType == '2'
+      (this.infoRequest?.typeOfTransfer == 'SAT_SAE' && clarType == '1') ||
+      (this.infoRequest?.typeOfTransfer == 'SAT_SAE' &&
+        clarType == '1' &&
+        this.dataClarifications2.clarification.clarification ==
+          'INDIVIDUALIZACIÓN DE BIENES')
     ) {
-      this.getInfoDocAclarationType2();
+      this.getInfoDocAclaration(this.infoRequest.typeOfTransfer, clarType);
     }
 
-    //Actualiza Bien, de prueba
-    //this.changeSimulateGood()
     this.modalService.onHide.subscribe(key => {});
 
     this.dictamenSeq();
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
-    const applicationId = this.idRequest;
-    const rejectNoticeId = this.dataClarifications2.rejectNotificationId;
   }
 
-  getInfoDocAclaration() {
+  getInfoDocAclaration(typeOfTransfer: string, clarType: string) {
+    let documentTypeId: number = 0;
+    if (typeOfTransfer == 'PGR_SAE' && clarType == '1') {
+      documentTypeId = 211;
+    }
+
+    if (typeOfTransfer == 'MANUAL' && clarType == '1') {
+      documentTypeId = 213;
+    }
+
+    if (typeOfTransfer == 'SAT_SAE' && clarType == '1') {
+      documentTypeId = 212;
+    }
+
+    if (typeOfTransfer == 'SAT_SAE' && clarType == '2') {
+      documentTypeId = 104;
+    }
+
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.applicationId'] = this.idRequest;
-    params.getValue()['filter.documentTypeId'] = 212;
+    params.getValue()['filter.documentTypeId'] = documentTypeId;
     this.documentService
       .getAllClarificationDocImpro(params.getValue())
       .subscribe({
@@ -156,17 +175,38 @@ export class NotifyAssetsImproprietyFormComponent
               .get('webMail')
               .setValue(clarificationImpro?.mailNotification);
           }
+          if (clarificationImpro?.consistentIn) {
+            this.clarificationForm
+              .get('consistentIn')
+              .setValue(clarificationImpro?.consistentIn);
+          }
+          if (clarificationImpro?.clarification) {
+            this.clarificationForm
+              .get('clarification')
+              .setValue(clarificationImpro?.clarification);
+          }
 
           if (this.infoRequest?.observations) {
             this.clarificationForm
               .get('observations')
               .setValue(this.infoRequest?.observations);
           }
+
+          if (clarificationImpro?.paragraphInitial) {
+            this.clarificationForm
+              .get('paragraphInitial')
+              .setValue(clarificationImpro?.paragraphInitial);
+          }
+          if (clarificationImpro?.paragraphFinal) {
+            this.clarificationForm
+              .get('paragraphFinal')
+              .setValue(clarificationImpro?.paragraphFinal);
+          }
         },
       });
   }
 
-  getInfoDocAclarationType2() {
+  /*getInfoDocAclarationType2() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.applicationId'] = this.idRequest;
     params.getValue()['filter.documentTypeId'] = 104;
@@ -237,121 +277,6 @@ export class NotifyAssetsImproprietyFormComponent
               .setValue(this.infoRequest?.observations);
           }
         },
-      });
-  }
-
-  /*getInfoDoc() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.applicationId'] = this.idRequest;
-    this.documentService
-      .getAllClarificationDocImpro(params.getValue())
-      .subscribe({
-        next: response => {
-          console.log('response', response);
-          if (
-            this.typeForm == 'aclaration-sat' &&
-            this.dataClarifications2.chatClarification.idClarificationType ==
-              '2'
-          ) {
-            const clarificationImpro: IClarificationDocumentsImpro =
-              response.data[0];
-            if (clarificationImpro?.managedTo) {
-              this.clarificationForm
-                .get('addresseeName')
-                .setValue(clarificationImpro?.managedTo);
-            }
-            if (clarificationImpro?.positionAddressee) {
-              this.clarificationForm
-                .get('positionAddressee')
-                .setValue(clarificationImpro?.positionAddressee);
-            }
-
-            if (clarificationImpro?.sender) {
-              this.clarificationForm
-                .get('senderName')
-                .setValue(clarificationImpro?.sender);
-            }
-
-            if (clarificationImpro?.positionSender) {
-              this.clarificationForm
-                .get('senderCharge')
-                .setValue(clarificationImpro?.positionSender);
-            }
-            if (clarificationImpro?.consistentIn) {
-              this.clarificationForm
-                .get('consistentIn')
-                .setValue(clarificationImpro?.consistentIn);
-            }
-
-            if (clarificationImpro?.clarification) {
-              this.clarificationForm
-                .get('clarification')
-                .setValue(clarificationImpro?.clarification);
-            }
-
-            if (clarificationImpro?.areaUserCapture) {
-              this.clarificationForm
-                .get('userAreaCaptures')
-                .setValue(clarificationImpro?.areaUserCapture);
-            }
-
-            if (clarificationImpro?.mailNotification) {
-              this.clarificationForm
-                .get('webMail')
-                .setValue(clarificationImpro?.mailNotification);
-            }
-            if (clarificationImpro?.paragraphInitial) {
-              this.clarificationForm
-                .get('paragraphInitial')
-                .setValue(clarificationImpro?.paragraphInitial);
-            }
-            if (clarificationImpro?.paragraphFinal) {
-              this.clarificationForm
-                .get('paragraphFinal')
-                .setValue(clarificationImpro?.paragraphFinal);
-            }
-          } else if(this.typeForm == 'aclaration-sat' &&
-            this.dataClarifications2.chatClarification.idClarificationType ==
-              '2'){
-                 const clarificationImpro: IClarificationDocumentsImpro =
-                   response.data[0];
-                 if (clarificationImpro?.managedTo) {
-                   this.clarificationForm
-                     .get('addresseeName')
-                     .setValue(clarificationImpro?.managedTo);
-                 }
-                 if (clarificationImpro?.positionAddressee) {
-                   this.clarificationForm
-                     .get('positionAddressee')
-                     .setValue(clarificationImpro?.positionAddressee);
-                 }
-
-                 if (clarificationImpro?.sender) {
-                   this.clarificationForm
-                     .get('senderName')
-                     .setValue(clarificationImpro?.sender);
-                 }
-
-                 if (clarificationImpro?.positionSender) {
-                   this.clarificationForm
-                     .get('senderCharge')
-                     .setValue(clarificationImpro?.positionSender);
-                 }
-
-                 if (clarificationImpro?.areaUserCapture) {
-                   this.clarificationForm
-                     .get('userAreaCaptures')
-                     .setValue(clarificationImpro?.areaUserCapture);
-                 }
-
-                 if (clarificationImpro?.mailNotification) {
-                   this.clarificationForm
-                     .get('webMail')
-                     .setValue(clarificationImpro?.mailNotification);
-                 }
-              }
-        },
-        error: error => {},
       });
   } */
 
@@ -489,7 +414,15 @@ export class NotifyAssetsImproprietyFormComponent
       this.notification?.clarification?.clarification ==
         'INDIVIDUALIZACIÓN DE BIENES'
     ) {
-      this.aclaracionComercioExterior();
+      this.aclaracionComercioExteriorInd();
+    }
+
+    if (
+      typeTransference == 'MANUAL' &&
+      this.notification?.clarification?.clarification ==
+        'INDIVIDUALIZACIÓN DE BIENES'
+    ) {
+      this.aclaracionAnam();
     }
 
     if (
@@ -533,9 +466,7 @@ export class NotifyAssetsImproprietyFormComponent
       creationUser: token.name,
       documentTypeId: '216',
       modificationUser: token.name,
-      //worthAppraisal: 1,
       creationDate: new Date(),
-      //rejectNoticeId: 1,
       assignmentInvoiceDate: new Date(),
       mailNotification: this.clarificationForm.controls['webMail'].value,
       areaUserCapture:
@@ -552,42 +483,33 @@ export class NotifyAssetsImproprietyFormComponent
       },
       error: error => {
         this.loading = false;
-
-        //this.onLoadToast('error', 'No se pudo guardar', '');
       },
     });
   }
 
   oficioImprocedencia() {
-    //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
-
-    //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
-      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
-      //foundation: ",",
-      //id: 1, //ID primaria
+      sender: this.clarificationForm.controls['senderName'].value,
       version: 1,
-      //transmitterId: ",",
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre Destinatario - Titular de la solicitud
+      managedTo: this.clarificationForm.controls['addresseeName'].value,
       invoiceLearned: ' ',
-      //invoiceNumber: 1,
       positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value, //cargo Destinatario - Titular de la solicitud
+        this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '111',
       modificationUser: token.name,
-      //worthAppraisal: 1,
+
       creationDate: new Date(),
-      //rejectNoticeId: 1,
+
       assignmentInvoiceDate: new Date(),
       mailNotification: this.clarificationForm.controls['webMail'].value,
       areaUserCapture:
@@ -640,14 +562,15 @@ export class NotifyAssetsImproprietyFormComponent
     };
     const checkExistDocImp: any = await this.checkDataExist(212);
 
-    console.log('checkExistDocImp', checkExistDocImp);
-
-    if (checkExistDocImp?.id != 0) {
+    if (checkExistDocImp.id != 0) {
       this.documentService
         .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
         .subscribe({
           next: data => {
-            //this.openReport(checkExistDocImp);
+            this.updateObservation(
+              this.clarificationForm.controls['observations'].value
+            );
+            this.openReport(checkExistDocImp);
             this.loading = false;
             this.close();
           },
@@ -660,7 +583,90 @@ export class NotifyAssetsImproprietyFormComponent
     if (checkExistDocImp == 0) {
       this.loading = true;
       this.documentService.createClarDocImp(modelReport).subscribe({
-        next: data => {
+        next: async data => {
+          const createClarGoodDoc = this.createClarGoodDoc(data);
+
+          if (createClarGoodDoc) {
+            const updateObservation = await this.updateObservation(
+              this.clarificationForm.controls['observations'].value
+            );
+            if (updateObservation) {
+              this.openReport(data);
+              this.loading = false;
+              this.close();
+            }
+          }
+        },
+        error: error => {
+          this.loading = false;
+
+          //this.onLoadToast('error', 'No se pudo guardar', '');
+        },
+      });
+    }
+  }
+
+  async aclaracionComercioExteriorInd() {
+    let token = this.authService.decodeToken();
+    const modelReport: IClarificationDocumentsImpro = {
+      clarification: this.clarificationForm.controls['clarification'].value,
+      sender: this.clarificationForm.controls['senderName'].value,
+      version: 1,
+      paragraphInitial:
+        this.clarificationForm.controls['paragraphInitial'].value,
+      applicationId: this.idRequest,
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+      consistentIn: this.clarificationForm.controls['observations'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      invoiceLearned: ' ',
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value,
+      modificationDate: new Date(),
+      creationUser: token.name,
+      documentTypeId: '212',
+      modificationUser: token.name,
+      creationDate: new Date(),
+      assignmentInvoiceDate: new Date(),
+      mailNotification: this.clarificationForm.controls['webMail'].value,
+      areaUserCapture:
+        this.clarificationForm.controls['userAreaCaptures'].value,
+      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+    };
+    const checkExistDocImp: any = await this.checkDataExist(212);
+
+    if (checkExistDocImp.id != 0) {
+      this.documentService
+        .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
+        .subscribe({
+          next: data => {
+            if (
+              this.notification?.clarification?.clarification ==
+              'INDIVIDUALIZACIÓN DE BIENES'
+            ) {
+              this.updateAnsweredAcla(
+                this.notification.rejectNotificationId,
+                this.notification.chatClarification.idClarification,
+                this.notification.goodId
+              );
+            }
+            this.updateObservation(
+              this.clarificationForm.controls['observations'].value
+            );
+
+            this.loading = false;
+            this.close();
+          },
+          error: error => {
+            this.loading = false;
+          },
+        });
+    }
+
+    if (checkExistDocImp == 0) {
+      this.loading = true;
+      this.documentService.createClarDocImp(modelReport).subscribe({
+        next: async data => {
           if (
             this.notification?.clarification?.clarification ==
             'INDIVIDUALIZACIÓN DE BIENES'
@@ -677,50 +683,22 @@ export class NotifyAssetsImproprietyFormComponent
             const createClarGoodDoc = this.createClarGoodDoc(checkExistDocImp);
 
             if (createClarGoodDoc) {
-              this.openReport(data);
-              this.loading = false;
-              this.close();
+              const updateObservation = await this.updateObservation(
+                this.clarificationForm.controls['observations'].value
+              );
+              if (updateObservation) {
+                this.openReport(data);
+                this.loading = false;
+                this.close();
+              }
             }
           }
         },
         error: error => {
           this.loading = false;
-
-          //this.onLoadToast('error', 'No se pudo guardar', '');
         },
       });
     }
-
-    /*
-
-    this.loading = true;
-    this.documentService.createClarDocImp(modelReport).subscribe({
-      next: data => {
-        if (
-          this.notification?.clarification?.clarification ==
-          'INDIVIDUALIZACIÓN DE BIENES'
-        ) {
-          this.updateAnsweredAcla(
-            this.notification.rejectNotificationId,
-            this.notification.chatClarification.idClarification,
-            this.notification.goodId
-          );
-        } else {
-          const createClarGoodDoc = this.createClarGoodDoc(data);
-
-          if (createClarGoodDoc) {
-            this.openReport(data);
-            this.loading = false;
-            this.close();
-          }
-        }
-      },
-      error: error => {
-        this.loading = false;
-
-        //this.onLoadToast('error', 'No se pudo guardar', '');
-      },
-    }); */
   }
 
   async aclaracionAnam() {
@@ -735,9 +713,8 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['observations'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
+      managedTo: this.clarificationForm.controls['addresseeName'].value,
       invoiceLearned: ' ',
-      //invoiceNumber: 1,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
@@ -753,14 +730,11 @@ export class NotifyAssetsImproprietyFormComponent
     };
     const checkExistDocImp: any = await this.checkDataExist(212);
 
-    console.log('checkExistDocImp', checkExistDocImp);
-
     if (checkExistDocImp?.id != 0) {
       this.documentService
         .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
         .subscribe({
           next: data => {
-            //this.openReport(checkExistDocImp);
             this.loading = false;
             this.close();
           },
@@ -790,7 +764,6 @@ export class NotifyAssetsImproprietyFormComponent
             const createClarGoodDoc = this.createClarGoodDoc(checkExistDocImp);
 
             if (createClarGoodDoc) {
-              this.openReport(data);
               this.loading = false;
               this.close();
             }
@@ -798,42 +771,9 @@ export class NotifyAssetsImproprietyFormComponent
         },
         error: error => {
           this.loading = false;
-
-          //this.onLoadToast('error', 'No se pudo guardar', '');
         },
       });
     }
-
-    /*
-
-    this.loading = true;
-    this.documentService.createClarDocImp(modelReport).subscribe({
-      next: data => {
-        if (
-          this.notification?.clarification?.clarification ==
-          'INDIVIDUALIZACIÓN DE BIENES'
-        ) {
-          this.updateAnsweredAcla(
-            this.notification.rejectNotificationId,
-            this.notification.chatClarification.idClarification,
-            this.notification.goodId
-          );
-        } else {
-          const createClarGoodDoc = this.createClarGoodDoc(data);
-
-          if (createClarGoodDoc) {
-            this.openReport(data);
-            this.loading = false;
-            this.close();
-          }
-        }
-      },
-      error: error => {
-        this.loading = false;
-
-        //this.onLoadToast('error', 'No se pudo guardar', '');
-      },
-    }); */
   }
 
   async oficioAclaracionTransferente() {
@@ -869,12 +809,36 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
 
     const checkExistDocImp: any = await this.checkDataExist(104);
+    if (checkExistDocImp == 0) {
+      this.documentService.createClarDocImp(modelReport).subscribe({
+        next: async data => {
+          const createClarGoodDoc = await this.createClarGoodDoc(data);
+          if (createClarGoodDoc) {
+            const updateObservations = await this.updateObservation(
+              this.clarificationForm.get('observations').value
+            );
 
-    if (checkExistDocImp?.id != 0) {
+            if (updateObservations) {
+              this.openReport(data);
+              this.loading = false;
+              this.close();
+            }
+          }
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+    }
+
+    if (checkExistDocImp.id != 0) {
       this.documentService
         .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
         .subscribe({
-          next: data => {
+          next: async data => {
+            const updateObservations = await this.updateObservation(
+              this.clarificationForm.get('observations').value
+            );
             this.openReport(checkExistDocImp);
             this.loading = false;
             this.close();
@@ -884,70 +848,29 @@ export class NotifyAssetsImproprietyFormComponent
           },
         });
     }
-
-    if (checkExistDocImp == 0) {
-      this.documentService.createClarDocImp(modelReport).subscribe({
-        next: data => {
-          const createClarGoodDoc = this.createClarGoodDoc(checkExistDocImp);
-          if (createClarGoodDoc) {
-            this.openReport(data);
-            this.loading = false;
-            this.close();
-          }
-        },
-        error: error => {
-          this.loading = false;
-        },
-      });
-    }
-    /*this.documentService.createClarDocImp(modelReport).subscribe({
-      next: data => {
-        const createClarGoodDoc = this.createClarGoodDoc(data);
-
-        if (createClarGoodDoc) {
-          this.openReport(data);
-          this.loading = false;
-          this.close();
-        }
-      },
-      error: error => {
-        this.loading = false;
-
-        //this.onLoadToast('error', 'No se pudo guardar', '');
-      },
-    }); */
   }
 
-  aclaracionAsegurados() {
-    //Recupera información del usuario logeando para luego registrarlo como firmante
+  async aclaracionAsegurados() {
     let token = this.authService.decodeToken();
-
-    //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
-      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
-      //foundation: ",",
-      //id: 1, //ID primaria
+      sender: this.clarificationForm.controls['senderName'].value,
       version: 1,
-      //transmitterId: ",",
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
+      managedTo: this.clarificationForm.controls['addresseeName'].value,
       invoiceLearned: ' ',
-      //invoiceNumber: 1,
       positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
+        this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '211',
       modificationUser: token.name,
-      //worthAppraisal: 1,
       creationDate: new Date(),
-      //rejectNoticeId: 1,
       assignmentInvoiceDate: new Date(),
       mailNotification: this.clarificationForm.controls['webMail'].value,
       areaUserCapture:
@@ -956,20 +879,62 @@ export class NotifyAssetsImproprietyFormComponent
     };
 
     this.loading = true;
-    this.documentService.createClarDocImp(modelReport).subscribe({
-      next: async data => {
-        const createClarGoodDoc = this.createClarGoodDoc(data);
-        if (createClarGoodDoc) {
-          this.openReport(data);
-          this.loading = false;
-          this.close();
-        }
-      },
-      error: error => {
-        this.loading = false;
+    const checkExistDocImp: any = await this.checkDataExist(211);
 
-        //this.onLoadToast('error', 'No se pudo guardar', '');
-      },
+    if (checkExistDocImp == 0) {
+      this.documentService.createClarDocImp(modelReport).subscribe({
+        next: async data => {
+          const createClarGoodDoc = await this.createClarGoodDoc(data);
+          if (createClarGoodDoc) {
+            const updateObservations = await this.updateObservation(
+              this.clarificationForm.get('observations').value
+            );
+
+            if (updateObservations) {
+              this.openReport(data);
+              this.loading = false;
+              this.close();
+            }
+          }
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+    }
+
+    if (checkExistDocImp.id != 0) {
+      this.documentService
+        .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
+        .subscribe({
+          next: async data => {
+            this.openReport(checkExistDocImp);
+            this.loading = false;
+            this.close();
+          },
+          error: error => {
+            this.loading = false;
+
+            //this.onLoadToast('error', 'No se pudo guardar', '');
+          },
+        });
+    }
+  }
+
+  updateObservation(observation: string) {
+    return new Promise((resolve, reject) => {
+      const modalRequest: IRequest = {
+        id: this.idRequest,
+        observations: observation,
+      };
+      this.requestService.update(this.idRequest, modalRequest).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -981,10 +946,13 @@ export class NotifyAssetsImproprietyFormComponent
         clarificationRequestId: docImpro.rejectNoticeId,
       };
       this.documentService.createClarDocGood(formData).subscribe({
-        next: () => {
+        next: response => {
+          this.idclarGoodDoc = response.id;
           resolve(true);
         },
-        error: error => {},
+        error: error => {
+          resolve(false);
+        },
       });
     });
   }
@@ -1020,18 +988,22 @@ export class NotifyAssetsImproprietyFormComponent
 
     const checkExistDocImp: any = await this.checkDataExist(213);
 
-    if (checkExistDocImp?.id != 0) {
+    if (checkExistDocImp.id != 0) {
       this.documentService
         .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
         .subscribe({
-          next: data => {
+          next: async data => {
+            const updateObservations = await this.updateObservation(
+              this.clarificationForm.get('observations').value
+            );
             this.openReport(checkExistDocImp);
+
             this.loading = false;
             this.close();
           },
           error: error => {
             this.loading = false;
-            console.log('No se pudo guardar', error);
+
             //this.onLoadToast('error', 'No se pudo guardar', '');
           },
         });
@@ -1039,12 +1011,18 @@ export class NotifyAssetsImproprietyFormComponent
 
     if (checkExistDocImp == 0) {
       this.documentService.createClarDocImp(modelReport).subscribe({
-        next: data => {
+        next: async data => {
           const createClarGoodDoc = this.createClarGoodDoc(checkExistDocImp);
           if (createClarGoodDoc) {
-            this.openReport(data);
-            this.loading = false;
-            this.close();
+            const updateObservations = await this.updateObservation(
+              this.clarificationForm.get('observations').value
+            );
+
+            if (updateObservations) {
+              this.openReport(data);
+              this.loading = false;
+              this.close();
+            }
           }
         },
         error: error => {
