@@ -77,7 +77,7 @@
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
 
             <span class="fs-4">
-              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
             </span>
           </div>
         </div>
@@ -86,7 +86,7 @@
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
 
             <span class="fs-4">
-              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
+              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
             >
           </div>
         </div>
@@ -481,7 +481,7 @@
                           formControlName="saeMeasureUnit">
                           <option
                             *ngFor="let measureUnit of measureUnits"
-                            [value]="measureUnit.measureTlUnit">
+                            [value]="measureUnit.uomCode">
                             {{ measureUnit.measureTlUnit }}
                           </option>
                         </select>
@@ -916,7 +916,7 @@
                                       formControlName="saeMeasureUnit">
                                       <option
                                         *ngFor="let measureUnit of measureUnits"
-                                        [value]="measureUnit.measureTlUnit">
+                                        [value]="measureUnit.uomCode">
                                         {{ measureUnit.measureTlUnit }}
                                       </option>
                                     </select>
@@ -1335,7 +1335,7 @@
                                   formControlName="saeMeasureUnit">
                                   <option
                                     *ngFor="let measureUnit of measureUnits"
-                                    [value]="measureUnit.measureTlUnit">
+                                    [value]="measureUnit.uomCode">
                                     {{ measureUnit.measureTlUnit }}
                                   </option>
                                 </select>
@@ -1781,7 +1781,7 @@
                                     formControlName="saeMeasureUnit">
                                     <option
                                       *ngFor="let measureUnit of measureUnits"
-                                      [value]="measureUnit.measureTlUnit">
+                                      [value]="measureUnit.uomCode">
                                       {{ measureUnit.measureTlUnit }}
                                     </option>
                                   </select>
@@ -2208,7 +2208,7 @@
                                     formControlName="saeMeasureUnit">
                                     <option
                                       *ngFor="let measureUnit of measureUnits"
-                                      [value]="measureUnit.measureTlUnit">
+                                      [value]="measureUnit.uomCode">
                                       {{ measureUnit.measureTlUnit }}
                                     </option>
                                   </select>
@@ -2568,7 +2568,7 @@
                                   formControlName="saeMeasureUnit">
                                   <option
                                     *ngFor="let measureUnit of measureUnits"
-                                    [value]="measureUnit.measureTlUnit">
+                                    [value]="measureUnit.uomCode">
                                     {{ measureUnit.measureTlUnit }}
                                   </option>
                                 </select>
