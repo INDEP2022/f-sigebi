@@ -6,8 +6,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="form.get('delegation')">
             <ngx-select
               [searchOnInit]="true"
@@ -32,7 +31,7 @@
             </ng-template>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="form.get('subdelegation')">
             <ngx-select
               [form]="form"
@@ -56,7 +55,7 @@
             </ng-template>
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('rangeDate')"
             label="Fechas de recepci&oacute;n">
@@ -71,32 +70,6 @@
               }" />
           </form-field>
         </div>
-        <div class="col-md-2"></div>
-        &acute;
-        <!--<div class="col-md-2">
-          <form-field [control]="form.get('fromMonth')" label="Del mes de">
-            <input
-              type="text"
-              class="form-control"
-              [bsConfig]="bsConfigFromMonth"
-              formControlName="fromMonth"
-              (bsValueChange)="setMinDateEnd($event)"
-              [maxDate]="maxDateStart"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('toMonth')" label="Al mes de">
-            <input
-              type="text"
-              class="form-control"
-              [bsConfig]="bsConfigToMonth"
-              formControlName="toMonth"
-              [maxDate]="maxDateEnd"
-              [minDate]="minDateEnd"
-              bsDatepicker />
-          </form-field>
-        </div>-->
       </div>
     </form>
   </div>
