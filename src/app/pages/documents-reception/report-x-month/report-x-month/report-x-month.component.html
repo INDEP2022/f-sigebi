@@ -1,12 +1,12 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Reporte de recepci&oacute;n documental Diaria</h5>
+    <h5 class="title">Reporte de recepci&oacute;n documental por mes</h5>
   </div>
 
   <div body>
     <form [formGroup]="reportForm" class="form-material">
       <div class="row margin-input">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="reportForm.get('delegation')">
             <ngx-select
               [form]="reportForm"
@@ -21,7 +21,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="reportForm.get('subdelegation')">
             <ngx-select
               [form]="reportForm"
@@ -35,29 +35,44 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field [control]="reportForm.get('PF_MES')" label="Mes">
-            <!-- <input formControlName="PF_MES" class="form-control" bsDatepicker /> -->
-            <input
-              type="text"
-              [bsConfig]="bsConfigFromMonth"
-              #dp="bsDatepicker"
-              bsDatepicker
-              [(bsValue)]="bsValueFromMonth"
-              formControlName="PF_MES"
-              class="form-control ng-pristine ng-valid ng-touched" />
-          </form-field>
-        </div>
+      </div>
+      <div class="row margin-input">
         <div class="col-md-2">
           <form-field [control]="reportForm.get('PF_ANIO')" label="Año">
             <input
               type="text"
               [maxDate]="maxDate"
               [bsConfig]="bsConfigFromYear"
-              #dp="bsDatepicker"
+              (bsValueChange)="validateDateYear($event)"
               bsDatepicker
-              [(bsValue)]="bsValueFromYear"
               formControlName="PF_ANIO"
+              class="form-control ng-pristine ng-valid ng-touched" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="reportForm.get('PF_DELMES')" label="Del Mes">
+            <!-- <input formControlName="PF_MES" class="form-control" bsDatepicker /> -->
+            <input
+              [maxDate]="maxDate1"
+              [minDate]="minDate1"
+              type="text"
+              (bsValueChange)="validateDate($event)"
+              [bsConfig]="bsConfigFromMonth"
+              bsDatepicker
+              formControlName="PF_DELMES"
+              class="form-control ng-pristine ng-valid ng-touched" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="reportForm.get('PF_ALMES')" label="Al Mes">
+            <!-- <input formControlName="PF_MES" class="form-control" bsDatepicker /> -->
+            <input
+              [maxDate]="maxDate1"
+              [minDate]="minDate2"
+              type="text"
+              [bsConfig]="bsConfigFromMonth1"
+              bsDatepicker
+              formControlName="PF_ALMES"
               class="form-control ng-pristine ng-valid ng-touched" />
           </form-field>
         </div>
@@ -88,8 +103,4 @@
       </div>
     </div>
   </div>
-
-  <!--<div footer>
-    
-  </div>-->
 </app-card>
