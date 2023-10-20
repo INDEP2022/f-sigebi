@@ -14,6 +14,7 @@ import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifi
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
@@ -48,7 +49,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     private chatService: ChatClarificationsService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
     private rejectedGoodService: RejectedGoodService,
-    private regionalDelegationService: RegionalDelegationService
+    private regionalDelegationService: RegionalDelegationService,
+    private requestService: RequestService
   ) {
     super();
     this.today = new Date();
@@ -70,8 +72,18 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   }
 
   getInfoDoc() {
+    let documentTypeId: number = 0;
+    const idClarType = this.notification.chatClarification.idClarificationType;
+    if (
+      (this.request.typeOfTransfer == 'PGR_SAE' && idClarType == '2') ||
+      (this.request.typeOfTransfer == 'SAT_SAE' && idClarType == '2')
+    ) {
+      documentTypeId = 216;
+    }
+
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.applicationId'] = this.idSolicitud;
+    params.getValue()['filter.documentTypeId'] = documentTypeId;
     this.documentService
       .getAllClarificationDocImpro(params.getValue())
       .subscribe({
@@ -172,7 +184,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       rejectNoticeId: this.notification.rejectNotificationId,
     };
     const checkExistDocImp: any = await this.checkDataExist();
-    if (checkExistDocImp?.id != 0) {
+    if (checkExistDocImp.id != 0) {
       this.documentService
         .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
         .subscribe({
@@ -222,6 +234,23 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
             resolve(0);
           },
         });
+    });
+  }
+
+  updateObservation(observation: string) {
+    return new Promise((resolve, reject) => {
+      const modalRequest: IRequest = {
+        id: this.idSolicitud,
+        observations: observation,
+      };
+      this.requestService.update(this.idSolicitud, modalRequest).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
     });
   }
 

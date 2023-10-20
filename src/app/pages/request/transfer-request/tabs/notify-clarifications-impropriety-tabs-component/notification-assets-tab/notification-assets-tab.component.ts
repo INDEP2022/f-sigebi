@@ -804,6 +804,7 @@ export class NotificationAssetsTabComponent
   aceptClarification() {
     if (this.rowSelected) {
       const notification = this.selectedRow;
+      console.log('notification', notification);
       let aclaration: boolean = false;
       let impro: boolean = false;
       let clarificationType1: boolean = false;
@@ -1290,6 +1291,7 @@ export class NotificationAssetsTabComponent
 
         this.goodService.create(_good).subscribe({
           next: response => {
+            console.log('individualización creada');
             this.GoodDataAsetService.updateGoodFinderRecord(
               response.id,
               response.goodId

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
@@ -8,10 +8,7 @@ import {
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
@@ -23,20 +20,13 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-export interface IReport {
-  data: File;
-}
 
 @Component({
-  selector: 'app-report',
-  templateUrl: './report.component.html',
-  styles: [],
+  selector: 'app-report-x-month',
+  templateUrl: './report-x-month.component.html',
+  styleUrls: [],
 })
-export class ReportComponent extends BasePage implements OnInit {
-  @Output() sendSearchForm = new EventEmitter<any>();
-  @Output() resetForm = new EventEmitter<boolean>();
-  @Input() delegationField: string = 'delegation';
-  @Input() subdelegationField: string = 'subdelegation';
+export class ReportXMonthComponent extends BasePage implements OnInit {
   flyersForm: FormGroup;
   minModeFromMonth: BsDatepickerViewMode = 'month';
   minModeFromYear: BsDatepickerViewMode = 'year';
@@ -49,6 +39,7 @@ export class ReportComponent extends BasePage implements OnInit {
   bsValueFromYear: Date = new Date();
   showSearchForm: boolean = true;
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
+  bsConfigFromMonth1: Partial<BsDatepickerConfig>;
   bsConfigFromYear: Partial<BsDatepickerConfig>;
   searchForm: ModelForm<any>;
   reportForm: FormGroup;
@@ -63,12 +54,16 @@ export class ReportComponent extends BasePage implements OnInit {
   delegations: DefaultSelect = new DefaultSelect([], 0);
   subDelegations: DefaultSelect = new DefaultSelect([], 0);
   maxDate: Date = new Date();
-  get delegation() {
-    return this.reportForm.get(this.delegationField);
-  }
-  get subdelegation() {
-    return this.reportForm.get(this.subdelegationField);
-  }
+  minDate: Date;
+
+  maxDate1: Date;
+  minDate1: Date;
+
+  maxDate2: Date;
+  minDate2: Date;
+
+  year: number;
+
   constructor(
     private fb: FormBuilder,
     private reportService: ReportService,
@@ -86,47 +81,18 @@ export class ReportComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     const params = new ListParams();
-    this.getDelegation(params);
-    this.getSubDelegations(params);
     this.startCalendars();
   }
-  getDelegation(params?: ListParams) {
-    this.delegationService.getAll(params).subscribe({
-      next: data => {
-        this.selectedDelegation = new DefaultSelect(data.data, data.count);
-      },
-      error: err => {
-        console.log(err);
-        this.selectedDelegation = new DefaultSelect();
-        this.onLoadToast('error', 'Error', err);
-      },
-    });
-  }
 
-  getSubDelegations(params?: ListParams) {
-    const paramsF = new FilterParams();
-    paramsF.addFilter(
-      'delegationNumber',
-      this.reportForm.get(this.delegationField).value
-    );
-    this.printFlyersService.getSubdelegations2(paramsF.getParams()).subscribe({
-      next: data => {
-        this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-
-        this.onLoadToast('error', 'Error', error);
-      },
-    });
-  }
   startCalendars() {
     this.bsConfigFromMonth = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromMonth,
+        dateInputFormat: 'MM',
+      }
+    );
+    this.bsConfigFromMonth1 = Object.assign(
       {},
       {
         minMode: this.minModeFromMonth,
@@ -146,41 +112,22 @@ export class ReportComponent extends BasePage implements OnInit {
     this.reportForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      PF_MES: [null, [Validators.required]],
+      PF_DELMES: [null, [Validators.required]],
+      PF_ALMES: [null, [Validators.required]],
       PF_ANIO: [null, [Validators.required]],
     });
+    this.reportForm.get('PF_ALMES').disable();
     this.reportForm.get('subdelegation').disable();
+    this.reportForm.get('PF_DELMES').disable();
   }
 
   save() {}
 
-  confirm(): void {
-    let params = {
-      PN_DELEG: this.reportForm.controls['delegation'].value,
-      PN_SUBDEL: Number(this.reportForm.controls['subdelegation'].value),
-      PF_MES: this.bsValueFromMonth.getFullYear(),
-      PF_ANIO: this.bsValueFromYear.getMonth(),
-    };
-
-    //this.showSearch = true;
-
-    setTimeout(() => {
-      this.onLoadToast('success', 'procesando', '');
-    }, 1000);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?PN_DELEG=${params.PN_DELEG}&PN_SUBDEL=${params.PN_SUBDEL}&PF_MES=${params.PF_MES}&PF_ANIO=${params.PF_ANIO}`;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
-    window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
-    setTimeout(() => {
-      this.onLoadToast('success', 'Reporte', 'Generado Correctamente');
-    }, 2000);
-
-    this.loading = false;
-    this.cleanForm();
-  }
-
   cleanForm(): void {
     this.reportForm.reset();
     this.reportForm.get('subdelegation').disable();
+    this.reportForm.get('PF_ALMES').disable();
+    this.reportForm.get('PF_DELMES').disable();
   }
 
   Generar() {
@@ -192,7 +139,7 @@ export class ReportComponent extends BasePage implements OnInit {
     };
 
     this.siabService
-      // .fetchReport('RGEROFPRECEPDOCUM', params)
+      // .fetchReport('RGEROFPESTADIXMES', params)
       .fetchReport('blank', params)
       .subscribe(response => {
         // response=null;
@@ -306,4 +253,32 @@ export class ReportComponent extends BasePage implements OnInit {
     }
   }
   changeSubDelegation(event: any) {}
+
+  validateDate(event: Date) {
+    //console.log(event);
+    if (event) {
+      const month = String(event.getMonth() + 1).padStart(2, '0');
+      const dateStart = `${this.year}/${month}/01`;
+      const dateEnd = `${this.year}/12/01`;
+      const start = new Date(dateStart);
+      //const end = new Date(dateEnd);
+      this.minDate2 = start;
+      //this.maxDate2 = end;
+      this.reportForm.get('PF_ALMES').enable();
+    }
+  }
+
+  validateDateYear(event: Date) {
+    if (event) {
+      console.log(event);
+      this.year = event.getFullYear();
+      const dateStart = `${this.year}/01/01`;
+      const dateEnd = `${this.year}/12/01`;
+      const start = new Date(dateStart);
+      const end = new Date(dateEnd);
+      this.minDate1 = start;
+      this.maxDate1 = end;
+      this.reportForm.get('PF_DELMES').enable();
+    }
+  }
 }

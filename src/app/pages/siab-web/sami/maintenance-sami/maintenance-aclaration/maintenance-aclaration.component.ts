@@ -78,7 +78,7 @@ export class MaintenanceAclarationComponent extends BasePage implements OnInit {
             .pipe(catchError(x => of(null)))
         );
         if (!res) {
-          this.alert('error', 'Actualización de Estatus', 'No realizada');
+          this.alert('warning', 'Error al Actualizar el Estatus', '');
           this.loader.load = false;
           return;
         }
@@ -93,14 +93,10 @@ export class MaintenanceAclarationComponent extends BasePage implements OnInit {
         );
         if (!res2) {
           this.loader.load = false;
-          this.alert('error', 'Actualización de Estatus', 'No realizada');
+          this.alert('warning', 'Error al Actualizar el Estatus', '');
           return;
         } else {
-          this.alert(
-            'success',
-            'Actualización de Estatus',
-            'Realizada Correctamente'
-          );
+          this.alert('success', 'Actualización Correctamente', '');
           this.clear();
         }
         this.loader.load = false;
