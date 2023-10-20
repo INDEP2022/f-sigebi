@@ -62,6 +62,6 @@ export class ParametersModService extends HttpService {
   }
 
   getByParameter(parameter: string) {
-    return this.get(`${this.endpoint}/parameter/${parameter}`);
+    return this.get(`parameters-mod/parameter/${parameter}`);
   }
 }

@@ -10,6 +10,7 @@ import { BillingMRoutingModule } from './billing-m-routing.module';
 import { BillingScreenComponent } from './billing-screen/billing-screen.component';
 import { ClientComponent } from './billing-screen/components-table/client/client.component';
 import { DatCancComponent } from './billing-screen/dat-canc/dat-canc.component';
+import { UpdateDetfacturaComponent } from './billing-screen/update-detfactura/update-detfactura.component';
 import { UpdateFacturaComponent } from './billing-screen/update-factura/update-factura.component';
 
 export const customCurrencyMaskConfig = {
@@ -30,6 +31,7 @@ export const customCurrencyMaskConfig = {
     DatCancComponent,
     UpdateFacturaComponent,
     ClientComponent,
+    UpdateDetfacturaComponent,
   ],
   imports: [
     CommonModule,

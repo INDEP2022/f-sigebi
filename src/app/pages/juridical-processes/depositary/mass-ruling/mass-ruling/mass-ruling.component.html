@@ -142,7 +142,7 @@
                     [disabled]="
                       !form.value.expedientNumber ||
                       !form.value.id ||
-                      !form.value.typeDict ||
+                      !form.getRawValue().typeDict ||
                       !form.value.delete
                     "
                     class="btn btn-primary active btn-sm active mr-3"
@@ -151,11 +151,10 @@
                   </button>
                   <button
                     [disabled]="
-                      !form.value.expedientNumber ||
                       !form.value.id ||
-                      !form.value.typeDict ||
-                      !form.value.delete ||
-                      !form.value.passOfficeArmy
+                      !form.getRawValue().typeDict ||
+                      !form.getRawValue().passOfficeArmy ||
+                      !form.getRawValue().userDict
                     "
                     type="button"
                     class="btn btn-primary active btn-sm active mr-3"
@@ -434,6 +433,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered table-responsive'"
               [settings]="tableSettings"
+              (userRowSelect)="rowsSelected($event)"
               [source]="dataTable2"></ng2-smart-table>
           </div>
           <div>
