@@ -5,7 +5,7 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <!-- <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('delegation')">
             <ngx-select
               [form]="form"
@@ -18,8 +18,8 @@
               (change)="getDelegations($event)">
             </ngx-select>
           </form-field>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        </div> -->
+        <!-- <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('subdelegation')">
             <ngx-select
               [form]="form"
@@ -31,6 +31,55 @@
               [control]="'subdelegation'"
               (change)="getSubdelegations($event)">
             </ngx-select>
+          </form-field>
+        </div> -->
+        <div class="col-md-6">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="onDelegationsChange($event)"
+              [labelTemplate]="delegationLabel"
+              [optionTemplate]="delegationOption">
+            </ngx-select>
+            <ng-template #delegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #delegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="onSubDelegationsChange($event)"
+              [labelTemplate]="subdelegationLabel"
+              [optionTemplate]="subdelegationOption">
+            </ngx-select>
+            <ng-template #subdelegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #subdelegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
       </div>
