@@ -367,6 +367,14 @@ export class MassRulingComponent
       return;
     } else {
       try {
+        if (!this.formCargaMasiva.value.identificadorCargaMasiva) {
+          this.onLoadToast(
+            'warning',
+            '',
+            'Debe Ingresar Un Identificador de Carga Masiva y Cargar los Bienes del Identificador'
+          );
+          return;
+        }
         let count = await this.getCount(this.goodNumber);
         let countData: any = count;
         const statusCount = countData.data[0].count;
@@ -387,7 +395,7 @@ export class MassRulingComponent
         this.historyGoodService.getUpdateGoodXHist(this.goodNumber).subscribe({
           next: resp => {
             //console.log(resp.data[0].estado);
-            this.updateStatus(this.goodNumber, status);
+            //this.updateStatus(this.goodNumber, status);
             this.onLoadToast('success', 'Proceso Terminado', '');
             this.onClickBtnClear();
           },
@@ -426,7 +434,7 @@ export class MassRulingComponent
         },
       });*/
 
-      if (this.dataTable.length < 1) {
+      /*if (this.dataTable.length < 1) {
         this.onLoadToast(
           'warning',
           '',
@@ -439,7 +447,7 @@ export class MassRulingComponent
       if (this.isFileLoad) {
         body['goodIds'] = /* this.dataTable.map(x => {
         return { no_bien: x.goodNumber }; 
-      });*/ this.dataFile.map(x => {
+      }); this.dataFile.map(x => {
           return { no_bien: x.goodNumber };
         });
       } else {
@@ -472,7 +480,7 @@ export class MassRulingComponent
           this.onLoadToast('warning', '', 'Error al Eliminar los Bienes');
           this.btnsEnabled.btnGoodDictation = false;
         },
-      });
+      });*/
     }
   }
 
@@ -894,7 +902,7 @@ export class MassRulingComponent
         TIPO_VOL,
       });*/
     } catch (ex) {
-      console.log({ ex });
+      this.onLoadToast('error', '', 'Reporte No Disponible');
     }
   }
 
@@ -919,7 +927,7 @@ export class MassRulingComponent
         TIPO_VOL,
       });*/
     } catch (ex) {
-      console.log({ ex });
+      this.onLoadToast('error', '', 'Reporte No Disponible');
     }
   }
 
@@ -932,7 +940,7 @@ export class MassRulingComponent
         TIPO_VOL,
       });
     } catch (ex) {
-      console.log({ ex });
+      this.onLoadToast('error', '', 'Reporte No Disponible');
     }
   }
 
@@ -1117,8 +1125,13 @@ export class MassRulingComponent
 
     try {
       let VIDEN = await this.findGoodAndDictXGood1();
-      let dataVIDEN: any = VIDEN;
-      vIDENTI = dataVIDEN.data[0].substr;
+      if (VIDEN) {
+        let dataVIDEN: any = VIDEN;
+        vIDENTI = dataVIDEN.data[0].substr;
+      } else {
+        vIDENTI = '';
+      }
+
       //console.log(dataVIDEN.data[0].substr);
     } catch (error: any) {
       if (error.status >= 400 && error.status < 500) {
@@ -1129,7 +1142,7 @@ export class MassRulingComponent
         );
         throw error;
       }
-      this.alert('warning', 'info', error?.message);
+      //this.alert('warning', 'info', error?.message);
       throw error;
     }
 
