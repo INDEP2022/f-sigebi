@@ -155,6 +155,23 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   valFiltros: boolean;
 
   limit: FormControl = new FormControl(500);
+  btnLoading: boolean = false;
+  btnLoading2: boolean = false;
+  btnLoading3: boolean = false;
+  btnLoading4: boolean = false;
+  btnLoading5: boolean = false;
+  btnLoading6: boolean = false;
+  btnLoading7: boolean = false;
+  btnLoading8: boolean = false;
+  btnLoading9: boolean = false;
+  btnLoading10: boolean = false;
+  btnLoading11: boolean = false;
+  btnLoading12: boolean = false;
+  btnLoading13: boolean = false;
+  btnLoading14: boolean = false;
+  btnLoading15: boolean = false;
+  btnLoading16: boolean = false;
+  btnLoading17: boolean = false;
   constructor(
     private fb: FormBuilder,
     private msInvoiceService: MsInvoiceService,
@@ -599,7 +616,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   }
   isBillingDetSelected(_billing: any) {
     const exists = this.selectedbillingsDet.find(
-      (billing: any) => billing.billId == _billing.billId
+      (billing: any) => billing.detinvoiceId == _billing.detinvoiceId
     );
     return !exists ? false : true;
   }
@@ -608,13 +625,14 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       this.selectedbillingsDet.push(billing);
     } else {
       this.selectedbillingsDet = this.selectedbillingsDet.filter(
-        (_billing: any) => _billing.billId != billing.billId
+        (_billing: any) => _billing.detinvoiceId != billing.detinvoiceId
       );
     }
   }
 
   ngOnInit(): void {
     this.params.getValue().limit = 500;
+    this.params2.getValue().limit = 500;
     this.prepareForm();
     this.billingCommunicationService.ejecutarFuncion$.subscribe((next: any) => {
       this.params = next;
@@ -630,7 +648,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   }
 
   async cambiarTab(numberTab: any) {
-    // Cambia a la pestaña deseada utilizando selectedIndex
     this.tabset.tabs[numberTab].active = true;
   }
   filterTable1() {
@@ -904,9 +921,12 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      idEvent: [null, Validators.pattern(NUMBERS_PATTERN)],
-      idLotPublic: [null],
-      date: [null],
+      idEvent: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+      ],
+      idLotPublic: [null, Validators.required],
+      date: [null, Validators.required],
       cause: [null],
       descause: [null],
       fec: [null],
@@ -942,12 +962,17 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   }
   async getBillings(filter: string) {
     // Facturas - COMER_FACTURAS
-    this.loading = true;
-    this.totalItems = 0;
+
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+
+    // if (!params['filter.eventId'])
+    //   return this.alert('warning', 'Debe especificar un evento', '')
+
+    this.loading = true;
+    this.totalItems = 0;
 
     if (params['filter.impressionDate']) {
       const fechas = params['filter.impressionDate'].split(',');
@@ -1023,8 +1048,10 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           // item['priceeg'] = price.priceeg;
         });
         Promise.all(result).then(async resp => {
+          if (response.count > 0) {
+            await this.funcPriceVatTotal(response.data[0]);
+          }
           this.form2.get('counter').patchValue(response.count);
-          await this.funcPriceVatTotal(response.data[0]);
           this.getSum(); // OBTENER SUMAS TOTALES
           this.data.load(response.data);
           this.data.refresh();
@@ -2068,7 +2095,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
   }
 
   cancelBilling() {
-    if (!this.causeBlkCtrl) {
+    if (!this.causeBlkCtrl.value) {
       this.visualCancelYesNot(1); // --muestras los campos de la causa
       //   GO_ITEM('BLK_CTRL.CAUSA');
     } else {
@@ -2218,16 +2245,14 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         this.alert('warning', 'Debe ingresar el No. Evento', '')
       );
     // --VALIDA QUE EXISTAN LOTES VALIDOS PARA FACTURAR-- //
-    const lotPublic = !this.form.get('idLotPublic').value
+    const lotPublic = !this.idLotPublicBlkCtrl.value
       ? null
-      : this.form.get('idLotPublic').value;
+      : this.idLotPublicBlkCtrl.value;
 
-    const obj: any = {
-      idEvent: eventId,
-      idLotPub: lotPublic,
-      formKey: 'FCOMER086_I',
-    };
-    let counter: any = await this.billingsService.getApplicationLotCounter(obj); // CAMBIAR POR EL ENDPOINT NUEVO //
+    let counter: any = await this.billingsService.getCountBatch(
+      eventId,
+      lotPublic
+    );
     if (counter == 0)
       return this.alert(
         'warning',
@@ -2238,39 +2263,33 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     // --VALIDA QUE HAYA LOTES PARA FACTURAR--
     // --SE ADICIONA LA VALIDACIÓN DE MANDATOS QUE NO SE FACTURAN--
 
-    const obj2: any = {
-      idEvent: eventId,
-      idLotPub: lotPublic,
-    };
-    counter = await this.billingsService.getApplicationBugInfoCounter(obj2); // CAMBIAR POR EL ENDPOINT NUEVO //
+    counter = await this.billingsService.getApplicationGetCountbyMandatoNotin(
+      eventId,
+      lotPublic
+    );
     if (counter == 0)
       return this.alert(
         'warning',
         'No se encontraron Lotes/Pagos para facturar, verifique.',
         ''
       );
-
-    const obj3: any = {
-      idEvent: eventId,
-      idLotPub: lotPublic,
-    };
     const count_noFact: any =
-      await this.billingsService.getApplicationNofactCounter(obj3); // CAMBIAR POR EL ENDPOINT NUEVO //
+      await this.billingsService.getApplicationGetCountbyMandatoin(
+        eventId,
+        lotPublic
+      );
     if (count_noFact > 0)
       return this.alert(
         'warning',
-        `No se generan ${count_noFact} facturas por Mandatos no facturables`,
+        `No se generan ${count_noFact} facturas por mandatos no facturables`,
         ''
       );
 
-    const obj4: any = {
-      idEvent: eventId,
-      idLotPub: lotPublic,
-    };
-
-    const counter1: any = await this.billingsService.getApplicationCounter1(
-      obj4
-    ); // CAMBIAR POR EL ENDPOINT NUEVO //
+    const counter1: any =
+      await this.billingsService.getApplicationGetCount1GenXpago(
+        eventId,
+        lotPublic
+      );
     if (counter <= counter1)
       return this.alert('warning', `No se tienen pagos a facturar.`, '');
     this.alertQuestion(
@@ -2655,12 +2674,16 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       !this.idEventBlkCtrl.value &&
       !this.idLotPublicBlkCtrl.value &&
       !this.fecBlkCtrl.value &&
+      !this.fec2BlkCtrl.value &&
       !this.dateBlkCtrl.value
     )
-      return this.alert(
-        'warning',
-        'Ingrese datos para filtrar en la tabla de Facturas',
-        ''
+      return (
+        this.form.markAllAsTouched(),
+        this.alert(
+          'warning',
+          'Ingrese datos para filtrar en la tabla de Facturas',
+          ''
+        )
       );
 
     if (this.idEventBlkCtrl.value) {
@@ -2679,12 +2702,13 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       delete this.params.getValue()['filter.batchId'];
     }
 
-    if (this.fecBlkCtrl.value && !this.dateBlkCtrl.value) {
-      console.log('this.fecBlkCtrl.value', this.fecBlkCtrl.value);
-      const fechas = this.fecBlkCtrl.value;
-      console.log('fechas', fechas);
-      var fecha1 = new Date(fechas[0]);
-      var fecha2 = new Date(fechas[1]);
+    if (
+      this.fecBlkCtrl.value &&
+      this.fec2BlkCtrl.value &&
+      !this.dateBlkCtrl.value
+    ) {
+      var fecha1 = new Date(this.fecBlkCtrl.value);
+      var fecha2 = new Date(this.fec2BlkCtrl.value);
 
       // var fecha1 = new Date(this.fecBlkCtrl.value);
       // var fecha2 = new Date(this.fec2BlkCtrl.value);
@@ -2707,7 +2731,41 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       ] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
     }
 
-    if (!this.fecBlkCtrl.value && this.dateBlkCtrl.value) {
+    if (
+      this.fecBlkCtrl.value &&
+      !this.fec2BlkCtrl.value &&
+      !this.dateBlkCtrl.value
+    ) {
+      var fecha1 = new Date(this.fecBlkCtrl.value);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      this.params.getValue()[
+        'filter.impressionDate'
+      ] = `$btw:${fechaFormateada1},${fechaFormateada1}`;
+    }
+
+    if (
+      !this.fecBlkCtrl.value &&
+      this.fec2BlkCtrl.value &&
+      !this.dateBlkCtrl.value
+    ) {
+      var fecha1 = new Date(this.fec2BlkCtrl.value);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      this.params.getValue()[
+        'filter.impressionDate'
+      ] = `$btw:${fechaFormateada1},${fechaFormateada1}`;
+    }
+
+    if (
+      this.fecBlkCtrl.value &&
+      this.fec2BlkCtrl.value &&
+      this.dateBlkCtrl.value
+    ) {
       var fecha1 = new Date(this.dateBlkCtrl.value);
       var ano1 = fecha1.getFullYear();
       var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
@@ -2718,7 +2776,11 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       ] = `$btw:${fechaFormateada1},${fechaFormateada1}`;
     }
 
-    if (this.fecBlkCtrl.value && this.dateBlkCtrl.value) {
+    if (
+      !this.fecBlkCtrl.value &&
+      !this.fec2BlkCtrl.value &&
+      this.dateBlkCtrl.value
+    ) {
       var fecha1 = new Date(this.dateBlkCtrl.value);
       var ano1 = fecha1.getFullYear();
       var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
@@ -2729,7 +2791,11 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       ] = `$btw:${fechaFormateada1},${fechaFormateada1}`;
     }
 
-    if (!this.fecBlkCtrl.value && !this.dateBlkCtrl.value) {
+    if (
+      !this.fecBlkCtrl.value &&
+      !this.fec2BlkCtrl.value &&
+      !this.dateBlkCtrl.value
+    ) {
       delete this.params.getValue()['filter.impressionDate'];
     }
 
@@ -2814,6 +2880,39 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     this.billingCommunicationService.ejecutarFuncion$.subscribe((next: any) => {
       console.log('SI WILM', next);
       //  this.ejecutarFuncion();
+    });
+  }
+
+  deleteDet() {
+    // ELIMINAXBIEN
+    if (this.selectedbillingsDet.length == 0)
+      return this.alert(
+        'warning',
+        'No hay detalles de facturas seleccionadas',
+        ''
+      );
+    this.btnLoading17 = true;
+    let result = this.selectedbillingsDet.map(async item => {
+      let obj = {
+        eventId: item.eventId,
+        batchId: item.batchId,
+        invoiceId: item.billId,
+        goodId: item.goodNot,
+      };
+      await this.billingsService.deleteApplicationDeleteIfExists(obj);
+
+      let obj_ = {
+        eventId: item.eventId,
+        batchId: item.batchId,
+        invoiceId: item.billId,
+      };
+      await this.billingsService.putApplicationComerBillsAmount(obj_);
+    });
+
+    Promise.all(result).then(resp => {
+      this.btnLoading17 = false;
+      this.getDetailsFacturas();
+      this.alert('success', 'Proceso terminado correctamente', '');
     });
   }
 }

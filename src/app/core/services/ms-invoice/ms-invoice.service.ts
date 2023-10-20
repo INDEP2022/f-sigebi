@@ -247,4 +247,48 @@ export class MsInvoiceService extends HttpService {
   updateDetBillings(body: any) {
     return this.put(`${ENDPOINT_INVOICE.ComerCetinvoices}`, body);
   }
+
+  getCountBatch(event: number, batch: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.CountBatch}?eventId=${event}&batch=${batch}&screen=FCOMER086_I`
+    );
+  }
+
+  getApplicationGetCountbyMandatoin(event: number, batch: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationGetCountbyMandatoin}?eventId=${event}&batch=${batch}`
+    );
+  }
+
+  getValidBatch(event: number, batch: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ValidBatch}?eventId=${event}&batch=${batch}`
+    );
+  }
+
+  getApplicationGetCountbyMandatoNotin(event: number, batch: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationGetCountbyMandatoNotin}?eventId=${event}&batch=${batch}`
+    );
+  }
+
+  getApplicationGetCount1GenXpago(event: number, batch: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationGetCount1GenXpago}?eventId=${event}&batch=${batch}`
+    );
+  }
+
+  deleteApplicationDeleteIfExists(body: any) {
+    return this.delete<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationDeleteIfExists}`,
+      body
+    );
+  }
+
+  putApplicationComerBillsAmount(body: any) {
+    return this.put<IListResponse>(
+      `${ENDPOINT_INVOICE.ApplicationUpdateTotalIvaMonto}`,
+      body
+    );
+  }
 }

@@ -158,6 +158,14 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     return this.httpClient.put(path, body);
   }
 
+  postGoodReceptionInvent(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.httpClient.post(
+      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/get-data-and-insert-dbo?${params}`,
+      {}
+    );
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

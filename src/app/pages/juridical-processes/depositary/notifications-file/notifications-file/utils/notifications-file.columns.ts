@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const NOTIFICATIONS_FILE_LOAD_COLUMNS = {
@@ -9,19 +9,36 @@ export const NOTIFICATIONS_FILE_LOAD_COLUMNS = {
   },
   captureDate: {
     title: 'Fecha de Captura',
-    type: 'string',
-    valuePrepareFunction: (captureDate: Date) => {
-      return captureDate ? format(new Date(captureDate), 'dd/MM/yyyy') : '';
-    },
+    // type: 'string',
+    // valuePrepareFunction: (captureDate: Date) => {
+    //   return captureDate ? format(new Date(captureDate), 'dd/MM/yyyy') : '';
+    // },
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   receiptDate: {
     title: 'Fecha de Recepción',
-    type: 'string',
-    valuePrepareFunction: (captureDate: Date) => {
-      return captureDate ? format(new Date(captureDate), 'dd/MM/yyyy') : '';
-    },
+    // type: 'string',
+    // valuePrepareFunction: (captureDate: Date) => {
+    //   return captureDate ? format(new Date(captureDate), 'dd/MM/yyyy') : '';
+    // },
+    // sort: false,
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   officeExternalKey: {
     title: 'No. Oficio',

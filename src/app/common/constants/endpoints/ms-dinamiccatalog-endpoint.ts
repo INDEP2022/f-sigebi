@@ -7,4 +7,5 @@ export enum DinamicCatalogEndPoints {
   PostQuery = 'application/get-eat-detinvoice-query',
   GetTvaltable1 = 'tval-table-1',
   getMax = 'tval-table-1/getMax/',
+  GetDistinic = 'tval-table-1/getDistinct',
 }
