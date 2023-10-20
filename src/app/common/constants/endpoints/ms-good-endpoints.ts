@@ -98,6 +98,7 @@ export enum GoodProcessPoints {
   RegFinalFile = 'application/regFinalFile',
   RegFile = 'application/regFile',
   GoodxStatusXtypeNumber = 'application/getExistsGoodxStatusXtypeNumber',
+  ApplicationGetData = 'application/getData',
 }
 
 export enum GoodFinderEndpoint {

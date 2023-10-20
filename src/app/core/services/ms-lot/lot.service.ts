@@ -251,6 +251,18 @@ export class LotService extends HttpService {
     );
   }
 
+  clientsTc(body: {
+    file: File;
+    lifMessageYesNo: string;
+    eventId: string | number;
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file);
+    formData.append('lifMessageYesNo', body.lifMessageYesNo);
+    formData.append('eventId', body.eventId as string);
+    return this.post('apps/clients-tc', formData);
+  }
+
   loadInvoiceData(body: {
     eventId: string | number;
     lot: string | number;
@@ -260,13 +272,13 @@ export class LotService extends HttpService {
     const { file, lot, eventId, pDirection } = body;
     const formData = new FormData();
     formData.append('file', file, file.name);
-    formData.append('eventId', eventId ? `${eventId}` : null);
+    formData.append('eventId', eventId ? `${eventId}` : '');
     if (lot) {
-      formData.append('pLot', lot ? `${lot}` : null);
-      formData.append('lot', lot ? `${lot}` : null);
+      formData.append('pLot', lot ? `${lot}` : '');
+      formData.append('lot', lot ? `${lot}` : '');
     }
 
-    formData.append('pEvent', eventId ? `${eventId}` : null);
+    formData.append('pEvent', eventId ? `${eventId}` : '');
 
     formData.append('pDirection', pDirection);
     return this.post('apps/load-data-billing', formData);
@@ -427,6 +439,38 @@ export class LotService extends HttpService {
 
   comerLotsClientsPayrefSum(idEvent: string | number) {
     return this.get(`apps/get-comer-lots-clients-payref-sum/${idEvent}`);
+  }
+
+  pupImpExcelBatchesCustomer(body: {
+    file: File;
+    lifMessageYesNo: string;
+    eventId: number | string;
+    direction: 'M' | 'I';
+    tpEventId: string | number;
+    pClientId: string | number;
+    pLotId: string | number;
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file);
+    formData.append('lifMessageYesNo', body.lifMessageYesNo as string);
+    formData.append('eventId', body.eventId as string);
+    formData.append('direction', body.direction as string);
+    formData.append('tpEventId', body.tpEventId as string);
+    formData.append('pClientId', body.pClientId as string);
+    formData.append('pLotId', body.pLotId as string);
+    return this.post('apps/pup-imp-excel-batches-customer', formData);
+  }
+
+  loadGoodsBilling(body: {
+    file: File;
+    eventId: string | number;
+    pLot: string | number;
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file);
+    formData.append('eventId', body.eventId as string);
+    formData.append('pLot', body.pLot as string);
+    return this.post('apps/load-goods-billing', formData);
   }
 
   pupProcEnvSirsae(body: IPupProcEnvSirsae) {
