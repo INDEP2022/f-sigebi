@@ -192,24 +192,27 @@
                         <div class="col-md-3">
                           <form-field
                             [control]="form.get('fec')"
-                            label="Fecha Inicial y Fecha Final: ">
+                            label="Fecha Inicial: ">
                             <input
                               type="text"
                               class="form-control"
                               formControlName="fec"
-                              bsDaterangepicker
-                              [bsConfig]="{
-                                dateInputFormat: 'DD-MM-YYYY',
-                                displayOneMonthRange: true
-                              }" />
-                          </form-field>
-                        </div>
-                        <!-- <div class="col-md-3">
-                          <form-field [control]="form.get('fec2')" label="Fecha Final:">
-                            <input type="text" class="form-control" formControlName="fec2" bsDatepicker
+                              bsDatepicker
                               [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
                           </form-field>
-                        </div> -->
+                        </div>
+                        <div class="col-md-3">
+                          <form-field
+                            [control]="form.get('fec2')"
+                            label="Fecha Final:">
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="fec2"
+                              bsDatepicker
+                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                          </form-field>
+                        </div>
                       </div>
                       <div class="row text-center justify-content-center mt-5">
                         <div class="col-md-2">
@@ -580,11 +583,17 @@
                       [leftList]="true"></app-columns-select>
                     <div>
                       <button
+                        [ngClass]="{ loading: btnLoading17 }"
+                        [disabled]="btnLoading17"
+                        (click)="deleteDet()"
                         type="button"
                         class="btn btn-primary btn-sm active mb-3 mr-3">
-                        Eliminar
+                        Elimina
                         <span
-                          ><i aria-hidden="true" class="fa fa-trash"></i
+                          ><i
+                            *ngIf="!btnLoading17"
+                            aria-hidden="true"
+                            class="fa fa-trash"></i
                         ></span>
                       </button>
                     </div>
@@ -603,7 +612,11 @@
                       [source]="data2">
                     </ng2-smart-table>
                   </ng-scrollbar>
-                  <app-pagination [params]="params2" [totalItems]="totalItems2">
+                  <app-pagination
+                    [params]="params2"
+                    [totalItems]="totalItems2"
+                    [limit]="limit"
+                    [pageSizeOptions]="[500]">
                   </app-pagination>
                 </div>
               </div>
