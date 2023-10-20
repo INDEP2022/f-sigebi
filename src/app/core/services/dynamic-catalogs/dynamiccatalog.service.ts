@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DinamicCatalogEndPoints } from 'src/app/common/constants/endpoints/ms-dinamiccatalog-endpoint';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 
 @Injectable({
@@ -43,5 +44,9 @@ export class DynamicCatalogsService extends HttpService {
 
   GetMax(value: number) {
     return this.get(`${DinamicCatalogEndPoints.getMax}/${value}`);
+  }
+
+  getDistinic(params: ListParams) {
+    return this.get(DinamicCatalogEndPoints.GetDistinic, params);
   }
 }
