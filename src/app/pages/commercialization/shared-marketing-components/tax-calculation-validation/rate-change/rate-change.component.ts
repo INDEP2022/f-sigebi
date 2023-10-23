@@ -74,7 +74,7 @@ export class RateChangeComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     if (this.dataDet) {
-      console.log('data dataDet ', this.dataDet);
+      console.error('data dataDet ', this.dataDet);
       console.log(
         'Tasa terreno ',
         this.convertDecToInteger(this.dataDet.terrainRate)
