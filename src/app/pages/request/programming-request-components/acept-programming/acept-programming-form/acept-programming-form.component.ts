@@ -28,6 +28,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
@@ -135,6 +136,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   nameState: string = '';
   nameWarehouse: string = '';
   formLoadingTransportable: boolean = false;
+  loadingReportGoods: boolean = false;
   formLoadingGuard: boolean = false;
   formLoadingWarehouse: boolean = false;
   paramsGuardGoods = new BehaviorSubject<ListParams>(new ListParams());
@@ -169,7 +171,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private stateService: StateOfRepublicService,
     private domicilieService: DomicileService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -200,7 +203,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   getProgrammingId() {
-    this.formLoading = true;
+    //this.formLoading = true;
     this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
@@ -788,7 +791,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   showWarehouseEmail() {
     return new Promise((resolve, reject) => {
-      let count: number = 0;
       const params = new BehaviorSubject<ListParams>(new ListParams());
       params.getValue()['filter.programmingId'] = this.programmingId;
       params.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
@@ -796,7 +798,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
         next: async data => {
           data.data.map(async good => {
-            count = count + 1;
             const paramsGood = new BehaviorSubject<ListParams>(
               new ListParams()
             );
@@ -814,10 +815,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
                   unitMeasure: data.data[0].unitMeasure,
                   storeId: infotrans,
                 };
-                if (count == 2) {
-                  this.warehouseGoods.push(transObject);
-                  resolve(true);
-                }
+                this.warehouseGoods.push(transObject);
+                resolve(true);
               },
             });
             //this.goodService.getAll;
@@ -891,7 +890,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     //task['requestId'] = this.programmingId;
     task['expedientId'] = 0;
     task['idDelegationRegional'] = user.department;
-    task['urlNb'] = 'pages/request/programming-request/execute-reception';
+    task['urlNb'] =
+      'pages/request/programming-request/execute-reception-programming';
     task['processName'] = 'SolicitudProgramacion';
     task['idAuthority'] = this.programming.autorityId;
     task['idStore'] = this.programming.storeId;
@@ -959,12 +959,14 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   warehouseNameT(idWarehouse: number) {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.organizationCode'] = idWarehouse;
+      params.getValue()['filter.organization'] = idWarehouse;
       this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
         next: response => {
           resolve(response.data[0].name);
         },
-        error: error => {},
+        error: error => {
+          resolve('Almacén no capturado');
+        },
       });
       /*this.warehouseService.getById(idWarehouse).subscribe({
         next: response => {
@@ -1008,5 +1010,122 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         this.router.navigate(['pages/siab-web/sami/consult-tasks']);
       }
     });
+  }
+
+  generateReport(statusGoood: string, nameExcel: string) {
+    if (statusGoood == 'EN_TRANSPORTABLE') {
+      this.goodsTranportables.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.programmingId}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+
+    if (statusGoood == 'EN_RESGUARDO_TMP') {
+      this.goodsGuards.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.programmingId}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+
+    if (statusGoood == 'EN_ALMACEN_TMP') {
+      this.goodsWarehouse.getElements().then(info => {
+        if (info.length > 0) {
+          this.loadingReportGoods = true;
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()[
+            'filter.programmingId'
+          ] = `$eq:${this.programmingId}`;
+          params.getValue()['filter.status'] = statusGoood;
+          this.massiveGoodService
+            .exportGoodProgramming(params.getValue())
+            .subscribe({
+              next: response => {
+                this.loadingReportGoods = false;
+                this.downloadExcel(response.base64File, nameExcel);
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo generar el reporte'
+                );
+                this.loadingReportGoods = false;
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No se encontraron bienes para generar el reporte'
+          );
+        }
+      });
+    }
+  }
+
+  downloadExcel(excel: any, nameReport: string) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = nameReport;
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 }

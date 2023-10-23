@@ -44,6 +44,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -361,7 +362,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private stateService: StateOfRepublicService,
     private domicilieService: DomicileService,
     private historyGoodService: HistoryGoodService,
-    private strategyService: StrategyServiceService
+    private strategyService: StrategyServiceService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -418,6 +420,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.getTask();
     this.getDestinyIndep();
     this.getOpenProceeding();
+    this.getUnitMeasure();
   }
 
   getInfoUserLog() {
@@ -895,10 +898,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       item.unitMeasureName = 'KILOGRAMOS';
                     } else if (item.unitMeasure == 'MT') {
                       item.unitMeasureName = 'METRO';
-                    } else if (
-                      item.unitMeasure == 'PZ' ||
-                      item.unitMeasure == 'PIEZA'
-                    ) {
+                    } else if (item.unitMeasure == 'PZ') {
                       item.unitMeasureName = 'PIEZA';
                     } else if (item.unitMeasure == 'CZA') {
                       item.unitMeasureName = 'CABEZA';
@@ -934,7 +934,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     } else if (item.ligieUnit == 'LT') {
                       item.unitLigieName = 'LITRO';
                     }
-                    this.getUnitMeasure(item.unitMeasure);
+                    //this.getUnitMeasure(item.unitMeasure);
                     //item.transferentDestiny = showDestinyTransferent;
                     this.goodData = item;
                     const form = this.fb.group({
@@ -944,8 +944,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       fileNumber: [item?.fileNumber],
                       goodDescription: [item?.goodDescription],
                       quantity: [item?.quantity],
-                      unitMeasure: [item?.unitMeasure],
-                      unitMeasureName: [item?.unitMeasureName],
+                      unitMeasure: [item?.unitMeasureName],
+
                       descriptionGoodSae: [item?.descriptionGoodSae],
                       quantitySae: [item?.quantitySae],
                       saeMeasureUnit: [item?.saeMeasureUnit],
@@ -1697,7 +1697,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     fileNumber: [response?.fileNumber],
                     goodDescription: [response?.goodDescription],
                     quantity: [response?.quantity],
-                    unitMeasure: [response?.unitMeasure],
+                    unitMeasure: [response?.unitMeasureName],
                     descriptionGoodSae: [response?.descriptionGoodSae],
                     quantitySae: [response?.quantitySae],
                     saeMeasureUnit: [response?.saeMeasureUnit],
@@ -1737,16 +1737,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
   }
 
-  getUnitMeasure(unit: string) {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
+  getUnitMeasure() {
+    /*const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.nbCode'] = `$eq:${unit}`;
     this.strategyService.getUnitsMedXConv(params.getValue()).subscribe({
       next: response => {
         this.measureUnits = response.data;
       },
       error: error => {},
-    });
-    /*this.params.getValue()['filter.measureTlUnit'] = `$ilike:${
+    }); */
+    this.params.getValue()['filter.measureTlUnit'] = `$ilike:${
       this.params.getValue().text
     }`;
     this.params.getValue().limit = 20;
@@ -1755,11 +1755,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          console.log('de aqui', resp);
+          console.log('resp', resp);
           this.measureUnits = resp.data;
         },
         error: error => {},
-      }); */
+      });
   }
 
   getConcervationState() {
@@ -5365,6 +5365,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   generateReportTransportable() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_TRANSPORTABLE';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*
     this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_TRANSPORTABLE')
       .subscribe({
@@ -5378,11 +5387,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportReception() {
-    this.programmingService
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_RECEPCION_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_RECEPCION_TMP')
       .subscribe({
         next: (response: any) => {
@@ -5395,11 +5412,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportGuard() {
-    this.programmingService
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_RESGUARDO_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_RESGUARDO_TMP')
       .subscribe({
         next: (response: any) => {
@@ -5412,11 +5437,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportWarehouse() {
-    this.programmingService
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_ALMACEN_TMP')
       .subscribe({
         next: (response: any) => {
@@ -5429,10 +5462,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportReprog() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_PROGRAMACION_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*
     this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_PROGRAMACION_TMP')
       .subscribe({
@@ -5446,10 +5488,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   generateReportCancelation() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = `$eq:${this.programmingId}`;
+    params.getValue()['filter.status'] = 'EN_CANCELACION_TMP';
+    this.massiveGoodService.exportGoodProgramming(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File);
+      },
+    });
+    /*
     this.programmingService
       .reportProgrammingGoods(this.programmingId, 'EN_CANCELACION_TMP')
       .subscribe({
@@ -5463,7 +5514,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             'No hay bienes para generar el reporte'
           );
         },
-      });
+      }); */
   }
 
   downloadExcel(excel: any) {

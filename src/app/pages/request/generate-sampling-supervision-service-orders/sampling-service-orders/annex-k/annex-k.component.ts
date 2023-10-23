@@ -21,6 +21,7 @@ export class AnnexKComponent extends BasePage implements OnInit {
   //participantsDataForm: ModelForm<any>;
   typeAnnex: string = '';
   annexData: any = null;
+  readonly: boolean = false;
 
   private wContent = inject(WContentService);
   private orderService = inject(OrderServiceService);
@@ -39,6 +40,10 @@ export class AnnexKComponent extends BasePage implements OnInit {
     console.log('anexo data', this.annexData);
     this.initSignDataForm();
     //this.initParticipantsData();
+    if (this.typeAnnex == 'revition-results') {
+      this.readonly = true;
+      this.setDataParicipants();
+    }
   }
 
   initSignDataForm() {
@@ -49,6 +54,7 @@ export class AnnexKComponent extends BasePage implements OnInit {
       postCompetitor1: [null, [Validators.pattern(STRING_PATTERN)]],
       competitor2: [null, [Validators.pattern(STRING_PATTERN)]],
       postCompetitor2: [null, [Validators.pattern(STRING_PATTERN)]],
+      guySignatureSupplierk: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -96,7 +102,7 @@ export class AnnexKComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'No se pudo guardar los datos');
       }
     );
-    /* const idSampleOrder = this.annexData.idSamplingOrder;
+    /*const idSampleOrder = this.annexData.idSamplingOrder;
     let config: ModalOptions = {
       initialState: {
         idSampleOrder: +idSampleOrder,
@@ -104,7 +110,6 @@ export class AnnexKComponent extends BasePage implements OnInit {
         typeFirm: 'electronica',
         idRegionalDelegation: +samplerOrder.idDelegationRegional,
         annexk:true,
-        //programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
             this.close();
@@ -114,7 +119,7 @@ export class AnnexKComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(ShowReportComponentComponent, config); */
+    this.modalService.show(ShowReportComponentComponent, config);*/
   }
 
   close() {
@@ -161,5 +166,17 @@ export class AnnexKComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  async setDataParicipants() {
+    const sampleOrder: any = await this.getSampleOrder();
+    this.annexKForm.get('competitor1').setValue(sampleOrder.competitor1);
+    this.annexKForm
+      .get('postCompetitor1')
+      .setValue(sampleOrder.postCompetitor1);
+    this.annexKForm.get('competitor2').setValue(sampleOrder.competitor2);
+    this.annexKForm
+      .get('postCompetitor2')
+      .setValue(sampleOrder.postCompetitor2);
   }
 }

@@ -12,4 +12,7 @@ export enum HistoryGoodEndpoints {
   GetProcessExtDom = 'historical/getProcessExtDom',
   UpdateGoodStatusWhenDelete = 'application/loop-delete-office',
   HistoricGoodsAsegExtdom = 'historic-goods-aseg-extdom',
+  GetStatus = 'application/getStatus',
+  GetCount = 'application/getCount',
+  UpdateGoodXHist = 'application/updateGoodXHist',
 }

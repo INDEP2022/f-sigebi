@@ -15,28 +15,28 @@ export const COUNT_SAFE_COLUMNS = {
     title: 'Responsable',
     sort: false,
   },
-  stateCode: {
+  stateDetail: {
     title: 'Entidad',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.stateDetail?.descCondition;
     },
   },
-  municipalityCode: {
+  municipalityDetail: {
     title: 'Municipio',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.municipalityDetail?.nameMunicipality;
     },
   },
-  cityCode: {
+  cityDetail: {
     title: 'Ciudad',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.cityDetail?.nameCity;
     },
   },
-  localityCode: {
+  localityDetail: {
     title: 'Localidad',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {

@@ -50,11 +50,15 @@ export class RecipientsEmailComponent extends BasePage implements OnInit {
   }
 
   createArrayDocs: string = '';
+  createArrayBase64: string = '';
   arrayDocs: any;
+  arrayBase64: any;
 
   getDocsNotifi() {
+    console.log('Se ejecuta método: getDocsNotifi()');
     let body: any = {};
     body['xidSolicitud'] = this.idSolicitud;
+    //body['texto'] = 'prueba_unir';
     this.wcontentService.getDocumentos(body).subscribe({
       next: (resp: any) => {
         //Revisa cuantos documentos tiene
@@ -80,13 +84,34 @@ export class RecipientsEmailComponent extends BasePage implements OnInit {
             );
             this.createArrayDocs =
               `${resp.data[i]?.dDocName},` + this.createArrayDocs;
+
+            this.wcontentService
+              .getObtainFile(resp.data[i]?.dDocName)
+              .subscribe({
+                next: resp2 => {
+                  console.log('Base 64 Obtenido', resp2);
+                  this.createArrayBase64 =
+                    `${resp2.data},` + this.createArrayBase64;
+                },
+                error: error => {
+                  console.log(
+                    'No se puede obtener base 64 del archivo',
+                    error.error
+                  );
+                },
+              });
           }
         }
+
+        let str2 = this.createArrayBase64;
+        str2 = str2.substring(0, str2.length - 1);
+        this.arrayBase64 = str2.split('');
+        console.log('Array de Base64: ', this.arrayBase64);
 
         let str = this.createArrayDocs;
         str = str.substring(0, str.length - 1);
         this.arrayDocs = str.split(',');
-        console.log(this.arrayDocs);
+        console.log('Array de nombres de Documentos', this.arrayDocs);
       },
       error: error => {},
     });

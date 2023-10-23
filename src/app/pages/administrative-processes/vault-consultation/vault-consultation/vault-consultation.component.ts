@@ -26,6 +26,7 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
   idSelected: number = 0;
   vaults: ISafe[] = [];
   columnFilters: any = [];
+  excelLoading: boolean = true;
   vault: ISafe;
   origin: string = '';
   origin2: string = '';
@@ -95,23 +96,44 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
     this.dataFactGen
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
+
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
+            let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
-            filter.field == 'idSafe' ||
-            filter.field == 'description' ||
-            filter.field == 'ubication' ||
-            filter.field == 'manager' ||
-            filter.field == 'stateCode' ||
-            filter.field == 'municipalityCode' ||
-            filter.field == 'cityCode' ||
-            filter.field == ' localityCode'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case ' idSafe':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'ubication':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'manager':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'localityDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'stateDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'cityDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'municipalityDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -140,7 +162,6 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
       },
     });
   }
-  exportAll() {}
 
   openForm(provider?: ISafe) {
     const modalConfig = MODAL_CONFIG;
@@ -152,19 +173,38 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
 
   search() {
     this.loading = true;
-    this.params.getValue()['sortBy'] = `idSafe:DESC`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.safeService.getAll(params).subscribe({
+    params['text'] = params.text;
+    this.safeService.getAllNew(params).subscribe({
       next: (data: any) => {
         this.loading = false;
         this.totalItems = data.count;
         this.vaults = data.data;
         console.log(this.vaults);
-        this.dataFactGen.load(data.data);
+        this.dataFactGen.load(this.vaults);
         this.dataFactGen.refresh();
+        this.vaults = data.data.map((vault: ISafe) => {
+          return {
+            idSafe: vault.idSafe,
+            description: vault.description,
+            localityDetail: vault.localityDetail
+              ? vault.localityDetail.nameLocation
+              : null,
+            cityDetail: vault.cityDetail ? vault.cityDetail.nameCity : '',
+            manager: vault.manager,
+            municipalityDetail: vault.municipalityDetail
+              ? vault.municipalityDetail.nameMunicipality
+              : null,
+            registerNumber: vault.registerNumber,
+            stateDetail: vault.stateDetail
+              ? vault.stateDetail.descCondition
+              : '',
+            ubication: vault.ubication,
+          };
+        });
       },
       error: () => {
         this.loading = false;
@@ -177,6 +217,74 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
     event.data
       ? this.openForm(event.data)
       : this.alert('info', 'Esta Bóveda no contiene Bienes', '');
+  }
+  exportToExcel(): void {
+    this.excelLoading = true;
+    this.safeService.exportExcel().subscribe({
+      next: data => {
+        this.excelLoading = false;
+        this.alert(
+          'warning',
+          'El archivo se esta generando, favor de esperar la descarga',
+          ''
+        );
+
+        this.downloadDocument('-Detalle-Bovedas', 'excel', data.base64File);
+        // this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.excelLoading = true;
+    this.alert('success', 'El reporte se ha descargado', '');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    // this.fullService.generatingFileFlag.next({
+    //   progress: 100,
+    //   showText: false,
+    // });
+
+    return bytes.buffer;
   }
 }
 

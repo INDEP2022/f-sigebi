@@ -718,7 +718,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       console.log('generalModel -> ', generalModel);
       this.serviceGood.updateWithoutId(generalModel).subscribe(
         res => {
-          this.alert('success', 'Los datos fueron guardados con éxito', '');
+          this.alert('success', 'Los datos fueron guardados', '');
         },
         err => {
           console.log(err);
@@ -864,7 +864,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
             dataAG.noRequest = id;
             this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
               res => {
-                this.alert('success', 'El Bien se avaluó con éxito', '');
+                this.alert('success', 'El Bien se avaluó', '');
                 this.getExpedientGoog();
               },
               err => {

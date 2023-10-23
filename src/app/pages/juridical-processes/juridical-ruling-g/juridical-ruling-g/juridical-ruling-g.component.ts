@@ -3630,7 +3630,7 @@ export class JuridicalRulingGComponent
                   vf_fecha = elemento2;
                 } else {
                   const cadena2 = good.val5 ? good.val5.indexOf('-') : 0;
-
+                  console.log('cadena2', cadena2);
                   if (cadena2 > 0) {
                     let cadena = good.val5;
                     console.log('cadena2', cadena2);
@@ -3650,9 +3650,8 @@ export class JuridicalRulingGComponent
                       // Utilizar el método split() para separar la cadena en un array de elementos
                       console.log('arrayCadena', arrayCadena);
                       let arrayCadena2 = cadena.split('-');
-                      elemento2 = `${arrayCadena2[2]}-${arrayCadena2[1]}-${arrayCadena2[0]}`;
+                      elemento2 = `${arrayCadena2[0]}-${arrayCadena2[1]}-${arrayCadena2[2]}`;
 
-                      // Obtener el segundo elemento del array, que es "06"
                       vf_fecha = elemento2;
                     }
                   } else {

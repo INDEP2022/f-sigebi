@@ -139,6 +139,8 @@ export class AppointmentsComponent
   paramsGoods = new BehaviorSubject<FilterParams>(new FilterParams());
   goods = new DefaultSelect<IGood>();
   goodSelect: IGood;
+  numberAppointment: number = null;
+  personNumber: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -2779,6 +2781,8 @@ export class AppointmentsComponent
   }
 
   _saveInfoData() {
+    this.numberAppointment = null;
+    this.personNumber = null;
     if (this._saveDataDepositary == true) {
       if (!this.depositaryAppointment.personNumber) {
         this.alertInfo(
@@ -2840,7 +2844,7 @@ export class AppointmentsComponent
         withHousehold: this.form.value.bienesMenaje,
         goodNum: this.form.value.noBien,
       };
-
+      this.personNumber = this.depositaryAppointment.personNumber.id;
       console.log(bodySave, this.form.value);
       if (this.depositaryAppointment) {
         if (this.depositaryAppointment.InvoiceUniversal) {
@@ -2854,9 +2858,18 @@ export class AppointmentsComponent
           );
         }
       }
+      this.loadingAppointment = true;
       this.appointmentsService.createAppointment(bodySave).subscribe({
         next: (data: any) => {
+          this.loadingAppointment = false;
           console.log(data);
+          if (data.appointmentNum) {
+            this.depositaryAppointment = data;
+            this.numberAppointment = data.appointmentNum;
+          } else {
+            this.depositaryAppointment = data.data[0];
+            this.numberAppointment = data.data[0].appointmentNum;
+          }
           this.getPersonXNom();
           setTimeout(() => {
             this._saveDataDepositary = false;
@@ -2875,6 +2888,7 @@ export class AppointmentsComponent
           }, 500);
         },
         error: error => {
+          this.loadingAppointment = false;
           console.log(error);
           this.alertInfo(
             'error',
@@ -2927,52 +2941,70 @@ export class AppointmentsComponent
           );
         }
       }
+      this.numberAppointment = Number(
+        this.depositaryAppointment.numberAppointment
+      );
+      this.personNumber = this.depositaryAppointment.personNumber.id;
+      this.loadingAppointment = true;
       this.appointmentsService.updateAppointment(body).subscribe({
         next: data => {
+          this.loadingAppointment = false;
           console.log(
             data,
             this.good.status == 'ADM',
             this.folios.universalFolio
           );
-          this.getDocumentsCount().subscribe(count => {
+          if (this.folios.universalFolio == null) {
             this.getPersonXNom();
             setTimeout(() => {
-              console.log('COUNT ', count);
-              if (count == 0) {
-                this.validGoodNumberInDepositaryAppointment(
-                  true,
-                  body.appointmentNum
-                );
-                this.alertInfo('success', 'El registro se ha guardado', '');
-              } else {
-                let _saveFolioDepositary = localStorage.getItem(
-                  '_saveFolioDepositary'
-                );
-                console.log(_saveFolioDepositary);
-                if (
-                  this.good.status == 'ADM' &&
-                  this.folios.universalFolio &&
-                  _saveFolioDepositary == 'A'
-                ) {
-                  this.updateGoodStatus('DEP', true);
-                }
-                if (
-                  this.good.status == 'DEP' &&
-                  this.folios.returnFolio &&
-                  _saveFolioDepositary == 'R'
-                ) {
-                  this.updateGoodStatus('ADM');
-                }
-                this.validGoodNumberInDepositaryAppointment(
-                  true,
-                  body.appointmentNum
-                );
-                this.alertInfo('success', 'El registro se ha guardado', '');
-              }
+              this.validGoodNumberInDepositaryAppointment(
+                true,
+                body.appointmentNum
+              );
+              this.alertInfo('success', 'El registro se ha guardado', '');
             }, 500);
-          });
+          } else {
+            this.getDocumentsCount().subscribe(count => {
+              this.getPersonXNom();
+              setTimeout(() => {
+                console.log('COUNT ', count);
+                if (count == 0) {
+                  this.validGoodNumberInDepositaryAppointment(
+                    true,
+                    body.appointmentNum
+                  );
+                  this.alertInfo('success', 'El registro se ha guardado', '');
+                } else {
+                  let _saveFolioDepositary = localStorage.getItem(
+                    '_saveFolioDepositary'
+                  );
+                  console.log(_saveFolioDepositary);
+                  if (
+                    this.good.status == 'ADM' &&
+                    this.folios.universalFolio &&
+                    _saveFolioDepositary == 'A'
+                  ) {
+                    this.updateGoodStatus('DEP', true);
+                  }
+                  if (
+                    this.good.status == 'DEP' &&
+                    this.folios.returnFolio &&
+                    _saveFolioDepositary == 'R'
+                  ) {
+                    this.updateGoodStatus('ADM');
+                  }
+                  this.validGoodNumberInDepositaryAppointment(
+                    true,
+                    body.appointmentNum
+                  );
+                  this.alertInfo('success', 'El registro se ha guardado', '');
+                }
+              }, 500);
+            });
+          }
         },
         error: error => {
+          this.loadingAppointment = false;
           console.log(error);
           this.alertInfo(
             'error',
@@ -3076,9 +3108,14 @@ export class AppointmentsComponent
     params.removeAllFilters();
     params.addFilter(
       'appointmentNum',
-      this.depositaryAppointment.numberAppointment
+      this.numberAppointment
+      //this.depositaryAppointment.numberAppointment
     );
-    params.addFilter('personNum', this.depositaryAppointment.personNumber.id);
+    params.addFilter(
+      'personNum',
+      this.personNumber
+      //this.depositaryAppointment.personNumber.id
+    );
 
     this.appointmentsService
       .getPersonsModDepositary(params.getParams())
@@ -3097,8 +3134,9 @@ export class AppointmentsComponent
 
   createPersonXNom() {
     let body: Partial<IPersonsModDepositary> = {
-      appointmentNum: Number(this.depositaryAppointment.numberAppointment),
-      personNum: this.depositaryAppointment.personNumber.id + '',
+      // appointmentNum: Number(this.depositaryAppointment.numberAppointment),
+      appointmentNum: this.numberAppointment,
+      personNum: this.personNumber + '', //this.depositaryAppointment.personNumber.id + '',
       process: 'S',
       dateExecution: new Date(),
       sentSirsae: 'N',

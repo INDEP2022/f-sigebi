@@ -221,6 +221,20 @@ export class UsersService extends HttpService {
     );
   }
 
+  getGetRecDeleg(body: any, params: ListParams) {
+    return this.post<IListResponse<any>>(UserEndpoints.RecDeleg, body, params);
+  }
+
+  getGetRecSubDel(noDel: string | number, params: ListParams) {
+    return this.get<IListResponse<any>>(
+      `${UserEndpoints.RecSubDel}/${noDel}`,
+      params
+    );
+  }
+
+  getRecVault(body: any, params: ListParams) {
+    return this.post<IListResponse<any>>(UserEndpoints.RecVault, body, params);
+  }
   getUsersbyUsers(user: any) {
     return this.get(`${UserEndpoints.SegUsers}?filter.id=$eq:${user}`);
   }

@@ -42,6 +42,7 @@ export enum GoodEndpoints {
   ExportExcelGoodBad = 'attrib-good-bad/get-all-export',
   UpdateStatusGood = 'good/updateGoodStatus',
   goodSec = 'good/seq-goods',
+  updateGoodByTransferent = 'good/updateGoodByTrans',
 }
 
 export enum GoodProcessPoints {
@@ -93,8 +94,12 @@ export enum GoodProcessPoints {
   ComerDetAvaluoAll = 'application/get-comer-det-avaluo-all',
   SpObtnxGood = 'application/spObtnxGood',
   SpObtnxGoodExcel = 'application/spObtnxGood-csv',
+  FnMethodPagof = 'application/fn-methodpagof',
+  RegFinalFile = 'application/regFinalFile',
+  RegFile = 'application/regFile',
   GoodxStatusXtypeNumber = 'application/getExistsGoodxStatusXtypeNumber',
   ConsultQuery = 'application/consultQuery',
+  ApplicationGetData = 'application/getData',
 }
 
 export enum GoodFinderEndpoint {

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared';
 
 @Component({
@@ -8,6 +9,10 @@ import { BasePage } from 'src/app/core/shared';
 })
 export class NumeraryErrorsComponent extends BasePage implements OnInit {
   data: any[];
+
+  constructor(private modalRef: BsModalRef) {
+    super();
+  }
 
   settings2: any = {
     ...this.settings,
@@ -28,5 +33,9 @@ export class NumeraryErrorsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data);
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 }

@@ -264,7 +264,11 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                         ),
                       };
                       const paramsF = new FilterParams();
-                      if (this.actaSC) {
+                      paramsF.addFilter(
+                        'keysProceedings',
+                        this.form.get('acta2').value
+                      );
+                      /* if (this.actaSC) {
                         paramsF.addFilter(
                           'keysProceedings',
                           this.form.get('acta2').value
@@ -274,7 +278,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                           'keysProceedings',
                           this.form.get(this.formControlName).value
                         );
-                      }
+                      } */
                       this.serviceProcVal
                         .getByFilter(paramsF.getParams())
                         .subscribe(
@@ -306,6 +310,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                               );
                           },
                           err => {
+                            console.log(err);
                             this.loading = false;
                             this.alert(
                               'error',
@@ -316,6 +321,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                         );
                     },
                     err => {
+                      console.log(err);
                       this.alert(
                         'error',
                         'Se presentó un error inesperado',

@@ -60,12 +60,14 @@
       </div>
     </div>
     <div class="table-responsive">
-      <ng2-smart-table
-        [settings]="settings"
-        [source]="data1"
-        (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data1"
+          (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
     </div>
     <div *ngIf="rowSelected">
       <div class="row pt-4">
@@ -80,12 +82,14 @@
         </div>
       </div>
       <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings2"
-          (edit)="openForm($event.data)"
-          [source]="data2"></ng2-smart-table>
-        <app-pagination [params]="params2" [totalItems]="totalItems2">
-        </app-pagination>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [settings]="settings2"
+            (edit)="openForm($event.data)"
+            [source]="data2"></ng2-smart-table>
+          <app-pagination [params]="params2" [totalItems]="totalItems2">
+          </app-pagination>
+        </div>
       </div>
     </div>
   </div>

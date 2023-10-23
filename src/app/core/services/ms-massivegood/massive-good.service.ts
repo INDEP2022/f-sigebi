@@ -42,6 +42,11 @@ export class MassiveGoodService extends HttpService {
   postGoodsSchedules(body: any) {
     return this.post(this.route.GoodsShedules, body);
   }
+
+  InsertGood(body: any) {
+    return this.post(this.route.InsertGoodDetail, body);
+  }
+
   getAllWithFilters(
     params2?: string,
     params?: ListParams
@@ -50,6 +55,10 @@ export class MassiveGoodService extends HttpService {
       `${this.route.MassiveChargeGoods}${params2}`,
       params
     );
+  }
+
+  getIdentifier(params: ListParams) {
+    return this.get(MassiveGoodEndpoints.getIdentifierCount, params);
   }
 
   getById(id: string | number): Observable<IMassiveGood> {
@@ -216,6 +225,11 @@ export class MassiveGoodService extends HttpService {
   exportSampleGoods(_params: ListParams) {
     const params = this.makeParams(_params);
     return this.get(`${MassiveGoodEndpoints.ExportSampleGoods}?${params}`);
+  }
+
+  exportGoodProgramming(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.get(`${MassiveGoodEndpoints.ExportGoodProgramming}?${params}`);
   }
 
   private makeParams(params: ListParams): HttpParams {

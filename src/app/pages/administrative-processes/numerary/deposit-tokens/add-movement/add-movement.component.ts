@@ -246,7 +246,6 @@ export class AddMovementComponent
       );
       return;
     }
-    return;
     // // console.log('VALUE', this.form.value);
     const SYSDATE = new Date();
     const USER = this.token.decodeToken().preferred_username;
@@ -318,12 +317,12 @@ export class AddMovementComponent
   async compararFechas_FINAL(fecha1: any, fecha2: any) {
     console.log(fecha1, 'eeeee', fecha2);
 
-    console.log('aaaa', this.detectarFormatoFecha(fecha1));
-    console.log('bbbb', this.detectarFormatoFecha(fecha2));
+    console.log('aaaa', fecha1);
+    console.log('bbbb', fecha2);
 
-    const fecha1_ = Date.parse(this.detectarFormatoFecha(fecha1));
-    const fecha2_ = Date.parse(this.detectarFormatoFecha(fecha2));
-    // // console.log(fecha1_, 'ooooo', fecha2_);
+    const fecha1_ = Date.parse(await this.detectarFormatoFecha(fecha1));
+    const fecha2_ = Date.parse(await this.detectarFormatoFecha(fecha2));
+    console.log(fecha1_, 'ooooo', fecha2_);
 
     if (fecha1_ < fecha2_) {
       return false;
@@ -482,17 +481,25 @@ export class AddMovementComponent
   detectarFormatoFecha(fecha: any) {
     // const formato1 = /^\w{3} \w{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[-+]\d{2}:\d{2} \(hora de .+\)$/;
     const formato1 =
-      /^[A-Za-z]{3} [A-Za-z]{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[-+]\d{4} \(hora de .+\)$/;
+      /^[A-Za-z]{3} [A-Za-z]{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[-+]\d{4} \(hora +\)$/;
     const formato2 = /^\d{2}-\d{2}-\d{4}$/;
 
-    if (formato1.test(fecha)) {
+    if (!formato2.test(fecha)) {
       console.log('SI');
+      const today = fecha;
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const year = today.getFullYear();
+      const SYSDATE = `${year}-${month}-${day}`;
+      return SYSDATE;
       return this.datePipe.transform(fecha, 'yyyy-MM-dd');
     } else if (formato2.test(fecha)) {
       console.log('NO');
-      return this.datePipe.transform(fecha, 'yyyy-dd-MM');
+      const date = fecha.split('-');
+      const date_ = `${date[2]}-${date[1]}-${date[0]}`;
+      return date_;
     } else {
-      return null;
+      return fecha;
     }
   }
 }
