@@ -1,11 +1,11 @@
 export const COLUMNS = {
-  value: {
+  valor: {
     title: 'Valor',
     sort: false,
     editable: false,
     addable: false,
   },
-  description: {
+  descriptionparameter: {
     title: 'Descripción',
     sort: false,
     editable: false,
