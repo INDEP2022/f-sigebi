@@ -149,4 +149,9 @@ export class DepartamentService
     const route = `${DepartamentEndpoints.Departament}?filter.id=$eq:${id}`;
     return this.get(route);
   }
+
+  getAppsGetData2(body: any, params: ListParams) {
+    const route = `${DepartamentEndpoints.AppsGetData2}`;
+    return this.post(route, body, params);
+  }
 }
