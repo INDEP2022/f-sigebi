@@ -1,0 +1,54 @@
+<form [formGroup]="form">
+  <div [class]="loading ? 'disabled' : ''" class="row mb-4">
+    <div class="col-md-12">
+      <div class="row">
+        <!-- 
+        -->
+        <div class="col-md-2"></div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get(formControlName)"
+            label="Folio de Escaneo">
+            <input
+              [disabled]="disabled"
+              type="number"
+              class="form-control"
+              min="1"
+              [formControlName]="formControlName"
+              maxlength="15" />
+          </form-field>
+        </div>
+        <div class="col">
+          <button
+            [disabled]="disabled"
+            type="button"
+            data-toggle="tooltip"
+            class="btn btn-secondary btn-sm active mr-1"
+            (click)="generateFolio()"
+            title="Generar Folio de Escaneo y Solicitud">
+            <i class="bx bxs-file-find"></i>
+          </button>
+          <button
+            [disabled]="disabled"
+            type="button"
+            data-toggle="tooltip"
+            class="btn btn-secondary btn-sm active mr-1"
+            (click)="scan()"
+            title="Escanear">
+            <i class="bx bxs-file"></i>
+          </button>
+          <button
+            [disabled]="disabled"
+            type="button"
+            data-toggle="tooltip"
+            class="btn btn-secondary btn-sm active"
+            (click)="seeImages()"
+            title="Consulta de imágenes escaneadas">
+            <i class="bx bxs-file-find"></i>
+          </button>
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+    </div>
+  </div>
+</form>
