@@ -10,6 +10,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, Subject, takeUntil, tap } from 'rxjs';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SweetalertModel } from 'src/app/core/shared';
 import {
@@ -28,6 +29,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   element: any;
   screenCode: string = null;
   userName: string;
+  user: TokenInfoModel;
   @Output() settingsButtonClicked = new EventEmitter();
   @Output() mobileMenuButtonClicked = new EventEmitter();
   $unSubscribe = new Subject<void>();
@@ -54,6 +56,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.openMobileMenu = false;
     this.element = document.documentElement;
     this.userName = this.authService.decodeToken().name;
+    this.user = this.authService.decodeToken();
     this.subscribeToFileGeneration().subscribe();
   }
 

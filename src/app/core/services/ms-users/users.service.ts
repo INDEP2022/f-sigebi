@@ -249,4 +249,13 @@ export class UsersService extends HttpService {
     const route = `${UserEndpoints.viewPrev}/${no_ofice}`;
     return this.get(route);
   }
+
+  consultationQuery1(no_acta: any, params: ListParams) {
+    const route = `${UserEndpoints.consultationQuery1}/${no_acta}`;
+    return this.get<IListResponse>(route, params);
+  }
+
+  consultationQuery2(params: ListParams) {
+    return this.get<IListResponse>(UserEndpoints.consultationQuery2, params);
+  }
 }
