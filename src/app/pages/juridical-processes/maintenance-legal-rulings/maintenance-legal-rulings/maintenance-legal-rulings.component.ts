@@ -247,12 +247,45 @@ export class MaintenanceLegalRulingComponent
     if (value) this.getCopiesOfficialOpinion(this.dictNumber, this.typeDict);
   }
 
+  delete(value: boolean) {
+    if (value) this.showDeleteAlert(value);
+  }
+
   loadGood(value: boolean) {
     if (value) this.getDictationXGood1(this.dictNumber, this.typeDict);
   }
 
   loadDocumentGood(value: boolean) {
     if (value) this.getDocumentsDictumStateM(this.dictNumber, this.typeDict);
+  }
+
+  showDeleteAlert(event: any) {
+    this.alertQuestion(
+      'question',
+      'Selecciono el C.C.P. ' + event.userOrPerson + '. ¿Desea eliminarlo?',
+      ''
+    ).then(async question => {
+      if (question.isConfirmed) {
+        if (event.id == undefined) {
+        } else {
+          // DELETE COPIA PARA
+          this.copiesOfficialOpinionService.remove(event).subscribe({
+            next: data => {
+              console.log('UPDATE COPIES DICTAMEN', data);
+              this.onLoadToast('success', 'Se eliminó correctamente', '');
+            },
+            error: error => {
+              console.log(error);
+              this.onLoadToast(
+                'error',
+                'Ocurrió un Error al Eliminar la CCP',
+                error.error.message
+              );
+            },
+          });
+        }
+      }
+    });
   }
 
   send() {
