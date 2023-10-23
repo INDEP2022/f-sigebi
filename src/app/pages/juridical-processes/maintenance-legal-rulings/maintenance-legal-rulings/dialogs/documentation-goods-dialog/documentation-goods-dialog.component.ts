@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
+import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -28,9 +30,12 @@ export class DocumentationGoodsDialogComponent
   edit: boolean = false;
   selectExpedient = new DefaultSelect();
   selectGood = new DefaultSelect();
+  dictationXGood: { stateNumber: number; expedientNumber: number } | null =
+    null;
   selectDictNumber = new DefaultSelect();
   dataCreate: { officialNumber: number; typeDictum: number } | null = null;
-
+  @Input() dictation: IDictation;
+  @Input() goods: IDictationXGood1;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -117,6 +122,15 @@ export class DocumentationGoodsDialogComponent
       this.documentsDictumXStateMForm.patchValue(this.dataCreate);
     }
 
+    if (this.goods) {
+      this.documentsDictumXStateMForm
+        .get('expedientNumber')
+        .patchValue(this.goods.proceedings.id);
+      this.documentsDictumXStateMForm
+        .get('stateNumber')
+        .patchValue(this.goods.good);
+    }
+
     if (this.documentsDictumXStateM != null) {
       console.log(this.documentsDictumXStateM);
       this.edit = true;
@@ -126,10 +140,10 @@ export class DocumentationGoodsDialogComponent
         .patchValue(this.documentsDictumXStateM.key.key);
       this.documentsDictumXStateMForm
         .get('expedientNumber')
-        .patchValue(this.documentsDictumXStateM.expedientNumber.id);
+        .patchValue(this.documentsDictumXStateM.expedientNumber);
       this.documentsDictumXStateMForm
         .get('stateNumber')
-        .patchValue(this.documentsDictumXStateM.stateNumber.id);
+        .patchValue(this.documentsDictumXStateM.stateNumber);
     }
   }
 
