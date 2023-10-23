@@ -477,6 +477,47 @@ export class PerformProgrammingFormComponent
   }
 
   async newWarehouse() {
+    let transferId: number = 0;
+    if (this.dataProgramming.tranferId) {
+      transferId = this.dataProgramming.tranferId;
+    } else if (this.performForm.get('tranferId').value) {
+      transferId = this.performForm.get('tranferId').value;
+    }
+    if (this.regionalDelegationUser && transferId) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modal-lg modal-dialog-centered',
+      };
+      const regDelData = this.regionalDelegationUser;
+      config.initialState = {
+        programmingId: this.idProgramming,
+        regDelData,
+        transferId,
+        callback: (next: boolean) => {
+          if (next) {
+            this.performForm
+              .get('regionalDelegationNumber')
+              .setValue(this.delegation);
+
+            this.performForm
+              .get('stationId')
+              .setValue(Number(this.dataProgramming.stationId));
+            this.setDataProgramming();
+          } else {
+            this.setDataProgramming();
+          }
+        },
+      };
+
+      this.modalService.show(WarehouseFormComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Para crear un almacén necesitas seleccionar una Delegación Regional y transferente'
+      );
+    }
+    /*
     if (this.regionalDelegationUser) {
       if (this.performForm.get('startDate').value) {
         this.performForm
@@ -577,7 +618,7 @@ export class PerformProgrammingFormComponent
         'Advertencia',
         'Para crear un almacén necesitas seleccionar una Delegación Regional'
       );
-    }
+    } */
   }
 
   listUsers() {

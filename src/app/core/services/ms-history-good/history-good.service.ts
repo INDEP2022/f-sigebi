@@ -152,4 +152,19 @@ export class HistoryGoodService extends HttpService {
     const route = `${HistoryGoodEndpoints.HistoryStatusGood}`;
     return this.post(route, params);
   }
+
+  getStatus(goodNumber: string | number, params: any) {
+    const route = `${HistoryGoodEndpoints.GetStatus}/${goodNumber}`;
+    return this.get(route, params);
+  }
+
+  getCount(goodNumber: string | number) {
+    const route = `${HistoryGoodEndpoints.GetCount}/${goodNumber}`;
+    return this.get(route);
+  }
+
+  getUpdateGoodXHist(goodNumber: string | number) {
+    const route = `${HistoryGoodEndpoints.UpdateGoodXHist}/${goodNumber}`;
+    return this.get(route);
+  }
 }

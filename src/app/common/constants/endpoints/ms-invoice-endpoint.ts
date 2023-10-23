@@ -92,4 +92,11 @@ export enum ENDPOINT_INVOICE {
   ApplicationComerBillsIva = 'application/comer-bills-iva',
   ApplicationComerBillsPrice = 'application/comer-bills-price',
   ApplicationComerBillsAmount = 'application/comer-bills-amount',
+  ApplicationGenerateFolio = 'application/generate-folio',
+  GetCountSumbyTypes = 'application/get-count-sum-by-types',
+  ApplicationGetCountbyMandatoNotin = 'application/get-count-by-mandato-notin',
+  ApplicationGetCount1GenXpago = 'application/get-count1-gen-xpago',
+  ApplicationGetCountbyMandatoin = 'application/get-count-by-mandato-in',
+  ApplicationDeleteIfExists = 'application/delete-if-exists',
+  ApplicationUpdateTotalIvaMonto = 'application/update-total-iva-monto',
 }

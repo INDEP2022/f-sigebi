@@ -86,27 +86,23 @@ export class MaintenanceGoodsComponent extends BasePage implements OnInit {
             next: response => {
               if (response) {
                 this.loader.load = false;
-                this.alert(
-                  'success',
-                  'Actualización de descripción del Bien',
-                  'Realizada Correctamente'
-                );
+                this.alert('success', 'Actualización Correctamente', '');
                 this.clear();
               } else {
                 this.loader.load = false;
                 this.alert(
-                  'error',
-                  'Actualización de descripción del Bien',
-                  'No realizada'
+                  'warning',
+                  'Error al Actualizar la descripción del Bien',
+                  ''
                 );
               }
             },
             error: err => {
               this.loader.load = false;
               this.alert(
-                'error',
-                'Actualización de descripción del Bien',
-                'No realizada'
+                'warning',
+                'Error al Actualizar la descripción del Bien',
+                ''
               );
             },
           });

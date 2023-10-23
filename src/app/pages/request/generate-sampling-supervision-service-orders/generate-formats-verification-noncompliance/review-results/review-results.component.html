@@ -6,7 +6,14 @@
       </div>
       <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
-          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
+          Turnar muestreo <i class="bx bxs-right-arrow-square"></i>
+        </button>
+      </div>
+      <div
+        class="p-2"
+        *ngIf="lsEstatusMuestreo == 'MUESTREO_PENDIENTE_APROBACION'">
+        <button class="btn btn-primary btn-sm active" (click)="finish()">
+          Finalizar <i class="bx bxs-right-arrow-square"></i>
         </button>
       </div>
     </div>
