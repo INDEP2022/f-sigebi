@@ -439,7 +439,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
       let task: any = {};
       task['id'] = 0;
-      task['assignees'] = this.user.username;
+      (task['reviewers'] = user.username),
+        (task['assignees'] = this.user.username);
       task['assigneesDisplayname'] = this.user.firstName;
       task['creator'] = user.username;
       task['taskNumber'] = Number(request.id);
