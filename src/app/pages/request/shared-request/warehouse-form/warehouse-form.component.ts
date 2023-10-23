@@ -62,6 +62,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   showLocality: boolean = false;
   showZipCode: boolean = false;
   programmingId: number = 0;
+  transferId: number = 0;
   task: ITask;
   stateKeySelect: number = 0;
   constructor(
@@ -86,6 +87,9 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('transferId', this.transferId);
+    console.log('regDelData', this.regDelData);
+    console.log('programmingId', this.programmingId);
     this.prepareForm();
     this.getStateSelect(new ListParams());
     this.getTypeWarehouseSelect(new ListParams());

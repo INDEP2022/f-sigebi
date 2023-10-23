@@ -77,6 +77,43 @@
           </form-field>
         </div>
       </div>
+
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="flyersForm.get('department')">
+            <ngx-select
+              [form]="flyersForm"
+              [data]="entFed"
+              value="cve_entfed"
+              bindLabel="cveOt"
+              label="Área Destino"
+              [searchOnInit]="true"
+              (fetchItems)="getEntFed($event)"
+              control="department">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="flyersForm.get('delegdestino')"
+            label="Delegación Destino">
+            <input
+              type="text"
+              formControlName="delegdestino"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="flyersForm.get('subddestino')"
+            label="Subdelegación Destino">
+            <input
+              type="text"
+              formControlName="subddestino"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
     </form>
     <div class="row">
       <div class="d-flex justify-content-center">
@@ -107,6 +144,7 @@
       </div>
     </div>
   </div>
+
   <!--<div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -7,8 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { catchError, firstValueFrom, map, of } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
@@ -24,30 +24,18 @@ import { PrintFlyersService } from 'src/app/core/services/document-reception/pri
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { SubDelegationService } from 'src/app/core/services/maintenance-delegations/subdelegation.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
-export interface IReport {
-  data: File;
-}
-export interface IEntidad {
-  data: [];
-  count: number;
-}
-
 @Component({
-  selector: 'app-summary',
-  templateUrl: './summary.component.html',
-  styles: [],
+  selector: 'app-summary-destination',
+  templateUrl: './summary-destination.component.html',
+  styleUrls: [],
 })
-export class SummaryComponent extends BasePage implements OnInit {
+export class SummaryDestinationComponent extends BasePage implements OnInit {
   flyersForm: FormGroup;
-  @Input() showDelegation: boolean = true;
-  @Output() emitDelegation = new EventEmitter<IDelegation>();
-  @Input() delegationField: string = 'delegation';
-  @Input() subdelegationField: string = 'subdelegation';
-  @Output() emitSubdelegation = new EventEmitter<ISubdelegation>();
   maxDate: Date = new Date();
   idDelegation: number = null;
   entidad = new DefaultSelect<IDelegationState>();
@@ -66,28 +54,6 @@ export class SummaryComponent extends BasePage implements OnInit {
   entfedSelect = new DefaultSelect<IEntfed>();
   flagA: boolean = true;
 
-  datePickerConfig: Partial<BsDatepickerConfig> = {
-    minMode: 'month',
-    adaptivePosition: true,
-    dateInputFormat: 'MMMM YYYY',
-  };
-  get PF_FECINI(): AbstractControl {
-    return this.flyersForm.get('PF_FECINI');
-  }
-  get PF_FECFIN(): AbstractControl {
-    return this.flyersForm.get('PF_FECFIN');
-  }
-
-  get includeArea() {
-    return this.flyersForm.get('includeArea');
-  }
-  get delegation() {
-    return this.flyersForm.get(this.delegationField);
-  }
-  get subdelegation() {
-    return this.flyersForm.get(this.subdelegationField);
-  }
-
   constructor(
     private fb: FormBuilder,
     private reportService: ReportService,
@@ -101,7 +67,8 @@ export class SummaryComponent extends BasePage implements OnInit {
     private printFlyersService: PrintFlyersService,
     private entFedService: EntFedService,
     private subDelegationService: SubDelegationService,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private parametersService: ParametersService
   ) {
     super();
   }
@@ -117,7 +84,7 @@ export class SummaryComponent extends BasePage implements OnInit {
       PF_FECINI: [null, [Validators.required]],
       PF_FECFIN: [null, [Validators.required, maxDate(new Date())]],
       includeArea: [false],
-      department: [null],
+      department: [null, [Validators.required]],
       delegdestino: [null],
       subddestino: [null],
       entiFed: [null, [Validators.required]],
@@ -128,6 +95,8 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.getDepartament(params);
     this.flyersForm.get('subdelegation').disable();
     this.flyersForm.get('PF_FECFIN').disable();
+    this.flyersForm.get('delegdestino').disable();
+    this.flyersForm.get('subddestino').disable();
   }
 
   activeFlag() {
@@ -148,7 +117,15 @@ export class SummaryComponent extends BasePage implements OnInit {
     }
   }
 
-  getDelegation(params?: ListParams) {
+  async getDelegation(params?: ListParams) {
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const year = today.getFullYear();
+    const SYSDATE = `${year}/${month}/${day}`;
+    const etapa = await this.getFaStageCreda(SYSDATE);
+    params['filter.etapaEdo'] = `$eq:${etapa}`;
+
     if (params.text) {
       if (!isNaN(parseInt(params.text))) {
         params['filter.id'] = `$eq:${params.text}`;
@@ -170,6 +147,16 @@ export class SummaryComponent extends BasePage implements OnInit {
       },
     });
   }
+  async getFaStageCreda(data: any) {
+    return firstValueFrom(
+      this.parametersService.getFaStageCreda(data).pipe(
+        catchError(error => {
+          return of(null);
+        }),
+        map(resp => resp.stagecreated)
+      )
+    );
+  }
 
   changeDelegation(event: any) {
     if (event) {
@@ -180,8 +167,16 @@ export class SummaryComponent extends BasePage implements OnInit {
       this.getSubDelegations(new ListParams());
     }
   }
-  getSubDelegations(params: ListParams) {
+  async getSubDelegations(params: ListParams) {
     if (this.noDel) {
+      const today = new Date();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const year = today.getFullYear();
+      const SYSDATE = `${year}/${month}/${day}`;
+      const etapa = await this.getFaStageCreda(SYSDATE);
+      params['filter.phaseEdo'] = `$eq:${etapa}`;
+      params['filter.delegationNumber'] = `$eq:${this.noDel}`;
       params['filter.delegationNumber'] = `$eq:${this.noDel}`;
       if (params.text) {
         if (!isNaN(parseInt(params.text))) {
@@ -205,27 +200,6 @@ export class SummaryComponent extends BasePage implements OnInit {
       });
       this.flyersForm.get('subdelegation').enable();
     }
-    /*const paramsF = new FilterParams();
-    paramsF.addFilter(
-      'delegationNumber',
-      this.flyersForm.get(this.delegationField).value
-    );
-
-    this.printFlyersService.getSubdelegations2(paramsF.getParams()).subscribe({
-      next: data => {
-        this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-
-        this.onLoadToast('error', 'Error', error);
-      },
-    });*/
   }
 
   getEntFed(params?: ListParams) {
@@ -280,16 +254,16 @@ export class SummaryComponent extends BasePage implements OnInit {
     const end = this.flyersForm.get('PF_FECFIN').value;
     this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
     this.end = this.datePipe.transform(end, 'dd/MM/yyyy');
-    this.FGEROFPRESUMENDIA();
+    this.FGEROFPRESUMENDIAA();
     /*if (this.end < this.start) {
       this.onLoadToast(
         'error',
         'Fecha final no puede ser menor a fecha de inicio'
       );
       return;
-    }
+    }*/
 
-    if (this.flyersForm.get('includeArea').value) {
+    /*if (this.flyersForm.get('includeArea').value) {
       this.FGEROFPRESUMENDIAA();
     } else {
       this.FGEROFPRESUMENDIA();
@@ -337,12 +311,12 @@ export class SummaryComponent extends BasePage implements OnInit {
     });
   }
 
-  /*FGEROFPRESUMENDIAA() {
+  FGEROFPRESUMENDIAA() {
     let params = {
       PN_DELEG: this.flyersForm.controls['delegation'].value,
       PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
-      PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
-      PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
+      PN_DELEGACION: this.flyersForm.controls['delegdestino'].getRawValue(),
+      PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].getRawValue(),
       PN_DEPARTAMENTO: this.flyersForm.controls['department'].value,
       PF_FECINI: this.start,
       PF_FECFIN: this.end,
@@ -379,7 +353,7 @@ export class SummaryComponent extends BasePage implements OnInit {
         );
       }
     });
-  }*/
+  }
 
   preview(url: string, params: ListParams) {
     try {
@@ -415,10 +389,10 @@ export class SummaryComponent extends BasePage implements OnInit {
   }
 
   onDelegationsChange(delegation: any) {
-    this.resetFields([this.delegation]);
+    /*this.resetFields([this.delegation]);
     this.selectedDelegation = new DefaultSelect();
     this.validateTotal();
-    this.emitDelegation.emit(delegation);
+    this.emitDelegation.emit(delegation);*/
   }
 
   onDepartmentsChange(type: any) {
@@ -426,12 +400,12 @@ export class SummaryComponent extends BasePage implements OnInit {
   }
 
   onSubDelegationsChange(subdelegation: any) {
-    this.resetFields([this.subdelegation]);
+    /*this.resetFields([this.subdelegation]);
     this.selectedDelegation = new DefaultSelect();
     this.validateTotal();
     // this.delegations = new DefaultSelect([subdelegation.delegation], 1);
     // this.delegation.setValue(subdelegation.delegation.id);
-    this.emitSubdelegation.emit(subdelegation);
+    this.emitSubdelegation.emit(subdelegation);*/
   }
   minDate: Date;
   onDateChange(event: any) {
