@@ -131,13 +131,37 @@
         </div>
 
         <div class="col-md-6 mt-4">
-          <form-field
+          <!-- <form-field
             label="Usuario Recibió"
             [control]="documentsDictumXStateMForm.get('userReceipt')">
             <input
               type="text"
               class="form-control"
               formControlName="userReceipt" />
+          </form-field> -->
+          <form-field [control]="documentsDictumXStateMForm.get('userReceipt')">
+            <ngx-select
+              label="Usuario"
+              [form]="documentsDictumXStateMForm"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="userReceipt"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="id"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ngx-select>
+            <ng-template #userLabel let-item="item">
+              {{ item.id + ' - ' + item.name }}
+            </ng-template>
+            <ng-template #userOption let-item="item">
+              <div [title]="item.id + '-' + item.name">
+                {{ item.id + ' - ' + item.name }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
 
@@ -152,7 +176,8 @@
               required
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'
-              }" />
+              }"
+              readonly />
           </form-field>
         </div>
 
@@ -164,7 +189,8 @@
               type="text"
               class="form-control"
               [max-length]="30"
-              formControlName="userInsertion" />
+              formControlName="userInsertion"
+              readonly />
           </form-field>
         </div>
 

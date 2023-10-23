@@ -1,19 +1,24 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { catchError, tap, throwError } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
-import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-
 @Component({
   selector: 'app-documentation-goods-dialog',
   templateUrl: './documentation-goods-dialog.component.html',
@@ -28,21 +33,21 @@ export class DocumentationGoodsDialogComponent
 
   title: string = 'Documentación de bien';
   edit: boolean = false;
+  users$ = new DefaultSelect<ISegUsers>();
   selectExpedient = new DefaultSelect();
   selectGood = new DefaultSelect();
-  dictationXGood: { stateNumber: number; expedientNumber: number } | null =
-    null;
   selectDictNumber = new DefaultSelect();
   dataCreate: { officialNumber: number; typeDictum: number } | null = null;
   @Input() dictation: IDictation;
-  @Input() goods: IDictationXGood1;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private documentService: DocumentsDictumStatetMService,
     private expedientsService: ExpedientService,
     private goodService: GoodService,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private token: AuthService,
+    private usersService: UsersService
   ) {
     super();
   }
@@ -120,15 +125,12 @@ export class DocumentationGoodsDialogComponent
 
     if (this.dataCreate) {
       this.documentsDictumXStateMForm.patchValue(this.dataCreate);
-    }
-
-    if (this.goods) {
       this.documentsDictumXStateMForm
-        .get('expedientNumber')
-        .patchValue(this.goods.proceedings.id);
+        .get('insertionDate')
+        .patchValue(new Date());
       this.documentsDictumXStateMForm
-        .get('stateNumber')
-        .patchValue(this.goods.good);
+        .get('userInsertion')
+        .patchValue(this.token.decodeToken().preferred_username);
     }
 
     if (this.documentsDictumXStateM != null) {
@@ -149,6 +151,35 @@ export class DocumentationGoodsDialogComponent
 
   close() {
     this.modalRef.hide();
+  }
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
+  }
+
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        if (response.count > 0) {
+          const name = this.documentsDictumXStateMForm.get('userReceipt').value;
+          const data = response.data.filter(m => {
+            m.id == name;
+          });
+          console.log(data[0]);
+          this.documentsDictumXStateMForm
+            .get('userReceipt')
+            .patchValue(data[0]);
+        }
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
 
   confirm() {
