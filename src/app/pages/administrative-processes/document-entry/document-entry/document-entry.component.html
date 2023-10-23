@@ -1,0 +1,93 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-md-3">
+            <form-field [control]="form.get('fecha')" label="Fecha">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="fecha"
+                bsDatepicker
+                bsDatepicker
+                [bsConfig]="{
+                  dateInputFormat: 'DD/MM/YYYY',
+                  displayOneMonthRange: true
+                }"
+                [maxDate]="fechaActual" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('horaInicio')" label="De Las">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="horaInicio" />
+            </form-field>
+          </div>
+
+          <div class="col-md-3">
+            <form-field [control]="form.get('horaFin')" label="A Las">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="horaFin" />
+            </form-field>
+          </div>
+
+          <div class="col-md-3">
+            <form-field [control]="form.get('expediente')">
+              <ngx-select
+                (fetchItems)="getExpedient($event)"
+                [data]="expedints"
+                [form]="form"
+                value="fileNumber"
+                bindLabel="fileNumber"
+                label="Expediente"
+                [control]="'expediente'"
+                (change)="onExpedintChange($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('usuario')">
+              <ngx-select
+                (fetchItems)="getUsers($event)"
+                [data]="users"
+                [form]="form"
+                value="name"
+                bindLabel="name"
+                label="Usuario que Envió"
+                [control]="'usuario'"
+                (change)="onUserChange($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col">
+            <div class="justify-content-start">
+              <button
+                type="button"
+                [disabled]="form.invalid"
+                class="btn btn-primary active btn-sm mr-3"
+                (click)="onReport1()">
+                Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger active btn-sm"
+                (click)="cleanForm1()">
+                Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>
