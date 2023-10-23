@@ -1,93 +1,95 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Reporte de recepci&oacute;n documental</h5>
+    <h5 class="title">Reporte de recepci&oacute;n documental Diaria</h5>
   </div>
 
   <div body>
     <form [formGroup]="reportForm" class="form-material">
-      <div class="row justify-content-center">
-        <div class="col-md-5">
-          <div class="row pt-3">
-            <form-field [control]="reportForm.get('delegation')">
-              <ngx-select
-                [form]="reportForm"
-                [data]="selectedDelegation"
-                value="description"
-                bindLabel="description"
-                label="Delegación"
-                (fetchItems)="getDelegation($event)"
-                control="delegation">
-              </ngx-select>
-            </form-field>
-          </div>
-          <div class="row pt-3">
-            <form-field [control]="reportForm.get('subdelegation')">
-              <ngx-select
-                [form]="reportForm"
-                [data]="selectedSubDelegation"
-                value="description"
-                bindLabel="description"
-                label="Subdelegación"
-                (fetchItems)="getSubDelegations($event)"
-                control="subdelegation">
-              </ngx-select>
-            </form-field>
-          </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="reportForm.get('delegation')">
+            <ngx-select
+              [form]="reportForm"
+              control="delegation"
+              (fetchItems)="getCatalogDelegation($event)"
+              label="Delegación"
+              [data]="delegations"
+              bindLabel="noDelDesc"
+              [searchOnInit]="true"
+              value="id"
+              (change)="changeDelegation($event)">
+            </ngx-select>
+          </form-field>
         </div>
-
-        <div class="col-md-5">
-          <div class="row pt-3">
-            <form-field [control]="reportForm.get('PF_MES')" label="Mes">
-              <!-- <input formControlName="PF_MES" class="form-control" bsDatepicker /> -->
-              <input
-                type="text"
-                [bsConfig]="bsConfigFromMonth"
-                #dp="bsDatepicker"
-                bsDatepicker
-                [(bsValue)]="bsValueFromMonth"
-                formControlName="PF_MES"
-                class="form-control ng-pristine ng-valid ng-touched" />
-            </form-field>
-          </div>
-
-          <div class="row pt-3">
-            <form-field [control]="reportForm.get('PF_ANIO')" label="Año">
-              <input
-                type="number"
-                [bsConfig]="bsConfigFromYear"
-                #dp="bsDatepicker"
-                bsDatepicker
-                [(bsValue)]="bsValueFromYear"
-                formControlName="PF_ANIO"
-                class="form-control ng-pristine ng-valid ng-touched" />
-            </form-field>
-          </div>
+        <div class="col-md-4">
+          <form-field [control]="reportForm.get('subdelegation')">
+            <ngx-select
+              [form]="reportForm"
+              control="subdelegation"
+              (fetchItems)="getSubDelegation($event)"
+              label="Sub Delegación"
+              [data]="subDelegations"
+              bindLabel="noSubDelDesc"
+              value="id"
+              (change)="changeSubDelegation($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="reportForm.get('PF_MES')" label="Mes">
+            <!-- <input formControlName="PF_MES" class="form-control" bsDatepicker /> -->
+            <input
+              type="text"
+              [bsConfig]="bsConfigFromMonth"
+              #dp="bsDatepicker"
+              bsDatepicker
+              [(bsValue)]="bsValueFromMonth"
+              formControlName="PF_MES"
+              class="form-control ng-pristine ng-valid ng-touched" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="reportForm.get('PF_ANIO')" label="Año">
+            <input
+              type="text"
+              [maxDate]="maxDate"
+              [bsConfig]="bsConfigFromYear"
+              #dp="bsDatepicker"
+              bsDatepicker
+              [(bsValue)]="bsValueFromYear"
+              formControlName="PF_ANIO"
+              class="form-control ng-pristine ng-valid ng-touched" />
+          </form-field>
         </div>
       </div>
     </form>
-  </div>
-  <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <!-- <confirm-button
+    <div class="row">
+      <div class="d-flex justify-content-center">
+        <div>
+          <!-- <confirm-button
           text="Imprimir"
           
           [loading]="loading"
           (confirm)="Generar()">
         </confirm-button> -->
-        <button
-          type="button"
-          class="btn btn-primary active btn-sm"
-          (click)="Generar()"
-          [disabled]="reportForm.invalid">
-          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
-        </button>
-      </div>
-      <div class="m-3">
-        <button class="btn btn-danger btn-sm active mr-3" (click)="cleanForm()">
-          Limpiar <i class="fas fa-eraser"> </i>
-        </button>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="Generar()"
+            [disabled]="reportForm.invalid">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
+
+  <!--<div footer>
+    
+  </div>-->
 </app-card>

@@ -1,0 +1,171 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Resumen diario de recepci&oacute;n documental</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="flyersForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="flyersForm.get('delegation')">
+            <ngx-select
+              [form]="flyersForm"
+              [data]="selectedDelegation"
+              value="id"
+              bindLabel="noDelDesc"
+              label="Delegación"
+              (fetchItems)="getDelegation($event)"
+              (change)="changeDelegation($event)"
+              [searchOnInit]="true"
+              control="delegation">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="flyersForm.get('subdelegation')">
+            <ngx-select
+              [form]="flyersForm"
+              [data]="subDelegations"
+              value="id"
+              bindLabel="noSubDelDesc"
+              label="Subdelegación"
+              (fetchItems)="getSubDelegations($event)"
+              control="subdelegation">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="flyersForm.get('entiFed')">
+            <ngx-select
+              [form]="flyersForm"
+              [data]="entFed"
+              value="cve_entfed"
+              bindLabel="cveOt"
+              label="Entidad Federativa"
+              [searchOnInit]="true"
+              (fetchItems)="getEntFed($event)"
+              control="entiFed">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <form-field
+            [control]="flyersForm.get('PF_FECINI')"
+            label="Recepci&oacute;n Desde">
+            <input
+              (bsValueChange)="onDateChange($event)"
+              formControlName="PF_FECINI"
+              class="form-control"
+              bsDatepicker
+              [maxDate]="maxDate" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="flyersForm.get('PF_FECFIN')"
+            label="Recepción Hasta">
+            <input
+              id="toDate"
+              [maxDate]="maxDate"
+              formControlName="PF_FECFIN"
+              class="form-control"
+              [minDate]="minDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="flyersForm.get('department')">
+            <ngx-select
+              [form]="flyersForm"
+              [data]="entFed"
+              value="cve_entfed"
+              bindLabel="cveOt"
+              label="Área Destino"
+              [searchOnInit]="true"
+              (fetchItems)="getEntFed($event)"
+              control="department">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="flyersForm.get('delegdestino')"
+            label="Delegación Destino">
+            <input
+              type="text"
+              formControlName="delegdestino"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="flyersForm.get('subddestino')"
+            label="Subdelegación Destino">
+            <input
+              type="text"
+              formControlName="subddestino"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="d-flex justify-content-center">
+        <div>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="Generar()"
+            [disabled]="flyersForm.invalid">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+          <!--<button
+            text="Imprimir"
+            [btnSmall]="true"
+            icon="bx bx-printer bx-sm float-icon mr-3"
+            [disabled]="flyersForm.invalid || !flagA"
+            [loading]="loading"
+            (confirm)="Generar()">
+          </button>-->
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="cleanForm()">
+            Limpiar
+            <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--<div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [btnSmall]="true"
+          icon="bx bx-printer bx-sm float-icon"
+          [disabled]="flyersForm.invalid || !flagA"
+          [loading]="loading"
+          (confirm)="Generar()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="cleanForm()">
+          Limpiar
+          <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
+    </div>
+  </div>-->
+</app-card>

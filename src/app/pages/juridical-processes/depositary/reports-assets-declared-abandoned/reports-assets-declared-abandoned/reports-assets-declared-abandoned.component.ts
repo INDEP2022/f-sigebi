@@ -1,6 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
@@ -8,9 +13,11 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
+import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -30,17 +37,24 @@ export class ReportsAssetsDeclaredAbandonedComponent
 {
   form: FormGroup = new FormGroup({});
   totalItems: number = 0;
+  phaseEdo: number;
   params = new BehaviorSubject<ListParams>(new ListParams());
   public delegations = new DefaultSelect();
   public subdelegations = new DefaultSelect();
   users$ = new DefaultSelect<ISegUsers>();
-
+  get delegation() {
+    return this.form.get('delegation');
+  }
+  get subdelegation() {
+    return this.form.get('subdelegation');
+  }
   constructor(
     private fb: FormBuilder,
     private delegationService: DelegationService,
     private subdelegationService: SubdelegationService,
     private datePipe: DatePipe,
     private siabService: SiabService,
+    private printFlyersService: PrintFlyersService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private usersService: UsersService,
@@ -84,16 +98,61 @@ export class ReportsAssetsDeclaredAbandonedComponent
       user: [null],
     });
   }
+  getDelegations(params: ListParams) {
+    this.delegationService.getAll(params).subscribe(
+      data => {
+        this.delegations = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        this.delegations = new DefaultSelect([], 0);
+      },
+      () => {}
+    );
+  }
 
-  public getDelegations(params: ListParams) {
-    this.delegationService.getAll(params).subscribe(data => {
-      this.delegations = new DefaultSelect(data.data, data.count);
+  onDelegationsChange(element: any) {
+    this.resetFields([this.delegation]);
+    this.subdelegations = new DefaultSelect([], 0);
+    this.form.controls['subdelegation'].setValue(null);
+    if (this.delegation.value)
+      this.getSubDelegations({ page: 1, limit: 10, text: '' });
+  }
+
+  // public getSubdelegations(params: ListParams) {
+  //   this.subdelegationService.getAll(params).subscribe(data => {
+  //     this.subdelegations = new DefaultSelect(data.data, data.count);
+  //   });
+  // }
+  getSubDelegations(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('dsarea', lparams.text, SearchFilter.LIKE);
+    if (this.delegation.value) {
+      params.addFilter('delegationNumber', this.delegation.value);
+    }
+    if (this.phaseEdo) params.addFilter('phaseEdo', this.phaseEdo);
+    // console.log(params.getParams());
+    this.printFlyersService.getSubdelegations(params.getParams()).subscribe({
+      next: data => {
+        this.subdelegations = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.subdelegations = new DefaultSelect([], 0);
+      },
     });
   }
-  public getSubdelegations(params: ListParams) {
-    this.subdelegationService.getAll(params).subscribe(data => {
-      this.subdelegations = new DefaultSelect(data.data, data.count);
+
+  onSubDelegationsChange(element: any) {
+    this.resetFields([this.subdelegation]);
+  }
+
+  resetFields(fields: AbstractControl[]) {
+    fields.forEach(field => {
+      field = null;
     });
+    this.form.updateValueAndValidity();
   }
 
   public getUsers($params: ListParams) {

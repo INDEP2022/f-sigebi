@@ -146,10 +146,10 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
 
   confirm(): void {
     this.loading = true;
-    this.submit.emit(this.flyersForm);
-    let dateInit = this.datePipe.transform(this.PF_FECINI.value, 'yyyy-MM-dd');
+    //this.submit.emit(this.flyersForm);
+    let dateInit = this.datePipe.transform(this.PF_FECINI.value, 'dd-MM-yyyy');
 
-    let dateEnd = this.datePipe.transform(this.PF_FECFIN.value, 'yyyy-MM-dd');
+    let dateEnd = this.datePipe.transform(this.PF_FECFIN.value, 'dd-MM-yyyy');
 
     let params = {
       PN_NODELEGACION: this.PN_NODELEGACION.value,
@@ -199,6 +199,35 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
           this.modalService.show(PreviewDocumentsComponent, config);
         }
       });
+
+    /*this.siabService
+      .fetchReport('RCONCOGVOLANTESRE', params)
+      .subscribe({
+        next: response => {
+          if (response !== null) {
+            if (response.body === null || response.code === 500) {
+              this.alert('error', 'No existe el reporte', '');
+              return;
+            }
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => { },
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        },error: err=>{
+          console.log(this.alert('error', 'No existe el reporte', ''));
+        }
+      });*/
   }
 
   getDelegations(params: ListParams) {
