@@ -485,6 +485,7 @@ export class TaxValidationCalculationComponent
   getComerEvent(idEvent: number) {
     this.comerGoodsRejectedService.getComerEvent('I', idEvent).subscribe(
       resp => {
+        console.log(resp);
         if (resp != null && resp != undefined) {
           console.log('Resp getComerEvent-> ', resp);
           this.getComerTpEvent(idEvent);

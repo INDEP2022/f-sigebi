@@ -53,6 +53,7 @@ export class SummaryDestinationComponent extends BasePage implements OnInit {
 
   entfedSelect = new DefaultSelect<IEntfed>();
   flagA: boolean = true;
+  validate: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -85,18 +86,19 @@ export class SummaryDestinationComponent extends BasePage implements OnInit {
       PF_FECFIN: [null, [Validators.required, maxDate(new Date())]],
       includeArea: [false],
       department: [null, [Validators.required]],
-      delegdestino: [null],
-      subddestino: [null],
+      delegdestino: [null, [Validators.required]],
+      subddestino: [null, [Validators.required]],
       entiFed: [null, [Validators.required]],
     });
     const params = new ListParams();
-    this.getDelegation(params);
-    this.getSubDelegations(params);
-    this.getDepartament(params);
+    //this.getDelegation(params);
+    //this.getSubDelegations(params);
+    //this.getDepartament(params);
     this.flyersForm.get('subdelegation').disable();
     this.flyersForm.get('PF_FECFIN').disable();
     this.flyersForm.get('delegdestino').disable();
     this.flyersForm.get('subddestino').disable();
+    this.flyersForm.get('department').disable();
   }
 
   activeFlag() {
@@ -193,12 +195,18 @@ export class SummaryDestinationComponent extends BasePage implements OnInit {
             item['noSubDelDesc'] = item.id + ' - ' + item.description;
           });
           this.subDelegations = new DefaultSelect(resp.data, resp.count);
+          this.flyersForm.get('subdelegation').enable();
         },
         error: () => {
           this.subDelegations = new DefaultSelect();
         },
       });
-      this.flyersForm.get('subdelegation').enable();
+    }
+  }
+
+  changeSubDelegation(event: any) {
+    if (event) {
+      this.getDepartament(new ListParams());
     }
   }
 
@@ -226,16 +234,88 @@ export class SummaryDestinationComponent extends BasePage implements OnInit {
   }
 
   getDepartament(params: ListParams) {
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.description'] = `$ilike:${params.text}`;
+      }
+    }
     this.departamentService.getAll(params).subscribe({
-      next: data => {
-        this.validateTotal();
-        this.selectDepartament = new DefaultSelect(data.data, data.count);
+      next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['iDepDesc'] =
+            item.id + ' - ' + item.dsarea + ' - ' + item.description;
+        });
+        this.selectDepartament = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
-        console.log(err);
+        this.selectDepartament = new DefaultSelect();
+        //console.log(err);
       },
     });
+    this.flyersForm.get('department').enable();
   }
+
+  async changeDepartament(event: any) {
+    if (event) {
+      const numDep = this.flyersForm.get('department').value;
+      const numDel = this.flyersForm.get('delegation').value;
+      const numSubDel = this.flyersForm.get('subdelegation').value;
+      let setDest = await this.getSetDest(
+        new ListParams(),
+        numDep,
+        numDel,
+        numSubDel
+      );
+      let dataSetDest: any = setDest;
+      console.log(dataSetDest);
+      if (dataSetDest.data === null) {
+        this.onLoadToast(
+          'warning',
+          'El Departamento no Existe',
+          'Por Favor Verifique'
+        );
+        this.flyersForm.get('delegdestino').reset();
+        this.flyersForm.get('subddestino').reset();
+        this.validate = true;
+        return;
+      } else {
+        this.validate = false;
+        this.flyersForm
+          .get('delegdestino')
+          .setValue(dataSetDest.data[0].descripcion);
+        this.flyersForm
+          .get('subddestino')
+          .setValue(dataSetDest.data[0].subdescripcion);
+      }
+    }
+  }
+
+  async getSetDest(
+    params: ListParams,
+    numDep: number,
+    numDel: number,
+    numSubDel: number
+  ) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        destinyDepNumber: numDep,
+        destinyDelNumber: numDel,
+        destinySubdelNumber: numSubDel,
+      };
+      this.departamentService.getAppsGetData2(body, params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
   save() {}
 
   getEndDateErrorMessage(fin: any, ini: any) {
@@ -379,6 +459,7 @@ export class SummaryDestinationComponent extends BasePage implements OnInit {
     this.flyersForm.reset();
     this.flyersForm.get('subdelegation').disable();
     this.flyersForm.get('PF_FECFIN').disable();
+    this.flyersForm.get('department').disable();
   }
 
   resetFields(fields: AbstractControl[]) {

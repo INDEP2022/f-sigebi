@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
@@ -26,7 +25,18 @@ import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IDetailProceedingsDevollutionDelete } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { AuthorizationAssetsDestructionForm } from '../utils/authorization-assets-destruction-form';
+import { ModalCorreoComponent } from '../utils/modal-correo/modal-correo.component';
+
+interface Blk {
+  descripcion: string;
+  email: string;
+  numeroDelegacion: number;
+  nombre: string;
+  usuario: string;
+  procesar: string;
+}
 
 @Component({
   selector: 'app-authorization-assets-destruction',
@@ -73,7 +83,8 @@ export class AuthorizationAssetsDestructionComponent
     private goodService: GoodService,
     private datePipe: DatePipe,
     private proceedingsDetailDel: ProceedingsDeliveryReceptionService,
-    private proceedingService: ProceedingsService
+    private proceedingService: ProceedingsService,
+    private serviceDocuments: DocumentsService
   ) {
     super();
     this.settings = {
@@ -110,23 +121,62 @@ export class AuthorizationAssetsDestructionComponent
     });
   }
 
-  /* expedientChange() {
-    const expedientId = this.controls.idExpedient.value;
-    if (!expedientId) {
-      return;
-    }
-    this.findExpedientById(expedientId).subscribe({
-      next: expedient => {
-        this.form.patchValue(expedient);
+  async openModal() {
+    let config: ModalOptions = {
+      initialState: {
+        acta: this.acta,
+        detalleActa: await this.data.getAll(),
+        callback: async (acta: any) => {
+          if (acta.statusProceedings === 'CERRADA') {
+            this.acta = acta;
+            const detail: any[] = await this.data.getAll();
+            this.proceedingsDetailDel.update2(this.acta).subscribe({
+              next: resp => {
+                console.log(resp);
+                detail.forEach(async (element: any) => {
+                  const model: IDetailProceedingsDevollutionDelete = {
+                    numberGood: element.numberGood,
+                    numberProceedings: element.numberProceedings,
+                  };
+                  await this.pupDepuraDetalle(model);
+                });
+                this.relationsExpedient();
+              },
+              error: err => {
+                this.alert(
+                  'error',
+                  this.title,
+                  'No Se Ha Podido Cerrar el Acta'
+                );
+              },
+            });
+          }
+        },
       },
-      error: error => {
-        if (error.status <= 500) {
-          this.onLoadToast('error', 'Error', 'No se encontró el expediente');
-          this.form.reset();
-        }
-      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ModalCorreoComponent, config);
+  }
+
+  getDocuments() {
+    return new Promise<number>((res, _rej) => {
+      const params: ListParams = {};
+      params[
+        'filter.associateUniversalFolio'
+      ] = `$eq:${this.acta.universalFolio}`;
+      this.serviceDocuments.getAll(params).subscribe({
+        next: resp => {
+          console.error(resp);
+          res(Number(resp.count));
+        },
+        error: err => {
+          console.log(err);
+          res(0);
+        },
+      });
     });
-  } */
+  }
 
   getDetailProceedingsDevolution(number: number, expedient: boolean = false) {
     this.loading = true;
@@ -247,19 +297,67 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   async closed() {
-    const detail: any[] = await this.data.getAll();
-    if (detail.length === 0) {
+    if (this.form.controls.fromDate === null) {
+      this.alert(
+        'warning',
+        this.title,
+        'Debe Ingresar la fecha de Autorización.',
+        ''
+      );
       return;
     }
-    detail.forEach(async (element: any) => {
+    if (this.form.controls.authNotice === null) {
+      this.alert(
+        'warning',
+        this.title,
+        'Debe Ingresar el Oficio de Autorización.',
+        ''
+      );
+      return;
+    }
+
+    if (this.form.controls.universalFolio.value === null) {
+      this.alert(
+        'warning',
+        this.title,
+        'El Oficio No Tiene Folio de Escaneo, No Se Puede Cerrar.',
+        ''
+      );
+      return;
+    }
+    const hojas: number = await this.getDocuments();
+    if (hojas <= 0) {
+      this.alert(
+        'warning',
+        this.title,
+        'El Oficio No Tiene Documentos Escaneados, No Se Puede Cerrar.',
+        ''
+      );
+      return;
+    }
+
+    const detail: any[] = await this.data.getAll();
+    if (detail.length === 0) {
+      this.alert(
+        'warning',
+        this.title,
+        'El Oficio No Tiene Ningun Bien Asignado, No Se Puede Cerrar.',
+        ''
+      );
+      return;
+    }
+    /*     detail.forEach(async (element: any) => {
       const model: IDetailProceedingsDevollutionDelete = {
         numberGood: element.numberGood,
         numberProceedings: element.numberProceedings,
       };
       await this.pupDepuraDetalle(model);
-    });
+    }); */
+    this.openModal();
     this.getDetailProceedingsDevolution(this.form.controls.noAuth.value);
   }
+
+  pupLlenaDist() {}
 
   pupDepuraDetalle(model: IDetailProceedingsDevollutionDelete) {
     return new Promise((resolve, _reject) => {
@@ -425,23 +523,6 @@ export class AuthorizationAssetsDestructionComponent
       'Atención',
       'Para escanear debe de abrir la aplicación de su preferencia'
     );
-  }
-
-  openPrevImg() {
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.imagenurl),
-          type: 'img',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   async ReadExcel(event: any) {

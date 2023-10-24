@@ -67,7 +67,7 @@ export class CommentsFormComponent implements OnInit {
 
   checkReadOnly() {
     if (this.op == 1) {
-      this.readonly = true;
+      this.readonly = false;
       this.readonlyNotification = true;
     } else if (this.op == 9) {
       this.readonly = false;
