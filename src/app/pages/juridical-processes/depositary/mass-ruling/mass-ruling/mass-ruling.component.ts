@@ -367,6 +367,14 @@ export class MassRulingComponent
       return;
     } else {
       try {
+        if (!this.formCargaMasiva.value.identificadorCargaMasiva) {
+          this.onLoadToast(
+            'warning',
+            '',
+            'Debe Ingresar Un Identificador de Carga Masiva y Cargar los Bienes del Identificador'
+          );
+          return;
+        }
         let count = await this.getCount(this.goodNumber);
         let countData: any = count;
         const statusCount = countData.data[0].count;
@@ -382,23 +390,33 @@ export class MassRulingComponent
           .deleteDocumentXGood(this.goodNumber)
           .subscribe({
             next: resp => {},
-            error: err => {},
+            error: err => {
+              this.alert('error', 'Ocurrio un Error', 'Al Elimnar el Bien');
+            },
           });
-        this.historyGoodService.getUpdateGoodXHist(this.goodNumber).subscribe({
-          next: resp => {
-            //console.log(resp.data[0].estado);
-            this.updateStatus(this.goodNumber, status);
-            this.onLoadToast('success', 'Proceso Terminado', '');
-            this.onClickBtnClear();
-          },
-          error: err => {
-            this.alert(
-              'error',
-              'Problemas',
-              'Para Regresar al Estatus Anterior'
-            );
-          },
-        });
+        setTimeout(() => {
+          this.historyGoodService
+            .getUpdateGoodXHist(this.goodNumber)
+            .subscribe({
+              next: resp => {
+                //console.log(resp.data[0].estado);
+                //this.updateStatus(this.goodNumber, status);
+                this.onLoadToast(
+                  'success',
+                  'Proceso Terminado',
+                  'Correctamente'
+                );
+                this.onClickBtnClear();
+              },
+              error: err => {
+                this.alert(
+                  'error',
+                  'Problemas',
+                  'Para Regresar al Estatus Anterior'
+                );
+              },
+            });
+        }, 3000);
       } catch (ex: any) {
         this.btnsEnabled.btnDictation = false;
         this.alert('error', '', 'Verificar si Selecciono un Bien');
@@ -426,7 +444,7 @@ export class MassRulingComponent
         },
       });*/
 
-      if (this.dataTable.length < 1) {
+      /*if (this.dataTable.length < 1) {
         this.onLoadToast(
           'warning',
           '',
@@ -439,7 +457,7 @@ export class MassRulingComponent
       if (this.isFileLoad) {
         body['goodIds'] = /* this.dataTable.map(x => {
         return { no_bien: x.goodNumber }; 
-      });*/ this.dataFile.map(x => {
+      }); this.dataFile.map(x => {
           return { no_bien: x.goodNumber };
         });
       } else {
@@ -472,7 +490,7 @@ export class MassRulingComponent
           this.onLoadToast('warning', '', 'Error al Eliminar los Bienes');
           this.btnsEnabled.btnGoodDictation = false;
         },
-      });
+      });*/
     }
   }
 
@@ -490,7 +508,7 @@ export class MassRulingComponent
   }
 
   onClickBtnClear() {
-    this.dataTable = [];
+    this.dataTable2.load([]);
     this.totalItems = 0;
     this.dataTableErrors = [];
     this.totalItemsErrors = 0;
@@ -584,8 +602,8 @@ export class MassRulingComponent
             this.btnsEnabled.btnDictation = false;
             this.alert(
               'info',
-              '',
-              'Su Usuario No Tiene Permiso Para Eliminar Registros'
+              'El Usuario',
+              'No Tiene Permiso Para Eliminar Registros'
             );
             return;
           }
@@ -626,7 +644,7 @@ export class MassRulingComponent
         );*/
       } catch (ex: any) {
         this.btnsEnabled.btnDictation = false;
-        this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
+        //this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
       }
     }
   }
@@ -637,43 +655,58 @@ export class MassRulingComponent
       this.form.get('passOfficeArmy').getRawValue()
     );
     let dataUpdate: any = updateStatus;
-    console.log(dataUpdate.data.length);
-    for (let i = 0; i < dataUpdate.data.length; i++) {
-      let status = await this.getStatus(
-        dataUpdate.data[i].no_bien,
-        new ListParams()
+    //console.log(dataUpdate.data.length);
+    if (dataUpdate === null) {
+      this.alert(
+        'warning',
+        'No se Encontraron Registros',
+        'Para Actualizar el Estatus'
       );
-      let dataStatus: any = status;
-      if (status == null) {
-        this.alert('warning', '', 'No se Encontro el Estatus Anterior');
-        break;
-      }
-      console.log(status);
-      if (dataUpdate.data[i].no_bien && dataStatus.data[0].estatus) {
-        const goodNumber = dataUpdate.data[i].no_bien;
-        const status = dataStatus.data[0].estatus;
-        try {
-          this.updateStatus(goodNumber, status);
-        } catch (ex: any) {
-          this.btnsEnabled.btnDictation = false;
-          this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
+      //return;
+    } else {
+      for (let i = 0; i < dataUpdate.data.length; i++) {
+        let status = await this.getStatus(
+          dataUpdate.data[i].no_bien,
+          new ListParams()
+        );
+        let dataStatus: any = status;
+        if (status == null) {
+          this.alert('warning', '', 'No se Encontro el Estatus Anterior');
+          break;
+        }
+        console.log(status);
+        if (dataUpdate.data[i].no_bien && dataStatus.data[0].estatus) {
+          const goodNumber = dataUpdate.data[i].no_bien;
+          const status = dataStatus.data[0].estatus;
+          try {
+            this.updateStatus(goodNumber, status);
+          } catch (ex: any) {
+            this.btnsEnabled.btnDictation = false;
+            this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
+          }
         }
       }
     }
-    if (this.form.get('passOfficeArmy').getRawValue()) {
-      const keyArmy = this.form.get('passOfficeArmy').getRawValue();
-      let body = {
-        armedTradeKey: keyArmy,
-      };
-      this.documentsDictumStatetMService.deleteMassive(body).subscribe({
-        next: resp => {
-          this.alert('success', 'Proceso Terminado', '');
-        },
-        error: err => {
-          this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
-        },
-      });
-    }
+    setTimeout(() => {
+      if (this.form.get('passOfficeArmy').getRawValue()) {
+        const keyArmy = this.form.get('passOfficeArmy').getRawValue();
+        let body = {
+          armedTradeKey: keyArmy,
+        };
+        this.documentsDictumStatetMService.deleteMassive(body).subscribe({
+          next: resp => {
+            this.alert('success', 'Dictamenes Eliminados', 'Correctamente');
+          },
+          error: err => {
+            this.alert(
+              'error',
+              'Ocurrio un Error',
+              'Al Elimnar los Dictamenes'
+            );
+          },
+        });
+      }
+    }, 3000);
   }
 
   async updateStatus(goodNumber: number, status: string) {
@@ -894,7 +927,7 @@ export class MassRulingComponent
         TIPO_VOL,
       });*/
     } catch (ex) {
-      console.log({ ex });
+      this.onLoadToast('error', '', 'Reporte No Disponible');
     }
   }
 
@@ -919,7 +952,7 @@ export class MassRulingComponent
         TIPO_VOL,
       });*/
     } catch (ex) {
-      console.log({ ex });
+      this.onLoadToast('error', '', 'Reporte No Disponible');
     }
   }
 
@@ -932,7 +965,7 @@ export class MassRulingComponent
         TIPO_VOL,
       });
     } catch (ex) {
-      console.log({ ex });
+      this.onLoadToast('error', '', 'Reporte No Disponible');
     }
   }
 
@@ -1117,8 +1150,13 @@ export class MassRulingComponent
 
     try {
       let VIDEN = await this.findGoodAndDictXGood1();
-      let dataVIDEN: any = VIDEN;
-      vIDENTI = dataVIDEN.data[0].substr;
+      if (VIDEN) {
+        let dataVIDEN: any = VIDEN;
+        vIDENTI = dataVIDEN.data[0].substr;
+      } else {
+        vIDENTI = '';
+      }
+
       //console.log(dataVIDEN.data[0].substr);
     } catch (error: any) {
       if (error.status >= 400 && error.status < 500) {
@@ -1129,7 +1167,7 @@ export class MassRulingComponent
         );
         throw error;
       }
-      this.alert('warning', 'info', error?.message);
+      //this.alert('warning', 'info', error?.message);
       throw error;
     }
 

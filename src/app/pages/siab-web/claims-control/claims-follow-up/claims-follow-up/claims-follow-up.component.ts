@@ -141,8 +141,6 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
 
             if (!isNaN(numericAmount)) {
               return numericAmount.toLocaleString('en-US', {
-                // style: 'currency',
-                // currency: 'USD',
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               });
@@ -160,8 +158,6 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
 
             if (!isNaN(numericAmount)) {
               return numericAmount.toLocaleString('en-US', {
-                // style: 'currency',
-                // currency: 'USD',
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               });
@@ -189,8 +185,6 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
 
             if (!isNaN(numericAmount)) {
               return numericAmount.toLocaleString('en-US', {
-                // style: 'currency',
-                // currency: 'USD',
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               });
@@ -213,41 +207,11 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           title: 'Fecha Oficio/Correo',
           type: 'string',
           sort: false,
-          // valuePrepareFunction: (date: Date) => {
-          //   console.log(date);
-          //   if (date != null) {
-          //     var raw = new Date(date);
-          //     var formatted = new DatePipe('en-EN').transform(
-          //       raw,
-          //       'dd/MM/yyyy',
-          //       'UTC'
-          //     );
-          //   } else {
-          //     var formatted = '';
-          //   }
-
-          //   return formatted;
-          // },
         },
         datejobconclusion: {
           title: 'Fecha Oficio Conclusión/Minuta',
           type: 'string',
           sort: false,
-          // valuePrepareFunction: (date: Date) => {
-          //   console.log(date);
-          //   if (date != null) {
-          //     var raw = new Date(date);
-          //     var formatted = new DatePipe('en-EN').transform(
-          //       raw,
-          //       'dd/MM/yyyy',
-          //       'UTC'
-          //     );
-          //   } else {
-          //     var formatted = '';
-          //   }
-
-          //   return formatted;
-          // },
         },
         ordendeingreso: {
           title: 'Orden de Ingreso',
@@ -270,18 +234,6 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-
-        // officialDocumentConclusion: {
-        //   title: 'Doc.Oficio minuta conclusion',
-        //   type: 'string',
-        //   sort: false,
-        // },
-
-        // docClaimLetter: {
-        //   title: 'Doc.Carta reclamación',
-        //   type: 'string',
-        //   sort: false,
-        // },
       },
     };
   }

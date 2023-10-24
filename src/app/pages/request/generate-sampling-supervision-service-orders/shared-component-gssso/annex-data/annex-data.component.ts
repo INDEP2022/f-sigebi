@@ -51,10 +51,12 @@ export class AnnexDataComponent extends BasePage implements OnInit {
       next: resp => {
         this.sampleOrderForm.patchValue(resp.data[0]);
 
-        if (resp.data[0].datebreaches && resp.data[0].daterepService) {
+        if (resp.data[0].datebreaches != null) {
           this.sampleOrderForm
             .get('datebreaches')
             .setValue(this.parseDateNoOffset(resp.data[0].datebreaches));
+        }
+        if (resp.data[0].daterepService != null) {
           this.sampleOrderForm
             .get('daterepService')
             .setValue(this.parseDateNoOffset(resp.data[0].daterepService));

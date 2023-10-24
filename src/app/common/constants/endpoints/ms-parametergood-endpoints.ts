@@ -17,4 +17,5 @@ export enum ParameterGoodEndpoints {
   PupArmaClave = 'application/pup-weapon-key',
   RNomencla = 'application/get-r-nomencla',
   ApplicationGetFaUrlwebFac = 'application/get-fa-urlweb-fac',
+  EnvioCorreoGenerico = 'application/paEnvioCorreoGenerico',
 }

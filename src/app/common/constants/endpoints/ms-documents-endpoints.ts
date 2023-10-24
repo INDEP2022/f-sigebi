@@ -28,6 +28,8 @@ export enum DocumentsEndpoints {
   InvoiceUniversal = 'application/get-documents-invoice-universal',
   InvoiceUniversalAsoc = 'application/get-documents-invoice-universal-asoc',
   loanDocument = 'documents-loans',
+  applicationGetDatas = 'application/getDatas',
+  applicationGetDatas2 = 'application/getDatas2',
   deleteFolio = 'application/delete-documents-invoice-universal-asoc',
   DocumentsDictumXStateM = 'documents-dictum-x-state-m/getCount',
   DocumentsDictumXStateMassive = 'documents-dictum-x-state-m/massiveDelete',
