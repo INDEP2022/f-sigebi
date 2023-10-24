@@ -514,6 +514,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
                 task['id'] = 0;
                 task['assignees'] = this.nickName;
                 task['assigneesDisplayname'] = this.userName;
+                task['reviewers'] = actualUser.username;
                 task['creator'] = actualUser.username;
                 task['taskNumber'] = Number(idRequest);
                 task['title'] =
@@ -805,6 +806,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['id'] = 0;
         task['assignees'] = this.nickName;
         task['assigneesDisplayname'] = this.userName;
+        task['reviewers'] = actualUser.username;
         task['creator'] = actualUser.username;
         task['taskNumber'] = Number(idRequest);
         task['title'] = title;

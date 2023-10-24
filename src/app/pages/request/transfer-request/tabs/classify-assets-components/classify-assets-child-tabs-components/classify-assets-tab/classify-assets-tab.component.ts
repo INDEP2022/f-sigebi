@@ -132,7 +132,9 @@ export class ClassifyAssetsTabComponent
   ngOnChanges(changes: SimpleChanges): void {
     this.typeTransfer = this.typeOfTransfer;
     if (this.process === 'classify-assets' && this.typeTransfer != 'MANUAL') {
-      this.isClassifyAsset = true;
+      //desabilita loa botones de guardar y limpiar en caso de ser distinto a manual
+      //se comenta la variable por modificaciones
+      //this.isClassifyAsset = true;
     }
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
