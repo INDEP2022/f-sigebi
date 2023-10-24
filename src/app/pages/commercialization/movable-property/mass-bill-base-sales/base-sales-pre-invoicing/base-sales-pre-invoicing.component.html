@@ -101,7 +101,7 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active mr-2"
-          (click)="exportAsXLSX()">
+          (click)="allSelect()">
           Selec. Todos <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
       </div>
@@ -157,6 +157,7 @@
     <form-loader *ngIf="loading"></form-loader>
     <div>
       <ng2-smart-table
+        #table
         [ngStyle]="{
           height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
         }"
