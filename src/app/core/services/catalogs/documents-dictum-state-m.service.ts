@@ -61,7 +61,7 @@ export class DocumentsDictumStatetMService extends HttpService {
   }
 
   deleteMassive(body: any) {
-    return this.delete(`${this.route.DocumentsDictumXStateMassive}`, body);
+    return this.post(`${this.route.DocumentsDictumXStateMassive}`, body);
   }
 
   deleteDocumentXGood(goodNumber: number) {

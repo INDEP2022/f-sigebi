@@ -30,6 +30,7 @@
               bindLabel="noSubDelDesc"
               label="Subdelegación"
               (fetchItems)="getSubDelegations($event)"
+              (change)="changeSubDelegation($event)"
               control="subdelegation">
             </ngx-select>
           </form-field>
@@ -83,12 +84,12 @@
           <form-field [control]="flyersForm.get('department')">
             <ngx-select
               [form]="flyersForm"
-              [data]="entFed"
-              value="cve_entfed"
-              bindLabel="cveOt"
+              [data]="selectDepartament"
+              value="id"
+              bindLabel="iDepDesc"
               label="Área Destino"
-              [searchOnInit]="true"
-              (fetchItems)="getEntFed($event)"
+              (fetchItems)="getDepartament($event)"
+              (change)="changeDepartament($event)"
               control="department">
             </ngx-select>
           </form-field>
@@ -122,7 +123,7 @@
             type="button"
             class="btn btn-primary active btn-sm mr-3"
             (click)="Generar()"
-            [disabled]="flyersForm.invalid">
+            [disabled]="flyersForm.invalid || validate">
             Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
           <!--<button
