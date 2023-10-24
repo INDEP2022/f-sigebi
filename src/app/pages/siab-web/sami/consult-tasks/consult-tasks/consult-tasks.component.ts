@@ -361,7 +361,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     const user = this.authService.decodeToken() as any;
     const idDeleReg = this.consultTasksForm.value.txtNoDelegacionRegional;
 
-    params['filter.assignees'] = `$ilike:${user.username}`;
+    params['filter.reviewers'] = `$ilike:${user.username}`;
     params['filter.idDelegationRegional'] = `$eq:${idDeleReg}`;
     params['sortBy'] = 'id:DESC';
     debugger;
