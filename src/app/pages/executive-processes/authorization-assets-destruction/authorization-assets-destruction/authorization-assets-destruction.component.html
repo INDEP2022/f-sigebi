@@ -207,7 +207,7 @@
       </div>
 
       <div class="row mt-4">
-        <app-scan-file-shared
+        <app-scan-file-authorization
           [form]="form"
           [formControlName]="'universalFolio'"
           [cveDocument]="form.get('act').value"
@@ -216,7 +216,7 @@
           [statusProceeding]="form.get('statusAct').value"
           [cveScreen]="'FACTDIRAPROBDESTR'"
           [reportPrint]="'RGERGENSOLICDIGIT'">
-        </app-scan-file-shared>
+        </app-scan-file-authorization>
       </div>
     </div>
   </app-card>

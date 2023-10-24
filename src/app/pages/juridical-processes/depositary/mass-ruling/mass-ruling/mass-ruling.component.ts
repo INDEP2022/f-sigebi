@@ -22,11 +22,14 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { IncidentMaintenanceService } from 'src/app/core/services/ms-generalproc/incident-maintenance.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { MassiveDictationService } from 'src/app/core/services/ms-massivedictation/massivedictation.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -145,12 +148,14 @@ export class MassRulingComponent
   result: any;
   identifier = new DefaultSelect();
   validate: boolean = false;
+  fileNumber: number;
+  goodNumber: number;
   // file: File | null = null;
   // public searchForm: FormGroup;
   constructor(
     // private fb: FormBuilder,
     protected dictationService: DictationService,
-    // private goodService: GoodService,
+    private goodService: GoodService,
     private massiveGoodService: MassiveGoodService,
     private modalService: BsModalService,
     private siabService: SiabService,
@@ -162,7 +167,9 @@ export class MassRulingComponent
     private dictationXGood1Service: DictationXGood1Service,
     private documentsDictumStatetMService: DocumentsDictumStatetMService,
     protected incidentMaintenanceService: IncidentMaintenanceService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private goodProcessService: GoodProcessService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -359,6 +366,62 @@ export class MassRulingComponent
     if (!question.isConfirmed) {
       return;
     } else {
+      try {
+        if (!this.formCargaMasiva.value.identificadorCargaMasiva) {
+          this.onLoadToast(
+            'warning',
+            '',
+            'Debe Ingresar Un Identificador de Carga Masiva y Cargar los Bienes del Identificador'
+          );
+          return;
+        }
+        let count = await this.getCount(this.goodNumber);
+        let countData: any = count;
+        const statusCount = countData.data[0].count;
+        if (statusCount === 0) {
+          this.alert(
+            'warning',
+            `El Estatus del Bien ${this.goodNumber}`,
+            'No Corresponde a un Estatus de Dictaminacion'
+          );
+          return;
+        }
+        this.documentsDictumStatetMService
+          .deleteDocumentXGood(this.goodNumber)
+          .subscribe({
+            next: resp => {},
+            error: err => {
+              this.alert('error', 'Ocurrio un Error', 'Al Elimnar el Bien');
+            },
+          });
+        setTimeout(() => {
+          this.historyGoodService
+            .getUpdateGoodXHist(this.goodNumber)
+            .subscribe({
+              next: resp => {
+                //console.log(resp.data[0].estado);
+                //this.updateStatus(this.goodNumber, status);
+                this.onLoadToast(
+                  'success',
+                  'Proceso Terminado',
+                  'Correctamente'
+                );
+                this.onClickBtnClear();
+              },
+              error: err => {
+                this.alert(
+                  'error',
+                  'Problemas',
+                  'Para Regresar al Estatus Anterior'
+                );
+              },
+            });
+        }, 3000);
+      } catch (ex: any) {
+        this.btnsEnabled.btnDictation = false;
+        this.alert('error', '', 'Verificar si Selecciono un Bien');
+      }
+
       let bodyDelete: any = {};
       bodyDelete['officialNumber'] = this.form.value.expedientNumber;
       bodyDelete['typeDictum'] = this.form.value.typeDict;
@@ -381,7 +444,7 @@ export class MassRulingComponent
         },
       });*/
 
-      if (this.dataTable.length < 1) {
+      /*if (this.dataTable.length < 1) {
         this.onLoadToast(
           'warning',
           '',
@@ -394,7 +457,7 @@ export class MassRulingComponent
       if (this.isFileLoad) {
         body['goodIds'] = /* this.dataTable.map(x => {
         return { no_bien: x.goodNumber }; 
-      });*/ this.dataFile.map(x => {
+      }); this.dataFile.map(x => {
           return { no_bien: x.goodNumber };
         });
       } else {
@@ -427,12 +490,25 @@ export class MassRulingComponent
           this.onLoadToast('warning', '', 'Error al Eliminar los Bienes');
           this.btnsEnabled.btnGoodDictation = false;
         },
-      });
+      });*/
     }
   }
 
+  async getCount(goodNumber: number) {
+    return new Promise((resolve, reject) => {
+      this.historyGoodService.getCount(goodNumber).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
   onClickBtnClear() {
-    this.dataTable = [];
+    this.dataTable2.load([]);
     this.totalItems = 0;
     this.dataTableErrors = [];
     this.totalItemsErrors = 0;
@@ -464,7 +540,8 @@ export class MassRulingComponent
     } else {
       let bodyDelete: any = {};
       //// de utilizan datos  de la tabla : tmp_exp_desahogob
-      this.dictationService
+
+      /*this.dictationService
         .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
         // .getTmpExpDesahogoByExpedient(793680)
         .subscribe({
@@ -482,7 +559,7 @@ export class MassRulingComponent
               'No Se Han encontrado Bienes Relacionados'
             );
           },
-        });
+        });*/
 
       /*  const armyOfficeKey = this.form.get('passOfficeArmy').value;
     console.log(armyOfficeKey);
@@ -496,63 +573,199 @@ export class MassRulingComponent
     }*/
 
       try {
-        const count = await this.CountDictationGoodFile(
-          this.form.get('passOfficeArmy').value
+        let count = await this.getDictationXState(
+          this.form.get('passOfficeArmy').getRawValue()
         );
-        this.onLoadToast(
+        let dataCount: any = count;
+        let count1: number = dataCount.count;
+
+        const responseQuestion1 = await this.alertQuestion(
           'info',
           '',
-          `El Total de Expediente a eliminar son: ${count}`
+          `El Total de Expediente a Eliminar son: ${count1}`,
+          'Continuar'
         );
-        let usuar;
-        try {
-          //  console.log(this.authService.decodeToken());
-          const user = this.authService
-            .decodeToken()
-            .preferred_username?.toUpperCase();
-          usuar = await this.getRtdictaAarusr(user);
-        } catch (ex) {
-          this.btnsEnabled.btnDictation = false;
-          this.alert(
-            'info',
-            '',
-            'Su Usuario No Tiene Permiso Para Eliminar Registros'
-          );
-          return;
+        if (responseQuestion1.isConfirmed) {
+          /*this.btnsEnabled.btnDictation = false;
+          return;*/
+          let usuar;
+          try {
+            //  console.log(this.authService.decodeToken());
+            const user = this.authService
+              .decodeToken()
+              .preferred_username?.toUpperCase();
+            usuar = await this.getRtdictaAarusr(user);
+            if (usuar) {
+              this.deleteDictaMasIva();
+            }
+          } catch (ex) {
+            this.btnsEnabled.btnDictation = false;
+            this.alert(
+              'info',
+              'El Usuario',
+              'No Tiene Permiso Para Eliminar Registros'
+            );
+            return;
+          }
+
+          /*if (usuar?.user) {
+            //  console.log(bodyDelete);
+            this.dictationXGood1Service.removDictamen(bodyDelete).subscribe({
+              next: data => {
+                this.alert('success', 'Dictamen', 'Proceso terminado');
+              },
+              error: err => {
+                this.alert(
+                  'error',
+                  'Error',
+                  'Error Desconocido Consulte a Su Analista'
+                );
+              },
+            });
+            await this.procedureDeleteDictationMoreTax(
+              this.form.get('passOfficeArmy').value
+            );
+            this.alert('success', 'Dictamen', 'Proceso terminado');
+            this.btnsEnabled.btnDictation = false;
+          } else {
+            this.alert(
+              'error',
+              '',
+              'Su Usuario No Tiene Permiso Para Eliminar Registros'
+            );
+            this.btnsEnabled.btnDictation = false;
+          }*/
         }
 
-        if (usuar?.user) {
-          //  console.log(bodyDelete);
-          this.dictationXGood1Service.removDictamen(bodyDelete).subscribe({
-            next: data => {
-              this.alert('success', 'Dictamen', 'Proceso terminado');
-            },
-            error: err => {
-              this.alert(
-                'error',
-                'Error',
-                'Error Desconocido Consulte a Su Analista'
-              );
-            },
-          });
-          await this.procedureDeleteDictationMoreTax(
-            this.form.get('passOfficeArmy').value
-          );
-          this.alert('success', 'Dictamen', 'Proceso terminado');
-          this.btnsEnabled.btnDictation = false;
-        } else {
-          this.alert(
-            'error',
-            '',
-            'Su Usuario No Tiene Permiso Para Eliminar Registros'
-          );
-          this.btnsEnabled.btnDictation = false;
-        }
+        /*this.onLoadToast(
+          'info',
+          '',
+          `El Total de Expediente a eliminar son: ${count1}`
+        );*/
       } catch (ex: any) {
         this.btnsEnabled.btnDictation = false;
-        this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
+        //this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
       }
     }
+  }
+
+  async deleteDictaMasIva() {
+    let status: string;
+    let updateStatus = await this.getApplicationGetData(
+      this.form.get('passOfficeArmy').getRawValue()
+    );
+    let dataUpdate: any = updateStatus;
+    //console.log(dataUpdate.data.length);
+    if (dataUpdate === null) {
+      this.alert(
+        'warning',
+        'No se Encontraron Registros',
+        'Para Actualizar el Estatus'
+      );
+      //return;
+    } else {
+      for (let i = 0; i < dataUpdate.data.length; i++) {
+        let status = await this.getStatus(
+          dataUpdate.data[i].no_bien,
+          new ListParams()
+        );
+        let dataStatus: any = status;
+        if (status == null) {
+          this.alert('warning', '', 'No se Encontro el Estatus Anterior');
+          break;
+        }
+        console.log(status);
+        if (dataUpdate.data[i].no_bien && dataStatus.data[0].estatus) {
+          const goodNumber = dataUpdate.data[i].no_bien;
+          const status = dataStatus.data[0].estatus;
+          try {
+            this.updateStatus(goodNumber, status);
+          } catch (ex: any) {
+            this.btnsEnabled.btnDictation = false;
+            this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
+          }
+        }
+      }
+    }
+    setTimeout(() => {
+      if (this.form.get('passOfficeArmy').getRawValue()) {
+        const keyArmy = this.form.get('passOfficeArmy').getRawValue();
+        let body = {
+          armedTradeKey: keyArmy,
+        };
+        this.documentsDictumStatetMService.deleteMassive(body).subscribe({
+          next: resp => {
+            this.alert('success', 'Dictamenes Eliminados', 'Correctamente');
+          },
+          error: err => {
+            this.alert(
+              'error',
+              'Ocurrio un Error',
+              'Al Elimnar los Dictamenes'
+            );
+          },
+        });
+      }
+    }, 3000);
+  }
+
+  async updateStatus(goodNumber: number, status: string) {
+    return new Promise((resolve, reject) => {
+      this.goodService.putStatusGood(goodNumber, status).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getStatus(goodNumber: string | number, params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.historyGoodService.getStatus(goodNumber, params).subscribe({
+        next: resp => {
+          console.log(resp);
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getApplicationGetData(key: string) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        armedTradeKey: key,
+      };
+      this.goodProcessService.getApplicationData(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getDictationXState(key: string) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        armedTradeKey: key,
+      };
+      this.documentsDictumStatetMService.getDocumentXState(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
 
   onClickLoadByIdentifier(): void {
@@ -714,7 +927,7 @@ export class MassRulingComponent
         TIPO_VOL,
       });*/
     } catch (ex) {
-      console.log({ ex });
+      this.onLoadToast('error', '', 'Reporte No Disponible');
     }
   }
 
@@ -739,7 +952,7 @@ export class MassRulingComponent
         TIPO_VOL,
       });*/
     } catch (ex) {
-      console.log({ ex });
+      this.onLoadToast('error', '', 'Reporte No Disponible');
     }
   }
 
@@ -752,7 +965,7 @@ export class MassRulingComponent
         TIPO_VOL,
       });
     } catch (ex) {
-      console.log({ ex });
+      this.onLoadToast('error', '', 'Reporte No Disponible');
     }
   }
 
@@ -881,15 +1094,19 @@ export class MassRulingComponent
     }
   }
 
+  rowsSelected(event: any) {
+    if (event) {
+      console.log(event.data.fileNumber, event.data.goodNumber);
+      this.fileNumber = event.data.fileNumber;
+      this.goodNumber = Number(event.data.goodNumber);
+    }
+  }
+
   changeCbDelete(event: any) {
     let target = event.target;
     const { id, typeDict, expedientNumber } = this.form.getRawValue();
-    if ((!id && !typeDict) || (!id && !expedientNumber)) {
-      this.alert(
-        'info',
-        '',
-        'LLene los Campos: Numero Expediente, Numero Dictaminación y Tipo Dictaminación'
-      );
+    if ((!id && !typeDict) || (!this.fileNumber && !this.goodNumber)) {
+      this.alert('info', '', 'No se han cargado los bienes a borrar');
       this.form.value.delete = false;
       event.target.checked = !target.checked;
       return;
@@ -933,8 +1150,13 @@ export class MassRulingComponent
 
     try {
       let VIDEN = await this.findGoodAndDictXGood1();
-      let dataVIDEN: any = VIDEN;
-      vIDENTI = dataVIDEN.data[0].substr;
+      if (VIDEN) {
+        let dataVIDEN: any = VIDEN;
+        vIDENTI = dataVIDEN.data[0].substr;
+      } else {
+        vIDENTI = '';
+      }
+
       //console.log(dataVIDEN.data[0].substr);
     } catch (error: any) {
       if (error.status >= 400 && error.status < 500) {
@@ -945,7 +1167,7 @@ export class MassRulingComponent
         );
         throw error;
       }
-      this.alert('warning', 'info', error?.message);
+      //this.alert('warning', 'info', error?.message);
       throw error;
     }
 

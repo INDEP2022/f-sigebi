@@ -1,11 +1,23 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
-import { LocalDataSource } from 'ng2-smart-table';
+import { DatePipe } from '@angular/common';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import {
   BehaviorSubject,
   catchError,
@@ -16,17 +28,20 @@ import {
 } from 'rxjs';
 import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ExcelService } from 'src/app/common/services/excel.service';
+import { InvoiceFolioSeparate } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
+import { AuthorizationSOIModalComponent } from './authorization-modal/authorization-modal.component';
 
 @Component({
   selector: 'app-base-sales-pre-invoicing',
@@ -55,6 +70,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   delegation: number;
   @Output() comer: EventEmitter<any> = new EventEmitter(null);
   limit: FormControl = new FormControl(500);
+
+  @ViewChild('table', { static: true }) table: Ng2SmartTableComponent;
+
   get idAllotment() {
     return this.form.get('idAllotment');
   }
@@ -63,49 +81,31 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
-    private excelService: ExcelService,
     private comerInvoice: ComerInvoiceService,
     private comerRebilService: ParameterInvoiceService,
     private userService: AuthService,
-    private dataUser: UsersService
+    private dataUser: UsersService,
+    private datePipe: DatePipe,
+    private authService: AuthService,
+    private eatLotService: LotService
   ) {
     super();
 
-    const params: ListParams = {
-      'filter.id': this.userService.decodeToken().username.toUpperCase(),
-    };
-
-    this.dataUser.getAllSegUsers(params).subscribe({
-      next: response => {
-        this.delegation = Number(response.data[0].usuario.delegationNumber);
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
+    this.delegation = Number(this.authService.decodeToken().department);
 
     this.settings = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
-        delete: true,
+        edit: false,
+        delete: false,
         add: false,
         position: 'right',
-        // custom: [
-        //   {
-        //     name: 'download',
-        //     title: '<i class="bi bi-download"></i>',
-        //   },
-        // ],
       },
-      // edit: {
-      //   editButtonContent: '<i class="bi bi-clipboard-minus"></i>',
-      // },
       hideSubHeader: false,
       columns: {
         select: {
-          title: '',
+          title: 'Selección',
           sort: false,
           filter: false,
           type: 'custom',
@@ -118,7 +118,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
                   comer.billId == instance.rowData.billId
               );
               if (index != -1) {
-                (instance.box.nativeElement as HTMLInputElement).click();
+                (instance.box.nativeElement as HTMLInputElement).checked = true;
               }
               clearTimeout(time);
             }, 300);
@@ -171,7 +171,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           title: 'Serie',
           sort: false,
         },
-        folioinvoiceId: {
+        Invoice: {
           title: 'Folio',
           sort: false,
           filter: {
@@ -287,7 +287,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
               delegationNumber: () => (searchFilter = SearchFilter.EQ),
               Type: () => (searchFilter = SearchFilter.EQ),
               series: () => (searchFilter = SearchFilter.ILIKE),
-              folioinvoiceId: () => (searchFilter = SearchFilter.EQ),
+              Invoice: () => (searchFilter = SearchFilter.EQ),
               factstatusId: () => (searchFilter = SearchFilter.EQ),
               vouchertype: () => (searchFilter = SearchFilter.ILIKE),
               impressionDate: () => (searchFilter = SearchFilter.EQ),
@@ -319,7 +319,6 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-
     this.loading = true;
     this.comerInvoice.getAllSumInvoice(params).subscribe({
       next: resp => {
@@ -402,6 +401,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       price: [null],
       ivaT: [null],
       total: [null],
+      userV: [null, Validators.required],
+      passwordV: [null, Validators.required],
     });
   }
 
@@ -451,30 +452,65 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   }
 
   openModal(): void {
-    this.modalService.show(FolioModalComponent, {
+    let config: ModalOptions = {
+      initialState: {
+        callback: async (next: boolean, data: InvoiceFolioSeparate) => {
+          if (next) {
+            const invoice: any[] = await this.dataFilter.getAll();
+            const index = invoice.findIndex(inv => inv == this.isSelect[0]);
+            invoice[index].series = data.series;
+            invoice[index].folioinvoiceId = data.folioinvoiceId;
+            invoice[index].Invoice = data.invoice;
+            invoice[index].factstatusId = 'FOL';
+
+            await this.updateInvoice(invoice[index]);
+            this.getAllComer();
+
+            //this.dataFilter.load(invoice);
+            //this.dataFilter.refresh();
+          }
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
+    };
+    this.modalService.show(FolioModalComponent, config);
+  }
+
+  async updateInvoice(data: any) {
+    return firstValueFrom(
+      this.comerInvoice.update(data).pipe(
+        map(() => true),
+        catchError(() => of(true))
+      )
+    );
   }
 
   async generatePreFacture() {
-    let next: number = 0;
+    let config: ModalOptions = {
+      initialState: {
+        form: this.form,
+        callback: (data: boolean, val: number) => {},
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AuthorizationSOIModalComponent, config);
 
+    return;
+    let next: number = 0;
     this.dataFilter.load([]);
     this.dataFilter.refresh();
     this.totalItems = 0;
-
-    next = await this.validatePreFactura();
+    const { event, idAllotment, iva } = this.form.value;
+    next = await this.getLotePass();
 
     if (next == 1) {
-      const { event, idAllotment, iva } = this.form.value;
-      const user = this.userService.decodeToken().username.toUpperCase();
+      const user = this.userService.decodeToken().preferred_username;
       const data = await this.dataFilter.getAll();
       const aux = await this.invoiceGenerate(
-        event,
-        data[0] ? data[0].eventId : 0,
-        idAllotment,
-        data[0] ? data[0].batchId : 0,
+        data[0] ? data[0].eventId : null,
+        data[0] ? data[0].batchId : null,
         event,
         iva,
         idAllotment,
@@ -485,15 +521,151 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       if (aux == 0) {
         //se habre modal verifiacion ususario
       }
+
+      if (!aux) {
+        this.alert(
+          'warning',
+          'Atención',
+          'Ha ocurrido un fallo en la generación de prefacturas'
+        );
+        return;
+      }
+
+      this.alert('success', 'Prefacturas Generadas', '');
+      this.resetParams();
+      this.columnFilters['filter.eventId'] = `$eq:${event}`;
+      this.getAllComer();
     } else {
       this.alert('warning', 'Operación Denegada', '');
     }
   }
 
+  async getLotePass() {
+    const { event, idAllotment } = this.form.value;
+    const next = await this.validatePreFactura();
+
+    if (next == 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        'No cuenta con los permisos para efectuar esta operación'
+      );
+      return 0;
+    }
+
+    if (!event) {
+      this.alert('warning', 'Atención', 'Debe especificar un evento');
+      return 0;
+    }
+
+    if (idAllotment) {
+      const count = await this.countLot(event, idAllotment);
+      const cont = await this.contLot(event, idAllotment);
+      const aux = await this.auxLot(event, idAllotment);
+
+      if (cont == 0) {
+        this.alert('warning', 'Atención', 'El Lote no existe');
+        return 0;
+      } else if (count == 0) {
+        this.alert('warning', 'Atención', 'El Lote aún no está pagado');
+        return 0;
+      } else if (aux != 0) {
+        this.alert(
+          'warning',
+          'Atención',
+          `Ya se han asignado folio al Lote: ${idAllotment}`
+        );
+        this.resetParams();
+        this.columnFilters['filter.eventId'] = `$eq:${event}`;
+        this.getAllComer();
+
+        return 0;
+      }
+
+      return 1;
+    }
+
+    const select = this.selectInovice();
+
+    if (select == 0) {
+      //servicio en espera
+      const aux = 0;
+
+      if (aux == 0) {
+        return 1;
+      }
+      this.alert(
+        'warning',
+        'Atención',
+        `Ya se han asignado folio al Lote: ${idAllotment}`
+      );
+      this.resetParams();
+      this.columnFilters['filter.eventId'] = `$eq:${event}`;
+      this.getAllComer();
+
+      return 0;
+    }
+
+    return 0;
+  }
+
+  selectInovice(): number {
+    return this.isSelect.length > 0 ? 1 : 0;
+  }
+
+  resetParams() {
+    this.columnFilters = [];
+    this.isSelect = [];
+    this.paramsList = new BehaviorSubject(new ListParams());
+    this.paramsList.getValue().limit = 500;
+    this.paramsList.getValue()['filter.tpevent'] = `${SearchFilter.EQ}:${11}`;
+    this.paramsList.getValue()['sortBy'] = 'batchId,eventId,customer:ASC';
+    this.dataFilter.reset();
+    this.settings = {
+      ...this.settings,
+    };
+  }
+
+  async countLot(event: number, lote: number) {
+    const filter = new FilterParams();
+    filter.addFilter('idEvent', event, SearchFilter.EQ);
+    filter.addFilter('lotPublic', lote, SearchFilter.EQ);
+    filter.addFilter('idStatusVta', 'VEN,PAG', SearchFilter.IN);
+    return firstValueFrom(
+      this.eatLotService.getAllComerLotsFilter(filter.getParams()).pipe(
+        map(resp => resp.count),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async contLot(event: number, lote: number) {
+    const filter = new FilterParams();
+    filter.addFilter('idEvent', event, SearchFilter.EQ);
+    filter.addFilter('lotPublic', lote, SearchFilter.EQ);
+    return firstValueFrom(
+      this.eatLotService.getAllComerLotsFilter(filter.getParams()).pipe(
+        map(resp => resp.count),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async auxLot(event: number, lote: number) {
+    const filter = new FilterParams();
+    filter.addFilter('eventId', event, SearchFilter.EQ);
+    filter.addFilter('batchId', lote, SearchFilter.EQ);
+    filter.addFilter('Invoice', '$null', SearchFilter.NOT);
+    return firstValueFrom(
+      this.comerInvoice.getAll(filter.getParams()).pipe(
+        map(resp => resp.count),
+        catchError(() => of(0))
+      )
+    );
+  }
+
   async invoiceGenerate(
-    event: number,
     eventId: number,
-    batch: number,
     batchId: number,
     ctrlEvent: number,
     ctrlGenIva: number,
@@ -504,9 +676,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     return firstValueFrom(
       this.comerInvoice
         .preInvoiceGenerate({
-          event,
           eventId,
-          batch,
           batchId,
           ctrlEvent,
           ctrlGenIva,
@@ -516,13 +686,13 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         })
         .pipe(
           map(resp => resp.auxOi),
-          catchError(() => of(0))
+          catchError(() => of(null))
         )
     );
   }
 
   async validatePreFactura() {
-    const user = this.userService.decodeToken().username.toUpperCase();
+    const user = this.userService.decodeToken().preferred_username;
     return firstValueFrom(
       this.comerInvoice.validateUSer(user).pipe(
         map(resp => resp.lValUsu),
@@ -710,5 +880,109 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       }
     }
     return 1;
+  }
+
+  async allSelect() {
+    const user = this.authService.decodeToken().preferred_username;
+    const userValid = await this.validUser('LGONZALEZG' ?? user);
+    const data = await this.dataFilter.getAll();
+    const { date } = this.form.value;
+
+    if (userValid == 0) {
+      this.alert(
+        'warning',
+        'Atención',
+        'No cuenta con los permisos para realizar esta operación'
+      );
+    } else {
+      if (data.length == 0) {
+        this.alert('warning', 'Atención', 'Debe consultar un evento');
+        return;
+      }
+      if (date) {
+        const newDate = this.datePipe.transform(date, 'yyyy-MM-dd');
+        const data = await this.dataFilter.getAll();
+        let exist: boolean = false;
+        for (const invoice of data) {
+          if (!invoice.impressionDate) {
+            invoice.impressionDate = newDate;
+            exist = true;
+          }
+        }
+        this.dataFilter.load([...data]);
+        this.dataFilter.refresh();
+        if (exist) {
+          const params = {
+            ...this.paramsList.getValue(),
+            ...this.columnFilters,
+          };
+          this.comerInvoice
+            .updateEventByDate(params, { impressionDate: newDate })
+            .subscribe({
+              next: () => {
+                this.alert(
+                  'success',
+                  'La fecha de impresión ha sido actualizada',
+                  ''
+                );
+              },
+            });
+        } else {
+          this.alert(
+            'warning',
+            'Atención',
+            'No hay fechas de impresión para actualizar'
+          );
+        }
+
+        this.form.get('date').patchValue(null);
+      } else {
+        this.selectAllInvoice(userValid);
+      }
+    }
+  }
+
+  async selectAllInvoice(user: number) {
+    const { delegation } = this.form.value;
+    const reg = Number(this.authService.decodeToken().department);
+    const data = await this.dataFilter.getAll();
+
+    if (user == 2) {
+      for (const invoice of data) {
+        if (Number(invoice.delegationNumber) == reg) {
+          const index = this.isSelect.findIndex(
+            comer =>
+              comer.eventId == invoice.eventId && comer.billId == invoice.billId
+          );
+          if (index == -1) this.isSelect.push(invoice);
+          if (index > -1) this.isSelect.splice(index, 1);
+        }
+      }
+    } else if (user == 1) {
+      for (const invoice of data) {
+        if (
+          Number(invoice.delegationNumber) ==
+          (delegation ?? Number(invoice.delegationNumber))
+        ) {
+          const index = this.isSelect.findIndex(
+            comer =>
+              comer.eventId == invoice.eventId && comer.billId == invoice.billId
+          );
+          if (index == -1) this.isSelect.push(invoice);
+          if (index > -1) this.isSelect.splice(index, 1);
+        }
+      }
+      this.dataFilter.add(data);
+      this.dataFilter.refresh();
+    }
+  }
+
+  async validUser(user: string) {
+    return firstValueFrom<number>(
+      this.comerInvoice.validateUSer(user).pipe(
+        map(resp => resp.lValUsu),
+        catchError(error => of(0))
+      )
+    );
   }
 }

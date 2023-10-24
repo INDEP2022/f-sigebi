@@ -477,6 +477,47 @@ export class PerformProgrammingFormComponent
   }
 
   async newWarehouse() {
+    let transferId: number = 0;
+    if (this.dataProgramming.tranferId) {
+      transferId = this.dataProgramming.tranferId;
+    } else if (this.performForm.get('tranferId').value) {
+      transferId = this.performForm.get('tranferId').value;
+    }
+    if (this.regionalDelegationUser && transferId) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modal-lg modal-dialog-centered',
+      };
+      const regDelData = this.regionalDelegationUser;
+      config.initialState = {
+        programmingId: this.idProgramming,
+        regDelData,
+        transferId,
+        callback: (next: boolean) => {
+          if (next) {
+            this.performForm
+              .get('regionalDelegationNumber')
+              .setValue(this.delegation);
+
+            this.performForm
+              .get('stationId')
+              .setValue(Number(this.dataProgramming.stationId));
+            this.setDataProgramming();
+          } else {
+            this.setDataProgramming();
+          }
+        },
+      };
+
+      this.modalService.show(WarehouseFormComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Para crear un almacén necesitas seleccionar una Delegación Regional y transferente'
+      );
+    }
+    /*
     if (this.regionalDelegationUser) {
       if (this.performForm.get('startDate').value) {
         this.performForm
@@ -577,7 +618,7 @@ export class PerformProgrammingFormComponent
         'Advertencia',
         'Para crear un almacén necesitas seleccionar una Delegación Regional'
       );
-    }
+    } */
   }
 
   listUsers() {
@@ -1683,6 +1724,7 @@ export class PerformProgrammingFormComponent
             this.loadingGoods = false;
             this.alert('warning', 'Advertencia', 'No se econtraron bienes');
             this.estatesList = new LocalDataSource();
+            this.totalItems = 0;
           } else {
             let goodsFilter = response.data.map(async item => {
               const showMunicipality: any = await this.showMunicipality(
@@ -1693,6 +1735,8 @@ export class PerformProgrammingFormComponent
 
               if (showMunicipality) {
                 item.municipalityName = showMunicipality;
+              } else {
+                this.loadingGoods = false;
               }
 
               const showStateKey: any = await this.showStateOfRepublic(
@@ -1700,6 +1744,8 @@ export class PerformProgrammingFormComponent
               );
               if (showStateKey) {
                 item.stateKeyName = showStateKey;
+              } else {
+                this.loadingGoods = false;
               }
               if (item.physicalState) {
                 if (item.physicalState == 1) {
@@ -1727,6 +1773,7 @@ export class PerformProgrammingFormComponent
           this.alert('warning', 'Advertencia', 'No se econtraron bienes');
           this.loadingGoods = false;
           this.estatesList = new LocalDataSource();
+          this.totalItems = 0;
         },
       });
   }
@@ -1743,6 +1790,9 @@ export class PerformProgrammingFormComponent
         next: resp => {
           resolve(resp.data[0]?.municipality);
         },
+        error: error => {
+          resolve(null);
+        },
       });
     });
   }
@@ -1754,6 +1804,9 @@ export class PerformProgrammingFormComponent
       this.statesService.getAll(params.getValue()).subscribe({
         next: response => {
           resolve(response.data[0].descCondition);
+        },
+        error: error => {
+          resolve(null);
         },
       });
     });

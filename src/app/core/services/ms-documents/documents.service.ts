@@ -391,6 +391,16 @@ export class DocumentsService extends HttpService {
     return this.get(route);
   }
 
+  getExpedient(params: ListParams, model: any) {
+    const route = `${DocumentsEndpoints.applicationGetDatas2}`;
+    return this.post(route, model, params);
+  }
+
+  getDatas(params: ListParams, model: any) {
+    const route = `${DocumentsEndpoints.applicationGetDatas}`;
+    return this.post(route, model, params);
+  }
+
   deleteByFolio(folio: any) {
     const route = `${DocumentsEndpoints.deleteFolio}/${folio}`;
     return this.get(route);

@@ -21,6 +21,7 @@ import {
   takeUntil,
 } from 'rxjs';
 import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
+import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/input-cell.component';
 import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import {
   FilterParams,
@@ -46,10 +47,10 @@ import { SurvillanceService } from 'src/app/core/services/ms-survillance/survill
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
+import { UseModalComponent } from '../../mass-bill-base-sales/sat-catalogs/use-comp/use-modal.component';
 import { ActModalComponent } from './act-comp/act-modal.component';
 import { AuthorizationModalComponent } from './authorization-modal/authorization-modal.component';
 import { ReferenceModalComponent } from './reference/reference.component';
-import { REGULAR_GOODS_COLUMN } from './regular-billing-invoice-goods-columns';
 
 @Component({
   selector: 'app-regular-billing-invoice',
@@ -90,22 +91,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   };
   blk_actdat: any[] = [];
   limit: FormControl = new FormControl(500);
+  rowInvoice: any = null;
 
   @Output() comer: EventEmitter<any> = new EventEmitter(null);
   @Output() formG: EventEmitter<FormGroup> = new EventEmitter();
-  @Input() set sum(values: any) {
-    if (values) {
-      // const time = setTimeout(() => {
-      //   this.formFactura.get('importE').patchValue(values.sum5);
-      //   this.formFactura.get('ivaE').patchValue(values.sum3);
-      //   this.formFactura.get('totalE').patchValue(values.sum1);
-      //   this.formFactura.get('importI').patchValue(values.sum6);
-      //   this.formFactura.get('ivaI').patchValue(values.sum4);
-      //   this.formFactura.get('totalI').patchValue(values.sum2);
-      //   clearTimeout(time);
-      // }, 0);
-    }
-  }
+  @Input() set sum(values: any) {}
 
   val: any;
 
@@ -139,14 +129,163 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   ) {
     super();
 
-    this.settings2.columns = { ...REGULAR_GOODS_COLUMN };
+    this.settings2.columns = {
+      goodNot: {
+        title: 'No. Bien',
+        sort: false,
+      },
+      amount: {
+        title: 'Cantidad',
+        sort: false,
+      },
+      description: {
+        title: 'Descripción',
+        sort: false,
+      },
+      price: {
+        title: 'Importe',
+        sort: false,
+        valuePrepareFunction: (val: string) => {
+          const formatter = new Intl.NumberFormat('en-US', {
+            currency: 'USD',
+            minimumFractionDigits: 2,
+          });
+
+          return formatter.format(Number(val));
+        },
+      },
+      vat: {
+        title: 'Iva',
+        sort: false,
+        valuePrepareFunction: (val: string) => {
+          const formatter = new Intl.NumberFormat('en-US', {
+            currency: 'USD',
+            minimumFractionDigits: 2,
+          });
+
+          return formatter.format(Number(val));
+        },
+      },
+      total: {
+        title: 'Total',
+        sort: false,
+        valuePrepareFunction: (val: string) => {
+          const formatter = new Intl.NumberFormat('en-US', {
+            currency: 'USD',
+            minimumFractionDigits: 2,
+          });
+
+          return formatter.format(Number(val));
+        },
+      },
+      brand: {
+        title: 'Marca',
+        sort: false,
+      },
+      subBrand: {
+        title: 'Sub Marca',
+        sort: false,
+      },
+      model: {
+        title: 'Modelo',
+        sort: false,
+      },
+      series: {
+        title: 'Serie',
+        sort: false,
+      },
+      downloadcvman: {
+        title: 'Mandato',
+        sort: false,
+      },
+      modmandato: {
+        title: 'Matrícula',
+        sort: false,
+        type: 'custom',
+        renderComponent: InputCellComponent,
+        onComponentInitFunction: (instance: any) => {
+          instance.inputChange.subscribe({
+            next: (resp: any) => {
+              resp.row.modmandato = resp.value;
+            },
+          });
+        },
+      },
+      desc_unidad_det: {
+        title: 'Unidad',
+        sort: false,
+        type: 'custom',
+        renderComponent: LinkCellComponent<any>,
+        onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+          instance.validateValue = false;
+          instance.onNavigate.subscribe(async invoice => {
+            if (this.rowInvoice.factstatusId != 'PREF') {
+              this.alert(
+                'warning',
+                'Atención',
+                'Verifique el estatus de la factura'
+              );
+            } else {
+              let config = {
+                initialState: {
+                  name: 'C_UNIDMED',
+                  callback: (
+                    ans: boolean,
+                    data: { clave: string; descripcion: string }
+                  ) => {
+                    this.updateCatalog(data, invoice, 1);
+                  },
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(UseModalComponent, config);
+            }
+          });
+        },
+      },
+      desc_producto_det: {
+        title: 'Prod./Serv.',
+        sort: false,
+        type: 'custom',
+        renderComponent: LinkCellComponent<any>,
+        onComponentInitFunction: (instance: LinkCellComponent<any>) => {
+          instance.validateValue = false;
+          instance.onNavigate.subscribe(async invoice => {
+            if (this.rowInvoice.factstatusId != 'PREF') {
+              this.alert(
+                'warning',
+                'Atención',
+                'Verifique el estatus de la factura'
+              );
+            } else {
+              let config = {
+                initialState: {
+                  name: 'C_CLVPROSE',
+                  callback: (
+                    ans: boolean,
+                    data: { clave: string; descripcion: string }
+                  ) => {
+                    this.updateCatalog(data, invoice, 2);
+                  },
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(UseModalComponent, config);
+            }
+          });
+        },
+      },
+    };
+
     this.settings2.hideSubHeader = false;
 
     this.settings = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: false,
         add: false,
         position: 'right',
@@ -167,7 +306,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
                   comer.billId == instance.rowData.billId
               );
               if (index != -1) {
-                (instance.box.nativeElement as HTMLInputElement).click();
+                (instance.box.nativeElement as HTMLInputElement).checked = true;
               }
               clearTimeout(time);
             }, 300);
@@ -260,7 +399,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           title: 'Serie',
           sort: false,
         },
-        folioinvoiceId: {
+        Invoice: {
           title: 'Folio',
           sort: false,
           filter: {
@@ -292,10 +431,39 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     );
   }
 
+  updateCatalog(
+    data: { clave: string; descripcion: string },
+    invoice: any,
+    type: number
+  ) {
+    switch (type) {
+      case 1:
+        invoice.unitSatKey = data.clave;
+        break;
+      case 2:
+        invoice.prodservSatKey = data.clave;
+        break;
+      default:
+        break;
+    }
+
+    delete invoice.desc_unidad_det;
+    delete invoice.desc_producto_det;
+    delete invoice.modmandato;
+
+    this.comerDetInvoice.update(invoice).subscribe({
+      next: () => {
+        this.getComerDetInovice();
+        this.alert('success', 'El Catálogo ha sido actualizado', '');
+      },
+      error: () => {},
+    });
+  }
+
   ngOnInit(): void {
     this.paramsList.getValue().limit = 500;
     this.paramsList2.getValue().limit = 500;
-    this.paramsList.getValue()['direction'] = `${SearchFilter.EQ}:M`;
+    this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
     this.paramsList.getValue()['sortBy'] = 'batchId,Invoice,customer:DESC';
     this.prepareForm();
 
@@ -318,7 +486,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               Type: () => (searchFilter = SearchFilter.EQ),
               document: () => (searchFilter = SearchFilter.ILIKE),
               series: () => (searchFilter = SearchFilter.ILIKE),
-              folioinvoiceId: () => (searchFilter = SearchFilter.EQ),
+              Invoice: () => (searchFilter = SearchFilter.EQ),
               factstatusId: () => (searchFilter = SearchFilter.ILIKE),
               vouchertype: () => (searchFilter = SearchFilter.ILIKE),
               impressionDate: () => (searchFilter = SearchFilter.EQ),
@@ -388,6 +556,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   getComerDetInvocie(data: any) {
+    this.rowInvoice = data;
     this.paramsList2.getValue()[
       'filter.eventId'
     ] = `${SearchFilter.EQ}:${data.eventId}`;
@@ -401,7 +570,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const params = {
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,
-      // ...{ sortBy: 'batchId:ASC' },
     };
 
     this.loading2 = true;
@@ -462,6 +630,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.totalItems = resp.count;
         this.dataFilter.load(resp.data);
         this.dataFilter.refresh();
+        this.rowInvoice = resp.data[0];
         this.paramsList2.getValue()[
           'filter.eventId'
         ] = `${SearchFilter.EQ}:${resp.data[0].eventId}`;
@@ -584,9 +753,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         } else if (pk_comer.p_RESUL == 'Correcto.') {
           this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
           this.paramsList.getValue()['limit'] = 500;
-          this.paramsList.getValue()[
-            'filter.direction'
-          ] = `${SearchFilter.EQ}:M`;
+          this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
           this.paramsList.getValue()[
             'filter.eventId'
           ] = `${SearchFilter.EQ}:${event}`;
@@ -918,7 +1085,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         invoice.factstatusId != 'CAN'
       ) {
         invoice.factstatusId = 'FOL';
-        //hacer update
+        await this.updateInvoice(invoice);
+        this.getAllComer();
       }
     }
   }
@@ -1238,22 +1406,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.buttons = check;
   }
 
-  exportAsXLSX(): void {
-    //this.excelService.exportAsExcelFile(this.data, 'facturas_de_eventos');
-  }
-
-  delete() {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-      }
-    });
-  }
-
   sendPack() {
     this.alertQuestion(
       'warning',
@@ -1277,8 +1429,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             invoice[index].folioinvoiceId = data.folioinvoiceId;
             invoice[index].Invoice = data.invoice;
             invoice[index].factstatusId = 'FOL';
-            this.dataFilter.load(invoice);
-            this.dataFilter.refresh();
+
+            await this.updateInvoice(invoice[index]);
+            this.getAllComer();
+
+            //this.dataFilter.load(invoice);
+            //this.dataFilter.refresh();
           }
         },
       },
@@ -1288,7 +1444,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.modalService.show(FolioModalComponent, config);
   }
 
-  track() {
+  async track() {
     const desc = this.isSelect.length > 0 ? this.isSelect[0].declassify : null;
     if (this.selectInovice() == 1 && desc == 'S') {
       this.alert(
@@ -1298,7 +1454,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       );
       this.removeSelect();
     } else if (this.selectInovice() == 1 && !desc) {
-      //hacer una actualizacion del invoice
       const invoice = this.isSelect[0];
       invoice.declassify = 'S';
       delete invoice.invoiceStatusId;
@@ -1307,14 +1462,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       delete invoice.prod;
       delete invoice.payment;
       delete invoice.relation;
+      delete invoice.delegation;
 
-      this.comerInvoice.update(invoice).subscribe({
-        next: () => {
-          this.getAllComer();
-        },
-        error: () => {},
-      });
+      await this.updateInvoice(invoice);
+      this.getAllComer();
       this.removeSelect();
+      this.alert('success', 'Cambio a vehiculos tractocamión', '');
     }
   }
 
@@ -1507,13 +1660,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           delete invoice.prod;
           delete invoice.payment;
           delete invoice.relation;
-          delete invoice.totaleg;
-          delete invoice.totaling;
-          delete invoice.ivaeg;
-          delete invoice.ivaing;
-          delete invoice.precioing;
-          delete invoice.precioeg;
           delete invoice.regional;
+          delete invoice.delegation;
           await this.updateInvoice(invoice);
         }
         this.form.get('date').patchValue(null);
@@ -1572,6 +1720,23 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
     this.callReport(
       12,
+      2,
+      Number(this.isSelect[0].Type),
+      1,
+      this.isSelect[0].eventId,
+      this.isSelect[0].billId,
+      this.isSelect[0].impressionDate
+    );
+  }
+
+  visualizarCR() {
+    if (this.isSelect.length == 0) {
+      this.alert('warning', 'Atención', 'Favor de seleccionar una factura');
+      return;
+    }
+
+    this.callReport(
+      11,
       2,
       Number(this.isSelect[0].Type),
       1,
@@ -1826,7 +1991,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   clientSend() {
     this.alertQuestion(
       'question',
-      'Se enviara el nuevo CFDI para Atención de Clientes',
+      'Se enviara el nuevo CFDI para Atención a Clientes',
       '¿Desea continuar?'
     ).then(answer => {
       if (answer.isConfirmed) {
@@ -1847,6 +2012,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         v_uuid = await this.getBill(invoice);
 
         if (['CFDI', 'IMP'].includes(invoice.factstatusId) && v_uuid == 1) {
+          //llama pub_rep_factura_mas
+          //llama pub_rep_factura_mas
+        } else {
           this.alert(
             'warning',
             'Atención',
@@ -1854,10 +2022,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             El lote ${invoice.batchId} no tiene estatus IMP o CFDI no se podrá imprimir el paquete`
           );
         }
+      } else {
+        // llama pup_rep_factura_mas
       }
-
-      break;
     }
+    //llama pub_ejecuta_bats
 
     this.alert('success', 'El CFDI nuevo fue enviado', '');
   }
@@ -1872,7 +2041,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
     return firstValueFrom(
       this.comerEleBillService.getAll(filter.getParams()).pipe(
-        map(() => of(1)),
+        map(() => 1),
         catchError(() => of(0))
       )
     );
@@ -2047,7 +2216,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
     this.comerInvoice.exportExcell(data[0].eventId).subscribe({
       next: resp => {
-        console.log(resp);
         const linkSource = `data:application/xlsx;base64,${resp.resultExcel.base64File}`;
         const downloadLink = document.createElement('a');
         downloadLink.href = linkSource;
@@ -2089,6 +2257,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             aux_val_liq = await this.batchLiq(invoice.eventId, invoice.batchId);
             if (aux_val_liq == 1) {
               invoice.process = process;
+              await this.updateProcess(
+                invoice.eventId,
+                invoice.billId,
+                process
+              );
             } else {
               cont++;
             }
@@ -2097,6 +2270,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           }
         } else {
           invoice.process = process;
+          await this.updateProcess(invoice.eventId, invoice.billId, process);
         }
       }
     }

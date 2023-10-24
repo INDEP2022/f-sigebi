@@ -66,134 +66,169 @@
                       </div>
                       <div class="row mt-5">
                         <div class="col-3">
-                          <button
-                            (click)="genPrefacHundred()"
-                            [disabled]="!disabledGenPreFac100"
-                            class="btn btn-sm btn-block btn-primary active">
-                            Prefacturar Fallo
-                          </button>
+                          <div class="row">
+                            <div class="col-12">
+                              <button
+                                [ngClass]="{ loading: btnLoading }"
+                                (click)="genPrefacHundred()"
+                                [disabled]="!disabledGenPreFac100 || btnLoading"
+                                class="btn btn-sm btn-block btn-primary active">
+                                Prefacturar Fallo
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="prefPaysParc()"
+                                [ngClass]="{ loading: btnLoading2 }"
+                                [disabled]="!disabledGenXPays || btnLoading2"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Pref Pagos Parciales
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="attentionCustomer()"
+                                [ngClass]="{ loading: btnLoading3 }"
+                                class="btn btn-sm btn-block btn-primary active mt-2"
+                                [disabled]="btnLoading3">
+                                Atención a Clientes
+                                <i
+                                  *ngIf="!btnLoading3"
+                                  class="fa fa-check"
+                                  aria-hidden="true"></i>
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="cancelBilling()"
+                                class="btn btn-sm btn-block btn-danger active mt-2">
+                                Cancelar Factura
+                              </button>
+                            </div>
+                          </div>
                         </div>
                         <div class="col-3">
-                          <button
-                            (click)="update()"
-                            [disabled]="!disabledUpdate"
-                            class="btn btn-sm btn-block btn-primary active">
-                            Act Datos Fallo
-                          </button>
+                          <div class="row">
+                            <div class="col-12">
+                              <button
+                                (click)="update()"
+                                [disabled]="!disabledUpdate"
+                                class="btn btn-sm btn-block btn-primary active">
+                                Act Datos Fallo
+                                <i class="fas fa-sync-alt"> </i>
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="update2()"
+                                [disabled]="!disabledUpdate2"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Act Datos Pagos
+                                <i class="fas fa-sync-alt"> </i>
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="faile()"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Actualiza a VEN
+                                <i class="fas fa-sync-alt"> </i>
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="export()"
+                                class="btn btn-sm btn-block btn-success active mt-2">
+                                Exporta <i class="bx bx-upload float-icon"></i>
+                              </button>
+                            </div>
+                          </div>
                         </div>
+
                         <div class="col-3">
-                          <button
-                            (click)="generateInvoices()"
-                            class="btn btn-sm btn-block btn-primary active">
-                            Genera Folios
-                          </button>
+                          <div class="row">
+                            <div class="col-12">
+                              <button
+                                (click)="generateInvoices()"
+                                class="btn btn-sm btn-block btn-primary active">
+                                Genera Folios
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="CFDI()"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Genera CFDI
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="visualBilling()"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Visualiza Factura
+                                <i class="bx bx-printer bx-sm float-icon"></i>
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="getDate()"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Consulta x Fecha
+                                <i
+                                  class="bx bx-search-alt bx-sm float-icon"></i>
+                              </button>
+                            </div>
+                          </div>
                         </div>
+
                         <div class="col-3">
-                          <button
-                            (click)="visualBilling()"
-                            class="btn btn-sm btn-block btn-primary active">
-                            Visualiza Factura
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="cancelBilling()"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Cancelar Factura
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="attentionCustomer()"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Atención a Clientes
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="CFDI()"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Genera CFDI
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="faile()"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Actualiza a VEN
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="prefPaysParc()"
-                            [disabled]="!disabledGenXPays"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Pref Pagos Parciales
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="update2()"
-                            [disabled]="!disabledUpdate2"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Act Datos Pagos
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="selectAll()"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Selec. Todos
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="deleteFact()"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Rest. Todos
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="deleteSelect()"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Elimina x Selección
-                            <span
-                              ><i aria-hidden="true" class="fa fa-trash"></i
-                            ></span>
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="deleteEventLote()"
-                            class="btn btn-sm btn-block btn-primary active mt-2">
-                            Elimina x Evento/Lote
-                            <span
-                              ><i aria-hidden="true" class="fa fa-trash"></i
-                            ></span>
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="export()"
-                            class="btn btn-sm btn-block btn-success active mt-2">
-                            Exporta <i class="bx bx-upload float-icon"></i>
-                          </button>
-                        </div>
-                        <div class="col-3">
-                          <button
-                            (click)="getDate()"
-                            class="btn btn-sm btn-block btn-info active mt-2">
-                            Consulta x Fecha
-                          </button>
+                          <div class="row">
+                            <div class="col-12">
+                              <button
+                                (click)="selectAll()"
+                                class="btn btn-sm btn-block btn-primary active">
+                                Selec. Todos
+                                <i class="fas fa-edit bx-sm float-icon"></i>
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="deleteFact()"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Rest. Todos
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="deleteSelect()"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Elimina x Selección
+                                <span
+                                  ><i aria-hidden="true" class="fa fa-trash"></i
+                                ></span>
+                              </button>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                (click)="deleteEventLote()"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Elimina x Evento/Lote
+                                <span
+                                  ><i aria-hidden="true" class="fa fa-trash"></i
+                                ></span>
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <div class="row text-center justify-content-center mt-5">
                         <div class="col-md-3">
                           <form-field
                             [control]="form.get('fec')"
-                            label="Fecha Inicial:">
+                            label="Fecha Inicial: ">
                             <input
+                              [(ngModel)]="dateMovemInicio"
+                              (ngModelChange)="dateMovementInicio($event)"
                               type="text"
                               class="form-control"
                               formControlName="fec"
@@ -206,6 +241,9 @@
                             [control]="form.get('fec2')"
                             label="Fecha Final:">
                             <input
+                              [(ngModel)]="dateMovemFin"
+                              [minDate]="dateMovemInicio"
+                              (ngModelChange)="dateMovementFin($event)"
                               type="text"
                               class="form-control"
                               formControlName="fec2"
@@ -215,18 +253,17 @@
                         </div>
                       </div>
                       <div class="row text-center justify-content-center mt-5">
-                        <div class="col-md-2">
+                        <div class="col-md-4">
                           <form-field
                             *ngIf="disabledCause"
                             [control]="form.get('cause')">
                             <ngx-select
-                              [searchOnInit]="true"
                               (change)="setValuesCause($event)"
                               [form]="form"
                               control="cause"
                               [data]="causeSelect"
-                              value="id"
-                              bindLabel="id"
+                              value="parametro"
+                              bindLabel="parametroAndDes"
                               label="Causa"
                               (fetchItems)="getCauses($event)">
                             </ngx-select>
@@ -234,18 +271,12 @@
                               formControlName="cause" /> -->
                           </form-field>
                         </div>
-                        <div class="col-md-6">
-                          <form-field
-                            *ngIf="disabledDescause"
-                            [control]="form.get('descause')"
-                            label="Causa">
-                            <input
-                              [readonly]="!disabledDescause"
-                              type="text"
-                              class="form-control"
+                        <!-- <div class="col-md-6">
+                          <form-field *ngIf="disabledDescause" [control]="form.get('descause')" label="Causa">
+                            <input [readonly]="!disabledDescause" type="text" class="form-control"
                               formControlName="descause" />
                           </form-field>
-                        </div>
+                        </div> -->
                         <div class="col-md-2">
                           <button
                             *ngIf="disabledRegCanc"
@@ -283,7 +314,7 @@
                   <form-loader *ngIf="loading"></form-loader>
                   <ng-scrollbar
                     [track]="'all'"
-                    [ngStyle]="{ height: loading ? '0px' : '300px' }">
+                    [ngStyle]="{ height: loading ? '0px' : '400px' }">
                     <ng2-smart-table
                       #myTable
                       [attr.class]="'table-bordered'"
@@ -293,7 +324,11 @@
                       (userRowSelect)="rowsSelected($event)">
                     </ng2-smart-table>
                   </ng-scrollbar>
-                  <app-pagination [params]="params" [totalItems]="totalItems">
+                  <app-pagination
+                    [params]="params"
+                    [limit]="limit"
+                    [pageSizeOptions]="[500]"
+                    [totalItems]="totalItems">
                   </app-pagination>
                 </div>
               </div>
@@ -309,7 +344,7 @@
                     <div
                       accordion-heading
                       class="d-flex justify-content-between">
-                      <h5>ACCIONES</h5>
+                      <h5>INFORMACIÓN</h5>
                     </div>
                     <form class="form-material" [formGroup]="form2">
                       <div class="row m-1">
@@ -579,11 +614,17 @@
                       [leftList]="true"></app-columns-select>
                     <div>
                       <button
+                        [ngClass]="{ loading: btnLoading17 }"
+                        [disabled]="btnLoading17"
+                        (click)="deleteDet()"
                         type="button"
                         class="btn btn-primary btn-sm active mb-3 mr-3">
-                        Eliminar
+                        Elimina
                         <span
-                          ><i aria-hidden="true" class="fa fa-trash"></i
+                          ><i
+                            *ngIf="!btnLoading17"
+                            aria-hidden="true"
+                            class="fa fa-trash"></i
                         ></span>
                       </button>
                     </div>
@@ -593,15 +634,20 @@
                   <form-loader *ngIf="loading2"></form-loader>
                   <ng-scrollbar
                     [track]="'all'"
-                    [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+                    [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
                     <ng2-smart-table
+                      (edit)="editDetalleFact($event)"
                       #myTable
                       [attr.class]="'table-bordered'"
                       [settings]="settings2"
                       [source]="data2">
                     </ng2-smart-table>
                   </ng-scrollbar>
-                  <app-pagination [params]="params2" [totalItems]="totalItems2">
+                  <app-pagination
+                    [params]="params2"
+                    [totalItems]="totalItems2"
+                    [limit]="limit"
+                    [pageSizeOptions]="[500]">
                   </app-pagination>
                 </div>
               </div>
@@ -624,7 +670,7 @@
                   <form-loader *ngIf="loading3"></form-loader>
                   <ng-scrollbar
                     [track]="'all'"
-                    [ngStyle]="{ height: loading3 ? '0px' : '300px' }">
+                    [ngStyle]="{ height: loading3 ? '0px' : '400px' }">
                     <ng2-smart-table
                       #myTable
                       [attr.class]="'table-bordered'"
@@ -655,7 +701,7 @@
                   <form-loader *ngIf="loading4"></form-loader>
                   <ng-scrollbar
                     [track]="'all'"
-                    [ngStyle]="{ height: loading4 ? '0px' : '300px' }">
+                    [ngStyle]="{ height: loading4 ? '0px' : '400px' }">
                     <ng2-smart-table
                       #myTable
                       [attr.class]="'table-bordered'"
@@ -687,7 +733,7 @@
                   <form-loader *ngIf="loading5"></form-loader>
                   <ng-scrollbar
                     [track]="'all'"
-                    [ngStyle]="{ height: loading5 ? '0px' : '300px' }">
+                    [ngStyle]="{ height: loading5 ? '0px' : '400px' }">
                     <ng2-smart-table
                       #myTable
                       [attr.class]="'table-bordered'"

@@ -231,10 +231,6 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
     invoice: any,
     type: number
   ) {
-    console.log(data);
-    console.log(invoice);
-    console.log(this.filter);
-
     switch (type) {
       case 1:
         invoice.usecompSat = data.clave;
@@ -261,6 +257,7 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
     delete invoice.prod;
     delete invoice.payment;
     delete invoice.relation;
+    delete invoice.delegation;
 
     this.comerInvoice.update(invoice).subscribe({
       next: () => {

@@ -188,7 +188,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
       this.taskService.getAll(params.getValue()).subscribe({
         next: response => {
           const taskForm: ITask = {
-            State: null,
+            State: 'PROCESO',
             taskDefinitionId: null,
           };
 

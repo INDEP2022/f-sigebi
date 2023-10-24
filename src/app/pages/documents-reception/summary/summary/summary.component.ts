@@ -10,10 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
@@ -23,9 +20,10 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { EntFedService } from 'src/app/core/services/catalogs/entfed.service';
-import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { SubDelegationService } from 'src/app/core/services/maintenance-delegations/subdelegation.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -59,6 +57,11 @@ export class SummaryComponent extends BasePage implements OnInit {
   selectDepartament = new DefaultSelect();
   start: string;
   end: string;
+  result: any;
+  result1: any;
+  noDel: number;
+  subDelegations: DefaultSelect = new DefaultSelect([], 0);
+  entFed: DefaultSelect = new DefaultSelect([], 0);
 
   entfedSelect = new DefaultSelect<IEntfed>();
   flagA: boolean = true;
@@ -94,9 +97,11 @@ export class SummaryComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private datePipe: DatePipe,
     private delegationService: DelegationService,
-    private serviceSubDeleg: SubdelegationService,
+    //private serviceSubDeleg: SubdelegationService,
     private printFlyersService: PrintFlyersService,
-    private entFedService: EntFedService
+    private entFedService: EntFedService,
+    private subDelegationService: SubDelegationService,
+    private dynamicCatalogsService: DynamicCatalogsService
   ) {
     super();
   }
@@ -115,11 +120,14 @@ export class SummaryComponent extends BasePage implements OnInit {
       department: [null],
       delegdestino: [null],
       subddestino: [null],
+      entiFed: [null, [Validators.required]],
     });
     const params = new ListParams();
     this.getDelegation(params);
     this.getSubDelegations(params);
     this.getDepartament(params);
+    this.flyersForm.get('subdelegation').disable();
+    this.flyersForm.get('PF_FECFIN').disable();
   }
 
   activeFlag() {
@@ -141,9 +149,20 @@ export class SummaryComponent extends BasePage implements OnInit {
   }
 
   getDelegation(params?: ListParams) {
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.description'] = `$ilike:${params.text}`;
+      }
+    }
     this.delegationService.getAll(params).subscribe({
-      next: data => {
-        this.selectedDelegation = new DefaultSelect(data.data, data.count);
+      next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['noDelDesc'] = item.id + ' - ' + item.description;
+        });
+        this.selectedDelegation = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
         this.selectedDelegation = new DefaultSelect();
@@ -151,6 +170,87 @@ export class SummaryComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  changeDelegation(event: any) {
+    if (event) {
+      if (this.noDel) {
+        this.flyersForm.get('subdelegation').reset();
+      }
+      this.noDel = event.id;
+      this.getSubDelegations(new ListParams());
+    }
+  }
+  getSubDelegations(params: ListParams) {
+    if (this.noDel) {
+      params['filter.delegationNumber'] = `$eq:${this.noDel}`;
+      if (params.text) {
+        if (!isNaN(parseInt(params.text))) {
+          params['filter.id'] = `$eq:${params.text}`;
+          params['search'] = '';
+        } else if (typeof params.text === 'string') {
+          params['filter.description'] = `$ilike:${params.text}`;
+        }
+      }
+      this.subDelegationService.getAll2(params).subscribe({
+        next: resp => {
+          console.log(resp.data);
+          this.result1 = resp.data.map(async (item: any) => {
+            item['noSubDelDesc'] = item.id + ' - ' + item.description;
+          });
+          this.subDelegations = new DefaultSelect(resp.data, resp.count);
+        },
+        error: () => {
+          this.subDelegations = new DefaultSelect();
+        },
+      });
+      this.flyersForm.get('subdelegation').enable();
+    }
+    /*const paramsF = new FilterParams();
+    paramsF.addFilter(
+      'delegationNumber',
+      this.flyersForm.get(this.delegationField).value
+    );
+
+    this.printFlyersService.getSubdelegations2(paramsF.getParams()).subscribe({
+      next: data => {
+        this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      },
+    });*/
+  }
+
+  getEntFed(params?: ListParams) {
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.cve_entfed'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.otvalor'] = `$ilike:${params.text}`;
+      }
+    }
+    this.dynamicCatalogsService.getDistinic(params).subscribe({
+      next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['cveOt'] = item.cve_entfed + ' - ' + item.otvalor;
+        });
+        this.entFed = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.entFed = new DefaultSelect();
+        console.log(err);
+      },
+    });
+  }
+
   getDepartament(params: ListParams) {
     this.departamentService.getAll(params).subscribe({
       next: data => {
@@ -180,8 +280,8 @@ export class SummaryComponent extends BasePage implements OnInit {
     const end = this.flyersForm.get('PF_FECFIN').value;
     this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
     this.end = this.datePipe.transform(end, 'dd/MM/yyyy');
-
-    if (this.end < this.start) {
+    this.FGEROFPRESUMENDIA();
+    /*if (this.end < this.start) {
       this.onLoadToast(
         'error',
         'Fecha final no puede ser menor a fecha de inicio'
@@ -193,7 +293,7 @@ export class SummaryComponent extends BasePage implements OnInit {
       this.FGEROFPRESUMENDIAA();
     } else {
       this.FGEROFPRESUMENDIA();
-    }
+    }*/
   }
 
   FGEROFPRESUMENDIA() {
@@ -237,7 +337,7 @@ export class SummaryComponent extends BasePage implements OnInit {
     });
   }
 
-  FGEROFPRESUMENDIAA() {
+  /*FGEROFPRESUMENDIAA() {
     let params = {
       PN_DELEG: this.flyersForm.controls['delegation'].value,
       PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
@@ -279,7 +379,7 @@ export class SummaryComponent extends BasePage implements OnInit {
         );
       }
     });
-  }
+  }*/
 
   preview(url: string, params: ListParams) {
     try {
@@ -303,6 +403,8 @@ export class SummaryComponent extends BasePage implements OnInit {
 
   cleanForm(): void {
     this.flyersForm.reset();
+    this.flyersForm.get('subdelegation').disable();
+    this.flyersForm.get('PF_FECFIN').disable();
   }
 
   resetFields(fields: AbstractControl[]) {
@@ -310,29 +412,6 @@ export class SummaryComponent extends BasePage implements OnInit {
       field = null;
     });
     this.flyersForm.updateValueAndValidity();
-  }
-  getSubDelegations(params: ListParams) {
-    const paramsF = new FilterParams();
-    paramsF.addFilter(
-      'delegationNumber',
-      this.flyersForm.get(this.delegationField).value
-    );
-
-    this.printFlyersService.getSubdelegations2(paramsF.getParams()).subscribe({
-      next: data => {
-        this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-
-        this.onLoadToast('error', 'Error', error);
-      },
-    });
   }
 
   onDelegationsChange(delegation: any) {
@@ -357,7 +436,10 @@ export class SummaryComponent extends BasePage implements OnInit {
   minDate: Date;
   onDateChange(event: any) {
     //change mindate #toDate
-    this.minDate = event;
+    if (event) {
+      this.flyersForm.get('PF_FECFIN').enable();
+      this.minDate = event;
+    }
   }
 
   getEntfed(params: ListParams) {

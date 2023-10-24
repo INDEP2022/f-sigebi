@@ -142,25 +142,26 @@
                     [disabled]="
                       !form.value.expedientNumber ||
                       !form.value.id ||
-                      !form.value.typeDict ||
+                      !form.getRawValue().typeDict ||
                       !form.value.delete
                     "
-                    class="btn btn-primary active btn-sm active mr-3"
+                    class="btn btn-red active btn-sm active mr-3"
                     (click)="onClickGoodDictation()">
                     Bienes del Dictamen
+                    <i class="fa fa-trash" aria-hidden="true"></i>
                   </button>
                   <button
                     [disabled]="
-                      !form.value.expedientNumber ||
                       !form.value.id ||
-                      !form.value.typeDict ||
-                      !form.value.delete ||
-                      !form.value.passOfficeArmy
+                      !form.getRawValue().typeDict ||
+                      !form.getRawValue().passOfficeArmy ||
+                      !form.getRawValue().userDict
                     "
                     type="button"
-                    class="btn btn-primary active btn-sm active mr-3"
+                    class="btn btn-red btn-sm active m-3 mr-3"
                     (click)="onClickDictation()">
-                    Dict&aacute;menes
+                    Eliminar Dict&aacute;menes
+                    <i class="fa fa-trash" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -434,6 +435,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered table-responsive'"
               [settings]="tableSettings"
+              (userRowSelect)="rowsSelected($event)"
               [source]="dataTable2"></ng2-smart-table>
           </div>
           <div>
