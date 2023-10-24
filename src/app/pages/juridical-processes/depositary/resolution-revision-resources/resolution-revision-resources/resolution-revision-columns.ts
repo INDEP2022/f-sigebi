@@ -1,5 +1,5 @@
 export const RESOLUTION_REVISION_COLUMNS = {
-  NoBien: {
+  goodId: {
     title: 'No Bien',
     type: 'string',
     sort: false,
@@ -19,23 +19,23 @@ export const RESOLUTION_REVISION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  motiveReRe: {
+  revRecCause: {
     title: 'Motivo de Recurso de Revisión',
     type: 'string',
     sort: false,
     width: '20%',
   },
-  dateRecep: {
+  physicalReceptionDate: {
     title: 'Fecha de Recepción',
     type: 'string',
     sort: false,
   },
-  dateEmitRes: {
+  resolutionEmissionRecRevDate: {
     title: 'Fecha de Emisión de Resolución',
     type: 'string',
     sort: false,
   },
-  obResourceRe: {
+  revRecObservations: {
     title: 'Observaciones del Recurso de Revisión',
     type: 'string',
     sort: false,

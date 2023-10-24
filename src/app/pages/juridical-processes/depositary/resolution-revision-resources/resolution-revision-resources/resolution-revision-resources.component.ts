@@ -139,7 +139,7 @@ export class ResolutionRevisionResourcesComponent
     };
     console.log('service ');
     this.formLoading = true;
-    this.goodService.getAll(params).subscribe({
+    this.goodService.getByGood2(params).subscribe({
       next: resp => {
         console.log('data -> ', resp.data);
 
@@ -147,14 +147,15 @@ export class ResolutionRevisionResourcesComponent
         for (let i = 0; i < resp.count; i++) {
           if (resp.data[i] != undefined) {
             let item = {
-              NoBien: resp.data[i].id,
+              goodId: resp.data[i].id,
               description: resp.data[i].description || null,
               quantity: resp.data[i].quantity || null,
               status: resp.data[i].statusDetails?.descriptionStatus || null,
-              motiveReRe: resp.data[i].revRecCause || null,
-              dateRecep: resp.data[i].physicalReceptionDate || null,
-              dateEmitRes: resp.data[i].resolutionEmissionRecRevDate || null,
-              obResourceRe: resp.data[i].revRecObservations || null,
+              revRecCause: resp.data[i].revRecCause || null,
+              physicalReceptionDate: resp.data[i].physicalReceptionDate || null,
+              resolutionEmissionRecRevDate:
+                resp.data[i].resolutionEmissionRecRevDate || null,
+              revRecObservations: resp.data[i].revRecObservations || null,
             };
             this.data2.push(item as any);
             this.data3 = resp.data;
@@ -178,7 +179,7 @@ export class ResolutionRevisionResourcesComponent
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        console.error('error', 'Error', error);
       },
     });
   }
