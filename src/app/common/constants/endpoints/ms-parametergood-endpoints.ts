@@ -16,4 +16,5 @@ export enum ParameterGoodEndpoints {
   CatMotivesrev = 'cat-motivesrev',
   PupArmaClave = 'application/pup-weapon-key',
   RNomencla = 'application/get-r-nomencla',
+  ApplicationGetFaUrlwebFac = 'application/get-fa-urlweb-fac',
 }
