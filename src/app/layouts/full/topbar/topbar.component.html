@@ -63,8 +63,27 @@
             aria-hidden="true"></i>
         </button>
       </div>
+      <ng-template #userPop>
+        <div class="col-md-12 pb-3 text-center">
+          <img
+            width="80px"
+            class="rounded-circle"
+            src="assets/images/users/avatar-2.jpg"
+            alt="Header Avatar" />
+        </div>
+        <hr class="row" />
+        <div class="col-md-12">
+          <p class="font-weight-bold">{{ user.name }}</p>
+          <p class="font-italic">{{ user.email }}</p>
+          <p class="font-weight-light">{{ user.puesto }}</p>
+        </div>
+      </ng-template>
+
       <div class="dropdown d-inline-block" dropdown>
         <button
+          [popover]="userPop"
+          placement="bottom"
+          triggers="mouseenter:mouseleave"
           type="button"
           class="btn header-item"
           dropdownToggle

@@ -227,7 +227,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
     this.parameterBrandsService.getSuperUserFilter(params).subscribe({
       next: response => {
         console.log('response ', response);
-        /*for (let i = 0; i < response.data.length; i++) {
+        /* for (let i = 0; i < response.data.length; i++) {
           let item = {
             value: response.data[i].value,
             description: response.data[i].description,
@@ -239,8 +239,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
             comerTpevents: response.data[i].comerTpevents,
           };
           this.dataA.push(item);
-        }*/
-        //this.data.load(this.dataA);
+        } */
         this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
@@ -330,6 +329,9 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
   }
 
   validateRow(total: number) {
+    console.error('this.dataDet', this.dataDet);
+    console.error('total', total);
+
     if (
       total > 0 &&
       (this.dataDet.check == 'N' || this.dataDet.check == null)
@@ -384,7 +386,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
         );
       },
       error: err => {
-        this.alert('error', 'El registro no ha sido actualizado', '');
+        this.alert('warning', 'El detalle ya esta aprobado', '');
       },
     });
   }

@@ -347,7 +347,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
-      (this.idTypeDoc == 197 && this.typeFirm == 'electronica')
+      (this.idTypeDoc == 197 && this.typeFirm == 'electronica') ||
+      (this.idOrderService && this.typeFirm == 'electronica')
     ) {
       if (!this.listSigns && this.printReport && !this.isAttachDoc) {
         this.printReport = false;
