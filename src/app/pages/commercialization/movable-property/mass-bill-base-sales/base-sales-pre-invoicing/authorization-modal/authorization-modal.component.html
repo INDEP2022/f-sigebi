@@ -1,0 +1,59 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form
+      class="form-material"
+      [formGroup]="form"
+      novalidate
+      autocomplete="off">
+      <div class="row">
+        <div class="col 12">
+          <p>
+            El evento no tiene ordenes de ingreso, si requiere generar
+            prefacturas debe solicitar autorización
+          </p>
+        </div>
+        <div class="col-12">
+          <form-field [control]="form.get('userV')" label="Autoriza">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userV"
+              autocomplete="off"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
+          </form-field>
+        </div>
+        <div class="col-12">
+          <form-field [control]="form.get('passwordV')" label="Clave">
+            <input
+              type="password"
+              class="form-control"
+              formControlName="passwordV"
+              autocomplete="off"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
+          </form-field>
+        </div>
+        <div class="col-12 text-center">
+          <div class="d-inline">
+            <confirm-button
+              (confirm)="validate()"
+              [disabled]="form.invalid"
+              [btnSmall]="true"
+              [loading]="loading"
+              [loadingText]="'Validando'"
+              text="Aceptar">
+            </confirm-button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm active ml-2"
+              (click)="close()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-modal>
