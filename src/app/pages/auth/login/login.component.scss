@@ -4,7 +4,13 @@ html {
   margin: 0;
 }
 
+h2 {
+  font-size: 1.625rem;
+}
+
 .component-background {
+  top: -1px;
+  margin-bottom: -1px;
   // background: linear-gradient(125deg,
   //     #fff 0%, #fff 40%,
   //     #bd9559 calc(40% + 1px), #bd9559 60%,
@@ -148,7 +154,7 @@ html {
   -moz-box-shadow: 10px 6px 39px -10px rgba(0, 0, 0, 0.75);
   box-shadow: 10px 6px 39px -10px rgba(0, 0, 0, 0.75);
 
-  margin-top: 23%;
+  margin-top: 15%;
   padding-right: 32px;
   padding-left: 32px;
   border-radius: 5px;
