@@ -269,7 +269,7 @@ export class ResolutionRevisionResourcesComponent
       let dataSelect: IGood;
 
       for (let i = 0; i < this.data3.length; i++) {
-        if (this.data3[i].goodId == this.selectedRow.NoBien) {
+        if (this.data3[i].goodId == this.selectedRow.goodId) {
           console.log(' encontrado -> ', this.data3[i]);
           dataSelect = this.data3[i];
         }
