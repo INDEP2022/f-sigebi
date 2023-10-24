@@ -285,7 +285,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: false,
         add: false,
         position: 'right',
@@ -1462,10 +1462,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       delete invoice.prod;
       delete invoice.payment;
       delete invoice.relation;
+      delete invoice.delegation;
 
       await this.updateInvoice(invoice);
       this.getAllComer();
       this.removeSelect();
+      this.alert('success', 'Cambio a vehiculos tractocamión', '');
     }
   }
 
@@ -1659,6 +1661,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           delete invoice.payment;
           delete invoice.relation;
           delete invoice.regional;
+          delete invoice.delegation;
           await this.updateInvoice(invoice);
         }
         this.form.get('date').patchValue(null);
@@ -1717,6 +1720,23 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
     this.callReport(
       12,
+      2,
+      Number(this.isSelect[0].Type),
+      1,
+      this.isSelect[0].eventId,
+      this.isSelect[0].billId,
+      this.isSelect[0].impressionDate
+    );
+  }
+
+  visualizarCR() {
+    if (this.isSelect.length == 0) {
+      this.alert('warning', 'Atención', 'Favor de seleccionar una factura');
+      return;
+    }
+
+    this.callReport(
+      11,
       2,
       Number(this.isSelect[0].Type),
       1,
