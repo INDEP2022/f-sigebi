@@ -253,7 +253,7 @@ export class ResolutionRevisionResourcesComponent
     this.router.navigate(
       ['pages/general-processes/historical-good-situation'],
       {
-        queryParams: { origin: this.selectedRow },
+        queryParams: { noBien: this.selectedRow.goodId },
       }
     );
   }
