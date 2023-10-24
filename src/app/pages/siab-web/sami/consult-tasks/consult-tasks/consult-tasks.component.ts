@@ -402,7 +402,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     this.filterParams
       .getValue()
-      .addFilter('assignees', user.username, SearchFilter.ILIKE);
+      .addFilter('reviewers', user.username, SearchFilter.ILIKE);
     //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     const filterStatus = this.consultTasksForm.get('State').value;
 
