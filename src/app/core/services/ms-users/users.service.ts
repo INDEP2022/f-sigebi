@@ -250,6 +250,10 @@ export class UsersService extends HttpService {
     return this.get(route);
   }
 
+  getUseXEvent(params: _Params) {
+    return this.get('comer-usersautxcanc', params);
+  }
+
   consultationQuery1(no_acta: any, params: ListParams) {
     const route = `${UserEndpoints.consultationQuery1}/${no_acta}`;
     return this.get<IListResponse>(route, params);
