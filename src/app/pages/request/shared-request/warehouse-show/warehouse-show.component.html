@@ -15,7 +15,7 @@
       <div class="d-flex justify-content-end">
         <div class="p-2">
           <button
-            *ngIf="infoTask?.State == null"
+            *ngIf="infoTask?.State == 'PROCESO'"
             type="button"
             (click)="confirm()"
             class="btn btn-primary btn-sm active">

@@ -87,11 +87,7 @@ export class MaintenanceFractionComponent extends BasePage implements OnInit {
         );
         if (!res) {
           this.loader.load = false;
-          this.alert(
-            'error',
-            'Actualización de Fracción Arancelaria',
-            'No realizada'
-          );
+          this.alert('warning', 'Error en la Actualización', '');
           return;
         }
         const res2 = await firstValueFrom(
@@ -105,18 +101,10 @@ export class MaintenanceFractionComponent extends BasePage implements OnInit {
         );
         if (!res2) {
           this.loader.load = false;
-          this.alert(
-            'error',
-            'Actualización de Fracción Arancelaria',
-            'No realizada'
-          );
+          this.alert('warning', 'Error en la Actualización', '');
           return;
         } else {
-          this.alert(
-            'success',
-            'Actualización de Fracción Arancelaria',
-            'Realizada Correctamente'
-          );
+          this.alert('success', 'Actualización Correctamente', '');
           this.clear();
         }
         this.loader.load = false;

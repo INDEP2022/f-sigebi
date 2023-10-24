@@ -35,7 +35,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   //en el caso de que sera una aprovacion de resultados se pone true
   isApprovalResult: boolean = false;
   input = '<input type="text" (keyup)="keyFunc($event)">';
-  lsEstatusMuestreo: string = 'MUESTREO_NO_CUMPLE';
+  lsEstatusMuestreo: string = 'MUESTREO_PENDIENTE_APROBACION';
 
   private orderService = inject(OrderServiceService);
   private fb = inject(FormBuilder);
