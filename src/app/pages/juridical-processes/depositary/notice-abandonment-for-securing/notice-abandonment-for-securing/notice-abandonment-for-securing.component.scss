@@ -1,0 +1,8 @@
+:host ::ng-deep ng2-smart-table table tr {
+  &.edict {
+    td {
+      &:nth-child(4) {
+      }
+    }
+  }
+}
