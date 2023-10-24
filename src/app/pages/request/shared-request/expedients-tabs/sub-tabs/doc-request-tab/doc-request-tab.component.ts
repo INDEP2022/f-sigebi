@@ -251,6 +251,7 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async res => {
+          // this.data = [];
           if (this.typeDoc == 'doc-request') {
             if (this.requestInfo.transferenceId == 1) {
               const filterDoc = res.data.filter((item: any) => {
@@ -285,17 +286,20 @@ export class DocRequestTabComponent
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
               });
-
-              Promise.all(info).then(data => {
-                this.docRequest =
-                  res.data.length > 10 ? this.setPaginate([...data]) : data;
-                this.totalItems = data.length;
-
-                //this.allDataDocReq = x;
-                //this.paragraphs.load(x);
-
+              if (this.data.length == 0) {
+                Promise.all(info).then(data => {
+                  this.docRequest =
+                    res.data.length > 10 ? this.setPaginate([...data]) : data;
+                  this.totalItems = data.length;
+                  console.log('docRequest');
+                  //this.allDataDocReq = x;
+                  //this.paragraphs.load(x);
+                });
+              } else {
+                this.selectPage();
                 this.loading = false;
-              });
+                console.log('docRequestssss');
+              }
             }
 
             if (this.requestInfo.transferenceId != 1) {
@@ -331,17 +335,18 @@ export class DocRequestTabComponent
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
               });
-
-              Promise.all(info).then(data => {
-                this.docRequest =
-                  res.data.length > 10 ? this.setPaginate([...data]) : data;
-                this.totalItems = data.length;
-
-                //this.allDataDocReq = x;
-                //this.paragraphs.load(x);
-
+              if (this.data.length == 0) {
+                Promise.all(info).then(data => {
+                  this.docRequest =
+                    res.data.length > 10 ? this.setPaginate([...data]) : data;
+                  this.totalItems = data.length;
+                  //this.allDataDocReq = x;
+                  //this.paragraphs.load(x);
+                });
+              } else {
+                this.selectPage();
                 this.loading = false;
-              });
+              }
             }
           }
 
@@ -382,17 +387,20 @@ export class DocRequestTabComponent
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
               });
-
-              Promise.all(info).then(data => {
-                this.docExpedient =
-                  res.data.length > 10 ? this.setPaginate([...data]) : data;
-                this.totalItems = data.length;
-
-                //this.allDataDocReq = x;
-                //this.paragraphs.load(x);
-
+              if (this.data.length == 0) {
+                Promise.all(info).then(data => {
+                  this.docExpedient =
+                    res.data.length > 10 ? this.setPaginate([...data]) : data;
+                  this.totalItems = data.length;
+                  console.log('docRequest');
+                  //this.allDataDocReq = x;
+                  //this.paragraphs.load(x);
+                });
+              } else {
+                this.selectPageEx();
                 this.loading = false;
-              });
+                console.log('docRequestssss');
+              }
             }
 
             if (
@@ -431,17 +439,20 @@ export class DocRequestTabComponent
                 items.xtipoDocumento = filter[0]?.ddescription;
                 return items;
               });
-
-              Promise.all(info).then(data => {
-                this.docExpedient =
-                  res.data.length > 10 ? this.setPaginate([...data]) : data;
-                this.totalItems = data.length;
-
-                //this.allDataDocReq = x;
-                //this.paragraphs.load(x);
-
+              if (res.data.length > 0) {
+                Promise.all(info).then(data => {
+                  this.docExpedient =
+                    res.data.length > 10 ? this.setPaginate([...data]) : data;
+                  this.totalItems = data.length;
+                  console.log('docRequest');
+                  //this.allDataDocReq = x
+                  //this.paragraphs.load(x)
+                });
+              } else {
+                this.selectPageEx();
                 this.loading = false;
-              });
+                console.log('docRequestsss');
+              }
             }
           }
 
@@ -452,7 +463,12 @@ export class DocRequestTabComponent
         },
       });
   }
-
+  private selectPage() {
+    this.docRequest = [...this.data[this.params.value.page - 1]];
+  }
+  private selectPageEx() {
+    this.docExpedient = [...this.data[this.params.value.page - 1]];
+  }
   private setPaginate(value: any[]): any[] {
     let data: any[] = [];
     let dataActual: any = [];
@@ -461,8 +477,11 @@ export class DocRequestTabComponent
       if ((i + 1) % this.params.value.limit === 0) {
         this.data.push(dataActual);
         dataActual = [];
+      } else if (i === value.length - 1) {
+        this.data.push(dataActual);
       }
     });
+    console.log(this.data);
     data = this.data[this.params.value.page - 1];
     return data;
   }
@@ -874,7 +893,9 @@ export class DocRequestTabComponent
         data,
         typeInfo,
         callback: (next: boolean) => {
-          if (next) this.getData(new ListParams());
+          if (next) {
+          }
+          this.getData(new ListParams());
         },
       },
       class: 'modal-lg modal-dialog-centered',

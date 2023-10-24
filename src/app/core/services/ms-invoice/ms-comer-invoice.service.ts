@@ -17,8 +17,8 @@ export class ComerInvoiceService extends HttpService {
     return this.get<IListResponse<any>>(ENDPOINT_INVOICE.ComerInovice, params);
   }
 
-  getInvoiceForniture(year: string, params: ListParams) {
-    return this.get(`${ENDPOINT_INVOICE.GetInvoiceForniture}${year}`, params);
+  getInvoiceForniture(params: ListParams) {
+    return this.get(`${ENDPOINT_INVOICE.GetInvoiceForniture}`, params);
   }
 
   getInvoiceByEvent(event: number) {
