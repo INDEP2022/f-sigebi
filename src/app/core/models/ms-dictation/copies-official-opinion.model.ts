@@ -40,3 +40,12 @@ export interface IDataCopiasOficio {
   data: ICopiesOfficialOpinion[];
   message: string[];
 }
+export interface ICopiesOfficialOpinion1 {
+  numberOfDicta: number;
+  typeDictamination: string;
+  recipientCopy: string;
+  copyDestinationNumber: number;
+  personExtInt: string;
+  namePersonExt: string;
+  registerNumber?: number;
+}
