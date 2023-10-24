@@ -5,3 +5,7 @@
 .help-button-container {
   margin-right: -40 px !important;
 }
+
+::ng-deep popover-container {
+  max-width: 100% !important;
+}

@@ -27,13 +27,13 @@ export class FullComponent implements OnInit {
   ) {
     let script = this.document.getElementById('my-script');
     if (!script) {
-      this.scriptService
-        .loadScript({
-          id: 'my-script',
-          url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js',
-        })
-        .then(data => {})
-        .catch(error => console.log(error));
+      // this.scriptService
+      //   .loadScript({
+      //     id: 'my-script',
+      //     url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js',
+      //   })
+      //   .then(data => {})
+      //   .catch(error => console.log(error));
       this.router.events.forEach(event => {
         if (event instanceof NavigationEnd) {
           document.body.classList.remove('sidebar-enable');

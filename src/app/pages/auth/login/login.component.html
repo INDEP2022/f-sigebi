@@ -11,13 +11,13 @@
               </div>
             </div>
 
-            <div class="card-body pt-0">
+            <div class="card-body pt-0 m-4">
               <div class="p-2 mt-4">
                 <form
                   class="form-material form-horizontal"
                   [formGroup]="loginForm"
                   (ngSubmit)="onSubmit()">
-                  <div class="mb-3">
+                  <div class="row pb-2">
                     <form-field
                       [showRequiredMark]="false"
                       [control]="loginForm.get('username')"
@@ -39,7 +39,7 @@
                       </svg>
                     </form-field>
                   </div>
-                  <div class="mb-3">
+                  <div class="row pb-2">
                     <form-field
                       [showRequiredMark]="false"
                       [control]="loginForm.get('password')"
