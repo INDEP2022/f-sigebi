@@ -64,26 +64,33 @@
         </button>
       </div>
       <ng-template #userPop>
-        <div class="col-md-12 pb-3 text-center">
-          <img
-            width="80px"
-            class="rounded-circle"
-            src="assets/images/users/avatar-2.jpg"
-            alt="Header Avatar" />
-        </div>
-        <hr class="row" />
-        <div class="col-md-12">
-          <p class="font-weight-bold">{{ user.name }}</p>
-          <p class="font-italic">{{ user.email }}</p>
-          <p class="font-weight-light">{{ user.puesto }}</p>
+        <div class="row">
+          <div
+            class="col-md-4 d-flex justify-content-center align-items-center">
+            <div>
+              <img
+                width="60px"
+                class="rounded-circle"
+                src="assets/images/users/avatar-2.jpg"
+                alt="Header Avatar" />
+            </div>
+          </div>
+          <div class="col-md-8 d-flex align-items-center">
+            <div>
+              <p class="font-weight-bold">{{ user.name }}</p>
+              <p class="font-italic">{{ user.email }}</p>
+              <p class="font-weight-light">{{ user.puesto }}</p>
+            </div>
+          </div>
         </div>
       </ng-template>
 
       <div class="dropdown d-inline-block" dropdown>
         <button
           [popover]="userPop"
-          placement="bottom"
+          container="body"
           triggers="mouseenter:mouseleave"
+          placement="bottom"
           type="button"
           class="btn header-item"
           dropdownToggle

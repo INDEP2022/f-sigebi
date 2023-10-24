@@ -99,7 +99,7 @@ export class MsInvoiceService extends HttpService {
   }
 
   getFValidateUser(body: any) {
-    return this.post<IListResponse>(`${ENDPOINT_INVOICE.FValidateUser}`, body);
+    return this.post(`${ENDPOINT_INVOICE.FValidateUser}`, body);
   }
 
   getPaNvoDeleteInvoice(body: any) {

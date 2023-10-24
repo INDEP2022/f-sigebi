@@ -91,7 +91,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: {
       edit: true,
-      delete: false,
+      delete: true,
       columnTitle: 'Acciones',
       position: 'right',
     },
@@ -200,7 +200,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   selectAssts(event: any) {
     this.listAssetsSelected = event.selected;
-    console.log('this.listAssetsSelected', this.listAssetsSelected);
   }
 
   addAssets() {
@@ -552,29 +551,43 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           next: response => {
             resolve(response.data);
           },
-          error: error => {},
+          error: error => {
+            resolve(false);
+          },
         });
     });
   }
 
-  getDeductives(deductivesRelSample: ISamplingDeductive[]) {
-    this.deductiveService.getAll(this.params4.getValue()).subscribe({
-      next: response => {
-        const infoDeductives = response.data.map(item => {
-          deductivesRelSample.map(deductiveEx => {
-            if (deductiveEx.deductiveVerificationId == item.id) {
-              item.observations = deductiveEx.observations;
-              item.selected = true;
-            }
-          });
-          return item;
-        });
+  getDeductives(deductivesRelSample: any) {
+    if (deductivesRelSample == false) {
+      this.deductiveService.getAll(this.params4.getValue()).subscribe({
+        next: response => {
+          this.paragraphsDeductivas.load(response.data);
+          this.allDeductives = response.data;
+        },
+        error: error => {},
+      });
+    }
 
-        this.paragraphsDeductivas.load(infoDeductives);
-        this.allDeductives = response.data;
-      },
-      error: error => {},
-    });
+    if (deductivesRelSample != false) {
+      this.deductiveService.getAll(this.params4.getValue()).subscribe({
+        next: response => {
+          const infoDeductives = response.data.map(item => {
+            deductivesRelSample.map((deductiveEx: any) => {
+              if (deductiveEx.deductiveVerificationId == item.id) {
+                item.observations = deductiveEx.observations;
+                item.selected = true;
+              }
+            });
+            return item;
+          });
+
+          this.paragraphsDeductivas.load(infoDeductives);
+          this.allDeductives = response.data;
+        },
+        error: error => {},
+      });
+    }
   }
 
   getNameTransferent(transferentId: number) {
@@ -752,13 +765,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   deductiveSelected(event: any) {
-    console.log('event', event);
-    //event.toggle.subscribe((data: any) => {});
+    event.toggle.subscribe((data: any) => {});
   }
 
-  deductivesObservations(event: any) {
-    console.log('Observaciones?', event);
-  }
+  deductivesObservations(event: any) {}
 
   getTransferent(params: ListParams) {
     params['sortBy'] = 'nameTransferent:ASC';
@@ -915,8 +925,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     }
   }
 
-  saveDeductives() {
+  async saveDeductives() {
+    //console.log('checkData', checkData);
     if (this.deductivesSel.length > 0) {
+      //const checkDeductivesExist = this.checkDedExist();
       let count: number = 0;
       this.alertQuestion(
         'question',
@@ -972,7 +984,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.deductivesSel = event.selected;
   }
 
-  addDeductive(deductive: IDeductive) {
+  editDeductive(deductive: IDeductive) {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       deductive,
@@ -990,5 +1002,49 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     };
 
     this.modalService.show(EditDeductiveComponent, config);
+  }
+
+  async deleteDeductive(deductiveDelete: ISamplingDeductive) {
+    const checkExistDeductive: any = await this.checkExistDeductives();
+    const _deductiveDelete = checkExistDeductive.map((deductive: any) => {
+      if (deductive.deductiveVerificationId == deductiveDelete.id) {
+        return deductive;
+      }
+    });
+
+    const filterDeductive = _deductiveDelete.filter((item: any) => {
+      return item;
+    });
+
+    if (filterDeductive.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea eliminar la deductiva?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.samplingGoodService
+            .deleteSampleDeductive(filterDeductive[0].sampleDeductiveId)
+            .subscribe({
+              next: response => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Deductiva eliminada correctamente'
+                );
+                this.params2
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getGoods());
+              },
+            });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'La deductiva no ha sido seleccionada a el muestreo'
+      );
+    }
   }
 }

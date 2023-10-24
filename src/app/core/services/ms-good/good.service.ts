@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   IListResponse,
   IResponse,
@@ -286,6 +286,10 @@ export class GoodService extends HttpService {
 
   getStatusGood(params?: string) {
     return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}?${params}`);
+  }
+
+  getStatus(params?: _Params) {
+    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}`, params);
   }
 
   getBySafe(
