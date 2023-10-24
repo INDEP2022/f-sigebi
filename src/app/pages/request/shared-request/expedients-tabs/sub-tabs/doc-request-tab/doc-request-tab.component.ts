@@ -251,7 +251,7 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async res => {
-          // this.data = [];
+          this.data = [];
           if (this.typeDoc == 'doc-request') {
             if (this.requestInfo.transferenceId == 1) {
               const filterDoc = res.data.filter((item: any) => {
@@ -292,6 +292,7 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   console.log('docRequest');
+                  this.loading = false;
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -340,6 +341,7 @@ export class DocRequestTabComponent
                   this.docRequest =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
+                  this.loading = false;
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -393,6 +395,7 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   console.log('docRequest');
+                  this.loading = false;
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -445,6 +448,7 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   console.log('docRequest');
+                  this.loading = false;
                   //this.allDataDocReq = x
                   //this.paragraphs.load(x)
                 });
@@ -456,7 +460,7 @@ export class DocRequestTabComponent
             }
           }
 
-          this.loading = false;
+          // this.loading = false;
         },
         error: error => {
           this.loading = false;

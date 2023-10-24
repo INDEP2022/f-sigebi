@@ -150,10 +150,10 @@ export class BillingsService {
     return new Promise((resolve, reject) => {
       this.msInvoiceService.getFValidateUser(body).subscribe({
         next: response => {
-          resolve(true);
+          resolve(response.nCount);
         },
         error: error => {
-          resolve(null);
+          resolve(0);
         },
       });
     });
@@ -516,9 +516,16 @@ export class BillingsService {
 
   async getParamterMod(params: any) {
     return new Promise((resolve, reject) => {
-      this.parameterModService.getParamterMod(params).subscribe({
+      this.parameterModService.getParamterMod_(params).subscribe({
         next: response => {
-          resolve(response.data[0]);
+          let result = response.data.map(item => {
+            item['parametroAndDes'] =
+              item.parametro + ' - ' + item.descriptionparameter;
+          });
+
+          Promise.all(result).then(resp => {
+            resolve(response);
+          });
         },
         error: error => {
           resolve(null);
@@ -685,6 +692,19 @@ export class BillingsService {
       this.msInvoiceService.putApplicationComerBillsAmount(body).subscribe({
         next: response => {
           resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  getApplicationGetFaUrlwebFac(eventId: number) {
+    return new Promise((resolve, reject) => {
+      this.parametersService.getApplicationGetFaUrlwebFac(eventId).subscribe({
+        next: response => {
+          resolve(response.fa_urlweb_fac);
         },
         error: error => {
           resolve(null);

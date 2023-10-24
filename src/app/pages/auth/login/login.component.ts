@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthModel } from 'src/app/core/models/authentication/auth.model';
@@ -13,11 +13,13 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class LoginComponent extends BasePage implements OnInit {
   loginForm: FormGroup;
   showPassword: boolean = false;
-
+  deleteClass: boolean = true;
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private elementRef: ElementRef,
+    private renderer: Renderer2
   ) {
     super();
   }
@@ -26,6 +28,10 @@ export class LoginComponent extends BasePage implements OnInit {
     this.loginForm = this.formBuilder.group({
       username: [null, [Validators.required]],
       password: [null, [Validators.required]],
+    });
+
+    this.renderer.listen('window', 'click', (event: Event) => {
+      this.deleteClass = false;
     });
   }
 
