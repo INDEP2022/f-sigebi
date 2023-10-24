@@ -210,4 +210,9 @@ export class ParameterModService
     // F_VALIDA_USUARIO
     return this.post(ParameterComerEndpoints.ParameterMod + '/find-one', data);
   }
+
+  //COMER_PARAMETROSMOD
+  getParamterMod_(params?: any) {
+    return this.get<IListResponse>(`parameters-mod`, params);
+  }
 }

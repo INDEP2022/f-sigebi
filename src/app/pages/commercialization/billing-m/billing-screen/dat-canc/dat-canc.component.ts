@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import {
@@ -38,6 +38,7 @@ export class DatCancComponent extends BasePage implements OnInit {
 
   dataSeleccionada: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  cause: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -56,9 +57,9 @@ export class DatCancComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      event: [null],
+      event: [null, Validators.required],
       keyProcess: [null],
-      idLot: [null],
+      idLot: [null, Validators.required],
       desLote: [null],
       noDelegation: [null],
       descDelegation: [null],
@@ -68,16 +69,23 @@ export class DatCancComponent extends BasePage implements OnInit {
   }
 
   close() {
+    this.changeValSelect(false);
     this.modalRef.hide();
   }
 
   async confirm() {
     let contador: any;
     if (!this.selectedEvent)
-      return this.alert('warning', 'Debe especificar un evento', '');
+      return (
+        this.form.markAllAsTouched,
+        this.alert('warning', 'Debe especificar un evento', '')
+      );
 
     if (!this.selectedLot)
-      return this.alert('warning', 'Debe especificar un lote', '');
+      return (
+        this.form.markAllAsTouched,
+        this.alert('warning', 'Debe especificar un lote', '')
+      );
 
     let obj = {
       idEvent: this.selectedEvent.idEvent,
@@ -125,7 +133,7 @@ export class DatCancComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.factstatusId'] = `$in:CFDI,IMP,PREF`;
     this.params.getValue()['filter.vouchertype'] = `$eq:FAC`;
 
-    this.enviarParams(this.params);
+    await this.enviarParams(this.params);
     contador = 0;
     let n_CONP = 0;
     let l_BAF = false;
@@ -172,6 +180,7 @@ export class DatCancComponent extends BasePage implements OnInit {
         ''
       );
 
+    // await this.selectData()
     // Seleccionamos todos los registros de la tabla
     // GO_BLOCK('COMER_FACTURAS');
     //   FIRST_RECORD;
@@ -180,25 +189,39 @@ export class DatCancComponent extends BasePage implements OnInit {
     //     EXIT WHEN: SYSTEM.LAST_RECORD = 'TRUE';
     //   NEXT_RECORD;
     // END LOOP;
-
-    if (contador == 0 && n_CONP == 0)
-      return this.alert(
-        'warning',
-        'No se tienen facturas para cancelar ni eliminar',
-        ''
-      );
-    this.alertQuestion(
-      'question',
-      `Se cancelará(n) ${contador}, y se eliminará(n) ${n_CONP} factura(s)`,
-      '¿Desea ejecutar el proceso?'
-    ).then(async question => {
-      if (question.isConfirmed) {
-        this.valUser();
-      } else {
-        this.modalRef.content.callback({ evento: null });
-        this.close();
+    this.billingCommunicationService.dataSeleccionada$.subscribe(
+      (next: any) => {
+        this.dataSeleccionada = next;
+        console.log('Data seleccionada', next);
+        if (contador == 0 && n_CONP == 0)
+          return this.alert(
+            'warning',
+            'No se tienen facturas para cancelar ni eliminar',
+            ''
+          );
+        this.alertQuestion(
+          'question',
+          `Se cancelará(n) ${contador}, y se eliminará(n) ${n_CONP} factura(s)`,
+          '¿Desea ejecutar el proceso?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            this.valUser();
+          } else {
+            this.modalRef.content.callback(false);
+            this.close();
+          }
+        });
       }
-    });
+    );
+  }
+  async selectData() {
+    this.billingCommunicationService.dataSeleccionada$.subscribe(
+      (next: any) => {
+        this.dataSeleccionada = next;
+        console.log('Data seleccionada', next);
+      }
+    );
+    return true;
   }
   valUser() {
     // Validamos al usuario para autorizar la cancelación //
@@ -369,8 +392,9 @@ export class DatCancComponent extends BasePage implements OnInit {
   }
 
   pupNvoCancFact() {
-    // PUP_NVO_CANC_FACT3
-    // if (this.dataSeleccionada.length == 0) return this.alert('warning', 'No hay facturas seleccionadas', '')
+    // PUP_NVO_CANC_FACT
+    if (this.dataSeleccionada.length == 0)
+      return this.alert('warning', 'No hay facturas seleccionadas', '');
     let cont = 0;
     let l_BAN: boolean = false;
     let n_OPCION: number;
@@ -481,9 +505,7 @@ export class DatCancComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result_).then(resp_ => {
-            this.modalRef.content.callback({
-              evento: this.selectedEvent.idEvent,
-            });
+            this.modalRef.content.callback(true);
             this.close();
             this.alert('success', 'Proceso terminado correctamente', '');
           });
@@ -491,7 +513,12 @@ export class DatCancComponent extends BasePage implements OnInit {
       });
     });
   }
-  enviarParams(params: any) {
+
+  async enviarParams(params: any) {
     this.billingCommunicationService.enviarParams(params);
+  }
+
+  async changeValSelect(bool: boolean) {
+    this.billingCommunicationService.changeValSelect(bool);
   }
 }
