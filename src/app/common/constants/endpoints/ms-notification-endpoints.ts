@@ -38,4 +38,5 @@ export enum NotificationEndpoints {
   confirmStatus = `application/post-pup-valida-estatus-bien`,
 
   NotificationDestruction = `notificaciones_destruccion`,
+  GetStatusClasifGood = 'application/get-status-and-classif-good',
 }

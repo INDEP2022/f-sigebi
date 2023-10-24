@@ -8,6 +8,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from './../../interfaces/list-response.interface';
 
 import { HttpParams } from '@angular/common/http';
+import { INotificationClasif } from '../../models/ms-notification/clasif';
 import { INotificationDestruction } from '../../models/ms-notification/notification-destruction';
 import {
   INotification,
@@ -160,6 +161,12 @@ export class NotificationService extends HttpService {
     );
   }
 
+  getNotificationxProperty(
+    params?: _Params
+  ): Observable<IListResponse<INotificationXProperty>> {
+    return this.get(this.route.NotificationxProperty + '/get-all', params);
+  }
+
   createNotificationxPropertyFilter(model: any): Observable<any> {
     return this.notificationRepository.create(
       this.route.NotificationxPropertyFilter,
@@ -244,6 +251,17 @@ export class NotificationService extends HttpService {
     return this.post(this.route.NotificationxPropertyFilter2, params);
   }
 
+  createNotiXProperty(body: INotificationXProperty) {
+    return this.post(this.route.NotificationxProperty, body);
+  }
+
+  deleteNotiXProperty(body: INotificationXProperty) {
+    return this.delete(this.route.NotificationxProperty, {
+      numberProperty: body.numberProperty,
+      notificationDate: body.notificationDate,
+    });
+  }
+
   updateNotiXProperty(
     numberProperty: number | string,
     notificationDate: Date | string,
@@ -290,6 +308,16 @@ export class NotificationService extends HttpService {
   }
   getCFlyer(fileNumber: number) {
     return this.get(`notification/cFlyer/${fileNumber}`);
+  }
+
+  getStatusClasif(cveForm: string, classifNo: number) {
+    return this.get<{ status: any; classif: INotificationClasif }>(
+      this.route.GetStatusClasifGood +
+        '?cveForm=' +
+        cveForm +
+        '&classifNo=' +
+        classifNo
+    );
   }
 
   applyAllGoddMaintenanceCoverage(body: any) {
