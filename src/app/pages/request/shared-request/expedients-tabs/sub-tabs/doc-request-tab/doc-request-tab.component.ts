@@ -481,7 +481,6 @@ export class DocRequestTabComponent
         this.data.push(dataActual);
       }
     });
-    console.log(this.data);
     data = this.data[this.params.value.page - 1];
     return data;
   }
