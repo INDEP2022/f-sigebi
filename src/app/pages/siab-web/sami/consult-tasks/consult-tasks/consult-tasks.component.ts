@@ -399,11 +399,10 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue(
       Number.parseInt(user.department)
     );
-
+    //se modifico assignees por reviewers para obtener solo el usuario asignado y no los usuarios
     this.filterParams
       .getValue()
       .addFilter('reviewers', user.username, SearchFilter.ILIKE);
-    //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     const filterStatus = this.consultTasksForm.get('State').value;
 
     if (filterStatus) {
