@@ -825,6 +825,17 @@ export const routes: Routes = [
           screen: 'FTIPOREPALMACEN',
         },
       },
+      {
+        //!SIRVIO
+        path: 'document-entry',
+        loadChildren: async () =>
+          (await import('./document-entry/document-entry.module'))
+            .DocumentEntryModule,
+        data: {
+          title: 'Entrada de documentos',
+          screen: 'FGERARGENTRADADOC',
+        },
+      },
     ],
   },
 ];
