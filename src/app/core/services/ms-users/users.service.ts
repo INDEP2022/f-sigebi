@@ -249,4 +249,8 @@ export class UsersService extends HttpService {
     const route = `${UserEndpoints.viewPrev}/${no_ofice}`;
     return this.get(route);
   }
+
+  getUseXEvent(params: _Params) {
+    return this.get('comer-usersautxcanc', params);
+  }
 }
