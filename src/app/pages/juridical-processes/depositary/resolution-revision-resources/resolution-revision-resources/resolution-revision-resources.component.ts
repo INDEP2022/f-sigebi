@@ -1,10 +1,12 @@
 /** BASE IMPORT */
+import { DatePipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -44,9 +46,10 @@ export class ResolutionRevisionResourcesComponent
   selectedRow: any;
   formLoading = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  data = new LocalDataSource();
+  data: LocalDataSource = new LocalDataSource();
   data3: IGood[] = [];
   data2: IGood[] = [];
+  datePipe: DatePipe;
   totalItems: number = 0;
   dataGood: IListResponse<IGoodSami> = {} as IListResponse<IGoodSami>;
   columnFilters: any = [];
@@ -73,7 +76,9 @@ export class ResolutionRevisionResourcesComponent
       columns: RESOLUTION_REVISION_COLUMNS,
     };
   }
-
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+  }
   ngOnInit(): void {
     this.startApp();
     this.data
@@ -85,51 +90,67 @@ export class ResolutionRevisionResourcesComponent
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            switch (filters.field) {
-              case 'NoBien':
-                searchFilter = SearchFilter.ILIKE;
+            switch (filter.field) {
+              case 'goodId':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
                 break;
               case 'quantity':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
                 break;
               case 'status':
                 searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
                 break;
-              case 'motiveReRe':
+              case 'revRecCause':
                 searchFilter = SearchFilter.ILIKE;
-                //field = `filter.${filter.field}.description`;
+                field = `filter.${filter.field}`;
                 break;
-              case 'dateRecep':
-                searchFilter = SearchFilter.ILIKE;
+              case 'physicalReceptionDate':
+                if (filter.search) {
+                  filter.search = `${this.returnParseDate(
+                    filter.search
+                  )} 00:00:00`;
+                }
+                searchFilter = SearchFilter.SD;
+                field = `filter.${filter.field}`;
                 break;
-              case 'dateEmitRes':
-                searchFilter = SearchFilter.ILIKE;
+              case 'resolutionEmissionRecRevDate':
+                if (filter.search) {
+                  filter.search = `${this.returnParseDate(
+                    filter.search
+                  )} 00:00:00`;
+                }
+                searchFilter = SearchFilter.SD;
+                field = `filter.${filter.field}`;
                 break;
-              case 'obResourceRe':
+              case 'revRecObservations':
                 searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
-
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getSubDelegations();
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getSubDelegations());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getSubDelegations();
+    });
   }
 
   getSubDelegations() {
@@ -139,22 +160,24 @@ export class ResolutionRevisionResourcesComponent
     };
     console.log('service ');
     this.formLoading = true;
-    this.goodService.getAll(params).subscribe({
+    params['sortBy'] = 'goodId:DESC';
+    this.goodService.getByGood2(params).subscribe({
       next: resp => {
         console.log('data -> ', resp.data);
-
         this.totalItems = resp.count;
+        this.data.load(resp.data);
         for (let i = 0; i < resp.count; i++) {
           if (resp.data[i] != undefined) {
             let item = {
-              NoBien: resp.data[i].id,
+              goodId: resp.data[i].id,
               description: resp.data[i].description || null,
               quantity: resp.data[i].quantity || null,
-              status: resp.data[i].statusDetails?.descriptionStatus || null,
-              motiveReRe: resp.data[i].revRecCause || null,
-              dateRecep: resp.data[i].physicalReceptionDate || null,
-              dateEmitRes: resp.data[i].resolutionEmissionRecRevDate || null,
-              obResourceRe: resp.data[i].revRecObservations || null,
+              status: resp.data[i].status || null,
+              revRecCause: resp.data[i].revRecCause || null,
+              physicalReceptionDate: resp.data[i].physicalReceptionDate || null,
+              resolutionEmissionRecRevDate:
+                resp.data[i].resolutionEmissionRecRevDate || null,
+              revRecObservations: resp.data[i].revRecObservations || null,
             };
             this.data2.push(item as any);
             this.data3 = resp.data;
@@ -178,7 +201,7 @@ export class ResolutionRevisionResourcesComponent
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        console.error('error', error);
       },
     });
   }
@@ -209,7 +232,7 @@ export class ResolutionRevisionResourcesComponent
     console.log('select', this.selectedRow);
     let auxRevision;
     for (let i = 0; i < this.data3.length; i++) {
-      if (this.data3[i].goodId == this.selectedRow.NoBien) {
+      if (this.data3[i].goodId == this.selectedRow.goodId) {
         console.log(' encontrado -> ', this.data3[i]);
         auxRevision = this.data3[i];
       }
@@ -230,7 +253,7 @@ export class ResolutionRevisionResourcesComponent
     this.router.navigate(
       ['pages/general-processes/historical-good-situation'],
       {
-        queryParams: { origin: this.selectedRow },
+        queryParams: { noBien: this.selectedRow.goodId },
       }
     );
   }
@@ -246,7 +269,7 @@ export class ResolutionRevisionResourcesComponent
       let dataSelect: IGood;
 
       for (let i = 0; i < this.data3.length; i++) {
-        if (this.data3[i].goodId == this.selectedRow.NoBien) {
+        if (this.data3[i].goodId == this.selectedRow.goodId) {
           console.log(' encontrado -> ', this.data3[i]);
           dataSelect = this.data3[i];
         }
