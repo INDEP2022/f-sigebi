@@ -57,14 +57,16 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     let date = new Date();
     let yearActual: number = date.getFullYear() - 2;
     this.year = String(yearActual);
-    this.getEvents();
+    setTimeout(() => {
+      this.getEvents(new ListParams());
+    }, 1000);
   }
 
   //
 
   loadDataEventSelected(event: any) {
     console.log('Esto trae la seleccion: ', event);
-    this.serviceInvoice.getInvoiceByEvent(event.id_evento).subscribe({
+    this.serviceInvoice.getInvoiceByEvent(event.eventId).subscribe({
       next: response => {
         this.getRrcs(this.array('rfc', response.data));
         this.getPublic(this.array('lote_publico', response.data));
@@ -120,8 +122,9 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     return arrayTwoLocal;
   }
 
-  getEvents(params?: ListParams) {
-    this.serviceInvoice.getInvoiceForniture(this.year, params).subscribe({
+  getEvents(params: ListParams) {
+    params['anio'] = this.year;
+    this.serviceInvoice.getInvoiceForniture(params).subscribe({
       next: data => {
         this.events = new DefaultSelect(data.data, data.count);
       },
