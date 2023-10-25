@@ -55,7 +55,7 @@ export class DocumentationGoodsDialogComponent
   ngOnInit(): void {
     this.prepareForm();
     this.getExpedients(new ListParams());
-    this.getGoods(new ListParams());
+    // this.getGoods(new ListParams());
     this.getDictNumbers(new ListParams());
   }
   getDictDoc(params: ListParams) {

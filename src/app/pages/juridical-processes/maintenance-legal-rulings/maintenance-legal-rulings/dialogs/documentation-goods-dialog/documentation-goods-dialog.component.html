@@ -121,12 +121,21 @@
               [searchOnInit]="true"
               [showTooltip]="true"
               termMaxLength="50"
-              value="key.key"
+              value="id"
+              [labelTemplate]="dicLabel"
               [optionTemplate]="dicOption">
             </ngx-select>
-            <ng-template #dicOption let-item="item">
-              <div [title]="item.key.key">
+            <!-- <ng-template #dicOption let-item="item">
+              <div [title]="item.key">
                 {{ item.key }}
+              </div>
+            </ng-template> -->
+            <ng-template #dicLabel let-item="item">
+              {{ item.key + ' - ' + item.name }}
+            </ng-template>
+            <ng-template #dicOption let-item="item">
+              <div [title]="item.key + '-' + item.name">
+                {{ item.key + ' - ' + item.name }}
               </div>
             </ng-template>
           </form-field>
