@@ -246,7 +246,7 @@ export class DetailAssetsTabComponentComponent
 
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
-        debugger;
+
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
       }
