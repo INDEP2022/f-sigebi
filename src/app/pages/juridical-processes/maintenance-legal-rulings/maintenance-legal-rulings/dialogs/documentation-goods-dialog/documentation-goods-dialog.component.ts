@@ -8,7 +8,10 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
-import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
+import {
+  IDocumentsDictumXStateCreate,
+  IDocumentsDictumXStateM,
+} from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
@@ -58,21 +61,32 @@ export class DocumentationGoodsDialogComponent
     // this.getGoods(new ListParams());
     this.getDictNumbers(new ListParams());
   }
-  getDictDoc(params: ListParams) {
-    this.dictationService.getAll(params).subscribe({
-      next: data => {
-        // (this.$documents = new DefaultSelect(data.data, data.count)),
-        if (data.count > 0) {
+
+  getDoc($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getDictDoc(params).subscribe();
+  }
+  getDictDoc(params: FilterParams) {
+    return this.documentService.getDocDict(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        if (response.count > 0) {
           const name = this.documentsDictumXStateMForm.get('key').value;
-          const response = data.data.filter(m => {
-            m.keyArmyNumber == name;
+          const data = response.data.filter((m: any) => {
+            m.key == name;
           });
-          console.log(response[0]);
+          console.log(data[0]);
           this.documentsDictumXStateMForm.get('key').patchValue(data[0]);
         }
-        this.$documents = new DefaultSelect(data.data, data.count);
-      },
-    });
+        this.$documents = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
   getDictNumbers(params: ListParams) {
     this.dictationService.getAll(params).subscribe({
@@ -203,10 +217,11 @@ export class DocumentationGoodsDialogComponent
 
   create() {
     this.loading = true;
-    const data: IDocumentsDictumXStateM = this.documentsDictumXStateMForm.value;
+    const data: IDocumentsDictumXStateCreate =
+      this.documentsDictumXStateMForm.value;
 
     this.documentService
-      .create(this.documentsDictumXStateMForm.value)
+      .createDocDict(this.documentsDictumXStateMForm.value)
       .subscribe({
         next: data => {
           this.handleSuccess();
@@ -228,9 +243,8 @@ export class DocumentationGoodsDialogComponent
 
   update() {
     this.loading = true;
-
     this.documentService
-      .update(this.documentsDictumXStateMForm.value)
+      .updateDocDict(this.documentsDictumXStateMForm.value)
       .subscribe({
         next: data => {
           // this.handleSuccess();
