@@ -112,34 +112,46 @@
                             <div class="col-12">
                               <button
                                 (click)="update()"
-                                [disabled]="!disabledUpdate"
+                                [ngClass]="{ loading: btnLoading4 }"
+                                [disabled]="!disabledUpdate || btnLoading4"
                                 class="btn btn-sm btn-block btn-primary active">
                                 Act Datos Fallo
-                                <i class="fas fa-sync-alt"> </i>
+                                <i *ngIf="!btnLoading4" class="fas fa-sync-alt">
+                                </i>
                               </button>
                             </div>
                             <div class="col-12">
                               <button
                                 (click)="update2()"
-                                [disabled]="!disabledUpdate2"
+                                [ngClass]="{ loading: btnLoading5 }"
+                                [disabled]="!disabledUpdate2 || btnLoading5"
                                 class="btn btn-sm btn-block btn-primary active mt-2">
                                 Act Datos Pagos
-                                <i class="fas fa-sync-alt"> </i>
+                                <i *ngIf="!btnLoading5" class="fas fa-sync-alt">
+                                </i>
                               </button>
                             </div>
                             <div class="col-12">
                               <button
                                 (click)="faile()"
+                                [ngClass]="{ loading: btnLoading6 }"
+                                [disabled]="btnLoading6"
                                 class="btn btn-sm btn-block btn-primary active mt-2">
                                 Actualiza a VEN
-                                <i class="fas fa-sync-alt"> </i>
+                                <i *ngIf="!btnLoading6" class="fas fa-sync-alt">
+                                </i>
                               </button>
                             </div>
                             <div class="col-12">
                               <button
                                 (click)="export()"
+                                [ngClass]="{ loading: btnLoading7 }"
+                                [disabled]="btnLoading7"
                                 class="btn btn-sm btn-block btn-success active mt-2">
-                                Exporta <i class="bx bx-upload float-icon"></i>
+                                Exporta a CSV
+                                <i
+                                  *ngIf="!btnLoading7"
+                                  class="bx bx-upload float-icon"></i>
                               </button>
                             </div>
                           </div>
@@ -149,6 +161,8 @@
                           <div class="row">
                             <div class="col-12">
                               <button
+                                [ngClass]="{ loading: btnLoading8 }"
+                                [disabled]="btnLoading8"
                                 (click)="generateInvoices()"
                                 class="btn btn-sm btn-block btn-primary active">
                                 Genera Folios
@@ -185,14 +199,20 @@
                           <div class="row">
                             <div class="col-12">
                               <button
+                                [ngClass]="{ loading: btnLoading13 }"
+                                [disabled]="btnLoading13"
                                 (click)="selectAll()"
                                 class="btn btn-sm btn-block btn-primary active">
                                 Selec. Todos
-                                <i class="fas fa-edit bx-sm float-icon"></i>
+                                <i
+                                  *ngIf="!btnLoading13"
+                                  class="fas fa-edit bx-sm float-icon"></i>
                               </button>
                             </div>
                             <div class="col-12">
                               <button
+                                [ngClass]="{ loading: btnLoading14 }"
+                                [disabled]="btnLoading14"
                                 (click)="deleteFact()"
                                 class="btn btn-sm btn-block btn-primary active mt-2">
                                 Rest. Todos
@@ -200,21 +220,31 @@
                             </div>
                             <div class="col-12">
                               <button
+                                [ngClass]="{ loading: btnLoading15 }"
+                                [disabled]="btnLoading15"
                                 (click)="deleteSelect()"
                                 class="btn btn-sm btn-block btn-primary active mt-2">
                                 Elimina x Selección
                                 <span
-                                  ><i aria-hidden="true" class="fa fa-trash"></i
+                                  ><i
+                                    *ngIf="!btnLoading15"
+                                    aria-hidden="true"
+                                    class="fa fa-trash"></i
                                 ></span>
                               </button>
                             </div>
                             <div class="col-12">
                               <button
+                                [ngClass]="{ loading: btnLoading16 }"
+                                [disabled]="btnLoading16"
                                 (click)="deleteEventLote()"
                                 class="btn btn-sm btn-block btn-primary active mt-2">
                                 Elimina x Evento/Lote
                                 <span
-                                  ><i aria-hidden="true" class="fa fa-trash"></i
+                                  ><i
+                                    *ngIf="!btnLoading16"
+                                    aria-hidden="true"
+                                    class="fa fa-trash"></i
                                 ></span>
                               </button>
                             </div>
@@ -637,7 +667,6 @@
                     [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
                     <ng2-smart-table
                       (edit)="editDetalleFact($event)"
-                      #myTable
                       [attr.class]="'table-bordered'"
                       [settings]="settings2"
                       [source]="data2">
@@ -672,7 +701,6 @@
                     [track]="'all'"
                     [ngStyle]="{ height: loading3 ? '0px' : '400px' }">
                     <ng2-smart-table
-                      #myTable
                       [attr.class]="'table-bordered'"
                       [settings]="settings3"
                       [source]="data3">
@@ -703,7 +731,6 @@
                     [track]="'all'"
                     [ngStyle]="{ height: loading4 ? '0px' : '400px' }">
                     <ng2-smart-table
-                      #myTable
                       [attr.class]="'table-bordered'"
                       [settings]="settings4"
                       [source]="data4">
@@ -735,7 +762,6 @@
                     [track]="'all'"
                     [ngStyle]="{ height: loading5 ? '0px' : '400px' }">
                     <ng2-smart-table
-                      #myTable
                       [attr.class]="'table-bordered'"
                       [settings]="settings5"
                       [source]="data5">
