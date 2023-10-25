@@ -24,6 +24,7 @@
           [attr.class]="'table-bordered'"
           [settings]="tableSettings"
           [source]="dataTable"
+          (delete)="showDeleteAlert($event.data)"
           (edit)="openForm($event.data)"></ng2-smart-table>
       </div>
     </div>
