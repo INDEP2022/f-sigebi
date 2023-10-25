@@ -39,8 +39,8 @@
               [form]="form"
               control="idLot"
               [data]="batchs"
-              value="idLot"
-              bindLabel="idLot"
+              value="lotPublic"
+              bindLabel="lotPublic"
               label="Lote"
               (fetchItems)="getLotes($event)"
               (change)="selectLot($event)">
@@ -115,12 +115,15 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="!form.valid"
+          [ngClass]="{ loading: btnLoading }"
+          [disabled]="!form.valid || btnLoading"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">
           Valida y Selecciona
-          <span><i class="fas fa-edit bx-sm float-icon"></i></span>
+          <span
+            ><i *ngIf="!btnLoading" class="fas fa-edit bx-sm float-icon"></i
+          ></span>
         </button>
       </div>
       <div class="m-3">
