@@ -16,6 +16,7 @@
                   control="noVolante"
                   (change)="getWheel($event)"
                   (fetchItems)="listWheels($event)"
+                  [searchOnInit]="true"
                   [data]="selectWheel"
                   label="No&#46; Volante"
                   value="wheelNumber"
@@ -32,14 +33,10 @@
               <form-field
                 [control]="form.get('noExpediente')"
                 label="No&#46; Expediente">
-                <label class="form-control-label w-100">{{
+                <!--<label class="form-control-label w-100">{{
                   noExpediente
-                }}</label>
-                <input
-                  readonly
-                  hidden
-                  class="form-control"
-                  formControlName="noExpediente" />
+                }}</label>-->
+                <input class="form-control" formControlName="noExpediente" />
               </form-field>
             </div>
           </div>
@@ -51,14 +48,10 @@
               <form-field
                 [control]="form.get('cveDictamen')"
                 label="Clave Dictamen">
-                <label class="form-control-label w-100">{{
+                <!--<label class="form-control-label w-100">{{
                   cveDictamen
-                }}</label>
-                <input
-                  readonly
-                  hidden
-                  class="form-control"
-                  formControlName="cveDictamen" />
+                }}</label>-->
+                <input class="form-control" formControlName="cveDictamen" />
               </form-field>
             </div>
           </div>
