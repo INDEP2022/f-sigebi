@@ -435,8 +435,8 @@ export class DestructionAuthorizationComponent
       .remove(this.goodIds, this.numberPro)
       .subscribe({
         next: () => {
-          this.getProceedingGoods();
           this.alert('success', 'Bienes eliminados correctamente', '');
+          this.getProceedingGoods();
         },
         error: err => {},
       });
@@ -496,7 +496,7 @@ export class DestructionAuthorizationComponent
         return;
       }
       this.goodTrackerGoods = trackerGoods;
-      this.getProceedingGoods();
+      //this.getProceedingGoods();
       this.searchActa(id.value);
       this.searchDicta(id.value);
     });
@@ -862,7 +862,7 @@ export class DestructionAuthorizationComponent
 
       // Puedes seguir con otras operaciones sincrónicas aquí
       this.findProceeding(keysProceedings.value).subscribe();
-      this.getProceedingGoods();
+      //this.getProceedingGoods();
     } catch (error) {
       // Manejar errores si alguna de las operaciones asincrónicas falla
       console.error('Error en update:', error);
@@ -1359,15 +1359,21 @@ export class DestructionAuthorizationComponent
     const files = (event.target as HTMLInputElement).files[0];
     let formData = new FormData();
     formData.append('file', files);
+    formData.append(
+      'statusProceeding',
+      this.proceedingForm.get('statusProceedings').value
+    );
+    formData.append(
+      'proceedingKey',
+      this.proceedingForm.get('keysProceedings').value
+    );
+    formData.append('proceedingNumber', this.proceedingForm.get('id').value);
+
     this.getDataFile(formData);
   }
 
   getDataFile(data: FormData) {
-    let params = {
-      ...this.params8.getValue(),
-    };
-    let file = this.proceedingForm.get('id').value;
-    this.massiveGoodService.pupBienesPlano(data, file).subscribe({
+    this.massiveGoodService.pupBienesPlano(data).subscribe({
       next: resp => {
         console.log(resp);
       },
