@@ -246,15 +246,15 @@ export class DetailAssetsTabComponentComponent
 
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
-
+        debugger;
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
       }
-      if (this.typeOfRequest == 'MANUAL') {
+      /*if (this.typeOfRequest == 'MANUAL') {
         this.isGoodTypeReadOnly = false;
       } else {
         this.isGoodTypeReadOnly = true;
-      }
+      }*/
     }
 
     if (this.typeDoc === 'clarification') {
