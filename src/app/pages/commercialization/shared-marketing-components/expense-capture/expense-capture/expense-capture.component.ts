@@ -19,6 +19,7 @@ export class ExpenseCaptureComponent extends BasePage {
     super();
     this.activateRoute.params.subscribe({
       next: param => {
+        console.log(param);
         if (param['id']) {
           this.address = param['id'];
           this.dataService.address = param['id'];

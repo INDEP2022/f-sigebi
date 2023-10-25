@@ -29,6 +29,7 @@ export interface TokenInfoModel {
   cargonivel1: string;
   cargonivel2: string;
   cargonivel3: string;
+  cargonivel4: string;
   siglasnivel1: string;
   siglasnivel2: string;
   siglasnivel3: string;

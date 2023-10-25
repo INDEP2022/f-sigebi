@@ -197,8 +197,8 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
         PDELEGACION: delegation,
         PSUBDELEGACION: subdelegation,
         PDPTO: departamentDes,
-        PFECHARECINI: format(from, 'yyyy-MM-dd'),
-        PFECHARECFIN: format(to, 'yyyy-MM-dd'),
+        PFECHARECINI: format(from, 'dd-MM-yyyy'),
+        PFECHARECFIN: format(to, 'dd-MM-yyyy'),
       })
       .subscribe({
         next: response => {

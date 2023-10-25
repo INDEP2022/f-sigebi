@@ -716,8 +716,9 @@ export class NotificationAssetsTabComponent
 
       let task: any = {};
       task['id'] = 0;
-      task['assignees'] = this.task.assignees;
-      task['assigneesDisplayname'] = this.task.displayName;
+      task['reviewers'] = user.username;
+      task['assignees'] = user.username;
+      task['assigneesDisplayname'] = user.firstName;
       task['creator'] = user.username;
       task['taskNumber'] = Number(request.id);
       task['title'] = title;
