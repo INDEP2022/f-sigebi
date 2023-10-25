@@ -5,3 +5,11 @@
 .help-button-container {
   margin-right: -40 px !important;
 }
+
+::ng-deep popover-container {
+  max-width: 100% !important;
+}
+
+.p-cont {
+  border-right: 1px solid #abb2b9;
+}
