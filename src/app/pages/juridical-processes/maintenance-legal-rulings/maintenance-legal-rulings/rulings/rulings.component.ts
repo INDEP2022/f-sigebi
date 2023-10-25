@@ -166,21 +166,27 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
       columns: {
         id: {
           title: 'Identificador',
+          sort: false,
         },
         passOfficeArmy: {
           title: 'Clave armada',
+          sort: false,
         },
         expedientNumber: {
           title: 'Número de expediente',
+          sort: false,
         },
         wheelNumber: {
           title: 'Número de volante',
+          sort: false,
         },
         typeDict: {
           title: 'Tipo de dictamen',
+          sort: false,
         },
         status: {
           title: 'Estatus',
+          sort: false,
         },
       },
       totalItems: data ? data.count : 0,
