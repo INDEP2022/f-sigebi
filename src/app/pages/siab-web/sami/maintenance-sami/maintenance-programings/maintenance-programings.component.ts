@@ -113,17 +113,13 @@ export class MaintenanceProgramingsComponent
 
   private messages(response: any) {
     if (response) {
-      this.alert(
-        'success',
-        'Actualización de fechas de la Programación',
-        'Realizada Correctamente'
-      );
+      this.alert('success', 'Actualización Correctamente', '');
       this.clear();
     } else {
       this.alert(
-        'error',
-        'Actualización de fechas de la Programación',
-        'No realizada'
+        'warning',
+        'Error al Actualizar la fecha de la Programación',
+        ''
       );
     }
     this.loader.load = false;
@@ -140,9 +136,9 @@ export class MaintenanceProgramingsComponent
         error: err => {
           this.loader.load = false;
           this.alert(
-            'error',
-            'Actualización de fechas de la Programación',
-            'No realizada'
+            'warning',
+            'Error al Actualizar la fecha de la Programación',
+            ''
           );
         },
       });
@@ -159,9 +155,9 @@ export class MaintenanceProgramingsComponent
         error: err => {
           this.loader.load = false;
           this.alert(
-            'error',
-            'Actualización de fechas de la Programación',
-            'No realizada'
+            'warning',
+            'Error al Actualizar la fecha de la Programación',
+            ''
           );
         },
       });

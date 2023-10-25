@@ -9,6 +9,7 @@ import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-
 import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -41,7 +42,7 @@ export class ServiceOrderRequestCaptureFormComponent
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
   op: number = null;
-  showForm: boolean = false;
+  showForm: boolean = true;
   orderServiceId: number = null;
   lsProgramming: string = null;
   programmingId: number = null;
@@ -64,6 +65,7 @@ export class ServiceOrderRequestCaptureFormComponent
   private modalService = inject(BsModalService);
   private programmingService = inject(ProgrammingRequestService);
   private orderService = inject(OrderServiceService);
+  private signatoriesService = inject(SignatoriesService);
 
   constructor() {
     super();
@@ -318,6 +320,7 @@ export class ServiceOrderRequestCaptureFormComponent
       callback: (signatore: any) => {
         //ISignatories
         if (signatore.data) {
+          //typeDoc = null
           this.openReport(signatore.data, signatore.sign);
         }
       },
@@ -326,22 +329,23 @@ export class ServiceOrderRequestCaptureFormComponent
     this.modalService.show(ConfirmProgrammingComponent, config);
   }
 
-  openReport(signatore: ISignatories, signature: boolean) {
+  async openReport(signatore: ISignatories, typeSign: string) {
     //task == 8 ||task == 10 ||task == 13 ||task == 11
-    let idTypeDoc = 221;
+    let idTypeDoc = null; //221;
     if (this.task == 2) {
     } else if (this.task == 3) {
     } else if (this.task == 5) {
     } else if (this.task == 6) {
     }
-    const idProg = this.programmingId;
-
+    //const idProg = this.programmingId;
+    //verificar si se guarda los firmantes
+    //const sign = await this.assignSign(signatore,idTypeDoc)
     let config: ModalOptions = {
       initialState: {
-        idProg,
+        idOrderService: this.orderServiceId,
         idTypeDoc,
-        signatore,
-        typeFirm: signature == true ? 'electronica' : 'autografa',
+        //signatore,
+        typeFirm: typeSign,
         programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
@@ -469,4 +473,40 @@ export class ServiceOrderRequestCaptureFormComponent
   refuseJustification() {
     this.justificationRefused = true;
   }
+
+  assignSign(signatore: any, typedoc: any = null) {
+    return new Promise((resolve, reject) => {
+      const signForm = {
+        learnedType: typedoc,
+        learnedId: this.programmingId,
+        name: signatore.nameSignatore,
+        post: signatore.chargeSignatore,
+      };
+      this.signatoriesService.create(signForm).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo guardar a los firmantes');
+          console.log('error: ', error);
+        },
+      });
+    });
+  }
+
+  /*openAutografoModal(sampleOrder: ISamplingOrder) {
+    let config: ModalOptions = {
+      initialState: {
+        typeDoc: 197,
+        sampleOrder: sampleOrder,
+        callback: (next: boolean) => {
+          //if (next){ this.getData();}
+        },
+      },
+      class: 'modalSizeXL modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(UploadReportReceiptComponent, config);
+  }*/
 }

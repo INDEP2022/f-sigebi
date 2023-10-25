@@ -60,6 +60,14 @@ export class DocumentsDictumStatetMService extends HttpService {
     return this.delete(`${this.route.DocumentsDictuXStateM}/delete`, body);
   }
 
+  deleteMassive(body: any) {
+    return this.post(`${this.route.DocumentsDictumXStateMassive}`, body);
+  }
+
+  deleteDocumentXGood(goodNumber: number) {
+    return this.delete(`${this.route.DeleteDocumXGoodM}/${goodNumber}`);
+  }
+
   getSeqDocument() {
     const route = `${DocumentsEndpoints.SeqDocument}`;
     return this.post(route, null);
@@ -71,5 +79,9 @@ export class DocumentsDictumStatetMService extends HttpService {
 
   postPupFol(data: any) {
     return this.post(DocumentsEndpoints.postPup, data);
+  }
+
+  getDocumentXState(body: any) {
+    return this.post(DocumentsEndpoints.DocumentsDictumXStateM, body);
   }
 }

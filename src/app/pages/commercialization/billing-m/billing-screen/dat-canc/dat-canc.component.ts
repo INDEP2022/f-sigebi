@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -12,6 +13,7 @@ import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BillingsService } from '../../services/services';
+import { BillingCommunicationService } from '../communication/communication.services';
 
 @Component({
   selector: 'app-dat-canc',
@@ -35,14 +37,15 @@ export class DatCancComponent extends BasePage implements OnInit {
   selectedMan: any = null;
 
   dataSeleccionada: any[] = [];
-  params = new ListParams();
+  params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private billingsService: BillingsService,
     private token: AuthService,
     private msInvoiceService: MsInvoiceService,
-    private lotService: LotService
+    private lotService: LotService,
+    private billingCommunicationService: BillingCommunicationService
   ) {
     super();
   }
@@ -107,20 +110,22 @@ export class DatCancComponent extends BasePage implements OnInit {
         'Se tienen facturas con estatus FOL',
         'No se puede realizar la cancelación.'
       );
-
-    this.params['filter.eventId'] = `$eq:${this.selectedEvent.idEvent}`;
-    this.params['filter.lotId'] = `$eq:${this.selectedLot.idLot}`;
+    this.params.getValue()[
+      'filter.eventId'
+    ] = `$eq:${this.selectedEvent.idEvent}`;
+    this.params.getValue()['filter.batchId'] = `$eq:${this.selectedLot.idLot}`;
     if (this.selectedDele)
-      this.params[
+      this.params.getValue()[
         'filter.delegationNumber'
       ] = `$eq:${this.selectedDele.idDelegation}`;
 
     if (this.selectedMan)
-      this.params['filter.cvman'] = `$eq:${this.selectedMan.cvman}`;
+      this.params.getValue()['filter.cvman'] = `$eq:${this.selectedMan.cvman}`;
 
-    this.params['filter.factstatusId'] = `$in:CFDI,IMP,PREF`;
-    this.params['filter.vouchertype'] = `$eq:FAC`;
+    this.params.getValue()['filter.factstatusId'] = `$in:CFDI,IMP,PREF`;
+    this.params.getValue()['filter.vouchertype'] = `$eq:FAC`;
 
+    this.enviarParams(this.params);
     contador = 0;
     let n_CONP = 0;
     let l_BAF = false;
@@ -175,6 +180,7 @@ export class DatCancComponent extends BasePage implements OnInit {
     //     EXIT WHEN: SYSTEM.LAST_RECORD = 'TRUE';
     //   NEXT_RECORD;
     // END LOOP;
+
     if (contador == 0 && n_CONP == 0)
       return this.alert(
         'warning',
@@ -484,5 +490,8 @@ export class DatCancComponent extends BasePage implements OnInit {
         }
       });
     });
+  }
+  enviarParams(params: any) {
+    this.billingCommunicationService.enviarParams(params);
   }
 }

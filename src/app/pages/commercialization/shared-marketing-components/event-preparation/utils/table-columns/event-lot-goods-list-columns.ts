@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   bienes: {
     title: 'No. Bien',
@@ -120,6 +122,8 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   appraisalDate: {
     title: 'Fecha Avalúo',
     sort: false,
+    valuePrepareFunction: (date: string) =>
+      date ? format(new Date(date), 'dd/MM/yyyy') : '',
   },
   warehouseNumber: {
     title: 'No. Almacén',
@@ -136,5 +140,7 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
   invoiceDate: {
     title: 'Fecha Factura',
     sort: false,
+    valuePrepareFunction: (date: string) =>
+      date ? format(new Date(date), 'dd/MM/yyyy') : '',
   },
 };

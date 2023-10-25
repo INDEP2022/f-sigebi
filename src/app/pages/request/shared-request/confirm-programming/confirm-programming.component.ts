@@ -40,6 +40,7 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      typeSignature: [false],
     });
   }
 
@@ -49,17 +50,20 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
       sign: this.electronicSignature,
     });
     this.modalRef.hide();*/
+    const progform: any = this.confirmForm.value;
+    progform.typeSignature = progform.typeSignature == true ? 'Y' : 'N';
+
     this.programmingService
-      .updateProgramming(this.idProgramming, this.confirmForm.value)
+      .updateProgramming(this.idProgramming, progform)
       .subscribe({
         next: () => {
           if (this.type == 'order-service') {
             this.modalRef.content.callback({
-              data: this.confirmForm.value,
-              sign: this.electronicSignature,
+              data: progform,
+              sign: progform.typeSignature == 'Y' ? 'electronica' : 'autografa',
             });
           } else {
-            this.modalRef.content.callback(this.confirmForm.value);
+            this.modalRef.content.callback(progform);
           }
           this.modalRef.hide();
         },
