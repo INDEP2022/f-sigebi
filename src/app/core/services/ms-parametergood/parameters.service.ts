@@ -75,4 +75,10 @@ export class ParametersService extends HttpService {
     const route = `${ParameterGoodEndpoints.CatMotivesrev}`;
     return this.get<IListResponse<any>>(route, params);
   }
+
+  getApplicationGetFaUrlwebFac(event: number) {
+    return this.get(
+      `${ParameterGoodEndpoints.ApplicationGetFaUrlwebFac}?eventId=${event}`
+    );
+  }
 }
