@@ -4,7 +4,14 @@ html {
   margin: 0;
 }
 
+h2 {
+  // font-size: 1.625rem;
+  font-size: 20px;
+}
+
 .component-background {
+  top: -1px;
+  margin-bottom: -1px;
   // background: linear-gradient(125deg,
   //     #fff 0%, #fff 40%,
   //     #bd9559 calc(40% + 1px), #bd9559 60%,
@@ -118,7 +125,7 @@ html {
   position: absolute !important;
   width: 20px !important;
   height: 20px !important;
-  left: 92% !important;
+  left: 90% !important;
   top: 52% !important;
   transform: translateY(-50%) !important;
 }
@@ -128,7 +135,7 @@ html {
   position: absolute;
   width: 20px;
   height: 20px;
-  left: 92%;
+  left: 90%;
   top: 52%;
   transform: translateY(-50%);
 }
@@ -138,7 +145,7 @@ html {
   position: absolute;
   width: 20px;
   height: 20px;
-  left: 92%;
+  left: 90%;
   top: 37%;
   transform: translateY(-50%);
 }
@@ -148,7 +155,7 @@ html {
   -moz-box-shadow: 10px 6px 39px -10px rgba(0, 0, 0, 0.75);
   box-shadow: 10px 6px 39px -10px rgba(0, 0, 0, 0.75);
 
-  margin-top: 23%;
+  margin-top: 15%;
   padding-right: 32px;
   padding-left: 32px;
   border-radius: 5px;
@@ -215,4 +222,9 @@ button.loading:after {
   to {
     transform: rotate(360deg);
   }
+}
+
+.correcc-padding {
+  padding-right: 6% !important;
+  padding-left: 6% !important;
 }

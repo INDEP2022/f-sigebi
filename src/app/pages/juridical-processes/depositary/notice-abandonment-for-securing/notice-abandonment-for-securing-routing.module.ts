@@ -7,6 +7,10 @@ const routes: Routes = [
     path: '',
     component: NoticeAbandonmentForSecuringComponent,
   },
+  {
+    path: ':id',
+    component: NoticeAbandonmentForSecuringComponent,
+  },
 ];
 
 @NgModule({

@@ -82,7 +82,7 @@ export class SamplingGoodService extends HttpService {
 
   deleteSampleDeductive(id: number) {
     const route = `${SamplingGoodEndpoint.SamplingDeductives}/${id}`;
-    return this.put<IListResponse<ISamplingDeductive>>(route);
+    return this.delete<IListResponse<ISamplingDeductive>>(route);
   }
 
   getSamplingGoodFilter(
