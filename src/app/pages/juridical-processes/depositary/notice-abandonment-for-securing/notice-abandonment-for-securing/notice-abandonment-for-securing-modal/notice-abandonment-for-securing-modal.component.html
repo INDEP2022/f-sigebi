@@ -1,0 +1,137 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ data ? 'Editar' : 'Nueva' }} {{ title }} {{ goodId }}
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="pb-3 col-md-6">
+          <form-field [control]="periodEndDate" label="Fecha de Término">
+            <input
+              bsDatepicker
+              [class]="!minDate ? 'disabled' : ''"
+              [minDate]="minDate"
+              class="form-control"
+              style="background: white"
+              readonly
+              formControlName="periodEndDate" />
+          </form-field>
+        </div>
+        <div class="pb-3 col-md-6">
+          <form-field
+            [control]="notificationDate"
+            label="Fecha de Notificación">
+            <input
+              bsDatepicker
+              class="form-control"
+              [maxDate]="today"
+              style="background: white"
+              readonly
+              formControlName="notificationDate" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="pb-3 col-md-6">
+          <form-field [control]="statusNotified" label="Estatus">
+            <ng-select class="form-control" formControlName="statusNotified">
+              <ng-option [value]="null">Seleccione un valor</ng-option>
+              <ng-option value="AE"> Enterado </ng-option>
+              <ng-option value="AN"> No Enterado </ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="pb-3 col-md-6">
+          <form-field [control]="duct" label="Conducto">
+            <ng-select class="form-control" formControlName="duct">
+              <ng-option [value]="null">Seleccione un valor</ng-option>
+              <ng-option *ngFor="let row of ducts" [value]="row.id">
+                {{ row.description }}
+              </ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="pb-3 col-md-12">
+          <form-field [control]="form.get('notifiedTo')" label="Notificado A">
+            <textarea
+              formControlName="notifiedTo"
+              class="form-control"
+              maxlength="600"
+              [readonly]="duct.value === 'EDICTO'"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="pb-3 col-md-12">
+          <form-field
+            [control]="form.get('nameInstitutionNotified')"
+            label="Lugar">
+            <textarea
+              formControlName="nameInstitutionNotified"
+              class="form-control"
+              maxlength="600"
+              [readonly]="duct.value === 'EDICTO'"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="pb-3 col-md-6">
+          <form-field
+            [control]="editPublicationDate"
+            label="Fecha de Publicación">
+            <input
+              bsDatepicker
+              style="background: white"
+              readonly
+              class="form-control"
+              [maxDate]="today"
+              [class]="duct.value !== 'EDICTO' ? 'disabled' : ''"
+              formControlName="editPublicationDate" />
+          </form-field>
+        </div>
+        <div class="pb-3 col-md-6">
+          <form-field
+            [control]="newspaperPublication"
+            label="Periódico de Publicación">
+            <input
+              class="form-control"
+              formControlName="newspaperPublication"
+              [readonly]="duct.value !== 'EDICTO'" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="pb-3 col-md-12">
+          <form-field [control]="form.get('observation')" label="Observaciones">
+            <textarea
+              formControlName="observation"
+              class="form-control"
+              maxlength="600"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          text="Aceptar"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
