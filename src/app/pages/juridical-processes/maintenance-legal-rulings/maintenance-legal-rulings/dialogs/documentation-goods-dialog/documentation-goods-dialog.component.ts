@@ -64,8 +64,8 @@ export class DocumentationGoodsDialogComponent
         // (this.$documents = new DefaultSelect(data.data, data.count)),
         if (data.count > 0) {
           const name = this.documentsDictumXStateMForm.get('key').value;
-          const response = data.data.filter((m: any) => {
-            m.key.key == name;
+          const response = data.data.filter(m => {
+            m.keyArmyNumber == name;
           });
           console.log(response[0]);
           this.documentsDictumXStateMForm.get('key').patchValue(data[0]);

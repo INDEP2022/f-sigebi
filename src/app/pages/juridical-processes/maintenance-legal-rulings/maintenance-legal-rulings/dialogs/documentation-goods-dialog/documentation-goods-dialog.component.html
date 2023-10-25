@@ -108,9 +108,7 @@
         </div>
 
         <div class="col-md-6 mt-4">
-          <form-field
-            label="Clave Documento "
-            [control]="documentsDictumXStateMForm.get('key')">
+          <form-field [control]="documentsDictumXStateMForm.get('key')">
             <!-- <input type="text" class="form-control" formControlName="key" /> -->
             <ngx-select
               [form]="documentsDictumXStateMForm"
@@ -121,21 +119,16 @@
               [searchOnInit]="true"
               [showTooltip]="true"
               termMaxLength="50"
-              value="id"
+              value="keyArmyNumber"
               [labelTemplate]="dicLabel"
               [optionTemplate]="dicOption">
             </ngx-select>
-            <!-- <ng-template #dicOption let-item="item">
-              <div [title]="item.key">
-                {{ item.key }}
-              </div>
-            </ng-template> -->
             <ng-template #dicLabel let-item="item">
-              {{ item.key + ' - ' + item.name }}
+              {{ item.keyArmyNumber }}
             </ng-template>
             <ng-template #dicOption let-item="item">
-              <div [title]="item.key + '-' + item.name">
-                {{ item.key + ' - ' + item.name }}
+              <div [title]="item.key">
+                {{ item.keyArmyNumber }}
               </div>
             </ng-template>
           </form-field>
