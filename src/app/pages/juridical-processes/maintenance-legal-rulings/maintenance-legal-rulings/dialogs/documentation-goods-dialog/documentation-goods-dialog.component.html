@@ -119,16 +119,16 @@
               [searchOnInit]="true"
               [showTooltip]="true"
               termMaxLength="50"
-              value="keyArmyNumber"
+              value="key"
               [labelTemplate]="dicLabel"
               [optionTemplate]="dicOption">
             </ngx-select>
             <ng-template #dicLabel let-item="item">
-              {{ item.keyArmyNumber }}
+              {{ item.key }}
             </ng-template>
             <ng-template #dicOption let-item="item">
               <div [title]="item.key">
-                {{ item.keyArmyNumber }}
+                {{ item.key }}
               </div>
             </ng-template>
           </form-field>
