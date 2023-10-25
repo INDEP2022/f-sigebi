@@ -34,17 +34,18 @@ export class DocumentationGoodsComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   tableSettings = {
+    ...this.settings,
     actions: {
-      columnTitle: '',
-      add: false,
+      columnTitle: 'Acciones',
       edit: true,
       delete: false,
+      add: false,
+      position: 'left',
     },
-    hideSubHeader: true,
-    mode: 'external',
-
-    columns: DOCUMENTS_DICTUM_X_STATE,
+    columns: { ...DOCUMENTS_DICTUM_X_STATE },
+    noDataMessage: 'No se encontrarón registros',
   };
+
   dataTable: IDocumentsDictumXStateM[] = [];
   @Input() dictation: IDictation;
 

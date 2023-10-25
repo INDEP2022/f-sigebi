@@ -18,8 +18,8 @@ export const DOCUMENTS_DICTUM_X_STATE = {
   key: {
     sort: false,
     title: 'Clave Documento',
-    valuePrepareFunction: (data: any) => {
-      return data ? data.key : '';
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.key.key;
     },
   },
   dateReceipt: {
