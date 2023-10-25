@@ -63,8 +63,71 @@
             aria-hidden="true"></i>
         </button>
       </div>
+      <ng-template #userPop>
+        <div class="row">
+          <div
+            class="col-md-4 p-cont d-flex justify-content-center align-items-center">
+            <div>
+              <img
+                width="60px"
+                class="rounded-circle"
+                src="assets/images/users/avatar-2.jpg"
+                alt="Header Avatar" />
+            </div>
+          </div>
+          <div class="col-md-8 d-flex align-items-center">
+            <div>
+              <p class="lh-1">
+                <span class="font-weight-bold">Nombre: </span> {{ user.name }}
+              </p>
+              <p class="lh-1">
+                <span class="font-weight-bold">Correo: </span> {{ user.email }}
+              </p>
+              <p class="lh-1">
+                <span class="font-weight-bold">Puesto: </span> {{ user.puesto }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <p class="lh-1">
+              <span class="font-weight-bold">Delegación Regional: </span>
+              {{ user.delegacionreg }}
+            </p>
+            <p class="lh-1">
+              <span class="font-weight-bold">Tipo Empleado: </span>
+              {{ user.employeetype }}
+            </p>
+            <p class="lh-1">
+              <span class="font-weight-bold">Dirección Corporativa: </span>
+              {{ user.siglasnivel1 }} - {{ user.cargonivel1 }}
+            </p>
+            <p class="lh-1">
+              <span class="font-weight-bold">Dirección Ejecutiva: </span>
+              {{ user.siglasnivel2 }} - {{ user.cargonivel2 }}
+            </p>
+            <p class="lh-1">
+              <span class="font-weight-bold"
+                >Coordinación Regional / Coordinación Administrativa:
+              </span>
+              {{ user.siglasnivel3 }} - {{ user.cargonivel3 }}
+            </p>
+            <p class="lh-1">
+              <span class="font-weight-bold">Puesto/Cargo: </span>
+              {{ user.siglasnivel4 }} - {{ user.cargonivel4 }}
+            </p>
+          </div>
+        </div>
+      </ng-template>
+
+      <!--  -->
       <div class="dropdown d-inline-block" dropdown>
         <button
+          [popover]="userPop"
+          container="body"
+          placement="bottom"
+          triggers="mouseenter:mouseleave"
           type="button"
           class="btn header-item"
           dropdownToggle

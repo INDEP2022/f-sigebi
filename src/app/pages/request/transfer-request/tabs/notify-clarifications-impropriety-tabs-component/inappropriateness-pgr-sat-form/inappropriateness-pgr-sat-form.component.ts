@@ -13,6 +13,7 @@ import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifi
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
 
@@ -52,21 +53,32 @@ export class InappropriatenessPgrSatFormComponent
     private documentService: DocumentsService,
     private chatService: ChatClarificationsService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
-    private rejectedGoodService: RejectedGoodService
+    private rejectedGoodService: RejectedGoodService,
+    private requestService: RequestService
   ) {
     super();
     this.today = new Date();
   }
 
   ngOnInit(): void {
-    this.dictamenSeq();
+    //this.dictamenSeq();
     this.getInfoDoc();
     this.prepareForm();
   }
 
   getInfoDoc() {
+    let documentTypeId: number = 0;
+    const idClarType = this.notification.chatClarification.idClarificationType;
+    if (
+      (this.request.typeOfTransfer == 'PGR_SAE' && idClarType == '2') ||
+      (this.request.typeOfTransfer == 'SAT_SAE' && idClarType == '2')
+    ) {
+      documentTypeId = 111;
+    }
+
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.applicationId'] = this.idSolicitud;
+    params.getValue()['filter.documentTypeId'] = documentTypeId;
     this.documentService
       .getAllClarificationDocImpro(params.getValue())
       .subscribe({
@@ -100,9 +112,7 @@ export class InappropriatenessPgrSatFormComponent
             }
           }
         },
-        error: error => {
-          console.log('response error', error);
-        },
+        error: error => {},
       });
   }
 
@@ -122,6 +132,16 @@ export class InappropriatenessPgrSatFormComponent
   async confirm() {
     let token = this.authService.decodeToken();
 
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+    }
+
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.notification?.clarificationType,
@@ -132,7 +152,7 @@ export class InappropriatenessPgrSatFormComponent
       paragraphInitial: this.form.controls['paragraphInitial'].value,
       applicationId: this.request.id,
 
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       managedTo: this.request?.nameOfOwner
         ? this.request?.nameOfOwner
         : this.form.controls['managedTo'].value,
@@ -151,13 +171,14 @@ export class InappropriatenessPgrSatFormComponent
 
     this.loading = true;
 
-    const checkExistDocImp: any = await this.checkDataExist();
-    if (checkExistDocImp?.id != 0) {
+    const checkExistDocImp: any = await this.checkDataExist(111);
+    if (checkExistDocImp.id != 0) {
       this.documentService
         .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
         .subscribe({
-          next: data => {
+          next: async data => {
             this.openReport(checkExistDocImp);
+            await this.updateObservation(this.form.get('observations').value);
             this.loading = false;
             this.close();
           },
@@ -173,11 +194,22 @@ export class InappropriatenessPgrSatFormComponent
       this.documentService.createClarDocImp(modelReport).subscribe({
         next: data => {
           const createClarGoodDoc = this.createClarGoodDoc(data);
-          setTimeout(() => {
+          setTimeout(async () => {
             if (createClarGoodDoc) {
-              this.openReport(data);
-              this.loading = false;
-              this.close();
+              const updateObservations = await this.updateObservation(
+                this.form.get('observations').value
+              );
+              if (updateObservations) {
+                const updateObservations = await this.updateObservation(
+                  this.form.get('observations').value
+                );
+
+                if (updateObservations) {
+                  this.openReport(data);
+                  this.loading = false;
+                  this.close();
+                }
+              }
             }
           }, 250);
         },
@@ -216,20 +248,40 @@ export class InappropriatenessPgrSatFormComponent
     });
   }
 
-  checkDataExist() {
+  checkDataExist(documentTypeId: number) {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
       params.getValue()['filter.applicationId'] = this.idSolicitud;
+      params.getValue()['filter.documentTypeId'] = documentTypeId;
       this.documentService
         .getAllClarificationDocImpro(params.getValue())
         .subscribe({
           next: response => {
+            console.log('Existe: ', response);
             resolve(response.data[0]);
           },
           error: error => {
+            console.log('No existe: ', error);
             resolve(0);
           },
         });
+    });
+  }
+
+  updateObservation(observation: string) {
+    return new Promise((resolve, reject) => {
+      const modalRequest: IRequest = {
+        id: this.idSolicitud,
+        observations: observation,
+      };
+      this.requestService.update(this.idSolicitud, modalRequest).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -339,36 +391,40 @@ export class InappropriatenessPgrSatFormComponent
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
-    const notificationValidate = 'Y';
-    const idReportAclara = data.id;
-    //const idDoc = data.id;
-    const idTypeDoc = Number(data.documentTypeId);
-    const requestInfo = this.request;
-    const idSolicitud = this.idSolicitud;
-    const nomenglatura = this.folioReporte;
-    const infoReport = data;
-    //Modal que genera el reporte
-    let config: ModalOptions = {
-      initialState: {
-        requestInfo,
-        idTypeDoc,
-        //idDoc,
-        idReportAclara,
-        idSolicitud,
-        notificationValidate,
-        nomenglatura,
-        infoReport,
-        callback: (next: boolean) => {
-          if (next) {
-            this.changeStatusAnswered();
-          } else {
-          }
+    this.dictamenSeq();
+
+    setTimeout(() => {
+      const notificationValidate = 'Y';
+      const idReportAclara = data.id;
+      //const idDoc = data.id;
+      const idTypeDoc = Number(data.documentTypeId);
+      const requestInfo = this.request;
+      const idSolicitud = this.idSolicitud;
+      const nomenglatura = this.folioReporte;
+      const infoReport = data;
+      //Modal que genera el reporte
+      let config: ModalOptions = {
+        initialState: {
+          requestInfo,
+          idTypeDoc,
+          //idDoc,
+          idReportAclara,
+          idSolicitud,
+          notificationValidate,
+          nomenglatura,
+          infoReport,
+          callback: (next: boolean) => {
+            if (next) {
+              this.changeStatusAnswered();
+            } else {
+            }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(PrintReportModalComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PrintReportModalComponent, config);
+    }, 2000); // 2000 milisegundos = 2 segundos
   }
 
   //Método para crear número secuencial según la no delegación del user logeado

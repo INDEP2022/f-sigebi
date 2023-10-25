@@ -1534,6 +1534,7 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
+    // this.sendGoodTransportable();
     //const sendGoodInventary = await this.sendGoodsGuardInventary();
     this.alertQuestion(
       'question',
@@ -1560,7 +1561,7 @@ export class FormalizeProgrammingFormComponent
               if (updateProgramming) {
                 const sendGoodInventary = await this.sendGoodsGuardInventary();
                 if (sendGoodInventary) {
-                  const updateGoodStatus = await this.updateStatusGoodReceipt();
+                  this.sendGoodTransportable();
                   this.alertInfo(
                     'success',
                     'Acción correcta',
@@ -1601,11 +1602,20 @@ export class FormalizeProgrammingFormComponent
     });
   }
 
-  updateStatusGoodReceipt() {
+  sendGoodTransportable() {
     if (this.goodsRecepcion.count() > 0) {
-      this.goodsRecepcion.getElements().then(data => {
-        data.map((item: any) => {});
-      });
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['programmingId'] = this.programmingId;
+      this.programmingGoodService
+        .postGoodReceptionInvent(params.getValue())
+        .subscribe({
+          next: response => {
+            console.log('bienes transportables enviados', response);
+          },
+          error: error => {
+            console.log('bienes transportables error', error);
+          },
+        });
     }
   }
 
@@ -1618,9 +1628,11 @@ export class FormalizeProgrammingFormComponent
               .AddReceptionBpm(Number(item.id), Number(item.goodId))
               .subscribe({
                 next: response => {
+                  console.log('encio inventario', response);
                   resolve(true);
                 },
                 error: error => {
+                  console.log('encio error inventario', error);
                   resolve(true);
                 },
               });

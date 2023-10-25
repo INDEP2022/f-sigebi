@@ -257,6 +257,7 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
     delete invoice.prod;
     delete invoice.payment;
     delete invoice.relation;
+    delete invoice.delegation;
 
     this.comerInvoice.update(invoice).subscribe({
       next: () => {

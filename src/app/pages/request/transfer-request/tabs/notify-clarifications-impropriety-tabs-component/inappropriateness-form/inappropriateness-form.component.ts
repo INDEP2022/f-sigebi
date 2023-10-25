@@ -14,6 +14,7 @@ import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifi
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
@@ -48,7 +49,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     private chatService: ChatClarificationsService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
     private rejectedGoodService: RejectedGoodService,
-    private regionalDelegationService: RegionalDelegationService
+    private regionalDelegationService: RegionalDelegationService,
+    private requestService: RequestService
   ) {
     super();
     this.today = new Date();
@@ -56,7 +58,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getInfoDoc();
-    this.dictamenSeq();
+    //this.dictamenSeq();
     this.prepareForm();
 
     /*this.regionalDelegationService.getById(this.delegationUser).subscribe({
@@ -70,8 +72,18 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   }
 
   getInfoDoc() {
+    let documentTypeId: number = 0;
+    const idClarType = this.notification.chatClarification.idClarificationType;
+    if (
+      (this.request.typeOfTransfer == 'PGR_SAE' && idClarType == '2') ||
+      (this.request.typeOfTransfer == 'SAT_SAE' && idClarType == '2')
+    ) {
+      documentTypeId = 216;
+    }
+
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.applicationId'] = this.idSolicitud;
+    params.getValue()['filter.documentTypeId'] = documentTypeId;
     this.documentService
       .getAllClarificationDocImpro(params.getValue())
       .subscribe({
@@ -151,6 +163,17 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   async confirm() {
     let token = this.authService.decodeToken();
+
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+    }
+
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.form.controls['clarification'].value,
       sender: this.form.controls['senderName'].value,
@@ -161,7 +184,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       paragraphFinal: this.form.controls['paragraphFinal'].value,
       consistentIn: this.form.controls['consistentIn'].value,
       managedTo: this.form.controls['addresseeName'].value,
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       positionAddressee: this.form.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
@@ -172,7 +195,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       rejectNoticeId: this.notification.rejectNotificationId,
     };
     const checkExistDocImp: any = await this.checkDataExist();
-    if (checkExistDocImp?.id != 0) {
+    if (checkExistDocImp.id != 0) {
       this.documentService
         .updateClarDocImp(Number(checkExistDocImp.id), modelReport)
         .subscribe({
@@ -222,6 +245,23 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
             resolve(0);
           },
         });
+    });
+  }
+
+  updateObservation(observation: string) {
+    return new Promise((resolve, reject) => {
+      const modalRequest: IRequest = {
+        id: this.idSolicitud,
+        observations: observation,
+      };
+      this.requestService.update(this.idSolicitud, modalRequest).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -313,37 +353,41 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
-    const notificationValidate = 'Y';
-    const idReportAclara = data.id;
-    //const idDoc = data.id;
-    const idTypeDoc = 216;
-    const requestInfo = this.request;
-    const idSolicitud = this.idSolicitud;
-    const nomenglatura = this.folioReporte;
-    const infoReport = data;
+    this.dictamenSeq();
 
-    //Modal que genera el reporte
-    let config: ModalOptions = {
-      initialState: {
-        requestInfo,
-        idTypeDoc,
-        //idDoc,
-        idReportAclara,
-        idSolicitud,
-        notificationValidate,
-        nomenglatura,
-        infoReport,
-        callback: (next: boolean) => {
-          if (next) {
-            this.changeStatusAnswered();
-          } else {
-          }
+    setTimeout(() => {
+      const notificationValidate = 'Y';
+      const idReportAclara = data.id;
+      //const idDoc = data.id;
+      const idTypeDoc = 216;
+      const requestInfo = this.request;
+      const idSolicitud = this.idSolicitud;
+      const nomenglatura = this.folioReporte;
+      const infoReport = data;
+
+      //Modal que genera el reporte
+      let config: ModalOptions = {
+        initialState: {
+          requestInfo,
+          idTypeDoc,
+          //idDoc,
+          idReportAclara,
+          idSolicitud,
+          notificationValidate,
+          nomenglatura,
+          infoReport,
+          callback: (next: boolean) => {
+            if (next) {
+              this.changeStatusAnswered();
+            } else {
+            }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(PrintReportModalComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PrintReportModalComponent, config);
+    }, 2000); // 2000 milisegundos = 2 segundos
   }
 
   //Método para crear número secuencial según la no delegación del user logeado

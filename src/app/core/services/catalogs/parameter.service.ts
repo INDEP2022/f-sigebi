@@ -53,4 +53,8 @@ export class ParameterCatService
       params
     );
   }
+
+  paEnvioCorreoGenerico(model: Object): Observable<Object> {
+    return this.post(ParameterGoodEndpoints.EnvioCorreoGenerico, model);
+  }
 }

@@ -4,9 +4,23 @@
       <div class="mr-auto p-2">
         <h5 class="title">Muestreo Ordenes de Servicio&#58; {{ title }}</h5>
       </div>
-      <div class="p-2">
+      <div class="p-2" *ngIf="lsEstatusMuestreo == 'MUESTREO_NO_CUMPLE'">
         <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
-          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
+          Turnar muestreo <i class="bx bxs-right-arrow-square"></i>
+        </button>
+      </div>
+      <div
+        class="p-2"
+        *ngIf="lsEstatusMuestreo == 'MUESTREO_PENDIENTE_APROBACION'">
+        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
+          Turnar a revisi&oacute;n <i class="bx bxs-right-arrow-square"></i>
+        </button>
+      </div>
+      <div
+        class="p-2"
+        *ngIf="lsEstatusMuestreo == 'MUESTREO_PENDIENTE_APROBACION'">
+        <button class="btn btn-primary btn-sm active" (click)="finish()">
+          Finalizar Muestreo<i class="bx bxs-right-arrow-square"></i>
         </button>
       </div>
     </div>
@@ -18,14 +32,14 @@
           <button
             class="btn btn-secondary btn-sm active"
             (click)="openAnnexK()">
-            <i class="bx bx-square-rounded"></i> Anexo K
+            Anexo K <i class="bx bx-square-rounded"></i>
           </button>
         </div>
-        <div class="p-2">
+        <!-- <div class="p-2">
           <button class="btn btn-primary btn-sm active">
             <i class="bx bx-save"></i> Guardar
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div id="detail">

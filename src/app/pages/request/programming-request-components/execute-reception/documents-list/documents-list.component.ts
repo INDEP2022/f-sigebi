@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -162,6 +163,8 @@ export class DocumentsListComponent extends BasePage implements OnInit {
         let result = resp.data.map(async (item: any) => {
           const typeDocument = await this.getTypeDocument(item.xtipoDocumento);
           item['typeDocumentName'] = typeDocument;
+          const date = this.parseDateNoOffset(item.dInDate);
+          item.dInDate = moment(date).format('DD/MM/YYYY');
         });
 
         Promise.all(result).then(data => {
@@ -392,5 +395,12 @@ export class DocumentsListComponent extends BasePage implements OnInit {
       this.stateId = data;
       this.getTranferences(new ListParams());
     });
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 }
