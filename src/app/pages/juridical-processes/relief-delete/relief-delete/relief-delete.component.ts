@@ -53,14 +53,16 @@ export class ReliefDeleteComponent
       noExpediente: [''],
       cveDictamen: ['', Validators.required],
     });
+    this.form.get('noExpediente').disable();
+    this.form.get('cveDictamen').disable();
   }
   listWheels(params?: ListParams) {
-    params['filter.wheelNumber'] = `$eq:${params.text}`;
-
+    if (params.text) {
+      params['filter.wheelNumber'] = `$eq:${params.text}`;
+    }
     this.notificationService.getAllWithFilter(params).subscribe({
       next: (data: any) => {
         console.log('RESSSS', data);
-
         this.selectWheel = new DefaultSelect(data.data, data.count);
       },
       error: error => {
@@ -87,6 +89,7 @@ export class ReliefDeleteComponent
         this.noExpediente = item.expedientNumber;
         this.cveDictamen = item.dictumKey;
         // this.form.get('noExpediente').setValue(item.expedientNumber);
+        this.form.get('noExpediente').setValue(item.expedientNumber);
         this.form.get('cveDictamen').setValue(item.dictumKey);
       }
     } else {
@@ -123,6 +126,8 @@ export class ReliefDeleteComponent
                 'El Desahogo se ha aplicado con éxito'
               );
               this.selectWheel = new DefaultSelect();
+              this.form.get('noExpediente').reset();
+              this.form.get('cveDictamen').reset();
             }
           },
           error: error => {

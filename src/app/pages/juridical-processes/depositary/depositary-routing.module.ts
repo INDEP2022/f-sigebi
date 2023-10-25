@@ -15,6 +15,16 @@ const routes: Routes = [
   ...DEPOSITARY_ROUTES_1_ROUTING,
   ...DEPOSITARY_ROUTES_2_ROUTING,
   // DEPOSITARIA
+  {
+    path: 'notice-abandonment',
+    loadChildren: async () =>
+      (
+        await import(
+          './notice-abandonment-for-securing/notice-abandonment-for-securing.module'
+        )
+      ).NoticeAbandonmentForSecuringModule,
+    data: { title: 'Notificación de Abandono', screen: '' },
+  },
 
   // PROCESO DE DISPERCION DE PAGOS
   {
