@@ -847,6 +847,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       task['assignees'] = _task.assignees;
       task['assigneesDisplayname'] = _task.assigneesDisplayname;
       task['creator'] = user.username;
+      task['reviewers'] = user.username;
       task['taskNumber'] = Number(this.programmingId);
       task[
         'title'
@@ -884,6 +885,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['assignees'] = _task.assignees;
     task['assigneesDisplayname'] = _task.assigneesDisplayname;
     task['creator'] = user.username;
+    task['reviewers'] = user.username;
     task['taskNumber'] = Number(this.programmingId);
     task['title'] = `Ejecutar Recepción con folio: ${this.programming.folio}`;
     task['programmingId'] = this.programmingId;
@@ -918,6 +920,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['assignees'] = _task.assignees;
     task['assigneesDisplayname'] = _task.assigneesDisplayname;
     task['creator'] = user.username;
+    task['reviewers'] = user.username;
     task['taskNumber'] = Number(this.programmingId);
     task['title'] = `Formalizar entrega con folio: ${this.programming.folio}`;
     task['programmingId'] = this.programmingId;
