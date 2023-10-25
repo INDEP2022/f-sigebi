@@ -149,14 +149,17 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
     //this.submit.emit(this.flyersForm);
     let dateInit = this.datePipe.transform(this.PF_FECINI.value, 'dd-MM-yyyy');
 
-    let dateEnd = this.datePipe.transform(this.PF_FECFIN.value, 'dd-MM-yyyy');
+    let dateEnd = this.datePipe.transform(
+      this.PF_FECFIN.getRawValue(),
+      'dd-MM-yyyy'
+    );
 
     let params = {
       PN_NODELEGACION: this.PN_NODELEGACION.value,
-      PN_NOSUBDELEGACION: this.PN_NOSUBDELEGACION.value,
-      PN_AREADESTINO: this.PN_AREADESTINO.value,
+      PN_NOSUBDELEGACION: this.PN_NOSUBDELEGACION.getRawValue(),
+      PN_AREADESTINO: this.PN_AREADESTINO.getRawValue(),
       PN_VOLANTEINI: this.PN_VOLANTEINI.value,
-      PN_VOLANTEFIN: this.PN_VOLANTEFIN.value,
+      PN_VOLANTEFIN: this.PN_VOLANTEFIN.getRawValue(),
       PN_TIPOASUNTO: this.PN_TIPOASUNTO.value,
       PF_FECINI: dateInit,
       PF_FECFIN: dateEnd,
@@ -164,8 +167,8 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
     };
 
     this.siabService
-      //.fetchReport('RCONCOGVOLANTESRE', params)
-      .fetchReportBlank('blank')
+      .fetchReport('RCONCOGVOLANTESRE', params)
+      //.fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
