@@ -18,7 +18,29 @@ import { BillingCommunicationService } from '../communication/communication.serv
 @Component({
   selector: 'app-dat-canc',
   templateUrl: './dat-canc.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class DatCancComponent extends BasePage implements OnInit {
   title: 'Cancelar Factura';
@@ -39,6 +61,7 @@ export class DatCancComponent extends BasePage implements OnInit {
   dataSeleccionada: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   cause: any;
+  btnLoading: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -89,23 +112,23 @@ export class DatCancComponent extends BasePage implements OnInit {
 
     let obj = {
       idEvent: this.selectedEvent.idEvent,
-      idLot: this.selectedLot.idLot,
+      idLot: this.selectedLot.lotPublic,
       delegationNumber: !this.selectedDele
         ? null
         : this.selectedDele.idDelegation,
       cvman: !this.selectedMan ? null : this.selectedMan.cvman,
     };
+    this.btnLoading = true;
     contador = await this.billingsService.valueContador(obj);
     if (contador > 0)
-      return this.alert(
-        'warning',
-        'No se tienen facturas con este criterio',
-        ''
+      return (
+        (this.btnLoading = false),
+        this.alert('warning', 'No se tienen facturas con este criterio', '')
       );
 
     let obj1 = {
       idEvent: this.selectedEvent.idEvent,
-      idLot: this.selectedLot.idLot,
+      idLot: this.selectedLot.lotPublic,
       delegationNumber: !this.selectedDele
         ? null
         : this.selectedDele.idDelegation,
@@ -113,15 +136,20 @@ export class DatCancComponent extends BasePage implements OnInit {
     };
     contador = await this.billingsService.valueContador1(obj1);
     if (contador > 0)
-      return this.alert(
-        'warning',
-        'Se tienen facturas con estatus FOL',
-        'No se puede realizar la cancelación.'
+      return (
+        (this.btnLoading = false),
+        this.alert(
+          'warning',
+          'Se tienen facturas con estatus FOL',
+          'No se puede realizar la cancelación.'
+        )
       );
     this.params.getValue()[
       'filter.eventId'
     ] = `$eq:${this.selectedEvent.idEvent}`;
-    this.params.getValue()['filter.batchId'] = `$eq:${this.selectedLot.idLot}`;
+    this.params.getValue()[
+      'filter.batchId'
+    ] = `$eq:${this.selectedLot.lotPublic}`;
     if (this.selectedDele)
       this.params.getValue()[
         'filter.delegationNumber'
@@ -139,7 +167,7 @@ export class DatCancComponent extends BasePage implements OnInit {
     let l_BAF = false;
     let obj_cursor1 = {
       idEvent: this.selectedEvent.idEvent,
-      idLot: this.selectedLot.idLot,
+      idLot: this.selectedLot.lotPublic,
       delegationNumber: !this.selectedDele
         ? null
         : this.selectedDele.idDelegation,
@@ -174,10 +202,13 @@ export class DatCancComponent extends BasePage implements OnInit {
     }
 
     if (l_BAF)
-      return this.alert(
-        'warning',
-        'No se puede realizar la cancelación por inconsistencia en estatus.',
-        ''
+      return (
+        (this.btnLoading = false),
+        this.alert(
+          'warning',
+          'No se puede realizar la cancelación por inconsistencia en estatus.',
+          ''
+        )
       );
 
     // await this.selectData()
@@ -194,10 +225,13 @@ export class DatCancComponent extends BasePage implements OnInit {
         this.dataSeleccionada = next;
         console.log('Data seleccionada', next);
         if (contador == 0 && n_CONP == 0)
-          return this.alert(
-            'warning',
-            'No se tienen facturas para cancelar ni eliminar',
-            ''
+          return (
+            (this.btnLoading = false),
+            this.alert(
+              'warning',
+              'No se tienen facturas para cancelar ni eliminar',
+              ''
+            )
           );
         this.alertQuestion(
           'question',
@@ -207,6 +241,7 @@ export class DatCancComponent extends BasePage implements OnInit {
           if (question.isConfirmed) {
             this.valUser();
           } else {
+            this.btnLoading = false;
             this.modalRef.content.callback(false);
             this.close();
           }
@@ -226,14 +261,15 @@ export class DatCancComponent extends BasePage implements OnInit {
   valUser() {
     // Validamos al usuario para autorizar la cancelación //
     const params = new ListParams();
-    params['filter.user'] = `$eq:${this.token.decodeToken().username}`;
+    params['filter.user'] = `$eq:${
+      this.token.decodeToken().preferred_username
+    }`;
     // delete params.sortBy;
     const user = this.billingsService.getSegAcessXAreasService(params);
     if (!user)
-      return this.alert(
-        'warning',
-        'El usuario no puede autorizar cancelación',
-        ''
+      return (
+        (this.btnLoading = false),
+        this.alert('warning', 'El usuario no puede autorizar cancelación', '')
       );
     this.pupNvoCancFact();
   }
@@ -284,11 +320,12 @@ export class DatCancComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    if (lparams.text) params.addFilter('idLot', lparams.text, SearchFilter.EQ);
+    if (lparams.text)
+      params.addFilter('lotPublic', lparams.text, SearchFilter.EQ);
 
     if (this.selectedEvent)
       params.addFilter('idEvent', this.selectedEvent.idEvent, SearchFilter.EQ);
-
+    params.sortBy = `lotPublic:DESC`;
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {
         console.log('LOTE', data);
@@ -327,7 +364,7 @@ export class DatCancComponent extends BasePage implements OnInit {
 
     let body = {
       idEvent: this.selectedEvent.idEvent,
-      idLot: this.selectedLot.idLot,
+      idLot: this.selectedLot.lotPublic,
     };
 
     this.msInvoiceService
@@ -365,7 +402,7 @@ export class DatCancComponent extends BasePage implements OnInit {
 
     let body = {
       idEvent: this.selectedEvent.idEvent,
-      idLot: this.selectedLot.idLot,
+      idLot: this.selectedLot.lotPublic,
       delegationNumber: this.selectedDele.idDelegation,
     };
 
@@ -394,7 +431,10 @@ export class DatCancComponent extends BasePage implements OnInit {
   pupNvoCancFact() {
     // PUP_NVO_CANC_FACT
     if (this.dataSeleccionada.length == 0)
-      return this.alert('warning', 'No hay facturas seleccionadas', '');
+      return (
+        (this.btnLoading = false),
+        this.alert('warning', 'No hay facturas seleccionadas', '')
+      );
     let cont = 0;
     let l_BAN: boolean = false;
     let n_OPCION: number;
@@ -414,16 +454,22 @@ export class DatCancComponent extends BasePage implements OnInit {
     });
     Promise.all(result).then(resp => {
       if (l_BAN)
-        return this.alert(
-          'warning',
-          'Usuario que autoriza inválido para esta selección.',
-          ''
+        return (
+          (this.btnLoading = false),
+          this.alert(
+            'warning',
+            'Usuario que autoriza inválido para esta selección.',
+            ''
+          )
         );
       if (cont == 0)
-        return this.alert(
-          'warning',
-          'No se tienen facturas por cancelar/eliminar',
-          ''
+        return (
+          (this.btnLoading = false),
+          this.alert(
+            'warning',
+            'No se tienen facturas por cancelar/eliminar',
+            ''
+          )
         );
 
       this.alertQuestion(
@@ -464,9 +510,15 @@ export class DatCancComponent extends BasePage implements OnInit {
                 c_SECDOC = 'S';
               }
 
-              let obj = {};
+              let obj___ = {
+                eventId: item.eventId,
+                invoiceId: item.billId,
+                causereinvoiceId: 1,
+                usuarioAuthorize: this.token.decodeToken().preferred_username,
+                dateIauthorize: new Date(),
+              };
               let c_RESUL: any = await this.billingsService.paNewGeneratePay(
-                obj
+                obj___
               ); // PK_COMER_FACTINM.PA_NVO_GENERA_NC
               if (c_RESUL != 'Correcto.') {
                 this.alert(
@@ -505,10 +557,13 @@ export class DatCancComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result_).then(resp_ => {
+            this.btnLoading = false;
             this.modalRef.content.callback(true);
             this.close();
             this.alert('success', 'Proceso terminado correctamente', '');
           });
+        } else {
+          this.btnLoading = false;
         }
       });
     });
