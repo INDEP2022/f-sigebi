@@ -111,7 +111,24 @@
           <form-field
             label="Clave Documento "
             [control]="documentsDictumXStateMForm.get('key')">
-            <input type="text" class="form-control" formControlName="key" />
+            <!-- <input type="text" class="form-control" formControlName="key" /> -->
+            <ngx-select
+              [form]="documentsDictumXStateMForm"
+              [data]="$documents"
+              (fetchItems)="getDictDoc($event)"
+              bindLabel="document"
+              control="key"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="id"
+              [optionTemplate]="dicOption">
+            </ngx-select>
+            <ng-template #dicOption let-item="item">
+              <div [title]="item.key.key">
+                {{ item.key }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
 
@@ -141,7 +158,7 @@
           </form-field> -->
           <form-field [control]="documentsDictumXStateMForm.get('userReceipt')">
             <ngx-select
-              label="Usuario"
+              label="Usuario Recibió"
               [form]="documentsDictumXStateMForm"
               [data]="users$"
               (fetchItems)="getUsers($event)"

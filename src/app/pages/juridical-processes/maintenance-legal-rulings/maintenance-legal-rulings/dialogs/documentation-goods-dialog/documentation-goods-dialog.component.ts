@@ -30,7 +30,7 @@ export class DocumentationGoodsDialogComponent
 {
   documentsDictumXStateMForm: ModelForm<IDocumentsDictumXStateM>;
   documentsDictumXStateM: IDocumentsDictumXStateM | any;
-
+  $documents = new DefaultSelect<IDocumentsDictumXStateM>();
   title: string = 'Documentación de bien';
   edit: boolean = false;
   users$ = new DefaultSelect<ISegUsers>();
@@ -58,7 +58,22 @@ export class DocumentationGoodsDialogComponent
     this.getGoods(new ListParams());
     this.getDictNumbers(new ListParams());
   }
-
+  getDictDoc(params: ListParams) {
+    this.dictationService.getAll(params).subscribe({
+      next: data => {
+        // (this.$documents = new DefaultSelect(data.data, data.count)),
+        if (data.count > 0) {
+          const name = this.documentsDictumXStateMForm.get('key').value;
+          const response = data.data.filter((m: any) => {
+            m.key.key == name;
+          });
+          console.log(response[0]);
+          this.documentsDictumXStateMForm.get('key').patchValue(data[0]);
+        }
+        this.$documents = new DefaultSelect(data.data, data.count);
+      },
+    });
+  }
   getDictNumbers(params: ListParams) {
     this.dictationService.getAll(params).subscribe({
       next: data =>

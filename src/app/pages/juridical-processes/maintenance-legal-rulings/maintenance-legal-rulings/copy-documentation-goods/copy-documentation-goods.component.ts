@@ -35,12 +35,12 @@ export class CopyDocumentationGoodsComponent
   totalItems: number = 0;
   tableSettings = {
     actions: {
-      columnTitle: '',
+      columnTitle: 'Acciones',
       add: false,
       edit: true,
-      delete: false,
+      delete: true,
     },
-    hideSubHeader: true,
+    hideSubHeader: false,
     mode: 'external',
     columns: COPY_DOCUMENTATION_GOODS_COLUMNS,
   };
