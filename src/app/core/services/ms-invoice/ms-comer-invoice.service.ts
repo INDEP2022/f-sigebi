@@ -17,8 +17,8 @@ export class ComerInvoiceService extends HttpService {
     return this.get<IListResponse<any>>(ENDPOINT_INVOICE.ComerInovice, params);
   }
 
-  getInvoiceForniture(year: string, params: ListParams) {
-    return this.get(`${ENDPOINT_INVOICE.GetInvoiceForniture}${year}`, params);
+  getInvoiceForniture(params: ListParams) {
+    return this.get(`${ENDPOINT_INVOICE.GetInvoiceForniture}`, params);
   }
 
   getInvoiceByEvent(event: number) {
@@ -128,9 +128,7 @@ export class ComerInvoiceService extends HttpService {
   }
 
   preInvoiceGenerate(data: {
-    event: number;
     eventId: number;
-    batch: number;
     batchId: number;
     ctrlEvent: number;
     ctrlGenIva: number;
@@ -346,5 +344,16 @@ export class ComerInvoiceService extends HttpService {
     pSession: number;
   }) {
     return this.post(ENDPOINT_INVOICE.PKComerVNRCancel, data);
+  }
+
+  procedureGenerate(data: {
+    pEvent: number;
+    ctrlBatch: number;
+    ctrlGenIva: number;
+    ctrlEvent: number;
+    toolbarNoDelegation: number;
+    toolbarUser: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.ProcedureSera, data);
   }
 }

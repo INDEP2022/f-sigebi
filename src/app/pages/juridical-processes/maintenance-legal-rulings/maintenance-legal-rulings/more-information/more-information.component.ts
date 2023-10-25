@@ -8,6 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -31,7 +32,8 @@ export class MoreInformationComponent
   @Output() formValues = new EventEmitter<any>();
   mode: 'create' | 'update' = 'create';
   public form: FormGroup;
-
+  dataCreate: { ofDictNumber: number; typeDict: number } | null = null;
+  @Input() dictation: IDictation;
   @Input() set data(value: IJobDictumTexts) {
     if (value) {
       this.form.patchValue(value);
@@ -91,6 +93,9 @@ export class MoreInformationComponent
       ],
     });
   }
+  public emitChange() {
+    this.formValues.emit(this.form);
+  }
 
   send() {
     if (this.mode === 'update') {
@@ -134,9 +139,5 @@ export class MoreInformationComponent
         this.alert('error', 'No se ha podido agregar la información', '');
       },
     });
-  }
-
-  public emitChange() {
-    this.formValues.emit(this.form);
   }
 }

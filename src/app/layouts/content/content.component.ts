@@ -6,7 +6,11 @@ import { ScriptService } from 'src/app/common/services/script.service';
 @Component({
   selector: 'app-content',
   templateUrl: './content.component.html',
-  styles: [],
+  styles: [
+    `
+      @import 'https://framework-gb.cdn.gob.mx/gm/v4/css/main.css';
+    `,
+  ],
 })
 export class ContentComponent implements OnInit {
   constructor(
@@ -19,12 +23,12 @@ export class ContentComponent implements OnInit {
     if (localStorage.getItem('token')) {
       this.router.navigate(['/pages/general-processes/goods-tracker']);
     }
-    this.scriptService.removeScript('my-script');
-    const header: HTMLCollectionOf<HTMLElement> =
-      this.document.getElementsByTagName('header');
-    header[0]?.remove();
-    const footer: HTMLCollectionOf<HTMLElement> =
-      this.document.getElementsByTagName('footer');
-    footer[0]?.remove();
+    // this.scriptService.removeScript('my-script');
+    // const header: HTMLCollectionOf<HTMLElement> =
+    //   this.document.getElementsByTagName('header');
+    // header[0]?.remove();
+    // const footer: HTMLCollectionOf<HTMLElement> =
+    //   this.document.getElementsByTagName('footer');
+    // footer[0]?.remove();
   }
 }

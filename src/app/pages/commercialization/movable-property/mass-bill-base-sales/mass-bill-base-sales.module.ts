@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
+import { AuthorizationSOIModalComponent } from './base-sales-pre-invoicing/authorization-modal/authorization-modal.component';
 import { BaseSalesPreInvoicingComponent } from './base-sales-pre-invoicing/base-sales-pre-invoicing.component';
 import { ErrorsNullDataComponent } from './errors-null-data/errors-null-data.component';
 import { MassBillBaseSalesRoutingModule } from './mass-bill-base-sales-routing.module';
@@ -23,6 +24,7 @@ import { SeparateFoliosModalComponent } from './separate-folios-modal/separate-f
     ErrorsNullDataComponent,
     SeparateFoliosModalComponent,
     UseModalComponent,
+    AuthorizationSOIModalComponent,
   ],
   imports: [
     CommonModule,
