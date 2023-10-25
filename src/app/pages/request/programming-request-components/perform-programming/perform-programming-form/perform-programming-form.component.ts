@@ -3185,6 +3185,7 @@ export class PerformProgrammingFormComponent
     task['assignees'] = _task.assignees;
     task['assigneesDisplayname'] = _task.assigneesDisplayname;
     task['creator'] = user.username;
+    task['reviewers'] = user.username;
     task['taskNumber'] = Number(this.idProgramming);
     task['title'] = 'Aceptar Programación con folio: ' + folio;
     task['programmingId'] = this.idProgramming;

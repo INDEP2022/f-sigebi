@@ -18,3 +18,22 @@ export interface IDataDocumentosBien {
   data: IDocumentsDictumXStateM[];
   message: string[];
 }
+
+export interface IDocumentsDictumXStateCreate {
+  recordNumber: number;
+  goodNumber: number;
+  key: IKey;
+  typeDictum: string;
+  dateReceipt: string;
+  userReceipt: string;
+  insertionDate: string;
+  userInsertion: string;
+  numRegister: number;
+  officialNumber: number;
+}
+export interface IKey {
+  key: string | number;
+  description: string;
+  typeDictum: string;
+  numRegister: number;
+}
