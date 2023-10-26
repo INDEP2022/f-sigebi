@@ -28,6 +28,10 @@ export class ExpenseParametercomerService extends HttpService {
     return this.get(`${ParameterComerEndpoints.ParameterMod}`, params);
   }
 
+  getParameterModV2(params: ListParams) {
+    return this.get(`${ParameterComerEndpoints.ParameterModGetAllV2}`, params);
+  }
+
   getComerStatusVta(statusVta: string) {
     return this.get(
       `${ParameterComerEndpoints.ComerStatusVta}?filter.salesStatusId=$eq:${statusVta}`
@@ -41,7 +45,7 @@ export class ExpenseParametercomerService extends HttpService {
     parameter: string
   ) {
     return this.get(
-      `${ParameterComerEndpoints.ParameterMod}?filter.typeEventId=$eq:${idEvent}&filter.address=$eq:${address}&filter.value=$eq:${tpsolavalId}&filter.parameter=$eq:${parameter}`
+      `${ParameterComerEndpoints.ParameterModGetAllV2}?filter.comerTpevents.idTpevent=$eq:${idEvent}&filter.address=$ilike:${address}&filter.value=$eq:${tpsolavalId}&filter.parameter=$ilike:${parameter}`
     );
   }
 
@@ -93,5 +97,9 @@ export class ExpenseParametercomerService extends HttpService {
 
   getParameterModParam(params?: ListParams) {
     return this.get(`${ParameterComerEndpoints.ParameterMod}`, params);
+  }
+
+  getParameterModParamV2(params?: ListParams) {
+    return this.get(`${ParameterComerEndpoints.ParameterModGetAllV2}`, params);
   }
 }

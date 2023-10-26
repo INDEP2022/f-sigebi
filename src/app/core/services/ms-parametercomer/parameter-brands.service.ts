@@ -66,4 +66,8 @@ export class ParameterBrandsService extends HttpService {
   getSuperUserFilter(params: ListParams) {
     return this.get(ParameterComerEndpoints.ParameterMod, params);
   }
+
+  getSuperUserFilterV2(params: ListParams) {
+    return this.get(ParameterComerEndpoints.ParameterModGetAllV2, params);
+  }
 }
