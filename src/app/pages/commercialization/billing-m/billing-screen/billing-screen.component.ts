@@ -1142,9 +1142,10 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             type: 'RFC',
             data: item.rfc,
           };
-          const FaValidCurpRfc: any =
-            await this.billingsService.getApplicationFaValidCurpRfc(obj);
-          item['valRFC'] = FaValidCurpRfc ? FaValidCurpRfc : null;
+          const FaValidCurpRfc: any = 'M';
+          // await this.billingsService.getApplicationFaValidCurpRfc(obj);
+          item['valRFC'] = 'M';
+          // FaValidCurpRfc ? FaValidCurpRfc : null;
 
           // let obj_ = {
           //   idEvent: item.eventId,
@@ -1201,6 +1202,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     this.form2.get('amountI').setValue(null);
     this.form2.get('ivaI').setValue(null);
     this.form2.get('totalI').setValue(null);
+    this.form2.get('txtErrorRFC').setValue(null);
   }
 
   selectAllFromModal() {
@@ -1811,9 +1813,9 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           }
           let result = this.selectedbillings.map(async item => {
             // COMER_CTRLFACTURA.REGXLOTE
-            let obj_1 = {
+            let obj_1: any = {
               eventId: item.eventId,
-              lotId: item.lotId,
+              lotId: item.batchId,
             };
             await this.billingsService.comerCtrFacRegxBatch(obj_1);
 
@@ -2635,7 +2637,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   update2() {
     // Act Datos Pagos - ACTUALIZA2
-    this.btnLoading5 = false;
+    this.btnLoading5 = true;
     this.pupActData('P'); // PUP_ACT_DATOS ('P')
   }
 
@@ -2818,10 +2820,18 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       if (n_COFT == n_COFP) {
         l_BAN = true;
       } else {
-        c_MENS = `De ${n_COPT} factura(s) de pago, solo se tienen ${n_COPP} en estatus PREF`;
+        c_MENS = `De ${n_COFT} factura(s) de pago, solo se tienen ${n_COFP} en estatus PREF`;
       }
     } else {
-      c_MENS = `Todavía se tiene ${n_COFP} factura(s) en estatus PREF de ${n_COFT} factura(s) de fallo`;
+      if (n_COFP == 0) {
+        if (n_COPT == n_COPP) {
+          l_BAN = true;
+        } else {
+          c_MENS = `De ${n_COPT} factura(s) de pago, solo se tienen ${n_COPP} en estatus PREF`;
+        }
+      } else {
+        c_MENS = `Todavía se tiene ${n_COFP} factura(s) en estatus PREF de ${n_COFT} factura(s) de fallo`;
+      }
     }
     if (l_BAN) {
       if (this.idLotPublicBlkCtrl.value) {
@@ -2973,6 +2983,9 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             'Las factura(s) no tienen estatus correcto o sus importes son diferentes y no fueron foliadas',
             ''
           );
+        } else if (foliosGenerated.msg == 'Connection closed') {
+          this.btnLoading8 = false;
+          this.alert('error', 'Conexión a Sirsae cerrada', '');
         } else {
           this.btnLoading8 = false;
           this.alert(
@@ -3010,6 +3023,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       this.params.getValue()[
         'filter.eventId'
       ] = `$eq:${this.idEventBlkCtrl.value}`;
+      await this.forArrayFilters('eventId', this.idEventBlkCtrl.value);
     } else {
       delete this.params.getValue()['filter.eventId'];
     }
@@ -3018,6 +3032,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       this.params.getValue()[
         'filter.batchId'
       ] = `$eq:${this.idLotPublicBlkCtrl.value}`;
+      await this.forArrayFilters('batchId', this.idLotPublicBlkCtrl.value);
     } else {
       delete this.params.getValue()['filter.batchId'];
     }
@@ -3118,13 +3133,26 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     ) {
       delete this.params.getValue()['filter.impressionDate'];
     }
-    await this.clearSubheaderFields();
-
-    this.getBillings('si');
+    // await this.clearSubheaderFields();
+    this.columnFilters = [];
+    await this.getBillings('si');
 
     setTimeout(() => {
       this.performScroll();
     }, 500);
+  }
+  async forArrayFilters(field: any, value: any) {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.field == field) {
+          item.search = value;
+        }
+      });
+    }
+    return true;
   }
 
   async clearSubheaderFields() {
@@ -3132,6 +3160,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
     const filterConf = subheaderFields.filterConf;
     console.log('this.table', this.table.grid);
+
     filterConf.filters = [];
     this.columnFilters = [];
     // this.sources.load([]);
