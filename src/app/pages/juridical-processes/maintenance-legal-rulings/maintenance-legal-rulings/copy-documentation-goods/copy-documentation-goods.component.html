@@ -1,30 +1,36 @@
 <div class="row w-100">
   <div class="ch-content" header>
     <h5 class="title"></h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select
-        [defaultColumns]="11"
-        [(settings)]="tableSettings"></app-columns-select>
-      <div>
-        <button
-          (click)="openForm()"
-          type="button"
-          tooltip="Nuevo"
-          containerClass="tooltip-style"
-          class="btn btn-info btn-sm active ml-2 mr-2">
-          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-        </button>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="d-flex justify-content-end mb-2">
+        <app-columns-select
+          [defaultColumns]="11"
+          [(settings)]="tableSettings"></app-columns-select>
+        <div>
+          <button
+            (click)="openForm()"
+            type="button"
+            tooltip="Nuevo"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-12 col-12 col-md-12 p-2">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings"
-          [source]="dataTable"
-          (edit)="openForm($event.data)"></ng2-smart-table>
+    <div class="row pt-4 table-container">
+      <div class="col-md-12 table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettings"
+            [source]="dataTable"
+            (delete)="showDeleteAlert($event.data)"
+            (edit)="openForm($event.data)"></ng2-smart-table>
+        </div>
       </div>
     </div>
     <app-pagination
