@@ -5,10 +5,11 @@
     </div>
   </div>
   <div body>
-    <div class="row">
-      <div class="col-md-6 ch-content">
+    <div class="row margin-input">
+      <div class="ch-content">
         <h5 class="title">ENTIDADES</h5>
       </div>
+      <div class="col-md-6"></div>
       <div class="col-md-6 text-right">
         <button
           type="button"
@@ -19,18 +20,15 @@
           Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
-    </div>
-    <br />
-    <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12 pt-3">
         <div [ngClass]="{ 'table-loading': loading }">
           <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="dataFactGen"
             (edit)="edit($event.data)"
             (delete)="confirmDelete($event.data)"></ng2-smart-table>
         </div>
-
         <app-pagination
           [params]="params2"
           [totalItems]="totalItems"></app-pagination>

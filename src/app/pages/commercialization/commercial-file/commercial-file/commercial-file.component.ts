@@ -52,9 +52,10 @@ export class CommercialFileComponent extends BasePage implements OnInit {
   ftec() {
     this.loading2 = true;
     let params = {
-      Lst_path_report: this.form.controls['noGood'].value,
+      P_NO_BIEN: this.form.controls['noGood'].value,
+      P_IDENTIFICADOR: 0,
     };
-    this.downloadReport('blank', params);
+    this.downloadReport('FICHATECNICA', params);
   }
 
   fie() {
