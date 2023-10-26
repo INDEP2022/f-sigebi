@@ -5,7 +5,8 @@ html {
 }
 
 h2 {
-  font-size: 1.625rem;
+  // font-size: 1.625rem;
+  font-size: 20px;
 }
 
 .component-background {
@@ -124,7 +125,7 @@ h2 {
   position: absolute !important;
   width: 20px !important;
   height: 20px !important;
-  left: 92% !important;
+  left: 90% !important;
   top: 52% !important;
   transform: translateY(-50%) !important;
 }
@@ -134,7 +135,7 @@ h2 {
   position: absolute;
   width: 20px;
   height: 20px;
-  left: 92%;
+  left: 90%;
   top: 52%;
   transform: translateY(-50%);
 }
@@ -144,7 +145,7 @@ h2 {
   position: absolute;
   width: 20px;
   height: 20px;
-  left: 92%;
+  left: 90%;
   top: 37%;
   transform: translateY(-50%);
 }
@@ -221,4 +222,9 @@ button.loading:after {
   to {
     transform: rotate(360deg);
   }
+}
+
+.correcc-padding {
+  padding-right: 6% !important;
+  padding-left: 6% !important;
 }
