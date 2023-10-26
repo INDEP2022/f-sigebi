@@ -1,3 +1,7 @@
+import { DatePipe } from '@angular/common';
+
+const datePipe = new DatePipe('en-US');
+
 export const UPDATE_MASS_VALUE_COLUMNS = {
   SOLICITANTE: {
     title: 'Solicitante',
@@ -7,15 +11,8 @@ export const UPDATE_MASS_VALUE_COLUMNS = {
   },
   FECAVALUO: {
     title: 'Fecha de Avalúo',
-    type: 'string',
+    type: 'html',
     sort: false,
-    /*valuePrepareFunction: (value: string) => {
-      if (!value) {
-        return '';
-      }
-      console.log(typeof value)
-      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
-    },*/
   },
   INSTITUCION: {
     title: 'Institución',
