@@ -5557,6 +5557,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         typeReceipt: 'warehouse',
         callback: (next: boolean) => {
           if (next) {
+            this.getReceiptsGuard();
           }
         },
       },
@@ -5573,6 +5574,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         typeReceipt: 'guard',
         callback: (next: boolean) => {
           if (next) {
+            this.getReceiptsGuard();
           }
         },
       },
