@@ -27,6 +27,10 @@ export class GoodProcessService extends HttpService {
     this.microservice = GoodProcessPoints.basepath;
   }
 
+  massiveUpdate(body: any) {
+    return this.post(GoodProcessPoints.masiveUpdate, body);
+  }
+
   getReportNingevent(params: ListParams) {
     return this.get(GoodProcessPoints.ReportNingevent, params);
   }
