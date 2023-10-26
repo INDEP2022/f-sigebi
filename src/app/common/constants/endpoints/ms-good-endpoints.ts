@@ -47,6 +47,7 @@ export enum GoodEndpoints {
 
 export enum GoodProcessPoints {
   basepath = `goodprocess`,
+  masiveUpdate = 'application/massive-update',
   updateFractions = 'application/pa-update-fraction-goods',
   cuValNume = `application/cuValNume`,
   cuValOtro = `application/cuValotro`,
