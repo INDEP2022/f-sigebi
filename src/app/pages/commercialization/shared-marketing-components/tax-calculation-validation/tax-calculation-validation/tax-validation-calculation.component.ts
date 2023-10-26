@@ -122,7 +122,7 @@ export class TaxValidationCalculationComponent
     };
     this.settings2 = {
       ...this.settings2,
-      hideSubHeader: false,
+      hideSubHeader: true,
       actions: false,
       //columns: { ...COLUMNS2 },
       columns: {
@@ -131,6 +131,7 @@ export class TaxValidationCalculationComponent
           title: 'Validación IVA',
           type: 'custom',
           sort: false,
+          filter: false,
           renderComponent: CheckboxElementComponent,
           valuePrepareFunction: (isSelected: any, row: any) => {
             console.log('valuePrepareFunction -> ', row);
@@ -145,6 +146,7 @@ export class TaxValidationCalculationComponent
         check: {
           title: 'Confirmado',
           type: 'custom',
+          filter: false,
           renderComponent: CheckboxElementComponent,
           valuePrepareFunction: (isSelected: any, row: any) => {
             console.log('valuePrepareFunction -> ', row);
@@ -170,7 +172,7 @@ export class TaxValidationCalculationComponent
     };
     this.settings3 = {
       ...this.settings,
-      hideSubHeader: false,
+      hideSubHeader: true,
       actions: false,
       columns: { ...COLUMNS3 },
     };
@@ -255,10 +257,11 @@ export class TaxValidationCalculationComponent
 
   getParametersGood(appraisal: number, value: number, dataIva: any) {
     const params = new ListParams();
-    params['filter.parameter'] = appraisal;
-    params['filter.value'] = value;
+    params['filter.parameter'] = `$ilike:${appraisal}`;
+    params['filter.value'] = `$eq:${value}`;
     console.log('params ', params);
-    this.expenseParametercomerService.getParameterModParam(params).subscribe({
+
+    this.expenseParametercomerService.getParameterModParamV2(params).subscribe({
       next: resp => {
         console.log('data getParametersGood ', resp);
         this.countParamaterGood = resp.data.length;
@@ -390,9 +393,10 @@ export class TaxValidationCalculationComponent
   }
 
   openModalRate(context?: Partial<RateChangeComponent>) {
+    let dataDet: any = this.dataDet;
     let config: ModalOptions = {
       initialState: {
-        dataDet: this.dataDet,
+        dataDet,
         callback: (next: boolean, data: any) => {
           if (next) {
             console.log('DataCallBack->', data);
@@ -462,7 +466,7 @@ export class TaxValidationCalculationComponent
   }
 
   getValueIva(params: ListParams) {
-    params['filter.parameter'] = 'IVA';
+    params['filter.parameter'] = `$ilike:IVA`;
     this.expenseParametercomerService.getParameterMod(params).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
@@ -515,6 +519,11 @@ export class TaxValidationCalculationComponent
         }
       },
       error: err => {
+        this.alert(
+          'error',
+          'Evento no Encontrado',
+          'Pruebe con otro No. Evento'
+        );
         console.log('Error getComerEvent-> ', err);
       },
     });
@@ -648,7 +657,7 @@ export class TaxValidationCalculationComponent
     this.dataDetArr = [];
     console.log('row ', rows);
     if (rows.length > 0) {
-      //this.flagDetail = false;
+      this.flagDetail = true;
       this.flagCambio = true;
       this.selectedRows = rows;
       console.log('Rows Selected->', this.selectedRows);
@@ -659,7 +668,7 @@ export class TaxValidationCalculationComponent
     } else {
       this.flagCambio = false;
       this.selectedRows = [];
-      //this.flagDetail = true;
+      this.flagDetail = true;
     }
   }
 
@@ -692,6 +701,7 @@ export class TaxValidationCalculationComponent
       aux.push(push3);
       this.data3.load(aux);
       this.data3.refresh;
+      this.totalItems3 = 1;
       this.loading = false;
     } else {
       this.flagTotal = false;
@@ -701,6 +711,7 @@ export class TaxValidationCalculationComponent
       let aux: any[] = [];
       this.data3.load(aux);
       this.data3.refresh;
+      this.totalItems3 = 0;
       this.loading = false;
     }
   }
@@ -764,7 +775,7 @@ export class TaxValidationCalculationComponent
     this.search();
   }
 
-  getComerDetAvaluo(appraisal: number) {
+  async getComerDetAvaluo(appraisal: number) {
     this.Detavaluos = [];
     this.data2.load(this.Detavaluos);
     this.data2.refresh();
@@ -821,7 +832,7 @@ export class TaxValidationCalculationComponent
     this.appraiseService
       .getComerDetAvaluo(appraisal, 'CPV', params2)
       .subscribe({
-        next: resp => {
+        next: async resp => {
           console.log('Resp ComerDetAvaluo-> ', resp);
           this.totalItems2 += resp.count;
           if (resp != null && resp != undefined) {
@@ -1131,10 +1142,23 @@ export class TaxValidationCalculationComponent
               goodNumber: resp.data[0].good.goodId,
             };
             const params = new ListParams();
-            params['filter.parameter'] = this.appraisal;
-            params['filter.value'] = resp.data[0].good.goodId;
-            params['filter.address'] = 'I';
+            params['filter.parameter'] = `$ilike:${this.appraisal}`;
+            params['filter.value'] = `$eq:${resp.data[0].good.goodId}`;
+            params['filter.address'] = '$ilike:I';
             console.log('params qqq', params);
+
+            let getV_Valor = await this.getV_Valor(
+              this.appraisal,
+              resp.data[0].good.goodId,
+              'I',
+              new ListParams()
+            );
+            let dataGetV_Valor: any = getV_Valor;
+            if (getV_Valor != null) {
+              this.v_valor = dataGetV_Valor.data[0].description;
+            } else {
+              this.v_valor = '';
+            }
             // this.expenseParametercomerService
             //   .postComerParametersMod(body)
             //   .subscribe(valid => {
@@ -1144,7 +1168,7 @@ export class TaxValidationCalculationComponent
             //     }
             //   });
             this.expenseParametercomerService
-              .getParameterModParam(params)
+              .getParameterModParamV2(params)
               .subscribe(valid => {
                 console.log(valid);
                 if (valid != null && valid != undefined) {
@@ -1195,24 +1219,24 @@ export class TaxValidationCalculationComponent
                   difference: difference,
                   terrainRate:
                     this.terrainRate != null
-                      ? this.rateCommercial
-                      : this.deletDecim(rateCommercial),
+                      ? this.terrainRate
+                      : this.deletDecim(terrainRate),
                   rateHousing:
                     this.rateHousing != null
-                      ? this.rateCommercial
-                      : this.deletDecim(rateCommercial),
+                      ? this.rateHousing
+                      : this.deletDecim(rateHousing),
                   rateCommercial:
                     this.rateCommercial != null
                       ? this.rateCommercial
                       : this.deletDecim(terrainRate),
                   rateSpecials:
                     this.rateSpecials != null
-                      ? this.rateCommercial
-                      : this.deletDecim(rateCommercial),
+                      ? this.rateSpecials
+                      : this.deletDecim(rateSpecials),
                   rateOthers:
                     this.rateOthers != null
-                      ? this.rateCommercial
-                      : this.deletDecim(rateCommercial),
+                      ? this.rateOthers
+                      : this.deletDecim(rateOthers),
                   terrainIva:
                     this.IVA_TERRENO != null ? this.IVA_TERRENO : terrainIva,
                   ivaHousing:
@@ -1256,6 +1280,29 @@ export class TaxValidationCalculationComponent
           console.log('Error ComerDetAvaluo-> ', err);
         },
       });
+  }
+
+  async getV_Valor(
+    parameter: string,
+    value: number,
+    address: string,
+    params: ListParams
+  ) {
+    return new Promise((resolve, reject) => {
+      params['filter.parameter'] = `$ilike:${parameter}`;
+      params['filter.value'] = `$eq:${value}`;
+      params['filter.address'] = `$ilike:${address}`;
+      this.expenseParametercomerService
+        .getParameterModParamV2(params)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
+    });
   }
 
   roundPercentage(percentage: number): number {
@@ -1442,6 +1489,8 @@ export class TaxValidationCalculationComponent
   }
 
   cleanForm() {
+    this.flagCambio = false;
+    this.flagDetail = true;
     this.form.reset();
     this.data.load([]);
     this.data.refresh();

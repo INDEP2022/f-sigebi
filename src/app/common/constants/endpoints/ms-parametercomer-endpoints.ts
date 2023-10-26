@@ -3,6 +3,7 @@ export enum ParameterComerEndpoints {
   TPenalty = `tpenalty`, // Tipos de Penalizacion
   BankMovements = `bank-accounts`,
   ParameterMod = `parameters-mod`,
+  ParameterModGetAllV2 = `parameters-mod/getAllV2`,
   Brand = 'comer-brands',
   SubBrand = 'sub-brands',
   Tiie = 'comer-cat-tiie',
