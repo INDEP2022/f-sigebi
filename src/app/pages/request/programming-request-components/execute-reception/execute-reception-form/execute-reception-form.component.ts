@@ -515,6 +515,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saePhysicalState: [null],
       stateConservationSae: [null],
       selectColumn: [null],
+      observations: [null],
       transferentDestiny: [null],
     });
   }
@@ -534,6 +535,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saePhysicalState: [null],
       stateConservationSae: [null],
       selectColumn: [null],
+      observations: [null],
       transferentDestiny: [null],
     });
   }
@@ -553,6 +555,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saePhysicalState: [null],
       stateConservationSae: [null],
       selectColumn: [null],
+      observations: [null],
       transferentDestiny: [null],
     });
   }
@@ -572,6 +575,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saePhysicalState: [null],
       stateConservationSae: [null],
       selectColumn: [null],
+      observations: [null],
       transferentDestiny: [null],
     });
   }
@@ -4468,6 +4472,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 saePhysicalState: good.saePhysicalState,
                 stateConservation: good.stateConservation,
                 stateConservationSae: good.stateConservationSae,
+                observations: good.observations,
                 uniqueKey: good.uniqueKey,
                 saeDestiny: good.transferentDestiny,
               };
@@ -4666,6 +4671,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 saeMeasureUnit: good.saeMeasureUnit,
                 saePhysicalState: good.saePhysicalState,
                 stateConservation: good.stateConservation,
+                observations: good.observations,
                 stateConservationSae: good.stateConservationSae,
                 uniqueKey: good.uniqueKey,
 
@@ -4819,6 +4825,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 saePhysicalState: good.saePhysicalState,
                 stateConservation: good.stateConservation,
                 stateConservationSae: good.stateConservationSae,
+                observations: good.observations,
                 uniqueKey: good.uniqueKey,
                 saeDestiny: good.transferentDestiny,
               };
