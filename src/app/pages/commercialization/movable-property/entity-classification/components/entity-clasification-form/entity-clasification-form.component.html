@@ -5,18 +5,23 @@
   <div body>
     <form class="form-material" [formGroup]="form" (submit)="save()">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field label="Identificador" [control]="form.get('id')">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-9">
           <form-field label="Descripción" [control]="form.get('description')">
-            <input
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"></textarea>
+            <!--<input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="description" />-->
           </form-field>
         </div>
       </div>
@@ -25,7 +30,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button (confirm)="save()" [loading]="loading"></confirm-button>
+        <confirm-button
+          (confirm)="save()"
+          [loading]="loading"
+          [disabled]="!form.valid"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
