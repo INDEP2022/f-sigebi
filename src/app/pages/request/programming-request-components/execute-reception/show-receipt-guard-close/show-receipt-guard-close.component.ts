@@ -7,7 +7,11 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
-import { IRecepitGuard } from 'src/app/core/models/receipt/receipt.model';
+import {
+  IReceipt,
+  IRecepitGuard,
+} from 'src/app/core/models/receipt/receipt.model';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared';
@@ -24,6 +28,7 @@ export class ShowReceiptGuardCloseComponent extends BasePage implements OnInit {
   totalItemsReceipt: number = 0;
 
   programming: Iprogramming;
+  receiptGuard: IReceipt;
   typeReceipt: string = '';
   settingsReceiptClose = {
     ...this.settings,
@@ -42,7 +47,8 @@ export class ShowReceiptGuardCloseComponent extends BasePage implements OnInit {
     private receptionGoodService: ReceptionGoodService,
     private wcontentService: WContentService,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private proceedingService: ProceedingsService
   ) {
     super();
   }
@@ -201,5 +207,118 @@ export class ShowReceiptGuardCloseComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  receiptSelect(receipt: IReceipt) {
+    console.log('receipt', receipt);
+    this.receiptGuard = receipt;
+  }
+  openReceipt() {
+    if (this.receiptGuard) {
+      const paramsProceeding = new BehaviorSubject<ListParams>(
+        new ListParams()
+      );
+      paramsProceeding.getValue()['filter.id'] = this.receiptGuard.actId;
+      paramsProceeding.getValue()['filter.idPrograming'] =
+        this.receiptGuard.programmingId;
+      this.proceedingService
+        .getProceedings(paramsProceeding.getValue())
+        .subscribe({
+          next: response => {
+            const statusProceeding = response.data[0].statusProceeedings;
+
+            if (statusProceeding == 'ABIERTO') {
+              this.alertQuestion(
+                'question',
+                'Confirmación',
+                '¿Desea abrir el recibo?'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  const params = new BehaviorSubject<ListParams>(
+                    new ListParams()
+                  );
+                  params.getValue()['filter.receiptId'] = this.receiptGuard.id;
+                  params.getValue()['filter.programmationId'] =
+                    this.receiptGuard.programmingId;
+                  params.getValue()['filter.actId'] = this.receiptGuard.actId;
+                  this.receptionGoodService
+                    .getReceptionGoods(params.getValue())
+                    .subscribe({
+                      next: async response => {
+                        const updateReceipt = await this.updateReceipt();
+                        if (updateReceipt) {
+                          if (this.typeReceipt == 'warehouse') {
+                            this.paramsReceipts
+                              .pipe(takeUntil(this.$unSubscribe))
+                              .subscribe(() => this.getReceiptsGuardGoods());
+
+                            this.receiptWarehouseGood = new LocalDataSource();
+                            this.totalItemsReceipt = 0;
+                            this.alert(
+                              'success',
+                              'Acción Correcta',
+                              'Recibo abierto correctamente'
+                            );
+                            this.modalRef.content.callback(true);
+                            this.modalRef.hide();
+                          } else if (this.typeReceipt == 'guard') {
+                            this.paramsReceipts
+                              .pipe(takeUntil(this.$unSubscribe))
+                              .subscribe(() => this.getReceiptsGuardGoods());
+
+                            this.receiptWarehouseGood = new LocalDataSource();
+                            this.totalItemsReceipt = 0;
+                            this.alert(
+                              'success',
+                              'Acción Correcta',
+                              'Recibo abierto correctamente'
+                            );
+                            this.modalRef.content.callback(true);
+                            this.modalRef.hide();
+                          }
+                          //this.getReceipts();
+                        }
+                      },
+                    });
+                }
+              });
+            } else {
+              this.alert(
+                'warning',
+                'Acción Invalida',
+                'El acta relacionada a el recibo ya se encuentra cerrada'
+              );
+            }
+          },
+        });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar un recibo'
+      );
+    }
+  }
+
+  updateReceipt() {
+    return new Promise((resolve, reject) => {
+      const formData: any = {
+        id: this.receiptGuard.id,
+        actId: this.receiptGuard.actId,
+        programmingId: this.programming.id,
+        statusReceiptGuard: 'ABIERTO',
+      };
+
+      this.receptionGoodService
+        .updateReceiptGuard(this.receiptGuard.id, formData)
+        .subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(true);
+          },
+        });
+    });
   }
 }
