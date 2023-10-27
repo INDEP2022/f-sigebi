@@ -33,16 +33,18 @@ export class CopyDocumentationGoodsComponent
   data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+
   tableSettings = {
+    ...this.settings,
     actions: {
-      columnTitle: '',
-      add: false,
+      columnTitle: 'Acciones',
       edit: true,
-      delete: false,
+      delete: true,
+      add: false,
+      position: 'left',
     },
-    hideSubHeader: true,
-    mode: 'external',
-    columns: COPY_DOCUMENTATION_GOODS_COLUMNS,
+    columns: { ...COPY_DOCUMENTATION_GOODS_COLUMNS },
+    noDataMessage: 'No se encontrarón registros',
   };
 
   dataTable: ICopiesOfficialOpinion[] = [];
@@ -94,5 +96,34 @@ export class CopyDocumentationGoodsComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(CopyDocumentationGoodsDialogComponent, config);
+  }
+  showDeleteAlert(event: any) {
+    this.alertQuestion(
+      'question',
+      'Selecciono el C.C.P. ' + event.userOrPerson + '. ¿Desea eliminarlo?',
+      ''
+    ).then(async question => {
+      if (question.isConfirmed) {
+        if (event.id == undefined) {
+        } else {
+          // DELETE COPIA PARA
+          this.copiesOfficialOpinionService.remove(event).subscribe({
+            next: data => {
+              console.log('UPDATE COPIES DICTAMEN', data);
+              this.onLoadToast('success', 'Se eliminó correctamente', '');
+              this.loadingDialog.emit(true);
+            },
+            error: error => {
+              console.log(error);
+              this.onLoadToast(
+                'error',
+                'Ocurrió un Error al Eliminar la CCP',
+                error.error.message
+              );
+            },
+          });
+        }
+      }
+    });
   }
 }
