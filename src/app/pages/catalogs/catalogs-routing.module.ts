@@ -573,6 +573,11 @@ const routes: Routes = [
       (await import('./transferors/transferors.module')).TransferorsModule,
     data: { title: 'Transferentes por estado' },
   },
+  {
+    path: 'reports-edit',
+    loadChildren: async () =>
+      (await import('./reports/reports.module')).ReportsModule,
+  },
 ];
 
 @NgModule({

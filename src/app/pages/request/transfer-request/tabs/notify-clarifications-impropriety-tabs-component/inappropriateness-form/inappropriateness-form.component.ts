@@ -58,7 +58,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getInfoDoc();
-    this.dictamenSeq();
+    //this.dictamenSeq();
     this.prepareForm();
 
     /*this.regionalDelegationService.getById(this.delegationUser).subscribe({
@@ -163,6 +163,17 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   async confirm() {
     let token = this.authService.decodeToken();
+
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+    }
+
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.form.controls['clarification'].value,
       sender: this.form.controls['senderName'].value,
@@ -173,7 +184,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       paragraphFinal: this.form.controls['paragraphFinal'].value,
       consistentIn: this.form.controls['consistentIn'].value,
       managedTo: this.form.controls['addresseeName'].value,
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       positionAddressee: this.form.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
@@ -342,37 +353,41 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
-    const notificationValidate = 'Y';
-    const idReportAclara = data.id;
-    //const idDoc = data.id;
-    const idTypeDoc = 216;
-    const requestInfo = this.request;
-    const idSolicitud = this.idSolicitud;
-    const nomenglatura = this.folioReporte;
-    const infoReport = data;
+    this.dictamenSeq();
 
-    //Modal que genera el reporte
-    let config: ModalOptions = {
-      initialState: {
-        requestInfo,
-        idTypeDoc,
-        //idDoc,
-        idReportAclara,
-        idSolicitud,
-        notificationValidate,
-        nomenglatura,
-        infoReport,
-        callback: (next: boolean) => {
-          if (next) {
-            this.changeStatusAnswered();
-          } else {
-          }
+    setTimeout(() => {
+      const notificationValidate = 'Y';
+      const idReportAclara = data.id;
+      //const idDoc = data.id;
+      const idTypeDoc = 216;
+      const requestInfo = this.request;
+      const idSolicitud = this.idSolicitud;
+      const nomenglatura = this.folioReporte;
+      const infoReport = data;
+
+      //Modal que genera el reporte
+      let config: ModalOptions = {
+        initialState: {
+          requestInfo,
+          idTypeDoc,
+          //idDoc,
+          idReportAclara,
+          idSolicitud,
+          notificationValidate,
+          nomenglatura,
+          infoReport,
+          callback: (next: boolean) => {
+            if (next) {
+              this.changeStatusAnswered();
+            } else {
+            }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(PrintReportModalComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PrintReportModalComponent, config);
+    }, 2000); // 2000 milisegundos = 2 segundos
   }
 
   //Método para crear número secuencial según la no delegación del user logeado

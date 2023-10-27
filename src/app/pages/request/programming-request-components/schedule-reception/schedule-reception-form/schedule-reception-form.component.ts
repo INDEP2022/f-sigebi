@@ -153,6 +153,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
           task['assignees'] = this.nickName;
           task['assigneesDisplayname'] = this.userName;
           task['creator'] = user.username;
+          task['reviewers'] = user.username;
           task['taskNumber'] = Number(this.programmingId);
           task['title'] =
             'Realizar Programación con folio: ' + this.programmingId;
