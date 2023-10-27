@@ -836,6 +836,17 @@ export const routes: Routes = [
           screen: 'FGERARGENTRADADOC',
         },
       },
+      {
+        //!SIRVIO
+        path: 'payment-of-goods',
+        loadChildren: async () =>
+          (await import('./payment-of-goods/payment-of-goods-routing.module'))
+            .PaymentOfGoodsRoutingModule,
+        data: {
+          title: 'Pago de Bienes / Admón de Ingresos',
+          screen: 'FPRSOLOIS',
+        },
+      },
     ],
   },
 ];
