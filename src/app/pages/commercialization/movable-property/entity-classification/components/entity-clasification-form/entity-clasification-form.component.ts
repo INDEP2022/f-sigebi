@@ -59,7 +59,7 @@ export class EntityClasificationFormComponent
       catchError(error => {
         this.loading = false;
         if (error.status <= 404 && error.status > 0) {
-          this.onLoadToast('error', 'Error', 'No se ha Guardado Correctamente');
+          this.onLoadToast('error', 'Error', 'El Id Proporcionado ya Existe');
         }
         return throwError(() => error);
       }),

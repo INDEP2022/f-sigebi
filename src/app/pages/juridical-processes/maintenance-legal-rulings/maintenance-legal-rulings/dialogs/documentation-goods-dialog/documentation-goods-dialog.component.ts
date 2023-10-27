@@ -9,8 +9,8 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import {
-  IDocumentsDictumXStateCreate,
   IDocumentsDictumXStateM,
+  IKey,
 } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -33,7 +33,7 @@ export class DocumentationGoodsDialogComponent
 {
   documentsDictumXStateMForm: ModelForm<IDocumentsDictumXStateM>;
   documentsDictumXStateM: IDocumentsDictumXStateM | any;
-  $documents = new DefaultSelect<IDocumentsDictumXStateM>();
+  $documents = new DefaultSelect<IKey>();
   title: string = 'Documentación de bien';
   edit: boolean = false;
   users$ = new DefaultSelect<ISegUsers>();
@@ -70,7 +70,7 @@ export class DocumentationGoodsDialogComponent
     this.getDictDoc(params).subscribe();
   }
   getDictDoc(params: FilterParams) {
-    return this.documentService.getDocDict(params.getParams()).pipe(
+    return this.documentService.getAllGetDocument(params.getParams()).pipe(
       catchError(error => {
         this.users$ = new DefaultSelect([], 0, true);
         return throwError(() => error);
@@ -129,14 +129,7 @@ export class DocumentationGoodsDialogComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      key: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(8),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
+      key: ['', [Validators.required]],
       dateReceipt: [null, [Validators.required]],
       userReceipt: ['', [Validators.required, Validators.maxLength(15)]],
       insertionDate: [null, [Validators.required]],
@@ -217,15 +210,14 @@ export class DocumentationGoodsDialogComponent
 
   create() {
     this.loading = true;
-    const data: IDocumentsDictumXStateCreate =
-      this.documentsDictumXStateMForm.value;
+    const data: IDocumentsDictumXStateM = this.documentsDictumXStateMForm.value;
 
     this.documentService
-      .createDocDict(this.documentsDictumXStateMForm.value)
+      .create(this.documentsDictumXStateMForm.value)
       .subscribe({
         next: data => {
-          this.handleSuccess();
           this.alert('success', 'Se ha creado el documento correctamente.', '');
+          this.handleSuccess();
           this.loading = false;
           this.close();
         },
@@ -244,7 +236,7 @@ export class DocumentationGoodsDialogComponent
   update() {
     this.loading = true;
     this.documentService
-      .updateDocDict(this.documentsDictumXStateMForm.value)
+      .update(this.documentsDictumXStateMForm.value)
       .subscribe({
         next: data => {
           // this.handleSuccess();
