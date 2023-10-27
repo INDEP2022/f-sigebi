@@ -21,8 +21,10 @@
           name="fileExcel"
           #fileExcel
           class="d-none"
-          accept=".xlsx, .xls, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-        <button class="btn btn-primary btn-sm active m-1">
+          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+        <button
+          class="btn btn-primary btn-sm active m-1"
+          (click)="updateMassive()">
           Procesar <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
@@ -30,10 +32,12 @@
         </button>
       </div>
       <div class="col-md-2">
-        <label for="" class="form-group">Registros Leidos: 0</label>
+        <label for="" class="form-group">Registros Leidos: {{ tLeidos }}</label>
       </div>
       <div class="col-md-2">
-        <label for="" class="form-group">Registros Procesados: 0</label>
+        <label for="" class="form-group"
+          >Registros Procesados: {{ tRegProcesados }}</label
+        >
       </div>
     </div>
     <div class="ch-content">

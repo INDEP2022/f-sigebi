@@ -36,7 +36,7 @@
                             [control]="form.get('idEvent')"
                             label="Id Evento">
                             <input
-                              type="text"
+                              type="number"
                               class="form-control"
                               formControlName="idEvent" />
                           </form-field>
@@ -46,7 +46,7 @@
                             [control]="form.get('idLotPublic')"
                             label="Id Lote">
                             <input
-                              type="text"
+                              type="number"
                               class="form-control"
                               formControlName="idLotPublic" />
                           </form-field>
@@ -251,7 +251,9 @@
                           </div>
                         </div>
                       </div>
-                      <div class="row text-center justify-content-center mt-5">
+                      <div
+                        class="row text-center justify-content-center mt-5"
+                        #scrollContainer>
                         <div class="col-md-3">
                           <form-field
                             [control]="form.get('fec')"
