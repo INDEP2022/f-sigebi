@@ -35,15 +35,17 @@ export class GoodsComponent
   totalItems: number = 0;
   data1: LocalDataSource = new LocalDataSource();
   tableSettings = {
+    ...this.settings,
     actions: {
-      columnTitle: '',
-      add: false,
+      columnTitle: 'Acciones',
       edit: true,
       delete: false,
+      add: false,
+      position: 'left',
     },
-    hideSubHeader: true,
     mode: 'external',
-    columns: DICTAMINATION_X_GOOD_COLUMNS,
+    columns: { ...DICTAMINATION_X_GOOD_COLUMNS },
+    noDataMessage: 'No se encontrarón registros',
   };
 
   dataTable: IDictationXGood1[] = [];

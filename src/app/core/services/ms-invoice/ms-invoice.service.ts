@@ -99,7 +99,7 @@ export class MsInvoiceService extends HttpService {
   }
 
   getFValidateUser(body: any) {
-    return this.post<IListResponse>(`${ENDPOINT_INVOICE.FValidateUser}`, body);
+    return this.post(`${ENDPOINT_INVOICE.FValidateUser}`, body);
   }
 
   getPaNvoDeleteInvoice(body: any) {
@@ -187,7 +187,7 @@ export class MsInvoiceService extends HttpService {
   }
 
   getApplicationConsPupEminFact(body: any) {
-    return this.put<IListResponse>(
+    return this.post<IListResponse>(
       `${ENDPOINT_INVOICE.ApplicationConsPupEminFact}`,
       body
     );
@@ -290,5 +290,9 @@ export class MsInvoiceService extends HttpService {
       `${ENDPOINT_INVOICE.ApplicationUpdateTotalIvaMonto}`,
       body
     );
+  }
+
+  deletePDelInvoice(body: any) {
+    return this.delete(`${ENDPOINT_INVOICE.PDelInvoice}`, body);
   }
 }

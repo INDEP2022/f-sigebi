@@ -250,11 +250,11 @@ export class DetailAssetsTabComponentComponent
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
       }
-      if (this.typeOfRequest == 'MANUAL') {
+      /*if (this.typeOfRequest == 'MANUAL') {
         this.isGoodTypeReadOnly = false;
       } else {
         this.isGoodTypeReadOnly = true;
-      }
+      }*/
     }
 
     if (this.typeDoc === 'clarification') {

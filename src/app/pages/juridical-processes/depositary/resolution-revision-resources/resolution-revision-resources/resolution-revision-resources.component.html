@@ -4,15 +4,8 @@
   </div>
 
   <div body>
-    <div class="row" style="margin-right: 1%">
-      <div class="col-md-12 d-flex justify-content-end">
-        <div>
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-        </div>
-      </div>
-    </div>
     <div class="row w-100">
-      <div
+      <!-- <div
         class="col-sm-12 col-12 col-md-12 p-2 loading ? 'table-loading' : ''">
         <form-loader *ngIf="formLoading"></form-loader>
         <ng2-smart-table
@@ -27,6 +20,40 @@
           *ngIf="!formLoading"
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
+      </div> -->
+      <div class="col-md-3"></div>
+      <div class="row mt-12 d-flex justify-content-center">
+        <div class="col-md-12 justify-content-center">
+          <div class="row">
+            <div class="d-flex justify-content-end mb-2">
+              <app-columns-select [(settings)]="settings"></app-columns-select>
+            </div>
+          </div>
+          <div class="row">
+            <form-loader *ngIf="formLoading"></form-loader>
+            <div class="col-md-12">
+              <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+              <ng-scrollbar
+                [track]="'all'"
+                [ngStyle]="{
+                  height: formLoading ? '0px' : '600px'
+                }">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings"
+                  [source]="data"
+                  (userRowSelect)="onRowSelect($event)"
+                  (dblclick)="doubleClick($event)"
+                  (edit)="formData($event.data)">
+                </ng2-smart-table>
+              </ng-scrollbar>
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+              <!-- </div> -->
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

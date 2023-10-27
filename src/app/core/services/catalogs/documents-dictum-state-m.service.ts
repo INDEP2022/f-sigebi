@@ -6,6 +6,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDataDocumentosBien,
+  IDocumentsDictumXStateCreate,
   IDocumentsDictumXStateM,
 } from '../../models/ms-documents/documents-dictum-x-state-m';
 
@@ -14,6 +15,7 @@ import {
 })
 export class DocumentsDictumStatetMService extends HttpService {
   private readonly route = DocumentsEndpoints;
+  private readonly doc = DocumentsEndpoints.DocumentsDictuXState;
   constructor() {
     super();
     this.microservice = DocumentsEndpoints.Documents;
@@ -42,6 +44,15 @@ export class DocumentsDictumStatetMService extends HttpService {
   create(body: IDocumentsDictumXStateM) {
     return this.post(this.route.DocumentsDictuXStateM, body);
   }
+  createDocDict(body: IDocumentsDictumXStateCreate) {
+    return this.post(this.doc, body);
+  }
+  updateDocDict(body: IDocumentsDictumXStateCreate) {
+    return this.put(this.doc, body);
+  }
+  getDocDict(params: _Params) {
+    return this.get(this.doc, params);
+  }
 
   update(body: Partial<IDocumentsDictumXStateM>) {
     return this.put(this.route.DocumentsDictuXStateM, body);
@@ -61,7 +72,7 @@ export class DocumentsDictumStatetMService extends HttpService {
   }
 
   deleteMassive(body: any) {
-    return this.delete(`${this.route.DocumentsDictumXStateMassive}`, body);
+    return this.post(`${this.route.DocumentsDictumXStateMassive}`, body);
   }
 
   deleteDocumentXGood(goodNumber: number) {

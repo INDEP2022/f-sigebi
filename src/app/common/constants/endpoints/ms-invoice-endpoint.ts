@@ -99,4 +99,6 @@ export enum ENDPOINT_INVOICE {
   ApplicationGetCountbyMandatoin = 'application/get-count-by-mandato-in',
   ApplicationDeleteIfExists = 'application/delete-if-exists',
   ApplicationUpdateTotalIvaMonto = 'application/update-total-iva-monto',
+  ProcedureSera = 'procedure-sera/generate-preinvoice-soi',
+  PDelInvoice = 'pk-comer-real-state-invoice/p-del-invoice',
 }
