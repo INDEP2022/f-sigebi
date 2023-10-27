@@ -44,11 +44,8 @@ export class DocumentsDictumXStateService extends HttpService {
       params
     );
   }
-  createDocsRevi(revision: IDocumentsDictumXState) {
-    return this.post<IListResponse<IDocumentsDictumXState>>(
-      DocumentsEndpoints.DocumentsDictuXState,
-      revision
-    );
+  createDocsRevi(revision: any) {
+    return this.post(DocumentsEndpoints.DocumentsDictuXState, revision);
   }
   update(revision: IDocumentsDictumXState) {
     return this.put<IListResponse<IDocumentsDictumXState>>(
