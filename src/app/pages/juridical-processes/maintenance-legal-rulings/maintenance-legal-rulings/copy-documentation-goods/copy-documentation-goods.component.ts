@@ -100,7 +100,7 @@ export class CopyDocumentationGoodsComponent
   showDeleteAlert(event: any) {
     this.alertQuestion(
       'question',
-      'Selecciono el C.C.P. ' + event.userOrPerson + '. ¿Desea eliminarlo?',
+      'Selecciono el C.C.P. ' + event.recipientCopy + '. ¿Desea eliminarlo?',
       ''
     ).then(async question => {
       if (question.isConfirmed) {

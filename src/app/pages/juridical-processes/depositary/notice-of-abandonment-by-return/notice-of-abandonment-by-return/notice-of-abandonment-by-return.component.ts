@@ -159,38 +159,26 @@ export class NoticeOfAbandonmentByReturnComponent
         : (paramDinamyc = `filter.description=$ilike:${lparams.text}`);
     }
 
-    this.goodService.getAll(`${params.getParams()}&${paramDinamyc}`).subscribe({
-      next: data => {
-        this.good = new DefaultSelect(data.data, data.count);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-
-        this.onLoadToast('error', 'Error', error);
-      },
-    });
+    this.goodService
+      .getByGoodAllQuery(`${params.getParams()}&${paramDinamyc}`)
+      .subscribe({
+        next: data => {
+          this.good = new DefaultSelect(data.data, data.count);
+        },
+        error: err => {
+          this.good = new DefaultSelect();
+        },
+      });
   }
   onGoodIdDescription(goodChange: any) {
     if (goodChange && goodChange != null) {
       let param = `filter.goodId=$eq:${goodChange.goodId}`;
-      this.goodService.getAll(param).subscribe({
+      this.goodService.getByGoodAllQuery(param).subscribe({
         next: data => {
           this.executeCamps(data.data[0]);
         },
         error: err => {
-          let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-          } else {
-            error = err.message;
-          }
-
-          this.onLoadToast('error', 'Error', error);
+          this.executeCamps([]);
         },
       });
     }
@@ -219,7 +207,7 @@ export class NoticeOfAbandonmentByReturnComponent
           this.periods1.setValue(maxFractionTime);
           this.periods2.setValue(maxExtensionTime);
         } else {
-          this.onLoadToast('error', 'No existen Periodos', 'Periodos Vacíos');
+          this.onLoadToast('warning', 'No existen Periodos', 'Periodos Vacíos');
         }
       },
     });
@@ -245,7 +233,7 @@ export class NoticeOfAbandonmentByReturnComponent
     if (this.goodId.value != null) {
       this.getGoods();
     } else {
-      this.message('info', 'Error', 'Debe llenar algun filtro.');
+      this.message('info', '', 'Debe llenar algun filtro.');
     }
   }
   message(header: any, title: string, body: string) {
@@ -259,7 +247,7 @@ export class NoticeOfAbandonmentByReturnComponent
         this.username = data.username;
       },
       error: error => {
-        error;
+        console.error(error);
       },
     });
   }
@@ -289,20 +277,20 @@ export class NoticeOfAbandonmentByReturnComponent
       changeStatusProgram: 'FACTREFACTAERCIER',
     };
 
-    const validacionStatus = this.dataArray.every((item: any) => {
-      item.statusNotified === 'DE';
+    this.dataArray.every((item: any) => {
+      if (item.statusNotified === 'DE') return item;
     });
 
     console.log('Body a enviar: ', body);
 
-    if (this.dataArray.length < 2) {
+    if (this.dataArray.length == 2) {
       this.onLoadToast(
-        'error',
-        'Error',
+        'warning',
+        ' ',
         'Deben haber 2 notificaciones de devolución para confirmar'
       );
     } else {
-      this.notificacionAbandono.confirmarStatus(body).subscribe({
+      this.notificacionAbandono.confirmarStatus('VXP', body).subscribe({
         next: data => {
           console.log(data);
           this.onLoadToast(
@@ -313,11 +301,7 @@ export class NoticeOfAbandonmentByReturnComponent
           this.clean();
         },
         error: error => {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Hubo un error actualizando la base de datos'
-          );
+          console.error(error);
           this.clean();
         },
       });
