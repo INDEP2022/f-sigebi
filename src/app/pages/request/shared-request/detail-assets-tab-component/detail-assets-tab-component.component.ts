@@ -49,7 +49,6 @@ import {
   DOUBLE_POSITIVE_PATTERN,
   NUMBERS_PATTERN,
   NUMBERS_POINT_PATTERN,
-  NUM_POSITIVE,
   NUM_POSITIVE_LETTERS,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -565,7 +564,7 @@ export class DetailAssetsTabComponentComponent
         0,
         [
           Validators.required,
-          Validators.pattern(NUM_POSITIVE),
+          Validators.pattern(DOUBLE_POSITIVE_PATTERN),
           Validators.maxLength(40),
         ],
       ],
