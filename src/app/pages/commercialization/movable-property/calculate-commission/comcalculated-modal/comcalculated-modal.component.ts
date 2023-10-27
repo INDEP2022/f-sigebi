@@ -109,7 +109,14 @@ export class ComcalculatedModalComponent extends BasePage implements OnInit {
     };
     this.comerComCalculatedService.createW(obj).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => (
+        this.alert(
+          'error',
+          'Ocurrió un error al guardar el registro',
+          'Verifique e intente nuevamente'
+        ),
+        (this.loading = false)
+      ),
     });
   }
 
@@ -132,7 +139,14 @@ export class ComcalculatedModalComponent extends BasePage implements OnInit {
       .updateW(this.calculated.comCalculatedId, obj)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => (
+          this.alert(
+            'error',
+            'Ocurrió un error al actualizar el registro',
+            'Verifique e intente nuevamente'
+          ),
+          (this.loading = false)
+        ),
       });
   }
 

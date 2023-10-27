@@ -242,8 +242,8 @@ export class DatCancComponent extends BasePage implements OnInit {
             this.valUser();
           } else {
             this.btnLoading = false;
-            this.modalRef.content.callback(false);
-            this.close();
+            // this.modalRef.content.callback(false);
+            // this.close();
           }
         });
       }
@@ -496,13 +496,12 @@ export class DatCancComponent extends BasePage implements OnInit {
               if (c_RESUL != 'Correcto.') {
                 this.alert(
                   'warning',
-                  c_RESUL +
-                    ` en eliminación para Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`,
-                  ''
+                  `No se completó la eliminación`,
+                  `Para el Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.: ${item.cvman}`
                 );
               }
             } else {
-              if (item.type === 8 || item.type === 9) {
+              if (item.Type == 8 || item.Type == 9) {
                 n_OPCION = 0;
                 c_SECDOC = 'P';
               } else {
@@ -523,9 +522,8 @@ export class DatCancComponent extends BasePage implements OnInit {
               if (c_RESUL != 'Correcto.') {
                 this.alert(
                   'warning',
-                  c_RESUL +
-                    ` en N.C. para Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`,
-                  ''
+                  `No se completó la cancelación`,
+                  `N.C. para Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
                 );
               } else {
                 let obj: any = {
@@ -544,12 +542,12 @@ export class DatCancComponent extends BasePage implements OnInit {
                 };
                 // PK_COMER_FACTINM.PA_NVO_FACTURA_PAG
                 const newBillingPay: any =
-                  await this.billingsService.paNewBillingPay(obj); // EDWIN - CORRECCIÓN
+                  await this.billingsService.paNewBillingPay(obj);
                 if (newBillingPay != 'Correcto.') {
                   this.alert(
                     'warning',
-                    newBillingPay,
-                    `Para Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
+                    'No se completó la cancelación',
+                    `Para el Evento: ${item.eventId}, Lote: ${item.lotId}, Del.: ${item.delegationNumber}, Mandato.:${item.cvman}`
                   );
                 }
               }
