@@ -33,87 +33,82 @@
         </div>
         <div class="col-md-8">
           <h3>Información del Reporte</h3>
-          <div class="row pt-5">
-            <form-field
-              class="col-md-4"
-              [control]="form.get('reportNb')"
-              label="Nombre">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="reportNb" />
-            </form-field>
-            <form-field
-              class="col-md-8"
-              [control]="form.get('descriptionNb')"
-              label="Descripción">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="descriptionNb" />
-            </form-field>
+          <form-field label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="reportNb" />
+          </form-field>
+          <form-field
+            class="col-md-8"
+            [control]="form.get('descriptionNb')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionNb" />
+          </form-field>
+        </div>
+        <div class="row pt-4">
+          <form-field
+            class="col-md-4"
+            [control]="form.get('legendNb')"
+            label="Leyenda">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="legendNb" />
+          </form-field>
+          <div class="col-md-8">
+            <form-radio label="Encabezado" for="label">
+              <input type="radio" formControlName="legendTp" [value]="1" />
+            </form-radio>
+            <form-radio label="Pie de Página">
+              <input type="radio" formControlName="legendTp" [value]="0" />
+            </form-radio>
           </div>
-          <div class="row pt-4">
-            <form-field
-              class="col-md-4"
-              [control]="form.get('legendNb')"
-              label="Leyenda">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="legendNb" />
-            </form-field>
-            <div class="col-md-8">
-              <form-radio label="Encabezado" for="label">
-                <input type="radio" formControlName="legendTp" [value]="1" />
-              </form-radio>
-              <form-radio label="Pie de Página">
-                <input type="radio" formControlName="legendTp" [value]="0" />
-              </form-radio>
+        </div>
+        <div class="row">
+          <form-field [control]="form.get('contentTx')" label="Contenido">
+            <textarea
+              class="form-control"
+              formControlName="contentTx"
+              rows="7"></textarea>
+          </form-field>
+        </div>
+        <div class="row pt-3">
+          <div class="col-md-12 d-flex justify-content-between">
+            <div>
+              <button
+                class="btn btn-sm btn-secondary active"
+                type="button"
+                (click)="inputField1.click()">
+                Marca de Agua
+              </button>
             </div>
-          </div>
-          <div class="row">
-            <form-field [control]="form.get('contentTx')" label="Contenido">
-              <textarea
-                class="form-control"
-                formControlName="contentTx"
-                rows="7"></textarea>
-            </form-field>
-          </div>
-          <div class="row pt-3">
-            <div class="col-md-12 d-flex justify-content-between">
-              <div>
-                <button
-                  class="btn btn-sm btn-secondary active"
-                  type="button"
-                  (click)="inputField1.click()">
-                  Marca de Agua
-                </button>
-              </div>
-              <div>
-                <button
-                  class="btn btn-sm btn-secondary active"
-                  type="button"
-                  (click)="inputField2.click()">
-                  Logo Hacienda
-                </button>
-              </div>
-              <div>
-                <button
-                  class="btn btn-sm btn-secondary active"
-                  type="button"
-                  (click)="inputField3.click()">
-                  Logo INDEP
-                </button>
-              </div>
-              <div>
-                <button
-                  class="btn btn-sm btn-secondary active"
-                  type="button"
-                  (click)="inputField4.click()">
-                  Pie de Página
-                </button>
-              </div>
+            <div>
+              <button
+                class="btn btn-sm btn-secondary active"
+                type="button"
+                (click)="inputField2.click()">
+                Logo Hacienda
+              </button>
+            </div>
+            <div>
+              <button
+                class="btn btn-sm btn-secondary active"
+                type="button"
+                (click)="inputField3.click()">
+                Logo INDEP
+              </button>
+            </div>
+            <div>
+              <button
+                class="btn btn-sm btn-secondary active"
+                type="button"
+                (click)="inputField4.click()">
+                Pie de Página
+              </button>
             </div>
           </div>
         </div>
