@@ -3,21 +3,27 @@
     <h5 class="title">Editor de Reportes</h5>
   </div>
   <div body>
-    <form [formGroup]="form" class="form-material">
+    <form [formGroup]="form" class="form-material" (ngSubmit)="save()">
       <div class="row">
         <div class="col-md-4">
-          <div class="row">
-            <form-field [control]="form.get('report')">
+          <div class="row pt-5">
+            <form-field [control]="form.get('repConfigId')">
               <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getAllReports($event)"
                 [form]="form"
+                (change)="onSelectReport($event)"
+                bindLabel="reportNb"
+                value="repConfigId"
                 [data]="reports"
                 label="Reportes"
-                control="report"></ngx-select>
+                control="repConfigId"></ngx-select>
             </form-field>
           </div>
           <div class="row">
             <div class="col-md-12">
               <button
+                (click)="newReport()"
                 type="button"
                 class="btn btn-info btn-sm active ml-2 mr-2">
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
@@ -27,49 +33,169 @@
         </div>
         <div class="col-md-8">
           <h3>Información del Reporte</h3>
-          <div class="row">
+          <div class="row pt-5">
             <form-field
               class="col-md-4"
-              [control]="form.get('name')"
+              [control]="form.get('reportNb')"
               label="Nombre">
-              <input type="text" class="form-control" formControlName="name" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="reportNb" />
             </form-field>
             <form-field
               class="col-md-8"
-              [control]="form.get('description')"
+              [control]="form.get('descriptionNb')"
               label="Descripción">
               <input
                 type="text"
                 class="form-control"
-                formControlName="description" />
+                formControlName="descriptionNb" />
             </form-field>
           </div>
-          <div class="row">
+          <div class="row pt-4">
             <form-field
               class="col-md-4"
-              [control]="form.get('name')"
+              [control]="form.get('legendNb')"
               label="Leyenda">
-              <input type="text" class="form-control" formControlName="name" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="legendNb" />
             </form-field>
             <div class="col-md-8">
               <form-radio label="Encabezado" for="label">
-                <input id="label" type="checkbox" formControlName="radio" />
+                <input type="radio" formControlName="legendTp" [value]="1" />
               </form-radio>
               <form-radio label="Pie de Página">
-                <input type="radio" formControlName="radio" value="cat" />
+                <input type="radio" formControlName="legendTp" [value]="0" />
               </form-radio>
             </div>
           </div>
           <div class="row">
-            <form-field [control]="form.get('name')" label="Leyenda">
+            <form-field [control]="form.get('contentTx')" label="Contenido">
               <textarea
                 class="form-control"
-                formControlName="name"
+                formControlName="contentTx"
                 rows="7"></textarea>
             </form-field>
           </div>
+          <div class="row pt-3">
+            <div class="col-md-12 d-flex justify-content-between">
+              <div>
+                <button
+                  class="btn btn-sm btn-secondary active"
+                  type="button"
+                  (click)="inputField1.click()">
+                  Marca de Agua
+                </button>
+              </div>
+              <div>
+                <button
+                  class="btn btn-sm btn-secondary active"
+                  type="button"
+                  (click)="inputField2.click()">
+                  Logo Hacienda
+                </button>
+              </div>
+              <div>
+                <button
+                  class="btn btn-sm btn-secondary active"
+                  type="button"
+                  (click)="inputField3.click()">
+                  Logo INDEP
+                </button>
+              </div>
+              <div>
+                <button
+                  class="btn btn-sm btn-secondary active"
+                  type="button"
+                  (click)="inputField4.click()">
+                  Pie de Página
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-3">
+          <h5>Marca de Agua</h5>
+          <div class="col-md-12 m-2">
+            <img
+              [src]="imgSrc1"
+              width="100%"
+              *ngIf="imgSrc1"
+              alt=""
+              srcset="" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <h5>Logo Hacienda</h5>
+          <div class="col-md-12 m-2">
+            <img
+              [src]="imgSrc2"
+              width="100%"
+              *ngIf="imgSrc2"
+              alt=""
+              srcset="" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <h5>Logo INDEP</h5>
+          <div class="col-md-12 m-2">
+            <img
+              [src]="imgSrc3"
+              width="100%"
+              *ngIf="imgSrc3"
+              alt=""
+              srcset="" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <h5>Pie de Página</h5>
+          <div class="col-md-12 m-2">
+            <img
+              [src]="imgSrc4"
+              width="100%"
+              *ngIf="imgSrc4"
+              alt=""
+              srcset="" />
+          </div>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12 flex justify-content-center">
+          <div>
+            <confirm-button
+              text="Guardar"
+              [btnSmall]="true"
+              loadingText="Guardando"
+              [loading]="loading"
+              icon="fa fa-save"></confirm-button>
+          </div>
+        </div>
+      </div>
+      <input
+        type="file"
+        #inputField1
+        [style.display]="'none'"
+        (change)="inputChange1($event)" />
+      <input
+        type="file"
+        #inputField2
+        [style.display]="'none'"
+        (change)="inputChange2($event)" />
+      <input
+        type="file"
+        #inputField3
+        [style.display]="'none'"
+        (change)="inputChange3($event)" />
+      <input
+        type="file"
+        #inputField4
+        [style.display]="'none'"
+        (change)="inputChange4($event)" />
     </form>
   </div>
 </app-card>
