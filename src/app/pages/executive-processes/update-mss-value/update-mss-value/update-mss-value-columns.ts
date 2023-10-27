@@ -1,48 +1,35 @@
+import { DatePipe } from '@angular/common';
+
+const datePipe = new DatePipe('en-US');
+
 export const UPDATE_MASS_VALUE_COLUMNS = {
-  SOLICITANTE: {
+  proficientOpinion: {
     title: 'Solicitante',
     width: '25px',
     type: 'string',
     sort: false,
   },
-  FECAVALUO: {
+  appraisalVigDate: {
     title: 'Fecha de Avalúo',
-    type: 'string',
-    sort: false,
-    /*valuePrepareFunction: (value: string) => {
-      if (!value) {
-        return '';
-      }
-      console.log(typeof value)
-      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
-    },*/
-  },
-  INSTITUCION: {
-    title: 'Institución',
-    type: 'string',
+    type: 'string', // Cambiamos el tipo a 'string'
     sort: false,
   },
-  PERITO: {
+  valuerOpinion: {
     title: 'Perito',
     type: 'string',
     sort: false,
   },
-  OBSERV: {
-    title: 'Observaciones',
-    type: 'string',
-    sort: false,
-  },
-  NOBIEN: {
+  goodNumber: {
     title: 'No. Bien',
     type: 'string',
     sort: false,
   },
-  VALORAVALUO: {
+  appraisedValue: {
     title: 'Valor avalúo',
     type: 'string',
     sort: false,
   },
-  MONEDA: {
+  appraisalCurrencyKey: {
     title: 'Moneda',
     type: 'string',
     sort: false,

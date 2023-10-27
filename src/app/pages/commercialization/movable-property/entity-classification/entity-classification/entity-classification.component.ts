@@ -219,7 +219,7 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
   openModal(context?: Partial<EntityClasificationFormComponent>) {
     const modalRef = this.modalService.show(EntityClasificationFormComponent, {
       initialState: context,
-      class: 'modal-dialog-centered',
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {

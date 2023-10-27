@@ -276,6 +276,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Entrada de documentos',
         link: '/pages/administrative-processes/document-entry',
       },
+      {
+        label: 'Pago de Bienes / Admón de Ingresos',
+        link: '/pages/administrative-processes/payment-of-goods',
+      },
       /**
        * END ALEXANDER
        **/
