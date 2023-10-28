@@ -32,7 +32,7 @@ export interface IDocumentsDictumXStateCreate {
   officialNumber: number;
 }
 export interface IKey {
-  key: string | number;
+  key: string;
   description: string;
   typeDictum: string;
   numRegister: number;

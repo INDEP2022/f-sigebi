@@ -15,6 +15,7 @@ import { ROOT_REDUCERS } from './app.reducers';
 import { CentralizedExpensesModalComponent } from './centralized-expenses.modal/centralized-expenses.modal.component';
 import { ToastrComponent } from './common/components/toastr/toastr.component';
 import { AppInitializer } from './common/config/app-init.service';
+import { BodySizeChangeDirective } from './common/directives/body-size-change.directive';
 import { InputFormDirective } from './common/directives/input-form.directive';
 import { AuthInterceptor } from './common/interceptors/auth.interceptor';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
@@ -46,6 +47,7 @@ export function servicesOnRun(app: AppInitializer) {
     ToastrComponent,
     LoadingPercentComponent,
     CentralizedExpensesModalComponent,
+    BodySizeChangeDirective,
   ],
   imports: [
     BrowserModule,
