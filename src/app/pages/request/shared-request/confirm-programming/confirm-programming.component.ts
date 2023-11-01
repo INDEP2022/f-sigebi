@@ -14,8 +14,12 @@ import { ElectronicSignatureListComponent } from '../electronic-signature-list/e
 export class ConfirmProgrammingComponent extends BasePage implements OnInit {
   confirmForm: FormGroup = new FormGroup({});
   idProgramming: number = 0;
-  type?: string = null;
+  type?: any = null;
   electronicSignature: boolean = false;
+
+  labelEncharge: string;
+  labelPost: string;
+  displayInput: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -28,6 +32,8 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.enableSignInput();
+    this.setLabelTitles();
   }
 
   prepareForm() {
@@ -40,6 +46,7 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      typeSignature: [false],
     });
   }
 
@@ -49,17 +56,20 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
       sign: this.electronicSignature,
     });
     this.modalRef.hide();*/
+    const progform: any = this.confirmForm.value;
+    progform.typeSignature = progform.typeSignature == true ? 'Y' : 'N';
+
     this.programmingService
-      .updateProgramming(this.idProgramming, this.confirmForm.value)
+      .updateProgramming(this.idProgramming, progform)
       .subscribe({
         next: () => {
-          if (this.type == 'order-service') {
+          if (this.type == 2) {
             this.modalRef.content.callback({
-              data: this.confirmForm.value,
-              sign: this.electronicSignature,
+              data: progform,
+              sign: progform.typeSignature == 'Y' ? 'electronica' : 'autografa',
             });
           } else {
-            this.modalRef.content.callback(this.confirmForm.value);
+            this.modalRef.content.callback(progform);
           }
           this.modalRef.hide();
         },
@@ -79,5 +89,25 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
 
   close() {
     this.modalService.hide();
+  }
+
+  enableSignInput() {
+    if (this.type) {
+      this.displayInput = true;
+    }
+  }
+
+  setLabelTitles() {
+    if (this.type == 2) {
+      this.labelEncharge = 'Responsable';
+      this.labelPost = 'Cargo';
+    }
+    if (this.type == 3) {
+      this.labelEncharge = 'ResponsableDr';
+      this.labelPost = 'CargoDr';
+    } else {
+      this.labelEncharge = 'Nombre del Firmante';
+      this.labelPost = 'Cargo';
+    }
   }
 }

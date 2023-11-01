@@ -107,8 +107,7 @@ export class BillingsService {
     return new Promise((resolve, reject) => {
       this.msInvoiceService.getPaNvoFacturaPag(body).subscribe({
         next: data => {
-          console.log('da1', data);
-          resolve(data.data);
+          resolve('Correcto.');
         },
         error: err => {
           resolve(null);
@@ -150,10 +149,10 @@ export class BillingsService {
     return new Promise((resolve, reject) => {
       this.msInvoiceService.getFValidateUser(body).subscribe({
         next: response => {
-          resolve(true);
+          resolve(response.nCount);
         },
         error: error => {
-          resolve(null);
+          resolve(0);
         },
       });
     });
@@ -177,7 +176,7 @@ export class BillingsService {
     return new Promise((resolve, reject) => {
       this.msInvoiceService.getPaNvoDeleteInvoice(body).subscribe({
         next: response => {
-          resolve(response.data);
+          resolve('Correcto.');
         },
         error: error => {
           resolve(null);
@@ -279,7 +278,7 @@ export class BillingsService {
       this.msInvoiceService.getPaNvoGenerarPag(body).subscribe({
         next: data => {
           console.log('da1', data);
-          resolve(data.data);
+          resolve('Correcto.');
         },
         error: err => {
           resolve(null);
@@ -374,7 +373,7 @@ export class BillingsService {
           resolve(response);
         },
         error: error => {
-          resolve(null);
+          resolve({ count: 0 });
         },
       });
     });
@@ -516,9 +515,16 @@ export class BillingsService {
 
   async getParamterMod(params: any) {
     return new Promise((resolve, reject) => {
-      this.parameterModService.getParamterMod(params).subscribe({
+      this.parameterModService.getParamterMod_(params).subscribe({
         next: response => {
-          resolve(response.data[0]);
+          let result = response.data.map(item => {
+            item['parametroAndDes'] =
+              item.parametro + ' - ' + item.descriptionparameter;
+          });
+
+          Promise.all(result).then(resp => {
+            resolve(response);
+          });
         },
         error: error => {
           resolve(null);
@@ -602,6 +608,115 @@ export class BillingsService {
       this.comerDetailInvoiceService.update(body).subscribe({
         next: response => {
           resolve(true);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  getCountBatch(event: number, batch: number) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoice.getCountBatch(event, batch).subscribe({
+        next: response => {
+          resolve(response.contador);
+        },
+        error: error => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  getApplicationGetCountbyMandatoin(event: number, batch: number) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService
+        .getApplicationGetCountbyMandatoin(event, batch)
+        .subscribe({
+          next: response => {
+            resolve(response.contador);
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
+    });
+  }
+
+  getApplicationGetCountbyMandatoNotin(event: number, batch: number) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService
+        .getApplicationGetCountbyMandatoNotin(event, batch)
+        .subscribe({
+          next: response => {
+            resolve(response.contador);
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
+    });
+  }
+  getApplicationGetCount1GenXpago(event: number, batch: number) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService
+        .getApplicationGetCount1GenXpago(event, batch)
+        .subscribe({
+          next: response => {
+            resolve(response.contador);
+          },
+          error: error => {
+            resolve(0);
+          },
+        });
+    });
+  }
+
+  deleteApplicationDeleteIfExists(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.deleteApplicationDeleteIfExists(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  putApplicationComerBillsAmount(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.putApplicationComerBillsAmount(body).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  getApplicationGetFaUrlwebFac(eventId: number) {
+    return new Promise((resolve, reject) => {
+      this.parametersService.getApplicationGetFaUrlwebFac(eventId).subscribe({
+        next: response => {
+          resolve(response.fa_urlweb_fac);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  deletePDelInvoice(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.deletePDelInvoice(body).subscribe({
+        next: response => {
+          resolve('Correcto.');
         },
         error: error => {
           resolve(null);

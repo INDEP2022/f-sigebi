@@ -89,7 +89,8 @@
                   [data]="selectRegionalDeleg"
                   bindLabel="description"
                   label="Delegaci&oacute;n Regional"
-                  value="id"></ngx-select>
+                  value="id"
+                  (change)="regDeleChange($event)"></ngx-select>
               </div>
               <div class="col-md-3">
                 <form-field
@@ -176,7 +177,8 @@
                     value="id"
                     bindLabel="description"
                     label="Asunto"
-                    [control]="'affair'">
+                    [control]="'affair'"
+                    (change)="affairChange($event)">
                   </ngx-select>
                 </form-field>
               </div>
@@ -194,34 +196,51 @@
             <div class="col-md-3" style="line-height: 2.5">
               Tipo de Usuario&#58;
             </div>
-            <div class="col-sm-1">
-              <form-radio label="T.E">
-                <input
-                  type="radio"
-                  formControlName="targetUserType"
-                  value="TE"
-                  id="te"
-                  [checked]="checked" />
-              </form-radio>
-            </div>
-            <div class="col-sm-1">
-              <form-radio label="INDEP">
-                <input
-                  type="radio"
-                  formControlName="targetUserType"
-                  value="SAE"
-                  id="sae" />
-              </form-radio>
-            </div>
-            <div class="col-md-3">
-              <button
-                type="button"
-                data-toggle="tooltip"
-                title="Agregar"
-                class="btn btn-info btn-sm active ml-2 mr-2"
-                (click)="openModalSelectUser()">
-                <i class="bx bx-plus bx-sm float-icon"></i>
-              </button>
+            <div class="row ml-5">
+              <div class="col-md-3 d-flex" *ngIf="displayOfficeCenter == false">
+                <div>
+                  <form-radio label="T.E">
+                    <input
+                      type="radio"
+                      formControlName="targetUserType"
+                      value="TE"
+                      id="te" />
+                  </form-radio>
+                </div>
+                <div>
+                  <form-radio label="INDEP">
+                    <input
+                      type="radio"
+                      formControlName="targetUserType"
+                      value="SAE"
+                      id="sae"
+                      [checked]="checked" />
+                  </form-radio>
+                </div>
+              </div>
+              <!-- se habilita las oficinas centrales -->
+              <div class="col-md-3" *ngIf="displayOfficeCenter == true">
+                <div class="col-sm-2">
+                  <form-radio label="Ofinas Centrales">
+                    <input
+                      type="radio"
+                      formControlName="targetUserType"
+                      value="SAE"
+                      id="sae"
+                      [checked]="checked" />
+                  </form-radio>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <button
+                  type="button"
+                  data-toggle="tooltip"
+                  title="Agregar"
+                  class="btn btn-info btn-sm active ml-2 mr-2"
+                  (click)="openModalSelectUser()">
+                  <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+              </div>
             </div>
           </div>
 

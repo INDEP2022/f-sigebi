@@ -49,7 +49,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log('Crear folio');
-    this.dictamenSeq();
+    //this.dictamenSeq();
 
     //Crea la clave armada o el folio
 
@@ -76,8 +76,19 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   update() {
-    this.loading = true;
     let token = this.authService.decodeToken();
+
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+    }
+
+    this.loading = true;
     const name = token.name;
     //Objeto para actualizar el reporte con datos del formulario
     const obj: IRequest = {
@@ -93,7 +104,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
         this.dictumForm.controls['postRecipientRuling'].value,
       postSignatoryRuling:
         this.dictumForm.controls['postSignatoryRuling'].value,
-      reportSheet: ' ',
+      reportSheet: this.folioReporte,
       rulingCreatorName: name,
       recordId: this.requestData.recordId,
     };
@@ -120,34 +131,38 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   signDictum(): void {
     this.requestService.getById(this.requestData.id).subscribe({
       next: resp => {
-        this.newDataRequest = resp;
-        console.log(
-          'Información de solicitud actualizada: ',
-          this.newDataRequest
-        );
-        console.log('id de solicitud', this.requestData.id);
-        const requestInfo = this.newDataRequest;
-        const idReportAclara = this.idSolicitud;
-        const typeAnnex = 'approval-request';
-        const idTypeDoc = this.idTypeDoc;
-        const nameTypeDoc = 'DictamenProcendecia';
-        const nomenglatura = this.folioReporte;
+        this.dictamenSeq();
 
-        let config: ModalOptions = {
-          initialState: {
-            idReportAclara,
-            idTypeDoc,
-            typeAnnex,
-            requestInfo,
-            nameTypeDoc,
-            nomenglatura,
-            callback: (next: boolean) => {},
-          },
-          class: 'modal-lg modal-dialog-centered',
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(PrintReportModalComponent, config);
-        //this.modalService.show(PrintReportModalComponent,  config);
+        setTimeout(() => {
+          this.newDataRequest = resp;
+          console.log(
+            'Información de solicitud actualizada: ',
+            this.newDataRequest
+          );
+          console.log('id de solicitud', this.requestData.id);
+          const requestInfo = this.newDataRequest;
+          const idReportAclara = this.idSolicitud;
+          const typeAnnex = 'approval-request';
+          const idTypeDoc = this.idTypeDoc;
+          const nameTypeDoc = 'DictamenProcendecia';
+          const nomenglatura = this.folioReporte;
+
+          let config: ModalOptions = {
+            initialState: {
+              idReportAclara,
+              idTypeDoc,
+              typeAnnex,
+              requestInfo,
+              nameTypeDoc,
+              nomenglatura,
+              callback: (next: boolean) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PrintReportModalComponent, config);
+          //this.modalService.show(PrintReportModalComponent,  config);
+        }, 2000); // 2000 milisegundos = 2 segundos
       },
       error: error => {
         this.onLoadToast(

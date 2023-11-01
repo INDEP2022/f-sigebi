@@ -74,7 +74,7 @@ export class RateChangeComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     if (this.dataDet) {
-      console.log('data dataDet ', this.dataDet);
+      console.error('data dataDet ', this.dataDet);
       console.log(
         'Tasa terreno ',
         this.convertDecToInteger(this.dataDet.terrainRate)
@@ -142,6 +142,8 @@ export class RateChangeComponent extends BasePage implements OnInit {
     this.form.controls['otherRate'].valueChanges.subscribe(val => {
       this.otherRate = val;
     });
+    this.form.get('goodId').disable();
+    this.form.get('goodDescription').disable();
   }
 
   onGoodsChange() {
@@ -368,11 +370,7 @@ export class RateChangeComponent extends BasePage implements OnInit {
     this.appraiseService.updateEatDetAppraisal(valor).subscribe({
       next: resp => {
         console.log('Resp updateDetailEval-> ', resp);
-        this.alert(
-          'success',
-          'El registro ha sido actualizado correctamente',
-          ''
-        );
+        this.alert('success', 'El Registro ha Sido Actualizado', '');
       },
       error: err => {
         this.alert('error', 'El registro no ha sido actualizado', '');

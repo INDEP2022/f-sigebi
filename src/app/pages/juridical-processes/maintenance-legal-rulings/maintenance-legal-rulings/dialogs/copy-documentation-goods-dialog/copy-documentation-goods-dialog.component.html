@@ -54,14 +54,14 @@
             label="No. Destinatario Copia"
             [control]="copiesOfficialForm.get('copyDestinationNumber')">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="copyDestinationNumber" />
           </form-field>
         </div>
 
         <div class="col-md-12 mt-4">
-          <form-field
+          <!-- <form-field
             label="Persona Ext Int"
             [control]="copiesOfficialForm.get('personExtInt')">
             <input
@@ -69,6 +69,30 @@
               type="text"
               class="form-control"
               formControlName="personExtInt" />
+          </form-field> -->
+          <form-field [control]="copiesOfficialForm.get('personExtInt')">
+            <ngx-select
+              label="Nombre de la Persona int"
+              [form]="copiesOfficialForm"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="personExtInt"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="id"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ngx-select>
+            <ng-template #userLabel let-item="item">
+              {{ item.id + ' - ' + item.name }}
+            </ng-template>
+            <ng-template #userOption let-item="item">
+              <div [title]="item.id + '-' + item.name">
+                {{ item.id + ' - ' + item.name }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
 

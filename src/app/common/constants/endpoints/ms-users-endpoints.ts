@@ -26,4 +26,6 @@ export enum UserEndpoints {
   RecSubDel = 'application/recSubdel',
   RecVault = 'application/recVault',
   viewPrev = 'application/btnViewPrev',
+  consultationQuery1 = 'application/consultationQuery1',
+  consultationQuery2 = 'application/consultationQuery2',
 }

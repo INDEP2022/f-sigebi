@@ -306,7 +306,8 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings4"
-                  (edit)="addDeductive($event.data)"
+                  (edit)="editDeductive($event.data)"
+                  (delete)="deleteDeductive($event.data)"
                   (userRowSelect)="deductivesSelect($event)"
                   [source]="paragraphsDeductivas">
                 </ng2-smart-table>

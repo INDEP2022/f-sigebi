@@ -59,6 +59,7 @@ export class MaintenanceLegalRulingComponent
   ngOnInit(): void {
     this.prepareForm();
     this.getUser();
+
     // this.loading = true;
   }
 
@@ -80,6 +81,7 @@ export class MaintenanceLegalRulingComponent
     this.getCopiesOfficialOpinion(value.id, value.typeDict);
     this.getDictationXGood1(value.id, value.typeDict);
     this.getOfficialDictation(value.id, value.typeDict);
+    this.moreInformationData(value);
   }
 
   /**@description OFICIO_DICTAMEN_TEXTOS */
@@ -244,6 +246,10 @@ export class MaintenanceLegalRulingComponent
   loadCopy(value: boolean) {
     if (value) this.getCopiesOfficialOpinion(this.dictNumber, this.typeDict);
   }
+
+  // delete(value: boolean) {
+  //   if (value) this.showDeleteAlert(value);
+  // }
 
   loadGood(value: boolean) {
     if (value) this.getDictationXGood1(this.dictNumber, this.typeDict);

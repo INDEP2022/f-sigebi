@@ -27,6 +27,10 @@ export class GoodProcessService extends HttpService {
     this.microservice = GoodProcessPoints.basepath;
   }
 
+  massiveUpdate(body: any) {
+    return this.post(GoodProcessPoints.masiveUpdate, body);
+  }
+
   getReportNingevent(params: ListParams) {
     return this.get(GoodProcessPoints.ReportNingevent, params);
   }
@@ -328,11 +332,16 @@ export class GoodProcessService extends HttpService {
   getComerDetAvaluoAll(goodNumber: number) {
     return this.get(`${GoodProcessPoints.ComerDetAvaluoAll}/${goodNumber}`);
   }
+
   getStatusNew(filters: any) {
     return this.post<IListResponse<any>>(
       `${GoodProcessPoints.GoodxStatusXtypeNumber}`,
       filters
     );
+  }
+
+  getExpedients(model: Object) {
+    return this.post(`${GoodProcessPoints.ConsultQuery}`, model);
   }
 
   getApplicationData(body: any) {

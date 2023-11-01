@@ -85,6 +85,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   userProcessService = inject(UserProcessService);
 
   selectedRegDel: any = null;
+  displayOfficeCenter: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -140,6 +141,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   prepareForm(): void {
+    const disableRegDele = this.op == 2 ? false : true;
     this.requestForm = this.fb.group({
       id: [null],
       applicationDate: [{ value: null, disabled: true }],
@@ -151,17 +153,21 @@ export class RequestFormComponent extends BasePage implements OnInit {
           Validators.maxLength(50),
         ],
       ],
-      regionalDelegationId: [{ value: null, disabled: true }], // cargar la delegacion a la que pertence
+      regionalDelegationId: [{ value: null, disabled: disableRegDele }], // cargar la delegacion a la que pertence
       transferenceId: [null, Validators.required],
       keyStateOfRepublic: [null, Validators.required],
       stationId: [null, Validators.required],
       authorityId: [null, Validators.required],
-      targetUserType: ['TE'],
+      targetUserType: ['SAE'],
       affair: [null],
       targetUser: [null],
       requestStatus: [null],
     });
     this.requestForm.controls['applicationDate'].patchValue(this.bsValue);
+    this.requestForm
+      .get('regionalDelegationId')
+      .setValue(this.getRegionalDelegationId());
+    this.getEntity(new ListParams(), this.getRegionalDelegationId());
 
     //se agregan campos documentación complementaria según el valor del parametro OP
     if (this.op == 2) this.complementaryDocumentationField(this.requestForm);
@@ -218,14 +224,32 @@ export class RequestFormComponent extends BasePage implements OnInit {
     return id;
   }
 
-  getRegionalDeleg(params?: ListParams) {
-    const regDelId = Number(this.getRegionalDelegationId());
-    this.regionalDelegationService.getById(regDelId).subscribe((data: any) => {
-      this.delegationId = data.id;
-      this.requestForm.get('regionalDelegationId').setValue(data.id);
-      this.selectRegionalDeleg = new DefaultSelect([data], data.count);
-      this.getEntity(new ListParams(), regDelId);
+  async getRegionalDeleg(params?: ListParams) {
+    const regDelId = this.getRegionalDelegationId();
+    let count = 0;
+    this.regionalDelegationService.getAll(params).subscribe({
+      next: async resp => {
+        if (count == 0) {
+          const exist = resp.data.some((x: any) => x.id == regDelId);
+          if (exist == false) {
+            const actualDeleg: any = await this.getDelegation(+regDelId);
+            resp.data.unshift(actualDeleg);
+          }
+        }
+
+        this.selectRegionalDeleg = new DefaultSelect(resp.data, resp.count);
+        count++;
+      },
     });
+  }
+
+  regDeleChange(e: any) {
+    if (e != undefined) {
+      this.getEntity(new ListParams(), e.id);
+    } else {
+      this.requestForm.get('keyStateOfRepublic').setValue(null);
+      this.selectEntity = new DefaultSelect();
+    }
   }
 
   getEntity(params: ListParams, id?: number | string): void {
@@ -395,11 +419,25 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
+  affairChange(e: any) {
+    console.log(e);
+    if (
+      e.processDetonate == 'ABANDONO' ||
+      e.processDetonate == 'EXT_DOMINIO' ||
+      e.processDetonate == 'DECOMISO'
+    ) {
+      this.displayOfficeCenter = true;
+    } else {
+      this.displayOfficeCenter = false;
+    }
+  }
+
   openModalSelectUser() {
     let config: ModalOptions = {
       initialState: {
         request: this.requestForm.value,
         op: this.op,
+        officeCentral: this.displayOfficeCenter,
         /*callback: (next: boolean) => {
           if (next) this.getExample();
         },*/
@@ -478,7 +516,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               'Solicitud Creada',
               'success'
             );*/
-          //debugger;
+
           //crea tareas de prueba se puede eliminar
           this.turnRequestOp2();
           /*  } */
@@ -512,6 +550,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
                 let task: any = {};
                 task['id'] = 0;
+                task['reviewers'] = this.nickName;
                 task['assignees'] = this.nickName;
                 task['assigneesDisplayname'] = this.userName;
                 task['creator'] = actualUser.username;
@@ -569,7 +608,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
       form.typeOfTransfer = 'MANUAL';
-      form.regionalDelegationId = this.delegationId;
+      //form.regionalDelegationId = this.delegationId;
 
       this.requestService.create(form).subscribe({
         next: resp => {
@@ -591,7 +630,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.receiptRoute = 'FISICA';
       form.affair = this.op == 2 ? form.affair : 37;
       form.typeOfTransfer = 'MANUAL';
-      form.regionalDelegationId = this.delegationId;
+      //form.regionalDelegationId = this.delegationId;
       //form.originInfo = 'SOL_TRANSFERENCIA'
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
@@ -648,7 +687,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   createOnlyTask(task: any) {
-    //debugger;
     return new Promise((resolve, reject) => {
       this.taskService.createTask(task).subscribe({
         next: resp => {
@@ -793,7 +831,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       if (requestResult) {
         const actualUser: any = this.authService.decodeToken();
         let body: any = {};
-        // debugger;
         body['idTask'] = this.taskId;
         body['userProcess'] = actualUser.username;
 
@@ -805,6 +842,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['id'] = 0;
         task['assignees'] = this.nickName;
         task['assigneesDisplayname'] = this.userName;
+        task['reviewers'] = actualUser.username;
         task['creator'] = actualUser.username;
         task['taskNumber'] = Number(idRequest);
         task['title'] = title;
@@ -861,5 +899,19 @@ export class RequestFormComponent extends BasePage implements OnInit {
       default:
         break;
     }
+  }
+
+  getDelegation(id: number) {
+    return new Promise((resolve, reject) => {
+      this.regionalDelegationService.getById(id).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se puedo obtener la delegacón');
+        },
+      });
+    });
   }
 }

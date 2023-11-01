@@ -39,5 +39,19 @@ export const CREAR_MENU_DEPOSITARY = function () {
       link: baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[index].link,
     });
   }
+  menuDepositary.push({
+    label: 'Notificación de Abandono',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Por Aseguramiento',
+        link: baseMenu + baseMenuDepositaria + 'notice-abandonment/S',
+      },
+      {
+        label: 'Por Devolución',
+        link: baseMenu + baseMenuDepositaria + 'notice-abandonment/D',
+      },
+    ],
+  });
   return menuDepositary;
 };

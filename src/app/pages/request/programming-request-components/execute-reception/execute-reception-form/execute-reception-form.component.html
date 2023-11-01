@@ -424,7 +424,7 @@
                       <td scope="row" class="align-baseline">
                         {{ good.get('goodId')?.value }}
                       </td>
-                      <td class="align-baseline text-nowrap">
+                      <td class="align-baseline">
                         {{ good.get('uniqueKey')?.value }}
                       </td>
                       <td class="align-baseline">
@@ -481,7 +481,7 @@
                           formControlName="saeMeasureUnit">
                           <option
                             *ngFor="let measureUnit of measureUnits"
-                            [value]="measureUnit.measureTlUnit">
+                            [value]="measureUnit.uomCode">
                             {{ measureUnit.measureTlUnit }}
                           </option>
                         </select>
@@ -525,8 +525,23 @@
                           </option>
                         </select>
                       </td>
-                      <td class="align-baseline">
-                        {{ good.get('observations')?.value }}
+                      <td>
+                        <form-field [control]="executeForm.get('observations')">
+                          <textarea
+                            id="w3review"
+                            name="w3review"
+                            style="
+                              width: 230px;
+                              height: 50px;
+                              font-size: 13px !important;
+                            "
+                            class="form-control"
+                            rows="4"
+                            maxlength="5000"
+                            formControlName="observations"
+                            cols="50">
+                          </textarea>
+                        </form-field>
                       </td>
                       <td class="align-baseline">
                         {{ good.get('ligieUnit')?.value }}
@@ -916,7 +931,7 @@
                                       formControlName="saeMeasureUnit">
                                       <option
                                         *ngFor="let measureUnit of measureUnits"
-                                        [value]="measureUnit.measureTlUnit">
+                                        [value]="measureUnit.uomCode">
                                         {{ measureUnit.measureTlUnit }}
                                       </option>
                                     </select>
@@ -974,7 +989,23 @@
                                     </select>
                                   </td>
                                   <td class="align-baseline">
-                                    {{ good.get('observations')?.value }}
+                                    <form-field
+                                      [control]="
+                                        executeForm.get('observations')
+                                      ">
+                                      <textarea
+                                        style="
+                                          width: 230px;
+                                          height: 50px;
+                                          font-size: 13px !important;
+                                        "
+                                        class="form-control"
+                                        rows="4"
+                                        maxlength="5000"
+                                        formControlName="observations"
+                                        cols="50">
+                                      </textarea>
+                                    </form-field>
                                   </td>
                                   <td class="align-baseline">
                                     {{ good.get('ligieUnit')?.value }}
@@ -1335,7 +1366,7 @@
                                   formControlName="saeMeasureUnit">
                                   <option
                                     *ngFor="let measureUnit of measureUnits"
-                                    [value]="measureUnit.measureTlUnit">
+                                    [value]="measureUnit.uomCode">
                                     {{ measureUnit.measureTlUnit }}
                                   </option>
                                 </select>
@@ -1366,7 +1397,7 @@
                               <td class="text-left align-baseline">
                                 {{ good.get('stateConservationName')?.value }}
                               </td>
-                              <td class="align-baseline">
+                              <td>
                                 <select
                                   [value]="
                                     executeForm.get('stateConservationSae')
@@ -1386,15 +1417,30 @@
                                 </select>
                               </td>
 
-                              <td class="align-baseline">
-                                {{ good.get('observations')?.value }}
+                              <td>
+                                <!--{{ good.get('observations')?.value }} -->
+                                <form-field
+                                  [control]="executeForm.get('observations')">
+                                  <textarea
+                                    style="
+                                      width: 230px;
+                                      height: 50px;
+                                      font-size: 13px !important;
+                                    "
+                                    class="form-control"
+                                    rows="4"
+                                    maxlength="5000"
+                                    formControlName="observations"
+                                    cols="50">
+                                  </textarea>
+                                </form-field>
                               </td>
 
                               <td class="align-baseline">
                                 {{ good.get('destiny').value }}
                               </td>
 
-                              <td class="align-baseline">
+                              <td>
                                 <select
                                   [value]="
                                     executeForm.get('transferentDestiny').value
@@ -1781,7 +1827,7 @@
                                     formControlName="saeMeasureUnit">
                                     <option
                                       *ngFor="let measureUnit of measureUnits"
-                                      [value]="measureUnit.measureTlUnit">
+                                      [value]="measureUnit.uomCode">
                                       {{ measureUnit.measureTlUnit }}
                                     </option>
                                   </select>
@@ -1834,8 +1880,26 @@
                                   </select>
                                 </td>
 
-                                <td class="align-baseline">
-                                  {{ good.get('observations')?.value }}
+                                <td>
+                                  <form-field
+                                    [control]="
+                                      goodsWarehouseForm.get('observations')
+                                    ">
+                                    <textarea
+                                      id="w3review"
+                                      name="w3review"
+                                      style="
+                                        width: 230px;
+                                        height: 50px;
+                                        font-size: 13px !important;
+                                      "
+                                      class="form-control"
+                                      rows="4"
+                                      maxlength="5000"
+                                      formControlName="observations"
+                                      cols="50">
+                                    </textarea>
+                                  </form-field>
                                 </td>
                                 <td class="align-baseline">
                                   {{ good.get('destiny').value }}
@@ -1875,7 +1939,7 @@
 
                                   <a class="ml-2 mr-2">
                                     <button
-                                      (click)="editGoodReception(good.value)"
+                                      (click)="editGoodWarehouse(good.value)"
                                       type="button"
                                       class="btn btn-info active btn-sm">
                                       <i
@@ -2208,7 +2272,7 @@
                                     formControlName="saeMeasureUnit">
                                     <option
                                       *ngFor="let measureUnit of measureUnits"
-                                      [value]="measureUnit.measureTlUnit">
+                                      [value]="measureUnit.uomCode">
                                       {{ measureUnit.measureTlUnit }}
                                     </option>
                                   </select>
@@ -2261,8 +2325,26 @@
                                   </select>
                                 </td>
 
-                                <td class="align-baseline">
-                                  {{ good.get('observations')?.value }}
+                                <td>
+                                  <form-field
+                                    [control]="
+                                      goodsWarehouseForm.get('observations')
+                                    ">
+                                    <textarea
+                                      id="w3review"
+                                      name="w3review"
+                                      style="
+                                        width: 230px;
+                                        height: 50px;
+                                        font-size: 13px !important;
+                                      "
+                                      class="form-control"
+                                      rows="4"
+                                      maxlength="5000"
+                                      formControlName="observations"
+                                      cols="50">
+                                    </textarea>
+                                  </form-field>
                                 </td>
                                 <td class="align-baseline text-nowrap">
                                   <a class="">
@@ -2568,7 +2650,7 @@
                                   formControlName="saeMeasureUnit">
                                   <option
                                     *ngFor="let measureUnit of measureUnits"
-                                    [value]="measureUnit.measureTlUnit">
+                                    [value]="measureUnit.uomCode">
                                     {{ measureUnit.measureTlUnit }}
                                   </option>
                                 </select>
@@ -2620,8 +2702,26 @@
                                   </option>
                                 </select>
                               </td>
-                              <td class="align-baseline">
-                                {{ good.get('observations')?.value }}
+                              <td>
+                                <form-field
+                                  [control]="
+                                    goodsWarehouseForm.get('observations')
+                                  ">
+                                  <textarea
+                                    id="w3review"
+                                    name="w3review"
+                                    style="
+                                      width: 230px;
+                                      height: 50px;
+                                      font-size: 13px !important;
+                                    "
+                                    class="form-control"
+                                    rows="4"
+                                    maxlength="5000"
+                                    formControlName="observations"
+                                    cols="50">
+                                  </textarea>
+                                </form-field>
                               </td>
                               <td class="align-baseline text-nowrap">
                                 <a class="">

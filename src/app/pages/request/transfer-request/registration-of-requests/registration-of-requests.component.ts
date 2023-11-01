@@ -1019,6 +1019,7 @@ export class RegistrationOfRequestsComponent
       const user: any = this.authService.decodeToken();
       let task: any = {};
       task['id'] = 0;
+      task['reviewers'] = user.username;
       task['assignees'] = this.task.assignees;
       task['assigneesDisplayname'] = this.task.displayName;
       task['creator'] = user.username;
@@ -1307,7 +1308,8 @@ export class RegistrationOfRequestsComponent
 
       let task: any = {};
       task['id'] = 0;
-      task['assignees'] = this.task.assignees;
+      (task['reviewers'] = user.username),
+        (task['assignees'] = this.task.assignees);
       task['assigneesDisplayname'] = this.task.displayName;
       task['creator'] = user.username;
       task['taskNumber'] = Number(request.id);

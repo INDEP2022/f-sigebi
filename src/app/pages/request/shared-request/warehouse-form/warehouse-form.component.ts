@@ -16,6 +16,7 @@ import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-deleg
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { IZipCodeGoodQuery } from 'src/app/core/models/catalogs/zip-code.model';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { ICatThirdView } from 'src/app/core/models/ms-goods-inv/goods-inv.model';
 import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
@@ -30,6 +31,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -62,8 +64,13 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   showLocality: boolean = false;
   showZipCode: boolean = false;
   programmingId: number = 0;
+  transferId: number = 0;
   task: ITask;
   stateKeySelect: number = 0;
+  programmingData: Iprogramming;
+  userEmail: string = '';
+  deleRegionalId: any;
+  storeData: any;
   constructor(
     private modalService: BsModalService,
     private modalRef: BsModalRef,
@@ -80,12 +87,16 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private taskService: TaskService,
     private router: Router,
-    private storeService: StoreAliasStockService
+    private storeService: StoreAliasStockService,
+    private transferGoodService: TranfergoodService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    console.log('programmingData', this.programmingData);
+    this.storeData = this.authService.decodeToken();
+    this.deleRegionalId = this.storeData.delegacionreg;
     this.prepareForm();
     this.getStateSelect(new ListParams());
     this.getTypeWarehouseSelect(new ListParams());
@@ -168,8 +179,10 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   userSelect(user: IUserTurn) {
+    console.log('user', user);
     this.userNameSelect = user.username;
     this.userFirstName = user.firstName;
+    this.userEmail = user.email;
   }
 
   confirm() {
@@ -179,6 +192,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       '¿Seguro de mandar a solicitar un nuevo almacén?'
     ).then(async question => {
       if (question.isConfirmed) {
+        this.sendEmailUser();
         this.loading = true;
         this.warehouseForm
           .get('wildebeestDelegationregion')
@@ -196,6 +210,22 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     });
   }
 
+  sendEmailUser() {
+    const infoEmail = {
+      header: `Solicitud de alta de almacén con folio: ${this.programmingData.folio}`,
+      destination: ['gustavoangelsantosclemente@gmail.com'],
+      subject: 'Solicitud alta de almacén',
+      copy: [''],
+      message: `Tarea solicitud de almacén con folio ${this.programmingData.folio} requiere su atención.`,
+    };
+
+    this.transferGoodService.sendEmail(infoEmail).subscribe({
+      next: response => {
+        console.log('correo enviado', response);
+      },
+    });
+  }
+
   async createTaskWarehouse(idWarehouse: number) {
     const _task = JSON.parse(localStorage.getItem('Task'));
     const user: any = this.authService.decodeToken();
@@ -203,7 +233,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     body['type'] = 'SOLICITUD_PROGRAMACION';
     body['subtype'] = 'Realizar_Programacion';
     body['ssubtype'] = 'ALTA_ALMACEN';
-
+    body['reviewers'] = user.username;
     let task: any = {};
     task['id'] = 0;
     task['assignees'] = this.userNameSelect;
@@ -287,16 +317,31 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   getResponsibleUserSelect(params: ListParams) {
     const user: any = this.authService.decodeToken();
 
+    /*this.params.value.addFilter('filter.search', params.text);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalId,
+      SearchFilter.ILIKE
+    ); */
+
+    //const filter = this.params.getValue().getParams();
+    params['regionalDelegation'] = `$ilike:${this.storeData.delegacionreg}`;
     params['filter.search'] = params.text;
     this.userProcessService.getAll(params).subscribe({
-      next: data => {
-        const concatNom = data.data.map(user => {
-          user['nomComplete'] = user.firstName + ' ' + user.lastName;
-          return user;
+      next: resp => {
+        resp.data.map((item: any) => {
+          item['fullName'] = item.firstName + ' ' + item.lastName;
         });
-        this.users = new DefaultSelect(concatNom, data.count);
+
+        resp.data.sort(function (a: any, b: any) {
+          return a.fullName - b.fullName;
+        });
+        console.log('resp.data', resp.data);
+        this.users = new DefaultSelect(resp.data, resp.count);
       },
-      error: error => {},
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 

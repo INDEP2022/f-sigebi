@@ -4,9 +4,9 @@
   </div>
 
   <div body>
-    <form [formGroup]="form" class="form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+    <div class="row margin-input">
+      <form [formGroup]="form" class="form-material">
+        <div class="col-md-6">
           <form-field [control]="form.get('delegation')">
             <ngx-select
               [searchOnInit]="true"
@@ -21,7 +21,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-md-6">
           <form-field [control]="form.get('subdelegation')">
             <ngx-select
               [form]="form"
@@ -35,14 +35,14 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-md-6 pt-4">
           <form-field [control]="form.get('delBien')">
             <ngx-select
               (fetchItems)="getGoodIdDescription($event)"
               [data]="good"
               [form]="form"
               value="id"
-              label="Desde el No&#46; Bien&#58;"
+              label="Desde el Numero de Bien&#58;"
               bindLabel="description"
               [control]="'delBien'"
               (change)="onGoodIdDescription($event)"
@@ -58,14 +58,14 @@
             >{{ item.id }} - {{ item.description }}</ng-template
           >
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-md-6 pt-4">
           <form-field [control]="form.get('alBien')">
             <ngx-select
               (fetchItems)="getGoodAlIdDescription($event)"
               [data]="goodAl"
               [form]="form"
               value="id"
-              label="Al No&#46; Bien&#58;"
+              label="Hasta el Numero de Bien&#58;"
               bindLabel="description"
               [control]="'alBien'"
               (change)="onGoodAlIdDescription($event)"
@@ -81,13 +81,14 @@
             >{{ item.id }} - {{ item.description }}</ng-template
           >
         </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2">
-          <h6>Fecha Presentaci&oacute;n Recurso&#58;</h6>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <!--<div class="ch-content">
+          <h5 class="title">Fecha Presentaci&oacute;n Recurso&#58;</h5>
+        </div>-->
+
+        <div class="col-md-6 pt-4">
           <form-field
             [control]="form.get('startDate')"
-            label="Fecha desde&#58;">
+            label="Fecha Desde&#58;">
             <input
               class="form-control"
               formControlName="startDate"
@@ -96,8 +97,8 @@
               [maxDate]="maxDate" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field [control]="form.get('endDate')" label="Fecha hasta&#58;">
+        <div class="col-md-6 pt-4">
+          <form-field [control]="form.get('endDate')" label="Fecha Hasta&#58;">
             <input
               class="form-control"
               formControlName="endDate"
@@ -112,8 +113,8 @@
             {{ getEndDateErrorMessage(endDate, startDate) }}
           </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
 
     <div>
       <div class="d-flex justify-content-center">

@@ -825,6 +825,28 @@ export const routes: Routes = [
           screen: 'FTIPOREPALMACEN',
         },
       },
+      {
+        //!SIRVIO
+        path: 'document-entry',
+        loadChildren: async () =>
+          (await import('./document-entry/document-entry.module'))
+            .DocumentEntryModule,
+        data: {
+          title: 'Entrada de documentos',
+          screen: 'FGERARGENTRADADOC',
+        },
+      },
+      {
+        //!SIRVIO
+        path: 'payment-of-goods',
+        loadChildren: async () =>
+          (await import('./payment-of-goods/payment-of-goods-routing.module'))
+            .PaymentOfGoodsRoutingModule,
+        data: {
+          title: 'Pago de Bienes / Admón de Ingresos',
+          screen: 'FPRSOLOIS',
+        },
+      },
     ],
   },
 ];

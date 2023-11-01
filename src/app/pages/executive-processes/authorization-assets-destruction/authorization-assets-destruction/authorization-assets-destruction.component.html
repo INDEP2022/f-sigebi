@@ -23,12 +23,16 @@
         <div class="col">
           <div class="justify-content-start">
             <button
+              [disabled]="!form.valid"
               (click)="expedientChange()"
               type="button"
               class="btn btn-primary active btn-sm mr-3">
               Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
-            <button (click)="clean()" class="btn btn-danger btn-sm active mr-3">
+            <button
+              [disabled]="!form.valid"
+              (click)="clean()"
+              class="btn btn-danger btn-sm active mr-3">
               Limpiar <i class="fas fa-eraser"> </i>
             </button>
           </div>
@@ -77,7 +81,7 @@
 
         <div class="col">
           <button
-            [disabled]="textDisabled"
+            [disabled]="!form.valid || textDisabled"
             (click)="addGood()"
             type="button"
             tooltip="Agregar"
@@ -207,7 +211,7 @@
       </div>
 
       <div class="row mt-4">
-        <app-scan-file-shared
+        <app-scan-file-authorization
           [form]="form"
           [formControlName]="'universalFolio'"
           [cveDocument]="form.get('act').value"
@@ -216,7 +220,7 @@
           [statusProceeding]="form.get('statusAct').value"
           [cveScreen]="'FACTDIRAPROBDESTR'"
           [reportPrint]="'RGERGENSOLICDIGIT'">
-        </app-scan-file-shared>
+        </app-scan-file-authorization>
       </div>
     </div>
   </app-card>

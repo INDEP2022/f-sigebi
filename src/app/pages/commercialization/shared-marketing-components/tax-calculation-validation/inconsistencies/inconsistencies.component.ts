@@ -39,6 +39,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
   dataDet: any;
   columnFilters: any = ([] = []);
   flagSubmit: boolean = false;
+  address: string;
 
   @Output() selected = new EventEmitter<{}>();
 
@@ -58,9 +59,10 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
       actions: false,
       columns: {
         ...COLUMNS,
-        /* option: {
-          title: '',
+        /*option: {
+          title: 'Opción',
           type: 'custom',
+          filter: false,
           sort: false,
           renderComponent: CheckboxElementComponent,
           valuePrepareFunction: (isSelected: any, row: any) => {
@@ -72,7 +74,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
               objBase.select(data);
             });
           },
-        }, */
+        },*/
       },
     };
   }
@@ -120,13 +122,14 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
   }
 
   select(data: any) {
-    console.log('select ', data.row);
+    console.log('select ', data.row.valor);
   }
 
   private prepareForm(): void {
     this.form = this.fb.group({
       goodId: [null, [Validators.required]],
     });
+    console.log(this.dataDet);
   }
 
   close() {
@@ -142,7 +145,8 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
     if (row.isSelected) {
       this.flagSubmit = true;
       this.selectedRow = row.data;
-      console.log('1');
+      this.address = this.selectedRow.direccion;
+      console.log('1', this.selectedRow);
     } else {
       this.flagSubmit = false;
       this.selectedRow = null;
@@ -157,17 +161,28 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  confirm() {
+  async confirm() {
     let v_reg_aux: string = null;
     let v_validado: number;
     let al_button: number;
 
     if (this.dataDet != null) {
       console.log('data det ', this.dataDet);
-      this.getComerParameterFilterSumit(
+      let parameter = await this.getComerParameterFilterSumit(
         this.dataDet.idDetAppraisal,
         this.dataDet.goodId
       );
+      let dataParameter: any = parameter;
+      console.log(dataParameter);
+      if (parameter === null) {
+        //console.log(dataParameter.count);
+        v_validado = 0;
+        this.validateRow(v_validado);
+      } else {
+        console.log(dataParameter.count);
+        v_validado = dataParameter.count;
+        this.validateRow(v_validado);
+      }
     }
 
     this.selected.emit(this.selectedRow);
@@ -215,6 +230,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
   }
 
   onPressed() {
+    this.loading = true;
     this.dataA = [];
     this.params.getValue()['filter.parameter'] = `$eq:CATINCONSVALIVA`;
     this.params.getValue()['order'] = 'value:ASC';
@@ -227,7 +243,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
     this.parameterBrandsService.getSuperUserFilter(params).subscribe({
       next: response => {
         console.log('response ', response);
-        /*for (let i = 0; i < response.data.length; i++) {
+        /* for (let i = 0; i < response.data.length; i++) {
           let item = {
             value: response.data[i].value,
             description: response.data[i].description,
@@ -239,12 +255,12 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
             comerTpevents: response.data[i].comerTpevents,
           };
           this.dataA.push(item);
-        }*/
-        //this.data.load(this.dataA);
+        } */
         this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.posChange();
+        this.loading = false;
       },
       error: err => {
         console.log('error ', err);
@@ -304,32 +320,46 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
     console.log(v_valor); // Debería mostrar 'cde' en la consola
   }
 
-  getComerParameterFilterSumit(idAvaluo: number, goodId: number) {
-    let v_validado = 0;
+  async getComerParameterFilterSumit(idAvaluo: number, goodId: number) {
+    //let v_validado = 0;
     const params = new ListParams();
     // this.params.getValue()['filter.description'] = '$eq:S';
     // this.params.getValue()['filter.parameter'] = `$eq:${idAvaluo}`;
     // this.params.getValue()['filter.value'] = `$eq:${goodId}`;
 
-    params['filter.description'] = '$eq:S';
-    params['filter.parameter'] = `$eq:${idAvaluo}`;
+    params['filter.description'] = '$ilike:S';
+    params['filter.parameter'] = `$ilike:${idAvaluo}`;
     params['filter.value'] = `$eq:${goodId}`;
-    console.log('params send 1', this.params.getValue());
+    /*console.log('params send 1', this.params.getValue());
     console.log('params send 2', params);
-    this.parameterBrandsService.getSuperUserFilter(params).subscribe({
+    this.parameterBrandsService.getSuperUserFilterV2(params).subscribe({
       next: response => {
-        console.log('response submit ', response);
+        console.log('response submit', response);
         this.validateRow(response.count);
       },
       error: err => {
         console.log('error ', err);
-        v_validado = 0;
+        //v_validado = 0;
         this.validateRow(0);
       },
+    });*/
+    return new Promise((resolve, reject) => {
+      this.parameterBrandsService.getSuperUserFilterV2(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(null);
+          //console.log('ERR', err);
+        },
+      });
     });
   }
 
   validateRow(total: number) {
+    console.error('this.dataDet', this.dataDet);
+    console.error('total', total);
+
     if (
       total > 0 &&
       (this.dataDet.check == 'N' || this.dataDet.check == null)
@@ -346,7 +376,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
         let body = {
           parameter: Number(this.dataDet.idDetAppraisal),
           value: Number(this.dataDet.goodId),
-          //address: 'I',
+          address: this.address,
         };
         this.deleteParametersGood(body);
       }
@@ -384,7 +414,7 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
         );
       },
       error: err => {
-        this.alert('error', 'El registro no ha sido actualizado', '');
+        this.alert('warning', 'El detalle ya esta aprobado', '');
       },
     });
   }

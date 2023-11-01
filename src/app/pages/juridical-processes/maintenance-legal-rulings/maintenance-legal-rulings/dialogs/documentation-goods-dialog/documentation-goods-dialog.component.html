@@ -108,10 +108,29 @@
         </div>
 
         <div class="col-md-6 mt-4">
-          <form-field
-            label="Clave Documento "
-            [control]="documentsDictumXStateMForm.get('key')">
-            <input type="text" class="form-control" formControlName="key" />
+          <form-field [control]="documentsDictumXStateMForm.get('key')">
+            <!-- <input type="text" class="form-control" formControlName="key" /> -->
+            <ngx-select
+              [form]="documentsDictumXStateMForm"
+              [data]="$documents"
+              (fetchItems)="getDoc($event)"
+              bindLabel="document"
+              control="key"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="key"
+              [labelTemplate]="dicLabel"
+              [optionTemplate]="dicOption">
+            </ngx-select>
+            <ng-template #dicLabel let-item="item">
+              {{ item.key + ' - ' + item.description }}
+            </ng-template>
+            <ng-template #dicOption let-item="item">
+              <div [title]="item.key + '-' + item.description">
+                {{ item.key + ' - ' + item.description }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
 
@@ -125,19 +144,43 @@
               bsDatepicker
               required
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
+                dateInputFormat: 'DD/MM/YYYY'
               }" />
           </form-field>
         </div>
 
         <div class="col-md-6 mt-4">
-          <form-field
+          <!-- <form-field
             label="Usuario Recibió"
             [control]="documentsDictumXStateMForm.get('userReceipt')">
             <input
               type="text"
               class="form-control"
               formControlName="userReceipt" />
+          </form-field> -->
+          <form-field [control]="documentsDictumXStateMForm.get('userReceipt')">
+            <ngx-select
+              label="Usuario Recibió"
+              [form]="documentsDictumXStateMForm"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="userReceipt"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="id"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ngx-select>
+            <ng-template #userLabel let-item="item">
+              {{ item.id + ' - ' + item.name }}
+            </ng-template>
+            <ng-template #userOption let-item="item">
+              <div [title]="item.id + '-' + item.name">
+                {{ item.id + ' - ' + item.name }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
 
@@ -151,8 +194,9 @@
               bsDatepicker
               required
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
-              }" />
+                dateInputFormat: 'DD/MM/YYYY'
+              }"
+              readonly />
           </form-field>
         </div>
 
@@ -164,7 +208,8 @@
               type="text"
               class="form-control"
               [max-length]="30"
-              formControlName="userInsertion" />
+              formControlName="userInsertion"
+              readonly />
           </form-field>
         </div>
 
@@ -178,7 +223,7 @@
               bsDatepicker
               required
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
+                dateInputFormat: 'DD/MM/YYYY'
               }" />
           </form-field>
         </div>

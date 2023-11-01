@@ -6,7 +6,7 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
@@ -18,6 +18,8 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { SubDelegationService } from 'src/app/core/services/maintenance-delegations/subdelegation.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -55,6 +57,12 @@ export class ReportComponent extends BasePage implements OnInit {
     adaptivePosition: true,
     dateInputFormat: 'MMMM YYYY',
   };
+  result: any;
+  result1: any;
+  noDel: number;
+  delegations: DefaultSelect = new DefaultSelect([], 0);
+  subDelegations: DefaultSelect = new DefaultSelect([], 0);
+  maxDate: Date = new Date();
   get delegation() {
     return this.reportForm.get(this.delegationField);
   }
@@ -68,7 +76,9 @@ export class ReportComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private modalService: BsModalService,
     private printFlyersService: PrintFlyersService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private parametersService: ParametersService,
+    private subDelegationService: SubDelegationService
   ) {
     super();
   }
@@ -92,6 +102,7 @@ export class ReportComponent extends BasePage implements OnInit {
       },
     });
   }
+
   getSubDelegations(params?: ListParams) {
     const paramsF = new FilterParams();
     paramsF.addFilter(
@@ -138,6 +149,7 @@ export class ReportComponent extends BasePage implements OnInit {
       PF_MES: [null, [Validators.required]],
       PF_ANIO: [null, [Validators.required]],
     });
+    this.reportForm.get('subdelegation').disable();
   }
 
   save() {}
@@ -168,6 +180,7 @@ export class ReportComponent extends BasePage implements OnInit {
 
   cleanForm(): void {
     this.reportForm.reset();
+    this.reportForm.get('subdelegation').disable();
   }
 
   Generar() {
@@ -207,4 +220,90 @@ export class ReportComponent extends BasePage implements OnInit {
         }
       });
   }
+
+  async getCatalogDelegation(params: ListParams) {
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const year = today.getFullYear();
+    const SYSDATE = `${year}/${month}/${day}`;
+    const etapa = await this.getFaStageCreda(SYSDATE);
+    params['filter.etapaEdo'] = `$eq:${etapa}`;
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.description'] = `$ilike:${params.text}`;
+      }
+    }
+    this.delegationService.getAll(params).subscribe({
+      next: resp => {
+        console.log(resp.data);
+        this.result = resp.data.map(async (item: any) => {
+          item['noDelDesc'] = item.id + ' - ' + item.description;
+        });
+        this.delegations = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {
+        this.delegations = new DefaultSelect();
+      },
+    });
+  }
+
+  async getFaStageCreda(data: any) {
+    return firstValueFrom(
+      this.parametersService.getFaStageCreda(data).pipe(
+        catchError(error => {
+          return of(null);
+        }),
+        map(resp => resp.stagecreated)
+      )
+    );
+  }
+
+  async changeDelegation(event: any) {
+    if (event) {
+      if (this.noDel) {
+        this.reportForm.get('subdelegation').reset();
+      }
+      this.noDel = event.id;
+      this.getSubDelegation(new ListParams());
+    }
+  }
+
+  async getSubDelegation(params: ListParams) {
+    if (this.noDel) {
+      const today = new Date();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const year = today.getFullYear();
+      const SYSDATE = `${year}/${month}/${day}`;
+      const etapa = await this.getFaStageCreda(SYSDATE);
+      params['filter.phaseEdo'] = `$eq:${etapa}`;
+      params['filter.delegationNumber'] = `$eq:${this.noDel}`;
+      if (params.text) {
+        if (!isNaN(parseInt(params.text))) {
+          params['filter.id'] = `$eq:${params.text}`;
+          params['search'] = '';
+        } else if (typeof params.text === 'string') {
+          params['filter.description'] = `$ilike:${params.text}`;
+        }
+      }
+      this.subDelegationService.getAll2(params).subscribe({
+        next: resp => {
+          console.log(resp.data);
+          this.result1 = resp.data.map(async (item: any) => {
+            item['noSubDelDesc'] = item.id + ' - ' + item.description;
+          });
+          this.subDelegations = new DefaultSelect(resp.data, resp.count);
+        },
+        error: () => {
+          this.subDelegations = new DefaultSelect();
+        },
+      });
+      this.reportForm.get('subdelegation').enable();
+    }
+  }
+  changeSubDelegation(event: any) {}
 }

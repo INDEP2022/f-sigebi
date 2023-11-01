@@ -7,6 +7,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { InconsistenciesComponent } from '../inconsistencies/inconsistencies.component';
 import { RateChangeComponent } from '../rate-change/rate-change.component';
 
+import { DatePipe } from '@angular/common';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   ListParams,
@@ -108,7 +109,8 @@ export class TaxValidationCalculationComponent
     private appraiseService: AppraiseService,
     private goodProcessService: GoodProcessService,
     private excelService: ExcelService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private datePipe: DatePipe
   ) {
     super();
     let objBase = this;
@@ -120,7 +122,7 @@ export class TaxValidationCalculationComponent
     };
     this.settings2 = {
       ...this.settings2,
-      hideSubHeader: false,
+      hideSubHeader: true,
       actions: false,
       //columns: { ...COLUMNS2 },
       columns: {
@@ -129,6 +131,7 @@ export class TaxValidationCalculationComponent
           title: 'Validación IVA',
           type: 'custom',
           sort: false,
+          filter: false,
           renderComponent: CheckboxElementComponent,
           valuePrepareFunction: (isSelected: any, row: any) => {
             console.log('valuePrepareFunction -> ', row);
@@ -143,6 +146,7 @@ export class TaxValidationCalculationComponent
         check: {
           title: 'Confirmado',
           type: 'custom',
+          filter: false,
           renderComponent: CheckboxElementComponent,
           valuePrepareFunction: (isSelected: any, row: any) => {
             console.log('valuePrepareFunction -> ', row);
@@ -168,7 +172,7 @@ export class TaxValidationCalculationComponent
     };
     this.settings3 = {
       ...this.settings,
-      hideSubHeader: false,
+      hideSubHeader: true,
       actions: false,
       columns: { ...COLUMNS3 },
     };
@@ -253,10 +257,11 @@ export class TaxValidationCalculationComponent
 
   getParametersGood(appraisal: number, value: number, dataIva: any) {
     const params = new ListParams();
-    params['filter.parameter'] = appraisal;
-    params['filter.value'] = value;
+    params['filter.parameter'] = `$ilike:${appraisal}`;
+    params['filter.value'] = `$eq:${value}`;
     console.log('params ', params);
-    this.expenseParametercomerService.getParameterModParam(params).subscribe({
+
+    this.expenseParametercomerService.getParameterModParamV2(params).subscribe({
       next: resp => {
         console.log('data getParametersGood ', resp);
         this.countParamaterGood = resp.data.length;
@@ -366,6 +371,13 @@ export class TaxValidationCalculationComponent
       status: [null],
       reference: [null],
     });
+    this.form.get('processKey').disable();
+    this.form.get('eventDate').disable();
+    this.form.get('observations').disable();
+    this.form.get('requestDate').disable();
+    this.form.get('requestType').disable();
+    this.form.get('status').disable();
+    this.form.get('reference').disable();
   }
 
   openModalRateChange(context?: Partial<RateChangeComponent>): void {
@@ -381,9 +393,10 @@ export class TaxValidationCalculationComponent
   }
 
   openModalRate(context?: Partial<RateChangeComponent>) {
+    let dataDet: any = this.dataDet;
     let config: ModalOptions = {
       initialState: {
-        dataDet: this.dataDet,
+        dataDet,
         callback: (next: boolean, data: any) => {
           if (next) {
             console.log('DataCallBack->', data);
@@ -453,7 +466,7 @@ export class TaxValidationCalculationComponent
   }
 
   getValueIva(params: ListParams) {
-    params['filter.parameter'] = 'IVA';
+    params['filter.parameter'] = `$ilike:IVA`;
     this.expenseParametercomerService.getParameterMod(params).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
@@ -483,10 +496,18 @@ export class TaxValidationCalculationComponent
   }
 
   getComerEvent(idEvent: number) {
-    this.comerGoodsRejectedService.getComerEvent('I', idEvent).subscribe(
-      resp => {
+    this.comerGoodsRejectedService.getComerEvent('I', idEvent).subscribe({
+      next: resp => {
+        console.log(resp);
         if (resp != null && resp != undefined) {
           console.log('Resp getComerEvent-> ', resp);
+          this.form.get('processKey').patchValue(resp.data[0].processKey);
+          const eventDate = this.datePipe.transform(
+            resp.data[0].eventDate,
+            'dd/MM/yyyy'
+          );
+          this.form.get('eventDate').patchValue(eventDate);
+          this.form.get('observations').patchValue(resp.data[0].observations);
           this.getComerTpEvent(idEvent);
           this.getComerStatusVta(resp.data[0].statusVtaId);
           this.getComerParameterMod(
@@ -497,15 +518,21 @@ export class TaxValidationCalculationComponent
           this.getComerJobs(idEvent);
         }
       },
-      error => {
-        console.log('Error getComerEvent-> ', error);
-      }
-    );
+      error: err => {
+        this.alert(
+          'error',
+          'Evento no Encontrado',
+          'Pruebe con otro No. Evento'
+        );
+        console.log('Error getComerEvent-> ', err);
+      },
+    });
   }
 
   getComerTpEvent(idEvent: number) {
-    this.comerUsuauTxEventService.getComerTpEvent(idEvent).subscribe(
-      resp => {
+    this.comerUsuauTxEventService.getComerTpEvent(idEvent).subscribe({
+      next: resp => {
+        console.log(resp);
         if (resp != null && resp != undefined) {
           console.log('Resp getComerTpEvent-> ', resp);
           this.form.get('requestType').patchValue(resp.data[0].description);
@@ -513,15 +540,16 @@ export class TaxValidationCalculationComponent
           this.form.get('requestType').setValue(null);
         }
       },
-      error => {
-        console.log('Error getComerTpEvent-> ', error);
-      }
-    );
+      error: err => {
+        console.log('Error getComerTpEvent-> ', err);
+      },
+    });
   }
 
   getComerStatusVta(statusVta: string) {
-    this.expenseParametercomerService.getComerStatusVta(statusVta).subscribe(
-      resp => {
+    this.expenseParametercomerService.getComerStatusVta(statusVta).subscribe({
+      next: resp => {
+        console.log(resp);
         if (resp != null && resp != undefined) {
           console.log('Resp getComerStatusVta-> ', resp);
           this.form.get('status').patchValue(resp.data[0].description);
@@ -529,17 +557,18 @@ export class TaxValidationCalculationComponent
           this.form.get('status').setValue(null);
         }
       },
-      error => {
-        console.log('Error getComerStatusVta-> ', error);
-      }
-    );
+      error: err => {
+        console.log('Error getComerStatusVta-> ', err);
+      },
+    });
   }
 
   getComerParameterMod(idEvent: number, address: string, tpsolavalId: any) {
     this.expenseParametercomerService
       .getComerParameterMod(idEvent, address, tpsolavalId, 'TP_SOL_AVAL')
-      .subscribe(
-        resp => {
+      .subscribe({
+        next: resp => {
+          console.log(resp);
           if (resp != null && resp != undefined) {
             console.log('Resp ComerParameterMod-> ', resp);
             this.form.get('reference').patchValue(resp.data[0].description);
@@ -547,15 +576,16 @@ export class TaxValidationCalculationComponent
             this.form.get('reference').setValue(null);
           }
         },
-        error => {
-          console.log('Error ComerParameterMod-> ', error);
-        }
-      );
+        error: err => {
+          console.log('Error ComerParameterMod-> ', err);
+        },
+      });
   }
 
   getComerJobs(idEvent: number) {
-    this.officeManagementService.getComerJobs(1, idEvent).subscribe(
-      resp => {
+    this.officeManagementService.getComerJobs(1, idEvent).subscribe({
+      next: resp => {
+        console.log(resp);
         if (resp != null && resp != undefined) {
           console.log('Resp ComerJobs', resp);
           this.form
@@ -565,10 +595,10 @@ export class TaxValidationCalculationComponent
           this.form.get('requestDate').setValue(null);
         }
       },
-      error => {
-        console.log('error ComerJobs-> ', error);
-      }
-    );
+      error: err => {
+        console.log('error ComerJobs-> ', err);
+      },
+    });
   }
 
   formatDate(date: Date): string {
@@ -580,6 +610,7 @@ export class TaxValidationCalculationComponent
 
   getComerAvaluo() {
     this.avaluos = [];
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -589,8 +620,8 @@ export class TaxValidationCalculationComponent
     console.log('params 1 -> ', params);
     this.appraiseService
       .getComerAvaluoWhere(this.form.get('eventId').value, 'I', params)
-      .subscribe(
-        resp => {
+      .subscribe({
+        next: resp => {
           console.log('Resp comerAvaluo', resp);
           for (let i = 0; i < resp.count; i++) {
             if (resp.data[i] != null && resp.data[i] != undefined) {
@@ -609,30 +640,35 @@ export class TaxValidationCalculationComponent
               this.data.load(this.avaluos);
               this.data.refresh();
               this.totalItems = resp.count;
+              this.loading = false;
             }
           }
         },
-        error => {
-          console.log('Error comerAvaluo-> ', error);
-        }
-      );
+        error: err => {
+          console.log('Error comerAvaluo-> ', err);
+          this.data.load([]);
+          this.totalItems = 0;
+          this.loading = false;
+        },
+      });
   }
 
   selectRows(rows: any[]) {
     this.dataDetArr = [];
     console.log('row ', rows);
     if (rows.length > 0) {
-      //this.flagDetail = false;
+      this.flagDetail = true;
       this.flagCambio = true;
       this.selectedRows = rows;
       console.log('Rows Selected->', this.selectedRows);
       console.log('SelectRows', this.selectedRows[0].id);
       this.appraisal = this.selectedRows[0].id;
+      this.loading = true;
       this.getComerDetAvaluo(this.appraisal);
     } else {
       this.flagCambio = false;
       this.selectedRows = [];
-      //this.flagDetail = true;
+      this.flagDetail = true;
     }
   }
 
@@ -642,6 +678,7 @@ export class TaxValidationCalculationComponent
     console.log('row ', rows);
     if (rows.length > 0) {
       this.flagTotal = true;
+      this.loading = true;
       this.flagDetail = false;
       this.selectedRows = rows;
       console.log('Rows Selected->', this.selectedRows);
@@ -664,6 +701,8 @@ export class TaxValidationCalculationComponent
       aux.push(push3);
       this.data3.load(aux);
       this.data3.refresh;
+      this.totalItems3 = 1;
+      this.loading = false;
     } else {
       this.flagTotal = false;
       console.log('row ', this.selectedRows);
@@ -672,6 +711,8 @@ export class TaxValidationCalculationComponent
       let aux: any[] = [];
       this.data3.load(aux);
       this.data3.refresh;
+      this.totalItems3 = 0;
+      this.loading = false;
     }
   }
 
@@ -734,7 +775,7 @@ export class TaxValidationCalculationComponent
     this.search();
   }
 
-  getComerDetAvaluo(appraisal: number) {
+  async getComerDetAvaluo(appraisal: number) {
     this.Detavaluos = [];
     this.data2.load(this.Detavaluos);
     this.data2.refresh();
@@ -788,439 +829,480 @@ export class TaxValidationCalculationComponent
 
     let observation: any;
     console.log('parmas2 -> ', params2);
-    this.appraiseService.getComerDetAvaluo(appraisal, 'CPV', params2).subscribe(
-      resp => {
-        console.log('Resp ComerDetAvaluo-> ', resp);
-        this.totalItems2 += resp.count;
-        if (resp != null && resp != undefined) {
-          /**INICIO pupValidaReg */
-          this.V_VRI =
-            Number(this.nvl(resp.data[0].vTerrain)) +
-            Number(this.nvl(resp.data[0].vConstruction)) +
-            Number(this.nvl(resp.data[0].vConstructionEat)) +
-            Number(this.nvl(resp.data[0].vInstallationsEsp)) +
-            Number(this.nvl(resp.data[0].vOthers));
-          /** Mapeo de campos operacion servicio Tabla */
-          let porcentTerrain = this.roundPercentage(
-            (resp.data[0].vTerrain * 100) / resp.data[0].vri
-          );
+    this.appraiseService
+      .getComerDetAvaluo(appraisal, 'CPV', params2)
+      .subscribe({
+        next: async resp => {
+          console.log('Resp ComerDetAvaluo-> ', resp);
+          this.totalItems2 += resp.count;
+          if (resp != null && resp != undefined) {
+            /**INICIO pupValidaReg */
+            this.V_VRI =
+              Number(this.nvl(resp.data[0].vTerrain)) +
+              Number(this.nvl(resp.data[0].vConstruction)) +
+              Number(this.nvl(resp.data[0].vConstructionEat)) +
+              Number(this.nvl(resp.data[0].vInstallationsEsp)) +
+              Number(this.nvl(resp.data[0].vOthers));
+            /** Mapeo de campos operacion servicio Tabla */
+            let porcentTerrain = this.roundPercentage(
+              (resp.data[0].vTerrain * 100) / resp.data[0].vri
+            );
 
-          let porcentHousing = this.roundPercentage(
-            (resp.data[0].vConstruction * 100) / resp.data[0].vri
-          );
+            let porcentHousing = this.roundPercentage(
+              (resp.data[0].vConstruction * 100) / resp.data[0].vri
+            );
 
-          let porcentCommercial = this.roundPercentage(
-            (resp.data[0].vConstructionEat * 100) / resp.data[0].vri
-          );
+            let porcentCommercial = this.roundPercentage(
+              (resp.data[0].vConstructionEat * 100) / resp.data[0].vri
+            );
 
-          let porcentSpecial = this.roundPercentage(
-            (resp.data[0].vInstallationsEsp * 100) / resp.data[0].vri
-          );
+            let porcentSpecial = this.roundPercentage(
+              (resp.data[0].vInstallationsEsp * 100) / resp.data[0].vri
+            );
 
-          let porcentOthers = this.roundPercentage(
-            (resp.data[0].vOthers * 100) / resp.data[0].vri
-          );
+            let porcentOthers = this.roundPercentage(
+              (resp.data[0].vOthers * 100) / resp.data[0].vri
+            );
 
-          console.log('Params SalidaRound-> ', porcentTerrain);
-          console.log('Params SalidaRound2-> ', porcentHousing);
-          console.log('Params SalidaRound3-> ', porcentCommercial);
+            console.log('Params SalidaRound-> ', porcentTerrain);
+            console.log('Params SalidaRound2-> ', porcentHousing);
+            console.log('Params SalidaRound3-> ', porcentCommercial);
 
-          /**------------------ */
-          let porcentTotal =
-            porcentTerrain +
-            porcentHousing +
-            porcentCommercial +
-            porcentSpecial +
-            porcentOthers;
-
-          if (porcentTotal > 100) {
-            v_porcen_aux = porcentTotal - 100;
-            if (this.nvl(porcentCommercial) > 0) {
-              v_proc_a = porcentCommercial;
-            }
-            if (this.nvl(porcentHousing) > 0) {
-              v_proc_b = porcentHousing;
-            }
-            if (this.nvl(porcentSpecial)) {
-              v_proc_c = porcentSpecial;
-            }
-            if (this.nvl(porcentOthers)) {
-              v_proc_d = porcentOthers;
-            }
-            if (this.nvl(porcentTerrain)) {
-              v_proc_e = porcentTerrain;
-            }
-
-            v_proc_aux = v_proc_a;
-
-            if (v_proc_b >= v_proc_aux) {
-              v_proc_aux = v_proc_b;
-            } else if (v_proc_c >= v_proc_aux) {
-              v_proc_aux = v_proc_c;
-            } else if (v_proc_d >= v_proc_aux) {
-              v_proc_aux = v_proc_d;
-            } else if (v_proc_e >= v_proc_aux) {
-              v_proc_aux = v_proc_e;
-            }
-
-            /**Asignación porcentual del de mayor peso porcentual,  según la siguiente secuencia  (comercial, habitacional, especial, otros, terreno) */
-            if (porcentCommercial == v_proc_aux) {
-              porcentCommercial = porcentCommercial - v_porcen_aux;
-            } else if (porcentSpecial == v_proc_aux) {
-              porcentSpecial = porcentSpecial - v_porcen_aux;
-            } else if (porcentOthers == v_proc_aux) {
-              porcentOthers = porcentOthers - v_porcen_aux;
-            } else if (porcentHousing == v_proc_aux) {
-              porcentHousing = porcentHousing - v_porcen_aux;
-            } else {
-              porcentTerrain = porcentTerrain - v_porcen_aux;
-            }
-
-            porcentOthers =
+            /**------------------ */
+            let porcentTotal =
               porcentTerrain +
-              porcentCommercial +
               porcentHousing +
+              porcentCommercial +
               porcentSpecial +
               porcentOthers;
-          } else if (porcentTotal < 100) {
-            v_porcen_aux = 100 - porcentTotal;
-            if (porcentCommercial == 0) {
-              if (porcentSpecial == 0) {
-                if (porcentOthers == 0) {
+
+            if (porcentTotal > 100) {
+              v_porcen_aux = porcentTotal - 100;
+              if (this.nvl(porcentCommercial) > 0) {
+                v_proc_a = porcentCommercial;
+              }
+              if (this.nvl(porcentHousing) > 0) {
+                v_proc_b = porcentHousing;
+              }
+              if (this.nvl(porcentSpecial)) {
+                v_proc_c = porcentSpecial;
+              }
+              if (this.nvl(porcentOthers)) {
+                v_proc_d = porcentOthers;
+              }
+              if (this.nvl(porcentTerrain)) {
+                v_proc_e = porcentTerrain;
+              }
+
+              v_proc_aux = v_proc_a;
+
+              if (v_proc_b >= v_proc_aux) {
+                v_proc_aux = v_proc_b;
+              } else if (v_proc_c >= v_proc_aux) {
+                v_proc_aux = v_proc_c;
+              } else if (v_proc_d >= v_proc_aux) {
+                v_proc_aux = v_proc_d;
+              } else if (v_proc_e >= v_proc_aux) {
+                v_proc_aux = v_proc_e;
+              }
+
+              /**Asignación porcentual del de mayor peso porcentual,  según la siguiente secuencia  (comercial, habitacional, especial, otros, terreno) */
+              if (porcentCommercial == v_proc_aux) {
+                porcentCommercial = porcentCommercial - v_porcen_aux;
+              } else if (porcentSpecial == v_proc_aux) {
+                porcentSpecial = porcentSpecial - v_porcen_aux;
+              } else if (porcentOthers == v_proc_aux) {
+                porcentOthers = porcentOthers - v_porcen_aux;
+              } else if (porcentHousing == v_proc_aux) {
+                porcentHousing = porcentHousing - v_porcen_aux;
+              } else {
+                porcentTerrain = porcentTerrain - v_porcen_aux;
+              }
+
+              porcentOthers =
+                porcentTerrain +
+                porcentCommercial +
+                porcentHousing +
+                porcentSpecial +
+                porcentOthers;
+            } else if (porcentTotal < 100) {
+              v_porcen_aux = 100 - porcentTotal;
+              if (porcentCommercial == 0) {
+                if (porcentSpecial == 0) {
                   if (porcentOthers == 0) {
-                    porcentTerrain = porcentTerrain + v_porcen_aux;
+                    if (porcentOthers == 0) {
+                      porcentTerrain = porcentTerrain + v_porcen_aux;
+                    } else {
+                      porcentHousing = porcentHousing + v_porcen_aux;
+                    }
                   } else {
-                    porcentHousing = porcentHousing + v_porcen_aux;
+                    porcentOthers = porcentOthers + v_porcen_aux;
                   }
                 } else {
-                  porcentOthers = porcentOthers + v_porcen_aux;
+                  porcentSpecial = porcentSpecial + v_porcen_aux;
                 }
               } else {
-                porcentSpecial = porcentSpecial + v_porcen_aux;
+                porcentCommercial = porcentCommercial + v_porcen_aux;
               }
-            } else {
-              porcentCommercial = porcentCommercial + v_porcen_aux;
+              porcentOthers =
+                porcentTerrain +
+                porcentHousing +
+                porcentCommercial +
+                porcentSpecial +
+                porcentOthers;
             }
-            porcentOthers =
-              porcentTerrain +
-              porcentHousing +
-              porcentCommercial +
-              porcentSpecial +
-              porcentOthers;
-          }
 
-          /**Información convertida a caracter por incluir en su caso leyenda (Para terreno). */
-          console.log('rateIvaTerrain-> ', resp.data[0].rateIvaTerrain);
-          if (resp.data[0].rateIvaTerrain == null) {
-            terrainRate = 'EXENTO';
-            terrainIva = 'N/A';
-            console.log('terrainIva-> ', terrainIva);
-          } else {
-            terrainRate = String(resp.data[0].rateIvaTerrain * 100);
-            v_mascara_terreno = String(
-              this.roundPercentage(
-                this.nvl(
-                  (porcentTerrain / 100) *
-                    resp.data[0].rateIvaTerrain *
+            /**Información convertida a caracter por incluir en su caso leyenda (Para terreno). */
+            console.log('rateIvaTerrain-> ', resp.data[0].rateIvaTerrain);
+            if (resp.data[0].rateIvaTerrain == null) {
+              terrainRate = 'EXENTO';
+              terrainIva = 'N/A';
+              console.log('terrainIva-> ', terrainIva);
+            } else {
+              terrainRate = String(resp.data[0].rateIvaTerrain * 100);
+              v_mascara_terreno = String(
+                this.roundPercentage(
+                  this.nvl(
+                    (porcentTerrain / 100) *
+                      resp.data[0].rateIvaTerrain *
+                      this.V_VRI
+                  )
+                )
+              );
+              //console.log('v_mascara_terreno-> ', v_mascara_terreno);
+              //console.log('terrainIva-> ', terrainIva);
+              let terreno = this.Substr(v_mascara_terreno);
+              if (terreno) {
+                //console.log('PRueba ---> ', terreno);
+                terrainIva = terreno;
+              } else {
+                terrainIva = v_mascara_terreno;
+              }
+            }
+            //console.log('Resp terrainIva FInal-> ', terrainIva);
+
+            /**Información convertida a caracter por incluir en su caso leyenda (Para habitacional). */
+            if (resp.data[0].rateIvaConstrHab == null) {
+              rateHousing = 'EXENTO';
+              ivaHousing = 'N/A';
+            } else {
+              rateHousing = String(resp.data[0].rateIvaConstrHab * 100);
+              v_mascara_habit = String(
+                this.roundPercentage(
+                  this.nvl(porcentHousing / 100) *
+                    resp.data[0].rateIvaConstrHab *
                     this.V_VRI
                 )
-              )
-            );
-            //console.log('v_mascara_terreno-> ', v_mascara_terreno);
-            //console.log('terrainIva-> ', terrainIva);
-            let terreno = this.Substr(v_mascara_terreno);
-            if (terreno) {
-              //console.log('PRueba ---> ', terreno);
-              terrainIva = terreno;
-            } else {
-              terrainIva = v_mascara_terreno;
-            }
-          }
-          //console.log('Resp terrainIva FInal-> ', terrainIva);
-
-          /**Información convertida a caracter por incluir en su caso leyenda (Para habitacional). */
-          if (resp.data[0].rateIvaConstrHab == null) {
-            rateHousing = 'EXENTO';
-            ivaHousing = 'N/A';
-          } else {
-            rateHousing = String(resp.data[0].rateIvaConstrHab * 100);
-            v_mascara_habit = String(
-              this.roundPercentage(
-                this.nvl(porcentHousing / 100) *
-                  resp.data[0].rateIvaConstrHab *
-                  this.V_VRI
-              )
-            );
-            let habitacion = this.Substr(v_mascara_habit);
-            if (habitacion) {
-              ivaHousing = habitacion;
-            } else {
-              ivaHousing = v_mascara_habit;
-            }
-          }
-
-          /**Información convertida a caracter por incluir en su caso leyenda (Para construción comercial). */
-          if (resp.data[0].rateIvaConstrEat == null) {
-            rateCommercial = 'EXENTO';
-            ivaCommercial = 'N/A';
-          } else {
-            rateCommercial = String(resp.data[0].rateIvaConstrEat * 100);
-            v_mascara_comer = String(
-              this.roundPercentage(
-                this.nvl(porcentCommercial / 100) *
-                  resp.data[0].rateIvaConstrEat *
-                  this.V_VRI
-              )
-            );
-            let comercial = this.Substr(v_mascara_comer);
-            if (comercial) {
-              ivaCommercial = comercial;
-            } else {
-              ivaCommercial = v_mascara_comer;
-            }
-          }
-
-          /**Información convertida a caracter por incluir en su caso leyenda (Para instalaciones especiales). */
-          if (resp.data[0].rateIvaInstEsp == null) {
-            rateSpecials = 'EXENTO';
-            ivaSpecial = 'N/A';
-          } else {
-            rateSpecials = String(resp.data[0].rateIvaInstEsp * 100);
-            v_mascara_especiales = String(
-              this.roundPercentage(
-                this.nvl(porcentSpecial / 100) *
-                  resp.data[0].rateIvaInstEsp *
-                  this.V_VRI
-              )
-            );
-            let especial = this.Substr(v_mascara_especiales);
-            if (especial) {
-              ivaSpecial = especial;
-            } else {
-              ivaSpecial = v_mascara_especiales;
-            }
-          }
-
-          /**Información convertida a caracter por incluir en su caso leyenda (Para otros). */
-          if (resp.data[0].rateIvaOtros == null) {
-            rateOthers = 'EXENTO';
-            ivaOthers = 'N/A';
-          } else {
-            rateOthers = String(resp.data[0].rateIvaOtros * 100);
-            v_mascara_otros = String(
-              this.roundPercentage(
-                this.nvl(porcentOthers / 100) *
-                  resp.data[0].rateIvaOtros *
-                  this.V_VRI
-              )
-            );
-            let otros = this.Substr(v_mascara_otros);
-            if (otros) {
-              ivaOthers = otros;
-            } else {
-              ivaOthers = v_mascara_otros;
-            }
-          }
-
-          if (terrainIva == 'N/A') {
-            V_SUMA_IVA_TERRENO = 0;
-          } else {
-            V_SUMA_IVA_TERRENO = Number(terrainIva);
-          }
-          if (ivaHousing == 'N/A') {
-            V_SUMA_IVA_HABITACIONAL = 0;
-          } else {
-            V_SUMA_IVA_HABITACIONAL = Number(ivaHousing);
-          }
-
-          if (ivaCommercial == 'N/A') {
-            V_SUMA_IVA_CONSTRUCION = 0;
-          } else {
-            V_SUMA_IVA_CONSTRUCION = Number(ivaCommercial);
-          }
-
-          if (ivaSpecial == 'N/A') {
-            V_SUMA_IVA_INSTALACIONES_ESP = 0;
-          } else {
-            V_SUMA_IVA_INSTALACIONES_ESP = Number(ivaSpecial);
-          }
-
-          if (ivaOthers == 'N/A') {
-            V_SUMA_IVA_OTROS = 0;
-          } else {
-            V_SUMA_IVA_OTROS = Number(ivaOthers);
-          }
-
-          valueIvaTotalCalculated =
-            V_SUMA_IVA_TERRENO +
-            V_SUMA_IVA_HABITACIONAL +
-            V_SUMA_IVA_CONSTRUCION +
-            V_SUMA_IVA_INSTALACIONES_ESP +
-            V_SUMA_IVA_OTROS;
-
-          product =
-            (this.nvl(porcentTerrain) / 100) * this.V_VRI +
-            (this.nvl(porcentHousing) / 100) * this.V_VRI +
-            (this.nvl(porcentCommercial) / 100) * this.V_VRI +
-            (this.nvl(porcentSpecial) / 100) * this.V_VRI +
-            (this.nvl(porcentOthers) / 100) * this.V_VRI;
-
-          totalAccount = this.V_VRI + this.nvl(valueIvaTotalCalculated);
-
-          difference = this.V_VRI - resp.data[0].vri;
-
-          if (observation != null && !observation.includes('Tasa 0')) {
-            porcentTerrain = null;
-            porcentCommercial = null;
-            porcentHousing = null;
-            porcentSpecial = null;
-            porcentOthers = null;
-            porcentTotal = null;
-            difference = null;
-            terrainIva = '';
-            terrainRate = '';
-            ivaCommercial = '';
-            rateCommercial = '';
-            ivaHousing = '';
-            rateHousing = '';
-            ivaSpecial = '';
-            rateSpecials = '';
-            ivaOthers = '';
-            rateOthers = '';
-            totalAccount = null;
-          }
-          /**Falta Servicio comer_parametrosmod Para botón tabla VALIDACION */
-          let bodyAux = {
-            avaluoNumber: this.appraisal,
-            goodNumber: resp.data[0].good.goodId,
-          };
-          let body = {
-            avaluoNumber: this.appraisal,
-            goodNumber: resp.data[0].good.goodId,
-          };
-          const params = new ListParams();
-          params['filter.parameter'] = this.appraisal;
-          params['filter.value'] = resp.data[0].good.goodId;
-          params['filter.address'] = 'I';
-          console.log('params qqq', params);
-          // this.expenseParametercomerService
-          //   .postComerParametersMod(body)
-          //   .subscribe(valid => {
-          //     if (valid != null && valid != undefined) {
-          //       this.v_valor = valid.descripcion;
-          //       console.log('CheckBox-> ', this.v_valor);
-          //     }
-          //   });
-          this.expenseParametercomerService
-            .getParameterModParam(params)
-            .subscribe(valid => {
-              if (valid != null && valid != undefined) {
-                this.v_valor = valid.data[0].description;
-                console.log('CheckBox-> ', valid);
+              );
+              let habitacion = this.Substr(v_mascara_habit);
+              if (habitacion) {
+                ivaHousing = habitacion;
+              } else {
+                ivaHousing = v_mascara_habit;
               }
-            });
-          /**FINAL pupValidaReg */
-          this.goodProcessService
-            .getComerDetAvaluoAll(resp.data[0].noGood)
-            .subscribe(response => {
-              console.log('Resp getComerDetAvaluoAll-> ', response);
+            }
 
-              let params2 = {
-                idDetAppraisal1: resp.data[0].idDetAppraisal,
-                idDetAppraisal: resp.data[0].idAppraisal,
-                goodId: resp.data[0].good.goodId,
-                description: response.data[0].descripcion,
-                status: response.data[0].estatus,
-                goodClassNumber: response.data[0].no_clasif_bien,
-                descSssubtipo: response.data[0].desc_sssubtipo,
-                descSsubtipo: response.data[0].desc_ssubtipo,
-                descSubtipo: response.data[0].desc_subtipo,
-                desc_tipo: response.data[0].desc_tipo,
-                appraisalDate: this.formatDate(
-                  new Date(resp.data[0].appraisalDate)
-                ),
-                vigAppraisalDate: this.formatDate(
-                  new Date(resp.data[0].good.appraisalVigDate)
-                ),
-                nameAppraiser: resp.data[0].nameAppraiser,
-                refAppraisal: resp.data[0].refAppraisal,
-                terrainSurface: this.split(resp.data[0].good.val5),
-                surfaceConstru: this.split(resp.data[0].good.val5),
-                terrainPorcentage: porcentTerrain,
-                porcentageHousing: porcentHousing,
-                porcentageCommercial: porcentCommercial,
-                porcentageSpecials: porcentSpecial,
-                porcentageOthers: porcentOthers,
-                porcentageTotal: porcentTotal,
-                vri: resp.data[0].vri,
-                vTerrain: resp.data[0].vTerrain,
-                vConstruction: resp.data[0].vConstruction,
-                vConstructionEat: resp.data[0].vConstructionEat,
-                vInstallationsEsp: resp.data[0].vInstallationsEsp,
-                vOthers: resp.data[0].vOthers,
-                product: product,
-                difference: difference,
-                terrainRate:
-                  this.terrainRate != null
-                    ? this.rateCommercial
-                    : this.deletDecim(rateCommercial),
-                rateHousing:
-                  this.rateHousing != null
-                    ? this.rateCommercial
-                    : this.deletDecim(rateCommercial),
-                rateCommercial:
-                  this.rateCommercial != null
-                    ? this.rateCommercial
-                    : this.deletDecim(terrainRate),
-                rateSpecials:
-                  this.rateSpecials != null
-                    ? this.rateCommercial
-                    : this.deletDecim(rateCommercial),
-                rateOthers:
-                  this.rateOthers != null
-                    ? this.rateCommercial
-                    : this.deletDecim(rateCommercial),
-                terrainIva:
-                  this.IVA_TERRENO != null ? this.IVA_TERRENO : terrainIva,
-                ivaHousing:
-                  this.IVA_CONS_HABITACIONAL != null
-                    ? this.IVA_CONS_HABITACIONAL
-                    : ivaHousing,
-                ivaCommercial:
-                  this.IVA_CONSTRUCION != null
-                    ? this.IVA_CONSTRUCION
-                    : ivaCommercial,
-                ivaSpecial:
-                  this.IVA_INSTALACIONES_ESP != null
-                    ? this.IVA_INSTALACIONES_ESP
-                    : ivaSpecial,
-                ivaOthers: this.IVA_OTROS != null ? this.IVA_OTROS : ivaOthers,
-                valueIvaTotalCalculated: valueIvaTotalCalculated,
-                totalAccount: totalAccount,
-                observation: resp.data[0].observations,
-                validIVA: this.v_valor,
-                check: resp.data[0].approved,
-                goodDescription: resp.data[0].good.description,
-                auxTasaIvaTerren: terrainRate,
-                auxTerrainIva: terrainIva,
-                vriIva: resp.data[0].vriIva,
-                //auxObservations:
-              };
-              this.dataDet = params2;
-              this.dataDetArr.push(params2);
-              this.Detavaluos.push(params2);
-              this.data2.load(this.Detavaluos);
-              this.data2.refresh();
-              //this.totalItems2 = resp.count;
-              console.log('Avaluos -->', this.Detavaluos);
-              console.log('this.data2 -->', this.data2);
-            });
-        }
-      },
-      error => {
-        console.log('Error ComerDetAvaluo-> ', error);
-      }
-    );
+            /**Información convertida a caracter por incluir en su caso leyenda (Para construción comercial). */
+            if (resp.data[0].rateIvaConstrEat == null) {
+              rateCommercial = 'EXENTO';
+              ivaCommercial = 'N/A';
+            } else {
+              rateCommercial = String(resp.data[0].rateIvaConstrEat * 100);
+              v_mascara_comer = String(
+                this.roundPercentage(
+                  this.nvl(porcentCommercial / 100) *
+                    resp.data[0].rateIvaConstrEat *
+                    this.V_VRI
+                )
+              );
+              let comercial = this.Substr(v_mascara_comer);
+              if (comercial) {
+                ivaCommercial = comercial;
+              } else {
+                ivaCommercial = v_mascara_comer;
+              }
+            }
+
+            /**Información convertida a caracter por incluir en su caso leyenda (Para instalaciones especiales). */
+            if (resp.data[0].rateIvaInstEsp == null) {
+              rateSpecials = 'EXENTO';
+              ivaSpecial = 'N/A';
+            } else {
+              rateSpecials = String(resp.data[0].rateIvaInstEsp * 100);
+              v_mascara_especiales = String(
+                this.roundPercentage(
+                  this.nvl(porcentSpecial / 100) *
+                    resp.data[0].rateIvaInstEsp *
+                    this.V_VRI
+                )
+              );
+              let especial = this.Substr(v_mascara_especiales);
+              if (especial) {
+                ivaSpecial = especial;
+              } else {
+                ivaSpecial = v_mascara_especiales;
+              }
+            }
+
+            /**Información convertida a caracter por incluir en su caso leyenda (Para otros). */
+            if (resp.data[0].rateIvaOtros == null) {
+              rateOthers = 'EXENTO';
+              ivaOthers = 'N/A';
+            } else {
+              rateOthers = String(resp.data[0].rateIvaOtros * 100);
+              v_mascara_otros = String(
+                this.roundPercentage(
+                  this.nvl(porcentOthers / 100) *
+                    resp.data[0].rateIvaOtros *
+                    this.V_VRI
+                )
+              );
+              let otros = this.Substr(v_mascara_otros);
+              if (otros) {
+                ivaOthers = otros;
+              } else {
+                ivaOthers = v_mascara_otros;
+              }
+            }
+
+            if (terrainIva == 'N/A') {
+              V_SUMA_IVA_TERRENO = 0;
+            } else {
+              V_SUMA_IVA_TERRENO = Number(terrainIva);
+            }
+            if (ivaHousing == 'N/A') {
+              V_SUMA_IVA_HABITACIONAL = 0;
+            } else {
+              V_SUMA_IVA_HABITACIONAL = Number(ivaHousing);
+            }
+
+            if (ivaCommercial == 'N/A') {
+              V_SUMA_IVA_CONSTRUCION = 0;
+            } else {
+              V_SUMA_IVA_CONSTRUCION = Number(ivaCommercial);
+            }
+
+            if (ivaSpecial == 'N/A') {
+              V_SUMA_IVA_INSTALACIONES_ESP = 0;
+            } else {
+              V_SUMA_IVA_INSTALACIONES_ESP = Number(ivaSpecial);
+            }
+
+            if (ivaOthers == 'N/A') {
+              V_SUMA_IVA_OTROS = 0;
+            } else {
+              V_SUMA_IVA_OTROS = Number(ivaOthers);
+            }
+
+            valueIvaTotalCalculated =
+              V_SUMA_IVA_TERRENO +
+              V_SUMA_IVA_HABITACIONAL +
+              V_SUMA_IVA_CONSTRUCION +
+              V_SUMA_IVA_INSTALACIONES_ESP +
+              V_SUMA_IVA_OTROS;
+
+            product =
+              (this.nvl(porcentTerrain) / 100) * this.V_VRI +
+              (this.nvl(porcentHousing) / 100) * this.V_VRI +
+              (this.nvl(porcentCommercial) / 100) * this.V_VRI +
+              (this.nvl(porcentSpecial) / 100) * this.V_VRI +
+              (this.nvl(porcentOthers) / 100) * this.V_VRI;
+
+            totalAccount = this.V_VRI + this.nvl(valueIvaTotalCalculated);
+
+            difference = this.V_VRI - resp.data[0].vri;
+
+            if (observation != null && !observation.includes('Tasa 0')) {
+              porcentTerrain = null;
+              porcentCommercial = null;
+              porcentHousing = null;
+              porcentSpecial = null;
+              porcentOthers = null;
+              porcentTotal = null;
+              difference = null;
+              terrainIva = '';
+              terrainRate = '';
+              ivaCommercial = '';
+              rateCommercial = '';
+              ivaHousing = '';
+              rateHousing = '';
+              ivaSpecial = '';
+              rateSpecials = '';
+              ivaOthers = '';
+              rateOthers = '';
+              totalAccount = null;
+            }
+            /**Falta Servicio comer_parametrosmod Para botón tabla VALIDACION */
+            let bodyAux = {
+              avaluoNumber: this.appraisal,
+              goodNumber: resp.data[0].good.goodId,
+            };
+            let body = {
+              avaluoNumber: this.appraisal,
+              goodNumber: resp.data[0].good.goodId,
+            };
+            const params = new ListParams();
+            params['filter.parameter'] = `$ilike:${this.appraisal}`;
+            params['filter.value'] = `$eq:${resp.data[0].good.goodId}`;
+            params['filter.address'] = '$ilike:I';
+            console.log('params qqq', params);
+
+            let getV_Valor = await this.getV_Valor(
+              this.appraisal,
+              resp.data[0].good.goodId,
+              'I',
+              new ListParams()
+            );
+            let dataGetV_Valor: any = getV_Valor;
+            if (getV_Valor != null) {
+              this.v_valor = dataGetV_Valor.data[0].description;
+            } else {
+              this.v_valor = '';
+            }
+            // this.expenseParametercomerService
+            //   .postComerParametersMod(body)
+            //   .subscribe(valid => {
+            //     if (valid != null && valid != undefined) {
+            //       this.v_valor = valid.descripcion;
+            //       console.log('CheckBox-> ', this.v_valor);
+            //     }
+            //   });
+            this.expenseParametercomerService
+              .getParameterModParamV2(params)
+              .subscribe(valid => {
+                console.log(valid);
+                if (valid != null && valid != undefined) {
+                  this.v_valor = valid.data[0].description;
+                  console.log('CheckBox-> ', valid);
+                }
+              });
+            /**FINAL pupValidaReg */
+            this.goodProcessService
+              .getComerDetAvaluoAll(resp.data[0].noGood)
+              .subscribe(response => {
+                console.log('Resp getComerDetAvaluoAll-> ', response);
+
+                let params2 = {
+                  idDetAppraisal1: resp.data[0].idDetAppraisal,
+                  idDetAppraisal: resp.data[0].idAppraisal,
+                  goodId: resp.data[0].good.goodId,
+                  description: response.data[0].descripcion,
+                  status: response.data[0].estatus,
+                  goodClassNumber: response.data[0].no_clasif_bien,
+                  descSssubtipo: response.data[0].desc_sssubtipo,
+                  descSsubtipo: response.data[0].desc_ssubtipo,
+                  descSubtipo: response.data[0].desc_subtipo,
+                  desc_tipo: response.data[0].desc_tipo,
+                  appraisalDate: this.formatDate(
+                    new Date(resp.data[0].appraisalDate)
+                  ),
+                  vigAppraisalDate: this.formatDate(
+                    new Date(resp.data[0].good.appraisalVigDate)
+                  ),
+                  nameAppraiser: resp.data[0].nameAppraiser,
+                  refAppraisal: resp.data[0].refAppraisal,
+                  terrainSurface: this.split(resp.data[0].good.val5),
+                  surfaceConstru: this.split(resp.data[0].good.val5),
+                  terrainPorcentage: porcentTerrain,
+                  porcentageHousing: porcentHousing,
+                  porcentageCommercial: porcentCommercial,
+                  porcentageSpecials: porcentSpecial,
+                  porcentageOthers: porcentOthers,
+                  porcentageTotal: porcentTotal,
+                  vri: resp.data[0].vri,
+                  vTerrain: resp.data[0].vTerrain,
+                  vConstruction: resp.data[0].vConstruction,
+                  vConstructionEat: resp.data[0].vConstructionEat,
+                  vInstallationsEsp: resp.data[0].vInstallationsEsp,
+                  vOthers: resp.data[0].vOthers,
+                  product: product,
+                  difference: difference,
+                  terrainRate:
+                    this.terrainRate != null
+                      ? this.terrainRate
+                      : this.deletDecim(terrainRate),
+                  rateHousing:
+                    this.rateHousing != null
+                      ? this.rateHousing
+                      : this.deletDecim(rateHousing),
+                  rateCommercial:
+                    this.rateCommercial != null
+                      ? this.rateCommercial
+                      : this.deletDecim(terrainRate),
+                  rateSpecials:
+                    this.rateSpecials != null
+                      ? this.rateSpecials
+                      : this.deletDecim(rateSpecials),
+                  rateOthers:
+                    this.rateOthers != null
+                      ? this.rateOthers
+                      : this.deletDecim(rateOthers),
+                  terrainIva:
+                    this.IVA_TERRENO != null ? this.IVA_TERRENO : terrainIva,
+                  ivaHousing:
+                    this.IVA_CONS_HABITACIONAL != null
+                      ? this.IVA_CONS_HABITACIONAL
+                      : ivaHousing,
+                  ivaCommercial:
+                    this.IVA_CONSTRUCION != null
+                      ? this.IVA_CONSTRUCION
+                      : ivaCommercial,
+                  ivaSpecial:
+                    this.IVA_INSTALACIONES_ESP != null
+                      ? this.IVA_INSTALACIONES_ESP
+                      : ivaSpecial,
+                  ivaOthers:
+                    this.IVA_OTROS != null ? this.IVA_OTROS : ivaOthers,
+                  valueIvaTotalCalculated: valueIvaTotalCalculated,
+                  totalAccount: totalAccount,
+                  observation: resp.data[0].observations,
+                  validIVA: this.v_valor,
+                  check: resp.data[0].approved,
+                  goodDescription: resp.data[0].good.description,
+                  auxTasaIvaTerren: terrainRate,
+                  auxTerrainIva: terrainIva,
+                  vriIva: resp.data[0].vriIva,
+                  //auxObservations:
+                };
+                this.dataDet = params2;
+                this.dataDetArr.push(params2);
+                this.Detavaluos.push(params2);
+                this.data2.load(this.Detavaluos);
+                this.data2.refresh();
+                this.loading = false;
+                //this.totalItems2 = resp.count;
+                console.log('Avaluos -->', this.Detavaluos);
+                console.log('this.data2 -->', this.data2);
+              });
+          }
+        },
+        error: err => {
+          console.log('Error ComerDetAvaluo-> ', err);
+        },
+      });
+  }
+
+  async getV_Valor(
+    parameter: string,
+    value: number,
+    address: string,
+    params: ListParams
+  ) {
+    return new Promise((resolve, reject) => {
+      params['filter.parameter'] = `$ilike:${parameter}`;
+      params['filter.value'] = `$eq:${value}`;
+      params['filter.address'] = `$ilike:${address}`;
+      this.expenseParametercomerService
+        .getParameterModParamV2(params)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
+    });
   }
 
   roundPercentage(percentage: number): number {
@@ -1391,11 +1473,10 @@ export class TaxValidationCalculationComponent
     console.log('deletDecim-> ', Math.floor(numero));
     return numero / 100;
   }
-
-  split(cadena: string): number | null {
+  //: number | null
+  split(cadena?: string): number | null {
     console.log('Split sin proc-> ', cadena);
     const cadenaSinGuiones = cadena.replace(/-/g, '');
-
     // Convierte la cadena en un número decimal
     const numero: number = parseFloat(cadenaSinGuiones);
     console.log('Split Numero-> ', numero);
@@ -1408,6 +1489,8 @@ export class TaxValidationCalculationComponent
   }
 
   cleanForm() {
+    this.flagCambio = false;
+    this.flagDetail = true;
     this.form.reset();
     this.data.load([]);
     this.data.refresh();

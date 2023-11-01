@@ -143,6 +143,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   getRow(user: any) {
     this.user = user.data;
     this.username = user.data.username;
+    console.log(this.username);
   }
 
   confirm() {
@@ -218,6 +219,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
       let task: any = {};
       task['id'] = 0;
+      task['reviewers'] = this.user.username;
       task['assignees'] = this.user.username;
       task['assigneesDisplayname'] = this.user.firstName;
       task['creator'] = user.username;
