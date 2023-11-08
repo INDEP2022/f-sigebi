@@ -89,7 +89,10 @@ export class NotifyAssetsImproprietyFormComponent
     const clarType: string =
       this.dataClarifications2.chatClarification.idClarificationType;
 
-    if (this.infoRequest?.typeOfTransfer == 'PGR_SAE' && clarType == '1') {
+    if (
+      (this.infoRequest?.typeOfTransfer == 'PGR_SAE' && clarType == '1') ||
+      (this.infoRequest?.typeOfTransfer == 'PGR_SAE' && clarType == '2')
+    ) {
       this.getInfoDocAclaration(this.infoRequest.typeOfTransfer, clarType);
     }
     if (this.infoRequest?.typeOfTransfer == 'MANUAL' && clarType == '1') {
@@ -115,7 +118,10 @@ export class NotifyAssetsImproprietyFormComponent
 
   getInfoDocAclaration(typeOfTransfer: string, clarType: string) {
     let documentTypeId: number = 0;
-    if (typeOfTransfer == 'PGR_SAE' && clarType == '1') {
+    if (
+      (typeOfTransfer == 'PGR_SAE' && clarType == '1') ||
+      (typeOfTransfer == 'PGR_SAE' && clarType == '2')
+    ) {
       documentTypeId = 211;
     }
 
@@ -433,7 +439,7 @@ export class NotifyAssetsImproprietyFormComponent
       this.aclaracionAnam();
     }
 
-    //this.saveClarificationsAcept();
+    //this.saveClarificationsAcept(); */
   }
 
   improcedenciaTransferentesVoluntarias() {
@@ -1007,7 +1013,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.loading = true;
     const checkExistDocImp: any = await this.checkDataExist(211);
-
+    console.log('checkExistDocImp 211', checkExistDocImp);
     if (checkExistDocImp == 0) {
       this.documentService.createClarDocImp(modelReport).subscribe({
         next: async data => {
