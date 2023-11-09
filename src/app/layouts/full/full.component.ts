@@ -166,12 +166,12 @@ export class FullComponent implements OnInit {
 
   ngAfterViewInit() {
     const body = this.elementRef.nativeElement.querySelector('.page-content');
-    this.$bodyObserver.observe(body, {
-      attributes: true,
-      childList: true,
-      characterData: true,
-      subtree: true,
-    });
+    // this.$bodyObserver.observe(body, {
+    //   attributes: true,
+    //   childList: true,
+    //   characterData: true,
+    //   subtree: true,
+    // });
   }
 
   ngOnDestroy() {
