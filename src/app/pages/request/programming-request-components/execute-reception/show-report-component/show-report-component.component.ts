@@ -79,6 +79,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   annexk: boolean = false;
   idRegionalDelegation: number = 0; //parametro pasado desde el padre
   process: string = '';
+  orderServiceTask: number = null;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -591,33 +592,35 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
           if (this.idTypeDoc == 197) {
             const idKeyDoc = this.idSampleOrder + '-K';
-            //nomReporte
-            this.gelectronicFirmService
-              .firmDocument(idKeyDoc, 'AnexoKMuestreoOrdenServicio', {})
-              .subscribe({
-                next: response => {
-                  this.msjCheck = true;
-                  this.loadingButton = false;
-                  this.alert(
-                    'success',
-                    'Correcto',
-                    'Documento firmado correctamente'
-                  );
-                },
-                error: error => {
-                  //this.msjCheck = true;
-                  this.loadingButton = false;
-                  this.alertInfo(
-                    'error',
-                    'Acción Inválida',
-                    'No fue posible firmar el documento'
-                  ).then();
-                },
-              });
+            this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio');
+          }
+
+          if (this.idOrderService) {
+            const idKeyDoc = this.programming.id + ' - ' + this.idOrderService;
+            this.saveElectronicSign(idKeyDoc, 'order_service');
           }
         }
       }
     );
+  }
+
+  saveElectronicSign(idKeyDoc: any, title: any, body = {}) {
+    this.gelectronicFirmService.firmDocument(idKeyDoc, title, body).subscribe({
+      next: response => {
+        this.msjCheck = true;
+        this.loadingButton = false;
+        this.alert('success', 'Correcto', 'Documento firmado correctamente');
+      },
+      error: error => {
+        //this.msjCheck = true;
+        this.loadingButton = false;
+        this.alertInfo(
+          'error',
+          'Acción Inválida',
+          'No fue posible firmar el documento'
+        ).then();
+      },
+    });
   }
 
   nextStep() {
@@ -1002,6 +1005,60 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
         const extension = '.pdf';
         const docName = `MUESTREO_ORDENES${this.idSampleOrder}${moment(
+          new Date()
+        ).format('YYYYMMDD')}`;
+        const contentType: string = '.pdf';
+
+        this.pdf.getData().then(u8 => {
+          let blob = new Blob([u8.buffer], {
+            type: 'application/pdf',
+          });
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                //const updateReceipt = await this.procedding(response.dDocName);
+                const updateSampleOrder = await this.updateSampleOrder(
+                  response.dDocName
+                );
+                if (updateSampleOrder) {
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true, this.typeFirm);
+                    }
+                  });
+                }
+              },
+              error: error => {},
+            });
+        });
+      } else if (this.idOrderService && this.typeFirm == 'electronica') {
+        let dDocTitle = '';
+        if (this.orderServiceTask) {
+          dDocTitle = this.idOrderService.toString() + '-OrderService';
+        }
+        const formData = {
+          xNivelRegistroNSBDB: 'Solicitud',
+          xNombreProceso: 'Ordenes Servicio',
+          xDelegacionRegional: this.idRegionalDelegation,
+          dDocTitle: dDocTitle,
+          dSecurityGroup: 'Public',
+          //xTipoDocumento: 197,
+        };
+
+        const extension = '.pdf';
+        const docName = `ORDEN_SERVICO${this.idSampleOrder}${moment(
           new Date()
         ).format('YYYYMMDD')}`;
         const contentType: string = '.pdf';

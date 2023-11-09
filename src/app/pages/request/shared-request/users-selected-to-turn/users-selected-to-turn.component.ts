@@ -47,6 +47,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   request: any;
   op: any;
   user: any;
+  officeCentral: boolean = false;
 
   typeUser: string = '';
 
@@ -97,12 +98,16 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
 
   getAllUsers() {
     this.loading = true;
-    this.params.value.addFilter('employeeType', this.typeUser);
-    this.params.value.addFilter(
-      'regionalDelegation',
-      this.deleRegionalId,
-      SearchFilter.ILIKE
-    );
+    if (this.officeCentral == false) {
+      this.params.value.addFilter('employeeType', this.typeUser);
+      this.params.value.addFilter(
+        'regionalDelegation',
+        this.deleRegionalId,
+        SearchFilter.ILIKE
+      );
+    } else {
+      this.params.value.addFilter('department', 0);
+    }
 
     const filter = this.params.getValue().getParams();
 

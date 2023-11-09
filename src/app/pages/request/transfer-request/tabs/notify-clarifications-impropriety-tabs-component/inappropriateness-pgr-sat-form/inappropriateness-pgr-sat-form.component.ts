@@ -178,7 +178,7 @@ export class InappropriatenessPgrSatFormComponent
         .subscribe({
           next: async data => {
             this.openReport(checkExistDocImp);
-            await this.updateObservation(this.form.get('observations').value);
+            //await this.updateObservation(this.form.get('observations').value);
             this.loading = false;
             this.close();
           },
@@ -257,11 +257,9 @@ export class InappropriatenessPgrSatFormComponent
         .getAllClarificationDocImpro(params.getValue())
         .subscribe({
           next: response => {
-            console.log('Existe: ', response);
             resolve(response.data[0]);
           },
           error: error => {
-            console.log('No existe: ', error);
             resolve(0);
           },
         });
