@@ -1,11 +1,12 @@
 <div class="row pt-3 pb-3">
-  <div class="col-md-12">
+  <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
+  <!-- <div class="col-md-12">
     <div style="float: right">
       <button (click)="updateGood()" class="btn btn-primary btn-sm active">
         <i class="bx bx-save"></i> Guardar2
       </button>
     </div>
-  </div>
+  </div> -->
 </div>
 <tabset class="md-tabs">
   <!-- Información del Bien General-->
@@ -568,7 +569,8 @@
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bxs-car"></i> Ficha T&eacute;cnica Vehículos
     </ng-template>
-    <div class="row d-flex justify-content-center">
+    <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
         <div
           *ngIf="
@@ -599,9 +601,9 @@
           </div>
         </ng-template>
       </div>
-    </div>
+    </div> -->
 
-    <!-- <form [formGroup]="detailAssets" class="form-material">
+    <form [formGroup]="detailAssets" class="form-material">
       <div
         *ngIf="
           process == 'registration-request' || process == 'classify-assets'
@@ -787,7 +789,7 @@
           </div>
         </div>
       </div>
-    </form> -->
+    </form>
 
     <app-read-info-vehicle
       *ngIf="process != 'registration-request' && process != 'classify-assets'"
@@ -802,7 +804,8 @@
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bx-anchor"></i> Ficha t&eacute;cnica Embarcaci&oacute;n
     </ng-template>
-    <div class="row d-flex justify-content-center">
+    <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
         <div
           *ngIf="
@@ -833,7 +836,7 @@
           </div>
         </ng-template>
       </div>
-    </div>
+    </div> -->
     <form [formGroup]="detailAssets" class="form-material">
       <div class="boatInformation">
         <p class="msg-required" *ngIf="process != 'classify-assets'">
@@ -1305,7 +1308,8 @@
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bx-disc"></i> Informaci&oacute;n de Joya
     </ng-template>
-    <div class="row d-flex justify-content-center">
+    <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
         <div
           *ngIf="
@@ -1336,7 +1340,7 @@
           </div>
         </ng-template>
       </div>
-    </div>
+    </div> -->
     <form [formGroup]="detailAssets" class="form-material">
       <div class="jewelInformation">
         <p class="msg-required" *ngIf="process != 'classify-assets'">
@@ -1423,8 +1427,8 @@
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bx-flag"></i> Ficha t&eacute;cnica Aeronaves
     </ng-template>
-
-    <div class="row d-flex justify-content-center">
+    <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
         <div
           *ngIf="
@@ -1455,7 +1459,7 @@
           </div>
         </ng-template>
       </div>
-    </div>
+    </div> -->
     <form [formGroup]="detailAssets" class="form-material">
       <div class="aircraftInformation">
         <p class="msg-required" *ngIf="process != 'classify-assets'">
@@ -1795,8 +1799,8 @@
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
       <i class="bx bx-building"></i> Bien Inmueble
     </ng-template>
-
-    <div class="row d-flex justify-content-center">
+    <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
+    <!-- <div class="row d-flex justify-content-center">
       <div class="col-md-7 col-sm-12 col-xs-12">
         <div
           *ngIf="
@@ -1827,7 +1831,7 @@
           </div>
         </ng-template>
       </div>
-    </div>
+    </div> -->
 
     <form [formGroup]="goodDomicilieForm" class="form-material">
       <div class="immovablestInformation">
