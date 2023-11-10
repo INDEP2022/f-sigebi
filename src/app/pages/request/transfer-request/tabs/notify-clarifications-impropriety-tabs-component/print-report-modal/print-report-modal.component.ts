@@ -225,7 +225,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             //Asigna un firmante según el usuario logeado
             this.signatoriesService.create(formData).subscribe({
               next: response => {
-                this.signParams();
+                this.signParams(), console.log('Firmante creado: ', response);
               },
               error: error => {},
             });
@@ -250,11 +250,14 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .getSignatoriesFilter(learnedType, learnedId)
       .subscribe({
         next: response => {
+          console.log('Firmantes: ', response.data);
           this.signatories = response.data;
           this.totalItems = response.count;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => (
+          (this.loading = false), console.log('Error getSignatories:', error)
+        ),
       });
   }
 
