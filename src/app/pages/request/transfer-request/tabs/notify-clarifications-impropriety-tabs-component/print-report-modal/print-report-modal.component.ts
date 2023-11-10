@@ -224,7 +224,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
             //Asigna un firmante según el usuario logeado
             this.signatoriesService.create(formData).subscribe({
-              next: response => {},
+              next: response => {
+                this.signParams();
+              },
               error: error => {},
             });
           },
