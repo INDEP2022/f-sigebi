@@ -18,4 +18,12 @@ export class NumeraryXGoodsService extends HttpService {
   getAll(params?: _Params) {
     return this.get<IListResponseMessage<INumeraryxGoods>>(this.route, params);
   }
+
+  add(body: INumeraryxGoods) {
+    return this.post(this.route, body);
+  }
+
+  edit(body: INumeraryxGoods) {
+    return this.put(this.route, body);
+  }
 }

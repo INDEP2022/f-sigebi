@@ -1,0 +1,54 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ row ? 'Editar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div *ngIf="row">
+        <form-field [control]="numeraryxGoodId" label="Id">
+          <input
+            class="form-control"
+            formControlName="numeraryxGoodId"
+            readonly />
+        </form-field>
+      </div>
+      <div class="row">
+        <div class="pb-2 col-md-4">
+          <form-field [control]="amount" label="Monto">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount"
+              [min]="0"
+              [max]="maxAmount" />
+          </form-field>
+        </div>
+        <div class="pb-2 col-md-4">
+          <form-field [control]="date" label="Fecha">
+            <input
+              bsDatePicker
+              class="form-control"
+              formControlName="date"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          text="Aceptar"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
