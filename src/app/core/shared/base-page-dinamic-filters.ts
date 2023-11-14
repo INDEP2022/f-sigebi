@@ -135,6 +135,8 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
           next: (response: any) => {
             if (response) {
               this.totalItems = response.count || 0;
+              console.log(response);
+
               this.data.load(response.data);
               this.data.refresh();
               this.loading = false;
