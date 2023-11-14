@@ -483,7 +483,11 @@ export class PerformProgrammingFormComponent
     } else if (this.performForm.get('tranferId').value) {
       transferId = this.performForm.get('tranferId').value;
     }
-    if (this.regionalDelegationUser && transferId) {
+    if (
+      this.regionalDelegationUser &&
+      transferId &&
+      this.dataProgramming.folio
+    ) {
       let config = {
         ...MODAL_CONFIG,
         class: 'modal-lg modal-dialog-centered',
@@ -491,6 +495,7 @@ export class PerformProgrammingFormComponent
       const regDelData = this.regionalDelegationUser;
       config.initialState = {
         programmingId: this.idProgramming,
+        programmingData: this.dataProgramming,
         regDelData,
         transferId,
         callback: (next: boolean) => {
@@ -514,7 +519,7 @@ export class PerformProgrammingFormComponent
       this.alert(
         'warning',
         'Acción Invalida',
-        'Para crear un almacén necesitas seleccionar una Delegación Regional y transferente'
+        'Para crear un almacén necesitas seleccionar una Delegación Regional, transferente, y tener un folio generado'
       );
     }
     /*
@@ -3180,6 +3185,7 @@ export class PerformProgrammingFormComponent
     task['assignees'] = _task.assignees;
     task['assigneesDisplayname'] = _task.assigneesDisplayname;
     task['creator'] = user.username;
+    task['reviewers'] = user.username;
     task['taskNumber'] = Number(this.idProgramming);
     task['title'] = 'Aceptar Programación con folio: ' + folio;
     task['programmingId'] = this.idProgramming;
@@ -3686,6 +3692,7 @@ export class PerformProgrammingFormComponent
       };
       this.programmingService.getDateProgramming(formData).subscribe({
         next: (response: any) => {
+          console.log('correct Date', response);
           const correctDate = moment(response).format('DD/MM/YYYY');
           if (correctDate > _startDate || correctDate > _endDateFormat) {
             this.performForm

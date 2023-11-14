@@ -80,26 +80,12 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     this.settingsDist = {
       ...this.settings,
       hideSubHeader: false,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: true,
-        add: false,
-        position: 'right',
-      },
       columns: { ...COLUMLNS_DIST },
     };
 
     this.settingsCc = {
       ...this.settings,
       hideSubHeader: false,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: true,
-        add: false,
-        position: 'right',
-      },
       columns: { ...COLUMLNS_CC },
     };
   }
@@ -124,7 +110,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     return new Promise((res, _rej) => {
       this.loadingDist = true;
       this.userService
-        .consultationQuery1(/* this.acta.id */ 7327, this.paramsDist.getValue())
+        .consultationQuery1(this.acta.id, this.paramsDist.getValue())
         .subscribe({
           next: resp => {
             this.dataDist.load(resp.data);

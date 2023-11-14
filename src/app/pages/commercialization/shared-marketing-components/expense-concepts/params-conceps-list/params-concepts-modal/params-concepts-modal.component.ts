@@ -26,9 +26,8 @@ export class ParamsConceptsModalComponent
   form: FormGroup;
   addressParam: string;
   conceptId: string;
-  edit: boolean = false;
   title: string = 'Parámetro del concepto';
-  parameterValue: IParameterConcept;
+  parameterValue: IParameterConcept = null;
   pageSizeOptions = [5, 10, 20, 25];
   limit: FormControl = new FormControl(5);
   constructor(
@@ -132,7 +131,7 @@ export class ParamsConceptsModalComponent
       ],
     });
     if (this.parameterValue !== null) {
-      this.edit = true;
+      // this.edit = true;
       // const formattedDate = this.formatDate(this.representative.dateBorn);
       const body = {
         parameter: this.parameterValue.parameter,

@@ -535,4 +535,8 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.updateGoodByTransferent}/${idRequest}`;
     return this.get<any>(route);
   }
+  getByGoodAllQuery(params: _Params) {
+    const route = `${GoodEndpoints.GetAllGoodQuery}`;
+    return this.get(route, params);
+  }
 }
