@@ -213,8 +213,8 @@ export class ServiceTransportableGoodsFormComponent
      * Obtener la data por el orderServiceId
      */
     const params = new ListParams();
-    //params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
-    params['filter.orderServiceId'] = 516;
+    params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
+    //params['filter.orderServiceId'] = 516;
     this.orderEntryService
       .getAllOrderServicesProvided(params)
       .pipe(
@@ -343,8 +343,7 @@ export class ServiceTransportableGoodsFormComponent
 
       let table = null;
       table = document.getElementById('table');
-      const tbody = table.children[0].children[1].children;
-
+      let tbody = table.children[0].children[1].children;
       //readonly duracion
       if (
         this.op == 1 ||
@@ -363,7 +362,7 @@ export class ServiceTransportableGoodsFormComponent
         this.op == 14 ||
         this.op == 15
       ) {
-        for (let index = 0; index < tbody.length; index++) {
+        for (let index = 0; index < tbody.length - 1; index++) {
           const ele: any = tbody[index];
           if (this.op != 2) {
             if (
@@ -413,7 +412,6 @@ export class ServiceTransportableGoodsFormComponent
             (this.op == 8 && this.typeOrder == 'reception') ||
             (this.op == 9 && this.typeOrder == 'reception')
           ) {
-            //const select = ele.children[1].querySelector('#select-input');
             ele.children[2].querySelector('#text-input').disabled = true;
             ele.children[3].querySelector('#text-input').disabled = true;
             ele.children[7].querySelector('#text-input').disabled = true;
@@ -422,39 +420,27 @@ export class ServiceTransportableGoodsFormComponent
           }
 
           if (this.op == 6) {
-            //const select = ele.children[1].querySelector('#select-input');
             ele.children[4].querySelector('#text-input').disabled = true;
             ele.children[5].querySelector('#text-input').disabled = true;
             ele.children[6].querySelector('#text-input').disabled = true;
-            //ele.children[10].querySelector('#text-input').disabled = true;
-            //ele.children[13].querySelector('#text-input').disabled = true;
           }
 
           if (this.op == 7) {
-            //const select = ele.children[1].querySelector('#select-input');
             ele.children[4].querySelector('#text-input').disabled = true;
             ele.children[5].querySelector('#text-input').disabled = true;
             ele.children[6].querySelector('#text-input').disabled = true;
-            //ele.children[10].querySelector('#text-input').disabled = true;
-            //ele.children[13].querySelector('#text-input').disabled = true;
           }
 
           if (this.op == 8) {
-            //const select = ele.children[1].querySelector('#select-input');
             ele.children[4].querySelector('#text-input').disabled = true;
             ele.children[5].querySelector('#text-input').disabled = true;
             ele.children[6].querySelector('#text-input').disabled = true;
-            //ele.children[10].querySelector('#text-input').disabled = true;
-            //ele.children[13].querySelector('#text-input').disabled = true;
           }
 
           if (this.op == 9) {
-            //const select = ele.children[1].querySelector('#select-input');
             ele.children[4].querySelector('#text-input').disabled = true;
             ele.children[5].querySelector('#text-input').disabled = true;
             ele.children[6].querySelector('#text-input').disabled = true;
-            //ele.children[10].querySelector('#text-input').disabled = true;
-            //ele.children[13].querySelector('#text-input').disabled = true;
           }
 
           if (this.op == 10 || this.op == 11 || this.op == 15) {
@@ -592,13 +578,6 @@ export class ServiceTransportableGoodsFormComponent
         row.children[4].querySelector('#text-input').hidden = true;
         row.children[5].querySelector('#text-input').hidden = true;
         row.children[6].querySelector('#text-input').hidden = true;
-        /*
-        //select
-        //
-        //comentario de servicio
-        row.children[3].querySelector('#text-input').hidden = true;
-        //duracion horas
-        row.children[4].querySelector('#text-input').hidden = true; */
       }
     }, 300);
   }

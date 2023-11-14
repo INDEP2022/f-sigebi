@@ -233,7 +233,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     body['type'] = 'SOLICITUD_PROGRAMACION';
     body['subtype'] = 'Realizar_Programacion';
     body['ssubtype'] = 'ALTA_ALMACEN';
-
+    body['reviewers'] = user.username;
     let task: any = {};
     task['id'] = 0;
     task['assignees'] = this.userNameSelect;
