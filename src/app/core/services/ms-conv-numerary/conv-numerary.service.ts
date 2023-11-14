@@ -24,11 +24,11 @@ export class ConvNumeraryService extends HttpService {
     return this.delete(this.route.SP_BORRA_NUMERA + '/' + idEvent);
   }
 
-  convert(body: { idEvent: number; screen: string }) {
+  convert(body: { pevent: number; pscreen: string }) {
     return this.post(this.route.CONVIERTE, body);
   }
 
-  SP_CONVERSION_ASEG_PARCIAL(body: { idEvent: number; pScreen: string }) {
+  SP_CONVERSION_ASEG_PARCIAL(body: { pevent: number; pscreen: string }) {
     return this.post(this.route.SP_CONVERSION_ASEG_PARCIAL, body);
   }
 
