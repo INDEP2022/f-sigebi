@@ -23,6 +23,7 @@ import {
   IDomicilies,
   IGood,
   IGoodRealState,
+  IGoodTable,
 } from 'src/app/core/models/good/good.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -49,7 +50,6 @@ import {
   DOUBLE_POSITIVE_PATTERN,
   NUMBERS_PATTERN,
   NUMBERS_POINT_PATTERN,
-  NUM_POSITIVE,
   NUM_POSITIVE_LETTERS,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -199,7 +199,8 @@ export class DetailAssetsTabComponentComponent
     private goodDomicilieService: GoodDomiciliesService,
     private goodProcessService: GoodProcessService,
     private strategyService: StrategyServiceService
-  ) {
+  ) //private goodService2: GoodService2,
+  {
     super();
     this.atributActSettings = {
       ...this.settings,
@@ -250,11 +251,11 @@ export class DetailAssetsTabComponentComponent
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
       }
-      if (this.typeOfRequest == 'MANUAL') {
+      /*if (this.typeOfRequest == 'MANUAL') {
         this.isGoodTypeReadOnly = false;
       } else {
         this.isGoodTypeReadOnly = true;
-      }
+      }*/
     }
 
     if (this.typeDoc === 'clarification') {
@@ -388,7 +389,12 @@ export class DetailAssetsTabComponentComponent
 
   ngOnInit(): void {
     this.detailAssetsInfo = this.detailAssets.value;
-    this.classificationNumber = +this.detailAssetsInfo.goodClassNumber;
+    this.classificationNumber = +this.detailAssetsInfo?.goodClassNumber;
+    //Cambiar la forma de traer el clasificador
+    //Selecciono la fracción
+    //Espero unos segundos
+    //Se guarda en automatico
+    //Obtener el clasificador
     this.initForm();
     this.getDestinyTransfer(new ListParams(), this.detailAssetsInfo.requestId);
     this.getPhysicalState(new ListParams());
@@ -565,7 +571,7 @@ export class DetailAssetsTabComponentComponent
         0,
         [
           Validators.required,
-          Validators.pattern(NUM_POSITIVE),
+          Validators.pattern(DOUBLE_POSITIVE_PATTERN),
           Validators.maxLength(40),
         ],
       ],
@@ -1552,6 +1558,90 @@ export class DetailAssetsTabComponentComponent
       await this.saveMenaje();
     }
   }
+
+  viewAct: boolean = false;
+  disableUpdate: boolean = false;
+  good: IGoodTable = {};
+
+  updateGood() {
+    console.log('Información del Bien: ', this.detailAssetsInfo);
+    let required: boolean = false;
+    this.dataAtribute.forEach((item: any) => {
+      if (item.required && (item.value === null || item.value === '')) {
+        required = true;
+      }
+    });
+    if (required) {
+      this.alert('warning', 'Debe Registrar los Atributos Requeridos.', '');
+      return;
+    }
+
+    let body: any = {};
+    this.dataAtribute.forEach((row: any) => {
+      body[row.column] = row.value;
+    });
+    body['id'] = Number(this.detailAssetsInfo.id);
+    body['goodId'] = Number(this.detailAssetsInfo.id);
+    this.goodService.updateGoodTable(body).subscribe({
+      next: resp => {
+        this.viewAct = !this.viewAct;
+        this.disableUpdate = !this.disableUpdate;
+        this.good = resp;
+        this.alert('success', 'El Bien se ha Actualizado', '');
+        setTimeout(() => {
+          this.goodChange++;
+        }, 100);
+      },
+      error: err => {
+        this.alert('error', 'Error al Actualizar el Bien', '');
+      },
+    });
+  }
+
+  /*convertirFecha(fechaOriginal: any): string {
+    const [dia, mes, anio] = fechaOriginal.split('/');
+    const fechaObjeto: Date = new Date(`${mes}/${dia}/${anio}`);
+    const anioFormateado: string = fechaObjeto.getFullYear().toString();
+    const mesFormateado: string = (fechaObjeto.getMonth() + 1)
+      .toString()
+      .padStart(2, '0');
+    const diaFormateado: string = fechaObjeto
+      .getDate()
+      .toString()
+      .padStart(2, '0');
+    const fechaFormateada: string = `${anioFormateado}-${mesFormateado}-${diaFormateado}`;
+    return fechaFormateada;
+  }
+
+  convertirFecha2(fecha: string | Date): string {
+    let fechaObj: Date;
+    if (typeof fecha === 'string') {
+      fechaObj = new Date(fecha);
+    } else {
+      fechaObj = fecha;
+    }
+    const anio = fechaObj.getFullYear();
+    const mes = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
+    const dia = fechaObj.getDate().toString().padStart(2, '0');
+
+    return `${anio}-${mes}-${dia}`;
+  }
+
+  formatearFecha(fecha: string): string {
+    const [anio, mes, dia] = fecha.split('-');
+    const fechaObjeto: Date = new Date(`${mes}/${dia}/${anio}`);
+    const anioFormateado: string = fechaObjeto.getFullYear().toString();
+    const mesFormateado: string = (fechaObjeto.getMonth() + 1)
+      .toString()
+      .padStart(2, '0');
+    const diaFormateado: string = fechaObjeto
+      .getDate()
+      .toString()
+      .padStart(2, '0');
+    const fechaFormateada: string = `${diaFormateado}/${mesFormateado}/${anioFormateado}`;
+    return fechaFormateada;
+  }
+*/
 
   saveMenaje() {
     new Promise((resolve, reject) => {

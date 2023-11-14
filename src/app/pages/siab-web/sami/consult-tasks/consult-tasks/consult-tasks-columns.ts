@@ -16,20 +16,7 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /*dffDays: {
 
-    title: 'Días de Atraso',
-    type: 'number',
-    sort: false,
-
-  },*/
-  /*nonBusinessDays: {
-
-    title: 'Días Inhábiles',
-    type: 'number',
-    sort: false,
-
-  },*/
   backwardness: {
     title: 'Días de Atraso',
     type: 'number',
@@ -106,10 +93,13 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  activitydescription: {
+  activityName: {
     title: 'Nombre de la Actividad',
     type: 'string',
     sort: false,
+    /* valuePrepareFunction: (value: string) => {
+      return value ? value.replace(/_/g,' ') : '';
+    } */
   },
   creator: {
     title: 'Autor',
@@ -119,12 +109,6 @@ export const REQUEST_LIST_COLUMNS = {
   assignees: {
     //originalAssigneeUser: {
     title: 'Asignado a',
-    type: 'string',
-    sort: false,
-  },
-
-  processName: {
-    title: 'Proceso',
     type: 'string',
     sort: false,
   },
@@ -138,7 +122,7 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  processdescription: {
+  processName: {
     title: 'Nombre del Proceso',
     type: 'string',
     sort: false,
@@ -148,14 +132,65 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /*assignedDate: {
-    title: 'Fecha Asignación',
-    type: 'string',
-    sort: false,
-  },*/
-
   instanceId: {
     title: 'No. Instancia',
+    type: 'number',
+    sort: false,
+  },
+  //////////////////////////// FALTA SOLO ESTO
+  instaId: {
+    title: 'Nombre Tarea BPM',
+    type: 'number',
+    sort: false,
+  },
+  ////////////////////////////
+  outcome: {
+    title: 'Salida',
+    type: 'number',
+    sort: false,
+  },
+  pushbackSequence: {
+    title: 'Secuencia',
+    type: 'number',
+    sort: false,
+  },
+  nuMinelapsed: {
+    title: 'Duración tiempo (min)',
+    type: 'number',
+    sort: false,
+  },
+  nuDayelapsed: {
+    title: 'Duración tiempo (Días)',
+    type: 'number',
+    sort: false,
+  },
+  idDeliverySchedule: {
+    title: 'No. Programación Entrega ',
+    type: 'number',
+    sort: false,
+  },
+  idOrderService: {
+    title: 'No. Orden Servicio',
+    type: 'number',
+    sort: false,
+  },
+  idSampling: {
+    title: 'No. Muestreo',
+    type: 'number',
+    sort: false,
+  },
+  idSamplingOrder: {
+    title: 'No. Muestreo Orden',
+    type: 'number',
+    sort: false,
+  },
+  idOrderIncome: {
+    title: 'No. Orden Ingreso',
+    type: 'number',
+    sort: false,
+  },
+  idOrderPay: {
+    title: 'No. Orden Pago',
     type: 'number',
     sort: false,
   },

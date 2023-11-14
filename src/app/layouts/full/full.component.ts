@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SIDEBAR_TYPE } from 'src/app/common/constants/layouts';
 import { EventService } from 'src/app/common/services/event.service';
@@ -18,22 +18,32 @@ export class FullComponent implements OnInit {
     'https://framework-gb.cdn.gob.mx/gm/v4/js/bootstrapV4.min.js',
     'https://framework-gb.cdn.gob.mx/gm/v4/js/main.js',
   ];
-
+  $bodyObserver = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      if (
+        mutation.type === 'attributes' &&
+        mutation.attributeName === 'style'
+      ) {
+        this.resizeSidebar();
+      }
+    }
+  });
   constructor(
     private router: Router,
     private scriptService: ScriptService,
     private eventService: EventService,
+    private elementRef: ElementRef,
     @Inject(DOCUMENT) private document: Document
   ) {
     let script = this.document.getElementById('my-script');
     if (!script) {
-      this.scriptService
-        .loadScript({
-          id: 'my-script',
-          url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js',
-        })
-        .then(data => {})
-        .catch(error => console.log(error));
+      // this.scriptService
+      //   .loadScript({
+      //     id: 'my-script',
+      //     url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js',
+      //   })
+      //   .then(data => {})
+      //   .catch(error => console.log(error));
       this.router.events.forEach(event => {
         if (event instanceof NavigationEnd) {
           document.body.classList.remove('sidebar-enable');
@@ -134,5 +144,37 @@ export class FullComponent implements OnInit {
     if (window.screen.width <= 768) {
       document.body.classList.remove('vertical-collpsed');
     }
+  }
+
+  resizeSidebar() {
+    const header = document.querySelector('header');
+    const body = document.querySelector('footer');
+    if (!header || !body) {
+      return;
+    }
+
+    const headerRect = header.getBoundingClientRect();
+    const bodyRect = body.getBoundingClientRect();
+    const heightPx = Math.abs(bodyRect.top - headerRect.bottom) - 20;
+    const sidebar = document.querySelector('.vertical-menu') as HTMLDivElement;
+    if (!sidebar) {
+      return;
+    }
+    sidebar.style.maxHeight = heightPx + 'px';
+    sidebar.style.height = 'auto';
+  }
+
+  ngAfterViewInit() {
+    const body = this.elementRef.nativeElement.querySelector('.page-content');
+    // this.$bodyObserver.observe(body, {
+    //   attributes: true,
+    //   childList: true,
+    //   characterData: true,
+    //   subtree: true,
+    // });
+  }
+
+  ngOnDestroy() {
+    this.$bodyObserver.disconnect();
   }
 }

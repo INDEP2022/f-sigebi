@@ -25,7 +25,7 @@
               [data]="users"
               value="username"
               [showTooltip]="true"
-              bindLabel="nomComplete"
+              bindLabel="fullName"
               label="Usuario Reponsable"
               (change)="userSelect($event)"
               (fetchItems)="getResponsibleUserSelect($event)"></ngx-select>
@@ -188,7 +188,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('nbcontract')"
-            label="N&uacute;mero de Contrato">
+            label="No. de Contrato">
             <input
               type="text"
               class="form-control"

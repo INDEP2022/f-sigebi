@@ -7,7 +7,7 @@
       <div class="row">
         <form-field
           [control]="confirmForm.get('nameSignatore')"
-          label="Nombre del Firmante">
+          label="{{ labelEncharge }}">
           <input
             type="text"
             class="form-control"
@@ -17,14 +17,14 @@
       <div class="row pt-4">
         <form-field
           [control]="confirmForm.get('chargeSignatore')"
-          label="Cargo">
+          label="{{ labelPost }}">
           <input
             type="text"
             class="form-control"
             formControlName="chargeSignatore" />
         </form-field>
       </div>
-      <div class="row pt-4" *ngIf="type == 'order-service'">
+      <div class="row pt-4" *ngIf="displayInput == true">
         <form-check label="Firma electrónica" for="firma">
           <input id="firma" type="checkbox" formControlName="typeSignature" />
         </form-check>

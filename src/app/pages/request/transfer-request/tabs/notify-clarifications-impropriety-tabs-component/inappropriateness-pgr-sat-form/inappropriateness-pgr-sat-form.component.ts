@@ -61,7 +61,7 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    this.dictamenSeq();
+    //this.dictamenSeq();
     this.getInfoDoc();
     this.prepareForm();
   }
@@ -132,6 +132,16 @@ export class InappropriatenessPgrSatFormComponent
   async confirm() {
     let token = this.authService.decodeToken();
 
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+    }
+
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.notification?.clarificationType,
@@ -142,7 +152,7 @@ export class InappropriatenessPgrSatFormComponent
       paragraphInitial: this.form.controls['paragraphInitial'].value,
       applicationId: this.request.id,
 
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       managedTo: this.request?.nameOfOwner
         ? this.request?.nameOfOwner
         : this.form.controls['managedTo'].value,
@@ -168,7 +178,7 @@ export class InappropriatenessPgrSatFormComponent
         .subscribe({
           next: async data => {
             this.openReport(checkExistDocImp);
-            await this.updateObservation(this.form.get('observations').value);
+            //await this.updateObservation(this.form.get('observations').value);
             this.loading = false;
             this.close();
           },
@@ -379,36 +389,40 @@ export class InappropriatenessPgrSatFormComponent
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
-    const notificationValidate = 'Y';
-    const idReportAclara = data.id;
-    //const idDoc = data.id;
-    const idTypeDoc = Number(data.documentTypeId);
-    const requestInfo = this.request;
-    const idSolicitud = this.idSolicitud;
-    const nomenglatura = this.folioReporte;
-    const infoReport = data;
-    //Modal que genera el reporte
-    let config: ModalOptions = {
-      initialState: {
-        requestInfo,
-        idTypeDoc,
-        //idDoc,
-        idReportAclara,
-        idSolicitud,
-        notificationValidate,
-        nomenglatura,
-        infoReport,
-        callback: (next: boolean) => {
-          if (next) {
-            this.changeStatusAnswered();
-          } else {
-          }
+    this.dictamenSeq();
+
+    setTimeout(() => {
+      const notificationValidate = 'Y';
+      const idReportAclara = data.id;
+      //const idDoc = data.id;
+      const idTypeDoc = Number(data.documentTypeId);
+      const requestInfo = this.request;
+      const idSolicitud = this.idSolicitud;
+      const nomenglatura = this.folioReporte;
+      const infoReport = data;
+      //Modal que genera el reporte
+      let config: ModalOptions = {
+        initialState: {
+          requestInfo,
+          idTypeDoc,
+          //idDoc,
+          idReportAclara,
+          idSolicitud,
+          notificationValidate,
+          nomenglatura,
+          infoReport,
+          callback: (next: boolean) => {
+            if (next) {
+              this.changeStatusAnswered();
+            } else {
+            }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(PrintReportModalComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PrintReportModalComponent, config);
+    }, 2000); // 2000 milisegundos = 2 segundos
   }
 
   //Método para crear número secuencial según la no delegación del user logeado

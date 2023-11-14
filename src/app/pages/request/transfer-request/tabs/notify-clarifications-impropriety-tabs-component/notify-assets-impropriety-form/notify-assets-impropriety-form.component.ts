@@ -89,7 +89,10 @@ export class NotifyAssetsImproprietyFormComponent
     const clarType: string =
       this.dataClarifications2.chatClarification.idClarificationType;
 
-    if (this.infoRequest?.typeOfTransfer == 'PGR_SAE' && clarType == '1') {
+    if (
+      (this.infoRequest?.typeOfTransfer == 'PGR_SAE' && clarType == '1') ||
+      (this.infoRequest?.typeOfTransfer == 'PGR_SAE' && clarType == '2')
+    ) {
       this.getInfoDocAclaration(this.infoRequest.typeOfTransfer, clarType);
     }
     if (this.infoRequest?.typeOfTransfer == 'MANUAL' && clarType == '1') {
@@ -108,14 +111,17 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.modalService.onHide.subscribe(key => {});
 
-    this.dictamenSeq();
+    //this.dictamenSeq();
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
   }
 
   getInfoDocAclaration(typeOfTransfer: string, clarType: string) {
     let documentTypeId: number = 0;
-    if (typeOfTransfer == 'PGR_SAE' && clarType == '1') {
+    if (
+      (typeOfTransfer == 'PGR_SAE' && clarType == '1') ||
+      (typeOfTransfer == 'PGR_SAE' && clarType == '2')
+    ) {
       documentTypeId = 211;
     }
 
@@ -433,12 +439,29 @@ export class NotifyAssetsImproprietyFormComponent
       this.aclaracionAnam();
     }
 
-    //this.saveClarificationsAcept();
+    //this.saveClarificationsAcept(); */
   }
 
   improcedenciaTransferentesVoluntarias() {
-    //Recupera información del usuario logeando para luego registrarlo como firmante
+    //Genara clave temporal -> Pasarlo a un método o modificar el existente para ahorrar código
     let token = this.authService.decodeToken();
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    }
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
@@ -457,7 +480,7 @@ export class NotifyAssetsImproprietyFormComponent
       managedTo: this.infoRequest?.nameOfOwner
         ? this.infoRequest?.nameOfOwner
         : this.clarificationForm.controls['managedTo'].value, //Nombre Destinatario - Titular de la solicitud
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
       positionAddressee: this.infoRequest?.holderCharge
         ? this.infoRequest?.holderCharge
@@ -488,7 +511,25 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   oficioImprocedencia() {
+    //Genara clave temporal -> Pasarlo a un método o modificar el existente para ahorrar código
     let token = this.authService.decodeToken();
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    }
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
@@ -500,7 +541,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value,
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
@@ -533,7 +574,26 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async aclaracionComercioExterior() {
+    //Genara clave temporal -> Pasarlo a un método o modificar el existente para ahorrar código
     let token = this.authService.decodeToken();
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    }
+
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
@@ -545,7 +605,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['observations'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte, //
       //invoiceNumber: 1,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
@@ -607,7 +667,26 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async aclaracionComercioExteriorInd() {
+    //Genara clave temporal -> Pasarlo a un método o modificar el existente para ahorrar código
     let token = this.authService.decodeToken();
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    }
+
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
@@ -619,7 +698,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['observations'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value,
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
@@ -702,7 +781,25 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async aclaracionAnam() {
+    //Genara clave temporal -> Pasarlo a un método o modificar el existente para ahorrar código
     let token = this.authService.decodeToken();
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    }
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
@@ -714,7 +811,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['observations'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value,
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
@@ -777,7 +874,25 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async oficioAclaracionTransferente() {
+    //Genara clave temporal -> Pasarlo a un método o modificar el existente para ahorrar código
     let token = this.authService.decodeToken();
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    }
 
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
@@ -790,7 +905,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
@@ -851,7 +966,25 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async aclaracionAsegurados() {
+    //Genara clave temporal -> Pasarlo a un método o modificar el existente para ahorrar código
     let token = this.authService.decodeToken();
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    }
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
@@ -863,7 +996,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value,
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
@@ -880,7 +1013,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.loading = true;
     const checkExistDocImp: any = await this.checkDataExist(211);
-
+    console.log('checkExistDocImp 211', checkExistDocImp);
     if (checkExistDocImp == 0) {
       this.documentService.createClarDocImp(modelReport).subscribe({
         next: async data => {
@@ -958,7 +1091,25 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async aclaracionTransferentesVoluntarias() {
+    //Genara clave temporal -> Pasarlo a un método o modificar el existente para ahorrar código
     let token = this.authService.decodeToken();
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/?/${year}`;
+
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
+    }
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.clarificationForm.controls['clarification'].value,
       sender: this.clarificationForm.controls['senderName'].value,
@@ -970,7 +1121,7 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
       managedTo: this.clarificationForm.controls['addresseeName'].value,
-      invoiceLearned: ' ',
+      invoiceLearned: this.folioReporte,
       positionAddressee:
         this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
@@ -1318,45 +1469,49 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
-    const notificationValidate = 'Y';
-    const idReportAclara = data.id;
-    //const idDoc = data.id;
-    const idTypeDoc = Number(data.documentTypeId);
-    const requestInfo = this.infoRequest;
-    const idSolicitud = this.idSolicitud;
-    const noBien = this.dataClarifications2.goodId;
-    const nomenglatura = this.folioReporte;
-    const infoReport = data;
-    //Modal que genera el reporte
-    let config: ModalOptions = {
-      initialState: {
-        requestInfo,
-        idTypeDoc,
-        //idDoc,
-        idReportAclara,
-        idSolicitud,
-        notificationValidate,
-        noBien,
-        nomenglatura,
-        infoReport,
-        callback: (next: boolean, xml?: string) => {
-          if (next) {
-            this.changeStatusAnswered(xml);
-            if (
-              this.clarificationForm?.controls['amount'].value != null ||
-              this.clarificationForm?.controls['unit'].value != null ||
-              this.clarificationForm?.controls['description'].value != null
-            ) {
-              this.changeSimulateGood();
+    this.dictamenSeq();
+
+    setTimeout(() => {
+      const notificationValidate = 'Y';
+      const idReportAclara = data.id;
+      //const idDoc = data.id;
+      const idTypeDoc = Number(data.documentTypeId);
+      const requestInfo = this.infoRequest;
+      const idSolicitud = this.idSolicitud;
+      const noBien = this.dataClarifications2.goodId;
+      const nomenglatura = this.folioReporte;
+      const infoReport = data;
+      //Modal que genera el reporte
+      let config: ModalOptions = {
+        initialState: {
+          requestInfo,
+          idTypeDoc,
+          //idDoc,
+          idReportAclara,
+          idSolicitud,
+          notificationValidate,
+          noBien,
+          nomenglatura,
+          infoReport,
+          callback: (next: boolean, xml?: string) => {
+            if (next) {
+              this.changeStatusAnswered(xml);
+              if (
+                this.clarificationForm?.controls['amount'].value != null ||
+                this.clarificationForm?.controls['unit'].value != null ||
+                this.clarificationForm?.controls['description'].value != null
+              ) {
+                this.changeSimulateGood();
+              }
+            } else {
             }
-          } else {
-          }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(PrintReportModalComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(PrintReportModalComponent, config);
+    }, 2000); // 2000 milisegundos = 2 segundos
   }
 
   //Modifica atributos del bien

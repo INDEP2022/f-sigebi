@@ -393,10 +393,11 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getProceeding3(
-    id: number
+    params: ListParams
   ): Observable<IListResponse<IProceedingDeliveryReception>> {
     return this.get<IListResponse<IProceedingDeliveryReception>>(
-      `${this.endpoint}?filter.numFile=${id}&filter.typeProceedings=$eq:AXD` //  &filter.typeProceedings='DESTINO'`
+      `${this.endpoint}?&filter.typeProceedings=$ilike:AXD`,
+      params //  &filter.typeProceedings='DESTINO'`
     );
   }
 }
