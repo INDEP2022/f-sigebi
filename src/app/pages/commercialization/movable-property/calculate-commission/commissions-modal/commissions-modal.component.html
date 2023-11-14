@@ -63,8 +63,8 @@
             label="Monto Comisión"
             [control]="commissionsForm.get('amountCommission')">
             <input
-              currencyMask
-              type="text"
+              pattern="^[0-9.]+"
+              type="number"
               class="form-control"
               formControlName="amountCommission" />
           </form-field>
