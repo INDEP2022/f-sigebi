@@ -386,6 +386,11 @@ export class DocumentVerificationRevisionResourcesComponent
       proceedingsNumber: [null],
       estatus_recurso_revision: [null],
     });
+
+    /*this.form.get('goodId').disable();
+    this.form.get('description').disable();
+    this.form.get('status').disable();*/
+
     this.formExp = this.fb.group({
       id: [null, Validators.required],
       preliminaryInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -746,12 +751,14 @@ export class DocumentVerificationRevisionResourcesComponent
                 goodId &&
                 di_situacion_bien != 'DICTAMINADO'
               ) {
-                this.activeBlocDoc = true;
-                this.createDocumentDicta();
-                this.getDataWihtVquery(vquery.join(', '));
-              } else {
-                this.activeBlocDoc = true;
-                this.getDataNotVquery();
+                if (vquery) {
+                  this.activeBlocDoc = true;
+                  //this.createDocumentDicta();
+                  this.getDataWihtVquery(vquery.join(', '));
+                } else {
+                  this.activeBlocDoc = true;
+                  this.getDataNotVquery();
+                }
               }
             }
           }
@@ -1057,6 +1064,8 @@ export class DocumentVerificationRevisionResourcesComponent
     });
     modalRef.content.onSave.subscribe((next: any) => {
       console.log(next);
+      this.form.reset();
+      this.dataTableDocument.data = [];
       this.getExpedient(next.id);
     });
   }
@@ -1130,13 +1139,14 @@ export class DocumentVerificationRevisionResourcesComponent
         this.form
           .get('notifyRevRecDate')
           .patchValue(good.revRecRemedyDate ? good.revRecRemedyDate : '');
+        const format = this.datePipe.transform(
+          good.admissionAgreementDate,
+          'dd/MM/yyyy'
+        );
+        const actDate = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
         this.form
           .get('agreementDate')
-          .patchValue(
-            good.admissionAgreementDate
-              ? good.admissionAgreementDate
-              : new Date()
-          );
+          .patchValue(good.admissionAgreementDate ? format : actDate);
         this.form
           .get('initialAgreement')
           .patchValue(good.initialAgreement ? good.initialAgreement : '');
@@ -1185,7 +1195,20 @@ export class DocumentVerificationRevisionResourcesComponent
       },
     });
   }
+  valuePrepareFunction(cell: any) {
+    const parts = cell.split('/');
+    const year = parts[2];
+    const month = parts[1];
+    const day = parts[0];
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+  }
+
   updateGood() {
+    const formatDate = this.form.get('agreementDate').getRawValue();
+    const format = this.valuePrepareFunction(formatDate);
+    console.log(format);
+
     this.goodUpdate = {
       id: this.form.get('goodId').value,
       goodId: this.form.get('goodId').value,
@@ -1196,7 +1219,7 @@ export class DocumentVerificationRevisionResourcesComponent
       revRecObservations: this.form.get('observations').value,
       revRecRemedyDate: this.form.get('notifyRevRecDate').value,
       revRecCause: this.form.get('revRecCause').value,
-      admissionAgreementDate: this.form.get('agreementDate').value,
+      admissionAgreementDate: format,
       initialAgreement: this.form.get('initialAgreement').value,
     };
 
@@ -1218,21 +1241,27 @@ export class DocumentVerificationRevisionResourcesComponent
     });
   }
 
-  createDocumentDicta() {
-    const obj: IDocumentsDictumXState = {
-      recordNumber: this.fileNumber.toString(),
-      goodNumber: this.form.get('goodId').value,
+  createDocumentDicta(typeDict: string, KeyDocument: string) {
+    const formatDate = this.form.get('agreementDate').getRawValue();
+    const format = this.valuePrepareFunction(formatDate);
+    console.log(format);
+
+    let body = {
+      /*recordNumber: this.fileNumber.toString(),
+      goodNumber: this.form.get('goodId').value,*/
       // key: 'RCV',
       key: 'RCV',
       typeDictum: 'RECREVISION',
-      dateReceipt: this.form.get('agreementDate').value,
+      dateReceipt: format,
       userReceipt: this.user.decodeToken().username,
       insertionDate: new Date(),
       userInsertion: this.user.decodeToken().username,
-      numRegister: '',
-      officialNumber: '',
+      /*numRegister: null,
+      officialNumber: null,*/
     };
-    this.documents.createDocsRevi(obj).subscribe({
+
+    console.log(body);
+    this.documents.createDocsRevi(body).subscribe({
       next: data => {
         console.log('documento agregado', data);
         this.getDocuments();
