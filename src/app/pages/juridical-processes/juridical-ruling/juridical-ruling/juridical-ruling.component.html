@@ -204,7 +204,6 @@
                     <ngx-select
                       label="Autoriza Dict."
                       [form]="legalForm"
-                      [readonly]="dictNumber ? true : false"
                       [data]="users$"
                       (fetchItems)="getUsers($event)"
                       bindLabel="userAndName"

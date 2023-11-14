@@ -3692,6 +3692,7 @@ export class PerformProgrammingFormComponent
       };
       this.programmingService.getDateProgramming(formData).subscribe({
         next: (response: any) => {
+          console.log('correct Date', response);
           const correctDate = moment(response).format('DD/MM/YYYY');
           if (correctDate > _startDate || correctDate > _endDateFormat) {
             this.performForm

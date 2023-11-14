@@ -1,3 +1,6 @@
+import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const COLUMNS = {
   id: {
     title: 'Id',
@@ -31,13 +34,29 @@ export const COLUMNS = {
   },
   eventDate: {
     title: 'Fecha de Evento',
-    type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   failureDate: {
     title: 'Fecha de Fallo',
-    type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   user: {
     title: 'Usuario',

@@ -210,7 +210,7 @@ export class ExpenseConceptsListComponent
                   });
                   this.alert(
                     'success',
-                    'Copiado de Parámetros',
+                    'Se han copiado los parámetros',
                     'Realizado correctamente'
                   );
                   // this.filesToDelete = [];
@@ -226,7 +226,7 @@ export class ExpenseConceptsListComponent
                 } else {
                   this.alert(
                     'error',
-                    'Copiado de Parámetros',
+                    'Se han copiado los parámetros',
                     'No se pudieron copiar los parámetros'
                   );
                 }
@@ -235,7 +235,7 @@ export class ExpenseConceptsListComponent
                 console.log(err);
                 this.alert(
                   'error',
-                  'Copiado de Parámetros',
+                  'Se han copiado los parámetros',
                   'No se pudieron copiar los parámetros'
                 );
               },
@@ -295,8 +295,8 @@ export class ExpenseConceptsListComponent
     if (event.data) {
       const response = await this.alertQuestion(
         'warning',
-        'Eliminar',
-        '¿Desea Eliminar este Registro?'
+        '¿Desea eliminar el concepto de pago?',
+        ''
       );
       if (response.isConfirmed) {
         this.conceptsService
@@ -307,8 +307,8 @@ export class ExpenseConceptsListComponent
               // event.confirm.resolve();
               this.alert(
                 'success',
-                'Eliminación de Concepto de Pago ' + event.data.id,
-                'Eliminado correctamente'
+                'Se ha eliminado el concepto de pago ' + event.data.id,
+                ''
               );
               this.getData();
             },

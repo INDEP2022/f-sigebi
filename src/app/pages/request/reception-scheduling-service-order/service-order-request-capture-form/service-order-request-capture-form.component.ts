@@ -42,7 +42,7 @@ export class ServiceOrderRequestCaptureFormComponent
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
   op: number = null;
-  showForm: boolean = true;
+  showForm: boolean = false;
   orderServiceId: number = null;
   lsProgramming: string = null;
   programmingId: number = null;
@@ -81,6 +81,9 @@ export class ServiceOrderRequestCaptureFormComponent
     this.prepareOrderServiceForm();
     this.getProgramming();
     this.getOrderService();
+    setTimeout(() => {
+      this.setTitle();
+    }, 600);
   }
 
   prepareProgForm() {
@@ -135,14 +138,8 @@ export class ServiceOrderRequestCaptureFormComponent
         [Validators.pattern(STRING_PATTERN)],
       ],
       //
-      notes: [
-        { value: null, disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ],
-      observation: [
-        { value: null, disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ],
+      notes: [null, [Validators.pattern(STRING_PATTERN)]],
+      observation: [null, [Validators.pattern(STRING_PATTERN)]],
       justification: [null, [Validators.pattern(STRING_PATTERN)]],
       justificationReport: [null, [Validators.pattern(STRING_PATTERN)]],
       commentRejection: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -166,7 +163,7 @@ export class ServiceOrderRequestCaptureFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea enviar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea enviar la orden de servicio con folio ${this.programming.folio}?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -251,6 +248,7 @@ export class ServiceOrderRequestCaptureFormComponent
       this.ordServform.controls['colonyOrigin'].enable();
       this.ordServform.controls['notes'].enable();
       this.ordServform.controls['observation'].enable();
+      this.showForm = true;
     }
   }
 
@@ -270,7 +268,6 @@ export class ServiceOrderRequestCaptureFormComponent
           // setTimeout(() => {
           this.ordServform.patchValue(resp.data[0]);
           this.orderServiceId = resp.data[0].id;
-          this.setTitle();
           // }, 100);
         },
       });
@@ -279,6 +276,7 @@ export class ServiceOrderRequestCaptureFormComponent
   getOrderServiceProvided() {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
+      debugger;
       params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
       this.orderEntryService
         .getAllOrderServicesProvided(params)
@@ -316,7 +314,7 @@ export class ServiceOrderRequestCaptureFormComponent
     const config = MODAL_CONFIG;
     config.initialState = {
       idProgramming: this.programmingId,
-      type: 'order-service',
+      type: this.op, //
       callback: (signatore: any) => {
         //ISignatories
         if (signatore.data) {
@@ -333,13 +331,14 @@ export class ServiceOrderRequestCaptureFormComponent
     //task == 8 ||task == 10 ||task == 13 ||task == 11
     let idTypeDoc = null; //221;
     if (this.task == 2) {
+      idTypeDoc = this.orderServiceId;
     } else if (this.task == 3) {
     } else if (this.task == 5) {
     } else if (this.task == 6) {
     }
-    //const idProg = this.programmingId;
+    const idProg = this.programming.id;
     //verificar si se guarda los firmantes
-    //const sign = await this.assignSign(signatore,idTypeDoc)
+    const sign = await this.assignSign(signatore, idTypeDoc);
     let config: ModalOptions = {
       initialState: {
         idOrderService: this.orderServiceId,
@@ -347,6 +346,8 @@ export class ServiceOrderRequestCaptureFormComponent
         //signatore,
         typeFirm: typeSign,
         programming: this.programming,
+        idProg: idProg,
+        orderServiceTask: this.task,
         callback: (next: boolean) => {
           if (next) {
             this.isApprove = true;
@@ -413,7 +414,9 @@ export class ServiceOrderRequestCaptureFormComponent
       `¿Deseas aprobar la orden de servicio con folio: ${folio}?`,
       ''
     ).then(question => {
-      this.onLoadToast('success', 'Solicitud Aprovada', 'falta la logica');
+      if (question.isConfirmed) {
+        this.onLoadToast('success', 'Solicitud Aprovada', 'falta la logica');
+      }
     });
   }
 
@@ -474,7 +477,7 @@ export class ServiceOrderRequestCaptureFormComponent
     this.justificationRefused = true;
   }
 
-  assignSign(signatore: any, typedoc: any = null) {
+  assignSign(signatore: any, typedoc: any = '') {
     return new Promise((resolve, reject) => {
       const signForm = {
         learnedType: typedoc,

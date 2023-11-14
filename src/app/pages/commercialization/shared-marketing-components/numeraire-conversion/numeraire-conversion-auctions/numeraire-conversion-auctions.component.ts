@@ -217,7 +217,7 @@ export class NumeraireConversionAuctionsComponent
     if (this.selectedEvent.statusVtaId !== 'CNE') {
       this.loader.load = true;
       this.convNumeraryService
-        .convert({ idEvent: this.selectedEvent.id, screen: 'FCOMER087' })
+        .convert({ pevent: this.selectedEvent.id, pscreen: 'FCOMER087' })
         .pipe(take(1))
         .subscribe({
           next: response => {
@@ -245,13 +245,14 @@ export class NumeraireConversionAuctionsComponent
       this.loader.load = true;
       this.convNumeraryService
         .SP_CONVERSION_ASEG_PARCIAL({
-          idEvent: this.selectedEvent.id,
-          pScreen: 'FCOMER087',
+          pevent: this.selectedEvent.id,
+          pscreen: 'FCOMER087',
         })
         .pipe(take(1))
         .subscribe({
           next: response => {
             this.reloadExpenses++;
+            this.loader.load = false;
             this.alert('success', 'Proceso Convierte Parcial terminado', '');
           },
           error: err => {
