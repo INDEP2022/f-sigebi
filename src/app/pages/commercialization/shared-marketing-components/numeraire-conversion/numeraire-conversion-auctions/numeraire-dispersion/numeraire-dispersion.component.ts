@@ -1,10 +1,13 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { INumeraryxGoods } from 'src/app/core/models/ms-numerary/numerary.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
 import { NumeraryXGoodsService } from 'src/app/core/services/ms-numerary/numerary-x-goods.service';
 import { TABLE_SETTINGS } from 'src/app/core/shared/base-page';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 import { COLUMNS } from './columns';
+import { NumeraireDispersionModalComponent } from './numeraire-dispersion-modal/numeraire-dispersion-modal.component';
 
 @Component({
   selector: 'app-numeraire-dispersion',
@@ -21,7 +24,10 @@ export class NumeraireDispersionComponent
   toggleInformation = true;
   total = 0;
   fillData = false;
-  constructor(private dataService: NumeraryXGoodsService) {
+  constructor(
+    private modalService: BsModalService,
+    private dataService: NumeraryXGoodsService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -72,6 +78,17 @@ export class NumeraireDispersionComponent
       ...this.params.getValue(),
       ...newColumnFilters,
     };
+  }
+
+  edit(row: INumeraryxGoods) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      row,
+      callBack: (next: boolean) => {
+        this.getData();
+      },
+    };
+    this.modalService.show(NumeraireDispersionModalComponent, modalConfig);
   }
 
   override setTotals(data: INumeraryxGoods[]): void {
