@@ -19,7 +19,7 @@
             <button
               *ngIf="!readonly"
               (click)="openModalCreate()"
-              [disabled]="!haveParams"
+              [disabled]="!conceptId"
               type="button"
               tooltip="Nuevo"
               containerClass="tooltip-style"

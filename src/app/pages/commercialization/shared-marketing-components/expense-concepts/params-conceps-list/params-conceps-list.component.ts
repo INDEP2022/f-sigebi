@@ -131,7 +131,16 @@ export class ParamsConcepsListComponent
   }
 
   override async extraOperationsGetData() {
-    this.haveParams = true;
+    const dataTemp = await this.data.getAll();
+    if (!dataTemp) {
+      this.haveParams = false;
+      return;
+    }
+    if (dataTemp.length > 0) {
+      this.haveParams = true;
+    } else {
+      this.haveParams = false;
+    }
   }
 
   private createParam(body: {
