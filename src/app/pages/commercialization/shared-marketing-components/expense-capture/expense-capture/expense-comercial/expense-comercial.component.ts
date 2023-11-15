@@ -353,7 +353,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       return;
     }
     if (!this.dataService.FOLIO_UNIVERSAL) {
-      this.alert('error', 'No a escaneado los documentos', '');
+      this.alert('warning', 'No se han escaneado los documentos', '');
       return;
     }
     let filterParams = new FilterParams();
@@ -575,7 +575,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.clkpv.setValue(event.clkpv);
 
     if (!event.descurcoord) {
-      this.alert('warning', 'No cuenta con coordinación regional', '');
+      this.alert('warning', 'No se cuenta con coordinación regional', '');
     }
     this.descurcoord.setValue(event.descurcoord);
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);

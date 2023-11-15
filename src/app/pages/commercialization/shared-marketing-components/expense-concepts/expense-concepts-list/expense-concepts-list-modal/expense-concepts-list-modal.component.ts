@@ -77,12 +77,13 @@ export class ExpenseConceptsListModalComponent
   }
 
   private onEditConfirm(body: any) {
-    console.log(event);
+    console.log(body);
+    // return;
     if (body) {
       this.conceptsService
         .edit({
           ...body,
-          address: this.getAddressCode(body.address),
+          address: body.address,
           automatic: body.automatic ? 'S' : 'N',
           numerary: body.numerary ? 'S' : 'N',
         })
