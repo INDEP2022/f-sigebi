@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
-import { map } from 'rxjs';
 import { ComerConceptEndpoints } from 'src/app/common/constants/endpoints/ms-comerconcept';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
@@ -8,6 +7,27 @@ import {
   IConcept,
   IConceptCopy,
 } from '../../models/ms-comer-concepts/concepts';
+
+export function getAddress(address: string) {
+  switch (address) {
+    case 'M':
+      return 'MUEBLES';
+    case 'I':
+      return 'INMUEBLES';
+    case 'C':
+      return 'GENERAL';
+    case 'V':
+      return 'VIGILANCIA';
+    case 'S':
+      return 'SEGUROS';
+    case 'J':
+      return 'JURÍDICO';
+    case 'A':
+      return 'ADMINISTRACIÓN';
+    default:
+      return null;
+  }
+}
 
 @Injectable({
   providedIn: 'root',
@@ -22,18 +42,6 @@ export class ConceptsService extends HttpService {
     return this.get<IListResponseMessage<IConcept>>(
       ComerConceptEndpoints.Concepts,
       params
-    ).pipe(
-      map(response => {
-        return {
-          ...response,
-          data: response.data.map(x => {
-            return {
-              ...x,
-              address: this.getAddress(x.address),
-            };
-          }),
-        };
-      })
     );
   }
 
@@ -52,26 +60,6 @@ export class ConceptsService extends HttpService {
     return this.delete(ComerConceptEndpoints.ConceptsDelete + '/' + body.id);
   }
 
-  private getAddress(address: string) {
-    switch (address) {
-      case 'M':
-        return 'MUEBLES';
-      case 'I':
-        return 'INMUEBLES';
-      case 'C':
-        return 'GENERAL';
-      case 'V':
-        return 'VIGILANCIA';
-      case 'S':
-        return 'SEGUROS';
-      case 'J':
-        return 'JURÍDICO';
-      case 'A':
-        return 'ADMINISTRACIÓN';
-      default:
-        return null;
-    }
-  }
   copyParameters(
     body: { id: string; address: string; concept: string },
     params: Params

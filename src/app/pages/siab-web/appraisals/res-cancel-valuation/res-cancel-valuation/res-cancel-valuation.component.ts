@@ -137,6 +137,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       ...this.settings,
       selectMode: 'multi',
       actions: false,
+      hideSubHeader: false,
       columns: { ...VALUATION_REQUEST_COLUMNS },
     };
 
@@ -426,6 +427,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       tap(x => {
         if (x) {
           this.city = x;
+          console.log(x);
         }
       })
     );
@@ -453,6 +455,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let body: any = {};
     body.eventId = valorObjeto?.eventId;
     body.officeId = valorObjeto?.jobType;
+    // this.form
+    //   .get('office')
+    //   .setValue(data.jobId, { onlySelf: true, emitEvent: false });
     this.form
       .get('event')
       .setValue(valorObjeto?.eventId, { onlySelf: true, emitEvent: false });
@@ -476,6 +481,61 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       : 0;
   }
 
+  validateBienesSelect() {
+    let tpOfi = this.officeType;
+    if (tpOfi === 2) {
+      if (this.dataService.selectedRowsValueds.length === 0) {
+        this.alert(
+          'warning',
+          'Para continuar es necesario seleccionar bienes Valuados',
+          ''
+        );
+        return false;
+      }
+    }
+    if (tpOfi === 3) {
+      if (this.dataService.selectedRowsCancel.length === 0) {
+        this.alert(
+          'warning',
+          'Para continuar es necesario seleccionar bienes Cancelados',
+          ''
+        );
+        return false;
+      }
+      let widthMotives = this.dataService.selectedRowsCancel.filter(
+        x => x.motivos
+      );
+      if (widthMotives.length != this.dataService.selectedRowsCancel.length) {
+        this.alert(
+          'warning',
+          'Para continuar es necesario que seleccione los motivos por los que se enviara a Rev el bien',
+          ''
+        );
+        return false;
+      }
+    }
+    return true;
+  }
+
+  modifyOffice() {
+    if (!this.validateBienesSelect()) {
+      return;
+    }
+    let tpOfi = this.officeType();
+    let body = {
+      officeId: this.form.get('office').value,
+      eventId: this.event,
+      officeType: tpOfi,
+      userInsert: this.formThree.controls['user'].value,
+      remi: this.form.get('remi').value,
+      dest: this.form.get('dest').value,
+      city: this.form.get('cityCi').value,
+      ref: this.form.get('ref').value,
+      aten: this.form.get('aten').value,
+      espe: this.form.get('espe').value,
+      key: this.form.get('key').value,
+    };
+  }
   async viewOffice() {
     try {
       let dataOffice: any[] = [];
@@ -668,6 +728,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       espe: null,
       fol: null,
     });
+    console.log(this.idOficio);
+
     // debugger;
     if (this.idOficio > 0) {
       let array = await this.getOfficeResponseTwo(body);

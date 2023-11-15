@@ -62,7 +62,7 @@ export class SelectModalTableSharedComponent
   @Input() operator: SearchFilter = SearchFilter.LIKE;
   @Input() searchField: string; // Debe pertenecer a una de las columnas
   @Input() columnsType: {
-    [others: string]: { title: string; type: string; sort: boolean };
+    [others: string]: any;
   };
   @Output() selectRow = new EventEmitter();
   constructor(protected override modalService: BsModalService) {
