@@ -117,8 +117,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  save() {
-    let body = {
+  private getBody() {
+    return {
       ...this.form.value,
       dateOfResolution: this.form.value.dateOfResolution
         ? this.form.value.dateOfResolution.trim().length > 0
@@ -139,18 +139,47 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       monthExpense11: this.form.value.monthExpense11 ? '11' : null,
       monthExpense12: this.form.value.monthExpense12 ? '12' : null,
     };
-    if (this.expenseNumber.value === null) {
-      delete body.expenseNumber;
+  }
+
+  edit() {
+    this.spentService2
+      .edit(this.getBody())
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.alert(
+            'success',
+            'Se ha actualizado el gasto ' + this.expenseNumber.value,
+            'Gasto actualizado correctamente'
+          );
+          // if (response && response.data) {
+          //   this.alert(
+          //     'success',
+          //     'Captura de Gastos',
+          //     'Gasto actualizado correctamente'
+          //   );
+          // }
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'No se pudo actualizar el gasto ' + this.expenseNumber.value,
+            'Favor de verificar'
+          );
+        },
+      });
+  }
+
+  save() {
+    if (this.expenseNumber.value) {
+      this.edit();
+    } else {
       this.spentService2
-        .save(body)
+        .save(this.getBody())
         .pipe(take(1))
         .subscribe({
           next: response => {
-            this.alert(
-              'success',
-              'Captura de Gastos',
-              'Gasto creado correctamente'
-            );
+            this.alert('success', 'Se ha creado el gasto', '');
             // if (response && response.data) {
             //   this.alert(
             //     'success',
@@ -160,30 +189,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             // }
           },
           error: err => {
-            this.alert('error', 'Creación de Gasto', err.error.message);
-          },
-        });
-    } else {
-      this.spentService2
-        .edit(body)
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
             this.alert(
-              'success',
-              'Captura de Gastos',
-              'Gasto actualizado correctamente'
+              'error',
+              'No se pudo crear el gasto',
+              'Favor de verificar'
             );
-            // if (response && response.data) {
-            //   this.alert(
-            //     'success',
-            //     'Captura de Gastos',
-            //     'Gasto actualizado correctamente'
-            //   );
-            // }
-          },
-          error: err => {
-            this.alert('error', 'Actualización de Gasto', err.error.message);
           },
         });
     }
