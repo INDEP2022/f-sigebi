@@ -120,6 +120,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   save() {
     let body = {
       ...this.form.value,
+      dateOfResolution: this.form.value.dateOfResolution
+        ? this.form.value.dateOfResolution.trim().length > 0
+          ? this.form.value.dateOfResolution
+          : null
+        : null,
+      comment: this.form.value.comment ?? '',
       monthExpense: this.form.value.monthExpense ? '1' : null,
       monthExpense2: this.form.value.monthExpense2 ? '2' : null,
       monthExpense3: this.form.value.monthExpense3 ? '3' : null,
@@ -653,10 +659,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
     this.dateOfResolution.setValue(
       event.dateOfResolution
-        ? secondFormatDateToDate(event.dateOfResolution)
+        ? event.dateOfResolution.trim().length > 0
+          ? secondFormatDateToDate(event.dateOfResolution)
+          : null
         : null
     );
-    this.comment.setValue(event.comment);
+    this.comment.setValue(event.comment ?? '');
 
     this.dataService.updateOI.next(true);
     this.dataService.updateExpenseComposition.next(true);
