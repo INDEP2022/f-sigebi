@@ -10,8 +10,8 @@ import { BasePage } from 'src/app/core/shared';
 export class NumeraryErrorsComponent extends BasePage implements OnInit {
   data: any[];
 
-  constructor(private modalRef: BsModalRef) {
-    super();
+  constructor(private modalRef: BsModalRef){
+    super()
   }
 
   settings2: any = {
@@ -35,7 +35,7 @@ export class NumeraryErrorsComponent extends BasePage implements OnInit {
     console.log(this.data);
   }
 
-  close() {
-    this.modalRef.hide();
+  close(){
+    this.modalRef.hide()
   }
 }
