@@ -104,13 +104,12 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.prepareForm();
     console.log('sampleGood', this.sampleGood);
     if (this.idGood && this.idRequest) {
-      this.prepareForm();
       this.getDocType(new ListParams());
       this.getDocuemntByGood();
     } else if (this.sampleGood.length > 0) {
-      this.prepareForm();
       this.goodData();
       this.getDocType(new ListParams());
     }

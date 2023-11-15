@@ -13,7 +13,10 @@ export class NotificacionAbandonoService extends HttpService {
     this.microservice = NotificationEndpoints.BasePath;
   }
 
-  confirmarStatus(body: any): Observable<any> {
-    return this.post<any>(this.route.confirmStatus, body);
+  confirmarStatus(statusFinal: string, body: any): Observable<any> {
+    return this.post<any>(`${this.route.confirmStatus}/${statusFinal}`, body);
+  }
+  getAll(statusFinal: string, body: any): Observable<any> {
+    return this.post<any>(`${this.route.confirmStatus}/${statusFinal}`, body);
   }
 }

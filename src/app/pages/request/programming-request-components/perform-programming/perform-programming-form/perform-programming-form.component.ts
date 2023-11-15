@@ -3185,6 +3185,7 @@ export class PerformProgrammingFormComponent
     task['assignees'] = _task.assignees;
     task['assigneesDisplayname'] = _task.assigneesDisplayname;
     task['creator'] = user.username;
+    task['reviewers'] = user.username;
     task['taskNumber'] = Number(this.idProgramming);
     task['title'] = 'Aceptar Programación con folio: ' + folio;
     task['programmingId'] = this.idProgramming;
@@ -3691,6 +3692,7 @@ export class PerformProgrammingFormComponent
       };
       this.programmingService.getDateProgramming(formData).subscribe({
         next: (response: any) => {
+          console.log('correct Date', response);
           const correctDate = moment(response).format('DD/MM/YYYY');
           if (correctDate > _startDate || correctDate > _endDateFormat) {
             this.performForm

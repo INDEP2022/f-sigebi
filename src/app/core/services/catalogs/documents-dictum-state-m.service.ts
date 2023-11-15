@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DocumentsEndpoints } from 'src/app/common/constants/endpoints/ms-documents-endpoints';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDataDocumentosBien,
+  IDocumentsDictumXStateCreate,
   IDocumentsDictumXStateM,
 } from '../../models/ms-documents/documents-dictum-x-state-m';
 
@@ -14,6 +13,7 @@ import {
 })
 export class DocumentsDictumStatetMService extends HttpService {
   private readonly route = DocumentsEndpoints;
+  private readonly doc = DocumentsEndpoints.DocumentsDictuXState;
   constructor() {
     super();
     this.microservice = DocumentsEndpoints.Documents;
@@ -26,21 +26,25 @@ export class DocumentsDictumStatetMService extends HttpService {
     );
   }
 
-  getAllDictum(
-    params?: _Params
-  ): Observable<IListResponse<IDocumentsDictumXStateM>> {
-    return this.get<IListResponse<IDocumentsDictumXStateM>>(
-      this.route.DocumentsDictuXStateM,
-      params
-    );
+  getAllDictum(params?: _Params) {
+    return this.get(this.route.DocumentsType, params);
   }
 
-  getAllGetDocument(params?: ListParams) {
-    return this.get<any>(this.route.GetDocument, params);
+  getAllGetDocument(params?: _Params) {
+    return this.get<any>(this.route.DocumentsForDictum, params);
   }
 
   create(body: IDocumentsDictumXStateM) {
     return this.post(this.route.DocumentsDictuXStateM, body);
+  }
+  createDocDict(body: IDocumentsDictumXStateCreate) {
+    return this.post(this.doc, body);
+  }
+  updateDocDict(body: IDocumentsDictumXStateCreate) {
+    return this.put(this.doc, body);
+  }
+  getDocDict(params: _Params) {
+    return this.get(this.doc, params);
   }
 
   update(body: Partial<IDocumentsDictumXStateM>) {
