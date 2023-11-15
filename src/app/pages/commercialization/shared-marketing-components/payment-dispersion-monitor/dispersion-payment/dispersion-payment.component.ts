@@ -325,6 +325,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     //TODO: Select que desencripta
 
     this.validateUser();
+    const body = {
+      date: new Date(),
+      
+    }
+    this.comerEventService.faMaxdayValid()
   }
 
   //Valida usuario
@@ -475,6 +480,23 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   get dateMaxPayment() {
     return this.form.get('dateMaxPayment');
+  }
+
+  //Boton limpiar
+  clearAll() {
+    this.cleanAllTables();
+    this.statusEvent = '';
+    this.eventType = '';
+    this.eventManagement = '';
+    this.formLotEvent.reset();
+    this.form.reset();
+    this.formCustomerBanks.reset();
+    this.formCustomerEvent.reset();
+    this.formDesertLots.reset();
+    this.formLotsBanks.reset();
+    this.formPaymentLots.reset();
+    this.formRbButton.reset();
+    this.formSirsae.reset();
   }
 
   //Limpiar tablas
@@ -1651,42 +1673,62 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Enviar a SIRSAE
   sendToSirsae() {
-    this.alertQuestion(
-      'question',
-      '¿Desea Ejecutar el Proceso de Envío a SIRSAE?',
-      '',
-      'Continuar'
-    ).then(q => {
-      if (q.isConfirmed) {
-        //TODO: PUP_PROC_ENV_SIRSAE
-        const model: IPupProcEnvSirsae = {
-          typeProcess: this.formRbButton.get('definitive').value,
-          lotId: this.lotId,
-          clientId: this.idClientCustomer,
-          typeDispId: this.id_tipo_disp,
-          rfc: this.rfcClientCustomer,
-          saleStatusId: this.statusVtaId,
-          address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
-          comerLotsEventId: this.event.value,
-          publicLot: this.lote_publico,
-          comerEventsEventId: this.event.value,
-          rgTotalLots: this.formRbButton.get('allBatch').value,
-          typeEventId: this.eventTpId,
-        };
+    if (this.dataCustomer['data'].length > 0) {
+      this.alertQuestion(
+        'question',
+        '¿Desea Ejecutar el Proceso de Envío a SIRSAE?',
+        '',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          //TODO: PUP_PROC_ENV_SIRSAE
+          if (
+            this.idClientCustomer != null &&
+            this.lotId != null &&
+            this.lote_publico != null &&
+            this.rfcClientCustomer != null
+          ) {
+            const model: IPupProcEnvSirsae = {
+              typeProcess: this.formRbButton.get('definitive').value,
+              lotId: this.lotId,
+              clientId: this.idClientCustomer,
+              typeDispId: this.id_tipo_disp,
+              rfc: this.rfcClientCustomer,
+              saleStatusId: this.statusVtaId,
+              address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
+              comerLotsEventId: this.event.value,
+              publicLot: this.lote_publico,
+              comerEventsEventId: this.event.value,
+              rgTotalLots: this.formRbButton.get('allBatch').value,
+              typeEventId: this.eventTpId,
+            };
 
-        console.log(model);
-        this.comerLotsService.pupProcEnvSirsae(model).subscribe(
-          res => {
-            console.log(res);
-            this.alert('success', 'Se envió a SIRSAE', '');
-          },
-          err => {
-            console.log(err);
-            this.alert('error', 'Se presentó un error inesperado', '');
+            console.log(model);
+            this.comerLotsService.pupProcEnvSirsae(model).subscribe(
+              res => {
+                console.log(res);
+                this.alert('success', 'Se envió a SIRSAE', '');
+              },
+              err => {
+                console.log(err);
+                if (err.status == 400) {
+                  this.alert('error', err.error.message, '');
+                } else {
+                  this.alert('error', 'Se presentó un error inesperado', '');
+                }
+              }
+            );
+          } else {
+            this.alert('warning', 'Faltan seleccionar datos', '');
           }
-        );
-      }
-    });
+        }
+      });
+    } else {
+      const element = document.getElementById('event');
+      element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      this.event.markAsTouched();
+      this.alert('warning', 'Debe buscar un Evento', '');
+    }
 
     /* if (this.txt_usu_valido != null) {
       this.alertQuestion(
@@ -1737,35 +1779,56 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Ejecutar dispersión
   executeScattering() {
-    this.alertQuestion(
-      'question',
-      '¿Desea Ejecutar el Proceso de Dispersión?',
-      '',
-      'Ejecutar'
-    ).then(q => {
-      if (q.isConfirmed) {
-        //TODO: PUP_PROC_DISP
-        const model: IPupProcDisp = {
-          typeDispId: this.id_tipo_disp,
-          comerEventsEventId: this.form.get('event').value,
-          address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
-          rgTotalLots: this.formRbButton.get('allBatch').value,
-          PROCESAR: batchEventCheck,
-          typeProcess: this.formRbButton.get('definitive').value,
-        };
-        console.log(model);
-        this.comerLotsService.pupProcDisp(model).subscribe(
-          res => {
-            console.log(res);
-            this.alert('success', 'Se ejecutó el proceso de dispersión', '');
-          },
-          err => {
-            console.log(err);
-            this.alert('warning', 'Se presentó un error inesperado', '');
+    if (this.dataCustomer['data'].length > 0) {
+      this.alertQuestion(
+        'question',
+        '¿Desea Ejecutar el Proceso de Dispersión?',
+        '',
+        'Ejecutar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          if (batchEventCheck.length > 0) {
+            //TODO: PUP_PROC_DISP
+            const model: IPupProcDisp = {
+              typeDispId: this.id_tipo_disp,
+              comerEventsEventId: this.form.get('event').value,
+              address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
+              rgTotalLots: this.formRbButton.get('allBatch').value,
+              PROCESAR: batchEventCheck,
+              typeProcess: this.formRbButton.get('definitive').value,
+            };
+            console.log(model);
+            this.comerLotsService.pupProcDisp(model).subscribe(
+              res => {
+                console.log(res);
+                this.alert(
+                  'success',
+                  'Se ejecutó el proceso de dispersión',
+                  ''
+                );
+              },
+              err => {
+                console.log(err);
+                console.log(err.error.message);
+                if (err.status == 400) {
+                  this.alert('error', err.error.message, '');
+                } else {
+                  this.alert('error', 'Se presentó un error inesperado', '');
+                }
+              }
+            );
+          } else {
+            this.alert(
+              'warning',
+              'Debe seleccionar por lo menos un lote asignado en el evento',
+              ''
+            );
           }
-        );
-      }
-    });
+        }
+      });
+    } else {
+      this.alert('warning', 'Debe buscar un Evento', '');
+    }
   }
 
   //Reprocesar Dispersión
@@ -1789,16 +1852,25 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
             rgTypeProcess: this.formRbButton.get('definitive').value,
           };
           console.log(model);
-          this.comerLotsService.pupProcReproc(model).subscribe(
-            res => {
-              console.log(res);
-            },
-            err => {
-              //!Hay error en el endpoint
-              console.log(err);
-              this.alert('error', 'Se presentó un error inesperado', '');
-            }
-          );
+
+          if (model.PROCESAR.length > 0) {
+            this.comerLotsService.pupProcReproc(model).subscribe(
+              res => {
+                console.log(res);
+              },
+              err => {
+                //!Hay error en el endpoint
+                console.log(err);
+                if (err.status == 400) {
+                  this.alert('error', err.error.message, '');
+                } else {
+                  this.alert('error', 'Se presentó un error inesperado', '');
+                }
+              }
+            );
+          } else {
+            this.alert('warning', 'Faltan seleccionar datos', '');
+          }
         }
       });
     } else {
@@ -1813,154 +1885,183 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Propuesta de Dispersión
   proposalScattering() {
-    this.alertQuestion(
-      'question',
-      '¿Desea Ejecutar el Proceso de Propuesta de Dispersión?',
-      '',
-      'Ejecutar'
-    ).then(q => {
-      if (q.isConfirmed) {
-        //* PUP_PROC_SELDISP
-        const model: IPupProcSeldisp = {
-          saleStatusId: this.statusVtaId,
-          typeDispId: this.id_tipo_disp,
-          totalAmount: this.formCustomerEvent.get('totalAmount').value,
-          totalClient: this.formCustomerBanks.get('validAmount').value,
-          comerClientXEventsEventId: this.event.value,
-          dateGraceLiq: this.form.get('dateMaxPayment').value,
-          comerLotsEventId: this.event.value,
-        };
+    if (this.dataCustomer['data'].length > 0) {
+      this.alertQuestion(
+        'question',
+        '¿Desea Ejecutar el Proceso de Propuesta de Dispersión?',
+        '',
+        'Ejecutar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          if (
+            this.formCustomerEvent.get('totalAmount').value != null &&
+            this.formCustomerBanks.get('validAmount').value != null
+          ) {
+            //* PUP_PROC_SELDISP
+            const model: IPupProcSeldisp = {
+              saleStatusId: this.statusVtaId,
+              typeDispId: this.id_tipo_disp,
+              totalAmount: this.formCustomerEvent.get('totalAmount').value,
+              totalClient: this.formCustomerBanks.get('validAmount').value,
+              comerClientXEventsEventId: this.event.value,
+              dateGraceLiq: this.form.get('dateMaxPayment').value,
+              comerLotsEventId: this.event.value,
+            };
 
-        console.log(model);
-        this.comerLotsService.pupProcSeldisp(model).subscribe(
-          res => {
-            console.log(res);
-            this.alert(
-              'success',
-              'Propuesta de Dispersion Realizada Correctamente',
-              ''
+            console.log(model);
+            this.comerLotsService.pupProcSeldisp(model).subscribe(
+              res => {
+                console.log(res);
+                this.alert(
+                  'success',
+                  'Propuesta de Dispersion Realizada Correctamente',
+                  ''
+                );
+              },
+              err => {
+                console.log(err);
+                if (
+                  err.error.message ==
+                  'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
+                ) {
+                  this.alert(
+                    'error',
+                    'No se realizaron acciones',
+                    'Verificar el Estatus de la venta ingresada'
+                  );
+                } else {
+                  this.alert('error', 'Se presentó un Error inesperado', '');
+                }
+              }
             );
-          },
-          err => {
-            console.log(err);
-            if (
-              err.error.message ==
-              'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
-            ) {
-              this.alert(
-                'error',
-                'No se realizaron acciones',
-                'Verificar el Estatus de la venta ingresada'
-              );
-            } else {
-              this.alert('error', 'Se presentó un Error inesperado', '');
-            }
+          } else {
+            this.alert('warning', 'Faltan seleccionar datos', '');
           }
-        );
-      }
-    });
+        }
+      });
+    } else {
+      const element = document.getElementById('event');
+      element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      this.event.markAsTouched();
+    }
   }
 
   //Propuesta de envío a SIRSAE
   proposalSendSirsae() {
-    this.alertQuestion(
-      'question',
-      '¿Desea Ejecutar el Proceso de Propuesta de Envio SIRSAE?',
-      '',
-      'Ejecutar'
-    ).then(q => {
-      if (q.isConfirmed) {
-        //TODO: PUP_PROC_SELSIRSAE
-        const model: IPupProcSelsirsae = {
-          saleStatusId: this.statusVtaId,
-          typeDispId: this.id_tipo_disp,
-          comerClientXEventsEventId: this.event.value,
-          comerLotsEventId: this.event.value,
-          comerEventsEventId: this.event.value,
-        };
+    if (this.dataCustomer['data'].length > 0) {
+      this.alertQuestion(
+        'question',
+        '¿Desea Ejecutar el Proceso de Propuesta de Envio SIRSAE?',
+        '',
+        'Ejecutar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          //TODO: PUP_PROC_SELSIRSAE
+          const model: IPupProcSelsirsae = {
+            saleStatusId: this.statusVtaId,
+            typeDispId: this.id_tipo_disp,
+            comerClientXEventsEventId: this.event.value,
+            comerLotsEventId: this.event.value,
+            comerEventsEventId: this.event.value,
+          };
 
-        this.comerLotsService.pupProcSelsirsae(model).subscribe(
-          res => {
-            console.log(res);
-            this.alert(
-              'success',
-              'Se proceso la Rropuesta de Envío SIRSAE',
-              ''
-            );
-          },
-          err => {
-            console.log(err);
-            if (
-              err.error.message ==
-              'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
-            ) {
+          this.comerLotsService.pupProcSelsirsae(model).subscribe(
+            res => {
+              console.log(res);
               this.alert(
-                'error',
-                'No se realizaron acciones',
-                'Verificar el Estatus de la venta ingresada'
+                'success',
+                'Se proceso la Rropuesta de Envío SIRSAE',
+                ''
               );
-            } else {
-              this.alert(
-                'error',
-                'Se presentó un Error inesperado',
-                'Por favor vuelva a intentarlo'
-              );
+            },
+            err => {
+              console.log(err);
+              if (
+                err.error.message ==
+                'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
+              ) {
+                this.alert(
+                  'error',
+                  'No se realizaron acciones',
+                  'Verificar el Estatus de la venta ingresada'
+                );
+              } else {
+                this.alert(
+                  'error',
+                  'Se presentó un Error inesperado',
+                  'Por favor vuelva a intentarlo'
+                );
+              }
             }
-          }
-        );
-      }
-    });
+          );
+        }
+      });
+    } else {
+      const element = document.getElementById('event');
+      element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      this.event.markAsTouched();
+    }
   }
 
   //Propuesta de Reproceso
   proposalReprocess() {
-    this.alertQuestion(
-      'question',
-      '¿Desea Ejecutar el Proceso de Propuesta de Reproceso?',
-      '',
-      'Ejecutar'
-    ).then(q => {
-      if (q.isConfirmed) {
-        //TODO: PUP_PROC_SELREPROCESO
-        const model: IPupProcSelReproceso = {
-          saleStatusId: this.statusVtaId,
-          typeDispId: this.id_tipo_disp,
-          comerEventsEventId: this.event.value,
-          totalClient: this.formCustomerBanks.get('validAmount').value,
-          dateGraceLiq: this.form.get('dateMaxPayment').value,
-        };
+    if (this.dataCustomer['data'].length > 0) {
+      this.alertQuestion(
+        'question',
+        '¿Desea Ejecutar el Proceso de Propuesta de Reproceso?',
+        '',
+        'Ejecutar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          if (this.formCustomerBanks.get('validAmount').value != null) {
+            //TODO: PUP_PROC_SELREPROCESO
+            const model: IPupProcSelReproceso = {
+              saleStatusId: this.statusVtaId,
+              typeDispId: this.id_tipo_disp,
+              comerEventsEventId: this.event.value,
+              totalClient: this.formCustomerBanks.get('validAmount').value,
+              dateGraceLiq: this.form.get('dateMaxPayment').value,
+            };
 
-        this.comerLotsService.pupProcSelReproceso(model).subscribe(
-          res => {
-            this.alert(
-              'success',
-              'Propuesta de Reproceso Realizada Correctamente',
-              ''
+            this.comerLotsService.pupProcSelReproceso(model).subscribe(
+              res => {
+                this.alert(
+                  'success',
+                  'Propuesta de Reproceso Realizada Correctamente',
+                  ''
+                );
+                console.log(res);
+              },
+              err => {
+                console.log(err);
+                if (
+                  err.error.message ==
+                  'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
+                ) {
+                  this.alert(
+                    'error',
+                    'No se realizaron acciones',
+                    'Verificar el Estatus de la venta ingresada'
+                  );
+                } else {
+                  this.alert(
+                    'error',
+                    'Se presentó un Error inesperado',
+                    'Por favor vuelva a intentarlo'
+                  );
+                }
+              }
             );
-            console.log(res);
-          },
-          err => {
-            console.log(err);
-            if (
-              err.error.message ==
-              'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
-            ) {
-              this.alert(
-                'error',
-                'No se realizaron acciones',
-                'Verificar el Estatus de la venta ingresada'
-              );
-            } else {
-              this.alert(
-                'error',
-                'Se presentó un Error inesperado',
-                'Por favor vuelva a intentarlo'
-              );
-            }
+          } else {
+            this.alert('warning', 'Faltan ingresar datos', '');
           }
-        );
-      }
-    });
+        }
+      });
+    } else {
+      const element = document.getElementById('event');
+      element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      this.event.markAsTouched();
+    }
   }
 
   //Pagos SIRSAE
@@ -2005,32 +2106,43 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Actualizar No de OIs
   updateNumberOis() {
-    this.alertQuestion(
-      'question',
-      '¿Desea Ejecutar el Proceso de Actualización de Números de Órdenes de Ingreso?',
-      '',
-      'Ejecutar'
-    ).then(q => {
-      if (q.isConfirmed) {
-        let body: ISendSirsaeLot = {
-          PROCESAR: [],
-          PROCESO: '',
-          COMER_EVENTOS_ID_EVENTO: '',
-          ID_TPEVENTO: '',
-          ID_TIPO_DISP: '',
-        };
-        //TODO
-        this.interfaceSirsaeService.sendSirsaeLot(body).subscribe(
-          res => {
-            console.log(res);
-          },
-          err => {
-            console.log(err);
-            this.alert('error', 'Se Presentó un Error Inesperado', '');
-          }
-        );
-      }
-    });
+    if(this.dataCustomer['data'].length > 0){
+      this.alertQuestion(
+        'question',
+        '¿Desea Ejecutar el Proceso de Actualización de Números de Órdenes de Ingreso?',
+        '',
+        'Ejecutar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          console.log(this.eventTpId)
+          let body: ISendSirsaeLot = {
+            PROCESAR: batchEventCheck,
+            PROCESO: '2',
+            COMER_EVENTOS_ID_EVENTO: this.event.value,
+            ID_TPEVENTO: this.eventTpId,
+            ID_TIPO_DISP: this.id_tipo_disp,
+          };
+          //TODO
+          this.interfaceSirsaeService.sendSirsaeLot(body).subscribe(
+            res => {
+              console.log(res);
+              this.alert('success','Actualización realizada','')
+              this.selectEvent()
+            },
+            err => {
+              console.log(err);
+              this.alert('error', 'Se Presentó un Error Inesperado', '');
+            }
+          );
+        }
+      });
+    }else{
+      this.event.reset()
+      const element = document.getElementById('event');
+      element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      this.event.markAsTouched();
+    }
+    
   }
 
   //Cargar pagos
@@ -2069,9 +2181,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.paymentService.getComerRelUsuCanc().subscribe(
       res => {
         console.log(res);
+        this.alert('success','Proceso realizado','')
       },
       err => {
         console.log(err);
+        this.alert('error','Se presentó un erro inesperado','')
       }
     );
   }
