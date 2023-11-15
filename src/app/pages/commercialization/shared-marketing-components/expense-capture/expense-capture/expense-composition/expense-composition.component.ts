@@ -305,16 +305,18 @@ export class ExpenseCompositionComponent
     if (!this.PCONDIVXMAND) {
       this.alert(
         'warning',
-        'Dispersión de Gastos/Mandatos',
-        'Este concepto no admite dispersión de pagos por mandato'
+
+        'Este concepto no admite dispersión de pagos por mandato',
+        ''
       );
       return;
     }
     if (!this.eventNumber) {
       this.alert(
         'warning',
-        'Dispersión de Gastos/Mandatos',
-        'Debe capturar el evento, para utilizar esta opción'
+
+        'Debe capturar el evento, para utilizar esta opción',
+        ''
       );
       return;
     }
@@ -334,13 +336,17 @@ export class ExpenseCompositionComponent
           if (response) {
             this.alert(
               'success',
-              'Dispersión de Gastos/Mandatos',
-              'Este concepto no admite dispersión de pagos por mandato'
+              'Este concepto no admite dispersión de pagos por mandato',
+              ''
             );
           }
         },
         error: err => {
-          this.alert('error', 'Dispersión de Gastos/Mandatos', err);
+          this.alert(
+            'error',
+            'No se pudo realizar la dispersión de gastos/mandatos',
+            'Favor de verificar'
+          );
         },
       });
     // divide mandatos
@@ -675,7 +681,9 @@ export class ExpenseCompositionComponent
       });
   }
 
-  reload() {}
+  // reload() {
+
+  // }
 
   validates() {
     if (this.eventNumber === null) {
@@ -705,6 +713,11 @@ export class ExpenseCompositionComponent
         next: response => {
           if (response) {
             console.log(response);
+            this.alert(
+              'info',
+              'Bienes que no pertenecen a la unidad responsable ligada al concepto seleccionado...',
+              ''
+            );
           }
         },
         error: err => {

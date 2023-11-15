@@ -1,3 +1,4 @@
+import { getAddress } from 'src/app/core/services/ms-commer-concepts/concepts.service';
 import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
 import { TextAreaRenderComponent } from 'src/app/shared/render-components/text-area-render/text-area-render.component';
 
@@ -26,7 +27,6 @@ export const COLUMNS = {
   },
   address: {
     title: 'Dirección',
-    type: 'string',
     sort: false,
     class: 'w-md',
     editor: {
@@ -35,15 +35,19 @@ export const COLUMNS = {
         selectText: 'Seleccionar',
         list: [
           { value: '', title: 'SELECCIONAR' },
-          { value: 'MUEBLES', title: 'MUEBLES' },
-          { value: 'INMUEBLES', title: 'INMUEBLES' },
-          { value: 'GENERAL', title: 'GENERAL' },
+          { value: 'M', title: 'MUEBLES' },
+          { value: 'I', title: 'INMUEBLES' },
+          { value: 'C', title: 'GENERAL' },
           { value: 'VIGILANCIA', title: 'VIGILANCIA' },
           { value: 'SEGUROS', title: 'SEGUROS' },
           { value: 'JURIDICO', title: 'JURÍDICO' },
           { value: 'ADMINISTRACIÓN', title: 'ADMINISTRACIÓN' },
         ],
       },
+    },
+    valuePrepareFunction: (value: any, row: any) => {
+      // DATA FROM HERE GOES TO renderComponent
+      return row.address ? getAddress(row.address) : '';
     },
   },
   automatic: {
