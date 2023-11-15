@@ -208,11 +208,7 @@ export class ExpenseConceptsListComponent
                         .pipe(takeUntil(this.$unSubscribe))
                     );
                   });
-                  this.alert(
-                    'success',
-                    'Se han copiado los parámetros',
-                    'Realizado correctamente'
-                  );
+                  this.alert('success', 'Se han copiado los parámetros', '');
                   // this.filesToDelete = [];
                   this.selectedConcept = body;
                   // this.expenseConceptsService.refreshParams.next(true);
@@ -226,8 +222,8 @@ export class ExpenseConceptsListComponent
                 } else {
                   this.alert(
                     'error',
-                    'Se han copiado los parámetros',
-                    'No se pudieron copiar los parámetros'
+                    'No se pudieron copiar los parámetros',
+                    'Favor de revisar'
                   );
                 }
               },
@@ -235,8 +231,8 @@ export class ExpenseConceptsListComponent
                 console.log(err);
                 this.alert(
                   'error',
-                  'Se han copiado los parámetros',
-                  'No se pudieron copiar los parámetros'
+                  'No se pudieron copiar los parámetros',
+                  'Favor de revisar'
                 );
               },
             });
