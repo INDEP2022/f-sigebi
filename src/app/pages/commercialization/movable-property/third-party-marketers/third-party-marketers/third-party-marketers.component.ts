@@ -241,8 +241,18 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters3[field] = `${searchFilter}:${filter.search}`;
-
+              // this.columnFilters3[field] = `${searchFilter}:${filter.search}`;
+              if (
+                ['startingAmount', 'pctCommission', 'finalAmount'].includes(
+                  filter.field
+                )
+              ) {
+                this.columnFilters3[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters3[field] = `${searchFilter}:${filter.search}`;
+              }
               // console.log(
               //   'this.columnFilters[field]',
               //   this.columnFilters[field]
