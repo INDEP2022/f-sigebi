@@ -140,6 +140,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       monthExpense12: this.form.value.monthExpense12 ? '12' : null,
     };
     if (this.expenseNumber.value === null) {
+      delete body.expenseNumber;
       this.spentService2
         .save(body)
         .pipe(take(1))
@@ -613,7 +614,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       return;
     }
     this.conceptNumber.setValue(event.conceptNumber);
-    if (this.validatePaymentCamps(event)) {
+    if (!this.validatePaymentCamps(event)) {
       return;
     }
     const responsePayments = await this.validPayments(event);
@@ -708,7 +709,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   get pathProvider() {
-    return 'interfaceesirsae/api/v1/supplier?filter.clkPv=$eq:45677&sortBy=clkPv:ASC';
+    return (
+      'interfaceesirsae/api/v1/supplier' +
+      (this.clkpv && this.clkpv.value
+        ? '?filter.clkPv=$eq:' + this.clkpv.value + '&sortBy=clkPv:ASC'
+        : '?sortBy=clkPv:ASC')
+    );
   }
 
   get dataCompositionExpenses() {
