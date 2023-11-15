@@ -179,7 +179,7 @@ export class ExpenseConceptsListComponent
               {
                 ...body,
                 concept: this.conceptId,
-                address: this.getAddressCode(this.selectedConcept.address),
+                address: this.selectedConcept.address,
               },
               listParams
             )
