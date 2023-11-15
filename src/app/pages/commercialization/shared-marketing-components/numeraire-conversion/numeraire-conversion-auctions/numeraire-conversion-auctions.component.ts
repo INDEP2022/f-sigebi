@@ -256,9 +256,13 @@ export class NumeraireConversionAuctionsComponent
             this.alert('success', 'Proceso Convierte Parcial terminado', '');
           },
           error: err => {
-            console.log(err);
+            console.log(err.error.message);
             this.loader.load = false;
-            this.alert('error', 'Proceso Convierte Parcial', err.error.message);
+            this.alert(
+              'error',
+              'No se pudo hacer la conversión',
+              'Favor de verificar'
+            );
           },
         });
     } else {
