@@ -45,6 +45,7 @@ export class SelectModalTableSharedComponent
   @Input() form: FormGroup;
   @Input() disabled: boolean;
   @Input() maxlengthInput = 10;
+  @Input() readonly = true;
   @Input() functionFilterName: string = 'getAllFilterSelf';
   @Input() override haveSelectColumns: boolean = false;
   @Input() override haveColumnFilters: boolean = false;

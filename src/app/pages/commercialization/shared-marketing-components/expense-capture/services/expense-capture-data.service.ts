@@ -42,6 +42,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   PCAMBIAESTATUS: string;
   PCONDIVXMAND: string;
   PCANVTA: string;
+  P_REGMANDATO: number;
   P_CAMBIO: number;
   P_MANDCONTIPO: string;
   PDEVPARCIAL: string;
@@ -207,10 +208,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   prepareForm() {
     this.form = this.fb.group({
-      expenseNumber: [
-        null,
-        [Validators.required, Validators.pattern(NUM_POSITIVE)],
-      ],
+      expenseNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
       conceptNumber: [null, [Validators.required]],
       paymentRequestNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
       idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
