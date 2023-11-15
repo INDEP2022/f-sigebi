@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -21,7 +24,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { APPROVAL_COLUMNS, GOOD_COLUMNS } from './approval-columns';
-
 @Component({
   selector: 'app-approval-for-donation',
   templateUrl: './approval-for-donation.component.html',
@@ -36,26 +38,32 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   origin: '';
   selectRow: boolean = false;
   delegation: string;
+  delegations$ = new DefaultSelect<IDelegation>();
   totalItems: number = 0;
   totalItems1: number = 0;
-
+  useracept: boolean = true;
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilter: any = [];
   columnFilter1: any = [];
   donation = new DefaultSelect();
-  user = localStorage.getItem('username');
-
+  // user = localStorage.getItem('username');
+  users$ = new DefaultSelect<ISegUsers>();
   area: string;
   validate: boolean = true;
   columnFilters: any = [];
-
+  idDelegation: number[] = [];
   status: string = null;
   cveEvent: string;
 
   settings1 = { ...this.settings };
-
+  get noDelegation1() {
+    return this.form.get('noDelegation1');
+  }
+  get user() {
+    return this.form.get('elaborated');
+  }
   constructor(
     private fb: FormBuilder,
     private donationService: DonationService,
@@ -161,7 +169,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
     //this.getUsers(new ListParams());
     const user: any = this.authService.decodeToken() as any;
-    this.user = user.username;
+    // this.user = user.username;
     this.delegation = this.authService.decodeToken().delegacionreg;
     this.area = this.authService.decodeToken().department;
     // this.form.get('noDelegation1').setValue(this.delegation);
@@ -185,6 +193,39 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    const area = this.form.controls['elaborated'].value;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
+  }
+
+  getAllUsers(params: FilterParams) {
+    return this.serviceUser.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        if (response.count > 0) {
+          const name = this.form.get('elaborated').value;
+          const data = response.data.filter(m => {
+            m.id == name;
+          });
+          console.log(data[0]);
+          this.form.get('elaborated').patchValue(data[0]);
+        }
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+  onUsersChange(event: any) {
+    const selectedUserId = event;
+    // Update the form with the selected user ID
+  }
+
   filterButton() {
     //this.params.value.page = 1;
     //this.search(false);
@@ -207,14 +248,23 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       elaborated
     );
   }
-  /*getUserDelegation() {
-    return firstValueFrom(
-      this.segAccessXAreas.getDelegationUser(this.user).pipe(
-        catchError(() => of('0')),
-        map(res => res.no_delegacion)
-      )
+  delegationToolbar: any = null;
+  getDelegation(params: FilterParams) {
+    params.addFilter(
+      'id',
+      this.authService.decodeToken().preferred_username,
+      SearchFilter.EQ
     );
-  }*/
+    return this.serviceUser.getAllSegUsers(params.getParams()).subscribe({
+      next: (value: any) => {
+        const data = value.data[0].usuario;
+        if (data) this.delegationToolbar = data.delegationNumber;
+      },
+      error(err) {
+        console.log('NO');
+      },
+    });
+  }
   export() {
     this.data.getAll().then(data => {
       this.excelService.export(data, { filename: 'hoja1.xls' });
@@ -368,6 +418,37 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       },
     });
   }*/
+  getDels($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    const area = this.form.controls['noDelegation1'].value;
+    params.search = $params.text;
+    this.getDelegations(params).subscribe();
+  }
+  getDelegations(params: FilterParams) {
+    return this.delegationService.getAll(params.getParams()).pipe(
+      catchError(error => {
+        this.delegations$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        if (response.count > 0) {
+          const name = this.form.get('noDelegation1').value;
+          const data = response.data.filter(m => {
+            return m.id == name;
+          });
+          this.form.get('noDelegation1').patchValue(data[0]);
+        }
+        this.delegations$ = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+  updateSelectedIds(event: any) {
+    if (this.form && this.form.get('noDelegation1')) {
+      this.idDelegation = this.form.get('noDelegation1').value;
+    }
+  }
   selectedDetailActa(event: any) {
     console.log(event.data);
   }
