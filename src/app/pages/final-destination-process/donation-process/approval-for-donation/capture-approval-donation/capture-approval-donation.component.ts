@@ -36,6 +36,7 @@ import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
+
 interface NotData {
   id: number;
   reason: string;
@@ -115,6 +116,7 @@ export class CaptureApprovalDonationComponent
   origin = 'FMCOMDONAC_1';
   @ViewChild('file') file: any;
   donationGood: IGoodDonation;
+
   paramsScreen: IParamsDonac = {
     origin: '',
     recordId: '',
@@ -447,6 +449,7 @@ export class CaptureApprovalDonationComponent
   ValidGoods(): void {
     console.log('this.bienes1 -->');
   }
+
   getDetailDonation() {
     const params = new ListParams();
     params['filter.recordId'] = this.paramsScreen.recordId;
@@ -911,6 +914,9 @@ export class CaptureApprovalDonationComponent
     this.selectedGooods = [];
     this.Exportdate = false;
     this.idAct = 0;
+    this.TOTAL_REPORTE = 0;
+    this.BIEN_ERROR = 0;
+    this.SUM_BIEN = 0;
   }
 
   searchActas(actas?: string) {
