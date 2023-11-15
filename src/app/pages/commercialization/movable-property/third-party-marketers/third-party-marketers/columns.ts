@@ -70,26 +70,71 @@ export const COMI_XTHIRC_COLUMNS = {
   // },
   startingAmount: {
     title: 'Monto Inicial',
+    type: 'html',
     sort: false,
-    valuePrepareFunction: (text: string) => {
-      console.log('text', text);
-      return text ? Number(text).toString() : null;
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   pctCommission: {
     title: 'PCT Comisión',
     sort: false,
-    valuePrepareFunction: (text: string) => {
-      console.log('text', text);
-      return text ? Number(text).toString() : null;
+    type: 'html',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 4,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   finalAmount: {
     title: 'Monto Final',
+    type: 'html',
     sort: false,
-    valuePrepareFunction: (text: string) => {
-      console.log('text', text);
-      return text ? Number(text).toString() : null;
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
 };

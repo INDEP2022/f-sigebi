@@ -77,12 +77,13 @@ export class ExpenseConceptsListModalComponent
   }
 
   private onEditConfirm(body: any) {
-    console.log(event);
+    console.log(body);
+    // return;
     if (body) {
       this.conceptsService
         .edit({
           ...body,
-          address: this.getAddressCode(body.address),
+          address: body.address,
           automatic: body.automatic ? 'S' : 'N',
           numerary: body.numerary ? 'S' : 'N',
         })
@@ -91,8 +92,8 @@ export class ExpenseConceptsListModalComponent
           next: response => {
             this.alert(
               'success',
-              'Edición de Concepto de Pago ' + body.id,
-              'Actualizado correctamente'
+              'Se ha actualizado el concepto de pago ' + body.id,
+              ''
             );
             this.modalRef.content.callback(true);
             this.modalRef.hide();
@@ -121,7 +122,7 @@ export class ExpenseConceptsListModalComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
-            this.alert('success', 'Concepto de Pago', 'Creado correctamente');
+            this.alert('success', 'Se ha creado el concepto de pago', '');
             this.modalRef.content.callback(true);
             this.modalRef.hide();
             // this.getData();

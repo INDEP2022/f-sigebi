@@ -152,8 +152,9 @@ export class ExpenseCompositionModalComponent
           next: response => {
             this.alert(
               'success',
-              'Edición de Composición de Gasto ' + body.expenseDetailNumber,
-              'Actualizado correctamente'
+              'Se ha actualizado la composición del gasto ' +
+                body.expenseDetailNumber,
+              ''
             );
             this.modalRef.content.callback(true);
             this.modalRef.hide();
@@ -161,8 +162,9 @@ export class ExpenseCompositionModalComponent
           error: err => {
             this.alert(
               'error',
-              'Edición de Composición de Gasto ' + body.expenseDetailNumber,
-              'No se pudo actualizar'
+              'No se pudo actualizar la composición del gasto ' +
+                body.expenseDetailNumber,
+              ''
             );
           },
         });
@@ -191,22 +193,14 @@ export class ExpenseCompositionModalComponent
         .pipe(take(1))
         .subscribe({
           next: response => {
-            this.alert(
-              'success',
-              'Composición de Gasto',
-              'Creado Correctamente'
-            );
+            this.alert('success', 'Se ha creado la composición de gasto', '');
             this.modalRef.content.callback(true);
             this.modalRef.hide();
             // this.getData();
           },
           error: err => {
             console.log(err);
-            this.alert(
-              'error',
-              'Creación Composición de Gasto',
-              'No se pudo realizar correctamente'
-            );
+            this.alert('error', 'No se pudo crear la composición de gasto', '');
           },
         });
     }

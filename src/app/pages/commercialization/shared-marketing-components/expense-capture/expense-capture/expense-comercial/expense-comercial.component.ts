@@ -118,33 +118,45 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   save() {
+    let body = {
+      ...this.form.value,
+      dateOfResolution: this.form.value.dateOfResolution
+        ? this.form.value.dateOfResolution.trim().length > 0
+          ? this.form.value.dateOfResolution
+          : null
+        : null,
+      comment: this.form.value.comment ?? '',
+      monthExpense: this.form.value.monthExpense ? '1' : null,
+      monthExpense2: this.form.value.monthExpense2 ? '2' : null,
+      monthExpense3: this.form.value.monthExpense3 ? '3' : null,
+      monthExpense4: this.form.value.monthExpense4 ? '4' : null,
+      monthExpense5: this.form.value.monthExpense5 ? '5' : null,
+      monthExpense6: this.form.value.monthExpense6 ? '6' : null,
+      monthExpense7: this.form.value.monthExpense7 ? '7' : null,
+      monthExpense8: this.form.value.monthExpense8 ? '8' : null,
+      monthExpense9: this.form.value.monthExpense9 ? '9' : null,
+      monthExpense10: this.form.value.monthExpense10 ? '10' : null,
+      monthExpense11: this.form.value.monthExpense11 ? '11' : null,
+      monthExpense12: this.form.value.monthExpense12 ? '12' : null,
+    };
     if (this.expenseNumber.value === null) {
       this.spentService2
-        .save({
-          ...this.form.value,
-          monthExpense: this.form.value.monthExpense ? '1' : null,
-          monthExpense2: this.form.value.monthExpense2 ? '2' : null,
-          monthExpense3: this.form.value.monthExpense3 ? '3' : null,
-          monthExpense4: this.form.value.monthExpense4 ? '4' : null,
-          monthExpense5: this.form.value.monthExpense5 ? '5' : null,
-          monthExpense6: this.form.value.monthExpense6 ? '6' : null,
-          monthExpense7: this.form.value.monthExpense7 ? '7' : null,
-          monthExpense8: this.form.value.monthExpense8 ? '8' : null,
-          monthExpense9: this.form.value.monthExpense9 ? '9' : null,
-          monthExpense10: this.form.value.monthExpense10 ? '10' : null,
-          monthExpense11: this.form.value.monthExpense11 ? '11' : null,
-          monthExpense12: this.form.value.monthExpense12 ? '12' : null,
-        })
+        .save(body)
         .pipe(take(1))
         .subscribe({
           next: response => {
-            if (response && response.data) {
-              this.alert(
-                'success',
-                'Captura de Gastos',
-                'Gasto creado correctamente'
-              );
-            }
+            this.alert(
+              'success',
+              'Captura de Gastos',
+              'Gasto creado correctamente'
+            );
+            // if (response && response.data) {
+            //   this.alert(
+            //     'success',
+            //     'Captura de Gastos',
+            //     'Gasto creado correctamente'
+            //   );
+            // }
           },
           error: err => {
             this.alert('error', 'Creación de Gasto', err.error.message);
@@ -152,17 +164,22 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         });
     } else {
       this.spentService2
-        .edit(this.form.value)
+        .edit(body)
         .pipe(take(1))
         .subscribe({
           next: response => {
-            if (response && response.data) {
-              this.alert(
-                'success',
-                'Captura de Gastos',
-                'Gasto actualizado correctamente'
-              );
-            }
+            this.alert(
+              'success',
+              'Captura de Gastos',
+              'Gasto actualizado correctamente'
+            );
+            // if (response && response.data) {
+            //   this.alert(
+            //     'success',
+            //     'Captura de Gastos',
+            //     'Gasto actualizado correctamente'
+            //   );
+            // }
           },
           error: err => {
             this.alert('error', 'Actualización de Gasto', err.error.message);
@@ -353,7 +370,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       return;
     }
     if (!this.dataService.FOLIO_UNIVERSAL) {
-      this.alert('error', 'No a escaneado los documentos', '');
+      this.alert('warning', 'No se han escaneado los documentos', '');
       return;
     }
     let filterParams = new FilterParams();
@@ -536,18 +553,77 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
+  private validatePaymentCamps(event: IComerExpense) {
+    if (!event.clkpv) {
+      this.alert('warning', 'Validación de pagos', 'Requiere clkpv');
+      return false;
+    }
+    if (!event.comment) {
+      this.alert('warning', 'Validación de pagos', 'Requiere comment');
+      return false;
+    }
+    if (!event.comproafmandsae) {
+      this.alert('warning', 'Validación de pagos', 'Requiere comproafmandsae');
+      return false;
+    }
+    if (!event.attachedDocumentation) {
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'Requiere attachedDocumentation'
+      );
+      return false;
+    }
+    if (!event.capturedUser) {
+      this.alert('warning', 'Validación de pagos', 'Requiere capturedUser');
+      return false;
+    }
+    if (!event.authorizedUser) {
+      this.alert('warning', 'Validación de pagos', 'Requiere authorizedUser');
+      return false;
+    }
+    if (!event.capturedUser) {
+      this.alert('warning', 'Validación de pagos', 'Requiere capturedUser');
+      return false;
+    }
+    if (!event.requestedUser) {
+      this.alert('warning', 'Validación de pagos', 'Requiere requestedUser');
+      return false;
+    }
+    if (!event.formPayment) {
+      this.alert('warning', 'Validación de pagos', 'Requiere formPayment');
+      return false;
+    }
+    if (!event.eventNumber) {
+      this.alert('warning', 'Validación de pagos', 'Requiere eventNumber');
+      return false;
+    }
+    if (!event.lotNumber) {
+      this.alert('warning', 'Validación de pagos', 'Requiere lotNumber');
+      return false;
+    }
+    return true;
+  }
+
   async fillForm(event: IComerExpense) {
-    // console.log(event);
+    console.log(event);
     this.data = event;
     if (!event.conceptNumber) {
       this.alert('warning', 'No cuenta con un concepto de pago', '');
       return;
     }
     this.conceptNumber.setValue(event.conceptNumber);
+    if (this.validatePaymentCamps(event)) {
+      return;
+    }
     const responsePayments = await this.validPayments(event);
     // console.log(responsePayments);
     if (responsePayments.message[0] !== 'OK') {
-      this.alert('error', responsePayments.message[0], '');
+      this.alert(
+        'error',
+        'Sucedió un error en la validación de pagos',
+        'Favor de verificar'
+      );
       return;
     }
     this.dataService.V_VALCON_ROBO = await firstValueFrom(
@@ -575,7 +651,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.clkpv.setValue(event.clkpv);
 
     if (!event.descurcoord) {
-      this.alert('warning', 'No cuenta con coordinación regional', '');
+      this.alert('warning', 'No se cuenta con coordinación regional', '');
     }
     this.descurcoord.setValue(event.descurcoord);
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
@@ -583,10 +659,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
     this.dateOfResolution.setValue(
       event.dateOfResolution
-        ? secondFormatDateToDate(event.dateOfResolution)
+        ? event.dateOfResolution.trim().length > 0
+          ? secondFormatDateToDate(event.dateOfResolution)
+          : null
         : null
     );
-    this.comment.setValue(event.comment);
+    this.comment.setValue(event.comment ?? '');
 
     this.dataService.updateOI.next(true);
     this.dataService.updateExpenseComposition.next(true);
