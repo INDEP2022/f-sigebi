@@ -96,6 +96,7 @@ export class NumeraireConversionAllotmentsComponent
 
   convierte() {
     if (['VEN', 'CONC'].includes(this.selectedEvent.statusVtaId)) {
+      this.loader.load = true;
       this.convNumeraryService
         .PA_CONVNUMERARIO_ADJUDIR({
           pevent: this.selectedEvent.id,
@@ -110,9 +111,11 @@ export class NumeraireConversionAllotmentsComponent
               'Proceso Convierte Adjudicación Directa terminado',
               ''
             );
+            this.loader.load = false;
           },
           error: err => {
             console.log(err);
+            this.loader.load = false;
           },
         });
     } else {

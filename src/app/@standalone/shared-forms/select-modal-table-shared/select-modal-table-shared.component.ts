@@ -45,6 +45,7 @@ export class SelectModalTableSharedComponent
   @Input() form: FormGroup;
   @Input() disabled: boolean;
   @Input() maxlengthInput = 10;
+  @Input() readonly = true;
   @Input() functionFilterName: string = 'getAllFilterSelf';
   @Input() override haveSelectColumns: boolean = false;
   @Input() override haveColumnFilters: boolean = false;
@@ -62,7 +63,7 @@ export class SelectModalTableSharedComponent
   @Input() operator: SearchFilter = SearchFilter.LIKE;
   @Input() searchField: string; // Debe pertenecer a una de las columnas
   @Input() columnsType: {
-    [others: string]: { title: string; type: string; sort: boolean };
+    [others: string]: any;
   };
   @Output() selectRow = new EventEmitter();
   constructor(protected override modalService: BsModalService) {
