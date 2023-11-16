@@ -187,7 +187,7 @@ export class MunicipalityControlMainComponent
       next: data => {
         this.assignedGoodColumns = data.data;
         this.assignedGoodTotalItems = data.count;
-        //console.log(this.assignedGoodColumns);
+        console.log(this.assignedGoodColumns);
       },
       error: err => {
         this.assignedGoodColumns = [];
@@ -305,7 +305,9 @@ export class MunicipalityControlMainComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(data => {
-      if (data) this.getDataGoods(this.idGood);
+      if (data) {
+        this.getDataGoods(this.applicant);
+      }
     });
   }
 }

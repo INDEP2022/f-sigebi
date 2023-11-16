@@ -220,7 +220,6 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
       this.bodyBien = this.goodForm.value;
       this.goodForm2.patchValue(this.bodyBien);
       //console.log(JSON.stringify(this.goodForm2.value));
-      debugger;
       this.msDirectawardService
         .createGoodsById(this.goodForm2.value)
         .subscribe({
