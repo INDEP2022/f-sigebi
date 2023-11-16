@@ -75,6 +75,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   settings1 = { ...this.settings };
+  loading2: boolean = false;
   get noDelegation1() {
     return this.form.get('noDelegation1');
   }
@@ -167,7 +168,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'captureDate':
-                filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'noDelegation1':
@@ -182,16 +182,32 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             }
 
             if (filter.search !== '') {
-              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'captureDate') {
+                var fecha1 = filter.search;
+                var ano1 = fecha1.getFullYear();
+                var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
+                var dia1 = ('0' + fecha1.getDate()).slice(-2);
+                var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${fechaFormateada1}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+
               //this.params.value.page = 1;
             } else {
-              delete this.columnFilter[field];
+              delete this.columnFilters[field];
             }
           });
           this.params = this.pageFilter(this.params);
           this.getEventComDonationAll();
         }
       });
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getEventComDonationAll());
 
     this.data1
       .onChanged()
@@ -223,7 +239,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
               delete this.columnFilter1[field];
             }
           });
-          this.params = this.pageFilter(this.params);
+          this.params1 = this.pageFilter(this.params1);
           this.getDetailComDonation();
         }
       });
@@ -468,7 +484,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   getDetailComDonation(idActa?: number | string) {
-    this.loading = true;
+    this.loading2 = true;
     if (idActa) {
       this.params1.getValue()['filter.recordId'] = `$eq:${idActa}`;
     }
@@ -482,10 +498,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         this.data1.load(resp.data);
         this.data1.refresh();
         this.totalItems1 = resp.count;
-        this.loading = false;
+        this.loading2 = false;
       },
       error: err => {
-        this.loading = false;
+        this.loading2 = false;
         this.data1.load([]);
         this.data1.refresh();
         this.totalItems1 = 0;
@@ -731,7 +747,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   clean() {
     this.response = false;
-    this.form.get('cveActa').setValue('');
+    this.form.get('cveActa').setValue(null);
     this.validate = true;
     this.form.get('estatusAct').setValue([]);
     this.form.get('noDelegation1').setValue([]);
