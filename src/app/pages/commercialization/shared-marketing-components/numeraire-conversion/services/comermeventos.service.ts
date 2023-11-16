@@ -7,7 +7,6 @@ import { IListResponseMessage } from 'src/app/core/interfaces/list-response.inte
   providedIn: 'root',
 })
 export class ComermeventosService extends HttpService {
-  private readonly endpoint: string = EventEndpoints.ComerEvents;
   constructor() {
     super();
     this.microservice = EventEndpoints.BasePath;

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { AccountingService } from 'src/app/core/services/ms-accounting/accounting.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
-import { IMandExpense } from '../../../models/mandcont';
+
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { IMandExpenseCont } from 'src/app/core/models/ms-accounting/mand-expensecont';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-mand-by-goods',
@@ -8,19 +12,44 @@ import { IMandExpense } from '../../../models/mandcont';
   styleUrls: ['./mand-by-goods.component.scss'],
 })
 export class MandByGoodsComponent
-  extends BasePageTableNotServerPagination<IMandExpense>
+  extends BasePageTableNotServerPagination<IMandExpenseCont>
   implements OnInit
 {
-  total = 0;
-  constructor() {
+  total: any = 0;
+  spentId: number;
+  constructor(
+    private dataService: AccountingService,
+    private modalRef: BsModalRef
+  ) {
     super();
+    this.service = this.dataService;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: COLUMNS,
+    };
   }
 
-  override setTotals(data: IMandExpense[]): void {
+  override getParams() {
+    let newColumnFilters: any = [];
+    if (this.spentId && this.spentId) {
+      newColumnFilters['filter.spentId'] = this.spentId;
+    }
+    return {
+      ...this.params.getValue(),
+      ...newColumnFilters,
+    };
+  }
+
+  override setTotals(data: IMandExpenseCont[]): void {
     this.total = 0;
     data.forEach(x => {
       this.total += +x.amount;
     });
-    this.total = +this.total.toFixed(2);
+    this.total = this.total.toFixed(2);
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 }

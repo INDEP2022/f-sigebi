@@ -258,12 +258,14 @@ export class ParamsConcepsListComponent
         conceptId: row.conceptId,
         parameter: row.parameter,
         value: row.value,
-        address: this.getAddressCode(row.address),
+        address: row.address,
       })
       .pipe(takeUntil(this.$unSubscribe));
   }
 
   async deleteConfirm(row: IParameterConcept) {
+    console.log(row);
+
     const response = await this.alertQuestion(
       'warning',
       'Eliminación Parámetro',

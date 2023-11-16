@@ -4,15 +4,21 @@
   // width: 150px;
   padding: 8px 10px;
   position: relative;
-  top: -19px;
   margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 100px;
   box-shadow: 0px 0px 20px 0px rgba(69, 90, 100, 0.08) !important;
 
   @media screen and (max-width: 576px) {
     margin-top: 10px;
   }
+}
+
+.footer-mand-goods {
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px 10px;
 }

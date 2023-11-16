@@ -17,6 +17,7 @@ export class ExpenseConceptsComponent implements OnInit {
       next: param => {
         if (param['id']) {
           this.address = param['id'];
+          console.log(this.address);
         }
       },
     });
