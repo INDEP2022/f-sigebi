@@ -524,7 +524,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     });
     if (resultSP === null) {
       // console.log(resultSP);
-
+      // this.alert('error','No se pudo realizar el proceso de pago','Favor de verificar')
       return;
     }
     this.expenseGoodProcessService
@@ -535,7 +535,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       )
       .subscribe({
         next: response => {
-          this.alert('success', 'Pago procesado correctamente', '');
+          this.alert('success', 'Se realizo el proceso de pago', '');
         },
         error: err => {
           this.alert(
