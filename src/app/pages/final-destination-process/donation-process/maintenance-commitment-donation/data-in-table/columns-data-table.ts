@@ -1,9 +1,12 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxElementComponent_ } from './CheckboxDisabled';
 export const COLUMNS_DATA_TABLE = {
   labelId: {
     title: 'Etiqueta',
     valuePrepareFunction: (value: any) => {
       return value != null ? value.description : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     type: 'string',
     sort: false,
@@ -52,7 +55,8 @@ export const COLUMNS_DATA_TABLE = {
   yes: {
     title: 'S',
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    // filter: false,
+    renderComponent: CheckboxElementComponent_,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
@@ -63,7 +67,8 @@ export const COLUMNS_DATA_TABLE = {
   not: {
     title: 'N',
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    // filter: false,
+    renderComponent: CheckboxElementComponent_,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;

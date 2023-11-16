@@ -4,10 +4,12 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IRapproveDonation } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { RapproveDonationService } from 'src/app/core/services/ms-r-approve-donation/r-approve-donation.service';
@@ -51,7 +53,8 @@ export class DataTableComponent extends BasePage implements OnInit {
     private usersService: UsersService,
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private goodSssubtypeService: GoodSssubtypeService
   ) {
     super();
     // this.settings = { ...this.settings, actions: false };
@@ -101,7 +104,8 @@ export class DataTableComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'labelId':
-                searchFilter = SearchFilter.EQ;
+                field = 'filter.label.description';
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'type':
                 searchFilter = SearchFilter.EQ;
@@ -165,6 +169,7 @@ export class DataTableComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'labelId':
+                field = 'filter.label.description';
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'type':
@@ -268,7 +273,7 @@ export class DataTableComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['filter.labelId'] = `$eq:${this.type}`;
+    params['filter.ruleId'] = `$eq:${this.type}`;
     //params.getValue()['filter.labelId'] = `$eq:${this.type}`;
     console.log('params 1 -> ', params);
     this.rapproveDonationService.getAllT(params).subscribe({
@@ -357,7 +362,10 @@ export class DataTableComponent extends BasePage implements OnInit {
   }
 
   openModal(newOrEdit: boolean, data: any, type: number) {
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-dialog-centered modal-lg',
+    };
     modalConfig.initialState = {
       newOrEdit,
       data,
@@ -374,6 +382,28 @@ export class DataTableComponent extends BasePage implements OnInit {
       MaintenanceCommitmentDonationModalComponent,
       modalConfig
     );
+  }
+
+  descClasif(numb: any) {
+    if (!numb) return null;
+    const params = new FilterParams();
+
+    params.page = 1;
+    params.limit = 1;
+
+    params.addFilter('numClasifGoods', numb, SearchFilter.EQ);
+    // params.addFilter('no_cuenta', lparams.text);
+    return new Promise((resolve, reject) => {
+      // getById
+      this.goodSssubtypeService.getFilter(params.getParams()).subscribe({
+        next: data => {
+          resolve(data.data[0].description);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
 }
 

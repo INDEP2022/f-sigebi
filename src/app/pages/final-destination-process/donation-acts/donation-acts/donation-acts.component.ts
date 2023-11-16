@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
@@ -19,6 +19,7 @@ import { ExpedientService } from 'src/app/core/services/expedients/expedient.ser
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
@@ -99,6 +100,10 @@ export class DonationActsComponent extends BasePage implements OnInit {
     this.settings2 = { ...this.settings, actions: false, columns: COLUMNS2 };
   }
 
+  controls() {
+    return this.actForm.controls;
+  }
+
   ngOnInit(): void {
     this.initForm();
     // this.startCalendars();
@@ -117,11 +122,14 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
   initForm() {
     this.form = this.fb.group({
-      no_expediente: [],
-      no_transferente: [],
-      av_previa: [],
-      ca_penal: [],
-      ti_expediente: [],
+      no_expediente: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+      ],
+      no_transferente: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      av_previa: [null, [Validators.pattern(STRING_PATTERN)]],
+      ca_penal: [null, [Validators.pattern(STRING_PATTERN)]],
+      ti_expediente: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     this.actForm = this.fb.group({
@@ -129,7 +137,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
       status: [],
       trans: [],
       don: [],
-      es_acta: [],
+      es_acta: [null],
       cv_acta: [],
       observations: [],
       fec_elaboracion: [],

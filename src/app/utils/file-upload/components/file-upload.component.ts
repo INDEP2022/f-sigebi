@@ -33,7 +33,6 @@ export class FileUploadComponent extends BasePage implements OnInit {
     public options: ModalOptions
   ) {
     super();
-    console.log(this.options.initialState);
     this.config = this.options.initialState;
     if (this.config && this.config.nameButton != '') {
       this.nameButton = this.config.nameButton;
@@ -74,7 +73,6 @@ export class FileUploadComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    console.log('Botón Subir presionado');
     if (this.fileEvents.length < 1) {
       this.alert('warning', 'Advertencia', 'Debes subir mínimo un archivo');
       return;
