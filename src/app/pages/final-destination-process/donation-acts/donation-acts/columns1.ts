@@ -14,4 +14,9 @@ export const COLUMNS1 = {
     type: 'number',
     sort: false,
   },
+  fileNumber: {
+    title: 'Acta',
+    type: 'string',
+    sort: false,
+  },
 };

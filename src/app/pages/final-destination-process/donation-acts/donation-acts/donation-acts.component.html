@@ -1,6 +1,14 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Actas de Donaci&oacute;n</h5>
+    <!-- <div class="col-md-6 buttons">
+      <div>
+        <button class="btn btn-primary btn-sm active m-1" (click)="desbFrom()">
+          Nueva Acta
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div> -->
   </div>
 
   <div body>
@@ -26,8 +34,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="av_previa"
-              readonly />
+              formControlName="av_previa" />
           </form-field>
         </div>
         <div class="row pt-3">
@@ -38,8 +45,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="ca_penal"
-              readonly />
+              formControlName="ca_penal" />
           </form-field>
 
           <form-field
@@ -49,8 +55,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="no_transferente"
-              readonly />
+              formControlName="no_transferente" />
           </form-field>
 
           <form-field
@@ -60,14 +65,19 @@
             <input
               type="text"
               class="form-control"
-              formControlName="ti_expediente"
-              readonly />
+              formControlName="ti_expediente" />
           </form-field>
         </div>
       </form>
     </div>
 
     <div class="d-flex">
+      <div>
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
       <div>
         <button
           class="btn btn-primary btn-sm active"
@@ -89,10 +99,7 @@
         </button>
       </div>
     </div>
-
-    <br />
-
-    <div>
+    <div class="pt-5">
       <form [formGroup]="actForm" class="form-material">
         <div class="row pt-3">
           <form-field
@@ -140,6 +147,9 @@
               type="text"
               class="form-control"
               formControlName="es_acta"
+              [style.color]="
+                this.actForm.get('es_acta').value == 'CERRADA' ? 'red' : 'green'
+              "
               readonly />
           </form-field>
         </div>
