@@ -208,15 +208,7 @@ export class ExpenseConceptsListComponent
                         .pipe(takeUntil(this.$unSubscribe))
                     );
                   });
-<<<<<<< HEAD
-                  this.alert(
-                    'success',
-                    'Se han copiado los parámetros',
-                    'Realizado correctamente'
-                  );
-=======
                   this.alert('success', 'Se han copiado los parámetros', '');
->>>>>>> c11abf89cdbc3ac758dd1ce106490556c9587e08
                   // this.filesToDelete = [];
                   this.selectedConcept = body;
                   // this.expenseConceptsService.refreshParams.next(true);
@@ -230,13 +222,8 @@ export class ExpenseConceptsListComponent
                 } else {
                   this.alert(
                     'error',
-<<<<<<< HEAD
-                    'Se han copiado los parámetros',
-                    'No se pudieron copiar los parámetros'
-=======
                     'No se pudieron copiar los parámetros',
                     'Favor de revisar'
->>>>>>> c11abf89cdbc3ac758dd1ce106490556c9587e08
                   );
                 }
               },
@@ -244,13 +231,8 @@ export class ExpenseConceptsListComponent
                 console.log(err);
                 this.alert(
                   'error',
-<<<<<<< HEAD
-                  'Se han copiado los parámetros',
-                  'No se pudieron copiar los parámetros'
-=======
                   'No se pudieron copiar los parámetros',
                   'Favor de revisar'
->>>>>>> c11abf89cdbc3ac758dd1ce106490556c9587e08
                 );
               },
             });
