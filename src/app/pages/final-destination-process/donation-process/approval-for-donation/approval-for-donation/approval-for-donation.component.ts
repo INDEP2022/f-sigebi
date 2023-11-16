@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import {
   FilterParams,
   ListParams,
@@ -21,7 +22,6 @@ import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service'
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { APPROVAL_COLUMNS, GOOD_COLUMNS } from './approval-columns';
 @Component({
@@ -37,11 +37,15 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   data1: LocalDataSource = new LocalDataSource();
   origin: '';
   selectRow: boolean = false;
+  // user: string = '';
   delegation: string;
   delegations$ = new DefaultSelect<IDelegation>();
   totalItems: number = 0;
   totalItems1: number = 0;
   useracept: boolean = true;
+  userName: string = '';
+  edit = false;
+
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -83,15 +87,58 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.settings.columns = APPROVAL_COLUMNS;
     this.settings.hideSubHeader = false;
 
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      columns: {
+        cveAct: {
+          title: 'Clave Evento',
+          type: 'string',
+          sort: false,
+        },
+        captureDate: {
+          title: 'Fecha Captura',
+          type: 'number',
+          sort: false,
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+          valuePrepareFunction: (text: string) => {
+            return `${text ? text.split('-').reverse().join('/') : ''}`;
+          },
+        },
+        elaborated: {
+          title: 'Ingresó',
+          type: 'string',
+          sort: false,
+        },
+        estatusAct: {
+          title: 'Estatus Evento',
+          type: 'string',
+          sort: false,
+        },
+      },
+    };
     this.settings1 = {
       ...this.settings,
       hideSubHeader: false,
-      columns: { ...GOOD_COLUMNS },
+      columns: {
+        ...GOOD_COLUMNS,
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.estatusAct == 'ABIERTA') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
     };
   }
 
   ngOnInit(): void {
     this.initForm();
+    // this.userTracker();
     // this.search();
     this.data
       .onChanged()
@@ -110,6 +157,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'noDelegation1':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'elaborated':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -163,19 +213,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
           this.getDetailComDonation();
         }
       });
-    /*this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.search());*/
 
-    //this.getUsers(new ListParams());
-    const user: any = this.authService.decodeToken() as any;
-    // this.user = user.username;
-    this.delegation = this.authService.decodeToken().delegacionreg;
-    this.area = this.authService.decodeToken().department;
-    // this.form.get('noDelegation1').setValue(this.delegation);
-    // this.form.get('elaborated').setValue(this.user);
-    console.log(this.user, user);
-    // console.log(this.delegation);
     this.inicialice();
   }
 
@@ -183,7 +221,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       cveActa: [null, []],
       estatusAct: ['', []],
-      noDelegation1: [null, [Validators.pattern(STRING_PATTERN)]],
+      noDelegation1: [null],
       elaborated: [null, []],
     });
     // this.form.get('elaborated').disable();
@@ -212,9 +250,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         if (response.count > 0) {
           const name = this.form.get('elaborated').value;
           const data = response.data.filter(m => {
-            m.id == name;
+            // m.id == name ;
+            m['description'] = m.id == name + '-' + m.description;
           });
           console.log(data[0]);
+          // this.user = data[0]
           this.form.get('elaborated').patchValue(data[0]);
         }
         this.users$ = new DefaultSelect(response.data, response.count);
@@ -230,10 +270,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     //this.params.value.page = 1;
     //this.search(false);
     this.response = true;
-    const state = this.status ? this.status : '';
     const cveAc = this.form.get('cveActa').value
       ? this.form.get('cveActa').value
       : '';
+    const state = this.status ? this.status : '';
     const noDelegation1 = this.form.get('noDelegation1').value
       ? this.form.get('noDelegation1').value
       : '';
@@ -242,19 +282,15 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       : '';
     this.getEventComDonationAll(
       'COMPDON',
-      state,
       cveAc,
+      state,
       noDelegation1,
       elaborated
     );
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
-    params.addFilter(
-      'id',
-      this.authService.decodeToken().preferred_username,
-      SearchFilter.EQ
-    );
+    params.addFilter('id', this.form.get('elaborated').value, SearchFilter.EQ);
     return this.serviceUser.getAllSegUsers(params.getParams()).subscribe({
       next: (value: any) => {
         const data = value.data[0].usuario;
@@ -284,23 +320,23 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   getEventComDonationAll(
     actType?: string | number,
-    estatusAct?: string | number,
     cveAct?: string | number,
+    estatusAct?: string | number,
     NoDelegation1?: string | number,
     elaborated?: string | number
   ) {
     this.loading = true;
-    // this.params.getValue()['filter.actType'] = `$eq:${actType}`;
-    // this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
-    // if (NoDelegation1) {
-    //   this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
-    // }
+    this.params.getValue()['filter.actType'] = `$eq:${actType}`;
+    this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
+    if (NoDelegation1) {
+      this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
+    }
     if (estatusAct) {
       this.params.getValue()['filter.estatusAct'] = `$eq:${estatusAct}`;
     }
-    // if (elaborated) {
-    //   this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`;
-    // }
+    if (elaborated) {
+      this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`;
+    }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -364,10 +400,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       ],
       {
         queryParams: {
-          origin: this.origin,
-          recordId: this.params1.getValue()['filter.recordId'],
-          cveEvent: this.cveEvent,
-          area: this.area,
+          // origin: this.origin,
+          // recordId: this.params1.getValue()['filter.recordId'],
+          // cveEvent: this.cveEvent,
+          // area: this.noDelegation1,
         },
       }
     );
@@ -476,7 +512,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   async getIndicator() {
     return new Promise((resolve, reject) => {
       let body = {
-        user: this.user,
+        user: this.authService.decodeToken().username,
         indicatorNumber: 12,
       };
       this.serviceUser.getAllIndicator(body).subscribe({
@@ -499,7 +535,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   async getFaVal() {
     return new Promise((resolve, reject) => {
       let body = {
-        pUser: this.user,
+        pUser: this.authService.decodeToken().username,
+        // pIndicatorNumber: this.authService.decodeToken().department,
         pIndicatorNumber: 12,
       };
       this.serviceUser.getAllFaVal(body).subscribe({
@@ -520,7 +557,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   async getAccessArea(params: ListParams) {
     return new Promise((resolve, reject) => {
-      params['filter.user'] = `$eq:${this.user}`;
+      params['filter.user'] = `$eq:${this.authService.decodeToken().username}`;
       this.segAccessXAreas.getAll(params).subscribe({
         next: resp => {
           if (resp.data) {
@@ -551,6 +588,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         'No tiene privilegios para esta pantalla'
       );
       this.form.get('cveActa').disable();
+      this.form.get('estatusAct').disable();
+      this.form.get('noDelegation1').disable();
+      this.form.get('elaborated').disable();
       this.validate = true;
       return;
     }
@@ -564,6 +604,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         'No tiene privilegios para esta pantalla'
       );
       this.form.get('cveActa').disable();
+      this.form.get('estatusAct').disable();
+      this.form.get('noDelegation1').disable();
+      this.form.get('elaborated').disable();
+
       this.validate = true;
       return;
     } else if (level == 2) {
@@ -571,7 +615,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       const valDele = delegation[0].delegationNumber;
       this.form.get('noDelegation1').setValue(valDele);
     } else if (level == 3) {
-      this.form.get('elaborated').setValue(this.user);
+      this.form
+        .get('elaborated')
+        .setValue(this.authService.decodeToken().username);
     }
   }
 
@@ -588,8 +634,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.response = false;
     this.form.get('cveActa').setValue('');
     this.validate = true;
-    this.status = null;
-    this.form.get('estatusAct').setValue('');
+    this.form.get('estatusAct').setValue([]);
+    this.form.get('noDelegation1').setValue([]);
+    this.form.get('noDelegation1').setValue([]);
+    this.form.get('elaborated').setValue([]);
     this.getDetailComDonation(-1);
   }
 
@@ -608,13 +656,13 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     const elaborated = this.form.get('elaborated').value
       ? this.form.get('elaborated').value
       : '';
-    /*this.getEventComDonationExcel(
-      //'COMPDON',
-      state,
-      cveAc
-      //noDelegation1,
-      //elaborated
-    );*/
+    // this.getEventComDonationExcel(
+    //   'COMPDON',
+    //   state,
+    //   cveAc,
+    //   noDelegation1,
+    //   elaborated
+    // );
     this.getEventComDonationExcel(
       //'COMPDON',
       cveAc

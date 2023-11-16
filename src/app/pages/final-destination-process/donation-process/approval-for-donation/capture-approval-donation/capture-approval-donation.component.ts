@@ -66,6 +66,8 @@ export class CaptureApprovalDonationComponent
   deleteO: boolean = false;
   goods: any[] = [];
   files: any = [];
+  radio: boolean = false;
+  bienesVaild: boolean = false;
   changeDescription: string;
   dataTableGood_: any[] = [];
   valueChange: number = 0;
@@ -114,9 +116,9 @@ export class CaptureApprovalDonationComponent
   type = 'COMPDON';
   eventDonacion: IGoodDonation;
   origin = 'FMCOMDONAC_1';
+
   @ViewChild('file') file: any;
   donationGood: IGoodDonation;
-
   paramsScreen: IParamsDonac = {
     origin: '',
     recordId: '',
@@ -251,6 +253,11 @@ export class CaptureApprovalDonationComponent
   }
   oadGoods() {
     this.donAuthorizaService.loadGoods.next(true);
+  }
+  enableButtons() {
+    if (this.regisForm.get('activeRadio').value !== null) {
+      this.radio = true;
+    }
   }
 
   initForm() {
