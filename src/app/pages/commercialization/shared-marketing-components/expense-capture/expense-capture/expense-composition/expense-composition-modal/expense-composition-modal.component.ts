@@ -108,28 +108,6 @@ export class ExpenseCompositionModalComponent
       this.onAddConfirm(this.form.value);
     }
   }
-
-  private getAddressCode(address: string) {
-    switch (address) {
-      case 'MUEBLES':
-        return 'M';
-      case 'INMUEBLES':
-        return 'I';
-      case 'GENERAL':
-        return 'C';
-      case 'VIGILANCIA':
-        return 'V';
-      case 'SEGUROS':
-        return 'S';
-      case 'JURIDICO':
-        return 'J';
-      case 'ADMINISTRACIÓN':
-        return 'A';
-      default:
-        return '';
-    }
-  }
-
   private onEditConfirm(body: any) {
     console.log(body);
     const total = (
