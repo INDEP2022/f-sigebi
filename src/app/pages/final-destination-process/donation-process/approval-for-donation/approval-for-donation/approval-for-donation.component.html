@@ -78,7 +78,6 @@
             <ngx-select
               label="Usuario"
               [form]="form"
-              [readonly]="useracept ? true : false"
               [data]="users$"
               (fetchItems)="getUsers($event)"
               bindLabel="userAndName"

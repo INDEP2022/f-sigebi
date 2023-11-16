@@ -11,12 +11,14 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -24,6 +26,10 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { APPROVAL_COLUMNS, GOOD_COLUMNS } from './approval-columns';
+export type IGoodAndAvailable = IGood & {
+  available: boolean;
+  selected: boolean;
+};
 @Component({
   selector: 'app-approval-for-donation',
   templateUrl: './approval-for-donation.component.html',
@@ -38,6 +44,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   origin: '';
   selectRow: boolean = false;
   // user: string = '';
+  paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  dataTableGood: LocalDataSource = new LocalDataSource();
+  bienes: IGood[] = [];
   delegation: string;
   delegations$ = new DefaultSelect<IDelegation>();
   totalItems: number = 0;
@@ -45,7 +54,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   useracept: boolean = true;
   userName: string = '';
   edit = false;
-
+  fileNumber: number = 0;
+  event: any[] = [];
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -55,12 +65,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   // user = localStorage.getItem('username');
   users$ = new DefaultSelect<ISegUsers>();
   area: string;
+  dataTableGood_: any[] = [];
   validate: boolean = true;
   columnFilters: any = [];
   idDelegation: number[] = [];
   status: string = null;
   cveEvent: string;
-
+  dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
+  dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   settings1 = { ...this.settings };
   get noDelegation1() {
     return this.form.get('noDelegation1');
@@ -73,6 +85,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     private donationService: DonationService,
     private router: Router,
     private excelService: ExcelService,
+    private GoodprocessService_: GoodprocessService,
     private serviceUser: UsersService,
     private regionalDelegacionService: RegionalDelegationService,
     private segAccessXAreas: SegAcessXAreasService,
@@ -127,7 +140,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         ...GOOD_COLUMNS,
       },
       rowClassFunction: (row: any) => {
-        if (row.data.estatusAct == 'ABIERTA') {
+        if (row.data.di_disponible == 'S') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -287,6 +300,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       noDelegation1,
       elaborated
     );
+    localStorage.setItem('cveAc', cveAc);
+    localStorage.setItem('area', noDelegation1);
+    localStorage.setItem('elaborated', elaborated);
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
@@ -344,6 +360,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.donationService.getEventComDonation(params).subscribe({
       next: resp => {
         this.data.load(resp.data);
+        this.event = resp.data.filter(filt => {
+          console.log(filt);
+          this.fileNumber = filt.fileId;
+        });
+        this.getGoodsByStatus(this.fileNumber);
+        console.log(this.fileNumber);
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
@@ -366,6 +388,79 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.getDetailComDonation(data.actId);
       console.log(event.data);
     }
+  }
+  getGoodsByStatus(id: number) {
+    this.loading = true;
+    // ACTUALIZA EL ESTADO DEL BIEN CUANDO BAJA A LA TABLA BIENES RELACIONADOS CON EL ACTA
+    this.dataTableGood_ = [];
+    this.dataTableGood.load(this.dataTableGood_);
+    this.dataTableGood.refresh();
+    console.log('CAMBIA COLOR');
+    let params: any = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+    console.log('1412212', params);
+    params['sortBy'] = `goodNumber:DESC`;
+    this.GoodprocessService_.GetMinuteDetailDelivery(id, params).subscribe({
+      next: data => {
+        this.bienes = data.data;
+
+        // console.log('Bienes', this.bienes);
+
+        let result = data.data.map(async (item: any) => {
+          let obj = {
+            vcScreen: 'FACTDESAPROBDONAC',
+            pNumberGood: item.goodNumber,
+          };
+          const di_dispo = await this.getStatusScreen(obj);
+          item['di_disponible'] = di_dispo;
+          if (item.minutesKey) {
+            item.di_disponible = 'N';
+          }
+          item['quantity'] = item.amount;
+          item['recordId'] = item.minutesKey;
+          item['id'] = item.goodNumber;
+          // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
+          // // console.log('acta', acta);
+          // item['acta_'] = acta;
+        });
+
+        Promise.all(result).then(item => {
+          this.dataTableGood_ = this.bienes;
+          this.dataTableGood.load(this.bienes);
+          this.dataTableGood.refresh();
+          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+          this.totalItems = data.count;
+          this.loading = false;
+          // // console.log(this.bienes);
+        });
+      },
+      error: error => {
+        this.loading = false;
+        this.dataTableGood.load([]);
+        this.dataTableGood.refresh();
+        this.totalItems = 0;
+      },
+    });
+  }
+  async getStatusScreen(body: any) {
+    return new Promise((resolve, reject) => {
+      this.GoodprocessService_.getScreenGood(body).subscribe({
+        next: async (state: any) => {
+          if (state.data) {
+            // console.log('di_disponible', state);
+            resolve('S');
+          } else {
+            // console.log('di_disponible', state);
+            resolve('N');
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
   }
 
   getDetailComDonation(idActa?: number | string) {
