@@ -71,6 +71,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   idDelegation: number[] = [];
   status: string = null;
   cveEvent: string;
+  actaId: string = '';
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   settings1 = { ...this.settings };
@@ -303,6 +304,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     localStorage.setItem('cveAc', cveAc);
     localStorage.setItem('area', noDelegation1);
     localStorage.setItem('elaborated', elaborated);
+    localStorage.setItem('state', state);
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
@@ -363,9 +365,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         this.event = resp.data.filter(filt => {
           console.log(filt);
           this.fileNumber = filt.fileId;
+          this.actaId = filt.actId;
         });
+        localStorage.setItem('actaId', this.actaId);
         this.getGoodsByStatus(this.fileNumber);
-        console.log(this.fileNumber);
+        console.log(this.actaId);
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
