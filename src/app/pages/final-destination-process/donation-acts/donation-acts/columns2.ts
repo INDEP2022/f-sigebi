@@ -8,6 +8,9 @@ export const COLUMNS2 = {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    valuePrepareFunction(call: any, row: any) {
+      return row.good.description;
+    },
   },
   amount: {
     title: 'Cantidad',
