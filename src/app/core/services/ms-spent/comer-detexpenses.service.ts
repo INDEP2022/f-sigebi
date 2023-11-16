@@ -43,8 +43,8 @@ export class ComerDetexpensesService extends HttpService {
               ? x.data.map(row => {
                   return {
                     ...row,
-                    amount: row.amount2,
-                    total: row.total2,
+                    amount: row.amount ? row.amount : row.amount2,
+                    total: row.total ? row.total : row.total2,
                     iva:
                       idGasto === '643' && row.iva2 === 0 && CHCONIVA === 'S'
                         ? row.amount2 * IVA

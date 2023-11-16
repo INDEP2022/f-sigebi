@@ -29,42 +29,76 @@
               class="form-control"
               [clearable]="false"
               (change)="getRowSelec($event)">
-              <ng-option value="">TODOS </ng-option>
+              <ng-option value=""></ng-option>
+              <ng-option value="TODOS">TODOS</ng-option>
               <ng-option value="ABIERTA">ABIERTA </ng-option>
               <ng-option value="CERRADA">CERRADA </ng-option>
             </ng-select>
           </form-field>
         </div>
         <div class="col-md-3">
-          <div class="title">{{ delegation || '' }}</div>
+          <!-- <div class="title">{{ delegation || '' }}</div> -->
           <!-- <label for="" class="col-form-label">Coord. Regional</label>
           <div>{{ delegation || '' }}</div> -->
-          <!--  <form-field [control]="form.get('noDelegation1')" label="Coord. Regional">
+          <!-- <form-field [control]="form.get('noDelegation1')" label="Coord. Regional">
            <input
               type="text"
               class="form-control"
               formControlName="noDelegation1" /> 
 
-          </form-field>-->
+          </form-field> -->
+          <form-field [control]="form.get('noDelegation1')">
+            <ngx-select
+              label="Coor. Regional"
+              [form]="form"
+              [data]="delegations$"
+              (fetchItems)="getDels($event)"
+              bindLabel="description"
+              control="noDelegation1"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              (change)="updateSelectedIds($event)"
+              termMaxLength="50"
+              value="id"
+              [multiple]="true">
+            </ngx-select>
+            <ng-template #userLabel let-item="item">
+              {{ item.id + ' - ' + item.description }}
+            </ng-template>
+            <ng-template #userOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id + ' - ' + item.description }}
+              </div>
+            </ng-template>
+          </form-field>
         </div>
         <div class="col-md-3">
-          <div class="title">{{ user || '' }}</div>
-          <!--  <form-field label="Usuario" [control]="form.get('elaborated')">
-           <input
-                type="text"
-                class="form-control"
-                formControlName="elaborated" />
-              <ngx-select
-                (fetchItems)="getEventComDonation($event)"
-                [data]="users"
-                [form]="form"
-                bindLabel="name"
-                value="user"
-                label="Usuarios"
-                control="elaborated"
-                (change)="onUsersChange($event)">
-              </ngx-select>
-          </form-field>-->
+          <!-- <div class="title">{{ user || '' }}</div> -->
+          <form-field [control]="form.get('elaborated')">
+            <ngx-select
+              label="Usuario"
+              [form]="form"
+              [readonly]="useracept ? true : false"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="elaborated"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="id"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ngx-select>
+            <ng-template #userLabel let-item="item">
+              {{ item.id + ' - ' + item.name }}
+            </ng-template>
+            <ng-template #userOption let-item="item">
+              <div [title]="item.id + '-' + item.name">
+                {{ item.id + ' - ' + item.name }}
+              </div>
+            </ng-template>
+          </form-field>
         </div>
       </div>
 
