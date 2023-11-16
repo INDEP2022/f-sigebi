@@ -28,7 +28,7 @@ h2 {
   //     hsl(172, 66%, 45%) calc(60% + 1px), hsl(172, 66%, 45%) 72%,
   //     hsl(172.22deg 47.37% 22.35%) calc(72% + 1px), hsl(172.22deg 47.37% 22.35%) 100%);
 
-  height: 100vh;
+  // height: 100vh;
   background-image: url('/assets/images/fondo.jpg');
   background-size: cover;
   background-repeat: no-repeat;
@@ -160,6 +160,7 @@ h2 {
   padding-left: 32px;
   border-radius: 5px;
   padding-bottom: 2px;
+  margin-bottom: 15%;
 }
 
 .svgCorrect {

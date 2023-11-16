@@ -120,7 +120,7 @@ export class DatCancComponent extends BasePage implements OnInit {
     };
     this.btnLoading = true;
     contador = await this.billingsService.valueContador(obj);
-    if (contador > 0)
+    if (contador == 0)
       return (
         (this.btnLoading = false),
         this.alert('warning', 'No se tienen facturas con este criterio', '')
@@ -211,52 +211,41 @@ export class DatCancComponent extends BasePage implements OnInit {
         )
       );
 
-    // await this.selectData()
-    // Seleccionamos todos los registros de la tabla
-    // GO_BLOCK('COMER_FACTURAS');
-    //   FIRST_RECORD;
-    //   LOOP
-    //   : COMER_FACTURAS.SELECCIONA := 'S';
-    //     EXIT WHEN: SYSTEM.LAST_RECORD = 'TRUE';
-    //   NEXT_RECORD;
-    // END LOOP;
-    this.billingCommunicationService.dataSeleccionada$.subscribe(
-      (next: any) => {
-        this.dataSeleccionada = next;
-        console.log('Data seleccionada', next);
-        if (contador == 0 && n_CONP == 0)
-          return (
-            (this.btnLoading = false),
-            this.alert(
-              'warning',
-              'No se tienen facturas para cancelar ni eliminar',
-              ''
-            )
-          );
-        this.alertQuestion(
-          'question',
-          `Se cancelará(n) ${contador}, y se eliminará(n) ${n_CONP} factura(s)`,
-          '¿Desea ejecutar el proceso?'
-        ).then(async question => {
-          if (question.isConfirmed) {
-            this.valUser();
-          } else {
-            this.btnLoading = false;
-            // this.modalRef.content.callback(false);
-            // this.close();
-          }
-        });
+    const arr: any = await this.selectData();
+    this.dataSeleccionada = arr;
+
+    if (contador == 0 && n_CONP == 0)
+      return (
+        (this.btnLoading = false),
+        this.alert(
+          'warning',
+          'No se tienen facturas para cancelar ni eliminar',
+          ''
+        )
+      );
+    this.alertQuestion(
+      'question',
+      `Se cancelará(n) ${contador}, y se eliminará(n) ${n_CONP} factura(s)`,
+      '¿Desea ejecutar el proceso?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        this.valUser();
+      } else {
+        this.btnLoading = false;
+        // this.modalRef.content.callback(false);
+        // this.close();
       }
-    );
+    });
   }
   async selectData() {
-    this.billingCommunicationService.dataSeleccionada$.subscribe(
-      (next: any) => {
-        this.dataSeleccionada = next;
-        console.log('Data seleccionada', next);
-      }
-    );
-    return true;
+    return new Promise((resolve, reject) => {
+      this.billingCommunicationService.dataSeleccionada$.subscribe(
+        (next: any) => {
+          // console.log('Data seleccionada', next);
+          resolve(next);
+        }
+      );
+    });
   }
   valUser() {
     // Validamos al usuario para autorizar la cancelación //

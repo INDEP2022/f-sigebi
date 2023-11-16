@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DocumentsEndpoints } from 'src/app/common/constants/endpoints/ms-documents-endpoints';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDataDocumentosBien,
   IDocumentsDictumXStateCreate,
@@ -28,17 +26,12 @@ export class DocumentsDictumStatetMService extends HttpService {
     );
   }
 
-  getAllDictum(
-    params?: _Params
-  ): Observable<IListResponse<IDocumentsDictumXStateM>> {
-    return this.get<IListResponse<IDocumentsDictumXStateM>>(
-      this.route.DocumentsDictuXStateM,
-      params
-    );
+  getAllDictum(params?: _Params) {
+    return this.get(this.route.DocumentsType, params);
   }
 
-  getAllGetDocument(params?: ListParams) {
-    return this.get<any>(this.route.GetDocument, params);
+  getAllGetDocument(params?: _Params) {
+    return this.get<any>(this.route.DocumentsForDictum, params);
   }
 
   create(body: IDocumentsDictumXStateM) {

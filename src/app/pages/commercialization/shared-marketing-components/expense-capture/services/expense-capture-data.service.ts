@@ -42,6 +42,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   PCAMBIAESTATUS: string;
   PCONDIVXMAND: string;
   PCANVTA: string;
+  P_REGMANDATO: number;
   P_CAMBIO: number;
   P_MANDCONTIPO: string;
   PDEVPARCIAL: string;
@@ -207,10 +208,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   prepareForm() {
     this.form = this.fb.group({
-      expenseNumber: [
-        null,
-        [Validators.required, Validators.pattern(NUM_POSITIVE)],
-      ],
+      expenseNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
       conceptNumber: [null, [Validators.required]],
       paymentRequestNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
       idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
@@ -526,7 +524,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     });
     if (resultSP === null) {
       // console.log(resultSP);
-
+      // this.alert('error','No se pudo realizar el proceso de pago','Favor de verificar')
       return;
     }
     this.expenseGoodProcessService
@@ -537,7 +535,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       )
       .subscribe({
         next: response => {
-          this.alert('success', 'Pago procesado correctamente', '');
+          this.alert('success', 'Se realizo el proceso de pago', '');
         },
         error: err => {
           this.alert(

@@ -44,13 +44,14 @@ export class WContentService extends HttpWContentService {
     nombreDoc: string,
     contentType: string,
     docData: any,
-    file: File
+    file: any,
+    filename?: string
   ): Observable<any> {
     const formData = new FormData();
     formData.append('nombreDocumento', nombreDoc);
     formData.append('contentType', contentType);
     formData.append('docData', docData);
-    formData.append('archivo', file);
+    formData.append('archivo', file, filename ?? '');
 
     return this.post<any>(WContentEndpoint.AddImagesTocontent, formData);
   }

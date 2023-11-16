@@ -36,6 +36,7 @@ import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
+
 interface NotData {
   id: number;
   reason: string;
@@ -65,6 +66,8 @@ export class CaptureApprovalDonationComponent
   deleteO: boolean = false;
   goods: any[] = [];
   files: any = [];
+  radio: boolean = false;
+  bienesVaild: boolean = false;
   changeDescription: string;
   dataTableGood_: any[] = [];
   valueChange: number = 0;
@@ -113,6 +116,7 @@ export class CaptureApprovalDonationComponent
   type = 'COMPDON';
   eventDonacion: IGoodDonation;
   origin = 'FMCOMDONAC_1';
+
   @ViewChild('file') file: any;
   donationGood: IGoodDonation;
   paramsScreen: IParamsDonac = {
@@ -234,21 +238,22 @@ export class CaptureApprovalDonationComponent
           }
           this.origin2 = paramsQuery['origin2'] ?? null;
         }
-        if (
-          this.origin != null &&
-          this.paramsScreen.recordId != null &&
-          this.paramsScreen.area != null
-        ) {
+        if (this.origin != null) {
           console.log(this.paramsScreen);
         }
       });
     this.getComerDonation();
     this.configDatePicker();
     this.initForm();
-    this.regisForm.get('type').setValue(this.type);
+    this.regisForm.get('type').setValue('COMPDON');
   }
   oadGoods() {
     this.donAuthorizaService.loadGoods.next(true);
+  }
+  enableButtons() {
+    if (this.regisForm.get('activeRadio').value !== null) {
+      this.radio = true;
+    }
   }
 
   initForm() {
@@ -266,7 +271,7 @@ export class CaptureApprovalDonationComponent
       observaciones: [null],
       activeRadio: [null],
     });
-    this.regisForm.get('area').setValue(this.paramsScreen.area);
+    this.regisForm.get('area').setValue(localStorage.getItem('area'));
   }
 
   createDon(donationGood: IGoodDonation) {
@@ -290,19 +295,19 @@ export class CaptureApprovalDonationComponent
   }
 
   getComerDonation() {
-    this.idAct = Number(this.paramsScreen.recordId.match(/[0-9]+/)[0]);
+    this.idAct = Number(localStorage.getItem('actaId'));
     this.donationService.getByIdEvent(this.idAct).subscribe({
       next: (data: any) => {
         this.eventDonacion = data;
         this.fileNumber = data.fileNumber;
-        this.estatus = data.estatusAct;
+        this.estatus = localStorage.getItem('state');
         console.log(this.eventDonacion);
         if (this.estatus != 'ABIERTA') {
           this.deleteO = true;
           // this.generarClave(this.regisForm.value.area, )
         }
         this.deleteO = false;
-        const ultimosCincoDigitos = data.cveAct.slice(-5);
+        const ultimosCincoDigitos = localStorage.getItem('cveAc').slice(-5);
         const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
         const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
         if (
@@ -336,7 +341,7 @@ export class CaptureApprovalDonationComponent
         const anioCompleto = anio < 100 ? sigloActual + anio : anio;
         this.regisForm.get('year').setValue(anioCompleto);
         this.regisForm.get('folio').setValue(data.folioUniversal);
-        this.regisForm.get('keyEvent').setValue(data.cveAct);
+        this.regisForm.get('keyEvent').setValue(localStorage.getItem('cveAc'));
         this.regisForm.get('captureDate').setValue(mesTexto);
         this.regisForm.get('observaciones').setValue(data.observations);
         console.log(this.eventDonacion);
@@ -447,9 +452,10 @@ export class CaptureApprovalDonationComponent
   ValidGoods(): void {
     console.log('this.bienes1 -->');
   }
+
   getDetailDonation() {
     const params = new ListParams();
-    params['filter.recordId'] = this.paramsScreen.recordId;
+    params['filter.recordId'] = localStorage.getItem('actaId');
     params['filter.good.status'] = 'DON';
     this.donationService.getEventComDonationDetail(params).subscribe({
       next: data => {
@@ -911,6 +917,9 @@ export class CaptureApprovalDonationComponent
     this.selectedGooods = [];
     this.Exportdate = false;
     this.idAct = 0;
+    this.TOTAL_REPORTE = 0;
+    this.BIEN_ERROR = 0;
+    this.SUM_BIEN = 0;
   }
 
   searchActas(actas?: string) {

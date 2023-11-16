@@ -38,7 +38,7 @@
           [source]="dataFactGen"
           (edit)="openFormApplicant($event.data)"
           (delete)="askDelete($event.data, 'APPLICANT')"
-          (userRowSelect)="getDataGoods($event.data.soladjinstgobId)">
+          (userRowSelect)="getDataGoods($event.data)">
         </ng2-smart-table>
         <div class="table-padding"></div>
       </div>

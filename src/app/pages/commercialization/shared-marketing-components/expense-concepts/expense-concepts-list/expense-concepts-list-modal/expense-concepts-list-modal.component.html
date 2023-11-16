@@ -25,7 +25,8 @@
         <form-field [control]="form.get('description')" label="Descripción">
           <textarea
             class="form-control"
-            formControlName="description"></textarea>
+            formControlName="description"
+            maxlength="100"></textarea>
         </form-field>
       </div>
       <div class="pb-4">
@@ -42,7 +43,10 @@
         <form-field
           [control]="form.get('routineCalculation')"
           label="Rutina Cálculo">
-          <input class="form-control" formControlName="routineCalculation" />
+          <input
+            class="form-control"
+            formControlName="routineCalculation"
+            maxlength="20" />
         </form-field>
       </div>
       <div class="d-flex">

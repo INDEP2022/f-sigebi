@@ -107,18 +107,19 @@ export const COMISIONESXBIEN_COLUMNS = {
   },
   sale: {
     title: 'Venta',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
@@ -129,22 +130,26 @@ export const COMISIONESXBIEN_COLUMNS = {
   },
   amountCommission: {
     title: 'Monto Comisión',
-    type: 'string',
+    type: 'html',
     sort: false,
-    // valuePrepareFunction: (amount: string) => {
-    //   const numericAmount = parseFloat(amount);
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
 
-    //   if (!isNaN(numericAmount)) {
-    //     return numericAmount.toLocaleString('en-US', {
-    //       // style: 'currency',
-    //       // currency: 'USD',
-    //       minimumFractionDigits: 2,
-    //       maximumFractionDigits: 2,
-    //     });
-    //   } else {
-    //     return amount;
-    //   }
-    // },
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 14,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   processIt: {
     title: 'Procesa',
