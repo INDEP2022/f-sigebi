@@ -40,6 +40,7 @@ export class MunicipalityControlMainComponent
   columnFilters: any = [];
   assignedGoodColumns: any[] = [];
   idGood: any;
+  applicant: any;
   applicantSettings = {
     ...TABLE_SETTINGS,
     actions: {
@@ -179,15 +180,18 @@ export class MunicipalityControlMainComponent
   onClick(data: any) {
     // console.log(data);
   }
-  getDataGoods(id?: any) {
-    this.idGood = id;
-    this.msDirectawardService.getGoodsByApplicant(id).subscribe({
+  getDataGoods(applicant?: any) {
+    this.idGood = applicant.soladjinstgobId;
+    this.applicant = applicant;
+    this.msDirectawardService.getGoodsByApplicant(this.idGood).subscribe({
       next: data => {
         this.assignedGoodColumns = data.data;
-        this.assignedGoodTotalItems = this.assignedGoodColumns.length;
-        console.log(this.assignedGoodColumns);
+        this.assignedGoodTotalItems = data.count;
+        //console.log(this.assignedGoodColumns);
       },
       error: err => {
+        this.assignedGoodColumns = [];
+        this.assignedGoodTotalItems = 0;
         this.onLoadToast(
           'warning',
           'Advertencia',
@@ -280,12 +284,23 @@ export class MunicipalityControlMainComponent
   }
 
   openFormAssignedGood(good?: any) {
+    if (good == undefined && this.applicant == undefined) {
+      this.onLoadToast(
+        'info',
+        'Para agregar un nuevo bien seleccione un solicitante'
+      );
+      return;
+    }
     this.openModalAssignedGood({ good });
   }
 
   openModalAssignedGood(context?: Partial<AssignedGoodsModalComponent>) {
     const modalRef = this.modalService.show(AssignedGoodsModalComponent, {
-      initialState: { ...context, ...this.assignedGoodColumns },
+      initialState: {
+        ...context,
+        ...this.assignedGoodColumns,
+        applicant: this.applicant,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });

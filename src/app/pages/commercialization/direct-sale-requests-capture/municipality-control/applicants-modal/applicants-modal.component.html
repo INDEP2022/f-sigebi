@@ -6,15 +6,16 @@
     <form class="form-material" [formGroup]="applicantForm">
       <div class="row">
         <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="applicantForm.get('typeentgobId')"
-            label="Entidad">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typeentgobId"
-              maxlength="3" />
-          </form-field>
+          <ngx-select
+            [form]="applicantForm"
+            [data]="typeEntityItems"
+            [searchable]="false"
+            label="Entidad"
+            value="id"
+            bindLabel="idDescription"
+            (fetchItems)="getTypeEntitiesGov($event)"
+            control="typeentgobId">
+          </ngx-select>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field
@@ -100,7 +101,7 @@
               type="text"
               class="form-control"
               formControlName="phone"
-              maxlength="15" />
+              maxlength="20" />
           </form-field>
         </div>
       </div>
