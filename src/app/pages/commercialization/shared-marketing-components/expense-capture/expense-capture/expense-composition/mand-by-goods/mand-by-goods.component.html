@@ -1,8 +1,16 @@
 <app-modal>
-  <div header>Partidas por Mandato</div>
+  <div header><h5 class="modal-title">Partidas por Mandato</h5></div>
   <div body>
     <div class="row">
-      <div class="col-12 d-flex justify-content-end">
+      <div class="col-6">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active mr-3"
+          (click)="close()">
+          Regresar
+        </button>
+      </div>
+      <div class="col-6 d-flex justify-content-end">
         <app-columns-select
           [leftList]="true"
           [(settings)]="settings"
@@ -27,15 +35,13 @@
     </app-pagination>
   </div>
   <div footer>
-    <div class="d-flex justify-content-right">
-      <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Regresar
-        </button>
-      </div>
-      <div class="m-3">
+    <div class="d-flex footer-mand-goods">
+      <!-- <div class="m-3">
+        
+      </div> -->
+      <div class="ml-3">
         <div class="cantidad">
-          <label for="">Total</label>
+          <label for="" class="m-0">Total</label>
           <div>{{ total }}</div>
         </div>
       </div>
