@@ -70,6 +70,7 @@
     "tslib": "^2.3.0",
     "uuid": "^9.0.0",
     "xlsx": "^0.18.5",
+    "@zip.js/zip.js": "2.7.30",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
