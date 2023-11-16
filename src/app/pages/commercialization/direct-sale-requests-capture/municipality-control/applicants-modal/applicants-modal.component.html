@@ -13,7 +13,7 @@
               type="text"
               class="form-control"
               formControlName="typeentgobId"
-              maxlength="10" />
+              maxlength="3" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -24,7 +24,7 @@
               type="text"
               class="form-control"
               formControlName="applicant"
-              maxlength="20" />
+              maxlength="70" />
           </form-field>
         </div>
       </div>
@@ -35,36 +35,40 @@
               type="text"
               class="form-control"
               formControlName="position"
-              maxlength="20" />
+              maxlength="60" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="applicantForm.get('municipality')">
-            <ngx-select
-              [form]="applicantForm"
-              [data]="municipalityItems"
-              label="Municipio"
-              value="description"
-              bindLabel="description"
-              (fetchItems)="getMunicipalities()"
-              control="municipality">
-            </ngx-select>
-          </form-field>
+          <!-- <form-field [control]="applicantForm.get('municipality')"> -->
+          <ngx-select
+            [form]="applicantForm"
+            [data]="municipalityItems"
+            [searchable]="true"
+            label="Municipio"
+            value="description"
+            bindLabel="description"
+            (fetchItems)="getMunicipalities($event)"
+            control="municipality"
+            (chenge)="municipalitiesChange($event)">
+          </ngx-select>
+          <!-- </form-field> -->
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="applicantForm.get('state')">
-            <ngx-select
-              [form]="applicantForm"
-              [data]="stateItems"
-              value="descCondition"
-              bindLabel="descCondition"
-              label="Estado"
-              (fetchItems)="getStates()"
-              control="state">
-            </ngx-select>
-          </form-field>
+          <!--  <form-field [control]="applicantForm.get('state')"> -->
+          <ngx-select
+            [form]="applicantForm"
+            [data]="stateItems"
+            [searchable]="true"
+            value="descCondition"
+            bindLabel="descCondition"
+            label="Estado"
+            (fetchItems)="getStates($event)"
+            control="state"
+            (change)="stateItemsChange($event)">
+          </ngx-select>
+          <!-- </form-field> -->
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field
@@ -120,7 +124,7 @@
               type="text"
               class="form-control"
               formControlName="webmail"
-              maxlength="20" />
+              maxlength="50" />
           </form-field>
         </div>
       </div>
