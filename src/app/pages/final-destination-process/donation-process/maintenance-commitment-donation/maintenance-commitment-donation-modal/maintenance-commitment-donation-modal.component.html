@@ -11,35 +11,152 @@
       [formGroup]="form"
       *ngIf="this.type == 1 || this.type == 2 || this.type == 3">
       <div class="row">
-        <div class="col-md-6">
-          <form-field [control]="form.get('labelId')" label="Etiqueta">
-            <input
-              type="number"
-              maxlength="30"
-              class="form-control"
-              formControlName="labelId"
-              [readonly]="true" />
+        <div class="col-12">
+          <div class="row">
+            <div class="col-4">
+              <form-field [control]="form.get('labelId')">
+                <ngx-select
+                  [searchOnInit]="true"
+                  [form]="form"
+                  control="labelId"
+                  [data]="labels"
+                  value="id"
+                  bindLabel="idAndDesc"
+                  label="Etiqueta"
+                  (fetchItems)="listLabel($event)">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="form.get('unit')">
+                <ngx-select
+                  [searchOnInit]="true"
+                  [form]="form"
+                  control="unit"
+                  [data]="units"
+                  value="unit"
+                  bindLabel="unit"
+                  label="Unidad"
+                  (fetchItems)="listUnidades($event)">
+                </ngx-select>
+                <!-- <input type="text" maxlength="30" class="form-control" formControlName="unit" /> -->
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="form.get('valid')" label="Valida">
+                <ng-select
+                  formControlName="valid"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="1">Sí</ng-option>
+                  <ng-option value="0">No</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+            <div class="col-2">
+              <form-field [control]="form.get('ruleId')" label="Id Regla">
+                <input
+                  readonly
+                  type="number"
+                  maxlength="40"
+                  class="form-control"
+                  formControlName="ruleId" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-4 mt-2">
+          <form-field [control]="form.get('status')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="status"
+              [data]="status"
+              value="status"
+              bindLabel="status"
+              label="Estatus"
+              (change)="insertDescStatus($event)"
+              (fetchItems)="listStatus($event)">
+            </ngx-select>
+            <!-- <input type="text" maxlength="3" class="form-control" formControlName="status" /> -->
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('status')" label="Estatus">
+
+        <div class="col-md-8 mt-2">
+          <form-field [control]="form.get('desStatus')" label="Desc. Estatus.">
             <input
+              readonly
               type="text"
-              maxlength="3"
-              class="form-control"
-              formControlName="status" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('desStatus')" label="Des. Estatus">
-            <input
-              type="text"
-              maxlength="100"
               class="form-control"
               formControlName="desStatus" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-4 mt-2">
+          <form-field [control]="form.get('transferentId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="transferentId"
+              [data]="transfers"
+              value="id"
+              bindLabel="id"
+              label="No. Trans."
+              (change)="insertDescTrans($event)"
+              (fetchItems)="listTransfer($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-8 mt-2">
+          <form-field [control]="form.get('keyCode')" label="Desc. Trans.">
+            <input
+              readonly
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="keyCode" />
+          </form-field>
+        </div>
+        <div class="col-4 mt-2">
+          <form-field [control]="form.get('clasifId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="clasifId"
+              [data]="clasifs"
+              value="numClasifGoods"
+              bindLabel="numClasifGoods"
+              label="No. Clasif."
+              (change)="insertDescClasif($event)"
+              (fetchItems)="listClasif($event)">
+            </ngx-select>
+            <!-- <input type="number" maxlength="40" class="form-control" formControlName="clasifId" /> -->
+          </form-field>
+        </div>
+        <div class="col-8 mt-2">
+          <form-field [control]="form.get('desClasif')" label="Desc. Clasif.">
+            <input
+              readonly
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="desClasif" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4 mt-2" *ngIf="this.type == 3">
+          <form-field [control]="form.get('amount')" label="Cantidad">
+            <input
+              currencyMask
+              type="text"
+              class="form-control"
+              formControlName="amount" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <!-- <div class="col-md-6">
           <form-field [control]="form.get('transferentId')" label="No. Trans.">
             <input
               type="number"
@@ -47,8 +164,8 @@
               class="form-control"
               formControlName="transferentId" />
           </form-field>
-        </div>
-        <div class="col-md-6">
+        </div> -->
+        <!-- <div class="col-md-6">
           <form-field [control]="form.get('keyCode')" label="Des. Trans.">
             <input
               type="text"
@@ -56,8 +173,8 @@
               class="form-control"
               formControlName="keyCode" />
           </form-field>
-        </div>
-        <div class="col-md-6">
+        </div> -->
+        <!-- <div class="col-md-6">
           <form-field [control]="form.get('clasifId')" label="No. Clasif.">
             <input
               type="number"
@@ -75,36 +192,7 @@
               formControlName="desClasif" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('unit')" label="Unidad">
-            <input
-              type="text"
-              maxlength="30"
-              class="form-control"
-              formControlName="unit" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('ruleId')" label="Id Regla">
-            <input
-              type="number"
-              maxlength="40"
-              class="form-control"
-              formControlName="ruleId" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('valid')" label="Valida">
-            <ng-select
-              formControlName="valid"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="1">Sí</ng-option>
-              <ng-option value="0">No</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
+        
         <div class="col-md-6" *ngIf="this.type == 3">
           <form-field [control]="form.get('amount')" label="Cantidad">
             <input
@@ -112,7 +200,7 @@
               class="form-control"
               formControlName="amount" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
 
@@ -162,6 +250,7 @@
         <div class="col-md-6">
           <form-field [control]="form.get('valid')" label="Abreviatura">
             <ng-select
+              style="margin-top: 5px"
               formControlName="valid"
               [searchable]="false"
               class="form-control"
@@ -181,7 +270,7 @@
           [text]="this.textBtn"
           [icon]="
             this.newOrEdit
-              ? 'fas fa-edit bx-sm float-icon'
+              ? 'fas fa-save bx-sm float-icon'
               : 'fas fa-save bx-sm float-icon'
           "
           [type]="'button'"

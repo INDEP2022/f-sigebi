@@ -10,7 +10,12 @@
       Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
     </button>
   </div>
-  <app-columns-select [(settings)]="settings" class="mx-1" [leftList]="true">
+
+  <app-columns-select
+    *ngIf="this.type != 4"
+    [(settings)]="settings"
+    class="mx-1"
+    [leftList]="true">
   </app-columns-select>
 </div>
 
