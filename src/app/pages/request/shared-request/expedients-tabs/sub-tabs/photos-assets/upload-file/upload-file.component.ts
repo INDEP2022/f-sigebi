@@ -141,6 +141,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
         const { index, fileEvents } = uploadEvent;
         this.idGood = this.data.id;
         fileEvents.forEach(fileEvent => {
+          console.log('fileEvent', fileEvent);
           const formData = {
             xidcProfile: 'NSBDB_Gral',
             dDocAuthor: this.userLogName,
