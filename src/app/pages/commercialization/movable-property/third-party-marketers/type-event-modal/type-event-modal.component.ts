@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
@@ -53,7 +53,7 @@ export class TypeEventModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.typeEvent3erForm = this.fb.group({
       thirdPartyId: [null, []],
-      typeEventId: [null, []],
+      typeEventId: [null, Validators.required],
     });
 
     this.descr = this.fb.group({

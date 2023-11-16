@@ -44,7 +44,7 @@ export class WContentService extends HttpWContentService {
     nombreDoc: string,
     contentType: string,
     docData: any,
-    file: File
+    file: any
   ): Observable<any> {
     const formData = new FormData();
     formData.append('nombreDocumento', nombreDoc);
