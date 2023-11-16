@@ -1,15 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { LabelGoodService } from 'src/app/core/services/catalogs/label-good.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-maintenance-commitment-donation-modal',
@@ -31,6 +40,13 @@ export class MaintenanceCommitmentDonationModalComponent
   users = new DefaultSelect();
   case: boolean = false;
   arr: number[] = [];
+
+  labels = new DefaultSelect();
+  clasifs = new DefaultSelect();
+  status = new DefaultSelect();
+  units = new DefaultSelect();
+  transfers = new DefaultSelect();
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -39,7 +55,12 @@ export class MaintenanceCommitmentDonationModalComponent
     private authService: AuthService,
     private donationService: DonationService,
     private tvalTable1Service: TvalTable1Service,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private labelGoodService: LabelGoodService,
+    private goodService: GoodService,
+    private transferenteService: TransferenteService,
+    private strategyServiceService: StrategyServiceService,
+    private goodSssubtypeService: GoodSssubtypeService
   ) {
     super();
   }
@@ -74,7 +95,7 @@ export class MaintenanceCommitmentDonationModalComponent
       }
       console.log('data -> ', this.data);
       if (this.data != null) {
-        this.textBtn = 'Editar';
+        this.textBtn = 'Guardar';
 
         console.log('data a mapear en el editar-> ', this.data.labelId);
         if (this.type == 4) {
@@ -90,7 +111,7 @@ export class MaintenanceCommitmentDonationModalComponent
             labelId: this.data.label.id,
             status: this.data.status,
             desStatus: this.data.desStatus,
-            transferentId: this.data.transfereeId.transferentId,
+            transferentId: this.data.transfereeId,
             keyCode: this.data.desTrans,
             clasifId: this.data.clasifId,
             desClasif: this.data.desClasif,
@@ -154,7 +175,9 @@ export class MaintenanceCommitmentDonationModalComponent
     model.desStatus = this.form.value.desStatus;
     model.transfereeId = Number(this.form.value.transferentId);
     model.desTrans = this.form.value.keyCode;
-    model.clasifId = Number(this.form.value.clasifId);
+    model.clasifId = this.form.value.clasifId
+      ? Number(this.form.value.clasifId)
+      : null;
     model.desClasif = this.form.value.desClasif;
     model.unit = this.form.value.unit;
     model.ruleId = Number(this.form.value.ruleId);
@@ -164,10 +187,10 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.createApproveDonation(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Registro creado correctamente', '');
+        this.alert('success', 'Registro creado correctamente', '');
       },
       error: error => {
-        this.onLoadToast('error', error.error.message, '');
+        this.alert('error', error.error.message, '');
       },
     });
   }
@@ -189,10 +212,10 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.createApproveDonation(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Registro creado correctamente', '');
+        this.alert('success', 'Registro creado correctamente', '');
       },
       error: error => {
-        this.onLoadToast('error', error.error.message, '');
+        this.alert('error', error.error.message, '');
       },
     });
   }
@@ -234,7 +257,11 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.createApproveDonation(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Usuario para Rastereador Creado', '');
+        this.onLoadToast(
+          'success',
+          'Usuario para Rastreador creado correctamente',
+          ''
+        );
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -288,7 +315,7 @@ export class MaintenanceCommitmentDonationModalComponent
       next: resp => {
         if (resp != null && resp != undefined) {
           this.handleSuccess();
-          this.alert('success', '', 'Registro creado correctamente');
+          this.alert('success', 'Registro creado correctamente', '');
         }
       },
       error: err => {
@@ -305,7 +332,7 @@ export class MaintenanceCommitmentDonationModalComponent
   }
 
   update(data: any) {
-    //console.log("data update -> ", data);
+    console.log('data update -> ', data);
     const model = {} as any;
     model.labelId = Number(data.labelId);
     model.status = data.status;
@@ -322,7 +349,7 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.editApproveDonation(model).subscribe({
       next: data => {
         this.handleSuccess();
-        Swal.fire('Actualizado', '', 'success');
+        this.alert('success', 'Registro actualizado correctamente', '');
       },
       error: err => {
         let error = '';
@@ -336,6 +363,7 @@ export class MaintenanceCommitmentDonationModalComponent
       },
     });
   }
+
   updateOtros(data: any) {
     //console.log("data update -> ", data);
     const model = {} as any;
@@ -356,7 +384,7 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.editApproveDonation(model).subscribe({
       next: data => {
         this.handleSuccess();
-        Swal.fire('Actualizado', '', 'success');
+        this.alert('success', 'Registro actualizado correctamente', '');
       },
       error: err => {
         let error = '';
@@ -383,7 +411,7 @@ export class MaintenanceCommitmentDonationModalComponent
     this.dynamicCatalogsService.editTvalTable1(model).subscribe({
       next: data => {
         this.handleSuccess();
-        Swal.fire('Actualizado', '', 'success');
+        this.alert('success', 'Registro actualizado correctamente', '');
       },
       error: err => {
         let error = '';
@@ -401,41 +429,42 @@ export class MaintenanceCommitmentDonationModalComponent
   prepareForm() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
-      status: ['', Validators.required],
-      desStatus: ['', Validators.required],
-      transferentId: ['', Validators.required],
-      keyCode: ['', Validators.required],
-      clasifId: ['', Validators.required],
-      desClasif: ['', Validators.required],
-      unit: ['', Validators.required],
-      ruleId: ['', Validators.required],
-      valid: ['', Validators.required],
+      status: [''],
+      desStatus: [''],
+      transferentId: [''],
+      keyCode: [''],
+      clasifId: [''],
+      desClasif: [''],
+      unit: [''],
+      ruleId: [''],
+      valid: [''],
     });
 
     this.form.patchValue({
-      labelId: this.type,
+      ruleId: this.type,
     });
-    this.form.get('labelId').disabled;
+    this.form.get('ruleId').disabled;
   }
+
   prepareFormOthersT() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
-      status: ['', Validators.required],
-      desStatus: ['', Validators.required],
-      transferentId: ['', Validators.required],
-      keyCode: ['', Validators.required],
-      clasifId: ['', Validators.required],
-      desClasif: ['', Validators.required],
-      unit: ['', Validators.required],
-      amount: ['', Validators.required],
-      ruleId: ['', Validators.required],
-      valid: ['', Validators.required],
+      status: [''],
+      desStatus: [''],
+      transferentId: [''],
+      keyCode: [''],
+      clasifId: [''],
+      desClasif: [''],
+      unit: [''],
+      amount: [''],
+      ruleId: [''],
+      valid: [''],
     });
 
     this.form.patchValue({
-      labelId: this.type,
+      ruleId: this.type,
     });
-    this.form.get('labelId').disabled;
+    this.form.get('ruleId').disabled;
   }
 
   prepareFormPermissionR() {
@@ -449,5 +478,208 @@ export class MaintenanceCommitmentDonationModalComponent
   handleSuccess() {
     this.modalRef.content.callback(true, this.case);
     this.modalRef.hide();
+  }
+
+  // SELECT DESCRIPCION,NO_ETIQUETA
+  // FROM CAT_ETIQUETA_BIEN
+  listLabel(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (lparams.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        params.addFilter('id', lparams.text, SearchFilter.EQ);
+        // params.addFilter('no_cuenta', lparams.text);
+      } else {
+        params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('cve_banco', lparams.text);
+      }
+    params.sortBy = `id:ASC`;
+    this.labelGoodService.getEtiqXClasif(params.getParams()).subscribe({
+      next: data => {
+        let result = data.data.map((item: any) => {
+          item['idAndDesc'] = item.id + ' - ' + item.description;
+        });
+        Promise.all(result).then(resp => {
+          this.labels = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: err => {
+        this.labels = new DefaultSelect([]);
+      },
+    });
+  }
+
+  // SELECT 'N/A' ESTATUS,'NO APLICA' DESCRIPCION
+  //   FROM DUAL
+  // UNION
+  // SELECT ESTATUS,DESCRIPCION
+  //   FROM ESTATUS_BIEN
+  // ORDER BY ESTATU
+  listStatus(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (lparams.text) params.addFilter('status', lparams.text, SearchFilter.EQ);
+
+    // if (!isNaN(parseInt(lparams?.text))) {
+    //     // params.addFilter('no_cuenta', lparams.text);
+    //   } else {
+    //     params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+    //     // params.addFilter('cve_banco', lparams.text);
+    //   }
+    // params.search = `${lparams.text}`
+    this.goodService.getAllStatusGood_(params.getParams()).subscribe({
+      next: data => {
+        let result = data.data.map((item: any) => {
+          item['idAndDesc'] = item.status + ' - ' + item.description;
+        });
+        Promise.all(result).then(resp => {
+          this.status = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: err => {
+        this.status = new DefaultSelect([]);
+      },
+    });
+  }
+
+  // SELECT 0 NO_TRANSFERENTE,'NO APLICA' CLAVE
+  //   FROM DUAL
+  // UNION
+  // SELECT NO_TRANSFERENTE,CLAVE
+  //   FROM CAT_TRANSFERENTE
+  // ORDER BY NO_TRANSFERENTE
+  listTransfer(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (lparams.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        params.addFilter('id', lparams.text, SearchFilter.EQ);
+        // params.addFilter('no_cuenta', lparams.text);
+      } else {
+        params.addFilter('keyTransferent', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('cve_banco', lparams.text);
+      }
+    params.sortBy = `id:ASC`;
+    this.transferenteService.getAll(params.getParams()).subscribe({
+      next: data => {
+        let result = data.data.map((item: any) => {
+          item['idAndDesc'] = item.id + ' - ' + item.keyTransferent;
+        });
+        Promise.all(result).then(resp => {
+          this.transfers = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: err => {
+        this.transfers = new DefaultSelect([]);
+      },
+    });
+  }
+
+  // SELECT 0 NO_CLASIF_BIEN,'NO APLICA' DESCRIPCION
+  //   FROM DUAL
+  // UNION
+  // SELECT NO_CLASIF_BIEN,DESCRIPCION
+  //   FROM CAT_SSSUBTIPO_BIEN
+  // ORDER BY NO_CLASIF_BIEN
+  listClasif(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (lparams.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        params.addFilter('numClasifGoods', lparams.text, SearchFilter.EQ);
+        // params.addFilter('no_cuenta', lparams.text);
+      } else {
+        params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('cve_banco', lparams.text);
+      }
+    params.sortBy = `id:ASC`;
+    this.goodSssubtypeService.getFilter(params.getParams()).subscribe({
+      next: data => {
+        let result = data.data.map((item: any) => {
+          item['idAndDesc'] = item.numClasifGoods + ' - ' + item.description;
+        });
+        Promise.all(result).then(resp => {
+          this.clasifs = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: err => {
+        this.clasifs = new DefaultSelect([]);
+      },
+    });
+  }
+
+  // SELECT 'N/A' UNIDAD
+  //   FROM DUAL
+  // UNION
+  // SELECT UNIDAD
+  //   FROM UNIDADESMED
+  // ORDER BY UNIDAD
+  listUnidades(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    // if (lparams.text)
+    //   if (!isNaN(parseInt(lparams?.text))) {
+    //     console.log('SI');
+    //     params.addFilter('idLot', lparams.text, SearchFilter.EQ);
+    //     // params.addFilter('no_cuenta', lparams.text);
+    //   } else {
+    //     console.log('NO');
+
+    params.addFilter('unit', lparams.text, SearchFilter.ILIKE);
+    //     // params.addFilter('cve_banco', lparams.text);
+    //   }
+    params.sortBy = `unit:ASC`;
+    this.strategyServiceService.getMedUnits(params.getParams()).subscribe({
+      next: data => {
+        let result = data.data.map(item => {
+          // item['idAndDesc'] = item.id + ' - ' + item.keyTransferent
+        });
+        Promise.all(result).then(resp => {
+          this.units = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: err => {
+        this.units = new DefaultSelect([]);
+      },
+    });
+  }
+
+  insertDescClasif(event: any) {
+    if (event) {
+      this.form.get('desClasif').setValue(event.description);
+    } else {
+      this.form.get('desClasif').setValue('');
+    }
+  }
+
+  insertDescTrans(event: any) {
+    if (event) {
+      this.form.get('keyCode').setValue(event.keyTransferent);
+    } else {
+      this.form.get('keyCode').setValue('');
+    }
+  }
+
+  insertDescStatus(event: any) {
+    if (event) {
+      this.form.get('desStatus').setValue(event.description);
+    } else {
+      this.form.get('desStatus').setValue('');
+    }
   }
 }
