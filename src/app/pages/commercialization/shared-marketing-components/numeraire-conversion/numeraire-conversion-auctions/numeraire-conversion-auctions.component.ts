@@ -159,12 +159,16 @@ export class NumeraireConversionAuctionsComponent
           next: response => {
             this.reloadExpenses++;
             this.loader.load = false;
-            this.alert('success', 'Proceso Cálculo terminado', '');
+            this.alert('success', 'Se ha calculado correctamente', '');
           },
           error: err => {
             console.log(err);
             this.loader.load = false;
-            this.alert('error', 'Proceso Cálculo', err.error.message);
+            this.alert(
+              'error',
+              'No se ha podido realizar el cálculo',
+              'Favor de verificar'
+            );
           },
         });
     } else {
@@ -185,7 +189,11 @@ export class NumeraireConversionAuctionsComponent
           .pipe(catchError(x => of(x.error)))
       );
       if (resultBorra.statusCode !== 200) {
-        this.alert('error', 'Proceso Cálculo Parcial', resultBorra.message);
+        this.alert(
+          'error',
+          'No se ha podido calcular parcialmente',
+          resultBorra.message
+        );
         this.loader.load = false;
         return;
       }
@@ -196,14 +204,18 @@ export class NumeraireConversionAuctionsComponent
           .pipe(catchError(x => of(x.error)))
       );
       if (resultParcial.statusCode !== 200) {
-        this.alert('error', 'Proceso Cálculo Parcial', resultParcial.message);
+        this.alert(
+          'error',
+          'No se ha podido calcular parcialmente',
+          resultParcial.message
+        );
         this.loader.load = false;
         return;
       }
 
       this.loader.load = false;
       this.reloadExpenses++;
-      this.alert('success', 'Proceso Cálculo Parcial terminado', '');
+      this.alert('success', 'Se ha calculado parcialmente', '');
     } else {
       this.alert(
         'warning',
@@ -222,13 +234,18 @@ export class NumeraireConversionAuctionsComponent
         .subscribe({
           next: response => {
             this.reloadExpenses++;
+            this.selectedExpenseData = null;
             this.loader.load = false;
-            this.alert('success', 'Proceso Convierte terminado', '');
+            this.alert('success', 'Se ha convertido correctamente', '');
           },
           error: err => {
             console.log(err);
             this.loader.load = false;
-            this.alert('error', 'Proceso Convierte', err.error.message);
+            this.alert(
+              'error',
+              'No se pudo realizar la conversión',
+              'Favor de verificar'
+            );
           },
         });
     } else {
@@ -253,12 +270,16 @@ export class NumeraireConversionAuctionsComponent
           next: response => {
             this.reloadExpenses++;
             this.loader.load = false;
-            this.alert('success', 'Proceso Convierte Parcial terminado', '');
+            this.alert('success', 'Se ha convertido parcialmente', '');
           },
           error: err => {
-            console.log(err);
+            console.log(err.error.message);
             this.loader.load = false;
-            this.alert('error', 'Proceso Convierte Parcial', err.error.message);
+            this.alert(
+              'error',
+              'No se pudo hacer la conversión parcial',
+              'Favor de verificar'
+            );
           },
         });
     } else {

@@ -17,6 +17,7 @@ import { NotLoadedsModalComponent } from './expense-capture/expense-comercial/no
 import { CheckboxReportDelitComponent } from './expense-capture/expense-composition/checkbox-report-delit';
 import { ExpenseCompositionModalComponent } from './expense-capture/expense-composition/expense-composition-modal/expense-composition-modal.component';
 import { ExpenseCompositionComponent } from './expense-capture/expense-composition/expense-composition.component';
+import { RejectedGoodsComponent } from './expense-capture/expense-composition/rejected-goods/rejected-goods.component';
 import { NotifyComponent } from './expense-capture/notify/notify.component';
 import { ScanFilesComponent } from './expense-capture/scan-files/scan-files.component';
 
@@ -32,6 +33,7 @@ import { ScanFilesComponent } from './expense-capture/scan-files/scan-files.comp
     NotLoadedsModalComponent,
     ExpenseCompositionModalComponent,
     CheckboxReportDelitComponent,
+    RejectedGoodsComponent,
   ],
   imports: [
     CommonModule,

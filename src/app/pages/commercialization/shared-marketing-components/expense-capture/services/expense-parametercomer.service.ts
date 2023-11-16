@@ -5,6 +5,7 @@ import { ParameterComerEndpoints } from 'src/app/common/constants/endpoints/ms-p
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
+import { IGoodRejected } from '../models/good-rejected';
 import {
   IParameterChargeCSV,
   IParameterComerDTO,
@@ -21,7 +22,10 @@ export class ExpenseParametercomerService extends HttpService {
   }
 
   getValidGoods(body: IParameterComerDTO) {
-    return this.post('aplication/get-bienes-validados', body);
+    return this.post<{ cveconcept: string; resData: IGoodRejected[] }>(
+      'aplication/get-bienes-validados',
+      body
+    );
   }
 
   getParameterMod(params: ListParams) {
