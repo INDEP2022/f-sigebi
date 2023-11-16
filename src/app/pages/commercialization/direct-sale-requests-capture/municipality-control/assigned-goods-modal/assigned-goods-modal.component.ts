@@ -19,6 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class AssignedGoodsModalComponent extends BasePage implements OnInit {
   title: string = 'Bien Asignado';
   good: any;
+  applicant: any;
   number = 0;
   maxDate = new Date();
   positions: number[] = [];
@@ -103,6 +104,7 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
       comments: [null, [Validators.pattern(STRING_PATTERN)]],
       visualize: [null],
     });
+
     if (this.good !== undefined) {
       this.edit = true;
       console.log('vamos a editar', this.good);
@@ -111,6 +113,14 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
     } else {
       console.log('vamos desde cero');
       this.edit = false;
+      this.goodForm.controls['soladjinstgobId'].setValue(
+        this.applicant.soladjinstgobId
+      );
+      this.goodForm.controls['typeentgobId'].setValue(
+        this.applicant.typeentgobId.typeentgobId
+      );
+      this.goodForm.controls['soladjinstgobId'].disable();
+      this.goodForm.controls['typeentgobId'].disable();
     }
   }
   // Deshacer///////////////////////////////////////////////////////////////////////////
@@ -210,6 +220,7 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
       this.bodyBien = this.goodForm.value;
       this.goodForm2.patchValue(this.bodyBien);
       //console.log(JSON.stringify(this.goodForm2.value));
+      debugger;
       this.msDirectawardService
         .createGoodsById(this.goodForm2.value)
         .subscribe({
