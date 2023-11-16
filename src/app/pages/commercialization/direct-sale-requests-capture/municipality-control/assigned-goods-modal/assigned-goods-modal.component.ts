@@ -1,10 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BienesAsignados } from 'src/app/core/models/ms-directsale/BienesAsignados';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { MsDirectawardService } from 'src/app/core/services/ms-directaward/ms-directaward.service';
 import { MunicipalityControlMainService } from 'src/app/core/services/ms-directsale/municipality-control-main.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -37,14 +39,16 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private municipalityControlMainService: MunicipalityControlMainService,
     private msDirectawardService: MsDirectawardService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private goodService: GoodFinderService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.getData();
-    this.getDelegation();
+    this.getDelegation(new ListParams());
+    this.getNoGood(new ListParams());
   }
   getData() {
     this.prepareForm();
@@ -53,12 +57,15 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.goodForm = this.fb.group({
       detbienesadjId: [null],
-      soladjinstgobId: [null, [Validators.required, Validators.max(1000)]],
+      soladjinstgobId: [
+        null,
+        [Validators.required, Validators.max(9999999999)],
+      ],
       typeentgobId: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      estateNumber: [null, [Validators.required, Validators.max(1000)]],
+      estateNumber: [null, [Validators.required, Validators.max(9999999999)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -75,7 +82,7 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
       visualize: [null],
     });
     this.goodForm2 = this.fb.group({
-      soladjinstgobId: [null, [Validators.required, Validators.max(1000)]],
+      soladjinstgobId: [null, [Validators.required]],
       typeentgobId: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -123,16 +130,39 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
       );
     }
   }
-  getDelegation() {
-    this.delegationService.getAll2().subscribe({
+  getDelegation(params: ListParams) {
+    if (params != undefined && params.text != '')
+      params['filter.description'] = `$ilike:${params.text}`;
+    this.delegationService.getAll2(params).subscribe({
       next: data => {
-        this.delegationItems = new DefaultSelect(data.data, data.data.length);
+        this.delegationItems = new DefaultSelect(data.data, data.count);
         console.log('delegacion', data);
       },
       error: err => {
         console.log('delegacion', err);
       },
     });
+  }
+
+  getNoGood(event?: ListParams) {
+    if (event != undefined && event.text != '')
+      event['filter.id'] = `$ilike:${event.text}`;
+    this.goodService.goodFinder(event).subscribe({
+      next: resp => {
+        resp.data.map((x: any) => {
+          x['idDescription'] = x.id + ' - ' + x.description;
+        });
+        this.goodItems = new DefaultSelect(resp.data, resp.count);
+      },
+    });
+  }
+
+  goodChange(event: any) {
+    if (event == undefined) {
+      this.goodForm.get('estateNumber').setValue(null);
+      this.goodItems = new DefaultSelect();
+      this.getNoGood();
+    }
   }
 
   close() {

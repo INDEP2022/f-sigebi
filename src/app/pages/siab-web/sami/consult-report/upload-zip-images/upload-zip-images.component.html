@@ -4,23 +4,30 @@
   </div>
   <div body>
     <div class="row mb-4">
-      <b style="padding: 0px">Archivos permitidos </b>
-      <div class="row">
-        {{ accept }}
-      </div>
-      <div class="row" *ngIf="accept === '.zip' && accept2">
-        <b style="padding: 0px">Archivos permitidos dentro del zip </b>
-        <div class="row">
-          {{ accept2 }}
+      <b style="padding: 0px">Archivos permitidos {{ accept }}</b>
+
+      <form [formGroup]="form" class="form-material">
+        <div class="row pt-5">
+          <form-field [control]="form.get('typeImages')">
+            <ngx-select
+              [form]="form"
+              control="typeImages"
+              [data]="typeImages"
+              value="type"
+              bindLabel="type"
+              label="Tipo de Imágen"
+              (change)="typeImageSelect($event)"></ngx-select>
+          </form-field>
         </div>
-      </div>
+      </form>
     </div>
 
     <div class="row">
       <div class="col-md-12">
         <file-upload
           (onUploadFiles)="loadImage($event)"
-          [accept]="accept"></file-upload>
+          [accept]="accept"
+          [info]="'Selecciona o arrastra el archivo zip'"></file-upload>
       </div>
     </div>
   </div>

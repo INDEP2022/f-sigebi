@@ -9,6 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
   PHONE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -45,22 +46,19 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getMunicipalities();
-    this.getStates();
+    this.getMunicipalities(new ListParams());
+    this.getStates(new ListParams());
     console.log(this.applicant);
 
     this.delegationService.getStates(new ListParams()).subscribe(data => {
       this.states = data.data;
-      this.stateItems = new DefaultSelect(this.states, this.states.length);
+      this.stateItems = new DefaultSelect(this.states, data.count);
 
       console.log(this.states);
     });
     this.delegationService.getAll(new ListParams()).subscribe(data => {
       this.departments = data.data;
-      this.municipalityItems = new DefaultSelect(
-        this.departments,
-        this.departments.length
-      );
+      this.municipalityItems = new DefaultSelect(this.departments, data.count);
       console.log(this.departments);
     });
   }
@@ -80,10 +78,13 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      municipality: [null, [Validators.required]],
-      state: [null, [Validators.required]],
+      municipality: [null, [Validators.required, Validators.maxLength(70)]],
+      state: [null, [Validators.required, Validators.maxLength(30)]],
       applicationDate: [null, [Validators.required]],
-      amount: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      amount: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -105,10 +106,13 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      municipality: [null, [Validators.required]],
-      state: [null, [Validators.required]],
+      municipality: [null, [Validators.required, Validators.maxLength(70)]],
+      state: [null, [Validators.required, Validators.maxLength(30)]],
       applicationDate: [null, [Validators.required]],
-      amount: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      amount: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -196,21 +200,37 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
     }
   }
 
-  getMunicipalities() {
-    this.delegationService.getAll(new ListParams()).subscribe(data => {
+  getMunicipalities(params?: ListParams) {
+    if (params != undefined && params.text != '')
+      params['filter.description'] = `$ilike:${params.text}`;
+    this.delegationService.getAll(params).subscribe(data => {
       this.departments = data.data;
-      this.municipalityItems = new DefaultSelect(
-        this.departments,
-        this.departments.length
-      );
+      this.municipalityItems = new DefaultSelect(this.departments, data.count);
       console.log(this.municipalityItems);
     });
   }
 
-  getStates() {
-    this.delegationService.getStates(new ListParams()).subscribe(data => {
+  municipalitiesChange(event: any) {
+    if (event == undefined) {
+      this.applicantForm.get('municipality').setValue(null);
+      this.municipalityItems = new DefaultSelect();
+      this.getMunicipalities(new ListParams());
+    }
+  }
+  getStates(params?: ListParams) {
+    if (params != undefined && params.text != '')
+      params['filter.descCondition'] = `$ilike:${params.text}`;
+    this.delegationService.getStates(params).subscribe(data => {
       this.states = data.data;
-      this.stateItems = new DefaultSelect(this.states, this.states.length);
+      this.stateItems = new DefaultSelect(this.states, data.count);
     });
+  }
+
+  stateItemsChange(event: any) {
+    if (event == undefined) {
+      this.applicantForm.get('state').setValue(null);
+      this.stateItems = new DefaultSelect();
+      this.getStates(new ListParams());
+    }
   }
 }
