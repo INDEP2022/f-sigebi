@@ -3,7 +3,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IUploadEvent } from 'src/app/utils/file-upload/components/file-upload.component';
 
 import { DatePipe } from '@angular/common';
-import { BlobReader, ZipReader } from '@zip.js/zip.js';
+import { BlobReader, BlobWriter, ZipReader } from '@zip.js/zip.js';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 
@@ -52,12 +52,7 @@ export class UploadZipImagesComponent implements OnInit {
     const entries = await this.getEntries(selectedFile);
 
     entries.map(async (entrie, index) => {
-      const blob = new Blob([entrie.rawExtraField], { type: 'image/png' });
-
-      const form = new FormData();
-      form.append('file', blob);
-      const file = form.get('file');
-
+      const blob = await entrie.getData(new BlobWriter());
       const formData = {
         xidcProfile: 'NSBDB_Gral',
         dDocAuthor: this.userLogName,
@@ -72,7 +67,8 @@ export class UploadZipImagesComponent implements OnInit {
           docName,
           contentType,
           JSON.stringify(formData),
-          file
+          blob,
+          entrie.filename
         )
         .subscribe({
           next: data => {
