@@ -22,6 +22,7 @@
                 [form]="form"
                 [maxlengthInput]="12"
                 [disabled]="false"
+                [readonly]="false"
                 [widthDescription]="false"
                 [haveSelectColumns]="true"
                 [haveColumnFilters]="true"
@@ -43,6 +44,13 @@
                 (click)="save()">
                 Guardar
               </button>
+              <!-- <button
+                type="button"
+                class="btn btn-sm btn-primary mt-2 active"
+                [disabled]="form.invalid"
+                (click)="edit()">
+                Actualizar
+              </button> -->
             </div>
           </div>
           <div class="row mt-4 ml-0">

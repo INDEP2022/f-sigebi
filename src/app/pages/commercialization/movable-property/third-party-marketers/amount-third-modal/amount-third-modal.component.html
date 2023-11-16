@@ -46,9 +46,10 @@
             label="Monto Inicial"
             [control]="amountForm.get('startingAmount')">
             <input
+              currencyMask
               [max-length]="10"
               pattern="^[0-9.]+"
-              type="number"
+              type="text"
               class="form-control"
               formControlName="startingAmount" />
           </form-field>
@@ -70,9 +71,10 @@
             label="Monto Final"
             [control]="amountForm.get('finalAmount')">
             <input
+              currencyMask
               [max-length]="10"
               pattern="^[0-9.]+"
-              type="number"
+              type="text"
               class="form-control"
               formControlName="finalAmount" />
           </form-field>

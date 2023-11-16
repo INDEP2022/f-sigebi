@@ -132,7 +132,6 @@ export class ParamsConcepsListComponent
 
   override async extraOperationsGetData() {
     const dataTemp = await this.data.getAll();
-    console.log(dataTemp);
     if (!dataTemp) {
       this.haveParams = false;
       return;
@@ -175,17 +174,19 @@ export class ParamsConcepsListComponent
             next: response => {
               this.alert(
                 'success',
-                'Parámetro por Concepto de Pago ' + this.conceptId,
-                'Creado correctamente'
+                'Se creo el parámetro por concepto de pago ' + this.conceptId,
+                ''
               );
               this.getData();
             },
             error: err => {
+              console.log(err);
+
               this.alert(
                 'error',
-                'Creación Parámetro',
                 'No se pudo crear el parámetro por concepto de pago ' +
-                  this.conceptId
+                  this.conceptId,
+                err.error.message
               );
             },
           });
@@ -216,19 +217,20 @@ export class ParamsConcepsListComponent
                 next: response => {
                   this.alert(
                     'success',
-                    'Parámetro con Concepto de Pago ' + this.conceptId,
-                    'Actualizado Correctamente'
+                    'Se pudo actualizar el parámetro con concepto de pago ' +
+                      this.conceptId,
+                    ''
                   );
                   this.getData();
                 },
                 error: err => {
                   this.alert(
                     'error',
-                    'Actualizar Parámetro',
-                    'No se pudo Actualizar el Parámetro ' +
+                    'No se pudo actualizar el parámetro ' +
                       row.parameter +
-                      ' con Concepto de Pago ' +
-                      this.conceptId
+                      ' con concepto de pago ' +
+                      this.conceptId,
+                    err.error.message
                   );
                 },
               });
@@ -236,11 +238,11 @@ export class ParamsConcepsListComponent
             error: err => {
               this.alert(
                 'error',
-                'Actualizar Parámetro',
-                'No se pudo Actualizar el Parámetro ' +
+                'No se pudo actualizar el parámetro ' +
                   row.parameter +
-                  ' con Concepto de Pago ' +
-                  this.conceptId
+                  ' con concepto de pago ' +
+                  this.conceptId,
+                err.error.message
               );
             },
           });
@@ -272,16 +274,16 @@ export class ParamsConcepsListComponent
         next: response => {
           this.alert(
             'success',
-            'Parámetro ' + row.parameter,
-            'Eliminado correctamente'
+            'Se ha eliminado el parámetro ' + row.parameter,
+            ''
           );
           this.getData();
         },
         error: err => {
           this.alert(
             'error',
-            'Eliminación Parámetro',
-            'No se pudo eliminar el parámetro por concepto de pago'
+            'No se pudo eliminar el parámetro ' + row.parameter,
+            ''
           );
         },
       });
