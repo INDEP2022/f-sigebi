@@ -291,7 +291,7 @@ export class DocRequestTabComponent
                   this.docRequest =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
-                  console.log('docRequest');
+
                   this.loading = false;
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
@@ -299,7 +299,6 @@ export class DocRequestTabComponent
               } else {
                 this.selectPage();
                 this.loading = false;
-                console.log('docRequestssss');
               }
             }
 
@@ -394,7 +393,7 @@ export class DocRequestTabComponent
                   this.docExpedient =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
-                  console.log('docRequest');
+
                   this.loading = false;
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
@@ -402,7 +401,6 @@ export class DocRequestTabComponent
               } else {
                 this.selectPageEx();
                 this.loading = false;
-                console.log('docRequestssss');
               }
             }
 
@@ -447,7 +445,7 @@ export class DocRequestTabComponent
                   this.docExpedient =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
-                  console.log('docRequest');
+
                   this.loading = false;
                   //this.allDataDocReq = x
                   //this.paragraphs.load(x)
@@ -455,7 +453,6 @@ export class DocRequestTabComponent
               } else {
                 this.selectPageEx();
                 this.loading = false;
-                console.log('docRequestsss');
               }
             }
           }

@@ -179,7 +179,7 @@ export class ExpenseConceptsListComponent
               {
                 ...body,
                 concept: this.conceptId,
-                address: this.getAddressCode(this.selectedConcept.address),
+                address: this.selectedConcept.address,
               },
               listParams
             )
@@ -208,11 +208,7 @@ export class ExpenseConceptsListComponent
                         .pipe(takeUntil(this.$unSubscribe))
                     );
                   });
-                  this.alert(
-                    'success',
-                    'Copiado de Parámetros',
-                    'Realizado correctamente'
-                  );
+                  this.alert('success', 'Se han copiado los parámetros', '');
                   // this.filesToDelete = [];
                   this.selectedConcept = body;
                   // this.expenseConceptsService.refreshParams.next(true);
@@ -226,8 +222,8 @@ export class ExpenseConceptsListComponent
                 } else {
                   this.alert(
                     'error',
-                    'Copiado de Parámetros',
-                    'No se pudieron copiar los parámetros'
+                    'No se pudieron copiar los parámetros',
+                    'Favor de revisar'
                   );
                 }
               },
@@ -235,8 +231,8 @@ export class ExpenseConceptsListComponent
                 console.log(err);
                 this.alert(
                   'error',
-                  'Copiado de Parámetros',
-                  'No se pudieron copiar los parámetros'
+                  'No se pudieron copiar los parámetros',
+                  'Favor de revisar'
                 );
               },
             });
@@ -295,8 +291,8 @@ export class ExpenseConceptsListComponent
     if (event.data) {
       const response = await this.alertQuestion(
         'warning',
-        'Eliminar',
-        '¿Desea Eliminar este Registro?'
+        '¿Desea eliminar el concepto de pago?',
+        ''
       );
       if (response.isConfirmed) {
         this.conceptsService
@@ -307,8 +303,8 @@ export class ExpenseConceptsListComponent
               // event.confirm.resolve();
               this.alert(
                 'success',
-                'Eliminación de Concepto de Pago ' + event.data.id,
-                'Eliminado correctamente'
+                'Se ha eliminado el concepto de pago ' + event.data.id,
+                ''
               );
               this.getData();
             },

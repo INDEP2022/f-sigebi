@@ -805,7 +805,7 @@ export class NotificationAssetsTabComponent
   aceptClarification() {
     if (this.rowSelected) {
       const notification = this.selectedRow;
-      console.log('notification', notification);
+
       let aclaration: boolean = false;
       let impro: boolean = false;
       let clarificationType1: boolean = false;
@@ -1292,7 +1292,6 @@ export class NotificationAssetsTabComponent
 
         this.goodService.create(_good).subscribe({
           next: response => {
-            console.log('individualización creada');
             this.GoodDataAsetService.updateGoodFinderRecord(
               response.id,
               response.goodId
@@ -1679,8 +1678,10 @@ export class NotificationAssetsTabComponent
   }
 
   reloadData() {
+    let count = 0;
     if (this.requestData.typeOfTransfer == 'SAT_SAE') {
       if (this.columns.length > 0) {
+        count = count + 1;
         this.columns.map(bien => {
           this.paramsReload.getValue()['filter.goodId'] = bien.goodid;
           this.rejectedGoodService
@@ -1757,11 +1758,13 @@ export class NotificationAssetsTabComponent
                     }
                   });
                 } else {
-                  this.onLoadToast(
-                    'warning',
-                    'Todas las notificaciones ya se encuentran aclaradas',
-                    ''
-                  );
+                  if (count == 1) {
+                    this.alert(
+                      'warning',
+                      'Acción Invalida',
+                      'Todas las notificaciones ya se encuentran aclaradas'
+                    );
+                  }
                 }
               },
               error: error => {},

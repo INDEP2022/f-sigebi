@@ -11,10 +11,10 @@ export const EVENTO_ERROR_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      if (row.lot == null) {
+      if (row.lots == null) {
         return '';
       } else {
-        return row.lot.lotPublic;
+        return row.lots.lotPublic;
       }
     },
   },

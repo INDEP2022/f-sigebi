@@ -124,11 +124,11 @@
               [optionTemplate]="dicOption">
             </ngx-select>
             <ng-template #dicLabel let-item="item">
-              {{ item.key }}
+              {{ item.key + ' - ' + item.description }}
             </ng-template>
             <ng-template #dicOption let-item="item">
-              <div [title]="item.key">
-                {{ item.key }}
+              <div [title]="item.key + '-' + item.description">
+                {{ item.key + ' - ' + item.description }}
               </div>
             </ng-template>
           </form-field>

@@ -132,21 +132,29 @@ export class PropertyComponent extends BasePage implements OnInit {
   }
 
   onSelectOffice(event: any) {
-    console.log(event.no_of_gestion);
-    const noGes = event.no_of_gestion;
-    const valid1: boolean = true;
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      noGes,
-      valid1,
-      callback: (next: boolean) => {
-        if (next)
-          this.params1
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getDataGood());
-      },
-    };
-    this.modalService.show(OutsideTradesComponent, modalConfig);
+    console.log(event);
+    if (event.no_of_gestion != null) {
+      const noGes = event.no_of_gestion;
+      const valid1: boolean = true;
+      const modalConfig = MODAL_CONFIG;
+      modalConfig.initialState = {
+        noGes,
+        valid1,
+        callback: (next: boolean) => {
+          if (next)
+            this.params1
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getDataGood());
+        },
+      };
+      this.modalService.show(OutsideTradesComponent, modalConfig);
+    } else {
+      this.alert(
+        'warning',
+        'advertencia',
+        'Lo sentimos el Bien no tiene No. Gestión'
+      );
+    }
   }
 
   onSelectDelegation(instance: CheckboxElementComponent) {

@@ -107,8 +107,7 @@ export class BillingsService {
     return new Promise((resolve, reject) => {
       this.msInvoiceService.getPaNvoFacturaPag(body).subscribe({
         next: data => {
-          console.log('da1', data);
-          resolve(data.data);
+          resolve('Correcto.');
         },
         error: err => {
           resolve(null);
@@ -177,7 +176,7 @@ export class BillingsService {
     return new Promise((resolve, reject) => {
       this.msInvoiceService.getPaNvoDeleteInvoice(body).subscribe({
         next: response => {
-          resolve(response.data);
+          resolve('Correcto.');
         },
         error: error => {
           resolve(null);
@@ -279,7 +278,7 @@ export class BillingsService {
       this.msInvoiceService.getPaNvoGenerarPag(body).subscribe({
         next: data => {
           console.log('da1', data);
-          resolve(data.data);
+          resolve('Correcto.');
         },
         error: err => {
           resolve(null);
@@ -374,7 +373,7 @@ export class BillingsService {
           resolve(response);
         },
         error: error => {
-          resolve(null);
+          resolve({ count: 0 });
         },
       });
     });
@@ -705,6 +704,19 @@ export class BillingsService {
       this.parametersService.getApplicationGetFaUrlwebFac(eventId).subscribe({
         next: response => {
           resolve(response.fa_urlweb_fac);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  deletePDelInvoice(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService.deletePDelInvoice(body).subscribe({
+        next: response => {
+          resolve('Correcto.');
         },
         error: error => {
           resolve(null);

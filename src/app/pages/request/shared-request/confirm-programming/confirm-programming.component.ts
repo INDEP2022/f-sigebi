@@ -14,8 +14,12 @@ import { ElectronicSignatureListComponent } from '../electronic-signature-list/e
 export class ConfirmProgrammingComponent extends BasePage implements OnInit {
   confirmForm: FormGroup = new FormGroup({});
   idProgramming: number = 0;
-  type?: string = null;
+  type?: any = null;
   electronicSignature: boolean = false;
+
+  labelEncharge: string;
+  labelPost: string;
+  displayInput: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -28,6 +32,8 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.enableSignInput();
+    this.setLabelTitles();
   }
 
   prepareForm() {
@@ -57,7 +63,7 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
       .updateProgramming(this.idProgramming, progform)
       .subscribe({
         next: () => {
-          if (this.type == 'order-service') {
+          if (this.type == 2) {
             this.modalRef.content.callback({
               data: progform,
               sign: progform.typeSignature == 'Y' ? 'electronica' : 'autografa',
@@ -83,5 +89,25 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
 
   close() {
     this.modalService.hide();
+  }
+
+  enableSignInput() {
+    if (this.type) {
+      this.displayInput = true;
+    }
+  }
+
+  setLabelTitles() {
+    if (this.type == 2) {
+      this.labelEncharge = 'Responsable';
+      this.labelPost = 'Cargo';
+    }
+    if (this.type == 3) {
+      this.labelEncharge = 'ResponsableDr';
+      this.labelPost = 'CargoDr';
+    } else {
+      this.labelEncharge = 'Nombre del Firmante';
+      this.labelPost = 'Cargo';
+    }
   }
 }
