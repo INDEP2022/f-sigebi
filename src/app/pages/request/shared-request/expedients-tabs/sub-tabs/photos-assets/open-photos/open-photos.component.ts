@@ -40,7 +40,6 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     if (this.request) {
       this.task = JSON.parse(localStorage.getItem('Task'));
       this.statusTask = this.task?.status;
-      console.log('statustask', this.statusTask);
     }
 
     this.settings = {
@@ -119,7 +118,6 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     };
 
     this.wContentService.getDocumentos(idReq).subscribe(data => {
-      console.log('updateinfoPhotos');
       const _data = data.data.filter((img: any) => {
         if (img.dDocType == 'DigitalMedia') return img;
       });
@@ -135,7 +133,6 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
 
   getImage(docName: string) {
     this.wContentService.getObtainFile(docName).subscribe(data => {
-      console.log('imagen', data);
       const type = this.detectMimeType(data);
       let blob = this.dataURItoBlob(data, type);
       let file = new Blob([blob], { type });

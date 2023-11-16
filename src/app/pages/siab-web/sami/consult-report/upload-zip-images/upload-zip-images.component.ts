@@ -3,35 +3,53 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IUploadEvent } from 'src/app/utils/file-upload/components/file-upload.component';
 
 import { DatePipe } from '@angular/common';
-import { BlobReader, ZipReader } from '@zip.js/zip.js';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BlobReader, BlobWriter, ZipReader } from '@zip.js/zip.js';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import { BasePage } from 'src/app/core/shared';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { typeImagesData } from './type-images-data';
 
 @Component({
   selector: 'app-upload-zip-images',
   templateUrl: './upload-zip-images.component.html',
   styles: [],
 })
-export class UploadZipImagesComponent implements OnInit {
+export class UploadZipImagesComponent extends BasePage implements OnInit {
   accept: string = '*';
   accept2: string = null;
   uploadFiles = false;
+  good: number = 0;
   info = `Haz clic para seleccionar las imágenes o arrástralas
       aquí`;
 
   multiple = true;
   userLogName: string = '';
   date: string = '';
+  form: FormGroup = new FormGroup({});
+  typeImages = new DefaultSelect(typeImagesData);
+  typeImagen: string = '';
   constructor(
     private modalRef: BsModalRef,
     private programmingService: ProgrammingRequestService,
     private datePipe: DatePipe,
-    private wContentService: WContentService
-  ) {}
+    private wContentService: WContentService,
+    private fb: FormBuilder
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
+    this.initialForm();
     this.getInfoUserLog();
     this.obtainDate();
+  }
+
+  initialForm() {
+    this.form = this.fb.group({
+      typeImages: [null],
+    });
   }
 
   getInfoUserLog() {
@@ -45,44 +63,69 @@ export class UploadZipImagesComponent implements OnInit {
     this.date = this.datePipe.transform(date, 'yyyy_MM_dd');
   }
 
+  typeImageSelect(event: Event) {
+    this.typeImagen = event.type;
+  }
+
   async loadImage(uploadEvent: IUploadEvent) {
-    const { index, fileEvents } = uploadEvent;
-    const selectedFile = fileEvents[0].file;
+    if (this.typeImagen != '') {
+      const { index, fileEvents } = uploadEvent;
+      const selectedFile = fileEvents[0].file;
 
-    const entries = await this.getEntries(selectedFile);
+      const entries = await this.getEntries(selectedFile);
+      const checkAllImages = entries.map((entrie: any) => {
+        const checkData = entrie.filename.indexOf(this.typeImagen);
+        if (checkData != -1) {
+          return checkData;
+        }
+      });
 
-    entries.map(async (entrie, index) => {
-      const blob = new Blob([entrie.rawExtraField], { type: 'image/png' });
+      const filterData = checkAllImages.filter(data => {
+        return data;
+      });
 
-      const form = new FormData();
-      form.append('file', blob);
-      const file = form.get('file');
+      if (filterData.length == entries.length) {
+        entries.map(async (entrie, index) => {
+          const blob = await entrie.getData(new BlobWriter());
+          const formData = {
+            xidcProfile: 'NSBDB_Gral',
+            dDocAuthor: this.userLogName,
+            xidBien: this.good,
+            xnombreProceso: 'Clasificar Bien',
+          };
+          const contentType = 'img';
+          const docName = `IMG_${this.date}${contentType}`;
 
-      const formData = {
-        xidcProfile: 'NSBDB_Gral',
-        dDocAuthor: this.userLogName,
-        xidBien: '9589899',
-        xnombreProceso: 'Clasificar Bien',
-      };
-      const contentType = 'img';
-      const docName = `IMG_${this.date}${contentType}`;
-
-      this.wContentService
-        .addImagesToContent(
-          docName,
-          contentType,
-          JSON.stringify(formData),
-          file
-        )
-        .subscribe({
-          next: data => {
-            console.log('subido al content', data);
-          },
-          error: error => {
-            console.log('Error al subir al content', error);
-          },
+          this.wContentService
+            .addImagesToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              entrie.filename
+            )
+            .subscribe({
+              next: data => {
+                this.modalRef.content.callback(true);
+                this.close();
+              },
+              error: () => {},
+            });
         });
-    });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Algunas imágenes de el zip no son las mismas que el tipo de imágen seleccionado'
+        );
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Selecciona el tipo de imágen a cargar'
+      );
+    }
   }
 
   getEntries(selectedFile: any) {
