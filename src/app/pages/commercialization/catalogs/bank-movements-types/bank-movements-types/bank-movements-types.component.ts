@@ -100,9 +100,9 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
           this.getDeductives();
         }
       });
-    this.params
+    /*this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDeductives());
+      .subscribe(() => this.getDeductives());*/
   }
 
   private prepareForm() {
@@ -121,6 +121,9 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
     this.getDeductives();
     this.loading = true;
     this.bankAccountSelect = new DefaultSelect();
+    if (params.text) {
+      params['filter.name'] = `$ilike:${params.text}`;
+    }
     this.recordAccountStatementsService.getAll(params).subscribe({
       next: response => {
         this.loading = true;
@@ -129,7 +132,7 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
       },
       error: (err: any) => {
         this.loading = false;
-        this.alert('warning', 'No Existen Bancos', ``);
+        this.alert('warning', 'No existen bancos', ``);
       },
     });
   }
@@ -217,7 +220,7 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
         this.loading = false;
         this.alert(
           'warning',
-          'No se Encontraron Registros con el Parámetro de Búsqueda',
+          'No se encontraron registros con el parámetro de búsqueda',
           ''
         );
       },
@@ -242,7 +245,7 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar este Registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(bankMovementsTypes.id);
@@ -254,12 +257,12 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
     this.bankMovementType.remove(id).subscribe({
       next: () => {
         this.getDeductives();
-        this.alert('success', 'Movimiento Borrado Correctamente', '');
+        this.alert('success', 'El movimiento ha sido eliminado', '');
       },
       error: err => {
         this.alert(
           'warning',
-          'No se Puede Eliminar el Registro porque Está Referenciado en Otra Tabla',
+          'No se puede eliminar el registro porque está referenciado en otra tabla',
           ''
         );
       },
@@ -274,6 +277,7 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
 
   cleandInfoDate() {
     this.form.get('bankSelect').reset();
-    this.getDeductives();
+    this.data.load([]);
+    //this.getDeductives();
   }
 }
