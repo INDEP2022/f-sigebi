@@ -1,9 +1,9 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
-import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import {
   FilterParams,
   ListParams,
@@ -52,8 +52,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   delegations$ = new DefaultSelect<IDelegation>();
   totalItems: number = 0;
   totalItems1: number = 0;
+  excelValid: boolean = true;
   useracept: boolean = true;
   userName: string = '';
+  to: string = '';
+  from: string = '';
   edit = false;
   fileNumber: number = 0;
   event: any[] = [];
@@ -97,46 +100,13 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     private indUserService: IndUserService,
     private delegationService: DelegationService,
     private securityService: SecurityService,
+    private datePipe: DatePipe,
     private authService: AuthService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings.columns = APPROVAL_COLUMNS;
     this.settings.hideSubHeader = false;
-
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      columns: {
-        cveAct: {
-          title: 'Clave Evento',
-          type: 'string',
-          sort: false,
-        },
-        captureDate: {
-          title: 'Fecha Captura',
-          type: 'number',
-          sort: false,
-          filter: {
-            type: 'custom',
-            component: CustomDateFilterComponent,
-          },
-          valuePrepareFunction: (text: string) => {
-            return `${text ? text.split('-').reverse().join('/') : ''}`;
-          },
-        },
-        elaborated: {
-          title: 'Ingresó',
-          type: 'string',
-          sort: false,
-        },
-        estatusAct: {
-          title: 'Estatus Evento',
-          type: 'string',
-          sort: false,
-        },
-      },
-    };
     this.settings1 = {
       ...this.settings,
       hideSubHeader: false,
@@ -170,20 +140,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'captureDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;
-              case 'closeDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'estatusAct':
                 searchFilter = SearchFilter.ILIKE;
@@ -265,7 +222,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   initForm() {
     this.form = this.fb.group({
-      cveActa: [null, [Validators.required]],
+      cveActa: [null],
       captureDate: ['', []],
       closeDate: ['', []],
       estatusAct: ['', []],
@@ -317,13 +274,17 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   filterButton() {
     //this.params.value.page = 1;
     //this.search(false);
+    this.from = this.datePipe.transform(
+      this.form.controls['captureDate'].value,
+      'dd/MM/yyyy'
+    );
+    this.to = this.datePipe.transform(
+      this.form.controls['closeDate'].value,
+      'dd/MM/yyyy'
+    );
     this.response = true;
-    const captureDate = this.form.get('captureDate').value
-      ? this.form.get('captureDate').value
-      : '';
-    const closeDate = this.form.get('closeDate').value
-      ? this.form.get('closeDate').value
-      : '';
+    const captureDate = this.form.get('captureDate').value ? this.from : '';
+    const closeDate = this.form.get('closeDate').value ? this.to : '';
     const cveAc = this.form.get('cveActa').value
       ? this.form.get('cveActa').value
       : '';
@@ -379,9 +340,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   getEventComDonationAll(
+    actType?: string | number,
     captureDate?: string | number,
     closeDate?: string | number,
-    actType?: string | number,
     cveAct?: string | number,
     estatusAct?: string | number,
     NoDelegation1?: string | number,
@@ -434,6 +395,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   changeEvent(event: any) {
     if (event) {
       this.selectRow = true;
+      this.excelValid = false;
       const data: any = event.data;
       this.getDetailComDonation(data.actId);
       console.log(event.data);
@@ -731,8 +693,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.response = false;
     this.form.get('cveActa').setValue(null);
     this.validate = true;
-    this.form.get('from').setValue(null);
-    this.form.get('to').setValue(null);
+    this.form.get('captureDate').setValue(null);
+    this.form.get('closeDate').setValue(null);
     this.form.get('estatusAct').setValue([]);
     this.form.get('noDelegation1').setValue([]);
     this.form.get('noDelegation1').setValue([]);
