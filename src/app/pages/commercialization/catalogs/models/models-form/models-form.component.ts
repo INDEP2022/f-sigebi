@@ -14,7 +14,7 @@ import { ModelsService } from '../models.service';
 })
 export class ModelsFormComponent extends BasePage implements OnInit {
   modelForm: ModelForm<IParameterComer>;
-  title: string = 'Modelo';
+  title: string = 'modelo';
   edit: boolean = false;
   parameterComer: IParameterComer;
 
@@ -32,8 +32,11 @@ export class ModelsFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.modelForm = this.fb.group({
-      id: [null, [Validators.pattern(STRING_PATTERN)]],
-      modelComment: [null, [Validators.pattern(STRING_PATTERN)]],
+      id: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      modelComment: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       nbOrigin: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     if (this.parameterComer != null) {
@@ -61,7 +64,7 @@ export class ModelsFormComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          this.alert('warning', `No es Posible Actualizar el Modelo`, '');
+          this.alert('warning', `No es posible asctualizar el modelo`, '');
           this.modalRef.hide();
         },
       });
@@ -78,7 +81,7 @@ export class ModelsFormComponent extends BasePage implements OnInit {
           this.modalRef.hide();
         },
         error: error => {
-          this.alert('warning', `No es Posible Crear el Modelo`, '');
+          this.alert('warning', `No es posible crear el modelo`, '');
           this.loading = false;
         },
       });
@@ -93,8 +96,10 @@ export class ModelsFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `${message} Correctamente`, '');
+    const message: string = this.edit
+      ? 'ha sido actualizado'
+      : 'ha sido guardado';
+    this.alert('success', `El ${this.title} ${message}`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

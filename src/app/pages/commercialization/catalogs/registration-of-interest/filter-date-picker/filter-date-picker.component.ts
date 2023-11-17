@@ -31,7 +31,7 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
   public override bsConfig: Partial<BsDatepickerConfig>;
   @Input() onChangeInp: any;
   @Input() placeholder: any;
-  title: string = 'Registro de Interés';
+  title: string = 'registro de interés';
   inputControl = new FormControl('');
 
   //providerForm: ModelForm<ITiieV1>;
@@ -43,6 +43,7 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
   maxDate = new Date('2025');
   maxValor: number = 99;
   miFormulario: FormGroup;
+  result: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -137,8 +138,16 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
     if (id) {
       params['filter.user'] = id;
     }
+    if (params.text) {
+      params['filter.user'] = `$ilike:${params.text}`;
+      params['search'] = '';
+    }
     this.securityService.getAllUsersTracker(params).subscribe({
       next: response => {
+        console.log(response.data);
+        this.result = response.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.userSelect = new DefaultSelect(response.data, response.count);
       },
       error: err => {
@@ -259,7 +268,7 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
             'duplicate key value violates unique constraint'
           )
         ) {
-          errorFixed = 'Mes y Año TIIE Duplicado';
+          errorFixed = 'Mes y año TIIE duplicado';
         } else {
           if (Array.isArray(error.error.message)) {
             errorFixed = error.error.message[0];
@@ -296,7 +305,7 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
               'duplicate key value violates unique constraint'
             )
           ) {
-            errorFixed = 'Mes y Año TIIE Duplicado';
+            errorFixed = 'Mes y año TIIE duplicado';
           } else {
             if (Array.isArray(error.error.message)) {
               errorFixed = error.error.message[0];
@@ -341,8 +350,10 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
     });*/
   }
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit
+      ? 'ha sido actualizado'
+      : 'ha sido guardado';
+    this.onLoadToast('success', `El ${this.title} ${message}`, '');
     this.loading = false;
     //this.onConfirm.emit(true);
     this.modalRef.content.callback(true);

@@ -101,7 +101,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
     };
     if (this.capture) {
       if (!this.capture.eventId) {
-        this.alert('warning', 'Cliente no Tiene Detalle de Eventos', '');
+        this.alert('warning', 'El cliente no tiene detalle de eventos', '');
         return;
       }
       this.captureLinesId = this.capture.eventId;
@@ -134,7 +134,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
     if (!this.capture) {
       this.alert(
         'warning',
-        'Selecciona Primero un Evento Para Exportar sus Detalles',
+        'Selecciona primero un evento para exportar sus detalles',
         ''
       );
     } else {

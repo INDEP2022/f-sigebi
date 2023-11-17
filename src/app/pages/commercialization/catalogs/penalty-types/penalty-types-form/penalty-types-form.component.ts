@@ -4,7 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
 import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-penalty-types-form',
@@ -36,10 +36,17 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
       id: [null],
       descPenalty: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(150)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(150),
+        ],
       ],
-      daysPenalty: [null, [Validators.pattern(NUM_POSITIVE)]],
-      process: [null, [Validators.maxLength(1)]],
+      daysPenalty: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      process: [null, [Validators.required, Validators.maxLength(1)]],
     });
     if (this.penaltyType != null) {
       this.edit = true;
@@ -86,8 +93,10 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `${message} Correctamente`, '');
+    const message: string = this.edit
+      ? 'ha sido actualizada'
+      : 'se ha guardado';
+    this.alert('success', `La penalización ${message}`, '');
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();

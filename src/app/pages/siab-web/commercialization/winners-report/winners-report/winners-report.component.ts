@@ -245,14 +245,18 @@ export class winnersReportComponent extends BasePage implements OnInit {
 
         // Si hay más páginas de datos, recuperarlas
         const totalPages = Math.ceil(resp.count / params.pageSize);
-        const additionalRequests = [];
+        const additionalRequests: any[] = [];
 
         for (let page = 2; page <= totalPages; page++) {
           params.page = page;
+          console.log(this.form.get('event').value, params);
           additionalRequests.push(
             this.winner.lotApp(this.form.get('event').value, params)
           );
         }
+        setTimeout(() => {
+          console.log(additionalRequests);
+        }, 1000);
 
         // Combinar todos los registros en this.line
         forkJoin(additionalRequests).subscribe({

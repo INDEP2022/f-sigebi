@@ -89,16 +89,20 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     });
   }
 
+  get dataComer() {
+    return this.dataService.data;
+  }
+
   get expenseNumber() {
-    return this.dataService.data.expenseNumber;
+    return this.dataComer.expenseNumber;
   }
 
   get conceptNumber() {
-    return this.dataService.data.conceptNumber;
+    return this.dataComer.conceptNumber;
   }
 
   get eventNumber() {
-    return this.dataService.data.eventNumber;
+    return this.dataComer.eventNumber;
   }
 
   get folioUniversal() {

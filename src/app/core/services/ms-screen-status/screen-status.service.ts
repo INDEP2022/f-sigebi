@@ -98,8 +98,8 @@ export class ScreenStatusService extends HttpService {
     return this.get(route);
   }
 
-  getStatusEndforScreen(key: any, status: any, process: any) {
-    const route = `${ScreenStatusEndpoints.StatusXScreenList}?filter.screenKey=$ilike:${key}&filter.status=$ilike:${status}&filter.processExtSun=$ilike:${process}&filter.action=$ilike:RDON`;
+  getStatusEndforScreen(key: any, status: any, process: any, action: any) {
+    const route = `${ScreenStatusEndpoints.StatusXScreenList}?filter.screenKey=$eq:${key}&filter.status=$eq:${status}&filter.processExtSun=$eq:${process}&filter.action=$eq:${action}`;
     return this.get(route);
   }
   getStatusXScreenColor(params: any) {

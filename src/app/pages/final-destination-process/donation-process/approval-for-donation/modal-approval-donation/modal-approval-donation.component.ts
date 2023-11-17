@@ -20,8 +20,12 @@ import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.ser
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { IParamsDonac } from '../capture-approval-donation/capture-approval-donation.component';
-
+interface NotData {
+  id: number;
+  reason: string;
+}
 @Component({
   selector: 'app-modal-approval-donation',
   templateUrl: './modal-approval-donation.component.html',
@@ -89,10 +93,11 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   // selectedGooods: any[] = [];
   selectedRow: any | null = null;
   dataTableGood_: any[] = [];
+  idsNotExist: NotData[] = [];
   dataTableGood: LocalDataSource = new LocalDataSource();
   activeGood: boolean = false;
   totalItems: number = 0;
-
+  ngGlobal: any;
   paramsScreen: IParamsDonac = {
     origin: '',
     recordId: '',
@@ -103,6 +108,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   loading2: boolean = false;
   provider: any;
+  data: LocalDataSource = new LocalDataSource();
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   @Output() onSave = new EventEmitter<any>();
   totalItems2: number = 0;
@@ -113,7 +119,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private GoodprocessService_: GoodprocessService,
     private statusGoodService: StatusGoodService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private globalVarService: GlobalVarsService
   ) {
     super();
     // this.settings = {
@@ -178,6 +185,20 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          if (this.ngGlobal.REL_BIENES) {
+            console.log('RASTREADOR ', this.data);
+            this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
+            this.dataGoodTable.load(this.selectedGooodsValid);
+            this.dataGoodTable.refresh();
+          }
+        },
+      });
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -241,6 +262,33 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsByStatus());
   }
+  loadGood(data: any[]) {
+    this.loading = true;
+    let count = 0;
+    data.forEach(good => {
+      count = count + 1;
+      this.goodService.getById(good.goodNumber).subscribe({
+        next: response => {
+          this.goods.push({
+            ...JSON.parse(JSON.stringify(response)).data[0],
+            avalaible: null,
+          });
+          console.log(this.goods);
+          this.addStatus();
+        },
+        error: err => {
+          if (err.error.message === 'No se encontrarón registros')
+            this.idsNotExist.push({
+              id: good.goodId,
+              reason: err.error.message,
+            });
+        },
+      });
+      if (count === data.length) {
+        this.loading = false;
+      }
+    });
+  }
 
   getListGoods() {
     let params = {
@@ -258,6 +306,19 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       },
       error: () => console.log('no hay bienes'),
     });
+  }
+  addStatus() {
+    this.data.load([]);
+    this.paginator();
+    this.data.refresh();
+  }
+
+  paginator(noPage: number = 1, elementPerPage: number = 10) {
+    const indiceInicial = (noPage - 1) * elementPerPage;
+    const indiceFinal = indiceInicial + elementPerPage;
+
+    let paginateData = this.goods.slice(indiceInicial, indiceFinal);
+    this.data.load(paginateData);
   }
 
   return() {

@@ -49,15 +49,12 @@ export class ExpenseConceptsListModalComponent
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      description: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.required],
-      ],
+      description: [null, [Validators.required]],
       address: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
-      routineCalculation: [null, [Validators.pattern(STRING_PATTERN)]],
+      routineCalculation: [null],
       automatic: [null],
       numerary: [null],
     });
@@ -65,6 +62,7 @@ export class ExpenseConceptsListModalComponent
 
   confirm() {
     console.log(this.form.value);
+    this.loader.load = true;
     if (this.concept) {
       this.onEditConfirm(this.form.value);
     } else {
@@ -77,18 +75,20 @@ export class ExpenseConceptsListModalComponent
   }
 
   private onEditConfirm(body: any) {
-    console.log(event);
+    console.log(body);
+    // return;
     if (body) {
       this.conceptsService
         .edit({
           ...body,
-          address: this.getAddressCode(body.address),
+          address: body.address,
           automatic: body.automatic ? 'S' : 'N',
           numerary: body.numerary ? 'S' : 'N',
         })
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
+            this.loader.load = false;
             this.alert(
               'success',
               'Se ha actualizado el concepto de pago ' + body.id,
@@ -98,6 +98,7 @@ export class ExpenseConceptsListModalComponent
             this.modalRef.hide();
           },
           error: err => {
+            this.loader.load = false;
             this.alert(
               'error',
               'ERROR',
@@ -105,6 +106,8 @@ export class ExpenseConceptsListModalComponent
             );
           },
         });
+    } else {
+      this.loader.load = false;
     }
   }
 
@@ -121,12 +124,14 @@ export class ExpenseConceptsListModalComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
+            this.loader.load = false;
             this.alert('success', 'Se ha creado el concepto de pago', '');
             this.modalRef.content.callback(true);
             this.modalRef.hide();
             // this.getData();
           },
           error: err => {
+            this.loader.load = false;
             this.alert(
               'error',
               'ERROR',
@@ -134,6 +139,8 @@ export class ExpenseConceptsListModalComponent
             );
           },
         });
+    } else {
+      this.loader.load = false;
     }
   }
 

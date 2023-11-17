@@ -16,7 +16,7 @@ export class ComerEventosService extends HttpService {
     this.microservice = EventEndpoints.BasePath;
   }
 
-  getAllEvents(params?: ListParams): Observable<IListResponse<IComerEvent>> {
+  getAllEvents(params?: _Params): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(EventEndpoints.ComerE, params);
   }
   getEvents(params: any) {

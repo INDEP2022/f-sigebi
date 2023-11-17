@@ -6,15 +6,14 @@
     <form action="" class="form-material" [formGroup]="form">
       <div class="ch-content">
         <div class="d-flex justify-content-between align-items-center">
-          <div style="width: 500px" class="d-flex justify-content-between">
-            <div class="col-6">
+          <div style="width: 800px" class="d-flex justify-content-between">
+            <div class="col-md-6">
               <form-field [control]="form.get('bankSelect')">
                 <ngx-select
                   label="Seleccione un Banco"
                   [data]="banks"
                   [form]="form"
                   bindLabel="name"
-                  style="width: 240px"
                   [control]="'bankSelect'"
                   (fetchItems)="searchBanks($event)"
                   (input)="onSearchName($event.target)"></ngx-select>
@@ -25,6 +24,7 @@
                 type="button"
                 class="btn btn-sm btn-info active mr-4"
                 style="width: 110px; background-color: #9d2449"
+                [disabled]="!form.valid"
                 (click)="consultarBanco(form.get('bankSelect').value.bankCode)">
                 Consultar <i class="bx bx-search float-icon"></i>
                 <!-- (click)="consultarBanco()" -->
@@ -33,6 +33,7 @@
                 type="button"
                 class="btn btn-sm btn-info active"
                 style="width: 90px; background-color: #b38e5d"
+                [disabled]="!form.valid"
                 (click)="cleandInfoDate()">
                 Limpiar <i class="fa fa-eraser"></i>
               </button>
