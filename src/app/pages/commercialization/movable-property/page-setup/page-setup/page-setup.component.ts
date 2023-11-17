@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -29,6 +29,7 @@ import { PAGE_SETUP_COLUMNS } from './page-setup-columns';
   styles: [],
 })
 export class PageSetupComponent extends BasePage implements OnInit {
+  @ViewChild('table', { static: false }) table: any;
   totalItems: number = 0;
   params = new BehaviorSubject(new FilterParams());
   data: IConfigvtadmun[] = [];
@@ -200,6 +201,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
       ...this.params2.getValue(),
       ...this.columnFilters,
     };
+    params['sortBy'] = `ordencol:ASC`;
     console.log('params', params);
     this.configvtadmunService.getAllFilter(params).subscribe({
       next: response => {
@@ -209,6 +211,18 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.dataFactGen.load(response.data);
         this.dataFactGen.refresh();
+
+        setTimeout(() => {
+          const table = document.getElementById('table');
+          const tbody = table.children[0].children[1].children;
+
+          for (let i = 0; i < tbody.length; i++) {
+            const element: any = tbody[i];
+            const a = (element.children[5].querySelector(
+              'input#checkbox-input'
+            ).disabled = true);
+          }
+        }, 600);
       },
       error: error => (this.loading = false),
     });

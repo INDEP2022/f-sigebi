@@ -1,19 +1,14 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IComerTpEvent } from 'src/app/core/models/ms-event/event-type.model';
-import {
-  IParameter,
-  ITypeEvent,
-} from 'src/app/core/models/ms-parametercomer/parameter';
+import { ITypeEvent } from 'src/app/core/models/ms-parametercomer/parameter';
 import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -24,9 +19,12 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ParametersFormComponent extends BasePage implements OnInit {
   title: string = 'parámetro del Módulo Comercialización';
   edit: boolean = false;
-  form: ModelForm<IParameter>;
-  parameter: IParameter;
-  typeEvents = new DefaultSelect<IComerTpEvent>();
+  form: FormGroup = new FormGroup({});
+  //parameter: IParameter;
+  parameter: any;
+  //typeEvents = new DefaultSelect<IComerTpEvent>();
+  typeEvents = new DefaultSelect<any>();
+
   parameters = new DefaultSelect<IParameters>();
   tipo = new DefaultSelect();
   addressList = new DefaultSelect<any>();
@@ -50,12 +48,12 @@ export class ParametersFormComponent extends BasePage implements OnInit {
       { value: 'C', description: 'Comercial' },
       { value: 'D', description: 'Conciliación' },
     ]);
-    this.getTypeEvent(new ListParams());
+    //this.getTypeEvent(new ListParams());
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      parameter: [
+      parametro: [
         null,
         [
           Validators.required,
@@ -63,11 +61,11 @@ export class ParametersFormComponent extends BasePage implements OnInit {
           Validators.maxLength(20),
         ],
       ],
-      description: [
+      descriptionparameter: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
       ],
-      value: [
+      valor: [
         null,
         [
           Validators.required,
@@ -75,36 +73,31 @@ export class ParametersFormComponent extends BasePage implements OnInit {
           Validators.maxLength(500),
         ],
       ],
-      address: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(1),
-        ],
-      ],
-      typeEventId: [
-        null,
-        [Validators.pattern(NUM_POSITIVE), Validators.max(999)],
-      ],
+      direccion: [null, [Validators.required]],
+      tpevent: [null, [Validators.required, Validators.max(999)]],
     });
 
     if (this.parameter != null) {
       this.edit = true;
       console.log(this.parameter);
       this.form.patchValue(this.parameter);
-      this.form.get('parameter').disable();
-      this.form.get('value').disable();
-      this.form.get('address').disable();
-      this.getTypeEvent(new ListParams(), this.form.get('typeEventId').value);
+      this.form.get('parametro').disable();
+      this.form.get('valor').disable();
+      this.form.get('direccion').disable();
+
+      let tpevent1 = this.parameter.tpevent.id_tpevento;
+      this.form.get('tpevent').setValue(tpevent1);
+      this.getTypeEvent(new ListParams(), tpevent1);
     }
 
+    setTimeout(() => {
+      this.getTypeEvent(new ListParams());
+      this.getParameters(new ListParams());
+    }, 1000);
     /*if (!this.edit) {
       const iParam = document.getElementById('idP');
       this.render.removeClass(iParam, 'disabled');
     }*/
-    this.getTypeEvent(new ListParams());
-    this.getParameters(new ListParams());
   }
 
   getTypeEvent(params: ListParams, id?: string) {
@@ -146,7 +139,15 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.parameterModService.create(this.form.getRawValue()).subscribe({
+    let body = {
+      parameter: this.form.get('parametro').getRawValue(),
+      value: this.form.get('valor').getRawValue(),
+      description: this.form.get('descriptionparameter').getRawValue(),
+      address: this.form.get('direccion').getRawValue(),
+      typeEventId: this.form.get('tpevent').getRawValue(),
+      nbOrigin: '',
+    };
+    this.parameterModService.create(body).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -157,7 +158,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
       ? 'ha sido actualizado'
       : 'ha sido guardado';
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.alert('success', this.title, `El ${this.title} ${message}`);
+    this.alert('success', `El ${this.title} ${message}`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -165,7 +166,15 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.parameterModService.updateNew(this.form.getRawValue()).subscribe({
+    let body = {
+      parameter: this.form.get('parametro').getRawValue(),
+      value: this.form.get('valor').getRawValue(),
+      description: this.form.get('descriptionparameter').getRawValue(),
+      address: this.form.get('direccion').getRawValue(),
+      typeEventId: this.form.get('tpevent').getRawValue(),
+      nbOrigin: '',
+    };
+    this.parameterModService.updateNew2(body).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
