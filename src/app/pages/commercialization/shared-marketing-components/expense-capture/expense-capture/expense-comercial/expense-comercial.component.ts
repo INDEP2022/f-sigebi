@@ -125,6 +125,21 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           ? this.form.value.dateOfResolution
           : null
         : null,
+      invoiceRecDate: this.form.value.invoiceRecDate
+        ? this.form.value.invoiceRecDate.trim().length > 0
+          ? this.form.value.invoiceRecDate
+          : null
+        : null,
+      payDay: this.form.value.payDay
+        ? this.form.value.payDay.trim().length > 0
+          ? this.form.value.payDay
+          : null
+        : null,
+      captureDate: this.form.value.captureDate
+        ? this.form.value.captureDate.trim().length > 0
+          ? this.form.value.captureDate
+          : null
+        : null,
       comment: this.form.value.comment ?? '',
       monthExpense: this.form.value.monthExpense ? '1' : null,
       monthExpense2: this.form.value.monthExpense2 ? '2' : null,
@@ -566,51 +581,63 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private validatePaymentCamps(event: IComerExpense) {
     if (!event.clkpv) {
-      this.alert('warning', 'Validación de pagos', 'Requiere clkpv');
+      this.alert('warning', 'Validación de pagos', 'Requiere proveedor');
       return false;
     }
     if (!event.comment) {
-      this.alert('warning', 'Validación de pagos', 'Requiere comment');
+      this.alert('warning', 'Validación de pagos', 'Requiere servicio');
       return false;
     }
     if (!event.comproafmandsae) {
-      this.alert('warning', 'Validación de pagos', 'Requiere comproafmandsae');
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'Requiere comprobantes a nombre'
+      );
       return false;
     }
     if (!event.attachedDocumentation) {
       this.alert(
         'warning',
         'Validación de pagos',
-        'Requiere attachedDocumentation'
+        'Requiere documentación anexa'
       );
       return false;
     }
     if (!event.capturedUser) {
-      this.alert('warning', 'Validación de pagos', 'Requiere capturedUser');
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'Requiere usuario de captura'
+      );
       return false;
     }
     if (!event.authorizedUser) {
-      this.alert('warning', 'Validación de pagos', 'Requiere authorizedUser');
-      return false;
-    }
-    if (!event.capturedUser) {
-      this.alert('warning', 'Validación de pagos', 'Requiere capturedUser');
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'Requiere usuario que autoriza'
+      );
       return false;
     }
     if (!event.requestedUser) {
-      this.alert('warning', 'Validación de pagos', 'Requiere requestedUser');
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'Requiere usuario que solicita'
+      );
       return false;
     }
     if (!event.formPayment) {
-      this.alert('warning', 'Validación de pagos', 'Requiere formPayment');
+      this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
       return false;
     }
     if (!event.eventNumber) {
-      this.alert('warning', 'Validación de pagos', 'Requiere eventNumber');
+      this.alert('warning', 'Validación de pagos', 'Requiere número de evento');
       return false;
     }
     if (!event.lotNumber) {
-      this.alert('warning', 'Validación de pagos', 'Requiere lotNumber');
+      this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
       return false;
     }
     return true;

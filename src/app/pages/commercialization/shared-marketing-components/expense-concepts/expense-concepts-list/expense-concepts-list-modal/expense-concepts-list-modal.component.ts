@@ -54,7 +54,7 @@ export class ExpenseConceptsListModalComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
-      routineCalculation: [null, [Validators.pattern(STRING_PATTERN)]],
+      routineCalculation: [null],
       automatic: [null],
       numerary: [null],
     });

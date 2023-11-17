@@ -567,7 +567,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
-  async VALIDACIONES_SOLICITUD() {
+  VALIDACIONES_SOLICITUD() {
     if (!this.capturedUser.value) {
       this.alert('error', 'Debe tener el Usuario que Captura', '');
       return false;
@@ -601,7 +601,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         row => row.changeStatus && row.changeStatus === true
       );
       if (VALIDA_DET.length === 0) {
-        this.alert('warning', 'Hay un problema en su detalle Verifique', '');
+        this.alert(
+          'warning',
+          'Debe tener al menos un bien para cambio de estatus',
+          ''
+        );
         return false;
       }
     }

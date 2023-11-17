@@ -18,50 +18,6 @@ export const COLUMNS = {
       return row.concepts ? row.concepts.description : null;
     },
   },
-  good: {
-    title: 'Bien',
-    type: 'string',
-    sort: false,
-    filter: false,
-    valuePrepareFunction: (value: any, row: any) => {
-      // DATA FROM HERE GOES TO renderComponent
-      return row.comerLot ? row.comerLot.goodsNumber : null;
-    },
-  },
-  address: {
-    title: 'Dirección',
-    type: 'string',
-    sort: false,
-    class: 'w-md',
-    filter: {},
-    // editor: {
-    //   type: 'list',
-    //   config: {
-    //     selectText: 'Seleccionar',
-    //     list: [
-    //       { value: '', title: 'SELECCIONAR' },
-    //       { value: 'MUEBLES', title: 'MUEBLES' },
-    //       { value: 'INMUEBLES', title: 'INMUEBLES' },
-    //       { value: 'GENERAL', title: 'GENERAL' },
-    //     ],
-    //   },
-    // },
-  },
-  paymentRequestNumber: {
-    title: 'Solicitud Pago',
-    type: 'string',
-    sort: false,
-  },
-  comment: {
-    title: 'Servicio',
-    type: 'string',
-    sort: false,
-  },
-  idOrdinginter: {
-    title: 'OI Intercambio',
-    type: 'string',
-    sort: false,
-  },
   eventNumber: {
     title: 'Evento',
     type: 'string',
@@ -90,6 +46,51 @@ export const COLUMNS = {
       return row.comerLot ? row.comerLot.description : null;
     },
   },
+  address: {
+    title: 'Dirección',
+    type: 'string',
+    sort: false,
+    class: 'w-md',
+    filter: {},
+    // editor: {
+    //   type: 'list',
+    //   config: {
+    //     selectText: 'Seleccionar',
+    //     list: [
+    //       { value: '', title: 'SELECCIONAR' },
+    //       { value: 'MUEBLES', title: 'MUEBLES' },
+    //       { value: 'INMUEBLES', title: 'INMUEBLES' },
+    //       { value: 'GENERAL', title: 'GENERAL' },
+    //     ],
+    //   },
+    // },
+  },
+  good: {
+    title: 'Bien',
+    type: 'string',
+    sort: false,
+    filter: false,
+    valuePrepareFunction: (value: any, row: any) => {
+      // DATA FROM HERE GOES TO renderComponent
+      return row.comerLot ? row.comerLot.goodsNumber : null;
+    },
+  },
+  paymentRequestNumber: {
+    title: 'Solicitud Pago',
+    type: 'string',
+    sort: false,
+  },
+  comment: {
+    title: 'Servicio',
+    type: 'string',
+    sort: false,
+  },
+  idOrdinginter: {
+    title: 'OI Intercambio',
+    type: 'string',
+    sort: false,
+  },
+
   folioAtnCustomer: {
     title: 'Folio Atn. Cliente',
     type: 'string',

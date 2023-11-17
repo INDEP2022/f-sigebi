@@ -1,13 +1,13 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Carga de imagenes</h5>
+    <h5 class="title">Carga de imágenes</h5>
   </div>
   <div body>
     <div class="row">
       <div class="justify-content-end btn-toolbar pt-4">
         <app-columns-select [(settings)]="settings"></app-columns-select>
         <button (click)="loadImages()" class="btn btn-primary btn-sm active">
-          Cargar imagenes <i class="bx bx-plus bx-sm float-icon"></i>
+          Cargar imágenes <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
       <div [class]="loading ? 'table-loading' : ''">
