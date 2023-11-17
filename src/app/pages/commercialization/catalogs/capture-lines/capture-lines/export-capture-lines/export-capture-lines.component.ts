@@ -340,7 +340,7 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
     document.body.removeChild(a);
     this._toastrService.clear();
     this.loading = false;
-    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    this.alert('success', 'El reporte ha sido generado', '');
     URL.revokeObjectURL(objURL);
   }
 

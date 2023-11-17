@@ -157,10 +157,22 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               console.log('filter', filter.field);
+              if (filter.field == 'endDate' || filter.field == 'startDate') {
+                var fecha1 = filter.search;
+                var ano1 = fecha1.getFullYear();
+                var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
+                var dia1 = ('0' + fecha1.getDate()).slice(-2);
+                var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${fechaFormateada1}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
               // if (filter.field === "thirdComerId") {
               //   this.columnFilters[field] = `${filter.search}`;
               // } else {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
               // }
             } else {
               delete this.columnFilters[field];

@@ -103,7 +103,7 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
         error: error => {
           this.alert(
             'warning',
-            `No es Posible Actualizar el Tipo de Evento`,
+            `No es posible actualizar el tipo de evento`,
             ''
           );
           this.loading = false;
@@ -119,7 +119,7 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
         this.modalRef.hide();
       },
       error: error => {
-        this.alert('warning', `No es Posible Crear el Tipo de Evento`, '');
+        this.alert('warning', `No es posible crear el tipo de evento`, '');
         this.loading = false;
       },
     });
@@ -127,7 +127,7 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
 
   handleSuccess(): void {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `${message} Correctamente`, '');
+    this.alert('success', `El evento ha sido ${message}`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

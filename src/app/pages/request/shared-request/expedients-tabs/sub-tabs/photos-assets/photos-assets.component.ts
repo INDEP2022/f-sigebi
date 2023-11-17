@@ -247,7 +247,6 @@ export class PhotosAssetsComponent
   }
 
   uploadFiles(data: any) {
-    console.log('uploadFiles photos-assets');
     let loadingPhotos = 0;
     const idRequest = this.idRequest;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };

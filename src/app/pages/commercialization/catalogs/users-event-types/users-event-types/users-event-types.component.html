@@ -3,46 +3,63 @@
     <h5 class="title">USUARIOS POR TIPO DE EVENTO</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="teventsForm">
-      <label>Filtrar</label>
-      <div class="row mb-3 mt-3">
-        <!--Event Types Component-->
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <app-event-type-shared
-            [form]="teventsForm"
-            (emitTevents)="onTeventsChange($event)"></app-event-type-shared>
+    <div class="row margin-input">
+      <form class="form-material" [formGroup]="teventsForm">
+        <label>Filtrar</label>
+        <div class="row mb-3 mt-3">
+          <!--Event Types Component-->
+          <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+            <app-event-type-shared
+              [form]="teventsForm"
+              (emitTevents)="onTeventsChange($event)"></app-event-type-shared>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!--USERS PER EVENT TYPE TABLE-->
+    <div class="row margin-input">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            *ngIf="teventsForm.valid"
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
-    </form>
-    <!--USERS PER EVENT TYPE TABLE-->
-    <div class="row">
-      <div class="ch-content" *ngIf="teventsForm.valid">
+      <!--<div class="ch-content" *ngIf="teventsForm.valid">
         <h5 class="title"></h5>
         <div class="col-md-5 buttons">
-          <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+           <app-columns-select [(settings)]="settings"></app-columns-select>
           <div>
             <button
               type="button"
               (click)="openForm()"
-              class="btn btn-info btn-sm active ml-2 mr-2">
+              class="btn btn-info btn-sm active ml-2">
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
           </div>
         </div>
-      </div>
-      <div class="col-md-12 table-responsive pt-4">
+      </div>-->
+      <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data"
             (edit)="openForm($event.data)"
             (delete)="delete($event.data)">
           </ng2-smart-table>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
     </div>
   </div>
 </app-card>
