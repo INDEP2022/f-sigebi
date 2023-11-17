@@ -11,6 +11,7 @@ import { CreateActaComponent } from './create-acta/create-acta.component';
 import { FindActaComponent } from './find-acta/find-acta.component';
 import { GoodErrorComponent } from './good-error/good-error.component';
 import { ModalApprovalDonationComponent } from './modal-approval-donation/modal-approval-donation.component';
+import { RopIdComponent } from './rop-id/rop-id.component';
 @NgModule({
   declarations: [
     ApprovalForDonationComponent,
@@ -19,6 +20,7 @@ import { ModalApprovalDonationComponent } from './modal-approval-donation/modal-
     FindActaComponent,
     CreateActaComponent,
     GoodErrorComponent,
+    RopIdComponent,
   ],
   imports: [
     CommonModule,

@@ -16,7 +16,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
-import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
+import {
+  IExportDetail,
+  IGoodDonation,
+} from 'src/app/core/models/ms-donation/donation.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
@@ -35,7 +38,6 @@ import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
-
 @Component({
   selector: 'app-capture-approval-donation',
   templateUrl: './capture-approval-donation.component.html',
@@ -64,6 +66,7 @@ export class CaptureApprovalDonationComponent
   bienesVaild: boolean = false;
   changeDescription: string;
   dataTableGood_: any[] = [];
+  body: IExportDetail;
   valueChange: number = 0;
   totalItems: number = 0;
   deleteG: boolean = false;
@@ -510,11 +513,21 @@ export class CaptureApprovalDonationComponent
   rowsSelected(event: any) {
     this.selectedGooodsValid = event.selected;
   }
+  exportAll(): void {
+    this.body = {
+      recordId: Number(localStorage.getItem('actaId')),
+      typeActa: 'COMPDON',
+      delegationId: Number(localStorage.getItem('noDelegation1')),
+      nombre_transferente: null,
+    };
 
-  exportToExcel(): void {
+    this.getEventComDonationExcel(this.body);
+  }
+
+  getEventComDonationExcel(body: IExportDetail): void {
     this.excelLoading = true;
     if (this.dataDetailDonationGood != null) {
-      this.donationService.getExcel().subscribe({
+      this.donationService.getExcel(body).subscribe({
         next: data => {
           this.excelLoading = false;
           this.alert(
