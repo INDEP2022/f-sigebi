@@ -51,7 +51,10 @@ export class GoodsAvailableSaleFormComponent
     this.goodsAvailableSaleForm = this.fb.group({
       idStatus: [null, [Validators.required]],
       idDirection: [null, [Validators.required]],
-      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       idTypeEvent: [null, [Validators.required]],
     });
     if (this.goodsAvailable != null) {
@@ -112,8 +115,10 @@ export class GoodsAvailableSaleFormComponent
     });
   }
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', `${message} Correctamente`);
+    const message: string = this.edit
+      ? 'El registro ha sido actualizada'
+      : 'El registro ha sido guardado';
+    this.onLoadToast('success', `${message}`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

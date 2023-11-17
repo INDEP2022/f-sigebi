@@ -69,7 +69,7 @@ export class StatusComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'idStatus':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
@@ -111,7 +111,12 @@ export class StatusComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+      },
     });
   }
 
@@ -147,7 +152,7 @@ export class StatusComponent extends BasePage implements OnInit {
   delete(body: Object) {
     this.statusDispService.remove(body).subscribe({
       next: () => {
-        this.alert('success', 'Borrado Correctamente', '');
+        this.alert('success', 'El registro se ha eliminado', '');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getExample());
@@ -156,7 +161,7 @@ export class StatusComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Estatus Disponibles para Comercializar',
-          'No se Puede Eliminar el Objeto Debido a una Relación con otra Tabla.'
+          'No se puede eliminar el registro debido a una relación con otra tabla.'
         );
       },
     });

@@ -249,6 +249,16 @@ export class CustomersModalComponent extends BasePage implements OnInit {
           .get('freeDate')
           .setValue(this.addDays(new Date(dbFreeDate), 1));
       }
+      if (this.customerForm.get('releaseDate').value === null) {
+        this.customerForm.get('releaseDate').setValue(null);
+      } else {
+        const dbreleaseDate = this.customerForm.get('releaseDate').value;
+        const formattedDate3 = formatDate(dbreleaseDate, 'dd/MM/yyyy', 'en-US');
+        this.customerForm.get('releaseDate').setValue(formattedDate3);
+        this.customerForm
+          .get('releaseDate')
+          .setValue(this.addDays(new Date(dbreleaseDate), 1));
+      }
 
       if (this.customerForm.get('penaltyInitDate').value === null) {
         this.customerForm.get('penaltyInitDate').setValue(null);
@@ -373,7 +383,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
         this.loading = true;
       },
       error: (error: any) => {
-        this.alert('warning', `No es Posible Actualizar el Cliente`, '');
+        this.alert('warning', `No es posible actualizar el cliente`, '');
         this.modalRef.hide();
         this.loading = false;
       },
@@ -383,6 +393,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
   }
 
   convertDateFormat(inputDate: string | Date): string {
+    console.log(inputDate);
     if (inputDate instanceof Date) {
       return formatDate(inputDate, 'yyyy-MM-dd', 'en-US');
     } else if (typeof inputDate === 'string') {
@@ -507,7 +518,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
           this.modalRef.hide();
         },
         error: error => {
-          this.alert('warning', `No es Posible Crear el Cliente`, '');
+          this.alert('warning', `No es posible crear el cliente`, '');
           this.modalRef.hide();
         },
       });
@@ -515,7 +526,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'El Formulario no es Válido. Revise los Campos Requeridos',
+        'El formulario no es válido. Revise los campos requeridos',
         ''
       );
     }
@@ -523,9 +534,9 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit
-      ? 'Cliente Actualizado'
-      : 'Cliente Creado';
-    this.alert('success', `${message} Correctamente`, '');
+      ? 'Cliente se ha Actualizado'
+      : 'Cliente se ha Creado';
+    this.alert('success', `${message}`, '');
     this.loading = true;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

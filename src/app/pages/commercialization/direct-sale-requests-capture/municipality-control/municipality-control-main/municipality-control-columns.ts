@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
   soladjinstgobId: {
     title: 'Solicitud',
@@ -82,6 +84,11 @@ export const MUNICIPALITY_CONTROL_ASSIGNED_GOOD_COLUMNS = {
     type: 'string',
     sort: false,
     width: '15%',
+    valuePrepareFunction: (date: any) => {
+      if (date == null) return null;
+      const newDate = parseDateNoOffset(date);
+      return moment(new Date(newDate)).format('DD/MM/YYYY');
+    },
   },
   sessionNumber: {
     title: 'No. Sesión',
@@ -132,3 +139,10 @@ export const MUNICIPALITY_CONTROL_ASSIGNED_GOOD_COLUMNS = {
     width: '10%',
   },
 };
+
+function parseDateNoOffset(date: string | Date): Date {
+  const dateLocal = new Date(date);
+  return new Date(
+    dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
+  );
+}

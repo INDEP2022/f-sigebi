@@ -7,7 +7,12 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -35,13 +40,27 @@ import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import * as XLSX from 'xlsx';
 import { MassRulingModalComponent } from '../mass-ruling-modal/mass-ruling-modal.component';
 import { MassRullingResponses } from '../tools/mass-rulling-responses';
 
 @Component({
   selector: 'app-mass-ruling',
   templateUrl: './mass-ruling.component.html',
-  styleUrls: [],
+  styles: [
+    `
+      input[type='file']::file-selector-button {
+        margin-right: 20px;
+        border: none;
+        background: #9d2449;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        /* transition: background.2s ease-in-out; */
+      }
+    `,
+  ],
 })
 export class MassRulingComponent
   extends MassRullingResponses
@@ -57,33 +76,7 @@ export class MassRulingComponent
   deleteGoodDictamen: boolean;
   columnFilters: any = [];
   dictaminacion: any;
-  tableSettings = {
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: false, //oculta subheaader de filtro
-    mode: 'external', // ventana externa
-    columns: {
-      goodNumber: {
-        sort: false,
-        title: 'No. Bien',
-        // valuePrepareFunction: (data: any) => {
-        //   return data ? data.id : '';
-        // },
-      },
-      fileNumber: {
-        sort: false,
-        title: 'No. Expediente',
-        // valuePrepareFunction: (data: any) => {
-        //   return data ? data.id : '';
-        // },
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
+  tableSettings = { ...this.settings };
   totalItems = 0;
   // Data table
   dataTable2: LocalDataSource = new LocalDataSource();
@@ -91,24 +84,7 @@ export class MassRulingComponent
   isFileLoad = false;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
-  tableSettings1 = {
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: false, //oculta subheaader de filtro
-    mode: 'external', // ventana externa
-
-    columns: {
-      description: {
-        sort: false,
-        title: 'Errores del proceso',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
+  tableSettings1 = { ...this.settings };
   // Data table
   dataTableErrors: { processId: any; description: string }[] = [];
   totalItemsErrors = 0;
@@ -150,6 +126,15 @@ export class MassRulingComponent
   validate: boolean = false;
   fileNumber: number;
   goodNumber: number;
+  form2: FormGroup = new FormGroup({});
+  records: any[] = [];
+  validCsv: boolean = false;
+  validXls: boolean = false;
+  tableXls: any[] = [];
+  tableCsv: any[] = [];
+  paramsXls = new BehaviorSubject<ListParams>(new ListParams());
+  readFileArrayXls: any;
+  readFileArrayCsv: any;
   // file: File | null = null;
   // public searchForm: FormGroup;
   constructor(
@@ -169,9 +154,37 @@ export class MassRulingComponent
     protected incidentMaintenanceService: IncidentMaintenanceService,
     private datePipe: DatePipe,
     private goodProcessService: GoodProcessService,
-    private historyGoodService: HistoryGoodService
+    private historyGoodService: HistoryGoodService,
+    private fb: FormBuilder
   ) {
     super();
+    this.tableSettings = {
+      ...this.settings,
+      actions: false,
+      hideSubHeader: false, //oculta subheaader de filtro
+      //mode: 'external', // ventana externa
+      columns: {
+        goodNumber: {
+          sort: false,
+          title: 'No. Bien',
+        },
+        fileNumber: {
+          sort: false,
+          title: 'No. Expediente',
+        },
+      },
+    };
+    this.tableSettings1 = {
+      ...this.settings,
+      actions: false,
+      hideSubHeader: false, // ventana externa
+      columns: {
+        description: {
+          sort: false,
+          title: 'Errores del proceso',
+        },
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -227,6 +240,10 @@ export class MassRulingComponent
     this.form.controls['dictDate'].disable();
     this.form.controls['instructorDate'].disable();
     this.form.controls['passOfficeArmy'].disable();
+    this.form2 = this.fb.group({
+      fileCsv: [null],
+      fileXls: [null],
+    });
   }
 
   loadDataForDataTable(listParams: ListParams) {
@@ -515,6 +532,9 @@ export class MassRulingComponent
     this.validate = false;
     this.formCargaMasiva.reset();
     this.form.reset();
+    this.form2.reset();
+    this.validCsv = false;
+    this.validXls = false;
     this.form.get('id').setValue('');
     this.form.get('wheelNumber').setValue('');
     this.form.get('expedientNumber').setValue('');
@@ -1442,6 +1462,106 @@ export class MassRulingComponent
           this.modalService.show(PreviewDocumentsComponent, config);
         }
       });
+  }
+
+  async chargeFileCsv(event: any) {
+    if (event) {
+      const file = event.target.files[0];
+      let readFile = await this.arrayTxt(file);
+      this.readFileArrayCsv = readFile;
+      this.validCsv = true;
+      console.log(this.readFileArrayCsv);
+    }
+  }
+
+  formatTableCsv() {
+    let body: any = {};
+    if (this.readFileArrayCsv) {
+      for (let i = 0; i < this.readFileArrayCsv.length; i++) {
+        for (let r = 0; r < 2; r++) {
+          if (
+            isNaN(parseInt(this.readFileArrayCsv[i][0])) &&
+            isNaN(parseInt(this.readFileArrayCsv[i][1]))
+          ) {
+            console.log('Deben ser Numeros enteros');
+            break;
+          }
+          body = {
+            goodNumber: this.readFileArrayCsv[i][0],
+            fileNumber: this.readFileArrayCsv[i][1],
+          };
+        }
+        this.tableCsv.push(body);
+      }
+      console.log(this.tableCsv);
+      /*this.loading = true;
+      this.paramsXls
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getTableXls(this.tableXls));*/
+    }
+  }
+  //this.validCsv = true;
+
+  async chargeFileXls(event: any) {
+    if (event) {
+      const file = event.target.files[0];
+      let readFile = await this.arrayTxt(file);
+      this.readFileArrayXls = readFile;
+      console.log(readFile);
+      this.validXls = true;
+    }
+  }
+
+  formatTableXls() {
+    let value = 0;
+    //this.validXls = true;
+    let body: any = {};
+    if (this.readFileArrayXls) {
+      for (let i = 0; i < this.readFileArrayXls.length; i++) {
+        for (let r = 0; r < 2; r++) {
+          body = {
+            goodNumber: this.readFileArrayXls[i][0],
+            fileNumber: this.readFileArrayXls[i][1],
+          };
+        }
+        this.tableXls.push(body);
+      }
+      console.log(this.tableXls, this.readFileArrayXls);
+      this.loading = true;
+      this.paramsXls
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getTableXls(this.tableXls));
+    }
+  }
+
+  getTableXls(array: any) {
+    if (array) {
+      this.dataTable2.load(array);
+      this.dataTable2.refresh();
+      this.totalItems = this.tableXls.length;
+      this.loading = false;
+    }
+  }
+
+  async arrayTxt(file: any) {
+    return new Promise((resolve, reject) => {
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          this.records = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          //console.log(this.records);
+          console.log(this.records);
+          resolve(this.records);
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        resolve(null);
+      }
+    });
   }
 
   // btnImprimeRelacionExpediente() {

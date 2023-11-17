@@ -39,8 +39,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     // DISABLED BUTTON - FINALIZED //
     if (this.request) {
       this.task = JSON.parse(localStorage.getItem('Task'));
-      this.statusTask = this.task.status;
-      console.log('statustask', this.statusTask);
+      this.statusTask = this.task?.status;
     }
 
     this.settings = {
@@ -119,7 +118,6 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     };
 
     this.wContentService.getDocumentos(idReq).subscribe(data => {
-      console.log('updateinfoPhotos');
       const _data = data.data.filter((img: any) => {
         if (img.dDocType == 'DigitalMedia') return img;
       });

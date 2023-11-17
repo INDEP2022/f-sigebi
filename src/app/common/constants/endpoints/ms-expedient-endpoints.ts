@@ -23,4 +23,5 @@ export enum ExpedientEndpoints {
   SelectNoTransfer = 'application/get-no-transf',
   documentsLoans = 'documents-loans-detail/get-all-custom-documents-loans-detail',
   documentLoan = 'documents-loans-detail',
+  ApplicationRegisterCount = 'application/registerCount',
 }

@@ -7,7 +7,7 @@ export const COLUMNS = {
     sort: false,
   },
   eventId: {
-    title: 'Clave Evento',
+    title: 'Cve. Evento',
     sort: false,
     /*valuePrepareFunction: (cell: any, row: any) => {
       
@@ -56,6 +56,7 @@ export const COLUMNS = {
       type: 'custom',
       component: CustomDateDayFilterComponent,
     },*/
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -70,7 +71,7 @@ export const COLUMNS = {
   endDate: {
     title: 'Fecha Final',
     sort: false,
-
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -105,6 +106,7 @@ export const COLUMNS = {
   penaltiDate: {
     title: 'Fecha Penaliza',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -136,7 +138,7 @@ export const COLUMNS2 = {
     sort: false,
   },
   /*event: {
-    title: 'Clave Evento',
+    title: 'Cve. Evento',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value != null ? value.id : '';
@@ -146,7 +148,7 @@ export const COLUMNS2 = {
     },
   },*/
   eventId: {
-    title: 'Clave Evento',
+    title: 'Cve. Evento',
     sort: false,
   },
   batchPublic: {
@@ -156,6 +158,7 @@ export const COLUMNS2 = {
   initialDate: {
     title: 'Fecha Inicial',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -170,6 +173,7 @@ export const COLUMNS2 = {
   finalDate: {
     title: 'Fecha Final',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -200,6 +204,7 @@ export const COLUMNS2 = {
   penalizesDate: {
     title: 'Fecha Penaliza',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -214,6 +219,7 @@ export const COLUMNS2 = {
   releasesDate: {
     title: 'Fecha Libera',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
       var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
@@ -232,7 +238,7 @@ export const COLUMNS3 = {
     sort: false,
   },
   eventId: {
-    title: 'Clave Evento',
+    title: 'Cve. Evento',
     sort: false,
   },
   batchPublic: {

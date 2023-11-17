@@ -2106,7 +2106,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Actualizar No de OIs
   updateNumberOis() {
-    if(this.dataCustomer['data'].length > 0){
+    if (this.dataCustomer['data'].length > 0) {
       this.alertQuestion(
         'question',
         '¿Desea Ejecutar el Proceso de Actualización de Números de Órdenes de Ingreso?',
@@ -2114,7 +2114,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         'Ejecutar'
       ).then(q => {
         if (q.isConfirmed) {
-          console.log(this.eventTpId)
+          console.log(this.eventTpId);
           let body: ISendSirsaeLot = {
             PROCESAR: batchEventCheck,
             PROCESO: '2',
@@ -2126,8 +2126,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           this.interfaceSirsaeService.sendSirsaeLot(body).subscribe(
             res => {
               console.log(res);
-              this.alert('success','Actualización realizada','')
-              this.selectEvent()
+              this.alert('success', 'Actualización realizada', '');
+              this.selectEvent();
             },
             err => {
               console.log(err);
@@ -2136,13 +2136,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           );
         }
       });
-    }else{
-      this.event.reset()
+    } else {
+      this.event.reset();
       const element = document.getElementById('event');
       element.scrollIntoView({ block: 'center', behavior: 'smooth' });
       this.event.markAsTouched();
     }
-    
   }
 
   //Cargar pagos
@@ -2181,11 +2180,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.paymentService.getComerRelUsuCanc().subscribe(
       res => {
         console.log(res);
-        this.alert('success','Proceso realizado','')
+        this.alert('success', 'Proceso realizado', '');
       },
       err => {
         console.log(err);
-        this.alert('error','Se presentó un erro inesperado','')
+        this.alert('error', 'Se presentó un erro inesperado', '');
       }
     );
   }

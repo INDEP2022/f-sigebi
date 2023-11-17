@@ -170,6 +170,7 @@ export class ExpenseConceptsListComponent
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       conceptId: this.conceptId,
+      address: this.address,
       callback: (body: { id: string }) => {
         if (body) {
           let listParams = new ListParams();
@@ -179,7 +180,7 @@ export class ExpenseConceptsListComponent
               {
                 ...body,
                 concept: this.conceptId,
-                address: this.getAddressCode(this.selectedConcept.address),
+                address: this.selectedConcept.address,
               },
               listParams
             )
@@ -208,11 +209,7 @@ export class ExpenseConceptsListComponent
                         .pipe(takeUntil(this.$unSubscribe))
                     );
                   });
-                  this.alert(
-                    'success',
-                    'Se han copiado los parámetros',
-                    'Realizado correctamente'
-                  );
+                  this.alert('success', 'Se han copiado los parámetros', '');
                   // this.filesToDelete = [];
                   this.selectedConcept = body;
                   // this.expenseConceptsService.refreshParams.next(true);
@@ -226,8 +223,8 @@ export class ExpenseConceptsListComponent
                 } else {
                   this.alert(
                     'error',
-                    'Se han copiado los parámetros',
-                    'No se pudieron copiar los parámetros'
+                    'No se pudieron copiar los parámetros',
+                    'Favor de revisar'
                   );
                 }
               },
@@ -235,8 +232,8 @@ export class ExpenseConceptsListComponent
                 console.log(err);
                 this.alert(
                   'error',
-                  'Se han copiado los parámetros',
-                  'No se pudieron copiar los parámetros'
+                  'No se pudieron copiar los parámetros',
+                  'Favor de revisar'
                 );
               },
             });

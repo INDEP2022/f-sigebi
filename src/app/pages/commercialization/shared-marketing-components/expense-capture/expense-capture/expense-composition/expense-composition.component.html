@@ -57,6 +57,7 @@
                   [settings]="settings"
                   [source]="dataPaginated"
                   (userRowSelect)="selectRow($event.data)"
+                  (delete)="delete($event.data)"
                   (edit)="edit($event.data)">
                 </ng2-smart-table>
               </div>

@@ -8,11 +8,11 @@
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-md-12">
-          <form-field [control]="form.get('parameter')" label="Parámetro">
+          <form-field [control]="form.get('parametro')" label="Parámetro">
             <input
               type="text"
               class="form-control"
-              formControlName="parameter" />
+              formControlName="parametro" />
             <!-- <ngx-select
               [form]="form"
               control="parameter"
@@ -27,26 +27,39 @@
       </div>
       <div class="row pt-3">
         <div class="col-md-12">
-          <form-field [control]="form.get('value')" label="Valor">
+          <form-field [control]="form.get('valor')" label="Valor">
             <textarea
               rows="2"
               type="text"
               class="form-control"
-              formControlName="value"></textarea>
+              formControlName="valor"></textarea>
           </form-field>
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-6">
-          <form-field [control]="form.get('address')">
-            <ngx-select
+          <form-field [control]="form.get('direccion')" label="Dirección">
+            <ng-select
+              formControlName="direccion"
               [searchable]="false"
-              [data]="addressList"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="I">Inmuebles</ng-option>
+              <ng-option value="M">Muebles</ng-option>
+              <ng-option value="C">Comercial</ng-option>
+              <ng-option value="D">Conciliación</ng-option>
+            </ng-select>
+            <!--<ngx-select
+              [searchable]="false"
               [form]="form"
-              value="value"
-              bindLabel="description"
               label="Dirección"
-              control="address"></ngx-select>
+              [clearable]="false"
+              control="direccion"></ngx-select>
+              <ng-option value="I">Inmuebles</ng-option>
+              <ng-option value="M">Muebles</ng-option>
+              <ng-option value="C">Comercial</ng-option>
+              <ng-option value="D">Conciliación</ng-option></ngx-select
+            >-->
             <!-- <select class="form-control" formControlName="address">
               <option selected>Selecciona un Valor</option>
               <option value="I">Inmuebles</option>
@@ -57,10 +70,10 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('typeEventId')">
+          <form-field [control]="form.get('tpevent')">
             <ngx-select
               [form]="form"
-              control="typeEventId"
+              control="tpevent"
               value="id"
               bindLabel="description"
               [data]="typeEvents"
@@ -73,12 +86,14 @@
       </div>
       <div class="row pt-3">
         <div class="col-md-12">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field
+            [control]="form.get('descriptionparameter')"
+            label="Descripción">
             <textarea
               rows="2"
               type="text"
               class="form-control"
-              formControlName="description"></textarea>
+              formControlName="descriptionparameter"></textarea>
           </form-field>
         </div>
       </div>
