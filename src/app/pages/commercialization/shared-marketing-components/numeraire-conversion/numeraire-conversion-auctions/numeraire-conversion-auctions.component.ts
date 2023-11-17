@@ -252,7 +252,6 @@ export class NumeraireConversionAuctionsComponent
                     this.selectEvent(response[0]);
                     this.alert('success', 'Se ha convertido correctamente', '');
                   } else {
-                    this.loader.load = false;
                     this.alert(
                       'error',
                       'Ocurrio un error al actualizar el evento',
