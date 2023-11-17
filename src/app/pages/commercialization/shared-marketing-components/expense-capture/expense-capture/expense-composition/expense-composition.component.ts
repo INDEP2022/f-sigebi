@@ -15,6 +15,7 @@ import { ExpenseLotService } from '../../services/expense-lot.service';
 import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
 import { COLUMNS } from './columns';
 import { ExpenseCompositionModalComponent } from './expense-composition-modal/expense-composition-modal.component';
+import { MandByGoodsComponent } from './mand-by-goods/mand-by-goods.component';
 import { RejectedGoodsComponent } from './rejected-goods/rejected-goods.component';
 
 @Component({
@@ -657,6 +658,12 @@ export class ExpenseCompositionComponent
   }
 
   private showViewMandatos() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      spentId: this.expenseCaptureDataService.data.expenseNumber,
+      callback: (next: boolean) => {},
+    };
+    this.modalService.show(MandByGoodsComponent, modalConfig);
     // this.openModalSelect(
     //   {
     //     title: 'Partidas por Mandato',
