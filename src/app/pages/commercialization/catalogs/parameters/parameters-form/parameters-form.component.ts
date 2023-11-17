@@ -22,7 +22,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class ParametersFormComponent extends BasePage implements OnInit {
-  title: string = 'Parámetro del Módulo Comercialización';
+  title: string = 'parámetro del Módulo Comercialización';
   edit: boolean = false;
   form: ModelForm<IParameter>;
   parameter: IParameter;
@@ -153,9 +153,11 @@ export class ParametersFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit
+      ? 'ha sido actualizado'
+      : 'ha sido guardado';
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.alert('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `El ${this.title} ${message}`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

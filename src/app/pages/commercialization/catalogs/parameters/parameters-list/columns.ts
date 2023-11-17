@@ -1,15 +1,15 @@
 export const COLUMNS = {
-  parameter: {
+  parametro: {
     title: 'Parámetro',
     width: '5%',
     sort: false,
   },
-  description: {
+  descriptionparameter: {
     title: 'Descripción',
     width: '30%',
     sort: false,
   },
-  value: {
+  valor: {
     title: 'Valor',
     width: '20%',
     valuePrepareFunction: (text: string) => {
@@ -17,7 +17,7 @@ export const COLUMNS = {
     },
     sort: false,
   },
-  address: {
+  direccion: {
     title: 'Dirección',
     type: 'html',
     valuePrepareFunction: (value: string) => {
@@ -45,12 +45,11 @@ export const COLUMNS = {
     },
     sort: false,
   },
-  comerTpevents: {
+  tpevent: {
     title: 'Tipo de Evento',
-
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value != null ? value.description : '';
+      return value != null ? value.descripcion : '';
     },
   },
 };

@@ -1,8 +1,8 @@
-<div class="ch-content">
-  <h5 class="title">Submarcas</h5>
-</div>
+<div class="row margin-input">
+  <div class="ch-content">
+    <h5 class="title">Submarcas</h5>
+  </div>
 
-<div class="row pt-4 mr-3">
   <div class="col-md-12">
     <div [class]="loading ? 'table-loading' : ''">
       <ng2-smart-table
@@ -13,7 +13,8 @@
         (delete)="showDeleteAlert($event.data)"
         (userRowSelect)="rowsSelected($event)">
       </ng2-smart-table>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
   </div>
 </div>
-<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>

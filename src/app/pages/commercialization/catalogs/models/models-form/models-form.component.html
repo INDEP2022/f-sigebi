@@ -35,6 +35,7 @@
       <div class="m-3">
         <confirm-button
           [loading]="loading"
+          [disabled]="!modelForm.valid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

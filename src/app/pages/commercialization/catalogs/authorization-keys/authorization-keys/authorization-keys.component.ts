@@ -21,6 +21,7 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
   users = new DefaultSelect<IComerEvent>();
   processKey: any;
   observations: any;
+  keyAuth: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -38,7 +39,7 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.eventForm = this.fb.group({
-      id: [null, Validators.required],
+      id: [null, [Validators.required]],
       processKey: [null, []],
       observations: [null, []],
     });
@@ -47,11 +48,11 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
   private prepareForm2() {
     this.form = this.fb.group({
       txtEncrip: [null, []],
-      encrip: [null, []],
+      encrip: [null, [Validators.required]],
     });
   }
 
-  getByIdTwo(id: any): void {
+  getByIdTwo(id?: any): void {
     this.comerEventosService.getByIdTwo(id).subscribe({
       next: data => {
         this.eventForm.controls['processKey'].setValue(data.processKey);
@@ -66,6 +67,11 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
         this.form.controls['encrip'].setValue('');
       },
     });
+  }
+
+  search() {
+    this.getByIdTwo(this.eventForm.get('id').value);
+    this.keyAuth = true;
   }
 
   generateKey(): void {
@@ -96,10 +102,12 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
 
   copy() {
     this.clipboard.copy(this.form.value['encrip']);
-    this.onLoadToast(
-      'success',
-      'Clave de Autorización',
-      'Copiada Correctamente'
-    );
+    this.onLoadToast('success', 'La Clave de Autorización ha sido copiada', '');
+  }
+
+  clean() {
+    this.form.reset();
+    this.eventForm.reset();
+    this.keyAuth = false;
   }
 }

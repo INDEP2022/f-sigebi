@@ -53,8 +53,9 @@
             <ngx-select
               [form]="providerForm"
               [data]="userSelect"
+              [searchOnInit]="true"
               label="Usuario"
-              bindLabel="name"
+              bindLabel="userName"
               value="user"
               (fetchItems)="getUserInfo($event)"
               control="user"></ngx-select>
