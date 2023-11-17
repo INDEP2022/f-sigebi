@@ -167,7 +167,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
     document.body.removeChild(a);
     this._toastrService.clear();
     this.loading = false;
-    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    this.alert('success', 'Reporte Excel', 'El reporte ha sido generado');
     URL.revokeObjectURL(objURL);
   }
 

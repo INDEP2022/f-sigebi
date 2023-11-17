@@ -373,7 +373,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
         this.loading = true;
       },
       error: (error: any) => {
-        this.alert('warning', `No es Posible Actualizar el Cliente`, '');
+        this.alert('warning', `No es posible actualizar el cliente`, '');
         this.modalRef.hide();
         this.loading = false;
       },
@@ -507,7 +507,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
           this.modalRef.hide();
         },
         error: error => {
-          this.alert('warning', `No es Posible Crear el Cliente`, '');
+          this.alert('warning', `No es posible crear el cliente`, '');
           this.modalRef.hide();
         },
       });
@@ -515,7 +515,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'El Formulario no es Válido. Revise los Campos Requeridos',
+        'El formulario no es válido. Revise los campos requeridos',
         ''
       );
     }
@@ -523,9 +523,9 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit
-      ? 'Cliente Actualizado'
-      : 'Cliente Creado';
-    this.alert('success', `${message} Correctamente`, '');
+      ? 'Cliente se ha Actualizado'
+      : 'Cliente se ha Creado';
+    this.alert('success', `${message}`, '');
     this.loading = true;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

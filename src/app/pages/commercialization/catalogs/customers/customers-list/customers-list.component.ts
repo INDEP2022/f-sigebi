@@ -259,6 +259,7 @@ export class CustomersListComponent extends BasePage implements OnInit {
 
   //Modal para crear o editar clientes
   openFormClients(customers?: any) {
+    console.log(customers);
     const modalConfig = MODAL_CONFIG;
     if (customers) {
       customers = { ...customers, sellerId: customers.sellerId?.id ?? null };
