@@ -329,7 +329,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       date: new Date(),
       
     }
-    this.comerEventService.faMaxdayValid()
+    /* this.comerEventService.faMaxdayValid() */
   }
 
   //Valida usuario
