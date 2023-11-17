@@ -55,12 +55,24 @@ export const COLUMNS_DATA_TABLE = {
   yes: {
     title: 'S',
     type: 'custom',
-    // filter: false,
     renderComponent: CheckboxElementComponent_,
     onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+      if (instance?.toggle) {
+        instance.toggle.subscribe((data: any) => {
+          data.row.to = data.toggle;
+        });
+      }
+    },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     sort: false,
   },
@@ -73,6 +85,17 @@ export const COLUMNS_DATA_TABLE = {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });
+    },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     sort: false,
   },
