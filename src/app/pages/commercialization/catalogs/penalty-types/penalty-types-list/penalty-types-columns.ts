@@ -20,9 +20,9 @@ export const PENALTY_TYPE_COLUMNS = {
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (value == 'A')
-        return '<strong><span class="badge badge-pill badge-success">Automático</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Automático</span></strong>';
       if (value == 'M')
-        return '<strong><span class="badge badge-pill badge-warning">Manual</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Manual</span></strong>';
       return value;
     },
     filter: {

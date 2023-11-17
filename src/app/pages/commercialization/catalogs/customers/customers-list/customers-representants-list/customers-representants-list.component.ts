@@ -66,7 +66,7 @@ export class CustomersRepresentantsListComponent
         this.loading = false;
         this.data = new LocalDataSource();
         this.totalItems = 0;
-        this.alert('warning', 'Cliente no Tiene Representante Asociado', '');
+        this.alert('warning', 'Cliente no tiene representante asociado', '');
         return;
       }
       this.agentId = this.client.agentId.id;
@@ -86,7 +86,7 @@ export class CustomersRepresentantsListComponent
             this.totalItems = 0;
             this.alert(
               'error',
-              'No es Posible Traer al Representante Asociado',
+              'No es posible traer al representante asociado',
               ''
             );
           },

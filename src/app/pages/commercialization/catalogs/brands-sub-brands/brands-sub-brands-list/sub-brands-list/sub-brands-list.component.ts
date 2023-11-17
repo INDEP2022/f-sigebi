@@ -69,7 +69,7 @@ export class SubBrandsListComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'idSubBrand':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'subBrandDescription':
                 searchFilter = SearchFilter.ILIKE;
@@ -120,7 +120,7 @@ export class SubBrandsListComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          this.alert('warning', 'No Existe una Submarca Asociada', '');
+          this.alert('warning', 'No existe una submarca asociada', '');
         },
       });
     }
@@ -151,7 +151,7 @@ export class SubBrandsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar esta Submarca?'
+      '¿Desea eliminar esta submarca?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(model);
@@ -163,7 +163,7 @@ export class SubBrandsListComponent extends BasePage implements OnInit {
     this.brandService.removeSubBrand(model).subscribe({
       next: () => {
         this.getData();
-        this.alert('success', 'Submarca Borrada Correctamente', '');
+        this.alert('success', 'La submarca ha sido eliminada', '');
       },
     });
   }

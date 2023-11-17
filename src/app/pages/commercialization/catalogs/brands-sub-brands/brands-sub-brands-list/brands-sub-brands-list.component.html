@@ -3,7 +3,42 @@
     <h5 class="title">MARCAS Y SUBMARCAS</h5>
   </div>
   <div body>
-    <div class="ch-content">
+    <div class="row margin-input">
+      <div class="ch-content">
+        <h5 class="title">MARCAS</h5>
+      </div>
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event.data)"
+            (userRowSelect)="selectRow($event.data)">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+    <app-sub-brands-list [selectedRow]="selectedRow"></app-sub-brands-list>
+
+    <!--<div class="ch-content">
       <div class="row mb-3 mt-3">
         <div class="d-flex justify-content-between align-items-center">
           <h5 class="title">MARCAS</h5>
@@ -16,7 +51,6 @@
             </button>
           </div>
         </div>
-        <!--Table-->
         <div class="row pt-4">
           <div class="col-md-12">
             <div [class]="loading ? 'table-loading' : ''">
@@ -36,6 +70,6 @@
           [totalItems]="totalItems"></app-pagination>
         <app-sub-brands-list [selectedRow]="selectedRow"></app-sub-brands-list>
       </div>
-    </div>
+    </div>-->
   </div>
 </app-card>
