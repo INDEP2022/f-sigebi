@@ -429,14 +429,14 @@ export class MaintenanceCommitmentDonationModalComponent
   prepareForm() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
-      status: [''],
+      status: ['', Validators.required],
       desStatus: [''],
-      transferentId: [''],
+      transferentId: ['', Validators.required],
       keyCode: [''],
-      clasifId: [''],
+      clasifId: ['', Validators.required],
       desClasif: [''],
-      unit: [''],
-      ruleId: [''],
+      unit: ['', Validators.required],
+      ruleId: ['', Validators.required],
       valid: [''],
     });
 
@@ -449,15 +449,15 @@ export class MaintenanceCommitmentDonationModalComponent
   prepareFormOthersT() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
-      status: [''],
+      status: ['', Validators.required],
       desStatus: [''],
-      transferentId: [''],
+      transferentId: ['', Validators.required],
       keyCode: [''],
-      clasifId: [''],
+      clasifId: ['', Validators.required],
       desClasif: [''],
-      unit: [''],
+      unit: ['', Validators.required],
       amount: [''],
-      ruleId: [''],
+      ruleId: ['', Validators.required],
       valid: [''],
     });
 
