@@ -162,4 +162,7 @@ export class DonationService
   getInventory(params: ListParams) {
     return this.get(DonationEndPoint.CreateInventary, params);
   }
+  deleteApproveDonation(data: any) {
+    return this.delete(DonationEndPoint.ApproveDonation, data);
+  }
 }
