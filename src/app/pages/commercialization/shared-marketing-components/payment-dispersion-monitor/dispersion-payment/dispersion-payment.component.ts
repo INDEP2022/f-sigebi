@@ -327,8 +327,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.validateUser();
     const body = {
       date: new Date(),
-    };
-    // this.comerEventService.faMaxdayValid()
+      
+    }
+    /* this.comerEventService.faMaxdayValid() */
   }
 
   //Valida usuario
