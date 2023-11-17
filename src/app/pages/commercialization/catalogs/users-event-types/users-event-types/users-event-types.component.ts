@@ -175,7 +175,7 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar Este Registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         console.log(parameter);
@@ -186,7 +186,7 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
         this.userTpeeventsService.remove(data).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert('success', 'Borrado Correctamente', '');
+              this.alert('success', 'El usuario ha sido eliminado', '');
               this.getValuesAll(
                 new ListParams(),
                 this.teventsForm.controls['event'].value

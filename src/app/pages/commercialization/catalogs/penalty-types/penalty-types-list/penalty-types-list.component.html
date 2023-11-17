@@ -11,22 +11,20 @@
   </div>
 
   <div body>
-    <div class="row">
-      <div class="ch-content" header>
-        <h5 class="title"></h5>
-        <div class="col-md-5 buttons">
-          <div>
-            <button
-              type="button"
-              (click)="openForm()"
-              class="btn btn-info btn-sm active ml-2 mr-2">
-              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
-          </div>
+    <div class="row margin-input">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
-    </div>
-    <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
@@ -36,10 +34,10 @@
             (edit)="openForm($event.data)"
             (delete)="delete($event.data)">
           </ng2-smart-table>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
   </div>
 </app-card>

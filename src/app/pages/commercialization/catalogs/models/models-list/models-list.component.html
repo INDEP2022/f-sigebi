@@ -3,7 +3,39 @@
     <h5 class="title">MODELOS</h5>
   </div>
   <div body>
-    <div class="ch-content">
+    <div class="row margin-input">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (create)="openForm()"
+            (delete)="showDeleteAlert($event.data)"
+            (userRowSelect)="rowsSelected($event)">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <!--<div class="ch-content">
       <div class="d-flex justify-content-between align-items-center">
         <div></div>
         <div>
@@ -14,9 +46,9 @@
           </button>
         </div>
       </div>
-    </div>
+    </div>-->
     <!--MODELS TABLE-->
-    <div class="row pt-4">
+    <!--<div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
@@ -33,6 +65,6 @@
     </div>
     <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+      [totalItems]="totalItems"></app-pagination>-->
   </div>
 </app-card>
