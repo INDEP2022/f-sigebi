@@ -189,6 +189,7 @@
               tooltip="Nuevo"
               containerClass="tooltip-style"
               class="btn btn-primary btn-sm active ml-2 mr-2"
+              [disabled]="!excelValid"
               (click)="goDetailDonation()">
               Captura de Evento <i class="bx bx-edit bx-sm float-icon"></i>
             </button>

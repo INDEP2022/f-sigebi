@@ -43,6 +43,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
   origin: '';
+  ropid: LocalDataSource = new LocalDataSource();
   selectRow: boolean = false;
   // user: string = '';
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
@@ -52,7 +53,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   delegations$ = new DefaultSelect<IDelegation>();
   totalItems: number = 0;
   totalItems1: number = 0;
-  excelValid: boolean = true;
+  excelValid: boolean = false;
   useracept: boolean = true;
   userName: string = '';
   to: string = '';
@@ -272,42 +273,49 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   filterButton() {
-    //this.params.value.page = 1;
-    //this.search(false);
-    this.from = this.datePipe.transform(
-      this.form.controls['captureDate'].value,
-      'dd/MM/yyyy'
-    );
-    this.to = this.datePipe.transform(
-      this.form.controls['closeDate'].value,
-      'dd/MM/yyyy'
-    );
-    this.response = true;
-    const captureDate = this.form.get('captureDate').value ? this.from : '';
-    const closeDate = this.form.get('closeDate').value ? this.to : '';
-    const cveAc = this.form.get('cveActa').value
-      ? this.form.get('cveActa').value
-      : '';
-    const state = this.status ? this.status : '';
-    const noDelegation1 = this.form.get('noDelegation1').value
-      ? this.form.get('noDelegation1').value
-      : '';
-    const elaborated = this.form.get('elaborated').value
-      ? this.form.get('elaborated').value
-      : '';
-    this.getEventComDonationAll(
-      'COMPDON',
-      captureDate,
-      closeDate,
-      cveAc,
-      state,
-      noDelegation1,
-      elaborated
-    );
-    localStorage.setItem('cveAc', cveAc);
-    localStorage.setItem('area', noDelegation1);
-    localStorage.setItem('elaborated', elaborated);
-    localStorage.setItem('state', state);
+    if (
+      this.form.get('cveActa').value === null ||
+      this.form.get('captureDate').value ||
+      this.form.get('closeDate').value ||
+      this.form.get('estatusAct').value ||
+      this.form.get('noDelegation1').value ||
+      this.form.get('elaborated').value
+    ) {
+      this.from = this.datePipe.transform(
+        this.form.controls['captureDate'].value,
+        'dd/MM/yyyy'
+      );
+      this.to = this.datePipe.transform(
+        this.form.controls['closeDate'].value,
+        'dd/MM/yyyy'
+      );
+      this.response = true;
+      const captureDate = this.form.get('captureDate').value ? this.from : '';
+      const closeDate = this.form.get('closeDate').value ? this.to : '';
+      const cveAc = this.form.get('cveActa').value
+        ? this.form.get('cveActa').value
+        : '';
+      const state = this.status ? this.status : '';
+      const noDelegation1 = this.form.get('noDelegation1').value
+        ? this.form.get('noDelegation1').value
+        : '';
+      const elaborated = this.form.get('elaborated').value
+        ? this.form.get('elaborated').value
+        : '';
+      this.getEventComDonationAll(
+        'COMPDON',
+        captureDate,
+        closeDate,
+        cveAc,
+        state,
+        noDelegation1,
+        elaborated
+      );
+      localStorage.setItem('cveAc', cveAc);
+      localStorage.setItem('area', noDelegation1);
+      localStorage.setItem('elaborated', elaborated);
+      localStorage.setItem('state', state);
+    }
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
@@ -395,7 +403,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   changeEvent(event: any) {
     if (event) {
       this.selectRow = true;
-      this.excelValid = false;
+      this.excelValid = true;
       const data: any = event.data;
       this.getDetailComDonation(data.actId);
       console.log(event.data);
