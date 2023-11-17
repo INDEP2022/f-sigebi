@@ -102,7 +102,7 @@ export class GoodsAvailableSaleListComponent2
             if (this.ilikeFilters.includes(filter.field)) {
               searchFilter = SearchFilter.ILIKE;
             } else {
-              searchFilter = SearchFilter.EQ;
+              searchFilter = SearchFilter.ILIKE;
             }
             field = `filter.${filter.field}`;
             if (filter.search !== '') {

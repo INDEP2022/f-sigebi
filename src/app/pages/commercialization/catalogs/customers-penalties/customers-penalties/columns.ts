@@ -56,6 +56,7 @@ export const COLUMNS = {
       type: 'custom',
       component: CustomDateDayFilterComponent,
     },*/
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -70,7 +71,7 @@ export const COLUMNS = {
   endDate: {
     title: 'Fecha Final',
     sort: false,
-
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -105,6 +106,7 @@ export const COLUMNS = {
   penaltiDate: {
     title: 'Fecha Penaliza',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -156,6 +158,7 @@ export const COLUMNS2 = {
   initialDate: {
     title: 'Fecha Inicial',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -170,6 +173,7 @@ export const COLUMNS2 = {
   finalDate: {
     title: 'Fecha Final',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -200,6 +204,7 @@ export const COLUMNS2 = {
   penalizesDate: {
     title: 'Fecha Penaliza',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -214,6 +219,7 @@ export const COLUMNS2 = {
   releasesDate: {
     title: 'Fecha Libera',
     sort: false,
+    type: 'html',
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
       var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');

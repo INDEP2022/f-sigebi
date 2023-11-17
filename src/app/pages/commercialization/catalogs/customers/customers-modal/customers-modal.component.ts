@@ -249,6 +249,16 @@ export class CustomersModalComponent extends BasePage implements OnInit {
           .get('freeDate')
           .setValue(this.addDays(new Date(dbFreeDate), 1));
       }
+      if (this.customerForm.get('releaseDate').value === null) {
+        this.customerForm.get('releaseDate').setValue(null);
+      } else {
+        const dbreleaseDate = this.customerForm.get('releaseDate').value;
+        const formattedDate3 = formatDate(dbreleaseDate, 'dd/MM/yyyy', 'en-US');
+        this.customerForm.get('releaseDate').setValue(formattedDate3);
+        this.customerForm
+          .get('releaseDate')
+          .setValue(this.addDays(new Date(dbreleaseDate), 1));
+      }
 
       if (this.customerForm.get('penaltyInitDate').value === null) {
         this.customerForm.get('penaltyInitDate').setValue(null);
@@ -383,6 +393,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
   }
 
   convertDateFormat(inputDate: string | Date): string {
+    console.log(inputDate);
     if (inputDate instanceof Date) {
       return formatDate(inputDate, 'yyyy-MM-dd', 'en-US');
     } else if (typeof inputDate === 'string') {
