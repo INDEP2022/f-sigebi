@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import {
   ListParams,
   SearchFilter,
@@ -26,13 +27,14 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import * as XLSX from 'xlsx';
 import { MassiveGoodService } from '../../../../../core/services/ms-massivegood/massive-good.service';
 import { DetailProceeDelRecService } from '../../../../../core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
-import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
+import { ExportCommunicationService } from './communication.services';
 
 @Component({
   selector: 'app-export-goods-donation',
@@ -78,7 +80,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   total: any;
   selectedA: any = false;
   rel_bienes: any;
-
+  selectedGoods: any[] = [];
   constructor(
     private router: Router,
     private expedientSamiService: ExpedientSamiService,
@@ -92,18 +94,202 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     private screenStatusService: ScreenStatusService,
     private historyGoodService: HistoryGoodService,
     private authService: AuthService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private exportCommunicationService: ExportCommunicationService
   ) {
     super();
+
     this.settings = {
       ...this.settings,
       actions: false,
       // selectMode: 'multi'
     };
     this.settings.columns = {
-      ...COLUMNS_EXPORT_GOODS,
+      goodNumber: {
+        title: 'No. Bien',
+        type: 'number',
+        sort: false,
+      },
+      description: {
+        title: 'Descripción',
+        type: 'string',
+        sort: false,
+      },
+      amount: {
+        title: 'Cantidad',
+        type: 'number',
+        sort: false,
+      },
+      notClassificationWell: {
+        title: 'No. Clasf Bien',
+        type: 'number',
+        sort: false,
+      },
+      transferor: {
+        title: 'No. Transfer',
+        type: 'number',
+        sort: false,
+      },
+      delAdmin: {
+        title: 'Del_Admin',
+        type: 'number',
+        sort: false,
+      },
+      delReceives: {
+        title: 'Del_Recibe',
+        type: 'number',
+        sort: false,
+      },
+      recepDate: {
+        title: 'Fecha Recepción',
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
+        valuePrepareFunction: (text: string) => {
+          return `${text ? text.split('-').reverse().join('/') : ''}`;
+        },
+        sort: false,
+      },
+      status: {
+        title: 'Estatus',
+        type: 'number',
+        sort: false,
+      },
+      proceedingsNumber: {
+        title: 'No. Expediente',
+        type: 'number',
+        sort: false,
+      },
+      cpd: {
+        title: 'CPD',
+        type: 'custom',
+        filter: false,
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: any) => {
+          instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {
+            // Manejar el evento del checkbox CPD aquí
+            const rowData = event.row;
+            const isChecked = event.toggle;
+
+            // Verificar si el checkbox se ha seleccionado
+            if (isChecked) {
+              // Si el checkbox se selecciona, establecer el valor en true
+              rowData.cpd = true; // Asume que rowData.cpd representa el valor de la columna 'CPD'
+              rowData.rda = false;
+              rowData.adm = false;
+              this.updateStatusCheck(true);
+            } else {
+              // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
+            }
+
+            console.log(
+              'Evento del checkbox CPD. Fila:',
+              rowData,
+              'Estado:',
+              isChecked
+            );
+          });
+        },
+        // showAlways: true,
+        // valuePrepareFunction: (isSelected: boolean, row: any) =>
+        //   this.isGoodSelectedCPD(row),
+        // renderComponent: CheckboxElementComponent,
+        // onComponentInitFunction: (instance: CheckboxElementComponent) =>
+        //   this.onGoodSelectCPD(instance),
+        sort: false,
+      },
+      adm: {
+        title: 'ADM',
+        type: 'custom',
+        filter: false,
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: any) => {
+          instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {
+            // Manejar el evento del checkbox CPD aquí
+            const rowData = event.row;
+            const isChecked = event.toggle;
+
+            // Verificar si el checkbox se ha seleccionado
+            if (isChecked) {
+              // Si el checkbox se selecciona, establecer el valor en true
+              rowData.adm = true; // Asume que rowData.cpd representa el valor de la columna 'CPD'
+              rowData.rda = false;
+              rowData.cpd = false;
+              this.updateStatusCheck(true);
+            } else {
+              // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
+            }
+
+            console.log(
+              'Evento del checkbox CPD. Fila:',
+              rowData,
+              'Estado:',
+              isChecked
+            );
+          });
+          // this.onGoodSelectCPD_(instance)
+        },
+        sort: false,
+      },
+      rda: {
+        title: 'RDA',
+        type: 'custom',
+        filter: false,
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: any) => {
+          instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {
+            // Manejar el evento del checkbox CPD aquí
+            const rowData = event.row;
+            const isChecked = event.toggle;
+
+            // Verificar si el checkbox se ha seleccionado
+            if (isChecked) {
+              // Si el checkbox se selecciona, establecer el valor en true
+              rowData.rda = true; // Asume que rowData.cpd representa el valor de la columna 'CPD'
+              rowData.cpd = false;
+              rowData.adm = false;
+              this.updateStatusCheck(true);
+            } else {
+              // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
+            }
+
+            console.log(
+              'Evento del checkbox CPD. Fila:',
+              rowData,
+              'Estado:',
+              isChecked
+            );
+          });
+        },
+        sort: false,
+      },
     };
     this.settings.hideSubHeader = false;
+  }
+  updateStatusCheck(instance: any) {
+    console.log('AQUI ESTAMOS');
+    this.data.refresh();
+  }
+  onGoodSelectCPD(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeCPD(data.row, data.toggle),
+    });
+  }
+  isGoodSelectedCPD(_billing: any) {
+    const exists = this.selectedGoods.find(
+      (good: any) => good.goodNumber == good.goodNumber && good.cpd == true
+    );
+    return !exists ? false : true;
+  }
+  goodSelectedChangeCPD(billing: any, selected: boolean) {
+    if (selected) {
+      this.selectedGoods.push(billing);
+    } else {
+      this.selectedGoods = this.selectedGoods.filter(
+        (good: any) => good.goodNumber == good.goodNumber
+      );
+    }
   }
 
   ngOnInit(): void {
@@ -130,6 +316,11 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     }
 
     this.data.load(this.data1);
+    this.exportCommunicationService.ejecutarFuncion$.subscribe(
+      async (next: any) => {
+        this.data.refresh();
+      }
+    );
   }
 
   getuser() {
@@ -153,112 +344,64 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     ]);
   }
 
-  async mapearDatos(response: any) {
-    this.data1 = []; // Se inicializa vavicio para que no se duplique al dar click
-    this.data.load([]);
-    // for (let i = 0; i < response.data.length; i++) {
-    let arr: any[] = [];
-    let result = response.data.map(async (item: any) => {
-      let padre =
-        item.no_bien_padre_parcializacion != null
-          ? item.no_bien_padre_parcializacion
-          : '1';
-      let dataForm: any = {
-        numberGood: item.no_bien,
-        description: item.descripcion,
-        quantity: item.cantidad,
-        clasificationNumb: item.no_clasif_bien,
-        tansfNumb: item.no_transferente,
-        proceso_ext_dom: item.proceso_ext_dom,
-        id_almacen: item.id_almacen,
-        fecha_liberacion: item.fecha_liberacion,
-        status: item.estatus,
-        unidad: item.unidad,
-        proceedingsNumb: item.no_expediente,
-        goodTotal: item,
-      };
-      const model = {} as IGoodsExportPost;
-      (model.noBien = item.no_bien),
-        (model.vNoBienPadre = padre),
-        (model.vNobienreferencia = item.no_bien_referencia);
-      //Servicio1
-      let acta: any = 0;
-      acta = await this.returnFirst(model);
-      if (acta != 0) {
-        // Servicio2
-        let res: any = await this.returnSecond(acta);
-        dataForm.delAdmin = res.del_administra;
-        dataForm.delDeliv = res.del_recibe;
-        dataForm.recepDate = res.fecha_recepcion;
-        // item['delAdmin'] = res.del_administra;
-        // item['delDeliv'] = res.del_recibe;
-        // item['recepDate'] = res.fecha_recepcion;
-      }
+  // async mapearDatos(response: any) {
+  //   this.data1 = []; // Se inicializa vavicio para que no se duplique al dar click
+  //   this.data.load([]);
+  //   // for (let i = 0; i < response.data.length; i++) {
+  //   let arr: any[] = [];
+  //   let result = response.data.map(async (item: any) => {
+  //     let padre =
+  //       item.no_bien_padre_parcializacion != null
+  //         ? item.no_bien_padre_parcializacion
+  //         : '1';
+  //     let dataForm: any = {
+  //       goodNumber: item.no_bien,
+  //       description: item.descripcion,
+  //       amount: item.cantidad,
+  //       clasificationNumb: item.notClassificationWell,
+  //       transferor: item.no_transferente,
+  //       processExtDom: item.proceso_ext_dom,
+  //       id_almacen: item.id_almacen,
+  //       dateRelease: item.dateRelease,
+  //       status: item.estatus,
+  //       unidad: item.unit,
+  //       proceedingsNumber: item.no_expediente,
+  //     };
+  //     const model = {} as IGoodsExportPost;
+  //     (model.noBien = item.no_bien),
+  //       (model.vNoBienPadre = padre),
+  //       (model.vNobienreferencia = item.no_bien_referencia);
+  //     //Servicio1
+  //     let acta: any = 0;
+  //     acta = await this.returnFirst(model);
+  //     if (acta != 0) {
+  //       // Servicio2
+  //       let res: any = await this.returnSecond(acta);
+  //       dataForm.delAdmin = res.del_administra;
+  //       dataForm.delReceives = res.del_recibe;
+  //       dataForm.dateCrecep = res.fecha_recepcion;
+  //       // item['delAdmin'] = res.del_administra;
+  //       // item['delDeliv'] = res.del_recibe;
+  //       // item['recepDate'] = res.fecha_recepcion;
+  //     }
 
-      let third: any = await this.returnThird(item.no_expediente);
-      dataForm.no_emisora = third.no_emisora;
-      dataForm.no_tran_emi_aut = third.no_tran_emi_aut;
-      // item['no_emisora']= third.no_emisora;
-      // item['no_tran_emi_aut'] = third.no_tran_emi_aut;
-      arr.push(dataForm);
-    });
+  //     let third: any = await this.returnThird(item.no_expediente);
+  //     dataForm.stationNumber = third.stationNumber;
+  //     dataForm.onlyKey = third.onlyKey;
+  //     // item['no_emisora']= third.no_emisora;
+  //     // item['onlyKey'] = third.onlyKey;
+  //     arr.push(dataForm);
+  //   });
 
-    Promise.all(result).then(item => {
-      this.data1 = arr;
-      this.data.load(arr);
-      this.data.refresh();
-      this.totalItems = response.count;
-      this.loading = false;
-    });
+  //   Promise.all(result).then(item => {
+  //     this.data1 = arr;
+  //     this.data.load(arr);
+  //     this.data.refresh();
+  //     this.totalItems = response.count;
+  //     this.loading = false;
+  //   });
 
-    // this.delegationService.postCatalog(model).subscribe({
-    //   next: resp => {
-    //     let acta = resp.data[0].coalesce;
-    //     //Servicio2
-    //     this.delegationService.getTran(response.data[i].no_expediente)
-    //       .subscribe(respo => {
-    //         if (respo != null && resp != undefined) {
-    //           console.log('Resp tranEmit', respo);
-    //           //servicio 3
-    //           this.detailProceeDelRecService.getProceding(acta).subscribe({
-    //             next: res => {
-    //               console.log('res 2 -> ', res);
-    //               let arr: any[] = []
-    //               let result = response.data.map((item: any) =>{
-    //                 let dataForm = {
-    //                   numberGood: response.data[i].no_bien,
-    //                   description: response.data[i].descripcion,
-    //                   quantity: response.data[i].cantidad,
-    //                   clasificationNumb: response.data[i].no_clasif_bien,
-    //                   tansfNumb: response.data[i].no_transferente,
-    //                   proceso_ext_dom: response.data[i].proceso_ext_dom,
-    //                   id_almacen: response.data[i].id_almacen,
-    //                   fecha_liberacion: response.data[i].fecha_liberacion,
-    //                   status: response.data[i].estatus,
-    //                   unidad: response.data[i].unidad,
-    //                   proceedingsNumb: response.data[i].no_expediente,
-    //                   delAdmin: res.del_administra,
-    //                   delDeliv: res.del_recibe,
-    //                   recepDate: res.fecha_recepcion,
-    //                   no_emisora: respo.data[0].no_emisora,
-    //                   no_tran_emi_aut: respo.data[0].no_tran_emi_aut,
-    //                   goodTotal: response.data[i],
-    //                 };
-    //                 arr.push(dataForm)
-    //               })
-
-    //               // console.log('DATA FORM ->', dataForm);
-    //               Promise.all(result).then(resp => {
-
-    //               })
-    //             },
-    //           });
-    //         }
-    //       });
-    //   },
-    // });
-    // }
-  }
+  // }
 
   returnFirst(model: any) {
     return new Promise((resolve, reject) => {
@@ -326,15 +469,23 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     console.log('Params-> ', params);
-    this.expedientSamiService.getexpedient(params).subscribe({
+    this.expedientSamiService.getApplicationRegisterCount(params).subscribe({
       next: response => {
-        console.log('Respuesta ', response);
-        this.generarAlerta(response, filter);
+        let result = response.data.map(item => {
+          item['rda'];
+          item['adm'];
+          item['cpd'];
+        });
+
+        Promise.all(result).then(item => {
+          console.log('Respuesta ', response);
+          this.generarAlerta(response, filter);
+        });
+
         // this.totalItems = response.count;
         // this.loading = false;
       },
       error: err => {
-        console.log('err ->', err);
         this.data1.push(params);
         this.data.load([]);
         this.data.refresh();
@@ -355,35 +506,38 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'numberGood':
-                field = 'filter.no_bien';
+              case 'goodNumber':
+                // field = 'filter.no_bien';
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'amount':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'quantity':
+              case 'notClassificationWell':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'clasificationNumb':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'tansfNumb':
+              case 'transferor':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'delAdmin':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'delDeliv':
+              case 'delReceives':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'recepDate':
-                searchFilter = SearchFilter.ILIKE;
+              case 'dateCrecep':
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'status':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'proceedingsNumb':
+              case 'proceedingsNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'recepDate':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -391,7 +545,18 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'recepDate') {
+                var fecha1 = filter.search;
+                var ano1 = fecha1.getFullYear();
+                var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
+                var dia1 = ('0' + fecha1.getDate()).slice(-2);
+                var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${fechaFormateada1}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -407,7 +572,11 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
 
   generarAlerta(response: any, filter: any) {
     if (filter == 'no') {
-      this.mapearDatos(response);
+      this.data1 = response.data;
+      this.data.load(response.data);
+      this.data.refresh();
+      this.totalItems = response.count;
+      this.loading = false;
     } else {
       if (response.count > 1000) {
         this.alertQuestion(
@@ -416,14 +585,22 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           '¿Deseas continuar?'
         ).then(question => {
           if (question.isConfirmed) {
-            this.mapearDatos(response);
+            this.data1 = response.data;
+            this.data.load(response.data);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
           } else {
             this.loading = false;
             return;
           }
         });
       } else {
-        this.mapearDatos(response);
+        this.data1 = response.data;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
       }
     }
   }
@@ -476,23 +653,22 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
                       console.log('res 2 -> ', res);
 
                       let dataForm = {
-                        numberGood: response.data[0].goodId,
+                        goodNumber: response.data[0].goodId,
                         description: response.data[0].description,
-                        quantity: response.data[0].quantity,
-                        clasificationNumb: response.data[0].goodClassNumber,
-                        tansfNumb: response.data[0].transferNumberFiles,
-                        proceso_ext_dom: response.data[0].extDomProcess,
-                        id_almacen: response.data[0].storeNumber,
-                        fecha_liberacion: '',
+                        amount: response.data[0].quantity,
+                        notClassificationWell: response.data[0].goodClassNumber,
+                        transferor: response.data[0].transferNumberFiles,
+                        processExtDom: response.data[0].extDomProcess,
+                        storeId: response.data[0].storeNumber,
+                        dateRelease: '',
                         status: response.data[0].goodStatus,
-                        unidad: response.data[0].unit,
-                        proceedingsNumb: response.data[0].fileNumber,
+                        unit: response.data[0].unit,
+                        proceedingsNumber: response.data[0].fileNumber,
                         delAdmin: res.del_administra,
-                        delDeliv: res.del_recibe,
-                        recepDate: res.fecha_recepcion,
-                        no_emisora: respo.data[0].no_emisora,
-                        no_tran_emi_aut: respo.data[0].no_tran_emi_aut,
-                        goodTotal: response.data[0],
+                        delReceives: res.del_recibe,
+                        dateCrecep: res.fecha_recepcion,
+                        stationNumber: respo.data[0].no_emisora,
+                        onlyKey: respo.data[0].no_tran_emi_aut,
                       };
                       console.log('DATA FORM ->', dataForm);
                       this.data1.push(dataForm); // invocar todos tres servicios
@@ -614,114 +790,112 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         'No hay bienes por exportar y actualizar',
         ''
       );
-    this.data.getElements().then(item => {
-      let i = 0;
-      let o = 0;
-      let result = item.map(async (item_: any) => {
-        if ([item_.cpd, item_.adm, item_.rda].includes(true)) {
-          let statusFinal: any = await this.returnService(
-            'FDONACIONES',
-            item_.status,
-            item_.proceso_ext_dom
-          );
-          let descripcion = this.form.get('description').value;
-          o++;
-          if (!statusFinal) {
-            i++;
-          } else {
-            let obj = {
-              goodId: item_.no_bien_referencia.replace(' ', ''),
-              id: item_.no_bien.replace(' ', ''),
-              status: statusFinal,
-              observations: descripcion + ' ' + item_.goodTotal.observations,
-            };
-            await this.updateGood(obj);
-
-            let params2 = {
-              propertyNum: item_.numberGood.replace(' ', ''),
-              status: statusFinal,
-              changeDate: new Date(),
-              userChange: this.user,
-              statusChangeProgram: 'FDONACIONES',
-              reasonForChange: descripcion,
-            };
-            await this.insertHistoric(params2);
-          }
-        }
-      });
-      Promise.all(result).then(resp => {
-        if (i == o) {
-          this.alertQuestion(
-            'warning',
-            'No se actualizaron el estatus de los bienes seleccionados',
-            '¿Desea descargar el excel?'
-          ).then(async question => {
-            if (question.isConfirmed) {
-              await this.exportToExcelX();
-            }
-          });
-        } else {
-          this.getall1(true, 'no');
-          this.alertInfo(
-            'success',
-            'Se actualizaron los bienes correctamente',
-            ''
-          ).then(async question => {
-            // if (question.isConfirmed) {
-            await this.exportToExcelX();
-            // }
-          });
-          // this.alert('success', 'Se actualizaron los bienes correctamente', '');
-        }
-      });
+    let arregloPrincipal: any[] = [];
+    let result = this.data1.map(item => {
+      if ([item.cpd, item.adm, item.rda].includes(true)) {
+        let item_: any = {
+          NO_BIEN: item.goodNumber,
+          DESCRIPCION: item.description,
+          CANTIDAD: item.amount,
+          NO_CLASIF_BIEN: item.notClassificationWell,
+          NO_TRANSFERENTE: item.transferor,
+          DEL_ADMINISTRA: item.delAdmin,
+          DEL_RECIBE: item.delReceives,
+          FECHA_RECEPCION: item.dateCrecep,
+          ESTATUS: item.status,
+          PROCESO_EXT_DOM: item.processExtDom,
+          NO_EXPEDIENTE: item.proceedingsNumber,
+          CANTIDAD_PROPUESTA: '0',
+          CANTIDAD_DONADA: '',
+          ID_ALMACEN: item.storeId,
+          FEC_LIBERACION: item.dateRelease,
+          NO_UNIDAD: item.unit,
+          CVE_UNICA: item.onlyKey,
+          NO_EMISORA: item.stationNumber,
+        };
+        arregloPrincipal.push(item_);
+      }
     });
-    return;
-    // for (let i = 0; i < this.data1.length; i++) {
-    //   let item = this.data1[i]
-    //   if ( [item.cpd, item.adm, item.rda].includes(true)
-    //   // this.data1[i].cpd == true || this.data1[i].adm == true || this.data1[i].rda == true
-    //   ) {
-    //     let cve = 'FDONACIONES';
-    //     this.screenStatusService.getStatusEndforScreen(cve, this.data1[i].status, this.data1[i].proceso_ext_dom)
-    //       .subscribe({
-    //         next: response => {
-    //           let statusFinal = response.data[0].statusFinal;
-    //           let descripcion = this.form.get('description').value;
-    //           this.data1[i].goodTotal.status = statusFinal;
-    //           this.data1[i].goodTotal.descripcion =
-    //             descripcion + ' ' + this.data1[i].goodTotal.observations;
-    //           let params2 = {
-    //             propertyNum: this.data1[i].numberGood,
-    //             status: statusFinal,
-    //             changeDate: new Date(),
-    //             userChange: this.user,
-    //             statusChangeProgram: 'FDONACIONES',
-    //             reasonForChange: this.form.get('description').value,
-    //           };
-    //           this.goodService.updateWithParams(this.data1[i].goodTotal)
-    //             .subscribe({
-    //               next: response => {
-    //                 this.alert(
-    //                   'success',
-    //                   'Exitoso',
-    //                   'Se actualizó correctamente'
-    //                 );
-    //               },
-    //               error: err => {
-    //                 this.alert(
-    //                   'error',
-    //                   'Error',
-    //                   'Hubo un error al actualizar el bien'
-    //                 );
-    //               },
-    //             }),
-    //             this.historyGoodService.PostStatus(params2).subscribe({
-    //               next: response => {},
-    //             });
-    //         },
-    //       });
-    //   }
-    // }
+    Promise.all(result).then(item => {
+      if (arregloPrincipal.length == 0) {
+        this.alert(
+          'warning',
+          'Seleccione los bienes a exportar',
+          ''
+          // 'Seleccione un estado de los bienes que quiere exportar'
+        );
+        return;
+      }
+
+      this.data.getElements().then(item => {
+        let i = 0;
+        let o = 0;
+        let result = item.map(async (item_: any) => {
+          if ([item_.cpd, item_.adm, item_.rda].includes(true)) {
+            let action = '';
+            if (item_.rda) action = 'RDON';
+            if (item_.adm) action = 'ADMIN';
+            if (item_.cpd) action = 'CDON';
+
+            let statusFinal: any = await this.returnService(
+              'FDONACIONES',
+              item_.status,
+              item_.processExtDom,
+              action
+            );
+            let descripcion = this.form.get('description').value;
+            o++;
+            if (!statusFinal) {
+              i++;
+            } else {
+              let obj = {
+                goodId: item_.goodNumber,
+                id: item_.goodNumber,
+                status: statusFinal.status,
+                observations: descripcion + ' ',
+              };
+              await this.updateGood(obj);
+
+              let params2 = {
+                propertyNum: item_.goodNumber,
+                status: statusFinal.status,
+                changeDate: new Date(),
+                userChange: this.user,
+                statusChangeProgram: 'FDONACIONES',
+                reasonForChange: descripcion,
+              };
+              await this.insertHistoric(params2);
+            }
+          }
+        });
+        Promise.all(result).then(resp => {
+          if (i == o) {
+            this.alertQuestion(
+              'warning',
+              'No se actualizaron el estatus de los bienes seleccionados',
+              '¿Desea descargar el excel?'
+            ).then(async question => {
+              if (question.isConfirmed) {
+                await this.exportToExcelX();
+              }
+            });
+          } else {
+            this.getall1(true, 'no');
+            this.alertInfo(
+              'success',
+              'Se actualizaron los bienes correctamente',
+              ''
+            ).then(async question => {
+              // if (question.isConfirmed) {
+              await this.exportToExcelX();
+              // }
+            });
+            // this.alert('success', 'Se actualizaron los bienes correctamente', '');
+          }
+        });
+      });
+      return;
+    });
   }
 
   insertHistoric(data: any) {
@@ -750,10 +924,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     });
   }
 
-  returnService(cve: any, status: any, processExtDom: any) {
+  returnService(cve: any, status: any, processExtDom: any, action: any) {
     return new Promise((resolve, reject) => {
       this.screenStatusService
-        .getStatusEndforScreen(cve, status, processExtDom)
+        .getStatusEndforScreen(cve, status, processExtDom, action)
         .subscribe({
           next: response => {
             resolve(response.data[0].statusFinal);
@@ -779,24 +953,24 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       if ([item.cpd, item.adm, item.rda].includes(true)) {
         c++;
         let item_: any = {
-          NO_BIEN: item.numberGood,
+          NO_BIEN: item.goodNumber,
           DESCRIPCION: item.description,
-          CANTIDAD: item.quantity,
-          NO_CLASIF_BIEN: item.clasificationNumb,
-          NO_TRANSFERENTE: item.tansfNumb,
+          CANTIDAD: item.amount,
+          NO_CLASIF_BIEN: item.notClassificationWell,
+          NO_TRANSFERENTE: item.transferor,
           DEL_ADMINISTRA: item.delAdmin,
-          DEL_RECIBE: item.delDeliv,
-          FECHA_RECEPCION: item.recepDate,
+          DEL_RECIBE: item.delReceives,
+          FECHA_RECEPCION: item.dateCrecep,
           ESTATUS: item.status,
-          PROCESO_EXT_DOM: item.proceso_ext_dom,
-          NO_EXPEDIENTE: item.proceedingsNumb,
+          PROCESO_EXT_DOM: item.processExtDom,
+          NO_EXPEDIENTE: item.proceedingsNumber,
           CANTIDAD_PROPUESTA: '0',
           CANTIDAD_DONADA: '',
-          ID_ALMACEN: item.id_almacen,
-          FEC_LIBERACION: item.fecha_liberacion,
-          NO_UNIDAD: item.unidad,
-          CVE_UNICA: item.no_tran_emi_aut,
-          NO_EMISORA: item.no_emisora,
+          ID_ALMACEN: item.storeId,
+          FEC_LIBERACION: item.dateRelease,
+          NO_UNIDAD: item.unit,
+          CVE_UNICA: item.onlyKey,
+          NO_EMISORA: item.stationNumber,
         };
         arregloPrincipal.push(item_);
       }
@@ -811,43 +985,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       );
       return;
     }
-    // for (let i = 0; i < this.data1.length; i++) {
-    //   if ( this.data1[i].cpd == true || this.data1[i].adm == true || this.data1[i].rda == true ) {
-    //     c++;
-    //     console.log('entra ', this.data1[i]);
-    //     let item: any = {
-    //       numberGood: this.data1[i].numberGood,
-    //       description: this.data1[i].description,
-    //       quantity: this.data1[i].quantity,
-    //       clasificationNumb: this.data1[i].clasificationNumb,
-    //       tansfNumb: this.data1[i].tansfNumb,
-    //       proceso_ext_dom: this.data1[i].proceso_ext_dom,
-    //       id_almacen: this.data1[i].id_almacen,
-    //       fecha_liberacion: this.data1[i].fecha_liberacion,
-    //       status: this.data1[i].status,
-    //       unidad: this.data1[i].unidad,
-    //       proceedingsNumb: this.data1[i].proceedingsNumb,
-    //       delAdmin: this.data1[i].delAdmin,
-    //       delDeliv: this.data1[i].delDeliv,
-    //       recepDate: this.data1[i].recepDate,
-    //       no_emisora: this.data1[i].no_emisora,
-    //       no_tran_emi_aut: this.data1[i].no_tran_emi_aut,
-    //     };
-    //     arregloPrincipal.push(item);
-    //   } else {
-    //     n++;
-    //     console.log('this ', this.data1[i], '', n);
-    //     if (n == this.data1.length) {
-    //       this.alert(
-    //         'warning',
-    //         'Seleccione los bienes a exportar',
-    //         ''
-    //         // 'Seleccione un estado de los bienes que quiere exportar'
-    //       );
-    //       return;
-    //     }
-    //   }
-    // }
     console.log('Data a enviar -> ', arregloPrincipal);
     Promise.all(result).then(item => {
       const filename: string = 'ExcelDownload';

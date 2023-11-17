@@ -93,7 +93,12 @@ export class SaleStatusComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
@@ -102,7 +107,11 @@ export class SaleStatusComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       saleStatus,
       callback: (next: boolean) => {
-        if (next) this.getDeductives();
+        if (next) {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getDeductives());
+        }
       },
     };
     this.modalService.show(SaleStatusFormComponent, modalConfig);
@@ -120,11 +129,11 @@ export class SaleStatusComponent extends BasePage implements OnInit {
           next: response => {
             this.getDeductives();
             this.loading = false;
-            this.alert('success', 'Elemento Eliminado', '');
+            this.alert('success', 'El estatus ha sido eliminado', '');
           },
           error: () => {
             this.loading = false;
-            this.alert('error', 'Error al Conectar con el Servidor', '');
+            this.alert('error', 'Error al conectar con el servidor', '');
           },
         });
       }

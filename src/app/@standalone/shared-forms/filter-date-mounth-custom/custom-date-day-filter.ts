@@ -10,9 +10,14 @@ import { DefaultFilter } from 'ng2-smart-table';
         bsDatepicker
         [ngModel]="query"
         [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
-        (ngModelChange)="onChange($event)" />
+        [placeholder]="column.title"
+        (ngModelChange)="onChange($event)"
+        style="border-radius: 5px;padding: 8px;border: 1px solid #ccc;" />
       <span class="input-group-addon" *ngIf="this.query">
-        <i class="fas fa-eraser" (click)="clearDate($event)"></i>
+        <i
+          class="fa fa-trash red-icon"
+          (click)="clearDate($event)"
+          style="color: #9D2449"></i>
       </span>
     </div>
   `,
@@ -23,7 +28,7 @@ export class CustomDateDayFilterComponent extends DefaultFilter {
     this.query = event;
     this.setFilter();
   }
-
+  ngOnChanges() {}
   clearDate(event: any) {
     event.stopPropagation();
     this.query = '';

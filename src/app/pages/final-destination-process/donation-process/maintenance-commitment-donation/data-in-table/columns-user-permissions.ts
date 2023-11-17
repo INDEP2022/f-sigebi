@@ -20,6 +20,17 @@ export const COLUMNS_USER_PERMISSIONS = {
         data.row.to = data.toggle;
       });
     },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
     sort: false,
   },
   not: {
@@ -31,6 +42,17 @@ export const COLUMNS_USER_PERMISSIONS = {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });
+    },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     sort: false,
   },
