@@ -318,6 +318,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     //this.params.value.page = 1;
     //this.search(false);
     this.response = true;
+    const captureDate = this.form.get('captureDate').value
+      ? this.form.get('captureDate').value
+      : '';
+    const closeDate = this.form.get('closeDate').value
+      ? this.form.get('closeDate').value
+      : '';
     const cveAc = this.form.get('cveActa').value
       ? this.form.get('cveActa').value
       : '';
@@ -330,6 +336,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       : '';
     this.getEventComDonationAll(
       'COMPDON',
+      captureDate,
+      closeDate,
       cveAc,
       state,
       noDelegation1,
@@ -371,6 +379,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   getEventComDonationAll(
+    captureDate?: string | number,
+    closeDate?: string | number,
     actType?: string | number,
     cveAct?: string | number,
     estatusAct?: string | number,
@@ -380,6 +390,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.loading = true;
     this.params.getValue()['filter.actType'] = `$eq:${actType}`;
     this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
+    this.params.getValue()['filter.captureDate'] = `$eq:${captureDate}`;
+    this.params.getValue()['filter.closeDate'] = `$eq:${closeDate}`;
     if (NoDelegation1) {
       this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
     }

@@ -21,26 +21,26 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('from')" label="Fecha Inicio">
+          <form-field [control]="form.get('captureDate')" label="Fecha Inicio">
             <input
               [maxDate]="maxDate"
-              formControlName="from"
+              formControlName="captureDate"
               class="form-control"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('to')" label="Fecha Fin">
+          <form-field [control]="form.get('closeDate')" label="Fecha Fin">
             <input
               [maxDate]="maxDate"
-              formControlName="to"
+              formControlName="closeDate"
               class="form-control"
-              [min]="form.get('from').value"
-              [minDate]="form.get('from').value"
+              [min]="form.get('captureDate').value"
+              [minDate]="form.get('captureDate').value"
               [ngModel]="
-                form.get('to').value < form.get('from').value
-                  ? form.get('from').value
-                  : form.get('to').value
+                form.get('closeDate').value < form.get('captureDate').value
+                  ? form.get('captureDate').value
+                  : form.get('closeDate').value
               "
               bsDatepicker />
           </form-field>
