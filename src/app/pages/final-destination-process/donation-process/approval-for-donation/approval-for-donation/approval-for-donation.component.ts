@@ -277,47 +277,53 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   filterButton() {
     if (
       this.form.get('cveActa').value === null ||
-      this.form.get('captureDate').value ||
-      this.form.get('closeDate').value ||
-      this.form.get('estatusAct').value ||
-      this.form.get('noDelegation1').value ||
-      this.form.get('elaborated').value
+      this.form.get('captureDate').value === null ||
+      this.form.get('closeDate').value === null ||
+      this.form.get('estatusAct').value === null ||
+      this.form.get('noDelegation1').value === null ||
+      this.form.get('elaborated').value === null
     ) {
-      this.from = this.datePipe.transform(
-        this.form.controls['captureDate'].value,
-        'dd/MM/yyyy'
+      this.alert(
+        'warning',
+        'Debe seleccionar al menos una opción para filtrar',
+        ''
       );
-      this.to = this.datePipe.transform(
-        this.form.controls['closeDate'].value,
-        'dd/MM/yyyy'
-      );
-      this.response = true;
-      const captureDate = this.form.get('captureDate').value ? this.from : '';
-      const closeDate = this.form.get('closeDate').value ? this.to : '';
-      const cveAc = this.form.get('cveActa').value
-        ? this.form.get('cveActa').value
-        : '';
-      const state = this.status ? this.status : '';
-      const noDelegation1 = this.form.get('noDelegation1').value
-        ? this.form.get('noDelegation1').value
-        : '';
-      const elaborated = this.form.get('elaborated').value
-        ? this.form.get('elaborated').value
-        : '';
-      this.getEventComDonationAll(
-        'COMPDON',
-        captureDate,
-        closeDate,
-        cveAc,
-        state,
-        noDelegation1,
-        elaborated
-      );
-      localStorage.setItem('cveAc', cveAc);
-      localStorage.setItem('area', noDelegation1);
-      localStorage.setItem('elaborated', elaborated);
-      localStorage.setItem('state', state);
+      return;
     }
+    this.from = this.datePipe.transform(
+      this.form.controls['captureDate'].value,
+      'dd/MM/yyyy'
+    );
+    this.to = this.datePipe.transform(
+      this.form.controls['closeDate'].value,
+      'dd/MM/yyyy'
+    );
+    this.response = true;
+    const captureDate = this.form.get('captureDate').value ? this.from : '';
+    const closeDate = this.form.get('closeDate').value ? this.to : '';
+    const cveAc = this.form.get('cveActa').value
+      ? this.form.get('cveActa').value
+      : '';
+    const state = this.status ? this.status : '';
+    const noDelegation1 = this.form.get('noDelegation1').value
+      ? this.form.get('noDelegation1').value
+      : '';
+    const elaborated = this.form.get('elaborated').value
+      ? this.form.get('elaborated').value
+      : '';
+    this.getEventComDonationAll(
+      'COMPDON',
+      captureDate,
+      closeDate,
+      cveAc,
+      state,
+      noDelegation1,
+      elaborated
+    );
+    localStorage.setItem('cveAc', cveAc);
+    localStorage.setItem('area', noDelegation1);
+    localStorage.setItem('elaborated', elaborated);
+    localStorage.setItem('state', state);
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
