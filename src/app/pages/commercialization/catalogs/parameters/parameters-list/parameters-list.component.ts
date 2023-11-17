@@ -59,14 +59,40 @@ export class ParametersListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            let searchFilter1: string;
             field = `filter.${filter.field}`;
-            filter.field == 'description' ||
+            switch (filter.field) {
+              case 'parametro':
+                //searchFilter1 = SearchFilter.ILIKE;
+                searchFilter1 = '';
+                console.log(searchFilter);
+                break;
+              case 'descriptionparameter':
+                //searchFilter1 = SearchFilter.ILIKE;
+                searchFilter1 = '';
+                break;
+              case 'valor':
+                //searchFilter1 = SearchFilter.EQ;
+                searchFilter1 = '';
+                break;
+              case 'tpevent':
+                field = `filter.${filter.field}.descripcion`;
+                //searchFilter1 = SearchFilter.ILIKE;
+                searchFilter1 = '';
+                break;
+              default:
+                //searchFilter1 = SearchFilter.ILIKE;
+                searchFilter1 = '';
+                break;
+            }
+            /*filter.field == 'description' ||
             filter.field == 'value' ||
             filter.field == 'typeEventId'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              let value = String(filter.search);
+              this.columnFilters[field] = `${searchFilter1}${value}`;
             } else {
               delete this.columnFilters[field];
             }
@@ -122,7 +148,13 @@ export class ParametersListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.parameterModService.newRemove(parameter).subscribe({
+        console.log(parameter);
+        let body = {
+          parameter: parameter.parametro,
+          value: parameter.valor,
+          address: parameter.direccion,
+        };
+        this.parameterModService.newRemove1(body).subscribe({
           next: (resp: any) => {
             if (resp) {
               this.alert(

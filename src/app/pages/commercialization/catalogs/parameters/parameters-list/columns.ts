@@ -51,5 +51,13 @@ export const COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.descripcion : '';
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.descripcion;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
 };
