@@ -7,7 +7,7 @@ export const COLUMNS = {
     sort: false,
   },
   eventId: {
-    title: 'Clave Evento',
+    title: 'Cve. Evento',
     sort: false,
     /*valuePrepareFunction: (cell: any, row: any) => {
       
@@ -136,7 +136,7 @@ export const COLUMNS2 = {
     sort: false,
   },
   /*event: {
-    title: 'Clave Evento',
+    title: 'Cve. Evento',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value != null ? value.id : '';
@@ -146,7 +146,7 @@ export const COLUMNS2 = {
     },
   },*/
   eventId: {
-    title: 'Clave Evento',
+    title: 'Cve. Evento',
     sort: false,
   },
   batchPublic: {
@@ -232,7 +232,7 @@ export const COLUMNS3 = {
     sort: false,
   },
   eventId: {
-    title: 'Clave Evento',
+    title: 'Cve. Evento',
     sort: false,
   },
   batchPublic: {

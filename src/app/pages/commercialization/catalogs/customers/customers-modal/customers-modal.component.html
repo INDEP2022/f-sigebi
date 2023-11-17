@@ -270,17 +270,6 @@
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'
               }" />
-            <i
-              *ngIf="customerForm.get('blackListDate').value"
-              class="fa fa-times"
-              (click)="clearFreeDate('blackListDate')"
-              style="
-                position: absolute;
-                top: 50%;
-                right: 5px;
-                transform: translate(0, -50%);
-                cursor: pointer;
-              "></i>
           </form-field>
         </div>
 
@@ -298,17 +287,6 @@
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'
               }" />
-            <i
-              *ngIf="customerForm.get('releaseDate').value"
-              class="fa fa-times"
-              (click)="clearFreeDate('releaseDate')"
-              style="
-                position: absolute;
-                top: 50%;
-                right: 5px;
-                transform: translate(0, -50%);
-                cursor: pointer;
-              "></i>
           </form-field>
         </div>
       </div>
@@ -381,23 +359,12 @@
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'
               }" />
-            <i
-              *ngIf="customerForm.get('freeDate').value"
-              class="fa fa-times"
-              (click)="clearFreeDate('freeDate')"
-              style="
-                position: absolute;
-                top: 50%;
-                right: 5px;
-                transform: translate(0, -50%);
-                cursor: pointer;
-              "></i>
           </form-field>
         </div>
 
         <div class="col-md-4">
           <form-field
-            label="Cve. Act. Econo."
+            label="Cve. de Actividad Económica"
             [control]="customerForm.get('economicAgreementKey')">
             <input
               type="text"
@@ -537,19 +504,9 @@
               bsDatepicker
               [maxDate]="today"
               [bsConfig]="{
-                dateInputFormat: 'DD/MM/YYYY'
+                dateInputFormat: 'DD/MM/YYYY',
+                adaptivePosition: true
               }" />
-            <i
-              *ngIf="customerForm.get('penaltyInitDate').value"
-              class="fa fa-times"
-              (click)="clearFreeDate('penaltyInitDate')"
-              style="
-                position: absolute;
-                top: 50%;
-                right: 5px;
-                transform: translate(0, -50%);
-                cursor: pointer;
-              "></i>
           </form-field>
         </div>
 
@@ -565,19 +522,9 @@
               bsDatepicker
               [maxDate]="today"
               [bsConfig]="{
-                dateInputFormat: 'DD/MM/YYYY'
+                dateInputFormat: 'DD/MM/YYYY',
+                adaptivePosition: true
               }" />
-            <i
-              *ngIf="customerForm.get('penaltyEndDate').value"
-              class="fa fa-times"
-              (click)="clearFreeDate('penaltyEndDate')"
-              style="
-                position: absolute;
-                top: 50%;
-                right: 5px;
-                transform: translate(0, -50%);
-                cursor: pointer;
-              "></i>
           </form-field>
         </div>
       </div>
