@@ -117,12 +117,27 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  save() {
-    let body = {
+  private getBody() {
+    return {
       ...this.form.value,
       dateOfResolution: this.form.value.dateOfResolution
         ? this.form.value.dateOfResolution.trim().length > 0
           ? this.form.value.dateOfResolution
+          : null
+        : null,
+      invoiceRecDate: this.form.value.invoiceRecDate
+        ? this.form.value.invoiceRecDate.trim().length > 0
+          ? this.form.value.invoiceRecDate
+          : null
+        : null,
+      payDay: this.form.value.payDay
+        ? this.form.value.payDay.trim().length > 0
+          ? this.form.value.payDay
+          : null
+        : null,
+      captureDate: this.form.value.captureDate
+        ? this.form.value.captureDate.trim().length > 0
+          ? this.form.value.captureDate
           : null
         : null,
       comment: this.form.value.comment ?? '',
@@ -139,17 +154,47 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       monthExpense11: this.form.value.monthExpense11 ? '11' : null,
       monthExpense12: this.form.value.monthExpense12 ? '12' : null,
     };
-    if (this.expenseNumber.value === null) {
+  }
+
+  edit() {
+    this.spentService2
+      .edit(this.getBody())
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.alert(
+            'success',
+            'Se ha actualizado el gasto ' + this.expenseNumber.value,
+            'Gasto actualizado correctamente'
+          );
+          // if (response && response.data) {
+          //   this.alert(
+          //     'success',
+          //     'Captura de Gastos',
+          //     'Gasto actualizado correctamente'
+          //   );
+          // }
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'No se pudo actualizar el gasto ' + this.expenseNumber.value,
+            'Favor de verificar'
+          );
+        },
+      });
+  }
+
+  save() {
+    if (this.expenseNumber.value) {
+      this.edit();
+    } else {
       this.spentService2
-        .save(body)
+        .save(this.getBody())
         .pipe(take(1))
         .subscribe({
           next: response => {
-            this.alert(
-              'success',
-              'Captura de Gastos',
-              'Gasto creado correctamente'
-            );
+            this.alert('success', 'Se ha creado el gasto', '');
             // if (response && response.data) {
             //   this.alert(
             //     'success',
@@ -159,30 +204,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             // }
           },
           error: err => {
-            this.alert('error', 'Creación de Gasto', err.error.message);
-          },
-        });
-    } else {
-      this.spentService2
-        .edit(body)
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
             this.alert(
-              'success',
-              'Captura de Gastos',
-              'Gasto actualizado correctamente'
+              'error',
+              'No se pudo crear el gasto',
+              'Favor de verificar'
             );
-            // if (response && response.data) {
-            //   this.alert(
-            //     'success',
-            //     'Captura de Gastos',
-            //     'Gasto actualizado correctamente'
-            //   );
-            // }
-          },
-          error: err => {
-            this.alert('error', 'Actualización de Gasto', err.error.message);
           },
         });
     }
@@ -555,51 +581,63 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private validatePaymentCamps(event: IComerExpense) {
     if (!event.clkpv) {
-      this.alert('warning', 'Validación de pagos', 'Requiere clkpv');
+      this.alert('warning', 'Validación de pagos', 'Requiere proveedor');
       return false;
     }
     if (!event.comment) {
-      this.alert('warning', 'Validación de pagos', 'Requiere comment');
+      this.alert('warning', 'Validación de pagos', 'Requiere servicio');
       return false;
     }
     if (!event.comproafmandsae) {
-      this.alert('warning', 'Validación de pagos', 'Requiere comproafmandsae');
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'Requiere comprobantes a nombre'
+      );
       return false;
     }
     if (!event.attachedDocumentation) {
       this.alert(
         'warning',
         'Validación de pagos',
-        'Requiere attachedDocumentation'
+        'Requiere documentación anexa'
       );
       return false;
     }
     if (!event.capturedUser) {
-      this.alert('warning', 'Validación de pagos', 'Requiere capturedUser');
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'Requiere usuario de captura'
+      );
       return false;
     }
     if (!event.authorizedUser) {
-      this.alert('warning', 'Validación de pagos', 'Requiere authorizedUser');
-      return false;
-    }
-    if (!event.capturedUser) {
-      this.alert('warning', 'Validación de pagos', 'Requiere capturedUser');
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'Requiere usuario que autoriza'
+      );
       return false;
     }
     if (!event.requestedUser) {
-      this.alert('warning', 'Validación de pagos', 'Requiere requestedUser');
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'Requiere usuario que solicita'
+      );
       return false;
     }
     if (!event.formPayment) {
-      this.alert('warning', 'Validación de pagos', 'Requiere formPayment');
+      this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
       return false;
     }
     if (!event.eventNumber) {
-      this.alert('warning', 'Validación de pagos', 'Requiere eventNumber');
+      this.alert('warning', 'Validación de pagos', 'Requiere número de evento');
       return false;
     }
     if (!event.lotNumber) {
-      this.alert('warning', 'Validación de pagos', 'Requiere lotNumber');
+      this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
       return false;
     }
     return true;
@@ -613,7 +651,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       return;
     }
     this.conceptNumber.setValue(event.conceptNumber);
-    if (this.validatePaymentCamps(event)) {
+    if (!this.validatePaymentCamps(event)) {
       return;
     }
     const responsePayments = await this.validPayments(event);
@@ -708,7 +746,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   get pathProvider() {
-    return 'interfaceesirsae/api/v1/supplier?filter.clkPv=$eq:45677&sortBy=clkPv:ASC';
+    return (
+      'interfaceesirsae/api/v1/supplier' +
+      (this.clkpv && this.clkpv.value
+        ? '?filter.clkPv=$eq:' + this.clkpv.value + '&sortBy=clkPv:ASC'
+        : '?sortBy=clkPv:ASC')
+    );
   }
 
   get dataCompositionExpenses() {

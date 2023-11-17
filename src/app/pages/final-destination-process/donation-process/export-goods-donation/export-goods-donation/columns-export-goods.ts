@@ -66,6 +66,7 @@ export const COLUMNS_EXPORT_GOODS = {
   cpd: {
     title: 'CPD',
     type: 'custom',
+    filter: false,
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {
@@ -94,6 +95,7 @@ export const COLUMNS_EXPORT_GOODS = {
   adm: {
     title: 'ADM',
     type: 'custom',
+    filter: false,
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {
@@ -122,6 +124,7 @@ export const COLUMNS_EXPORT_GOODS = {
   rda: {
     title: 'RDA',
     type: 'custom',
+    filter: false,
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {

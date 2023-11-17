@@ -143,4 +143,8 @@ export class ComerEventService extends HttpService {
       `${PrepareEventEndpoints.ApplicationValidationLiq}?eventId=${eventId}&batchId=${batchId}`
     );
   }
+
+  faMaxdayValid(body: { date: string; day: number }) {
+    return this.post(`/api/v1/util-comer-v1/faComerMaxdayValid`, body);
+  }
 }

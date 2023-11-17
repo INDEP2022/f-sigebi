@@ -2,13 +2,14 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, of, take } from 'rxjs';
+import { catchError, firstValueFrom, map, of, take } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -46,7 +47,8 @@ export class NumeraireConversionAuctionsComponent
     private sanitizer: DomSanitizer,
     private numerarieService: NumerarieService,
     private eventMService: ComermeventosService,
-    private eventIService: ComerieventosService
+    private eventIService: ComerieventosService,
+    private eventDataService: ComerEventosService
   ) {
     super();
   }
@@ -159,12 +161,16 @@ export class NumeraireConversionAuctionsComponent
           next: response => {
             this.reloadExpenses++;
             this.loader.load = false;
-            this.alert('success', 'Proceso Cálculo terminado', '');
+            this.alert('success', 'Se ha calculado correctamente', '');
           },
           error: err => {
             console.log(err);
             this.loader.load = false;
-            this.alert('error', 'Proceso Cálculo', err.error.message);
+            this.alert(
+              'error',
+              'No se ha podido realizar el cálculo',
+              'Favor de verificar'
+            );
           },
         });
     } else {
@@ -185,7 +191,11 @@ export class NumeraireConversionAuctionsComponent
           .pipe(catchError(x => of(x.error)))
       );
       if (resultBorra.statusCode !== 200) {
-        this.alert('error', 'Proceso Cálculo Parcial', resultBorra.message);
+        this.alert(
+          'error',
+          'No se ha podido calcular parcialmente',
+          resultBorra.message
+        );
         this.loader.load = false;
         return;
       }
@@ -196,14 +206,18 @@ export class NumeraireConversionAuctionsComponent
           .pipe(catchError(x => of(x.error)))
       );
       if (resultParcial.statusCode !== 200) {
-        this.alert('error', 'Proceso Cálculo Parcial', resultParcial.message);
+        this.alert(
+          'error',
+          'No se ha podido calcular parcialmente',
+          resultParcial.message
+        );
         this.loader.load = false;
         return;
       }
 
       this.loader.load = false;
       this.reloadExpenses++;
-      this.alert('success', 'Proceso Cálculo Parcial terminado', '');
+      this.alert('success', 'Se ha calculado parcialmente', '');
     } else {
       this.alert(
         'warning',
@@ -221,14 +235,41 @@ export class NumeraireConversionAuctionsComponent
         .pipe(take(1))
         .subscribe({
           next: response => {
-            this.reloadExpenses++;
-            this.loader.load = false;
-            this.alert('success', 'Proceso Convierte terminado', '');
+            // this.reloadExpenses++;
+            let params = new FilterParams();
+            params.addFilter('id', this.selectedEvent.id);
+            this.eventDataService
+              .getAllEvents(params.getParams())
+              .pipe(
+                take(1),
+                catchError(x => of({ data: [] as IComerEvent[] })),
+                map(x => x.data)
+              )
+              .subscribe({
+                next: response => {
+                  this.loader.load = false;
+                  if (response && response.length > 0) {
+                    this.selectEvent(response[0]);
+                    this.alert('success', 'Se ha convertido correctamente', '');
+                  } else {
+                    this.loader.load = false;
+                    this.alert(
+                      'error',
+                      'Ocurrio un error al actualizar el evento',
+                      'Favor de verificar'
+                    );
+                  }
+                },
+              });
           },
           error: err => {
             console.log(err);
             this.loader.load = false;
-            this.alert('error', 'Proceso Convierte', err.error.message);
+            this.alert(
+              'error',
+              'No se pudo realizar la conversión',
+              'Favor de verificar'
+            );
           },
         });
     } else {
@@ -253,14 +294,14 @@ export class NumeraireConversionAuctionsComponent
           next: response => {
             this.reloadExpenses++;
             this.loader.load = false;
-            this.alert('success', 'Proceso Convierte Parcial terminado', '');
+            this.alert('success', 'Se ha convertido parcialmente', '');
           },
           error: err => {
             console.log(err.error.message);
             this.loader.load = false;
             this.alert(
               'error',
-              'No se pudo hacer la conversión',
+              'No se pudo hacer la conversión parcial',
               'Favor de verificar'
             );
           },

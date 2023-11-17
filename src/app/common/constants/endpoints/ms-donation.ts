@@ -11,6 +11,7 @@ export enum DonationEndPoint {
   ApproveDonation = 'r-approve-donation',
   fdonacDocumAdm1 = 'fdonacDocumAdm1',
   ApproveDnation = 'r-approve-donation',
+  TempDonation = 'tmp-goods-donac',
   GoodsForDonation = 'admon-donation',
   RequestGoodDon = 'donac-request-good/getAllV2',
   DeleteGoodDon = 'donac-request-good',

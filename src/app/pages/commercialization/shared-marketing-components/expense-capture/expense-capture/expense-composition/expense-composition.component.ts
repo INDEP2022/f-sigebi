@@ -15,6 +15,8 @@ import { ExpenseLotService } from '../../services/expense-lot.service';
 import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
 import { COLUMNS } from './columns';
 import { ExpenseCompositionModalComponent } from './expense-composition-modal/expense-composition-modal.component';
+import { MandByGoodsComponent } from './mand-by-goods/mand-by-goods.component';
+import { RejectedGoodsComponent } from './rejected-goods/rejected-goods.component';
 
 @Component({
   selector: 'app-expense-composition',
@@ -236,6 +238,11 @@ export class ExpenseCompositionComponent
     if (!this.dataService) {
       return;
     }
+    this.amount = 0;
+    this.vat = 0;
+    this.isrWithholding = 0;
+    this.vatWithholding = 0;
+    this.total = 0;
     this.loading = true;
     let params = this.getParams();
     this.dataService
@@ -253,11 +260,11 @@ export class ExpenseCompositionComponent
           if (response && response.data && response.data.length > 0) {
             console.log(response.data);
             this.data = response.data.map(row => {
-              this.amount += row.amount2 ? +row.amount2 : 0;
+              this.amount += row.amount ? +row.amount : 0;
               this.vat += row.iva2 ? +row.iva2 : 0;
               this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
               this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
-              this.total += row.total2 ? +row.total2 : 0;
+              this.total += row.total ? +row.total : 0;
               return {
                 ...row,
                 V_VALCON_ROBO: this.expenseCaptureDataService.V_VALCON_ROBO,
@@ -637,8 +644,38 @@ export class ExpenseCompositionComponent
     if (this.expenseCaptureDataService.P_MANDCONTIPO === 'N') {
       this.MAND_CONTA();
     } else {
-      this.MANDA_CONTA_TPBIEN();
+      let filterGoodNumber = this.data.filter(row => row.goodNumber);
+      if (filterGoodNumber.length > 0) {
+        this.MANDA_CONTA_TPBIEN();
+      } else {
+        this.alert(
+          'warning',
+          'Para procesar la contabilidad en este concepto se requiere capturar bienes',
+          ''
+        );
+      }
     }
+  }
+
+  private showViewMandatos() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      spentId: this.expenseCaptureDataService.data.expenseNumber,
+      callback: (next: boolean) => {},
+    };
+    this.modalService.show(MandByGoodsComponent, modalConfig);
+    // this.openModalSelect(
+    //   {
+    //     title: 'Partidas por Mandato',
+    //     columnsType: { ...MAND_COLUMNS },
+    //     service: this.deliveryService,
+    //     dataObservableListParamsFn: this.deliveryService.getByGoodId,
+    //     searchFilter: null,
+    //     showError: false,
+    //     initialCharge: true,
+    //   },
+    //   this.selectActa
+    // );
   }
 
   private MANDA_CONTA_TPBIEN() {
@@ -653,6 +690,7 @@ export class ExpenseCompositionComponent
           if (response) {
             this.expenseCaptureDataService.P_CAMBIO = 0;
             //show view mandatos
+            this.showViewMandatos();
           }
         },
         error: err => {
@@ -673,6 +711,7 @@ export class ExpenseCompositionComponent
           if (response) {
             this.expenseCaptureDataService.P_CAMBIO = 0;
             //show view mandatos
+            this.showViewMandatos();
           }
         },
         error: err => {
@@ -713,11 +752,18 @@ export class ExpenseCompositionComponent
         next: response => {
           if (response) {
             console.log(response);
-            this.alert(
-              'info',
-              'Bienes que no pertenecen a la unidad responsable ligada al concepto seleccionado...',
-              ''
-            );
+            if (response && response.resData) {
+              const modalConfig = MODAL_CONFIG;
+              modalConfig.initialState = {
+                data: response.resData,
+                callback: (next: boolean) => {},
+              };
+              this.modalService.show(RejectedGoodsComponent, modalConfig);
+            } // this.alert(
+            //   'info',
+            //   'Bienes que no pertenecen a la unidad responsable ligada al concepto seleccionado...',
+            //   ''
+            // );
           }
         },
         error: err => {
