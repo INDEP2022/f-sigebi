@@ -196,11 +196,7 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
         .subscribe({
           next: data => {
             console.log(data);
-            this.onLoadToast(
-              'success',
-              'Bien Asignado',
-              'Actualizado Correctamente'
-            );
+            this.onLoadToast('success', 'Se ha actualizado el bien', '');
             this.refresh.emit(true);
             this.modalRef.hide();
             //location.reload();
@@ -227,7 +223,7 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
             console.log(data);
             this.onLoadToast(
               'success',
-              'Bien Asignado',
+              'Se ha asignado un Bien',
               'Agregado Correctamente'
             );
             this.refresh.emit(true);
