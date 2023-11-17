@@ -24,7 +24,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class EventTProcessFormComponent extends BasePage implements OnInit {
-  title: string = 'Proceso';
+  title: string = 'proceso';
   edit: boolean = false;
 
   comerEventRlForm: ModelForm<IComerTpEventFull>;
@@ -103,8 +103,8 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.min(0), Validators.max(99)],
       ],
-      topost: [null],
-      warrantyDate: [null, []],
+      topost: [null, [Validators.required]],
+      warrantyDate: [null, [Validators.required]],
     });
 
     if (this.comerEvent != null) {
@@ -212,8 +212,10 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit
+      ? 'se ha actualizado'
+      : 'ha sido guardado';
+    this.onLoadToast('success', `El ${this.title} ${message}`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
