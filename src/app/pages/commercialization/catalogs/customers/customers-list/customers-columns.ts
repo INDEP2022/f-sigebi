@@ -2,7 +2,7 @@ import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/f
 
 export const CUSTOMERS_COLUMNS = {
   id: {
-    title: 'Clave Cliente',
+    title: 'Cve. Cliente',
     sort: false,
   },
   reasonName: {
@@ -42,7 +42,7 @@ export const CUSTOMERS_COLUMNS = {
     sort: false,
   },
   sellerId: {
-    title: 'Clave Vendedor',
+    title: 'Cve. Vendedor',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value ? value.id : value;
@@ -77,26 +77,19 @@ export const CUSTOMERS_COLUMNS = {
     sort: false,
   },
   municipalityId: {
-    title: 'Clave Municipal',
+    title: 'Cve. Municipal',
     sort: false,
   },
   stateId: {
-    title: 'Clave Estatal',
+    title: 'Cve. Estatal',
     sort: false,
   },
   blackListDate: {
     title: 'Fecha de Lista Negra',
     sort: false,
-    valuePrepareFunction: (date: any) => {
-      const dateObject = typeof date === 'string' ? new Date(date) : date;
-      if (dateObject instanceof Date && !isNaN(dateObject.getTime())) {
-        const day = dateObject.getDate().toString().padStart(2, '0');
-        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
-        const year = dateObject.getFullYear();
-        return `${day}/${month}/${year}`;
-      } else {
-        return date;
-      }
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -106,16 +99,9 @@ export const CUSTOMERS_COLUMNS = {
   releaseDate: {
     title: 'Fecha de Liberación',
     sort: false,
-    valuePrepareFunction: (date: any) => {
-      const dateObject = typeof date === 'string' ? new Date(date) : date;
-      if (dateObject instanceof Date && !isNaN(dateObject.getTime())) {
-        const day = dateObject.getDate().toString().padStart(2, '0');
-        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
-        const year = dateObject.getFullYear();
-        return `${day}/${month}/${year}`;
-      } else {
-        return date;
-      }
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -123,7 +109,7 @@ export const CUSTOMERS_COLUMNS = {
     },
   },
   penaltyId: {
-    title: 'Clave de Penalización',
+    title: 'Cve. de Penalización',
     sort: false,
   },
   personType: {
@@ -139,18 +125,11 @@ export const CUSTOMERS_COLUMNS = {
     sort: false,
   },
   freeDate: {
-    title: 'Fecha Libera',
+    title: 'Fecha Liberado',
     sort: false,
-    valuePrepareFunction: (date: any) => {
-      const dateObject = typeof date === 'string' ? new Date(date) : date;
-      if (dateObject instanceof Date && !isNaN(dateObject.getTime())) {
-        const day = dateObject.getDate().toString().padStart(2, '0');
-        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
-        const year = dateObject.getFullYear();
-        return `${day}/${month}/${year}`;
-      } else {
-        return date;
-      }
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -162,7 +141,7 @@ export const CUSTOMERS_COLUMNS = {
     sort: false,
   },
   economicAgreementKey: {
-    title: 'Clave de Actividad Económica',
+    title: 'Cve. de Actividad Económica',
     sort: false,
   },
   identificationType: {
@@ -174,7 +153,7 @@ export const CUSTOMERS_COLUMNS = {
     sort: false,
   },
   agentId: {
-    title: 'Clave de Representante',
+    title: 'Cve. de Representante',
     sort: false,
   },
   outsideNumber: {
@@ -212,16 +191,9 @@ export const CUSTOMERS_COLUMNS = {
   penaltyInitDate: {
     title: 'Fecha Inicial de Penalización',
     sort: false,
-    valuePrepareFunction: (date: any) => {
-      const dateObject = typeof date === 'string' ? new Date(date) : date;
-      if (dateObject instanceof Date && !isNaN(dateObject.getTime())) {
-        const day = dateObject.getDate().toString().padStart(2, '0');
-        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
-        const year = dateObject.getFullYear();
-        return `${day}/${month}/${year}`;
-      } else {
-        return date;
-      }
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',

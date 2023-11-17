@@ -42,4 +42,8 @@ export class ExpedientSamiService extends HttpService {
   getexpedient(params: any) {
     return this.get(ExpedientEndpoints.expedientePrueba, params);
   }
+
+  getApplicationRegisterCount(params: _Params) {
+    return this.get(ExpedientEndpoints.ApplicationRegisterCount, params);
+  }
 }
