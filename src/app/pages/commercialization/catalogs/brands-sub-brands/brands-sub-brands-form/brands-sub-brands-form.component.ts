@@ -15,7 +15,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   brandsSubBrandsForm: ModelForm<IBrand>;
   brandsSubBrands: IBrand;
-  title: string = 'Marca';
+  title: string = 'marca';
   edit: boolean = false;
 
   constructor(
@@ -90,8 +90,10 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Marca Actualizada' : 'Marca Creada';
-    this.alert('success', `${message} Correctamente`, '');
+    const message: string = this.edit
+      ? 'ha sido actualizada'
+      : 'ha sido creada';
+    this.alert('success', `La ${this.title} ${message}`, '');
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }

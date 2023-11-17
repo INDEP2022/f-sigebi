@@ -1,6 +1,6 @@
 export const COLUMNS = {
   id: {
-    title: 'Id.',
+    title: 'Id',
     sort: false,
   },
   accountKey: {
@@ -20,11 +20,11 @@ export const COLUMNS = {
     sort: false,
   },
   bankKey: {
-    title: 'Clave del Banco',
+    title: 'Cve. del Banco',
     sort: false,
   },
   registryNumber: {
-    title: 'Número de Registro',
+    title: 'No. de Registro',
     sort: false,
   },
 };

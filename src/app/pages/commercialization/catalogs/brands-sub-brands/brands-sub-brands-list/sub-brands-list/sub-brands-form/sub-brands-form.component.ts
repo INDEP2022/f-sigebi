@@ -77,7 +77,7 @@ export class SubBrandsFormComponent extends BasePage implements OnInit {
         this.handleSuccess(), this.modalRef.hide();
       },
       error: (error: any) => {
-        this.alert('warning', `No es Posible Actualizar la Submarca`, '');
+        this.alert('warning', `No es posible actualizar la submarca`, '');
         this.modalRef.hide();
       },
     });
@@ -85,8 +85,8 @@ export class SubBrandsFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = 'Submarca Actualizada';
-    this.alert('success', `${message} Correctamente`, '');
+    const message: string = 'La submarca ha sido actualizada';
+    this.alert('success', `${message}`, '');
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }

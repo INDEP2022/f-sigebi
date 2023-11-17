@@ -2,13 +2,14 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, of, take } from 'rxjs';
+import { catchError, firstValueFrom, map, of, take } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -46,7 +47,8 @@ export class NumeraireConversionAuctionsComponent
     private sanitizer: DomSanitizer,
     private numerarieService: NumerarieService,
     private eventMService: ComermeventosService,
-    private eventIService: ComerieventosService
+    private eventIService: ComerieventosService,
+    private eventDataService: ComerEventosService
   ) {
     super();
   }
@@ -233,10 +235,32 @@ export class NumeraireConversionAuctionsComponent
         .pipe(take(1))
         .subscribe({
           next: response => {
-            this.reloadExpenses++;
-            this.selectedExpenseData = null;
-            this.loader.load = false;
-            this.alert('success', 'Se ha convertido correctamente', '');
+            // this.reloadExpenses++;
+            let params = new FilterParams();
+            params.addFilter('id', this.selectedEvent.id);
+            this.eventDataService
+              .getAllEvents(params.getParams())
+              .pipe(
+                take(1),
+                catchError(x => of({ data: [] as IComerEvent[] })),
+                map(x => x.data)
+              )
+              .subscribe({
+                next: response => {
+                  this.loader.load = false;
+                  if (response && response.length > 0) {
+                    this.selectEvent(response[0]);
+                    this.alert('success', 'Se ha convertido correctamente', '');
+                  } else {
+                    this.loader.load = false;
+                    this.alert(
+                      'error',
+                      'Ocurrio un error al actualizar el evento',
+                      'Favor de verificar'
+                    );
+                  }
+                },
+              });
           },
           error: err => {
             console.log(err);

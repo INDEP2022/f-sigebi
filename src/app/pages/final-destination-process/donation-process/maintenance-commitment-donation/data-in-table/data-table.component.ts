@@ -12,6 +12,7 @@ import { IRapproveDonation } from 'src/app/core/models/ms-r-approve-donation/r-a
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
+import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { RapproveDonationService } from 'src/app/core/services/ms-r-approve-donation/r-approve-donation.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -54,7 +55,8 @@ export class DataTableComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private fb: FormBuilder,
     private dynamicCatalogsService: DynamicCatalogsService,
-    private goodSssubtypeService: GoodSssubtypeService
+    private goodSssubtypeService: GoodSssubtypeService,
+    private donationService: DonationService
   ) {
     super();
     // this.settings = { ...this.settings, actions: false };
@@ -65,7 +67,7 @@ export class DataTableComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         add: false,
         position: 'right',
       },
@@ -133,12 +135,31 @@ export class DataTableComponent extends BasePage implements OnInit {
               case 'unit':
                 searchFilter = SearchFilter.ILIKE;
                 break;
+              case 'yes' || 'not':
+                searchFilter = SearchFilter.IN;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (['yes', 'not'].includes(filter.field)) {
+                if (filter.field == 'not') {
+                  if (!filter.search) {
+                    this.columnFilters[field] = '1';
+                  } else {
+                    this.columnFilters[field] = '0';
+                  }
+                } else {
+                  if (!filter.search) {
+                    this.columnFilters[field] = '0';
+                  } else {
+                    this.columnFilters[field] = '1';
+                  }
+                }
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -201,12 +222,32 @@ export class DataTableComponent extends BasePage implements OnInit {
               case 'amount':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'yes' || 'not':
+                searchFilter = SearchFilter.IN;
+                break;
+
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (['yes', 'not'].includes(filter.field)) {
+                if (filter.field == 'not') {
+                  if (!filter.search) {
+                    this.columnFilters[field] = '1';
+                  } else {
+                    this.columnFilters[field] = '0';
+                  }
+                } else {
+                  if (!filter.search) {
+                    this.columnFilters[field] = '0';
+                  } else {
+                    this.columnFilters[field] = '1';
+                  }
+                }
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -248,7 +289,23 @@ export class DataTableComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (['yes', 'not'].includes(filter.field)) {
+                if (filter.field == 'not') {
+                  if (!filter.search) {
+                    this.columnFilters[field] = 'S';
+                  } else {
+                    this.columnFilters[field] = 'N';
+                  }
+                } else {
+                  if (!filter.search) {
+                    this.columnFilters[field] = 'N';
+                  } else {
+                    this.columnFilters[field] = 'S';
+                  }
+                }
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -274,7 +331,20 @@ export class DataTableComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     params['filter.ruleId'] = `$eq:${this.type}`;
-    //params.getValue()['filter.labelId'] = `$eq:${this.type}`;
+
+    if (params['filter.yes'] || params['filter.not']) {
+      let arr = [];
+      if (params['filter.yes']) arr.push(params['filter.yes']);
+      if (params['filter.not']) arr.push(params['filter.not']);
+
+      delete params['filter.yes'];
+      delete params['filter.not'];
+
+      params['filter.valid'] = `$in:${arr.join(',')}`;
+    } else {
+      delete params['filter.valid'];
+    }
+
     console.log('params 1 -> ', params);
     this.rapproveDonationService.getAllT(params).subscribe({
       next: response => {
@@ -303,6 +373,9 @@ export class DataTableComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.log(error);
+        this.dataTable1.load([]);
+        this.dataTable1.refresh();
+        this.totalItems = 0;
         this.loading = false;
       },
     });
@@ -314,6 +387,18 @@ export class DataTableComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    if (params['filter.yes'] || params['filter.not']) {
+      let arr = [];
+      if (params['filter.yes']) arr.push(params['filter.yes']);
+      if (params['filter.not']) arr.push(params['filter.not']);
+
+      delete params['filter.yes'];
+      delete params['filter.not'];
+
+      params['filter.abbreviation'] = `$in:${arr.join(',')}`;
+    } else {
+      delete params['filter.abbreviation'];
+    }
     this.tvalTable1Service.getAlls2(params).subscribe({
       next: response => {
         console.log('data tracer ', response);
@@ -403,6 +488,72 @@ export class DataTableComponent extends BasePage implements OnInit {
           resolve(null);
         },
       });
+    });
+  }
+
+  deleteAlert(data: any, filter: any) {
+    console.log('data', data);
+    this.alertQuestion(
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (filter == 4) {
+          const model = {} as any;
+          (model.nmtable = 421), (model.otkey = Number(data.otkey));
+          model.otvalor = data.value;
+          model.registerNumber = 0;
+          model.abbreviation = data.valid;
+
+          console.log('data update 4-> ', model);
+
+          this.dynamicCatalogsService.deleteTvalTable1(model).subscribe({
+            next: data => {
+              this.alert(
+                'success',
+                'Permiso a usuario eliminado correctamente',
+                ''
+              );
+              this.getTracker();
+            },
+            error: err => {
+              let error = '';
+              this.alert(
+                'error',
+                'Ha ocurrido un error al intentar eliminar el permiso a usuario',
+                error
+              );
+            },
+          });
+        } else {
+          const model = {} as any;
+          model.labelId = Number(data.labelId.id);
+          model.status = data.status;
+          // model.desStatus = data.desStatus;
+          model.transfereeId = Number(data.transfereeId);
+          // model.desTrans = data.keyCode;
+          model.clasifId = Number(data.clasifId);
+          // model.desClasif = data.desClasif;
+          model.unit = data.unit;
+          model.ruleId = Number(data.ruleId);
+          model.valid = Number(data.valid);
+          this.donationService.deleteApproveDonation(model).subscribe({
+            next: data => {
+              this.alert('success', 'Registro eliminado correctamente', '');
+              this.getForeignTrade();
+            },
+            error: err => {
+              let error = '';
+              this.alert(
+                'error',
+                'Ha ocurrido un error al intentar eliminar el registro',
+                error
+              );
+            },
+          });
+        }
+      }
     });
   }
 }

@@ -64,6 +64,17 @@ export const COLUMNS_OTHER_TRANS = {
         data.row.to = data.toggle;
       });
     },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
     sort: false,
   },
   not: {
@@ -75,6 +86,17 @@ export const COLUMNS_OTHER_TRANS = {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });
+    },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     sort: false,
   },

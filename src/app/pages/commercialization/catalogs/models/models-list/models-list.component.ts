@@ -54,7 +54,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'modelComment':
                 searchFilter = SearchFilter.ILIKE;
@@ -128,7 +128,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
     this.modelServices.remove(id).subscribe({
       next: () => {
         this.getModels();
-        this.alert('success', 'Modelo Borrado Correctamente', '');
+        this.alert('success', 'El modelo ha sido eliminado', '');
       },
     });
   }
