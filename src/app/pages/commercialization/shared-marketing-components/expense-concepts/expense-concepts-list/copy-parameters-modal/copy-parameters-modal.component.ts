@@ -11,6 +11,7 @@ import { BasePage } from 'src/app/core/shared';
 export class CopyParametersConceptsModalComponent extends BasePage {
   form: FormGroup;
   conceptId: string;
+  address: string;
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
     this.form = this.fb.group({
@@ -20,6 +21,14 @@ export class CopyParametersConceptsModalComponent extends BasePage {
 
   changeValue(event: any) {
     console.log(event, this.form.value);
+  }
+
+  get path() {
+    return (
+      'comerconcepts/api/v1/concepts/getIdConcept?filter.direccion=$in:' +
+      this.address +
+      ',C'
+    );
   }
 
   close() {
