@@ -360,8 +360,8 @@ export class RegistrationOfInterestModalComponent
             this.loading = false;
             this.onLoadToast(
               'success',
-              'Registro de Interés',
-              'Borrado Correctamente'
+              'El registro de interés ha sido eliminado',
+              ''
             );
             this.getExample();
           },

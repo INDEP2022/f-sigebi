@@ -7,7 +7,7 @@ export const EVENT_COLUMNS = {
     sort: false,
   },
   eatEventDetail: {
-    title: 'Clave Procedimiento',
+    title: 'Cve. Procedimiento',
     // type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {

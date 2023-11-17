@@ -204,6 +204,57 @@
 
     <hr />
 
+    <div class="row margin-input">
+      <form [formGroup]="form2" class="form-material">
+        <div class="col-md-4">
+          <label
+            for=""
+            style="font-size: 10px; font-weight: 600; color: #74788d"
+            >Cargar Expedientes (csv)</label
+          >
+          <form-field [control]="form2.get('fileCsv')">
+            <input
+              type="file"
+              accept=".csv"
+              formControlName="fileCsv"
+              (change)="chargeFileCsv($event)" />
+            <!--<input type="file" class="form-control" formControlName="file" />-->
+          </form-field>
+        </div>
+        <div class="col-md-2 mt-5">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            [disabled]="!validCsv"
+            (click)="formatTableCsv()">
+            Cargar
+          </button>
+        </div>
+        <div class="col-md-4">
+          <label
+            for=""
+            style="font-size: 10px; font-weight: 600; color: #74788d"
+            >Cargar Expedientes (xls)</label
+          >
+          <form-field [control]="form2.get('fileXls')">
+            <input
+              type="file"
+              accept=".xlsx"
+              formControlName="fileXls"
+              (change)="chargeFileXls($event)" />
+            <!--<input type="file" class="form-control" formControlName="file" />-->
+          </form-field>
+        </div>
+        <div class="col-md-2 mt-5">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            [disabled]="!validXls"
+            (click)="formatTableXls()">
+            Cargar
+          </button>
+        </div>
+      </form>
+    </div>
+
     <div class="row margin-input pt-4">
       <form [formGroup]="formCargaMasiva" class="form-material">
         <!-- <form-field
@@ -437,10 +488,8 @@
               [settings]="tableSettings"
               (userRowSelect)="rowsSelected($event)"
               [source]="dataTable2"></ng2-smart-table>
-          </div>
-          <div>
             <app-pagination
-              [params]="params"
+              [params]="paramsXls ? paramsXls : params"
               [totalItems]="totalItems"></app-pagination>
           </div>
         </div>

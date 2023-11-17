@@ -73,7 +73,7 @@ export class CustomersPenalitiesFormComponent
   }
 
   handleSuccess() {
-    this.alert('success', 'Cliente', `Liberado Correctamente`);
+    this.alert('success', 'Cliente', `El cliente ha sido liberado`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
