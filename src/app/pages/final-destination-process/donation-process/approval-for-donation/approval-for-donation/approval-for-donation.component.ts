@@ -287,8 +287,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             console.log(m);
             m['userAndName'] = m.id + '-' + m.name;
           });
-          console.log(data[0]);
-          // this.user = data[0]
+
           this.form.get('elaborated').patchValue(data[0]);
         }
         this.users$ = new DefaultSelect(response.data, response.count);
