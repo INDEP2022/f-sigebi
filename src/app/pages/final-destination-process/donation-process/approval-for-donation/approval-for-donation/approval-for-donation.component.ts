@@ -12,6 +12,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { IExportDetail } from 'src/app/core/models/ms-donation/donation.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -58,6 +59,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   userName: string = '';
   to: string = '';
   from: string = '';
+  body: IExportDetail;
   edit = false;
   fileNumber: number = 0;
   event: any[] = [];
@@ -559,16 +561,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     console.log(event.data);
   }
 
-  getEventComDonationExcel(cveAct?: string | number) {
+  getEventComDonationExcel(body: IExportDetail) {
     this.loading = true;
-    this.params2.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
-    let params = {
-      ...this.params2.getValue(),
-    };
-    this.donationService.getExcel().subscribe({
+    this.donationService.getExcel(body).subscribe({
       next: response => {
         this.downloadDocument(
-          'Aprobación para Donación',
+          'Detalle de Eventos Donación',
           'excel',
           response.base64File
         );
@@ -716,28 +714,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   exportAll(): void {
-    //this.loading = true;
-    const state = this.status ? this.status : '';
-    const cveAc = this.cveEvent;
-    const noDelegation1 = this.form.get('noDelegation1').value
-      ? this.form.get('noDelegation1').value
-      : '';
-    const elaborated = this.form.get('elaborated').value
-      ? this.form.get('elaborated').value
-      : '';
-    // this.getEventComDonationExcel(
-    //   'COMPDON',
-    //   state,
-    //   cveAc,
-    //   noDelegation1,
-    //   elaborated
-    // );
-    this.getEventComDonationExcel(
-      //'COMPDON',
-      cveAc
-      //noDelegation1,
-      //elaborated
-    );
+    this.body = {
+      recordId: Number(this.actaId),
+      typeActa: 'COMPDON',
+      delegationId: Number(localStorage.getItem('noDelegation1')),
+      nombre_transferente: null,
+    };
+
+    this.getEventComDonationExcel(this.body);
   }
 
   //Descargar Excel
