@@ -26,6 +26,7 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { APPROVAL_COLUMNS, GOOD_COLUMNS } from './approval-columns';
+
 export type IGoodAndAvailable = IGood & {
   available: boolean;
   selected: boolean;
@@ -169,7 +170,23 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'captureDate':
-                searchFilter = SearchFilter.EQ;
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;
+              case 'closeDate':
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;
+              case 'estatusAct':
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'noDelegation1':
                 searchFilter = SearchFilter.EQ;
@@ -183,20 +200,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             }
 
             if (filter.search !== '') {
-              if (filter.field == 'captureDate') {
-                var fecha1 = filter.search;
-                var ano1 = fecha1.getFullYear();
-                var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
-                var dia1 = ('0' + fecha1.getDate()).slice(-2);
-                var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
-                this.columnFilters[
-                  field
-                ] = `${searchFilter}:${fechaFormateada1}`;
-              } else {
-                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              }
-
-              //this.params.value.page = 1;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
@@ -246,6 +250,17 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       });
 
     this.inicialice();
+  }
+  formatDate(dateString: string): string {
+    if (dateString === '') {
+      return '';
+    }
+
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${year}-${month}-${day}`;
   }
 
   initForm() {
