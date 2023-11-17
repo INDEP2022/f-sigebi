@@ -45,7 +45,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
   //Opción de armar clave
-  assembleKeybool: boolean = true;
+  assembleKeybool: boolean = false;
 
   //Número de acta
   idProceeding: string = null;
@@ -87,6 +87,9 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   GSt_rec_adm: string;
 
   //NAVEGACIÓN DE ACTAS
+  isNewProceeding = true;
+  loadingProcedure = false;
+  loadingTable = false;
   paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsNavigate: number = 0;
   newLimitparamsActNavigate = new FormControl(1);
@@ -132,6 +135,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.loadingProcedure);
     this.initForm();
     this.initializesForm();
     this.buttonToggle();
@@ -141,6 +145,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
+        console.log('Llama');
         this.qParams.origin = params['origin'];
         this.qParams.expedient = params['NO_EXPEDIENTE_F'];
         this.qParams.type = params['TIPO_DICTA_F'];
@@ -322,6 +327,8 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   }
 
   searchDataExp() {
+    this.loadingProcedure = true;
+    this.loadingTable = true;
     this.searchDataByExp();
   }
   //DESACTIVAR CAMPOS CUANDO EL ACTA ESTA CERRADAS
@@ -352,6 +359,8 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         this.searchGoodsByExp();
       },
       err => {
+        this.loadingProcedure = false;
+        this.loadingTable = false;
         console.log(err);
       }
     );
@@ -374,13 +383,20 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
+
         this.idProceeding = JSON.parse(JSON.stringify(res['data'][0])).id;
         this.totalItemsNavigate = res.count;
         this.fillIncomeProceeding(res['data'][0]);
         this.searchGoodsInDetailProceeding();
         this.navigateProceedings = true;
+        this.isNewProceeding = false;
+        this.assembleKeybool = false;
+        this.loadingProcedure = false;
       },
       err => {
+        this.isNewProceeding = true;
+        this.assembleKeybool = true;
+        this.loadingProcedure = false;
         console.log(err);
       }
     );
@@ -417,8 +433,11 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         console.log(res);
         this.dataGoods.load(res.data);
         this.totalItems = res.count;
+        this.loadingTable = false;
       },
       err => {
+        this.loadingTable = false;
+        this.alert('warning', 'No se encontraron bienes', '');
         console.log(err);
       }
     );
@@ -483,6 +502,8 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  //TRAER DELEGACION QUE ADMINISTRA
 
   //FUNCION DE AGREGAR CEROS AL FOLIO
   zeroAdd(number: number, lengthS: number) {
@@ -563,4 +584,24 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   }
 
   unsubscribeFn() {}
+
+  //LIMPIAR
+  resetTableDataGoods() {
+    this.dataGoods.load([]);
+    this.totalItems = 0;
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+  }
+
+  resetTableDataGoodsAct() {
+    this.dataGoodsAct.load([]);
+    this.totalItems2 = 0;
+    this.params2 = new BehaviorSubject<ListParams>(new ListParams());
+  }
+
+  clearForm() {
+    this.assembleKeybool = false;
+    this.actForm.reset();
+    this.resetTableDataGoods();
+    this.resetTableDataGoodsAct();
+  }
 }
