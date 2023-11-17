@@ -266,8 +266,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   initForm() {
     this.form = this.fb.group({
       cveActa: [null, [Validators.required]],
-      from: ['', []],
-      to: ['', []],
+      captureDate: ['', []],
+      closeDate: ['', []],
       estatusAct: ['', []],
       noDelegation1: [null],
       elaborated: [null, []],
