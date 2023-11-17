@@ -10,7 +10,12 @@
       Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
     </button>
   </div>
-  <app-columns-select [(settings)]="settings" class="mx-1" [leftList]="true">
+
+  <app-columns-select
+    *ngIf="this.type != 4"
+    [(settings)]="settings"
+    class="mx-1"
+    [leftList]="true">
   </app-columns-select>
 </div>
 
@@ -20,6 +25,7 @@
       [attr.class]="'table-bordered'"
       [settings]="settings"
       (edit)="loadModal(true, $event)"
+      (delete)="deleteAlert($event.data, this.type)"
       [source]="dataTable1">
     </ng2-smart-table>
   </div>

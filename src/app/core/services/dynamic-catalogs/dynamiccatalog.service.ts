@@ -49,4 +49,8 @@ export class DynamicCatalogsService extends HttpService {
   getDistinic(params: ListParams) {
     return this.get(DinamicCatalogEndPoints.GetDistinic, params);
   }
+
+  deleteTvalTable1(params: any) {
+    return this.delete(DinamicCatalogEndPoints.GetTvaltable1, params);
+  }
 }

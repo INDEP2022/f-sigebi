@@ -1,4 +1,4 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxElementComponent_ } from './CheckboxDisabled';
 export const COLUMNS_USER_PERMISSIONS = {
   otvalor: {
     title: 'Usuario',
@@ -13,22 +13,46 @@ export const COLUMNS_USER_PERMISSIONS = {
   yes: {
     title: 'S',
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    // filter: false,
+    renderComponent: CheckboxElementComponent_,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });
+    },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     sort: false,
   },
   not: {
     title: 'N',
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    // filter: false,
+    renderComponent: CheckboxElementComponent_,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });
+    },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     sort: false,
   },

@@ -20,6 +20,7 @@ import { CONSULTATION_ROUTES } from '../common/routes/siab-web/consultation.rout
 import { INDICATORS_ROUTES } from '../common/routes/siab-web/indicators.routes';
 import { MAINTENANCE_ROUTES } from '../common/routes/siab-web/maintenance.routes';
 import { PARAMETRIZATION_ROUTES } from '../common/routes/siab-web/parametrization.routes';
+import { REPORTS_ROUTES } from '../common/routes/siab-web/reports.routes';
 import { SAMI_ROUTES } from '../common/routes/siab-web/simi.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
@@ -72,6 +73,7 @@ export const MENU: IMenuItem[] = [
       ...CONSULTATION_ROUTES,
       ...CLAIMS_CONTROL_ROUTES,
       ...MAINTENANCE_ROUTES,
+      ...REPORTS_ROUTES,
     ],
   },
   /*SAMI ROUTES*/

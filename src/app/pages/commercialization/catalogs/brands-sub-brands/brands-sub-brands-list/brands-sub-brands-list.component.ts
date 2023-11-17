@@ -51,7 +51,7 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'brandDescription':
                 searchFilter = SearchFilter.ILIKE;
@@ -113,7 +113,7 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar esta Marca?'
+      '¿Desea eliminar esta marca?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(brandsSubBrands.id);
@@ -125,12 +125,12 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     this.brandService.remove(id).subscribe({
       next: () => {
         this.getDeductives();
-        this.alert('success', 'Marca Borrada Correctamente', '');
+        this.alert('success', 'La marca ha sido eliminada', '');
       },
       error: err => {
         this.alert(
           'warning',
-          'No se Puede Eliminar la Marca Porque se Encuentra Registrada en Otra Tabla',
+          'No se puede eliminar la marca porque se encuentra registrada en otra tabla',
           ''
         );
       },

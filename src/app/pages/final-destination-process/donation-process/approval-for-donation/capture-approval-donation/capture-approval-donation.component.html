@@ -32,11 +32,6 @@
                     formControlName="type"
                     readonly />
                 </form-field>
-                <!-- <form-field [control]="regisForm.get('type')" label="Tipo">
-                  <ng-select formControlName="type" class="form-control pt-1" readonly>
-                    <ng-option value="COMPDON">COMPDON</ng-option>
-                  </ng-select>
-                </form-field> -->
               </div>
             </div>
 
@@ -58,10 +53,6 @@
           <div class="row mt-3">
             <div class="col-md-2">
               <div class="mb-3 pl-4 pr-4">
-                <!-- <form-field [control]="regisForm.get('year')" label="Año">
-                  <input type="text" class="form-control" [bsConfig]="bsConfigToYear" #dp="bsDatepicker"
-                    formControlName="year" bsDatepicker [(bsValue)]="bsValueToYear" />
-                </form-field> -->
                 <form-field [control]="regisForm.get('year')" label="Año">
                   <input
                     #inputValue
@@ -169,25 +160,29 @@
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="0" />
+                            value="1"
+                            (change)="enableButtons()" />
                         </form-radio>
                         <form-radio label="Com. Exterior KG">
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="1" />
+                            value="2"
+                            (change)="enableButtons()" />
                         </form-radio>
                         <form-radio label="Delitos Federales">
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="2" />
+                            value="3"
+                            (change)="enableButtons()" />
                         </form-radio>
                         <form-radio label="Otros Trans.">
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="3" />
+                            value="4"
+                            (change)="enableButtons()" />
                         </form-radio>
                       </div>
                     </div>
@@ -199,25 +194,29 @@
           <div class="row m-3">
             <div class="col-4"></div>
             <div class="col-md-12 text-center">
-              <!-- <button
+              <button
                 class="btn btn-secondary btn-sm active me-2"
-                (click)="validaGood()">
+                (click)="validaGood()"
+                [disabled]="dataDetailDonationGood">
                 Valida Bienes <i class="bx bx-check float-icon"></i>
-              </button> -->
+              </button>
               <button
                 class="btn btn-success btn-sm active me-2"
                 type="button"
+                [disabled]="!radio"
                 (click)="exportToExcel()">
                 Exportar a Excel
                 <i class="bx bx-download float-icon"></i>
               </button>
               <button
+                [disabled]="!bienesVaild"
                 class="btn btn-primary btn-sm active me-2"
                 (click)="ubicaGood()">
                 Consulta Bienes
                 <i class="bx bx-search float-icon"></i>
               </button>
               <button
+                [disabled]="!radio"
                 class="btn btn-info active btn-sm active"
                 (click)="findRast()">
                 Rastreador de Bienes&nbsp;
@@ -255,7 +254,7 @@
             <div class="row">
               <div class="d-flex justify-content-end mb-2">
                 <app-columns-select
-                  [(settings)]="settings"></app-columns-select>
+                  [(settings)]="settings2"></app-columns-select>
               </div>
             </div>
             <div class="row">
@@ -310,7 +309,7 @@
           </div>
         </div>
       </div>
-      <div class="row p-3">
+      <!-- <div class="row p-3">
         <div class="col-md-3"></div>
         <div class="row mt-12 d-flex justify-content-center">
           <div class="col-md-12">
@@ -334,7 +333,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div footer>
         <div class="d-flex justify-content-center">

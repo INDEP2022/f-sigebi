@@ -14,20 +14,31 @@
     </div>
     <app-card [header]="false">
       <div body>
-        <div class="row">
-          <div class="col-6">
+        <div class="row m-0">
+          <!-- <div class="col-6">
             <button
               *ngIf="!readonly"
               (click)="openModalCreate()"
-              [disabled]="!haveParams"
+              [disabled]="!conceptId"
               type="button"
               tooltip="Nuevo"
               containerClass="tooltip-style"
               class="btn btn-info btn-sm active ml-2 mr-2">
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-          </div>
-          <div class="col-6 d-flex justify-content-end">
+          </div> -->
+          <div class="d-flex justify-content-end p-0">
+            <button
+              *ngIf="!readonly"
+              (click)="openModalCreate()"
+              [disabled]="!conceptId"
+              type="button"
+              tooltip="Nuevo"
+              style="width: 100px"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
             <app-columns-select
               [leftList]="true"
               [(settings)]="settings"

@@ -7,11 +7,11 @@
       <div class="row">
         <div class="col-md-2">
           <form-field [control]="eventForm.get('id')" label="ID">
+            <!--(blur)="getByIdTwo(eventForm.controls['id'].value)"-->
             <input
               type="text"
               formControlName="id"
               class="form-control"
-              (blur)="getByIdTwo(eventForm.controls['id'].value)"
               [maxLength]="7" />
           </form-field>
         </div>
@@ -43,15 +43,29 @@
     <div class="d-flex justify-content-center mb-2">
       <div>
         <button
-          class="btn btn-sm btn-primary active"
-          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary btn-sm active mr-3"
+          [disabled]="!eventForm.valid"
+          (click)="search()">
+          Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <!--[disabled]="!form3.valid"-->
+        <button
+          class="btn btn-danger btn-sm active mr-3"
+          [disabled]="!eventForm.valid"
+          (click)="clean()">
+          Limpiar <i class="fas fa-eraser"></i>
+        </button>
+        <button
+          class="btn btn-sm btn-primary active mr-3"
+          [disabled]="!keyAuth"
           (click)="generateKey()">
           Generar Clave de Autorización
         </button>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row pt-4">
       <form class="form-material" [formGroup]="form">
         <div>
           <div class="">
@@ -79,7 +93,8 @@
           <div class="col-md-1 mt-3">
             <button
               class="btn btn-sm btn-inline btn-success mt-n2 py-2 px-3"
-              (click)="copy()">
+              (click)="copy()"
+              [disabled]="!form.valid">
               <i class="bx bx-copy-alt mt-2"></i>
             </button>
           </div>

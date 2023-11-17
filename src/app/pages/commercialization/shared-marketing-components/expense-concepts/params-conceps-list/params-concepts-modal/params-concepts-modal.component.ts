@@ -121,10 +121,10 @@ export class ParamsConceptsModalComponent
   }
 
   private prepareForm() {
-    debugger;
+    // debugger;
     this.form = this.fb.group({
       parameter: [null, [Validators.required]],
-      value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      value: [null, [Validators.required]],
       address: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

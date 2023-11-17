@@ -57,6 +57,7 @@
                   [settings]="settings"
                   [source]="dataPaginated"
                   (userRowSelect)="selectRow($event.data)"
+                  (delete)="delete($event.data)"
                   (edit)="edit($event.data)">
                 </ng2-smart-table>
               </div>
@@ -154,13 +155,13 @@
               (click)="contabilityMand()">
               Contabilidad Mandatorio
             </button>
-            <button
+            <!-- <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showFilters"
               (click)="reload()">
               Recargar
-            </button>
+            </button> -->
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"

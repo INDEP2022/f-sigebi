@@ -323,7 +323,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
     this.comerTpEventsService.remove(id).subscribe({
       next: data => {
         //this.loading = false;
-        this.alert('success', 'Proceso', 'Borrado Correctamente');
+        this.alert('success', 'El proceso ha sido eliminado', '');
         this.getEventProcess(this.eventId);
         //this.showSuccess();
         //this.getEvents();

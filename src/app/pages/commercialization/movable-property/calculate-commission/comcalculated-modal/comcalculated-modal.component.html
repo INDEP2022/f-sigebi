@@ -75,7 +75,8 @@
             label="Tipo Cambio"
             [control]="calculatedForm.get('changeType')">
             <input
-              type="number"
+              currencyMask
+              type="text"
               class="form-control"
               formControlName="changeType" />
           </form-field>
