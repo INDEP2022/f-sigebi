@@ -14,6 +14,7 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IInitFormProceedingsBody } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion.component';
 import { DETALLES } from '../approval-for-donation/approval-columns';
+
 @Component({
   selector: 'app-rop-id',
   templateUrl: './rop-id.component.html',
@@ -27,6 +28,7 @@ export class RopIdComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   pageParams: IInitFormProceedingsBody = null;
   edit = false;
+  ropid: LocalDataSource = new LocalDataSource();
   cve: any;
   totalItemRrop: number = 0;
   loadingRop: boolean = false;
