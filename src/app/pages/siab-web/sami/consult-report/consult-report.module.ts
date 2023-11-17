@@ -7,6 +7,7 @@ import { FileUploadModule } from 'src/app/utils/file-upload/file-upload.module';
 import { ConsultReportRoutingModule } from './consult-report-routing.module';
 import { ReportConsolidatedEntryOrderComponent } from './report-consolidated-entry-order/report-consolidated-entry-order.component';
 import { ReportExpensesForGoodComponent } from './report-expenses-for-good/report-expenses-for-good.component';
+import { ReportGoodComponent } from './report-good/report-good.component';
 import { UploadImagesComponent } from './upload-images/upload-images.component';
 import { UploadZipImagesComponent } from './upload-zip-images/upload-zip-images.component';
 @NgModule({
@@ -15,6 +16,7 @@ import { UploadZipImagesComponent } from './upload-zip-images/upload-zip-images.
     ReportConsolidatedEntryOrderComponent,
     UploadImagesComponent,
     UploadZipImagesComponent,
+    ReportGoodComponent,
   ],
   imports: [
     CommonModule,

@@ -170,6 +170,7 @@ export class ExpenseConceptsListComponent
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       conceptId: this.conceptId,
+      address: this.address,
       callback: (body: { id: string }) => {
         if (body) {
           let listParams = new ListParams();
