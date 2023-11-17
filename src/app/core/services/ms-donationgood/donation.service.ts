@@ -77,7 +77,8 @@ export class DonationService
   }
 
   getExcel(body: IExportDetail) {
-    return this.post(DonationEndPoint.eventComDonationExcel, body);
+    const route = `${DonationEndPoint.eventComDonationExcel}`;
+    return this.post(route, body);
   }
 
   createAdmonDonation(model: any) {
