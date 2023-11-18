@@ -11,6 +11,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { REPORT_GOOD_COLUMNS } from './report-good-columns';
@@ -35,7 +36,8 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   measureUnits = new DefaultSelect();
   conservationStatus = new DefaultSelect(conservationStatusData);
   physicalStatusData = new DefaultSelect(phisycalStatusData);
-
+  userInfo: any;
+  delRegUserLog: string = '';
   constructor(
     private goodProcessService: GoodProcessService,
     private typeRelevantService: TypeRelevantService,
@@ -45,7 +47,8 @@ export class ReportGoodComponent extends BasePage implements OnInit {
     private transferentService: TransferenteService,
     private stationService: StationService,
     private fb: FormBuilder,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private programmingService: ProgrammingRequestService
   ) {
     super();
     this.settings = {
@@ -57,12 +60,10 @@ export class ReportGoodComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getInfoUserLog();
     this.getTypeRelevantSelect(new ListParams());
     this.getTransferentSelect(new ListParams());
     this.getUnitMeasure(new ListParams());
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodsResDevInv());
   }
 
   prepareForm() {
@@ -82,9 +83,22 @@ export class ReportGoodComponent extends BasePage implements OnInit {
     });
   }
 
+  getInfoUserLog() {
+    this.programmingService.getUserInfo().subscribe(data => {
+      this.userInfo = data;
+
+      this.delRegUserLog = this.userInfo.department;
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsResDevInv());
+    });
+  }
+
   getGoodsResDevInv() {
     this.loading = true;
-    this.params.getValue()['filter.regionalDelegationId'] = `$eq:${11}`;
+    this.params.getValue()[
+      'filter.regionalDelegationId'
+    ] = `$eq:${this.delRegUserLog}`;
     this.goodProcessService.goodResDevInv(this.params.getValue()).subscribe({
       next: response => {
         const info = response.data.map(async data => {
@@ -248,10 +262,60 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   }
 
   search() {
-    console.log('form', this.form.value);
+    this.loading = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()[
+      'filter.regionalDelegationId'
+    ] = `$eq:${this.delRegUserLog}`;
+
+    this.goodProcessService
+      .goodResDevInvFilter(params.getValue(), this.form.value)
+      .subscribe({
+        next: response => {
+          const info = response.data.map(async data => {
+            const typeRelevatName: any = await this.getTypeRelevant(
+              data.typeRelevantId
+            );
+
+            const authorityName: any = await this.getAuthorityName(
+              data.authorityId
+            );
+
+            const regDelegationName: any = await this.getRegionalDelName(
+              data.regionalDelegationId
+            );
+            const stateName: any = await this.getStateName(data.stateKey);
+            const transferentName: any = await this.getTransferentName(
+              data.transferId
+            );
+
+            const stationName: any = await this.getStationName(data.stationId);
+            data.relevantTypeName = typeRelevatName;
+            data.authorityName = authorityName;
+            data.delegationName = regDelegationName;
+            data.stateName = stateName;
+            data.transferentName = transferentName;
+            data.stationName = stationName;
+            return data;
+          });
+
+          Promise.all(info).then(data => {
+            this.paragraphs.load(data);
+            this.totalItems = response.count;
+            this.loading = false;
+          });
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
   }
 
   cleanForm() {
+    this.loading = true;
     this.form.reset();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsResDevInv());
   }
 }

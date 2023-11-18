@@ -313,6 +313,14 @@ export class GoodProcessService extends HttpService {
     );
   }
 
+  goodResDevInvFilter(_params: ListParams, filter: Object) {
+    const params = this.makeParams(_params);
+    return this.post<IListResponse<IGoodsResDev>>(
+      `${GoodProcessPoints.GetGoodsResDevInvFilter}?${params}`,
+      filter
+    );
+  }
+
   getGoodCustom(currency: string, good: number) {
     return this.get(
       `${GoodProcessPoints.GetDataCustom}?tCurrency=${currency}&noGood=${good}`

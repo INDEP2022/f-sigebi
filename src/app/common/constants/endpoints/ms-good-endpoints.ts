@@ -82,6 +82,7 @@ export enum GoodProcessPoints {
   UpdateProcedingNumber = 'application/updateProceedingsNumber',
   UpdateMassiveStore = 'application/updateMassiveStore',
   GetGoodsResDevInv = 'application/goods-res-dev-inv-view',
+  GetGoodsResDevInvFilter = 'application/goods-res-dev-inv-view-filt',
   GetDataCustom = 'application/get-data-custom-by-currency-nogood',
   VGoodType = 'v-good-type',
   //Classification View
