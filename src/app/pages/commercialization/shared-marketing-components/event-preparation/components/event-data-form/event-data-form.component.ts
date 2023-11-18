@@ -462,12 +462,12 @@ export class EventDataFormComponent extends BasePage implements OnInit {
     }
     const { eventDate, failureDate } = this.controls;
     if (failDate <= eventDate.value) {
+      failureDate.reset();
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Verificar fecha',
         'La fecha de fallo no puede menor o igual a la fecha del evento'
       );
-      failureDate.reset();
       return;
     }
   }
@@ -483,8 +483,8 @@ export class EventDataFormComponent extends BasePage implements OnInit {
 
     if (failureDate.value <= eventDate.value) {
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Verificar fecha',
         'La fecha de fallo no puede menor o igual a la fecha del evento'
       );
       failureDate.reset();

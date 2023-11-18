@@ -62,3 +62,9 @@ export interface IDetailDonation {
   exchangeValue: number;
   registrationId: number;
 }
+export interface IExportDetail {
+  recordId: number;
+  typeActa: string;
+  delegationId: number;
+  nombre_transferente: string;
+}

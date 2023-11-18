@@ -739,7 +739,7 @@ export class EventGoodsLotsListActionsComponent
   async onLoadCustomersFromThird() {
     const ask = await this.alertQuestion(
       'question',
-      'Eliga una opción',
+      'Elija una opción',
       '',
       'Lotificación',
       'Cliente'

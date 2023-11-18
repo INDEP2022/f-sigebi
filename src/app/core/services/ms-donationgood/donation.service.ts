@@ -9,6 +9,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDetailDonation,
   IDonationGood,
+  IExportDetail,
   IFilterDonation,
   IGoodDonation,
 } from '../../models/ms-donation/donation.model';
@@ -75,8 +76,9 @@ export class DonationService
     );
   }
 
-  getExcel() {
-    return this.get(DonationEndPoint.eventComDonationExcel);
+  getExcel(body: IExportDetail) {
+    const route = `${DonationEndPoint.eventComDonationExcel}`;
+    return this.post(route, body);
   }
 
   createAdmonDonation(model: any) {
