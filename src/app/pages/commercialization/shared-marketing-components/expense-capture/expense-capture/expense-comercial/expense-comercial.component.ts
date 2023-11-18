@@ -48,9 +48,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   // params
   @Input() address: string;
   errorsClasification: any[] = [];
-  delegation: number;
-  subDelegation: number;
-  noDepartamento: number;
+  addressEvent: string;
   provider: string;
   //
   toggleInformation = true;
@@ -117,9 +115,37 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
+  get delegation() {
+    return this.dataService.delegation;
+  }
+
+  set delegation(value) {
+    this.dataService.delegation = value;
+  }
+
+  get subDelegation() {
+    return this.dataService.subDelegation;
+  }
+
+  set subDelegation(value) {
+    this.dataService.subDelegation = value;
+  }
+
+  get noDepartamento() {
+    return this.dataService.noDepartamento;
+  }
+
+  set noDepartamento(value) {
+    this.dataService.noDepartamento = value;
+  }
+
   private getBody() {
     return {
       ...this.form.value,
+      amount: this.dataService.amount ?? 0,
+      vat: this.dataService.vat ?? 0,
+      vatWithheld: this.dataService.vatWithholding ?? 0,
+      address: this.addressEvent ?? this.address,
       dateOfResolution: this.form.value.dateOfResolution
         ? this.form.value.dateOfResolution.trim().length > 0
           ? this.form.value.dateOfResolution
@@ -138,6 +164,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       captureDate: this.form.value.captureDate
         ? this.form.value.captureDate.trim().length > 0
           ? this.form.value.captureDate
+          : null
+        : null,
+      fecha_contrarecibo: this.form.value.fecha_contrarecibo
+        ? this.form.value.fecha_contrarecibo.trim().length > 0
+          ? this.form.value.fecha_contrarecibo
           : null
         : null,
       comment: this.form.value.comment ?? '',
@@ -194,7 +225,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         .pipe(take(1))
         .subscribe({
           next: response => {
-            this.alert('success', 'Se ha creado el gasto', '');
+            this.alert('success', 'Se ha creado el gasto correctamente', '');
+            this.expenseNumber.setValue(response.data.expenseNumber);
             // if (response && response.data) {
             //   this.alert(
             //     'success',
@@ -341,10 +373,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   reloadLoteEvent(event: any) {
-    // console.log(event);
+    console.log(event);
     if (event)
       this.comerEventService
-        .getMANDXEVENTO(event)
+        .getMANDXEVENTO(event.id)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
@@ -646,6 +678,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   async fillForm(event: IComerExpense) {
     console.log(event);
     this.data = event;
+    this.addressEvent = event.address;
     if (!event.conceptNumber) {
       this.alert('warning', 'No cuenta con un concepto de pago', '');
       return;

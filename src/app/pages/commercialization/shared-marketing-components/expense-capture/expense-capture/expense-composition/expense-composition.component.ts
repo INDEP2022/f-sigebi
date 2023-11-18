@@ -4,7 +4,10 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, map, of, take, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { IComerDetExpense2 } from 'src/app/core/models/ms-spent/comer-detexpense';
+import {
+  IComerDetExpense,
+  IComerDetExpense2,
+} from 'src/app/core/models/ms-spent/comer-detexpense';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
@@ -449,6 +452,7 @@ export class ExpenseCompositionComponent
   }
 
   loadGoods(event: Event) {
+    this.loader.load = true;
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const file = files[0];
@@ -540,6 +544,35 @@ export class ExpenseCompositionComponent
       });
   }
 
+  private getComerDetExpenseArray(messages: any) {
+    return messages.map((row: any) => {
+      let total =
+        row.COL_IMPORTE + row.COL_IVA
+          ? row.COL_IVA
+          : 0 - row.COL_RETISR
+          ? row.COL_RETISR
+          : 0 - row.COL_RETIVA
+          ? row.COL_RETIVA
+          : 0;
+      let newRow: IComerDetExpense = {
+        vat: row.COL_IVA,
+        amount: row.COL_IMPORTE,
+        goodNumber: row.COL_SIAB,
+        transferorNumber: row.LNU_MANDATO,
+        cvman: row.LST_CVMAN,
+        isrWithholding: row.COL_RETISR,
+        vatWithholding: row.COL_RETIVA,
+        goodDescription: row.DESCRIPCION,
+        budgetItem: row.CLAVE,
+        changeStatus: false,
+        reportDelit: false,
+        total,
+        expenseNumber: this.expenseNumber.value,
+      };
+      return newRow;
+    });
+  }
+
   private CARGA_BIENES_CSV(file: File) {
     this.parametercomerService
       .pupChargeGoods(file)
@@ -549,48 +582,60 @@ export class ExpenseCompositionComponent
         if (typeof event === 'object') {
           console.log(event.body);
           if (event.CONT > 0) {
-            this.amount = 0;
-            this.vat = 0;
-            this.isrWithholding = 0;
-            this.vatWithholding = 0;
-            this.total = 0;
-            this.data = event.messages.map((row: any) => {
-              this.amount += row.COL_IMPORTE ? +row.COL_IMPORTE : 0;
-              this.vat += row.COL_IVA ? +row.COL_IVA : 0;
-              this.isrWithholding += row.COL_RETISR ? +row.COL_RETISR : 0;
-              this.vatWithholding += row.COL_RETIVA ? +row.COL_RETIVA : 0;
-              let total =
-                row.COL_IMPORTE + row.COL_IVA
-                  ? row.COL_IVA
-                  : 0 - row.COL_RETISR
-                  ? row.COL_RETISR
-                  : 0 - row.COL_RETIVA
-                  ? row.COL_RETIVA
-                  : 0;
-              this.total += total;
-              return {
-                iva: row.COL_IVA,
-                amount2: row.COL_IMPORTE,
-                goodNumber: row.COL_SIAB,
-                transferorNumber: row.LNU_MANDATO,
-                manCV: row.LST_CVMAN,
-                retencionIsr: row.COL_RETISR,
-                retencionIva: row.COL_RETIVA,
-                description: row.DESCRIPCION,
-                mandato: row.CLAVE,
-                changeStatus: false,
-                reportDelit: false,
-                total,
-              };
+            let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
+              event.messages
+            );
+            this.dataService.massiveInsert(dataCSV).subscribe({
+              next: response => {
+                this.loader.load = false;
+              },
             });
-            this.expenseCaptureDataService.dataCompositionExpenses = [
-              ...this.data,
-            ];
-            this.totalItems = this.data.length;
-            this.dataTemp = [...this.data];
-            this.getPaginated(this.params.value);
-            this.GRABA_TOTALES();
           }
+          // if (event.CONT > 0) {
+          //   this.amount = 0;
+          //   this.vat = 0;
+          //   this.isrWithholding = 0;
+          //   this.vatWithholding = 0;
+          //   this.total = 0;
+          //   this.data = event.messages.map((row: any) => {
+          //     this.amount += row.COL_IMPORTE ? +row.COL_IMPORTE : 0;
+          //     this.vat += row.COL_IVA ? +row.COL_IVA : 0;
+          //     this.isrWithholding += row.COL_RETISR ? +row.COL_RETISR : 0;
+          //     this.vatWithholding += row.COL_RETIVA ? +row.COL_RETIVA : 0;
+          //     let total =
+          //       row.COL_IMPORTE + row.COL_IVA
+          //         ? row.COL_IVA
+          //         : 0 - row.COL_RETISR
+          //         ? row.COL_RETISR
+          //         : 0 - row.COL_RETIVA
+          //         ? row.COL_RETIVA
+          //         : 0;
+          //     this.total += total;
+          //     return {
+          //       iva: row.COL_IVA,
+          //       amount2: row.COL_IMPORTE,
+          //       goodNumber: row.COL_SIAB,
+          //       transferorNumber: row.LNU_MANDATO,
+          //       manCV: row.LST_CVMAN,
+          //       retencionIsr: row.COL_RETISR,
+          //       retencionIva: row.COL_RETIVA,
+          //       description: row.DESCRIPCION,
+          //       mandato: row.CLAVE,
+          //       changeStatus: false,
+          //       reportDelit: false,
+          //       total,
+          //     };
+          //   });
+          //   this.expenseCaptureDataService.dataCompositionExpenses = [
+          //     ...this.data,
+          //   ];
+          //   this.totalItems = this.data.length;
+          //   this.dataTemp = [...this.data];
+          //   this.getPaginated(this.params.value);
+          //   this.GRABA_TOTALES();
+          // }
+        } else {
+          this.loader.load = false;
         }
       });
 
@@ -628,6 +673,7 @@ export class ExpenseCompositionComponent
 
   async contabilityMand() {
     if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
+      this.loader.load = true;
       const result = await firstValueFrom(
         this.accountMovementService.getDepuraContmand(this.expenseNumber.value)
       );
@@ -636,6 +682,7 @@ export class ExpenseCompositionComponent
         this.ESCOJE_MANDCONTA();
       } else {
         this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
+        this.loader.load = false;
       }
     }
   }
@@ -653,6 +700,7 @@ export class ExpenseCompositionComponent
           'Para procesar la contabilidad en este concepto se requiere capturar bienes',
           ''
         );
+        this.loader.load = false;
       }
     }
   }
@@ -688,13 +736,19 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response) {
+            this.loader.load = false;
             this.expenseCaptureDataService.P_CAMBIO = 0;
             //show view mandatos
             this.showViewMandatos();
           }
         },
         error: err => {
-          this.alert('error', 'Contablidad Mandatorio', err);
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'Ocurrio un error en obtención de mandatos',
+            'Favor de verificar'
+          );
         },
       });
   }
@@ -709,13 +763,20 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response) {
+            this.loader.load = false;
             this.expenseCaptureDataService.P_CAMBIO = 0;
             //show view mandatos
             this.showViewMandatos();
           }
         },
         error: err => {
-          this.alert('error', 'Contablidad Mandatorio', err);
+          this.loader.load = false;
+          console.log(err);
+          this.alert(
+            'error',
+            'Ocurrio un error en obtención de mandatos',
+            'Favor de verificar'
+          );
         },
       });
   }

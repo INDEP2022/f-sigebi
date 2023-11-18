@@ -7,6 +7,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import { AuthService } from '../authentication/auth.service';
 import {
+  ICabms,
   IComerPaymentsRefVir,
   IComerReldisDisp,
   IOI,
@@ -234,5 +235,12 @@ export class PaymentService extends HttpService {
   }
   getExpRefSol(id_ctlpay: number) {
     return this.get(PaymentEndPoints.ApplicationExpRefSol + '/' + id_ctlpay);
+  }
+
+  getCabms(opcion: number, params: _Params) {
+    return this.get<IListResponseMessage<ICabms>>(
+      PaymentEndPoints.ApplicationValidCabms + '/' + opcion,
+      params
+    );
   }
 }
