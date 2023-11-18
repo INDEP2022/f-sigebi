@@ -41,6 +41,10 @@ export const GOOD_COLUMNS = {
     type: 'number',
     sort: false,
   },
+  processExt: {
+    title: 'Prcoeso Ext. Dom',
+    sort: false,
+  },
 };
 
 export const DETALLES = {

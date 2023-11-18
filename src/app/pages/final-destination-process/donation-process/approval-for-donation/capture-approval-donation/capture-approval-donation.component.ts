@@ -38,6 +38,7 @@ import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
+
 @Component({
   selector: 'app-capture-approval-donation',
   templateUrl: './capture-approval-donation.component.html',
@@ -56,6 +57,7 @@ export class CaptureApprovalDonationComponent
   implements OnInit
 {
   regisForm: FormGroup;
+  delForm: FormGroup;
   siabForm: FormGroup;
   foolio: number;
   statusGood_: any;
@@ -136,15 +138,14 @@ export class CaptureApprovalDonationComponent
     private donAuthorizaService: DonAuthorizaService
   ) {
     super();
-
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-      actions: false,
-      // selectMode: 'multi',
+      actions: {
+        edit: true,
+      },
       selectedRowIndex: -1,
       mode: 'external',
-      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
       columns: {
         name: {
           filter: false,
@@ -186,7 +187,6 @@ export class CaptureApprovalDonationComponent
         },
       },
     };
-
     this.settings2 = {
       ...this.settings,
       hideSubHeader: false,
@@ -197,6 +197,13 @@ export class CaptureApprovalDonationComponent
       columns: {
         ...COPY,
       },
+      rowClassFunction: (row: any) => {
+        if (row.data.error === 0) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
     };
   }
 
@@ -205,9 +212,6 @@ export class CaptureApprovalDonationComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
         this.origin = paramsQuery['origin'] ?? null;
-        this.paramsScreen.recordId = paramsQuery['recordId'] ?? null;
-        // this.paramsScreen.cveEvent = paramsQuery['cveEvent'] ?? null;
-        this.paramsScreen.area = paramsQuery['area'] ?? null;
         if (this.origin == 'FMCOMDONAC_1') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
@@ -219,12 +223,15 @@ export class CaptureApprovalDonationComponent
         }
         if (this.origin != null) {
           console.log(this.paramsScreen);
+          this.consultgoods();
         }
       });
     this.getComerDonation();
     this.configDatePicker();
     this.initForm();
     this.regisForm.get('type').setValue('COMPDON');
+    this.regisForm.get('area').setValue(localStorage.getItem('area'));
+    this.regisForm.get('keyEvent').setValue(localStorage.getItem('cveAc'));
   }
   oadGoods() {
     this.donAuthorizaService.loadGoods.next(true);
@@ -246,9 +253,11 @@ export class CaptureApprovalDonationComponent
       ],
       captureDate: [null, []],
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      observaElimina: [null],
       observaciones: [null],
       activeRadio: [null],
+    });
+    this.delForm = this.fb.group({
+      observaElimina: [null, [Validators.required]],
     });
     this.regisForm.get('area').setValue(localStorage.getItem('area'));
   }
@@ -272,6 +281,7 @@ export class CaptureApprovalDonationComponent
       },
     });
   }
+  findRop() {}
 
   getComerDonation() {
     this.idAct = Number(localStorage.getItem('actaId'));
@@ -720,7 +730,6 @@ export class CaptureApprovalDonationComponent
       return;
     } else {
       // console.log('this.actasDefault ', this.actasDefault);
-
       if (this.dataDetailDonation == null) {
         this.alert(
           'warning',
@@ -728,22 +737,25 @@ export class CaptureApprovalDonationComponent
           ''
         );
         return;
-      } else if (this.selectedGooodsValid.length == 0) {
+      }
+      if (this.selectedGooodsValid.length == 0) {
         this.alert(
           'warning',
           'Debe seleccionar un bien que Forme parte del evento primero',
           'Debe capturar un evento.'
         );
         return;
-      } else {
+      }
+      if (this.delForm.get('observaElimina').value === null) {
         this.inputVisible = true;
+      } else {
         this.alertQuestion(
           'question',
           '¿Seguro que desea eliminar el bien del evento?',
           ''
         ).then(async question => {
           if (question.isConfirmed) {
-            if (this.regisForm.get('observaElimina').value == null) {
+            if (this.delForm.get('observaElimina').value === null) {
               this.alert(
                 'warning',
                 'Debe llenar las obervaciones de la eliminación primero',

@@ -34,24 +34,29 @@ export const COPY = {
   recordId: {
     title: 'No. Ref',
     sort: false,
+    visible: true,
   },
   goodId: {
     title: 'No. Bien',
     sort: false,
+    visible: true,
   },
   description: {
     title: 'Descripción',
     sort: false,
+    visible: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.good?.description;
     },
   },
   amount: {
+    visible: true,
     title: 'Cantidad',
     sort: false,
   },
   unit: {
     title: 'Unidad',
+    visible: true,
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.good?.unit;
@@ -60,6 +65,7 @@ export const COPY = {
   status: {
     title: 'Estatus',
     sort: false,
+    visible: true,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.bienindicadores?.estatus;
     },
@@ -67,6 +73,7 @@ export const COPY = {
   noExpediente: {
     title: 'No. Expediente',
     type: 'number',
+    visible: true,
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.bienindicadores?.noExpediente;

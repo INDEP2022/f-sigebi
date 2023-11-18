@@ -95,7 +95,9 @@ export class DonationService
   getTempGood(params: ListParams) {
     return this.get(DonationEndPoint.TempDonationGood, params);
   }
-
+  getTempDon(params: ListParams) {
+    return this.get(DonationEndPoint.TempDonation, params);
+  }
   createApproveDonation(data: any) {
     return this.post(DonationEndPoint.ApproveDonation, data);
   }

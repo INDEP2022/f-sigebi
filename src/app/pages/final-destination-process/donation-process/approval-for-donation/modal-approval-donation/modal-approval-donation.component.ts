@@ -153,11 +153,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onGoodSelectValid(instance),
         },
-        inventoryNumber: {
-          title: 'No. Inventario',
-          sort: false,
-        },
-        goodId: {
+        goodNumber: {
           title: 'No. Gestión',
           sort: false,
         },
@@ -174,13 +170,13 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           sort: false,
         },
       },
-      // rowClassFunction: (row: any) => {
-      //   if (row.data.di_disponible == 'S') {
-      //     return 'bg-success text-white';
-      //   } else {
-      //     return 'bg-dark text-white';
-      //   }
-      // },
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
     };
   }
 
@@ -295,9 +291,10 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['filter.status'] = 'DON';
+    // params['filter.status'] = 'DON';
+    params['sortBy'] = `goodId:DESC`;
     // params['sortBy'] = `goodId:DESC`;
-    this.goodService.getAll(params).subscribe({
+    this.donationService.getTempDon(params).subscribe({
       next: data => {
         console.log(data.data);
         this.totalItems2 = data.count;

@@ -117,7 +117,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         ...GOOD_COLUMNS,
       },
       rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
+        if (row.data.error === 0) {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -277,8 +277,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   filterButton() {
     if (
       this.form.get('cveActa').value === null ||
-      this.form.get('captureDate').value === null ||
-      this.form.get('closeDate').value === null ||
+      // this.form.get('captureDate').value === null ||
+      // this.form.get('closeDate').value === null ||
       this.form.get('estatusAct').value === null ||
       this.form.get('noDelegation1').value === null ||
       this.form.get('elaborated').value === null
@@ -292,11 +292,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     }
     this.from = this.datePipe.transform(
       this.form.controls['captureDate'].value,
-      'dd/MM/yyyy'
+      'yyyy-MM-dd'
     );
     this.to = this.datePipe.transform(
       this.form.controls['closeDate'].value,
-      'dd/MM/yyyy'
+      'yyyy-MM-dd'
     );
     this.response = true;
     const captureDate = this.form.get('captureDate').value ? this.from : '';
@@ -313,8 +313,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       : '';
     this.getEventComDonationAll(
       'COMPDON',
-      captureDate,
-      closeDate,
+      // captureDate,
+      // closeDate,
       cveAc,
       state,
       noDelegation1,
@@ -357,8 +357,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   getEventComDonationAll(
     actType?: string | number,
-    captureDate?: string | number,
-    closeDate?: string | number,
+    // captureDate?: string | number,
+    // closeDate?: string | number,
     cveAct?: string | number,
     estatusAct?: string | number,
     NoDelegation1?: string | number,
@@ -367,8 +367,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.loading = true;
     this.params.getValue()['filter.actType'] = `$eq:${actType}`;
     this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
-    this.params.getValue()['filter.captureDate'] = `$eq:${captureDate}`;
-    this.params.getValue()['filter.closeDate'] = `$eq:${closeDate}`;
+    // this.params.getValue()['filter.captureDate'] = `$eq:${captureDate}`;
+    // this.params.getValue()['filter.closeDate'] = `$eq:${closeDate}`;
     if (NoDelegation1) {
       this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
     }
@@ -449,6 +449,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
           item['quantity'] = item.amount;
           item['recordId'] = item.minutesKey;
           item['id'] = item.goodNumber;
+          item['processExt'] = item.processExt;
           // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
           // // console.log('acta', acta);
           // item['acta_'] = acta;
@@ -662,6 +663,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.form.get('estatusAct').disable();
       this.form.get('noDelegation1').disable();
       this.form.get('elaborated').disable();
+      this.form.get('captureDate').disable();
+      this.form.get('closeDate').disable();
       this.validate = true;
       return;
     }
@@ -707,7 +710,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.validate = true;
     this.form.get('captureDate').setValue(null);
     this.form.get('closeDate').setValue(null);
-    this.form.get('estatusAct').setValue([]);
+    this.form.get('estatusAct').setValue(null);
     this.form.get('noDelegation1').setValue([]);
     this.form.get('noDelegation1').setValue([]);
     this.form.get('elaborated').setValue([]);

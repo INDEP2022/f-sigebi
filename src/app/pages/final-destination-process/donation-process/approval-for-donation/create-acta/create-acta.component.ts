@@ -187,11 +187,10 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
-
+    // localStorage.setItem('actaId', acta);
     localStorage.setItem('anio', anio);
     console.log('AÑO', anio);
     localStorage.setItem('mes', mes.label);
-
     let consec_ = consec.toString().padStart(4, '0');
     this.foolio = consec;
     console.log('MES', mes);
@@ -204,7 +203,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       this.authService.decodeToken().department
     }/${consec_}/${anio}`;
     console.log('cveActa -->', cveActa);
-
+    localStorage.setItem('cveAc', cveActa);
     if (cveActa) {
       const params = new ListParams();
       params['filter.keysProceedings'] = `$eq:${cveActa}`;
@@ -232,9 +231,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
   guardarRegistro(cveActa: any) {
     let obj: any = {
       cveAct: cveActa,
-      elaborationDate: this.actaRecepttionForm.value.elaboradate,
+      elaborationDate: new Date(),
       estatusAct: 'ABIERTA',
-      elaborated: this.authService.decodeToken().preferred_username,
+      elaborated: this.authService.decodeToken().username,
       fileId: this.actaRecepttionForm.value.fileId,
       witness1: this.actaRecepttionForm.value.testigoOne,
       witness2: this.actaRecepttionForm.value.testigoTree,
@@ -242,13 +241,14 @@ export class CreateActaComponent extends BasePage implements OnInit {
       captureDate: new Date(),
       observations: this.actaRecepttionForm.value.observaciones,
       registreNumber: null,
-      numDelegation1: null,
+      numDelegation1: localStorage.getItem('area'),
       numDelegation2: null,
       identifier: null,
       label: null,
       folioUniversal: this.foolio,
       closeDate: null,
     };
+    localStorage.setItem('state', obj.estatusAct);
     this.donationService.createD(obj).subscribe({
       next: (data: any) => {
         console.log('DATA', data);
@@ -276,7 +276,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       next: (value: any) => {
         const data = value.data[0].usuario;
         if (data) this.delegationToolbar = data.delegationNumber;
-
+        localStorage.setItem('area', data.delegationNumber);
         console.log('SI', value);
       },
       error(err) {
