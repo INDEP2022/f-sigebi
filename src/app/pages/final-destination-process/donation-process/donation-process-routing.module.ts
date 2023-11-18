@@ -53,7 +53,7 @@ const routes: Routes = [
         m => m.ApprovalForDonationModule
       ),
     data: {
-      title: 'Aprobación Para Donación',
+      title: 'Comprometer Para Donación',
       screen: 'FMCOMDONAC',
     },
   },

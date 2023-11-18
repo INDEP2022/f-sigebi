@@ -69,7 +69,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   columnFilter: any = [];
   columnFilter1: any = [];
   donation = new DefaultSelect();
-  // user = localStorage.getItem('username');
+  error: number = 0;
   users$ = new DefaultSelect<ISegUsers>();
   area: string;
   dataTableGood_: any[] = [];
@@ -118,7 +118,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         ...GOOD_COLUMNS,
       },
       rowClassFunction: (row: any) => {
-        if (row.data.error === 0 && row.data.estatusAct === 'ABIERTA') {
+        if (row.data.error == 0) {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -129,89 +129,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    // this.userTracker();
-    // this.search();
-    // this.data
-    //   .onChanged()
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(change => {
-    //     if (change.action === 'filter') {
-    //       let filters = change.filter.filters;
-    //       filters.map((filter: any) => {
-    //         let field = '';
-    //         let searchFilter = SearchFilter.ILIKE;
-    //         field = `filter.${filter.field}`;
-    //         /*SPECIFIC CASES*/
-    //         switch (filter.field) {
-    //           case 'captureDate':
-    //             searchFilter = SearchFilter.ILIKE;
-    //             break;
-    //           case 'closeDate':
-    //             searchFilter = SearchFilter.ILIKE;
-    //             break;
-    //           case 'estatusAct':
-    //             searchFilter = SearchFilter.ILIKE;
-    //             break;
-    //           case 'noDelegation1':
-    //             searchFilter = SearchFilter.EQ;
-    //             break;
-    //           case 'elaborated':
-    //             searchFilter = SearchFilter.EQ;
-    //             break;
-    //           default:
-    //             searchFilter = SearchFilter.ILIKE;
-    //             break;
-    //         }
-
-    //         if (filter.search !== '') {
-    //           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-    //         } else {
-    //           delete this.columnFilters[field];
-    //         }
-    //       });
-    //       this.params = this.pageFilter(this.params);
-    //       this.getEventComDonationAll();
-    //     }
-    //   });
-
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getEventComDonationAll());
-
-    // this.data1
-    //   .onChanged()
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(change => {
-    //     if (change.action === 'filter') {
-    //       let filters = change.filter.filters;
-    //       filters.map((filter: any) => {
-    //         let field = '';
-    //         let searchFilter = SearchFilter.ILIKE;
-    //         field = `filter.${filter.field}`;
-    //         /*SPECIFIC CASES*/
-    //         switch (filter.field) {
-    //           case 'goodId':
-    //             searchFilter = SearchFilter.EQ;
-    //             break;
-    //           case 'amount':
-    //             searchFilter = SearchFilter.EQ;
-    //             break;
-    //           default:
-    //             searchFilter = SearchFilter.ILIKE;
-    //             break;
-    //         }
-
-    //         if (filter.search !== '') {
-    //           this.columnFilter1[field] = `${searchFilter}:${filter.search}`;
-    //           //this.params.value.page = 1;
-    //         } else {
-    //           delete this.columnFilter1[field];
-    //         }
-    //       });
-    //       this.params1 = this.pageFilter(this.params1);
-    //       this.getDetailComDonation();
-    //     }
-    //   });
 
     this.inicialice();
   }
@@ -236,8 +153,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       noDelegation1: [null],
       elaborated: [null, []],
     });
-    // this.form.get('elaborated').disable();
-    // this.form.get('noDelegation1').disable();
+
     this.getEventComDonation(new ListParams());
   }
 
@@ -278,21 +194,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   filterButton() {
-    if (
-      this.form.get('cveActa').value === null ||
-      this.form.get('captureDate').value === null ||
-      this.form.get('closeDate').value === null ||
-      this.form.get('estatusAct').value === null ||
-      this.form.get('noDelegation1').value === null ||
-      this.form.get('elaborated').value === null
-    ) {
-      this.alert(
-        'warning',
-        'Debe seleccionar al menos una opción para filtrar',
-        ''
-      );
-      return;
-    }
     this.from = this.datePipe.transform(
       this.form.controls['captureDate'].value,
       'yyyy-MM-dd'
@@ -329,7 +230,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
-    params.addFilter('id', this.form.get('elaborated').value, SearchFilter.EQ);
+    params.addFilter(
+      'id',
+      this.form.get('elaborated').value,
+      SearchFilter.ILIKE
+    );
     return this.serviceUser.getAllSegUsers(params.getParams()).subscribe({
       next: (value: any) => {
         const data = value.data[0].usuario;
@@ -391,10 +296,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
           this.fileNumber = filt.fileId;
           this.actaId = filt.actId;
           this.estatusAct = filt.estatusAct;
+          this.error = filt.error;
         });
         localStorage.setItem('actaId', this.actaId);
         localStorage.setItem('estatusAct', this.estatusAct);
-        this.getGoodsByStatus(this.fileNumber);
+        // this.getGoodsByStatus(this.fileNumber);
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
