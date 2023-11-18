@@ -248,7 +248,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       folioUniversal: this.foolio,
       closeDate: null,
     };
-    localStorage.setItem('state', obj.estatusAct);
+    localStorage.setItem('estatusAct', obj.estatusAct);
     this.donationService.createD(obj).subscribe({
       next: (data: any) => {
         console.log('DATA', data);

@@ -198,7 +198,7 @@ export class CaptureApprovalDonationComponent
         ...COPY,
       },
       rowClassFunction: (row: any) => {
-        if (row.data.error === 0) {
+        if (row.data.error === 0 && row.data.statusAct === 'ABIERTA') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -232,6 +232,7 @@ export class CaptureApprovalDonationComponent
     this.regisForm.get('type').setValue('COMPDON');
     this.regisForm.get('area').setValue(localStorage.getItem('area'));
     this.regisForm.get('keyEvent').setValue(localStorage.getItem('cveAc'));
+    this.estatus = localStorage.getItem('estatusAct');
   }
   oadGoods() {
     this.donAuthorizaService.loadGoods.next(true);
@@ -289,7 +290,6 @@ export class CaptureApprovalDonationComponent
       next: (data: any) => {
         this.eventDonacion = data;
         this.fileNumber = data.fileNumber;
-        this.estatus = localStorage.getItem('state');
         console.log(this.eventDonacion);
         if (this.estatus != 'ABIERTA') {
           this.deleteO = true;
@@ -343,7 +343,7 @@ export class CaptureApprovalDonationComponent
   }
 
   ubicaGood() {
-    if (this.eventDonacion.estatusAct === 'CERRADA') {
+    if (this.estatus === 'CERRADA') {
       this.alert(
         'warning',
         'El evento está cerrado, no se pueden consultar bienes',
