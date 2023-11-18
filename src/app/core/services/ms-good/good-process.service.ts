@@ -321,6 +321,11 @@ export class GoodProcessService extends HttpService {
     );
   }
 
+  goodResDevInvReport(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.post(`${GoodProcessPoints.GetGoodsResDevReport}?${params}`, {});
+  }
+
   getGoodCustom(currency: string, good: number) {
     return this.get(
       `${GoodProcessPoints.GetDataCustom}?tCurrency=${currency}&noGood=${good}`

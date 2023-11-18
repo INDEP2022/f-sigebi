@@ -30,6 +30,7 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   paragraphs: LocalDataSource = new LocalDataSource();
   showSearchForm: boolean = false;
+  loadingReport: boolean = false;
   form: FormGroup = new FormGroup({});
   typeRelevant = new DefaultSelect();
   transferences = new DefaultSelect();
@@ -317,5 +318,30 @@ export class ReportGoodComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsResDevInv());
+  }
+
+  reportGoods() {
+    this.loadingReport = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()[
+      'filter.regionalDelegationId'
+    ] = `$eq:${this.delRegUserLog}`;
+    this.goodProcessService.goodResDevInvReport(params.getValue()).subscribe({
+      next: response => {
+        this.downloadExcel(response.base64File, 'Reporte_Bienes.xlsx');
+        this.loadingReport = false;
+      },
+      error: error => {},
+    });
+  }
+
+  downloadExcel(excel: any, nameReport: string) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = nameReport;
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 }
