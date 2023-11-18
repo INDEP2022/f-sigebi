@@ -118,7 +118,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         ...GOOD_COLUMNS,
       },
       rowClassFunction: (row: any) => {
-        if (row.error === 0 && row.estatusAct === 'ABIERTA') {
+        if (row.data.error === 0 && row.data.estatusAct === 'ABIERTA') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -278,7 +278,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   filterButton() {
-    if (!this.form.valid) {
+    if (
+      this.form.get('cveActa').value === null ||
+      this.form.get('captureDate').value === null ||
+      this.form.get('closeDate').value === null ||
+      this.form.get('estatusAct').value === null ||
+      this.form.get('noDelegation1').value === null ||
+      this.form.get('elaborated').value === null
+    ) {
       this.alert(
         'warning',
         'Debe seleccionar al menos una opción para filtrar',
