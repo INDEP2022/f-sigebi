@@ -118,8 +118,6 @@ export class CaptureApprovalDonationComponent
   donationGood: IGoodDonation;
   paramsScreen: IParamsDonac = {
     origin: '',
-    recordId: '',
-    area: '',
   };
 
   constructor(
@@ -198,7 +196,7 @@ export class CaptureApprovalDonationComponent
         ...COPY,
       },
       rowClassFunction: (row: any) => {
-        if (row.data.error === 0 && row.data.statusAct === 'ABIERTA') {
+        if (row.error === 0 && row.statusAct === 'ABIERTA') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -479,7 +477,7 @@ export class CaptureApprovalDonationComponent
       ...this.columnFilters2,
     };
     // params['filter.good.status'] = 'DON';
-    params['filter.recordId'] = this.paramsScreen.recordId;
+    params['filter.recordId'] = localStorage.getItem('actaId');
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
         next: data => {
@@ -679,7 +677,7 @@ export class CaptureApprovalDonationComponent
                 `Ese bien ya se encuentra en el evento ${good.di_acta}`,
                 'Debe capturar un evento.'
               );
-            } else if (good.di_disponible == 'N') {
+            } else if (this.dataDetailDonation.error === 1) {
               this.onLoadToast(
                 'warning',
                 `El bien ${good.id} tiene un estatus Inválido para ser asignado a algún evento`
@@ -983,11 +981,10 @@ export class CaptureApprovalDonationComponent
         //this.disabledBtnCerrar = true;
       }
       console.log('acta NEXT ', next);
-      this.paramsScreen.recordId = next.actId;
-      this.paramsScreen.area = next.noDelegation1;
       this.regisForm.patchValue({
         folio: next.folioUniversal,
         type: this.type,
+        area: localStorage.getItem('area'),
         keyEvent: next.cveAct,
         mes: next.captureDate,
         year: next.captureDate,
@@ -999,8 +996,6 @@ export class CaptureApprovalDonationComponent
       });
       this.paramsScreen = {
         origin: 'FMCOMDONAC_1',
-        recordId: next.actId,
-        area: this.authService.decodeToken().department,
       };
       //this.data1 = next.statusProceedings;
       //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
@@ -1270,7 +1265,8 @@ export class CaptureApprovalDonationComponent
         ''
       );
       return;
-    } else if (this.eventdetailDefault !== null) {
+    }
+    if (this.dataDetailDonationGood.count() == 0) {
       this.alert('warning', 'No hay bienes a validar', '');
       return;
     } else {
@@ -1311,11 +1307,11 @@ export class CaptureApprovalDonationComponent
     });
   }
   actualizarActa() {
-    if (this.paramsScreen.recordId == '0' || null) {
+    if (this.idAct === null) {
       this.alertInfo('warning', 'Debe seleccionar un evento', '');
       return;
     }
-    if (this.estatus == 'CERRADA') {
+    if (this.estatus === 'CERRADA') {
       this.alertInfo('warning', 'No puede actualizar un evento cerrado', '');
       return;
     }
@@ -1346,12 +1342,12 @@ export class CaptureApprovalDonationComponent
   }
   generaRepote() {}
   actualizarEvento() {
-    const toolbar_user = this.authService.decodeToken().preferred_username;
+    const toolbar_user = this.authService.decodeToken().username;
     const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
 
     if (
       cadena != 0 &&
-      this.authService.decodeToken().preferred_username == toolbar_user
+      this.authService.decodeToken().username == toolbar_user
     ) {
       null;
     } else {
@@ -1359,13 +1355,13 @@ export class CaptureApprovalDonationComponent
         cveAct: this.eventDonacion.cveAct,
         elaborationDate: this.eventDonacion.elaborationDate,
         estatusAct: 'CERRADA',
-        elaborated: this.authService.decodeToken().preferred_username,
+        elaborated: this.authService.decodeToken().username,
         witness1: this.eventDonacion.witness1,
         witness2: this.eventDonacion.witness2,
         actType: 'COMPDON',
         observations: this.eventDonacion.observations,
         registreNumber: null,
-        noDelegation1: this.authService.decodeToken().department,
+        noDelegation1: localStorage.getItem('area'),
         fileId: this.eventDonacion.fileId,
         noDelegation2: null,
         identifier: this.eventDonacion.identifier,
@@ -1380,7 +1376,7 @@ export class CaptureApprovalDonationComponent
             pActaNumber: this.idAct,
             pStatusActa: 'ABIERTA',
             pVcScreen: 'FMCOMDONAC_1',
-            pUser: this.authService.decodeToken().preferred_username,
+            pUser: this.authService.decodeToken().username,
           };
 
           await this.updateGoodEInsertHistoric(obj);
@@ -1403,11 +1399,9 @@ export class CaptureApprovalDonationComponent
 
 export interface IParamsDonac {
   origin: string;
-  recordId: string;
-  area: string;
 }
 
 export interface IDonationGoodError {
   goodId: number;
-  description: string;
+  des_error: string;
 }

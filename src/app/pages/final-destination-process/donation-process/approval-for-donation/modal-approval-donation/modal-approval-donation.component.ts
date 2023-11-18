@@ -100,8 +100,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   ngGlobal: any;
   paramsScreen: IParamsDonac = {
     origin: '',
-    recordId: '',
-    area: '',
   };
   params = new BehaviorSubject<ListParams>(new ListParams());
   dataGoodTable: LocalDataSource = new LocalDataSource();
@@ -199,9 +197,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
         this.origin = paramsQuery['origin'] ?? null;
-        this.paramsScreen.recordId = paramsQuery['recordId'] ?? null;
-        // this.paramsScreen.cveEvent = paramsQuery['cveEvent'] ?? null;
-        this.paramsScreen.area = paramsQuery['area'] ?? null;
         if (this.origin == 'FMCOMDONAC_1') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
@@ -210,11 +205,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
             }
           }
         }
-        if (
-          this.origin != null &&
-          this.paramsScreen.recordId != null &&
-          this.paramsScreen.area != null
-        ) {
+        if (this.origin != null) {
           console.log(this.paramsScreen);
         }
       });
@@ -391,7 +382,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     // if (this.dataRecepcion.length > 0) {
     // let result = this.dataRecepcion.map(async good => {
     let obj: any = {
-      numberProceedings: this.paramsScreen.recordId,
+      numberProceedings: localStorage.getItem('actaId'),
       numberGood: good.goodId,
       amount: good.quantity,
       received: null,

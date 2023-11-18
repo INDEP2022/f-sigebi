@@ -63,8 +63,9 @@ export class DonationService
     return this.donationRepository.remove(api, id);
   }
 
-  getEventComDonation(params?: ListParams): Observable<IListResponse<any>> {
-    return this.donationRepository.getAll(donationEvent, params);
+  getEventComDonation(params?: ListParams) {
+    const route = `${DonationEndPoint.eventComDonation}`;
+    return this.get(route, params);
   }
 
   getEventComDonationDetail(
