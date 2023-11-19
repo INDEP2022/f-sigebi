@@ -84,14 +84,8 @@ export class automobilesComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      NoBien: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      DescBien: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      NoBien: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      DescBien: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

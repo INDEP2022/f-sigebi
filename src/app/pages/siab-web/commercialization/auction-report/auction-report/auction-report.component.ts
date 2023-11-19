@@ -250,7 +250,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      event: [null, [Validators.required]],
+      event: [null, []],
     });
     setTimeout(() => {
       this.getEvent(new ListParams());
@@ -259,19 +259,16 @@ export class auctionReportComponent extends BasePage implements OnInit {
 
   private prepareFormFilter() {
     this.formFilter = this.fb.group({
-      lot: [null, [Validators.required]],
-      customer: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      view: [null, [Validators.required]],
+      lot: [null, []],
+      customer: [null, []],
+      status: [null, []],
+      view: [null, []],
     });
   }
 
   private prepareFormReport() {
     this.formReport = this.fb.group({
-      nameReport: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      nameReport: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -294,6 +291,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.totalItems = 0;
         this.formFilter.reset();
+        this.formReport.reset();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getDataSettlement());
@@ -303,6 +301,8 @@ export class auctionReportComponent extends BasePage implements OnInit {
         this.data1.load([]);
         this.data1.refresh();
         this.totalItems1 = 0;
+        this.formFilter.reset();
+        this.formReport.reset();
 
         setTimeout(() => {
           this.getLotPublic(new ListParams(), this.idEvent, 1);
@@ -328,13 +328,15 @@ export class auctionReportComponent extends BasePage implements OnInit {
   }
 
   search() {
-    if (this.validateFilter == 'settlement') {
-      this.loading = false;
-      this.data.load([]);
-      this.data.refresh();
-      this.totalItems = 0;
-      this.showLiquidacion = false;
-      this.showFilter = true;
+    this.showGarantia = false;
+    this.showLiquidacion = false;
+    this.showFilter = true;
+    if (
+      this.formFilter.get('lot').value &&
+      this.formFilter.get('customer').value &&
+      this.formFilter.get('status').value &&
+      this.formFilter.get('view').value
+    ) {
       this.publicLotBody = this.formFilter.get('lot').value;
       this.customerBody = this.formFilter.get('customer').value;
       this.statusBody = this.formFilter.get('status').value;
@@ -353,6 +355,16 @@ export class auctionReportComponent extends BasePage implements OnInit {
         this.statusBody,
         this.viewBody
       );
+    } else {
+      this.alert('warning', 'Debe llenar todos los campos', '');
+    }
+
+    /*if (this.validateFilter == 'settlement') {
+      this.loading = false;
+      this.data.load([]);
+      this.data.refresh();
+      this.totalItems = 0;
+      
     } else {
       this.loading = false;
       this.data1.load([]);
@@ -378,7 +390,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
         this.statusBody,
         this.viewBody
       );
-    }
+    }*/
   }
 
   getEvent(params: ListParams) {
@@ -474,65 +486,75 @@ export class auctionReportComponent extends BasePage implements OnInit {
   settlement() {
     //this.showGarantia = true;
     //this.filter = true;
-    this.validateFilter = 'settlement';
-    this.showLiquidacion = true;
-    this.showGarantia = false;
-    this.filter = true;
-    this.data2.load([]);
-    this.data2.refresh();
-    this.totalItems2 = 0;
-    this.showFilter = false;
-    this.formReport.get('nameReport').setValue('');
+    if (this.form.get('event').value) {
+      this.validateFilter = 'settlement';
+      this.showLiquidacion = true;
+      this.showGarantia = false;
+      this.showFilter = false;
+      this.filter = true;
+      this.data2.load([]);
+      this.data2.refresh();
+      this.totalItems2 = 0;
+      this.showFilter = false;
+      this.formReport.get('nameReport').setValue('');
 
-    this.formFilter.get('lot').setValue(null);
-    this.getLotPublic(new ListParams(), -1);
-    this.formFilter.get('customer').setValue(null);
-    this.getClient(new ListParams(), -1);
-    this.formFilter.get('status').setValue(null);
-    this.getStatus(new ListParams(), -1);
-    this.formFilter.get('view').setValue(null);
+      this.formFilter.get('lot').setValue(null);
+      this.getLotPublic(new ListParams(), -1);
+      this.formFilter.get('customer').setValue(null);
+      this.getClient(new ListParams(), -1);
+      this.formFilter.get('status').setValue(null);
+      this.getStatus(new ListParams(), -1);
+      this.formFilter.get('view').setValue(null);
 
-    setTimeout(() => {
-      this.getLotPublic(new ListParams(), this.idEvent, 4);
-      this.getStatus(new ListParams(), this.idEvent, 5);
-      this.getClient(new ListParams(), this.idEvent, 6);
-    }, 1000);
+      setTimeout(() => {
+        this.getLotPublic(new ListParams(), this.idEvent, 4);
+        this.getStatus(new ListParams(), this.idEvent, 5);
+        this.getClient(new ListParams(), this.idEvent, 6);
+      }, 1000);
 
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDataSettlement());
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getDataSettlement());
+    } else {
+      this.alert('warning', 'Debe seleccionar un evento', '');
+    }
   }
 
   filterSettlement() {}
 
   warranty() {
-    this.validateFilter = 'warranty';
-    this.showGarantia = true;
-    this.showLiquidacion = false;
-    this.filter = true;
-    this.formReport.get('nameReport').setValue('');
+    if (this.form.get('event').value) {
+      this.validateFilter = 'warranty';
+      this.showGarantia = true;
+      this.showLiquidacion = false;
+      this.showFilter = false;
+      this.filter = true;
+      this.formReport.get('nameReport').setValue('');
 
-    this.data1.load([]);
-    this.data1.refresh();
-    this.totalItems1 = 0;
+      this.data1.load([]);
+      this.data1.refresh();
+      this.totalItems1 = 0;
 
-    this.formFilter.get('lot').setValue(null);
-    this.getLotPublic(new ListParams(), -1);
-    this.formFilter.get('customer').setValue(null);
-    this.getClient(new ListParams(), -1);
-    this.formFilter.get('status').setValue(null);
-    this.getStatus(new ListParams(), -1);
-    this.formFilter.get('view').setValue(null);
+      this.formFilter.get('lot').setValue(null);
+      this.getLotPublic(new ListParams(), -1);
+      this.formFilter.get('customer').setValue(null);
+      this.getClient(new ListParams(), -1);
+      this.formFilter.get('status').setValue(null);
+      this.getStatus(new ListParams(), -1);
+      this.formFilter.get('view').setValue(null);
 
-    setTimeout(() => {
-      this.getLotPublic(new ListParams(), this.idEvent, 1);
-      this.getStatus(new ListParams(), this.idEvent, 2);
-      this.getClient(new ListParams(), this.idEvent, 3);
-    }, 1000);
+      setTimeout(() => {
+        this.getLotPublic(new ListParams(), this.idEvent, 1);
+        this.getStatus(new ListParams(), this.idEvent, 2);
+        this.getClient(new ListParams(), this.idEvent, 3);
+      }, 1000);
 
-    this.params1
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDataWarranty(this.idEvent));
+      this.params1
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getDataWarranty(this.idEvent));
+    } else {
+      this.alert('warning', 'Debe seleccionar un evento', '');
+    }
   }
 
   getDataSettlement() {
@@ -664,16 +686,20 @@ export class auctionReportComponent extends BasePage implements OnInit {
         ...this.params3.getValue(),
         ...this.columnFilters3,
       };
-      const name = this.formReport.get('nameReport').value;
-      param['limit'] = '';
-      this.msMassivecapturelineService.getSettlementExcel(param).subscribe({
-        next: resp => {
-          this.downloadDocument(`${name}`, 'excel', resp.base64File);
-        },
-        error: err => {
-          console.log(err);
-        },
-      });
+      if (!this.formReport.get('nameReport').value) {
+        this.alert('warning', 'No se epecifico el nombre del reporte', '');
+      } else {
+        const name = this.formReport.get('nameReport').value;
+        param['limit'] = '';
+        this.msMassivecapturelineService.getSettlementExcel(param).subscribe({
+          next: resp => {
+            this.downloadDocument(`${name}`, 'excel', resp.base64File);
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+      }
     } else if (this.validateFilter == 'warranty') {
       if (this.idEvent) {
         this.params3.getValue()['filter.id_evento'] = `$eq:${this.idEvent}`;
@@ -700,16 +726,20 @@ export class auctionReportComponent extends BasePage implements OnInit {
         ...this.params3.getValue(),
         ...this.columnFilters3,
       };
-      const name = this.formReport.get('nameReport').value;
-      param['limit'] = '';
-      this.massiveDepositaryService.getGuaranteExcel(param).subscribe({
-        next: resp => {
-          this.downloadDocument(`${name}`, 'excel', resp.base64File);
-        },
-        error: err => {
-          console.log(err);
-        },
-      });
+      if (!this.formReport.get('nameReport').value) {
+        this.alert('warning', 'No se epecifico el nombre del reporte', '');
+      } else {
+        const name = this.formReport.get('nameReport').value;
+        param['limit'] = '';
+        this.massiveDepositaryService.getGuaranteExcel(param).subscribe({
+          next: resp => {
+            this.downloadDocument(`${name}`, 'excel', resp.base64File);
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+      }
     }
   }
 

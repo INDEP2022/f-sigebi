@@ -12,8 +12,64 @@
   </div>
 
   <div body>
-    <div>
+    <div class="row mb-4">
       <form [formGroup]="form" class="form-material">
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <div class="row">
+              <div class="col">
+                <button
+                  type="button"
+                  (click)="getAllBLKByFilters()"
+                  class="btn btn-primary active btn-sm mr-2 mb-2">
+                  Buscar
+                  <i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button>
+                <!-- <button
+                        id="expedient-number"
+                        [class]="loading ? 'disabled' : ''"
+                        class="btn btn-primary btn-sm disabled mr-2 active"
+                        (click)="searchButton()">
+                        <i class="fa fa-search"></i> Buscar
+                      </button> -->
+                <button
+                  (click)="resetForm()"
+                  class="btn btn-danger btn-sm active mb-2">
+                  Limpiar <i class="fas fa-eraser"> </i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="navigateProceedings" class="col-md-4">
+            <span>Navegación de actas</span>
+            <div class="row mt-3">
+              <div class="col-md-9">
+                <div class="d-flex justify-content-center align-items-center">
+                  <app-pagination
+                    [params]="paramsActNavigate"
+                    [totalItems]="totalItemsNavigate"
+                    [limit]="newLimitparamsActNavigate"
+                    [paginatorPageSize]="false"
+                    [pageSizeOptions]="[1]"
+                    [paginatorRangeLabel]="false"
+                    [maxSize]="1"></app-pagination>
+                  <div class="col">
+                    <button
+                      (click)="resNewForm()"
+                      id="expedient-number"
+                      class="btn btn-info btn-sm active ml-4">
+                      Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br />
+        <hr class="row" style="width: 97%; margin: auto" />
+        <br />
+        <br />
         <div class="row pt-3">
           <form-field
             [control]="form.get('no_expediente')"
@@ -68,35 +124,122 @@
               formControlName="ti_expediente" />
           </form-field>
         </div>
+
+        <br />
+        <br />
+        <hr class="row" style="width: 97%; margin: auto" />
+        <br />
+        <br />
+        <div class="row pt-3">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col">
+                <form-field [control]="form.get('acta')">
+                  <ngx-select
+                    id="acta"
+                    control="acta"
+                    label="Tipo Acta"
+                    bindLabel="records"
+                    [data]="records"
+                    [searchable]="false"
+                    [form]="form"></ngx-select>
+                </form-field>
+              </div>
+
+              <div class="col-md-2">
+                <form-field [control]="form.get('transfer')">
+                  <ngx-select
+                    id="transfer"
+                    control="transfer"
+                    label="Transferente"
+                    bindLabel="clave_transferente"
+                    [searchable]="false"
+                    [data]="transferSelect"
+                    [form]="form"></ngx-select>
+                </form-field>
+              </div>
+
+              <div class="col">
+                <form-field [control]="form.get('ident')" label="Identificador">
+                  <input
+                    type="text"
+                    class="form-control pt-0"
+                    formControlName="ident" />
+                </form-field>
+              </div>
+
+              <div class="col">
+                <form-field [control]="form.get('recibe')">
+                  <ngx-select
+                    (fetchItems)="getRecibe($event)"
+                    control="recibe"
+                    label="Recibe"
+                    bindLabel="delegation"
+                    ngbTooltip="Prueba"
+                    [data]="recibeSelect"
+                    [form]="form"></ngx-select>
+                </form-field>
+              </div>
+
+              <div class="col">
+                <form-field [control]="form.get('admin')">
+                  <ngx-select
+                    (fetchItems)="getAdmin($event)"
+                    control="admin"
+                    label="Administra"
+                    bindLabel="delegation"
+                    [data]="adminSelect"
+                    [form]="form"></ngx-select>
+                  <!--       <input
+                          type="text"
+                          class="form-control"
+                          formControlName="admin"
+                          (ngModelChange)="fillActTwo()" /> -->
+                </form-field>
+              </div>
+
+              <div class="col">
+                <form-field [control]="form.get('folio')" label="Folio">
+                  <input
+                    type="number"
+                    class="form-control pt-0"
+                    min="1"
+                    [max-length]="5"
+                    formControlName="folio" />
+                </form-field>
+              </div>
+              <div class="col">
+                <form-field [control]="form.get('year')" label="A&ntilde;o">
+                  <input
+                    type="number"
+                    class="form-control disabled pt-0"
+                    formControlName="year" />
+                </form-field>
+              </div>
+              <div class="col">
+                <form-field [control]="form.get('mes')" label="Mes">
+                  <input
+                    type="number"
+                    class="form-control disabled pt-0"
+                    formControlName="mes" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
-
-    <div class="d-flex">
-      <div>
-        <button type="button" class="btn btn-primary btn-sm active mr-3">
-          Guardar
-          <i aria-hidden="true" class="fa fa-save"></i>
-        </button>
-      </div>
-      <div>
-        <button
-          class="btn btn-primary btn-sm active"
-          (click)="getAllBLKByFilters()">
-          Consultar
-          <i class="bx bx-search-alt bx-sm float-icon"></i>
-        </button>
-      </div>
-      <div>
-        <button
-          class="btn btn-danger btn-sm active ml-3 mr-3"
-          (click)="resetForm()">
-          Limpiar <i class="fas fa-eraser"> </i>
-        </button>
-      </div>
-      <div class="ml-auto">
-        <button class="btn btn-primary btn-sm active" (click)="closeExp()">
-          Cerrar
-        </button>
+    <div class="row mb-5">
+      <div class="d-flex justify-content-center">
+        <div>
+          <button type="button" class="btn btn-primary btn-sm active mr-3">
+            Guardar
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+          <button class="btn btn-primary btn-sm active" (click)="closeExp()">
+            Cerrar acta
+          </button>
+        </div>
       </div>
     </div>
     <div class="pt-5">
@@ -110,7 +253,7 @@
               type="text"
               class="form-control"
               formControlName="status"
-              readonly />
+              [readonly]="isEnableEstado" />
           </form-field>
 
           <form-field
@@ -121,7 +264,8 @@
               type="text"
               class="form-control"
               formControlName="actSelect"
-              readonly></textarea>
+              (ngModelChange)="searchKeyProceeding()"
+              [readonly]="isEnableActa"></textarea>
           </form-field>
 
           <!-- <form-field [control]="actForm.get('trans')" label="Trans:" class="col-md-1">
@@ -136,7 +280,7 @@
               type="text"
               class="form-control"
               formControlName="don"
-              readonly />
+              [readonly]="isEnableDon" />
           </form-field>
 
           <form-field
@@ -150,7 +294,7 @@
               [style.color]="
                 this.actForm.get('es_acta').value == 'CERRADA' ? 'red' : 'green'
               "
-              readonly />
+              [readOnly]="true" />
           </form-field>
         </div>
         <!--  -->
@@ -163,7 +307,7 @@
               type="text"
               class="form-control"
               formControlName="cv_acta"
-              readonly></textarea>
+              [readonly]="isEnableActacvc"></textarea>
           </form-field>
 
           <form-field
@@ -174,7 +318,7 @@
               type="text"
               class="form-control"
               formControlName="observations"
-              readonly />
+              [readonly]="isEnableObservaciones" />
           </form-field>
         </div>
         <!--  -->
@@ -184,10 +328,11 @@
             label="Fec. Elaboraci&oacute;n:"
             class="col-md-6">
             <input
+              bsDatepicker
               type="text"
               class="form-control"
               formControlName="fec_elaboracion"
-              readonly />
+              [readonly]="isEnableFecElaboracion" />
           </form-field>
 
           <form-field
@@ -198,7 +343,7 @@
               type="text"
               class="form-control"
               formControlName="nom_entrega"
-              readonly />
+              [readonly]="isEnableNombreEntrega" />
           </form-field>
         </div>
         <!--  -->
@@ -208,10 +353,11 @@
             label="Fec. Donaci&oacute;n:"
             class="col-md-6">
             <input
+              bsDatepicker
               type="text"
               class="form-control"
               formControlName="fec_don"
-              readonly />
+              [readonly]="isEnableFecDonacion" />
           </form-field>
 
           <form-field
@@ -222,7 +368,7 @@
               type="text"
               class="form-control"
               formControlName="nom_rec"
-              readonly />
+              [readonly]="isEnableNombreRecibe" />
           </form-field>
         </div>
         <!--  -->
@@ -235,7 +381,7 @@
               type="text"
               class="form-control"
               formControlName="dir"
-              readonly />
+              [readonly]="isEnableDireccion" />
           </form-field>
 
           <form-field
@@ -246,7 +392,7 @@
               type="text"
               class="form-control"
               formControlName="audit"
-              readonly />
+              [readonly]="isEnableAuditor" />
           </form-field>
         </div>
         <!--  -->
@@ -259,7 +405,7 @@
               type="text"
               class="form-control"
               formControlName="fol_esc"
-              readonly />
+              [readonly]="isEnableFolio" />
           </form-field>
 
           <form-field
@@ -270,7 +416,7 @@
               type="text"
               class="form-control"
               formControlName="tes_con"
-              readonly />
+              [readonly]="isEnableTestigo" />
           </form-field>
         </div>
         <!--  -->
@@ -285,13 +431,40 @@
         <div>
           <ng2-smart-table
             [attr.class]="'table-bordered'"
-            [settings]="settings"
+            [settings]="settings1"
             [source]="datas"
-            (userRowSelect)="rowSelectedOne($event)">
+            (userRowSelect)="rowSelectedOne($event)"
+            (rowDeselect)="desSelectRow()">
           </ng2-smart-table>
         </div>
         <app-pagination [params]="paramsOne" [totalItems]="totalItems">
         </app-pagination>
+        <hr class="row" style="width: 97%; margin: auto" />
+        <br />
+        <br />
+        <div class="row">
+          <div class="d-flex justify-content-center">
+            <form [formGroup]="form2" class="form-material">
+              <form-field
+                class="col-md-12"
+                [control]="form2.get('estatusPrueba')">
+                <input
+                  type="text"
+                  class="form-control"
+                  [readOnly]="true"
+                  formControlName="estatusPrueba" />
+              </form-field>
+            </form>
+            <p class="pt-4">
+              <span class="text-success mr-5"
+                ><i class="fa fa-square"></i>Disponibles</span
+              >
+              <span class="text-dark"
+                ><i class="fa fa-square"></i>No disponibles</span
+              >
+            </p>
+          </div>
+        </div>
       </div>
 
       <div class="col-md-12 text-center mt-4 mb-4">

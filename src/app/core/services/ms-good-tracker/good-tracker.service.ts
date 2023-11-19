@@ -142,4 +142,9 @@ export class GoodTrackerService extends HttpService {
   deleteTrackerGood(id: number) {
     return this.delete(`${this.microservice}/apps/deleteRegister/${id}`);
   }
+
+  PaInsGoodtmptracker_(traker: any) {
+    const route = `${GoodTrackerEndpoints.TmpTracker}?filter.identificator=$eq:${traker}&limit=100`;
+    return this.get(route);
+  }
 }
