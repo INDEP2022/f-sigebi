@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output,
 } from '@angular/core';
@@ -112,6 +113,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   @Output() onSave = new EventEmitter<any>();
+  @Input() files: any;
   totalItems2: number = 0;
   constructor(
     private goodService: GoodService,
@@ -246,9 +248,9 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     //         // this.dataGoodTable.load(this.selectedGooodsValid);
     //         // this.dataGoodTable.refresh();
     //       }
-    //     },
+    //     }
     //   });
-
+    console.log(this.files);
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {

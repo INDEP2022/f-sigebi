@@ -78,6 +78,7 @@ export class CaptureApprovalDonationComponent
   body: IExportDetail;
   valueChange: number = 0;
   totalItems: number = 0;
+  lv_ESTATUSB: number = 0;
   deleteG: boolean = false;
   loading3: boolean = false;
   Exportdate: boolean = false;
@@ -219,7 +220,7 @@ export class CaptureApprovalDonationComponent
   }
 
   ngOnInit(): void {
-    console.log(localStorage.getItem('actaId'));
+    console.log(localStorage.getItem('cveAc'));
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -233,7 +234,7 @@ export class CaptureApprovalDonationComponent
           }
           this.origin2 = paramsQuery['origin2'] ?? null;
         }
-        if (this.origin != null) {
+        if (this.origin !== null) {
           console.log('traigo parametros');
           this.consultgoods();
         }
@@ -323,7 +324,7 @@ export class CaptureApprovalDonationComponent
           .get('captureDate')
           .setValue(localStorage.getItem('captureDate'));
         this.regisForm.get('observaciones').setValue(data.observations);
-        this.getDetailDonation(this.idAct);
+        this.getDetailProceedingsDevollution(this.idAct);
       },
       error: () => {
         console.error('error');
@@ -446,23 +447,16 @@ export class CaptureApprovalDonationComponent
         this.SUM_BIEN = this.dataDetailDonation.reduce(
           (accumulator: any, object: any) => {
             return accumulator + parseFloat(object.amount);
-          },
-          0
+          }
         );
         console.log(this.SUM_BIEN);
-        this.dataDetailDonation.map((item: any) => {
-          this.goodError = item;
-          const counter = this.goodError.length;
-          this.BIEN_ERROR = counter;
-          console.log(this.SUM_BIEN);
-        });
+        this.BIEN_ERROR = Number(localStorage.getItem('error'));
       },
       error: () => console.error('no hay detalle acta'),
     });
   }
   async getDetailProceedingsDevollution(id: any) {
     this.loading3 = true;
-
     let params: any = {
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,

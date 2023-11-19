@@ -391,10 +391,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.GoodprocessService_.getScreenGood(body).subscribe({
         next: async (state: any) => {
           if (state.data) {
-            // console.log('di_disponible', state);
             resolve('S');
           } else {
-            // console.log('di_disponible', state);
             resolve('N');
           }
         },
