@@ -23,6 +23,7 @@ import { ParametersConceptsService } from 'src/app/core/services/ms-commer-conce
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -89,6 +90,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private segAccessAreaService: SegAcessXAreasService,
     private lotService: ExpenseLotService,
+    private eventService: EventAppService,
     private expenseModalService: ExpenseModalService,
     private parameterService: ParametersConceptsService
   ) {
@@ -198,6 +200,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             'Se ha actualizado el gasto ' + this.expenseNumber.value,
             'Gasto actualizado correctamente'
           );
+          this.fillForm({
+            ...this.data,
+            ...this.form.value,
+            amount: this.dataService.amount ?? 0,
+            vat: this.dataService.vat ?? 0,
+            vatWithheld: this.dataService.vatWithholding ?? 0,
+            address: this.addressEvent ?? this.address,
+          });
           // if (response && response.data) {
           //   this.alert(
           //     'success',
@@ -227,6 +237,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           next: response => {
             this.alert('success', 'Se ha creado el gasto correctamente', '');
             this.expenseNumber.setValue(response.data.expenseNumber);
+            this.fillForm({
+              ...this.data,
+              ...this.form.value,
+              amount: this.dataService.amount ?? 0,
+              vat: this.dataService.vat ?? 0,
+              vatWithheld: this.dataService.vatWithholding ?? 0,
+              address: this.addressEvent ?? this.address,
+            });
             // if (response && response.data) {
             //   this.alert(
             //     'success',
@@ -355,6 +373,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   ngOnInit() {
     this.lotNumber.valueChanges.subscribe({
       next: response => {
+        console.log(response);
         if (response) {
           this.nextItemLote();
         }
@@ -513,9 +532,43 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
-  private URCOORDREGCHATARRA_AUTOMATICO(opcion: number) {}
+  private URCOORDREGCHATARRA_AUTOMATICO(opcion: number) {
+    return this.eventService.urcoordRegChatarraAutomatic(
+      this.conceptNumber.value,
+      opcion
+    );
+  }
 
-  private CARGA_BIENES_LOTE_XDELRES(id_evento: number, id_lote: number) {}
+  private CARGA_BIENES_LOTE_XDELRES(
+    v_id_evento: number,
+    v_id_lote: number,
+    id_concepto: number
+  ) {
+    this.lotService
+      .CARGA_BIENES_LOTE_DELRES({
+        v_id_evento,
+        v_id_lote,
+        id_concepto,
+        cve_pantalla: 'FCOMER084',
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            console.log(response);
+            this.alert('success', 'Se han cargado los Bienes del lote', '');
+            this.dataService.updateExpenseComposition.next(true);
+          }
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'No se pudieron cargar los bienes del lote',
+            'Favor de verificar'
+          );
+        },
+      });
+  }
 
   private CARGA_BIENES_LOTE(pEventId: number, pBatchId: number) {
     this.lotService
@@ -531,7 +584,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           if (response) {
             console.log(response);
             this.alert('success', 'Se han cargado los Bienes del lote', '');
+            this.dataService.updateExpenseComposition.next(true);
           }
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'No se pudieron cargar los bienes del lote',
+            'Favor de verificar'
+          );
         },
       });
   }
@@ -541,42 +602,48 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async nextItemLote() {
-    if (this.PVALIDADET === 'S') {
-      const V_EXIST = await this.getParamValConcept(this.conceptNumber.value);
-      if (V_EXIST) {
-        // console.log(V_EXIST);
-        this.URCOORDREGCHATARRA_AUTOMATICO(3);
-        this.CARGA_BIENES_LOTE_XDELRES(
-          this.eventNumber.value,
-          this.lotNumber.value
-        );
-      } else {
-        this.CARGA_BIENES_LOTE(this.eventNumber.value, this.lotNumber.value);
-      }
-      if (this.dataService.V_BIEN_REP_ROBO > 0) {
-        this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
-        this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = true;
-        this.dataService.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
-        this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = true;
-      }
+    // if (this.PVALIDADET === 'S') {
+    const V_EXIST = await this.getParamValConcept(this.conceptNumber.value);
+    console.log(V_EXIST);
+    if (V_EXIST) {
+      // console.log(V_EXIST);
+      let coordChatarra = await firstValueFrom(
+        this.URCOORDREGCHATARRA_AUTOMATICO(3)
+      );
+      console.log(coordChatarra);
+
+      this.CARGA_BIENES_LOTE_XDELRES(
+        this.eventNumber.value,
+        this.lotNumber.value,
+        this.conceptNumber.value
+      );
+    } else {
+      this.CARGA_BIENES_LOTE(this.eventNumber.value, this.lotNumber.value);
     }
+    if (this.dataService.V_BIEN_REP_ROBO > 0) {
+      this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+      this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = true;
+      this.dataService.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
+      this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = true;
+    }
+    // }
   }
 
   private validPayments(event: IComerExpense) {
     return firstValueFrom(
       this.sirsaeService
         .validPayments({
-          pClkpv: event.clkpv,
-          pComment: event.comment,
-          pPayAfmandSae: event.comproafmandsae,
-          pNumberVoucher: event.numReceipts,
-          pDocumentationAnexa: event.attachedDocumentation,
-          pUserCapture: event.capturedUser,
-          pUserAuthorize: event.authorizedUser,
-          pUserRequest: event.requestedUser,
-          pFormPay: event.formPayment,
-          pEventId: +event.eventNumber,
-          pLotePub: +event.lotNumber,
+          pClkpv: this.clkpv.value,
+          pComment: this.comment.value,
+          pPayAfmandSae: this.comproafmandsae.value,
+          pNumberVoucher: this.form.get('numReceipts').value,
+          pDocumentationAnexa: this.form.get('attachedDocumentation').value,
+          pUserCapture: this.form.get('capturedUser').value,
+          pUserAuthorize: this.form.get('authorizedUser').value,
+          pUserRequest: this.form.get('requestedUser').value,
+          pFormPay: this.form.get('formPayment').value,
+          pEventId: this.eventNumber.value,
+          pLotePub: this.lotNumber.value,
         })
         .pipe(catchError(x => of({ data: false, message: x })))
     );
@@ -618,6 +685,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
     if (!event.comment) {
       this.alert('warning', 'Validación de pagos', 'Requiere servicio');
+      return false;
+    }
+    if (!event.conceptNumber) {
+      this.alert('warning', 'No cuenta con un concepto de pago', '');
+      return false;
+    }
+    if (!event.numReceipts) {
+      this.alert('warning', 'No cuenta con un número de comprobantes', '');
       return false;
     }
     if (!event.comproafmandsae) {
@@ -679,52 +754,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     console.log(event);
     this.data = event;
     this.addressEvent = event.address;
-    if (!event.conceptNumber) {
-      this.alert('warning', 'No cuenta con un concepto de pago', '');
-      return;
-    }
-    this.conceptNumber.setValue(event.conceptNumber);
-    if (!this.validatePaymentCamps(event)) {
-      return;
-    }
-    const responsePayments = await this.validPayments(event);
-    // console.log(responsePayments);
-    if (responsePayments.message[0] !== 'OK') {
-      this.alert(
-        'error',
-        'Sucedió un error en la validación de pagos',
-        'Favor de verificar'
-      );
-      return;
-    }
-    this.dataService.V_VALCON_ROBO = await firstValueFrom(
-      this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
-    );
-    if (!event.eventNumber) {
-      this.alert('warning', 'No cuenta con un número de evento', '');
-    }
-    this.eventNumber.setValue(event.eventNumber);
-    const responseParams = await this.getParams(event.conceptNumber);
-    if (!responseParams) {
-      return;
-    }
-    const otherParams = await this.fillOthersParameters();
-    // if (!otherParams) {
-    //   return;
-    // }
-    if (!event.lotNumber) {
-      this.alert('warning', 'No cuenta con un número de lote', '');
-    }
-    this.lotNumber.setValue(event.lotNumber);
-    if (!event.clkpv) {
-      this.alert('warning', 'No cuenta con un proveedor', '');
-    }
-    this.clkpv.setValue(event.clkpv);
-
-    if (!event.descurcoord) {
-      this.alert('warning', 'No se cuenta con coordinación regional', '');
-    }
-    this.descurcoord.setValue(event.descurcoord);
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
@@ -735,11 +764,47 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           : null
         : null
     );
-    this.comment.setValue(event.comment ?? '');
+    this.comment.setValue(event.comment);
+    this.conceptNumber.setValue(event.conceptNumber);
+    this.eventNumber.setValue(event.eventNumber);
+    this.lotNumber.setValue(event.lotNumber);
+    this.clkpv.setValue(event.clkpv);
+    setTimeout(async () => {
+      if (!event.descurcoord) {
+        this.alert('warning', 'No se cuenta con coordinación regional', '');
+      }
+      this.descurcoord.setValue(event.descurcoord);
+      if (!this.validatePaymentCamps(event)) {
+        return;
+      }
+      const responsePayments = await this.validPayments(event);
+      // console.log(responsePayments);
+      if (responsePayments.message[0] !== 'OK') {
+        this.alert(
+          'error',
+          'Sucedió un error en la validación de pagos',
+          'Favor de verificar'
+        );
+        return;
+      }
+      this.dataService.V_VALCON_ROBO = await firstValueFrom(
+        this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
+      );
 
-    this.dataService.updateOI.next(true);
-    this.dataService.updateExpenseComposition.next(true);
-    this.dataService.updateFolio.next(true);
+      const responseParams = await this.getParams(event.conceptNumber);
+      if (!responseParams) {
+        return;
+      }
+      const otherParams = await this.fillOthersParameters();
+      // if (!otherParams) {
+      //   return;
+      // }
+
+      this.dataService.updateOI.next(true);
+      this.dataService.updateExpenseComposition.next(true);
+      this.dataService.updateFolio.next(true);
+    }, 500);
+
     // this.reloadConcepto = !this.reloadConcepto;
   }
 

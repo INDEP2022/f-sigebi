@@ -589,6 +589,9 @@ export class ExpenseCompositionComponent
               next: response => {
                 this.loader.load = false;
               },
+              error: err => {
+                this.loader.load = false;
+              },
             });
           }
           // if (event.CONT > 0) {

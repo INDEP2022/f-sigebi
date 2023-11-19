@@ -15,4 +15,5 @@ export enum ScreenStatusEndpoints {
   PUP_VAL_BIEN_ROBO = 'application/val-good-steal',
   PUF_VAL_CONCEP_ROBO = 'application/val-concep-rob',
   GetCount = 'application/getCount',
+  ValidateDelegationConcept = 'application/loadGoodsLotXDelRes',
 }
