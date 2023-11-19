@@ -35,13 +35,6 @@
               [maxDate]="maxDate"
               formControlName="closeDate"
               class="form-control"
-              [min]="form.get('captureDate').value"
-              [minDate]="form.get('captureDate').value"
-              [ngModel]="
-                form.get('closeDate').value < form.get('captureDate').value
-                  ? form.get('captureDate').value
-                  : form.get('closeDate').value
-              "
               bsDatepicker />
           </form-field>
         </div>
@@ -109,8 +102,7 @@
               <button
                 type="button"
                 class="btn btn-primary active btn-sm mr-3"
-                (click)="filterButton()"
-                [disabled]="!form.valid">
+                (click)="filterButton()">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
@@ -131,6 +123,7 @@
           <div>
             <button
               class="btn btn-success active btn-sm ml-3"
+              [disabled]="!excelValid"
               (click)="exportAll()">
               Exportar a Excel <i class="bx bx-download float-icon"></i>
             </button>
@@ -196,6 +189,7 @@
               tooltip="Nuevo"
               containerClass="tooltip-style"
               class="btn btn-primary btn-sm active ml-2 mr-2"
+              [disabled]="!excelValid"
               (click)="goDetailDonation()">
               Captura de Evento <i class="bx bx-edit bx-sm float-icon"></i>
             </button>

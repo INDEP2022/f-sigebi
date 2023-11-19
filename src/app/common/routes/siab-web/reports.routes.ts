@@ -6,6 +6,14 @@ export const REPORTS_ROUTES = [
         label: 'Carga imagenes',
         link: '/pages/siab-web/sami/consult-report/upload-images',
       },
+      {
+        label: 'Reporte Bienes',
+        link: '/pages/siab-web/sami/consult-report/report-goods',
+      },
+      {
+        label: 'Documentos',
+        link: '/pages/siab-web/sami/consult-report/report-documents',
+      },
     ],
   },
 ];
