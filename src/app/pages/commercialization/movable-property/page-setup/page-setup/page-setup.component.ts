@@ -153,8 +153,8 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración de Columnas',
-          'Eliminada Correctamente'
+          'Se ha eliminado la configuración de columnas',
+          ''
         );
         this.getData();
       },
@@ -162,8 +162,8 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'error',
-          'Error',
-          'Ocurrio un Error al Eliminar la Configuración de Columnas'
+          'Ocurrio un error al eliminar la configuración de columnas',
+          ''
         );
       },
     });
@@ -222,7 +222,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio un Error al Actualizar la Configuración de Columnas'
+          'Ocurrio un error al modificar la configuración de columnas'
         );
         return throwError(() => error);
       }),
@@ -230,8 +230,8 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración de Columnas',
-          'Actualizada Correctamente'
+          'Se ha modificado la configuración de columnas',
+          ''
         );
         this.getData();
       })
