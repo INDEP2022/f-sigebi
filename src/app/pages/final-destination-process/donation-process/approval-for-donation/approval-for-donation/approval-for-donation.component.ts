@@ -227,6 +227,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     localStorage.setItem('cveAc', cveAc);
     localStorage.setItem('area', noDelegation1);
     localStorage.setItem('elaborated', elaborated);
+    localStorage.setItem('captureDate', captureDate);
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
@@ -321,6 +322,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.selectRow = true;
       this.excelValid = true;
       const data: any = event.data;
+      localStorage.setItem('area', event.data.noDelegation1);
+      localStorage.setItem('cveAc', event.data.cveAc);
+      localStorage.setItem('elaborated', event.data.elaborated);
+      localStorage.setItem('captureDate', event.data.captureDate);
       this.getDetailComDonation(data.actId);
       console.log(event.data);
     }
@@ -555,12 +560,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   async inicialice() {
     let access = await this.getAccessArea(new ListParams());
-    console.log(access);
     let FaVal = await this.getFaVal();
-    console.log(FaVal);
     let indicated = await this.getIndicator();
-    console.log(indicated);
-
     if (indicated == null) {
       this.alert(
         'error',

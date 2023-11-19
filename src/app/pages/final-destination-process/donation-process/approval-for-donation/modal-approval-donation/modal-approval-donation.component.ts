@@ -155,15 +155,11 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
             this.onGoodSelectValid(instance),
         },
         goodNumber: {
-          title: 'No. Gestión',
-          sort: false,
-          valuePrepareFunction(cell: any, row: any) {
-            return row.good.goodId;
-          },
-        },
-        id: {
           title: 'No. Bien',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.noBien;
+          },
         },
         description: {
           title: 'Descripción',
@@ -172,11 +168,11 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
             return row.good.description;
           },
         },
-        quantity: {
+        amount: {
           title: 'Cantidad',
           sort: false,
           valuePrepareFunction(cell: any, row: any) {
-            return row.good.amount;
+            return row.bienindicadores.amount;
           },
         },
         status: {
@@ -190,9 +186,12 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           title: 'Usuario',
           sort: false,
         },
-        delegationNumber: {
+        delegation: {
           title: 'Delegación',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.delegation.description;
+          },
         },
         warehouse: {
           title: 'Almacén',

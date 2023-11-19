@@ -219,6 +219,7 @@ export class CaptureApprovalDonationComponent
   }
 
   ngOnInit(): void {
+    console.log(localStorage.getItem('actaId'));
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -233,17 +234,11 @@ export class CaptureApprovalDonationComponent
           this.origin2 = paramsQuery['origin2'] ?? null;
         }
         if (this.origin != null) {
-          console.log(this.paramsScreen);
+          console.log('traigo parametros');
           this.consultgoods();
         }
       });
-    this.getComerDonation();
-    this.configDatePicker();
     this.initForm();
-    this.regisForm.get('type').setValue('COMPDON');
-    this.regisForm.get('area').setValue(localStorage.getItem('area'));
-    this.regisForm.get('keyEvent').setValue(localStorage.getItem('cveAc'));
-    this.estatus = localStorage.getItem('estatusAct');
   }
   oadGoods() {
     this.donAuthorizaService.loadGoods.next(true);
@@ -271,7 +266,8 @@ export class CaptureApprovalDonationComponent
     this.delForm = this.fb.group({
       observaElimina: [null, [Validators.required]],
     });
-    this.regisForm.get('area').setValue(localStorage.getItem('area'));
+    this.getComerDonation();
+    this.configDatePicker();
   }
 
   createDon(donationGood: IGoodDonation) {
@@ -296,6 +292,10 @@ export class CaptureApprovalDonationComponent
 
   getComerDonation() {
     this.idAct = Number(localStorage.getItem('actaId'));
+    this.regisForm.get('type').setValue('COMPDON');
+    this.regisForm.get('area').setValue(localStorage.getItem('area'));
+    this.regisForm.get('keyEvent').setValue(localStorage.getItem('cveAc'));
+    this.estatus = localStorage.getItem('estatusAct');
     this.donationService.getByIdEvent(this.idAct).subscribe({
       next: (data: any) => {
         this.eventDonacion = data;
@@ -308,40 +308,20 @@ export class CaptureApprovalDonationComponent
         this.deleteO = false;
         const ultimosCincoDigitos = localStorage.getItem('cveAc').slice(-5);
         const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
-        const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
-        if (
-          isNaN(anio) ||
-          isNaN(mesNumero) ||
-          anio < 0 ||
-          mesNumero < 1 ||
-          mesNumero > 12
-        ) {
+        // const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
+        if (isNaN(anio)) {
           return null;
         }
 
-        const mesesTexto = [
-          'Enero',
-          'Febrero',
-          'Marzo',
-          'Abril',
-          'Mayo',
-          'Junio',
-          'Julio',
-          'Agosto',
-          'Septiembre',
-          'Octubre',
-          'Noviembre',
-          'Diciembre',
-        ];
-
-        const mesTexto = mesesTexto[mesNumero - 1];
         const fechaActual = new Date();
         const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
         const anioCompleto = anio < 100 ? sigloActual + anio : anio;
         this.regisForm.get('year').setValue(anioCompleto);
         this.regisForm.get('folio').setValue(data.folioUniversal);
         this.regisForm.get('keyEvent').setValue(localStorage.getItem('cveAc'));
-        this.regisForm.get('captureDate').setValue(mesTexto);
+        this.regisForm
+          .get('captureDate')
+          .setValue(localStorage.getItem('captureDate'));
         this.regisForm.get('observaciones').setValue(data.observations);
         this.getDetailDonation(this.idAct);
       },
