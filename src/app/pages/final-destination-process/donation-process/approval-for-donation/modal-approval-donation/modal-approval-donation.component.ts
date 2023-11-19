@@ -14,6 +14,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { ITempDonDetail } from 'src/app/core/models/ms-donation/donation.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
@@ -22,6 +23,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { IParamsDonac } from '../capture-approval-donation/capture-approval-donation.component';
+
 interface NotData {
   id: number;
   reason: string;
@@ -88,8 +90,9 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   op: string;
   statusGood_: any;
   origin: string = '';
-  goods: IGood[] = [];
+  goods: ITempDonDetail[] = [];
   totalItemsModal: number = 0;
+  modelCreate: ITempDonDetail;
   // selectedGooods: any[] = [];
   selectedRow: any | null = null;
   dataTableGood_: any[] = [];
@@ -100,8 +103,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   ngGlobal: any;
   paramsScreen: IParamsDonac = {
     origin: '',
-    recordId: '',
-    area: '',
   };
   params = new BehaviorSubject<ListParams>(new ListParams());
   dataGoodTable: LocalDataSource = new LocalDataSource();
@@ -153,59 +154,105 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onGoodSelectValid(instance),
         },
-        inventoryNumber: {
-          title: 'No. Inventario',
+        goodNumber: {
+          title: 'No. Bien',
           sort: false,
-        },
-        goodId: {
-          title: 'No. Gestión',
-          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.noBien;
+          },
         },
         description: {
           title: 'Descripción',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good.description;
+          },
         },
-        quantity: {
+        amount: {
           title: 'Cantidad',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.amount;
+          },
         },
         status: {
           title: 'Estatus',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good.status;
+          },
+        },
+        user: {
+          title: 'Usuario',
+          sort: false,
+        },
+        delegation: {
+          title: 'Delegación',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.delegation.description;
+          },
+        },
+        warehouse: {
+          title: 'Almacén',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.warehouse.description;
+          },
+        },
+        bienindicadores: {
+          title: 'Indicador',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.description;
+          },
+        },
+        transference: {
+          title: 'Transferente',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.transference.nameTransferent;
+          },
+        },
+        processExt: {
+          title: 'Process. Ext Dom',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.procesoExtDom;
+          },
         },
       },
-      // rowClassFunction: (row: any) => {
-      //   if (row.data.di_disponible == 'S') {
-      //     return 'bg-success text-white';
-      //   } else {
-      //     return 'bg-dark text-white';
-      //   }
-      // },
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
     };
   }
 
   ngOnInit(): void {
-    this.globalVarService
-      .getGlobalVars$()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: global => {
-          this.ngGlobal = global;
-          if (this.ngGlobal.REL_BIENES) {
-            console.log('RASTREADOR ', this.data);
-            this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
-            this.dataGoodTable.load(this.selectedGooodsValid);
-            this.dataGoodTable.refresh();
-          }
-        },
-      });
+    // this.globalVarService
+    //   .getGlobalVars$()
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe({
+    //     next: global => {
+    //       this.ngGlobal = global;
+    //       if (this.ngGlobal.REL_BIENES) {
+    //         console.log('RASTREADOR ', this.data);
+    //         // this.createMultipleRecords(this.data);
+    //         // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
+    //         // this.dataGoodTable.load(this.selectedGooodsValid);
+    //         // this.dataGoodTable.refresh();
+    //       }
+    //     },
+    //   });
+
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
         this.origin = paramsQuery['origin'] ?? null;
-        this.paramsScreen.recordId = paramsQuery['recordId'] ?? null;
-        // this.paramsScreen.cveEvent = paramsQuery['cveEvent'] ?? null;
-        this.paramsScreen.area = paramsQuery['area'] ?? null;
         if (this.origin == 'FMCOMDONAC_1') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
@@ -214,11 +261,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
             }
           }
         }
-        if (
-          this.origin != null &&
-          this.paramsScreen.recordId != null &&
-          this.paramsScreen.area != null
-        ) {
+        if (this.origin != null) {
+          this.loadGlobalVarsAndCreateRecords();
           console.log(this.paramsScreen);
         }
       });
@@ -238,11 +282,16 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              inventoryNumber: () => (searchFilter = SearchFilter.ILIKE),
-              goodId: () => (searchFilter = SearchFilter.EQ),
+              goodNumber: () => (searchFilter = SearchFilter.ILIKE),
+              id: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.EQ),
               quantity: () => (searchFilter = SearchFilter.EQ),
               status: () => (searchFilter = SearchFilter.ILIKE),
+              user: () => (searchFilter = SearchFilter.ILIKE),
+              delegationNumber: () => (searchFilter = SearchFilter.EQ),
+              waehouse: () => (searchFilter = SearchFilter.EQ),
+              bienindicadores: () => (searchFilter = SearchFilter.EQ),
+              transference: () => (searchFilter = SearchFilter.EQ),
             };
 
             search[filter.field]();
@@ -295,10 +344,12 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['filter.status'] = 'DON';
+    // params['filter.status'] = 'DON';
+    params['sortBy'] = `goodId:DESC`;
     // params['sortBy'] = `goodId:DESC`;
-    this.goodService.getAll(params).subscribe({
+    this.donationService.getTempDon(params).subscribe({
       next: data => {
+        this.goods = data.data;
         console.log(data.data);
         this.totalItems2 = data.count;
         this.dataGoodTable.load(data.data);
@@ -394,7 +445,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     // if (this.dataRecepcion.length > 0) {
     // let result = this.dataRecepcion.map(async good => {
     let obj: any = {
-      numberProceedings: this.paramsScreen.recordId,
+      numberProceedings: localStorage.getItem('actaId'),
       numberGood: good.goodId,
       amount: good.quantity,
       received: null,
@@ -468,14 +519,14 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     console.log('1412212', params);
     params['sortBy'] = `goodId:DESC`;
     params['filter.status'] != 'ADM';
-    this.goodService.getByGood2(params).subscribe({
+    this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
         console.log('Bienes', this.goods);
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',
-            pNumberGood: item.goodId,
+            pNumberGood: item.goodNumber,
           };
 
           const di_dispo = await this.getStatusScreen(obj);
@@ -484,7 +535,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
             item.di_disponible = 'N';
           }
           item['quantity'] = item.amount;
-          item['di_acta'] = item.minutesKey;
+          item['id'] = item.minutesKey;
+          item['processExt'] = item.processExt;
           // item['id'] = item.goodId;
           // item['id'] = item.goodId;
           // item['id'] = item.goodId;
@@ -537,5 +589,61 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  async createTemp(body: ITempDonDetail) {
+    return new Promise((resolve, reject) => {
+      this.donationService.createTempDon(body).subscribe({
+        next: data => {
+          console.log('creado');
+          this.modelCreate = data;
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
+  }
+
+  async loadGlobalVarsAndCreateRecords() {
+    // Retrieve global variables
+    await this.getGlobalVars();
+
+    // Create multiple records
+    const data: ITempDonDetail[] = []; // Your data
+    await this.createMultipleRecords(data);
+  }
+
+  async getGlobalVars() {
+    return new Promise<void>((resolve, reject) => {
+      this.globalVarService
+        .getGlobalVars$()
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: global => {
+            this.ngGlobal = global;
+            if (this.ngGlobal.REL_BIENES) {
+              console.log('RASTREADOR ', this.data);
+            }
+            resolve();
+          },
+          error: reject,
+        });
+    });
+  }
+
+  async createMultipleRecords(data: ITempDonDetail[]) {
+    const promises = [];
+    for (const record of data) {
+      const promise = this.createTemp(record);
+      promises.push(promise);
+    }
+    const results = await Promise.all(promises);
+    console.log('All records created:', results);
+    this.alert(
+      'info',
+      'Bienes del rastreador agregados a temporales, por favor seleccione los bienes para el detalle',
+      ''
+    );
   }
 }
