@@ -144,7 +144,7 @@ export class ComerEventService extends HttpService {
     );
   }
 
-  faMaxdayValid(body: {date: string, day: number}){
-    return this.post(`/api/v1/util-comer-v1/faComerMaxdayValid`, body)
+  faMaxdayValid(body: { date: string; day: number }) {
+    return this.post(`/api/v1/util-comer-v1/faComerMaxdayValid`, body);
   }
 }

@@ -16,7 +16,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class BankMovementsFormComponent extends BasePage implements OnInit {
-  title: string = 'Movimiento';
+  title: string = 'movimiento';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   bankMovementsTypes: IBankMovementsTypes;
@@ -79,7 +79,7 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
       },
       error: (err: any) => {
         this.loading = false;
-        this.alert('warning', 'No Existen Bancos', ``);
+        this.alert('warning', 'No existen bancos', ``);
       },
     });
   }
@@ -123,7 +123,7 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
           this.handleSuccess(), this.modalRef.hide();
         },
         error: (error: any) => {
-          this.alert('warning', `No es Posible Actualizar el Movimiento`, '');
+          this.alert('warning', `No es posible actualizar el movimiento`, '');
           this.modalRef.hide();
         },
       });
@@ -164,14 +164,14 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
           this.modalRef.hide();
         },
         error: error => {
-          this.alert('warning', `No es Posible Crear el Movimiento`, '');
+          this.alert('warning', `No es posible crear el movimiento`, '');
           this.loading = false;
         },
       });
     } else {
       this.alert(
         'warning',
-        'El Formulario no es Válido. Revise los Campos Requeridos',
+        'El formulario no es válido. revise los campos requeridos',
         ''
       );
       this.loading = false;
@@ -180,9 +180,9 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit
-      ? 'Movimiento Actualizado'
-      : 'Movimiento Creado';
-    this.alert('success', `${message} Correctamente`, '');
+      ? 'ha sido actualizado'
+      : 'ha sido creado';
+    this.alert('success', `El ${this.title} ${message}`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

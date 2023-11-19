@@ -131,7 +131,7 @@ export class PenaltyTypesListComponent extends BasePage implements OnInit {
   removePenalty(id: number): void {
     this.tpenaltyService.remove(id).subscribe({
       next: data => {
-        this.alert('success', 'Eliminado Correctamente', '');
+        this.alert('success', 'La penalización se ha eliminado', '');
         this.loading = false;
         this.params
           .pipe(takeUntil(this.$unSubscribe))

@@ -22,7 +22,7 @@ export class UploadImagesComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs = new LocalDataSource();
   totalItems: number = 0;
-  goodSelect: IGood[] = [];
+  goodSelect: number = 0;
   constructor(
     private modalService: BsModalService,
     private goodFinderService: GoodFinderService,
@@ -69,13 +69,12 @@ export class UploadImagesComponent extends BasePage implements OnInit {
   }
 
   goodsSelect(good: IGood[]) {
-    this.goodSelect = good;
+    this.goodSelect = good[0].goodId;
   }
 
   loadImages() {
-    if (this.goodSelect.length == 1) {
-      console.log('good', this.goodSelect);
-
+    if (this.goodSelect != 0) {
+      let loadingPhotos = 0;
       const config = {
         ...MODAL_CONFIG,
         initialState: {
@@ -83,14 +82,27 @@ export class UploadImagesComponent extends BasePage implements OnInit {
           uploadFiles: false,
           service: this.massiveFilePhotoSaveZipService,
           multiple: false,
+          good: this.goodSelect,
           titleFinishUpload: 'Imagenes Cargadas Correctamente',
           questionFinishUpload: '¿Desea subir más imagenes?',
           callback: (refresh: boolean) => {
             if (refresh) {
-              this.dataService.showEvent.next(true);
+              this.loading = true;
+              loadingPhotos = loadingPhotos + 1;
+              setTimeout(() => {
+                this.params
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getGoodsRequest());
+                this.loading = false;
+              }, 7000);
+              if (loadingPhotos == 1) {
+                this.alert(
+                  'success',
+                  'Acción correcta',
+                  'Imágenes agregadas correctamente'
+                );
+              }
             }
-            // console.log(refresh);
-            // this.fileUploaderClose(refresh);
           },
         },
       };

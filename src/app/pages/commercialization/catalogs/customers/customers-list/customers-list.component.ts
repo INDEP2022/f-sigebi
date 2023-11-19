@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+
+import { MODAL_CONFIG_XL } from 'src/app/common/constants/modal-config-xl';
 import {
   ListParams,
   SearchFilter,
@@ -253,13 +254,20 @@ export class CustomersListComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.customers = [];
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
   //Modal para crear o editar clientes
   openFormClients(customers?: any) {
-    const modalConfig = MODAL_CONFIG;
+    console.log(customers);
+    const modalConfig = MODAL_CONFIG_XL;
     if (customers) {
       customers = { ...customers, sellerId: customers.sellerId?.id ?? null };
     }
@@ -274,7 +282,7 @@ export class CustomersListComponent extends BasePage implements OnInit {
 
   //Abrir modal de lista negra
   openBlackList() {
-    const modalConfig = MODAL_CONFIG;
+    const modalConfig = MODAL_CONFIG_XL;
     modalConfig.initialState = {
       callback: (next: boolean) => {
         if (next) this.getData();
@@ -285,7 +293,7 @@ export class CustomersListComponent extends BasePage implements OnInit {
 
   //Abrir modal de lista blanca
   openWhiteList() {
-    const modalConfig = MODAL_CONFIG;
+    const modalConfig = MODAL_CONFIG_XL;
     modalConfig.initialState = {
       callback: (next: boolean) => {
         if (next) this.getData();
@@ -296,7 +304,7 @@ export class CustomersListComponent extends BasePage implements OnInit {
 
   //Abrir modal con todos los clientes
   openAllClient() {
-    const modalConfig = MODAL_CONFIG;
+    const modalConfig = MODAL_CONFIG_XL;
     modalConfig.initialState = {
       callback: (next: boolean) => {
         if (next) this.getData();

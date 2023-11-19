@@ -46,6 +46,10 @@ export class UsersEventTypesFormsComponent extends BasePage implements OnInit {
     this.getUsuarios(new ListParams());
   }
   getUsuarios(params: ListParams) {
+    if (params.text) {
+      params['filter.user'] = `$ilike:${params.text}`;
+      params['search'] = ``;
+    }
     this.securityService.getAllUsersTracker(params).subscribe({
       next: data => {
         this.user = new DefaultSelect(data.data, data.count);
@@ -55,6 +59,8 @@ export class UsersEventTypesFormsComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  async userGet(text: string) {}
   confirm() {
     this.edit ? this.update() : this.create();
   }
@@ -71,9 +77,9 @@ export class UsersEventTypesFormsComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizado' : 'ha sido guardado';
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.alert('success', `${message} Correctamente`, '');
+    this.alert('success', `El usuario ${message}`, '');
     this.loading = false;
     this.modalRef.content.callback(this.idTypeEvent);
     this.modalRef.hide();

@@ -34,7 +34,7 @@
     </div> -->
     <div class="row">
       <div class="col-md-6">
-        <div class="row">
+        <div class="row margin-input">
           <div class="ch-content">
             <h5 class="title">Eventos</h5>
           </div>
@@ -55,22 +55,24 @@
               [leftList]="true"
               [defaultColumns]="3"></app-columns-select>
           </div>
-        </div>
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (edit)="openForm($event.data)"
-            (rowSelect)="changeEvent($event)">
-          </ng2-smart-table>
-          <app-pagination [params]="params" [totalItems]="totalItems">
-          </app-pagination>
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings"
+                [source]="data"
+                (edit)="openForm($event.data)"
+                (rowSelect)="changeEvent($event)">
+              </ng2-smart-table>
+              <app-pagination [params]="params" [totalItems]="totalItems">
+              </app-pagination>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="col-md-6">
-        <div class="row">
+        <div class="row margin-input">
           <div class="ch-content">
             <h5 class="title">Procesos</h5>
           </div>
@@ -91,17 +93,27 @@
               [(settings)]="settings2"
               [leftList]="true"></app-columns-select>
           </div>
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [settings]="settings2"
+                [attr.class]="'table-bordered table-responsive'"
+                [source]="data1"
+                (delete)="showDeleteAlert($event)"
+                (edit)="openForm($event)"></ng2-smart-table>
+            </div>
+          </div>
         </div>
-        <div class="table-responsive">
+        <!--<div class="table-responsive">
           <ng2-smart-table
             [settings]="settings2"
             [source]="data1"
             (delete)="showDeleteAlert($event)"
             (edit)="openForm($event)"></ng2-smart-table>
-          <!--<app-pagination
+          <app-pagination
             [params]="params1"
-            [totalItems]="totalItems1"></app-pagination>-->
-        </div>
+            [totalItems]="totalItems1"></app-pagination>
+        </div>-->
       </div>
     </div>
   </div>

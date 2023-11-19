@@ -1,12 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Aprobaci&oacute;n para Donaci&oacute;n</h5>
+    <h5 class="title">Mantenimiento y Seguimiento de Eventos</h5>
   </div>
 
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mt-5">
-        <div class="col-md-3">
+      <div class="row">
+        <div class="col-md-4">
           <form-field [control]="form.get('cveActa')">
             <ngx-select
               (fetchItems)="getEventComDonation($event)"
@@ -20,8 +20,25 @@
             </ngx-select>
           </form-field>
         </div>
-
-        <div class="col-md-3">
+        <div class="col-md-4">
+          <form-field [control]="form.get('captureDate')" label="Fecha Inicio">
+            <input
+              [maxDate]="maxDate"
+              formControlName="captureDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('closeDate')" label="Fecha Fin">
+            <input
+              [maxDate]="maxDate"
+              formControlName="closeDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
           <form-field [control]="form.get('estatusAct')" label="Estatus Evento">
             <ng-select
               formControlName="estatusAct"
@@ -29,24 +46,14 @@
               class="form-control"
               [clearable]="false"
               (change)="getRowSelec($event)">
-              <ng-option value=""></ng-option>
-              <ng-option value="TODOS">TODOS</ng-option>
+              <ng-option value="null"></ng-option>
+              <ng-option value="null">TODOS</ng-option>
               <ng-option value="ABIERTA">ABIERTA </ng-option>
               <ng-option value="CERRADA">CERRADA </ng-option>
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-3">
-          <!-- <div class="title">{{ delegation || '' }}</div> -->
-          <!-- <label for="" class="col-form-label">Coord. Regional</label>
-          <div>{{ delegation || '' }}</div> -->
-          <!-- <form-field [control]="form.get('noDelegation1')" label="Coord. Regional">
-           <input
-              type="text"
-              class="form-control"
-              formControlName="noDelegation1" /> 
-
-          </form-field> -->
+        <div class="col-md-4">
           <form-field [control]="form.get('noDelegation1')">
             <ngx-select
               label="Coor. Regional"
@@ -60,7 +67,7 @@
               (change)="updateSelectedIds($event)"
               termMaxLength="50"
               value="id"
-              [multiple]="true">
+              [multiple]="false">
             </ngx-select>
             <ng-template #userLabel let-item="item">
               {{ item.id + ' - ' + item.description }}
@@ -72,13 +79,11 @@
             </ng-template>
           </form-field>
         </div>
-        <div class="col-md-3">
-          <!-- <div class="title">{{ user || '' }}</div> -->
+        <div class="col-md-4">
           <form-field [control]="form.get('elaborated')">
             <ngx-select
               label="Usuario"
               [form]="form"
-              [readonly]="useracept ? true : false"
               [data]="users$"
               (fetchItems)="getUsers($event)"
               bindLabel="userAndName"
@@ -86,69 +91,28 @@
               [searchOnInit]="true"
               [showTooltip]="true"
               termMaxLength="50"
-              value="id"
-              [labelTemplate]="userLabel"
-              [optionTemplate]="userOption">
+              value="id">
             </ngx-select>
-            <ng-template #userLabel let-item="item">
-              {{ item.id + ' - ' + item.name }}
-            </ng-template>
-            <ng-template #userOption let-item="item">
-              <div [title]="item.id + '-' + item.name">
-                {{ item.id + ' - ' + item.name }}
-              </div>
-            </ng-template>
           </form-field>
         </div>
-      </div>
 
-      <!-- <div class="row pt-4">
-        <div class="d-flex justify-content-center">
-          <div class="col offset-md-3">
-            <button class="btn btn-sm btn-primary active mr-3" [disabled]="!form.valid" (click)="filterButton()">
-              Buscar
-            </button>
-            <button class="btn btn-danger btn-sm active" (click)="clean()">
-              Limpiar <i class="fas fa-eraser"> </i>
-            </button>
-          </div>
-        </div>
-      </div> -->
-
-      <div class="row pt-4">
-        <div class="col-md-12 d-flex justify-content-center">
-          <div>
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm mr-3"
-              (click)="filterButton()"
-              [disabled]="validate">
-              Buscar
-              <i class="bx bx-search-alt bx-sm float-icon"></i>
-            </button>
-            <button class="btn btn-danger btn-sm active" (click)="clean()">
-              Limpiar <i class="fas fa-eraser"></i>
-            </button>
+        <div class="row pt-4">
+          <div class="col-md-12 d-flex justify-content-center">
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm mr-3"
+                (click)="filterButton()">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button class="btn btn-danger btn-sm active" (click)="clean()">
+                Limpiar <i class="fas fa-eraser"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-
-      <!--<div class="row mt-5 justify-content-center justify-content-sm-end">
-        <div class="col-12 col-sm-3 text-center text-sm-right">
-          <button
-            class="btn btn-primary active btn-sm"
-            (click)="filterButton()">
-            Buscar
-          </button>
-        </div>
-        <div class="col-12 col-sm-3 text-center mt-3 mt-sm-0 text-sm-right">
-          <button
-            class="btn btn-primary active btn-sm"
-            routerLink="capture-approval-donation">
-            Capturar Evento
-          </button>
-        </div>
-      </div>-->
     </form>
 
     <div *ngIf="response">
@@ -159,6 +123,7 @@
           <div>
             <button
               class="btn btn-success active btn-sm ml-3"
+              [disabled]="!excelValid"
               (click)="exportAll()">
               Exportar a Excel <i class="bx bx-download float-icon"></i>
             </button>
@@ -198,7 +163,20 @@
       </div>
       <app-pagination [params]="params1" [totalItems]="totalItems1">
       </app-pagination>
-
+      <div class="col-6 align-items-center">
+        <div class="row">
+          <div class="col-6">
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Disponibles</span
+            >
+          </div>
+          <div class="col-6">
+            <span class="text-black"
+              ><i class="fa fa-square"></i> No disponibles</span
+            >
+          </div>
+        </div>
+      </div>
       <div class="row pt-4">
         <div class="col-md-8 mb-3"></div>
         <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
@@ -211,7 +189,7 @@
               tooltip="Nuevo"
               containerClass="tooltip-style"
               class="btn btn-primary btn-sm active ml-2 mr-2"
-              [disabled]="!selectRow"
+              [disabled]="!excelValid"
               (click)="goDetailDonation()">
               Captura de Evento <i class="bx bx-edit bx-sm float-icon"></i>
             </button>
@@ -219,35 +197,5 @@
         </div>
       </div>
     </div>
-
-    <!--<div *ngIf="detail">
-      <hr />
-      <div class="row pt-5">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings"
-              [source]="data">
-            </ng2-smart-table>
-          </div>
-        </div>
-      </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
-
-      <div class="row pt-4">
-        <div class="col-md-8 mb-3"></div>
-        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
-          <div>
-            <button
-              class="btn btn-primary active btn-sm"
-              routerLink="capture-approval-donation">
-              Captura de Evento
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>-->
   </div>
 </app-card>

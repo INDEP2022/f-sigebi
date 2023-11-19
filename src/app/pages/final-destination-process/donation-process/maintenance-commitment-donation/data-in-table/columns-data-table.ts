@@ -1,9 +1,12 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxElementComponent_ } from './CheckboxDisabled';
 export const COLUMNS_DATA_TABLE = {
   labelId: {
     title: 'Etiqueta',
     valuePrepareFunction: (value: any) => {
       return value != null ? value.description : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     type: 'string',
     sort: false,
@@ -52,22 +55,47 @@ export const COLUMNS_DATA_TABLE = {
   yes: {
     title: 'S',
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    renderComponent: CheckboxElementComponent_,
     onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+      if (instance?.toggle) {
+        instance.toggle.subscribe((data: any) => {
+          data.row.to = data.toggle;
+        });
+      }
+    },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     sort: false,
   },
   not: {
     title: 'N',
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    // filter: false,
+    renderComponent: CheckboxElementComponent_,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });
+    },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: true,
+        false: false,
+        resetText: ' ',
+      },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
     sort: false,
   },

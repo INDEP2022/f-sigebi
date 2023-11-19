@@ -7,7 +7,9 @@
     <form class="form-material" [formGroup]="form">
       <div class="row mb-5 mt-3">
         <div class="col">
-          <button class="btn btn-danger btn-sm active mr-3" (click)="clearAll()">
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="clearAll()">
             Limpiar <i class="fas fa-eraser"> </i>
           </button>
           <button
@@ -203,7 +205,7 @@
     <div class="md-tabs mb-3 mt-3">
       <tabset [justified]="true">
         <!-- CLIENTES PARTICIPANTES EN EL EVENTO -->
-        <tab heading="Clientes Participantes en el Evento" id="tab1">
+        <tab  heading="Clientes Participantes en el Evento" id="tab1">
           <form [formGroup]="formCustomerEvent" class="form-material">
             <div class="row mb-3">
               <div class="col">
@@ -358,7 +360,6 @@
 <!--Tabs-->
 <app-card>
   <div body>
-    Options
     <div class="md-tabs mb-3 mt-3">
       <tabset [justified]="true">
         <!-- LOTES ASIGNADOS EN EL EVENTO -->

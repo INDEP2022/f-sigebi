@@ -5,20 +5,26 @@
   <div body>
     <form class="form-material" [formGroup]="penaltyTypeForm">
       <div class="row">
-        <div class="col-md-12 pt-sm-5">
+        <div class="col-md-12">
           <form-field
             [control]="penaltyTypeForm.get('descPenalty')"
             label="Descripción">
-            <input
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="descPenalty"
+              maxlength="150"></textarea>
+            <!--<input
               type="text"
               class="form-control"
               formControlName="descPenalty"
-              maxlength="150" />
+              maxlength="150" />-->
           </form-field>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-6 pt-sm-5">
+      <div class="row pt-4">
+        <div class="col-md-6">
           <form-field
             [control]="penaltyTypeForm.get('daysPenalty')"
             label="Días">
@@ -28,7 +34,7 @@
               formControlName="daysPenalty" />
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5">
+        <div class="col-md-6">
           <form-field
             [control]="penaltyTypeForm.get('process')"
             label="Proceso">

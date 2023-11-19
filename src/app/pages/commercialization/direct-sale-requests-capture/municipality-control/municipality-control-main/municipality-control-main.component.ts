@@ -40,6 +40,7 @@ export class MunicipalityControlMainComponent
   columnFilters: any = [];
   assignedGoodColumns: any[] = [];
   idGood: any;
+  applicant: any;
   applicantSettings = {
     ...TABLE_SETTINGS,
     actions: {
@@ -112,7 +113,7 @@ export class MunicipalityControlMainComponent
               case 'soladjinstgobId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'amount':
+              case 'typeentgobId':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'applicant':
@@ -164,6 +165,7 @@ export class MunicipalityControlMainComponent
     };
     this.assignedGoodColumns = [];
     this.assignedGoodTotalItems = 0;
+    this.dataFactGen.reset();
     this.municipalityControlMainService.getSolicitantes(params).subscribe({
       next: response => {
         this.loading = false;
@@ -179,15 +181,18 @@ export class MunicipalityControlMainComponent
   onClick(data: any) {
     // console.log(data);
   }
-  getDataGoods(id?: any) {
-    this.idGood = id;
-    this.msDirectawardService.getGoodsByApplicant(id).subscribe({
+  getDataGoods(applicant?: any) {
+    this.idGood = applicant.soladjinstgobId;
+    this.applicant = applicant;
+    this.msDirectawardService.getGoodsByApplicant(this.idGood).subscribe({
       next: data => {
         this.assignedGoodColumns = data.data;
-        this.assignedGoodTotalItems = this.assignedGoodColumns.length;
+        this.assignedGoodTotalItems = data.count;
         console.log(this.assignedGoodColumns);
       },
       error: err => {
+        this.assignedGoodColumns = [];
+        this.assignedGoodTotalItems = 0;
         this.onLoadToast(
           'warning',
           'Advertencia',
@@ -230,7 +235,7 @@ export class MunicipalityControlMainComponent
     };
     this.municipalityControlMainService.deleteSolicitante(body).subscribe({
       next: data => {
-        this.onLoadToast('success', 'Solicitante', 'Eliminado Correctamente');
+        this.onLoadToast('success', 'Se ha eliminado el solicitante', '');
         this.getData();
         // location.reload();
       },
@@ -248,7 +253,7 @@ export class MunicipalityControlMainComponent
     // console.log(row);
     this.msDirectawardService.deleteGoodsById(row.detbienesadjId).subscribe({
       next: data => {
-        this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
+        this.onLoadToast('success', 'Se ha eliminado el bien', '');
         // location.reload();
         this.getData();
       },
@@ -280,17 +285,30 @@ export class MunicipalityControlMainComponent
   }
 
   openFormAssignedGood(good?: any) {
+    if (good == undefined && this.applicant == undefined) {
+      this.onLoadToast(
+        'info',
+        'Para agregar un nuevo bien seleccione un solicitante'
+      );
+      return;
+    }
     this.openModalAssignedGood({ good });
   }
 
   openModalAssignedGood(context?: Partial<AssignedGoodsModalComponent>) {
     const modalRef = this.modalService.show(AssignedGoodsModalComponent, {
-      initialState: { ...context, ...this.assignedGoodColumns },
+      initialState: {
+        ...context,
+        ...this.assignedGoodColumns,
+        applicant: this.applicant,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(data => {
-      if (data) this.getDataGoods(this.idGood);
+      if (data) {
+        this.getDataGoods(this.applicant);
+      }
     });
   }
 }
