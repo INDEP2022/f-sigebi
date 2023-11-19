@@ -111,9 +111,12 @@
             <div class="col-md-4 text-center text-md-right">
               <button
                 class="btn btn-success btn-sm active"
-                [disabled]="!isSelect"
-                (click)="exportToExcelX()">
-                Exportar a Excel <i class="bx bx-download float-icon"></i>
+                [ngClass]="{ loading: loadingExport }"
+                [disabled]="selectedGoods.length == 0 || loadingExport"
+                [disabled]="selectedGoods.length == 0"
+                (click)="exportToExcelX(true)">
+                Exportar a Excel
+                <i *ngIf="!loadingExport" class="bx bx-download float-icon"></i>
               </button>
             </div>
             <div class="col-md-4">
@@ -130,9 +133,13 @@
             <div class="col-md-4">
               <button
                 class="btn btn-success btn-sm active"
-                [disabled]="!isExcel"
+                [ngClass]="{ loading: loadingExportAndUpdate }"
+                [disabled]="selectedGoods.length == 0 || loadingExportAndUpdate"
                 (click)="ExportAndChange()">
                 Exportar a Excel y Cambiar Estatus
+                <i
+                  *ngIf="!loadingExportAndUpdate"
+                  class="bx bx-download float-icon"></i>
               </button>
             </div>
           </div>

@@ -347,4 +347,12 @@ export class GoodProcessService extends HttpService {
   getApplicationData(body: any) {
     return this.post(GoodProcessPoints.ApplicationGetData, body);
   }
+
+  getApplicationGetDataNoprocedingConsulta(body: any, params: _Params) {
+    return this.post<IListResponse>(
+      GoodProcessPoints.ApplicationGetDataNoprocedingConsulta,
+      body,
+      params
+    );
+  }
 }

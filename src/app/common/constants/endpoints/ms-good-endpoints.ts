@@ -101,6 +101,7 @@ export enum GoodProcessPoints {
   GoodxStatusXtypeNumber = 'application/getExistsGoodxStatusXtypeNumber',
   ConsultQuery = 'application/consultQuery',
   ApplicationGetData = 'application/getData',
+  ApplicationGetDataNoprocedingConsulta = 'application/get-data-noproceding-consulta',
 }
 
 export enum GoodFinderEndpoint {
