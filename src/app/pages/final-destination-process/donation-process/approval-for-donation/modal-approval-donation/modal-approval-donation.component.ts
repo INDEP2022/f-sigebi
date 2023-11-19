@@ -157,18 +157,70 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         goodNumber: {
           title: 'No. Gestión',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good.goodId;
+          },
+        },
+        id: {
+          title: 'No. Bien',
+          sort: false,
         },
         description: {
           title: 'Descripción',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good.description;
+          },
         },
         quantity: {
           title: 'Cantidad',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good.amount;
+          },
         },
         status: {
           title: 'Estatus',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good.status;
+          },
+        },
+        user: {
+          title: 'Usuario',
+          sort: false,
+        },
+        delegationNumber: {
+          title: 'Delegación',
+          sort: false,
+        },
+        warehouse: {
+          title: 'Almacén',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.warehouse.description;
+          },
+        },
+        bienindicadores: {
+          title: 'Indicador',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.description;
+          },
+        },
+        transference: {
+          title: 'Transferente',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.transference.nameTransferent;
+          },
+        },
+        processExt: {
+          title: 'Process. Ext Dom',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.procesoExtDom;
+          },
         },
       },
       rowClassFunction: (row: any) => {
@@ -197,7 +249,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     //       }
     //     },
     //   });
-    this.loadGlobalVarsAndCreateRecords();
+
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -211,6 +263,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           }
         }
         if (this.origin != null) {
+          this.loadGlobalVarsAndCreateRecords();
           console.log(this.paramsScreen);
         }
       });
@@ -474,7 +527,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',
-            pNumberGood: item.goodId,
+            pNumberGood: item.goodNumber,
           };
 
           const di_dispo = await this.getStatusScreen(obj);
@@ -483,8 +536,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
             item.di_disponible = 'N';
           }
           item['quantity'] = item.amount;
-          item['di_acta'] = item.minutesKey;
-
+          item['id'] = item.minutesKey;
+          item['processExt'] = item.processExt;
           // item['id'] = item.goodId;
           // item['id'] = item.goodId;
           // item['id'] = item.goodId;

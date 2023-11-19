@@ -30,25 +30,28 @@ export const GOODS = {
     title: 'Descripción',
     sort: false,
     valuePrepareFunction(row: any) {
-      return row.description;
+      return row.good.description;
     },
   },
-  quantity: {
+  cant: {
     title: 'Cantidad',
     sort: false,
     valuePrepareFunction(row: any) {
-      return row.quantity;
+      return row.good.cant;
     },
   },
 };
 
 export const TEMPGOODS = {
   goodNumber: {
-    title: 'No. Bien',
+    title: 'No. Gestión',
     sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.good.goodId;
+    },
   },
   id: {
-    title: 'No. Gestión',
+    title: 'No. Bien',
     sort: false,
   },
   description: {
@@ -83,13 +86,29 @@ export const TEMPGOODS = {
   warehouse: {
     title: 'Almacén',
     sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.warehouse.description;
+    },
   },
   bienindicadores: {
     title: 'Indicador',
     sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.bienindicadores.description;
+    },
   },
   transference: {
     title: 'Transferente',
     sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.transference.nameTransferent;
+    },
+  },
+  processExt: {
+    title: 'Process. Ext Dom',
+    sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.bienindicadores.procesoExtDom;
+    },
   },
 };
