@@ -313,6 +313,19 @@ export class GoodProcessService extends HttpService {
     );
   }
 
+  goodResDevInvFilter(_params: ListParams, filter: Object) {
+    const params = this.makeParams(_params);
+    return this.post<IListResponse<IGoodsResDev>>(
+      `${GoodProcessPoints.GetGoodsResDevInvFilter}?${params}`,
+      filter
+    );
+  }
+
+  goodResDevInvReport(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.post(`${GoodProcessPoints.GetGoodsResDevReport}?${params}`, {});
+  }
+
   getGoodCustom(currency: string, good: number) {
     return this.get(
       `${GoodProcessPoints.GetDataCustom}?tCurrency=${currency}&noGood=${good}`
@@ -346,5 +359,13 @@ export class GoodProcessService extends HttpService {
 
   getApplicationData(body: any) {
     return this.post(GoodProcessPoints.ApplicationGetData, body);
+  }
+
+  getApplicationGetDataNoprocedingConsulta(body: any, params: _Params) {
+    return this.post<IListResponse>(
+      GoodProcessPoints.ApplicationGetDataNoprocedingConsulta,
+      body,
+      params
+    );
   }
 }

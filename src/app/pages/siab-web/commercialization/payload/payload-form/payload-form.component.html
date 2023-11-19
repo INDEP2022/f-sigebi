@@ -146,7 +146,12 @@
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('Fecha')" label="Fecha">
-            <input type="text" class="form-control" formControlName="Fecha" />
+            <input
+              type="text"
+              [maxDate]="maxDate"
+              class="form-control"
+              formControlName="Fecha"
+              bsDatepicker />
           </form-field>
         </div>
       </div>
