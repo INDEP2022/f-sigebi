@@ -141,7 +141,7 @@
                 control="unitMeasurement"
                 [showTooltip]="true"
                 [data]="measureUnits"
-                value="measureTlUnit"
+                value="uomCode"
                 bindLabel="measureTlUnit"
                 label="Unidad de Medida"
                 (fetchItems)="getUnitMeasure($event)"></ngx-select>
@@ -214,6 +214,15 @@
     <div class="row pt-4">
       <div class="justify-content-start btn-toolbar pt-4">
         <app-columns-select [(settings)]="settings"></app-columns-select>
+        <confirm-button
+          [loading]="loadingReport"
+          [btnSmall]="true"
+          [text]="'Reporte de Bienes programables'"
+          [loadingText]="'Generando Reporte'"
+          [className]="'btn-success ml-2'"
+          [icon]="'bx bx-download float-icon'"
+          class="mr-2"
+          (confirm)="reportGoods()"></confirm-button>
       </div>
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
