@@ -159,8 +159,6 @@ export class FindActaComponent extends BasePage implements OnInit {
         this.dataFactActas.refresh();
         this.loading = false;
         this.totalItems2 = data.count;
-
-        console.log('asdasd ', this.dataTableGoodsActa);
       },
       error: error => {
         this.loading = false;
@@ -175,12 +173,9 @@ export class FindActaComponent extends BasePage implements OnInit {
   onUserRowSelect(row: any): void {
     if (row.isSelected) {
       this.selectedRow = row.data;
-      console.log(this.selectedRow);
     } else {
       this.selectedRow = null;
     }
-
-    console.log(this.selectedRow);
   }
 
   handleSuccess(): void {

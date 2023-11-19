@@ -16,6 +16,7 @@ import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-pr
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+
 @Component({
   selector: 'app-create-acta',
   templateUrl: './create-acta.component.html',
@@ -35,6 +36,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   witnessTes: any;
   witnessAdm: any;
   cve_recibe: any;
+  idActa: number = 0;
   @Output() onSave = new EventEmitter<any>();
   arrayDele: any[] = [];
   dele = new DefaultSelect<any>();
@@ -89,7 +91,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.actaRecepttionForm = this.fb.group({
       type: [null, Validators.required],
       fileId: [null, Validators.required],
-      consec: [null, Validators.required],
+      consec: [null],
       anio: [null, [Validators.required]],
       captureDate: [null],
       cveActa: [null],
@@ -105,7 +107,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     });
 
     this.actaRecepttionForm.patchValue({
-      elaboradate: await this.getDate(),
+      captureDate: await this.getDate(),
     });
   }
 
@@ -253,6 +255,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       next: (data: any) => {
         console.log('DATA', data);
         this.newRegister = data;
+        this.idActa = data.id;
         this.alert('success', 'El Evento se ha Creado Correctamente', '');
         this.handleSuccess();
       },

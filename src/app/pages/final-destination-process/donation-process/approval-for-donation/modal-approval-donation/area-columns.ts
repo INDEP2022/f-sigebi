@@ -41,3 +41,55 @@ export const GOODS = {
     },
   },
 };
+
+export const TEMPGOODS = {
+  goodNumber: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  id: {
+    title: 'No. Gestión',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.good.description;
+    },
+  },
+  quantity: {
+    title: 'Cantidad',
+    sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.good.amount;
+    },
+  },
+  status: {
+    title: 'Estatus',
+    sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.good.status;
+    },
+  },
+  user: {
+    title: 'Usuario',
+    sort: false,
+  },
+  delegationNumber: {
+    title: 'Delegación',
+    sort: false,
+  },
+  warehouse: {
+    title: 'Almacén',
+    sort: false,
+  },
+  bienindicadores: {
+    title: 'Indicador',
+    sort: false,
+  },
+  transference: {
+    title: 'Transferente',
+    sort: false,
+  },
+};

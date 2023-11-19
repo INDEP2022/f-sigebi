@@ -45,6 +45,7 @@ import { GoodErrorComponent } from '../good-error/good-error.component';
 import { RopIdComponent } from '../rop-id/rop-id.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
+
 @Component({
   selector: 'app-capture-approval-donation',
   templateUrl: './capture-approval-donation.component.html',
@@ -257,7 +258,7 @@ export class CaptureApprovalDonationComponent
     this.regisForm = this.fb.group({
       type: [null, []],
       area: [null, [Validators.pattern(STRING_PATTERN)]],
-      year: [this.bsValueToYear, []],
+      year: [null, []],
       folio: [
         null,
         [Validators.pattern(KEYGENERATION_PATTERN), Validators.maxLength(4)],
@@ -342,8 +343,7 @@ export class CaptureApprovalDonationComponent
         this.regisForm.get('keyEvent').setValue(localStorage.getItem('cveAc'));
         this.regisForm.get('captureDate').setValue(mesTexto);
         this.regisForm.get('observaciones').setValue(data.observations);
-        console.log(this.eventDonacion);
-        this.getDetailDonation();
+        this.getDetailDonation(this.idAct);
       },
       error: () => {
         console.error('error');
@@ -451,9 +451,9 @@ export class CaptureApprovalDonationComponent
     console.log('this.bienes1 -->');
   }
 
-  getDetailDonation() {
+  getDetailDonation(actaId: string | number) {
     const params = new ListParams();
-    params['filter.recordId'] = localStorage.getItem('actaId');
+    params['filter.recordId'] = actaId;
     params['filter.good.status'] = 'DON';
     this.donationService.getEventComDonationDetail(params).subscribe({
       next: data => {
@@ -730,6 +730,9 @@ export class CaptureApprovalDonationComponent
     // }
   }
   removeSelect() {
+    this.inputVisible = true;
+    // this.elementRef.nativeElement = this.delForm.get('observaElimina').value;
+    // this.elementRef.nativeElement.focus();
     if (this.estatus == 'CERRADA') {
       this.alert(
         'warning',
@@ -754,11 +757,6 @@ export class CaptureApprovalDonationComponent
           'Debe capturar un evento.'
         );
         return;
-      }
-      if (this.delForm.get('observaElimina').value === null) {
-        this.inputVisible = true;
-        this.elementRef.nativeElement =
-          this.delForm.get('observaElimina').value;
       } else {
         this.alertQuestion(
           'question',
@@ -766,7 +764,7 @@ export class CaptureApprovalDonationComponent
           ''
         ).then(async question => {
           if (question.isConfirmed) {
-            if (this.delForm.get('observaElimina').value === null) {
+            if (this.delForm.get('observaElimina').value !== null) {
               this.alert(
                 'warning',
                 'Debe llenar las obervaciones de la eliminación primero',
@@ -948,7 +946,6 @@ export class CaptureApprovalDonationComponent
 
     let modalRef = this.modalService.show(FindActaComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
-      console.log(next);
       if (next) {
         this.alert(
           'success',
@@ -976,13 +973,9 @@ export class CaptureApprovalDonationComponent
       const formattedfecCapture =
         dateCapture != null ? this.formatDate(dateCapture) : null;
 
-      // this.fCreate = this.datePipe.transform(
-      //   next.dateElaborationReceipt,
-      //   'dd/MM/yyyy'
-      // );
       this.to = this.datePipe.transform(
         this.regisForm.controls['year'].value,
-        'MM/yyyy'
+        'yyyy'
       );
 
       this.estatus = next.estatusAct;
@@ -994,6 +987,8 @@ export class CaptureApprovalDonationComponent
         //this.disabledBtnCerrar = true;
       }
       console.log('acta NEXT ', next);
+      localStorage.setItem('actaId', next.actId);
+      console.log(localStorage.getItem('actaId'));
       this.regisForm.patchValue({
         folio: next.folioUniversal,
         type: this.type,
@@ -1010,12 +1005,8 @@ export class CaptureApprovalDonationComponent
       this.paramsScreen = {
         origin: 'FMCOMDONAC_1',
       };
-      //this.data1 = next.statusProceedings;
-      //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
-      // Pasar clave a esta función
       this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
-
-      await this.getDetailProceedingsDevollution(this.eventDonacion.actId);
+      await this.getDetailDonation(next.actId);
     });
     modalRef.content.cleanForm.subscribe(async (next: any) => {
       if (next) {

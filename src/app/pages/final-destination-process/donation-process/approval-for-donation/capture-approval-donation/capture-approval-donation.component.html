@@ -210,7 +210,7 @@
                 <i class="bx bx-download float-icon"></i>
               </button>
               <button
-                [disabled]="!bienesVaild"
+                [disabled]="!radio"
                 class="btn btn-primary btn-sm active me-2"
                 (click)="ubicaGood()">
                 Consulta Bienes
@@ -297,7 +297,7 @@
       </div>
       <div class="row p-3">
         <div class="col-md-3"></div>
-        <div class="row mt-12 d-flex justify-content-center">
+        <div class="row mt-8 d-flex justify-content-center">
           <div class="col-md-12">
             <div>
               <form-field
@@ -314,16 +314,21 @@
           </div>
           <div class="col-md-12">
             <div class="row">
-              <form-field
-                [control]="delForm.get('observaElimina')"
-                [hidden]="!inputVisible"
-                label="Observaciones Eliminación de Bienes por">
-                <textarea
-                  maxlength="1000"
-                  type="text"
-                  class="form-control"
-                  formControlName="observaElimina"></textarea>
-              </form-field>
+              <form
+                class="form-material form-horizontal"
+                [formGroup]="delForm"
+                (ngSubmit)="removeSelect()">
+                <form-field
+                  [control]="delForm.get('observaElimina')"
+                  [hidden]="!inputVisible"
+                  label="Observaciones Eliminación de Bienes por">
+                  <textarea
+                    maxlength="1000"
+                    type="text"
+                    class="form-control"
+                    formControlName="observaElimina"></textarea>
+                </form-field>
+              </form>
             </div>
           </div>
         </div>

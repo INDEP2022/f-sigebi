@@ -12,6 +12,7 @@ import {
   IExportDetail,
   IFilterDonation,
   IGoodDonation,
+  ITempDonDetail,
 } from '../../models/ms-donation/donation.model';
 import {
   IDeleteGoodDon,
@@ -98,6 +99,9 @@ export class DonationService
   }
   getTempDon(params: ListParams) {
     return this.get(DonationEndPoint.TempDonation, params);
+  }
+  createTempDon(don: ITempDonDetail) {
+    return this.post(DonationEndPoint.TempDonation, don);
   }
   createApproveDonation(data: any) {
     return this.post(DonationEndPoint.ApproveDonation, data);
