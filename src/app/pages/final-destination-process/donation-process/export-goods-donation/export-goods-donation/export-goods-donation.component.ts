@@ -471,6 +471,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   getallCondition() {
     this.boolCon = true;
     this.valRastreador = false;
+    this.selectedGoods = [];
     this.getall1(this.boolCon, 'si');
   }
 
