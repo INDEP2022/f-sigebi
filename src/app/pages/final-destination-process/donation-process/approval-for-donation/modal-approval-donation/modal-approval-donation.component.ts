@@ -250,7 +250,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     //       }
     //     }
     //   });
-    console.log(this.files);
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -346,14 +345,14 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    // params['filter.status'] = 'DON';
+    params['filter.status'] = 'DON';
     params['sortBy'] = `goodId:DESC`;
     // params['sortBy'] = `goodId:DESC`;
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
         console.log(data.data);
-        this.totalItems2 = data.count;
+        this.totalItems2 = data.count ?? 0;
         this.dataGoodTable.load(data.data);
         this.dataGoodTable.refresh();
       },
@@ -382,15 +381,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     this.onSave.emit(this.selectedGooodsValid);
     this.modalRef.hide();
   }
-  // onUserRowSelect(row: any): void {
-  //   if (row.isSelected) {
-  //     this.selectedRow = row.data;
-  //   } else {
-  //     this.selectedRow = null;
-  //   }
-
-  //   console.log(this.selectedRow);
-  // }
 
   onUserRowSelect(event: { data: any; selected: any }) {
     this.selectedRow = event.data;
@@ -518,13 +508,11 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    console.log('1412212', params);
     params['sortBy'] = `goodId:DESC`;
     params['filter.status'] != 'ADM';
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
-        console.log('Bienes', this.goods);
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',

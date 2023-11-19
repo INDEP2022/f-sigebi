@@ -78,7 +78,8 @@ export class CaptureApprovalDonationComponent
   body: IExportDetail;
   valueChange: number = 0;
   totalItems: number = 0;
-  lv_ESTATUSB: number = 0;
+  errorSumInvalidos: number = 0;
+  errorSumValidos: number = 0;
   deleteG: boolean = false;
   loading3: boolean = false;
   Exportdate: boolean = false;
@@ -268,18 +269,19 @@ export class CaptureApprovalDonationComponent
       observaElimina: [null, [Validators.required]],
     });
     this.getComerDonation();
+    this.getDetailProceedingsDevollution(this.idAct);
     this.configDatePicker();
   }
 
   createDon(donationGood: IGoodDonation) {
     this.loading = true;
     const folio = this.regisForm.value.folio;
-    const acta = this.regisForm.value.type;
+    // const acta = this.regisForm.value.type;
     let year = this.regisForm.value.year;
     const area = this.regisForm.value.area;
     let folio_ = folio.toString().padStart(4, '0');
     this.foolio = folio_;
-    const cveActa = `${acta}/${area}/${year}/${folio_}/${this.type}`;
+    const cveActa = `${'COMPDON'}/${area}/${year}/${folio_}/${this.type}`;
     console.log('cveActa -->', cveActa);
     this.donationService.createD(donationGood).subscribe({
       next: resp => {
@@ -293,38 +295,35 @@ export class CaptureApprovalDonationComponent
 
   getComerDonation() {
     this.idAct = Number(localStorage.getItem('actaId'));
-    this.regisForm.get('type').setValue('COMPDON');
-    this.regisForm.get('area').setValue(localStorage.getItem('area'));
-    this.regisForm.get('keyEvent').setValue(localStorage.getItem('cveAc'));
-    this.estatus = localStorage.getItem('estatusAct');
     this.donationService.getByIdEvent(this.idAct).subscribe({
       next: (data: any) => {
         this.eventDonacion = data;
         this.fileNumber = data.fileNumber;
+        this.regisForm.get('type').setValue('COMPDON');
+        this.regisForm.get('area').setValue(localStorage.getItem('area'));
+        this.estatus = localStorage.getItem('estatusAct');
         console.log(this.eventDonacion);
         if (this.estatus != 'ABIERTA') {
           this.deleteO = true;
           // this.generarClave(this.regisForm.value.area, )
         }
         this.deleteO = false;
-        const ultimosCincoDigitos = localStorage.getItem('cveAc').slice(-5);
+        const ultimosCincoDigitos = data.cveAc.slice(-5);
         const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
         // const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
         if (isNaN(anio)) {
           return null;
         }
-
         const fechaActual = new Date();
         const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
         const anioCompleto = anio < 100 ? sigloActual + anio : anio;
         this.regisForm.get('year').setValue(anioCompleto);
         this.regisForm.get('folio').setValue(data.folioUniversal);
-        this.regisForm.get('keyEvent').setValue(localStorage.getItem('cveAc'));
+        this.regisForm.get('keyEvent').setValue(data.cveAc);
         this.regisForm
           .get('captureDate')
           .setValue(localStorage.getItem('captureDate'));
         this.regisForm.get('observaciones').setValue(data.observations);
-        this.getDetailProceedingsDevollution(this.idAct);
       },
       error: () => {
         console.error('error');
@@ -381,10 +380,14 @@ export class CaptureApprovalDonationComponent
 
   generarClave(lvArea: number, lvCons: number, anio: number): string {
     // Validamos que los datos sean del tipo correcto
-    // if (typeof lvArea !== "number" || typeof lvCons !== "number" || typeof anio !== "number") {
-    //   throw new Error("Los datos ingresados no son del tipo correcto");
-    // }
-    const clave = `${lvArea.toString().padStart(2, '0')}${lvCons
+    if (
+      typeof lvArea !== 'number' ||
+      typeof lvCons !== 'number' ||
+      typeof anio !== 'number'
+    ) {
+      throw new Error('Los datos ingresados no son del tipo correcto');
+    }
+    const clave = `${this.type}${lvArea.toString().padStart(2, '0')}${lvCons
       .toString()
       .padStart(4, '0')}${anio.toString().padStart(4, '0')}`;
     return clave;
@@ -443,14 +446,6 @@ export class CaptureApprovalDonationComponent
         this.dataDetailDonationGood.load(this.dataDetailDonation);
         this.dataDetailDonationGood.refresh();
         this.totalItems = data.count;
-        this.TOTAL_REPORTE = this.totalItems;
-        this.SUM_BIEN = this.dataDetailDonation.reduce(
-          (accumulator: any, object: any) => {
-            return accumulator + parseFloat(object.amount);
-          }
-        );
-        console.log(this.SUM_BIEN);
-        this.BIEN_ERROR = Number(localStorage.getItem('error'));
       },
       error: () => console.error('no hay detalle acta'),
     });
@@ -462,37 +457,33 @@ export class CaptureApprovalDonationComponent
       ...this.columnFilters2,
     };
     // params['filter.good.status'] = 'DON';
-    params['filter.recordId'] = localStorage.getItem('actaId');
+    params['filter.recordId'] = this.idAct;
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
         next: data => {
-          let result = data.data.map((item: any) => {
+          let result: any[] = [];
+          result = data.data.map((item: any) => {
             item['description'] = item.good ? item.good.description : null;
           });
 
-          Promise.all(result).then(item => {
+          Promise.all(result).then(items => {
             this.dataDetailDonation = data.data;
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
             this.totalItems2 = data.count;
             this.TOTAL_REPORTE = this.totalItems2;
-            this.SUM_BIEN = this.dataDetailDonation.reduce(
-              (accumulator: any, object: any) => {
-                return accumulator + parseFloat(object.amount);
-              },
-              0
-            );
-            console.log(this.SUM_BIEN);
-            this.dataDetailDonation.map((item: any) => {
-              this.goodError = item;
-              const counter = this.goodError.length;
-              this.BIEN_ERROR = counter;
-              console.log(this.goodError);
-            });
+            for (const item of items) {
+              this.BIEN_ERROR += item.error;
+              this.SUM_BIEN += item.amount;
+              if (item.status === null) {
+                this.errorSumInvalidos += item.status;
+              } else {
+                this.errorSumValidos += item.status;
+              }
+            }
             console.log('data', data);
             this.loading3 = false;
             this.Exportdate = true;
-            //this.disabledBtnEscaneo = true;
           });
         },
         error: error => {
@@ -508,7 +499,7 @@ export class CaptureApprovalDonationComponent
   }
   exportAll(): void {
     this.body = {
-      recordId: Number(localStorage.getItem('actaId')),
+      recordId: this.idAct,
       typeActa: 'COMPDON',
       delegationId: Number(localStorage.getItem('noDelegation1')),
       nombre_transferente: null,
@@ -1252,12 +1243,15 @@ export class CaptureApprovalDonationComponent
         next: data => {
           console.log(this.dataDetailDonation);
           console.log(data.data);
-          this.alert('success', 'Bienes validados', '');
+          this.alert(
+            'success',
+            `Bienes válidos ${this.errorSumValidos}, Bienes no válidos ${this.errorSumInvalidos}`,
+            ''
+          );
         },
       });
     }
   }
-
   findRast() {
     if (this.eventDonacion.estatusAct === 'CERRADA') {
       this.alert(
