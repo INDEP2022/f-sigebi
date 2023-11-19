@@ -59,13 +59,13 @@ export class EntityClasificationFormComponent
       catchError(error => {
         this.loading = false;
         if (error.status <= 404 && error.status > 0) {
-          this.onLoadToast('error', 'Error', 'El Id Proporcionado ya Existe');
+          this.onLoadToast('error', 'El Id proporcionado ya existe', '');
         }
         return throwError(() => error);
       }),
       tap(() => {
         this.loading = false;
-        this.onLoadToast('success', 'Entidad', 'Guardada Correctamente');
+        this.onLoadToast('success', 'Se ha creado la entidad', '');
         this.refresh.emit(true);
         this.modalRef.hide();
       })
@@ -90,7 +90,7 @@ export class EntityClasificationFormComponent
         }),
         tap(() => {
           this.loading = false;
-          this.onLoadToast('success', 'Entidad', 'Actualizada Correctamente');
+          this.onLoadToast('success', 'Se ha modificado la entidad', '');
           this.refresh.emit(true);
           this.modalRef.hide();
         })

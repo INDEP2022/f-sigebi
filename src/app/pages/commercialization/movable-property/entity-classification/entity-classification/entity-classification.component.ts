@@ -201,7 +201,7 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
     this.typeEntityGovService.remove(id).subscribe({
       next: () => {
         this.loading = false;
-        this.onLoadToast('success', 'Entidad', ' Eliminada Correctamente');
+        this.onLoadToast('success', 'Se ha eliminado la entidad', ' ');
         this.getData();
         //location.reload();
       },

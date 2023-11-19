@@ -82,30 +82,29 @@ export class validCaptureLineComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       typeEvent: [null, []],
-      idEvent: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      allotment: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      idClient: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      idEvent: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      allotment: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      idClient: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
   }
 
   searchConsult() {
-    this.idEvent = this.form.get('idEvent').value;
-    this.publicLot = this.form.get('allotment').value;
-    this.idClient = this.form.get('idClient').value;
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() =>
-        this.getData(this.idEvent, this.publicLot, this.idClient)
-      );
+    if (
+      this.form.get('idEvent').value &&
+      this.form.get('allotment').value &&
+      this.form.get('idClient').value
+    ) {
+      this.idEvent = this.form.get('idEvent').value;
+      this.publicLot = this.form.get('allotment').value;
+      this.idClient = this.form.get('idClient').value;
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() =>
+          this.getData(this.idEvent, this.publicLot, this.idClient)
+        );
+    } else {
+      this.alert('warning', 'Debe llenar todos los campos', ``);
+    }
   }
 
   getData(idEvent?: number, publicLot?: number, idClient?: number) {
