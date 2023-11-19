@@ -137,7 +137,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   adminSelect = new DefaultSelect();
   dataExpedients = new DefaultSelect();
-  records = new DefaultSelect();
+  records = new DefaultSelect(['A', 'NA', 'D', 'NS']);
   warehouseSelect = new DefaultSelect();
   dataEdoFisico = new DefaultSelect(['MALO', 'REGULAR', 'BUENO']);
   itemsSelect = new DefaultSelect();
