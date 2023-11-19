@@ -2,7 +2,7 @@ import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/f
 
 export const REPRESENTATIVES_COLUMNS = {
   id: {
-    title: 'Clave Representante',
+    title: 'Cve. Representante',
     sort: false,
   },
   reasonName: {
@@ -37,7 +37,7 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   curp: {
-    title: 'Clave Única de Registro de Población',
+    title: 'Cve. Única de Registro de Población',
     sort: false,
   },
   personType: {
@@ -61,11 +61,11 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   nationalityKey: {
-    title: 'Clave de Nacionalidad',
+    title: 'Cve. de Nacionalidad',
     sort: false,
   },
   countryOriginKey: {
-    title: 'Clave de País de Nacimiento',
+    title: 'Cve. de País de Nacimiento',
     sort: false,
   },
   street: {
@@ -101,7 +101,7 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   homeCountryKey: {
-    title: 'Clave de País Domicilio',
+    title: 'Cve. de País Domicilio',
     sort: false,
   },
   fax: {
@@ -109,7 +109,7 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   countryPhoneKey: {
-    title: 'Clave de Teléfono del País',
+    title: 'Cve. de Teléfono del País',
     sort: false,
   },
   phone: {
@@ -121,11 +121,11 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   ecoActivityKey: {
-    title: 'Clave de Actividad Económica',
+    title: 'Cve. de Actividad Económica',
     sort: false,
   },
   repAssociatedId: {
-    title: 'Clave Representante Asociado',
+    title: 'Cve. Representante Asociado',
     sort: false,
   },
   registerNumber: {

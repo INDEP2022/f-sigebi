@@ -70,4 +70,14 @@ export interface IGoodsResDev {
   organizationId?: number;
   transactionDevId?: number;
   invoiceRecord?: string;
+  relevantTypeName?: string;
+  authorityName?: string;
+  typeRelevantId?: number;
+  regionalDelegationId?: number;
+  delegationName?: string;
+  stateKey?: number;
+  stateName?: string;
+  transferId?: number;
+  transferentName?: string;
+  stationName?: string;
 }

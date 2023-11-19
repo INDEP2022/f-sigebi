@@ -145,13 +145,13 @@ export class EventTypesComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.comerTpEventosService.removeTevents(id).subscribe({
       next: () => {
-        this.alert('success', 'Tipo de Eveno Eliminado', '');
+        this.alert('success', 'Tipo de Eveno ha sido Eliminado', '');
         this.getAllEventTypes();
       },
       error: error => {
         this.alert(
           'warning',
-          'No se Puede Eliminar el Tipo de Evento Debido a una Relación con Otra Tabla',
+          'No se puede eliminar el Tipo de Evento debido a una relación con otra tabla',
           ''
         );
       },

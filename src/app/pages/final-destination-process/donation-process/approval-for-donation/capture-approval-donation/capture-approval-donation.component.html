@@ -196,15 +196,14 @@
             <div class="col-md-12 text-center">
               <button
                 class="btn btn-secondary btn-sm active me-2"
-                (click)="validaGood()"
-                [disabled]="dataDetailDonationGood">
+                (click)="validaGood()">
                 Valida Bienes <i class="bx bx-check float-icon"></i>
               </button>
               <button
                 class="btn btn-success btn-sm active me-2"
                 type="button"
                 [disabled]="!radio"
-                (click)="exportToExcel()">
+                (click)="exportAll()">
                 Exportar a Excel
                 <i class="bx bx-download float-icon"></i>
               </button>

@@ -16,7 +16,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
-import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
+import {
+  IExportDetail,
+  IGoodDonation,
+} from 'src/app/core/models/ms-donation/donation.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
@@ -29,18 +32,12 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { DonAuthorizaService } from '../../donation-authorization-request/donation-authorization-request/service/don-authoriza.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
-
-interface NotData {
-  id: number;
-  reason: string;
-}
 @Component({
   selector: 'app-capture-approval-donation',
   templateUrl: './capture-approval-donation.component.html',
@@ -62,7 +59,6 @@ export class CaptureApprovalDonationComponent
   siabForm: FormGroup;
   foolio: number;
   statusGood_: any;
-  ngGlobal: any;
   deleteO: boolean = false;
   goods: any[] = [];
   files: any = [];
@@ -70,6 +66,7 @@ export class CaptureApprovalDonationComponent
   bienesVaild: boolean = false;
   changeDescription: string;
   dataTableGood_: any[] = [];
+  body: IExportDetail;
   valueChange: number = 0;
   totalItems: number = 0;
   deleteG: boolean = false;
@@ -85,9 +82,7 @@ export class CaptureApprovalDonationComponent
   goodError: IDonationGoodError[];
   dataDetailDonation: any;
   data1: any;
-  data: LocalDataSource = new LocalDataSource();
   consec: string = '';
-  idsNotExist: NotData[] = [];
   dataDetailDonationGood: LocalDataSource = new LocalDataSource();
   excelLoading: boolean = false;
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -138,7 +133,6 @@ export class CaptureApprovalDonationComponent
     private datePipe: DatePipe,
     private usersService: UsersService,
     private detailProceeDelRecService: DetailProceeDelRecService,
-    private globalVarService: GlobalVarsService,
     private donAuthorizaService: DonAuthorizaService
   ) {
     super();
@@ -207,21 +201,6 @@ export class CaptureApprovalDonationComponent
   }
 
   ngOnInit(): void {
-    this.globalVarService
-      .getGlobalVars$()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: global => {
-          this.ngGlobal = global;
-          if (this.ngGlobal.REL_BIENES) {
-            console.log('RASTREADOR ', this.data);
-            this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
-            this.dataDetailDonationGood.load(this.selectedGooodsValid);
-            this.dataDetailDonationGood.refresh();
-          }
-        },
-      });
-
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -534,11 +513,21 @@ export class CaptureApprovalDonationComponent
   rowsSelected(event: any) {
     this.selectedGooodsValid = event.selected;
   }
+  exportAll(): void {
+    this.body = {
+      recordId: Number(localStorage.getItem('actaId')),
+      typeActa: 'COMPDON',
+      delegationId: Number(localStorage.getItem('noDelegation1')),
+      nombre_transferente: null,
+    };
 
-  exportToExcel(): void {
+    this.getEventComDonationExcel(this.body);
+  }
+
+  getEventComDonationExcel(body: IExportDetail): void {
     this.excelLoading = true;
     if (this.dataDetailDonationGood != null) {
-      this.donationService.getExcel().subscribe({
+      this.donationService.getExcel(body).subscribe({
         next: data => {
           this.excelLoading = false;
           this.alert(
@@ -1292,53 +1281,11 @@ export class CaptureApprovalDonationComponent
       );
       return;
     }
-    this.data.load([]);
     this.router.navigate(['/pages/general-processes/goods-tracker'], {
       queryParams: { origin: 'FMCOMDONAC_1' },
     });
   }
-  loadGood(data: any[]) {
-    this.loading = true;
-    let count = 0;
-    data.forEach(good => {
-      count = count + 1;
-      this.goodService.getById(good.goodNumber).subscribe({
-        next: response => {
-          this.goods.push({
-            ...JSON.parse(JSON.stringify(response)).data[0],
-            avalaible: null,
-          });
-          console.log(this.goods);
-          this.addStatus();
-          /* this.validGood(JSON.parse(JSON.stringify(response)).data[0]); */ //!SE TIENE QUE REVISAR
-        },
-        error: err => {
-          if (err.error.message === 'No se encontrarón registros')
-            this.idsNotExist.push({
-              id: good.goodId,
-              reason: err.error.message,
-            });
-        },
-      });
-      if (count === data.length) {
-        this.loading = false;
-      }
-    });
-  }
 
-  addStatus() {
-    /* this.data.load(this.goods); */
-    this.paginator();
-    this.data.refresh();
-  }
-
-  paginator(noPage: number = 1, elementPerPage: number = 10) {
-    const indiceInicial = (noPage - 1) * elementPerPage;
-    const indiceFinal = indiceInicial + elementPerPage;
-
-    let paginateData = this.goods.slice(indiceInicial, indiceFinal);
-    this.data.load(paginateData);
-  }
   searchGoodError(provider?: any) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {

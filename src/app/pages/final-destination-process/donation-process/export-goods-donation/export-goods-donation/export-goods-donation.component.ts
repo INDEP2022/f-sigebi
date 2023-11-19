@@ -309,6 +309,30 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     };
     this.settings.hideSubHeader = false;
   }
+  updateStatusCheck(instance: any) {
+    console.log('AQUI ESTAMOS');
+    this.data.refresh();
+  }
+  onGoodSelectCPD(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeCPD(data.row, data.toggle),
+    });
+  }
+  isGoodSelectedCPD(_billing: any) {
+    const exists = this.selectedGoods.find(
+      (good: any) => good.goodNumber == good.goodNumber && good.cpd == true
+    );
+    return !exists ? false : true;
+  }
+  goodSelectedChangeCPD(billing: any, selected: boolean) {
+    if (selected) {
+      this.selectedGoods.push(billing);
+    } else {
+      this.selectedGoods = this.selectedGoods.filter(
+        (good: any) => good.goodNumber == good.goodNumber
+      );
+    }
+  }
 
   updateStatusCheck(data: any, valid: boolean) {
     console.log('AQUI ESTAMOS');
