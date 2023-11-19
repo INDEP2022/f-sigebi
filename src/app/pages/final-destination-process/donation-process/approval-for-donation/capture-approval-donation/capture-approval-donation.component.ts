@@ -1,5 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -36,9 +42,9 @@ import { DonAuthorizaService } from '../../donation-authorization-request/donati
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
+import { RopIdComponent } from '../rop-id/rop-id.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
-
 @Component({
   selector: 'app-capture-approval-donation',
   templateUrl: './capture-approval-donation.component.html',
@@ -123,6 +129,7 @@ export class CaptureApprovalDonationComponent
   constructor(
     private router: Router,
     private fb: FormBuilder,
+    private elementRef: ElementRef,
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
@@ -140,6 +147,7 @@ export class CaptureApprovalDonationComponent
       ...this.settings,
       hideSubHeader: false,
       actions: {
+        title: 'Acciones',
         edit: true,
       },
       selectedRowIndex: -1,
@@ -188,7 +196,11 @@ export class CaptureApprovalDonationComponent
     this.settings2 = {
       ...this.settings,
       hideSubHeader: false,
-      actions: false,
+      actions: {
+        edit: true,
+        delete: false,
+        add: false,
+      },
       selectMode: 'multi',
       // selectedRowIndex: -1,
       // mode: 'external',
@@ -196,7 +208,7 @@ export class CaptureApprovalDonationComponent
         ...COPY,
       },
       rowClassFunction: (row: any) => {
-        if (row.error === 0 && row.statusAct === 'ABIERTA') {
+        if (row.data.error === 0) {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -280,7 +292,6 @@ export class CaptureApprovalDonationComponent
       },
     });
   }
-  findRop() {}
 
   getComerDonation() {
     this.idAct = Number(localStorage.getItem('actaId'));
@@ -746,6 +757,8 @@ export class CaptureApprovalDonationComponent
       }
       if (this.delForm.get('observaElimina').value === null) {
         this.inputVisible = true;
+        this.elementRef.nativeElement =
+          this.delForm.get('observaElimina').value;
       } else {
         this.alertQuestion(
           'question',
@@ -1395,6 +1408,26 @@ export class CaptureApprovalDonationComponent
       });
     }
   }
+  searchRopaId(rop?: string) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      rop,
+    };
+
+    let modalRef = this.modalService.show(RopIdComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      console.log(next);
+      if (next) {
+        this.alert(
+          'success',
+          'Se actualizó la información del Bien',
+          next.goodId
+        );
+      }
+      await this.updateGood(next.goodId);
+    });
+  }
+  updateGood(goodId: number) {}
 }
 
 export interface IParamsDonac {

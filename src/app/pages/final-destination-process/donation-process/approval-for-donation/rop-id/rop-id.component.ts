@@ -30,6 +30,7 @@ export class RopIdComponent extends BasePage implements OnInit {
   edit = false;
   ropid: LocalDataSource = new LocalDataSource();
   cve: any;
+  settingsRop;
   totalItemRrop: number = 0;
   loadingRop: boolean = false;
   donationGood: IGoodDonation;
@@ -52,8 +53,8 @@ export class RopIdComponent extends BasePage implements OnInit {
     private donationService: DonationService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
+    this.settingsRop = {
+      ...this.settingsRop,
       hideSubHeader: false,
       columns: {
         ...DETALLES,

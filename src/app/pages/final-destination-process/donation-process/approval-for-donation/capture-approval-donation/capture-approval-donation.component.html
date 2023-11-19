@@ -263,12 +263,12 @@
               <div class="col-md-12">
                 <ng-scrollbar
                   [track]="'all'"
-                  [ngStyle]="{ height: loading3 ? '0px' : '400px' }">
+                  [ngStyle]="{ height: loading3 ? '0px' : '300px' }">
                   <ng2-smart-table
                     class="table-responsive"
                     [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings2"
-                    (edit)="findRop()"
+                    (edit)="searchRopaId()"
                     (userRowSelect)="rowsSelected($event)"
                     [source]="dataDetailDonationGood">
                   </ng2-smart-table>
@@ -278,32 +278,16 @@
                   [totalItems]="totalItems2"></app-pagination>
               </div>
               <div class="row">
-                <div class="col-md-12">
-                  <div>
-                    <form-field
-                      [control]="regisForm.get('observaciones')"
-                      label="Observaciones">
-                      <textarea
-                        maxlength="1000"
-                        type="text"
-                        class="form-control"
-                        [disabled]="!deleteO"
-                        formControlName="observaciones"></textarea>
-                    </form-field>
+                <div class="d-flex justify-content-center">
+                  <div class="col-3">
+                    <span class="text-success mr-5"
+                      ><i class="fa fa-square"></i> Disponibles</span
+                    >
                   </div>
-                </div>
-                <div class="col-md-12">
-                  <div class="row">
-                    <form-field
-                      [control]="delForm.get('observaElimina')"
-                      [hidden]="!inputVisible"
-                      label="Observaciones Eliminación de Bienes por">
-                      <textarea
-                        maxlength="1000"
-                        type="text"
-                        class="form-control"
-                        formControlName="observaElimina"></textarea>
-                    </form-field>
+                  <div class="col-3">
+                    <span class="text-black"
+                      ><i class="fa fa-square"></i> No disponibles</span
+                    >
                   </div>
                 </div>
               </div>
@@ -311,6 +295,40 @@
           </div>
         </div>
       </div>
+      <div class="row p-3">
+        <div class="col-md-3"></div>
+        <div class="row mt-12 d-flex justify-content-center">
+          <div class="col-md-12">
+            <div>
+              <form-field
+                [control]="regisForm.get('observaciones')"
+                label="Observaciones">
+                <textarea
+                  maxlength="1000"
+                  type="text"
+                  class="form-control"
+                  [disabled]="!deleteO"
+                  formControlName="observaciones"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="row">
+              <form-field
+                [control]="delForm.get('observaElimina')"
+                [hidden]="!inputVisible"
+                label="Observaciones Eliminación de Bienes por">
+                <textarea
+                  maxlength="1000"
+                  type="text"
+                  class="form-control"
+                  formControlName="observaElimina"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- <div class="row p-3">
         <div class="col-md-3"></div>
         <div class="row mt-12 d-flex justify-content-center">
