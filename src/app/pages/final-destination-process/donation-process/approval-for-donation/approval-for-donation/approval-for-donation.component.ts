@@ -46,7 +46,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   origin: string = '';
   ropid: LocalDataSource = new LocalDataSource();
   selectRow: boolean = false;
-  // user: string = '';
+  responseDetail: boolean = false;
   origin2: '';
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   dataTableGood: LocalDataSource = new LocalDataSource();
@@ -422,6 +422,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.excelValid = true;
       const data: any = event.data;
       this.getDetailComDonation(this.actaId);
+      this.responseDetail = true;
       console.log(event.data);
     }
   }
@@ -635,6 +636,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   clean() {
     this.response = false;
+    this.responseDetail = false;
     this.validate = true;
     this.form.reset();
     localStorage.removeItem('actaId');
