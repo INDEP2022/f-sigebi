@@ -149,15 +149,17 @@
       </app-pagination>
 
       <hr />
-      <div class="row pt-5" *ngIf="responseDetail">
-        <div class="col-md-12">
-          <div [class]="loading2 ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings1"
-              [source]="data1"
-              (rowSelect)="selectedDetailActa($event)">
-            </ng2-smart-table>
+      <div *ngIf="responseDetail">
+        <div class="row pt-5">
+          <div class="col-md-12">
+            <div [class]="loading2 ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings1"
+                [source]="data1"
+                (rowSelect)="selectedDetailActa($event)">
+              </ng2-smart-table>
+            </div>
           </div>
         </div>
       </div>
