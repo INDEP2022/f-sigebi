@@ -18,6 +18,7 @@ import {
   BehaviorSubject,
   filter,
   Observable,
+  Subscription,
   switchMap,
   takeUntil,
 } from 'rxjs';
@@ -67,6 +68,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
   goodPDS: IGood[] = [];
   selectData: any = null;
   //DATOS DE USUARIO
+  act2Valid = false;
   delUser: string;
   subDelUser: string;
   departmentUser: string;
@@ -149,6 +151,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
   varObjectFinalModal: any[] = [];
   varCreateObject: any;
   varDeleteObject: any;
+  private actSelectSubscription: Subscription = new Subscription();
 
   //
 
@@ -686,6 +689,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
   resNewForm() {
     this.actForm.reset();
     this.checkChange();
+    this.verifyActAndTransfer();
     this.isEnableActa = false;
     this.isEnableEstado = false;
     this.isEnableDon = false;
@@ -961,20 +965,12 @@ export class DonationActsComponent extends BasePage implements OnInit {
     };
   }
 
-  fillActTwo() {
-    let countAct: Number =
-      0 +
-      (this.form.get('acta').value != null ? 1 : 0) +
-      (this.form.get('transfer').value != null ? 1 : 0) +
-      (this.form.get('ident').value != null ? 1 : 0) +
-      (this.form.get('recibe').value != null ? 1 : 0) +
-      (this.form.get('admin').value != null ? 1 : 0) +
-      (this.form.get('folio').value != null ? 1 : 0) +
-      (this.form.get('year').value != null ? 1 : 0) +
-      (this.form.get('mes').value != null ? 1 : 0);
-
-    console.log(countAct);
-
+  async fillActTwo() {
+    this.act2Valid = false;
+    if (!this.actSelectSubscription) {
+      this.actSelectSubscription.unsubscribe();
+    }
+    let countAct = await this.calculateCountAct();
     const nameAct =
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
@@ -1006,14 +1002,29 @@ export class DonationActsComponent extends BasePage implements OnInit {
         ? this.zeroAdd(this.form.get('mes').value, 2)
         : '');
     this.actForm.get('actSelect').setValue(nameAct);
-    console.log(this.actForm.get('actSelect').value);
+    this.subscribeToActSelectChanges();
     //Validar Acta 2
-    if (countAct == 8) {
+    if (countAct === 8) {
       console.log('Está activando aquí');
       countAct = 0;
+      this.act2Valid = true;
       this.searchKeyProceeding();
     } else {
+      this.act2Valid = false;
     }
+  }
+
+  calculateCountAct(): number {
+    return (
+      (this.form.get('acta').value != null ? 1 : 0) +
+      (this.form.get('transfer').value != null ? 1 : 0) +
+      (this.form.get('ident').value != null ? 1 : 0) +
+      (this.form.get('recibe').value != null ? 1 : 0) +
+      (this.form.get('admin').value != null ? 1 : 0) +
+      (this.form.get('folio').value != null ? 1 : 0) +
+      (this.form.get('year').value != null ? 1 : 0) +
+      (this.form.get('mes').value != null ? 1 : 0)
+    );
   }
 
   zeroAdd(number: number, lengthS: number) {
@@ -1156,6 +1167,16 @@ export class DonationActsComponent extends BasePage implements OnInit {
       this.subDelUser = resJson.usuario.subdelegationNumber;
       this.departmentUser = resJson.usuario.departamentNumber;
     });
+  }
+
+  private subscribeToActSelectChanges() {
+    this.actSelectSubscription = this.actForm
+      .get('actSelect')
+      .valueChanges.subscribe(res => {
+        // Lógica que se debe ejecutar cuando cambia el valor de actSelect
+        // Por ejemplo, podrías llamar a fillActTwo() si es necesario
+        this.fillActTwo();
+      });
   }
 
   searchKeyProceeding() {
