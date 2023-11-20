@@ -44,7 +44,13 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
       ],
       daysPenalty: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.min(30),
+          Validators.max(2160),
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(4),
+        ],
       ],
       process: [null, [Validators.required, Validators.maxLength(1)]],
     });

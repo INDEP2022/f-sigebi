@@ -153,6 +153,8 @@ export class winnersReportComponent extends BasePage implements OnInit {
   }
 
   getWinner() {
+    if (this.form.get('event').value) {
+    }
     this.loading = true;
     this.winnerr = [];
     let params = {
