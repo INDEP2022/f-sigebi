@@ -518,7 +518,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
           this.modalRef.hide();
         },
         error: error => {
-          this.alert('warning', `No es posible crear el cliente`, '');
+          this.alert('warning', `RFC previamente registrado`, '');
           this.modalRef.hide();
         },
       });
