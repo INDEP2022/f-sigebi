@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
@@ -43,10 +43,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   detail: boolean = false;
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
-  origin: '';
+  origin: string = '';
   ropid: LocalDataSource = new LocalDataSource();
   selectRow: boolean = false;
   // user: string = '';
+  origin2: '';
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   dataTableGood: LocalDataSource = new LocalDataSource();
   bienes: IGood[] = [];
@@ -80,6 +81,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   status: string = null;
   cveEvent: string;
   actaId: string = '';
+  paramsScreen = {
+    origin: 'FMCOMDONAC',
+  };
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   settings1 = { ...this.settings };
@@ -106,6 +110,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private donationService: DonationService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private excelService: ExcelService,
     private GoodprocessService_: GoodprocessService,
     private serviceUser: UsersService,
@@ -141,6 +146,23 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.inicialice();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        if (this.origin == 'FMCOMDONAC') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
+          }
+          this.origin2 = paramsQuery['origin2'] ?? null;
+        }
+        if (this.origin !== null) {
+          console.log('traigo parametros');
+        }
+      });
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
