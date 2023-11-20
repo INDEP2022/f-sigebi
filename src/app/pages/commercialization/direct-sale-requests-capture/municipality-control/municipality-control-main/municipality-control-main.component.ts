@@ -213,7 +213,7 @@ export class MunicipalityControlMainComponent
     //console.log(row, type);
     this.alertQuestion(
       'question',
-      '¿Desea Eliminar este Registro?',
+      '¿Desea eliminar este registro?',
       '',
       'Eliminar'
     ).then(question => {

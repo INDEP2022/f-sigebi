@@ -138,7 +138,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar esta Configuración de Columnas?'
+      '¿Desea eliminar esta configuración de columnas?'
     ).then(question => {
       if (question.isConfirmed) {
         this.remove(pageSetup);
