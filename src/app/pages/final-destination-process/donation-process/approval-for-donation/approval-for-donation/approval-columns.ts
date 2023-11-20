@@ -38,7 +38,19 @@ export const GOOD_COLUMNS = {
   },
   amount: {
     title: 'Cantidad',
-    type: 'number',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
+    },
   },
 };
