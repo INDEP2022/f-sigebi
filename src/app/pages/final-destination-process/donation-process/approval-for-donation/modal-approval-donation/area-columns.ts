@@ -50,10 +50,6 @@ export const TEMPGOODS = {
       return row.good.id;
     },
   },
-  id: {
-    title: 'No. Acta',
-    sort: false,
-  },
   description: {
     title: 'Descripción',
     sort: false,
