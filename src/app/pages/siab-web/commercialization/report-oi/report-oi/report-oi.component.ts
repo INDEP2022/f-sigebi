@@ -106,11 +106,7 @@ export class reportOiComponent extends BasePage implements OnInit {
   }
 
   ObtenerRepOI() {
-    if (
-      this.form.get('rangeDate').value &&
-      this.form.get('typeAuction').value &&
-      this.form.get('idEvent').value
-    ) {
+    if (this.form.get('rangeDate').value && this.form.get('idEvent').value) {
       const rangeDateValue = this.form.get('rangeDate').value;
 
       const fechaInicial = moment(rangeDateValue[0]).format('YYYY-MM-DD');
@@ -119,10 +115,10 @@ export class reportOiComponent extends BasePage implements OnInit {
       console.log('Fecha inicial:', fechaInicial);
       console.log('Fecha final:', fechaFinal);
 
-      if (!this.form.get('typeAuction').value) {
-        this.alert('warning', 'Debe Ingresar un Tipo de Subasta', '');
-        return;
-      }
+      // if (!this.form.get('typeAuction').value) {
+      //   this.alert('warning', 'Debe Ingresar un Tipo de Subasta', '');
+      //   return;
+      // }
 
       let body = {
         fInicio: fechaInicial,
@@ -142,11 +138,7 @@ export class reportOiComponent extends BasePage implements OnInit {
         next: resp => {
           console.log(resp);
           if (resp.data.length === 0) {
-            this.alert(
-              'warning',
-              'No Existen Registros Correspondientes a este Rango de Fechas',
-              ''
-            );
+            this.alert('warning', 'No se encontraron registros', '');
             return;
           }
           this.show = true;
@@ -155,10 +147,15 @@ export class reportOiComponent extends BasePage implements OnInit {
         },
         error: err => {
           console.log(err);
+          this.alert('warning', 'No se encontraron registros', '');
         },
       });
     } else {
-      this.alert('warning', 'Debe llenar todos los campos', ``);
+      this.alert(
+        'warning',
+        'Verificar Rango de Fechas o Selecciona un tipo de Evento',
+        ``
+      );
     }
   }
 
@@ -172,10 +169,7 @@ export class reportOiComponent extends BasePage implements OnInit {
       const fechaInicial = moment(rangeDateValue[0]).format('YYYY-MM-DD');
       const fechaFinal = moment(rangeDateValue[1]).format('YYYY-MM-DD');
 
-      if (
-        !this.form.get('idEvent').value ||
-        !this.form.get('typeAuction').value
-      ) {
+      if (!this.form.get('idEvent').value) {
         this.alert('warning', 'No existen datos para exportar', '');
         return;
       }

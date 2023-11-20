@@ -119,8 +119,9 @@
               </button>
               <button
                 class="btn btn-danger btn-sm active mr-3"
-                type="submit"
-                [disabled]="!formFilter.valid">
+                type="button"
+                [disabled]="!formFilter.valid"
+                (click)="clear()">
                 Limpiar <i class="fas fa-eraser"></i>
               </button>
               <button
