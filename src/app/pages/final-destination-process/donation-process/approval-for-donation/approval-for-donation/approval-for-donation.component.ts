@@ -330,6 +330,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     elaborated?: string | number
   ) {
     this.loading = true;
+    let params: any = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.params.getValue()['filter.actType'] = `$ilike:${actType}`;
     this.params.getValue()['filter.cveAct'] = `$ilike:${cveAct}`;
     this.params.getValue()['filter.captureDate'] = `$ilike:${captureDate}`;
@@ -344,12 +348,13 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.params.getValue()['filter.elaborated'] = `$ilike:${elaborated}`;
     }
 
-    this.donationService.getEventComDonation(this.params.getValue()).subscribe({
+    this.donationService.getEventComDonation(params).subscribe({
       next: resp => {
         this.data.load(resp.data);
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
+        this.loading2 = false;
         this.event = resp.data.filter(filt => {
           this.fileNumber = filt.fileId;
           this.actaId = filt.actId;
