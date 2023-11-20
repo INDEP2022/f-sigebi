@@ -567,12 +567,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         `El Usuario`,
         'No tiene privilegios para esta pantalla'
       );
-      this.form.get('cveActa').disable();
-      this.form.get('estatusAct').disable();
-      this.form.get('noDelegation1').disable();
-      this.form.get('elaborated').disable();
-      this.form.get('captureDate').disable();
-      this.form.get('closeDate').disable();
+      this.disabledField();
       this.validate = true;
       return;
     }
@@ -585,11 +580,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         `El Usuario`,
         'No tiene privilegios para esta pantalla'
       );
-      this.form.get('cveActa').disable();
-      this.form.get('estatusAct').disable();
-      this.form.get('noDelegation1').disable();
-      this.form.get('elaborated').disable();
-
+      this.disabledField();
       this.validate = true;
       return;
     } else if (level == 2) {
@@ -601,6 +592,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         .get('elaborated')
         .setValue(this.authService.decodeToken().username);
     }
+  }
+  disabledField() {
+    this.form.get('cveActa').disable();
+    this.form.get('estatusAct').disable();
+    this.form.get('noDelegation1').disable();
+    this.form.get('elaborated').disable();
+    this.form.get('captureDate').disable();
+    this.form.get('closeDate').disable();
   }
 
   onEventChange(type: any) {
