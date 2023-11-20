@@ -110,6 +110,9 @@ export class ParamsConcepsListComponent
       }
     }
     if (changes['conceptId'] && changes['conceptId'].currentValue) {
+      this.columnFilters = [];
+      this.data.setFilter([], true, false);
+      // this.data.load([]);
       this.getData();
     }
   }
