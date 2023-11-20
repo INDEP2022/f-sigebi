@@ -16,7 +16,7 @@
         [ngStyle]="{ height: loadingRop ? '0px' : '300px' }">
         <ng2-smart-table
           [attr.class]="'table-responsive table-bordered'"
-          [settings]="settings"
+          [settings]="settingsRop"
           [source]="dataDetail"
           (userRowSelect)="onUserRowSelect($event)">
         </ng2-smart-table>

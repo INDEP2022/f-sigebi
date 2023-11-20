@@ -14,7 +14,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class billingPaymentsModalComponent extends BasePage implements OnInit {
-  title: string = 'Detalle de Pago';
+  title: string = 'detalle de pago';
   edit: boolean = true;
   form: FormGroup = new FormGroup({});
   billing: any;
@@ -105,7 +105,7 @@ export class billingPaymentsModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     //const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `Actualizado Correctamente`);
+    this.alert('success', `Se ha modificado el ${this.title}`, ``);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -1,5 +1,5 @@
 <app-modal>
-  <div header><h5 class="modal-title">Partidas por Mandato</h5></div>
+  <div header><h5 class="modal-title">Partidas Contables SIRSAE</h5></div>
   <div body>
     <div class="row">
       <div class="col-6">
@@ -25,7 +25,7 @@
               #table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="dataPaginated"
+              [source]="data"
               (userRowSelect)="selectRow($event.data)">
             </ng2-smart-table>
           </div>
@@ -36,21 +36,24 @@
     </app-pagination>
   </div>
   <div footer>
-    <div class="d-flex footer-mand-goods">
-      <div>
+    <div class="row partContFooter">
+      <div class="col-md-6">
+        <form-check for="apply" label="Aplicar a todos los mandatos">
+          <input
+            type="checkbox"
+            id="apply"
+            [(ngModel)]="apply"
+            class="form-control" />
+        </form-check>
+      </div>
+      <div class="col-md-6 partContFooter-select">
         <button
-          (click)="showPartContSirsae()"
+          (click)="confirm()"
           type="button"
           class="btn btn-primary active btn-sm"
           [disabled]="!selected">
           Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
-      </div>
-      <div class="ml-3">
-        <div class="cantidad">
-          <label for="" class="m-0">Total</label>
-          <div>{{ total }}</div>
-        </div>
       </div>
     </div>
   </div>

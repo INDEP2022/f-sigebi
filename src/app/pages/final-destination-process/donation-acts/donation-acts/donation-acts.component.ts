@@ -965,12 +965,20 @@ export class DonationActsComponent extends BasePage implements OnInit {
     };
   }
 
-  async fillActTwo() {
-    this.act2Valid = false;
-    if (!this.actSelectSubscription) {
-      this.actSelectSubscription.unsubscribe();
-    }
-    let countAct = await this.calculateCountAct();
+  fillActTwo() {
+    let countAct: Number =
+      0 +
+      (this.form.get('acta').value != null ? 1 : 0) +
+      (this.form.get('transfer').value != null ? 1 : 0) +
+      (this.form.get('ident').value != null ? 1 : 0) +
+      (this.form.get('recibe').value != null ? 1 : 0) +
+      (this.form.get('admin').value != null ? 1 : 0) +
+      (this.form.get('folio').value != null ? 1 : 0) +
+      (this.form.get('year').value != null ? 1 : 0) +
+      (this.form.get('mes').value != null ? 1 : 0);
+
+    console.log(countAct);
+
     const nameAct =
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +

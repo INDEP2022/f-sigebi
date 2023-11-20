@@ -63,18 +63,12 @@ export class reportOiComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      rangeDate: [null, [Validators.required, maxDate(new Date())]],
-      typeAuction: [null, [Validators.required]],
-      idEvent: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      rangeDate: [null, [maxDate(new Date())]],
+      typeAuction: [null, []],
+      idEvent: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     this.formReport = this.fb.group({
-      NameReport: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      NameReport: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -112,111 +106,120 @@ export class reportOiComponent extends BasePage implements OnInit {
   }
 
   ObtenerRepOI() {
-    const rangeDateValue = this.form.get('rangeDate').value;
+    if (this.form.get('rangeDate').value && this.form.get('idEvent').value) {
+      const rangeDateValue = this.form.get('rangeDate').value;
 
-    const fechaInicial = moment(rangeDateValue[0]).format('YYYY-MM-DD');
-    const fechaFinal = moment(rangeDateValue[1]).format('YYYY-MM-DD');
+      const fechaInicial = moment(rangeDateValue[0]).format('YYYY-MM-DD');
+      const fechaFinal = moment(rangeDateValue[1]).format('YYYY-MM-DD');
 
-    console.log('Fecha inicial:', fechaInicial);
-    console.log('Fecha final:', fechaFinal);
+      console.log('Fecha inicial:', fechaInicial);
+      console.log('Fecha final:', fechaFinal);
 
-    if (!this.form.get('typeAuction').value) {
-      this.alert('warning', 'Debe Ingresar un Tipo de Subasta', '');
-      return;
+      // if (!this.form.get('typeAuction').value) {
+      //   this.alert('warning', 'Debe Ingresar un Tipo de Subasta', '');
+      //   return;
+      // }
+
+      let body = {
+        fInicio: fechaInicial,
+        fFin: fechaFinal,
+        direc: this.form.get('typeAuction').value,
+        eventId: this.form.get('idEvent').value,
+        ...this.params.getValue(),
+      };
+
+      let params = {
+        ...this.params.getValue(),
+      };
+
+      console.log(body);
+
+      this.orderentry.getorderentry(body, params).subscribe({
+        next: resp => {
+          console.log(resp);
+          if (resp.data.length === 0) {
+            this.alert('warning', 'No se encontraron registros', '');
+            return;
+          }
+          this.show = true;
+          this.data.load(resp.data);
+          this.totalItems = resp.count;
+        },
+        error: err => {
+          console.log(err);
+          this.alert('warning', 'No se encontraron registros', '');
+        },
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Verificar Rango de Fechas o Selecciona un tipo de Evento',
+        ``
+      );
     }
-
-    let body = {
-      fInicio: fechaInicial,
-      fFin: fechaFinal,
-      direc: this.form.get('typeAuction').value,
-      eventId: this.form.get('idEvent').value,
-      ...this.params.getValue(),
-    };
-
-    let params = {
-      ...this.params.getValue(),
-    };
-
-    console.log(body);
-
-    this.orderentry.getorderentry(body, params).subscribe({
-      next: resp => {
-        console.log(resp);
-        if (resp.data.length === 0) {
-          this.alert(
-            'warning',
-            'No Existen Registros Correspondientes a este Rango de Fechas',
-            ''
-          );
-          return;
-        }
-        this.show = true;
-        this.data.load(resp.data);
-        this.totalItems = resp.count;
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
   }
 
   exportXlsx() {
-    const filename = this.formReport.get('NameReport').value;
-    console.log(filename);
+    if (this.formReport.get('NameReport').value) {
+      const filename = this.formReport.get('NameReport').value;
+      console.log(filename);
 
-    const rangeDateValue = this.form.get('rangeDate').value;
+      const rangeDateValue = this.form.get('rangeDate').value;
 
-    const fechaInicial = moment(rangeDateValue[0]).format('YYYY-MM-DD');
-    const fechaFinal = moment(rangeDateValue[1]).format('YYYY-MM-DD');
+      const fechaInicial = moment(rangeDateValue[0]).format('YYYY-MM-DD');
+      const fechaFinal = moment(rangeDateValue[1]).format('YYYY-MM-DD');
 
-    if (
-      !this.form.get('idEvent').value ||
-      !this.form.get('typeAuction').value
-    ) {
-      this.alert('warning', 'No existen datos para exportar', '');
+      if (!this.form.get('idEvent').value) {
+        this.alert('warning', 'No existen datos para exportar', '');
+        return;
+      }
+      // Hacer una copia de this.params1 si es necesario
+      let params = { ...this.params.getValue() };
+
+      let body = {
+        fInicio: fechaInicial,
+        fFin: fechaFinal,
+        direc: this.form.get('typeAuction').value,
+        eventId: this.form.get('idEvent').value,
+      };
+
+      this.orderentry.getorderentry(body, params).subscribe({
+        next: resp => {
+          const allData = resp.data;
+
+          // Si hay más páginas de datos, recuperarlas
+          const totalPages = Math.ceil(resp.count / params.pageSize);
+          const additionalRequests = [];
+
+          for (let page = 2; page <= totalPages; page++) {
+            params.page = page;
+            additionalRequests.push(
+              this.orderentry.getorderentry(body, params)
+            );
+          }
+
+          // Combinar todos los registros en this.line
+          forkJoin(additionalRequests).subscribe({
+            next: additionalResponses => {
+              for (const additionalResp of additionalResponses) {
+                allData.push(...additionalResp.data);
+              }
+              this.alert('success', filename, 'Exportado Correctamente');
+              this.excelService.export(allData, { type: 'csv', filename });
+            },
+            error: err => {
+              console.log(err);
+            },
+          });
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+    } else {
+      this.alert('error', 'No se epecifico el nombre de la descarga', '');
       return;
     }
-    // Hacer una copia de this.params1 si es necesario
-    let params = { ...this.params.getValue() };
-
-    let body = {
-      fInicio: fechaInicial,
-      fFin: fechaFinal,
-      direc: this.form.get('typeAuction').value,
-      eventId: this.form.get('idEvent').value,
-    };
-
-    this.orderentry.getorderentry(body, params).subscribe({
-      next: resp => {
-        const allData = resp.data;
-
-        // Si hay más páginas de datos, recuperarlas
-        const totalPages = Math.ceil(resp.count / params.pageSize);
-        const additionalRequests = [];
-
-        for (let page = 2; page <= totalPages; page++) {
-          params.page = page;
-          additionalRequests.push(this.orderentry.getorderentry(body, params));
-        }
-
-        // Combinar todos los registros en this.line
-        forkJoin(additionalRequests).subscribe({
-          next: additionalResponses => {
-            for (const additionalResp of additionalResponses) {
-              allData.push(...additionalResp.data);
-            }
-            this.alert('success', filename, 'Exportado Correctamente');
-            this.excelService.export(allData, { type: 'csv', filename });
-          },
-          error: err => {
-            console.log(err);
-          },
-        });
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
   }
 
   async exportCsv() {

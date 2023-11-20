@@ -67,4 +67,11 @@ export class EventAppService extends HttpService {
   getPupRemiEnt(good: any) {
     return this.get(`${EventEndpoints.PupRemiEnt}/${good}`);
   }
+
+  urcoordRegChatarraAutomatic(conceptId: number, option: number) {
+    return this.post(`${this.endpoint}/ur-coor-dreg-scrap-automatic`, {
+      conceptId,
+      option,
+    });
+  }
 }

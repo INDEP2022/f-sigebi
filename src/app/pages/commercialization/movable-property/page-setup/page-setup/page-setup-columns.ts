@@ -1,5 +1,3 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-
 export const PAGE_SETUP_COLUMNS = {
   idTable: {
     title: 'Tabla',
@@ -24,8 +22,8 @@ export const PAGE_SETUP_COLUMNS = {
   visualiza: {
     title: 'Visualizar',
     sort: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    type: 'html',
+    /*renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (value: any) => {
       if (value !== null) {
         switch (value) {
@@ -37,6 +35,13 @@ export const PAGE_SETUP_COLUMNS = {
             return value;
         }
       }
+    },*/
+    valuePrepareFunction: (value: string) => {
+      if (value == '1')
+        return '<strong><span class="badge badge-pill badge-success">Si</span></strong>';
+      if (value == '0')
+        return '<strong><span class="badge badge-pill badge-warning">No</span></strong>';
+      return value;
     },
     filter: {
       type: 'list',

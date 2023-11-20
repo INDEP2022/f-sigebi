@@ -8,6 +8,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GODD_ERROR } from '../capture-approval-donation/columns-approval-donation';
 @Component({
@@ -19,15 +20,17 @@ export class GoodErrorComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   selectedRow: any | null = null;
   dataFactError: LocalDataSource = new LocalDataSource();
-  columnFilters: any = [];
-  totalItems2: number = 0;
+  columnFilterError: any = [];
+  loadingError: boolean = false;
+  totalItemsError: number = 0;
   @Output() onSave = new EventEmitter<any>();
   constructor(
     private modalRef: BsModalRef,
     private activateRoute: ActivatedRoute,
     private fb: FormBuilder,
     private router: Router,
-    private opcion: ModalOptions
+    private opcion: ModalOptions,
+    private donationService: DonationService
   ) {
     super();
     this.settings = {
@@ -63,9 +66,11 @@ export class GoodErrorComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilterError[
+                field
+              ] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilters[field];
+              delete this.columnFilterError[field];
             }
           });
           this.params = this.pageFilter(this.params);
@@ -79,5 +84,30 @@ export class GoodErrorComponent extends BasePage implements OnInit {
   return() {
     this.modalRef.hide();
   }
-  getError() {}
+  getError() {
+    this.loadingError = true;
+    this.params.getValue()['filter.recordId'] = `$eq:${localStorage.getItem(
+      'actaId'
+    )}`;
+    this.params.getValue()['filter.error'] = 1;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilterError,
+    };
+    this.donationService.getEventComDonationDetail(params).subscribe({
+      next: resp => {
+        console.log(resp.data);
+        this.dataFactError.load(resp.data);
+        this.dataFactError.refresh();
+        this.totalItemsError = resp.count;
+        this.loadingError = false;
+      },
+      error: err => {
+        this.loadingError = false;
+        this.dataFactError.load([]);
+        this.dataFactError.refresh();
+        this.totalItemsError = 0;
+      },
+    });
+  }
 }
