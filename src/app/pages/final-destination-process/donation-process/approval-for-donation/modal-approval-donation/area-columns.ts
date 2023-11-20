@@ -44,14 +44,14 @@ export const GOODS = {
 
 export const TEMPGOODS = {
   goodNumber: {
-    title: 'No. Gestión',
+    title: 'No. Bien',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.good.goodId;
+      return row.good.id;
     },
   },
   id: {
-    title: 'No. Bien',
+    title: 'No. Acta',
     sort: false,
   },
   description: {

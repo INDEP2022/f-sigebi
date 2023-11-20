@@ -354,7 +354,7 @@ export class CaptureApprovalDonationComponent
         this.fileNumber = data.fileNumber;
         this.regisForm.get('type').setValue('COMPDON');
         this.regisForm.get('area').setValue(localStorage.getItem('area'));
-        this.estatus = localStorage.getItem('estatusAct');
+        this.estatus = this.eventDonacion.estatusAct;
         console.log(this.eventDonacion);
         if (this.estatus != 'ABIERTA') {
           this.deleteO = true;
@@ -1020,8 +1020,7 @@ export class CaptureApprovalDonationComponent
         //this.disabledBtnCerrar = true;
       }
       console.log('acta NEXT ', next);
-      localStorage.setItem('actaId', next.actId);
-      console.log(localStorage.getItem('actaId'));
+      this.idAct = next.actId;
       this.regisForm.patchValue({
         folio: next.folioUniversal,
         type: this.type,
@@ -1163,11 +1162,11 @@ export class CaptureApprovalDonationComponent
         fechacap: formattedfecCapture,
       });
 
-      this.data1 = next.estatusAct;
+      // this.data1 = next.estatusAct;
       // Se mapea Mes  y año al crear nueva acta
       this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
 
-      await this.getDetailProceedingsDevollution(this.eventdetailDefault.id);
+      await this.getDetailProceedingsDevollution(next.actId);
     });
     // console.log(this.authService.decodeToken());
   }

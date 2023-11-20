@@ -52,7 +52,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   bienes: IGood[] = [];
   delegation: string;
   delegations$ = new DefaultSelect<IDelegation>();
-  totalItems: number = 0;
+  totalItems3: number = 0;
   totalItems1: number = 0;
   excelValid: boolean = false;
   useracept: boolean = true;
@@ -80,7 +80,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   status: string = null;
   cveEvent: string;
   actaId: string = '';
-  estatusAct: string = '';
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   settings1 = { ...this.settings };
@@ -144,6 +143,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
               captureDate: () => (searchFilter = SearchFilter.ILIKE),
               noDelegation1: () => (searchFilter = SearchFilter.EQ),
               elaborated: () => (searchFilter = SearchFilter.ILIKE),
+              estatusAct: () => (searchFilter = SearchFilter.ILIKE),
             };
             search[filter.field]();
             if (filter.search !== '') {
@@ -330,45 +330,48 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     elaborated?: string | number
   ) {
     this.loading = true;
-    let params: any = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.params.getValue()['filter.actType'] = `$ilike:${actType}`;
-    this.params.getValue()['filter.cveAct'] = `$ilike:${cveAct}`;
-    this.params.getValue()['filter.captureDate'] = `$ilike:${captureDate}`;
-    this.params.getValue()['filter.closeDate'] = `$ilike:${closeDate}`;
+
+    if (closeDate) {
+      this.params.getValue()['filter.closeDate'] = `$eq:${closeDate}`;
+    }
+    if (captureDate) {
+      this.params.getValue()['filter.captureDate'] = `$eq:${captureDate}`;
+    }
+    if (cveAct) {
+      this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
+    }
+
     if (NoDelegation1) {
       this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
     }
     if (estatusAct) {
-      this.params.getValue()['filter.estatusAct'] = `$ilike:${estatusAct}`;
+      this.params.getValue()['filter.estatusAct'] = `$eq:${this.status}`;
     }
     if (elaborated) {
-      this.params.getValue()['filter.elaborated'] = `$ilike:${elaborated}`;
+      this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`;
     }
-
+    let params: any = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.donationService.getEventComDonation(params).subscribe({
       next: resp => {
         this.data.load(resp.data);
         this.data.refresh();
-        this.totalItems = resp.count;
+        this.totalItems3 = resp.count;
         this.loading = false;
         this.loading2 = false;
         this.event = resp.data.filter(filt => {
           this.fileNumber = filt.fileId;
           this.actaId = filt.actId;
-          this.estatusAct = filt.estatusAct;
-          this.error = filt.error;
         });
         localStorage.setItem('actaId', this.actaId);
-        localStorage.setItem('estatusAct', this.estatusAct);
       },
       error: err => {
         this.loading = false;
         this.data.load([]);
         this.data.refresh();
-        this.totalItems = 0;
+        this.totalItems3 = 0;
       },
     });
   }
@@ -381,70 +384,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.getDetailComDonation(data.actId);
       console.log(event.data);
     }
-  }
-  getGoodsByStatus(id: number) {
-    this.loading = true;
-    this.dataTableGood_ = [];
-    this.dataTableGood.load(this.dataTableGood_);
-    this.dataTableGood.refresh();
-    console.log('CAMBIA COLOR');
-    let params: any = {
-      ...this.paramsList.getValue(),
-      ...this.columnFilters,
-    };
-    console.log('1412212', params);
-    params['sortBy'] = `goodNumber:DESC`;
-    this.GoodprocessService_.GetMinuteDetailDelivery(id, params).subscribe({
-      next: data => {
-        this.bienes = data.data;
-
-        let result = data.data.map(async (item: any) => {
-          let obj = {
-            vcScreen: 'FACTDESAPROBDONAC',
-            pNumberGood: item.goodNumber,
-          };
-          const di_dispo = await this.getStatusScreen(obj);
-          item['di_disponible'] = di_dispo;
-          if (item.minutesKey) {
-            item.di_disponible = 'N';
-          }
-          item['quantity'] = item.amount;
-          item['recordId'] = item.minutesKey;
-          item['id'] = item.goodNumber;
-          item['processExt'] = item.processExt;
-        });
-
-        Promise.all(result).then(item => {
-          this.dataTableGood_ = this.bienes;
-          this.dataTableGood.load(this.bienes);
-          this.dataTableGood.refresh();
-          this.totalItems = data.count;
-          this.loading = false;
-        });
-      },
-      error: error => {
-        this.loading = false;
-        this.dataTableGood.load([]);
-        this.dataTableGood.refresh();
-        this.totalItems = 0;
-      },
-    });
-  }
-  async getStatusScreen(body: any) {
-    return new Promise((resolve, reject) => {
-      this.GoodprocessService_.getScreenGood(body).subscribe({
-        next: async (state: any) => {
-          if (state.data) {
-            resolve('S');
-          } else {
-            resolve('N');
-          }
-        },
-        error: () => {
-          resolve('N');
-        },
-      });
-    });
   }
 
   getDetailComDonation(idActa?: number | string) {
@@ -659,13 +598,22 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.response = false;
     this.form.get('cveActa').setValue(null);
     this.validate = true;
-    this.form.get('captureDate').setValue('');
-    this.form.get('closeDate').setValue('');
-    this.form.get('estatusAct').setValue('');
-    this.form.get('noDelegation1').setValue([]);
-    this.form.get('noDelegation1').setValue([]);
-    this.form.get('elaborated').setValue([]);
-    this.getDetailComDonation(-1);
+    this.form.get('captureDate').setValue(null);
+    this.form.get('closeDate').setValue(null);
+    this.form.get('estatusAct').setValue(null);
+    this.form.get('noDelegation1').setValue(null);
+    this.form.get('elaborated').setValue(null);
+    localStorage.removeItem('actaId');
+    localStorage.removeItem('cveActa');
+    localStorage.removeItem('captureDate');
+    localStorage.removeItem('closeDate');
+    localStorage.removeItem('estatusAct');
+    localStorage.removeItem('noDelegation1');
+    localStorage.removeItem('elaborated');
+    this.data1.load([]);
+    this.data1.refresh();
+    this.data.load([]);
+    this.data.refresh();
   }
 
   getRowSelec(event: any) {

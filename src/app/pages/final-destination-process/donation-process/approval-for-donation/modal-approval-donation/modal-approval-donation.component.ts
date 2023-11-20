@@ -508,8 +508,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    params['sortBy'] = `goodId:DESC`;
-    params['filter.status'] != 'ADM';
+    params['sortBy'] = `goodNumber:DESC`;
+    params['filter.status'] != 'DON';
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
@@ -526,32 +526,17 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           }
           item['quantity'] = item.amount;
           item['id'] = item.minutesKey;
+          item['goodNumber'] = item.goodNumber;
           item['processExt'] = item.processExt;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-
-          // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-          // // console.log('acta', acta);
-          // item['acta_'] = acta;
         });
 
         Promise.all(result).then(item => {
           this.dataTableGood_ = this.goods;
           this.dataTableGood.load(this.goods);
           this.dataTableGood.refresh();
-          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+
           this.totalItems = data.count;
           this.loading = false;
-          // // console.log(this.bienes);
         });
       },
       error: error => {
