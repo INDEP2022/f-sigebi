@@ -42,22 +42,3 @@ export const GOOD_COLUMNS = {
     sort: false,
   },
 };
-
-export const DETALLES = {
-  RIC: {
-    title: 'RIC',
-    sort: false,
-  },
-  CH: {
-    title: 'CH',
-    sort: false,
-  },
-  N: {
-    title: 'N',
-    sort: false,
-  },
-  Q: {
-    title: 'Q',
-    sort: false,
-  },
-};

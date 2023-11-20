@@ -7,10 +7,8 @@
   <div body>
     <div class="table-padding"></div>
     <div class="justify-content-end d-flex mb-2"></div>
-    <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false"> -->
     <form-loader *ngIf="loadingRop"></form-loader>
     <div class="col-md-12">
-      <!-- <div [class]="loading ? 'table-loading' : ''"> -->
       <ng-scrollbar
         [track]="'all'"
         [ngStyle]="{ height: loadingRop ? '0px' : '300px' }">
@@ -21,7 +19,6 @@
           (userRowSelect)="onUserRowSelect($event)">
         </ng2-smart-table>
       </ng-scrollbar>
-      <!-- </div> -->
       <app-pagination [params]="params" [totalItems]="totalItemRrop">
       </app-pagination>
     </div>

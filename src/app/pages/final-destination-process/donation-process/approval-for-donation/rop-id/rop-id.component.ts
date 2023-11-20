@@ -13,8 +13,7 @@ import { DonationService } from 'src/app/core/services/ms-donationgood/donation.
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IInitFormProceedingsBody } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion.component';
-import { DETALLES } from '../approval-for-donation/approval-columns';
-
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 @Component({
   selector: 'app-rop-id',
   templateUrl: './rop-id.component.html',
@@ -56,8 +55,69 @@ export class RopIdComponent extends BasePage implements OnInit {
     this.settingsRop = {
       ...this.settingsRop,
       hideSubHeader: false,
+      actions: false,
       columns: {
-        ...DETALLES,
+        goodId: {
+          title: 'No. Bien',
+          sort: false,
+          visible: true,
+        },
+        description: {
+          title: 'Descripción',
+          sort: false,
+          visible: true,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.description;
+          },
+        },
+        RIC: {
+          filter: false,
+          sort: false,
+          title: 'RIC',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: any) =>
+            this.ropaId(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onRopaId(instance),
+        },
+        CH: {
+          filter: false,
+          sort: false,
+          title: 'CH',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: any) =>
+            this.ropaId(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onRopaId(instance),
+        },
+        N: {
+          filter: false,
+          sort: false,
+          title: 'N',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: any) =>
+            this.ropaId(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onRopaId(instance),
+        },
+        Q: {
+          filter: false,
+          sort: false,
+          title: 'Q',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: any) =>
+            this.ropaId(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onRopaId(instance),
+        },
       },
     };
   }
@@ -72,7 +132,7 @@ export class RopIdComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            this.cve = filter.field == 'cveAct';
+            // this.cve = filter.field == 'cveAct';
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'goodId':
@@ -104,34 +164,48 @@ export class RopIdComponent extends BasePage implements OnInit {
     console.log('SIIII', this.valDelete);
     this.modalRef.hide();
   }
+  ropaId(rop: string) {
+    return rop;
+  }
+  onRopaId(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.updateGood(data.row, data.toggle),
+    });
+  }
 
   getStatusDeliveryCve() {
     this.loadingRop = true;
-    // console.log(this.providerForm.value.cveActa.replace(/\//g, ''));
-
+    this.params.getValue()['filter.recordId'] = `$eq:${localStorage.getItem(
+      'actaId'
+    )}`;
+    // this.params.getValue()['filter.error'] = `$eq:${1}`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.params.getValue()['filter.actType'] = 'COMPDON';
-    params['sortBy'] = `captureDate:DESC`;
-    this.donationService.getEventGood(params).subscribe({
-      next: data => {
-        console.log(data.data);
-        // this.donationGood = data.data
-        this.dataDetail.load(data.data);
+    this.donationService.getEventComDonationDetail(params).subscribe({
+      next: resp => {
+        console.log(resp.data);
+        this.dataDetail.load(resp.data);
         this.dataDetail.refresh();
         this.loadingRop = false;
-        this.totalItems2 = data.count;
+        this.totalItems2 = resp.count;
       },
-      error: error => {
-        this.loadingRop = false;
+      error: err => {
+        this.loadingRop = true;
+        this.dataDetail.load([]);
+        this.dataDetail.refresh();
         this.totalItems2 = 0;
-        // console.log(error);
       },
     });
   }
-
+  updateGood(row: any, selected?: boolean) {
+    if (selected) {
+      console.log('actualiza', row);
+    } else {
+      console.log('actualiza');
+    }
+  }
   onUserRowSelect(row: any): void {
     if (row.isSelected) {
       this.selectedRow = row.data;
