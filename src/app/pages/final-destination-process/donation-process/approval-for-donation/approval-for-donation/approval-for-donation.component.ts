@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -129,8 +129,65 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-
     this.inicialice();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            const search: any = {
+              captureDate: () => (searchFilter = SearchFilter.ILIKE),
+              noDelegation1: () => (searchFilter = SearchFilter.EQ),
+              elaborated: () => (searchFilter = SearchFilter.ILIKE),
+            };
+            search[filter.field]();
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getEventComDonationAll();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getEventComDonationAll());
+
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            const search: any = {
+              numberGood: () => (searchFilter = SearchFilter.EQ),
+              amount: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+            if (filter.search !== '') {
+              this.columnFilter1[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilter1[field];
+            }
+          });
+          this.params1 = this.pageFilter(this.params1);
+          this.getDetailComDonation();
+        }
+      });
+    this.params1
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDetailComDonation());
   }
   formatDate(dateString: string): string {
     if (dateString === '') {
@@ -286,13 +343,13 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     if (elaborated) {
       this.params.getValue()['filter.elaborated'] = `$ilike:${elaborated}`;
     }
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.donationService.getEventComDonation(params).subscribe({
+
+    this.donationService.getEventComDonation(this.params.getValue()).subscribe({
       next: resp => {
         this.data.load(resp.data);
+        this.data.refresh();
+        this.totalItems = resp.count;
+        this.loading = false;
         this.event = resp.data.filter(filt => {
           this.fileNumber = filt.fileId;
           this.actaId = filt.actId;
@@ -301,14 +358,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         });
         localStorage.setItem('actaId', this.actaId);
         localStorage.setItem('estatusAct', this.estatusAct);
-        // this.getGoodsByStatus(this.fileNumber);
-        this.data.refresh();
-        this.totalItems = resp.count;
-        this.loading = false;
-        //this.donation = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
-        //this.donation = new DefaultSelect();
         this.loading = false;
         this.data.load([]);
         this.data.refresh();
@@ -322,17 +373,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.selectRow = true;
       this.excelValid = true;
       const data: any = event.data;
-      localStorage.setItem('area', event.data.noDelegation1);
-      localStorage.setItem('cveAc', event.data.cveAc);
-      localStorage.setItem('elaborated', event.data.elaborated);
-      localStorage.setItem('captureDate', event.data.captureDate);
       this.getDetailComDonation(data.actId);
       console.log(event.data);
     }
   }
   getGoodsByStatus(id: number) {
     this.loading = true;
-    // ACTUALIZA EL ESTADO DEL BIEN CUANDO BAJA A LA TABLA BIENES RELACIONADOS CON EL ACTA
     this.dataTableGood_ = [];
     this.dataTableGood.load(this.dataTableGood_);
     this.dataTableGood.refresh();
@@ -346,8 +392,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.GoodprocessService_.GetMinuteDetailDelivery(id, params).subscribe({
       next: data => {
         this.bienes = data.data;
-
-        // console.log('Bienes', this.bienes);
 
         let result = data.data.map(async (item: any) => {
           let obj = {
@@ -363,19 +407,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
           item['recordId'] = item.minutesKey;
           item['id'] = item.goodNumber;
           item['processExt'] = item.processExt;
-          // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-          // // console.log('acta', acta);
-          // item['acta_'] = acta;
         });
 
         Promise.all(result).then(item => {
           this.dataTableGood_ = this.bienes;
           this.dataTableGood.load(this.bienes);
           this.dataTableGood.refresh();
-          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
           this.totalItems = data.count;
           this.loading = false;
-          // // console.log(this.bienes);
         });
       },
       error: error => {

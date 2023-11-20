@@ -31,6 +31,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class CreateActaComponent extends BasePage implements OnInit {
   actaRecepttionForm: FormGroup;
   fileNumber: any;
+  title: string = 'Captura';
   detalleActa: IProceedingDeliveryReception;
   witnessOic: any;
   witnessTes: any;
@@ -42,6 +43,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   dele = new DefaultSelect<any>();
   trans = new DefaultSelect<any>();
   expedient: any;
+  edit: boolean = false;
   testigoTree: any;
   responsable: any;
   testigoOne: any;
@@ -293,7 +295,34 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   handleSuccess(): void {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
     this.onSave.emit(this.newRegister);
     this.modalRef.hide();
+  }
+  confirm() {
+    this.edit ? this.update() : this.handleSuccess();
+  }
+  updateRegister: any;
+  update() {
+    this.loading = true;
+    this.donationService
+      .updateDonation(
+        this.actaRecepttionForm.value,
+        localStorage.getItem('actaId')
+      )
+      .subscribe({
+        next: data => {
+          this.newRegister = data;
+          this.idActa = Number(localStorage.getItem('actaId'));
+          this.alert(
+            'success',
+            'El Evento se ha actualizado Correctamente',
+            ''
+          );
+          this.handleSuccess();
+        },
+        error: error => (this.loading = false),
+      });
   }
 }

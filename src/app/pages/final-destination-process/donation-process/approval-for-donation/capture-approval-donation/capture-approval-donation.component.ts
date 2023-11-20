@@ -3,11 +3,13 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
@@ -26,6 +28,7 @@ import {
   IExportDetail,
   IGoodDonation,
 } from 'src/app/core/models/ms-donation/donation.model';
+import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
@@ -37,6 +40,8 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { GOOD_TRACKER_ORIGINS } from 'src/app/pages/general-processes/goods-tracker/utils/constants/origins';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DonAuthorizaService } from '../../donation-authorization-request/donation-authorization-request/service/don-authoriza.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
@@ -111,6 +116,7 @@ export class CaptureApprovalDonationComponent
   selectedRow: IGood;
   origin2: 'FCONGENRASTREADOR';
   fileNumber: number = 0;
+  $trackedGoods = this.store.select(getTrackedGoods);
   columnFilters: any = [];
   columnFilterDetail: any = [];
   columnFilters2: any = [];
@@ -129,6 +135,17 @@ export class CaptureApprovalDonationComponent
   paramsScreen: IParamsDonac = {
     origin: '',
   };
+  goodsList: ITrackedGood[] = [];
+  get good(): ITrackedGood[] {
+    return this.goodsList;
+  }
+  @Input() set good(good: ITrackedGood[]) {
+    if (good.length > 0) {
+      this.goodsList = good;
+    } else {
+      this.goodsList = [];
+    }
+  }
 
   constructor(
     private router: Router,
@@ -144,7 +161,8 @@ export class CaptureApprovalDonationComponent
     private datePipe: DatePipe,
     private usersService: UsersService,
     private detailProceeDelRecService: DetailProceeDelRecService,
-    private donAuthorizaService: DonAuthorizaService
+    private donAuthorizaService: DonAuthorizaService,
+    private store: Store
   ) {
     super();
     this.settings = {
@@ -152,7 +170,9 @@ export class CaptureApprovalDonationComponent
       hideSubHeader: false,
       actions: {
         title: 'Acciones',
-        edit: true,
+        edit: false,
+        add: false,
+        delete: false,
       },
       selectedRowIndex: -1,
       mode: 'external',
@@ -200,11 +220,7 @@ export class CaptureApprovalDonationComponent
     this.settings2 = {
       ...this.settings,
       hideSubHeader: false,
-      actions: {
-        edit: true,
-        delete: false,
-        add: false,
-      },
+      actions: false,
       selectMode: 'multi',
       // selectedRowIndex: -1,
       // mode: 'external',
@@ -275,7 +291,7 @@ export class CaptureApprovalDonationComponent
         }
         if (this.origin !== null) {
           console.log('traigo parametros');
-          this.consultgoods();
+          this.isValidOrigin();
         }
       });
     this.initForm();
@@ -367,6 +383,21 @@ export class CaptureApprovalDonationComponent
         console.error('error');
       },
     });
+  }
+  isGoodSelectedT(_good: ITrackedGood) {
+    const exists = this.selectedGooods.find(
+      good => good.goodNumber == _good.goodNumber
+    );
+    return exists ? true : false;
+  }
+
+  private isValidOrigin() {
+    return (
+      this.origin !== null &&
+      Object.values(GOOD_TRACKER_ORIGINS).includes(
+        this.origin as unknown as GOOD_TRACKER_ORIGINS
+      )
+    );
   }
 
   ubicaGood() {
@@ -501,6 +532,7 @@ export class CaptureApprovalDonationComponent
           let result: any[] = [];
           result = data.data.map((item: any) => {
             item['description'] = item.good ? item.good.description : null;
+            item['error'] = item.error ? (this.BIEN_ERROR += item.error) : null;
           });
 
           Promise.all(result).then(items => {
@@ -509,16 +541,15 @@ export class CaptureApprovalDonationComponent
             this.dataDetailDonationGood.refresh();
             this.totalItems2 = data.count;
             this.TOTAL_REPORTE = this.totalItems2;
-            console.log(items);
-            // for (const item of items) {
-            //   this.BIEN_ERROR += item.error;
-            //   this.SUM_BIEN += item.amount;
-            //   if (item.status === null) {
-            //     this.errorSumInvalidos += item.status;
-            //   } else {
-            //     this.errorSumValidos += item.status;
-            //   }
-            // }
+            for (const item of items) {
+              // this.BIEN_ERROR += item.error;
+              this.SUM_BIEN += item.good.amount;
+              if (item.status === null) {
+                this.errorSumInvalidos += item.good.status;
+              } else {
+                this.errorSumValidos += item.good.status;
+              }
+            }
             console.log('data', data);
             this.loading3 = false;
             this.Exportdate = true;
@@ -1144,15 +1175,15 @@ export class CaptureApprovalDonationComponent
   getDelegation(params: FilterParams) {
     params.addFilter(
       'elaborated',
-      this.authService.decodeToken().preferred_username,
+      this.authService.decodeToken().username,
       SearchFilter.EQ
     );
     return this.usersService.getAllSegUsers(params.getParams()).subscribe({
       next: (value: any) => {
-        const data = value.data[0].usuario;
+        const data = value.data[0].username;
         if (data) this.delegationToolbar = data.delegationNumber;
 
-        // console.log('SI', value);
+        console.log('SI', this.delegationToolbar);
       },
       error(err) {
         console.log('NO');

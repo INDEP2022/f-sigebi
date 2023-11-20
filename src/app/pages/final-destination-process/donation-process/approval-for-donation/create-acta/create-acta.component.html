@@ -1,7 +1,7 @@
 <app-modal>
   <div header class="d-flex justify-content-between">
     <div>
-      <h5 class="modal-title">CAPTURA</h5>
+      <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
     </div>
   </div>
   <div body>
@@ -148,13 +148,12 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
+        <confirm-button
           [disabled]="!actaRecepttionForm.valid"
-          type="button"
-          class="btn btn-primary active btn-sm mr-3"
-          (click)="agregarActa()">
-          Guardar <i class="fas fa-save bx-sm float-icon"></i>
-        </button>
+          [loading]="loading"
+          (confirm)="confirm()"
+          >Guardar <i class="fas fa-save bx-sm float-icon"></i>
+        </confirm-button>
       </div>
       <div class="m-3">
         <button
