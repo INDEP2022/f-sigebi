@@ -39,6 +39,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   arrayDele: any[] = [];
   dele = new DefaultSelect<any>();
   trans = new DefaultSelect<any>();
+  edit: boolean = false;
   expedient: any;
   testigoTree: any;
   responsable: any;
