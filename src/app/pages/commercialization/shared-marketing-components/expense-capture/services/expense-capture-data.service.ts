@@ -30,6 +30,9 @@ import { ExpenseModalService } from './expense-modal.service';
 export class ExpenseCaptureDataService extends ClassWidthAlert {
   form: FormGroup;
   data: IComerExpense;
+  delegation: number;
+  subDelegation: number;
+  noDepartamento: number;
   FOLIO_UNIVERSAL: any;
   address: string;
   dataCompositionExpenses: IComerDetExpense2[] = [];

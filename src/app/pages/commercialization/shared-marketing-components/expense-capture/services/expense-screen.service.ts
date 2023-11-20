@@ -21,7 +21,7 @@ export class ExpenseScreenService extends HttpService {
 
   PUF_VAL_CONCEP_ROBO(id_concepto: string) {
     return this.get<IResponse<any>>(
-      this.endpoint.PUP_VAL_BIEN_ROBO + '/FCOMER084/' + id_concepto
+      this.endpoint.PUF_VAL_CONCEP_ROBO + '/FCOMER084/' + id_concepto
     ).pipe(
       catchError(x => of({ count: 0 })),
       map(x => x.count)

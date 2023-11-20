@@ -9,8 +9,10 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDetailDonation,
   IDonationGood,
+  IExportDetail,
   IFilterDonation,
   IGoodDonation,
+  ITempDonDetail,
 } from '../../models/ms-donation/donation.model';
 import {
   IDeleteGoodDon,
@@ -62,8 +64,9 @@ export class DonationService
     return this.donationRepository.remove(api, id);
   }
 
-  getEventComDonation(params?: ListParams): Observable<IListResponse<any>> {
-    return this.donationRepository.getAll(donationEvent, params);
+  getEventComDonation(params?: ListParams) {
+    const route = `${DonationEndPoint.eventComDonation}`;
+    return this.get(route, params);
   }
 
   getEventComDonationDetail(
@@ -75,8 +78,9 @@ export class DonationService
     );
   }
 
-  getExcel() {
-    return this.get(DonationEndPoint.eventComDonationExcel);
+  getExcel(body: IExportDetail) {
+    const route = `${DonationEndPoint.eventComDonationExcel}`;
+    return this.post(route, body);
   }
 
   createAdmonDonation(model: any) {
@@ -93,7 +97,12 @@ export class DonationService
   getTempGood(params: ListParams) {
     return this.get(DonationEndPoint.TempDonationGood, params);
   }
-
+  getTempDon(params: ListParams) {
+    return this.get(DonationEndPoint.TempDonation, params);
+  }
+  createTempDon(don: ITempDonDetail) {
+    return this.post(DonationEndPoint.TempDonation, don);
+  }
   createApproveDonation(data: any) {
     return this.post(DonationEndPoint.ApproveDonation, data);
   }

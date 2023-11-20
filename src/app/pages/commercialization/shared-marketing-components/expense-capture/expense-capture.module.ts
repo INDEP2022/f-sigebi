@@ -18,6 +18,7 @@ import { CheckboxReportDelitComponent } from './expense-capture/expense-composit
 import { ExpenseCompositionModalComponent } from './expense-capture/expense-composition/expense-composition-modal/expense-composition-modal.component';
 import { ExpenseCompositionComponent } from './expense-capture/expense-composition/expense-composition.component';
 import { MandByGoodsComponent } from './expense-capture/expense-composition/mand-by-goods/mand-by-goods.component';
+import { PartContSirsaeComponent } from './expense-capture/expense-composition/part-cont-sirsae/part-cont-sirsae.component';
 import { RejectedGoodsComponent } from './expense-capture/expense-composition/rejected-goods/rejected-goods.component';
 import { NotifyComponent } from './expense-capture/notify/notify.component';
 import { ScanFilesComponent } from './expense-capture/scan-files/scan-files.component';
@@ -36,6 +37,7 @@ import { ScanFilesComponent } from './expense-capture/scan-files/scan-files.comp
     CheckboxReportDelitComponent,
     RejectedGoodsComponent,
     MandByGoodsComponent,
+    PartContSirsaeComponent,
   ],
   imports: [
     CommonModule,

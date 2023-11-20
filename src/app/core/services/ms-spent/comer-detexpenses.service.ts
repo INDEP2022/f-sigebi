@@ -20,6 +20,10 @@ export class ComerDetexpensesService extends HttpService {
     this.microservice = this.route.BasePath;
   }
 
+  massiveInsert(body: IComerDetExpense[]) {
+    return this.post('aplication/massiveInsertComerDetexpenses', body);
+  }
+
   getAll(
     idGasto: string,
     PVALIDADET: string,

@@ -105,4 +105,8 @@ export class ScreenStatusService extends HttpService {
   getStatusXScreenColor(params: any) {
     return this.get(ScreenStatusEndpoints.StatusXScreenList, params);
   }
+
+  validateDelegationConcept() {
+    return this.post;
+  }
 }
