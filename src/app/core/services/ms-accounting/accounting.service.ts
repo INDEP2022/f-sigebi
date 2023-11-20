@@ -19,4 +19,8 @@ export class AccountingService extends HttpService {
       params
     );
   }
+
+  update(body: IMandExpenseCont) {
+    return this.put(AccountingEndpoints.MandExpenseCont, body);
+  }
 }

@@ -309,7 +309,7 @@ export class PropertyComponent extends BasePage implements OnInit {
 
   generateReport() {
     this.show = true;
-    this.showInm = false;
+    this.showInm = true;
     this.params1
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDataGood());

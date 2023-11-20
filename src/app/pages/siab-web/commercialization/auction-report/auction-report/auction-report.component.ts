@@ -275,11 +275,11 @@ export class auctionReportComponent extends BasePage implements OnInit {
   onSubmit() {
     if (this.formFilter.valid) {
       this.formFilter.get('lot').setValue(null);
-      this.getLotPublic(new ListParams(), -1);
+      // this.getLotPublic(new ListParams(), -1);
       this.formFilter.get('customer').setValue(null);
-      this.getClient(new ListParams(), -1);
+      // this.getClient(new ListParams(), -1);
       this.formFilter.get('status').setValue(null);
-      this.getStatus(new ListParams(), -1);
+      // this.getStatus(new ListParams(), -1);
       this.formFilter.get('view').setValue(null);
       if (this.validateFilter == 'settlement') {
         setTimeout(() => {
@@ -413,9 +413,9 @@ export class auctionReportComponent extends BasePage implements OnInit {
     if (event) {
       this.formFilter.get('lot').setValue(null);
       this.idEvent = event.id_evento;
-      this.getLotPublic(new ListParams(), event.id_evento);
-      this.getClient(new ListParams(), event.id_evento);
-      this.getStatus(new ListParams(), event.id_evento);
+      // this.getLotPublic(new ListParams(), event.id_evento);
+      // this.getClient(new ListParams(), event.id_evento);
+      // this.getStatus(new ListParams(), event.id_evento);
     }
   }
 
@@ -499,11 +499,11 @@ export class auctionReportComponent extends BasePage implements OnInit {
       this.formReport.get('nameReport').setValue('');
 
       this.formFilter.get('lot').setValue(null);
-      this.getLotPublic(new ListParams(), -1);
+      // this.getLotPublic(new ListParams(), -1);
       this.formFilter.get('customer').setValue(null);
-      this.getClient(new ListParams(), -1);
+      // this.getClient(new ListParams(), -1);
       this.formFilter.get('status').setValue(null);
-      this.getStatus(new ListParams(), -1);
+      // this.getStatus(new ListParams(), -1);
       this.formFilter.get('view').setValue(null);
 
       setTimeout(() => {
@@ -536,11 +536,11 @@ export class auctionReportComponent extends BasePage implements OnInit {
       this.totalItems1 = 0;
 
       this.formFilter.get('lot').setValue(null);
-      this.getLotPublic(new ListParams(), -1);
+      // this.getLotPublic(new ListParams(), -1);
       this.formFilter.get('customer').setValue(null);
-      this.getClient(new ListParams(), -1);
+      // this.getClient(new ListParams(), -1);
       this.formFilter.get('status').setValue(null);
-      this.getStatus(new ListParams(), -1);
+      // this.getStatus(new ListParams(), -1);
       this.formFilter.get('view').setValue(null);
 
       setTimeout(() => {
@@ -784,5 +784,15 @@ export class auctionReportComponent extends BasePage implements OnInit {
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
+  }
+  clear() {
+    this.form.reset();
+    this.formFilter.reset();
+    this.data1.load([]);
+    this.data1.refresh();
+    this.totalItems1 = 0;
+    this.data.load([]);
+    this.data.refresh();
+    this.totalItems = 0;
   }
 }
