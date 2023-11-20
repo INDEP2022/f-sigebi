@@ -14,6 +14,8 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IInitFormProceedingsBody } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion.component';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { RadiobuttonElementComponent } from 'src/app/shared/components/radiobutton-element-smarttable/radiobutton-element';
+
 @Component({
   selector: 'app-rop-id',
   templateUrl: './rop-id.component.html',
@@ -76,11 +78,10 @@ export class RopIdComponent extends BasePage implements OnInit {
           title: 'RIC',
           type: 'custom',
           showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: any) =>
-            this.ropaId(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onRopaId(instance),
+          valuePrepareFunction(row: any) {
+            return row;
+          },
+          renderComponent: RadiobuttonElementComponent,
         },
         CH: {
           filter: false,
@@ -88,11 +89,10 @@ export class RopIdComponent extends BasePage implements OnInit {
           title: 'CH',
           type: 'custom',
           showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: any) =>
-            this.ropaId(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onRopaId(instance),
+          valuePrepareFunction(row: any) {
+            return row;
+          },
+          renderComponent: RadiobuttonElementComponent,
         },
         N: {
           filter: false,
@@ -100,11 +100,10 @@ export class RopIdComponent extends BasePage implements OnInit {
           title: 'N',
           type: 'custom',
           showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: any) =>
-            this.ropaId(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onRopaId(instance),
+          valuePrepareFunction(row: any) {
+            return row;
+          },
+          renderComponent: RadiobuttonElementComponent,
         },
         Q: {
           filter: false,
@@ -112,17 +111,15 @@ export class RopIdComponent extends BasePage implements OnInit {
           title: 'Q',
           type: 'custom',
           showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: any) =>
-            this.ropaId(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onRopaId(instance),
+          valuePrepareFunction(row: any) {
+            return row;
+          },
+          renderComponent: RadiobuttonElementComponent,
         },
       },
     };
   }
   ngOnInit(): void {
-    // this.providerForm.patchValue(this.actas);
     this.dataDetail
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
