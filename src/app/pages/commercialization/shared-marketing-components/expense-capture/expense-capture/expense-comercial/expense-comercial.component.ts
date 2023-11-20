@@ -602,31 +602,31 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async nextItemLote() {
-    // if (this.PVALIDADET === 'S') {
-    const V_EXIST = await this.getParamValConcept(this.conceptNumber.value);
-    console.log(V_EXIST);
-    if (V_EXIST) {
-      // console.log(V_EXIST);
-      let coordChatarra = await firstValueFrom(
-        this.URCOORDREGCHATARRA_AUTOMATICO(3)
-      );
-      console.log(coordChatarra);
+    if (this.PVALIDADET === 'S') {
+      const V_EXIST = await this.getParamValConcept(this.conceptNumber.value);
+      console.log(V_EXIST);
+      if (V_EXIST) {
+        // console.log(V_EXIST);
+        let coordChatarra = await firstValueFrom(
+          this.URCOORDREGCHATARRA_AUTOMATICO(3)
+        );
+        console.log(coordChatarra);
 
-      this.CARGA_BIENES_LOTE_XDELRES(
-        this.eventNumber.value,
-        this.lotNumber.value,
-        this.conceptNumber.value
-      );
-    } else {
-      this.CARGA_BIENES_LOTE(this.eventNumber.value, this.lotNumber.value);
+        this.CARGA_BIENES_LOTE_XDELRES(
+          this.eventNumber.value,
+          this.lotNumber.value,
+          this.conceptNumber.value
+        );
+      } else {
+        this.CARGA_BIENES_LOTE(this.eventNumber.value, this.lotNumber.value);
+      }
+      if (this.dataService.V_BIEN_REP_ROBO > 0) {
+        this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+        this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = true;
+        this.dataService.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
+        this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = true;
+      }
     }
-    if (this.dataService.V_BIEN_REP_ROBO > 0) {
-      this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
-      this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = true;
-      this.dataService.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
-      this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = true;
-    }
-    // }
   }
 
   private validPayments(event: IComerExpense) {
