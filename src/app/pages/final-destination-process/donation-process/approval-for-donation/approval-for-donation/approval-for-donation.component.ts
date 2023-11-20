@@ -90,6 +90,18 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   get user() {
     return this.form.get('elaborated');
   }
+  get captureDate() {
+    return this.form.get('captureDate');
+  }
+  get closeDate() {
+    return this.form.get('closeDate');
+  }
+  get estatusAct() {
+    return this.form.get('estatusAct');
+  }
+  get cveActa() {
+    return this.form.get('cveActa');
+  }
   constructor(
     private fb: FormBuilder,
     private donationService: DonationService,
@@ -140,10 +152,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             const search: any = {
-              captureDate: () => (searchFilter = SearchFilter.ILIKE),
+              captureDate: () => (searchFilter = SearchFilter.EQ),
               noDelegation1: () => (searchFilter = SearchFilter.EQ),
-              elaborated: () => (searchFilter = SearchFilter.ILIKE),
-              estatusAct: () => (searchFilter = SearchFilter.ILIKE),
+              elaborated: () => (searchFilter = SearchFilter.EQ),
+              estatusAct: () => (searchFilter = SearchFilter.EQ),
+              cveAct: () => (searchFilter = SearchFilter.EQ),
+              closeDate: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
             if (filter.search !== '') {
@@ -268,10 +282,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     const state = this.status ? this.status : '';
     const noDelegation1 = this.form.get('noDelegation1').value
       ? this.form.get('noDelegation1').value
-      : '';
+      : 0;
     const elaborated = this.form.get('elaborated').value
       ? this.form.get('elaborated').value
-      : '';
+      : 0;
     this.getEventComDonationAll(
       'COMPDON',
       captureDate,
@@ -288,11 +302,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
-    params.addFilter(
-      'id',
-      this.form.get('elaborated').value,
-      SearchFilter.ILIKE
-    );
+    params.addFilter('id', this.user.value, SearchFilter.ILIKE);
     return this.serviceUser.getAllSegUsers(params.getParams()).subscribe({
       next: (value: any) => {
         const data = value.data[0].usuario;
@@ -331,28 +341,30 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   ) {
     this.loading = true;
 
-    if (closeDate) {
-      this.params.getValue()['filter.closeDate'] = `$eq:${closeDate}`;
-    }
-    if (captureDate) {
-      this.params.getValue()['filter.captureDate'] = `$eq:${captureDate}`;
-    }
-    if (cveAct) {
-      this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
-    }
+    captureDate
+      ? (this.params.getValue()['filter.captureDate'] = `$eq:${captureDate}`)
+      : delete this.params.getValue()['filter.captureDate'];
+    closeDate
+      ? (this.params.getValue()['filter.closeDate'] = `$eq:${closeDate}`)
+      : delete this.params.getValue()['filter.closeDate'];
+    cveAct
+      ? (this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`)
+      : delete this.params.getValue()['filter.cveAct'];
+    NoDelegation1
+      ? (this.params.getValue()[
+          'filter.NoDelegation1'
+        ] = `$eq:${NoDelegation1}`)
+      : delete this.params.getValue()['filter.NoDelegation1'];
+    estatusAct
+      ? (this.params.getValue()['filter.estatusAct'] = `$eq:${estatusAct}`)
+      : delete this.params.getValue()['filter.estatusAct'];
+    elaborated
+      ? (this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`)
+      : delete this.params.getValue()['filter.elaborated'];
 
-    if (NoDelegation1) {
-      this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
-    }
-    if (estatusAct) {
-      this.params.getValue()['filter.estatusAct'] = `$eq:${this.status}`;
-    }
-    if (elaborated) {
-      this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`;
-    }
     let params: any = {
       ...this.params.getValue(),
-      ...this.columnFilters,
+      ...this.columnFilter,
     };
     this.donationService.getEventComDonation(params).subscribe({
       next: resp => {
@@ -366,6 +378,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
           this.actaId = filt.actId;
         });
         localStorage.setItem('actaId', this.actaId);
+        closeDate = '';
+        captureDate = '';
+        cveAct = '';
+        NoDelegation1 = 0;
+        estatusAct = '';
+        elaborated = 0;
       },
       error: err => {
         this.loading = false;
@@ -381,7 +399,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.selectRow = true;
       this.excelValid = true;
       const data: any = event.data;
-      this.getDetailComDonation(data.actId);
+      this.getDetailComDonation(this.actaId);
       console.log(event.data);
     }
   }
@@ -596,19 +614,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   clean() {
     this.response = false;
-    this.form.get('cveActa').setValue(null);
     this.validate = true;
-    this.form.get('captureDate').setValue(null);
-    this.form.get('closeDate').setValue(null);
-    this.form.get('estatusAct').setValue(null);
-    this.form.get('noDelegation1').setValue(null);
-    this.form.get('elaborated').setValue(null);
+    this.form.reset();
     localStorage.removeItem('actaId');
     localStorage.removeItem('cveActa');
     localStorage.removeItem('captureDate');
     localStorage.removeItem('closeDate');
     localStorage.removeItem('estatusAct');
-    localStorage.removeItem('noDelegation1');
+    localStorage.removeItem('area');
     localStorage.removeItem('elaborated');
     this.data1.load([]);
     this.data1.refresh();
@@ -625,7 +638,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.body = {
       recordId: Number(this.actaId),
       typeActa: 'COMPDON',
-      delegationId: Number(localStorage.getItem('noDelegation1')),
+      delegationId: Number(localStorage.getItem('area')),
       nombre_transferente: null,
     };
 
