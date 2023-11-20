@@ -185,15 +185,13 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
   }
 
   confirmDelete(typeEntity?: ITypeEntityGov) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea Eliminar este Registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.remove(typeEntity);
+    this.alertQuestion('warning', '¿Desea eliminar este registro?', '').then(
+      question => {
+        if (question.isConfirmed) {
+          this.remove(typeEntity);
+        }
       }
-    });
+    );
   }
   remove(typeEntity: ITypeEntityGov) {
     this.loading = true;
@@ -210,7 +208,7 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio un Error al Eliminar la Entidad'
+          'Ocurrio un error al eliminar la entidad'
         );
       },
     });
@@ -228,7 +226,7 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
   }
 
   onSaveConfirm(event: any) {
-    this.onLoadToast('success', 'Entidad', ' Actualizada Correctamente');
+    this.onLoadToast('success', 'Se ha actualizo la entidad correctamente', '');
   }
 }
 export interface IParamsVault {

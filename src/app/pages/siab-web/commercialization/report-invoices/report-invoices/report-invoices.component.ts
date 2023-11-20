@@ -245,12 +245,12 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       rangeDate: [null, [maxDate(new Date())]],
-      typeCFDI: [null, [Validators.required]],
-      statusInvoice: [null, [Validators.required]],
-      goods: [null, [Validators.required]],
-      event: [null, [Validators.required]],
-      year: [null, [Validators.required]],
-      valid: ['A', [Validators.required]],
+      typeCFDI: [null, []],
+      statusInvoice: [null, []],
+      goods: [null, []],
+      event: [null, []],
+      year: [null, []],
+      valid: ['A', []],
     });
     setTimeout(() => {
       this.getEvent(new ListParams());
@@ -260,14 +260,14 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
 
   changeValid(event: any) {
     if (event == 'A') {
-      this.year.setValidators([Validators.required]);
+      //this.year.setValidators([Validators.required]);
       this.rangeDate.setValidators([]);
       this.form.get('rangeDate').setValue('');
       this.form.get('rangeDate').disable();
       this.form.get('year').enable();
     } else if (event == 'R') {
       this.year.setValidators([]);
-      this.rangeDate.setValidators([Validators.required]);
+      //this.rangeDate.setValidators([Validators.required]);
       this.form.get('year').setValue('');
       this.form.get('year').disable();
       this.form.get('rangeDate').enable();
@@ -290,16 +290,53 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   }
 
   consult() {
-    this.validateExcel = true;
-    this.show = true;
-    this.array = [];
-    this.dataFormatPercentage = [];
-    this.dataFormat = [];
-    this.data1.load([]);
-    this.data1.refresh();
-    this.data2.load([]);
-    this.data2.refresh();
-    this.consultInvoices();
+    if (this.form.get('valid').value === 'A') {
+      if (
+        this.form.get('valid').value &&
+        this.form.get('year').value &&
+        this.form.get('event').value &&
+        this.form.get('typeCFDI').value &&
+        this.form.get('statusInvoice').value &&
+        this.form.get('goods').value
+      ) {
+        this.validateExcel = true;
+        this.show = true;
+        this.array = [];
+        this.dataFormatPercentage = [];
+        this.dataFormat = [];
+        this.data1.load([]);
+        this.data1.refresh();
+        this.data2.load([]);
+        this.data2.refresh();
+        this.consultInvoices();
+      } else {
+        this.alert('warning', 'Debe llenar todos los campos', '');
+      }
+    } else if (this.form.get('valid').value === 'R') {
+      if (
+        this.form.get('valid').value &&
+        this.form.get('rangeDate').value &&
+        this.form.get('event').value &&
+        this.form.get('typeCFDI').value &&
+        this.form.get('statusInvoice').value &&
+        this.form.get('goods').value
+      ) {
+        this.validateExcel = true;
+        this.show = true;
+        this.array = [];
+        this.dataFormatPercentage = [];
+        this.dataFormat = [];
+        this.data1.load([]);
+        this.data1.refresh();
+        this.data2.load([]);
+        this.data2.refresh();
+        this.consultInvoices();
+      } else {
+        this.alert('warning', 'Debe llenar todos los campos', '');
+      }
+    } else {
+      this.alert('warning', 'Debe llenar todos los campos', '');
+    }
   }
 
   async consultInvoices() {
@@ -582,7 +619,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     document.body.removeChild(a);
     this._toastrService.clear();
     this.loading = false;
-    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    this.alert('success', 'El reporte ha sido generado', '');
     URL.revokeObjectURL(objURL);
   }
 
