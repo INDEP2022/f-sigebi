@@ -123,7 +123,7 @@ export class MunicipalityControlMainComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'award':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
@@ -139,6 +139,9 @@ export class MunicipalityControlMainComponent
                 break;
               case 'state':
                 searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.EQ;
                 break;
             }
             if (filter.search !== '') {
@@ -196,7 +199,7 @@ export class MunicipalityControlMainComponent
         this.onLoadToast(
           'warning',
           'Advertencia',
-          'No se han Encontrado Bienes para el Solicitante Seleccionado'
+          'No se han encontrado bienes para el solicitante seleccionado'
         );
       },
     });
@@ -243,7 +246,7 @@ export class MunicipalityControlMainComponent
         this.onLoadToast(
           'warning',
           'Advertencia',
-          'El Solicitante no se ha Eliminado Correctamente'
+          'El solicitante no se ha eliminado correctamente, verifique que no tenga bienes asignados'
         );
       },
     });
@@ -255,13 +258,14 @@ export class MunicipalityControlMainComponent
       next: data => {
         this.onLoadToast('success', 'Se ha eliminado el bien', '');
         // location.reload();
-        this.getData();
+        //this.getData();
+        this.getDataGoods(this.applicant);
       },
       error: err => {
         this.onLoadToast(
           'warning',
           'Advertencia',
-          'El bien no se ha Eliminado Correctamente'
+          'El bien no se ha eliminado correctamente'
         );
       },
     });

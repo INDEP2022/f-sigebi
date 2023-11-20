@@ -38,3 +38,13 @@ export interface IApplicationFComerCtldPag3 {
   ctldevpagKey: string;
   cRelEvents: [];
 }
+
+export interface ICabms {
+  CLKCABMS: string;
+  CLKSUBCAT: number;
+  CVDSC: string;
+  CVPART: string;
+  CVSUBPART: string;
+  CODOPE: string;
+  CVDSC2: string;
+}
