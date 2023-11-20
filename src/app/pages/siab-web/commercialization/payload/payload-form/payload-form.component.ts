@@ -14,6 +14,7 @@ export class PayloadFormComponent extends BasePage implements OnInit {
   title: string = 'Carga de Pago';
   form: FormGroup = new FormGroup({});
   edit: boolean = true;
+  maxDate: Date = new Date();
   paymentLoad: any;
   constructor(
     private modalRef: BsModalRef,
@@ -148,6 +149,7 @@ export class PayloadFormComponent extends BasePage implements OnInit {
       pCuenta: this.paymentLoad.Cuenta,
       pIdTypeSat: this.paymentLoad.Id_Tipo_SAT,
     };
+    console.log(body, this.paymentLoad);
     this.paymentService.postComerpagrefweb(body).subscribe({
       next: resp => {
         this.handleSuccess();

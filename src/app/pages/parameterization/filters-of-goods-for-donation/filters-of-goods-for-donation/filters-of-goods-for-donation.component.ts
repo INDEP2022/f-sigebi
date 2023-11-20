@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -30,7 +31,8 @@ export class FiltersOfGoodsForDonationComponent
 
   constructor(
     private modalService: BsModalService,
-    private donationServ: DonationService
+    private donationServ: DonationService,
+    private router: Router
   ) {
     super();
 
@@ -118,6 +120,7 @@ export class FiltersOfGoodsForDonationComponent
 
     this.donationServ.getAll(newParams).subscribe({
       next: response => {
+        console.log('response', response);
         /*if (response.data.length > 0) {
           response.data.map(donation => {
             donation.statusDesc = donation.status.description;
@@ -126,9 +129,14 @@ export class FiltersOfGoodsForDonationComponent
           });
           this.loading = false;
         }*/
-        this.data.load(response.data);
-        this.totalItems = response.count;
+        if (response.count == 0) {
+          this.data.load([]);
+        } else {
+          this.data.load(response.data);
+        }
         this.data.refresh();
+        this.totalItems = response.count;
+
         this.loading = false;
       },
       error: err => {
@@ -168,5 +176,11 @@ export class FiltersOfGoodsForDonationComponent
         });
       }
     });
+  }
+
+  back() {
+    this.router.navigate([
+      `/pages/final-destination-process/donation-process/export-goods-donation`,
+    ]);
   }
 }

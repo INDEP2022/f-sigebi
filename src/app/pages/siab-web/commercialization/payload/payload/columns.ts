@@ -27,7 +27,7 @@ export const DATA_COLUMNS = {
     sort: false,
   },
   Cuenta: {
-    title: 'cuenta',
+    title: 'Cuenta',
     sort: false,
   },
   Referencia: {

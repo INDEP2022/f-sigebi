@@ -16,6 +16,7 @@ import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-pr
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+
 @Component({
   selector: 'app-create-acta',
   templateUrl: './create-acta.component.html',
@@ -35,6 +36,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   witnessTes: any;
   witnessAdm: any;
   cve_recibe: any;
+  idActa: number = 0;
   @Output() onSave = new EventEmitter<any>();
   arrayDele: any[] = [];
   dele = new DefaultSelect<any>();
@@ -89,7 +91,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.actaRecepttionForm = this.fb.group({
       type: [null, Validators.required],
       fileId: [null, Validators.required],
-      consec: [null, Validators.required],
+      consec: [null],
       anio: [null, [Validators.required]],
       captureDate: [null],
       cveActa: [null],
@@ -105,7 +107,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     });
 
     this.actaRecepttionForm.patchValue({
-      elaboradate: await this.getDate(),
+      captureDate: await this.getDate(),
     });
   }
 
@@ -187,11 +189,10 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
-
+    // localStorage.setItem('actaId', acta);
     localStorage.setItem('anio', anio);
     console.log('AÑO', anio);
     localStorage.setItem('mes', mes.label);
-
     let consec_ = consec.toString().padStart(4, '0');
     this.foolio = consec;
     console.log('MES', mes);
@@ -204,7 +205,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       this.authService.decodeToken().department
     }/${consec_}/${anio}`;
     console.log('cveActa -->', cveActa);
-
+    localStorage.setItem('cveAc', cveActa);
     if (cveActa) {
       const params = new ListParams();
       params['filter.keysProceedings'] = `$eq:${cveActa}`;
@@ -232,9 +233,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
   guardarRegistro(cveActa: any) {
     let obj: any = {
       cveAct: cveActa,
-      elaborationDate: this.actaRecepttionForm.value.elaboradate,
+      elaborationDate: new Date(),
       estatusAct: 'ABIERTA',
-      elaborated: this.authService.decodeToken().preferred_username,
+      elaborated: this.authService.decodeToken().username,
       fileId: this.actaRecepttionForm.value.fileId,
       witness1: this.actaRecepttionForm.value.testigoOne,
       witness2: this.actaRecepttionForm.value.testigoTree,
@@ -242,17 +243,19 @@ export class CreateActaComponent extends BasePage implements OnInit {
       captureDate: new Date(),
       observations: this.actaRecepttionForm.value.observaciones,
       registreNumber: null,
-      numDelegation1: null,
+      numDelegation1: localStorage.getItem('area'),
       numDelegation2: null,
       identifier: null,
       label: null,
       folioUniversal: this.foolio,
       closeDate: null,
     };
+    localStorage.setItem('estatusAct', obj.estatusAct);
     this.donationService.createD(obj).subscribe({
       next: (data: any) => {
         console.log('DATA', data);
         this.newRegister = data;
+        this.idActa = data.id;
         this.alert('success', 'El Evento se ha Creado Correctamente', '');
         this.handleSuccess();
       },
@@ -276,7 +279,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       next: (value: any) => {
         const data = value.data[0].usuario;
         if (data) this.delegationToolbar = data.delegationNumber;
-
+        localStorage.setItem('area', data.delegationNumber);
         console.log('SI', value);
       },
       error(err) {
