@@ -543,11 +543,11 @@ export class CaptureApprovalDonationComponent
             this.TOTAL_REPORTE = this.totalItems2;
             for (const item of items) {
               // this.BIEN_ERROR += item.error;
-              this.SUM_BIEN += item.good.amount;
+              this.SUM_BIEN += item.amount;
               if (item.status === null) {
-                this.errorSumInvalidos += item.good.status;
+                this.errorSumInvalidos += item.status;
               } else {
-                this.errorSumValidos += item.good.status;
+                this.errorSumValidos += item.status;
               }
             }
             console.log('data', data);
