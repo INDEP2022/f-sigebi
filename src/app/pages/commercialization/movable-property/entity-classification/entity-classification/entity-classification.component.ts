@@ -185,15 +185,13 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
   }
 
   confirmDelete(typeEntity?: ITypeEntityGov) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.remove(typeEntity);
+    this.alertQuestion('warning', '¿Desea eliminar este registro?', '').then(
+      question => {
+        if (question.isConfirmed) {
+          this.remove(typeEntity);
+        }
       }
-    });
+    );
   }
   remove(typeEntity: ITypeEntityGov) {
     this.loading = true;
