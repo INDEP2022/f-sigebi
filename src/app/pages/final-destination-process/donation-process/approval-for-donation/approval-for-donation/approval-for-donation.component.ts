@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -69,7 +69,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   columnFilter: any = [];
   columnFilter1: any = [];
   donation = new DefaultSelect();
-  // user = localStorage.getItem('username');
+  error: number = 0;
   users$ = new DefaultSelect<ISegUsers>();
   area: string;
   dataTableGood_: any[] = [];
@@ -80,6 +80,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   status: string = null;
   cveEvent: string;
   actaId: string = '';
+  estatusAct: string = '';
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   settings1 = { ...this.settings };
@@ -117,7 +118,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         ...GOOD_COLUMNS,
       },
       rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
+        if (row.data.error === 0) {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -128,86 +129,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    // this.userTracker();
-    // this.search();
-    this.data
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = '';
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
-            switch (filter.field) {
-              case 'captureDate':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'estatusAct':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'noDelegation1':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'elaborated':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
-
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.params = this.pageFilter(this.params);
-          this.getEventComDonationAll();
-        }
-      });
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getEventComDonationAll());
-
-    this.data1
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = '';
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
-            switch (filter.field) {
-              case 'goodId':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'amount':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
-
-            if (filter.search !== '') {
-              this.columnFilter1[field] = `${searchFilter}:${filter.search}`;
-              //this.params.value.page = 1;
-            } else {
-              delete this.columnFilter1[field];
-            }
-          });
-          this.params1 = this.pageFilter(this.params1);
-          this.getDetailComDonation();
-        }
-      });
 
     this.inicialice();
   }
@@ -226,14 +147,13 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   initForm() {
     this.form = this.fb.group({
       cveActa: [null],
-      captureDate: ['', []],
-      closeDate: ['', []],
-      estatusAct: ['', []],
+      captureDate: [null, []],
+      closeDate: [null, []],
+      estatusAct: [null, []],
       noDelegation1: [null],
       elaborated: [null, []],
     });
-    // this.form.get('elaborated').disable();
-    // this.form.get('noDelegation1').disable();
+
     this.getEventComDonation(new ListParams());
   }
 
@@ -259,7 +179,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
           const name = this.form.get('elaborated').value;
           const data = response.data.filter(m => {
             // m.id == name ;
-            console.log(m);
             m['userAndName'] = m.id + '-' + m.name;
           });
 
@@ -275,28 +194,13 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   filterButton() {
-    if (
-      this.form.get('cveActa').value === null ||
-      this.form.get('captureDate').value === null ||
-      this.form.get('closeDate').value === null ||
-      this.form.get('estatusAct').value === null ||
-      this.form.get('noDelegation1').value === null ||
-      this.form.get('elaborated').value === null
-    ) {
-      this.alert(
-        'warning',
-        'Debe seleccionar al menos una opción para filtrar',
-        ''
-      );
-      return;
-    }
     this.from = this.datePipe.transform(
       this.form.controls['captureDate'].value,
-      'dd/MM/yyyy'
+      'yyyy-MM-dd'
     );
     this.to = this.datePipe.transform(
       this.form.controls['closeDate'].value,
-      'dd/MM/yyyy'
+      'yyyy-MM-dd'
     );
     this.response = true;
     const captureDate = this.form.get('captureDate').value ? this.from : '';
@@ -323,11 +227,15 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     localStorage.setItem('cveAc', cveAc);
     localStorage.setItem('area', noDelegation1);
     localStorage.setItem('elaborated', elaborated);
-    localStorage.setItem('state', state);
+    localStorage.setItem('captureDate', captureDate);
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
-    params.addFilter('id', this.form.get('elaborated').value, SearchFilter.EQ);
+    params.addFilter(
+      'id',
+      this.form.get('elaborated').value,
+      SearchFilter.ILIKE
+    );
     return this.serviceUser.getAllSegUsers(params.getParams()).subscribe({
       next: (value: any) => {
         const data = value.data[0].usuario;
@@ -365,18 +273,18 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     elaborated?: string | number
   ) {
     this.loading = true;
-    this.params.getValue()['filter.actType'] = `$eq:${actType}`;
-    this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
-    this.params.getValue()['filter.captureDate'] = `$eq:${captureDate}`;
-    this.params.getValue()['filter.closeDate'] = `$eq:${closeDate}`;
+    this.params.getValue()['filter.actType'] = `$ilike:${actType}`;
+    this.params.getValue()['filter.cveAct'] = `$ilike:${cveAct}`;
+    this.params.getValue()['filter.captureDate'] = `$ilike:${captureDate}`;
+    this.params.getValue()['filter.closeDate'] = `$ilike:${closeDate}`;
     if (NoDelegation1) {
       this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
     }
     if (estatusAct) {
-      this.params.getValue()['filter.estatusAct'] = `$eq:${estatusAct}`;
+      this.params.getValue()['filter.estatusAct'] = `$ilike:${estatusAct}`;
     }
     if (elaborated) {
-      this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`;
+      this.params.getValue()['filter.elaborated'] = `$ilike:${elaborated}`;
     }
     let params = {
       ...this.params.getValue(),
@@ -386,13 +294,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       next: resp => {
         this.data.load(resp.data);
         this.event = resp.data.filter(filt => {
-          console.log(filt);
           this.fileNumber = filt.fileId;
           this.actaId = filt.actId;
+          this.estatusAct = filt.estatusAct;
+          this.error = filt.error;
         });
         localStorage.setItem('actaId', this.actaId);
-        this.getGoodsByStatus(this.fileNumber);
-        console.log(this.actaId);
+        localStorage.setItem('estatusAct', this.estatusAct);
+        // this.getGoodsByStatus(this.fileNumber);
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
@@ -413,6 +322,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.selectRow = true;
       this.excelValid = true;
       const data: any = event.data;
+      localStorage.setItem('area', event.data.noDelegation1);
+      localStorage.setItem('cveAc', event.data.cveAc);
+      localStorage.setItem('elaborated', event.data.elaborated);
+      localStorage.setItem('captureDate', event.data.captureDate);
       this.getDetailComDonation(data.actId);
       console.log(event.data);
     }
@@ -449,6 +362,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
           item['quantity'] = item.amount;
           item['recordId'] = item.minutesKey;
           item['id'] = item.goodNumber;
+          item['processExt'] = item.processExt;
           // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
           // // console.log('acta', acta);
           // item['acta_'] = acta;
@@ -646,12 +560,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   async inicialice() {
     let access = await this.getAccessArea(new ListParams());
-    console.log(access);
     let FaVal = await this.getFaVal();
-    console.log(FaVal);
     let indicated = await this.getIndicator();
-    console.log(indicated);
-
     if (indicated == null) {
       this.alert(
         'error',
@@ -662,6 +572,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.form.get('estatusAct').disable();
       this.form.get('noDelegation1').disable();
       this.form.get('elaborated').disable();
+      this.form.get('captureDate').disable();
+      this.form.get('closeDate').disable();
       this.validate = true;
       return;
     }
@@ -705,9 +617,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.response = false;
     this.form.get('cveActa').setValue(null);
     this.validate = true;
-    this.form.get('captureDate').setValue(null);
-    this.form.get('closeDate').setValue(null);
-    this.form.get('estatusAct').setValue([]);
+    this.form.get('captureDate').setValue('');
+    this.form.get('closeDate').setValue('');
+    this.form.get('estatusAct').setValue('');
     this.form.get('noDelegation1').setValue([]);
     this.form.get('noDelegation1').setValue([]);
     this.form.get('elaborated').setValue([]);

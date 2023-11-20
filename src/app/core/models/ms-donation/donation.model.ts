@@ -1,3 +1,6 @@
+import { IWarehouse } from '../catalogs/warehouse.model';
+import { IGood } from '../good/good.model';
+
 export interface IDonationGood {
   statusId: string;
   noLabel: string;
@@ -67,4 +70,50 @@ export interface IExportDetail {
   typeActa: string;
   delegationId: number;
   nombre_transferente: string;
+}
+
+export interface IIndicators {
+  noBien: number;
+  noExpediente: number;
+  estatus: string;
+  description: string;
+  amount: number;
+  procesoExtDom: string;
+  cveEvent: null;
+  idEvent: number;
+  idLot: number;
+  numeraryNoEnt: number;
+}
+export interface ITransference {
+  id: number;
+  nameTransferent: string;
+  keyTransferent: string;
+  userCreation: string;
+  dateCreation: string;
+  userUpdate: string;
+  dateUpdate: string;
+  typeTransferent: string;
+  version: string;
+  status: string;
+}
+export interface IDelegationDon {
+  id: number;
+  description: string;
+  registerNumber: number;
+  zoneContractKey: string;
+  diffHours: number;
+  phaseEdo: number;
+  zoneVigilanceKey: string;
+}
+
+export interface ITempDonDetail {
+  id: number;
+  user: string;
+  delegationNumber: number;
+  goodNumber: number;
+  good: IGood;
+  warehouse: IWarehouse;
+  bienindicadores: IIndicators;
+  transference: ITransference;
+  delegation: IDelegationDon;
 }

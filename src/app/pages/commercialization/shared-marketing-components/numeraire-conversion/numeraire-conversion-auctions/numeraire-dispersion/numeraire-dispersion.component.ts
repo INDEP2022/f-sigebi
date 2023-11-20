@@ -60,6 +60,7 @@ export class NumeraireDispersionComponent
       }
     }
     if (changes['selectedExpenseData'] && this.fillData) {
+      this.total = 0;
       this.getData();
     }
   }

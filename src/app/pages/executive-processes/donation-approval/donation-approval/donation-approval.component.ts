@@ -274,7 +274,7 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
     if (good.di_disponible === 'S') {
       this.openModal(good);
     } else {
-      this.alert('warning', this.title, 'Este Bien no Está Disponible');
+      this.alert('warning', this.title, 'Este Bien no está disponible');
     }
   }
 

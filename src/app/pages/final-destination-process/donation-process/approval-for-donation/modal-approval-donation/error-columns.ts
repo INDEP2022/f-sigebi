@@ -4,7 +4,7 @@ export const ERROR_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  goodsDescrip: {
+  error_desc: {
     title: 'Descrip. Error',
     type: 'string',
     sort: false,
