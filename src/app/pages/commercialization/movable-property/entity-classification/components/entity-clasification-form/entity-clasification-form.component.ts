@@ -83,7 +83,7 @@ export class EntityClasificationFormComponent
             this.onLoadToast(
               'error',
               'Error',
-              'Ocurrio un Error al Actualizar'
+              'Ocurrio un error al actualizar'
             );
           }
           return throwError(() => error);

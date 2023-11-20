@@ -1,4 +1,5 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const COLUMNS_APPROVAL_DONATION = {
   recordId: {
     title: 'Ref.',
@@ -53,6 +54,19 @@ export const COPY = {
     visible: true,
     title: 'Cantidad',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
+    },
   },
   unit: {
     title: 'Unidad',

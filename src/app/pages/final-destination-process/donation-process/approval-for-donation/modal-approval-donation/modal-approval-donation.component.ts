@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output,
 } from '@angular/core';
@@ -112,6 +113,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   @Output() onSave = new EventEmitter<any>();
+  @Input() files: any;
   totalItems2: number = 0;
   constructor(
     private goodService: GoodService,
@@ -246,9 +248,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     //         // this.dataGoodTable.load(this.selectedGooodsValid);
     //         // this.dataGoodTable.refresh();
     //       }
-    //     },
+    //     }
     //   });
-
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -344,14 +345,14 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    // params['filter.status'] = 'DON';
+    params['filter.status'] = 'DON';
     params['sortBy'] = `goodId:DESC`;
     // params['sortBy'] = `goodId:DESC`;
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
         console.log(data.data);
-        this.totalItems2 = data.count;
+        this.totalItems2 = data.count ?? 0;
         this.dataGoodTable.load(data.data);
         this.dataGoodTable.refresh();
       },
@@ -380,15 +381,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     this.onSave.emit(this.selectedGooodsValid);
     this.modalRef.hide();
   }
-  // onUserRowSelect(row: any): void {
-  //   if (row.isSelected) {
-  //     this.selectedRow = row.data;
-  //   } else {
-  //     this.selectedRow = null;
-  //   }
-
-  //   console.log(this.selectedRow);
-  // }
 
   onUserRowSelect(event: { data: any; selected: any }) {
     this.selectedRow = event.data;
@@ -516,13 +508,11 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    console.log('1412212', params);
-    params['sortBy'] = `goodId:DESC`;
-    params['filter.status'] != 'ADM';
+    params['sortBy'] = `goodNumber:DESC`;
+    params['filter.status'] != 'DON';
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
-        console.log('Bienes', this.goods);
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',
@@ -536,32 +526,17 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           }
           item['quantity'] = item.amount;
           item['id'] = item.minutesKey;
+          item['goodNumber'] = item.goodNumber;
           item['processExt'] = item.processExt;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-
-          // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-          // // console.log('acta', acta);
-          // item['acta_'] = acta;
         });
 
         Promise.all(result).then(item => {
           this.dataTableGood_ = this.goods;
           this.dataTableGood.load(this.goods);
           this.dataTableGood.refresh();
-          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+
           this.totalItems = data.count;
           this.loading = false;
-          // // console.log(this.bienes);
         });
       },
       error: error => {

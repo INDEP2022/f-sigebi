@@ -21,6 +21,7 @@
           [settings]="settings"
           [source]="dataFactActas"
           (userRowSelect)="onUserRowSelect($event)"
+          (edit)="update($event.data)"
           (delete)="showDeleteMsg($event)">
         </ng2-smart-table>
       </ng-scrollbar>

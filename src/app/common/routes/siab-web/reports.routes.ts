@@ -14,6 +14,14 @@ export const REPORTS_ROUTES = [
         label: 'Documentos',
         link: '/pages/siab-web/sami/consult-report/report-documents',
       },
+      {
+        label: 'Documentos Bienes',
+        link: '/pages/siab-web/sami/consult-report/report-documents-goods',
+      },
+      {
+        label: 'Documentos Programación',
+        link: '/pages/siab-web/sami/consult-report/report-documents-schedule',
+      },
     ],
   },
 ];
