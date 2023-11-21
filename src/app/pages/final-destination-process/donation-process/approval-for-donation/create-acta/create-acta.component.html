@@ -8,8 +8,8 @@
     <form [formGroup]="actaRecepttionForm" class="form-material">
       <div class="col-12">
         <div class="row">
-          <div class="col-md-3 mt-2">
-            <!-- <div>
+          <!-- <div class="col-md-3 mt-2">
+            <div>
               <form-field
                 [control]="actaRecepttionForm.get('type')"
                 label="Tipo de Evento">
@@ -19,33 +19,33 @@
               </form-field>
             </div>
           </div> -->
-            <div class="col-md-3 mt-2">
-              <div>
-                <form-field
-                  [control]="actaRecepttionForm.get('acta')"
-                  label="Acta">
-                  <ng-select formControlName="acta" class="form-control pt-1">
-                    <ng-option value="COMPDON">COMPDON</ng-option>
-                  </ng-select>
-                </form-field>
-              </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('acta')"
+                label="Acta">
+                <ng-select formControlName="acta" class="form-control pt-1">
+                  <ng-option value="COMPDON">COMPDON</ng-option>
+                </ng-select>
+              </form-field>
             </div>
-            <div class="col-md-3 mt-2">
-              <div>
-                <form-field
-                  [control]="actaRecepttionForm.get('type')"
-                  label="Estado">
-                  <ng-select formControlName="type" class="form-control pt-1">
-                    <ng-option value="A">A</ng-option>
-                    <ng-option value="D">D</ng-option>
-                    <ng-option value="RT">RT</ng-option>
-                  </ng-select>
-                  <!-- <input #inputValue type="text" class="form-control" formControlName="type" readonly /> -->
-                </form-field>
-              </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('type')"
+                label="Estado">
+                <ng-select formControlName="type" class="form-control pt-1">
+                  <ng-option value="A">A</ng-option>
+                  <ng-option value="D">D</ng-option>
+                  <ng-option value="RT">RT</ng-option>
+                </ng-select>
+                <!-- <input #inputValue type="text" class="form-control" formControlName="type" readonly /> -->
+              </form-field>
             </div>
+          </div>
 
-            <!-- <div class="col-md-6 mt-2">
+          <!-- <div class="col-md-6 mt-2">
             <div>
               <form-field [control]="actaRecepttionForm.get('claveTrans')">
                 <ngx-select
@@ -62,97 +62,102 @@
                 </ngx-select>
               
             </div>
-          </div> -->
+          </div>  -->
 
-            <div class="col-md-3 mt-2">
-              <div>
-                <form-field
-                  [control]="actaRecepttionForm.get('consec')"
-                  label="Folio">
-                  <input
-                    min="0"
-                    max="99999"
-                    pattern="^[0-9]+"
-                    type="number"
-                    class="form-control pt-1"
-                    formControlName="consec" />
-                </form-field>
-              </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('consec')"
+                label="Folio">
+                <input
+                  min="0"
+                  max="99999"
+                  pattern="^[0-9]+"
+                  type="number"
+                  class="form-control pt-1"
+                  formControlName="consec"
+                  readonly />
+              </form-field>
             </div>
-            <!-- <div class="col-md-3 mt-2">
-              <div>
-                <form-field [control]="actaRecepttionForm.get('administra')">
-                  <ngx-select
-                    [form]="actaRecepttionForm"
-                    [data]="arrayDele"
-                    (fetchItems)="consulREG_DEL_ADMIN($event)"
-                    bindLabel="administra"
-                    value="delegacion"
-                    control="administra"
-                    label="Área que administra"
-                    [searchOnInit]="true"
-                    [showTooltip]="true"
-                    termMaxLength="30">
-                  </ngx-select>
-                </form-field>
-              </div>
-            </div> -->
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field [control]="actaRecepttionForm.get('administra')">
+                <ngx-select
+                  [form]="actaRecepttionForm"
+                  [data]="arrayDele"
+                  (fetchItems)="consulREG_DEL_ADMIN($event)"
+                  bindLabel="administra"
+                  value="delegacion"
+                  control="administra"
+                  label="Área que administra"
+                  [searchOnInit]="true"
+                  [showTooltip]="true"
+                  termMaxLength="30">
+                </ngx-select>
+              </form-field>
+            </div>
+          </div>
 
-            <div class="col-md-3 mt-2">
-              <div>
-                <form-field
-                  [control]="actaRecepttionForm.get('captureDate')"
-                  label="Fecha Captura">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="captureDate"
-                    readonly />
-                </form-field>
-              </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('captureDate')"
+                label="Fecha Captura">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="captureDate"
+                  [value]="
+                    actaRecepttionForm.get('captureDate').value
+                      | date : 'dd/MM/yyyy'
+                  "
+                  readonly />
+              </form-field>
             </div>
+          </div>
 
-            <div class="col-md-3 mt-2">
-              <div>
-                <form-field
-                  [control]="actaRecepttionForm.get('observaciones')"
-                  label="Observaciones">
-                  <textarea
-                    maxlength="1000"
-                    type="text"
-                    class="form-control pt-1"
-                    formControlName="observaciones"></textarea>
-                </form-field>
-              </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('observaciones')"
+                label="Observaciones">
+                <textarea
+                  maxlength="1000"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="observaciones"></textarea>
+              </form-field>
             </div>
-            <div class="col-md-3 mt-2">
-              <div>
-                <form-field
-                  [control]="actaRecepttionForm.get('testigoOne')"
-                  label="Testigo 1">
-                  <input
-                    maxlength="100"
-                    type="text"
-                    class="form-control pt-1"
-                    formControlName="testigoOne" />
-                </form-field>
-              </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('testigoOne')"
+                label="Testigo 1">
+                <input
+                  maxlength="100"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="testigoOne" />
+              </form-field>
             </div>
+          </div>
 
-            <div class="col-md-3 mt-2">
-              <div>
-                <form-field
-                  [control]="actaRecepttionForm.get('testigoTree')"
-                  label="Testigo 2">
-                  <input
-                    maxlength="100"
-                    type="text"
-                    class="form-control pt-1"
-                    formControlName="testigoTree" />
-                </form-field>
-              </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('testigoOIC')"
+                label="Testigo 2">
+                <input
+                  maxlength="100"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="testigoOIC" />
+              </form-field>
             </div>
-            <!-- <div class="col-md-3 mt-2">
+          </div>
+          <!-- <div class="col-md-3 mt-2">
             <div>
               <form-field [control]="actaRecepttionForm.get('cveReceived')">
                 <ngx-select
@@ -168,8 +173,8 @@
                   termMaxLength="30">
                 </ngx-select>
               </form-field>
-            </div>-->
-          </div>
+            </div>
+          </div>-->
         </div>
       </div>
     </form>
