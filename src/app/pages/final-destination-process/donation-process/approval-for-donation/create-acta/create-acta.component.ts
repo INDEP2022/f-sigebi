@@ -184,7 +184,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   globalGstRecAdm: any = null;
   async consulREG_DEL_ADMIN(lparams: ListParams) {
     const params = new FilterParams();
-    const area = Number(localStorage.getItem('area'));
+    const area = this.delegation;
     params.page = lparams.page;
     params.limit = lparams.limit;
 
