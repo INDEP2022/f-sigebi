@@ -7,6 +7,7 @@ import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { BasePage } from 'src/app/core/shared';
 
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
 import { COLUMNS } from '../numeraire-conversion-auctions/columns';
@@ -29,15 +30,18 @@ export class NumeraireConversionAllotmentsComponent
   ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
   dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
+  user: any;
   constructor(
     private fb: FormBuilder,
     private convNumeraryService: ConvNumeraryService,
     private comertpEventService: ComerTpEventosService,
     private eventMService: ComermeventosService,
     private eventIService: ComerieventosService,
-    private eventDataService: ComerEventosService
+    private eventDataService: ComerEventosService,
+    private authService: AuthService
   ) {
     super();
+    this.user = this.authService.decodeToken();
   }
 
   get eventService() {
@@ -104,6 +108,7 @@ export class NumeraireConversionAllotmentsComponent
           pevent: this.selectedEvent.id,
           pscreen: 'FCOMER087',
           pdirectionScreen: this.address,
+          user: this.user.preferred_username,
         })
         .pipe(take(1))
         .subscribe({
@@ -135,6 +140,13 @@ export class NumeraireConversionAllotmentsComponent
                     );
                   }
                 },
+                error: err => {
+                  this.alert(
+                    'error',
+                    'Ocurrio un error al actualizar el evento',
+                    'Favor de verificar'
+                  );
+                },
               });
 
             this.loader.load = false;
@@ -142,6 +154,11 @@ export class NumeraireConversionAllotmentsComponent
           error: err => {
             console.log(err);
             this.loader.load = false;
+            this.alert(
+              'error',
+              'Ocurrio un error al convertir numerario',
+              'Favor de verificar'
+            );
           },
         });
     } else {

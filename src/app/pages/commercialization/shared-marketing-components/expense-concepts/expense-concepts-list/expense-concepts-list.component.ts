@@ -211,7 +211,10 @@ export class ExpenseConceptsListComponent
                   });
                   this.alert('success', 'Se han copiado los parámetros', '');
                   // this.filesToDelete = [];
-                  this.selectedConcept = body;
+                  setTimeout(() => {
+                    this.selectedConcept = body;
+                  }, 500);
+
                   // this.expenseConceptsService.refreshParams.next(true);
                   // forkJoin(obs).subscribe({
                   //   complete: () => {

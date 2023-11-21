@@ -7,6 +7,7 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
@@ -37,6 +38,7 @@ export class NumeraireConversionAuctionsComponent
   ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
   dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
+  user: any;
   constructor(
     private fb: FormBuilder,
     private convNumeraryService: ConvNumeraryService,
@@ -48,9 +50,11 @@ export class NumeraireConversionAuctionsComponent
     private numerarieService: NumerarieService,
     private eventMService: ComermeventosService,
     private eventIService: ComerieventosService,
-    private eventDataService: ComerEventosService
+    private eventDataService: ComerEventosService,
+    private authService: AuthService
   ) {
     super();
+    this.user = this.authService.decodeToken();
   }
 
   ngOnInit(): void {
@@ -231,7 +235,11 @@ export class NumeraireConversionAuctionsComponent
     if (this.selectedEvent.statusVtaId !== 'CNE') {
       this.loader.load = true;
       this.convNumeraryService
-        .convert({ pevent: this.selectedEvent.id, pscreen: 'FCOMER087' })
+        .convert({
+          pevent: this.selectedEvent.id,
+          pscreen: 'FCOMER087',
+          user: this.user,
+        })
         .pipe(take(1))
         .subscribe({
           next: response => {

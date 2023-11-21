@@ -24,7 +24,7 @@ export class ConvNumeraryService extends HttpService {
     return this.delete(this.route.SP_BORRA_NUMERA + '/' + idEvent);
   }
 
-  convert(body: { pevent: number; pscreen: string }) {
+  convert(body: { pevent: number; pscreen: string; user: string }) {
     return this.post(this.route.CONVIERTE, body);
   }
 
@@ -36,6 +36,7 @@ export class ConvNumeraryService extends HttpService {
     pevent: number;
     pscreen: string;
     pdirectionScreen: string;
+    user: string;
   }) {
     return this.post(this.route.PA_CONVNUMERARIO_ADJUDIR, body);
   }

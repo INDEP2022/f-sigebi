@@ -813,7 +813,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         comer_detgastos: this.dataCompositionExpenses
           .filter(x => x.changeStatus)
           .map(x => {
-            return { select_cambia_status: 'S', no_bien: +x.goodNumber };
+            return { select_cambia_status: 'S', no_bien: x.goodNumber };
           }),
         cat_motivos_rev: this.expenseModalService.selectedMotives.map(
           x => x.descriptionCause
