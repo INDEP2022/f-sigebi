@@ -100,9 +100,9 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
           this.getDeductives();
         }
       });
-    /*this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDeductives());*/
+      .subscribe(() => this.getDeductives());
   }
 
   private prepareForm() {
@@ -278,6 +278,6 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
   cleandInfoDate() {
     this.form.get('bankSelect').reset();
     this.data.load([]);
-    //this.getDeductives();
+    this.getDeductives();
   }
 }

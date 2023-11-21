@@ -61,6 +61,11 @@ export class CustomerPenaltiesModalComponent
   countAll: number;
 
   prueba: IComerClients[] = [];
+  result: any;
+  result1: any;
+  result2: any;
+  result3: any;
+  minDate: Date;
 
   @Output() data = new EventEmitter<{}>();
 
@@ -208,6 +213,10 @@ export class CustomerPenaltiesModalComponent
     console.log(this.user);
     this.form.get('user').setValue(this.user);
     this.form.get('user').disable();
+    this.form.get('endDate').disable();
+    this.form.get('penaltiDate').setValue(new Date());
+    this.form.get('penaltiDate').disable();
+
     this.form.get('publicLot').disable();
     setTimeout(() => {
       this.getClient(new ListParams());
@@ -216,6 +225,13 @@ export class CustomerPenaltiesModalComponent
       this.getPenalty(new ListParams());
       this.getUser(new ListParams());
     }, 1000);
+  }
+
+  validateDate(date: Date) {
+    if (date) {
+      this.minDate = date;
+      this.form.get('endDate').enable();
+    }
   }
 
   getUser(params: ListParams) {
@@ -230,8 +246,19 @@ export class CustomerPenaltiesModalComponent
   }
 
   getPenalty(params: ListParams) {
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.descPenalty'] = `$ilike:${params.text}`;
+      }
+    }
     this.bankMovementType.getAllTPenalty(params).subscribe({
       next: resp => {
+        this.result2 = resp.data.map(async (item: any) => {
+          item['idDescPenalty'] = item.id + ' - ' + item.descPenalty;
+        });
         this.selectPenalty = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -241,11 +268,26 @@ export class CustomerPenaltiesModalComponent
     });
   }
 
+  changePenalty(event: any) {
+    console.log(event);
+  }
+
   getClient(params: ListParams) {
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.reasonName'] = `$ilike:${params.text}`;
+      }
+    }
     this.comerClientsService.getAllV2(params).subscribe({
       next: resp => {
         /*id
         reasonName*/
+        this.result = resp.data.map(async (item: any) => {
+          item['idReasonName'] = item.id + ' - ' + item.reasonName;
+        });
         console.log(resp.data);
         this.selectClient = new DefaultSelect(resp.data, resp.count);
       },
@@ -274,8 +316,19 @@ export class CustomerPenaltiesModalComponent
   }
 
   getEvent(params: ListParams) {
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.eventTpId'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.processKey'] = `$ilike:${params.text}`;
+      }
+    }
     this.comerEventService.getAllFilter(params).subscribe({
       next: resp => {
+        this.result1 = resp.data.map(async (item: any) => {
+          item['idProcessKey'] = item.eventTpId + ' - ' + item.processKey;
+        });
         this.selectEvent = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -302,8 +355,19 @@ export class CustomerPenaltiesModalComponent
   }
 
   getLot(params: ListParams) {
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.idLot'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.description'] = `$ilike:${params.text}`;
+      }
+    }
     this.lotService.getAllComerLot(params).subscribe({
       next: resp => {
+        this.result3 = resp.data.map(async (item: any) => {
+          item['idLotDescription'] = item.idLot + ' - ' + item.description;
+        });
         this.selectLot = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -432,7 +496,7 @@ export class CustomerPenaltiesModalComponent
         this.modalRef.hide();
       },
       error: (error: any) => {
-        this.alert('warning', `No es Posible Actualizar el Cliente`, '');
+        this.alert('warning', `No es posible actualizar el cliente`, '');
         //this.modalRef.hide();
       },
     });
@@ -665,8 +729,8 @@ export class CustomerPenaltiesModalComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', 'La Penalización ha sido', `${message}`);
+    const message: string = this.edit ? 'actualizado' : 'guardado';
+    this.alert('success', `La penalización ha sido ${message}`, ``);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
