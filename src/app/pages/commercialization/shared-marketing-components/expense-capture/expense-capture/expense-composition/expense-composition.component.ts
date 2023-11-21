@@ -33,6 +33,8 @@ export class ExpenseCompositionComponent
   toggleInformation = true;
   selectedRow: IComerDetExpense2;
   @ViewChild('table') table: Ng2SmartTableComponent;
+  ce: boolean = false;
+  rr: boolean = false;
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
@@ -176,6 +178,55 @@ export class ExpenseCompositionComponent
 
   set total(value) {
     this.expenseCaptureDataService.total = value;
+  }
+
+  selectAllCE() {
+    this.ce = !this.ce;
+    this.dataPaginated.getElements().then(_item => {
+      let result = _item.map(item => {
+        if (item.changeStatus) {
+          item.changeStatus = false;
+        } else {
+          item.changeStatus = true;
+        }
+      });
+      Promise.all(result).then(resp => {
+        // console.log('after array selectsCPD: ', this.selectedGoods);
+        this.dataPaginated.refresh();
+      });
+    });
+  }
+
+  selectAllRR() {
+    this.rr = !this.rr;
+    this.dataPaginated.getElements().then(_item => {
+      let result = _item.map(item => {
+        if (item.reportDelit) {
+          item.reportDelit = false;
+        } else {
+          item.reportDelit = true;
+        }
+        if (item.V_VALCON_ROBO > 0) {
+          if (
+            item.vehiculoCount === 0 &&
+            item.reportDelit &&
+            item.clasifGoodNumber + '' !== '1606'
+          ) {
+            item.reportDelit = false;
+          } else if (
+            item.vehiculoCount === 0 &&
+            !item.reportDelit &&
+            item.clasifGoodNumber + '' === '1606'
+          ) {
+            item.reportDelit = true;
+          }
+        }
+      });
+      Promise.all(result).then(resp => {
+        // console.log('after array selectsCPD: ', this.selectedGoods);
+        this.dataPaginated.refresh();
+      });
+    });
   }
 
   add() {
