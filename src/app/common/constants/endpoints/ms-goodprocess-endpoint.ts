@@ -44,4 +44,5 @@ export enum GoodprocessEndpoints {
   blokOffice3 = 'application/blokOffice3',
   pupPortafolio = 'application/pup-portafolio',
   seqFolio = 'application/seqfol-univ',
+  GetTypeMinuteDetailDelivery = 'application/get-type-minute-detail-delivery',
 }

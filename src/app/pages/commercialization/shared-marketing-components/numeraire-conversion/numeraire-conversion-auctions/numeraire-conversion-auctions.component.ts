@@ -332,21 +332,30 @@ export class NumeraireConversionAuctionsComponent
     };
     this.siabService.fetchReport('RCOMER_NUMERARIO', params).subscribe({
       next: response => {
+        console.log(response);
         this.loading = false;
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered',
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
+        if (response) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          this.alert(
+            'error',
+            'El reporte no se encuentra disponible',
+            'Favor de verificar'
+          );
+        }
       },
       error: err => {
         console.log(err);
