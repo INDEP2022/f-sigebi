@@ -374,8 +374,9 @@
                         [control]="actaRecepttionForm.get('folio')"
                         label="Folio de Escaneo:">
                         <input
+                          max="9999999999"
                           [readonly]="!actaCerrada || !dataExpediente"
-                          type="text"
+                          type="number"
                           class="form-control"
                           formControlName="folio" />
                       </form-field>
