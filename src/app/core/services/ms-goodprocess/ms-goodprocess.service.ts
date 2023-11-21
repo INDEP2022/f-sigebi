@@ -320,4 +320,12 @@ export class GoodprocessService extends HttpService {
     const route = `${GoodprocessEndpoints.seqFolio}`;
     return this.get(route);
   }
+
+  GetTypeMinuteDetailDelivery(body: any, params: _Params) {
+    return this.post(
+      `${GoodprocessEndpoints.GetTypeMinuteDetailDelivery}`,
+      body,
+      params
+    );
+  }
 }

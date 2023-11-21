@@ -10,6 +10,7 @@ import {
   IOrderService,
   IOrderServiceDTO,
 } from '../../models/ms-order-service/order-service.mode';
+import { IRecepReqModel } from '../../models/ms-order-service/report-order-service.model';
 import { ISamplingOrderService } from '../../models/ms-order-service/sampling-order-service.model';
 
 @Injectable({
@@ -123,6 +124,69 @@ export class OrderServiceService extends HttpService {
   updateSampleOrder(body: any) {
     const route = `${OrderServiceEndpoint.SampleOrders}/${body.idSamplingOrder}`;
     return this.put(route, body);
+  }
+
+  getOrderServiceRecepReq(
+    _params: ListParams
+  ): Observable<IListResponse<IRecepReqModel>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IRecepReqModel>>(
+      `${OrderServiceEndpoint.OrderServiceRecepReq}?${params}`
+    );
+  }
+
+  getOrderServiceRecepDoc(
+    _params: ListParams
+  ): Observable<IListResponse<IRecepReqModel>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IRecepReqModel>>(
+      `${OrderServiceEndpoint.OrderServiceRecepDoc}?${params}`
+    );
+  }
+
+  getOrderServiceTypeReb(
+    _params: ListParams
+  ): Observable<IListResponse<IRecepReqModel>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IRecepReqModel>>(
+      `${OrderServiceEndpoint.OrderServiceTypeReb}?${params}`
+    );
+  }
+
+  getOrderServiceTypeMan(
+    _params: ListParams
+  ): Observable<IListResponse<IRecepReqModel>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IRecepReqModel>>(
+      `${OrderServiceEndpoint.OrderServiceTypeMan}?${params}`
+    );
+  }
+
+  getOrderServiceTypeOrder(
+    _params: ListParams
+  ): Observable<IListResponse<IRecepReqModel>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IRecepReqModel>>(
+      `${OrderServiceEndpoint.OrderServiceTypeOrder}?${params}`
+    );
+  }
+
+  getOrderServiceDateEndAt(
+    _params: ListParams
+  ): Observable<IListResponse<IRecepReqModel>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IRecepReqModel>>(
+      `${OrderServiceEndpoint.OrderServiceDateEndAt}?${params}`
+    );
+  }
+
+  getOrderServiceCancelled(
+    _params: ListParams
+  ): Observable<IListResponse<IRecepReqModel>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IRecepReqModel>>(
+      `${OrderServiceEndpoint.OrderServiceCacelled}?${params}`
+    );
   }
 
   private makeParams(params: ListParams): HttpParams {

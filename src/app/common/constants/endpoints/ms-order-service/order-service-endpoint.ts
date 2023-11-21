@@ -4,6 +4,13 @@ export enum OrderServiceEndpoint {
   ORDER_SERVICE = 'service-order',
   ServiceVehicle = 'vehicles-order-service',
   SamplingOrderView = 'aplication/samplingOrdersView',
+  OrderServiceRecepReq = 'aplication/order-service-recep-req',
+  OrderServiceRecepDoc = 'aplication/order-service-recep-doc',
+  OrderServiceTypeReb = 'aplication/order-service-type-order-reb',
+  OrderServiceTypeMan = 'aplication/order-service-type-order-man',
+  OrderServiceTypeOrder = 'aplication/order-service-type-order',
+  OrderServiceDateEndAt = 'aplication/order-service-date-end-attention',
+  OrderServiceCacelled = 'aplication/order-service-cancelled',
   SamplingOrderService = 'sample-order-service',
   SampleOrders = 'sampling-orders',
 }
