@@ -537,6 +537,7 @@ export class CaptureApprovalDonationComponent
 
           Promise.all(result).then(items => {
             this.dataDetailDonation = data.data;
+            console.log(this.dataDetailDonation);
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
             this.totalItems2 = data.count;

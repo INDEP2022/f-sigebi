@@ -14,6 +14,7 @@ import { HistoricalService } from 'src/app/core/services/ms-historical/historica
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -37,9 +38,10 @@ export class CreateActaComponent extends BasePage implements OnInit {
   witnessTes: any;
   witnessAdm: any;
   cve_recibe: any;
+  cveActa: string = '';
   idActa: number = 0;
   @Output() onSave = new EventEmitter<any>();
-  arrayDele: any[] = [];
+  arrayDele = new DefaultSelect<any>();
   dele = new DefaultSelect<any>();
   trans = new DefaultSelect<any>();
   expedient: any;
@@ -51,21 +53,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
   foolio: number;
   mes: any;
   currentYear: number = new Date().getFullYear();
-  months = [
-    { value: 1, label: 'Enero' },
-    { value: 2, label: 'Febrero' },
-    { value: 3, label: 'Marzo' },
-    { value: 4, label: 'Abril' },
-    { value: 5, label: 'Mayo' },
-    { value: 6, label: 'Junio' },
-    { value: 7, label: 'Julio' },
-    { value: 8, label: 'Agosto' },
-    { value: 9, label: 'Septiembre' },
-    { value: 10, label: 'Octubre' },
-    { value: 11, label: 'Noviembre' },
-    { value: 12, label: 'Diciembre' },
-  ];
+
   disabledSend: boolean = false;
+  get captureDate() {
+    return this.actaRecepttionForm.get('captureDate');
+  }
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -75,13 +67,13 @@ export class CreateActaComponent extends BasePage implements OnInit {
     private rNomenclaService: RNomenclaService,
     private transferenteService: TransferenteService,
     private usersService: UsersService,
-    private donationService: DonationService
+    private donationService: DonationService,
+    private procedureManagementService: ProcedureManagementService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    console.log('expedient--', this.expedient);
     this.actaForm();
     this.consulREG_DEL_ADMIN();
     for (let i = 1900; i <= this.currentYear; i++) {
@@ -91,53 +83,41 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
   async actaForm() {
     this.actaRecepttionForm = this.fb.group({
-      type: [null, Validators.required],
-      fileId: [null, Validators.required],
+      acta: [null, Validators.required],
+      type: [null],
+      administra: [null, Validators.required],
       consec: [null],
-      anio: [null, [Validators.required]],
-      captureDate: [null],
-      cveActa: [null],
       observaciones: [null],
       testigoOne: [null, [Validators.required]],
-      testigoTree: [null, [Validators.required]],
-      respConv: [null],
-      elaboradate: [null],
-      fechaact: [null],
-      fechacap: [null],
-      // witness1: [null],
-      // witness2: [null],
+      testigoOIC: [null, [Validators.required]],
+      captureDate: [null],
     });
 
     this.actaRecepttionForm.patchValue({
       captureDate: await this.getDate(),
     });
   }
-
   async getDate() {
-    // const formattedDate = moment(date).format('DD-MM-YYYY');
-
     const fechaEscritura: any = new Date();
     fechaEscritura.setUTCDate(fechaEscritura.getUTCDate());
     const _fechaEscritura: any = new Date(fechaEscritura.toISOString());
     return _fechaEscritura;
-    // { authorizeDate: formattedDate }
-    // { emitEvent: false }
   }
 
   // REG_DEL_ADMIN
   consulREG_DEL_ADMIN() {
     let obj = {
       gst_todo: 'TODO',
-      gnu_delegacion: 0,
+      gnu_delegacion: 12,
       gst_rec_adm: 'FILTRAR',
     };
     this.historicalService.getHistoricalConsultDelegation(obj).subscribe({
-      next: (data: any) => {
-        console.log('data', data);
-        this.arrayDele = data.data;
+      next: data => {
+        this.arrayDele = new DefaultSelect(data.delegacion, 0);
+        console.log('data', this.arrayDele);
       },
       error: error => {
-        this.arrayDele = [];
+        this.arrayDele = new DefaultSelect();
       },
     });
   }
@@ -156,61 +136,31 @@ export class CreateActaComponent extends BasePage implements OnInit {
       } else {
         params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
       }
-
-    // this.rNomenclaService.getAll(params.getParams()).subscribe({
-    //   next: (data: any) => {
-    //     console.log('data', data);
-    //     let result = data.data.map(async (item: any) => {
-    //       item['cveReceived'] =
-    //         item.numberDelegation2 + ' - ' + item.delegation;
-    //     });
-
-    //     Promise.all(result).then(resp => {
-    //       this.dele = new DefaultSelect(data.data, data.count);
-    //     });
-    //   },
-    //   error: error => {
-    //     this.dele = new DefaultSelect([], 0);
-    //   },
-    // });
   }
 
   agregarActa() {
     const acta = this.actaRecepttionForm.value.acta;
     const type = this.actaRecepttionForm.value.type;
-    const respConv = this.actaRecepttionForm.value.respConv;
     const obser = this.actaRecepttionForm.value.observaciones;
     const administra = this.actaRecepttionForm.value.administra;
     const consec = this.actaRecepttionForm.value.consec;
     this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
     this.witnessTes = this.actaRecepttionForm.value.testigoOne;
-    this.witnessAdm = this.actaRecepttionForm.value.testigoTree;
-    //this.cve_recibe = this.actaRecepttionForm.value.respConv;
-    const anio = this.actaRecepttionForm.value.anio;
-    const mes = this.actaRecepttionForm.value.captureDate;
-
-    const miCadenaAnio = anio + '';
-    const miSubcadena = miCadenaAnio.slice(2, 5);
+    const anio = this.actaRecepttionForm.value.captureDate;
+    this.generaConsec();
+    const miCadenaAnio = anio.slice(0, 4);
     // localStorage.setItem('actaId', acta);
     localStorage.setItem('anio', anio);
     console.log('AÑO', anio);
-    localStorage.setItem('mes', mes.label);
-    let consec_ = consec.toString().padStart(4, '0');
-    this.foolio = consec;
-    console.log('MES', mes);
+    // let consec_ = consec.toString().padStart(4, '0');
+    // this.foolio = consec;
     console.log('numeraryFolio - >', consec);
-    if (consec_.length > 4) {
-      consec_ = consec_.toString().slice(0, 4);
-    }
-
-    const cveActa = `${
-      this.authService.decodeToken().department
-    }/${consec_}/${anio}`;
-    console.log('cveActa -->', cveActa);
-    localStorage.setItem('cveAc', cveActa);
-    if (cveActa) {
+    this.cveActa = `${acta}/${administra}/${miCadenaAnio}/${type}${this.foolio}`;
+    console.log('cveActa -->', this.cveActa);
+    localStorage.setItem('cveAc', this.cveActa);
+    if (this.cveActa) {
       const params = new ListParams();
-      params['filter.keysProceedings'] = `$eq:${cveActa}`;
+      params['filter.keysProceedings'] = `$eq:${this.cveActa}`;
       this.proceedingsDeliveryReceptionService.getByFilter_(params).subscribe({
         next: (data: any) => {
           if (data.data.length == 1) {
@@ -225,10 +175,23 @@ export class CreateActaComponent extends BasePage implements OnInit {
           return;
         },
         error: error => {
-          this.guardarRegistro(cveActa);
+          this.guardarRegistro(this.cveActa);
         },
       });
     }
+  }
+  generaConsec() {
+    this.procedureManagementService
+      .getFolioMax(Number(localStorage.getItem('area')))
+      .subscribe({
+        next: (data: any) => {
+          console.log('DATA', data);
+          this.foolio = data;
+        },
+        error: error => {
+          this.foolio = 0;
+        },
+      });
   }
 
   newRegister: any;
@@ -274,7 +237,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   getDelegation(params: FilterParams) {
     params.addFilter(
       'id',
-      this.authService.decodeToken().preferred_username,
+      this.authService.decodeToken().username,
       SearchFilter.EQ
     );
     return this.usersService.getAllSegUsers(params.getParams()).subscribe({
@@ -282,7 +245,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
         const data = value.data[0].usuario;
         if (data) this.delegationToolbar = data.delegationNumber;
         localStorage.setItem('area', data.delegationNumber);
-        console.log('SI', value);
+        console.log('SI', data.delegationNumber);
       },
       error(err) {
         console.log('NO');
@@ -301,7 +264,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
   confirm() {
-    this.edit ? this.update() : this.handleSuccess();
+    this.edit ? this.update() : this.agregarActa();
   }
   updateRegister: any;
   update() {
@@ -313,7 +276,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: data => {
-          this.newRegister = data;
+          this.updateRegister = data;
           this.idActa = Number(localStorage.getItem('actaId'));
           this.alert(
             'success',
@@ -325,4 +288,45 @@ export class CreateActaComponent extends BasePage implements OnInit {
         error: error => (this.loading = false),
       });
   }
+  // consultREG_TRANSFERENTES(lparams: ListParams) {
+  //   console.log('LPARAMS - ', lparams);
+  //   let obj = {
+  //     transfereeNumber: this.expedient.transferNumber,
+  //     expedientType: this.expedient.expedientType,
+  //   };
+
+  //   console.log('ObJ --', obj);
+
+  //   const params = new FilterParams();
+
+  //   params.page = lparams.page;
+  //   params.limit = lparams.limit;
+
+  //   if (lparams?.text.length > 0)
+  //     if (!isNaN(parseInt(lparams?.text))) {
+  //       console.log('SI');
+
+  //       params.addFilter3('number', lparams.text);
+  //     } else {
+  //       params.addFilter3('password', lparams.text);
+  //     }
+
+  //   this.transferenteService.appsGetPassword(obj, lparams).subscribe({
+  //     next: (data: any) => {
+  //       console.log('data', data);
+  //       let result = data.data.map(async (item: any) => {
+  //         item['transfer'] =
+  //           item.password + ' - ' + item.number + ' - ' + item.name;
+  //       });
+
+  //       Promise.all(result).then(resp => {
+  //         this.trans = new DefaultSelect(data.data, data.count);
+  //       });
+  //       console.log('data222', data);
+  //     },
+  //     error: error => {
+  //       this.trans = new DefaultSelect([], 0);
+  //     },
+  //   });
+  // }
 }
