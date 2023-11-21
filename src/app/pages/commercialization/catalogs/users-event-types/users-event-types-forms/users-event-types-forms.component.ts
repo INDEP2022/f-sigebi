@@ -45,11 +45,35 @@ export class UsersEventTypesFormsComponent extends BasePage implements OnInit {
     this.form.controls['idTpevent'].setValue(this.typeEvent);
     this.getUsuarios(new ListParams());
   }
-  getUsuarios(params: ListParams) {
+
+  async getUsuarios(params: ListParams) {
+    let text;
     if (params.text) {
       params['filter.user'] = `$ilike:${params.text}`;
       params['search'] = ``;
+      text = params.text;
     }
+    let user = await this.getUser(params);
+    let dataUser: any = user;
+    if (user == null) {
+      if (text) {
+        let params1 = new ListParams();
+        params1['filter.name'] = `$ilike:${text}`;
+        params1['search'] = ``;
+        let user1 = await this.getUser(params1);
+        let dataUser1: any = user1;
+        this.loading = false;
+        console.log(dataUser1);
+        this.user = new DefaultSelect(dataUser1.data, dataUser1.count);
+      } else {
+        this.user = new DefaultSelect();
+      }
+    } else {
+      console.log(dataUser);
+      this.loading = false;
+      this.user = new DefaultSelect(dataUser.data, dataUser.count);
+    }
+    /*console.log(user);
     this.securityService.getAllUsersTracker(params).subscribe({
       next: data => {
         this.user = new DefaultSelect(data.data, data.count);
@@ -57,6 +81,19 @@ export class UsersEventTypesFormsComponent extends BasePage implements OnInit {
       error: error => {
         this.user = new DefaultSelect();
       },
+    });*/
+  }
+
+  async getUser(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.securityService.getAllUsersTracker(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
     });
   }
 
@@ -72,7 +109,10 @@ export class UsersEventTypesFormsComponent extends BasePage implements OnInit {
     };
     this.userTpeeventsService.create(data).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.alert('error', `El usuario ya ha sido registrado`, '');
+      },
     });
   }
 

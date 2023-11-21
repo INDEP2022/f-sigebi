@@ -534,9 +534,9 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit
-      ? 'Cliente se ha Actualizado'
-      : 'Cliente se ha Creado';
-    this.alert('success', `${message}`, '');
+      ? 'cliente ha sido actualizado'
+      : 'cliente ha sido creado';
+    this.alert('success', `El ${message}`, '');
     this.loading = true;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
