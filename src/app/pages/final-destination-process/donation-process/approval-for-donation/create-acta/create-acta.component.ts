@@ -103,7 +103,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.actaRecepttionForm = this.fb.group({
       acta: [null, Validators.required],
       type: [null],
-      administra: [null, Validators.required],
+      administra: [null],
       consec: [null],
       // cveReceived: [null, Validators.required],
       observaciones: [null],

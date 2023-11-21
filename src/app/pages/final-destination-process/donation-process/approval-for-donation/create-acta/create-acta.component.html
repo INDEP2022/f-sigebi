@@ -108,6 +108,10 @@
                   type="text"
                   class="form-control"
                   formControlName="captureDate"
+                  [value]="
+                    actaRecepttionForm.get('captureDate').value
+                      | date : 'dd/MM/yyyy'
+                  "
                   readonly />
               </form-field>
             </div>
