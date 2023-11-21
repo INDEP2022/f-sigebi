@@ -204,6 +204,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             'Se ha actualizado el gasto ' + this.expenseNumber.value,
             'Gasto actualizado correctamente'
           );
+          this.loader.load = false;
           this.fillForm({
             ...this.data,
             ...this.form.value,
