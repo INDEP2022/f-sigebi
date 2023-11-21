@@ -105,6 +105,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
     this.actaRecepttionForm.patchValue({
       captureDate: await this.getDate(),
+      administra: 'DRCS',
     });
   }
   async delegationWhere() {

@@ -1314,7 +1314,7 @@ export class CaptureApprovalDonationComponent
           console.log(data.data);
           this.alert(
             'success',
-            `Bienes válidos ${this.errorSumValidos}, Bienes no válidos ${this.errorSumInvalidos}`,
+            `Bienes válidos ${this.errorSumValidos}, Bienes inválidos ${this.errorSumInvalidos}`,
             ''
           );
         },
