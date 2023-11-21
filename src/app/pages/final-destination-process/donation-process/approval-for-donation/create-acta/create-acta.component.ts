@@ -94,7 +94,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.actaRecepttionForm = this.fb.group({
       acta: [null, Validators.required],
       type: [null],
-      administra: [null, Validators.required],
+      // administra: [null, Validators.required],
       consec: [null],
       cveReceived: [null, Validators.required],
       observaciones: [null],
@@ -105,7 +105,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
     this.actaRecepttionForm.patchValue({
       captureDate: await this.getDate(),
-      administra: 'DRCS',
+      // administra: 'DRCS',
     });
   }
   async delegationWhere() {
@@ -255,7 +255,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     // let consec_ = consec.toString().padStart(4, '0');
     // this.foolio = consec;
     console.log('numeraryFolio - >', consec);
-    this.cveActa = `${acta}/${administra}/${miCadenaAnio}/${type}${this.foolio}`;
+    this.cveActa = `${acta}/DRCS/${miCadenaAnio}/${type}${this.foolio}`;
     console.log('cveActa -->', this.cveActa);
     localStorage.setItem('cveAc', this.cveActa);
     if (this.cveActa) {
