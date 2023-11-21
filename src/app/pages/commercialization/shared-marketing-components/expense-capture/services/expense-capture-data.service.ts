@@ -41,7 +41,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   updateFolio = new Subject();
   P_PRUEBA: number;
   PMONTOXMAND: string;
-  PDEVCLIENTE: string;
+  PDEVCLIENTE: string = null;
   PCAMBIAESTATUS: string;
   PCONDIVXMAND: string;
   PCANVTA: string;
@@ -108,7 +108,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   resetParams() {
     this.PMONTOXMAND = 'N';
-    this.PDEVCLIENTE = 'N';
+    this.PDEVCLIENTE = null;
     this.PCAMBIAESTATUS = 'N';
     this.PCONDIVXMAND = 'N';
     this.PCANVTA = 'N';
@@ -129,6 +129,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   fillParams(row: IReadParameter) {
+    console.log(row);
     this.PMONTOXMAND = row.PMONTOXMAND;
     this.PDEVCLIENTE = row.PDEVCLIENTE;
     this.PCAMBIAESTATUS = row.PCAMBIAESTATUS;
@@ -222,7 +223,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       clkpv: [null, [Validators.required]],
       descurcoord: [null],
       comment: [null],
-      invoiceRecNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
+      invoiceRecNumber: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
       numReceipts: [null],
       invoiceRecDate: [null],
       payDay: [null],

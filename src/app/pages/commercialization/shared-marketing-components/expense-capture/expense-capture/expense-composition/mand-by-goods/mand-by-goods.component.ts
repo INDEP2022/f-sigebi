@@ -72,14 +72,15 @@ export class MandByGoodsComponent
           };
           this.dataService.update(newRow).subscribe({
             next: response => {
-              this.data.forEach(x => {
-                if (x.mandxexpensecontId === this.selected.mandxexpensecontId) {
-                  x = newRow;
-                }
-              });
-              this.dataTemp = [...this.data];
-              this.getPaginated(this.params.value);
-              this.loading = false;
+              // this.data.forEach(x => {
+              //   if (x.mandxexpensecontId === this.selected.mandxexpensecontId) {
+              //     x = newRow;
+              //   }
+              // });
+              // this.dataTemp = [...this.data];
+              // this.getPaginated(this.params.value);
+              // this.loading = false;
+              this.getData();
               this.alert('success', 'Partida actualizada correctamente', '');
             },
             error: err => {
