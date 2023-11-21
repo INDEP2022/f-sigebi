@@ -532,24 +532,26 @@ export class CaptureApprovalDonationComponent
           let result: any[] = [];
           result = data.data.map((item: any) => {
             item['description'] = item.good ? item.good.description : null;
-            item['error'] = item.error ? (this.BIEN_ERROR += item.error) : null;
+            this.BIEN_ERROR += item['error'];
+            this.SUM_BIEN += item['cant'] = item.good ? item.good.cant : null;
+            const status = (item['status'] = item.good
+              ? item.good.status
+              : null);
+            if (status === null) {
+              this.errorSumInvalidos += status;
+            } else {
+              this.errorSumValidos += status;
+            }
           });
 
           Promise.all(result).then(items => {
             this.dataDetailDonation = data.data;
+            console.log(this.dataDetailDonation);
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
             this.totalItems2 = data.count;
             this.TOTAL_REPORTE = this.totalItems2;
-            for (const item of items) {
-              // this.BIEN_ERROR += item.error;
-              this.SUM_BIEN += item.amount;
-              if (item.status === null) {
-                this.errorSumInvalidos += item.status;
-              } else {
-                this.errorSumValidos += item.status;
-              }
-            }
+
             console.log('data', data);
             this.loading3 = false;
             this.Exportdate = true;
@@ -1312,7 +1314,7 @@ export class CaptureApprovalDonationComponent
           console.log(data.data);
           this.alert(
             'success',
-            `Bienes válidos ${this.errorSumValidos}, Bienes no válidos ${this.errorSumInvalidos}`,
+            `Bienes válidos ${this.errorSumValidos}, Bienes inválidos ${this.errorSumInvalidos}`,
             ''
           );
         },
