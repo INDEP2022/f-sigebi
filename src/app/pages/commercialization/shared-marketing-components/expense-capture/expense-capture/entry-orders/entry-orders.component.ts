@@ -73,7 +73,8 @@ export class EntryOrdersComponent
   get showFilters() {
     return (
       this.expenseCaptureDataService.expenseNumber &&
-      this.expenseCaptureDataService.expenseNumber.value
+      this.expenseCaptureDataService.expenseNumber.value &&
+      this.expenseCaptureDataService.validPayment
     );
   }
 

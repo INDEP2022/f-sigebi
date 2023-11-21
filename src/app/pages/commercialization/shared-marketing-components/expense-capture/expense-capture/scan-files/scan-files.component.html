@@ -8,7 +8,7 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active mr-1"
-            [disabled]="!dataComer"
+            [disabled]="!valid"
             (click)="generateFolio()"
             title="Generar Folio de Escaneo y Solicitud">
             <i class="bx bxs-file-find"></i>
@@ -17,7 +17,7 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active"
-            [disabled]="!dataComer"
+            [disabled]="!valid"
             (click)="scan()"
             title="Escanear">
             <i class="bx bxs-file"></i>
@@ -41,7 +41,7 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active mr-1"
-            [disabled]="!dataComer"
+            [disabled]="!valid"
             (click)="printScanFile()"
             title="imprimir Solicitud de Escaneo">
             <i class="bx bxs-printer"></i>
@@ -50,7 +50,7 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active"
-            [disabled]="!dataComer"
+            [disabled]="!valid"
             (click)="seeImages()"
             title="Consulta de imágenes escaneadas">
             <i class="bx bxs-file-find"></i>

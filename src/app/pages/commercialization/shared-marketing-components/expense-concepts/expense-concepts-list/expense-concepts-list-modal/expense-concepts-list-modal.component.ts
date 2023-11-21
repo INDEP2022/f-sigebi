@@ -91,7 +91,7 @@ export class ExpenseConceptsListModalComponent
             this.loader.load = false;
             this.alert(
               'success',
-              'Se ha actualizado el concepto de pago ' + body.id,
+              'El concepto de pago ' + body.id + ' ha sido actualizado',
               ''
             );
             this.modalRef.content.callback(true);
@@ -125,7 +125,7 @@ export class ExpenseConceptsListModalComponent
         .subscribe({
           next: response => {
             this.loader.load = false;
-            this.alert('success', 'Se ha creado el concepto de pago', '');
+            this.alert('success', 'El concepto de pago ha sido creado', '');
             this.modalRef.content.callback(true);
             this.modalRef.hide();
             // this.getData();
@@ -134,8 +134,8 @@ export class ExpenseConceptsListModalComponent
             this.loader.load = false;
             this.alert(
               'error',
-              'ERROR',
-              'No se pudo crear el concepto de pago'
+              'No se pudo crear el concepto de pago',
+              'Favor de verificar'
             );
           },
         });
