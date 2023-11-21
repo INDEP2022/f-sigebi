@@ -157,8 +157,17 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
   }
 
   getNoGood(event?: ListParams) {
-    if (event != undefined && event.text != '')
-      event['filter.id'] = `$ilike:${event.text}`;
+    /*if (event != undefined && event.text != '')
+      event['filter.id'] = `$ilike:${event.text}`;*/
+    if (event.text) {
+      if (!isNaN(parseInt(event.text))) {
+        event['filter.id'] = `$eq:${event.text}`;
+        event['search'] = '';
+      } else if (typeof event.text === 'string') {
+        event['filter.description'] = `$ilike:${event.text}`;
+        event['search'] = '';
+      }
+    }
     this.goodService.goodFinder(event).subscribe({
       next: resp => {
         resp.data.map((x: any) => {
