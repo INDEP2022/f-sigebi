@@ -4,10 +4,10 @@ export const COLUMNS = {
     sort: false,
   },
   eventId: {
-    title: 'Clave Evento',
+    title: 'Cve. Evento',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value != null ? value.id : '';
+      return value != null ? `${value.id} ${value.processKey}` : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
       return true;
@@ -16,10 +16,17 @@ export const COLUMNS = {
       return cell.id;
     },*/
   },
-  publicLot: {
+  lotId: {
     title: 'Lote',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? `${value.publicLot} - ${value.description}` : '';
+    },
   },
+  /*publicLot: {
+    title: 'Lote',
+    sort: false,
+  },*/
   refeOfficeOther: {
     title: 'Referencia/Oficio/Otros',
     sort: false,

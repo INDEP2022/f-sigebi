@@ -134,15 +134,43 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
     this.edit ? this.update() : this.create();
   }
 
-  getUserInfo(params: ListParams, id?: string | number) {
+  async getUserInfo(params: ListParams, id?: string | number) {
     if (id) {
       params['filter.user'] = id;
     }
+    let text;
     if (params.text) {
       params['filter.user'] = `$ilike:${params.text}`;
       params['search'] = '';
+      text = params.text;
     }
-    this.securityService.getAllUsersTracker(params).subscribe({
+    let user = await this.getUser(params);
+    let dataUser: any = user;
+    if (user == null) {
+      if (text) {
+        let params1 = new ListParams();
+        params1['filter.name'] = `$ilike:${text}`;
+        params1['search'] = ``;
+        let user1 = await this.getUser(params1);
+        let dataUser1: any = user1;
+        this.loading = false;
+        console.log(dataUser1);
+        this.result = dataUser1.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
+        this.userSelect = new DefaultSelect(dataUser1.data, dataUser1.count);
+      } else {
+        this.userSelect = new DefaultSelect();
+      }
+    } else {
+      console.log(dataUser);
+      this.loading = false;
+      this.result = dataUser.data.map(async (item: any) => {
+        item['userName'] = item.user + ' - ' + item.name;
+      });
+      this.userSelect = new DefaultSelect(dataUser.data, dataUser.count);
+    }
+    /*this.securityService.getAllUsersTracker(params).subscribe({
       next: response => {
         console.log(response.data);
         this.result = response.data.map(async (item: any) => {
@@ -154,6 +182,19 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
         this.userSelect = new DefaultSelect();
         this.loading = false;
       },
+    });*/
+  }
+
+  async getUser(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.securityService.getAllUsersTracker(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
     });
   }
 

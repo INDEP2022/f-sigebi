@@ -1,5 +1,4 @@
 import { getAddress } from 'src/app/core/services/ms-commer-concepts/concepts.service';
-import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
 import { TextAreaRenderComponent } from 'src/app/shared/render-components/text-area-render/text-area-render.component';
 
 export const COLUMNS = {
@@ -52,26 +51,23 @@ export const COLUMNS = {
   },
   automatic: {
     title: 'Automático',
-    type: 'custom',
     sort: false,
-    renderComponent: CheckboxDisabledElementComponent,
-    valuePrepareFunction: (value: any, row: any) => {
-      // DATA FROM HERE GOES TO renderComponent
-      return {
-        checked: row.automatic === 'S' || row.automatic === true ? true : false,
-        disabled: true,
-      };
-    },
-    editor: {
-      type: 'custom',
-      component: CheckboxDisabledElementComponent,
+    type: 'html',
+    valuePrepareFunction: (value: any) => {
+      if (value == 'S')
+        return '<strong><span class="badge badge-pill badge-success">Si</span></strong>';
+      if (value == 'N' || !value)
+        return '<strong><span class="badge badge-pill badge-warning">No</span></strong>';
+      return value;
     },
     filter: {
-      type: 'checkbox',
+      type: 'list',
       config: {
-        true: 'S',
-        false: 'N',
-        resetText: 'x',
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'N', title: 'No Automático' },
+          { value: 'S', title: 'Automático' },
+        ],
       },
     },
   },
@@ -82,27 +78,49 @@ export const COLUMNS = {
   },
   numerary: {
     title: 'Afecta No.',
-    type: 'custom',
     sort: false,
-    renderComponent: CheckboxDisabledElementComponent,
-    valuePrepareFunction: (value: any, row: any) => {
-      // DATA FROM HERE GOES TO renderComponent
-      return {
-        checked: row.numerary === 'S' || row.numerary === true ? true : false,
-        disabled: true,
-      };
-    },
-    editor: {
-      type: 'custom',
-      component: CheckboxDisabledElementComponent,
+    type: 'html',
+    valuePrepareFunction: (value: any) => {
+      if (value == 'S')
+        return '<strong><span class="badge badge-pill badge-success">Si</span></strong>';
+      if (value == 'N' || !value)
+        return '<strong><span class="badge badge-pill badge-warning">No</span></strong>';
+      return value;
     },
     filter: {
-      type: 'checkbox',
+      type: 'list',
       config: {
-        true: 'S',
-        false: 'N',
-        resetText: 'x',
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'N', title: 'No Afecta No.' },
+          { value: 'S', title: 'Afecta No.' },
+        ],
       },
     },
   },
+  // numerary: {
+  //   title: 'Afecta No.',
+  //   type: 'custom',
+  //   sort: false,
+  //   renderComponent: CheckboxDisabledElementComponent,
+  //   valuePrepareFunction: (value: any, row: any) => {
+  //     // DATA FROM HERE GOES TO renderComponent
+  //     return {
+  //       checked: row.numerary === 'S' || row.numerary === true ? true : false,
+  //       disabled: true,
+  //     };
+  //   },
+  //   editor: {
+  //     type: 'custom',
+  //     component: CheckboxDisabledElementComponent,
+  //   },
+  //   filter: {
+  //     type: 'checkbox',
+  //     config: {
+  //       true: 'S',
+  //       false: 'N',
+  //       resetText: 'x',
+  //     },
+  //   },
+  // },
 };

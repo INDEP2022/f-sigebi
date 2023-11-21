@@ -12,7 +12,7 @@
               [data]="selectClient"
               [form]="form"
               value="id"
-              bindLabel="reasonName"
+              bindLabel="idReasonName"
               label="Cliente"
               control="clientId"
               (change)="changeClient($event)">
@@ -36,8 +36,9 @@
               [data]="selectPenalty"
               [form]="form"
               value="id"
-              bindLabel="descPenalty"
+              bindLabel="idDescPenalty"
               label="Penalización"
+              (change)="changePenalty($event)"
               control="id">
             </ngx-select>
           </form-field>
@@ -74,7 +75,7 @@
               [form]="form"
               [clearable]="false"
               value="eventTpId"
-              bindLabel="processKey"
+              bindLabel="idProcessKey"
               label="Evento"
               control="eventId"
               (change)="changeEvent($event)">
@@ -95,7 +96,7 @@
               [data]="selectLot"
               [form]="form"
               value="idLot"
-              bindLabel="description"
+              bindLabel="idLotDescription"
               label="Lote"
               control="lotId"
               (change)="changeLot($event)">
@@ -117,6 +118,7 @@
               formControlName="startDate"
               bsDatepicker
               [maxDate]="today"
+              (bsValueChange)="validateDate($event)"
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'
               }" />
@@ -131,6 +133,7 @@
               type="text"
               class="form-control"
               formControlName="endDate"
+              [minDate]="minDate"
               bsDatepicker
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'

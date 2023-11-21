@@ -142,6 +142,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private getBody() {
+    console.log(this.form.value.dateOfResolution);
+
     return {
       ...this.form.value,
       amount: this.dataService.amount ?? 0,
@@ -149,22 +151,22 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       vatWithheld: this.dataService.vatWithholding ?? 0,
       address: this.addressEvent ?? this.address,
       dateOfResolution: this.form.value.dateOfResolution
-        ? this.form.value.dateOfResolution.trim().length > 0
+        ? (this.form.value.dateOfResolution + '').trim().length > 0
           ? this.form.value.dateOfResolution
           : null
         : null,
       invoiceRecDate: this.form.value.invoiceRecDate
-        ? this.form.value.invoiceRecDate.trim().length > 0
+        ? (this.form.value.invoiceRecDate + '').trim().length > 0
           ? this.form.value.invoiceRecDate
           : null
         : null,
       payDay: this.form.value.payDay
-        ? this.form.value.payDay.trim().length > 0
+        ? (this.form.value.payDay + '').trim().length > 0
           ? this.form.value.payDay
           : null
         : null,
       captureDate: this.form.value.captureDate
-        ? this.form.value.captureDate.trim().length > 0
+        ? (this.form.value.captureDate + '').trim().length > 0
           ? this.form.value.captureDate
           : null
         : null,
