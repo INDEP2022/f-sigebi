@@ -47,7 +47,7 @@ export const TEMPGOODS = {
     title: 'No. Bien',
     sort: false,
     valuePrepareFunction(cell: any, row: any) {
-      return row.good.id;
+      return row.goodNumber;
     },
   },
   description: {

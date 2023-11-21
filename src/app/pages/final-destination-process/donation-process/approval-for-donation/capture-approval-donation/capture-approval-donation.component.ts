@@ -75,6 +75,7 @@ export class CaptureApprovalDonationComponent
   statusGood_: any;
   deleteO: boolean = false;
   goods: any[] = [];
+  selectedOption: string = '';
   files: any = [];
   radio: boolean = false;
   bienesVaild: boolean = false;
@@ -98,6 +99,7 @@ export class CaptureApprovalDonationComponent
   goodError: IDonationGoodError[];
   dataDetailDonation: any;
   data1: any;
+  columnFilterDet: any[] = [];
   consec: string = '';
   dataDetailDonationGood: LocalDataSource = new LocalDataSource();
   excelLoading: boolean = false;
@@ -245,26 +247,31 @@ export class CaptureApprovalDonationComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = ``;
+            let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'goodId':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'des_error':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            const search: any = {
+              numberGood: () => (searchFilter = SearchFilter.EQ),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.EQ),
+              unit: () => (searchFilter = SearchFilter.EQ),
+              status: () => (searchFilter = SearchFilter.EQ),
+              noExpediente: () => (searchFilter = SearchFilter.EQ),
+              noEtiqueta: () => (searchFilter = SearchFilter.EQ),
+              idNoWorker1: () => (searchFilter = SearchFilter.EQ),
+              idExpWorker1: () => (searchFilter = SearchFilter.EQ),
+              noClasifBien: () => (searchFilter = SearchFilter.EQ),
+              procesoExtDom: () => (searchFilter = SearchFilter.EQ),
+              warehouseNumb: () => (searchFilter = SearchFilter.EQ),
+              warehouse: () => (searchFilter = SearchFilter.EQ),
+              warehouseLocat: () => (searchFilter = SearchFilter.EQ),
+              coordAdmin: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
             if (filter.search !== '') {
-              this.columnFilterDetail[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              this.columnFilterDet[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilterDetail[field];
+              delete this.columnFilterDet[field];
             }
           });
           this.params = this.pageFilter(this.params);
@@ -302,6 +309,8 @@ export class CaptureApprovalDonationComponent
   enableButtons() {
     if (this.regisForm.get('activeRadio').value !== null) {
       this.radio = true;
+      this.selectedOption = this.activeRadio.valueOf.name;
+      console.log(this.selectedOption);
     }
   }
 
@@ -580,8 +589,19 @@ export class CaptureApprovalDonationComponent
   }
 
   getEventComDonationExcel(body: IExportDetail): void {
-    this.excelLoading = true;
-    if (this.dataDetailDonationGood != null) {
+    if (this.estatus === 'CERRADA') {
+      this.alert(
+        'warning',
+        'El evento está cerrado, no se puede descargar el archivo',
+        ''
+      );
+      return;
+    }
+    if (this.dataDetailDonationGood.count() == 0) {
+      this.alert('warning', 'No hay bienes para descargar', '');
+      return;
+    } else {
+      this.excelLoading = true;
       this.donationService.getExcel(body).subscribe({
         next: data => {
           this.excelLoading = false;
@@ -599,12 +619,10 @@ export class CaptureApprovalDonationComponent
           // this.modalRef.hide();
         },
         error: error => {
-          this.loading = false;
+          this.excelLoading = false;
+          this.alert('warning', 'No hay Datos para Exportar', '');
         },
       });
-    } else {
-      this.excelLoading = false;
-      this.alert('warning', 'No hay Datos para Exportar', '');
     }
   }
 
@@ -860,8 +878,8 @@ export class CaptureApprovalDonationComponent
         recordId: this.idAct,
         goodId: good.goodId,
         amount: good.amount,
-        received: 0,
-        exchangeValue: this.regisForm.get('activeRadio').value | 0,
+        received: good.received,
+        exchangeValue: good.exchangeValue | 0,
         registrationId: good.registreNumber,
       };
 
@@ -992,7 +1010,8 @@ export class CaptureApprovalDonationComponent
       this.regisForm.reset();
       //this.formScan.reset();
       this.eventDonacion = next;
-
+      this.SUM_BIEN = 0;
+      this.BIEN_ERROR = 0;
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;
       const formattedfecElaborate =
@@ -1449,13 +1468,13 @@ export class CaptureApprovalDonationComponent
         this.alert(
           'success',
           'Se actualizó la información del Bien',
-          next.goodId
+          next.goodNumber
         );
       }
-      await this.updateGood(next.goodId);
+      await this.updateGood(next.goodNumber);
     });
   }
-  updateGood(goodId: number) {}
+  updateGood(goodNumber: number | string) {}
 }
 
 export interface IParamsDonac {

@@ -246,7 +246,7 @@
           </span>
           <span class="text-info">
             Suma de Cantidades
-            <b>{{ SUM_BIEN | currency : 'USD' : '2' }}</b>
+            <b>{{ SUM_BIEN }}</b>
           </span>
         </div>
       </div>
@@ -344,6 +344,23 @@
               class="btn btn-secondary btn-sm active"
               (click)="searchGoodError()">
               Ver Error
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              [disabled]="TOTAL_REPORTE < 500"
+              (click)="searchRopaId()"
+              type="button"
+              class="btn btn-primary active btn-sm mr-3">
+              Llena Ropa Div
+              <i class="fas fa-edit bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              class="btn btn-danger btn-sm active"
+              (click)="removeSelect()">
+              Elimina Bienes <i class="fa fa-trash-alt"></i>
             </button>
           </div>
           <div class="m-3">
