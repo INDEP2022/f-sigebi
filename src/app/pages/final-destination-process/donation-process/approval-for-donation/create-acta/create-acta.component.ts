@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
@@ -36,7 +37,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class CreateActaComponent extends BasePage implements OnInit {
   actaRecepttionForm: FormGroup;
   fileNumber: any;
-  title: string = 'Captura';
+  title: string = 'Evento';
   detalleActa: IProceedingDeliveryReception;
   witnessOic: any;
   witnessTes: any;
@@ -53,9 +54,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
   testigoTree: any;
   responsable: any;
   testigoOne: any;
+  from: string = '';
   years: number[] = [];
   foolio: number;
   mes: any;
+  date = new Date();
   currentYear: number = new Date().getFullYear();
   delegation: any = null;
   subdelegation: any = null;
@@ -76,13 +79,19 @@ export class CreateActaComponent extends BasePage implements OnInit {
     private donationService: DonationService,
     private procedureManagementService: ProcedureManagementService,
     private parametersService: ParametersService,
-    private abandonmentsService: AbandonmentsDeclarationTradesService
+    private abandonmentsService: AbandonmentsDeclarationTradesService,
+    private datePipe: DatePipe
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.generaConsec();
     this.actaForm();
+    this.from = this.datePipe.transform(
+      this.actaRecepttionForm.controls['captureDate'].value,
+      'dd/MM/yyyy'
+    );
     this.delegation = Number(localStorage.getItem('area'));
     // this.consulREG_DEL_ADMIN(lparams: ListParams);
     for (let i = 1900; i <= this.currentYear; i++) {
@@ -94,18 +103,17 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.actaRecepttionForm = this.fb.group({
       acta: [null, Validators.required],
       type: [null],
-      // administra: [null, Validators.required],
+      administra: [null],
       consec: [null],
-      cveReceived: [null, Validators.required],
+      // cveReceived: [null, Validators.required],
       observaciones: [null],
       testigoOne: [null, [Validators.required]],
       testigoOIC: [null, [Validators.required]],
       captureDate: [null],
     });
-
+    this.actaRecepttionForm.get('consec').setValue(this.foolio);
     this.actaRecepttionForm.patchValue({
-      captureDate: await this.getDate(),
-      // administra: 'DRCS',
+      captureDate: new Date(),
     });
   }
   async delegationWhere() {
@@ -222,7 +230,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       });
   }
 
-  // REG_DEL_DESTR
+  REG_DEL_DESTR;
   consulREG_DEL_DESTR(lparams: ListParams) {
     const params = new FilterParams();
 
@@ -242,20 +250,22 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const acta = this.actaRecepttionForm.value.acta;
     const type = this.actaRecepttionForm.value.type;
     const obser = this.actaRecepttionForm.value.observaciones;
-    const administra = this.actaRecepttionForm.value.administra;
+    const administra = this.actaRecepttionForm.value.administra
+      ? this.actaRecepttionForm.value.administra
+      : 'COMPDON';
     const consec = this.actaRecepttionForm.value.consec;
     this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
     this.witnessTes = this.actaRecepttionForm.value.testigoOne;
     const anio = this.actaRecepttionForm.value.captureDate;
-    this.generaConsec();
+
     const miCadenaAnio = anio.slice(0, 4);
     // localStorage.setItem('actaId', acta);
     localStorage.setItem('anio', anio);
     console.log('AÑO', anio);
     // let consec_ = consec.toString().padStart(4, '0');
     // this.foolio = consec;
-    console.log('numeraryFolio - >', consec);
-    this.cveActa = `${acta}/DRCS/${miCadenaAnio}/${type}${this.foolio}`;
+    console.log('numeraryFolio - >', this.foolio);
+    this.cveActa = `${acta}/${administra}/${miCadenaAnio}/${type}${this.foolio}`;
     console.log('cveActa -->', this.cveActa);
     localStorage.setItem('cveAc', this.cveActa);
     if (this.cveActa) {
@@ -303,14 +313,14 @@ export class CreateActaComponent extends BasePage implements OnInit {
       elaborationDate: new Date(),
       estatusAct: 'ABIERTA',
       elaborated: this.authService.decodeToken().username,
-      fileId: this.actaRecepttionForm.value.fileId,
+      // fileId: this.actaRecepttionForm.value.fileId,
       witness1: this.actaRecepttionForm.value.testigoOne,
-      witness2: this.actaRecepttionForm.value.testigoTree,
+      witness2: this.actaRecepttionForm.value.testigoOIC,
       actType: 'COMPDON',
-      captureDate: new Date(),
+      captureDate: this.actaRecepttionForm.value.captureDate,
       observations: this.actaRecepttionForm.value.observaciones,
       registreNumber: null,
-      numDelegation1: localStorage.getItem('area'),
+      numDelegation1: this.delegation,
       numDelegation2: null,
       identifier: null,
       label: null,
