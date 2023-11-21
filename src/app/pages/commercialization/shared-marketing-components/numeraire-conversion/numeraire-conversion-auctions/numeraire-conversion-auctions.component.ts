@@ -295,6 +295,7 @@ export class NumeraireConversionAuctionsComponent
         .SP_CONVERSION_ASEG_PARCIAL({
           pevent: this.selectedEvent.id,
           pscreen: 'FCOMER087',
+          user: this.user,
         })
         .pipe(take(1))
         .subscribe({
