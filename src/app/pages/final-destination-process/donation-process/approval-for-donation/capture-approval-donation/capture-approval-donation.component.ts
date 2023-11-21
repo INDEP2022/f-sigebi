@@ -538,9 +538,9 @@ export class CaptureApprovalDonationComponent
               ? item.good.status
               : null);
             if (status === null) {
-              this.errorSumInvalidos += status;
+              this.errorSumInvalidos += status.length;
             } else {
-              this.errorSumValidos += status;
+              this.errorSumValidos += status.length;
             }
           });
 
