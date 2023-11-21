@@ -31,7 +31,10 @@
             (click)="consult()">
             Consultar información
           </button>
-          <button class="btn btn-info btn-sm active" [disabled]="!form.valid">
+          <button
+            class="btn btn-info btn-sm active"
+            [disabled]="!form.valid"
+            (click)="download()">
             Descargar resultado
           </button>
         </div>

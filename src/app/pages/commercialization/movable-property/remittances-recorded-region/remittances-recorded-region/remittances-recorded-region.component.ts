@@ -7,7 +7,7 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
-import { BinnacleService } from 'src/app/core/services/ms-survillance/Binnacle-survillance.service';
+import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -37,7 +37,7 @@ export class RemittancesRecordedRegionComponent
     private siabService: SiabService,
     private datePipe: DatePipe,
     private sanitizer: DomSanitizer,
-    private binnacleService: BinnacleService
+    private binnacleService: SurvillanceService
   ) {
     super();
     this.today = new Date();
@@ -74,7 +74,7 @@ export class RemittancesRecordedRegionComponent
 
   getDelegations(params: ListParams) {
     this.loading = true;
-    this.binnacleService.getDelegations(params).subscribe(
+    this.binnacleService.getViewVigDelegations_(params).subscribe(
       (resp: any) => {
         this.delegation = resp.data.map(async (item: any) => {
           item['tipoSupbtipoDescription'] =

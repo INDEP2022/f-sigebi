@@ -111,6 +111,9 @@ export const CUSTOMERS_COLUMNS = {
   penaltyId: {
     title: 'Cve. de Penalización',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value ? value.penaltyId : value;
+    },
   },
   personType: {
     title: 'Tipo de Persona',
@@ -123,6 +126,9 @@ export const CUSTOMERS_COLUMNS = {
   userFree: {
     title: 'Usuario Liberado',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value ? value.name : value;
+    },
   },
   freeDate: {
     title: 'Fecha Liberado',
@@ -155,6 +161,9 @@ export const CUSTOMERS_COLUMNS = {
   agentId: {
     title: 'Cve. de Representante',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value ? value.id : value;
+    },
   },
   outsideNumber: {
     title: 'No. Exterior',

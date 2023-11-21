@@ -4,6 +4,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   ICancelVtaDTO,
   IDivideCommandsDTO,
+  ILoadLotDelResDTO,
   ILoadLotDTO,
   ILotDTO,
   IValidStatusChangeDTO,
@@ -42,6 +43,10 @@ export class ExpenseLotService extends HttpService {
 
   CARGA_BIENES_LOTE(body: ILoadLotDTO) {
     return this.post('apps/load-goods-lot', body);
+  }
+
+  CARGA_BIENES_LOTE_DELRES(body: ILoadLotDelResDTO) {
+    return this.post('apps/carga-bienes-lote-xdelres', body);
   }
 
   CANCELA_VTA_NORMAL(body: ICancelVtaDTO) {

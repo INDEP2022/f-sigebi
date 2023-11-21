@@ -25,7 +25,8 @@
               #table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="dataPaginated">
+              [source]="dataPaginated"
+              (userRowSelect)="selectRow($event.data)">
             </ng2-smart-table>
           </div>
         </div>
@@ -36,9 +37,15 @@
   </div>
   <div footer>
     <div class="d-flex footer-mand-goods">
-      <!-- <div class="m-3">
-        
-      </div> -->
+      <div>
+        <button
+          (click)="showPartContSirsae()"
+          type="button"
+          class="btn btn-primary active btn-sm"
+          [disabled]="!selected">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
       <div class="ml-3">
         <div class="cantidad">
           <label for="" class="m-0">Total</label>

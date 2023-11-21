@@ -31,9 +31,16 @@ export interface ILoadLotDTO {
   pScreen: string;
 }
 
+export interface ILoadLotDelResDTO {
+  v_id_evento: number;
+  v_id_lote: number;
+  id_concepto: number;
+  cve_pantalla: string;
+}
+
 export interface IComerDetGastosDTO {
   select_cambia_status: string;
-  no_bien: number;
+  no_bien: any;
 }
 
 export interface ICancelVtaDTO {

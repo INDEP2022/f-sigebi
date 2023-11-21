@@ -62,7 +62,7 @@ export const FINAL_DESTINATION_PROCESS_ROUTES = [
             link: '/pages/final-destination-process/donation-process/maintenance-commitment-donation',
           },
           {
-            label: 'Aprobación para Donación',
+            label: 'Comprometer para Donación',
             link: '/pages/final-destination-process/donation-process/approval-for-donation',
           },
           {

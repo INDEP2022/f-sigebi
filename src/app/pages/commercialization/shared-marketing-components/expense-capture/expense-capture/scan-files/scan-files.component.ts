@@ -53,14 +53,16 @@ export class ScanFilesComponent extends BasePage implements OnInit {
   getDataUser() {
     this.user = this.authService.decodeToken();
     console.log(this.user);
-    const routeUser = `?filter.name=$eq:${this.user.preferred_username}`;
+    const routeUser = `?filter.id=$eq:${this.user.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      console.log(res);
       if (res && res.data && res.data.length > 0) {
         const resJson = JSON.parse(JSON.stringify(res.data[0]));
         this.userData = resJson;
         this.delUser = resJson.usuario.delegationNumber;
         this.subDelUser = resJson.usuario.subdelegationNumber;
         this.departmentUser = resJson.usuario.departamentNumber;
+      } else {
       }
     });
   }
@@ -110,6 +112,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
   }
 
   async generateFolio() {
+    debugger;
     if (this.folioUniversal && this.folioUniversal.value) {
       this.alert('error', 'Generar Folio', 'El gasto ya cuenta con un folio');
       return;
@@ -119,71 +122,90 @@ export class ScanFilesComponent extends BasePage implements OnInit {
       'ID GASTO: ' +
       this.expenseNumber +
       ' CANCELACION DE VENTA POR SOLICITUD DE AUTORIDAD';
-    this.dataService.dataCompositionExpenses
-      .filter(row => row.expendientNumber !== null)
-      .forEach(async (x, index) => {
-        console.log(x);
-        const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${x.expendientNumber}&sortBy=wheelNumber:DESC`;
-        const notifications = await firstValueFrom(
-          this.serviceNotification
-            .getAllFilter(route)
-            .pipe(catchError(x => of(null)))
-        );
-        if (notifications) {
-          const DATO4 = notifications.data[0]['wheelNumber'];
+    let filterDataComposition = this.dataService.dataCompositionExpenses.filter(
+      row => row.expendientNumber !== null
+    );
 
-          if (this.userData) {
-            const modelDocument: IDocuments = {
-              id: this.userData.data[0]['id'],
-              natureDocument: 'ORIGINAL',
-              descriptionDocument: DESCR,
-              significantDate: format(new Date(), 'MM/yyyy'),
-              scanStatus: index === 0 ? 'SOLICITADO' : 'ESCANEADO',
-              fileStatus: '',
-              userRequestsScan: this.user.preferred_username,
-              scanRequestDate: new Date(),
-              userRegistersScan: this.user.preferred_username,
-              dateRegistrationScan: undefined,
-              userReceivesFile: '',
-              dateReceivesFile: undefined,
-              keyTypeDocument: 'ENTRE',
-              keySeparator: '60',
-              numberProceedings: x.expendientNumber,
-              sheets: '',
-              numberDelegationRequested: this.userData.usuario.delegationNumber,
-              numberSubdelegationRequests:
-                this.userData.usuario.subdelegationNumber,
-              numberDepartmentRequest: this.userData.usuario.departamentNumber,
-              registrationNumber: 0,
-              flyerNumber: DATO4,
-              userSend: '',
-              areaSends: '',
-              sendDate: undefined,
-              sendFilekey: '',
-              userResponsibleFile: '',
-              mediumId: '',
-              associateUniversalFolio: index > 0 ? FOLIO_ASOC : 0,
-              dateRegistrationScanningHc: undefined,
-              dateRequestScanningHc: undefined,
-              goodNumber: this.expenseNumber,
-            };
-            let createDocument = await firstValueFrom(
-              this.serviceDocuments.create(modelDocument).pipe(
-                catchError(x => {
-                  this.alert('error', 'Generar Folio', x);
-                  return of(null);
-                })
-              )
-            );
-            if (!createDocument) {
-              return;
-            }
-            if (index === 0) {
-              FOLIO_ASOC = createDocument.id;
-            }
+    if (filterDataComposition.length === 0) {
+      this.alert(
+        'warning',
+        'No cuenta con expediente en los detalles de gasto para continuar',
+        ''
+      );
+      return;
+    }
+    if (!this.userData) {
+      this.alert(
+        'warning',
+        'No cuenta con data de usuario válida para continuar',
+        ''
+      );
+      return;
+    }
+    filterDataComposition.forEach(async (x, index) => {
+      debugger;
+      console.log(x);
+      const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${x.expendientNumber}&sortBy=wheelNumber:DESC`;
+      const notifications = await firstValueFrom(
+        this.serviceNotification
+          .getAllFilter(route)
+          .pipe(catchError(x => of(null)))
+      );
+      if (notifications) {
+        const DATO4 = notifications.data[0]['wheelNumber'];
+
+        if (this.userData) {
+          const modelDocument: IDocuments = {
+            id: this.userData['id'],
+            natureDocument: 'ORIGINAL',
+            descriptionDocument: DESCR,
+            significantDate: format(new Date(), 'MM/yyyy'),
+            scanStatus: index === 0 ? 'SOLICITADO' : 'ESCANEADO',
+            fileStatus: '',
+            userRequestsScan: this.user.preferred_username,
+            scanRequestDate: new Date(),
+            userRegistersScan: this.user.preferred_username,
+            dateRegistrationScan: null,
+            userReceivesFile: '',
+            dateReceivesFile: null,
+            keyTypeDocument: 'ENTRE',
+            keySeparator: '60',
+            numberProceedings: x.expendientNumber,
+            sheets: '',
+            numberDelegationRequested: this.userData.usuario.delegationNumber,
+            numberSubdelegationRequests:
+              this.userData.usuario.subdelegationNumber,
+            numberDepartmentRequest: this.userData.usuario.departamentNumber,
+            registrationNumber: 0,
+            flyerNumber: DATO4,
+            userSend: '',
+            areaSends: '',
+            sendDate: null,
+            sendFilekey: '',
+            userResponsibleFile: '',
+            mediumId: '',
+            associateUniversalFolio: index > 0 ? FOLIO_ASOC : 0,
+            dateRegistrationScanningHc: null,
+            dateRequestScanningHc: null,
+            goodNumber: this.expenseNumber,
+          };
+          let createDocument = await firstValueFrom(
+            this.serviceDocuments.create(modelDocument).pipe(
+              catchError(x => {
+                this.alert('error', 'Generar Folio', x);
+                return of(null);
+              })
+            )
+          );
+          if (!createDocument) {
+            return;
+          }
+          if (index === 0) {
+            this.folioUniversal.setValue(createDocument.id);
           }
         }
-      });
+      }
+    });
   }
 
   goToScan() {

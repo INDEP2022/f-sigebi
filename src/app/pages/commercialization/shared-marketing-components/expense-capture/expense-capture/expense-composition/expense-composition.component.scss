@@ -11,6 +11,12 @@
           }
         }
       }
+
+      .customSelect {
+        position: absolute;
+        z-index: 100;
+        top: 103px;
+      }
       ng2-smart-table {
         thead {
           checkbox-filter {
@@ -18,7 +24,7 @@
             justify-content: center;
             align-items: flex-end;
             a {
-              margin-left: 10px;
+              display: none;
             }
           }
         }
