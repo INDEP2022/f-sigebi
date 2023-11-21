@@ -14,9 +14,9 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { IInitFormProceedingsBody } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion.component';
-import { ActasConvertionCommunicationService } from 'src/app/pages/administrative-processes/proceedings-conversion/services/proceedings-conversionn';
 import { ACTAS } from '../capture-approval-donation/columns-approval-donation';
+import { ServiceService } from './service.service';
+
 @Component({
   selector: 'app-find-acta',
   templateUrl: './find-acta.component.html',
@@ -28,7 +28,6 @@ export class FindActaComponent extends BasePage implements OnInit {
   actas: string;
   expedienteNumber: any;
   columnFilters: any = [];
-  pageParams: IInitFormProceedingsBody = null;
   edit = false;
   vaultSelect: any;
   cve: any;
@@ -39,6 +38,7 @@ export class FindActaComponent extends BasePage implements OnInit {
   providerForm: FormGroup = new FormGroup({});
   dataTableGoodsActa: LocalDataSource = new LocalDataSource();
   dataFactActas: LocalDataSource = new LocalDataSource();
+  @Input() update: Function;
   @Output() onSave = new EventEmitter<any>();
   @Output() cleanForm = new EventEmitter<any>();
   @Input() idConversion: number | string;
@@ -55,7 +55,7 @@ export class FindActaComponent extends BasePage implements OnInit {
     protected goodprocessService: GoodProcessService,
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
     private detailProceeDelRecService: DetailProceeDelRecService,
-    private sharedService: ActasConvertionCommunicationService,
+    private sharedService: ServiceService,
     private donationService: DonationService
   ) {
     super();
@@ -65,7 +65,7 @@ export class FindActaComponent extends BasePage implements OnInit {
       actions: {
         title: 'Acciones',
         delete: true,
-        edit: false,
+        edit: true,
         add: false,
       },
       columns: {
@@ -74,7 +74,6 @@ export class FindActaComponent extends BasePage implements OnInit {
     };
   }
   ngOnInit(): void {
-    // this.providerForm.patchValue(this.actas);
     this.dataFactActas
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -143,7 +142,6 @@ export class FindActaComponent extends BasePage implements OnInit {
 
   getStatusDeliveryCve() {
     this.loading = true;
-    // console.log(this.providerForm.value.cveActa.replace(/\//g, ''));
 
     let params = {
       ...this.params.getValue(),
@@ -154,7 +152,7 @@ export class FindActaComponent extends BasePage implements OnInit {
     this.donationService.getEventGood(params).subscribe({
       next: data => {
         console.log(data.data);
-        // this.donationGood = data.data
+
         this.dataFactActas.load(data.data);
         this.dataFactActas.refresh();
         this.loading = false;
@@ -163,9 +161,6 @@ export class FindActaComponent extends BasePage implements OnInit {
       error: error => {
         this.loading = false;
         this.totalItems2 = 0;
-        // console.log(error);
-        // this.dataFactActas.load([]);
-        // this.dataFactActas.refresh();
       },
     });
   }
@@ -188,15 +183,6 @@ export class FindActaComponent extends BasePage implements OnInit {
 
     this.onSave.emit(this.selectedRow);
     this.modalRef.hide();
-    // this.router.navigate(
-    //   ['/pages/administrative-processes/proceedings-conversion'],
-    //   {
-    //     queryParams: {
-    //       origin: 'FACTDBCONVBIEN',
-    //       PAR_IDCONV: Number(this.selectedRow.id),
-    //     },
-    //   }
-    // );
   }
 
   showDeleteMsg($event: any) {

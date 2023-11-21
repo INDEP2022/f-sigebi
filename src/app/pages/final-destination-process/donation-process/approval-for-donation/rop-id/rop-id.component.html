@@ -1,16 +1,14 @@
 <app-modal>
   <div header class="d-flex justify-content-between">
     <div>
-      <h5 class="modal-title">LLENAR ROP ID</h5>
+      <h5 class="modal-title">ROPA DIV</h5>
     </div>
   </div>
   <div body>
     <div class="table-padding"></div>
     <div class="justify-content-end d-flex mb-2"></div>
-    <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false"> -->
     <form-loader *ngIf="loadingRop"></form-loader>
     <div class="col-md-12">
-      <!-- <div [class]="loading ? 'table-loading' : ''"> -->
       <ng-scrollbar
         [track]="'all'"
         [ngStyle]="{ height: loadingRop ? '0px' : '300px' }">
@@ -21,7 +19,6 @@
           (userRowSelect)="onUserRowSelect($event)">
         </ng2-smart-table>
       </ng-scrollbar>
-      <!-- </div> -->
       <app-pagination [params]="params" [totalItems]="totalItemRrop">
       </app-pagination>
     </div>
@@ -33,7 +30,7 @@
           type="button"
           class="btn btn-primary active btn-sm"
           (click)="handleSuccess()">
-          Actualizar <i class="fas fa-edit bx-sm float-icon"></i>
+          Aplica <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
       </div>
       <div class="m-3">
@@ -41,7 +38,7 @@
           type="button"
           class="btn btn-danger active btn-sm"
           (click)="return()">
-          Cancelar
+          Salir
         </button>
       </div>
     </div>

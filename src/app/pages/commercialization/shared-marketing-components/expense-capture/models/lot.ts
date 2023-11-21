@@ -40,7 +40,7 @@ export interface ILoadLotDelResDTO {
 
 export interface IComerDetGastosDTO {
   select_cambia_status: string;
-  no_bien: number;
+  no_bien: any;
 }
 
 export interface ICancelVtaDTO {
