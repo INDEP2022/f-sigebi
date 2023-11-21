@@ -113,6 +113,7 @@
               </form-field>
             </div>
           </div>
+
           <div class="col-md-3 mt-2">
             <div>
               <form-field
@@ -123,6 +124,24 @@
                   type="text"
                   class="form-control pt-1"
                   formControlName="testigoTree" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field [control]="actaRecepttionForm.get('cveReceived')">
+                <ngx-select
+                  [form]="actaRecepttionForm"
+                  [data]="dele"
+                  (fetchItems)="consulREG_DEL_ADMIN($event)"
+                  bindLabel="cveReceived"
+                  value="delegation"
+                  control="cveReceived"
+                  label="Admin"
+                  [searchOnInit]="false"
+                  [showTooltip]="true"
+                  termMaxLength="30">
+                </ngx-select>
               </form-field>
             </div>
           </div>

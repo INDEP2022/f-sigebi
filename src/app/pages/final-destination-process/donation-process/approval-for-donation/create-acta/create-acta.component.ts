@@ -96,6 +96,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       type: [null],
       administra: [null, Validators.required],
       consec: [null],
+      cveReceived: [null, Validators.required],
       observaciones: [null],
       testigoOne: [null, [Validators.required]],
       testigoOIC: [null, [Validators.required]],
