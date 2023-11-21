@@ -22,6 +22,10 @@ export const REPORTS_ROUTES = [
         label: 'Documentos Programación',
         link: '/pages/siab-web/sami/consult-report/report-documents-schedule',
       },
+      {
+        label: 'Reporte de Gastos por Bien',
+        link: '/pages/siab-web/sami/consult-report/report-expenses-for-good',
+      },
     ],
   },
 ];
