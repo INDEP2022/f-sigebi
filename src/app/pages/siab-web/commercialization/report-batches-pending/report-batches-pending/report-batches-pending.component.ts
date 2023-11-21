@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -76,7 +76,7 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      event: [null, [Validators.required]],
+      event: [null, []],
     });
   }
   getEvent(params: ListParams) {
@@ -110,25 +110,29 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
   }
 
   lineaCaptura() {
-    this.loading = true;
-    this.line = [];
-    let params = {
-      ...this.params1.getValue(),
-    };
-    this.lotService.querysp(this.form.get('event').value, params).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.line = resp.data;
-        this.data1.load(resp.data);
-        this.data1.refresh();
-        this.totalItems1 = resp.count;
-        this.loading = false;
-      },
-      error: err => {
-        console.log(err);
-        this.alert('warning', 'No se encontraron registros', '');
-      },
-    });
+    if (this.form.get('event').value) {
+      this.loading = true;
+      this.line = [];
+      let params = {
+        ...this.params1.getValue(),
+      };
+      this.lotService.querysp(this.form.get('event').value, params).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.line = resp.data;
+          this.data1.load(resp.data);
+          this.data1.refresh();
+          this.totalItems1 = resp.count;
+          this.loading = false;
+        },
+        error: err => {
+          console.log(err);
+          this.alert('warning', 'No se encontraron registros', '');
+        },
+      });
+    } else {
+      this.alert('warning', 'Debe llenar el campo evento', '');
+    }
   }
 
   selectData(event: { data: any; selected: any }) {

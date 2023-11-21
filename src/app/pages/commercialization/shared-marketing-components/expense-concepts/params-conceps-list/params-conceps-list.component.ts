@@ -46,7 +46,7 @@ export class ParamsConcepsListComponent
         position: 'right',
         add: false,
         edit: true,
-        delete: false,
+        delete: true,
       },
       columns: { ...COLUMNS },
     };
@@ -110,6 +110,9 @@ export class ParamsConcepsListComponent
       }
     }
     if (changes['conceptId'] && changes['conceptId'].currentValue) {
+      this.columnFilters = [];
+      this.data.setFilter([], true, false);
+      // this.data.load([]);
       this.getData();
     }
   }
@@ -285,7 +288,7 @@ export class ParamsConcepsListComponent
           this.alert(
             'error',
             'No se pudo eliminar el parámetro ' + row.parameter,
-            ''
+            'Favor de verificar'
           );
         },
       });

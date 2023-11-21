@@ -119,14 +119,14 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
         this.modalRef.hide();
       },
       error: error => {
-        this.alert('warning', `No es posible crear el tipo de evento`, '');
+        this.alert('warning', `El No. Tipo Evento ya ha sido creado`, '');
         this.loading = false;
       },
     });
   }
 
   handleSuccess(): void {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'actualizado' : 'creado';
     this.alert('success', `El evento ha sido ${message}`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
