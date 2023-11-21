@@ -288,7 +288,7 @@ export class ParamsConcepsListComponent
           this.alert(
             'error',
             'No se pudo eliminar el parámetro ' + row.parameter,
-            ''
+            'Favor de verificar'
           );
         },
       });
