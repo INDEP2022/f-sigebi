@@ -1,6 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -11,11 +13,13 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { HistoricalService } from 'src/app/core/services/ms-historical/historical.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
-import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BasePage } from 'src/app/core/shared';
+import { AbandonmentsDeclarationTradesService } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/service/abandonments-declaration-trades.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -53,7 +57,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
   foolio: number;
   mes: any;
   currentYear: number = new Date().getFullYear();
-
+  delegation: any = null;
+  subdelegation: any = null;
+  areaDict: any = null;
   disabledSend: boolean = false;
   get captureDate() {
     return this.actaRecepttionForm.get('captureDate');
@@ -68,14 +74,17 @@ export class CreateActaComponent extends BasePage implements OnInit {
     private transferenteService: TransferenteService,
     private usersService: UsersService,
     private donationService: DonationService,
-    private procedureManagementService: ProcedureManagementService
+    private procedureManagementService: ProcedureManagementService,
+    private parametersService: ParametersService,
+    private abandonmentsService: AbandonmentsDeclarationTradesService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.actaForm();
-    this.consulREG_DEL_ADMIN();
+    this.delegation = Number(localStorage.getItem('area'));
+    // this.consulREG_DEL_ADMIN(lparams: ListParams);
     for (let i = 1900; i <= this.currentYear; i++) {
       this.years.push(i);
     }
@@ -97,29 +106,118 @@ export class CreateActaComponent extends BasePage implements OnInit {
       captureDate: await this.getDate(),
     });
   }
+  async delegationWhere() {
+    return new Promise((resolve, reject) => {
+      if (this.delegation != null) {
+        this.parametersService
+          .getPhaseEdo(`date=${format(new Date(), 'yyyy-MM-dd')}`)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(
+            (res: any) => {
+              console.log('REESS', res);
+              resolve(res.stagecreated);
+            },
+            err => {
+              resolve(null);
+              console.log(err);
+            }
+          );
+      }
+    });
+  }
+
   async getDate() {
     const fechaEscritura: any = new Date();
     fechaEscritura.setUTCDate(fechaEscritura.getUTCDate());
     const _fechaEscritura: any = new Date(fechaEscritura.toISOString());
     return _fechaEscritura;
   }
+  async validacionFirst() {
+    const params = new FilterParams();
+    params.addFilter('numberDelegation2', this.delegation, SearchFilter.EQ);
 
-  // REG_DEL_ADMIN
-  consulREG_DEL_ADMIN() {
-    let obj = {
-      gst_todo: 'TODO',
-      gnu_delegacion: 12,
-      gst_rec_adm: 'FILTRAR',
-    };
-    this.historicalService.getHistoricalConsultDelegation(obj).subscribe({
-      next: data => {
-        this.arrayDele = new DefaultSelect(data.delegacion, 0);
-        console.log('data', this.arrayDele);
+    this.rNomenclaService.getAll(params.getParams()).subscribe({
+      next: async (data: any) => {
+        console.log('datarNomen', data);
+        if (data.count > 1) {
+          this.globalGstRecAdm = 'FILTRAR';
+        } else {
+          this.globalGstRecAdm = this.delegation;
+        }
+        await this.consulREG_DEL_ADMIN(new ListParams());
       },
-      error: error => {
-        this.arrayDele = new DefaultSelect();
+      error: async error => {
+        this.globalGstRecAdm = 'NADA';
+        await this.consulREG_DEL_ADMIN(new ListParams());
       },
     });
+  }
+  stagecreated: any = null;
+  async get___Senders(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    // params.addFilter('assigned', 'S');
+    if (lparams?.text) params.addFilter('user', lparams.text, SearchFilter.EQ);
+    // this.hideError();
+    this.abandonmentsService.getUsers(params.getParams()).subscribe({
+      next: async (data: any) => {
+        console.log('DATA DDELE', data);
+        this.delegation = data.data[0].delegationNumber;
+        this.subdelegation = data.data[0].subdelegationNumber;
+        this.areaDict = data.data[0].departamentNumber;
+        this.stagecreated = await this.delegationWhere();
+        console.log('aaaaaaaaa', this.stagecreated);
+        await this.validacionFirst();
+        await this.consulREG_DEL_DESTR(new ListParams());
+        await this.consulREG_DEL_ADMIN(new ListParams());
+      },
+      error: async () => {
+        await this.consulREG_DEL_DESTR(new ListParams());
+        await this.consulREG_DEL_ADMIN(new ListParams());
+        await this.validacionFirst();
+      },
+    });
+  }
+
+  globalGstRecAdm: any = null;
+  async consulREG_DEL_ADMIN(lparams: ListParams) {
+    const params = new FilterParams();
+    const area = Number(localStorage.getItem('area'));
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    let obj = {
+      globalGstAll: 'NADA',
+      globalGnuDelegation: this.delegation,
+      globalGstRecAdm: this.globalGstRecAdm,
+    };
+
+    if (lparams.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        params.addFilter('delegationNumber2', area, SearchFilter.EQ);
+      } else {
+        params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
+      }
+
+    params.addFilter('stageEdo', this.stagecreated, SearchFilter.EQ);
+    this.parametersService
+      .GetDelegationGlobal(obj, params.getParams())
+      .subscribe({
+        next: (data: any) => {
+          console.log('REG_DEL_ADMIN', data);
+          let result = data.data.map(async (item: any) => {
+            item['cveReceived'] =
+              item.delegationNumber2 + ' - ' + item.delegation;
+          });
+          Promise.all(result).then(resp => {
+            this.dele = new DefaultSelect(data.data, data.count);
+          });
+        },
+        error: error => {
+          this.dele = new DefaultSelect();
+        },
+      });
   }
 
   // REG_DEL_DESTR
@@ -161,23 +259,25 @@ export class CreateActaComponent extends BasePage implements OnInit {
     if (this.cveActa) {
       const params = new ListParams();
       params['filter.keysProceedings'] = `$eq:${this.cveActa}`;
-      this.proceedingsDeliveryReceptionService.getByFilter_(params).subscribe({
-        next: (data: any) => {
-          if (data.data.length == 1) {
-            this.alert('warning', 'Esa Acta ya se tiene Registrada', '');
-          } else {
-            this.alert(
-              'warning',
-              'Actas Duplicadas en ACTAS_ENTREGA_RECEPCION',
-              ''
-            );
-          }
-          return;
-        },
-        error: error => {
-          this.guardarRegistro(this.cveActa);
-        },
-      });
+      this.proceedingsDeliveryReceptionService
+        .getAllFilterDelRec(params)
+        .subscribe({
+          next: (data: any) => {
+            if (data.data.length == 1) {
+              this.alert('warning', 'Esa Acta ya se tiene Registrada', '');
+            } else {
+              this.alert(
+                'warning',
+                'Actas Duplicadas en ACTAS_ENTREGA_RECEPCION',
+                ''
+              );
+            }
+            return;
+          },
+          error: error => {
+            this.guardarRegistro(this.cveActa);
+          },
+        });
     }
   }
   generaConsec() {
