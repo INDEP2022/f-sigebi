@@ -10,7 +10,7 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-part-cont-sirsae',
   templateUrl: './part-cont-sirsae.component.html',
-  styleUrls: ['./part-cont-sirsae.component.css'],
+  styleUrls: ['./part-cont-sirsae.component.scss'],
 })
 export class PartContSirsaeComponent extends BasePageWidhtDinamicFiltersExtra<ICabms> {
   mand: IMandExpenseCont;

@@ -209,7 +209,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
   }
 
   goToScan() {
-    // localStorage.setItem('numberExpedient', this.noExpedient.toString());
+    localStorage.setItem('eventExpense', JSON.stringify(this.dataService.data));
 
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: {
