@@ -315,10 +315,15 @@ export class ExpenseConceptsListComponent
             error: err => {
               console.log(err);
               // event.confirm.resolve();
+              let errorM = err.error.message;
               this.alert(
                 'error',
                 'Eliminación de Concepto de Pago ' + event.data.id,
-                err.error.message
+                errorM
+                  ? errorM.includes('violates foreign key')
+                    ? 'Debe eliminar sus parámetros para poder continuar'
+                    : ''
+                  : ''
               );
             },
           });

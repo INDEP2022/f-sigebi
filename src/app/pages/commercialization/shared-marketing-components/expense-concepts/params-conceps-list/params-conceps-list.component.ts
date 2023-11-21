@@ -46,7 +46,7 @@ export class ParamsConcepsListComponent
         position: 'right',
         add: false,
         edit: true,
-        delete: false,
+        delete: true,
       },
       columns: { ...COLUMNS },
     };
