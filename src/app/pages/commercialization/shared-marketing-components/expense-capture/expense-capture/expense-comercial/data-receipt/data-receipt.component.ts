@@ -16,7 +16,9 @@ export class DataReceiptComponent implements OnInit {
       this.numReceipts.setValue(value.numReceipts);
       this.invoiceRecDate.setValue(
         value.invoiceRecDate
-          ? secondFormatDateToDate(value.invoiceRecDate)
+          ? value.invoiceRecDate instanceof Date
+            ? value.invoiceRecDate
+            : secondFormatDateToDate(value.invoiceRecDate)
           : null
       );
       this.payDay.setValue(
