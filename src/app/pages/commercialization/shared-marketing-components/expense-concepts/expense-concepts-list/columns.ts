@@ -54,7 +54,7 @@ export const COLUMNS = {
     sort: false,
     type: 'html',
     valuePrepareFunction: (value: any) => {
-      if (value == 'S' || value)
+      if (value == 'S')
         return '<strong><span class="badge badge-pill badge-success">Si</span></strong>';
       if (value == 'N' || !value)
         return '<strong><span class="badge badge-pill badge-warning">No</span></strong>';
@@ -81,7 +81,7 @@ export const COLUMNS = {
     sort: false,
     type: 'html',
     valuePrepareFunction: (value: any) => {
-      if (value == 'S' || value)
+      if (value == 'S')
         return '<strong><span class="badge badge-pill badge-success">Si</span></strong>';
       if (value == 'N' || !value)
         return '<strong><span class="badge badge-pill badge-warning">No</span></strong>';
