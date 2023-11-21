@@ -9,4 +9,10 @@
       text-align: center;
     }
   }
+  &-check {
+    padding-left: 33px;
+    @media screen and (max-width: 768px) {
+      text-align: center;
+    }
+  }
 }

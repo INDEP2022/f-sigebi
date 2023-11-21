@@ -25,5 +25,9 @@ export class MenuDynamicComponent implements OnInit {
     if (item.link === '/pages/general-processes/good-photos') {
       localStorage.removeItem('selectedGoodsForPhotos');
     }
+
+    if (item.label === 'Captura de Gastos') {
+      localStorage.removeItem('eventExpense');
+    }
   }
 }
