@@ -105,6 +105,8 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
       visualize: [null],
     });
 
+    this.goodForm.get('visualize').setValue('1');
+
     if (this.good !== undefined) {
       this.edit = true;
       console.log('vamos a editar', this.good);
