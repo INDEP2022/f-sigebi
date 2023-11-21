@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Captura de Aprobaci&oacute;n para Donaci&oacute;n</h5>
+    <h5 class="title">Captura de Eventos para Donaci&oacute;n</h5>
   </div>
 
   <div body>
@@ -246,7 +246,7 @@
           </span>
           <span class="text-info">
             Suma de Cantidades
-            <b>{{ SUM_BIEN | currency }}</b>
+            <b>{{ SUM_BIEN | currency : 'USD' : '2' }}</b>
           </span>
         </div>
       </div>

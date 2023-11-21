@@ -74,6 +74,17 @@ export class ExpenseCompositionComponent
     });
   }
 
+  override ngOnInit(): void {
+    if (this.haveInitialCharge) {
+      this.getData();
+    }
+    this.amount = 0;
+    this.vat = 0;
+    this.isrWithholding = 0;
+    this.vatWithholding = 0;
+    this.total = 0;
+  }
+
   get PCONDIVXMAND() {
     return this.expenseCaptureDataService.PCONDIVXMAND;
   }
