@@ -171,8 +171,8 @@ export class SearchActasComponent extends BasePage implements OnInit {
           this.loading = false;
           this.totalItems2 = 0;
           // console.log(error);
-          // this.dataFactActas.load([]);
-          // this.dataFactActas.refresh();
+          this.dataFactActas.load([]);
+          this.dataFactActas.refresh();
         },
       });
   }
@@ -239,8 +239,8 @@ export class SearchActasComponent extends BasePage implements OnInit {
                 ''
               );
               // console.log(error);
-              // this.dataFactActas.load([]);
-              // this.dataFactActas.refresh();
+              this.dataFactActas.load([]);
+              this.dataFactActas.refresh();
             },
           });
       }

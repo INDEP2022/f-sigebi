@@ -23,6 +23,7 @@ export class ExpenseCompositionModalComponent
   comerDetExpense: IComerDetExpense2;
   expenseNumber: number;
   title = 'Composición de Gastos';
+  manCV: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -33,6 +34,11 @@ export class ExpenseCompositionModalComponent
 
   ngOnInit() {
     this.prepareForm();
+  }
+
+  getTransferent(result: any) {
+    console.log(result);
+    this.manCV = result.cvman;
   }
 
   private prepareForm() {
@@ -123,6 +129,7 @@ export class ExpenseCompositionModalComponent
         .edit({
           ...body,
           expenseNumber: this.expenseNumber,
+          cvman: this.manCV,
           total,
         })
         .pipe(take(1))
@@ -161,6 +168,7 @@ export class ExpenseCompositionModalComponent
     let newBody = {
       ...body,
       expenseNumber: this.expenseNumber,
+      cvman: this.manCV,
       total,
     };
     console.log(total, this.expenseNumber, newBody);

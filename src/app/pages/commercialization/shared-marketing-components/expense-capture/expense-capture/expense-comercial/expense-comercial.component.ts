@@ -53,7 +53,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   provider: string;
   //
   toggleInformation = true;
-  reloadLote = false;
+  // reloadLote = false;
   reloadConcepto = false;
   ilikeFilters = [
     'attachedDocumentation',
@@ -63,6 +63,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     'nomEmplcapture',
     'providerName',
     'usu_captura_siab',
+    'eventDescription',
   ];
   dateFilters = [
     'captureDate',
@@ -171,7 +172,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           : null
         : null,
       fecha_contrarecibo: this.form.value.fecha_contrarecibo
-        ? this.form.value.fecha_contrarecibo.trim().length > 0
+        ? (this.form.value.fecha_contrarecibo + '').trim().length > 0
           ? this.form.value.fecha_contrarecibo
           : null
         : null,
@@ -197,11 +198,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: response => {
+          this.loader.load = false;
           this.alert(
             'success',
             'Se ha actualizado el gasto ' + this.expenseNumber.value,
             'Gasto actualizado correctamente'
           );
+          this.loader.load = false;
           this.fillForm({
             ...this.data,
             ...this.form.value,
@@ -224,11 +227,25 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             'No se pudo actualizar el gasto ' + this.expenseNumber.value,
             'Favor de verificar'
           );
+          this.loader.load = false;
         },
       });
   }
 
   save() {
+    this.loader.load = true;
+    // if (this.form.invalid) {
+    //   const invalid = [];
+    //   console.log(this.form.value);
+    //   const controls = this.form.controls;
+    //   for (const name in controls) {
+    //     if (controls[name].invalid) {
+    //       invalid.push(name);
+    //     }
+    //   }
+    //   console.log(invalid);
+    //   return;
+    // }
     if (this.expenseNumber.value) {
       this.edit();
     } else {
@@ -237,8 +254,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         .pipe(take(1))
         .subscribe({
           next: response => {
+            console.log(response);
             this.alert('success', 'Se ha creado el gasto correctamente', '');
-            this.expenseNumber.setValue(response.data.expenseNumber);
+            this.expenseNumber.setValue(response.expenseNumber);
+            this.loader.load = false;
             this.fillForm({
               ...this.data,
               ...this.form.value,
@@ -261,6 +280,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
               'No se pudo crear el gasto',
               'Favor de verificar'
             );
+            this.loader.load = false;
           },
         });
     }
@@ -373,19 +393,27 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    this.lotNumber.valueChanges.subscribe({
+    this.eventNumber.valueChanges.subscribe({
       next: response => {
-        console.log(response);
-        if (response) {
-          this.nextItemLote();
-        }
+        this.lotNumber.setValue(null, { emitEvent: false });
       },
     });
-    // this.expenseModalService.selectedMotivesSubject.subscribe({
+    // this.lotNumber.valueChanges.subscribe({
     //   next: response => {
     //     console.log(response);
+    //     if (response) {
+    //       this.nextItemLote();
+    //     }
     //   },
     // });
+    if (localStorage.getItem('eventExpense')) {
+      this.fillForm(JSON.parse(localStorage.getItem('eventExpense')));
+    }
+    this.expenseModalService.selectedMotivesSubject.subscribe({
+      next: response => {
+        console.log(response);
+      },
+    });
   }
 
   updateProvider(event: any) {
@@ -413,9 +441,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             }
           },
         });
-    setTimeout(() => {
-      this.reloadLote = !this.reloadLote;
-    }, 500);
+    // setTimeout(() => {
+    //   this.reloadLote = !this.reloadLote;
+    // }, 500);
   }
 
   getParams(id: string) {
@@ -755,20 +783,21 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   async fillForm(event: IComerExpense) {
     console.log(event);
     this.data = event;
+    this.dataService.validPayment = false;
     this.addressEvent = event.address;
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
     this.dateOfResolution.setValue(
       event.dateOfResolution
-        ? event.dateOfResolution.trim().length > 0
+        ? (event.dateOfResolution + '').trim().length > 0
           ? secondFormatDateToDate(event.dateOfResolution)
           : null
         : null
     );
     this.comment.setValue(event.comment);
     this.conceptNumber.setValue(event.conceptNumber);
-    this.eventNumber.setValue(event.eventNumber);
+    this.eventNumber.setValue(event.eventNumber, { emitEvent: false });
     this.lotNumber.setValue(event.lotNumber);
     this.clkpv.setValue(event.clkpv);
     setTimeout(async () => {
@@ -776,6 +805,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.alert('warning', 'No se cuenta con coordinación regional', '');
       }
       this.descurcoord.setValue(event.descurcoord);
+      this.dataService.updateOI.next(true);
+      this.dataService.updateExpenseComposition.next(true);
+      this.dataService.updateFolio.next(true);
       if (!this.validatePaymentCamps(event)) {
         return;
       }
@@ -788,6 +820,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           'Favor de verificar'
         );
         return;
+      } else {
+        this.dataService.validPayment = true;
       }
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
@@ -801,10 +835,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       // if (!otherParams) {
       //   return;
       // }
-
-      this.dataService.updateOI.next(true);
-      this.dataService.updateExpenseComposition.next(true);
-      this.dataService.updateFolio.next(true);
     }, 500);
 
     // this.reloadConcepto = !this.reloadConcepto;

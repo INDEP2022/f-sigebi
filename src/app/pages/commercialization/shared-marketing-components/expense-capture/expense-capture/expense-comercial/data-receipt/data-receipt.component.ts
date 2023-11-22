@@ -11,11 +11,14 @@ import { ExpenseCaptureDataService } from '../../../services/expense-capture-dat
 export class DataReceiptComponent implements OnInit {
   @Input() set expense(value: IComerExpense) {
     if (value) {
+      console.log(value);
       this.invoiceRecNumber.setValue(value.invoiceRecNumber);
       this.numReceipts.setValue(value.numReceipts);
       this.invoiceRecDate.setValue(
         value.invoiceRecDate
-          ? secondFormatDateToDate(value.invoiceRecDate)
+          ? value.invoiceRecDate instanceof Date
+            ? value.invoiceRecDate
+            : secondFormatDateToDate(value.invoiceRecDate)
           : null
       );
       this.payDay.setValue(

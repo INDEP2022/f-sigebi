@@ -73,17 +73,20 @@ export class EntryOrdersComponent
   get showFilters() {
     return (
       this.expenseCaptureDataService.expenseNumber &&
-      this.expenseCaptureDataService.expenseNumber.value
+      this.expenseCaptureDataService.expenseNumber.value &&
+      this.expenseCaptureDataService.validPayment
     );
   }
 
   async replyFolio() {
+    this.loader.load = true;
     if (!this.expenseNumber) {
       this.alert(
         'warning',
         'No puede mandar correo si no a guardado el gasto',
         ''
       );
+      this.loader.load = false;
       return;
     }
     // const firstValidation =
@@ -99,10 +102,12 @@ export class EntryOrdersComponent
       !this.expenseCaptureDataService.dataCompositionExpenses[0].goodNumber &&
       !this.expenseCaptureDataService.data.providerName
     ) {
+      this.loader.load = false;
       this.alert('warning', 'Tiene que llenar alguno de los campos', '');
       return;
     }
     if (!this.expenseCaptureDataService.FOLIO_UNIVERSAL) {
+      this.loader.load = false;
       this.alert('warning', 'No se han escaneado los documentos', '');
       return;
     }
@@ -120,7 +125,7 @@ export class EntryOrdersComponent
     filterParams.addFilter('sheets', 0, SearchFilter.GT);
     filterParams.addFilter('scanStatus', 'ESCANEADO', SearchFilter.ILIKE);
     let documents = await firstValueFrom(
-      this.documentService.getAll().pipe(
+      this.documentService.getAll(filterParams.getParams()).pipe(
         take(1),
         catchError(x => of({ data: null, message: x })),
         map(x => {
@@ -132,6 +137,7 @@ export class EntryOrdersComponent
       )
     );
     if (!documents) {
+      this.loader.load = false;
       return;
     }
     this.expenseGoodProcessService
@@ -148,9 +154,21 @@ export class EntryOrdersComponent
       })
       .pipe(take(1))
       .subscribe({
-        next: response => {},
+        next: response => {
+          this.loader.load = false;
+          this.alert(
+            'success',
+            'Se replico el folio y se guardo correctamente',
+            ''
+          );
+        },
         error: err => {
-          this.alert('error', 'No se ha guardado el folio de escaneo', '');
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'No se ha guardado el folio de escaneo',
+            'Favor de verificar'
+          );
         },
       });
   }
@@ -188,6 +206,7 @@ export class EntryOrdersComponent
       return;
     }
     this.loading = true;
+    console.log(this.expenseCaptureDataService.PDEVCLIENTE);
     this.dataService
       .getOI({
         idEvento: this.eventNumber.value,

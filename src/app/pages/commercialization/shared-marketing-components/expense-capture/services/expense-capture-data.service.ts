@@ -30,6 +30,7 @@ import { ExpenseModalService } from './expense-modal.service';
 export class ExpenseCaptureDataService extends ClassWidthAlert {
   form: FormGroup;
   data: IComerExpense;
+  validPayment = false;
   delegation: number;
   subDelegation: number;
   noDepartamento: number;
@@ -41,7 +42,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   updateFolio = new Subject();
   P_PRUEBA: number;
   PMONTOXMAND: string;
-  PDEVCLIENTE: string;
+  PDEVCLIENTE: string = null;
   PCAMBIAESTATUS: string;
   PCONDIVXMAND: string;
   PCANVTA: string;
@@ -108,7 +109,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   resetParams() {
     this.PMONTOXMAND = 'N';
-    this.PDEVCLIENTE = 'N';
+    this.PDEVCLIENTE = null;
     this.PCAMBIAESTATUS = 'N';
     this.PCONDIVXMAND = 'N';
     this.PCANVTA = 'N';
@@ -129,6 +130,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   fillParams(row: IReadParameter) {
+    console.log(row);
     this.PMONTOXMAND = row.PMONTOXMAND;
     this.PDEVCLIENTE = row.PDEVCLIENTE;
     this.PCAMBIAESTATUS = row.PCAMBIAESTATUS;
@@ -222,7 +224,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       clkpv: [null, [Validators.required]],
       descurcoord: [null],
       comment: [null],
-      invoiceRecNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
+      invoiceRecNumber: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
       numReceipts: [null],
       invoiceRecDate: [null],
       payDay: [null],
@@ -257,17 +259,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.expenseModalService.openModalMotives(this.address);
   }
 
-  private VALIDA_DET(V_VALIDA_DET: boolean = null) {
+  VALIDA_DET(V_VALIDA_DET: boolean = null) {
     if (V_VALIDA_DET === null) {
       const VALIDA_DET = this.dataCompositionExpenses.filter(
         row => row.changeStatus && row.changeStatus === true
       );
       if (VALIDA_DET.length === 0) {
-        this.alert(
-          'error',
-          'Envia Solictud',
-          'Debe seleccionar un bien al menos'
-        );
+        this.alert('error', 'Debe seleccionar al menos un bien', '');
         return false;
       } else {
         return true;
@@ -277,10 +275,42 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private RECARGA_BIENES_LOTE() {
+    const VALIDA_DET = this.dataCompositionExpenses.filter(
+      row => row.changeStatus && row.changeStatus === true
+    );
+    if (VALIDA_DET.length === 0) {
+      this.alert(
+        'error',
+        'Envia Solictud',
+        'Debe seleccionar al menos un bien'
+      );
+      return of(null);
+    } else {
+      let arrayToDelete = this.dataCompositionExpenses
+        .filter(row => !row.changeStatus)
+        .map(row => {
+          return {
+            expenseDetailNumber: row.detPaymentsId,
+            expenseNumber: row.paymentsId,
+          };
+        });
+      return this.comerDetService
+        .removeMassive(arrayToDelete)
+        .pipe(catchError(x => of(null)));
+    }
     // this.comerDetService.remove()
   }
 
-  async ENVIA_SOLICITUD(V_VALIDA_DET: boolean = null) {
+  validateAndProcessSolicitud() {
+    if (this.VALIDA_DET()) {
+      this.PROCESA_SOLICITUD();
+    }
+  }
+
+  async ENVIA_SOLICITUD(
+    V_VALIDA_DET: boolean = null,
+    showExtramessage: boolean = null
+  ) {
     const resultParams = await this.readParams(this.conceptNumber.value);
 
     if (
@@ -294,19 +324,23 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       if (this.VALIDA_DET(V_VALIDA_DET)) {
         this.PROCESA_SOLICITUD();
       }
+      return false;
     } else if (this.PVALIDADET === 'S') {
       if (this.lotNumber && this.lotNumber.value) {
-        // this.RECARGA_BIENES_LOTE();
+        let response = await firstValueFrom(this.RECARGA_BIENES_LOTE());
+        if (response) {
+          return true;
+        }
         if (this.VALIDA_DET(V_VALIDA_DET)) {
           this.PROCESA_SOLICITUD();
         }
+        return false;
       } else {
-        this.alert(
-          'error',
-          'Envia Solictud',
-          'Para este concepto debe indicar el lote'
-        );
+        this.alert('error', 'Debe indicar el lote para enviar solicitud', '');
+        return false;
       }
+    } else {
+      return false;
     }
   }
 
@@ -347,7 +381,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         this.alert(
           'error',
           'Envio a Sirsae',
-          'Debe seleccionar un bien al menos'
+          'Debe seleccionar al menos un bien'
         );
         return;
       }
