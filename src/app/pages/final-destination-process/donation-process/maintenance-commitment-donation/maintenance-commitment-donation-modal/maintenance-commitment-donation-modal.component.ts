@@ -171,15 +171,23 @@ export class MaintenanceCommitmentDonationModalComponent
     this.newOrEdit = false;
     const model = {} as any;
     model.labelId = Number(this.form.value.labelId);
-    model.status = this.form.value.status;
-    model.desStatus = this.form.value.desStatus;
-    model.transfereeId = Number(this.form.value.transferentId);
-    model.desTrans = this.form.value.keyCode;
+    model.status = this.form.value.status ? this.form.value.status : 'N/A';
+    model.desStatus = this.form.value.desStatus
+      ? this.form.value.desStatus
+      : 'NO APLICA';
+    model.transfereeId = this.form.value.transferentId
+      ? Number(this.form.value.transferentId)
+      : 0;
+    model.desTrans = this.form.value.keyCode
+      ? this.form.value.keyCode
+      : 'NO APLICA';
     model.clasifId = this.form.value.clasifId
       ? Number(this.form.value.clasifId)
-      : null;
-    model.desClasif = this.form.value.desClasif;
-    model.unit = this.form.value.unit;
+      : 0;
+    model.desClasif = this.form.value.desClasif
+      ? this.form.value.desClasif
+      : 'NO APLICA';
+    model.unit = this.form.value.unit ? this.form.value.unit : 'N/A';
     model.ruleId = Number(this.form.value.ruleId);
     model.valid = Number(this.form.value.valid);
 
@@ -198,13 +206,23 @@ export class MaintenanceCommitmentDonationModalComponent
     this.newOrEdit = false;
     const model = {} as any;
     model.labelId = Number(this.form.value.labelId);
-    model.status = this.form.value.status;
-    model.desStatus = this.form.value.desStatus;
-    model.transfereeId = Number(this.form.value.transferentId);
-    model.desTrans = this.form.value.keyCode;
-    model.clasifId = Number(this.form.value.clasifId);
-    model.desClasif = this.form.value.desClasif;
-    model.unit = this.form.value.unit;
+    model.status = this.form.value.status ? this.form.value.status : 'N/A';
+    model.desStatus = this.form.value.desStatus
+      ? this.form.value.desStatus
+      : 'NO APLICA';
+    model.transfereeId = this.form.value.transferentId
+      ? Number(this.form.value.transferentId)
+      : 0;
+    model.desTrans = this.form.value.keyCode
+      ? this.form.value.keyCode
+      : 'NO APLICA';
+    model.clasifId = this.form.value.clasifId
+      ? Number(this.form.value.clasifId)
+      : 0;
+    model.desClasif = this.form.value.desClasif
+      ? this.form.value.desClasif
+      : 'NO APLICA';
+    model.unit = this.form.value.unit ? this.form.value.unit : 'N/A';
     model.ruleId = Number(this.form.value.ruleId);
     model.valid = Number(this.form.value.valid);
 
@@ -223,13 +241,23 @@ export class MaintenanceCommitmentDonationModalComponent
     this.newOrEdit = false;
     const model = {} as any;
     model.labelId = Number(this.form.value.labelId);
-    model.status = this.form.value.status;
-    model.desStatus = this.form.value.desStatus;
-    model.transfereeId = Number(this.form.value.transferentId);
-    model.desTrans = this.form.value.keyCode;
-    model.clasifId = Number(this.form.value.clasifId);
-    model.desClasif = this.form.value.desClasif;
-    model.unit = this.form.value.unit;
+    model.status = this.form.value.status ? this.form.value.status : 'N/A';
+    model.desStatus = this.form.value.desStatus
+      ? this.form.value.desStatus
+      : 'NO APLICA';
+    model.transfereeId = this.form.value.transferentId
+      ? Number(this.form.value.transferentId)
+      : 0;
+    model.desTrans = this.form.value.keyCode
+      ? this.form.value.keyCode
+      : 'NO APLICA';
+    model.clasifId = this.form.value.clasifId
+      ? Number(this.form.value.clasifId)
+      : 0;
+    model.desClasif = this.form.value.desClasif
+      ? this.form.value.desClasif
+      : 'NO APLICA';
+    model.unit = this.form.value.unit ? this.form.value.unit : 'N/A';
     model.ruleId = Number(this.form.value.ruleId);
     model.valid = Number(this.form.value.valid);
     model.amount = Number(this.form.value.amount);
@@ -335,15 +363,26 @@ export class MaintenanceCommitmentDonationModalComponent
     console.log('data update -> ', data);
     const model = {} as any;
     model.labelId = Number(data.labelId);
-    model.status = data.status;
-    model.desStatus = data.desStatus;
-    model.transfereeId = Number(data.transferentId);
-    model.desTrans = data.keyCode;
-    model.clasifId = Number(data.clasifId);
-    model.desClasif = data.desClasif;
-    model.unit = data.unit;
+    model.status = data.status ? data.status : 'N/A';
+    model.desStatus = data.desStatus ? data.desStatus : 'NO APLICA';
+    model.transfereeId = data.transferentId ? Number(data.transferentId) : 0;
+    model.desTrans = data.keyCode ? data.keyCode : 'NO APLICA';
+    model.clasifId = data.clasifId ? Number(data.clasifId) : 0;
+    model.desClasif = data.desClasif ? data.desClasif : 'NO APLICA';
+    model.unit = data.unit ? data.unit : 'N/A';
     model.ruleId = Number(data.ruleId);
     model.valid = Number(data.valid);
+
+    // model.labelId = Number(data.labelId);
+    // model.status = data.status;
+    // model.desStatus = data.desStatus;
+    // model.transfereeId = Number(data.transferentId);
+    // model.desTrans = data.keyCode;
+    // model.clasifId = Number(data.clasifId);
+    // model.desClasif = data.desClasif;
+    // model.unit = data.unit;
+    // model.ruleId = Number(data.ruleId);
+    // model.valid = Number(data.valid);
     console.log('data update 2-> ', model);
 
     this.donationService.editApproveDonation(model).subscribe({
@@ -368,13 +407,13 @@ export class MaintenanceCommitmentDonationModalComponent
     //console.log("data update -> ", data);
     const model = {} as any;
     model.labelId = Number(data.labelId);
-    model.status = data.status;
-    model.desStatus = data.desStatus;
-    model.transfereeId = Number(data.transferentId);
-    model.desTrans = data.keyCode;
-    model.clasifId = Number(data.clasifId);
-    model.desClasif = data.desClasif;
-    model.unit = data.unit;
+    model.status = data.status ? data.status : 'N/A';
+    model.desStatus = data.desStatus ? data.desStatus : 'NO APLICA';
+    model.transfereeId = data.transferentId ? Number(data.transferentId) : 0;
+    model.desTrans = data.keyCode ? data.keyCode : 'NO APLICA';
+    model.clasifId = data.clasifId ? Number(data.clasifId) : 0;
+    model.desClasif = data.desClasif ? data.desClasif : 'NO APLICA';
+    model.unit = data.unit ? data.unit : 'N/A';
     model.ruleId = Number(data.ruleId);
     model.valid = Number(data.valid);
     model.amount = Number(data.amount);
@@ -429,13 +468,13 @@ export class MaintenanceCommitmentDonationModalComponent
   prepareForm() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
-      status: ['', Validators.required],
+      status: [''],
       desStatus: [''],
-      transferentId: ['', Validators.required],
+      transferentId: [''],
       keyCode: [''],
-      clasifId: ['', Validators.required],
+      clasifId: [''],
       desClasif: [''],
-      unit: ['', Validators.required],
+      unit: [''],
       ruleId: ['', Validators.required],
       valid: [''],
     });
@@ -449,13 +488,13 @@ export class MaintenanceCommitmentDonationModalComponent
   prepareFormOthersT() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
-      status: ['', Validators.required],
+      status: [''],
       desStatus: [''],
-      transferentId: ['', Validators.required],
+      transferentId: [''],
       keyCode: [''],
-      clasifId: ['', Validators.required],
+      clasifId: [''],
       desClasif: [''],
-      unit: ['', Validators.required],
+      unit: [''],
       amount: [''],
       ruleId: ['', Validators.required],
       valid: [''],

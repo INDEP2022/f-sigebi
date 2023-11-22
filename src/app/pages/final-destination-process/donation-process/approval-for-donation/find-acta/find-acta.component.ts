@@ -38,7 +38,7 @@ export class FindActaComponent extends BasePage implements OnInit {
   providerForm: FormGroup = new FormGroup({});
   dataTableGoodsActa: LocalDataSource = new LocalDataSource();
   dataFactActas: LocalDataSource = new LocalDataSource();
-  @Input() update: Function;
+  @Input() agregarCaptura: Function;
   @Output() onSave = new EventEmitter<any>();
   @Output() cleanForm = new EventEmitter<any>();
   @Input() idConversion: number | string;
@@ -168,6 +168,7 @@ export class FindActaComponent extends BasePage implements OnInit {
   onUserRowSelect(row: any): void {
     if (row.isSelected) {
       this.selectedRow = row.data;
+      console.log(this.selectedRow);
     } else {
       this.selectedRow = null;
     }
@@ -180,15 +181,19 @@ export class FindActaComponent extends BasePage implements OnInit {
     //     console.log(`${prop}: ${this.selectedRow[0].idConversion}`);
     //   }
     // }
-
     this.onSave.emit(this.selectedRow);
     this.modalRef.hide();
   }
 
   showDeleteMsg($event: any) {
     const data = $event.data;
-    this.detailProceeDelRecService.getGoodsByProceedings(data.id).subscribe({
+    let body = {
+      requestId: data.actId,
+      requestTypeId: 1,
+    };
+    this.donationService.getDetailById(body).subscribe({
       next: data => {
+        console.log(data);
         this.alert(
           'warning',
           'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
@@ -202,39 +207,37 @@ export class FindActaComponent extends BasePage implements OnInit {
   }
 
   deleteD(data: any) {
-    const dataaaID = data.id;
+    const dataaaID = data.actId;
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea Eliminar Este Registro?'
     ).then(async question => {
       if (question.isConfirmed) {
-        this.proceedingsDeliveryReceptionService
-          .deleteProceedingsDeliveryReception(data.id)
-          .subscribe({
-            next: data => {
-              if (this.actaActual)
-                if (this.actaActual.id == dataaaID) {
-                  this.valDelete = true;
-                  this.ejecutarFuncionDesdeModal(true);
-                }
-              this.alert('success', 'Acta Eliminada Correctamente', '');
-              this.getStatusDeliveryCve();
-              // console.log(this.dataTableGoodsActa);
-            },
-            error: error => {
-              this.loading = false;
-              this.totalItems2 = 0;
-              this.alert(
-                'error',
-                'Ocurrió un error al Intentar Eliminar el Acta',
-                ''
-              );
-              // console.log(error);
-              // this.dataFactActas.load([]);
-              // this.dataFactActas.refresh();
-            },
-          });
+        this.donationService.removeEvent(dataaaID).subscribe({
+          next: data => {
+            if (this.actaActual)
+              if (this.actaActual.id == dataaaID) {
+                this.valDelete = true;
+                this.ejecutarFuncionDesdeModal(true);
+              }
+            this.alert('success', 'Acta Eliminada Correctamente', '');
+            this.getStatusDeliveryCve();
+            // console.log(this.dataTableGoodsActa);
+          },
+          error: error => {
+            this.loading = false;
+            this.totalItems2 = 0;
+            this.alert(
+              'error',
+              'Ocurrió un error al Intentar Eliminar el Acta',
+              ''
+            );
+            // console.log(error);
+            // this.dataFactActas.load([]);
+            // this.dataFactActas.refresh();
+          },
+        });
       }
     });
   }

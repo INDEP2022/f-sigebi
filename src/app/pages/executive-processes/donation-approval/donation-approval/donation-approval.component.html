@@ -22,6 +22,7 @@
           <form-field [control]="form.get('preliminaryInquiry')">
             <ngx-select
               [form]="form"
+              [readonly]="true"
               [data]="expedientSelec"
               (fetchItems)="getExpedient($event)"
               bindLabel="name"

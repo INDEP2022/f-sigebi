@@ -3,13 +3,11 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Input,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngrx/store';
+
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
@@ -28,22 +26,18 @@ import {
   IExportDetail,
   IGoodDonation,
 } from 'src/app/core/models/ms-donation/donation.model';
-import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
-import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
-import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
-import { GOOD_TRACKER_ORIGINS } from 'src/app/pages/general-processes/goods-tracker/utils/constants/origins';
+
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { DonAuthorizaService } from '../../donation-authorization-request/donation-authorization-request/service/don-authoriza.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
@@ -56,6 +50,15 @@ import { COPY } from './columns-approval-donation';
   templateUrl: './capture-approval-donation.component.html',
   styles: [
     `
+      .form-radio input[type='radio'] {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .form-radio {
+        padding: 10px 20px;
+      }
       @media screen and (max-width: 767px) {
         #column {
           border-right: 0px !important;
@@ -75,6 +78,7 @@ export class CaptureApprovalDonationComponent
   statusGood_: any;
   deleteO: boolean = false;
   goods: any[] = [];
+  selectedOption: string = '';
   files: any = [];
   radio: boolean = false;
   bienesVaild: boolean = false;
@@ -98,6 +102,7 @@ export class CaptureApprovalDonationComponent
   goodError: IDonationGoodError[];
   dataDetailDonation: any;
   data1: any;
+  columnFilterDet: any[] = [];
   consec: string = '';
   dataDetailDonationGood: LocalDataSource = new LocalDataSource();
   excelLoading: boolean = false;
@@ -116,7 +121,7 @@ export class CaptureApprovalDonationComponent
   selectedRow: IGood;
   origin2: 'FCONGENRASTREADOR';
   fileNumber: number = 0;
-  $trackedGoods = this.store.select(getTrackedGoods);
+
   columnFilters: any = [];
   columnFilterDetail: any = [];
   columnFilters2: any = [];
@@ -130,22 +135,10 @@ export class CaptureApprovalDonationComponent
   eventDonacion: IGoodDonation;
   origin = 'FMCOMDONAC_1';
 
-  @ViewChild('file') file: any;
   donationGood: IGoodDonation;
   paramsScreen: IParamsDonac = {
     origin: '',
   };
-  goodsList: ITrackedGood[] = [];
-  get good(): ITrackedGood[] {
-    return this.goodsList;
-  }
-  @Input() set good(good: ITrackedGood[]) {
-    if (good.length > 0) {
-      this.goodsList = good;
-    } else {
-      this.goodsList = [];
-    }
-  }
 
   constructor(
     private router: Router,
@@ -159,10 +152,7 @@ export class CaptureApprovalDonationComponent
     private changeDetectorRef: ChangeDetectorRef,
     private statusGoodService: StatusGoodService,
     private datePipe: DatePipe,
-    private usersService: UsersService,
-    private detailProceeDelRecService: DetailProceeDelRecService,
-    private donAuthorizaService: DonAuthorizaService,
-    private store: Store
+    private usersService: UsersService
   ) {
     super();
     this.settings = {
@@ -245,26 +235,31 @@ export class CaptureApprovalDonationComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = ``;
+            let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'goodId':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'des_error':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            const search: any = {
+              numberGood: () => (searchFilter = SearchFilter.EQ),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.EQ),
+              unit: () => (searchFilter = SearchFilter.EQ),
+              status: () => (searchFilter = SearchFilter.EQ),
+              noExpediente: () => (searchFilter = SearchFilter.EQ),
+              noEtiqueta: () => (searchFilter = SearchFilter.EQ),
+              idNoWorker1: () => (searchFilter = SearchFilter.EQ),
+              idExpWorker1: () => (searchFilter = SearchFilter.EQ),
+              noClasifBien: () => (searchFilter = SearchFilter.EQ),
+              procesoExtDom: () => (searchFilter = SearchFilter.EQ),
+              warehouseNumb: () => (searchFilter = SearchFilter.EQ),
+              warehouse: () => (searchFilter = SearchFilter.EQ),
+              warehouseLocat: () => (searchFilter = SearchFilter.EQ),
+              coordAdmin: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
             if (filter.search !== '') {
-              this.columnFilterDetail[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              this.columnFilterDet[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilterDetail[field];
+              delete this.columnFilterDet[field];
             }
           });
           this.params = this.pageFilter(this.params);
@@ -291,17 +286,16 @@ export class CaptureApprovalDonationComponent
         }
         if (this.origin !== null) {
           console.log('traigo parametros');
-          this.isValidOrigin();
         }
       });
     this.initForm();
   }
-  oadGoods() {
-    this.donAuthorizaService.loadGoods.next(true);
-  }
+
   enableButtons() {
     if (this.regisForm.get('activeRadio').value !== null) {
       this.radio = true;
+      const nameT = this.regisForm.get('activeRadio').value;
+      localStorage.setItem('nameT', nameT);
     }
   }
 
@@ -310,10 +304,7 @@ export class CaptureApprovalDonationComponent
       type: [null, []],
       area: [null, [Validators.pattern(STRING_PATTERN)]],
       year: [null, []],
-      folio: [
-        null,
-        [Validators.pattern(KEYGENERATION_PATTERN), Validators.maxLength(4)],
-      ],
+      folio: [null],
       captureDate: [null, []],
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       observaciones: [null],
@@ -330,11 +321,9 @@ export class CaptureApprovalDonationComponent
     this.loading = true;
     const folio = this.regisForm.value.folio;
     // const acta = this.regisForm.value.type;
-    let year = this.regisForm.value.year;
+    let year = localStorage.getItem('anio');
     const area = this.regisForm.value.area;
-    let folio_ = folio.toString().padStart(4, '0');
-    this.foolio = folio_;
-    const cveActa = `${'COMPDON'}/${area}/${year}/${folio_}/${this.type}`;
+    const cveActa = `${'COMPDON'}/${area}/${year}/${this.foolio}/${this.type}`;
     console.log('cveActa -->', cveActa);
     this.donationService.createD(donationGood).subscribe({
       next: resp => {
@@ -355,6 +344,12 @@ export class CaptureApprovalDonationComponent
         this.regisForm.get('type').setValue('COMPDON');
         this.regisForm.get('area').setValue(localStorage.getItem('area'));
         this.estatus = this.eventDonacion.estatusAct;
+        const dateCapture =
+          this.eventDonacion.captureDate != null
+            ? new Date(this.eventDonacion.captureDate)
+            : null;
+        const formattedfecCapture =
+          dateCapture != null ? this.formatDate(dateCapture) : null;
         console.log(this.eventDonacion);
         if (this.estatus != 'ABIERTA') {
           this.deleteO = true;
@@ -367,15 +362,10 @@ export class CaptureApprovalDonationComponent
         if (isNaN(anio)) {
           return null;
         }
-        const fechaActual = new Date();
-        const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
-        const anioCompleto = anio < 100 ? sigloActual + anio : anio;
-        this.regisForm.get('year').setValue(anioCompleto);
+        this.regisForm.get('year').setValue(localStorage.getItem('anio'));
         this.regisForm.get('folio').setValue(data.folioUniversal);
         this.regisForm.get('keyEvent').setValue(this.eventDonacion.cveAct);
-        this.regisForm
-          .get('captureDate')
-          .setValue(localStorage.getItem('captureDate'));
+        this.regisForm.get('captureDate').setValue(formattedfecCapture);
         this.getDetailProceedingsDevollution(this.idAct);
         this.regisForm.get('observaciones').setValue(data.observations);
       },
@@ -383,21 +373,6 @@ export class CaptureApprovalDonationComponent
         console.error('error');
       },
     });
-  }
-  isGoodSelectedT(_good: ITrackedGood) {
-    const exists = this.selectedGooods.find(
-      good => good.goodNumber == _good.goodNumber
-    );
-    return exists ? true : false;
-  }
-
-  private isValidOrigin() {
-    return (
-      this.origin !== null &&
-      Object.values(GOOD_TRACKER_ORIGINS).includes(
-        this.origin as unknown as GOOD_TRACKER_ORIGINS
-      )
-    );
   }
 
   ubicaGood() {
@@ -504,37 +479,46 @@ export class CaptureApprovalDonationComponent
     console.log('this.bienes1 -->');
   }
 
-  // getDetailDonation(actaId: string | number) {
-  //   const params = new ListParams();
-  //   params['filter.recordId'] = actaId;
-  //   params['filter.good.status'] = 'DON';
-  //   this.donationService.getEventComDonationDetail(params).subscribe({
-  //     next: data => {
-  //       console.log(data);
-  //       this.dataDetailDonation = data.data;
-  //       this.dataDetailDonationGood.load(this.dataDetailDonation);
-  //       this.dataDetailDonationGood.refresh();
-  //       this.totalItems = data.count;
-  //     },
-  //     error: () => console.error('no hay detalle acta'),
-  //   });
-  // }
   async getDetailProceedingsDevollution(id: any) {
     this.loading3 = true;
     let params: any = {
-      ...this.paramsList2.getValue(),
-      ...this.columnFilters2,
+      ...this.params.getValue(),
+      ...this.columnFilterDet,
     };
     params['filter.recordId'] = `$eq:${this.idAct}`;
+    // params['filter.good.status'] = `$eq:DON`;
+
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
         next: data => {
-          let result: any[] = [];
-          result = data.data.map((item: any) => {
+          // let result: any[] = [];
+          // result = data.data.map((item: any) => {
+          //   item['description'] = item.good ? item.good.description : null;
+          //   this.BIEN_ERROR += item['error'];
+          //   this.SUM_BIEN += item['amount'] = item.amount ? item.amount : null;
+          //   const status = (item['status'] = item.good.status
+          //     ? item.good.status
+          //     : null
+          //     ? item.good.status
+          //     : null);
+          //   if (status === null) {
+          //     this.errorSumInvalidos += status.length;
+          //   } else {
+          //     this.errorSumValidos += status.length;
+          //   }
+          // });
+
+          // Promise.all(result).then(items => {
+          //   this.dataDetailDonation = data.data;
+          //   this.dataDetailDonationGood.load(this.dataDetailDonation);
+          //   this.dataDetailDonationGood.refresh();
+          //   this.totalItems2 = data.count;
+          //   this.TOTAL_REPORTE = this.totalItems2;
+          let result = data.data.map((item: any) => {
             item['description'] = item.good ? item.good.description : null;
-            this.BIEN_ERROR += item['error'];
-            this.SUM_BIEN += item['cant'] = item.good ? item.good.cant : null;
-            const status = (item['status'] = item.good
+            const status = (item['status'] = item.good.status
+              ? item.good.status
+              : null
               ? item.good.status
               : null);
             if (status === null) {
@@ -544,15 +528,12 @@ export class CaptureApprovalDonationComponent
             }
           });
 
-          Promise.all(result).then(items => {
+          Promise.all(result).then(item => {
             this.dataDetailDonation = data.data;
-            console.log(this.dataDetailDonation);
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
-            this.totalItems2 = data.count;
-            this.TOTAL_REPORTE = this.totalItems2;
-
-            console.log('data', data);
+            this.totalItems2 = data.count ?? 0;
+            console.log('getDetailProceedingsDevollution', data);
             this.loading3 = false;
             this.Exportdate = true;
           });
@@ -580,8 +561,19 @@ export class CaptureApprovalDonationComponent
   }
 
   getEventComDonationExcel(body: IExportDetail): void {
-    this.excelLoading = true;
-    if (this.dataDetailDonationGood != null) {
+    if (this.estatus === 'CERRADA') {
+      this.alert(
+        'warning',
+        'El evento está cerrado, no se puede descargar el archivo',
+        ''
+      );
+      return;
+    }
+    if (this.dataDetailDonationGood.count() == 0) {
+      this.alert('warning', 'No hay bienes para descargar', '');
+      return;
+    } else {
+      this.excelLoading = true;
       this.donationService.getExcel(body).subscribe({
         next: data => {
           this.excelLoading = false;
@@ -599,12 +591,10 @@ export class CaptureApprovalDonationComponent
           // this.modalRef.hide();
         },
         error: error => {
-          this.loading = false;
+          this.excelLoading = false;
+          this.alert('warning', 'No hay Datos para Exportar', '');
         },
       });
-    } else {
-      this.excelLoading = false;
-      this.alert('warning', 'No hay Datos para Exportar', '');
     }
   }
 
@@ -786,6 +776,10 @@ export class CaptureApprovalDonationComponent
         );
         return;
       }
+      if (this.dataDetailDonationGood.count() == 0) {
+        this.alert('warning', 'No hay bienes para eliminar', '');
+        return;
+      }
       if (this.selectedGooodsValid.length == 0) {
         this.alert(
           'warning',
@@ -860,8 +854,8 @@ export class CaptureApprovalDonationComponent
         recordId: this.idAct,
         goodId: good.goodId,
         amount: good.amount,
-        received: 0,
-        exchangeValue: this.regisForm.get('activeRadio').value | 0,
+        received: good.received,
+        exchangeValue: good.exchangeValue | 0,
         registrationId: good.registreNumber,
       };
 
@@ -965,6 +959,7 @@ export class CaptureApprovalDonationComponent
     this.TOTAL_REPORTE = 0;
     this.BIEN_ERROR = 0;
     this.SUM_BIEN = 0;
+    localStorage.removeItem('nameT');
   }
 
   searchActas(actas?: string) {
@@ -992,7 +987,8 @@ export class CaptureApprovalDonationComponent
       this.regisForm.reset();
       //this.formScan.reset();
       this.eventDonacion = next;
-
+      this.SUM_BIEN = 0;
+      this.BIEN_ERROR = 0;
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;
       const formattedfecElaborate =
@@ -1028,8 +1024,7 @@ export class CaptureApprovalDonationComponent
         type: this.type,
         area: localStorage.getItem('area'),
         keyEvent: next.cveAct,
-        mes: next.captureDate,
-        year: next.captureDate,
+        year: localStorage.getItem('anio'),
         testigoOne: next.witness1,
         testigoTree: next.witness2,
         elaboradate: formattedfecElaborate,
@@ -1050,54 +1045,31 @@ export class CaptureApprovalDonationComponent
   }
   generarDatosDesdeUltimosCincoDigitos(
     claveActa: string
-  ): { anio: number; mes: string } | null {
+  ): { anio: number } | null {
     // Verificar que la longitud de la clave sea la esperada
     if (claveActa.length < 5) {
       return null; // Clave no válida
     }
 
-    const ultimosCincoDigitos = claveActa.slice(-4);
+    const ultimosCincoDigitos = claveActa.slice(-5);
     const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
     const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
-    if (
-      isNaN(anio) ||
-      isNaN(mesNumero) ||
-      anio < 0 ||
-      mesNumero < 1 ||
-      mesNumero > 12
-    ) {
+    if (isNaN(anio) || anio < 0) {
       return null;
     }
 
-    const mesesTexto = [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre',
-    ];
-
-    const mesTexto = mesesTexto[mesNumero - 1];
     const fechaActual = new Date();
     const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
     const anioCompleto = anio < 100 ? sigloActual + anio : anio;
 
     this.regisForm.patchValue({
       year: anioCompleto,
-      mes: mesTexto,
     });
 
-    return { anio: anioCompleto, mes: mesTexto };
+    return { anio: anioCompleto };
   }
 
-  agregarCaptura() {
+  agregarCaptura(create?: any) {
     // const testigoOne = this.regisForm.get('testigoOne').value;
     // const testigoTree = this.regisForm.get('testigoTree').value;
     const modalConfig = MODAL_CONFIG;
@@ -1105,7 +1077,7 @@ export class CaptureApprovalDonationComponent
       delegationToolbar: this.delegationToolbar,
       fileNumber: this.fileNumber,
       expedient: this.fileNumber,
-      // testigoTree,
+      create,
       // testigoOne,
     };
 
@@ -1117,60 +1089,45 @@ export class CaptureApprovalDonationComponent
           'Se cargó la información del Evento',
           next.cveAct
         );
-      }
+        console.log('acta NEXT ', next);
+        this.idAct = next.actId;
+        localStorage.setItem('actaId', next.actId);
+        const dateElabora =
+          next.elaborationDate != null ? new Date(next.elaborationDate) : null;
+        const formattedfecElaborate =
+          dateElabora != null ? this.formatDate(dateElabora) : null;
 
+        const dateCapture =
+          next.captureDate != null ? new Date(next.captureDate) : null;
+        const formattedfecCapture =
+          dateCapture != null ? this.formatDate(dateCapture) : null;
+
+        this.regisForm.patchValue({
+          folio: next.folioUniversal,
+          type: next.actType,
+          area: localStorage.getItem('area'),
+          keyEvent: next.cveAct,
+          anio: localStorage.getItem('anio'),
+          testigoOne: next.witness1,
+          testigoTree: next.witness2,
+          elaboradate: next.captureDate,
+          captureDate: formattedfecCapture,
+        });
+      }
+      this.SUM_BIEN = 0;
+      this.BIEN_ERROR = 0;
       this.totalItems2 = 0;
       this.eventdetailDefault = next;
       this.estatus = next.estatusAct;
       if (this.estatus == 'CERRADA') {
-        //this.disabledBtnCerrar = false;
         this.disabledBtnActas = false;
       } else {
         this.disabledBtnActas = true;
-        //this.disabledBtnCerrar = true;
       }
-      //Se limpia el campo de folio de escaneo cuando se genera nueva acta
-      // this.formScan.reset();
-
-      // Const formato de fecha
-      const dateElabora =
-        next.elaborationDate != null ? new Date(next.elaborationDate) : null;
-      const formattedfecElaborate =
-        dateElabora != null ? this.formatDate(dateElabora) : null;
-
-      const dateActa =
-        next.datePhysicalReception != null
-          ? new Date(next.datePhysicalReception)
-          : null;
-      const formattedfecActa =
-        dateActa != null ? this.formatDate(dateActa) : null;
-
-      const dateCapture =
-        next.captureDate != null ? new Date(next.captureDate) : null;
-      const formattedfecCapture =
-        dateCapture != null ? this.formatDate(dateCapture) : null;
-
-      this.regisForm.patchValue({
-        acta: next.actId,
-        consec: next.numeraryFolio,
-        type: next.actType,
-        cveActa: next.cveAct,
-        respConv: next.elaborated,
-        testigoOne: next.witness1,
-        testigoTree: next.witness2,
-        observaciones: next.observations,
-        elaboradate: formattedfecElaborate,
-        fechaact: formattedfecActa,
-        fechacap: formattedfecCapture,
-      });
-
-      // this.data1 = next.estatusAct;
-      // Se mapea Mes  y año al crear nueva acta
-      this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
+      // this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
 
       await this.getDetailProceedingsDevollution(next.actId);
     });
-    // console.log(this.authService.decodeToken());
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
@@ -1358,11 +1315,11 @@ export class CaptureApprovalDonationComponent
     }
     this.selectedGooodsValid.forEach(good => {
       let obj: any = {
-        recordId: this.idAct,
+        recordId: localStorage.getItem('actaId'),
         goodId: good.goodId,
         amount: good.amount,
         received: 1,
-        exchangeValue: this.regisForm.get('activeRadio').value | 0,
+        exchangeValue: good.exchangeValue ?? 0,
         registrationId: good.registrationId,
       };
       this.updateBienDetalle(good.goodId, 'CPD');
@@ -1449,13 +1406,13 @@ export class CaptureApprovalDonationComponent
         this.alert(
           'success',
           'Se actualizó la información del Bien',
-          next.goodId
+          next.goodNumber
         );
       }
-      await this.updateGood(next.goodId);
+      await this.updateGood(next.goodNumber);
     });
   }
-  updateGood(goodId: number) {}
+  updateGood(goodNumber: number | string) {}
 }
 
 export interface IParamsDonac {

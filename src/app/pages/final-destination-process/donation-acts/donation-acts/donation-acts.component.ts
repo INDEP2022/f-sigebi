@@ -212,6 +212,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
   years: number[] = [];
   currentYear: number = new Date().getFullYear();
+  currentMonth: number = new Date().getMonth();
   months = [
     { value: 1, label: '01' },
     { value: 2, label: '02' },
@@ -226,7 +227,8 @@ export class DonationActsComponent extends BasePage implements OnInit {
     { value: 11, label: '11' },
     { value: 12, label: '12' },
   ];
-  valClave: boolean = true;
+  valClave: boolean = false;
+  btnSave: boolean = false;
   constructor(
     private fb: FormBuilder,
     private expedientService: ExpedientService,
@@ -491,7 +493,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
       don: [],
       es_acta: [null],
       cv_acta: [],
-      observations: [],
+      observations: [Validators.pattern(STRING_PATTERN)],
       fec_elaboracion: [],
       nom_entrega: [],
       fec_don: [],
@@ -504,11 +506,11 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
     this.actaRecepttionForm = this.fb.group({
       cveActa: [null],
-      direccion: [null],
-      observaciones: [null],
-      testigoOIC: [null],
-      testigoTwo: [null],
-      testigoTree: [null],
+      direccion: [null, Validators.pattern(STRING_PATTERN)],
+      observaciones: [null, Validators.pattern(STRING_PATTERN)],
+      testigoOIC: [null, Validators.pattern(STRING_PATTERN)],
+      testigoTwo: [null, Validators.pattern(STRING_PATTERN)],
+      testigoTree: [null, Validators.pattern(STRING_PATTERN)],
       respConv: [null],
       parrafo1: [null],
       parrafo2: [null],
@@ -540,12 +542,15 @@ export class DonationActsComponent extends BasePage implements OnInit {
     this.totalItems3 = 0;
     this.datas.load([]);
     this.data2.load([]);
-
+    0;
+    this.valClave = false;
+    this.btnSave = false;
     this.actaRecepttionForm.patchValue({
       elaboradate: await this.getDate(),
       datePhysicalReception: await this.getDate(),
     });
     this.claveActaForm.get('anio').setValue(this.currentYear);
+    // this.claveActaForm.get('mes').setValue(this.currentMonth)
   }
 
   settingsChange(event: any, op: number) {
@@ -1470,6 +1475,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
         });
 
         this.valClave = false;
+        this.btnSave = true;
         let clave = await this.obtenerValores(this.actaDefault.keysProceedings);
         // this.claveActaForm.patchValue({
         //   acta: clave[0],
@@ -1503,7 +1509,12 @@ export class DonationActsComponent extends BasePage implements OnInit {
       datePhysicalReception: await this.getDate(),
     });
     this.valClave = true;
+    this.btnSave = true;
     this.claveActaForm.get('anio').setValue(this.currentYear);
+    this.consulREG_DEL_ADMIN(new ListParams());
+    this.consultREG_TRANSFERENTES(new ListParams());
+    this.consulREG_DEL_DESTR(new ListParams());
+    // this.claveActaForm.get('mes').setValue(11);
   }
 
   actualizarActa() {
@@ -1518,7 +1529,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
     if (!this.actaRecepttionForm.value.elaboradate)
       return (
-        this.actaRecepttionForm.get('elaboradate').markAsTouched(),
+        // this.actaRecepttionForm.controls['elaboradate'].markAsTouched(),
         this.alert('warning', 'La fecha de elaboración no puede ser vacía', '')
       );
 
@@ -1796,13 +1807,13 @@ export class DonationActsComponent extends BasePage implements OnInit {
   agregarActa() {
     if (!this.claveActaForm.value.cveReceived)
       return (
-        this.actaRecepttionForm.get('cveReceived').markAsTouched(),
+        // this.actaRecepttionForm.get('cveReceived').markAsTouched(),
         this.alert('warning', 'El campo Admin no puede ir vacío', '')
       );
 
     if (!this.actaRecepttionForm.value.elaboradate)
       return (
-        this.actaRecepttionForm.get('elaboradate').markAsTouched(),
+        // this.actaRecepttionForm.get('elaboradate').markAsTouched(),
         this.alert('warning', 'La fecha de elaboración no puede ser vacía', '')
       );
 
@@ -1923,10 +1934,19 @@ export class DonationActsComponent extends BasePage implements OnInit {
     this.proceedingsDeliveryReceptionService
       .createDeliveryReception(obj)
       .subscribe({
-        next: (data: any) => {
+        next: async (data: any) => {
           console.log('DATA', data);
           this.actaDefault = data;
           this.alert('success', 'El Acta se ha creado correctamente', '');
+
+          this.claveActaForm.reset();
+          this.valClave = false;
+          this.actaRecepttionForm.patchValue({
+            elaboradate: await this.getDate(),
+            datePhysicalReception: await this.getDate(),
+          });
+          this.claveActaForm.get('anio').setValue(this.currentYear);
+
           this.actualizarData();
         },
         error: error => {

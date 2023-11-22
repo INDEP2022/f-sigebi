@@ -17,4 +17,5 @@ export enum DonationEndPoint {
   DeleteGoodDon = 'donac-request-good',
   Inventary = 'donate-invent-rel/invent-rel',
   CreateInventary = 'donate-invent-rel',
+  DetailEventComByID = 'detail-event-com-don/find-one',
 }
