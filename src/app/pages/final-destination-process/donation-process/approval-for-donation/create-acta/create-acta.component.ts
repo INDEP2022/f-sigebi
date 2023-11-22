@@ -46,7 +46,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   cveActa: string = '';
   idActa: number = 0;
   @Output() onSave = new EventEmitter<any>();
-  arrayDele = new DefaultSelect<any>();
+  arrayDele: any[] = [];
   dele = new DefaultSelect<any>();
   trans = new DefaultSelect<any>();
   expedient: any;
@@ -88,12 +88,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.generaConsec();
     this.actaForm();
-    this.from = this.datePipe.transform(
-      this.actaRecepttionForm.controls['captureDate'].value,
-      'dd/MM/yyyy'
-    );
+    console.log(this.foolio);
     this.delegation = Number(localStorage.getItem('area'));
-    // this.consulREG_DEL_ADMIN(lparams: ListParams);
+    this.consulREG_DEL_DESTR(new ListParams());
+    this.consulREG_DEL_ADMIN(new ListParams());
+    this.consulREG_DEL_ADMIN1();
     for (let i = 1900; i <= this.currentYear; i++) {
       this.years.push(i);
     }
@@ -103,9 +102,10 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.actaRecepttionForm = this.fb.group({
       acta: [null, Validators.required],
       type: [null],
-      administra: [null],
+      administra: [null, Validators.required],
       consec: [null],
-      // cveReceived: [null, Validators.required],
+      anio: [null],
+      fileId: [null, [Validators.required]],
       observaciones: [null],
       testigoOne: [null, [Validators.required]],
       testigoOIC: [null, [Validators.required]],
@@ -113,7 +113,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     });
     this.actaRecepttionForm.get('consec').setValue(this.foolio);
     this.actaRecepttionForm.patchValue({
-      captureDate: new Date(),
+      captureDate: await this.getDate(),
     });
   }
   async delegationWhere() {
@@ -162,6 +162,23 @@ export class CreateActaComponent extends BasePage implements OnInit {
       },
     });
   }
+  consulREG_DEL_ADMIN1() {
+    let obj = {
+      gst_todo: 'TODO',
+      gnu_delegacion: this.delegation,
+      gst_rec_adm: 'FILTRAR',
+    };
+    this.historicalService.getHistoricalConsultDelegation(obj).subscribe({
+      next: (data: any) => {
+        console.log('data', data);
+        this.arrayDele = data.data;
+      },
+      error: error => {
+        this.arrayDele = [];
+      },
+    });
+  }
+
   stagecreated: any = null;
   async get___Senders(lparams: ListParams) {
     const params = new FilterParams();
@@ -253,19 +270,16 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const administra = this.actaRecepttionForm.value.administra
       ? this.actaRecepttionForm.value.administra
       : 'COMPDON';
-    const consec = this.actaRecepttionForm.value.consec;
+    const consec = this.foolio;
     this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
     this.witnessTes = this.actaRecepttionForm.value.testigoOne;
-    const anio = this.actaRecepttionForm.value.captureDate;
+    const anio = this.actaRecepttionForm.value.anio;
 
-    const miCadenaAnio = anio.slice(0, 4);
-    // localStorage.setItem('actaId', acta);
     localStorage.setItem('anio', anio);
     console.log('AÑO', anio);
-    // let consec_ = consec.toString().padStart(4, '0');
-    // this.foolio = consec;
+
     console.log('numeraryFolio - >', this.foolio);
-    this.cveActa = `${acta}/${administra}/${miCadenaAnio}/${type}${this.foolio}`;
+    this.cveActa = `${acta}/${administra}/${anio}/${this.foolio}`;
     console.log('cveActa -->', this.cveActa);
     localStorage.setItem('cveAc', this.cveActa);
     if (this.cveActa) {
@@ -298,7 +312,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       .subscribe({
         next: (data: any) => {
           console.log('DATA', data);
-          this.foolio = data;
+          this.foolio = data.folioMax;
         },
         error: error => {
           this.foolio = 0;
@@ -313,7 +327,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       elaborationDate: new Date(),
       estatusAct: 'ABIERTA',
       elaborated: this.authService.decodeToken().username,
-      // fileId: this.actaRecepttionForm.value.fileId,
+      fileId: this.actaRecepttionForm.value.fileId,
       witness1: this.actaRecepttionForm.value.testigoOne,
       witness2: this.actaRecepttionForm.value.testigoOIC,
       actType: 'COMPDON',
