@@ -29,6 +29,7 @@ import {
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -36,7 +37,6 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
-
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
@@ -46,6 +46,13 @@ import { RopIdComponent } from '../rop-id/rop-id.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
 
+interface NotData {
+  id: number;
+  reason: string;
+}
+interface IDs {
+  No_bien: number;
+}
 @Component({
   selector: 'app-capture-approval-donation',
   templateUrl: './capture-approval-donation.component.html',
@@ -75,12 +82,15 @@ export class CaptureApprovalDonationComponent
   regisForm: FormGroup;
   delForm: FormGroup;
   siabForm: FormGroup;
+  idsNotExist: NotData[] = [];
   foolio: number;
   statusGood_: any;
   deleteO: boolean = false;
   goods: any[] = [];
   totalCant: any[] = [];
   selectedOption: string = '';
+  showError: boolean = true;
+  availableToAssing: boolean = true;
   files: any = [];
   radio: boolean = false;
   bienesVaild: boolean = false;
@@ -107,6 +117,7 @@ export class CaptureApprovalDonationComponent
   data1: any;
   columnFilterDet: any[] = [];
   consec: string = '';
+  data: LocalDataSource = new LocalDataSource();
   dataDetailDonationGood: LocalDataSource = new LocalDataSource();
   excelLoading: boolean = false;
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -156,7 +167,8 @@ export class CaptureApprovalDonationComponent
     private statusGoodService: StatusGoodService,
     private datePipe: DatePipe,
     private usersService: UsersService,
-    private globalVarService: GlobalVarsService
+    private globalVarService: GlobalVarsService,
+    private goodTrackerService: GoodTrackerService
   ) {
     super();
     this.settings = {
@@ -232,23 +244,23 @@ export class CaptureApprovalDonationComponent
   }
 
   ngOnInit(): void {
-    this.globalVarService
-      .getGlobalVars$()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: global => {
-          this.ngGlobal = global;
-          if (this.ngGlobal.REL_BIENES) {
-            console.log('RASTREADOR ', this.ngGlobal.REL_BIENES);
-            this.goodById();
-            // this.createMultipleRecords(this.ngGlobal.REL_BIENES);
-            // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
-            // console.log(this.selectedGooodsValid);
-            // this.dataGoodTable.load(this.selectedGooodsValid);
-            // this.dataGoodTable.refresh();
-          }
-        },
-      });
+    // this.globalVarService
+    //   .getGlobalVars$()
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe({
+    //     next: global => {
+    //       this.ngGlobal = global;
+    //       if (this.ngGlobal.REL_BIENES) {
+    //         console.log('RASTREADOR ', this.ngGlobal.REL_BIENES);
+    //         this.goodById();
+    //         // this.createMultipleRecords(this.ngGlobal.REL_BIENES);
+    //         // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
+    //         // console.log(this.selectedGooodsValid);
+    //         // this.dataGoodTable.load(this.selectedGooodsValid);
+    //         // this.dataGoodTable.refresh();
+    //       }
+    //     },
+    //   });
     this.dataDetailDonationGood
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -310,6 +322,81 @@ export class CaptureApprovalDonationComponent
         }
       });
     this.initForm();
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          console.log({
+            longitud_tabla: this.dataDetailDonationGood['data'].length,
+          });
+          if (
+            this.ngGlobal.REL_BIENES &&
+            this.dataDetailDonationGood['data'].length == 0
+          ) {
+            console.log(this.ngGlobal.REL_BIENES);
+            const paramsF = new FilterParams();
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            this.goodTrackerService
+              .getAllTmpTracker(paramsF.getParams())
+              .subscribe(res => {
+                console.log(res);
+                this.loading = true;
+                let count = 0;
+                res['data'].forEach(good => {
+                  count = count + 1;
+                  this.goodService.getById(good.goodNumber).subscribe({
+                    next: response => {
+                      console.log(response);
+                      const newGoodId = JSON.parse(JSON.stringify(response))
+                        .data[0].goodId;
+                      console.log(newGoodId);
+                      const exists = this.goods.some(
+                        e => e.goodId === newGoodId
+                      );
+                      console.log(exists);
+                      if (!exists) {
+                        this.goods.push({
+                          ...JSON.parse(JSON.stringify(response)).data[0],
+                          avalaible: null,
+                        });
+                      }
+
+                      console.log(this.goods);
+                      this.addStatus();
+                      /* this.validGood(JSON.parse(JSON.stringify(response)).data[0]); */ //!SE TIENE QUE REVISAR
+                    },
+                    error: err => {
+                      if (err.error.message === 'No se encontrarón registros')
+                        this.idsNotExist.push({
+                          id: good.goodNumber,
+                          reason: err.error.message,
+                        });
+                    },
+                  });
+                  if (count === res['data'].length) {
+                    this.loading = false;
+                    this.showError = true;
+                    this.availableToAssing = true;
+                  }
+                });
+              });
+          }
+        },
+      });
+  }
+  addStatus() {
+    /* this.data.load(this.goods); */
+    this.paginator();
+    this.data.refresh();
+  }
+  paginator(noPage: number = 1, elementPerPage: number = 10) {
+    const indiceInicial = (noPage - 1) * elementPerPage;
+    const indiceFinal = indiceInicial + elementPerPage;
+
+    let paginateData = this.goods.slice(indiceInicial, indiceFinal);
+    this.data.load(paginateData);
   }
   async goodById() {
     this.goodService.getGoodByIds(this.ngGlobal.REL_BIENES).subscribe({
@@ -654,7 +741,6 @@ export class CaptureApprovalDonationComponent
   goodSelectedChange(good: IGood, selected: boolean) {
     if (selected) {
       this.selectedGooods.push(good);
-      console.log(this.selectedGooods);
     } else {
       this.selectedGooods = this.selectedGooods.filter(
         _good => _good.id != good.id
