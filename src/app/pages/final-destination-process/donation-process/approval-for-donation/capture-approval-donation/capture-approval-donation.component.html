@@ -79,16 +79,20 @@
                 </form-field>
               </div>
             </div>
+
             <div class="col-md-5">
-              <div class="mb-3 pl-4 pr-4">
+              <div>
                 <form-field
                   [control]="regisForm.get('captureDate')"
                   label="Fecha Captura">
                   <input
+                    #datepickerElement
                     type="text"
-                    class="form-control"
+                    readonly
+                    class="form-control pt-1"
                     formControlName="captureDate"
-                    readonly />
+                    bsDatepicker
+                    [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
                 </form-field>
               </div>
             </div>

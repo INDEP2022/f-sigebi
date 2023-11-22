@@ -187,24 +187,22 @@ export class FindActaComponent extends BasePage implements OnInit {
 
   showDeleteMsg($event: any) {
     const data = $event.data;
-    this.detailProceeDelRecService
-      .getGoodsByProceedings(data.actaId)
-      .subscribe({
-        next: data => {
-          this.alert(
-            'warning',
-            'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
-            ''
-          );
-        },
-        error: error => {
-          this.deleteD(data);
-        },
-      });
+    this.detailProceeDelRecService.getGoodsByProceedings(data.actId).subscribe({
+      next: data => {
+        this.alert(
+          'warning',
+          'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
+          ''
+        );
+      },
+      error: error => {
+        this.deleteD(data);
+      },
+    });
   }
 
   deleteD(data: any) {
-    const dataaaID = data.id;
+    const dataaaID = data.actId;
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -212,7 +210,7 @@ export class FindActaComponent extends BasePage implements OnInit {
     ).then(async question => {
       if (question.isConfirmed) {
         this.proceedingsDeliveryReceptionService
-          .deleteProceedingsDeliveryReception(data.id)
+          .deleteProceedingsDeliveryReception(dataaaID)
           .subscribe({
             next: data => {
               if (this.actaActual)

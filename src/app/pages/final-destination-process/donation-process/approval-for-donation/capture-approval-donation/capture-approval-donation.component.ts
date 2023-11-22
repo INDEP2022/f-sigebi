@@ -1050,7 +1050,7 @@ export class CaptureApprovalDonationComponent
   }
   generarDatosDesdeUltimosCincoDigitos(
     claveActa: string
-  ): { anio: number; mes: string } | null {
+  ): { anio: number } | null {
     // Verificar que la longitud de la clave sea la esperada
     if (claveActa.length < 5) {
       return null; // Clave no válida
@@ -1059,42 +1059,19 @@ export class CaptureApprovalDonationComponent
     const ultimosCincoDigitos = claveActa.slice(-4);
     const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
     const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
-    if (
-      isNaN(anio) ||
-      isNaN(mesNumero) ||
-      anio < 0 ||
-      mesNumero < 1 ||
-      mesNumero > 12
-    ) {
+    if (isNaN(anio) || anio < 0) {
       return null;
     }
 
-    const mesesTexto = [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre',
-    ];
-
-    const mesTexto = mesesTexto[mesNumero - 1];
     const fechaActual = new Date();
     const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
     const anioCompleto = anio < 100 ? sigloActual + anio : anio;
 
     this.regisForm.patchValue({
       year: anioCompleto,
-      mes: mesTexto,
     });
 
-    return { anio: anioCompleto, mes: mesTexto };
+    return { anio: anioCompleto };
   }
 
   agregarCaptura(create?: any) {
@@ -1117,60 +1094,45 @@ export class CaptureApprovalDonationComponent
           'Se cargó la información del Evento',
           next.cveAct
         );
+        console.log('acta NEXT ', next);
+        this.idAct = next.actId;
+        localStorage.setItem('actaId', next.actId);
+        const dateElabora =
+          next.elaborationDate != null ? new Date(next.elaborationDate) : null;
+        const formattedfecElaborate =
+          dateElabora != null ? this.formatDate(dateElabora) : null;
+
+        const dateCapture =
+          next.captureDate != null ? new Date(next.captureDate) : null;
+        const formattedfecCapture =
+          dateCapture != null ? this.formatDate(dateCapture) : null;
+
+        this.regisForm.patchValue({
+          folio: next.folioUniversal,
+          type: next.actType,
+          area: localStorage.getItem('area'),
+          keyEvent: next.cveAct,
+          anio: next.anio,
+          testigoOne: next.witness1,
+          testigoTree: next.witness2,
+          elaboradate: next.captureDate,
+          captureDate: formattedfecCapture,
+        });
       }
 
       this.totalItems2 = 0;
       this.eventdetailDefault = next;
       this.estatus = next.estatusAct;
       if (this.estatus == 'CERRADA') {
-        //this.disabledBtnCerrar = false;
         this.disabledBtnActas = false;
       } else {
         this.disabledBtnActas = true;
-        //this.disabledBtnCerrar = true;
       }
-      //Se limpia el campo de folio de escaneo cuando se genera nueva acta
-      // this.formScan.reset();
 
-      // Const formato de fecha
-      const dateElabora =
-        next.elaborationDate != null ? new Date(next.elaborationDate) : null;
-      const formattedfecElaborate =
-        dateElabora != null ? this.formatDate(dateElabora) : null;
-
-      const dateActa =
-        next.datePhysicalReception != null
-          ? new Date(next.datePhysicalReception)
-          : null;
-      const formattedfecActa =
-        dateActa != null ? this.formatDate(dateActa) : null;
-
-      const dateCapture =
-        next.captureDate != null ? new Date(next.captureDate) : null;
-      const formattedfecCapture =
-        dateCapture != null ? this.formatDate(dateCapture) : null;
-
-      this.regisForm.patchValue({
-        acta: next.actId,
-        consec: next.numeraryFolio,
-        type: next.actType,
-        cveActa: next.cveAct,
-        respConv: next.elaborated,
-        testigoOne: next.witness1,
-        testigoTree: next.witness2,
-        observaciones: next.observations,
-        elaboradate: formattedfecElaborate,
-        fechaact: formattedfecActa,
-        fechacap: formattedfecCapture,
-      });
-
-      // this.data1 = next.estatusAct;
-      // Se mapea Mes  y año al crear nueva acta
       this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
 
       await this.getDetailProceedingsDevollution(next.actId);
     });
-    // console.log(this.authService.decodeToken());
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
