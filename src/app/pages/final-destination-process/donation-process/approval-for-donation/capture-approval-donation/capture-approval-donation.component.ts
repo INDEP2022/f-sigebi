@@ -79,6 +79,7 @@ export class CaptureApprovalDonationComponent
   statusGood_: any;
   deleteO: boolean = false;
   goods: any[] = [];
+  totalCant: any[] = [];
   selectedOption: string = '';
   files: any = [];
   radio: boolean = false;
@@ -112,7 +113,7 @@ export class CaptureApprovalDonationComponent
   bsValueToYear: Date = new Date();
   TOTAL_REPORTE: number = 0;
   BIEN_ERROR: number = 0;
-  SUM_BIEN: number = 0;
+  SUM_BIEN: string = '';
   validChange: number = 0;
   minModeToYear: BsDatepickerViewMode = 'year'; // change for month:year
   bsConfigToYear: Partial<BsDatepickerConfig>;
@@ -313,12 +314,7 @@ export class CaptureApprovalDonationComponent
   async goodById() {
     this.goodService.getGoodByIds(this.ngGlobal.REL_BIENES).subscribe({
       next: data => {
-        this.selectedGooods = data.data;
-        const exists = this.selectedGooods.find(good => good.id == good.id);
-        !exists ? false : true;
-        if (!exists) {
-          console.log(this.selectedGooods);
-        }
+        this.isGoodSelected(data.data);
       },
       error: () => console.log('no hay bienes'),
     });
@@ -519,8 +515,7 @@ export class CaptureApprovalDonationComponent
       ...this.columnFilterDet,
     };
     params['filter.recordId'] = `$eq:${this.idAct}`;
-    // params['filter.good.status'] = `$eq:DON`;
-
+    params['filter.good.status'] !== `$eq:ROP`;
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
         next: data => {
@@ -548,6 +543,7 @@ export class CaptureApprovalDonationComponent
           //   this.totalItems2 = data.count;
           //   this.TOTAL_REPORTE = this.totalItems2;
           let result = data.data.map((item: any) => {
+            this.totalCant.push(item.good.cant);
             item['description'] = item.good ? item.good.description : null;
             const status = (item['status'] = item.good.status
               ? item.good.status
@@ -559,6 +555,12 @@ export class CaptureApprovalDonationComponent
             } else {
               this.errorSumValidos += status.length;
             }
+            this.BIEN_ERROR += item['error'];
+            this.SUM_BIEN = this.totalCant.reduce(
+              (acumulador, cantidad) => acumulador + cantidad,
+              0
+            );
+            console.log(this.SUM_BIEN);
           });
 
           Promise.all(result).then(item => {
@@ -566,6 +568,7 @@ export class CaptureApprovalDonationComponent
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
             this.totalItems2 = data.count ?? 0;
+            this.TOTAL_REPORTE = this.totalItems2;
             console.log('getDetailProceedingsDevollution', data);
             this.loading3 = false;
             this.Exportdate = true;
@@ -991,8 +994,24 @@ export class CaptureApprovalDonationComponent
     this.idAct = 0;
     this.TOTAL_REPORTE = 0;
     this.BIEN_ERROR = 0;
-    this.SUM_BIEN = 0;
+    this.SUM_BIEN = '';
     localStorage.removeItem('nameT');
+  }
+
+  formatCurrency(amount: string) {
+    const numericAmount = parseFloat(amount);
+
+    if (!isNaN(numericAmount)) {
+      const a = numericAmount.toLocaleString('en-US', {
+        // style: 'currency',
+        // currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      return '<p class="cell_right">' + a + '</p>';
+    } else {
+      return amount;
+    }
   }
 
   searchActas(actas?: string) {
@@ -1020,7 +1039,7 @@ export class CaptureApprovalDonationComponent
       this.regisForm.reset();
       //this.formScan.reset();
       this.eventDonacion = next;
-      this.SUM_BIEN = 0;
+      this.SUM_BIEN = '';
       this.BIEN_ERROR = 0;
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;
@@ -1052,6 +1071,7 @@ export class CaptureApprovalDonationComponent
       }
       console.log('acta NEXT ', next);
       this.idAct = next.actId;
+      localStorage.setItem('actaId', next.actId);
       this.regisForm.patchValue({
         folio: next.folioUniversal,
         type: this.type,
@@ -1147,7 +1167,7 @@ export class CaptureApprovalDonationComponent
           captureDate: formattedfecCapture,
         });
       }
-      this.SUM_BIEN = 0;
+      this.SUM_BIEN = '';
       this.BIEN_ERROR = 0;
       this.totalItems2 = 0;
       this.eventdetailDefault = next;
@@ -1258,7 +1278,10 @@ export class CaptureApprovalDonationComponent
                 //this.disabledBtnCerrar = false;
                 this.disabledBtnActas = false;
                 this.dataTableGood.refresh();
-                await this.getDetailProceedingsDevollution(this.idAct);
+                this.getComerDonation();
+                await this.getDetailProceedingsDevollution(
+                  localStorage.getItem('actaId')
+                );
               },
               error: error => {
                 this.alert('error', 'Ocurrió un error al cerrar el evento', '');
@@ -1315,7 +1338,7 @@ export class CaptureApprovalDonationComponent
     if (this.estatus === 'CERRADA') {
       this.alert(
         'warning',
-        'El evento está cerrado, no se pueden validar bienes',
+        'El evento está cerrado, no se pueden cargar bienes del rastreador',
         ''
       );
       return;
