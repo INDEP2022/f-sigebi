@@ -97,6 +97,13 @@ export class ExpenseCompositionComponent
           this.getData();
         },
       });
+    this.expenseCaptureDataService.finishProcessSolicitud
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.loader.load = false;
+        },
+      });
   }
 
   get validateAndProcess() {
@@ -535,7 +542,13 @@ export class ExpenseCompositionComponent
     return selectedChangeStatus.length > 0;
   }
 
+  set actionButton(value) {
+    this.expenseCaptureDataService.actionButton = value;
+  }
+
   async modifyEstatus() {
+    this.loader.load = true;
+    this.actionButton = 'Cambio de estatus';
     let filterParams = new FilterParams();
     filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
     if (this.conceptNumber) {
@@ -579,6 +592,7 @@ export class ExpenseCompositionComponent
               'Realizado Correctamente'
             );
           } else {
+            this.loader.load = false;
             this.alert(
               'warning',
               'Modificar Estatus',
@@ -586,8 +600,11 @@ export class ExpenseCompositionComponent
             );
           }
         } else {
+          this.loader.load = false;
           this.sendMotive();
         }
+      } else {
+        this.loader.load = false;
       }
     }
   }
@@ -824,6 +841,7 @@ export class ExpenseCompositionComponent
   }
 
   applyTC() {
+    this.loader.load = true;
     this.dataTemp.forEach(row => {
       if (row) {
         row.amount = +(
@@ -842,23 +860,44 @@ export class ExpenseCompositionComponent
       }
     });
     // this.getPaginated(this.params.value);
-    this.dataService.updateMassive(this.dataTemp).subscribe({
-      next: response => {
-        this.alert('success', 'Se actualizarón los detalles del gasto ', '');
-      },
-      error: err => {
-        this.alert(
-          'error',
-          'No se pudieron actualizar los detalles de gasto',
-          ''
-        );
-      },
-    });
+    this.dataService
+      .updateMassive(
+        this.dataTemp.map(x => {
+          let newRow: any = {
+            amount: x.amount,
+            goodNumber: x.goodNumber,
+            expenseDetailNumber: x.detPaymentsId,
+            expenseNumber: x.paymentsId,
+            vat: x.iva,
+            isrWithholding: x.retencionIsr,
+            vatWithholding: x.retencionIva,
+            cvman: x.manCV,
+            budgetItem: x.departure,
+          };
+          return newRow;
+        })
+      )
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.loader.load = false;
+          this.alert('success', 'Se actualizarón los detalles del gasto ', '');
+          this.getPaginated(this.params.value);
+        },
+        error: err => {
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'No se pudieron actualizar los detalles de gasto',
+            ''
+          );
+        },
+      });
   }
 
   async contabilityMand() {
+    this.loader.load = true;
     if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
-      this.loader.load = true;
       const result = await firstValueFrom(
         this.accountMovementService.getDepuraContmand(this.expenseNumber.value)
       );
@@ -869,6 +908,8 @@ export class ExpenseCompositionComponent
         this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
         this.loader.load = false;
       }
+    } else {
+      this.loader.load = false;
     }
   }
 
@@ -967,21 +1008,41 @@ export class ExpenseCompositionComponent
   }
 
   reload() {
-    if (this.expenseCaptureDataService.VALIDA_DET()) {
-      this.getData();
-    }
+    this.loader.load = true;
+    this.expenseCaptureDataService
+      .RECARGA_BIENES_LOTE()
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.loader.load = false;
+            this.getData();
+          } else {
+            this.loader.load = false;
+          }
+        },
+      });
+    // if (this.expenseCaptureDataService.VALIDA_DET()) {
+    //   this.getData();
+    // } else {
+    //   this.loader.load = false;
+    // }
   }
 
   validates() {
+    this.loader.load = true;
     if (this.eventNumber === null) {
+      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de evento', '');
       return;
     }
     if (this.lotNumber === null || this.lotNumber.value === null) {
+      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de lote', '');
       return;
     }
     if (this.conceptNumber === null || this.conceptNumber.value === null) {
+      this.loader.load = false;
       this.alert(
         'warning',
         'Es necesario tener número de concepto de pago',
@@ -998,6 +1059,7 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
+          this.loader.load = false;
           if (response) {
             console.log(response);
             if (response && response.resData) {
@@ -1016,6 +1078,7 @@ export class ExpenseCompositionComponent
         },
         error: err => {
           console.log(err);
+          this.loader.load = false;
           this.alert('error', 'Validación de Bienes', err);
         },
       });
