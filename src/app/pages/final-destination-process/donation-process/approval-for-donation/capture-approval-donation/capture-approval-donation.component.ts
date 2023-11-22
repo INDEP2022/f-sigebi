@@ -38,6 +38,7 @@ import {
 } from 'src/app/core/shared/patterns';
 
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
@@ -85,6 +86,7 @@ export class CaptureApprovalDonationComponent
   changeDescription: string;
   dataTableGood_: any[] = [];
   body: IExportDetail;
+  ngGlobal: any;
   valueChange: number = 0;
   totalItems: number = 0;
   errorSumInvalidos: number = 0;
@@ -152,7 +154,8 @@ export class CaptureApprovalDonationComponent
     private changeDetectorRef: ChangeDetectorRef,
     private statusGoodService: StatusGoodService,
     private datePipe: DatePipe,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private globalVarService: GlobalVarsService
   ) {
     super();
     this.settings = {
@@ -228,6 +231,23 @@ export class CaptureApprovalDonationComponent
   }
 
   ngOnInit(): void {
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          if (this.ngGlobal.REL_BIENES) {
+            console.log('RASTREADOR ', this.ngGlobal.REL_BIENES);
+            this.goodById();
+            // this.createMultipleRecords(this.ngGlobal.REL_BIENES);
+            // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
+            // console.log(this.selectedGooodsValid);
+            // this.dataGoodTable.load(this.selectedGooodsValid);
+            // this.dataGoodTable.refresh();
+          }
+        },
+      });
     this.dataDetailDonationGood
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -289,6 +309,19 @@ export class CaptureApprovalDonationComponent
         }
       });
     this.initForm();
+  }
+  async goodById() {
+    this.goodService.getGoodByIds(this.ngGlobal.REL_BIENES).subscribe({
+      next: data => {
+        this.selectedGooods = data.data;
+        const exists = this.selectedGooods.find(good => good.id == good.id);
+        !exists ? false : true;
+        if (!exists) {
+          console.log(this.selectedGooods);
+        }
+      },
+      error: () => console.log('no hay bienes'),
+    });
   }
 
   enableButtons() {
