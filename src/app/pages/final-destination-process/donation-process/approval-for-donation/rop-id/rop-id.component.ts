@@ -35,7 +35,7 @@ export class RopIdComponent extends BasePage implements OnInit {
   totalItemRrop: number = 0;
   loadingRop: boolean = false;
   donationGood: IGoodDonation;
-  totalItems2: number = 0;
+  totalItemsRopa: number = 0;
   selectedRow: any | null = null;
   conversiones: any;
   providerForm: FormGroup = new FormGroup({});
@@ -175,7 +175,8 @@ export class RopIdComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.recordId'] = `$eq:${localStorage.getItem(
       'actaId'
     )}`;
-    // this.params.getValue()['filter.error'] = `$eq:${1}`;
+    this.params.getValue()['filter.good.noClasifGood'] = `$eq:${778}`;
+    this.params.getValue()['filter.good.unit'] = `$eq:PIEZA`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -186,13 +187,13 @@ export class RopIdComponent extends BasePage implements OnInit {
         this.dataDetail.load(resp.data);
         this.dataDetail.refresh();
         this.loadingRop = false;
-        this.totalItems2 = resp.count;
+        this.totalItemsRopa = resp.count;
       },
       error: err => {
         this.loadingRop = true;
         this.dataDetail.load([]);
         this.dataDetail.refresh();
-        this.totalItems2 = 0;
+        this.totalItemsRopa = 0;
       },
     });
   }

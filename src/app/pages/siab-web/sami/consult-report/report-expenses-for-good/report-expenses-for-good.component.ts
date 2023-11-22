@@ -6,7 +6,9 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage } from 'src/app/core/shared';
 import {
   GOODS_COLUMNS,
@@ -119,7 +121,9 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private regionalDelegationService: RegionalDelegationService
+    private regionalDelegationService: RegionalDelegationService,
+    private orderServiceService: OrderServiceService,
+    private goodService: GoodService
   ) {
     super();
 
@@ -176,32 +180,74 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     });
   }
 
+  showListGoods() {
+    const idGood = this.form.get('idGood').value;
+    const idTypeRelevant = this.form.get('idTypeRelevant').value;
+    const fileNumber = this.form.get('fileNumber').value;
+    const descriptionGood = this.form.get('descriptionGood').value;
+    const quantity = this.form.get('quantity').value;
+    const unit = this.form.get('unit').value;
+    const uniqueKey = this.form.get('uniqueKey').value;
+
+    if (idGood) this.params.getValue()['filter.goodId'] = idGood;
+    if (idTypeRelevant)
+      this.params.getValue()['filter.relevantTypeId'] = idTypeRelevant;
+    if (fileNumber) this.params.getValue()['filter.fileNumber'] = fileNumber;
+    if (descriptionGood)
+      this.params.getValue()['filter.description'] = descriptionGood;
+    if (quantity) this.params.getValue()['filter.quantity'] = quantity;
+    if (unit) this.params.getValue()['filter.unitMeasure'] = unit;
+    if (uniqueKey) this.params.getValue()['filter.uniqueKey'] = uniqueKey;
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getInfoGoods());
+  }
+
+  getInfoGoods() {
+    this.loading = true;
+    const user: any = this.authService.decodeToken();
+    this.params.getValue()['filter.delegationNumber'] = user.department;
+    this.goodService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.infoGoods.load(response.data);
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
   getInfoValReq() {
+    this.loadingValReq = true;
     const user: any = this.authService.decodeToken();
     this.paramsValReq.getValue()[
-      'filter.ORD_delegacion_regional'
+      'filter.regionalDelegation'
     ] = `$eq:${user.department}`;
-    this.goodsQueryService
-      .getInfoValReqView(this.paramsValReq.getValue())
+    this.orderServiceService
+      .getOrderServiceRecepReq(this.paramsValReq.getValue())
       .subscribe({
         next: async response => {
           const infoValReq = response.data.map(async item => {
             const showDelegation: any = await this.showDelegation(
-              item.ORD_delegacion_regional
+              item.regionalDelegation
             );
-            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+            if (showDelegation) item.regionalDelegationName = showDelegation;
 
             return item;
           });
 
           Promise.all(infoValReq).then(ValReqData => {
-            console.log('infoValReq', ValReqData);
-
             this.infoValReq.load(ValReqData);
-            this.totalItemsValReq = ValReqData.length;
+            this.totalItemsValReq = response.count;
+            this.loadingValReq = false;
           });
         },
-        error: error => {},
+        error: error => {
+          this.loadingValReq = false;
+        },
       });
   }
 
@@ -217,164 +263,195 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
   }
 
   getInfoRecDoc() {
+    this.loadingRecDoc = true;
     const user: any = this.authService.decodeToken();
     this.paramsRecDoc.getValue()[
-      'filter.ORD_delegacion_regional'
+      'filter.regionalDelegation'
     ] = `$eq:${user.department}`;
-    this.goodsQueryService
-      .getInfoRecDocView(this.paramsRecDoc.getValue())
+    this.orderServiceService
+      .getOrderServiceRecepDoc(this.paramsRecDoc.getValue())
       .subscribe({
         next: async response => {
           const infoRecDoc = response.data.map(async item => {
             const showDelegation: any = await this.showDelegation(
-              item.ORD_delegacion_regional
+              item.regionalDelegation
             );
-            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+            if (showDelegation) item.regionalDelegationName = showDelegation;
 
             return item;
           });
 
           Promise.all(infoRecDoc).then(infoRecDoc => {
             this.infoRecDoc.load(infoRecDoc);
-            this.totalItemsRecDoc = infoRecDoc.length;
+            this.totalItemsRecDoc = response.count;
+            this.loadingRecDoc = false;
           });
         },
-        error: error => {},
+        error: error => {
+          this.loadingRecDoc = false;
+        },
       });
   }
 
   getInfoProg() {
+    this.loadingProg = true;
     const user: any = this.authService.decodeToken();
     this.paramsProg.getValue()[
-      'filter.ORD_delegacion_regional'
+      'filter.regionalDelegation'
     ] = `$eq:${user.department}`;
-    this.goodsQueryService
-      .getInfoProgView(this.paramsProg.getValue())
+    this.orderServiceService
+      .getOrderServiceCancelled(this.paramsProg.getValue())
       .subscribe({
         next: async response => {
           const infoProg = response.data.map(async item => {
             const showDelegation: any = await this.showDelegation(
-              item.ORD_delegacion_regional
+              item.regionalDelegation
             );
-            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+            if (showDelegation) item.regionalDelegationName = showDelegation;
 
             return item;
           });
 
           Promise.all(infoProg).then(infoProg => {
             this.infoProg.load(infoProg);
-            this.totalItemsProg = infoProg.length;
+            this.totalItemsProg = response.count;
+            this.loadingProg = false;
           });
         },
-        error: error => {},
+        error: error => {
+          this.loadingProg = false;
+        },
       });
   }
 
   getInfoProgEnt() {
+    this.loadingProgEnt = true;
     const user: any = this.authService.decodeToken();
 
-    this.goodsQueryService
-      .getInfoProgEntView(this.paramsProgEnt.getValue())
+    this.orderServiceService
+      .getOrderServiceDateEndAt(this.paramsProgEnt.getValue())
       .subscribe({
         next: async response => {
-          console.log('prog Entrega', response);
           const infoProgEnt = response.data.map(async item => {
             const showDelegation: any = await this.showDelegation(
-              item.ORD_delegacion_regional
+              item.regionalDelegation
             );
-            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+            if (showDelegation) item.regionalDelegationName = showDelegation;
 
             return item;
           });
 
           Promise.all(infoProgEnt).then(infoProgEnt => {
             this.infoProgEnt.load(infoProgEnt);
-            this.totalItemsProgEnt = infoProgEnt.length;
+            this.totalItemsProgEnt = response.count;
+            this.loadingProgEnt = false;
           });
         },
         error: error => {
-          console.log('prog Entrega', error);
+          this.loadingProgEnt = false;
         },
       });
   }
 
   getInfoWarehouse() {
+    this.loadingWarehouse = true;
     const user: any = this.authService.decodeToken();
-    this.paramsWarehouse.getValue()[
+    /*this.paramsWarehouse.getValue()[
       'filter.ORD_delegacion_regional'
-    ] = `$eq:${user.department}`;
-    this.goodsQueryService
-      .getInfoWarehouseView(this.paramsWarehouse.getValue())
+    ] = `$eq:${user.department}`; */
+    this.orderServiceService
+      .getOrderServiceTypeOrder(this.paramsWarehouse.getValue())
       .subscribe({
         next: async response => {
           const infoWarehouse = response.data.map(async item => {
             const showDelegation: any = await this.showDelegation(
-              item.ORD_delegacion_regional
+              item.regionalDelegation
             );
-            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+            if (showDelegation) item.regionalDelegationName = showDelegation;
 
             return item;
           });
 
           Promise.all(infoWarehouse).then(infoWarehouse => {
             this.infoWarehouse.load(infoWarehouse);
-            this.totalItemsWarehouse = infoWarehouse.length;
+            this.totalItemsWarehouse = response.count;
+            this.loadingWarehouse = false;
           });
         },
-        error: error => {},
+        error: error => {
+          this.loadingWarehouse = false;
+        },
       });
   }
 
   getInfoManual() {
+    this.loadingMan = true;
     const user: any = this.authService.decodeToken();
-    this.paramsMan.getValue()[
-      'filter.ORD_delegacion_regional'
-    ] = `$eq:${user.department}`;
-    this.goodsQueryService.getInfoManView(this.paramsMan.getValue()).subscribe({
-      next: async response => {
-        const infoManual = response.data.map(async item => {
-          const showDelegation: any = await this.showDelegation(
-            item.ORD_delegacion_regional
-          );
-          if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+    /*this.paramsMan.getValue()[
+      'filter.regionalDelegation'
+    ] = `$eq:${user.department}`; */
+    this.orderServiceService
+      .getOrderServiceTypeMan(this.paramsMan.getValue())
+      .subscribe({
+        next: async response => {
+          const infoManual = response.data.map(async item => {
+            const showDelegation: any = await this.showDelegation(
+              item.regionalDelegation
+            );
+            if (showDelegation) item.regionalDelegationName = showDelegation;
 
-          return item;
-        });
+            return item;
+          });
 
-        Promise.all(infoManual).then(infoManual => {
-          this.infoManual.load(infoManual);
-          this.totalItemsMan = infoManual.length;
-        });
-      },
-      error: error => {},
-    });
+          Promise.all(infoManual).then(infoManual => {
+            this.infoManual.load(infoManual);
+            this.totalItemsMan = response.count;
+            this.loadingMan = false;
+          });
+        },
+        error: () => {
+          this.loadingMan = false;
+        },
+      });
   }
 
   getInfoReubGood() {
+    this.loadingReubGood = true;
     const user: any = this.authService.decodeToken();
-    this.paramsReubGood.getValue()[
-      'filter.ORD_delegacion_regional'
-    ] = `$eq:${user.department}`;
-    this.goodsQueryService
-      .getInfoReubGoodView(this.paramsReubGood.getValue())
+    /*this.paramsReubGood.getValue()[
+      'filter.regionalDelegation'
+    ] = `$eq:${user.department}`; */
+    this.orderServiceService
+      .getOrderServiceTypeReb(this.paramsReubGood.getValue())
       .subscribe({
         next: async response => {
           const infoReubGood = response.data.map(async item => {
             const showDelegation: any = await this.showDelegation(
-              item.ORD_delegacion_regional
+              item.regionalDelegation
             );
-            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+            if (showDelegation) item.regionalDelegationName = showDelegation;
 
             return item;
           });
 
           Promise.all(infoReubGood).then(infoReubGood => {
             this.infoReubGood.load(infoReubGood);
-            this.totalItemsReubGood = infoReubGood.length;
+            this.totalItemsReubGood = response.count;
+            this.loadingReubGood = false;
           });
         },
-        error: error => {},
+        error: () => {
+          this.loadingReubGood = false;
+        },
       });
+  }
+
+  cleanSearch() {
+    this.form.reset();
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getInfoGoods());
   }
 
   close() {

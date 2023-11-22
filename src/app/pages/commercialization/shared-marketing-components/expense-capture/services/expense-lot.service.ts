@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IComerDetBills } from '../models/bills';
 import {
   ICancelVtaDTO,
   IDivideCommandsDTO,
@@ -30,7 +31,7 @@ export class ExpenseLotService extends HttpService {
   }
 
   VALIDA_CAMBIO_ESTATUS(body: IValidStatusChangeDTO) {
-    return this.post('valid-status-change', body);
+    return this.post('apps/valid-status-change', body);
   }
 
   VALIDA_SUBTOTAL_PRECIO(body: IValidSubPriceDTO) {
@@ -51,6 +52,30 @@ export class ExpenseLotService extends HttpService {
 
   CANCELA_VTA_NORMAL(body: ICancelVtaDTO) {
     return this.post('apps/post-cancela-vta-normal', body);
+  }
+
+  CANCELACION_PARCIAL(body: {
+    pLotId: number;
+    pEventId: number;
+    pLotPub: string;
+    pSpentId: number;
+    pTotIva: string;
+    pTotMonto: string;
+    pTotTot: string;
+    comerDetBills: IComerDetBills[];
+  }) {
+    return this.post('apps/partial-cancellation', body);
+  }
+
+  DEVOLUCION_PARCIAL(body: {
+    dpLote: number;
+    pPrueba: number;
+    pCambiaStatus: string;
+    user: string;
+    spentId: number;
+    cat_motivos_rev: string[];
+  }) {
+    return this.post('apps/partial-return', body);
   }
   // update(id) {
   //   this.put(this.endpoint+'/'+,);

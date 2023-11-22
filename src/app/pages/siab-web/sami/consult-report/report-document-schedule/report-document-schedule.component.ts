@@ -193,7 +193,6 @@ export class ReportDocumentScheduleComponent
       .subscribe({
         next: async res => {
           this.data = [];
-          console.log('res', res);
           this.loading = false;
           const filterDoc = res.data.filter((item: any) => {
             if (

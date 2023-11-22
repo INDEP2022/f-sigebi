@@ -88,7 +88,7 @@ export class EditValidationExemptedGoodsModalComponent
       },
       error: error => {
         this.loading = false;
-        this.alert('warning', `No es Posible Crear el Registro`, '');
+        this.alert('warning', `No es posible crear el registro`, '');
       },
     });
   }

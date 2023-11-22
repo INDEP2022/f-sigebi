@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Captura de Aprobaci&oacute;n para Donaci&oacute;n</h5>
+    <h5 class="title">Captura de Eventos para Donaci&oacute;n</h5>
   </div>
 
   <div body>
@@ -70,7 +70,6 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('folio')" label="Folio">
                   <input
-                    #inputValue
                     type="text"
                     class="form-control"
                     formControlName="folio"
@@ -154,32 +153,40 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="card justify-content-center">
-                    <div class="col-md-6 d-flex flex-column">
+                    <div class="col-md-8 d-flex flex-column">
                       <div
                         class="row ps-4"
                         [ngClass]="{ 'not-press': !activeRadio }">
-                        <form-radio label="Consulta de Bienes">
+                        <form-radio
+                          style="background-color: #c8c8c8"
+                          label="Consulta de Bienes">
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="1"
+                            value="CONSULTA DE BIENES"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Com. Exterior KG">
+                        <form-radio
+                          style="background-color: #008080"
+                          label="Com. Exterior KG">
                           <input
                             type="radio"
                             formControlName="activeRadio"
                             value="COMERCIO EXTERIOR"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Delitos Federales">
+                        <form-radio
+                          style="background-color: #ffc000"
+                          label="Delitos Federales">
                           <input
                             type="radio"
                             formControlName="activeRadio"
                             value="DELITOS FEDERALES"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Otros Trans.">
+                        <form-radio
+                          style="background-color: #80c000"
+                          label="Otros Trans.">
                           <input
                             type="radio"
                             formControlName="activeRadio"
@@ -246,7 +253,7 @@
           </span>
           <span class="text-info">
             Suma de Cantidades
-            <b>{{ SUM_BIEN | currency }}</b>
+            <b>{{ SUM_BIEN | currency : 'USD' : '2' }}</b>
           </span>
         </div>
       </div>
@@ -348,11 +355,22 @@
           </div>
           <div class="m-3">
             <button
+              [disabled]="TOTAL_REPORTE < 500"
+              (click)="searchRopaId()"
+              type="button"
+              class="btn btn-primary active btn-sm mr-3">
+              Llena Ropa Div
+              <i class="fas fa-edit bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
               class="btn btn-danger btn-sm active"
               (click)="removeSelect()">
               Elimina Bienes <i class="fa fa-trash-alt"></i>
             </button>
           </div>
+
           <div class="m-3">
             <button
               (click)="actualizarActa()"

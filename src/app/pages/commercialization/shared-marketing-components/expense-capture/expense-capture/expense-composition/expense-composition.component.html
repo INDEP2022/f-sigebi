@@ -27,8 +27,37 @@
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
           </div> -->
-
-          <div class="col-12 d-flex justify-content-end">
+          <div class="col-md-6 d-flex mb-3">
+            <span title="Selecionar Todo" containerClass="tooltip-style">
+              <button
+                *ngIf="data && data.length > 0"
+                class="btn btn-secondary btn-sm active"
+                style="
+                  width: 100px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+                (click)="selectAllCE()">
+                Cambia E.
+              </button></span
+            >
+            <span title="Selecionar Todo" containerClass="tooltip-style">
+              <button
+                *ngIf="data && data.length > 0"
+                class="btn btn-secondary btn-sm active ml-3"
+                style="
+                  width: 100px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+                (click)="selectAllRR()">
+                Reporte R.
+              </button></span
+            >
+          </div>
+          <div class="col-md-6 mb-3 d-flex justify-content-end">
             <button
               (click)="add()"
               [disabled]="!showFilters"
@@ -47,13 +76,11 @@
         </div>
         <div class="row pt-4 pl-0 pr-0 m-0">
           <div class="col-md-12 p-0">
-            <div
-              class="table-responsive"
-              [class]="showFilters ? '' : 'hideFilters'">
+            <div class="" [class]="showFilters ? '' : 'hideFilters'">
               <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   #table
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-responsive table-bordered'"
                   [settings]="settings"
                   [source]="dataPaginated"
                   (userRowSelect)="selectRow($event.data)"
@@ -70,26 +97,26 @@
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Monto</label>
-              <div>{{ amount }}</div>
+              <div>{{ amount | number : '1.2-2' }}</div>
             </div>
           </div>
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">IVA</label>
-              <div>{{ vat }}</div>
+              <div>{{ vat | number : '1.2-2' }}</div>
             </div>
           </div>
 
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Retención ISR</label>
-              <div>{{ isrWithholding }}</div>
+              <div>{{ isrWithholding | number : '1.2-2' }}</div>
             </div>
           </div>
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Retención IVA</label>
-              <div>{{ vatWithholding }}</div>
+              <div>{{ vatWithholding | number : '1.2-2' }}</div>
             </div>
           </div>
         </div>
@@ -97,7 +124,7 @@
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Total</label>
-              <div>{{ total }}</div>
+              <div>{{ total | number : '1.2-2' }}</div>
             </div>
           </div>
         </div>
@@ -155,13 +182,13 @@
               (click)="contabilityMand()">
               Contabilidad Mandatorio
             </button>
-            <!-- <button
+            <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showFilters"
               (click)="reload()">
               Recargar
-            </button> -->
+            </button>
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"

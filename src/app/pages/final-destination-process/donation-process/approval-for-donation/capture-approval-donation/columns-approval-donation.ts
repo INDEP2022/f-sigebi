@@ -97,7 +97,7 @@ export const COPY = {
     title: 'Etiqueta Destino',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodEntity?.noEtiqueta;
+      return row.etiquetagood?.description;
     },
   },
   idNoWorker1: {
