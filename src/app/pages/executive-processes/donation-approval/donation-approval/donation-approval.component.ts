@@ -162,7 +162,7 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
     );
     this.expedientSelec = new DefaultSelect();
 
-    this.getExpedientById();
+    // this.getExpedientById();
   }
 
   getExpedientById(): void {

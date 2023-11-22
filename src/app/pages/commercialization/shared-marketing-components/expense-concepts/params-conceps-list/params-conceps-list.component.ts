@@ -175,7 +175,9 @@ export class ParamsConcepsListComponent
             next: response => {
               this.alert(
                 'success',
-                'Se creo el parámetro por concepto de pago ' + this.conceptId,
+                'El parámetro por concepto de pago ' +
+                  this.conceptId +
+                  ' ha sido creado',
                 ''
               );
               this.getData();
@@ -218,8 +220,9 @@ export class ParamsConcepsListComponent
                 next: response => {
                   this.alert(
                     'success',
-                    'Se pudo actualizar el parámetro con concepto de pago ' +
-                      this.conceptId,
+                    'El parámetro con concepto de pago ' +
+                      this.conceptId +
+                      ' ha sido actualizado',
                     ''
                   );
                   this.getData();
