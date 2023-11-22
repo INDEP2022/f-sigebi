@@ -350,11 +350,7 @@ export class NumeraireConversionAuctionsComponent
           };
           this.modalService.show(PreviewDocumentsComponent, config);
         } else {
-          this.alert(
-            'error',
-            'El reporte no se encuentra disponible',
-            'Favor de verificar'
-          );
+          this.alert('error', 'El reporte no se encuentra disponible', '');
         }
       },
       error: err => {
