@@ -486,7 +486,7 @@ export class CaptureApprovalDonationComponent
       ...this.columnFilterDet,
     };
     params['filter.recordId'] = `$eq:${this.idAct}`;
-    params['filter.good.status'] = `$eq:DON`;
+    // params['filter.good.status'] = `$eq:DON`;
 
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
