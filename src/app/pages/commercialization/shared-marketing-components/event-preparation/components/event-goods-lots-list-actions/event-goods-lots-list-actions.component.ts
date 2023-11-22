@@ -382,6 +382,7 @@ export class EventGoodsLotsListActionsComponent
       return;
     }
 
+    console.log(Number(eventTpId.value));
     if (![1, 4].includes(Number(eventTpId.value))) {
       this.alert('error', 'Error', 'Tipo de Evento no Apto para Publicarse');
       return;
