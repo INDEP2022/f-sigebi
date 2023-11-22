@@ -377,7 +377,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       if (this.VALIDA_DET(V_VALIDA_DET)) {
         this.PROCESA_SOLICITUD();
       }
-      return false;
     } else if (this.PVALIDADET === 'S') {
       if (this.lotNumber && this.lotNumber.value) {
         let response = await firstValueFrom(this.RECARGA_BIENES_LOTE());
@@ -388,7 +387,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         if (this.VALIDA_DET(V_VALIDA_DET)) {
           this.PROCESA_SOLICITUD();
         }
-        return false;
       } else {
         this.alert('error', 'Debe indicar el lote para enviar solicitud', '');
       }

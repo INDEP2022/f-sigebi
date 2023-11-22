@@ -35,24 +35,24 @@
                 title="Gastos del Área Comercial"
                 (selectRow)="fillForm($event)"></app-select-modal-table-shared>
             </div>
-            <div class="col-md-8 col-6" style="text-align: right">
+            <div class="col-md-8 col-12 mb-3 expenseComercial-buttons">
               <button
                 type="button"
-                class="btn btn-sm btn-primary mt-2 active"
+                class="btn btn-sm btn-primary mt-2 mr-2 active"
                 [disabled]="!data"
                 (click)="delete()">
                 Eliminar
               </button>
               <button
                 type="button"
-                class="btn btn-sm btn-warning mt-2 active"
+                class="btn btn-sm btn-warning mt-2 mr-2 active"
                 [disabled]="!data"
                 (click)="clean()">
                 Limpiar
               </button>
               <button
                 type="button"
-                class="btn btn-sm btn-primary mt-2 active"
+                class="btn btn-sm btn-primary mt-2 mr-2 active"
                 [disabled]="form.invalid"
                 (click)="save()">
                 Guardar
