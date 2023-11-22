@@ -187,8 +187,13 @@ export class FindActaComponent extends BasePage implements OnInit {
 
   showDeleteMsg($event: any) {
     const data = $event.data;
-    this.detailProceeDelRecService.getGoodsByProceedings(data.actId).subscribe({
+    let body = {
+      requestId: data.actId,
+      requestTypeId: 1,
+    };
+    this.donationService.getDetailById(body).subscribe({
       next: data => {
+        console.log(data);
         this.alert(
           'warning',
           'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
@@ -209,32 +214,30 @@ export class FindActaComponent extends BasePage implements OnInit {
       '¿Desea Eliminar Este Registro?'
     ).then(async question => {
       if (question.isConfirmed) {
-        this.proceedingsDeliveryReceptionService
-          .deleteProceedingsDeliveryReception(dataaaID)
-          .subscribe({
-            next: data => {
-              if (this.actaActual)
-                if (this.actaActual.id == dataaaID) {
-                  this.valDelete = true;
-                  this.ejecutarFuncionDesdeModal(true);
-                }
-              this.alert('success', 'Acta Eliminada Correctamente', '');
-              this.getStatusDeliveryCve();
-              // console.log(this.dataTableGoodsActa);
-            },
-            error: error => {
-              this.loading = false;
-              this.totalItems2 = 0;
-              this.alert(
-                'error',
-                'Ocurrió un error al Intentar Eliminar el Acta',
-                ''
-              );
-              // console.log(error);
-              // this.dataFactActas.load([]);
-              // this.dataFactActas.refresh();
-            },
-          });
+        this.donationService.removeEvent(dataaaID).subscribe({
+          next: data => {
+            if (this.actaActual)
+              if (this.actaActual.id == dataaaID) {
+                this.valDelete = true;
+                this.ejecutarFuncionDesdeModal(true);
+              }
+            this.alert('success', 'Acta Eliminada Correctamente', '');
+            this.getStatusDeliveryCve();
+            // console.log(this.dataTableGoodsActa);
+          },
+          error: error => {
+            this.loading = false;
+            this.totalItems2 = 0;
+            this.alert(
+              'error',
+              'Ocurrió un error al Intentar Eliminar el Acta',
+              ''
+            );
+            // console.log(error);
+            // this.dataFactActas.load([]);
+            // this.dataFactActas.refresh();
+          },
+        });
       }
     });
   }

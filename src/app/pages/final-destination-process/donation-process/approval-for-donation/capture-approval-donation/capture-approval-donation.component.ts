@@ -344,6 +344,12 @@ export class CaptureApprovalDonationComponent
         this.regisForm.get('type').setValue('COMPDON');
         this.regisForm.get('area').setValue(localStorage.getItem('area'));
         this.estatus = this.eventDonacion.estatusAct;
+        const dateCapture =
+          this.eventDonacion.captureDate != null
+            ? new Date(this.eventDonacion.captureDate)
+            : null;
+        const formattedfecCapture =
+          dateCapture != null ? this.formatDate(dateCapture) : null;
         console.log(this.eventDonacion);
         if (this.estatus != 'ABIERTA') {
           this.deleteO = true;
@@ -359,9 +365,7 @@ export class CaptureApprovalDonationComponent
         this.regisForm.get('year').setValue(localStorage.getItem('anio'));
         this.regisForm.get('folio').setValue(data.folioUniversal);
         this.regisForm.get('keyEvent').setValue(this.eventDonacion.cveAct);
-        this.regisForm
-          .get('captureDate')
-          .setValue(localStorage.getItem('captureDate'));
+        this.regisForm.get('captureDate').setValue(formattedfecCapture);
         this.getDetailProceedingsDevollution(this.idAct);
         this.regisForm.get('observaciones').setValue(data.observations);
       },
@@ -528,7 +532,7 @@ export class CaptureApprovalDonationComponent
             this.dataDetailDonation = data.data;
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
-            this.totalItems2 = data.count;
+            this.totalItems2 = data.count ?? 0;
             console.log('getDetailProceedingsDevollution', data);
             this.loading3 = false;
             this.Exportdate = true;
@@ -1020,8 +1024,7 @@ export class CaptureApprovalDonationComponent
         type: this.type,
         area: localStorage.getItem('area'),
         keyEvent: next.cveAct,
-        mes: next.captureDate,
-        year: next.anio,
+        year: localStorage.getItem('anio'),
         testigoOne: next.witness1,
         testigoTree: next.witness2,
         elaboradate: formattedfecElaborate,
@@ -1111,7 +1114,8 @@ export class CaptureApprovalDonationComponent
           captureDate: formattedfecCapture,
         });
       }
-
+      this.SUM_BIEN = 0;
+      this.BIEN_ERROR = 0;
       this.totalItems2 = 0;
       this.eventdetailDefault = next;
       this.estatus = next.estatusAct;
@@ -1120,8 +1124,7 @@ export class CaptureApprovalDonationComponent
       } else {
         this.disabledBtnActas = true;
       }
-
-      this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
+      // this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
 
       await this.getDetailProceedingsDevollution(next.actId);
     });
