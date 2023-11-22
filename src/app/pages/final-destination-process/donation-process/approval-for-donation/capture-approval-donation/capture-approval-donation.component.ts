@@ -3,13 +3,11 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Input,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngrx/store';
+
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
@@ -28,22 +26,18 @@ import {
   IExportDetail,
   IGoodDonation,
 } from 'src/app/core/models/ms-donation/donation.model';
-import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
-import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
-import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
-import { GOOD_TRACKER_ORIGINS } from 'src/app/pages/general-processes/goods-tracker/utils/constants/origins';
+
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { DonAuthorizaService } from '../../donation-authorization-request/donation-authorization-request/service/don-authoriza.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { GoodErrorComponent } from '../good-error/good-error.component';
@@ -56,6 +50,15 @@ import { COPY } from './columns-approval-donation';
   templateUrl: './capture-approval-donation.component.html',
   styles: [
     `
+      .form-radio input[type='radio'] {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .form-radio {
+        padding: 10px 20px;
+      }
       @media screen and (max-width: 767px) {
         #column {
           border-right: 0px !important;
@@ -118,7 +121,7 @@ export class CaptureApprovalDonationComponent
   selectedRow: IGood;
   origin2: 'FCONGENRASTREADOR';
   fileNumber: number = 0;
-  $trackedGoods = this.store.select(getTrackedGoods);
+
   columnFilters: any = [];
   columnFilterDetail: any = [];
   columnFilters2: any = [];
@@ -132,22 +135,10 @@ export class CaptureApprovalDonationComponent
   eventDonacion: IGoodDonation;
   origin = 'FMCOMDONAC_1';
 
-  @ViewChild('file') file: any;
   donationGood: IGoodDonation;
   paramsScreen: IParamsDonac = {
     origin: '',
   };
-  goodsList: ITrackedGood[] = [];
-  get good(): ITrackedGood[] {
-    return this.goodsList;
-  }
-  @Input() set good(good: ITrackedGood[]) {
-    if (good.length > 0) {
-      this.goodsList = good;
-    } else {
-      this.goodsList = [];
-    }
-  }
 
   constructor(
     private router: Router,
@@ -161,10 +152,7 @@ export class CaptureApprovalDonationComponent
     private changeDetectorRef: ChangeDetectorRef,
     private statusGoodService: StatusGoodService,
     private datePipe: DatePipe,
-    private usersService: UsersService,
-    private detailProceeDelRecService: DetailProceeDelRecService,
-    private donAuthorizaService: DonAuthorizaService,
-    private store: Store
+    private usersService: UsersService
   ) {
     super();
     this.settings = {
@@ -298,19 +286,16 @@ export class CaptureApprovalDonationComponent
         }
         if (this.origin !== null) {
           console.log('traigo parametros');
-          this.isValidOrigin();
         }
       });
     this.initForm();
   }
-  oadGoods() {
-    this.donAuthorizaService.loadGoods.next(true);
-  }
+
   enableButtons() {
     if (this.regisForm.get('activeRadio').value !== null) {
       this.radio = true;
-      this.selectedOption = this.activeRadio.valueOf.name;
-      console.log(this.selectedOption);
+      const nameT = this.regisForm.get('activeRadio').value;
+      localStorage.setItem('nameT', nameT);
     }
   }
 
@@ -392,21 +377,6 @@ export class CaptureApprovalDonationComponent
         console.error('error');
       },
     });
-  }
-  isGoodSelectedT(_good: ITrackedGood) {
-    const exists = this.selectedGooods.find(
-      good => good.goodNumber == _good.goodNumber
-    );
-    return exists ? true : false;
-  }
-
-  private isValidOrigin() {
-    return (
-      this.origin !== null &&
-      Object.values(GOOD_TRACKER_ORIGINS).includes(
-        this.origin as unknown as GOOD_TRACKER_ORIGINS
-      )
-    );
   }
 
   ubicaGood() {
@@ -513,21 +483,6 @@ export class CaptureApprovalDonationComponent
     console.log('this.bienes1 -->');
   }
 
-  // getDetailDonation(actaId: string | number) {
-  //   const params = new ListParams();
-  //   params['filter.recordId'] = actaId;
-  //   params['filter.good.status'] = 'DON';
-  //   this.donationService.getEventComDonationDetail(params).subscribe({
-  //     next: data => {
-  //       console.log(data);
-  //       this.dataDetailDonation = data.data;
-  //       this.dataDetailDonationGood.load(this.dataDetailDonation);
-  //       this.dataDetailDonationGood.refresh();
-  //       this.totalItems = data.count;
-  //     },
-  //     error: () => console.error('no hay detalle acta'),
-  //   });
-  // }
   async getDetailProceedingsDevollution(id: any) {
     this.loading3 = true;
     let params: any = {
@@ -535,6 +490,7 @@ export class CaptureApprovalDonationComponent
       ...this.columnFilters2,
     };
     params['filter.recordId'] = `$eq:${this.idAct}`;
+    params['filter.status'] = `$eq:DON`;
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
         next: data => {
@@ -542,7 +498,7 @@ export class CaptureApprovalDonationComponent
           result = data.data.map((item: any) => {
             item['description'] = item.good ? item.good.description : null;
             this.BIEN_ERROR += item['error'];
-            this.SUM_BIEN += item['cant'] = item.good ? item.good.cant : null;
+            this.SUM_BIEN += item['amount'] = item.amount ? item.amount : null;
             const status = (item['status'] = item.good
               ? item.good.status
               : null);
@@ -555,7 +511,6 @@ export class CaptureApprovalDonationComponent
 
           Promise.all(result).then(items => {
             this.dataDetailDonation = data.data;
-            console.log(this.dataDetailDonation);
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
             this.totalItems2 = data.count;
@@ -804,6 +759,10 @@ export class CaptureApprovalDonationComponent
         );
         return;
       }
+      if (this.dataDetailDonationGood.count() == 0) {
+        this.alert('warning', 'No hay bienes para eliminar', '');
+        return;
+      }
       if (this.selectedGooodsValid.length == 0) {
         this.alert(
           'warning',
@@ -983,6 +942,7 @@ export class CaptureApprovalDonationComponent
     this.TOTAL_REPORTE = 0;
     this.BIEN_ERROR = 0;
     this.SUM_BIEN = 0;
+    localStorage.removeItem('nameT');
   }
 
   searchActas(actas?: string) {
@@ -1377,11 +1337,11 @@ export class CaptureApprovalDonationComponent
     }
     this.selectedGooodsValid.forEach(good => {
       let obj: any = {
-        recordId: this.idAct,
+        recordId: localStorage.getItem('actaId'),
         goodId: good.goodId,
         amount: good.amount,
         received: 1,
-        exchangeValue: this.regisForm.get('activeRadio').value | 0,
+        exchangeValue: good.exchangeValue ?? 0,
         registrationId: good.registrationId,
       };
       this.updateBienDetalle(good.goodId, 'CPD');

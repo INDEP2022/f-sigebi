@@ -154,32 +154,40 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="card justify-content-center">
-                    <div class="col-md-6 d-flex flex-column">
+                    <div class="col-md-8 d-flex flex-column">
                       <div
                         class="row ps-4"
                         [ngClass]="{ 'not-press': !activeRadio }">
-                        <form-radio label="Consulta de Bienes">
+                        <form-radio
+                          style="background-color: #c8c8c8"
+                          label="Consulta de Bienes">
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="1"
+                            value="CONSULTA DE BIENES"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Com. Exterior KG">
+                        <form-radio
+                          style="background-color: #008080"
+                          label="Com. Exterior KG">
                           <input
                             type="radio"
                             formControlName="activeRadio"
                             value="COMERCIO EXTERIOR"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Delitos Federales">
+                        <form-radio
+                          style="background-color: #ffc000"
+                          label="Delitos Federales">
                           <input
                             type="radio"
                             formControlName="activeRadio"
                             value="DELITOS FEDERALES"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Otros Trans.">
+                        <form-radio
+                          style="background-color: #80c000"
+                          label="Otros Trans.">
                           <input
                             type="radio"
                             formControlName="activeRadio"
@@ -363,13 +371,7 @@
               Elimina Bienes <i class="fa fa-trash-alt"></i>
             </button>
           </div>
-          <div class="m-3">
-            <button
-              class="btn btn-danger btn-sm active"
-              (click)="removeSelect()">
-              Elimina Bienes <i class="fa fa-trash-alt"></i>
-            </button>
-          </div>
+
           <div class="m-3">
             <button
               (click)="actualizarActa()"

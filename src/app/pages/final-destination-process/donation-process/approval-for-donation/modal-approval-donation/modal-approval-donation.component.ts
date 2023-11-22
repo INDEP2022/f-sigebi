@@ -5,8 +5,10 @@ import {
   Input,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -16,11 +18,14 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ITempDonDetail } from 'src/app/core/models/ms-donation/donation.model';
+import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { GOOD_TRACKER_ORIGINS } from 'src/app/pages/general-processes/goods-tracker/utils/constants/origins';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { IParamsDonac } from '../capture-approval-donation/capture-approval-donation.component';
@@ -90,11 +95,11 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   subTitle: string;
   op: string;
   statusGood_: any;
-  origin: string = '';
+  origin = GOOD_TRACKER_ORIGINS.DonationGood;
   goods: ITempDonDetail[] = [];
   totalItemsModal: number = 0;
   modelCreate: ITempDonDetail;
-  // selectedGooods: any[] = [];
+  $trackedGoods = this.store.select(getTrackedGoods);
   selectedRow: any | null = null;
   dataTableGood_: any[] = [];
   idsNotExist: NotData[] = [];
@@ -113,7 +118,26 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   @Output() onSave = new EventEmitter<any>();
-  @Input() files: any;
+  @ViewChild('file') file: any;
+  @Input() set files(files: any[]) {
+    // debugger;
+    if (files.length === 0) return;
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => console.log(fileReader.result);
+  }
+  goodsList: ITrackedGood[] = [];
+  get good(): ITrackedGood[] {
+    return this.goodsList;
+  }
+  @Input() set good(good: ITrackedGood[]) {
+    if (good.length > 0) {
+      this.goodsList = good;
+    } else {
+      this.goodsList = [];
+    }
+  }
+
   totalItems2: number = 0;
   constructor(
     private goodService: GoodService,
@@ -123,7 +147,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     private GoodprocessService_: GoodprocessService,
     private statusGoodService: StatusGoodService,
     private activatedRoute: ActivatedRoute,
-    private globalVarService: GlobalVarsService
+    private globalVarService: GlobalVarsService,
+    private store: Store
   ) {
     super();
     // this.settings = {
@@ -224,32 +249,40 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           },
         },
       },
+
       rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
+        switch (row.data.nameT) {
+          case '1':
+            return 'bg-success text-white';
+          case '2':
+            return 'bg-gray-200 text-black';
+          case '3':
+            return 'bg-teal-500 text-white';
+          default:
+            return 'bg-yellow-500 text-black';
         }
       },
     };
   }
 
   ngOnInit(): void {
-    // this.globalVarService
-    //   .getGlobalVars$()
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe({
-    //     next: global => {
-    //       this.ngGlobal = global;
-    //       if (this.ngGlobal.REL_BIENES) {
-    //         console.log('RASTREADOR ', this.data);
-    //         // this.createMultipleRecords(this.data);
-    //         // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
-    //         // this.dataGoodTable.load(this.selectedGooodsValid);
-    //         // this.dataGoodTable.refresh();
-    //       }
-    //     }
-    //   });
+    console.log(this.goodsList);
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          if (this.ngGlobal.REL_BIENES) {
+            console.log('RASTREADOR ', this.data);
+            this.createMultipleRecords(this.ngGlobal.REL_BIENES);
+            // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
+            // console.log(this.selectedGooodsValid);
+            // this.dataGoodTable.load(this.selectedGooodsValid);
+            // this.dataGoodTable.refresh();
+          }
+        },
+      });
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -263,6 +296,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           }
         }
         if (this.origin != null) {
+          // this.isValidOrigin();
           this.loadGlobalVarsAndCreateRecords();
           console.log(this.paramsScreen);
         }
@@ -345,9 +379,11 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['filter.status'] = 'DON';
+
+    params['filter.status'] = `$eq:DON`;
+    params['filter.transference.id'] = `$ilike:${120}`;
     params['sortBy'] = `goodId:DESC`;
-    // params['sortBy'] = `goodId:DESC`;
+
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
@@ -428,6 +464,21 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         _good => _good.id != good.id
       );
     }
+  }
+  isGoodSelectedT(_good: ITrackedGood) {
+    const exists = this.selectedGooods.find(
+      good => good.goodNumber == _good.goodNumber
+    );
+    return exists ? true : false;
+  }
+
+  private isValidOrigin() {
+    return (
+      this.origin !== null &&
+      Object.values(GOOD_TRACKER_ORIGINS).includes(
+        this.origin as unknown as GOOD_TRACKER_ORIGINS
+      )
+    );
   }
   selectedGooodsValid: any[] = [];
   selectedGooods: any[] = [];
@@ -518,9 +569,10 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
             vcScreen: 'FMCOMDONAC_1',
             pNumberGood: item.goodNumber,
           };
-
+          const nameT = localStorage.getItem('nameT');
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
+          item['nameTransferent'] = nameT;
           if (item.minutesKey) {
             item.di_disponible = 'N';
           }
@@ -583,9 +635,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   async loadGlobalVarsAndCreateRecords() {
     // Retrieve global variables
     await this.getGlobalVars();
-
-    // Create multiple records
-    const data: ITempDonDetail[] = []; // Your data
+    console.log(this.goodsList);
+    const data: ITempDonDetail[] = [];
     await this.createMultipleRecords(data);
   }
 

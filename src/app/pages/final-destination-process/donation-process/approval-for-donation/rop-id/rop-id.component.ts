@@ -176,7 +176,7 @@ export class RopIdComponent extends BasePage implements OnInit {
       'actaId'
     )}`;
     this.params.getValue()['filter.good.noClasifGood'] = `$eq:${778}`;
-    this.params.getValue()['filter.good.unit'] = `$eq:BARRIL`;
+    this.params.getValue()['filter.good.unit'] = `$eq:PIEZA`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
