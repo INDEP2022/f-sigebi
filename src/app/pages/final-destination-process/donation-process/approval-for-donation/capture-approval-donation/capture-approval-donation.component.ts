@@ -113,7 +113,7 @@ export class CaptureApprovalDonationComponent
   bsValueToYear: Date = new Date();
   TOTAL_REPORTE: number = 0;
   BIEN_ERROR: number = 0;
-  SUM_BIEN: string = '';
+  SUM_BIEN: number = 0;
   validChange: number = 0;
   minModeToYear: BsDatepickerViewMode = 'year'; // change for month:year
   bsConfigToYear: Partial<BsDatepickerConfig>;
@@ -519,51 +519,21 @@ export class CaptureApprovalDonationComponent
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
         next: data => {
-          // let result: any[] = [];
-          // result = data.data.map((item: any) => {
-          //   item['description'] = item.good ? item.good.description : null;
-          //   this.BIEN_ERROR += item['error'];
-          //   this.SUM_BIEN += item['amount'] = item.amount ? item.amount : null;
-          //   const status = (item['status'] = item.good.status
-          //     ? item.good.status
-          //     : null
-          //     ? item.good.status
-          //     : null);
-          //   if (status === null) {
-          //     this.errorSumInvalidos += status.length;
-          //   } else {
-          //     this.errorSumValidos += status.length;
-          //   }
-          // });
-
-          // Promise.all(result).then(items => {
-          //   this.dataDetailDonation = data.data;
-          //   this.dataDetailDonationGood.load(this.dataDetailDonation);
-          //   this.dataDetailDonationGood.refresh();
-          //   this.totalItems2 = data.count;
-          //   this.TOTAL_REPORTE = this.totalItems2;
           let result = data.data.map((item: any) => {
-            this.totalCant.push(item.good.cant);
+            this.SUM_BIEN += parseInt(item.good.cant);
+            console.log(this.SUM_BIEN);
+            // console.log(parseFloat(this.SUM_BIEN.toString()));
             item['description'] = item.good ? item.good.description : null;
-            const status = (item['status'] = item.good.status
-              ? item.good.status
-              : null
-              ? item.good.status
-              : null);
-            if (status === null) {
-              this.errorSumInvalidos += status.length;
-            } else {
+            const status = item.good.status || null;
+            if (status !== null) {
               this.errorSumValidos += status.length;
+            } else {
+              this.errorSumInvalidos++;
             }
             this.BIEN_ERROR += item['error'];
-            this.SUM_BIEN = this.totalCant.reduce(
-              (acumulador, cantidad) => acumulador + cantidad,
-              0
-            );
             console.log(this.SUM_BIEN);
           });
-
-          Promise.all(result).then(item => {
+          Promise.all(result).then(items => {
             this.dataDetailDonation = data.data;
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
@@ -618,13 +588,7 @@ export class CaptureApprovalDonationComponent
             'El archivo se esta generando, favor de esperar la descarga',
             ''
           );
-          // this.fullService.generatingFileFlag.next({
-          //   progress: 99,
-          //   showText: true,
-          // });
-          // console.log(response.data)
           this.downloadDocument('-Detalle-Donacion', 'excel', data.base64File);
-          // this.modalRef.hide();
         },
         error: error => {
           this.excelLoading = false;
@@ -675,10 +639,6 @@ export class CaptureApprovalDonationComponent
     for (var i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
-    // this.fullService.generatingFileFlag.next({
-    //   progress: 100,
-    //   showText: false,
-    // });
 
     return bytes.buffer;
   }
@@ -699,6 +659,19 @@ export class CaptureApprovalDonationComponent
       this.selectedGooods = this.selectedGooods.filter(
         _good => _good.id != good.id
       );
+    }
+  }
+  async parseCurrrency(amount: string) {
+    const numericAmount = parseFloat(amount);
+    if (!isNaN(numericAmount)) {
+      return numericAmount.toLocaleString('en-US', {
+        // style: 'currency',
+        // currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    } else {
+      return amount;
     }
   }
   onGoodSelectValid(instance: CheckboxElementComponent) {
@@ -994,7 +967,7 @@ export class CaptureApprovalDonationComponent
     this.idAct = 0;
     this.TOTAL_REPORTE = 0;
     this.BIEN_ERROR = 0;
-    this.SUM_BIEN = '';
+    this.SUM_BIEN = 0;
     localStorage.removeItem('nameT');
   }
 
@@ -1039,7 +1012,7 @@ export class CaptureApprovalDonationComponent
       this.regisForm.reset();
       //this.formScan.reset();
       this.eventDonacion = next;
-      this.SUM_BIEN = '';
+      this.SUM_BIEN = 0;
       this.BIEN_ERROR = 0;
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;
@@ -1167,7 +1140,7 @@ export class CaptureApprovalDonationComponent
           captureDate: formattedfecCapture,
         });
       }
-      this.SUM_BIEN = '';
+      this.SUM_BIEN = 0;
       this.BIEN_ERROR = 0;
       this.totalItems2 = 0;
       this.eventdetailDefault = next;
