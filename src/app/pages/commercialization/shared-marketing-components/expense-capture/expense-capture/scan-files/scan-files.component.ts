@@ -95,6 +95,10 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     return this.dataService.data;
   }
 
+  get valid() {
+    return this.dataComer && this.dataService.validPayment;
+  }
+
   get expenseNumber() {
     return this.dataComer.expenseNumber;
   }
