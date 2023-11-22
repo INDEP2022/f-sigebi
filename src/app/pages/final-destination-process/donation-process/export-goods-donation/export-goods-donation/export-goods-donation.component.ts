@@ -963,6 +963,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           status: statusFinal.status,
           observations: descripcion + ' ',
         };
+
+        item_.status = statusFinal.status;
         await this.updateGood(obj);
 
         let params2 = {
