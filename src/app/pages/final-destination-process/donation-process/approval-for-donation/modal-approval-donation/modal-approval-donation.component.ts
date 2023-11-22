@@ -251,16 +251,19 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       },
 
       rowClassFunction: (row: any) => {
-        switch (row.data.nameT) {
-          case '1':
-            return 'bg-success text-white';
-          case '2':
-            return 'bg-gray-200 text-black';
-          case '3':
-            return 'bg-teal-500 text-white';
-          default:
-            return 'bg-yellow-500 text-black';
+        if (row.data.di_disponible === 'S') {
+          return 'bg-success text-black';
         }
+        // switch () {
+        //   case '1':
+        //     return 'bg-success text-white';
+        //   case '2':
+        //     return 'bg-gray-200 text-black';
+        //   case '3':
+        //     return 'bg-teal-500 text-white';
+        //   default:
+        //     return 'bg-yellow-500 text-black';
+        // }
       },
     };
   }
