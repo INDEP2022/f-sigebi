@@ -486,20 +486,43 @@ export class CaptureApprovalDonationComponent
   async getDetailProceedingsDevollution(id: any) {
     this.loading3 = true;
     let params: any = {
-      ...this.paramsList2.getValue(),
-      ...this.columnFilters2,
+      ...this.params.getValue(),
+      ...this.columnFilterDet,
     };
     params['filter.recordId'] = `$eq:${this.idAct}`;
-    params['filter.status'] = `$eq:DON`;
+    params['filter.good.status'] = `$eq:DON`;
+
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
         next: data => {
-          let result: any[] = [];
-          result = data.data.map((item: any) => {
+          // let result: any[] = [];
+          // result = data.data.map((item: any) => {
+          //   item['description'] = item.good ? item.good.description : null;
+          //   this.BIEN_ERROR += item['error'];
+          //   this.SUM_BIEN += item['amount'] = item.amount ? item.amount : null;
+          //   const status = (item['status'] = item.good.status
+          //     ? item.good.status
+          //     : null
+          //     ? item.good.status
+          //     : null);
+          //   if (status === null) {
+          //     this.errorSumInvalidos += status.length;
+          //   } else {
+          //     this.errorSumValidos += status.length;
+          //   }
+          // });
+
+          // Promise.all(result).then(items => {
+          //   this.dataDetailDonation = data.data;
+          //   this.dataDetailDonationGood.load(this.dataDetailDonation);
+          //   this.dataDetailDonationGood.refresh();
+          //   this.totalItems2 = data.count;
+          //   this.TOTAL_REPORTE = this.totalItems2;
+          let result = data.data.map((item: any) => {
             item['description'] = item.good ? item.good.description : null;
-            this.BIEN_ERROR += item['error'];
-            this.SUM_BIEN += item['amount'] = item.amount ? item.amount : null;
-            const status = (item['status'] = item.good
+            const status = (item['status'] = item.good.status
+              ? item.good.status
+              : null
               ? item.good.status
               : null);
             if (status === null) {
@@ -509,14 +532,12 @@ export class CaptureApprovalDonationComponent
             }
           });
 
-          Promise.all(result).then(items => {
+          Promise.all(result).then(item => {
             this.dataDetailDonation = data.data;
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
             this.totalItems2 = data.count;
-            this.TOTAL_REPORTE = this.totalItems2;
-
-            console.log('data', data);
+            console.log('getDetailProceedingsDevollution', data);
             this.loading3 = false;
             this.Exportdate = true;
           });
@@ -1076,7 +1097,7 @@ export class CaptureApprovalDonationComponent
     return { anio: anioCompleto, mes: mesTexto };
   }
 
-  agregarCaptura() {
+  agregarCaptura(create?: any) {
     // const testigoOne = this.regisForm.get('testigoOne').value;
     // const testigoTree = this.regisForm.get('testigoTree').value;
     const modalConfig = MODAL_CONFIG;
@@ -1084,7 +1105,7 @@ export class CaptureApprovalDonationComponent
       delegationToolbar: this.delegationToolbar,
       fileNumber: this.fileNumber,
       expedient: this.fileNumber,
-      // testigoTree,
+      create,
       // testigoOne,
     };
 

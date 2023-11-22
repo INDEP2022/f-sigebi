@@ -38,7 +38,7 @@ export class FindActaComponent extends BasePage implements OnInit {
   providerForm: FormGroup = new FormGroup({});
   dataTableGoodsActa: LocalDataSource = new LocalDataSource();
   dataFactActas: LocalDataSource = new LocalDataSource();
-  @Input() update: Function;
+  @Input() agregarCaptura: Function;
   @Output() onSave = new EventEmitter<any>();
   @Output() cleanForm = new EventEmitter<any>();
   @Input() idConversion: number | string;
@@ -168,6 +168,7 @@ export class FindActaComponent extends BasePage implements OnInit {
   onUserRowSelect(row: any): void {
     if (row.isSelected) {
       this.selectedRow = row.data;
+      console.log(this.selectedRow);
     } else {
       this.selectedRow = null;
     }
@@ -180,25 +181,26 @@ export class FindActaComponent extends BasePage implements OnInit {
     //     console.log(`${prop}: ${this.selectedRow[0].idConversion}`);
     //   }
     // }
-
     this.onSave.emit(this.selectedRow);
     this.modalRef.hide();
   }
 
   showDeleteMsg($event: any) {
     const data = $event.data;
-    this.detailProceeDelRecService.getGoodsByProceedings(data.id).subscribe({
-      next: data => {
-        this.alert(
-          'warning',
-          'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
-          ''
-        );
-      },
-      error: error => {
-        this.deleteD(data);
-      },
-    });
+    this.detailProceeDelRecService
+      .getGoodsByProceedings(data.actaId)
+      .subscribe({
+        next: data => {
+          this.alert(
+            'warning',
+            'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
+            ''
+          );
+        },
+        error: error => {
+          this.deleteD(data);
+        },
+      });
   }
 
   deleteD(data: any) {

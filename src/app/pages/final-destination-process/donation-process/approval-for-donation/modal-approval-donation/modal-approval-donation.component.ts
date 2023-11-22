@@ -381,7 +381,9 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     };
 
     params['filter.status'] = `$eq:DON`;
-    params['filter.transference.id'] = `$ilike:${120}`;
+    params[
+      'filter.transference.nameTransferent'
+    ] = `$ilike:${localStorage.getItem('nameT')}`;
     params['sortBy'] = `goodId:DESC`;
 
     this.donationService.getTempDon(params).subscribe({

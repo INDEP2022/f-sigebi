@@ -82,37 +82,67 @@
           </div>
           <div class="col-md-3 mt-2">
             <div>
-              <form-field [control]="actaRecepttionForm.get('administra')">
-                <ngx-select
-                  [form]="actaRecepttionForm"
-                  [data]="arrayDele"
-                  (fetchItems)="consulREG_DEL_ADMIN($event)"
-                  bindLabel="administra"
-                  value="delegacion"
-                  control="administra"
-                  label="Área que administra"
-                  [searchOnInit]="true"
-                  [showTooltip]="true"
-                  termMaxLength="30">
-                </ngx-select>
+              <form-field
+                [control]="actaRecepttionForm.get('fileId')"
+                label="Expediente">
+                <input
+                  min="0"
+                  max="99999"
+                  pattern="^[0-9]+"
+                  type="number"
+                  class="form-control pt-1"
+                  formControlName="fileId" />
               </form-field>
             </div>
           </div>
-
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('anio')"
+                label="Año">
+                <ng-select
+                  class="form-control pt-1"
+                  formControlName="anio"
+                  [items]="years"
+                  [ngModel]="currentYear"></ng-select>
+                <!-- <input #inputValue [max-length]="2" pattern="^[0-9]+" type="number" class="form-control"
+                  formControlName="anio" /> -->
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('administra')"
+                label="Adm.">
+                <ng-select
+                  formControlName="administra"
+                  class="form-control pt-1">
+                  <ng-option
+                    *ngFor="let item of arrayDele"
+                    [value]="item.delegacion"
+                    >{{ item.no_delegacion_2 }} -
+                    {{ item.delegacion }}</ng-option
+                  >
+                </ng-select>
+                <!-- <input #inputValue type="text" class="form-control" formControlName="cveReceived"
+                                    readonly /> -->
+              </form-field>
+            </div>
+          </div>
           <div class="col-md-3 mt-2">
             <div>
               <form-field
                 [control]="actaRecepttionForm.get('captureDate')"
                 label="Fecha Captura">
                 <input
+                  [ngClass]="{ 'not-press bg-gray': !disabledSend }"
+                  #datepickerElement
                   type="text"
-                  class="form-control"
+                  class="form-control pt-1"
                   formControlName="captureDate"
-                  [value]="
-                    actaRecepttionForm.get('captureDate').value
-                      | date : 'dd/MM/yyyy'
-                  "
-                  readonly />
+                  bsDatepicker
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
               </form-field>
             </div>
           </div>
@@ -148,7 +178,7 @@
             <div>
               <form-field
                 [control]="actaRecepttionForm.get('testigoOIC')"
-                label="Testigo 2">
+                label="Testigo  de l Contraloria">
                 <input
                   maxlength="100"
                   type="text"
@@ -182,17 +212,18 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!actaRecepttionForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()"
-          >Guardar <i class="fas fa-save bx-sm float-icon"></i>
-        </confirm-button>
+        <button
+          type="button"
+          [disabled]="!actaRecepttionForm.value"
+          class="btn btn-primary active btn-sm"
+          (click)="confirm()">
+          Guardar <i class="fas fa-save bx-sm float-icon"></i>
+        </button>
       </div>
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-danger btn-sm active mr-3"
+          class="btn btn-danger active btn-sm"
           (click)="return()">
           Cancelar
         </button>

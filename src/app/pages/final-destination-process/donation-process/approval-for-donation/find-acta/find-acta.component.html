@@ -21,7 +21,6 @@
           [settings]="settings"
           [source]="dataFactActas"
           (userRowSelect)="onUserRowSelect($event)"
-          (edit)="update($event.data)"
           (delete)="showDeleteMsg($event)">
         </ng2-smart-table>
       </ng-scrollbar>
@@ -30,6 +29,7 @@
       </app-pagination>
     </div>
   </div>
+  <!-- (edit)="agregarCaptura($event.data)" -->
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
