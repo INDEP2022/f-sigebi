@@ -97,6 +97,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   statusGood_: any;
   origin = GOOD_TRACKER_ORIGINS.DonationGood;
   goods: ITempDonDetail[] = [];
+  goodT: IGood;
   totalItemsModal: number = 0;
   modelCreate: ITempDonDetail;
   $trackedGoods = this.store.select(getTrackedGoods);
@@ -139,6 +140,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
 
   totalItems2: number = 0;
+  radioButton: any;
   constructor(
     private goodService: GoodService,
     private modalRef: BsModalRef,
@@ -160,6 +162,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     //     ...GOODS,
     //   },
     // };
+    console.log("localStorage.getItem('nameT')", localStorage.getItem('nameT'));
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -250,7 +253,15 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.error === 0) {
+        const typeBg = localStorage.getItem('nameT');
+        if (typeBg == 'CONSULTA DE BIENES') return 'bg-donacion-1 text-black';
+        else if (typeBg == 'COMERCIO EXTERIOR')
+          return 'bg-donacion-2 text-white';
+        else if (typeBg == 'DELITOS FEDERALES')
+          return 'bg-donacion-3 text-black';
+        else if (typeBg == 'OTROS TRANSFERENTES')
+          return 'bg-donacion-4 text-black';
+        else if (row.data.error === 0) {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -260,7 +271,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.goodsList);
     this.globalVarService
       .getGlobalVars$()
       .pipe(takeUntil(this.$unSubscribe))
@@ -268,8 +278,9 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         next: global => {
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
-            console.log('RASTREADOR ', this.data);
-            this.createMultipleRecords(this.ngGlobal.REL_BIENES);
+            console.log('RASTREADOR ', this.ngGlobal.REL_BIENES);
+            this.goodById();
+            // this.createMultipleRecords(this.ngGlobal.REL_BIENES);
             // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
             // console.log(this.selectedGooodsValid);
             // this.dataGoodTable.load(this.selectedGooodsValid);
@@ -291,7 +302,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         }
         if (this.origin != null) {
           // this.isValidOrigin();
-          this.loadGlobalVarsAndCreateRecords();
           console.log(this.paramsScreen);
         }
       });
@@ -375,10 +385,10 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     };
 
     params['filter.status'] = `$eq:DON`;
-    params[
-      'filter.transference.nameTransferent'
-    ] = `$ilike:${localStorage.getItem('nameT')}`;
-    params['sortBy'] = `goodId:DESC`;
+    // params[
+    //   'filter.transference.nameTransferent'
+    // ] = `$ilike:${localStorage.getItem('nameT')}`;
+    // params['sortBy'] = `goodId:DESC`;
 
     this.donationService.getTempDon(params).subscribe({
       next: data => {
@@ -535,7 +545,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   async getStatusGoodService(status: any) {
     this.statusGoodService.getById(status).subscribe({
       next: async (resp: any) => {
-        console.log('datapruebaJess', resp);
         this.statusGood_ = resp.description;
         // this.statusGoodForm.get('statusGood').setValue(resp.description)
       },
@@ -557,6 +566,10 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     };
     params['sortBy'] = `goodNumber:DESC`;
     params['filter.status'] != 'DON';
+    if (localStorage.getItem('nameT'))
+      params[
+        'filter.transference.nameTransferent'
+      ] = `$ilike:${localStorage.getItem('nameT')}`;
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
@@ -614,28 +627,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     });
   }
 
-  async createTemp(body: ITempDonDetail) {
-    return new Promise((resolve, reject) => {
-      this.donationService.createTempDon(body).subscribe({
-        next: data => {
-          console.log('creado');
-          this.modelCreate = data;
-        },
-        error: () => {
-          resolve('N');
-        },
-      });
-    });
-  }
-
-  async loadGlobalVarsAndCreateRecords() {
-    // Retrieve global variables
-    await this.getGlobalVars();
-    console.log(this.goodsList);
-    const data: ITempDonDetail[] = [];
-    await this.createMultipleRecords(data);
-  }
-
   async getGlobalVars() {
     return new Promise<void>((resolve, reject) => {
       this.globalVarService
@@ -654,18 +645,13 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     });
   }
 
-  async createMultipleRecords(data: ITempDonDetail[]) {
-    const promises = [];
-    for (const record of data) {
-      const promise = this.createTemp(record);
-      promises.push(promise);
-    }
-    const results = await Promise.all(promises);
-    console.log('All records created:', results);
-    this.alert(
-      'info',
-      'Bienes del rastreador agregados a temporales, por favor seleccione los bienes para el detalle',
-      ''
-    );
+  async goodById() {
+    this.goodService.getGoodByIds(this.ngGlobal.REL_BIENES).subscribe({
+      next: data => {
+        this.goodT = data.data;
+        this.isGoodSelected(this.goodT);
+      },
+      error: () => console.log('no hay bienes'),
+    });
   }
 }
