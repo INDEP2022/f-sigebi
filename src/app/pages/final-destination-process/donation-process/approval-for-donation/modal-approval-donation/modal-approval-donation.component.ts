@@ -140,6 +140,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
 
   totalItems2: number = 0;
+  radioButton: any;
   constructor(
     private goodService: GoodService,
     private modalRef: BsModalRef,
@@ -161,6 +162,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     //     ...GOODS,
     //   },
     // };
+    console.log("localStorage.getItem('nameT')", localStorage.getItem('nameT'));
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -251,7 +253,15 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.error === 0) {
+        const typeBg = localStorage.getItem('nameT');
+        if (typeBg == 'CONSULTA DE BIENES') return 'bg-donacion-1 text-black';
+        else if (typeBg == 'COMERCIO EXTERIOR')
+          return 'bg-donacion-2 text-white';
+        else if (typeBg == 'DELITOS FEDERALES')
+          return 'bg-donacion-3 text-black';
+        else if (typeBg == 'OTROS TRANSFERENTES')
+          return 'bg-donacion-4 text-black';
+        else if (row.data.error === 0) {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -375,10 +385,10 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     };
 
     params['filter.status'] = `$eq:DON`;
-    params[
-      'filter.transference.nameTransferent'
-    ] = `$ilike:${localStorage.getItem('nameT')}`;
-    params['sortBy'] = `goodId:DESC`;
+    // params[
+    //   'filter.transference.nameTransferent'
+    // ] = `$ilike:${localStorage.getItem('nameT')}`;
+    // params['sortBy'] = `goodId:DESC`;
 
     this.donationService.getTempDon(params).subscribe({
       next: data => {
@@ -556,6 +566,10 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     };
     params['sortBy'] = `goodNumber:DESC`;
     params['filter.status'] != 'DON';
+    if (localStorage.getItem('nameT'))
+      params[
+        'filter.transference.nameTransferent'
+      ] = `$ilike:${localStorage.getItem('nameT')}`;
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
