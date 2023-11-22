@@ -40,6 +40,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   selectedComposition: IComerDetExpense2;
   updateExpenseComposition = new Subject();
   updateExpenseCompositionAndValidateProcess = new Subject();
+  finishProcessSolicitud = new Subject();
   updateOI = new Subject();
   updateFolio = new Subject();
   P_PRUEBA: number;
@@ -78,7 +79,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   SELECT_CAMBIA_CLASIF_ENABLED = false;
   validateAndProcess = false;
   user: any;
-
+  actionButton = '';
   // Scan Files Data
   formScan: FormGroup;
   delUser: number;
@@ -102,6 +103,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   clean() {
     this.form.reset();
+    this.actionButton = '';
     this.data = null;
     this.validPayment = false;
     this.delegation = null;
@@ -326,7 +328,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return V_VALIDA_DET;
   }
 
-  private RECARGA_BIENES_LOTE() {
+  RECARGA_BIENES_LOTE() {
     const VALIDA_DET = this.dataCompositionExpenses.filter(
       row => row.changeStatus && row.changeStatus === true
     );
@@ -576,6 +578,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     });
     if (resultOI === null) {
       // console.log(resultSP);
+      this.errorSendSolicitudeMessage();
       return;
     }
     const resultSP = await this.ENVIA_SIRSAE_CHATARRA_SP({
@@ -614,6 +617,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     if (resultSP === null) {
       // console.log(resultSP);
       // this.alert('error','No se pudo realizar el proceso de pago','Favor de verificar')
+      this.errorSendSolicitudeMessage();
       return;
     }
     this.expenseGoodProcessService
@@ -624,14 +628,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       )
       .subscribe({
         next: response => {
+          this.finishProcessSolicitud.next(true);
           this.alert('success', 'Se realizo el proceso de pago', '');
         },
         error: err => {
+          this.finishProcessSolicitud.next(true);
           this.alert(
             'error',
             'No se puede procesar la solicitud',
             err.error.message
           );
+          // this.errorSendSolicitudeMessage();
         },
       });
   }
@@ -643,6 +650,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.processPay();
     } else {
       this.alert('error', 'No se puede procesar la solicitud', '');
+      this.errorSendSolicitudeMessage();
     }
   }
 
@@ -653,6 +661,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.processPay();
     } else {
       this.alert('error', 'No se puede procesar la solicitud', '');
+      this.errorSendSolicitudeMessage();
     }
   }
 
@@ -811,10 +820,12 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
-          this.alert('success', 'Procedimiento ejecutado correctamente', '');
+          // this.alert('success', 'Procedimiento ejecutado correctamente', '');
+          this.sucessSendSolitudeMessage();
         },
         error: err => {
           this.alert('error', 'Envio a sirsae', err.error.message);
+          this.errorSendSolicitudeMessage();
         },
       });
   }
@@ -832,6 +843,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           'El Lote ' + this.lotNumber.value,
           'Debe tener un pago registrado para la forma de pago seleccionada'
         );
+        this.errorSendSolicitudeMessage();
         return;
       } else {
         this.ENVIAR_SIRSAE();
@@ -848,12 +860,46 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
+  private sucessSendSolitudeMessage() {
+    this.finishProcessSolicitud.next(true);
+    setTimeout(() => {
+      this.alert(
+        'success',
+        'Se envió la solicitud de ' + this.actionButton,
+        ''
+      );
+    }, 500);
+  }
+
+  private errorSendSolicitudeMessage() {
+    this.finishProcessSolicitud.next(true);
+    setTimeout(() => {
+      this.alert(
+        'error',
+        'No se pudo enviar la solicitud de ' + this.actionButton,
+        ''
+      );
+    }, 500);
+  }
+
   private VALIDA_SUBTOTAL_PRECIO(
     eventId: string,
     lotId: string,
     spentId: string
   ) {
-    this.lotService.VALIDA_SUBTOTAL_PRECIO({ eventId, lotId, spentId });
+    this.lotService
+      .VALIDA_SUBTOTAL_PRECIO({ eventId, lotId, spentId })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.alert('success', 'Sub total precio válido', '');
+          this.sucessSendSolitudeMessage();
+        },
+        error: err => {
+          this.alert('error', err.error.message, '');
+          this.errorSendSolicitudeMessage();
+        },
+      });
   }
 
   VALIDA_CAMBIO_ESTATUS() {
@@ -901,9 +947,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             'Se generó la cancelación parcial correctamente',
             ''
           );
+          this.sucessSendSolitudeMessage();
         },
         error: err => {
           this.alert('error', 'No se pudo generar la cancelación parcial', '');
+          this.errorSendSolicitudeMessage();
         },
       });
   }
@@ -938,9 +986,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             'Se generó la devolución parcial correctamente',
             ''
           );
+          this.sucessSendSolitudeMessage();
         },
         error: err => {
           this.alert('error', 'No se pudo generar la devolución parcial', '');
+          this.errorSendSolicitudeMessage();
         },
       });
   }
@@ -971,9 +1021,12 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       })
       .pipe(take(1))
       .subscribe({
-        next: response => {},
+        next: response => {
+          this.sucessSendSolitudeMessage();
+        },
         error: err => {
-          this.alert('error', 'Cancela Vta Normal', err.error.message);
+          this.alert('error', 'Fallo en Cancela Vta Normal', err.error.message);
+          this.errorSendSolicitudeMessage();
         },
       });
   }
