@@ -97,6 +97,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   statusGood_: any;
   origin = GOOD_TRACKER_ORIGINS.DonationGood;
   goods: ITempDonDetail[] = [];
+  goodT: IGood;
   totalItemsModal: number = 0;
   modelCreate: ITempDonDetail;
   $trackedGoods = this.store.select(getTrackedGoods);
@@ -260,7 +261,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.goodsList);
     this.globalVarService
       .getGlobalVars$()
       .pipe(takeUntil(this.$unSubscribe))
@@ -268,8 +268,9 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         next: global => {
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
-            console.log('RASTREADOR ', this.data);
-            this.createMultipleRecords(this.ngGlobal.REL_BIENES);
+            console.log('RASTREADOR ', this.ngGlobal.REL_BIENES);
+            this.goodById();
+            // this.createMultipleRecords(this.ngGlobal.REL_BIENES);
             // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
             // console.log(this.selectedGooodsValid);
             // this.dataGoodTable.load(this.selectedGooodsValid);
@@ -291,7 +292,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         }
         if (this.origin != null) {
           // this.isValidOrigin();
-          this.loadGlobalVarsAndCreateRecords();
           console.log(this.paramsScreen);
         }
       });
@@ -535,7 +535,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   async getStatusGoodService(status: any) {
     this.statusGoodService.getById(status).subscribe({
       next: async (resp: any) => {
-        console.log('datapruebaJess', resp);
         this.statusGood_ = resp.description;
         // this.statusGoodForm.get('statusGood').setValue(resp.description)
       },
@@ -614,28 +613,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     });
   }
 
-  async createTemp(body: ITempDonDetail) {
-    return new Promise((resolve, reject) => {
-      this.donationService.createTempDon(body).subscribe({
-        next: data => {
-          console.log('creado');
-          this.modelCreate = data;
-        },
-        error: () => {
-          resolve('N');
-        },
-      });
-    });
-  }
-
-  async loadGlobalVarsAndCreateRecords() {
-    // Retrieve global variables
-    await this.getGlobalVars();
-    console.log(this.goodsList);
-    const data: ITempDonDetail[] = [];
-    await this.createMultipleRecords(data);
-  }
-
   async getGlobalVars() {
     return new Promise<void>((resolve, reject) => {
       this.globalVarService
@@ -654,18 +631,13 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     });
   }
 
-  async createMultipleRecords(data: ITempDonDetail[]) {
-    const promises = [];
-    for (const record of data) {
-      const promise = this.createTemp(record);
-      promises.push(promise);
-    }
-    const results = await Promise.all(promises);
-    console.log('All records created:', results);
-    this.alert(
-      'info',
-      'Bienes del rastreador agregados a temporales, por favor seleccione los bienes para el detalle',
-      ''
-    );
+  async goodById() {
+    this.goodService.getGoodByIds(this.ngGlobal.REL_BIENES).subscribe({
+      next: data => {
+        this.goodT = data.data;
+        this.isGoodSelected(this.goodT);
+      },
+      error: () => console.log('no hay bienes'),
+    });
   }
 }
