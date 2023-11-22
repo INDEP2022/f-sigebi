@@ -123,7 +123,7 @@
               </div>
               <div class="col-md-8 text-end">
                 <button
-                  [disabled]="!dataExpediente || !actaCerrada"
+                  [disabled]="!actaCerrada || !btnSave"
                   (click)="save()"
                   type="button"
                   class="btn btn-primary active btn-sm mr-3">
@@ -136,18 +136,28 @@
                 </button> -->
                 <button
                   [ngClass]="{ loading: loadingBtn }"
-                  [disabled]="!dataExpediente || !actaCerrada"
+                  [disabled]="!actaCerrada || !actaDefault"
                   class="btn btn-primary btn-sm active mr-3"
                   (click)="cerrarActa()">
                   Cerrar Acta
                 </button>
                 <button
+                  [disabled]="!dataExpediente"
+                  button
+                  type="button"
+                  tooltip="Nuevo"
+                  containerClass="tooltip-style"
+                  class="btn btn-info btn-sm active ml-2 mr-2"
+                  (click)="cleanActa()">
+                  Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <!-- <button
                   (click)="cleanActa()"
                   type="button"
                   class="btn btn-danger active btn-sm">
                   Limpiar
                   <i class="fa fa-eraser" aria-hidden="true"></i>
-                </button>
+                </button> -->
               </div>
             </div>
             <app-card [header]="false" [footer]="false">
@@ -160,9 +170,7 @@
                           [control]="claveActaForm.get('acta')"
                           label="Acta">
                           <ng-select
-                            [readonly]="
-                              !dataExpediente || !valClave || !actaCerrada
-                            "
+                            [readonly]="!valClave || !actaCerrada"
                             formControlName="acta"
                             class="form-control pt-1">
                             <ng-option value="DON">DON</ng-option>
@@ -176,9 +184,7 @@
                           [control]="claveActaForm.get('type')"
                           label="Estado">
                           <ng-select
-                            [readonly]="
-                              !dataExpediente || !valClave || !actaCerrada
-                            "
+                            [readonly]="!valClave || !actaCerrada"
                             formControlName="type"
                             class="form-control pt-1">
                             <ng-option value="A">A</ng-option>
@@ -193,9 +199,7 @@
                       <div>
                         <form-field [control]="claveActaForm.get('claveTrans')">
                           <ngx-select
-                            [readonly]="
-                              !dataExpediente || !valClave || !actaCerrada
-                            "
+                            [readonly]="!valClave || !actaCerrada"
                             [form]="claveActaForm"
                             [data]="trans"
                             (fetchItems)="consultREG_TRANSFERENTES($event)"
@@ -215,9 +219,7 @@
                         <form-field
                           [control]="claveActaForm.get('cveReceived')">
                           <ngx-select
-                            [readonly]="
-                              !dataExpediente || !valClave || !actaCerrada
-                            "
+                            [readonly]="!valClave || !actaCerrada"
                             [form]="claveActaForm"
                             [data]="dele"
                             (fetchItems)="consulREG_DEL_ADMIN($event)"
@@ -236,9 +238,7 @@
                       <div>
                         <form-field [control]="claveActaForm.get('administra')">
                           <ngx-select
-                            [readonly]="
-                              !dataExpediente || !valClave || !actaCerrada
-                            "
+                            [readonly]="!valClave || !actaCerrada"
                             [form]="claveActaForm"
                             [data]="arrayDele"
                             (fetchItems)="consulREG_DEL_DESTR($event)"
@@ -259,9 +259,7 @@
                           [control]="claveActaForm.get('consec')"
                           label="Folio">
                           <input
-                            [readonly]="
-                              !dataExpediente || !valClave || !actaCerrada
-                            "
+                            [readonly]="!valClave || !actaCerrada"
                             [max-length]="4"
                             pattern="^[0-9]+"
                             type="number"
@@ -276,9 +274,7 @@
                           [control]="claveActaForm.get('anio')"
                           label="Año">
                           <ng-select
-                            [readonly]="
-                              !dataExpediente || !valClave || !actaCerrada
-                            "
+                            [readonly]="!valClave || !actaCerrada"
                             class="form-control pt-1"
                             formControlName="anio"
                             [items]="years"
@@ -292,9 +288,7 @@
                           [control]="claveActaForm.get('mes')"
                           label="Mes">
                           <ng-select
-                            [readonly]="
-                              !dataExpediente || !valClave || !actaCerrada
-                            "
+                            [readonly]="!valClave || !actaCerrada"
                             class="form-control pt-1"
                             formControlName="mes"
                             [items]="months"></ng-select>
@@ -374,8 +368,9 @@
                         [control]="actaRecepttionForm.get('folio')"
                         label="Folio de Escaneo:">
                         <input
+                          [maxlength]="10"
                           [readonly]="!actaCerrada || !dataExpediente"
-                          type="text"
+                          type="number"
                           class="form-control"
                           formControlName="folio" />
                       </form-field>
@@ -385,6 +380,7 @@
                         [control]="actaRecepttionForm.get('testigoTwo')"
                         label="Nombre Entrega:">
                         <input
+                          maxlength="100"
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
                           class="form-control"
@@ -398,6 +394,7 @@
                         <input
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
+                          maxlength="100"
                           class="form-control"
                           formControlName="testigoTree" />
                       </form-field>
@@ -407,6 +404,7 @@
                         [control]="actaRecepttionForm.get('respConv')"
                         label="Auditor:">
                         <input
+                          maxlength="500"
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
                           class="form-control"
@@ -420,6 +418,7 @@
                         <input
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
+                          maxlength="100"
                           class="form-control"
                           formControlName="testigoOIC" />
                       </form-field>
@@ -431,6 +430,7 @@
                         <textarea
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
+                          maxlength="1000"
                           rows="3"
                           cols="3"
                           class="form-control"
@@ -444,6 +444,7 @@
                         <textarea
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
+                          maxlength="1000"
                           rows="3"
                           cols="3"
                           class="form-control"

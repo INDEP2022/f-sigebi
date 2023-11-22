@@ -63,6 +63,10 @@ export class DonationService
   remove(id: string): Observable<any> {
     return this.donationRepository.remove(api, id);
   }
+  removeEvent(id: string | number) {
+    const route = `${DonationEndPoint.eventComDonation}/${id}`;
+    return this.delete(route);
+  }
 
   getEventComDonation(params?: ListParams) {
     const route = `${DonationEndPoint.eventComDonation}`;
@@ -78,6 +82,10 @@ export class DonationService
     );
   }
 
+  getDetailById(body: any) {
+    const route = `${DonationEndPoint.DetailEventComByID}`;
+    return this.post(route, body);
+  }
   getExcel(body: IExportDetail) {
     const route = `${DonationEndPoint.eventComDonationExcel}`;
     return this.post(route, body);

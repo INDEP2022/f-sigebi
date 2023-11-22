@@ -36,7 +36,6 @@ export class ExpenseCompositionComponent
   @ViewChild('table') table: Ng2SmartTableComponent;
   ce: boolean = false;
   rr: boolean = false;
-
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
