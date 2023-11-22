@@ -46,6 +46,10 @@ export class SpentService extends HttpService {
     );
   }
 
+  remove(id: string) {
+    return this.delete(SpentEndpoints.ExpenseComer + '/' + id);
+  }
+
   getAllComerPagosRef(params?: string) {
     return this.get('comer-payment-ref-gens', params);
   }

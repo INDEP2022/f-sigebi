@@ -145,6 +145,15 @@ export function firstFormatDateToDate(date: string) {
   }
 }
 
+export function secondFormatDateToDateAny(date: any) {
+  if (!date) return null;
+  if (date instanceof Date) {
+    return date;
+  } else {
+    return secondFormatDateToDate(date);
+  }
+}
+
 export function secondFormatDateToDate(date: string) {
   if (date) {
     const array = date.split('-');
