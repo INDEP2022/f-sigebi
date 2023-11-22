@@ -16,6 +16,8 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
+import { SafeService } from 'src/app/core/services/catalogs/safe.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -51,7 +53,9 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
     private expedientService: ExpedientService,
     private datePipe: DatePipe,
     private modalService: BsModalService,
-    private goodprocessService: GoodProcessService
+    private goodprocessService: GoodProcessService,
+    private safeService: SafeService,
+    private warehouseService: WarehouseService
   ) {
     super();
     this.settings = {
@@ -198,26 +202,36 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['filter.fileNumber'] = `$eq:${id}`;
-    this.goodService.getAll(params).subscribe({
+    // params['filter.fileNumber'] = `$eq:${id}`;
+    this.goodService.getByExpedient(id, params).subscribe({
       next: async response => {
         let data = await Promise.all(
           response.data.map(async (item: any) => {
             console.log(item.ubicationType);
+            let resultStore: any = null;
+            let vaultNumber: any = null;
             switch (item.ubicationType) {
               case 'A':
                 item.di_cve_ubicacion = 'ALMACEN';
+
+                if (item.storeNumber)
+                  resultStore = await this.getAlmacen(item.storeNumber);
+
                 item.di_ubicacion1 = `${
-                  item.almacen ? item.almacen.ubication : ''
-                } LOTE ${item.lotNumber ? item.lotNumber.id : ''} RACK ${
+                  resultStore ? resultStore.ubication : ''
+                } LOTE ${item.lotNumber ? item.lotNumber : ''} RACK ${
                   item.rackNumber
                 }`;
                 break;
               case 'B':
                 item.di_cve_ubicacion = 'BOVEDA';
+
+                if (item.vaultNumber)
+                  vaultNumber = await this.getBoveda(item.vaultNumber);
+
                 item.di_ubicacion1 = `${
-                  item.boveda ? item.boveda.ubication : ''
-                } GAVETA ${item.lotNumber ? item.lotNumber.id : ''}`;
+                  vaultNumber ? vaultNumber.ubication : ''
+                } GAVETA ${item.lotNumber ? item.lotNumber : ''}`;
                 break;
               case 'D':
                 item.di_cve_ubicacion = 'DEPOSITARÍA';
@@ -237,7 +251,38 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
+    });
+  }
+
+  getBoveda(id: any) {
+    return new Promise((res, _rej) => {
+      this.safeService.getById2(id).subscribe({
+        next: resp => {
+          res(resp);
+        },
+        error: err => {
+          res(null);
+        },
+      });
+    });
+  }
+
+  getAlmacen(id: any) {
+    return new Promise((res, _rej) => {
+      this.warehouseService.getById(id).subscribe({
+        next: resp => {
+          res(resp);
+        },
+        error: err => {
+          res(null);
+        },
+      });
     });
   }
 
