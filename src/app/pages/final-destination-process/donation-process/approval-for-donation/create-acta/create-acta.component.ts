@@ -275,14 +275,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.witnessTes = this.actaRecepttionForm.value.testigoOne;
     const anio = this.actaRecepttionForm.value.anio;
 
-    // const miCadenaAnio = anio + '';
-    // const miSubcadena = miCadenaAnio.slice(2, 5);
-    // localStorage.setItem('actaId', acta);
     localStorage.setItem('anio', anio);
     console.log('AÑO', anio);
-    // let consec_ = this.foolio.toString().padStart(4, '0');
-    // console.log(consec_);
-    // this.foolio = consec;
+
     console.log('numeraryFolio - >', this.foolio);
     this.cveActa = `${acta}/${administra}/${anio}/${this.foolio}`;
     console.log('cveActa -->', this.cveActa);

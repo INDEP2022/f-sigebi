@@ -304,10 +304,7 @@ export class CaptureApprovalDonationComponent
       type: [null, []],
       area: [null, [Validators.pattern(STRING_PATTERN)]],
       year: [null, []],
-      folio: [
-        null,
-        [Validators.pattern(KEYGENERATION_PATTERN), Validators.maxLength(4)],
-      ],
+      folio: [null],
       captureDate: [null, []],
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       observaciones: [null],
@@ -324,11 +321,9 @@ export class CaptureApprovalDonationComponent
     this.loading = true;
     const folio = this.regisForm.value.folio;
     // const acta = this.regisForm.value.type;
-    let year = this.regisForm.value.year;
+    let year = localStorage.getItem('anio');
     const area = this.regisForm.value.area;
-    let folio_ = folio.toString().padStart(4, '0');
-    this.foolio = folio_;
-    const cveActa = `${'COMPDON'}/${area}/${year}/${folio_}/${this.type}`;
+    const cveActa = `${'COMPDON'}/${area}/${year}/${this.foolio}/${this.type}`;
     console.log('cveActa -->', cveActa);
     this.donationService.createD(donationGood).subscribe({
       next: resp => {
@@ -361,10 +356,7 @@ export class CaptureApprovalDonationComponent
         if (isNaN(anio)) {
           return null;
         }
-        const fechaActual = new Date();
-        const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
-        const anioCompleto = anio < 100 ? sigloActual + anio : anio;
-        this.regisForm.get('year').setValue(anioCompleto);
+        this.regisForm.get('year').setValue(localStorage.getItem('anio'));
         this.regisForm.get('folio').setValue(data.folioUniversal);
         this.regisForm.get('keyEvent').setValue(this.eventDonacion.cveAct);
         this.regisForm
@@ -1029,7 +1021,7 @@ export class CaptureApprovalDonationComponent
         area: localStorage.getItem('area'),
         keyEvent: next.cveAct,
         mes: next.captureDate,
-        year: next.captureDate,
+        year: next.anio,
         testigoOne: next.witness1,
         testigoTree: next.witness2,
         elaboradate: formattedfecElaborate,
@@ -1056,7 +1048,7 @@ export class CaptureApprovalDonationComponent
       return null; // Clave no válida
     }
 
-    const ultimosCincoDigitos = claveActa.slice(-4);
+    const ultimosCincoDigitos = claveActa.slice(-5);
     const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
     const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
     if (isNaN(anio) || anio < 0) {
@@ -1112,7 +1104,7 @@ export class CaptureApprovalDonationComponent
           type: next.actType,
           area: localStorage.getItem('area'),
           keyEvent: next.cveAct,
-          anio: next.anio,
+          anio: localStorage.getItem('anio'),
           testigoOne: next.witness1,
           testigoTree: next.witness2,
           elaboradate: next.captureDate,

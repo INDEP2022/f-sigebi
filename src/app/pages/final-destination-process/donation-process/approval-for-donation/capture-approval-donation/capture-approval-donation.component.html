@@ -70,7 +70,6 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('folio')" label="Folio">
                   <input
-                    #inputValue
                     type="text"
                     class="form-control"
                     formControlName="folio"
@@ -79,20 +78,16 @@
                 </form-field>
               </div>
             </div>
-
             <div class="col-md-5">
-              <div>
+              <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="regisForm.get('captureDate')"
                   label="Fecha Captura">
                   <input
-                    #datepickerElement
                     type="text"
-                    readonly
-                    class="form-control pt-1"
+                    class="form-control"
                     formControlName="captureDate"
-                    bsDatepicker
-                    [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                    readonly />
                 </form-field>
               </div>
             </div>
