@@ -12,4 +12,5 @@ export enum SpentEndpoints {
   FillExpenses = 'aplication/fill-expenses',
   GetAllExpensesByFilter = 'aplication/query-spent',
   MassiveDeleteDetExpenses = 'aplication/massiveDeleteComerDetexpenses',
+  MassiveUpdateComerDetexpenses = 'aplication/massiveUpdateComerDetexpenses',
 }

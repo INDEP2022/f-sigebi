@@ -37,7 +37,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   FOLIO_UNIVERSAL: any;
   address: string;
   dataCompositionExpenses: IComerDetExpense2[] = [];
+  selectedComposition: IComerDetExpense2;
   updateExpenseComposition = new Subject();
+  updateExpenseCompositionAndValidateProcess = new Subject();
   updateOI = new Subject();
   updateFolio = new Subject();
   P_PRUEBA: number;
@@ -74,6 +76,15 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   PB_VEHICULO_REP_ROBO_ENABLED = false;
   SELECT_CAMBIA_CLASIF_DISPLAYED = true;
   SELECT_CAMBIA_CLASIF_ENABLED = false;
+  validateAndProcess = false;
+  user: any;
+
+  // Scan Files Data
+  formScan: FormGroup;
+  delUser: number;
+  subDelUser: number;
+  departmentUser: number;
+  userData: any;
   constructor(
     private fb: FormBuilder,
     private parameterService: ParametersConceptsService,
@@ -87,24 +98,60 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     private comerDetService: ComerDetexpensesService
   ) {
     super();
-    this.expenseModalService.selectedMotivesSubject.subscribe({
-      next: response => {
-        if (response) {
-          this.secondSendSolicitud();
-        }
-      },
-    });
   }
 
-  private secondSendSolicitud() {
-    // debugger;
-    const VALIDA_DET = this.dataCompositionExpenses.filter(
-      row => row.changeStatus && row.changeStatus === true
-    );
-    if (VALIDA_DET.length > 0) {
-      this.ENVIA_SOLICITUD();
-      this.alert('success', 'Actualización Realizada', '');
-    }
+  clean() {
+    this.form.reset();
+    this.data = null;
+    this.validPayment = false;
+    this.delegation = null;
+    this.subDelegation = null;
+    this.noDepartamento = null;
+    this.FOLIO_UNIVERSAL = null;
+    this.dataCompositionExpenses = [];
+    this.P_PRUEBA = undefined;
+    this.PMONTOXMAND = undefined;
+    this.PDEVCLIENTE = undefined;
+    this.PCAMBIAESTATUS = undefined;
+    this.PCONDIVXMAND = undefined;
+    this.PCANVTA = undefined;
+    this.P_REGMANDATO = undefined;
+    this.P_CAMBIO = undefined;
+    this.P_MANDCONTIPO = undefined;
+    this.PDEVPARCIAL = undefined;
+    this.PCHATMORSINFLUJOPM = undefined;
+    this.PCHATMORSINFLUJOPF = undefined;
+    this.PCHATMORSINFLUJOPFSR = undefined;
+    this.PCANFACT = undefined;
+    this.PCREAFACT = undefined;
+    this.VALBIEVEND = undefined;
+    this.PNOENVIASIRSAE = undefined;
+    this.PDEVPARCIALBIEN = undefined;
+    this.PVALIDADET = undefined;
+    this.CHCONIVA = undefined;
+    this.IVA = undefined;
+    this.V_VALCON_ROBO = 0;
+    this.amount = 0;
+    this.vat = 0;
+    this.isrWithholding = 0;
+    this.vatWithholding = 0;
+    this.total = 0;
+    this.totalMandatos = 0;
+    this.V_BIEN_REP_ROBO = 0;
+    this.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+    this.PB_VEHICULO_REP_ROBO_ENABLED = false;
+    this.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
+    this.SELECT_CAMBIA_CLASIF_ENABLED = false;
+    this.user = undefined;
+    this.validateAndProcess = false;
+    this.selectedComposition = null;
+    this.expenseModalService.clean();
+
+    this.formScan.reset();
+    this.delUser = null;
+    this.subDelUser = null;
+    this.departmentUser = null;
+    this.userData = null;
   }
 
   resetParams() {
@@ -211,6 +258,10 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return this.form.get('comment');
   }
 
+  get publicLot() {
+    return this.form.get('publicLot');
+  }
+
   prepareForm() {
     this.form = this.fb.group({
       expenseNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
@@ -219,6 +270,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
       eventNumber: [null],
       lotNumber: [null],
+      publicLot: [null],
       folioAtnCustomer: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
       dateOfResolution: [null],
       clkpv: [null, [Validators.required]],
@@ -311,6 +363,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
+    // debugger;
     const resultParams = await this.readParams(this.conceptNumber.value);
 
     if (
@@ -324,23 +377,21 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       if (this.VALIDA_DET(V_VALIDA_DET)) {
         this.PROCESA_SOLICITUD();
       }
-      return false;
     } else if (this.PVALIDADET === 'S') {
       if (this.lotNumber && this.lotNumber.value) {
         let response = await firstValueFrom(this.RECARGA_BIENES_LOTE());
-        if (response) {
-          return true;
+        if (response && showExtramessage) {
+          this.updateExpenseCompositionAndValidateProcess.next(true);
+          return;
         }
         if (this.VALIDA_DET(V_VALIDA_DET)) {
           this.PROCESA_SOLICITUD();
         }
-        return false;
       } else {
         this.alert('error', 'Debe indicar el lote para enviar solicitud', '');
-        return false;
       }
     } else {
-      return false;
+      this.PROCESA_SOLICITUD();
     }
   }
 
@@ -364,11 +415,12 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return firstValueFrom(
       this.comerEventService
         .getAll(filterParams.getParams())
-        .pipe(catchError(x => of(null)))
+        .pipe(catchError(x => of({ count: 0, data: [] })))
     );
   }
 
   async updateByGoods(sendToSIRSAE: boolean) {
+    // debugger;
     console.log(this.dataCompositionExpenses);
     // this.ENVIA_MOTIVOS();
     // return;
@@ -402,7 +454,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
               this.ENVIA_SOLICITUD();
             }
           } else {
-            this.alert('error', 'Evento Equivocado', '');
+            this.alert('error', 'Evento Equivocado', 'Favor de verificar');
             this.eventNumber.setValue(null);
           }
         }
@@ -770,17 +822,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   private async normalSolicitud() {
     let aux = false;
     aux = await this.VALIDACIONES_SOLICITUD2();
-    let AUX_INTERCAMBIO = await this.PUF_VALIDA_PAGOXEVENTO(
-      this.data.formPayment
-    );
-
     if (aux) {
+      let AUX_INTERCAMBIO = await this.PUF_VALIDA_PAGOXEVENTO(
+        this.data.formPayment
+      );
       if (AUX_INTERCAMBIO === '0') {
         this.alert(
           'error',
-          'Lote ' + this.lotNumber.value,
+          'El Lote ' + this.lotNumber.value,
           'Debe tener un pago registrado para la forma de pago seleccionada'
         );
+        return;
       } else {
         this.ENVIAR_SIRSAE();
       }
@@ -818,15 +870,79 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   async VERIFICA_ACTUALIZACION_EST() {
     this.P_PRUEBA = 0;
     if (this.PDEVPARCIAL === 'S') {
-      // this.DEVOLUCION_PARCIAL();
+      this.DEVOLUCION_PARCIAL();
     } else if (!this.PCANVTA) {
       const CONTINUA = await this.VALIDA_CAMBIO_ESTATUS();
       if (CONTINUA === 1) {
         this.CANCELA_VTA_NORMAL();
       } else {
-        // this.CANCELACION_PARCIAL();
+        this.CANCELACION_PARCIAL();
       }
     }
+  }
+
+  private DEVOLUCION_PARCIAL() {
+    this.lotService
+      .DEVOLUCION_PARCIAL({
+        dpLote: this.lotNumber.value,
+        pPrueba: this.P_PRUEBA,
+        pCambiaStatus: this.PCAMBIAESTATUS,
+        user: this.user.preferred_username,
+        spentId: this.expenseNumber.value,
+        cat_motivos_rev: this.expenseModalService.selectedMotives.map(
+          x => x.descriptionCause
+        ),
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.alert(
+            'success',
+            'Se generó la cancelación parcial correctamente',
+            ''
+          );
+        },
+        error: err => {
+          this.alert('error', 'No se pudo generar la cancelación parcial', '');
+        },
+      });
+  }
+
+  private CANCELACION_PARCIAL() {
+    this.lotService
+      .CANCELACION_PARCIAL({
+        pLotId: this.lotNumber.value,
+        pEventId: this.eventNumber.value,
+        pLotPub: this.publicLot.value,
+        pSpentId: this.expenseNumber.value,
+        pTotIva: this.IVA + '',
+        pTotMonto: this.amount + '',
+        pTotTot: this.total + '',
+        comerDetBills: this.dataCompositionExpenses.map(x => {
+          return {
+            selectChangeStatus: x.changeStatus ? 'S' : 'N',
+            goodNumber: +x.goodNumber,
+            pConceptId: this.conceptNumber.value,
+            plot2: this.lotNumber.value,
+            pProof: this.P_PRUEBA,
+            pChangeStatus: this.PCAMBIAESTATUS,
+            pUser: this.user.preferred_username,
+          };
+        }),
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.alert(
+            'success',
+            'Se generó la devolución parcial correctamente',
+            ''
+          );
+        },
+        error: err => {
+          this.alert('error', 'No se pudo generar la devolución parcial', '');
+        },
+      });
   }
 
   private CANCELA_VTA_NORMAL() {

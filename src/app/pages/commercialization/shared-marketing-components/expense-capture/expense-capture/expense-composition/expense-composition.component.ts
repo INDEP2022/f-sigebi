@@ -14,6 +14,7 @@ import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/p
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
 import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
@@ -32,11 +33,10 @@ export class ExpenseCompositionComponent
   implements OnInit
 {
   toggleInformation = true;
-  selectedRow: IComerDetExpense2;
   @ViewChild('table') table: Ng2SmartTableComponent;
   ce: boolean = false;
   rr: boolean = false;
-  validateAndProcess = false;
+
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
@@ -44,6 +44,7 @@ export class ExpenseCompositionComponent
     private parameterService: ParametersConceptsService,
     private parametersModService: ParametersModService,
     private lotService: ExpenseLotService,
+    private goodProcessService: ExpenseGoodProcessService,
     private expenseModalService: ExpenseModalService,
     private accountMovementService: AccountMovementService,
     private parametercomerService: ExpenseParametercomerService
@@ -65,22 +66,54 @@ export class ExpenseCompositionComponent
           }
         },
       });
-    this.dataPaginated.onUpdated().subscribe({
-      next: response => {
-        console.log(response);
-      },
-    });
-    this.dataPaginated.onChanged().subscribe({
-      next: response => {
-        console.log(response);
-      },
-    });
-    this.expenseModalService.selectedMotivesSubject.subscribe({
-      next: response => {
-        console.log(response);
-        this.sendSolicitud();
-      },
-    });
+    this.dataPaginated
+      .onUpdated()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+        },
+      });
+    this.dataPaginated
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+        },
+      });
+    this.expenseModalService.selectedMotivesSubject
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.sendSolicitud(false, true);
+        },
+      });
+    this.expenseCaptureDataService.updateExpenseCompositionAndValidateProcess
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.validateAndProcess = true;
+          this.getData();
+        },
+      });
+  }
+
+  get validateAndProcess() {
+    return this.expenseCaptureDataService.validateAndProcess;
+  }
+
+  set validateAndProcess(value) {
+    this.expenseCaptureDataService.validateAndProcess = value;
+  }
+
+  get selectedRow() {
+    return this.expenseCaptureDataService.selectedComposition;
+  }
+
+  set selectedRow(value) {
+    this.expenseCaptureDataService.selectedComposition = value;
   }
 
   override ngOnInit(): void {
@@ -484,15 +517,10 @@ export class ExpenseCompositionComponent
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
-    let result = await this.expenseCaptureDataService.ENVIA_SOLICITUD(
+    this.expenseCaptureDataService.ENVIA_SOLICITUD(
       V_VALIDA_DET,
       showExtramessage
     );
-    console.log(result);
-    if (result) {
-      this.validateAndProcess = true;
-      this.getData();
-    }
   }
 
   private sendMotive() {
@@ -594,6 +622,33 @@ export class ExpenseCompositionComponent
             this.CARGA_BIENES_CSV(file);
           },
         });
+    } else {
+      this.goodProcessService.CARGA_BIENES_EXCEL(file).subscribe(
+        (event: any) => {
+          if (typeof event === 'object') {
+            console.log(event.body);
+            this.loader.load = false;
+            // if (event.CONT > 0) {
+            //   let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
+            //     event.messages
+            //   );
+            //   this.dataService.massiveInsert(dataCSV).subscribe({
+            //     next: response => {
+            //       this.loader.load = false;
+            //     },
+            //     error: err => {
+            //       this.loader.load = false;
+            //     },
+            //   });
+            // }
+          } else {
+            this.loader.load = false;
+          }
+        },
+        err => {
+          this.loader.load = false;
+        }
+      );
     }
   }
 

@@ -39,6 +39,20 @@
               <button
                 type="button"
                 class="btn btn-sm btn-primary mt-2 active"
+                [disabled]="!data"
+                (click)="delete()">
+                Eliminar
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-warning mt-2 active"
+                [disabled]="!data"
+                (click)="clean()">
+                Limpiar
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mt-2 active"
                 [disabled]="form.invalid"
                 (click)="save()">
                 Guardar
@@ -154,7 +168,8 @@
               prefixSearch="$ilike"
               secondParamSearch="filter.idLot"
               [labelTemplate]="lotLabel"
-              [optionTemplate]="lotOption">
+              [optionTemplate]="lotOption"
+              (valueChange)="updateLot($event)">
             </ng-custom-select-loading>
             <ng-template #lotLabel let-item="item">
               {{ item.idLot }} - {{ item.description }}

@@ -49,12 +49,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   // params
   @Input() address: string;
   errorsClasification: any[] = [];
-  addressEvent: string;
   provider: string;
   //
   toggleInformation = true;
-  // reloadLote = false;
-  reloadConcepto = false;
   ilikeFilters = [
     'attachedDocumentation',
     'comment',
@@ -75,7 +72,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     'dateOfResolution',
   ];
   columns: any;
-  user: any;
   constructor(
     private dataService: ExpenseCaptureDataService,
     private spentMService: SpentMService,
@@ -96,7 +92,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private parameterService: ParametersConceptsService
   ) {
     super();
-    this.user = this.authService.decodeToken();
+    this.dataService.user = this.authService.decodeToken();
     const filterParams = new FilterParams();
     filterParams.addFilter('user', this.user.preferred_username);
     this.segAccessAreaService
@@ -116,6 +112,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       });
     // console.log(user);
     this.prepareForm();
+  }
+
+  get user() {
+    return this.dataService.user;
   }
 
   get delegation() {
@@ -150,7 +150,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       amount: this.dataService.amount ?? 0,
       vat: this.dataService.vat ?? 0,
       vatWithheld: this.dataService.vatWithholding ?? 0,
-      address: this.addressEvent ?? this.address,
+      address: this.data.address ?? this.address,
       dateOfResolution: this.form.value.dateOfResolution
         ? (this.form.value.dateOfResolution + '').trim().length > 0
           ? this.form.value.dateOfResolution
@@ -211,7 +211,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             amount: this.dataService.amount ?? 0,
             vat: this.dataService.vat ?? 0,
             vatWithheld: this.dataService.vatWithholding ?? 0,
-            address: this.addressEvent ?? this.address,
+            address: this.data.address ?? this.address,
           });
           // if (response && response.data) {
           //   this.alert(
@@ -230,6 +230,34 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           this.loader.load = false;
         },
       });
+  }
+
+  clean() {
+    this.dataService.clean();
+    this.provider = null;
+    this.errorsClasification = [];
+  }
+
+  delete() {
+    this.loader.load = true;
+    this.alertQuestion('question', '¿Desea eliminar el gasto?', '').then(x => {
+      if (x.isConfirmed)
+        [
+          this.spentService2
+            .remove(this.data.expenseNumber)
+            .pipe(take(1))
+            .subscribe({
+              next: response => {
+                this.loader.load = false;
+                this.clean();
+              },
+              error: err => {
+                this.loader.load = false;
+                this.alert('error', 'No se pudo eliminar el gasto', '');
+              },
+            }),
+        ];
+    });
   }
 
   save() {
@@ -264,7 +292,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
               amount: this.dataService.amount ?? 0,
               vat: this.dataService.vat ?? 0,
               vatWithheld: this.dataService.vatWithholding ?? 0,
-              address: this.addressEvent ?? this.address,
+              address: this.data.address ?? this.address,
             });
             // if (response && response.data) {
             //   this.alert(
@@ -352,6 +380,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get lotNumber() {
     return this.form.get('lotNumber');
   }
+
+  get publicLot() {
+    return this.form.get('publicLot');
+  }
+
   get folioAtnCustomer() {
     return this.form.get('folioAtnCustomer');
   }
@@ -414,6 +447,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         console.log(response);
       },
     });
+  }
+
+  updateLot(event: any) {
+    if (event) {
+      this.publicLot.setValue(event.lotPublic);
+      this.nextItemLote();
+    }
   }
 
   updateProvider(event: any) {
@@ -784,7 +824,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     console.log(event);
     this.data = event;
     this.dataService.validPayment = false;
-    this.addressEvent = event.address;
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
@@ -799,6 +838,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.conceptNumber.setValue(event.conceptNumber);
     this.eventNumber.setValue(event.eventNumber, { emitEvent: false });
     this.lotNumber.setValue(event.lotNumber);
+    this.publicLot.setValue(event.comerLot ? event.comerLot.publicLot : null);
     this.clkpv.setValue(event.clkpv);
     setTimeout(async () => {
       if (!event.descurcoord) {
@@ -836,8 +876,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       //   return;
       // }
     }, 500);
-
-    // this.reloadConcepto = !this.reloadConcepto;
   }
 
   private prepareForm() {
@@ -965,8 +1003,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
               if (errors.length === 0) {
                 this.alert(
                   'success',
-                  'Cambio de Clasificación a Vehiculo con Reporte de Robo',
-                  'Realizado correctamente'
+                  'Se realizco el cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  ''
                 );
               }
               if (errors.length === VALIDA_DET.length) {
