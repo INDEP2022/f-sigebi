@@ -432,6 +432,7 @@ export class ExpenseCompositionComponent
   }
 
   private setDisperGasto(row: IComerDetExpense2) {
+    this.loader.load = true;
     this.lotService
       .DIVIDE_MANDATOS({
         eventId: this.eventNumber,
@@ -445,7 +446,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           console.log(response);
-
+          this.loader.load = false;
           if (response) {
             this.alert(
               'success',
@@ -455,6 +456,7 @@ export class ExpenseCompositionComponent
           }
         },
         error: err => {
+          this.loader.load = false;
           this.alert(
             'error',
             'No se pudo realizar la dispersión de gastos/mandatos',
@@ -639,33 +641,106 @@ export class ExpenseCompositionComponent
           },
         });
     } else {
-      this.goodProcessService.CARGA_BIENES_EXCEL(file).subscribe(
-        (event: any) => {
-          if (typeof event === 'object') {
-            console.log(event.body);
-            this.loader.load = false;
-            // if (event.CONT > 0) {
-            //   let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
-            //     event.messages
-            //   );
-            //   this.dataService.massiveInsert(dataCSV).subscribe({
-            //     next: response => {
-            //       this.loader.load = false;
-            //     },
-            //     error: err => {
-            //       this.loader.load = false;
-            //     },
-            //   });
-            // }
+      this.CARGA_BIENES_EXCEL(file);
+    }
+  }
+
+  private CARGA_BIENES_EXCEL(file) {
+    this.goodProcessService
+      .CARGA_BIENES_EXCEL(file)
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response.data && response.data.length > 0) {
+            this.dataService
+              .massiveInsert(
+                response.data.map(row => {
+                  let total = row.amount2 + row.COL_IVA ? row.vat2 : 0;
+                  return {
+                    vat: row.vat2,
+                    amount: row.amount2,
+                    goodNumber: row.goodNumber,
+                    transferorNumber: row.transferorNumber,
+                    cvman: row.mandate2,
+                    isrWithholding: 0,
+                    vatWithholding: 0,
+                    // goodDescription: row.DESCRIPCION,
+                    budgetItem: null,
+                    changeStatus: false,
+                    reportDelit: false,
+                    total,
+                    expenseNumber: this.expenseNumber.value,
+                  };
+                })
+              )
+              .subscribe({
+                next: response => {
+                  this.loader.load = false;
+                  this.alert('success', 'Se realizó la carga de datos', '');
+                  this.getData();
+                },
+                error: err => {
+                  this.loader.load = false;
+                  this.alert(
+                    'error',
+                    'No se pudo realizar la carga de datos',
+                    ''
+                  );
+                },
+              });
           } else {
             this.loader.load = false;
+            this.alert('error', 'No se pudo realizar la carga de datos', '');
           }
         },
-        err => {
+        error: err => {
           this.loader.load = false;
+          this.alert('error', 'No se pudo realizar la carga de datos', '');
+        },
+      });
+  }
+
+  private CARGA_BIENES_CSV(file: File) {
+    this.parametercomerService
+      .pupChargeGoods(file)
+      .pipe(take(1))
+      .subscribe(
+        (event: any) => {
+          console.log(event);
+          if (typeof event === 'object') {
+            console.log(event.body);
+            if (event.CONT > 0) {
+              let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
+                event.messages
+              );
+              this.dataService.massiveInsert(dataCSV).subscribe({
+                next: response => {
+                  this.loader.load = false;
+                  this.alert('success', 'Se realizó la carga de datos', '');
+                  this.getData();
+                },
+                error: err => {
+                  this.loader.load = false;
+                  this.alert(
+                    'error',
+                    'No se pudo realizar la carga de datos',
+                    ''
+                  );
+                },
+              });
+            }
+          } else {
+            this.loader.load = false;
+            this.alert('error', 'No se pudo realizar la carga de datos', '');
+          }
+        },
+        error => {
+          this.loader.load = false;
+          this.alert('error', 'No se pudo realizar la carga de datos', '');
         }
       );
-    }
+
+    // this.GRABA_TOTALES();
   }
 
   private CARGA_BIENES_CSV_VALIDADOS(file: File) {
@@ -678,55 +753,41 @@ export class ExpenseCompositionComponent
         retentionIva2: this.vatWithholding + '',
       })
       .pipe(take(1))
-      .subscribe((event: any) => {
-        console.log(event);
-        if (typeof event === 'object') {
-          console.log(event.body);
-          if (event.CONT > 0) {
-            this.amount = 0;
-            this.vat = 0;
-            this.isrWithholding = 0;
-            this.vatWithholding = 0;
-            this.total = 0;
-            this.data = event.messages.map((row: any) => {
-              this.amount += row.COL_IMPORTE ? +row.COL_IMPORTE : 0;
-              this.vat += row.COL_IVA ? +row.COL_IVA : 0;
-              this.isrWithholding += row.COL_RETISR ? +row.COL_RETISR : 0;
-              this.vatWithholding += row.COL_RETIVA ? +row.COL_RETIVA : 0;
-              let total =
-                row.COL_IMPORTE + row.COL_IVA
-                  ? row.COL_IVA
-                  : 0 - row.COL_RETISR
-                  ? row.COL_RETISR
-                  : 0 - row.COL_RETIVA
-                  ? row.COL_RETIVA
-                  : 0;
-              this.total += total;
-              return {
-                iva: row.COL_IVA,
-                amount2: row.COL_IMPORTE,
-                goodNumber: row.COL_SIAB,
-                transferorNumber: row.LNU_MANDATO,
-                manCV: row.LST_CVMAN,
-                retencionIsr: row.COL_RETISR,
-                retencionIva: row.COL_RETIVA,
-                changeStatus: false,
-                reportDelit: false,
-                description: row.DESCRIPCION,
-                mandato: row.CLAVE,
-                total,
-              };
-            });
-            this.expenseCaptureDataService.dataCompositionExpenses = [
-              ...this.data,
-            ];
-            this.totalItems = this.data.length;
-            this.dataTemp = [...this.data];
-            this.getPaginated(this.params.value);
-            this.GRABA_TOTALES();
+      .subscribe(
+        (event: any) => {
+          console.log(event);
+          if (typeof event === 'object') {
+            console.log(event.body);
+            if (event.CONT > 0) {
+              let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
+                event.messages
+              );
+              this.dataService.massiveInsert(dataCSV).subscribe({
+                next: response => {
+                  this.loader.load = false;
+                  this.alert('success', 'Se realizó la carga de datos', '');
+                  this.getData();
+                },
+                error: err => {
+                  this.loader.load = false;
+                  this.alert(
+                    'error',
+                    'No se pudo realizar la carga de datos',
+                    ''
+                  );
+                },
+              });
+            } else {
+              this.loader.load = false;
+              this.alert('error', 'No se pudo realizar la carga de datos', '');
+            }
           }
+        },
+        error => {
+          this.loader.load = false;
+          this.alert('error', 'No se pudo realizar la carga de datos', '');
         }
-      });
+      );
   }
 
   private getComerDetExpenseArray(messages: any) {
@@ -758,78 +819,6 @@ export class ExpenseCompositionComponent
       };
       return newRow;
     });
-  }
-
-  private CARGA_BIENES_CSV(file: File) {
-    this.parametercomerService
-      .pupChargeGoods(file)
-      .pipe(take(1))
-      .subscribe((event: any) => {
-        console.log(event);
-        if (typeof event === 'object') {
-          console.log(event.body);
-          if (event.CONT > 0) {
-            let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
-              event.messages
-            );
-            this.dataService.massiveInsert(dataCSV).subscribe({
-              next: response => {
-                this.loader.load = false;
-              },
-              error: err => {
-                this.loader.load = false;
-              },
-            });
-          }
-          // if (event.CONT > 0) {
-          //   this.amount = 0;
-          //   this.vat = 0;
-          //   this.isrWithholding = 0;
-          //   this.vatWithholding = 0;
-          //   this.total = 0;
-          //   this.data = event.messages.map((row: any) => {
-          //     this.amount += row.COL_IMPORTE ? +row.COL_IMPORTE : 0;
-          //     this.vat += row.COL_IVA ? +row.COL_IVA : 0;
-          //     this.isrWithholding += row.COL_RETISR ? +row.COL_RETISR : 0;
-          //     this.vatWithholding += row.COL_RETIVA ? +row.COL_RETIVA : 0;
-          //     let total =
-          //       row.COL_IMPORTE + row.COL_IVA
-          //         ? row.COL_IVA
-          //         : 0 - row.COL_RETISR
-          //         ? row.COL_RETISR
-          //         : 0 - row.COL_RETIVA
-          //         ? row.COL_RETIVA
-          //         : 0;
-          //     this.total += total;
-          //     return {
-          //       iva: row.COL_IVA,
-          //       amount2: row.COL_IMPORTE,
-          //       goodNumber: row.COL_SIAB,
-          //       transferorNumber: row.LNU_MANDATO,
-          //       manCV: row.LST_CVMAN,
-          //       retencionIsr: row.COL_RETISR,
-          //       retencionIva: row.COL_RETIVA,
-          //       description: row.DESCRIPCION,
-          //       mandato: row.CLAVE,
-          //       changeStatus: false,
-          //       reportDelit: false,
-          //       total,
-          //     };
-          //   });
-          //   this.expenseCaptureDataService.dataCompositionExpenses = [
-          //     ...this.data,
-          //   ];
-          //   this.totalItems = this.data.length;
-          //   this.dataTemp = [...this.data];
-          //   this.getPaginated(this.params.value);
-          //   this.GRABA_TOTALES();
-          // }
-        } else {
-          this.loader.load = false;
-        }
-      });
-
-    // this.GRABA_TOTALES();
   }
 
   private GRABA_TOTALES() {

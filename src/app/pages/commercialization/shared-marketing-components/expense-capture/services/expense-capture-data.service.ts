@@ -80,6 +80,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   validateAndProcess = false;
   user: any;
   actionButton = '';
+  publicLot: string = null;
   // Scan Files Data
   formScan: FormGroup;
   delUser: number;
@@ -103,6 +104,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   clean() {
     this.form.reset();
+    this.publicLot = null;
     this.actionButton = '';
     this.data = null;
     this.validPayment = false;
@@ -144,16 +146,16 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.PB_VEHICULO_REP_ROBO_ENABLED = false;
     this.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
     this.SELECT_CAMBIA_CLASIF_ENABLED = false;
-    this.user = undefined;
+    // this.user = undefined;
     this.validateAndProcess = false;
     this.selectedComposition = null;
     this.expenseModalService.clean();
 
-    this.formScan.reset();
-    this.delUser = null;
-    this.subDelUser = null;
-    this.departmentUser = null;
-    this.userData = null;
+    // this.formScan.reset();
+    // this.delUser = null;
+    // this.subDelUser = null;
+    // this.departmentUser = null;
+    // this.userData = null;
   }
 
   resetParams() {
@@ -260,10 +262,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return this.form.get('comment');
   }
 
-  get publicLot() {
-    return this.form.get('publicLot');
-  }
-
   prepareForm() {
     this.form = this.fb.group({
       expenseNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
@@ -272,14 +270,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
       eventNumber: [null],
       lotNumber: [null],
-      publicLot: [null],
       folioAtnCustomer: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
       dateOfResolution: [null],
       clkpv: [null, [Validators.required]],
       descurcoord: [null],
       comment: [null],
-      invoiceRecNumber: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
-      numReceipts: [null],
+      invoiceRecNumber: [null],
+      numReceipts: [null, [Validators.pattern(NUM_POSITIVE)]],
       invoiceRecDate: [null],
       payDay: [null],
       captureDate: [null],
@@ -972,7 +969,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .CANCELACION_PARCIAL({
         pLotId: this.lotNumber.value,
         pEventId: this.eventNumber.value,
-        pLotPub: this.publicLot.value,
+        pLotPub: this.publicLot,
         pSpentId: this.expenseNumber.value,
         pTotIva: this.IVA + '',
         pTotMonto: this.amount + '',
@@ -1016,7 +1013,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         id_lote: this.data.lotNumber,
         id_gasto: this.data.expenseNumber,
         id_evento: this.data.eventNumber,
-        lote_pub: this.data.comerLot ? this.data.comerLot.publicLot : null,
+        lote_pub: this.publicLot,
         pMotivo: this.data.concepts ? this.data.concepts.description : null,
         id_concepto: this.data.conceptNumber,
         p_prueba: this.P_PRUEBA + '',
