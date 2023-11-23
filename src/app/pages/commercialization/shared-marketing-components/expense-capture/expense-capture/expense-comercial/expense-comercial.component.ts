@@ -812,7 +812,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
     this.comment.setValue(event.comment);
     this.conceptNumber.setValue(event.conceptNumber);
-    this.eventNumber.setValue(event.eventNumber, { emitEvent: false });
+    this.eventNumber.setValue(event.eventNumber);
     this.lotNumber.setValue(event.lotNumber);
     this.publicLot = event.comerLot ? event.comerLot.publicLot : null;
     this.clkpv.setValue(event.clkpv);
