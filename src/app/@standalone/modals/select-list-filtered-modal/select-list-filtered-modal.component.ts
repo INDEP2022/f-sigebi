@@ -283,6 +283,7 @@ export class SelectListFilteredModalComponent
         },
         error: err => {
           console.log(err);
+          this.totalItems = 0;
           if (err.status == 400) {
             if (this.showError) {
               this.alert('error', 'Error', 'No se encontrarón registros');

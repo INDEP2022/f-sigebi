@@ -136,7 +136,7 @@
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showFilters || !selectedRow"
               (click)="disperGasto()">
-              Dispersa Gasto/Mandato
+              Dispersa Gasto/Mandato {{ selectedRow?.detPaymentsId }}
             </button>
             <button
               type="button"
