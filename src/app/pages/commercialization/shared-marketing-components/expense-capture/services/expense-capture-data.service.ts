@@ -151,7 +151,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.selectedComposition = null;
     this.expenseModalService.clean();
 
-    // this.formScan.reset();
+    this.formScan.reset();
     // this.delUser = null;
     // this.subDelUser = null;
     // this.departmentUser = null;
