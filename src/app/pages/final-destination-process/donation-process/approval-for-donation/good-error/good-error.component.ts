@@ -59,7 +59,7 @@ export class GoodErrorComponent extends BasePage implements OnInit {
               case 'goodId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'des_error':
+              case 'error_desc':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -90,7 +90,7 @@ export class GoodErrorComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.recordId'] = `$eq:${localStorage.getItem(
       'actaId'
     )}`;
-    this.params.getValue()['filter.error'] = `$eq:${1}`;
+    this.params.getValue()['filter.error'] = `$not:${0}`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilterError,

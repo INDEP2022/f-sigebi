@@ -228,7 +228,6 @@
                 <i class="bx bx-search float-icon"></i>
               </button>
               <button
-                [disabled]="!radio"
                 class="btn btn-info active btn-sm active"
                 (click)="findRast()">
                 Rastreador de Bienes&nbsp;
@@ -253,7 +252,7 @@
           </span>
           <span class="text-info">
             Suma de Cantidades
-            <b>{{ SUM_BIEN | currency : 'USD' : '2' }}</b>
+            <b>{{ SUM_BIEN | currency }}</b>
           </span>
         </div>
       </div>
@@ -280,7 +279,7 @@
                     [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings2"
                     (userRowSelect)="rowsSelected($event)"
-                    [source]="dataDetailDonationGood">
+                    [source]="data">
                   </ng2-smart-table>
                 </ng-scrollbar>
                 <app-pagination
