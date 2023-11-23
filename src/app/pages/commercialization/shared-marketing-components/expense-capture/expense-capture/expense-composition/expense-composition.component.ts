@@ -705,9 +705,7 @@ export class ExpenseCompositionComponent
               )
               .subscribe({
                 next: response => {
-                  this.loader.load = false;
-                  this.alert('success', 'Se realizó la carga de datos', '');
-                  this.getData();
+                  this.removeMassive();
                 },
                 error: err => {
                   this.loader.load = false;
@@ -747,9 +745,7 @@ export class ExpenseCompositionComponent
               );
               this.dataService.massiveInsert(dataCSV).subscribe({
                 next: response => {
-                  this.loader.load = false;
-                  this.alert('success', 'Se realizó la carga de datos', '');
-                  this.getData();
+                  this.removeMassive();
                 },
                 error: err => {
                   this.loader.load = false;
@@ -776,6 +772,30 @@ export class ExpenseCompositionComponent
     // this.GRABA_TOTALES();
   }
 
+  private removeMassive() {
+    this.dataService
+      .removeMassive(
+        this.data.map(x => {
+          return {
+            expenseDetailNumber: x.detPaymentsId,
+            expenseNumber: x.paymentsId,
+          };
+        })
+      )
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.loader.load = false;
+          this.alert('success', 'Se realizó la carga de datos', '');
+          this.getData();
+        },
+        error: err => {
+          this.loader.load = false;
+          this.alert('error', 'No se pudo realizar la carga de datos', '');
+        },
+      });
+  }
+
   private CARGA_BIENES_CSV_VALIDADOS(file: File) {
     this.parametercomerService
       .pupChargeValidateGoods(file, {
@@ -798,9 +818,7 @@ export class ExpenseCompositionComponent
               );
               this.dataService.massiveInsert(dataCSV).subscribe({
                 next: response => {
-                  this.loader.load = false;
-                  this.alert('success', 'Se realizó la carga de datos', '');
-                  this.getData();
+                  this.removeMassive();
                 },
                 error: err => {
                   this.loader.load = false;
