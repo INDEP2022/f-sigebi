@@ -150,7 +150,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       amount: this.dataService.amount ?? 0,
       vat: this.dataService.vat ?? 0,
       vatWithheld: this.dataService.vatWithholding ?? 0,
-      address: this.data.address ?? this.address,
+      address: this.data ? this.data.address ?? this.address : this.address,
       dateOfResolution: this.form.value.dateOfResolution
         ? (this.form.value.dateOfResolution + '').trim().length > 0
           ? this.form.value.dateOfResolution
@@ -292,7 +292,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
               amount: this.dataService.amount ?? 0,
               vat: this.dataService.vat ?? 0,
               vatWithheld: this.dataService.vatWithholding ?? 0,
-              address: this.data.address ?? this.address,
+              address: this.data
+                ? this.data.address ?? this.address
+                : this.address,
             });
             // if (response && response.data) {
             //   this.alert(
@@ -382,7 +384,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   get publicLot() {
-    return this.form.get('publicLot');
+    return this.dataService.publicLot;
+  }
+
+  set publicLot(value) {
+    this.dataService.publicLot = value;
   }
 
   get folioAtnCustomer() {
@@ -451,7 +457,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   updateLot(event: any) {
     if (event) {
-      this.publicLot.setValue(event.lotPublic);
+      this.publicLot = event.lotPublic;
       this.nextItemLote();
     }
   }
@@ -822,6 +828,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   async fillForm(event: IComerExpense) {
     console.log(event);
+    this.clean();
+    this.expenseNumber.setValue(event.expenseNumber);
     this.data = event;
     this.dataService.validPayment = false;
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
@@ -838,7 +846,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.conceptNumber.setValue(event.conceptNumber);
     this.eventNumber.setValue(event.eventNumber, { emitEvent: false });
     this.lotNumber.setValue(event.lotNumber);
-    this.publicLot.setValue(event.comerLot ? event.comerLot.publicLot : null);
+    this.publicLot = event.comerLot ? event.comerLot.publicLot : null;
     this.clkpv.setValue(event.clkpv);
     setTimeout(async () => {
       if (!event.descurcoord) {
@@ -880,6 +888,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.dataService.prepareForm();
+    console.log(this.form.getRawValue());
   }
 
   get pathComerExpenses() {
@@ -947,6 +956,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async sendToSIRSAE() {
+    this.dataService.actionButton = 'SIRSAE';
     await this.dataService.updateByGoods(true);
   }
 

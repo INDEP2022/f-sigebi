@@ -87,6 +87,10 @@ export class InterfacesirsaeService extends HttpService {
   }
 
   sendSirsae2(body: ISirsaeDTO) {
-    return this.post('sirsae/sendSirsae3', body);
+    return this.post<{
+      COMER_GASTOS_ID_SOLICITUDPAGO: any;
+      BLK_TEMP_CADENA: any;
+      COMER_GASTOS_FECHA_SP: any;
+    }>('sirsae/sendSirsae3', body);
   }
 }
