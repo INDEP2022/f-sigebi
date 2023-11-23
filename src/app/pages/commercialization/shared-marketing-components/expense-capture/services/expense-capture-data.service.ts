@@ -151,7 +151,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.selectedComposition = null;
     this.expenseModalService.clean();
 
-    // this.formScan.reset();
+    this.formScan.reset();
     // this.delUser = null;
     // this.subDelUser = null;
     // this.departmentUser = null;
@@ -826,9 +826,19 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
           this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
           // this.sucessSendSolitudeMessage();
+          if (this.data.formPayment !== 'INTERCAMBIO') {
+            this.VERIFICA_ACTUALIZACION_EST();
+          } else {
+            this.VALIDA_SUBTOTAL_PRECIO(
+              this.data.expenseNumber,
+              this.data.eventNumber,
+              this.data.lotNumber
+            );
+          }
         },
         error: err => {
-          this.alert('error', 'Envio a sirsae', err.error.message);
+          this.alert('error', 'No se pudo realizar el envió a SIRSAE', '');
+          // this.alert('error', 'Envio a sirsae', err.error.message);
           // this.errorSendSolicitudeMessage();
         },
       });
@@ -852,15 +862,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       } else {
         this.ENVIAR_SIRSAE();
       }
-    }
-    if (this.data.formPayment !== 'INTERCAMBIO') {
-      this.VERIFICA_ACTUALIZACION_EST();
-    } else {
-      this.VALIDA_SUBTOTAL_PRECIO(
-        this.data.expenseNumber,
-        this.data.eventNumber,
-        this.data.lotNumber
-      );
     }
   }
 
