@@ -113,6 +113,9 @@ export class ParamsConcepsListComponent
       // this.data.load([]);
       this.getData();
     }
+    if (changes['conceptId'] && changes['conceptId'].currentValue === null) {
+      this.dataNotFound();
+    }
   }
 
   get haveParams() {

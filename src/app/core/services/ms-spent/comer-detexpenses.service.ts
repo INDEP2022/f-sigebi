@@ -113,7 +113,7 @@ export class ComerDetexpensesService extends HttpService {
   removeMassive(
     body: { expenseDetailNumber: string; expenseNumber: string }[]
   ) {
-    return this.post(SpentEndpoints.MassiveDeleteDetExpenses, body);
+    return this.delete(SpentEndpoints.MassiveDeleteDetExpenses, body);
   }
 
   updateMassive(body: IComerDetExpense2[]) {

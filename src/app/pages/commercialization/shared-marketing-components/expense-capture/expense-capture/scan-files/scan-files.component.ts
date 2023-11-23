@@ -93,6 +93,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
         this.subDelUser = resJson.usuario.subdelegationNumber;
         this.departmentUser = resJson.usuario.departamentNumber;
       } else {
+        this.alert('error', 'No se pudo traer información del usuario', '');
       }
     });
   }
@@ -115,6 +116,9 @@ export class ScanFilesComponent extends BasePage implements OnInit {
               this.dataService.FOLIO_UNIVERSAL = response.data[0].id;
               this.folioUniversal.setValue(response.data[0].id);
             }
+          },
+          error: err => {
+            this.alert('warning', 'No cuenta con folio de escaneo', '');
           },
         });
       },
@@ -232,9 +236,11 @@ export class ScanFilesComponent extends BasePage implements OnInit {
             )
           );
           if (!createDocument) {
+            this.alert('error', 'No se pudo generar el folio de escaneo', '');
             return;
           }
           if (index === 0) {
+            this.alert('success', 'Se generó el folio de escaneo', '');
             this.folioUniversal.setValue(createDocument.id);
           }
         }
@@ -315,9 +321,8 @@ export class ScanFilesComponent extends BasePage implements OnInit {
   //CONSULTA DE IMAGENES
   seeImages() {
     if (this.folioUniversal.value != null) {
-      this.serviceDocuments
-        .getByFolio(this.folioUniversal.value)
-        .subscribe(res => {
+      this.serviceDocuments.getByFolio(this.folioUniversal.value).subscribe(
+        res => {
           const data = JSON.parse(JSON.stringify(res));
           const scanStatus = data.data[0]['scanStatus'];
           const idMedium = data.data[0]['mediumId'];
@@ -331,7 +336,11 @@ export class ScanFilesComponent extends BasePage implements OnInit {
               ''
             );
           }
-        });
+        },
+        err => {
+          this.alert('warning', 'No existe documentación para este folio', '');
+        }
+      );
     } else {
       this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
     }
