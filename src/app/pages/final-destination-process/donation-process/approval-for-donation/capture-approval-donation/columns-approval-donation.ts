@@ -227,7 +227,7 @@ export const GODD_ERROR = {
     title: 'No. Bien',
     sort: false,
   },
-  des_error: {
+  error_desc: {
     title: 'Descripción del Error',
     sort: false,
   },
