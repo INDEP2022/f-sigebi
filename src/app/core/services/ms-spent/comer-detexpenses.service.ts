@@ -117,6 +117,6 @@ export class ComerDetexpensesService extends HttpService {
   }
 
   updateMassive(body: IComerDetExpense2[]) {
-    return this.put(SpentEndpoints.MassiveDeleteDetExpenses, body);
+    return this.put(SpentEndpoints.MassiveUpdateComerDetexpenses, body);
   }
 }

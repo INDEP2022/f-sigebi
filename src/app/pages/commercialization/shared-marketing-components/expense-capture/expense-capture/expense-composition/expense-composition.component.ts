@@ -14,6 +14,7 @@ import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/p
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
 import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
@@ -32,11 +33,9 @@ export class ExpenseCompositionComponent
   implements OnInit
 {
   toggleInformation = true;
-  selectedRow: IComerDetExpense2;
   @ViewChild('table') table: Ng2SmartTableComponent;
   ce: boolean = false;
   rr: boolean = false;
-  validateAndProcess = false;
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
@@ -44,6 +43,7 @@ export class ExpenseCompositionComponent
     private parameterService: ParametersConceptsService,
     private parametersModService: ParametersModService,
     private lotService: ExpenseLotService,
+    private goodProcessService: ExpenseGoodProcessService,
     private expenseModalService: ExpenseModalService,
     private accountMovementService: AccountMovementService,
     private parametercomerService: ExpenseParametercomerService
@@ -65,22 +65,61 @@ export class ExpenseCompositionComponent
           }
         },
       });
-    this.dataPaginated.onUpdated().subscribe({
-      next: response => {
-        console.log(response);
-      },
-    });
-    this.dataPaginated.onChanged().subscribe({
-      next: response => {
-        console.log(response);
-      },
-    });
-    this.expenseModalService.selectedMotivesSubject.subscribe({
-      next: response => {
-        console.log(response);
-        this.sendSolicitud();
-      },
-    });
+    this.dataPaginated
+      .onUpdated()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+        },
+      });
+    this.dataPaginated
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+        },
+      });
+    this.expenseModalService.selectedMotivesSubject
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.sendSolicitud(false, true);
+        },
+      });
+    this.expenseCaptureDataService.updateExpenseCompositionAndValidateProcess
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.validateAndProcess = true;
+          this.getData();
+        },
+      });
+    this.expenseCaptureDataService.finishProcessSolicitud
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.loader.load = false;
+        },
+      });
+  }
+
+  get validateAndProcess() {
+    return this.expenseCaptureDataService.validateAndProcess;
+  }
+
+  set validateAndProcess(value) {
+    this.expenseCaptureDataService.validateAndProcess = value;
+  }
+
+  get selectedRow() {
+    return this.expenseCaptureDataService.selectedComposition;
+  }
+
+  set selectedRow(value) {
+    this.expenseCaptureDataService.selectedComposition = value;
   }
 
   override ngOnInit(): void {
@@ -484,15 +523,10 @@ export class ExpenseCompositionComponent
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
-    let result = await this.expenseCaptureDataService.ENVIA_SOLICITUD(
+    this.expenseCaptureDataService.ENVIA_SOLICITUD(
       V_VALIDA_DET,
       showExtramessage
     );
-    console.log(result);
-    if (result) {
-      this.validateAndProcess = true;
-      this.getData();
-    }
   }
 
   private sendMotive() {
@@ -508,7 +542,13 @@ export class ExpenseCompositionComponent
     return selectedChangeStatus.length > 0;
   }
 
+  set actionButton(value) {
+    this.expenseCaptureDataService.actionButton = value;
+  }
+
   async modifyEstatus() {
+    this.loader.load = true;
+    this.actionButton = 'Cambio de estatus';
     let filterParams = new FilterParams();
     filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
     if (this.conceptNumber) {
@@ -552,6 +592,7 @@ export class ExpenseCompositionComponent
               'Realizado Correctamente'
             );
           } else {
+            this.loader.load = false;
             this.alert(
               'warning',
               'Modificar Estatus',
@@ -559,8 +600,11 @@ export class ExpenseCompositionComponent
             );
           }
         } else {
+          this.loader.load = false;
           this.sendMotive();
         }
+      } else {
+        this.loader.load = false;
       }
     }
   }
@@ -594,6 +638,33 @@ export class ExpenseCompositionComponent
             this.CARGA_BIENES_CSV(file);
           },
         });
+    } else {
+      this.goodProcessService.CARGA_BIENES_EXCEL(file).subscribe(
+        (event: any) => {
+          if (typeof event === 'object') {
+            console.log(event.body);
+            this.loader.load = false;
+            // if (event.CONT > 0) {
+            //   let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
+            //     event.messages
+            //   );
+            //   this.dataService.massiveInsert(dataCSV).subscribe({
+            //     next: response => {
+            //       this.loader.load = false;
+            //     },
+            //     error: err => {
+            //       this.loader.load = false;
+            //     },
+            //   });
+            // }
+          } else {
+            this.loader.load = false;
+          }
+        },
+        err => {
+          this.loader.load = false;
+        }
+      );
     }
   }
 
@@ -770,6 +841,7 @@ export class ExpenseCompositionComponent
   }
 
   applyTC() {
+    this.loader.load = true;
     this.dataTemp.forEach(row => {
       if (row) {
         row.amount = +(
@@ -788,23 +860,44 @@ export class ExpenseCompositionComponent
       }
     });
     // this.getPaginated(this.params.value);
-    this.dataService.updateMassive(this.dataTemp).subscribe({
-      next: response => {
-        this.alert('success', 'Se actualizarón los detalles del gasto ', '');
-      },
-      error: err => {
-        this.alert(
-          'error',
-          'No se pudieron actualizar los detalles de gasto',
-          ''
-        );
-      },
-    });
+    this.dataService
+      .updateMassive(
+        this.dataTemp.map(x => {
+          let newRow: any = {
+            amount: x.amount,
+            goodNumber: x.goodNumber,
+            expenseDetailNumber: x.detPaymentsId,
+            expenseNumber: x.paymentsId,
+            vat: x.iva,
+            isrWithholding: x.retencionIsr,
+            vatWithholding: x.retencionIva,
+            cvman: x.manCV,
+            budgetItem: x.departure,
+          };
+          return newRow;
+        })
+      )
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.loader.load = false;
+          this.alert('success', 'Se actualizarón los detalles del gasto ', '');
+          this.getPaginated(this.params.value);
+        },
+        error: err => {
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'No se pudieron actualizar los detalles de gasto',
+            ''
+          );
+        },
+      });
   }
 
   async contabilityMand() {
+    this.loader.load = true;
     if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
-      this.loader.load = true;
       const result = await firstValueFrom(
         this.accountMovementService.getDepuraContmand(this.expenseNumber.value)
       );
@@ -815,6 +908,8 @@ export class ExpenseCompositionComponent
         this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
         this.loader.load = false;
       }
+    } else {
+      this.loader.load = false;
     }
   }
 
@@ -913,21 +1008,41 @@ export class ExpenseCompositionComponent
   }
 
   reload() {
-    if (this.expenseCaptureDataService.VALIDA_DET()) {
-      this.getData();
-    }
+    this.loader.load = true;
+    this.expenseCaptureDataService
+      .RECARGA_BIENES_LOTE()
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.loader.load = false;
+            this.getData();
+          } else {
+            this.loader.load = false;
+          }
+        },
+      });
+    // if (this.expenseCaptureDataService.VALIDA_DET()) {
+    //   this.getData();
+    // } else {
+    //   this.loader.load = false;
+    // }
   }
 
   validates() {
+    this.loader.load = true;
     if (this.eventNumber === null) {
+      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de evento', '');
       return;
     }
     if (this.lotNumber === null || this.lotNumber.value === null) {
+      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de lote', '');
       return;
     }
     if (this.conceptNumber === null || this.conceptNumber.value === null) {
+      this.loader.load = false;
       this.alert(
         'warning',
         'Es necesario tener número de concepto de pago',
@@ -944,6 +1059,7 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
+          this.loader.load = false;
           if (response) {
             console.log(response);
             if (response && response.resData) {
@@ -962,6 +1078,7 @@ export class ExpenseCompositionComponent
         },
         error: err => {
           console.log(err);
+          this.loader.load = false;
           this.alert('error', 'Validación de Bienes', err);
         },
       });

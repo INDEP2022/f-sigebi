@@ -512,9 +512,14 @@ export class CaptureApprovalDonationComponent
   }
   eventdetailDefault: any = null;
   consultgoods(provider?: any) {
-    const modalConfig = MODAL_CONFIG;
+    const modalConfig = {
+      initialState: {},
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
     modalConfig.initialState = {
       provider,
+      radioButton: this.regisForm.get('activeRadio').value,
     };
 
     let modalRef = this.modalService.show(
@@ -569,7 +574,9 @@ export class CaptureApprovalDonationComponent
         title,
         op,
         subTitle,
+        radioButton: this.regisForm.get('activeRadio').value,
       },
+      class: 'modal-xl modal-dialog-centered',
     };
     this.bsModalRef = this.modalService.show(
       ModalApprovalDonationComponent,

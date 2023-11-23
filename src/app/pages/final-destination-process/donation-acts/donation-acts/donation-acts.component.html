@@ -105,16 +105,9 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>ACTAS Y BIENES RELACIONADOS</h5>
         </div>
-        <div class="float-right pl-3">
-          <button
-            [disabled]="!dataExpediente"
-            (click)="searchActa()"
-            class="btn btn-primary btn-sm active m-1"
-            tooltip="Lista de Actas"
-            containerClass="tooltip-style">
-            <i class="bx bx-list-plus bx-sm float-icon"></i>
-          </button>
-        </div>
+        <!-- <div class="float-right pl-3">
+          
+        </div> -->
         <app-card [header]="false" [footer]="false">
           <div body>
             <div class="row mb-3 mt-2 ml-1 mr-1">
@@ -147,9 +140,17 @@
                   type="button"
                   tooltip="Nuevo"
                   containerClass="tooltip-style"
-                  class="btn btn-info btn-sm active ml-2 mr-2"
+                  class="btn btn-info btn-sm active mr-3"
                   (click)="cleanActa()">
                   Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <button
+                  [disabled]="!dataExpediente"
+                  (click)="searchActa()"
+                  class="btn btn-primary btn-sm active"
+                  tooltip="Lista de Actas"
+                  containerClass="tooltip-style">
+                  <i class="bx bx-list-plus bx-sm float-icon"></i>
                 </button>
                 <!-- <button
                   (click)="cleanActa()"
@@ -414,7 +415,7 @@
                     <div class="col-6 mt-2">
                       <form-field
                         [control]="actaRecepttionForm.get('testigoOIC')"
-                        label="Testigo de Contraloria:">
+                        label="Testigo de Contraloría:">
                         <input
                           [readonly]="!actaCerrada || !dataExpediente"
                           type="text"
@@ -495,7 +496,7 @@
                         </form-field>
                       </div>
                       <div
-                        class="col-6 text-center justify-content-center mt-4">
+                        class="col-6 text-center justify-content-center mt-5">
                         <p class="">
                           <span class="text-success mr-5"
                             ><i class="fa fa-square"></i>Disponibles</span
@@ -512,24 +513,30 @@
 
               <div class="row pt-2">
                 <div class="col-md-12 text-center mt-4 mb-4">
+                  <!-- <div> -->
+                  <span style="font-weight: 700">Agregar</span>
                   <button
                     tooltip="Agregar Bien al Acta"
                     containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-3 p-1 pointer"
                     type="button"
                     (click)="addSelect()">
-                    <!-- Mover uno -->
                     <i class="bx bx-chevron-down bx-md"></i>
                   </button>
+                  <!-- </div> -->
+                  <!-- <div> -->
+                  <span style="font-weight: 700; margin-left: 20px">
+                    Eliminar
+                  </span>
                   <button
                     tooltip="Quitar Bien del Acta"
                     containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-3 p-1 pointer"
                     type="button"
                     (click)="removeSelect()">
-                    <!-- Quitar uno -->
                     <i class="bx bx-chevron-up bx-md"></i>
                   </button>
+                  <!-- </div> -->
                 </div>
               </div>
               <!-- <div class="col-md-12 text-center mt-4 mb-4">

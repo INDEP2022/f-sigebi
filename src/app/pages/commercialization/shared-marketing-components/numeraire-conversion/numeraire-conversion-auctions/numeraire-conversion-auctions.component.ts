@@ -324,6 +324,7 @@ export class NumeraireConversionAuctionsComponent
   }
 
   reporte() {
+    this.loader.load = true;
     let params = {
       DESTYPE: 'SCREEN',
       PARAMFORM: 'NO',
@@ -333,7 +334,7 @@ export class NumeraireConversionAuctionsComponent
     this.siabService.fetchReport('RCOMER_NUMERARIO', params).subscribe({
       next: response => {
         console.log(response);
-        this.loading = false;
+        this.loader.load = false;
         if (response) {
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
@@ -350,15 +351,13 @@ export class NumeraireConversionAuctionsComponent
           };
           this.modalService.show(PreviewDocumentsComponent, config);
         } else {
-          this.alert(
-            'error',
-            'El reporte no se encuentra disponible',
-            'Favor de verificar'
-          );
+          this.alert('error', 'El reporte no se encuentra disponible', '');
         }
       },
       error: err => {
+        this.loader.load = false;
         console.log(err);
+        this.alert('error', 'El reporte no se encuentra disponible', '');
       },
     });
   }

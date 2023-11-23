@@ -186,14 +186,22 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
         }
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'No se encontró el expediente especificado', '');
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
   getGoodsByExpedient(id: string | number): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods(id));
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() =>
+    this.getGoods(id);
+    // );
   }
 
   getGoods(id: string | number): void {
@@ -252,6 +260,7 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => {
+        console.log('Nueva errr: ', error);
         this.data.load([]);
         this.data.refresh();
         this.totalItems = 0;
