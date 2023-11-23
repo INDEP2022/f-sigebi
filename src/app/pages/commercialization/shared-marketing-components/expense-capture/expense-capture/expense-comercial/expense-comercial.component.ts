@@ -28,7 +28,7 @@ import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
-import { secondFormatDateToDate } from 'src/app/shared/utils/date';
+import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
@@ -202,24 +202,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Se ha actualizado el gasto ' + this.expenseNumber.value,
-            'Gasto actualizado correctamente'
+            ''
           );
-          this.loader.load = false;
-          this.fillForm({
-            ...this.data,
-            ...this.form.value,
-            amount: this.dataService.amount ?? 0,
-            vat: this.dataService.vat ?? 0,
-            vatWithheld: this.dataService.vatWithholding ?? 0,
-            address: this.data.address ?? this.address,
-          });
-          // if (response && response.data) {
-          //   this.alert(
-          //     'success',
-          //     'Captura de Gastos',
-          //     'Gasto actualizado correctamente'
-          //   );
-          // }
         },
         error: err => {
           this.alert(
@@ -286,23 +270,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             this.alert('success', 'Se ha creado el gasto correctamente', '');
             this.expenseNumber.setValue(response.expenseNumber);
             this.loader.load = false;
-            this.fillForm({
-              ...this.data,
-              ...this.form.value,
-              amount: this.dataService.amount ?? 0,
-              vat: this.dataService.vat ?? 0,
-              vatWithheld: this.dataService.vatWithholding ?? 0,
-              address: this.data
-                ? this.data.address ?? this.address
-                : this.address,
-            });
-            // if (response && response.data) {
-            //   this.alert(
-            //     'success',
-            //     'Captura de Gastos',
-            //     'Gasto creado correctamente'
-            //   );
-            // }
           },
           error: err => {
             this.alert(
@@ -480,8 +447,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
                 this.eventNumber.setValue(null);
                 this.alert(
                   'error',
-                  'Evento',
-                  'Contiene bienes de más de un mandato verifique'
+
+                  'Contiene bienes de más de un mandato verifique',
+                  ''
                 );
               }
             }
@@ -632,7 +600,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         next: response => {
           if (response) {
             console.log(response);
-            this.alert('success', 'Se han cargado los Bienes del lote', '');
+            this.alert('success', 'Se han cargado los bienes del lote', '');
             this.dataService.updateExpenseComposition.next(true);
           }
         },
@@ -659,7 +627,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         next: response => {
           if (response) {
             console.log(response);
-            this.alert('success', 'Se han cargado los Bienes del lote', '');
+            this.alert('success', 'Se han cargado los bienes del lote', '');
             this.dataService.updateExpenseComposition.next(true);
           }
         },
@@ -764,7 +732,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       return false;
     }
     if (!event.conceptNumber) {
-      this.alert('warning', 'No cuenta con un concepto de pago', '');
+      this.alert(
+        'warning',
+        'Validación de pagos',
+        'No cuenta con un concepto de pago'
+      );
       return false;
     }
     if (!event.numReceipts) {
@@ -836,11 +808,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
     this.dateOfResolution.setValue(
-      event.dateOfResolution
-        ? (event.dateOfResolution + '').trim().length > 0
-          ? secondFormatDateToDate(event.dateOfResolution)
-          : null
-        : null
+      secondFormatDateToDateAny(event.dateOfResolution)
     );
     this.comment.setValue(event.comment);
     this.conceptNumber.setValue(event.conceptNumber);
