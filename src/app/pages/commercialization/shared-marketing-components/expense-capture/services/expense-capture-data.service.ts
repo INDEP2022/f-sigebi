@@ -365,7 +365,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
-    // debugger;
+    debugger;
     const resultParams = await this.readParams(this.conceptNumber.value);
 
     if (
@@ -391,6 +391,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         }
       } else {
         this.alert('error', 'Debe indicar el lote para enviar solicitud', '');
+        this.errorSendSolicitudeMessage();
       }
     } else {
       this.PROCESA_SOLICITUD();
@@ -422,7 +423,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   async updateByGoods(sendToSIRSAE: boolean) {
-    // debugger;
+    debugger;
     console.log(this.dataCompositionExpenses);
     // this.ENVIA_MOTIVOS();
     // return;
@@ -451,12 +452,14 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           const n_COUN = await this.getn_COUNT();
           if (n_COUN && n_COUN.data && n_COUN.data) {
             if (n_COUN.data.length === 0) {
+              this.finishProcessSolicitud.next(true);
               this.ENVIA_MOTIVOS();
             } else {
               this.ENVIA_SOLICITUD();
             }
           } else {
             this.alert('error', 'Evento Equivocado', 'Favor de verificar');
+            this.finishProcessSolicitud.next(true);
             this.eventNumber.setValue(null);
           }
         }
@@ -821,11 +824,15 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .subscribe({
         next: response => {
           // this.alert('success', 'Procedimiento ejecutado correctamente', '');
-          this.sucessSendSolitudeMessage();
+          this.form
+            .get('paymentRequestNumber')
+            .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
+          this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
+          // this.sucessSendSolitudeMessage();
         },
         error: err => {
           this.alert('error', 'Envio a sirsae', err.error.message);
-          this.errorSendSolicitudeMessage();
+          // this.errorSendSolicitudeMessage();
         },
       });
   }
@@ -865,7 +872,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     setTimeout(() => {
       this.alert(
         'success',
-        'Se envió la solicitud de ' + this.actionButton,
+        'Se envió la solicitud ' +
+          (this.actionButton === 'SIRSAE' ? 'a ' : 'de ') +
+          this.actionButton,
         ''
       );
     }, 500);
@@ -876,7 +885,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     setTimeout(() => {
       this.alert(
         'error',
-        'No se pudo enviar la solicitud de ' + this.actionButton,
+        'No se pudo enviar la solicitud ' +
+          (this.actionButton === 'SIRSAE' ? 'a ' : 'de ') +
+          +this.actionButton,
         ''
       );
     }, 500);

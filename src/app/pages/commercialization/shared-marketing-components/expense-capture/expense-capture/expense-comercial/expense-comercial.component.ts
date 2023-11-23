@@ -947,6 +947,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async sendToSIRSAE() {
+    this.dataService.actionButton = 'SIRSAE';
     await this.dataService.updateByGoods(true);
   }
 
