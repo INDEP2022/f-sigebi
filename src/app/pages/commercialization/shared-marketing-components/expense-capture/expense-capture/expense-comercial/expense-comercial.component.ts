@@ -284,8 +284,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           next: response => {
             console.log(response);
             this.alert('success', 'Se ha creado el gasto correctamente', '');
-            this.expenseNumber.setValue(response.expenseNumber);
+            // this.expenseNumber.setValue(response.expenseNumber);
             this.loader.load = false;
+            this.fillForm({
+              ...this.form.value,
+              amount: this.dataService.amount ?? 0,
+              vat: this.dataService.vat ?? 0,
+              vatWithheld: this.dataService.vatWithholding ?? 0,
+              address: this.address,
+            });
           },
           error: err => {
             this.alert(
