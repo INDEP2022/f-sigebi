@@ -174,7 +174,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             const search: any = {
-              captureDate: () => (searchFilter = SearchFilter.EQ),
+              captureDate: () => {
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+              },
               noDelegation1: () => (searchFilter = SearchFilter.EQ),
               elaborated: () => (searchFilter = SearchFilter.EQ),
               estatusAct: () => (searchFilter = SearchFilter.EQ),
