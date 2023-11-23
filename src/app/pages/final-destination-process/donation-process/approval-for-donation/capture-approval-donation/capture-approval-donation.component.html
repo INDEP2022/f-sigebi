@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Captura de Aprobaci&oacute;n para Donaci&oacute;n</h5>
+    <h5 class="title">Captura de Eventos para Donaci&oacute;n</h5>
   </div>
 
   <div body>
@@ -70,7 +70,6 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('folio')" label="Folio">
                   <input
-                    #inputValue
                     type="text"
                     class="form-control"
                     formControlName="folio"
@@ -143,43 +142,51 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="row">
             <div class="col-12">
               <h5>Par&aacute;metros para Traer Informaci&oacute;n de SIAB</h5>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
               <div class="row">
                 <div class="col-md-12">
                   <div class="card justify-content-center">
-                    <div class="col-md-6 d-flex flex-column">
+                    <div class="col-md-8 d-flex flex-column">
                       <div
                         class="row ps-4"
                         [ngClass]="{ 'not-press': !activeRadio }">
-                        <form-radio label="Consulta de Bienes">
+                        <form-radio
+                          style="background-color: #c8c8c8"
+                          label="Consulta de Bienes">
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="1"
+                            value="CONSULTA DE BIENES"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Com. Exterior KG">
+                        <form-radio
+                          style="background-color: #008080"
+                          label="Com. Exterior KG">
                           <input
                             type="radio"
                             formControlName="activeRadio"
                             value="COMERCIO EXTERIOR"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Delitos Federales">
+                        <form-radio
+                          style="background-color: #ffc000"
+                          label="Delitos Federales">
                           <input
                             type="radio"
                             formControlName="activeRadio"
                             value="DELITOS FEDERALES"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Otros Trans.">
+                        <form-radio
+                          style="background-color: #80c000"
+                          label="Otros Trans.">
                           <input
                             type="radio"
                             formControlName="activeRadio"
@@ -192,8 +199,12 @@
                 </div>
               </div>
             </div>
+            <div class="col-md-6 d-flex flex-column align-items-center">
+              <span class="badge rounded-pill">Acta</span>
+              <div style="font-weight: bold">{{ idAct || '' }}</div>
+            </div>
           </div>
-          <div class="row m-3">
+          <div class="row m-6">
             <div class="col-4"></div>
             <div class="col-md-12 text-center">
               <button
@@ -217,7 +228,6 @@
                 <i class="bx bx-search float-icon"></i>
               </button>
               <button
-                [disabled]="!radio"
                 class="btn btn-info active btn-sm active"
                 (click)="findRast()">
                 Rastreador de Bienes&nbsp;
@@ -263,14 +273,13 @@
               <div class="col-md-12">
                 <ng-scrollbar
                   [track]="'all'"
-                  [ngStyle]="{ height: loading3 ? '0px' : '300px' }">
+                  [ngStyle]="{ height: loading3 ? '0px' : '600px' }">
                   <ng2-smart-table
                     class="table-responsive"
                     [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings2"
-                    (edit)="searchRopaId()"
                     (userRowSelect)="rowsSelected($event)"
-                    [source]="dataDetailDonationGood">
+                    [source]="data">
                   </ng2-smart-table>
                 </ng-scrollbar>
                 <app-pagination
@@ -334,32 +343,6 @@
         </div>
       </div>
 
-      <!-- <div class="row p-3">
-        <div class="col-md-3"></div>
-        <div class="row mt-12 d-flex justify-content-center">
-          <div class="col-md-12">
-            <h6>BIENES DEL RASTREADOR</h6>
-            <div class="row"></div>
-            <div class="row justify-content-end mt-3">
-              <div class="col-md-5 buttons pt-3 text-right">
-                <app-columns-select
-                  (settingsChange)="settingsChange($event)"
-                  [settings]="settings2">
-                </app-columns-select>
-              </div>
-            </div>
-            <div class="row">
-              <form-loader *ngIf="loading3"></form-loader>
-              <div class="col-md-12">
-                <app-goods-list
-                  [files]="files"
-                  [changeDescription]="changeDescription"></app-goods-list>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
       <div footer>
         <div class="d-flex justify-content-center">
           <div class="m-3">
@@ -371,11 +354,22 @@
           </div>
           <div class="m-3">
             <button
+              [disabled]="TOTAL_REPORTE < 500"
+              (click)="searchRopaId()"
+              type="button"
+              class="btn btn-primary active btn-sm mr-3">
+              Llena Ropa Div
+              <i class="fas fa-edit bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
               class="btn btn-danger btn-sm active"
               (click)="removeSelect()">
               Elimina Bienes <i class="fa fa-trash-alt"></i>
             </button>
           </div>
+
           <div class="m-3">
             <button
               (click)="actualizarActa()"

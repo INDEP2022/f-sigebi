@@ -12,14 +12,15 @@ export const COLUMNS = {
         data.row.changeStatus = data.toggle;
       });
     },
-    filter: {
-      type: 'checkbox',
-      config: {
-        true: true,
-        false: false,
-        resetText: 'x',
-      },
-    },
+    filter: false,
+    // filter: {
+    //   type: 'checkbox',
+    //   config: {
+    //     true: true,
+    //     false: false,
+    //     resetText: false,
+    //   },
+    // },
   },
   reportDelit: {
     title: 'Reporte Robo',
@@ -45,17 +46,22 @@ export const COLUMNS = {
             data.row.reportDelit = true;
           }
         }
-        console.log(data);
+        // console.log(data);
       });
     },
-    filter: {
-      type: 'checkbox',
-      config: {
-        true: true,
-        false: false,
-        resetText: 'x',
-      },
-    },
+    filter: false,
+    // filter: {
+    //   type: 'checkbox',
+    //   config: {
+    //     true: true,
+    //     false: false,
+    //     resetText: 'x',
+    //   },
+    // },
+  },
+  detPaymentsId: {
+    title: 'Id',
+    sort: false,
   },
   departure: {
     title: 'Partida',

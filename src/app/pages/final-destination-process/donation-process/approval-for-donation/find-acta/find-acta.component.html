@@ -29,11 +29,13 @@
       </app-pagination>
     </div>
   </div>
+  <!-- (edit)="agregarCaptura($event.data)" -->
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
           type="button"
+          [disabled]="!selectedRow"
           class="btn btn-primary active btn-sm"
           (click)="handleSuccess()">
           Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>

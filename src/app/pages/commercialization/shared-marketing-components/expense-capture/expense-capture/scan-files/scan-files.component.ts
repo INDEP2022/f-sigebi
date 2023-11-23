@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
@@ -11,7 +11,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -25,18 +24,11 @@ import { ExpenseCaptureDataService } from '../../services/expense-capture-data.s
   styleUrls: ['./scan-files.component.css'],
 })
 export class ScanFilesComponent extends BasePage implements OnInit {
-  form: FormGroup;
-  delUser: number;
-  subDelUser: number;
-  departmentUser: number;
-  userData: any;
-  user: any;
   constructor(
     private serviceDocuments: DocumentsService,
     private serviceNotification: NotificationService,
     private dataService: ExpenseCaptureDataService,
     private serviceUser: UsersService,
-    private authService: AuthService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private router: Router,
@@ -49,9 +41,47 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     });
   }
 
+  get form() {
+    return this.dataService.formScan;
+  }
+
+  set form(value) {
+    this.dataService.formScan = value;
+  }
+
+  get user() {
+    return this.dataService.user;
+  }
+
+  get userData() {
+    return this.dataService.userData;
+  }
+  set userData(value) {
+    this.dataService.userData = value;
+  }
+
+  get delUser() {
+    return this.dataService.delUser;
+  }
+  set delUser(value) {
+    this.dataService.delUser = value;
+  }
+
+  get subDelUser() {
+    return this.dataService.subDelUser;
+  }
+  set subDelUser(value) {
+    this.dataService.subDelUser = value;
+  }
+  get departmentUser() {
+    return this.dataService.departmentUser;
+  }
+  set departmentUser(value) {
+    this.dataService.departmentUser = value;
+  }
+
   //DATA DE USUARIO
   getDataUser() {
-    this.user = this.authService.decodeToken();
     console.log(this.user);
     const routeUser = `?filter.id=$eq:${this.user.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
@@ -63,6 +93,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
         this.subDelUser = resJson.usuario.subdelegationNumber;
         this.departmentUser = resJson.usuario.departamentNumber;
       } else {
+        this.alert('error', 'No se pudo traer información del usuario', '');
       }
     });
   }
@@ -86,6 +117,9 @@ export class ScanFilesComponent extends BasePage implements OnInit {
               this.folioUniversal.setValue(response.data[0].id);
             }
           },
+          error: err => {
+            this.alert('warning', 'No cuenta con folio de escaneo', '');
+          },
         });
       },
     });
@@ -93,6 +127,10 @@ export class ScanFilesComponent extends BasePage implements OnInit {
 
   get dataComer() {
     return this.dataService.data;
+  }
+
+  get valid() {
+    return this.dataComer && this.dataService.validPayment;
   }
 
   get expenseNumber() {
@@ -198,9 +236,11 @@ export class ScanFilesComponent extends BasePage implements OnInit {
             )
           );
           if (!createDocument) {
+            this.alert('error', 'No se pudo generar el folio de escaneo', '');
             return;
           }
           if (index === 0) {
+            this.alert('success', 'Se generó el folio de escaneo', '');
             this.folioUniversal.setValue(createDocument.id);
           }
         }
@@ -209,7 +249,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
   }
 
   goToScan() {
-    // localStorage.setItem('numberExpedient', this.noExpedient.toString());
+    localStorage.setItem('eventExpense', JSON.stringify(this.dataService.data));
 
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: {
@@ -281,9 +321,8 @@ export class ScanFilesComponent extends BasePage implements OnInit {
   //CONSULTA DE IMAGENES
   seeImages() {
     if (this.folioUniversal.value != null) {
-      this.serviceDocuments
-        .getByFolio(this.folioUniversal.value)
-        .subscribe(res => {
+      this.serviceDocuments.getByFolio(this.folioUniversal.value).subscribe(
+        res => {
           const data = JSON.parse(JSON.stringify(res));
           const scanStatus = data.data[0]['scanStatus'];
           const idMedium = data.data[0]['mediumId'];
@@ -297,7 +336,11 @@ export class ScanFilesComponent extends BasePage implements OnInit {
               ''
             );
           }
-        });
+        },
+        err => {
+          this.alert('warning', 'No existe documentación para este folio', '');
+        }
+      );
     } else {
       this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
     }

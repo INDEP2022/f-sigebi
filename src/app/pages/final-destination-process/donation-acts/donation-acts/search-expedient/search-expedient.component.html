@@ -1,0 +1,49 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <div>
+      <h5 class="modal-title">BÚSQUEDA DE EXPEDIENTES</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="justify-content-end d-flex mb-3 ml-2">
+      <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+    </div>
+    <form-loader *ngIf="loading"></form-loader>
+    <div>
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '300px' }">
+        <ng2-smart-table
+          [attr.class]="'table-responsive table-bordered'"
+          [settings]="settings"
+          [source]="data"
+          (userRowSelect)="onUserRowSelect($event)">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <!-- </div> -->
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="!selectedRow"
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="handleSuccess()">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

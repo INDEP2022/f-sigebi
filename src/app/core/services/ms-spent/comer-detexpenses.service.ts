@@ -47,12 +47,12 @@ export class ComerDetexpensesService extends HttpService {
               ? x.data.map(row => {
                   return {
                     ...row,
-                    amount: row.amount ? row.amount : row.amount2,
+                    amount: row.amount ? row.amount : row.amount,
                     total: row.total ? row.total : row.total2,
                     iva:
                       idGasto === '643' && row.iva2 === 0 && CHCONIVA === 'S'
-                        ? row.amount2 * IVA
-                        : row.iva2,
+                        ? row.amount * IVA
+                        : row.iva,
                   };
                 })
               : PDEVPARCIALBIEN === 'S'
@@ -108,5 +108,15 @@ export class ComerDetexpensesService extends HttpService {
 
   getExpenses(body: ListParams) {
     return this.post(SpentEndpoints.GetAllExpensesByFilter, body);
+  }
+
+  removeMassive(
+    body: { expenseDetailNumber: string; expenseNumber: string }[]
+  ) {
+    return this.delete(SpentEndpoints.MassiveDeleteDetExpenses, body);
+  }
+
+  updateMassive(body: IComerDetExpense2[]) {
+    return this.put(SpentEndpoints.MassiveUpdateComerDetexpenses, body);
   }
 }

@@ -18,6 +18,11 @@ export const COLUMNS = {
         return null;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell;
+      console.log(cell);
+      return true;
+    },
   },
   value: {
     title: 'Valor',

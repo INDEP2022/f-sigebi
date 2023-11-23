@@ -35,7 +35,20 @@
                 title="Gastos del Área Comercial"
                 (selectRow)="fillForm($event)"></app-select-modal-table-shared>
             </div>
-            <div class="col-md-8 col-6" style="text-align: right">
+            <div class="col-md-8 col-12 mb-3 expenseComercial-buttons">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mt-2 mr-2 active"
+                [disabled]="!expenseNumberValue"
+                (click)="delete()">
+                Eliminar
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-warning mt-2 mr-2 active"
+                (click)="clean()">
+                Limpiar
+              </button>
               <button
                 type="button"
                 class="btn btn-sm btn-primary mt-2 active"
@@ -154,7 +167,8 @@
               prefixSearch="$ilike"
               secondParamSearch="filter.idLot"
               [labelTemplate]="lotLabel"
-              [optionTemplate]="lotOption">
+              [optionTemplate]="lotOption"
+              (valueChange)="updateLot($event)">
             </ng-custom-select-loading>
             <ng-template #lotLabel let-item="item">
               {{ item.idLot }} - {{ item.description }}

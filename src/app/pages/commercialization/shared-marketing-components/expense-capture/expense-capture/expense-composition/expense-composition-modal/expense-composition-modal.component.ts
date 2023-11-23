@@ -23,45 +23,59 @@ export class ExpenseCompositionModalComponent
   comerDetExpense: IComerDetExpense2;
   expenseNumber: number;
   title = 'Composición de Gastos';
+  manCV: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private service: ComerDetexpensesService
   ) {
     super();
+    this.prepareForm();
   }
 
   ngOnInit() {
-    this.prepareForm();
+    console.log(this.comerDetExpense);
+    // this.prepareForm();
+    setTimeout(() => {
+      if (this.comerDetExpense) {
+        this.expenseDetailNumber.setValue(this.comerDetExpense.detPaymentsId);
+        this.amount.setValue(this.comerDetExpense.amount);
+        this.vat.setValue(this.comerDetExpense.iva);
+        this.isrWithholding.setValue(this.comerDetExpense.retencionIsr);
+        this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
+        this.transferorNumber.setValue(this.comerDetExpense.transferorNumber);
+        this.goodNumber.setValue(this.comerDetExpense.goodNumber);
+      }
+    }, 500);
+  }
+
+  getTransferent(result: any) {
+    console.log(result);
+    this.manCV = result.cvman;
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      expenseDetailNumber: [
-        this.comerDetExpense ? this.comerDetExpense.detPaymentsId : null,
-      ],
+      expenseDetailNumber: [null],
       amount: [
-        this.comerDetExpense ? this.comerDetExpense.amount : null,
+        null,
         [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
       ],
       vat: [
-        this.comerDetExpense ? this.comerDetExpense.iva : null,
+        null,
         [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
       ],
       isrWithholding: [
-        this.comerDetExpense ? this.comerDetExpense.retencionIsr : null,
+        null,
         [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
       ],
       vatWithholding: [
-        this.comerDetExpense ? this.comerDetExpense.retencionIva : null,
+        null,
         [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
       ],
-      transferorNumber: [
-        this.comerDetExpense ? this.comerDetExpense.transferorNumber : null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
-      ],
+      transferorNumber: [null, [Validators.required]],
       goodNumber: [
-        this.comerDetExpense ? this.comerDetExpense.goodNumber : null,
+        null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
     });
@@ -123,6 +137,7 @@ export class ExpenseCompositionModalComponent
         .edit({
           ...body,
           expenseNumber: this.expenseNumber,
+          cvman: this.manCV,
           total,
         })
         .pipe(take(1))
@@ -161,6 +176,7 @@ export class ExpenseCompositionModalComponent
     let newBody = {
       ...body,
       expenseNumber: this.expenseNumber,
+      cvman: this.manCV,
       total,
     };
     console.log(total, this.expenseNumber, newBody);

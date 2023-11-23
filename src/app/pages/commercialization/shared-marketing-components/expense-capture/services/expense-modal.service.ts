@@ -53,4 +53,8 @@ export class ExpenseModalService extends OpenModalListFiltered {
     console.log(row);
     self.selectedMotivesSubject.next(row);
   }
+
+  clean() {
+    this.selectedMotives = [];
+  }
 }

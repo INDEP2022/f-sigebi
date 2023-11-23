@@ -4,15 +4,18 @@ export const COLUMNS_USER_PERMISSIONS = {
     title: 'Usuario',
     type: 'string',
     sort: false,
+    width: '20%',
   },
   name: {
     title: 'Nombre',
     type: 'string',
     sort: false,
+    width: '80%',
   },
   yes: {
     title: 'S',
     type: 'custom',
+    width: '10%',
     // filter: false,
     renderComponent: CheckboxElementComponent_,
     onComponentInitFunction(instance: any) {
@@ -37,6 +40,7 @@ export const COLUMNS_USER_PERMISSIONS = {
     title: 'N',
     type: 'custom',
     // filter: false,
+    width: '10%',
     renderComponent: CheckboxElementComponent_,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {

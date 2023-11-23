@@ -11,6 +11,7 @@ import {
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GODD_ERROR } from '../capture-approval-donation/columns-approval-donation';
+
 @Component({
   selector: 'app-good-error',
   templateUrl: './good-error.component.html',
@@ -58,7 +59,7 @@ export class GoodErrorComponent extends BasePage implements OnInit {
               case 'goodId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'des_error':
+              case 'error_desc':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -89,7 +90,7 @@ export class GoodErrorComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.recordId'] = `$eq:${localStorage.getItem(
       'actaId'
     )}`;
-    this.params.getValue()['filter.error'] = 1;
+    this.params.getValue()['filter.error'] = `$not:${0}`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilterError,
@@ -99,7 +100,8 @@ export class GoodErrorComponent extends BasePage implements OnInit {
         console.log(resp.data);
         this.dataFactError.load(resp.data);
         this.dataFactError.refresh();
-        this.totalItemsError = resp.count;
+        this.totalItemsError = resp.count ?? 0;
+        localStorage.setItem('error', String(this.totalItemsError));
         this.loadingError = false;
       },
       error: err => {

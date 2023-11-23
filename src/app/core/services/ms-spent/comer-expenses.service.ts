@@ -3,10 +3,7 @@ import { Observable } from 'rxjs';
 import { SpentEndpoints } from 'src/app/common/constants/endpoints/ms-spent';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import {
-  IListResponseMessage,
-  IResponse,
-} from '../../interfaces/list-response.interface';
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import {
   IComerExpense,
   IComerExpenseDTO,
@@ -39,10 +36,7 @@ export class SpentService extends HttpService {
   }
 
   save(body: IComerExpenseDTO) {
-    return this.post<IResponse<IComerExpense>>(
-      SpentEndpoints.ExpenseComer,
-      body
-    );
+    return this.post<IComerExpense>(SpentEndpoints.ExpenseComer, body);
   }
 
   edit(body: IComerExpenseDTO) {
@@ -50,6 +44,10 @@ export class SpentService extends HttpService {
       SpentEndpoints.ExpenseComer + '/' + body.expenseNumber,
       body
     );
+  }
+
+  remove(id: string) {
+    return this.delete(SpentEndpoints.ExpenseComer + '/' + id);
   }
 
   getAllComerPagosRef(params?: string) {

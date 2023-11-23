@@ -1,4 +1,5 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const COLUMNS_APPROVAL_DONATION = {
   recordId: {
     title: 'Ref.',
@@ -53,6 +54,19 @@ export const COPY = {
     visible: true,
     title: 'Cantidad',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
+    },
   },
   unit: {
     title: 'Unidad',
@@ -83,7 +97,7 @@ export const COPY = {
     title: 'Etiqueta Destino',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodEntity?.noEtiqueta;
+      return row.etiquetagood?.description;
     },
   },
   idNoWorker1: {
@@ -213,7 +227,7 @@ export const GODD_ERROR = {
     title: 'No. Bien',
     sort: false,
   },
-  des_error: {
+  error_desc: {
     title: 'Descripción del Error',
     sort: false,
   },

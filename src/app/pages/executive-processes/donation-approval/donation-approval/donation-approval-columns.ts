@@ -13,11 +13,13 @@ export const DONATION_APPROVAL_COLUMNS = {
     title: 'Ubicación Exacta',
     type: 'string',
     sort: false,
+    filter: false,
   },
   di_ubicacion1: {
     title: 'Dirección',
     type: 'string',
     sort: false,
+    filter: false,
   },
   status: {
     title: 'Estatus',

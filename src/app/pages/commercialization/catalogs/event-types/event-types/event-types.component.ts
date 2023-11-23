@@ -134,7 +134,7 @@ export class EventTypesComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar este Registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(reginalDelegation.id);
@@ -145,7 +145,7 @@ export class EventTypesComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.comerTpEventosService.removeTevents(id).subscribe({
       next: () => {
-        this.alert('success', 'Tipo de Eveno ha sido Eliminado', '');
+        this.alert('success', 'Tipo de evento ha sido eliminado', '');
         this.getAllEventTypes();
       },
       error: error => {

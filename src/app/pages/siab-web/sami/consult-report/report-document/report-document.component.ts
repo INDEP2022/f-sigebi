@@ -156,7 +156,6 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
   }
 
   search() {
-    console.log('data', this.docRequestForm.value);
     const typeDoc = this.docRequestForm.get('docType').value;
     const typeTrasf = this.docRequestForm.get('typeTrasf').value;
     const titleDoc = this.docRequestForm.get('docTitle').value;

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -378,9 +378,9 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      subtype: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
-      status: [null, [Validators.required]],
+      subtype: [null, []],
+      delegation: [null, []],
+      status: [null, []],
       totalAssets: [null],
     });
 
@@ -401,7 +401,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
 
   private prepareForm3() {
     this.form3 = this.fb.group({
-      typeGood: [null, [Validators.required]],
+      typeGood: [null, []],
     });
   }
 
@@ -633,17 +633,21 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   }
 
   reporGood() {
-    if (this.records.length === 0) {
-      this.alert('warning', 'No se encontraron registros', ``);
+    if (this.form2.get('filterText').value) {
+      if (this.records.length === 0) {
+        this.alert('warning', 'No se encontraron registros', ``);
+      } else {
+        this.show = false;
+        this.showMonth = false;
+        this.showConsult = false;
+        this.showGood = true;
+        console.log(this.records);
+        this.params7
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getReportGood(this.records));
+      }
     } else {
-      this.show = false;
-      this.showMonth = false;
-      this.showConsult = false;
-      this.showGood = true;
-      console.log(this.records);
-      this.params7
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getReportGood(this.records));
+      this.alert('warning', 'Debe insertar un archivo .txt', ``);
     }
   }
 
@@ -680,23 +684,29 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   }
 
   reportNoAttempt() {
-    if (this.idTypeGood) {
-      this.data1.load([]);
-      this.data1.refresh();
-      this.totalItems1 = 0;
+    if (this.form3.get('typeGood').value) {
+      if (this.idTypeGood) {
+        this.data1.load([]);
+        this.data1.refresh();
+        this.totalItems1 = 0;
 
-      this.data5.load([]);
-      this.data5.refresh();
-      this.totalItems5 = 0;
+        this.data5.load([]);
+        this.data5.refresh();
+        this.totalItems5 = 0;
 
-      this.show = true;
-      this.showMonth = false;
-      this.showConsult = false;
-      this.showGood = false;
+        this.show = true;
+        this.showMonth = false;
+        this.showConsult = false;
+        this.showGood = false;
 
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getReportNoAttempt(this.idTypeGood, '', '', ''));
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() =>
+            this.getReportNoAttempt(this.idTypeGood, '', '', '')
+          );
+      }
+    } else {
+      this.alert('warning', 'Debe insertar un tipo bien', '');
     }
   }
 
@@ -745,22 +755,26 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   }
 
   reporTwoMonths() {
-    if (this.idTypeGood) {
-      this.data.load([]);
-      this.data.refresh();
-      this.totalItems = 0;
+    if (this.form3.get('typeGood').value) {
+      if (this.idTypeGood) {
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
 
-      this.data5.load([]);
-      this.data5.refresh();
-      this.totalItems5 = 0;
+        this.data5.load([]);
+        this.data5.refresh();
+        this.totalItems5 = 0;
 
-      this.showMonth = true;
-      this.show = false;
-      this.showConsult = false;
-      this.showGood = false;
-      this.params1
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getReporTwoMonths(this.idTypeGood, '', '', ''));
+        this.showMonth = true;
+        this.show = false;
+        this.showConsult = false;
+        this.showGood = false;
+        this.params1
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getReporTwoMonths(this.idTypeGood, '', '', ''));
+      }
+    } else {
+      this.alert('warning', 'Debe insertar un tipo bien', '');
     }
   }
 
@@ -815,33 +829,42 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   }
 
   consult() {
-    this.data1.load([]);
-    this.data1.refresh();
-    this.totalItems1 = 0;
+    if (
+      this.form3.get('typeGood').value &&
+      this.form.get('subtype').value &&
+      this.form.get('delegation').value &&
+      this.form.get('status').value
+    ) {
+      this.data1.load([]);
+      this.data1.refresh();
+      this.totalItems1 = 0;
 
-    this.data.load([]);
-    this.data.refresh();
-    this.totalItems = 0;
+      this.data.load([]);
+      this.data.refresh();
+      this.totalItems = 0;
 
-    this.showMonth = false;
-    this.show = false;
-    this.showConsult = true;
-    this.showGood = false;
-    //this.show = !this.show;
-    this.type = this.form3.get('typeGood').value;
-    this.subtype = this.form.get('subtype').value;
-    this.delegation1 = this.form.get('delegation').value;
-    this.state1 = this.form.get('status').value;
-    this.params5
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() =>
-        this.getConsultGood(
-          this.type,
-          this.subtype,
-          this.delegation1,
-          this.state1
-        )
-      );
+      this.showMonth = false;
+      this.show = false;
+      this.showConsult = true;
+      this.showGood = false;
+      //this.show = !this.show;
+      this.type = this.form3.get('typeGood').value;
+      this.subtype = this.form.get('subtype').value;
+      this.delegation1 = this.form.get('delegation').value;
+      this.state1 = this.form.get('status').value;
+      this.params5
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() =>
+          this.getConsultGood(
+            this.type,
+            this.subtype,
+            this.delegation1,
+            this.state1
+          )
+        );
+    } else {
+      this.alert('warning', 'Debe llenar todos los campos', '');
+    }
   }
 
   getConsultGood(

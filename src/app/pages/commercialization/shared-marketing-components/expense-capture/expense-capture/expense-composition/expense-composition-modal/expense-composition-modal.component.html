@@ -58,6 +58,7 @@
         <div class="pb-2 col-md-8">
           <ng-custom-select-loading
             [form]="form"
+            [updateValues]="true"
             path="goodfinder/api/v1/good-query"
             label="No. Bien"
             formControlName="goodNumber"
@@ -83,6 +84,7 @@
         <div class="pb-2 col-md-12">
           <ng-custom-select-loading
             [form]="form"
+            [updateValues]="true"
             path="catalog/api/v1/transferent"
             formControlName="transferorNumber"
             label="Transferente"
@@ -92,7 +94,8 @@
             prefixSearch="$ilike"
             secondParamSearch="filter.id"
             [labelTemplate]="transferentLabel"
-            [optionTemplate]="transferentOption">
+            [optionTemplate]="transferentOption"
+            (valueChange)="getTransferent($event)">
           </ng-custom-select-loading>
           <ng-template #transferentLabel let-item="item">
             {{ item.id }} - {{ item.nameTransferent }}

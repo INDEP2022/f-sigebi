@@ -12,224 +12,576 @@
   </div>
 
   <div body>
-    <div class="row mb-4">
-      <form [formGroup]="form" class="form-material">
-        <div class="row mb-4">
-          <div class="col-md-4">
-            <div class="row">
-              <div class="col">
+    <accordion [isAnimated]="true">
+      <accordion-group [isOpen]="true">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>EXPEDIENTE</h5>
+        </div>
+        <div class="float-right pl-3">
+          <button
+            (click)="searchExpediente()"
+            class="btn btn-primary btn-sm active m-1"
+            tooltip="Lista de Expedientes"
+            containerClass="tooltip-style">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <app-card [header]="false" [footer]="false">
+          <div body>
+            <!-- FORMULARIO EXPEDIENTE -->
+            <form [formGroup]="form" class="form-material">
+              <div class="row">
+                <div class="col-4 mt-2">
+                  <form-field
+                    [control]="form.get('no_expediente')"
+                    label="No. Expediente">
+                    <input
+                      readonly
+                      type="number"
+                      class="form-control"
+                      formControlName="no_expediente"
+                      [(ngModel)]="noExpe" />
+                  </form-field>
+                </div>
+                <div class="col-8 mt-2">
+                  <form-field
+                    [control]="form.get('av_previa')"
+                    label="Averiguaci&oacute;n Previa">
+                    <input
+                      readonly
+                      type="text"
+                      class="form-control"
+                      formControlName="av_previa" />
+                  </form-field>
+                </div>
+                <div class="col-4 mt-2">
+                  <form-field
+                    [control]="form.get('ca_penal')"
+                    label="Causa Penal">
+                    <input
+                      readonly
+                      type="text"
+                      class="form-control"
+                      formControlName="ca_penal" />
+                  </form-field>
+                </div>
+                <div class="col-4 mt-2">
+                  <form-field
+                    [control]="form.get('no_transferente')"
+                    label="No. Exp. Transferente">
+                    <input
+                      readonly
+                      type="text"
+                      class="form-control"
+                      formControlName="no_transferente" />
+                  </form-field>
+                </div>
+                <div class="col-2 mt-2">
+                  <form-field
+                    [control]="form.get('ti_expediente')"
+                    label="Ti. Expediente">
+                    <input
+                      readonly
+                      type="text"
+                      class="form-control"
+                      formControlName="ti_expediente" />
+                  </form-field>
+                </div>
+                <div class="col-2 mt-2">
+                  <button
+                    (click)="resetForm()"
+                    class="btn btn-danger btn-block btn-sm active mt-1">
+                    Limpiar <i class="fas fa-eraser"> </i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </app-card>
+      </accordion-group>
+    </accordion>
+    <accordion [isAnimated]="true">
+      <accordion-group [isOpen]="true">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>ACTAS Y BIENES RELACIONADOS</h5>
+        </div>
+        <!-- <div class="float-right pl-3">
+          
+        </div> -->
+        <app-card [header]="false" [footer]="false">
+          <div body>
+            <div class="row mb-3 mt-2 ml-1 mr-1">
+              <div class="col-4">
+                <h6>ACTA</h6>
+              </div>
+              <div class="col-md-8 text-end">
                 <button
+                  [disabled]="!actaCerrada || !btnSave"
+                  (click)="save()"
                   type="button"
-                  (click)="getAllBLKByFilters()"
-                  class="btn btn-primary active btn-sm mr-2 mb-2">
-                  Buscar
-                  <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  class="btn btn-primary active btn-sm mr-3">
+                  Guardar
+                  <i aria-hidden="true" class="fa fa-save"></i>
+                </button>
+                <!-- <button [disabled]="!dataExpediente" (click)="agregarActa()" type="button" class="btn btn-info active btn-sm mr-3">
+                  Nueva Acta
+                  <i class="bx bx-plus bx-sm float-icon"></i>
+                </button> -->
+                <button
+                  [ngClass]="{ loading: loadingBtn }"
+                  [disabled]="!actaCerrada || !actaDefault"
+                  class="btn btn-primary btn-sm active mr-3"
+                  (click)="cerrarActa()">
+                  Cerrar Acta
+                </button>
+                <button
+                  [disabled]="!dataExpediente"
+                  button
+                  type="button"
+                  tooltip="Nuevo"
+                  containerClass="tooltip-style"
+                  class="btn btn-info btn-sm active mr-3"
+                  (click)="cleanActa()">
+                  Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <button
+                  [disabled]="!dataExpediente"
+                  (click)="searchActa()"
+                  class="btn btn-primary btn-sm active"
+                  tooltip="Lista de Actas"
+                  containerClass="tooltip-style">
+                  <i class="bx bx-list-plus bx-sm float-icon"></i>
                 </button>
                 <!-- <button
-                        id="expedient-number"
-                        [class]="loading ? 'disabled' : ''"
-                        class="btn btn-primary btn-sm disabled mr-2 active"
-                        (click)="searchButton()">
-                        <i class="fa fa-search"></i> Buscar
-                      </button> -->
-                <button
-                  (click)="resetForm()"
-                  class="btn btn-danger btn-sm active mb-2">
-                  Limpiar <i class="fas fa-eraser"> </i>
-                </button>
+                  (click)="cleanActa()"
+                  type="button"
+                  class="btn btn-danger active btn-sm">
+                  Limpiar
+                  <i class="fa fa-eraser" aria-hidden="true"></i>
+                </button> -->
               </div>
             </div>
-          </div>
-          <div *ngIf="navigateProceedings" class="col-md-4">
-            <span>Navegación de actas</span>
-            <div class="row mt-3">
-              <div class="col-md-9">
-                <div class="d-flex justify-content-center align-items-center">
-                  <app-pagination
-                    [params]="paramsActNavigate"
-                    [totalItems]="totalItemsNavigate"
-                    [limit]="newLimitparamsActNavigate"
-                    [paginatorPageSize]="false"
-                    [pageSizeOptions]="[1]"
-                    [paginatorRangeLabel]="false"
-                    [maxSize]="1"></app-pagination>
-                  <div class="col">
-                    <button
-                      (click)="resNewForm()"
-                      id="expedient-number"
-                      class="btn btn-info btn-sm active ml-4">
-                      Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-                    </button>
+            <app-card [header]="false" [footer]="false">
+              <div body>
+                <form [formGroup]="claveActaForm" class="form-material">
+                  <div class="row">
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="claveActaForm.get('acta')"
+                          label="Acta">
+                          <ng-select
+                            [readonly]="!valClave || !actaCerrada"
+                            formControlName="acta"
+                            class="form-control pt-1">
+                            <ng-option value="DON">DON</ng-option>
+                          </ng-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="claveActaForm.get('type')"
+                          label="Estado">
+                          <ng-select
+                            [readonly]="!valClave || !actaCerrada"
+                            formControlName="type"
+                            class="form-control pt-1">
+                            <ng-option value="A">A</ng-option>
+                            <ng-option value="D">D</ng-option>
+                            <ng-option value="RT">RT</ng-option>
+                            <ng-option value="NA">NA</ng-option>
+                          </ng-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                      <div>
+                        <form-field [control]="claveActaForm.get('claveTrans')">
+                          <ngx-select
+                            [readonly]="!valClave || !actaCerrada"
+                            [form]="claveActaForm"
+                            [data]="trans"
+                            (fetchItems)="consultREG_TRANSFERENTES($event)"
+                            bindLabel="transfer"
+                            value="password"
+                            control="claveTrans"
+                            label="Cve. Transferente"
+                            [searchOnInit]="true"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="claveActaForm.get('cveReceived')">
+                          <ngx-select
+                            [readonly]="!valClave || !actaCerrada"
+                            [form]="claveActaForm"
+                            [data]="dele"
+                            (fetchItems)="consulREG_DEL_ADMIN($event)"
+                            bindLabel="cveReceived"
+                            value="delegation"
+                            control="cveReceived"
+                            label="Admin"
+                            [searchOnInit]="false"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field [control]="claveActaForm.get('administra')">
+                          <ngx-select
+                            [readonly]="!valClave || !actaCerrada"
+                            [form]="claveActaForm"
+                            [data]="arrayDele"
+                            (fetchItems)="consulREG_DEL_DESTR($event)"
+                            bindLabel="cveAdmin"
+                            value="delegation"
+                            control="administra"
+                            label="Don"
+                            [searchOnInit]="false"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="claveActaForm.get('consec')"
+                          label="Folio">
+                          <input
+                            [readonly]="!valClave || !actaCerrada"
+                            [max-length]="4"
+                            pattern="^[0-9]+"
+                            type="number"
+                            class="form-control pt-1"
+                            formControlName="consec" />
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="claveActaForm.get('anio')"
+                          label="Año">
+                          <ng-select
+                            [readonly]="!valClave || !actaCerrada"
+                            class="form-control pt-1"
+                            formControlName="anio"
+                            [items]="years"
+                            [ngModel]="currentYear"></ng-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                      <div>
+                        <form-field
+                          [control]="claveActaForm.get('mes')"
+                          label="Mes">
+                          <ng-select
+                            [readonly]="!valClave || !actaCerrada"
+                            class="form-control pt-1"
+                            formControlName="mes"
+                            [items]="months"></ng-select>
+                        </form-field>
+                      </div>
+                    </div>
                   </div>
+                </form>
+              </div>
+            </app-card>
+            <app-card [header]="false" [footer]="false">
+              <div body>
+                <form [formGroup]="actaRecepttionForm" class="form-material">
+                  <div class="row">
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('cveActa')"
+                        label="Acta:">
+                        <input
+                          readonly
+                          type="text"
+                          class="form-control"
+                          formControlName="cveActa" />
+                      </form-field>
+                    </div>
+                    <div class="col-3 mt-2">
+                      <form-field
+                        [control]="
+                          actaRecepttionForm.get('datePhysicalReception')
+                        "
+                        label="Fecha Recepción Física:">
+                        <input
+                          [ngClass]="{
+                            'not-press bg-gray': !actaCerrada || !dataExpediente
+                          }"
+                          #datepickerElement
+                          type="text"
+                          class="form-control"
+                          formControlName="datePhysicalReception"
+                          bsDatepicker
+                          [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                      </form-field>
+                    </div>
+                    <div class="col-3 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('elaboradate')"
+                        label="Fecha de Elaboración">
+                        <input
+                          [ngClass]="{
+                            'not-press bg-gray': !actaCerrada || !dataExpediente
+                          }"
+                          #datepickerElement
+                          type="text"
+                          class="form-control pt-1"
+                          formControlName="elaboradate"
+                          bsDatepicker
+                          [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                      </form-field>
+                    </div>
+                    <div class="col-3 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('statusActa')"
+                        label="Estatus Acta:">
+                        <ng-select
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          formControlName="statusActa"
+                          class="form-control pt-1">
+                          <ng-option value="ABIERTA">ABIERTA</ng-option>
+                          <ng-option value="SOLICITADO">SOLICITADO</ng-option>
+                          <ng-option value="AUTORIZADO">AUTORIZADO</ng-option>
+                          <ng-option value="CERRADA">CERRADA</ng-option>
+                        </ng-select>
+                      </form-field>
+                    </div>
+                    <div class="col-3 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('folio')"
+                        label="Folio de Escaneo:">
+                        <input
+                          [maxlength]="10"
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="number"
+                          class="form-control"
+                          formControlName="folio" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('testigoTwo')"
+                        label="Nombre Entrega:">
+                        <input
+                          maxlength="100"
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          class="form-control"
+                          formControlName="testigoTwo" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('testigoTree')"
+                        label="Nombre Recibe:">
+                        <input
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          maxlength="100"
+                          class="form-control"
+                          formControlName="testigoTree" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('respConv')"
+                        label="Auditor:">
+                        <input
+                          maxlength="500"
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          class="form-control"
+                          formControlName="respConv" />
+                      </form-field>
+                    </div>
+                    <div class="col-6 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('testigoOIC')"
+                        label="Testigo de Contraloría:">
+                        <input
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          maxlength="100"
+                          class="form-control"
+                          formControlName="testigoOIC" />
+                      </form-field>
+                    </div>
+                    <div class="col-12 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('direccion')"
+                        label="Dirección:">
+                        <textarea
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          maxlength="1000"
+                          rows="3"
+                          cols="3"
+                          class="form-control"
+                          formControlName="direccion"></textarea>
+                      </form-field>
+                    </div>
+                    <div class="col-12 mt-2">
+                      <form-field
+                        [control]="actaRecepttionForm.get('observaciones')"
+                        label="Observaciones:">
+                        <textarea
+                          [readonly]="!actaCerrada || !dataExpediente"
+                          type="text"
+                          maxlength="1000"
+                          rows="3"
+                          cols="3"
+                          class="form-control"
+                          formControlName="observaciones"></textarea>
+                      </form-field>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </app-card>
+          </div>
+        </app-card>
+        <app-card [header]="false" [footer]="false">
+          <div body>
+            <div>
+              <div class="col-md-12 justify-content-center">
+                <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
+                <div class="row">
+                  <form-loader *ngIf="loading"></form-loader>
+                  <div class="col-md-12">
+                    <ng-scrollbar
+                      [track]="'all'"
+                      [ngStyle]="{ height: loading ? '0px' : '400px' }">
+                      <ng2-smart-table
+                        [attr.class]="'table-bordered table-responsive'"
+                        [settings]="settings1"
+                        [source]="datas"
+                        (userRowSelect)="rowSelectedOne($event)">
+                      </ng2-smart-table>
+                    </ng-scrollbar>
+                  </div>
+
+                  <app-pagination
+                    [params]="paramsOne"
+                    [totalItems]="totalItems"></app-pagination>
+                  <form [formGroup]="form2" class="form-material">
+                    <div class="row">
+                      <div class="col-6 mt-4">
+                        <form-field
+                          [control]="form2.get('estatusPrueba')"
+                          label="Estatus Bien">
+                          <input
+                            [(ngModel)]="statusGood_"
+                            type="text"
+                            class="form-control"
+                            formControlName="estatusPrueba"
+                            readonly />
+                        </form-field>
+                      </div>
+                      <div
+                        class="col-6 text-center justify-content-center mt-5">
+                        <p class="">
+                          <span class="text-success mr-5"
+                            ><i class="fa fa-square"></i>Disponibles</span
+                          >
+                          <span class="text-dark"
+                            ><i class="fa fa-square"></i>No disponibles</span
+                          >
+                        </p>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <div class="row pt-2">
+                <div class="col-md-12 text-center mt-4 mb-4">
+                  <!-- <div> -->
+                  <span style="font-weight: 700">Agregar</span>
+                  <button
+                    tooltip="Agregar Bien al Acta"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                    type="button"
+                    (click)="addSelect()">
+                    <i class="bx bx-chevron-down bx-md"></i>
+                  </button>
+                  <!-- </div> -->
+                  <!-- <div> -->
+                  <span style="font-weight: 700; margin-left: 20px">
+                    Eliminar
+                  </span>
+                  <button
+                    tooltip="Quitar Bien del Acta"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                    type="button"
+                    (click)="removeSelect()">
+                    <i class="bx bx-chevron-up bx-md"></i>
+                  </button>
+                  <!-- </div> -->
+                </div>
+              </div>
+              <!-- <div class="col-md-12 text-center mt-4 mb-4">
+                    <button
+                      type="button"
+                      tooltip="Agregar"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2"
+                      (click)="createTableTwo()">
+                      Agregar <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
+                    <button
+                      class="btn btn-red btn-sm active m-3"
+                      (click)="deleteTableTwo()">
+                      Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                  </div> -->
+              <div class="col-md-12">
+                <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+                <div class="row">
+                  <form-loader *ngIf="loading2"></form-loader>
+                  <div class="col-md-12">
+                    <ng-scrollbar
+                      [track]="'all'"
+                      [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
+                      <ng2-smart-table
+                        class="table-responsive"
+                        [attr.class]="'table-bordered table-responsive'"
+                        [settings]="settings2"
+                        (userRowSelect)="rowSelectedTwo($event)"
+                        [source]="data2">
+                      </ng2-smart-table>
+                    </ng-scrollbar>
+                  </div>
+                  <app-pagination
+                    [params]="params2"
+                    [totalItems]="totalItems2"></app-pagination>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <br />
-        <hr class="row" style="width: 97%; margin: auto" />
-        <br />
-        <br />
-        <div class="row pt-3">
-          <form-field
-            [control]="form.get('no_expediente')"
-            label="No. Expediente"
-            class="col-md-5">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="no_expediente"
-              [(ngModel)]="noExpe"
-              [max-length]="10" />
-          </form-field>
-
-          <form-field
-            [control]="form.get('av_previa')"
-            label="Averiguaci&oacute;n Previa"
-            class="col-md-7">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="av_previa" />
-          </form-field>
-        </div>
-        <div class="row pt-3">
-          <form-field
-            [control]="form.get('ca_penal')"
-            label="Causa Penal"
-            class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="ca_penal" />
-          </form-field>
-
-          <form-field
-            [control]="form.get('no_transferente')"
-            class="col-md-4"
-            label="No. Exp. Transferente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="no_transferente" />
-          </form-field>
-
-          <form-field
-            [control]="form.get('ti_expediente')"
-            class="col-md-4"
-            label="Ti. Expediente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="ti_expediente" />
-          </form-field>
-        </div>
-
-        <br />
-        <br />
-        <hr class="row" style="width: 97%; margin: auto" />
-        <br />
-        <br />
-        <div class="row pt-3">
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col">
-                <form-field [control]="form.get('acta')">
-                  <ngx-select
-                    id="acta"
-                    control="acta"
-                    label="Tipo Acta"
-                    bindLabel="records"
-                    [data]="records"
-                    [searchable]="false"
-                    [form]="form"></ngx-select>
-                </form-field>
-              </div>
-
-              <div class="col-md-2">
-                <form-field [control]="form.get('transfer')">
-                  <ngx-select
-                    id="transfer"
-                    control="transfer"
-                    label="Transferente"
-                    bindLabel="clave_transferente"
-                    [searchable]="false"
-                    [data]="transferSelect"
-                    [form]="form"></ngx-select>
-                </form-field>
-              </div>
-
-              <div class="col">
-                <form-field [control]="form.get('ident')" label="Identificador">
-                  <input
-                    type="text"
-                    class="form-control pt-0"
-                    formControlName="ident" />
-                </form-field>
-              </div>
-
-              <div class="col">
-                <form-field [control]="form.get('recibe')">
-                  <ngx-select
-                    (fetchItems)="getRecibe($event)"
-                    control="recibe"
-                    label="Recibe"
-                    bindLabel="delegation"
-                    ngbTooltip="Prueba"
-                    [data]="recibeSelect"
-                    [form]="form"></ngx-select>
-                </form-field>
-              </div>
-
-              <div class="col">
-                <form-field [control]="form.get('admin')">
-                  <ngx-select
-                    (fetchItems)="getAdmin($event)"
-                    control="admin"
-                    label="Administra"
-                    bindLabel="delegation"
-                    [data]="adminSelect"
-                    [form]="form"></ngx-select>
-                  <!--       <input
-                          type="text"
-                          class="form-control"
-                          formControlName="admin"
-                          (ngModelChange)="fillActTwo()" /> -->
-                </form-field>
-              </div>
-
-              <div class="col">
-                <form-field [control]="form.get('folio')" label="Folio">
-                  <input
-                    type="number"
-                    class="form-control pt-0"
-                    min="1"
-                    [max-length]="5"
-                    formControlName="folio" />
-                </form-field>
-              </div>
-              <div class="col">
-                <form-field [control]="form.get('year')" label="A&ntilde;o">
-                  <input
-                    type="number"
-                    class="form-control disabled pt-0"
-                    formControlName="year" />
-                </form-field>
-              </div>
-              <div class="col">
-                <form-field [control]="form.get('mes')" label="Mes">
-                  <input
-                    type="number"
-                    class="form-control disabled pt-0"
-                    formControlName="mes" />
-                </form-field>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="row mb-5">
+        </app-card>
+      </accordion-group>
+    </accordion>
+    <!-- <div class="row mb-5">
       <div class="d-flex justify-content-center">
         <div>
           <button type="button" class="btn btn-primary btn-sm active mr-3">
@@ -241,294 +593,6 @@
           </button>
         </div>
       </div>
-    </div>
-    <div class="pt-5">
-      <form [formGroup]="actForm" class="form-material">
-        <div class="row pt-3">
-          <form-field
-            [control]="actForm.get('status')"
-            label="Estado:"
-            class="col-md-2">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="status"
-              [readonly]="isEnableEstado" />
-          </form-field>
-
-          <form-field
-            [control]="actForm.get('actSelect')"
-            label="Acta:"
-            class="col-md-4">
-            <textarea
-              type="text"
-              class="form-control"
-              formControlName="actSelect"
-              (ngModelChange)="searchKeyProceeding()"
-              [readonly]="isEnableActa"></textarea>
-          </form-field>
-
-          <!-- <form-field [control]="actForm.get('trans')" label="Trans:" class="col-md-1">
-            <input type="text" class="form-control" formControlName="trans" />
-          </form-field> -->
-
-          <form-field
-            [control]="actForm.get('don')"
-            label="Don."
-            class="col-md-2">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="don"
-              [readonly]="isEnableDon" />
-          </form-field>
-
-          <form-field
-            [control]="actForm.get('es_acta')"
-            label="Estatus Acta:"
-            class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="es_acta"
-              [style.color]="
-                this.actForm.get('es_acta').value == 'CERRADA' ? 'red' : 'green'
-              "
-              [readOnly]="true" />
-          </form-field>
-        </div>
-        <!--  -->
-        <div class="row pt-3">
-          <form-field
-            [control]="actForm.get('cv_acta')"
-            label="Acta:"
-            class="col-md-6">
-            <textarea
-              type="text"
-              class="form-control"
-              formControlName="cv_acta"
-              [readonly]="isEnableActacvc"></textarea>
-          </form-field>
-
-          <form-field
-            [control]="actForm.get('observations')"
-            label="Observaciones:"
-            class="col-md-6">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="observations"
-              [readonly]="isEnableObservaciones" />
-          </form-field>
-        </div>
-        <!--  -->
-        <div class="row pt-3">
-          <form-field
-            [control]="actForm.get('fec_elaboracion')"
-            label="Fec. Elaboraci&oacute;n:"
-            class="col-md-6">
-            <input
-              bsDatepicker
-              type="text"
-              class="form-control"
-              formControlName="fec_elaboracion"
-              [readonly]="isEnableFecElaboracion" />
-          </form-field>
-
-          <form-field
-            [control]="actForm.get('nom_entrega')"
-            label="Nombre Entrega:"
-            class="col-md-6">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nom_entrega"
-              [readonly]="isEnableNombreEntrega" />
-          </form-field>
-        </div>
-        <!--  -->
-        <div class="row pt-3">
-          <form-field
-            [control]="actForm.get('fec_don')"
-            label="Fec. Donaci&oacute;n:"
-            class="col-md-6">
-            <input
-              bsDatepicker
-              type="text"
-              class="form-control"
-              formControlName="fec_don"
-              [readonly]="isEnableFecDonacion" />
-          </form-field>
-
-          <form-field
-            [control]="actForm.get('nom_rec')"
-            label="Nombre Recibe:"
-            class="col-md-6">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nom_rec"
-              [readonly]="isEnableNombreRecibe" />
-          </form-field>
-        </div>
-        <!--  -->
-        <div class="row pt-3">
-          <form-field
-            [control]="actForm.get('dir')"
-            label="Direcci&oacute;n:"
-            class="col-md-6">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dir"
-              [readonly]="isEnableDireccion" />
-          </form-field>
-
-          <form-field
-            [control]="actForm.get('audit')"
-            label="Auditor:"
-            class="col-md-6">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="audit"
-              [readonly]="isEnableAuditor" />
-          </form-field>
-        </div>
-        <!--  -->
-        <div class="row pt-3">
-          <form-field
-            [control]="actForm.get('fol_esc')"
-            label="Folio de Escaneo:"
-            class="col-md-6">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="fol_esc"
-              [readonly]="isEnableFolio" />
-          </form-field>
-
-          <form-field
-            [control]="actForm.get('tes_con')"
-            label="Testigo de la Contralor&iacute;a:"
-            class="col-md-6">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="tes_con"
-              [readonly]="isEnableTestigo" />
-          </form-field>
-        </div>
-        <!--  -->
-      </form>
-    </div>
-
-    <div>
-      <form [formGroup]="actForm" class="form-materia"></form>
-
-      <div class="d-flex justify-content-end mt-5"></div>
-      <div class="row mt-3 pt-2" [class.table-loading]="loadingOne">
-        <div>
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings1"
-            [source]="datas"
-            (userRowSelect)="rowSelectedOne($event)"
-            (rowDeselect)="desSelectRow()">
-          </ng2-smart-table>
-        </div>
-        <app-pagination [params]="paramsOne" [totalItems]="totalItems">
-        </app-pagination>
-        <hr class="row" style="width: 97%; margin: auto" />
-        <br />
-        <br />
-        <div class="row">
-          <div class="d-flex justify-content-center">
-            <form [formGroup]="form2" class="form-material">
-              <form-field
-                class="col-md-12"
-                [control]="form2.get('estatusPrueba')">
-                <input
-                  type="text"
-                  class="form-control"
-                  [readOnly]="true"
-                  formControlName="estatusPrueba" />
-              </form-field>
-            </form>
-            <p class="pt-4">
-              <span class="text-success mr-5"
-                ><i class="fa fa-square"></i>Disponibles</span
-              >
-              <span class="text-dark"
-                ><i class="fa fa-square"></i>No disponibles</span
-              >
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-12 text-center mt-4 mb-4">
-        <button
-          type="button"
-          tooltip="Agregar"
-          containerClass="tooltip-style"
-          class="btn btn-info btn-sm active ml-2 mr-2"
-          (click)="createTableTwo()">
-          Agregar <i class="bx bx-plus bx-sm float-icon"></i>
-        </button>
-        <button
-          class="btn btn-red btn-sm active m-3"
-          (click)="deleteTableTwo()">
-          Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
-        </button>
-      </div>
-
-      <!-- BLoque DAD (Detalle Acta)-->
-
-      <div class="d-flex justify-content-end mt-5"></div>
-      <div class="row mt-3 pt-2" [class.table-loading]="loadingOne">
-        <div>
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="data2"
-            (userRowSelect)="rowSelectedTwo($event)"></ng2-smart-table>
-        </div>
-        <app-pagination [params]="params2" [totalItems]="totalItems2">
-        </app-pagination>
-      </div>
-      <div class="row">
-        <div class="d-flex align-items-center">
-          <div class="col-6 align-items-center">
-            <div class="mt-5">
-              <!-- <form class="form-material form-horizontal" [formGroup]="formTable2" (ngSubmit)="onSubmit()">
-                <div class="row mt-5 justify-content-start justify-content-sm-end">
-                  <div class="mb-3 pl-4 pr-4">
-                    <form-field [control]="formTable2.get('detail')">
-                      <input type="text" class="form-control" formControlName="detail" readonly />
-                    </form-field>
-                  </div>
-                </div>
-              </form> -->
-            </div>
-          </div>
-          <!-- <div class="col-6 align-items-center">
-                    <div class="row">
-                      <div class="col-6">
-                        <span class="text-success mr-5"
-                          ><i class="fa fa-square"></i> Disponibles</span
-                        >
-                      </div>
-                      <div class="col-6">
-                        <span class="text-danger"
-                          ><i class="fa fa-square"></i> No disponibles</span
-                        >
-                      </div>
-                    </div>
-                  </div> -->
-        </div>
-      </div>
-      <div></div>
-    </div>
+    </div> -->
   </div>
 </app-card>
