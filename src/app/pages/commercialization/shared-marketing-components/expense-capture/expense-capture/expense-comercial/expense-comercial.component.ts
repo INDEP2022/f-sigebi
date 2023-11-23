@@ -414,6 +414,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     // });
     if (localStorage.getItem('eventExpense')) {
       this.fillForm(JSON.parse(localStorage.getItem('eventExpense')));
+      setTimeout(() => {
+        localStorage.removeItem('eventExpense');
+      }, 500);
     }
     // this.expenseModalService.selectedMotivesSubject.subscribe({
     //   next: response => {
