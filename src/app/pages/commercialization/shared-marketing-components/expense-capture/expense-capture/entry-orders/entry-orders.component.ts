@@ -28,7 +28,6 @@ export class EntryOrdersComponent
     private expenseCaptureDataService: ExpenseCaptureDataService
   ) {
     super();
-    this.params.value.limit = 100000;
     this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,

@@ -66,9 +66,8 @@ export abstract class BasePageTableNotServerPagination<
       return;
     }
     let params = this.getParams();
-    params.limit = 100000000;
     this.service
-      .getAll(params)
+      .getAll({ ...params, limit: 100000000 })
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {

@@ -176,6 +176,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           ? this.form.value.fecha_contrarecibo
           : null
         : null,
+      providerName: this.provider ?? '',
       comment: this.form.value.comment ?? '',
       monthExpense: this.form.value.monthExpense ? '1' : null,
       monthExpense2: this.form.value.monthExpense2 ? '2' : null,
@@ -216,31 +217,35 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       });
   }
 
-  clean() {
+  clean(updateOthers = true) {
     this.dataService.clean();
     this.provider = null;
     this.errorsClasification = [];
+    if (updateOthers) {
+      this.dataService.updateOI.next(true);
+      this.dataService.updateExpenseComposition.next(true);
+      this.dataService.updateFolio.next(true);
+    }
   }
 
   delete() {
-    this.loader.load = true;
     this.alertQuestion('question', '¿Desea eliminar el gasto?', '').then(x => {
-      if (x.isConfirmed)
-        [
-          this.spentService2
-            .remove(this.data.expenseNumber)
-            .pipe(take(1))
-            .subscribe({
-              next: response => {
-                this.loader.load = false;
-                this.clean();
-              },
-              error: err => {
-                this.loader.load = false;
-                this.alert('error', 'No se pudo eliminar el gasto', '');
-              },
-            }),
-        ];
+      if (x.isConfirmed) {
+        this.loader.load = true;
+        this.spentService2
+          .remove(this.data.expenseNumber)
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.loader.load = false;
+              this.clean();
+            },
+            error: err => {
+              this.loader.load = false;
+              this.alert('error', 'No se pudo eliminar el gasto', '');
+            },
+          });
+      }
     });
   }
 
@@ -332,6 +337,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.form.get('expenseNumber');
   }
 
+  get expenseNumberValue() {
+    return this.expenseNumber ? this.expenseNumber.value : null;
+  }
+
   get conceptNumber() {
     return this.form.get('conceptNumber');
   }
@@ -414,6 +423,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     // });
     if (localStorage.getItem('eventExpense')) {
       this.fillForm(JSON.parse(localStorage.getItem('eventExpense')));
+      setTimeout(() => {
+        localStorage.removeItem('eventExpense');
+      }, 500);
     }
     // this.expenseModalService.selectedMotivesSubject.subscribe({
     //   next: response => {
@@ -431,7 +443,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   updateProvider(event: any) {
     console.log(event);
-    this.provider = event.pvName;
+    this.provider = event ? event.pvName : '';
   }
 
   reloadLoteEvent(event: any) {
@@ -494,6 +506,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.alert('warning', 'No se han escaneado los documentos', '');
       return;
     }
+    this.loader.load = true;
     let filterParams = new FilterParams();
     filterParams.addFilter(
       'id',
@@ -512,14 +525,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         take(1),
         catchError(x => of({ data: null, message: x })),
         map(x => {
-          if (!x.data) {
-            this.alert('error', 'No a escaneado los documentos', '');
-          }
           return x.data;
         })
       )
     );
     if (!documents) {
+      this.loader.load = false;
+      this.alert('error', 'No a escaneado los documentos', '');
       return;
     }
     this.expenseGoodProcessService
@@ -553,9 +565,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
           };
+          this.loader.load = false;
           this.modalService.show(NotifyComponent, config);
         },
         error: err => {
+          this.loader.load = false;
           this.alert('error', 'No se ha guardado el folio de escaneo', '');
         },
       });
@@ -800,9 +814,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   async fillForm(event: IComerExpense) {
     console.log(event);
-    this.clean();
+    this.clean(false);
     this.expenseNumber.setValue(event.expenseNumber);
     this.data = event;
+    this.provider = event.providerName;
     this.dataService.validPayment = false;
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
@@ -816,6 +831,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.lotNumber.setValue(event.lotNumber);
     this.publicLot = event.comerLot ? event.comerLot.publicLot : null;
     this.clkpv.setValue(event.clkpv);
+
     setTimeout(async () => {
       if (!event.descurcoord) {
         this.alert('warning', 'No se cuenta con coordinación regional', '');
