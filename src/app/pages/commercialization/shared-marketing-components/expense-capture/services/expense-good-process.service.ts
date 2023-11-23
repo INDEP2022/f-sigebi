@@ -37,7 +37,7 @@ export class ExpenseGoodProcessService extends HttpService {
     const formData = new FormData();
     formData.append('file', file);
     return this.httpClient.post<any>(
-      `${this._url}good/${this._prefix}good/charge-goods-excel`,
+      `${this._url}massivegood/${this._prefix}application/load-good-excel`,
       formData
     );
   }
