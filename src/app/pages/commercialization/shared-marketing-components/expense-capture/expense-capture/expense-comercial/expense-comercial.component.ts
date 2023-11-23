@@ -448,11 +448,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (localStorage.getItem('eventExpense')) {
       this.fillForm(JSON.parse(localStorage.getItem('eventExpense')));
     }
-    this.expenseModalService.selectedMotivesSubject.subscribe({
-      next: response => {
-        console.log(response);
-      },
-    });
+    // this.expenseModalService.selectedMotivesSubject.subscribe({
+    //   next: response => {
+    //     console.log(response);
+    //   },
+    // });
   }
 
   updateLot(event: any) {

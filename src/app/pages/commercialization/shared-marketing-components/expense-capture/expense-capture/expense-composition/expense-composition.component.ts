@@ -431,6 +431,15 @@ export class ExpenseCompositionComponent
     this.selectedRow = row;
   }
 
+  showErrorDisperGasto() {
+    this.loader.load = false;
+    this.alert(
+      'error',
+      'No se pudo realizar la dispersión de gastos/mandatos',
+      'Favor de verificar'
+    );
+  }
+
   private setDisperGasto(row: IComerDetExpense2) {
     this.loader.load = true;
     this.lotService
@@ -446,22 +455,46 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           console.log(response);
-          this.loader.load = false;
-          if (response) {
-            this.alert(
-              'success',
-              'Se realizo la división de pagos entre los mandatos',
-              ''
-            );
+          if (response.data && response.data.length > 0) {
+            let result = response.data[0];
+            this.dataService
+              .updateMassive(
+                this.dataTemp.map(x => {
+                  let newRow: any = {
+                    amount: result.monto2,
+                    goodNumber: x.goodNumber,
+                    expenseDetailNumber: x.detPaymentsId,
+                    expenseNumber: x.paymentsId,
+                    vat: result.iva2,
+                    isrWithholding: result.retencion_isr2,
+                    vatWithholding: result.retencion_iva2,
+                    cvman: x.manCV,
+                    budgetItem: x.departure,
+                  };
+                  return newRow;
+                })
+              )
+              .pipe(take(1))
+              .subscribe({
+                next: response => {
+                  this.loader.load = false;
+                  this.alert(
+                    'success',
+                    'Se realizo la división de pagos entre los mandatos',
+                    ''
+                  );
+                  this.getData();
+                },
+                error: err => {
+                  this.showErrorDisperGasto();
+                },
+              });
+          } else {
+            this.showErrorDisperGasto();
           }
         },
         error: err => {
-          this.loader.load = false;
-          this.alert(
-            'error',
-            'No se pudo realizar la dispersión de gastos/mandatos',
-            'Favor de verificar'
-          );
+          this.showErrorDisperGasto();
         },
       });
   }
