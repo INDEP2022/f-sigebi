@@ -47,7 +47,7 @@ export class ExpenseLotService extends HttpService {
         iva2: number;
         mandato: string;
         mandato2: string;
-        monto2: number;
+        MONTO2: number;
         no_transferente: number;
         retencion_isr2: number;
         retencion_iva2: number;

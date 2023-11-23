@@ -205,6 +205,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             'Se ha actualizado el gasto ' + this.expenseNumber.value,
             ''
           );
+          this.fillForm({
+            ...this.data,
+            ...this.form.value,
+            amount: this.dataService.amount ?? 0,
+            vat: this.dataService.vat ?? 0,
+            vatWithheld: this.dataService.vatWithholding ?? 0,
+            address: this.data.address ?? this.address,
+          });
         },
         error: err => {
           this.alert(
@@ -229,6 +237,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   delete() {
+    // this.alert('success', 'Se elimino el gasto', '');
+    return;
     this.alertQuestion('question', '¿Desea eliminar el gasto?', '').then(x => {
       if (x.isConfirmed) {
         this.loader.load = true;
@@ -239,6 +249,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             next: response => {
               this.loader.load = false;
               this.clean();
+              this.alert('success', 'Se elimino el gasto', '');
             },
             error: err => {
               this.loader.load = false;

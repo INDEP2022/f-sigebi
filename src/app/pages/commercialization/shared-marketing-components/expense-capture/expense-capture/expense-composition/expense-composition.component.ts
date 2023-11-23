@@ -86,6 +86,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           console.log(response);
+          this.loader.load = true;
           this.sendSolicitud(false, true);
         },
       });
@@ -451,12 +452,12 @@ export class ExpenseCompositionComponent
         next: response => {
           console.log(response);
           if (response.data && response.data.length > 0) {
-            let result = response.data[0];
+            let result = response.data[1];
             this.dataService
               .updateMassive(
                 this.dataTemp.map(x => {
                   let newRow: any = {
-                    amount: result.monto2,
+                    amount: result.MONTO2,
                     goodNumber: x.goodNumber,
                     expenseDetailNumber: x.detPaymentsId,
                     expenseNumber: x.paymentsId,
@@ -640,6 +641,8 @@ export class ExpenseCompositionComponent
   }
 
   loadGoods(event: Event) {
+    // this.alert('success', 'Se realizó la carga de datos', '');
+    // return;
     this.loader.load = true;
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
