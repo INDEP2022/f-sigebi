@@ -837,7 +837,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           }
         },
         error: err => {
-          this.alert('error', 'Envio a sirsae', err.error.message);
+          this.alert('error', 'No se pudo realizar el envió a SIRSAE', '');
+          // this.alert('error', 'Envio a sirsae', err.error.message);
           // this.errorSendSolicitudeMessage();
         },
       });
