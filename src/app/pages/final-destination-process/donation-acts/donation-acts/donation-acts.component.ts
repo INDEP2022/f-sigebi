@@ -542,7 +542,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
     this.totalItems3 = 0;
     this.datas.load([]);
     this.data2.load([]);
-    0;
+    this.actaCerrada = false;
     this.valClave = false;
     this.btnSave = false;
     this.actaRecepttionForm.patchValue({
@@ -1510,6 +1510,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
     });
     this.valClave = true;
     this.btnSave = true;
+    this.actaCerrada = true;
     this.claveActaForm.get('anio').setValue(this.currentYear);
     this.consulREG_DEL_ADMIN(new ListParams());
     this.consultREG_TRANSFERENTES(new ListParams());
@@ -1626,6 +1627,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
         error: error => {
           this.dataRecepcion = [];
           this.data2.load([]);
+          this.data2.refresh();
           this.loading2 = false;
           // this.ocultarPaginado = false;
         },
@@ -1938,7 +1940,9 @@ export class DonationActsComponent extends BasePage implements OnInit {
           console.log('DATA', data);
           this.actaDefault = data;
           this.alert('success', 'El Acta se ha creado correctamente', '');
-
+          this.actaRecepttionForm.patchValue({
+            statusActa: this.actaDefault.statusProceedings,
+          });
           this.claveActaForm.reset();
           this.valClave = false;
           this.actaRecepttionForm.patchValue({
