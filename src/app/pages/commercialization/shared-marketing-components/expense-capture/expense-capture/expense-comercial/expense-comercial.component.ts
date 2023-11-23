@@ -205,7 +205,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             'Se ha actualizado el gasto ' + this.expenseNumber.value,
             ''
           );
-          this.fillForm({
+          this.fillFormSecond({
             ...this.data,
             ...this.form.value,
             amount: this.dataService.amount ?? 0,
@@ -238,7 +238,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   delete() {
     // this.alert('success', 'Se elimino el gasto', '');
-    return;
+    // return;
     this.alertQuestion('question', '¿Desea eliminar el gasto?', '').then(x => {
       if (x.isConfirmed) {
         this.loader.load = true;
@@ -286,7 +286,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             this.alert('success', 'Se ha creado el gasto correctamente', '');
             // this.expenseNumber.setValue(response.expenseNumber);
             this.loader.load = false;
-            this.fillForm({
+            this.fillFormSecond({
               ...this.form.value,
               amount: this.dataService.amount ?? 0,
               vat: this.dataService.vat ?? 0,
@@ -830,9 +830,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return true;
   }
 
-  async fillForm(event: IComerExpense) {
-    console.log(event);
-    this.clean(false);
+  private fillFormSecond(event: IComerExpense) {
     this.expenseNumber.setValue(event.expenseNumber);
     this.data = event;
     this.provider = event.providerName;
@@ -882,10 +880,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         return;
       }
       const otherParams = await this.fillOthersParameters();
-      // if (!otherParams) {
-      //   return;
-      // }
     }, 500);
+  }
+
+  async fillForm(expense: IComerExpense) {
+    console.log(event);
+    this.clean(false);
+    this.fillFormSecond(expense);
   }
 
   private prepareForm() {
