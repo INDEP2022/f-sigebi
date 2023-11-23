@@ -37,6 +37,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
@@ -155,6 +156,8 @@ export class CaptureApprovalDonationComponent
     private statusGoodService: StatusGoodService,
     private datePipe: DatePipe,
     private usersService: UsersService,
+    private readonly goodServices: GoodService,
+    private goodTrackerService: GoodTrackerService,
     private globalVarService: GlobalVarsService
   ) {
     super();
@@ -238,8 +241,43 @@ export class CaptureApprovalDonationComponent
         next: global => {
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
-            console.log('RASTREADOR ', this.ngGlobal.REL_BIENES);
-            this.goodById();
+            console.log(this.ngGlobal.REL_BIENES);
+            const paramsF = new FilterParams();
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            this.goodTrackerService
+              .getAllTmpTracker(paramsF.getParams())
+              .subscribe(
+                res => {
+                  res['data'].forEach(good => {
+                    this.goodServices.getById(good.goodNumber).subscribe({
+                      next: response => {
+                        console.log(response);
+                        const newGoodId = JSON.parse(JSON.stringify(response))
+                          .data[0].goodId;
+                        console.log(newGoodId);
+                        const exists = this.goods.some(
+                          e => e.goodId === newGoodId
+                        );
+                        console.log(exists);
+                        if (!exists) {
+                          this.goods.push({
+                            ...JSON.parse(JSON.stringify(response)).data[0],
+                            avalaible: null,
+                          });
+                        }
+
+                        console.log(this.goods);
+                      },
+                      error: err => {
+                        console.log(err);
+                      },
+                    });
+                  });
+                },
+                err => {
+                  console.log(err);
+                }
+              );
             // this.createMultipleRecords(this.ngGlobal.REL_BIENES);
             // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
             // console.log(this.selectedGooodsValid);
