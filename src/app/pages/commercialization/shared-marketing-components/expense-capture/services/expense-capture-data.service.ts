@@ -362,7 +362,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
-    debugger;
+    // debugger;
     const resultParams = await this.readParams(this.conceptNumber.value);
 
     if (
@@ -420,7 +420,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   async updateByGoods(sendToSIRSAE: boolean) {
-    debugger;
+    // debugger;
     console.log(this.dataCompositionExpenses);
     // this.ENVIA_MOTIVOS();
     // return;

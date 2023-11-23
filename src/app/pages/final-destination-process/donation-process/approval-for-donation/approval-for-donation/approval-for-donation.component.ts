@@ -553,7 +553,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.serviceUser.getAllIndicator(body).subscribe({
         next: resp => {
           if (resp.data) {
-            resolve(resp);
+            resolve(resp.data[0].min);
           } else {
             resolve(null);
           }
@@ -565,11 +565,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     });
   }
 
-  async getFaVal() {
+  async getFaVal(indicated: any) {
     return new Promise((resolve, reject) => {
       let body = {
         pUser: this.authService.decodeToken().username,
-        pIndicatorNumber: 12,
+        pIndicatorNumber: indicated,
       };
       this.serviceUser.getAllFaVal(body).subscribe({
         next: resp => {
@@ -608,26 +608,29 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   async inicialice() {
     // let access = await this.getAccessArea(new ListParams());
     // console.log("access", access)
-    let FaVal = await this.getFaVal();
+
     let indicated = await this.getIndicator();
+    console.log('indicated', indicated);
     if (indicated == null) {
       this.alert(
-        'error',
-        `El Usuario`,
-        'No tiene privilegios para esta pantalla'
+        'warning',
+        `El usuario no tiene privilegios para esta pantalla`,
+        ''
       );
       this.disabledField();
       this.validate = true;
       return;
     }
+
+    let FaVal = await this.getFaVal(indicated);
     const faVal: any = FaVal;
     const level: any = faVal ? faVal[0].fa_val_usuario_ind : 0;
     // console.log(level);
     if (level == 0) {
       this.alert(
         'warning',
-        `El Usuario`,
-        'No tiene privilegios para esta pantalla'
+        `El usuario no tiene privilegios para esta pantalla`,
+        ''
       );
       this.disabledField();
       this.validate = true;
