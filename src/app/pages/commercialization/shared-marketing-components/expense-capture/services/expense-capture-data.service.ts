@@ -358,7 +358,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
-    debugger;
+    // debugger;
     const resultParams = await this.readParams(this.conceptNumber.value);
 
     if (
@@ -420,7 +420,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     console.log(this.dataCompositionExpenses);
     // this.ENVIA_MOTIVOS();
     // return;
-    debugger;
     if (sendToSIRSAE) {
       const VALIDA_DET = this.dataCompositionExpenses.filter(
         row => row.changeStatus && row.changeStatus === true
@@ -816,7 +815,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
-          debugger;
+          // debugger;
           // this.alert('success', 'Procedimiento ejecutado correctamente', '');
           this.form
             .get('paymentRequestNumber')
@@ -893,7 +892,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     lotId: string,
     spentId: string
   ) {
-    debugger;
+    // debugger;
     this.lotService
       .VALIDA_SUBTOTAL_PRECIO({ eventId, lotId, spentId })
       .pipe(take(1))
@@ -921,7 +920,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   async VERIFICA_ACTUALIZACION_EST() {
-    debugger;
+    // debugger;
     this.P_PRUEBA = 0;
     if (this.PDEVPARCIAL === 'S') {
       this.DEVOLUCION_PARCIAL();
