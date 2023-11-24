@@ -768,11 +768,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   private PUF_VALIDA_PAGOXEVENTO(p_fpago: string) {
     return firstValueFrom(
-      this.lotService.PUF_VALIDA_PAGOXEVENTO({
-        p_fpago,
-        id_evento: this.eventNumber.value,
-        lotePub: this.lotNumber.value,
-      })
+      this.lotService
+        .PUF_VALIDA_PAGOXEVENTO({
+          p_fpago,
+          id_evento: this.eventNumber.value,
+          lotePub: this.lotNumber.value,
+        })
+        .pipe(catchError(x => of({ data: null })))
     );
   }
 
@@ -855,12 +857,14 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       } else {
         this.alert(
           'error',
-          'El Lote ' + this.lotNumber.value,
+          'El Lote ' + this.lotNumber.value ?? '',
           'Debe tener un pago registrado para la forma de pago seleccionada'
         );
         this.errorSendSolicitudeMessage();
         return;
       }
+    } else {
+      this.finishProcessSolicitud.next(true);
     }
   }
 
