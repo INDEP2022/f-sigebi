@@ -45,6 +45,7 @@ export class ExpenseCompositionModalComponent
         this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
         this.transferorNumber.setValue(this.comerDetExpense.transferorNumber);
         this.goodNumber.setValue(this.comerDetExpense.goodNumber);
+        this.budgetItem.setValue(this.comerDetExpense.departure);
       }
     }, 500);
   }
