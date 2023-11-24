@@ -665,11 +665,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       return false;
     }
     if (!this.authorizedUser.value) {
-      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      this.alert('error', 'Debe tener el Usuario que Autoriza', '');
       return false;
     }
     if (!this.requestedUser.value) {
-      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      this.alert('error', 'Debe tener el Usuario que Solicita', '');
       return false;
     }
     if (!this.form.get('comproafmandsae')) {
