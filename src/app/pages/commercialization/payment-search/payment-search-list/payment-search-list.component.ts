@@ -1,11 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -26,7 +21,6 @@ import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PaymentSearchModalComponent } from '../payment-search-modal/payment-search-modal.component';
 import { PaymentSearchProcessComponent } from '../payment-search-process/payment-search-process.component';
@@ -226,18 +220,15 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.searchForm = this.fb.group({
-      event: [null, [Validators.required]],
-      batch: [null, [Validators.required]],
-      bank: [null, [Validators.required]],
-      amount: [null, [Validators.required]],
-      reference: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      validity: [null, [Validators.required]],
-      searchType: [null, [Validators.required]],
+      event: [null, []],
+      batch: [null, []],
+      bank: [null, []],
+      amount: [null, []],
+      reference: [null, []],
+      validity: [null, []],
+      searchType: [null, []],
       processType: [null],
-      system: [null, [Validators.required]],
+      system: [null, []],
       action: [null],
       type: [null],
     });
