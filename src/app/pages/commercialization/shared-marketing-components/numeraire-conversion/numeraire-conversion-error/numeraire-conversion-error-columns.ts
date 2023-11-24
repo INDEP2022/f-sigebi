@@ -17,6 +17,9 @@ export const EVENTO_ERROR_COLUMNS = {
         return row.lots.lotPublic;
       }
     },
+    filterFunction: (cell: any, search?: string) => {
+      return true;
+    },
   },
   inconsistency: {
     title: 'Inconsistencia',

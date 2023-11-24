@@ -59,6 +59,10 @@ export const COLUMNS = {
     //   },
     // },
   },
+  detPaymentsId: {
+    title: 'Id',
+    sort: false,
+  },
   departure: {
     title: 'Partida',
     sort: false,

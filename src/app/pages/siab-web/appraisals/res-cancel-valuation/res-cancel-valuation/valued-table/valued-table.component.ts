@@ -49,10 +49,9 @@ export class ValuedTableComponent
       return;
     }
     let params = this.getParams();
-    params.limit = 100000000;
     this.loading = true;
     this.serviceAppraise
-      .postGetAppraise(this.body, params)
+      .postGetAppraise(this.body, { ...params, limit: 100000000 })
       .pipe(take(1))
       .subscribe({
         next: response => {

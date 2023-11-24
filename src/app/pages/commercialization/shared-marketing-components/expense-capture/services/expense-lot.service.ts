@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IListResponseMessage } from 'src/app/core/interfaces/list-response.interface';
 import { IComerDetBills } from '../models/bills';
 import {
   ICancelVtaDTO,
@@ -39,7 +40,20 @@ export class ExpenseLotService extends HttpService {
   }
 
   DIVIDE_MANDATOS(body: IDivideCommandsDTO) {
-    return this.post('apps/divide-commands', body);
+    return this.post<
+      IListResponseMessage<{
+        id_detgasto: number;
+        id_gasto: number;
+        iva2: number;
+        mandato: string;
+        mandato2: string;
+        MONTO2: number;
+        no_transferente: number;
+        retencion_isr2: number;
+        retencion_iva2: number;
+        total2: number;
+      }>
+    >('apps/divide-commands', body);
   }
 
   CARGA_BIENES_LOTE(body: ILoadLotDTO) {

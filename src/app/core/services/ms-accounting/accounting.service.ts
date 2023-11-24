@@ -23,4 +23,8 @@ export class AccountingService extends HttpService {
   update(body: IMandExpenseCont) {
     return this.put(AccountingEndpoints.MandExpenseCont, body);
   }
+
+  updateMassive(body: IMandExpenseCont[]) {
+    return this.put(AccountingEndpoints.MassiveUpdateExpenseCont, body);
+  }
 }

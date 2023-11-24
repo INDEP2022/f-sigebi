@@ -26,14 +26,28 @@ export class FractionsListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
 
+  parentIdlvl1: number = null;
+  parentIdlvl2: number = null;
+  parentIdlvl3: number = null;
+  parentIdlvl4: number = null;
+  parentIdlvl5: number = null;
+  parentIdlvl6: number = null;
+  fractionLvl1: IFraction = null;
+  fractionLvl2: IFraction = null;
+  fractionLvl3: IFraction = null;
+  fractionLvl4: IFraction = null;
+  fractionLvl5: IFraction = null;
+  fractionLvl6: IFraction = null;
+
   constructor(
     private fractionService: FractionService,
     private modalService: BsModalService
   ) {
     super();
     this.settings.columns = FRACTIONS_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
+    this.settings.actions = false;
+    //this.settings.actions.delete = true;
+    //this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
 
@@ -98,6 +112,8 @@ export class FractionsListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['filter.level'] = `$eq:0`;
+    params['sortBy'] = `id:ASC`;
     this.fractionService.getAll(params).subscribe({
       next: response => {
         /*this.paragraphs = response.data.map((item: any) => {
@@ -112,6 +128,127 @@ export class FractionsListComponent extends BasePage implements OnInit {
       },
       error: error => (this.loading = false),
     });
+  }
+
+  selectRow(event: any) {
+    console.log(event);
+    if (event.isSelected == false) {
+      return;
+    }
+    this.parentIdlvl1 = null;
+    this.fractionLvl1 = null;
+    this.parentIdlvl2 = null;
+    this.parentIdlvl2 = null;
+    this.fractionLvl3 = null;
+    this.fractionLvl3 = null;
+    this.parentIdlvl4 = null;
+    this.fractionLvl4 = null;
+    this.parentIdlvl5 = null;
+    this.fractionLvl5 = null;
+    this.parentIdlvl6 = null;
+    this.fractionLvl6 = null;
+
+    setTimeout(() => {
+      this.parentIdlvl1 = event.data.id;
+      const level = event.data.level;
+      this.fractionLvl1 = event.data;
+    }, 500);
+  }
+
+  getFraction(event: any) {
+    console.log(event);
+    if (event == null) {
+      this.onLoadToast('info', 'No se encontraron registros');
+      return;
+    }
+
+    if (event.level == 1) {
+      this.parentIdlvl2 = null;
+      this.fractionLvl2 = null;
+      this.parentIdlvl3 = null;
+      this.fractionLvl3 = null;
+      this.parentIdlvl4 = null;
+      this.fractionLvl4 = null;
+      this.parentIdlvl5 = null;
+      this.fractionLvl5 = null;
+      this.parentIdlvl6 = null;
+      this.fractionLvl6 = null;
+      setTimeout(() => {
+        this.parentIdlvl2 = event.id;
+        this.fractionLvl2 = event;
+      }, 400);
+    }
+
+    if (event.level == 2) {
+      this.parentIdlvl3 = null;
+      this.fractionLvl3 = null;
+      this.parentIdlvl4 = null;
+      this.fractionLvl4 = null;
+      this.parentIdlvl5 = null;
+      this.fractionLvl5 = null;
+      this.parentIdlvl6 = null;
+      this.fractionLvl6 = null;
+      setTimeout(() => {
+        this.parentIdlvl3 = event.id;
+        this.fractionLvl3 = event;
+      }, 400);
+    }
+
+    if (event.level == 3) {
+      this.parentIdlvl4 = null;
+      this.fractionLvl4 = null;
+      this.parentIdlvl5 = null;
+      this.fractionLvl5 = null;
+      this.parentIdlvl6 = null;
+      this.fractionLvl6 = null;
+      setTimeout(() => {
+        this.parentIdlvl4 = event.id;
+        this.fractionLvl4 = event;
+      }, 400);
+    }
+
+    if (event.level == 4) {
+      this.parentIdlvl5 = null;
+      this.fractionLvl5 = null;
+      this.parentIdlvl6 = null;
+      this.fractionLvl6 = null;
+      setTimeout(() => {
+        this.parentIdlvl5 = event.id;
+        this.fractionLvl5 = event;
+      }, 400);
+    }
+
+    if (event.level == 5) {
+      this.parentIdlvl6 = event.id;
+      this.fractionLvl6 = event;
+    }
+  }
+
+  hideFraction({ level }: any) {
+    if (level == 1) {
+      this.parentIdlvl2 = null;
+      this.fractionLvl2 = null;
+    }
+
+    if (level == 2) {
+      this.parentIdlvl3 = null;
+      this.fractionLvl3 = null;
+    }
+
+    if (level == 3) {
+      this.parentIdlvl4 = null;
+      this.fractionLvl4 = null;
+    }
+
+    if (level == 4) {
+      this.parentIdlvl5 = null;
+      this.fractionLvl5 = null;
+    }
+
+    if (level == 5) {
+      this.parentIdlvl6 = null;
+      this.fractionLvl6 = null;
+    }
   }
 
   openForm(fraction?: IFraction) {

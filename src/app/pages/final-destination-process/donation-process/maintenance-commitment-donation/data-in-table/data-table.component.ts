@@ -71,6 +71,10 @@ export class DataTableComponent extends BasePage implements OnInit {
         add: false,
         position: 'right',
       },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-2"></i>',
+      },
       columns: { ...COLUMNS_DATA_TABLE },
     };
   }

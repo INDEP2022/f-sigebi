@@ -35,7 +35,7 @@ export class DataReceiptComponent implements OnInit {
       this.monthExpense10.setValue(value.monthExpense10);
       this.monthExpense11.setValue(value.monthExpense11);
       this.monthExpense12.setValue(value.monthExpense12);
-      this.exchangeRate.setValue(value.exchangeRate);
+      this.exchangeRate.setValue(+value.exchangeRate);
       this.formPayment.setValue(value.formPayment);
       this.comproafmandsae.setValue(value.comproafmandsae);
       this.capturedUser.setValue(value.capturedUser);
