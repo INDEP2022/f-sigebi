@@ -10,6 +10,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+
 @Component({
   selector: 'app-disposal-record-report',
   templateUrl: './disposal-record-report.component.html',
@@ -41,6 +42,8 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    const initialParams = new ListParams();
+    this.params.next(initialParams);
   }
 
   private prepareForm() {
