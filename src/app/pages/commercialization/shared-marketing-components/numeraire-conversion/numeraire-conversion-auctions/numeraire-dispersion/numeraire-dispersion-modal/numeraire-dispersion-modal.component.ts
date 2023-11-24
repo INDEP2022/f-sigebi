@@ -19,6 +19,7 @@ export class NumeraireDispersionModalComponent
   form: FormGroup;
   row: INumeraryxGoods;
   title = 'Dispersión de Gastos';
+  eventId: number;
   constructor(
     private service: NumeraryXGoodsService,
     private modalRef: BsModalRef,
@@ -64,14 +65,14 @@ export class NumeraireDispersionModalComponent
     let body = this.form.value;
     if (body) {
       let serviceAction = this.row
-        ? this.service.edit(body)
-        : this.service.add(body);
+        ? this.service.edit({ ...body, eventId: this.row.eventId })
+        : this.service.add({ ...body, eventId: this.eventId });
       serviceAction.pipe(take(1)).subscribe({
         next: response => {
           if (this.row) {
-            this.alert('success', 'Edición', 'Realizada correctamente');
+            this.alert('success', 'Se realizó la edición del bien', '');
           } else {
-            this.alert('success', 'Registro', 'Realizado correctamente');
+            this.alert('success', 'Se realizó el registro del bien', '');
           }
 
           this.modalRef.content.callback(true);

@@ -85,6 +85,7 @@ export class NumeraireDispersionComponent
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       row,
+      eventId: this.idEvento,
       callBack: (next: boolean) => {
         this.getData();
       },
