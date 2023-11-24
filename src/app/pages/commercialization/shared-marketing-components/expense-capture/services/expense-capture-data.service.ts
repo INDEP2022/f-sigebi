@@ -38,6 +38,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   updateExpenseComposition = new Subject();
   updateExpenseCompositionAndValidateProcess = new Subject();
   finishProcessSolicitud = new Subject();
+  saveSubject = new Subject();
   updateOI = new Subject();
   updateFolio = new Subject();
   P_PRUEBA: number;
@@ -902,6 +903,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         next: response => {
           this.alert('success', 'Sub total precio válido', '');
           this.sucessSendSolitudeMessage();
+          this.saveSubject.next(true);
         },
         error: err => {
           this.alert('error', err.error.message, '');
@@ -957,6 +959,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             ''
           );
           this.sucessSendSolitudeMessage();
+          this.saveSubject.next(true);
         },
         error: err => {
           this.alert('error', 'No se pudo generar la cancelación parcial', '');
@@ -996,6 +999,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             ''
           );
           this.sucessSendSolitudeMessage();
+          this.saveSubject.next(true);
         },
         error: err => {
           this.alert('error', 'No se pudo generar la devolución parcial', '');
@@ -1032,6 +1036,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .subscribe({
         next: response => {
           this.sucessSendSolitudeMessage();
+          this.saveSubject.next(true);
         },
         error: err => {
           this.alert('error', 'Fallo en Cancela Vta Normal', err.error.message);
