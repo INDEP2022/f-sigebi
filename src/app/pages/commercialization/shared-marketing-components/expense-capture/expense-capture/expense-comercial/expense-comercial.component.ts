@@ -288,6 +288,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             this.loader.load = false;
             this.fillFormSecond({
               ...this.form.value,
+              expenseNumber: response.expenseNumber,
               amount: this.dataService.amount ?? 0,
               vat: this.dataService.vat ?? 0,
               vatWithheld: this.dataService.vatWithholding ?? 0,

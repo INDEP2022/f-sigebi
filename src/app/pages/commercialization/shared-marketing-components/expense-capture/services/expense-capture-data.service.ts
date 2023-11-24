@@ -16,10 +16,7 @@ import {
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
-import {
-  NUMBERS_DASH_PATTERN,
-  NUM_POSITIVE,
-} from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { ExpenseGoodProcessService } from './expense-good-process.service';
 import { ExpenseLotService } from './expense-lot.service';
 import { ExpenseModalService } from './expense-modal.service';
@@ -270,7 +267,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
       eventNumber: [null],
       lotNumber: [null],
-      folioAtnCustomer: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
+      folioAtnCustomer: [null],
       dateOfResolution: [null],
       clkpv: [null, [Validators.required]],
       descurcoord: [null],
