@@ -815,19 +815,23 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         next: response => {
           // debugger;
           // this.alert('success', 'Procedimiento ejecutado correctamente', '');
-          this.form
-            .get('paymentRequestNumber')
-            .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
-          this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
-          // this.sucessSendSolitudeMessage();
-          if (this.data.formPayment !== 'INTERCAMBIO') {
-            this.VERIFICA_ACTUALIZACION_EST();
+          if (response.COMER_GASTOS_ID_SOLICITUDPAGO) {
+            this.errorSendSolicitudeMessage();
           } else {
-            this.VALIDA_SUBTOTAL_PRECIO(
-              this.data.expenseNumber,
-              this.data.eventNumber,
-              this.data.lotNumber
-            );
+            this.form
+              .get('paymentRequestNumber')
+              .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
+            this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
+            // this.sucessSendSolitudeMessage();
+            if (this.data.formPayment !== 'INTERCAMBIO') {
+              this.VERIFICA_ACTUALIZACION_EST();
+            } else {
+              this.VALIDA_SUBTOTAL_PRECIO(
+                this.data.expenseNumber,
+                this.data.eventNumber,
+                this.data.lotNumber
+              );
+            }
           }
         },
         error: err => {
@@ -873,7 +877,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private errorSendSolicitudeMessage() {
-    this.finishProcessSolicitud.next(true);
+    this.finishProcessSolicitud.next(false);
     setTimeout(() => {
       this.alert(
         'error',

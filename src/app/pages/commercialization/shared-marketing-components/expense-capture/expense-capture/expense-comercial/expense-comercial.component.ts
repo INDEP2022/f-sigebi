@@ -110,6 +110,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           }
         },
       });
+    this.dataService.finishProcessSolicitud
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response === true) {
+            this.save();
+          }
+        },
+      });
     // console.log(user);
     this.prepareForm();
   }
