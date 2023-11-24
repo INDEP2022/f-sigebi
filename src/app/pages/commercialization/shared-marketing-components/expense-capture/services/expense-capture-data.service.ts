@@ -151,7 +151,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.selectedComposition = null;
     this.expenseModalService.clean();
 
-    // this.formScan.reset();
+    this.formScan.reset();
     // this.delUser = null;
     // this.subDelUser = null;
     // this.departmentUser = null;
@@ -330,11 +330,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       row => row.changeStatus && row.changeStatus === true
     );
     if (VALIDA_DET.length === 0) {
-      this.alert(
-        'error',
-        'Envia Solictud',
-        'Debe seleccionar al menos un bien'
-      );
+      this.alert('error', 'Debe seleccionar al menos un bien', '');
       return of(null);
     } else {
       let arrayToDelete = this.dataCompositionExpenses
@@ -424,7 +420,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     console.log(this.dataCompositionExpenses);
     // this.ENVIA_MOTIVOS();
     // return;
-    // debugger;
     if (sendToSIRSAE) {
       const VALIDA_DET = this.dataCompositionExpenses.filter(
         row => row.changeStatus && row.changeStatus === true
@@ -820,16 +815,27 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
+          // debugger;
           // this.alert('success', 'Procedimiento ejecutado correctamente', '');
           this.form
             .get('paymentRequestNumber')
             .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
           this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
           // this.sucessSendSolitudeMessage();
+          if (this.data.formPayment !== 'INTERCAMBIO') {
+            this.VERIFICA_ACTUALIZACION_EST();
+          } else {
+            this.VALIDA_SUBTOTAL_PRECIO(
+              this.data.expenseNumber,
+              this.data.eventNumber,
+              this.data.lotNumber
+            );
+          }
         },
         error: err => {
-          this.alert('error', 'Envio a sirsae', err.error.message);
-          // this.errorSendSolicitudeMessage();
+          // this.alert('error', 'No se pudo realizar el envió a SIRSAE', '');
+          // this.alert('error', 'Envio a sirsae', err.error.message);
+          this.errorSendSolicitudeMessage();
         },
       });
   }
@@ -841,7 +847,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       let AUX_INTERCAMBIO = await this.PUF_VALIDA_PAGOXEVENTO(
         this.data.formPayment
       );
-      if (AUX_INTERCAMBIO === '0') {
+      if (AUX_INTERCAMBIO.data && AUX_INTERCAMBIO.data.length > 0) {
+        this.ENVIAR_SIRSAE();
+      } else {
         this.alert(
           'error',
           'El Lote ' + this.lotNumber.value,
@@ -849,18 +857,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         );
         this.errorSendSolicitudeMessage();
         return;
-      } else {
-        this.ENVIAR_SIRSAE();
       }
-    }
-    if (this.data.formPayment !== 'INTERCAMBIO') {
-      this.VERIFICA_ACTUALIZACION_EST();
-    } else {
-      this.VALIDA_SUBTOTAL_PRECIO(
-        this.data.expenseNumber,
-        this.data.eventNumber,
-        this.data.lotNumber
-      );
     }
   }
 
@@ -884,7 +881,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         'error',
         'No se pudo enviar la solicitud ' +
           (this.actionButton === 'SIRSAE' ? 'a ' : 'de ') +
-          +this.actionButton,
+          this.actionButton,
         ''
       );
     }, 500);
@@ -895,6 +892,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     lotId: string,
     spentId: string
   ) {
+    // debugger;
     this.lotService
       .VALIDA_SUBTOTAL_PRECIO({ eventId, lotId, spentId })
       .pipe(take(1))
@@ -922,6 +920,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   async VERIFICA_ACTUALIZACION_EST() {
+    // debugger;
     this.P_PRUEBA = 0;
     if (this.PDEVPARCIAL === 'S') {
       this.DEVOLUCION_PARCIAL();

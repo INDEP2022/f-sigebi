@@ -20,6 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class FractionsFormComponent extends BasePage implements OnInit {
   fraction: IFraction;
+  oldFraction: IFraction;
   fractionForm: ModelForm<IFraction>;
   norms = new DefaultSelect<INorm>();
   clasifications = new DefaultSelect<ISiabClasification>();
@@ -161,6 +162,8 @@ export class FractionsFormComponent extends BasePage implements OnInit {
     } else {
       this.getClasificationSelect({ page: 1, text: '' });
       this.getFractionSelect({ page: 1, text: '' });
+      this.fractionForm.controls['level'].setValue(this.oldFraction.level);
+      this.fractionForm.controls['level'].disable();
     }
   }
 
@@ -186,15 +189,15 @@ export class FractionsFormComponent extends BasePage implements OnInit {
       return; // Retorna temprano si el campo está vacío.
     }
     this.loading = true;
-    console.log(this.fractionForm.value);
-    this.fractionService.create(this.fractionForm.value).subscribe({
+    //console.log(this.fractionForm.getRawValue());
+    this.fractionService.create(this.fractionForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
   }
 
   update() {
-    this.fractionService.newUpdate(this.fractionForm.value).subscribe({
+    this.fractionService.newUpdate(this.fractionForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });

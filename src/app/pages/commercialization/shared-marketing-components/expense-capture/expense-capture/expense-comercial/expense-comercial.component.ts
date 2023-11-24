@@ -205,6 +205,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             'Se ha actualizado el gasto ' + this.expenseNumber.value,
             ''
           );
+          this.fillFormSecond({
+            ...this.data,
+            ...this.form.value,
+            amount: this.dataService.amount ?? 0,
+            vat: this.dataService.vat ?? 0,
+            vatWithheld: this.dataService.vatWithholding ?? 0,
+            address: this.data.address ?? this.address,
+          });
         },
         error: err => {
           this.alert(
@@ -229,6 +237,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   delete() {
+    // this.alert('success', 'Se elimino el gasto', '');
+    // return;
     this.alertQuestion('question', '¿Desea eliminar el gasto?', '').then(x => {
       if (x.isConfirmed) {
         this.loader.load = true;
@@ -239,6 +249,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             next: response => {
               this.loader.load = false;
               this.clean();
+              this.alert('success', 'Se elimino el gasto', '');
             },
             error: err => {
               this.loader.load = false;
@@ -273,8 +284,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           next: response => {
             console.log(response);
             this.alert('success', 'Se ha creado el gasto correctamente', '');
-            this.expenseNumber.setValue(response.expenseNumber);
+            // this.expenseNumber.setValue(response.expenseNumber);
             this.loader.load = false;
+            this.fillFormSecond({
+              ...this.form.value,
+              amount: this.dataService.amount ?? 0,
+              vat: this.dataService.vat ?? 0,
+              vatWithheld: this.dataService.vatWithholding ?? 0,
+              address: this.address,
+            });
           },
           error: err => {
             this.alert(
@@ -812,9 +830,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return true;
   }
 
-  async fillForm(event: IComerExpense) {
-    console.log(event);
-    this.clean(false);
+  private fillFormSecond(event: IComerExpense) {
     this.expenseNumber.setValue(event.expenseNumber);
     this.data = event;
     this.provider = event.providerName;
@@ -864,10 +880,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         return;
       }
       const otherParams = await this.fillOthersParameters();
-      // if (!otherParams) {
-      //   return;
-      // }
     }, 500);
+  }
+
+  async fillForm(expense: IComerExpense) {
+    console.log(event);
+    this.clean(false);
+    this.fillFormSecond(expense);
   }
 
   private prepareForm() {
