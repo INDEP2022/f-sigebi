@@ -163,9 +163,8 @@ export class FractionsListComponent extends BasePage implements OnInit {
     }
 
     if (event.level == 1) {
-      this.parentIdlvl2 = event.id;
-      this.fractionLvl2 = event;
-      //clean
+      this.parentIdlvl2 = null;
+      this.fractionLvl2 = null;
       this.parentIdlvl3 = null;
       this.fractionLvl3 = null;
       this.parentIdlvl4 = null;
@@ -174,36 +173,49 @@ export class FractionsListComponent extends BasePage implements OnInit {
       this.fractionLvl5 = null;
       this.parentIdlvl6 = null;
       this.fractionLvl6 = null;
+      setTimeout(() => {
+        this.parentIdlvl2 = event.id;
+        this.fractionLvl2 = event;
+      }, 400);
     }
 
     if (event.level == 2) {
-      this.parentIdlvl3 = event.id;
-      this.fractionLvl3 = event;
-      //clean
+      this.parentIdlvl3 = null;
+      this.fractionLvl3 = null;
       this.parentIdlvl4 = null;
       this.fractionLvl4 = null;
       this.parentIdlvl5 = null;
       this.fractionLvl5 = null;
       this.parentIdlvl6 = null;
       this.fractionLvl6 = null;
+      setTimeout(() => {
+        this.parentIdlvl3 = event.id;
+        this.fractionLvl3 = event;
+      }, 400);
     }
 
     if (event.level == 3) {
-      this.parentIdlvl4 = event.id;
-      this.fractionLvl4 = event;
-      //clean
+      this.parentIdlvl4 = null;
+      this.fractionLvl4 = null;
       this.parentIdlvl5 = null;
       this.fractionLvl5 = null;
       this.parentIdlvl6 = null;
       this.fractionLvl6 = null;
+      setTimeout(() => {
+        this.parentIdlvl4 = event.id;
+        this.fractionLvl4 = event;
+      }, 400);
     }
 
     if (event.level == 4) {
-      this.parentIdlvl5 = event.id;
-      this.fractionLvl5 = event;
-      //clean
+      this.parentIdlvl5 = null;
+      this.fractionLvl5 = null;
       this.parentIdlvl6 = null;
       this.fractionLvl6 = null;
+      setTimeout(() => {
+        this.parentIdlvl5 = event.id;
+        this.fractionLvl5 = event;
+      }, 400);
     }
 
     if (event.level == 5) {
