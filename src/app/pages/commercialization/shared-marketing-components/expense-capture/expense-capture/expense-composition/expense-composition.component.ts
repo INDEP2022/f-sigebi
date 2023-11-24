@@ -204,6 +204,10 @@ export class ExpenseCompositionComponent
     return this.expenseNumber && this.expenseNumber.value && this.validPayment;
   }
 
+  get showAdd() {
+    return this.expenseNumber && this.expenseNumber.value;
+  }
+
   get amount() {
     return this.expenseCaptureDataService.amount;
   }
