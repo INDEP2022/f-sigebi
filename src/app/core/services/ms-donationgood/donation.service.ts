@@ -73,6 +73,11 @@ export class DonationService
     return this.get(route, params);
   }
 
+  getEventComDonationFilter(params?: any) {
+    const route = `${DonationEndPoint.eventComDonation}`;
+    return this.get(route, params);
+  }
+
   getEventComDonationDetail(
     params?: ListParams
   ): Observable<IListResponse<any>> {

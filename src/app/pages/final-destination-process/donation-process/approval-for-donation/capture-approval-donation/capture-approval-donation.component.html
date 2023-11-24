@@ -113,20 +113,20 @@
                 <button
                   (click)="agregarCaptura()"
                   type="button"
-                  class="btn btn-info active btn-sm mr-3">
+                  class="btn btn-info active btn-sm mr-3 mt-2">
                   Nuevo Evento
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
-                  class="btn btn-primary active btn-sm mr-3"
+                  class="btn btn-primary active btn-sm mr-3 mt-2"
                   (click)="searchActas()">
                   Buscar Evento
                   <i class="bx bx-search bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
-                  class="btn btn-primary active btn-sm mr-3"
+                  class="btn btn-primary active btn-sm mr-3 mt-2"
                   (click)="cerrarActa()">
                   Cerrar Evento
                   <i class="fas fa-close bx-sm float-icon"></i>
@@ -134,7 +134,7 @@
                 <button
                   (click)="cleanActa()"
                   type="button"
-                  class="btn btn-danger active btn-sm mr-3">
+                  class="btn btn-danger active btn-sm mr-3 mt-2">
                   Limpiar
                   <i class="fa fa-eraser" aria-hidden="true"></i>
                 </button>
@@ -153,7 +153,7 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="card justify-content-center">
-                    <div class="col-md-8 d-flex flex-column">
+                    <div class="col-md-12 d-flex flex-column">
                       <div
                         class="row ps-4"
                         [ngClass]="{ 'not-press': !activeRadio }">
@@ -163,7 +163,7 @@
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="CONSULTA DE BIENES"
+                            value="0"
                             (change)="enableButtons()" />
                         </form-radio>
                         <form-radio
@@ -172,7 +172,7 @@
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="COMERCIO EXTERIOR"
+                            value="1"
                             (change)="enableButtons()" />
                         </form-radio>
                         <form-radio
@@ -181,7 +181,7 @@
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="DELITOS FEDERALES"
+                            value="2"
                             (change)="enableButtons()" />
                         </form-radio>
                         <form-radio
@@ -190,7 +190,7 @@
                           <input
                             type="radio"
                             formControlName="activeRadio"
-                            value="OTROS TRANSFERENTES"
+                            value="3"
                             (change)="enableButtons()" />
                         </form-radio>
                       </div>
@@ -208,12 +208,12 @@
             <div class="col-4"></div>
             <div class="col-md-12 text-center">
               <button
-                class="btn btn-secondary btn-sm active me-2"
+                class="btn btn-secondary btn-sm active me-2 mt-2"
                 (click)="validaGood()">
                 Valida Bienes <i class="bx bx-check float-icon"></i>
               </button>
               <button
-                class="btn btn-success btn-sm active me-2"
+                class="btn btn-success btn-sm active me-2 mt-2"
                 type="button"
                 [disabled]="!radio"
                 (click)="exportAll()">
@@ -222,13 +222,13 @@
               </button>
               <button
                 [disabled]="!radio"
-                class="btn btn-primary btn-sm active me-2"
+                class="btn btn-primary btn-sm active me-2 mt-2"
                 (click)="ubicaGood()">
-                Consulta Bienes
+                {{ pb_label }}
                 <i class="bx bx-search float-icon"></i>
               </button>
               <button
-                class="btn btn-info active btn-sm active"
+                class="btn btn-info active btn-sm active mt-2"
                 (click)="findRast()">
                 Rastreador de Bienes&nbsp;
                 <i class="fas fa-map-marker bx-sm float-icon"></i>
