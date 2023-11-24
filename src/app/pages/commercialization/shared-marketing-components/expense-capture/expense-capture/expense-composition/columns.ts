@@ -68,11 +68,11 @@ export const COLUMNS = {
     sort: false,
   },
   manCV: {
-    title: 'Transferente',
+    title: 'Ur',
     sort: false,
   },
   mandato: {
-    title: 'Ur',
+    title: 'Transferente',
     sort: false,
   },
   goodNumber: {
