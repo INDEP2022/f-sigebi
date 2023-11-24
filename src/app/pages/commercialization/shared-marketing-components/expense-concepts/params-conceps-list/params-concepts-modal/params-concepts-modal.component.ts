@@ -126,7 +126,7 @@ export class ParamsConceptsModalComponent
     // }
     this.modalRef.content.callback({
       ...this.form.value,
-      address: this.getAddressCode(this.form.value.address),
+      address: this.form.value.address,
     });
     this.modalRef.hide();
   }
