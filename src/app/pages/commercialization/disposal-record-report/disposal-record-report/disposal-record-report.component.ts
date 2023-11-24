@@ -2,7 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
@@ -16,8 +21,10 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
   today: Date;
   maxDate: Date;
   minDate: Date;
-  params: any;
   estatus: any;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+
   pdfurl =
     'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
 
@@ -65,7 +72,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       this.estatus = this.form.controls['estatusActa'].value;
     }
 
-    this.params = {
+    let params = {
       PN_DELEGACION: this.form.controls['delegation'].value,
       PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
       PN_EXPINI: this.form.controls['PN_EXPINI'].value,
@@ -78,7 +85,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       // noFile: this.form.controls['noFile'].value,
     };
 
-    console.log(this.params);
+    console.log(params);
     const startEx = this.form.get('PN_EXPINI').value;
     const endEx = this.form.get('PN_EXPFIN').value;
 
@@ -122,6 +129,86 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
     this.loading = false;
     this.cleanForm();
   }
+  getRowSelec(event: any) {
+    this.estatus = event;
+    console.log(event);
+  }
+  // onValuesChange(areaChange: IDepartment) {
+  //   console.log(areaChange);
+  //   this.form.controls['delegation'].setValue(null);
+  //   this.form.controls['subdelegation'].setValue(null);
+  //   if (areaChange !== undefined) {
+  //     this.idDel = areaChange.delegation as IDelegation;
+  //     this.idSub = areaChange.numSubDelegation as ISubdelegation;
+  //     this.areaValue = areaChange;
+  //     this.form.controls['delegation'].setValue(this.idDel.description);
+  //     this.form.controls['subdelegation'].setValue(this.idSub.description);
+  //   } else {
+  //     this.idDel = null;
+  //     this.idSub = null;
+  //   }
+  // }
+  // getDels($params: ListParams) {
+  //   let params = new FilterParams();
+  //   params.page = $params.page;
+  //   params.limit = $params.limit;
+  //   // const area = this.form.controls['noDelegation1'].value;
+  //   params.search = $params.text;
+  //   this.getDelegations(params).subscribe();
+  // }
+  // getDelegations(params: FilterParams) {
+  //   return this.delegationService.getAll(params.getParams()).pipe(
+  //     catchError(error => {
+  //       this.delegations = new DefaultSelect([], 0, true);
+  //       return throwError(() => error);
+  //     }),
+  //     tap(response => {
+  //       if (response.count > 0) {
+  //         const name = this.form.get('delegation').value;
+  //         const data = response.data.filter(m => {
+  //           return m.id == name;
+  //         });
+  //         this.form.get('delegation').patchValue(data[0]);
+  //       }
+  //       this.delegations = new DefaultSelect(response.data, response.count);
+  //     })
+  //   );
+  // }
+  // getSubDelegation(paramsData: ListParams) {
+  //   const params: any = new FilterParams();
+  //   if (paramsData['search'] == undefined || paramsData['search'] == null) {
+  //     paramsData['search'] = '';
+  //   }
+  //   if (!this.form.controls['delegation'].value) {
+  //     this.subdelegations = new DefaultSelect();
+  //     return;
+  //   }
+  //   params.removeAllFilters();
+  //   params.search = paramsData['search'];
+  //   params.addFilter(
+  //     'delegationNumber',
+  //     this.form.controls['delegation'].value
+  //   );
+  //   let subscription = this.subdelegationService
+  //     .getAll(params.getParams())
+  //     .subscribe({
+  //       next: data => {
+  //         this.subdelegations = new DefaultSelect(data.data, data.count);
+  //         console.log(data, this.subdelegations);
+  //         subscription.unsubscribe();
+  //       },
+  //       error: error => {
+  //         this.subdelegations = new DefaultSelect();
+  //         subscription.unsubscribe();
+  //       },
+  //     });
+  // }
+  // updateSelectedIds(event: any) {
+  //   if (this.form && this.form.get('delegation')) {
+  //     this.idDelegation = this.form.get('delegation').value;
+  //   }
+  // }
+
   onSubmit() {
     if (this.params != null) {
       this.siabService.fetchReport('RGERDESACTAENAJEN', this.params).subscribe({
