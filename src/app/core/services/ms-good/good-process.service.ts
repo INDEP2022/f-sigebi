@@ -17,6 +17,7 @@ import {
   IValNumeOtro,
 } from '../../models/ms-good/good';
 import { IGoodsResDev } from '../../models/ms-rejectedgood/goods-res-dev-model';
+import { IFmComDanc, IProcedureFmCom } from './good-process-model';
 
 @Injectable({
   providedIn: 'root',
@@ -367,5 +368,13 @@ export class GoodProcessService extends HttpService {
       body,
       params
     );
+  }
+
+  procedureFmcom(body: IProcedureFmCom) {
+    return this.post('application/procdure-fmcomdonac1', body);
+  }
+
+  fmComDonac(body: IFmComDanc) {
+    return this.post('application/fm-com-donac-1-good', body);
   }
 }
