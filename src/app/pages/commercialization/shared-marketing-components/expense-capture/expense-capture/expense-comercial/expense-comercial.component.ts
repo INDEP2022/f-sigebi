@@ -952,7 +952,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get dataCompositionExpensesToUpdateClasif() {
     return this.dataCompositionExpenses
       ? this.dataCompositionExpenses.filter(
-          row => row.reportDelit && row.reportDelit === true && row.goodNumber
+          row => row.reportDelit && row.reportDelit === true
         )
       : [];
   }
@@ -960,7 +960,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get dataCompositionExpensesStatusChange() {
     return this.dataCompositionExpenses
       ? this.dataCompositionExpenses.filter(
-          row => row.changeStatus && row.changeStatus === true && row.goodNumber
+          row => row.changeStatus && row.changeStatus === true
         )
       : [];
   }
