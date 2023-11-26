@@ -268,7 +268,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
         this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -381,7 +381,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     }
   }
 
-  getState(event: any): void {}
+  getState(event: any): void { }
 
   /*getIssue(event?: any, id?: string): void {
     let params = new ListParams();
@@ -490,7 +490,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
               allowOutsideClick: false,
-            }).then(async result => {});
+            }).then(async result => { });
           }
         }
       }
@@ -834,6 +834,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         body['idTask'] = this.taskId;
         body['userProcess'] = actualUser.username;
 
+        /** VALIDAR DATOS */
         body['type'] = 'SOLICITUD_TRANSFERENCIA';
         body['subtype'] = 'Nueva_Solicitud';
         body['ssubtype'] = 'TURNAR';
@@ -845,7 +846,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['reviewers'] = actualUser.username;
         task['creator'] = actualUser.username;
         task['taskNumber'] = Number(idRequest);
-        task['title'] = title;
+        task['title'] = title + idRequest;
         task['programmingId'] = 0;
         task['requestId'] = idRequest;
         task['expedientId'] = 0;
@@ -888,13 +889,34 @@ export class RequestFormComponent extends BasePage implements OnInit {
     let url = '';
     let process = '';
     switch (affair) {
-      case 33: //RESARCIMIENTO EN ESPECIA
+
+      case 10: //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+        title =
+          'DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud:';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'DRegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
+
+      case 33: //GESTIONAR BINES SIMILARES RESARCIMIENTO
         title =
           'BIENES SIMILARES Registro de Documentación Complementaria,No. Solicitud:';
-        url = 'pages/request/request-comp-doc';
-        process = 'SRegistroSolicitudes';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'BSRegistroSolicitudes';
         return { title: title, urlNb: url, processName: process };
-        break;
+
+      case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
+        title =
+          'RESOLUCIÓN ADMINISTRATIVA DE PAGO EN ESPECIE Registro de Documentación Complementaria,No. Solicitud:';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'RERegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
+
+      case 41: //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
+        title =
+          'SOLICITUD DE INFORMACIÓN DEL DESTINO DEL BIEN Registro de Documentación Complementaria,No. Solicitud:';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'IBRegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
 
       default:
         break;
