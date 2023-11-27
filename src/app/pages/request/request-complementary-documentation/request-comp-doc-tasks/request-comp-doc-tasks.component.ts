@@ -24,6 +24,10 @@ import { CreateReportComponent } from '../../shared-request/create-report/create
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { de } from 'date-fns/locale';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -32,8 +36,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
+  protected override searchAssociateFile: boolean;
   /* CALL TABS DINAMICALY */
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   /**
@@ -83,12 +87,17 @@ export class RequestCompDocTasksComponent
    */
   emailForm: FormGroup = new FormGroup({});
 
+  loadingTurn = false
+
   /* INJECTIONS
   ============== */
   private requestService = inject(RequestService);
   private requestHelperService = inject(RequestHelperService);
   private affairService = inject(AffairService);
   private bsModalRef = inject(BsModalRef);
+  private authService = inject(AuthService);
+  private taskService = inject(TaskService);
+
   //private rejectedService = inject(RejectedGoodService)
 
   /*  */
@@ -176,7 +185,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
@@ -198,10 +207,23 @@ export class RequestCompDocTasksComponent
       'Turnar'
     ).then(async question => {
       if (question.isConfirmed) {
+
+        console.log(this.affair, this.process);
+
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else if (this.process == 'register-request') {
-          this.setEmailNotificationTask();
+
+          let val = this.affair.toString();
+          switch (val) {
+            case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+              this.generateTask(this.affair);
+              break;
+            default:
+              this.setEmailNotificationTask();
+              break;
+          }
+
         } else if (this.process == 'BSNotificarTransferente') {
           this.setEmailNotificationTask();
         } else if (this.process == 'BSVisitaOcular') {
@@ -219,6 +241,7 @@ export class RequestCompDocTasksComponent
         } else {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         }
+
       }
     });
   }
@@ -252,6 +275,7 @@ export class RequestCompDocTasksComponent
   }
 
   closeSearchRequestSimGoodsTab(recordId: number) {
+    console.log(recordId);
     if (recordId) {
       this.searchRequestSimGoods = false;
     }
@@ -492,4 +516,154 @@ export class RequestCompDocTasksComponent
       } //this.getCities();
     });
   }
+
+  getValuesForTurn(affair): any {
+
+    let title = '';
+    let url = '';
+    let process = '';
+    switch (affair) {
+
+      case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+        title =
+          'DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ' + this.requestId + ', Contribuyente, PAMA';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'DVerificarCumplimiento';
+        return { title: title, urlNb: url, processName: process };
+
+      case "33": //GESTIONAR BINES SIMILARES RESARCIMIENTO
+        title =
+          'BIENES SIMILARES Notificacion a transferente,No. Solicitud:';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'BSRegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
+
+      case "40": //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
+        title =
+          'Revisión de Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud ' + this.requestId + ', Contribuyente, PAMA:';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'RERegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
+
+      case "41": //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
+        title =
+          'Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'IBRegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
+
+      default:
+        break;
+    }
+  }
+
+  async generateTask(affair) {
+
+    const { title, urlNb, processName } = this.getValuesForTurn(affair);
+    const actualUser: any = this.authService.decodeToken();
+    const _task = JSON.parse(localStorage.getItem('Task'));
+
+    let body: any = {};
+    body['idTask'] = this.requestId;
+    body['userProcess'] = actualUser.username;
+
+    /** VALIDAR DATOS */
+    body['type'] = 'SOLICITUD_TRANSFERENCIA';
+    body['subtype'] = 'Nueva_Solicitud';
+    body['ssubtype'] = 'TURNAR';
+
+    let task: any = {};
+    task['id'] = _task.id;
+    task['assignees'] = _task.assignees;
+    task['assigneesDisplayname'] = _task.assigneesDisplayname;
+    task['reviewers'] = actualUser.username;
+    task['creator'] = actualUser.username;
+    task['taskNumber'] = Number(this.requestId);
+    task['title'] = title + this.requestId;
+    task['programmingId'] = 0;
+    task['requestId'] = this.requestId;
+    task['expedientId'] = 0;
+    task['urlNb'] = urlNb;
+    task['processName'] = processName;
+    task['idstation'] = _task.idstation;
+    task['idTransferee'] = _task.idTransferente;
+    task['idAuthority'] = _task.idAuthoridad;
+    task['idDelegationRegional'] = actualUser.department;
+    body['task'] = task;
+
+    let orderservice: any = {};
+    orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+    orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+    orderservice['pIdApplication'] = this.requestId;
+    orderservice['pCurrentDate'] = new Date().toISOString();
+    orderservice['pOrderServiceIn'] = '';
+
+    body['orderservice'] = orderservice;
+
+    const taskResult = await this.createTaskOrderService(body);
+
+    this.loading = false;
+    if (taskResult) {
+      this.msgModal(
+        'Se turnó la solicitud con el Folio Nº'
+          .concat(`<strong>${this.requestId}</strong>`)
+          .concat(` al usuario <strong>${_task.assigneesDisplayname}</strong>`),
+        'Solicitud Creada',
+        'success'
+      );
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTask(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
+
+  msgModal(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    });
+  }
+
+  updateRequest() {
+    this.updateInfo = true;
+  }
+
+  updateTask(body: any, idRequest: string) {
+    return new Promise((resolve, reject) => {
+      this.taskService.update(body.id, body).subscribe({
+        next: resp => {
+          this.msgModal(
+            'Se guardó la solicitud con el Folio Nº '.concat(
+              `<strong>${idRequest}</strong>`
+            ),
+            'Solicitud Guardada',
+            'success'
+          );
+        },
+      });
+    });
+  }
+
+
 }

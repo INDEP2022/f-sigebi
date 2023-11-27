@@ -4,14 +4,14 @@
       <h5
         class="title"
         *ngIf="
-          this.requestInfo?.affair == 13 || this.requestInfo?.affair == 10
+          this.requestInfo?.affair == 13 || this.requestInfo?.affair == 10 || this.requestInfo?.affair == 33
         ">
         {{ title }}
       </h5>
       <h5
         class="title"
         *ngIf="
-          this.requestInfo?.affair != 13 && this.requestInfo?.affair != 10
+          this.requestInfo?.affair != 13 && this.requestInfo?.affair != 10 && this.requestInfo?.affair != 33
         ">
         {{ title }}
         {{ requestId }}&#44; Contribuyente&#58; {{ contributor }}
@@ -25,7 +25,7 @@
               type="button"
               class="btn btn-primary btn-sm active"
               (click)="turnRequest()"
-              [disabled]="">
+              [disabled]="loadingTurn">
               Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
             </button>
           </div>
@@ -53,7 +53,8 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            [disabled]="">
+            [disabled]=""
+            (click)="updateRequest()">
             Guardar <i class="fa fa-save mr-1 float-icon"></i>
           </button>
         </div>
@@ -174,11 +175,6 @@
                 Regresar <i class="fas fa-arrow-circle-left"></i>
               </a>
             </li>
-            <li>
-              <a class="dropdown-item bg-primary text-light" (click)="close()">
-                Regresar <i class="fas fa-arrow-circle-left"></i>
-              </a>
-            </li>
           </ul>
         </div>
       </div>
@@ -234,6 +230,11 @@
           id="requestSimilarGoodsTab">
           <app-search-request-similar-goods></app-search-request-similar-goods>
         </tab>
+        
+        <tab *ngIf="searchAssociateFile" heading="Buscar y Asociar al Expediente" id="associateTab">
+          <app-associate-file></app-associate-file>
+        </tab>
+
         <tab
           *ngIf="selectGoods"
           heading="Seleccionar Bienes"
@@ -320,3 +321,6 @@
     </div>
   </div>
 </app-card>
+<div>
+  <img *ngIf="loadingTurn" src="assets/images/loader-button.gif" alt="loading" id="loading" />
+</div>

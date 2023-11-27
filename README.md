@@ -29,3 +29,13 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## Librarys Documentation
 
 https://github.com/MurhafSousli/ngx-scrollbar/wiki/usage
+
+# CASO DE PRUEBA
+
+description : DEVOLUCIÓN DE BIENES COMERCIO EXTERIOR
+
+processDetonate : DEVOLUCION
+
+SOLICITUD 61631
+
+TAREA 61632

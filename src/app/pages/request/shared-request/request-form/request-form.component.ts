@@ -899,21 +899,21 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
       case 33: //GESTIONAR BINES SIMILARES RESARCIMIENTO
         title =
-          'BIENES SIMILARES Registro de Documentación Complementaria,No. Solicitud:';
+          'BIENES SIMILARES Registro de Documentación Complementaria, No. Solicitud:';
         url = 'pages/request/request-comp-doc/tasks/register-request';
         process = 'BSRegistroSolicitudes';
         return { title: title, urlNb: url, processName: process };
 
       case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
         title =
-          'RESOLUCIÓN ADMINISTRATIVA DE PAGO EN ESPECIE Registro de Documentación Complementaria,No. Solicitud:';
+          'RESOLUCIÓN ADMINISTRATIVA DE PAGO EN ESPECIE Registro de Documentación Complementaria, No. Solicitud:';
         url = 'pages/request/request-comp-doc/tasks/register-request';
         process = 'RERegistroSolicitudes';
         return { title: title, urlNb: url, processName: process };
 
       case 41: //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
         title =
-          'SOLICITUD DE INFORMACIÓN DEL DESTINO DEL BIEN Registro de Documentación Complementaria,No. Solicitud:';
+          'SOLICITUD DE INFORMACIÓN DEL DESTINO DEL BIEN Registro de Documentación Complementaria, No. Solicitud:';
         url = 'pages/request/request-comp-doc/tasks/register-request';
         process = 'IBRegistroSolicitudes';
         return { title: title, urlNb: url, processName: process };

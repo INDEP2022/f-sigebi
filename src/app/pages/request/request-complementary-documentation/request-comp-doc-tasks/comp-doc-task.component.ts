@@ -10,6 +10,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract regDocForm: boolean;
   protected abstract regDocView: boolean;
   protected abstract searchRequestSimGoods: boolean;
+  protected abstract searchAssociateFile: boolean;
   protected abstract selectGoods: boolean;
   protected abstract guidelines: boolean;
   protected abstract docRequest: boolean;
@@ -44,10 +45,17 @@ export abstract class CompDocTasksComponent extends BasePage {
       this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
       this.complementaryDoc = true;
     } else if (affair == 10) {
-      this.title = `Devolución: Registro de documentación complementaria, No. Solicitud ${this.requestInfo.id}`;
-      this.complementaryDoc = true;
+      if (process == 'DRegistroSolicitudes' || process == 'register-request') {
+        this.title = `DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
+      }
+      if (process == 'DVerificarCumplimiento') {
+        this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
+      }
+      if (process == 'DAprobarDevolucion') {
+        this.title = `Aprobar Devolución, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
+      }
     } else if (affair == 33) {
-      if (process == 'BSRegistroSolicitudes') {
+      if (process == 'BSRegistroSolicitudes' || process == 'register-request') {
         this.title = `BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
       }
       if (process == 'BSNotificarTransferente') {
@@ -86,12 +94,17 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.createReport = false;
           this.rejectReq = false;
         } else if (affair == 10) {
-          this.searchRequestSimGoods = true;
+
+          this.searchRequestSimGoods = false;
           this.regDocForm = true;
           this.selectGoods = true;
           this.expRequest = true;
+          this.searchAssociateFile = true;
           this.selectGoodForEyeVisit = false;
           this.validateGoodForEyeVisit = false;
+
+          this.turnReq = true;
+
         } else if (affair == 33) {
           //RESARCIMIENTO EN ESPECIES
           this.regDocForm = true;
