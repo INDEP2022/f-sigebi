@@ -34,6 +34,7 @@ export class ExpenseCompositionComponent
 {
   toggleInformation = true;
   @ViewChild('table') table: Ng2SmartTableComponent;
+  @ViewChild('file') file: any;
   ce: boolean = false;
   rr: boolean = false;
   constructor(
@@ -50,7 +51,6 @@ export class ExpenseCompositionComponent
   ) {
     super();
     // this.service = this.dataService;
-    this.params.value.limit = 100000;
     this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
@@ -86,6 +86,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           console.log(response);
+          this.loader.load = true;
           this.sendSolicitud(false, true);
         },
       });
@@ -203,6 +204,10 @@ export class ExpenseCompositionComponent
     return this.expenseNumber && this.expenseNumber.value && this.validPayment;
   }
 
+  get showAdd() {
+    return this.expenseNumber && this.expenseNumber.value;
+  }
+
   get amount() {
     return this.expenseCaptureDataService.amount;
   }
@@ -247,11 +252,7 @@ export class ExpenseCompositionComponent
     this.ce = !this.ce;
     this.dataPaginated.getElements().then(_item => {
       let result = _item.map(item => {
-        if (item.changeStatus) {
-          item.changeStatus = false;
-        } else {
-          item.changeStatus = true;
-        }
+        item.changeStatus = this.ce;
       });
       Promise.all(result).then(resp => {
         // console.log('after array selectsCPD: ', this.selectedGoods);
@@ -264,11 +265,9 @@ export class ExpenseCompositionComponent
     this.rr = !this.rr;
     this.dataPaginated.getElements().then(_item => {
       let result = _item.map(item => {
-        if (item.reportDelit) {
-          item.reportDelit = false;
-        } else {
-          item.reportDelit = true;
-        }
+        let result = _item.map(item => {
+          item.reportDelit = this.rr;
+        });
         if (item.V_VALCON_ROBO > 0) {
           if (
             item.vehiculoCount === 0 &&
@@ -342,6 +341,7 @@ export class ExpenseCompositionComponent
               'Composición de Gasto ' + row.detPaymentsId,
               'Eliminado correctamente'
             );
+            this.getData();
           },
           error: err => {
             this.alert(
@@ -369,7 +369,7 @@ export class ExpenseCompositionComponent
         this.PDEVPARCIALBIEN,
         this.CHCONIVA,
         this.IVA,
-        params
+        { ...params, limit: 1000000 }
       )
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
@@ -456,12 +456,12 @@ export class ExpenseCompositionComponent
         next: response => {
           console.log(response);
           if (response.data && response.data.length > 0) {
-            let result = response.data[0];
+            let result = response.data[1];
             this.dataService
               .updateMassive(
                 this.dataTemp.map(x => {
                   let newRow: any = {
-                    amount: result.monto2,
+                    amount: result.MONTO2,
                     goodNumber: x.goodNumber,
                     expenseDetailNumber: x.detPaymentsId,
                     expenseNumber: x.paymentsId,
@@ -645,10 +645,13 @@ export class ExpenseCompositionComponent
   }
 
   loadGoods(event: Event) {
+    // this.alert('success', 'Se realizó la carga de datos', '');
+    // return;
     this.loader.load = true;
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const file = files[0];
+    // this.file.nativeElement.value = '';
     console.log(file.name);
     if (file.name.includes('csv')) {
       // this.CARGA_BIENES_CSV(file);
@@ -684,6 +687,7 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
+          this.file.nativeElement.value = '';
           if (response.data && response.data.length > 0) {
             this.dataService
               .massiveInsert(
@@ -708,9 +712,7 @@ export class ExpenseCompositionComponent
               )
               .subscribe({
                 next: response => {
-                  this.loader.load = false;
-                  this.alert('success', 'Se realizó la carga de datos', '');
-                  this.getData();
+                  this.removeMassive();
                 },
                 error: err => {
                   this.loader.load = false;
@@ -727,6 +729,7 @@ export class ExpenseCompositionComponent
           }
         },
         error: err => {
+          this.file.nativeElement.value = '';
           this.loader.load = false;
           this.alert('error', 'No se pudo realizar la carga de datos', '');
         },
@@ -740,6 +743,7 @@ export class ExpenseCompositionComponent
       .subscribe(
         (event: any) => {
           console.log(event);
+          this.file.nativeElement.value = '';
           if (typeof event === 'object') {
             console.log(event.body);
             if (event.CONT > 0) {
@@ -748,9 +752,7 @@ export class ExpenseCompositionComponent
               );
               this.dataService.massiveInsert(dataCSV).subscribe({
                 next: response => {
-                  this.loader.load = false;
-                  this.alert('success', 'Se realizó la carga de datos', '');
-                  this.getData();
+                  this.removeMassive();
                 },
                 error: err => {
                   this.loader.load = false;
@@ -769,11 +771,36 @@ export class ExpenseCompositionComponent
         },
         error => {
           this.loader.load = false;
+          this.file.nativeElement.value = '';
           this.alert('error', 'No se pudo realizar la carga de datos', '');
         }
       );
 
     // this.GRABA_TOTALES();
+  }
+
+  private removeMassive() {
+    this.dataService
+      .removeMassive(
+        this.data.map(x => {
+          return {
+            expenseDetailNumber: x.detPaymentsId,
+            expenseNumber: x.paymentsId,
+          };
+        })
+      )
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.loader.load = false;
+          this.alert('success', 'Se realizó la carga de datos', '');
+          this.getData();
+        },
+        error: err => {
+          this.loader.load = false;
+          this.alert('error', 'No se pudo realizar la carga de datos', '');
+        },
+      });
   }
 
   private CARGA_BIENES_CSV_VALIDADOS(file: File) {
@@ -789,6 +816,7 @@ export class ExpenseCompositionComponent
       .subscribe(
         (event: any) => {
           console.log(event);
+          this.file.nativeElement.value = '';
           if (typeof event === 'object') {
             console.log(event.body);
             if (event.CONT > 0) {
@@ -797,9 +825,7 @@ export class ExpenseCompositionComponent
               );
               this.dataService.massiveInsert(dataCSV).subscribe({
                 next: response => {
-                  this.loader.load = false;
-                  this.alert('success', 'Se realizó la carga de datos', '');
-                  this.getData();
+                  this.removeMassive();
                 },
                 error: err => {
                   this.loader.load = false;
@@ -818,6 +844,7 @@ export class ExpenseCompositionComponent
         },
         error => {
           this.loader.load = false;
+          this.file.nativeElement.value = '';
           this.alert('error', 'No se pudo realizar la carga de datos', '');
         }
       );

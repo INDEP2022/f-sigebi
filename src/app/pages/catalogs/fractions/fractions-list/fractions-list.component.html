@@ -1,13 +1,13 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Lista fracciones</h5>
+    <h5 class="title">Lista de fracciones</h5>
   </div>
 
   <div body>
     <div class="row">
       <div class="d-flex justify-content-end mb-2">
         <app-columns-select [(settings)]="settings"></app-columns-select>
-        <div>
+        <!-- <div>
           <button
             type="button"
             tooltip="Nuevo"
@@ -16,7 +16,7 @@
             (click)="openForm()">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="row pt-4 table-container">
@@ -27,10 +27,11 @@
               [attr.class]="'table-bordered'"
               [settings]="settings"
               [source]="data"
-              (custom)="openForm($event.data)"
-              (edit)="openForm($event.data)"
-              (delete)="showDeleteAlert($event.data)">
+              (rowSelect)="selectRow($event)">
             </ng2-smart-table>
+            <!-- (custom)="openForm($event.data)"
+              (edit)="openForm($event.data)"
+              (delete)="showDeleteAlert($event.data)" -->
           </div>
         </div>
       </div>
@@ -40,3 +41,45 @@
       [totalItems]="totalItems"></app-pagination>
   </div>
 </app-card>
+
+<section *ngIf="parentIdlvl1">
+  <app-fraction-lvl
+    [fractionLvl]="fractionLvl1"
+    (returnfraction)="getFraction($event)"
+    (nofraction)="hideFraction($event)"></app-fraction-lvl>
+</section>
+
+<section *ngIf="parentIdlvl2">
+  <app-fraction-lvl
+    [fractionLvl]="fractionLvl2"
+    (returnfraction)="getFraction($event)"
+    (nofraction)="hideFraction($event)"></app-fraction-lvl>
+</section>
+
+<section *ngIf="parentIdlvl3">
+  <app-fraction-lvl
+    [fractionLvl]="fractionLvl3"
+    (returnfraction)="getFraction($event)"
+    (nofraction)="hideFraction($event)"></app-fraction-lvl>
+</section>
+
+<section *ngIf="parentIdlvl4">
+  <app-fraction-lvl
+    [fractionLvl]="fractionLvl4"
+    (returnfraction)="getFraction($event)"
+    (nofraction)="hideFraction($event)"></app-fraction-lvl>
+</section>
+
+<section *ngIf="parentIdlvl5">
+  <app-fraction-lvl
+    [fractionLvl]="fractionLvl5"
+    (returnfraction)="getFraction($event)"
+    (nofraction)="hideFraction($event)"></app-fraction-lvl>
+</section>
+
+<section *ngIf="parentIdlvl6">
+  <app-fraction-lvl
+    [fractionLvl]="fractionLvl6"
+    (returnfraction)="getFraction($event)"
+    (nofraction)="hideFraction($event)"></app-fraction-lvl>
+</section>

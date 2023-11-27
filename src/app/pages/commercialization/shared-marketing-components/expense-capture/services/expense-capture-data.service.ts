@@ -16,10 +16,7 @@ import {
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
-import {
-  NUMBERS_DASH_PATTERN,
-  NUM_POSITIVE,
-} from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { ExpenseGoodProcessService } from './expense-good-process.service';
 import { ExpenseLotService } from './expense-lot.service';
 import { ExpenseModalService } from './expense-modal.service';
@@ -41,6 +38,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   updateExpenseComposition = new Subject();
   updateExpenseCompositionAndValidateProcess = new Subject();
   finishProcessSolicitud = new Subject();
+  saveSubject = new Subject();
   updateOI = new Subject();
   updateFolio = new Subject();
   P_PRUEBA: number;
@@ -151,7 +149,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.selectedComposition = null;
     this.expenseModalService.clean();
 
-    // this.formScan.reset();
+    this.formScan.reset();
     // this.delUser = null;
     // this.subDelUser = null;
     // this.departmentUser = null;
@@ -187,16 +185,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.PCAMBIAESTATUS = row.PCAMBIAESTATUS;
     this.PCONDIVXMAND = row.PCONDIVXMAND;
     this.PCANVTA = row.PCANVTA;
-    this.P_MANDCONTIPO = row.P_MANDCONTIPO;
-    this.PDEVPARCIAL = row.PDEVPARCIAL;
-    this.PCHATMORSINFLUJOPM = row.PCHATMORSINFLUJOPM;
-    this.PCHATMORSINFLUJOPF = row.PCHATMORSINFLUJOPF;
-    this.PCHATMORSINFLUJOPFSR = row.PCHATMORSINFLUJOPFSR;
-    this.PCANFACT = row.PCANFACT;
-    this.PCREAFACT = row.PCREAFACT;
-    this.VALBIEVEND = row.VALBIEVEND;
-    this.PDEVPARCIALBIEN = row.PDEVPARCIALBIEN;
-    this.PVALIDADET = row.PVALIDADET;
+    this.P_MANDCONTIPO = row.P_MANDCONTIPO ?? 'N';
+    this.PDEVPARCIAL = row.PDEVPARCIAL ?? 'N';
+    this.PCHATMORSINFLUJOPM = row.PCHATMORSINFLUJOPM ?? 'N';
+    this.PCHATMORSINFLUJOPF = row.PCHATMORSINFLUJOPF ?? 'N';
+    this.PCHATMORSINFLUJOPFSR = row.PCHATMORSINFLUJOPFSR ?? 'N';
+    this.PCANFACT = row.PCANFACT ?? 'N';
+    this.PCREAFACT = row.PCREAFACT ?? 'N';
+    this.VALBIEVEND = row.VALBIEVEND ?? 'N';
+    this.PNOENVIASIRSAE = row.PNOENVIASIRSAE ?? 'N';
+    this.PDEVPARCIALBIEN = row.PDEVPARCIALBIEN ?? 'N';
+    this.PVALIDADET = row.PVALIDADET ?? 'N';
   }
 
   readParams(conceptId: string) {
@@ -270,7 +269,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
       eventNumber: [null],
       lotNumber: [null],
-      folioAtnCustomer: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
+      folioAtnCustomer: [null],
       dateOfResolution: [null],
       clkpv: [null, [Validators.required]],
       descurcoord: [null],
@@ -330,11 +329,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       row => row.changeStatus && row.changeStatus === true
     );
     if (VALIDA_DET.length === 0) {
-      this.alert(
-        'error',
-        'Envia Solictud',
-        'Debe seleccionar al menos un bien'
-      );
+      this.alert('error', 'Debe seleccionar al menos un bien', '');
       return of(null);
     } else {
       let arrayToDelete = this.dataCompositionExpenses
@@ -424,7 +419,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     console.log(this.dataCompositionExpenses);
     // this.ENVIA_MOTIVOS();
     // return;
-    // debugger;
     if (sendToSIRSAE) {
       const VALIDA_DET = this.dataCompositionExpenses.filter(
         row => row.changeStatus && row.changeStatus === true
@@ -671,11 +665,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       return false;
     }
     if (!this.authorizedUser.value) {
-      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      this.alert('error', 'Debe tener el Usuario que Autoriza', '');
       return false;
     }
     if (!this.requestedUser.value) {
-      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      this.alert('error', 'Debe tener el Usuario que Solicita', '');
       return false;
     }
     if (!this.form.get('comproafmandsae')) {
@@ -774,11 +768,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   private PUF_VALIDA_PAGOXEVENTO(p_fpago: string) {
     return firstValueFrom(
-      this.lotService.PUF_VALIDA_PAGOXEVENTO({
-        p_fpago,
-        id_evento: this.eventNumber.value,
-        lotePub: this.lotNumber.value,
-      })
+      this.lotService
+        .PUF_VALIDA_PAGOXEVENTO({
+          p_fpago,
+          id_evento: this.eventNumber.value,
+          lotePub: this.lotNumber.value,
+        })
+        .pipe(catchError(x => of({ data: null })))
     );
   }
 
@@ -820,16 +816,31 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
+          // debugger;
           // this.alert('success', 'Procedimiento ejecutado correctamente', '');
-          this.form
-            .get('paymentRequestNumber')
-            .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
-          this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
-          // this.sucessSendSolitudeMessage();
+          if (response.COMER_GASTOS_ID_SOLICITUDPAGO) {
+            this.errorSendSolicitudeMessage();
+          } else {
+            this.form
+              .get('paymentRequestNumber')
+              .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
+            this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
+            // this.sucessSendSolitudeMessage();
+            if (this.data.formPayment !== 'INTERCAMBIO') {
+              this.VERIFICA_ACTUALIZACION_EST();
+            } else {
+              this.VALIDA_SUBTOTAL_PRECIO(
+                this.data.expenseNumber,
+                this.data.eventNumber,
+                this.data.lotNumber
+              );
+            }
+          }
         },
         error: err => {
-          this.alert('error', 'Envio a sirsae', err.error.message);
-          // this.errorSendSolicitudeMessage();
+          // this.alert('error', 'No se pudo realizar el envió a SIRSAE', '');
+          // this.alert('error', 'Envio a sirsae', err.error.message);
+          this.errorSendSolicitudeMessage();
         },
       });
   }
@@ -841,26 +852,19 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       let AUX_INTERCAMBIO = await this.PUF_VALIDA_PAGOXEVENTO(
         this.data.formPayment
       );
-      if (AUX_INTERCAMBIO === '0') {
+      if (AUX_INTERCAMBIO.data && AUX_INTERCAMBIO.data.length > 0) {
+        this.ENVIAR_SIRSAE();
+      } else {
         this.alert(
           'error',
-          'El Lote ' + this.lotNumber.value,
+          'El Lote ' + this.lotNumber.value ?? '',
           'Debe tener un pago registrado para la forma de pago seleccionada'
         );
         this.errorSendSolicitudeMessage();
         return;
-      } else {
-        this.ENVIAR_SIRSAE();
       }
-    }
-    if (this.data.formPayment !== 'INTERCAMBIO') {
-      this.VERIFICA_ACTUALIZACION_EST();
     } else {
-      this.VALIDA_SUBTOTAL_PRECIO(
-        this.data.expenseNumber,
-        this.data.eventNumber,
-        this.data.lotNumber
-      );
+      this.finishProcessSolicitud.next(true);
     }
   }
 
@@ -878,13 +882,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private errorSendSolicitudeMessage() {
-    this.finishProcessSolicitud.next(true);
+    this.finishProcessSolicitud.next(false);
     setTimeout(() => {
       this.alert(
         'error',
         'No se pudo enviar la solicitud ' +
           (this.actionButton === 'SIRSAE' ? 'a ' : 'de ') +
-          +this.actionButton,
+          this.actionButton,
         ''
       );
     }, 500);
@@ -895,6 +899,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     lotId: string,
     spentId: string
   ) {
+    // debugger;
     this.lotService
       .VALIDA_SUBTOTAL_PRECIO({ eventId, lotId, spentId })
       .pipe(take(1))
@@ -902,6 +907,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         next: response => {
           this.alert('success', 'Sub total precio válido', '');
           this.sucessSendSolitudeMessage();
+          this.saveSubject.next(true);
         },
         error: err => {
           this.alert('error', err.error.message, '');
@@ -922,6 +928,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   async VERIFICA_ACTUALIZACION_EST() {
+    // debugger;
     this.P_PRUEBA = 0;
     if (this.PDEVPARCIAL === 'S') {
       this.DEVOLUCION_PARCIAL();
@@ -956,6 +963,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             ''
           );
           this.sucessSendSolitudeMessage();
+          this.saveSubject.next(true);
         },
         error: err => {
           this.alert('error', 'No se pudo generar la cancelación parcial', '');
@@ -995,6 +1003,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             ''
           );
           this.sucessSendSolitudeMessage();
+          this.saveSubject.next(true);
         },
         error: err => {
           this.alert('error', 'No se pudo generar la devolución parcial', '');
@@ -1031,6 +1040,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .subscribe({
         next: response => {
           this.sucessSendSolitudeMessage();
+          this.saveSubject.next(true);
         },
         error: err => {
           this.alert('error', 'Fallo en Cancela Vta Normal', err.error.message);

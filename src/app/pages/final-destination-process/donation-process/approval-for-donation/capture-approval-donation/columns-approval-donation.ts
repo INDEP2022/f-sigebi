@@ -47,7 +47,11 @@ export const COPY = {
     sort: false,
     visible: true,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.good?.description;
+      if (row.description) {
+        return row.description;
+      } else {
+        return row.good;
+      }
     },
   },
   amount: {
@@ -73,7 +77,11 @@ export const COPY = {
     visible: true,
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.good?.unit;
+      if (row.description) {
+        return row.unit;
+      } else {
+        return row.good?.unit;
+      }
     },
   },
   status: {

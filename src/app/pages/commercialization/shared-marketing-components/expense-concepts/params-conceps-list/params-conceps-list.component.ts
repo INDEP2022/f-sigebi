@@ -38,7 +38,12 @@ export class ParamsConcepsListComponent
     super();
     this.params.value.limit = 5;
     this.service = this.parameterService;
-    this.ilikeFilters = ['parameter', 'description', 'value'];
+    this.ilikeFilters = [
+      'parameter',
+      'description',
+      'value',
+      'routineCalculation',
+    ];
     this.settings = {
       ...this.settings,
       actions: {
@@ -112,6 +117,9 @@ export class ParamsConcepsListComponent
       this.data.setFilter([], true, false);
       // this.data.load([]);
       this.getData();
+    }
+    if (changes['conceptId'] && changes['conceptId'].currentValue === null) {
+      this.dataNotFound();
     }
   }
 

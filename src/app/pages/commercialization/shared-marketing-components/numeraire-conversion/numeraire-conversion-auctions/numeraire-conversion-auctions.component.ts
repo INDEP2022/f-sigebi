@@ -54,7 +54,7 @@ export class NumeraireConversionAuctionsComponent
     private authService: AuthService
   ) {
     super();
-    this.user = this.authService.decodeToken();
+    this.user = this.authService.decodeToken().preferred_username;
   }
 
   ngOnInit(): void {

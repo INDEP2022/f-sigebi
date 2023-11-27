@@ -58,6 +58,7 @@
         <div class="pb-2 col-md-8">
           <ng-custom-select-loading
             [form]="form"
+            [updateValues]="true"
             path="goodfinder/api/v1/good-query"
             label="No. Bien"
             formControlName="goodNumber"
@@ -108,6 +109,16 @@
           <!-- <form-field [control]="transferorNumber" label="Transferente">
             <input class="form-control" formControlName="transferorNumber" />
           </form-field> -->
+        </div>
+      </div>
+      <div class="row">
+        <div class="pb-2 col-md-4">
+          <form-field [control]="budgetItem" label="Partida">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="budgetItem" />
+          </form-field>
         </div>
       </div>
     </form>
