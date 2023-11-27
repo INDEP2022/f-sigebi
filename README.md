@@ -39,3 +39,48 @@ processDetonate : DEVOLUCION
 SOLICITUD 61631
 
 TAREA 61632
+
+Crear solicitud
+
+Se crea la tarea con Registrar Devolución
+
+20.1 Registro de solicitud de devolución: Registrar documentación complementaria devolución
+20.1.1 Registrar Devolución
+20.1.2 Búsqueda y selección de bienes para devolución
+20.1.3 Asociar solicitud a expediente existente
+20.1.4 Asociar solicitud a nuevo expediente
+20.1.5 Integrar documentación al Expediente
+20.1.6 Solicitar búsqueda en SIAB
+
+20.2 Turnar solicitud
+
+Secierra la tarea anterior estatus FINALIZADO
+
+- Que debo actualizar en la solicitud ?
+  Se crea la tarea con Registrar Devolución
+
+  20.3 Clasificación Bienes
+  20.3.1 Verificar Cumplimiento
+  20.3.2 Generar Dictamen Devolución
+  20.4 Turnar Solicitud de Devolución
+
+  20.5.1 Revisión de la Solicitud de Devolución
+  20.5.3 Rechazar Solicitud de Devolución
+  20.5.4 Firmar Dictamen
+  20.5.5 Aprobar Solicitud de Devolución
+
+register-request
+
+-DRegistroSolicitudes
+DVerificarCumplimiento
+DAprobarDevolucion
+
+-BSRegistroSolicitudes
+BSNotificarTransferente
+BSVisitaOcular
+BSValidarVisitaOcular
+BSValidarDictamen
+
+-RERegistroSolicitudes
+RERevisionLineamientos
+REGenerarResultadoAnalisis

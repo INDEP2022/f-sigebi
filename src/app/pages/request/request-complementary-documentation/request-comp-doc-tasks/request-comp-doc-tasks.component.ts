@@ -28,6 +28,7 @@ import { de } from 'date-fns/locale';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import Swal from 'sweetalert2';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -82,6 +83,8 @@ export class RequestCompDocTasksComponent
   complementaryDoc: boolean = false;
   typeVisit: string = '';
   affair: number = null;
+  taskId: number = 0;
+
   /**
    * email del usuairo
    */
@@ -547,7 +550,7 @@ export class RequestCompDocTasksComponent
 
       case "41": //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
         title =
-          'Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud';
+          'Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud' + this.requestId;
         url = 'pages/request/request-comp-doc/tasks/register-request';
         process = 'IBRegistroSolicitudes';
         return { title: title, urlNb: url, processName: process };
@@ -557,70 +560,190 @@ export class RequestCompDocTasksComponent
     }
   }
 
+  updateRequest() {
+    this.updateInfo = true;
+    this.msgModal(
+      'Se guardó la solicitud con el Folio Nº '.concat(
+        `<strong>${this.requestId}</strong>`
+      ),
+      'Solicitud Guardada',
+      'success'
+    );
+  }
+
+  /** VALIDAR */
   async generateTask(affair) {
 
-    const { title, urlNb, processName } = this.getValuesForTurn(affair);
-    const actualUser: any = this.authService.decodeToken();
+    const { title, urlNb, processName, finish, type, subtype, ssubtype
+    } = this.nextProcess(affair, this.process);
+
+    this.loadingTurn = true;
     const _task = JSON.parse(localStorage.getItem('Task'));
+    await this.closeTask();
 
-    let body: any = {};
-    body['idTask'] = this.requestId;
-    body['userProcess'] = actualUser.username;
+    const createTask = await this.generateFirstTask(processName);
+    if (createTask) {
 
-    /** VALIDAR DATOS */
-    body['type'] = 'SOLICITUD_TRANSFERENCIA';
-    body['subtype'] = 'Nueva_Solicitud';
-    body['ssubtype'] = 'TURNAR';
+      //Estableciendo valores a transferente, emisora y autoridad
+      let idTransferente = this.requestInfo.transferenceId;
+      let idEmisora = this.requestInfo.stationId;
+      let idAuthoridad = this.requestInfo.authorityId;
+      let nickName = '';
+      let userName = '';
 
-    let task: any = {};
-    task['id'] = _task.id;
-    task['assignees'] = _task.assignees;
-    task['assigneesDisplayname'] = _task.assigneesDisplayname;
-    task['reviewers'] = actualUser.username;
-    task['creator'] = actualUser.username;
-    task['taskNumber'] = Number(this.requestId);
-    task['title'] = title + this.requestId;
-    task['programmingId'] = 0;
-    task['requestId'] = this.requestId;
-    task['expedientId'] = 0;
-    task['urlNb'] = urlNb;
-    task['processName'] = processName;
-    task['idstation'] = _task.idstation;
-    task['idTransferee'] = _task.idTransferente;
-    task['idAuthority'] = _task.idAuthoridad;
-    task['idDelegationRegional'] = actualUser.department;
-    body['task'] = task;
+      /** VALIDAR DATOS */
+      //const requestResult: any = await this.updateTurnedRequest(this.requestInfo);
+      if (true) {
+        const actualUser: any = this.authService.decodeToken();
+        let body: any = {};
+        body['idTask'] = this.taskId;
+        body['userProcess'] = actualUser.username;
 
-    let orderservice: any = {};
-    orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
-    orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
-    orderservice['pIdApplication'] = this.requestId;
-    orderservice['pCurrentDate'] = new Date().toISOString();
-    orderservice['pOrderServiceIn'] = '';
+        /** VALIDAR DATOS */
+        body['type'] = type;
+        body['subtype'] = subtype;
+        body['ssubtype'] = ssubtype;
 
-    body['orderservice'] = orderservice;
+        let task: any = {};
+        task['id'] = _task.id;
+        task['assignees'] = nickName;
+        task['assigneesDisplayname'] = userName;
+        task['reviewers'] = actualUser.username;
+        task['creator'] = actualUser.username;
+        task['taskNumber'] = Number(this.requestId);
+        task['title'] = title;
+        task['programmingId'] = 0;
+        task['requestId'] = this.requestId;
+        task['expedientId'] = 0;
+        task['urlNb'] = urlNb;
+        task['processName'] = processName;
+        task['idstation'] = idEmisora;
+        task['idTransferee'] = idTransferente;
+        task['idAuthority'] = idAuthoridad;
+        task['idDelegationRegional'] = actualUser.department;
+        body['task'] = task;
 
-    const taskResult = await this.createTaskOrderService(body);
+        let orderservice: any = {};
+        orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+        orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+        orderservice['pIdApplication'] = this.requestId;
+        orderservice['pCurrentDate'] = new Date().toISOString();
+        orderservice['pOrderServiceIn'] = '';
 
-    this.loading = false;
-    if (taskResult) {
-      this.msgModal(
-        'Se turnó la solicitud con el Folio Nº'
-          .concat(`<strong>${this.requestId}</strong>`)
-          .concat(` al usuario <strong>${_task.assigneesDisplayname}</strong>`),
-        'Solicitud Creada',
-        'success'
-      );
+        body['orderservice'] = orderservice;
+
+        const taskResult = await this.createTaskOrderService(body);
+        if (taskResult) {
+          this.loadingTurn = false;
+          this.msgModal(
+            'Se turnó la solicitud con el Folio Nº'
+              .concat(`<strong>${this.requestId}</strong>`),
+            'Solicitud Creada',
+            'success'
+          );
+          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        }
+      }
     }
   }
 
-  createTaskOrderService(body: any) {
+  /** VALIDAR */
+  async generateFirstTask(processName) {
+
+    //POR_TURNAR
+
+    return new Promise(async (resolve, reject) => {
+      this.loadingTurn = true;
+
+      this.requestId = this.requestId;
+      const user: any = this.authService.decodeToken();
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = user.username;
+      task['assigneesDisplayname'] = user.username;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.requestId);
+      task['title'] = 'Verificar Cumplimiento con folio: ' + this.requestId;
+      task['programmingId'] = 0;
+      task['requestId'] = this.requestId;
+      task['expedientId'] = 0;
+      task['processName'] = processName;
+      task['idDelegationRegional'] = user.department;
+      task['urlNb'] = 'pages/request/request-comp-doc/create';
+      const taskResult: any = await this.createOnlyTask(task);
+      if (taskResult) {
+
+        this.taskId = Number(taskResult.data[0].id);
+
+        this.loadingTurn = false;
+      }
+      resolve(true);
+
+    });
+  }
+
+  /** VALIDAR */
+  createOnlyTask(task: any) {
     return new Promise((resolve, reject) => {
-      this.taskService.createTask(body).subscribe({
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          if (resp.length == 0) {
+            this.onLoadToast(
+              'error',
+              'Error al crear tarea',
+              'El servicio de crear tareas no esta funcionando por el momento'
+            );
+            reject(false);
+          } else {
+            resolve(resp);
+          }
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'Error al crear tarea',
+            'El servicio de crear tareas no esta funcionando por el momento'
+          );
+          reject(false);
+        },
+      });
+    });
+  }
+
+  /** VALIDAR */
+  updateTurnedRequest(form: any) {
+    return new Promise((resolve, reject) => {
+      form.requestStatus = 'A_TURNAR';
+      form.receiptRoute = 'FISICA';
+      form.affair = form.affair;
+      form.typeOfTransfer = 'MANUAL';
+      //form.regionalDelegationId = this.delegationId;
+      //form.originInfo = 'SOL_TRANSFERENCIA'
+      //let date = this.requestForm.controls['applicationDate'].value;
+      //form.applicationDate = date.toISOString();
+
+      this.requestService.update(form.id, form).subscribe({
         next: resp => {
           resolve(resp);
         },
         error: error => {
+          this.loadingTurn = false;
+          this.msgModal('error', 'Error', 'Error al guardar la solicitud');
+          reject(error.error);
+        },
+      });
+    });
+  }
+
+  /** VALIDAR */
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.loadingTurn = false;
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
@@ -628,11 +751,27 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  msgModal(icon: any, title: string, message: string) {
+  closeTask() {
+    return new Promise((resolve, reject) => {
+      const task = JSON.parse(localStorage.getItem('Task'));
+      const taskForm: ITask = {
+        State: 'FINALIZADA',
+      };
+      this.taskService.update(task.id, taskForm).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => { },
+      });
+    });
+  }
+
+  /** VALIDAR */
+  msgModal(message: string, title: string, typeMsg: any) {
     Swal.fire({
       title: title,
       html: message,
-      icon: icon,
+      icon: typeMsg,
       showCancelButton: false,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
@@ -640,30 +779,9 @@ export class RequestCompDocTasksComponent
       allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
-        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        this.loadingTurn = false;
       }
     });
   }
-
-  updateRequest() {
-    this.updateInfo = true;
-  }
-
-  updateTask(body: any, idRequest: string) {
-    return new Promise((resolve, reject) => {
-      this.taskService.update(body.id, body).subscribe({
-        next: resp => {
-          this.msgModal(
-            'Se guardó la solicitud con el Folio Nº '.concat(
-              `<strong>${idRequest}</strong>`
-            ),
-            'Solicitud Guardada',
-            'success'
-          );
-        },
-      });
-    });
-  }
-
 
 }
