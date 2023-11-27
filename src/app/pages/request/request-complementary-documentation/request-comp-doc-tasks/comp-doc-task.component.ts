@@ -67,6 +67,29 @@ export abstract class CompDocTasksComponent extends BasePage {
       if (process == 'BSValidarVisitaOcular') {
         this.title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
       }
+    } else if (affair == 40) {
+      if (process == 'RERegistroSolicitudes' || process == 'register-request') {
+        this.title = `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No. Solicitud: #: ${this.requestInfo.id}`;
+      }
+      if (process == 'RERevisionLineamientos') {
+        this.title = `Revisión de Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA.`;
+      }
+      if (process == 'REGenerarResultadoAnalisis') {
+        this.title = `Generar Resultado de Análisis Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
+      }
+      if (process == 'BSValidarDictaamen') {
+        this.title = `Validar Dictamen Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
+      }
+    } else if (affair == 41) {
+      if (process == 'IBRegistroSolicitudes' || process == 'register-request') {
+        this.title = `INFORMACIÓN DE BIENES: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
+      }
+      if (process == 'IBGenerarSolicitudInformacion') {
+        this.title = `Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud: ${this.requestInfo.id}`;
+      }
+      if (process == 'IBRevisionOficioRespuesta') {
+        this.title = `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${this.requestInfo.id}`;
+      }
     }
   }
 
