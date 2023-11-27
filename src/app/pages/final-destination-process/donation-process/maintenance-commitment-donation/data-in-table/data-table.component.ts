@@ -429,6 +429,8 @@ export class DataTableComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.log('error ', error);
+        this.dataTable1.load([]);
+        this.dataTable1.refresh();
         this.loading = false;
       },
     });
