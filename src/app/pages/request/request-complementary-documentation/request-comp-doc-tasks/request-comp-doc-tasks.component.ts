@@ -24,6 +24,11 @@ import { CreateReportComponent } from '../../shared-request/create-report/create
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { de } from 'date-fns/locale';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import Swal from 'sweetalert2';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -32,8 +37,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
+  protected override searchAssociateFile: boolean;
   /* CALL TABS DINAMICALY */
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   /**
@@ -78,10 +83,14 @@ export class RequestCompDocTasksComponent
   complementaryDoc: boolean = false;
   typeVisit: string = '';
   affair: number = null;
+  taskId: number = 0;
+
   /**
    * email del usuairo
    */
   emailForm: FormGroup = new FormGroup({});
+
+  loadingTurn = false
 
   /* INJECTIONS
   ============== */
@@ -89,6 +98,9 @@ export class RequestCompDocTasksComponent
   private requestHelperService = inject(RequestHelperService);
   private affairService = inject(AffairService);
   private bsModalRef = inject(BsModalRef);
+  private authService = inject(AuthService);
+  private taskService = inject(TaskService);
+
   //private rejectedService = inject(RejectedGoodService)
 
   /*  */
@@ -176,7 +188,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
@@ -198,10 +210,23 @@ export class RequestCompDocTasksComponent
       'Turnar'
     ).then(async question => {
       if (question.isConfirmed) {
+
+        console.log(this.affair, this.process);
+
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else if (this.process == 'register-request') {
-          this.setEmailNotificationTask();
+
+          let val = this.affair.toString();
+          switch (val) {
+            case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+              this.generateTask(this.affair);
+              break;
+            default:
+              this.setEmailNotificationTask();
+              break;
+          }
+
         } else if (this.process == 'BSNotificarTransferente') {
           this.setEmailNotificationTask();
         } else if (this.process == 'BSVisitaOcular') {
@@ -219,6 +244,7 @@ export class RequestCompDocTasksComponent
         } else {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         }
+
       }
     });
   }
@@ -252,6 +278,7 @@ export class RequestCompDocTasksComponent
   }
 
   closeSearchRequestSimGoodsTab(recordId: number) {
+    console.log(recordId);
     if (recordId) {
       this.searchRequestSimGoods = false;
     }
@@ -492,4 +519,269 @@ export class RequestCompDocTasksComponent
       } //this.getCities();
     });
   }
+
+  getValuesForTurn(affair): any {
+
+    let title = '';
+    let url = '';
+    let process = '';
+    switch (affair) {
+
+      case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+        title =
+          'DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ' + this.requestId + ', Contribuyente, PAMA';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'DVerificarCumplimiento';
+        return { title: title, urlNb: url, processName: process };
+
+      case "33": //GESTIONAR BINES SIMILARES RESARCIMIENTO
+        title =
+          'BIENES SIMILARES Notificacion a transferente,No. Solicitud:';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'BSRegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
+
+      case "40": //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
+        title =
+          'Revisión de Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud ' + this.requestId + ', Contribuyente, PAMA:';
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'RERegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
+
+      case "41": //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
+        title =
+          'Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud' + this.requestId;
+        url = 'pages/request/request-comp-doc/tasks/register-request';
+        process = 'IBRegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
+
+      default:
+        break;
+    }
+  }
+
+  updateRequest() {
+    this.updateInfo = true;
+    this.msgModal(
+      'Se guardó la solicitud con el Folio Nº '.concat(
+        `<strong>${this.requestId}</strong>`
+      ),
+      'Solicitud Guardada',
+      'success'
+    );
+  }
+
+  /** VALIDAR */
+  async generateTask(affair) {
+
+    const { title, urlNb, processName, finish, type, subtype, ssubtype
+    } = this.nextProcess(affair, this.process);
+
+    this.loadingTurn = true;
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    await this.closeTask();
+
+    const createTask = await this.generateFirstTask(processName);
+    if (createTask) {
+
+      //Estableciendo valores a transferente, emisora y autoridad
+      let idTransferente = this.requestInfo.transferenceId;
+      let idEmisora = this.requestInfo.stationId;
+      let idAuthoridad = this.requestInfo.authorityId;
+      let nickName = '';
+      let userName = '';
+
+      /** VALIDAR DATOS */
+      //const requestResult: any = await this.updateTurnedRequest(this.requestInfo);
+      if (true) {
+        const actualUser: any = this.authService.decodeToken();
+        let body: any = {};
+        body['idTask'] = this.taskId;
+        body['userProcess'] = actualUser.username;
+
+        /** VALIDAR DATOS */
+        body['type'] = type;
+        body['subtype'] = subtype;
+        body['ssubtype'] = ssubtype;
+
+        let task: any = {};
+        task['id'] = _task.id;
+        task['assignees'] = nickName;
+        task['assigneesDisplayname'] = userName;
+        task['reviewers'] = actualUser.username;
+        task['creator'] = actualUser.username;
+        task['taskNumber'] = Number(this.requestId);
+        task['title'] = title;
+        task['programmingId'] = 0;
+        task['requestId'] = this.requestId;
+        task['expedientId'] = 0;
+        task['urlNb'] = urlNb;
+        task['processName'] = processName;
+        task['idstation'] = idEmisora;
+        task['idTransferee'] = idTransferente;
+        task['idAuthority'] = idAuthoridad;
+        task['idDelegationRegional'] = actualUser.department;
+        body['task'] = task;
+
+        let orderservice: any = {};
+        orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+        orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+        orderservice['pIdApplication'] = this.requestId;
+        orderservice['pCurrentDate'] = new Date().toISOString();
+        orderservice['pOrderServiceIn'] = '';
+
+        body['orderservice'] = orderservice;
+
+        const taskResult = await this.createTaskOrderService(body);
+        if (taskResult) {
+          this.loadingTurn = false;
+          this.msgModal(
+            'Se turnó la solicitud con el Folio Nº'
+              .concat(`<strong>${this.requestId}</strong>`),
+            'Solicitud Creada',
+            'success'
+          );
+          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        }
+      }
+    }
+  }
+
+  /** VALIDAR */
+  async generateFirstTask(processName) {
+
+    //POR_TURNAR
+
+    return new Promise(async (resolve, reject) => {
+      this.loadingTurn = true;
+
+      this.requestId = this.requestId;
+      const user: any = this.authService.decodeToken();
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = user.username;
+      task['assigneesDisplayname'] = user.username;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.requestId);
+      task['title'] = 'Verificar Cumplimiento con folio: ' + this.requestId;
+      task['programmingId'] = 0;
+      task['requestId'] = this.requestId;
+      task['expedientId'] = 0;
+      task['processName'] = processName;
+      task['idDelegationRegional'] = user.department;
+      task['urlNb'] = 'pages/request/request-comp-doc/create';
+      const taskResult: any = await this.createOnlyTask(task);
+      if (taskResult) {
+
+        this.taskId = Number(taskResult.data[0].id);
+
+        this.loadingTurn = false;
+      }
+      resolve(true);
+
+    });
+  }
+
+  /** VALIDAR */
+  createOnlyTask(task: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          if (resp.length == 0) {
+            this.onLoadToast(
+              'error',
+              'Error al crear tarea',
+              'El servicio de crear tareas no esta funcionando por el momento'
+            );
+            reject(false);
+          } else {
+            resolve(resp);
+          }
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'Error al crear tarea',
+            'El servicio de crear tareas no esta funcionando por el momento'
+          );
+          reject(false);
+        },
+      });
+    });
+  }
+
+  /** VALIDAR */
+  updateTurnedRequest(form: any) {
+    return new Promise((resolve, reject) => {
+      form.requestStatus = 'A_TURNAR';
+      form.receiptRoute = 'FISICA';
+      form.affair = form.affair;
+      form.typeOfTransfer = 'MANUAL';
+      //form.regionalDelegationId = this.delegationId;
+      //form.originInfo = 'SOL_TRANSFERENCIA'
+      //let date = this.requestForm.controls['applicationDate'].value;
+      //form.applicationDate = date.toISOString();
+
+      this.requestService.update(form.id, form).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.loadingTurn = false;
+          this.msgModal('error', 'Error', 'Error al guardar la solicitud');
+          reject(error.error);
+        },
+      });
+    });
+  }
+
+  /** VALIDAR */
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.loadingTurn = false;
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
+
+  closeTask() {
+    return new Promise((resolve, reject) => {
+      const task = JSON.parse(localStorage.getItem('Task'));
+      const taskForm: ITask = {
+        State: 'FINALIZADA',
+      };
+      this.taskService.update(task.id, taskForm).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => { },
+      });
+    });
+  }
+
+  /** VALIDAR */
+  msgModal(message: string, title: string, typeMsg: any) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: typeMsg,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.loadingTurn = false;
+      }
+    });
+  }
+
 }
