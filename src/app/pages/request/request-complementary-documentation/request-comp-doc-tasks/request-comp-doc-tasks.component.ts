@@ -148,6 +148,13 @@ export class RequestCompDocTasksComponent
         //this.requestId = resp.data[0].id;
         console.log(this.process, this.affair);
         this.mapTask(this.process, resp.data[0].affair);
+
+        //DRegistroSolicitudes
+        //DVerificarCumplimiento
+        //DAprobarDevolucion
+
+        this.process = "DVerificarCumplimiento";
+
         this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
