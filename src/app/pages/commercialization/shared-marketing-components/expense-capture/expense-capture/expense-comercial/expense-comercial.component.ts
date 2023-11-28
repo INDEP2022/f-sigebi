@@ -110,6 +110,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           }
         },
       });
+    this.dataService.saveSubject.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        if (response) {
+          this.save();
+        }
+      },
+    });
     // console.log(user);
     this.prepareForm();
   }
@@ -952,7 +959,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get dataCompositionExpensesToUpdateClasif() {
     return this.dataCompositionExpenses
       ? this.dataCompositionExpenses.filter(
-          row => row.reportDelit && row.reportDelit === true && row.goodNumber
+          row => row.reportDelit && row.reportDelit === true
         )
       : [];
   }
@@ -960,7 +967,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get dataCompositionExpensesStatusChange() {
     return this.dataCompositionExpenses
       ? this.dataCompositionExpenses.filter(
-          row => row.changeStatus && row.changeStatus === true && row.goodNumber
+          row => row.changeStatus && row.changeStatus === true
         )
       : [];
   }

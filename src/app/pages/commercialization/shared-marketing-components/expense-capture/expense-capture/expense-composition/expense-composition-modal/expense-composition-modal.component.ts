@@ -45,6 +45,7 @@ export class ExpenseCompositionModalComponent
         this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
         this.transferorNumber.setValue(this.comerDetExpense.transferorNumber);
         this.goodNumber.setValue(this.comerDetExpense.goodNumber);
+        this.budgetItem.setValue(this.comerDetExpense.departure);
       }
     }, 500);
   }
@@ -61,6 +62,7 @@ export class ExpenseCompositionModalComponent
         null,
         [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
       ],
+      budgetItem: [null],
       vat: [
         null,
         [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
@@ -74,10 +76,7 @@ export class ExpenseCompositionModalComponent
         [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
       ],
       transferorNumber: [null, [Validators.required]],
-      goodNumber: [
-        null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
-      ],
+      goodNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
   }
 
@@ -87,6 +86,10 @@ export class ExpenseCompositionModalComponent
 
   get amount() {
     return this.form.get('amount');
+  }
+
+  get budgetItem() {
+    return this.form.get('budgetItem');
   }
 
   get amountValue() {
