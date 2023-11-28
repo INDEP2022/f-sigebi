@@ -148,13 +148,6 @@ export class RequestCompDocTasksComponent
         //this.requestId = resp.data[0].id;
         console.log(this.process, this.affair);
         this.mapTask(this.process, resp.data[0].affair);
-
-        //DRegistroSolicitudes
-        //DVerificarCumplimiento
-        //DAprobarDevolucion
-
-        this.process = "DVerificarCumplimiento";
-
         this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
@@ -219,6 +212,15 @@ export class RequestCompDocTasksComponent
       if (question.isConfirmed) {
 
         console.log(this.affair, this.process);
+
+        switch (this.process) {
+          case 'register-request-return':
+          case 'verify-compliance-return':
+          case 'approve-return':
+            this.generateTask(this.process);
+            return;
+        }
+
 
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
@@ -527,46 +529,6 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  getValuesForTurn(affair): any {
-
-    let title = '';
-    let url = '';
-    let process = '';
-    switch (affair) {
-
-      case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
-        title =
-          'DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ' + this.requestId + ', Contribuyente, PAMA';
-        url = 'pages/request/request-comp-doc/tasks/register-request';
-        process = 'DVerificarCumplimiento';
-        return { title: title, urlNb: url, processName: process };
-
-      case "33": //GESTIONAR BINES SIMILARES RESARCIMIENTO
-        title =
-          'BIENES SIMILARES Notificacion a transferente,No. Solicitud:';
-        url = 'pages/request/request-comp-doc/tasks/register-request';
-        process = 'BSRegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      case "40": //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
-        title =
-          'Revisión de Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud ' + this.requestId + ', Contribuyente, PAMA:';
-        url = 'pages/request/request-comp-doc/tasks/register-request';
-        process = 'RERegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      case "41": //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
-        title =
-          'Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud' + this.requestId;
-        url = 'pages/request/request-comp-doc/tasks/register-request';
-        process = 'IBRegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      default:
-        break;
-    }
-  }
-
   updateRequest() {
     this.updateInfo = true;
     this.msgModal(
@@ -581,8 +543,11 @@ export class RequestCompDocTasksComponent
   /** VALIDAR */
   async generateTask(affair) {
 
+    console.log("**********");
+    console.log(affair, this.process);
+
     const { title, urlNb, processName, finish, type, subtype, ssubtype
-    } = this.nextProcess(affair, this.process);
+    } = this.nextProcess(this.process);
 
     this.loadingTurn = true;
     const _task = JSON.parse(localStorage.getItem('Task'));
