@@ -13,7 +13,7 @@ export const COLUMNS = {
       
     },*/
     valuePrepareFunction: (value: any) => {
-      return value != null ? value.id : '';
+      return value != null ? `${value.id} - ${value.processKey}` : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
       return true;
@@ -37,9 +37,12 @@ export const COLUMNS = {
       }
     },*/
   },
-  publicLot: {
+  lotId: {
     title: 'Lote',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? `${value.publicLot} - ${value.description}` : '';
+    },
   },
   startDate: {
     title: 'Fecha Inicial',
@@ -137,23 +140,33 @@ export const COLUMNS2 = {
     title: 'Tipo de Penalización',
     sort: false,
   },
-  /*event: {
+  event: {
     title: 'Cve. Evento',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value != null ? value.id : '';
+      return value != null ? `${value.id} - ${value.processKey}` : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
       return true;
     },
-  },*/
-  eventId: {
+  },
+  /*eventId: {
     title: 'Cve. Evento',
     sort: false,
-  },
-  batchPublic: {
+  },*/
+  /*batchPublic: {
     title: 'Lote',
     sort: false,
+  },*/
+  lot: {
+    title: 'Lote',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? `${value.id} - ${value.description}` : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   initialDate: {
     title: 'Fecha Inicial',

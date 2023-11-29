@@ -49,6 +49,29 @@ export class ParamsConceptsModalComponent
 
   override ngOnInit(): void {
     this.prepareForm();
+    const list = [{ value: 'C', title: 'GENERAL' }];
+    if (this.addressParam === 'M') {
+      list.push({ value: 'M', title: 'MUEBLES' });
+    }
+    if (this.addressParam === 'I') {
+      list.push({ value: 'I', title: 'INMUEBLES' });
+    }
+    this.settings = {
+      ...this.settings,
+      columns: {
+        ...COLUMNS,
+        address: {
+          ...COLUMNS.address,
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Seleccionar',
+              list,
+            },
+          },
+        },
+      },
+    };
     this.dinamicFilterUpdate();
     this.searchParams();
   }
@@ -103,7 +126,7 @@ export class ParamsConceptsModalComponent
     // }
     this.modalRef.content.callback({
       ...this.form.value,
-      address: this.getAddressCode(this.form.value.address),
+      address: this.form.value.address,
     });
     this.modalRef.hide();
   }

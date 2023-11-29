@@ -14,7 +14,9 @@ import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/p
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
+import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
 import { COLUMNS } from './columns';
 import { ExpenseCompositionModalComponent } from './expense-composition-modal/expense-composition-modal.component';
@@ -31,8 +33,8 @@ export class ExpenseCompositionComponent
   implements OnInit
 {
   toggleInformation = true;
-  selectedRow: IComerDetExpense2;
   @ViewChild('table') table: Ng2SmartTableComponent;
+  @ViewChild('file') file: any;
   ce: boolean = false;
   rr: boolean = false;
   constructor(
@@ -42,12 +44,13 @@ export class ExpenseCompositionComponent
     private parameterService: ParametersConceptsService,
     private parametersModService: ParametersModService,
     private lotService: ExpenseLotService,
+    private goodProcessService: ExpenseGoodProcessService,
+    private expenseModalService: ExpenseModalService,
     private accountMovementService: AccountMovementService,
     private parametercomerService: ExpenseParametercomerService
   ) {
     super();
     // this.service = this.dataService;
-    this.params.value.limit = 100000;
     this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
@@ -62,16 +65,77 @@ export class ExpenseCompositionComponent
           }
         },
       });
-    this.dataPaginated.onUpdated().subscribe({
-      next: response => {
-        console.log(response);
-      },
-    });
-    this.dataPaginated.onChanged().subscribe({
-      next: response => {
-        console.log(response);
-      },
-    });
+    this.dataPaginated
+      .onUpdated()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+        },
+      });
+    this.dataPaginated
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+        },
+      });
+    this.expenseModalService.selectedMotivesSubject
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.loader.load = true;
+          this.sendSolicitud(false, true);
+        },
+      });
+    this.expenseCaptureDataService.updateExpenseCompositionAndValidateProcess
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.validateAndProcess = true;
+          this.getData();
+        },
+      });
+    this.expenseCaptureDataService.finishProcessSolicitud
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.loader.load = false;
+        },
+      });
+  }
+
+  get validateAndProcess() {
+    return this.expenseCaptureDataService.validateAndProcess;
+  }
+
+  set validateAndProcess(value) {
+    this.expenseCaptureDataService.validateAndProcess = value;
+  }
+
+  get selectedRow() {
+    return this.expenseCaptureDataService.selectedComposition;
+  }
+
+  set selectedRow(value) {
+    this.expenseCaptureDataService.selectedComposition = value;
+  }
+
+  override ngOnInit(): void {
+    if (this.haveInitialCharge) {
+      this.resetTotals();
+      this.getData();
+    }
+  }
+
+  private resetTotals() {
+    this.amount = 0;
+    this.vat = 0;
+    this.isrWithholding = 0;
+    this.vatWithholding = 0;
+    this.total = 0;
   }
 
   get PCONDIVXMAND() {
@@ -137,6 +201,10 @@ export class ExpenseCompositionComponent
   }
 
   get showFilters() {
+    return this.expenseNumber && this.expenseNumber.value && this.validPayment;
+  }
+
+  get showAdd() {
     return this.expenseNumber && this.expenseNumber.value;
   }
 
@@ -184,11 +252,7 @@ export class ExpenseCompositionComponent
     this.ce = !this.ce;
     this.dataPaginated.getElements().then(_item => {
       let result = _item.map(item => {
-        if (item.changeStatus) {
-          item.changeStatus = false;
-        } else {
-          item.changeStatus = true;
-        }
+        item.changeStatus = this.ce;
       });
       Promise.all(result).then(resp => {
         // console.log('after array selectsCPD: ', this.selectedGoods);
@@ -201,11 +265,9 @@ export class ExpenseCompositionComponent
     this.rr = !this.rr;
     this.dataPaginated.getElements().then(_item => {
       let result = _item.map(item => {
-        if (item.reportDelit) {
-          item.reportDelit = false;
-        } else {
-          item.reportDelit = true;
-        }
+        let result = _item.map(item => {
+          item.reportDelit = this.rr;
+        });
         if (item.V_VALCON_ROBO > 0) {
           if (
             item.vehiculoCount === 0 &&
@@ -256,6 +318,10 @@ export class ExpenseCompositionComponent
     this.modalService.show(ExpenseCompositionModalComponent, modalConfig);
   }
 
+  get validPayment() {
+    return this.expenseCaptureDataService.validPayment;
+  }
+
   async delete(row: IComerDetExpense2) {
     const response = await this.alertQuestion(
       'warning',
@@ -275,6 +341,7 @@ export class ExpenseCompositionComponent
               'Composición de Gasto ' + row.detPaymentsId,
               'Eliminado correctamente'
             );
+            this.getData();
           },
           error: err => {
             this.alert(
@@ -292,11 +359,7 @@ export class ExpenseCompositionComponent
     if (!this.dataService) {
       return;
     }
-    this.amount = 0;
-    this.vat = 0;
-    this.isrWithholding = 0;
-    this.vatWithholding = 0;
-    this.total = 0;
+    this.resetTotals();
     this.loading = true;
     let params = this.getParams();
     this.dataService
@@ -306,7 +369,7 @@ export class ExpenseCompositionComponent
         this.PDEVPARCIALBIEN,
         this.CHCONIVA,
         this.IVA,
-        params
+        { ...params, limit: 1000000 }
       )
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
@@ -315,7 +378,7 @@ export class ExpenseCompositionComponent
             console.log(response.data);
             this.data = response.data.map(row => {
               this.amount += row.amount ? +row.amount : 0;
-              this.vat += row.iva2 ? +row.iva2 : 0;
+              this.vat += row.iva ? +row.iva : 0;
               this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
               this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
               this.total += row.total ? +row.total : 0;
@@ -335,8 +398,14 @@ export class ExpenseCompositionComponent
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
-
+            this.GRABA_TOTALES();
             this.loading = false;
+            if (this.validateAndProcess) {
+              setTimeout(() => {
+                this.expenseCaptureDataService.validateAndProcessSolicitud();
+                this.validateAndProcess = false;
+              }, 500);
+            }
           } else {
             this.notGetData();
           }
@@ -362,6 +431,74 @@ export class ExpenseCompositionComponent
     this.selectedRow = row;
   }
 
+  showErrorDisperGasto() {
+    this.loader.load = false;
+    this.alert(
+      'error',
+      'No se pudo realizar la dispersión de gastos/mandatos',
+      'Favor de verificar'
+    );
+  }
+
+  private setDisperGasto(row: IComerDetExpense2) {
+    this.loader.load = true;
+    this.lotService
+      .DIVIDE_MANDATOS({
+        eventId: this.eventNumber,
+        amount2: row.amount,
+        iva2: row.iva,
+        withholding_vat2: row.retencionIva,
+        withholdingIsr2: row.retencionIsr,
+        expenseId: this.expenseNumber.value,
+      })
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+          if (response.data && response.data.length > 0) {
+            let result = response.data[1];
+            this.dataService
+              .updateMassive(
+                this.dataTemp.map(x => {
+                  let newRow: any = {
+                    amount: result.MONTO2,
+                    goodNumber: x.goodNumber,
+                    expenseDetailNumber: x.detPaymentsId,
+                    expenseNumber: x.paymentsId,
+                    vat: result.iva2,
+                    isrWithholding: result.retencion_isr2,
+                    vatWithholding: result.retencion_iva2,
+                    cvman: x.manCV,
+                    budgetItem: x.departure,
+                  };
+                  return newRow;
+                })
+              )
+              .pipe(take(1))
+              .subscribe({
+                next: response => {
+                  this.loader.load = false;
+                  this.alert(
+                    'success',
+                    'Se realizo la división de pagos entre los mandatos',
+                    ''
+                  );
+                  this.getData();
+                },
+                error: err => {
+                  this.showErrorDisperGasto();
+                },
+              });
+          } else {
+            this.showErrorDisperGasto();
+          }
+        },
+        error: err => {
+          this.showErrorDisperGasto();
+        },
+      });
+  }
+
   disperGasto() {
     if (!this.PCONDIVXMAND) {
       this.alert(
@@ -375,41 +512,30 @@ export class ExpenseCompositionComponent
     if (!this.eventNumber) {
       this.alert(
         'warning',
-
         'Debe capturar el evento, para utilizar esta opción',
         ''
       );
       return;
     }
     const row = this.selectedRow;
-    this.lotService
-      .DIVIDE_MANDATOS({
-        eventId: this.eventNumber,
-        amount2: row.amount,
-        iva2: row.iva2,
-        withholding_vat2: row.retencionIva,
-        withholdingIsr2: row.retencionIsr,
-        expenseId: this.expenseNumber.value,
-      })
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: response => {
-          if (response) {
-            this.alert(
-              'success',
-              'Este concepto no admite dispersión de pagos por mandato',
-              ''
-            );
-          }
-        },
-        error: err => {
-          this.alert(
-            'error',
-            'No se pudo realizar la dispersión de gastos/mandatos',
-            'Favor de verificar'
-          );
-        },
-      });
+    if (!row.amount) {
+      this.alert('warning', 'Debe capturar los datos del importe', '');
+      return;
+    }
+    if (!row.iva) {
+      this.alert('warning', 'Debe capturar los datos del importe', '');
+      return;
+    }
+    this.alertQuestion(
+      'question',
+      '¿Desea dividir los pagos entre los mandatos participantes del evento?',
+      ''
+    ).then(response => {
+      if (response.isConfirmed) {
+        this.setDisperGasto(row);
+      }
+    });
+
     // divide mandatos
   }
 
@@ -428,8 +554,14 @@ export class ExpenseCompositionComponent
     }
   }
 
-  private async sendSolicitud(V_VALIDA_DET: boolean = null) {
-    this.expenseCaptureDataService.ENVIA_SOLICITUD(V_VALIDA_DET);
+  private async sendSolicitud(
+    V_VALIDA_DET: boolean = null,
+    showExtramessage: boolean = null
+  ) {
+    this.expenseCaptureDataService.ENVIA_SOLICITUD(
+      V_VALIDA_DET,
+      showExtramessage
+    );
   }
 
   private sendMotive() {
@@ -445,7 +577,13 @@ export class ExpenseCompositionComponent
     return selectedChangeStatus.length > 0;
   }
 
+  set actionButton(value) {
+    this.expenseCaptureDataService.actionButton = value;
+  }
+
   async modifyEstatus() {
+    this.loader.load = true;
+    this.actionButton = 'Cambio de estatus';
     let filterParams = new FilterParams();
     filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
     if (this.conceptNumber) {
@@ -489,6 +627,7 @@ export class ExpenseCompositionComponent
               'Realizado Correctamente'
             );
           } else {
+            this.loader.load = false;
             this.alert(
               'warning',
               'Modificar Estatus',
@@ -496,17 +635,23 @@ export class ExpenseCompositionComponent
             );
           }
         } else {
+          this.loader.load = false;
           this.sendMotive();
         }
+      } else {
+        this.loader.load = false;
       }
     }
   }
 
   loadGoods(event: Event) {
+    // this.alert('success', 'Se realizó la carga de datos', '');
+    // return;
     this.loader.load = true;
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const file = files[0];
+    // this.file.nativeElement.value = '';
     console.log(file.name);
     if (file.name.includes('csv')) {
       // this.CARGA_BIENES_CSV(file);
@@ -531,7 +676,131 @@ export class ExpenseCompositionComponent
             this.CARGA_BIENES_CSV(file);
           },
         });
+    } else {
+      this.CARGA_BIENES_EXCEL(file);
     }
+  }
+
+  private CARGA_BIENES_EXCEL(file) {
+    this.goodProcessService
+      .CARGA_BIENES_EXCEL(file)
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.file.nativeElement.value = '';
+          if (response.data && response.data.length > 0) {
+            this.dataService
+              .massiveInsert(
+                response.data.map(row => {
+                  let total = row.amount2 + row.COL_IVA ? row.vat2 : 0;
+                  return {
+                    vat: row.vat2,
+                    amount: row.amount2,
+                    goodNumber: row.goodNumber,
+                    transferorNumber: row.transferorNumber,
+                    cvman: row.mandate2,
+                    isrWithholding: 0,
+                    vatWithholding: 0,
+                    // goodDescription: row.DESCRIPCION,
+                    budgetItem: null,
+                    changeStatus: false,
+                    reportDelit: false,
+                    total,
+                    expenseNumber: this.expenseNumber.value,
+                  };
+                })
+              )
+              .subscribe({
+                next: response => {
+                  this.removeMassive();
+                },
+                error: err => {
+                  this.loader.load = false;
+                  this.alert(
+                    'error',
+                    'No se pudo realizar la carga de datos',
+                    ''
+                  );
+                },
+              });
+          } else {
+            this.loader.load = false;
+            this.alert('error', 'No se pudo realizar la carga de datos', '');
+          }
+        },
+        error: err => {
+          this.file.nativeElement.value = '';
+          this.loader.load = false;
+          this.alert('error', 'No se pudo realizar la carga de datos', '');
+        },
+      });
+  }
+
+  private CARGA_BIENES_CSV(file: File) {
+    this.parametercomerService
+      .pupChargeGoods(file)
+      .pipe(take(1))
+      .subscribe(
+        (event: any) => {
+          console.log(event);
+          this.file.nativeElement.value = '';
+          if (typeof event === 'object') {
+            console.log(event.body);
+            if (event.CONT > 0) {
+              let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
+                event.messages
+              );
+              this.dataService.massiveInsert(dataCSV).subscribe({
+                next: response => {
+                  this.removeMassive();
+                },
+                error: err => {
+                  this.loader.load = false;
+                  this.alert(
+                    'error',
+                    'No se pudo realizar la carga de datos',
+                    ''
+                  );
+                },
+              });
+            }
+          } else {
+            this.loader.load = false;
+            this.alert('error', 'No se pudo realizar la carga de datos', '');
+          }
+        },
+        error => {
+          this.loader.load = false;
+          this.file.nativeElement.value = '';
+          this.alert('error', 'No se pudo realizar la carga de datos', '');
+        }
+      );
+
+    // this.GRABA_TOTALES();
+  }
+
+  private removeMassive() {
+    this.dataService
+      .removeMassive(
+        this.data.map(x => {
+          return {
+            expenseDetailNumber: x.detPaymentsId,
+            expenseNumber: x.paymentsId,
+          };
+        })
+      )
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.loader.load = false;
+          this.alert('success', 'Se realizó la carga de datos', '');
+          this.getData();
+        },
+        error: err => {
+          this.loader.load = false;
+          this.alert('error', 'No se pudo realizar la carga de datos', '');
+        },
+      });
   }
 
   private CARGA_BIENES_CSV_VALIDADOS(file: File) {
@@ -544,59 +813,47 @@ export class ExpenseCompositionComponent
         retentionIva2: this.vatWithholding + '',
       })
       .pipe(take(1))
-      .subscribe((event: any) => {
-        console.log(event);
-        if (typeof event === 'object') {
-          console.log(event.body);
-          if (event.CONT > 0) {
-            this.amount = 0;
-            this.vat = 0;
-            this.isrWithholding = 0;
-            this.vatWithholding = 0;
-            this.total = 0;
-            this.data = event.messages.map((row: any) => {
-              this.amount += row.COL_IMPORTE ? +row.COL_IMPORTE : 0;
-              this.vat += row.COL_IVA ? +row.COL_IVA : 0;
-              this.isrWithholding += row.COL_RETISR ? +row.COL_RETISR : 0;
-              this.vatWithholding += row.COL_RETIVA ? +row.COL_RETIVA : 0;
-              let total =
-                row.COL_IMPORTE + row.COL_IVA
-                  ? row.COL_IVA
-                  : 0 - row.COL_RETISR
-                  ? row.COL_RETISR
-                  : 0 - row.COL_RETIVA
-                  ? row.COL_RETIVA
-                  : 0;
-              this.total += total;
-              return {
-                iva: row.COL_IVA,
-                amount2: row.COL_IMPORTE,
-                goodNumber: row.COL_SIAB,
-                transferorNumber: row.LNU_MANDATO,
-                manCV: row.LST_CVMAN,
-                retencionIsr: row.COL_RETISR,
-                retencionIva: row.COL_RETIVA,
-                changeStatus: false,
-                reportDelit: false,
-                description: row.DESCRIPCION,
-                mandato: row.CLAVE,
-                total,
-              };
-            });
-            this.expenseCaptureDataService.dataCompositionExpenses = [
-              ...this.data,
-            ];
-            this.totalItems = this.data.length;
-            this.dataTemp = [...this.data];
-            this.getPaginated(this.params.value);
-            this.GRABA_TOTALES();
+      .subscribe(
+        (event: any) => {
+          console.log(event);
+          this.file.nativeElement.value = '';
+          if (typeof event === 'object') {
+            console.log(event.body);
+            if (event.CONT > 0) {
+              let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
+                event.messages
+              );
+              this.dataService.massiveInsert(dataCSV).subscribe({
+                next: response => {
+                  this.removeMassive();
+                },
+                error: err => {
+                  this.loader.load = false;
+                  this.alert(
+                    'error',
+                    'No se pudo realizar la carga de datos',
+                    ''
+                  );
+                },
+              });
+            } else {
+              this.loader.load = false;
+              this.alert('error', 'No se pudo realizar la carga de datos', '');
+            }
           }
+        },
+        error => {
+          this.loader.load = false;
+          this.file.nativeElement.value = '';
+          this.alert('error', 'No se pudo realizar la carga de datos', '');
         }
-      });
+      );
   }
 
   private getComerDetExpenseArray(messages: any) {
     return messages.map((row: any) => {
+      console.log(row);
+
       let total =
         row.COL_IMPORTE + row.COL_IVA
           ? row.COL_IVA
@@ -613,8 +870,8 @@ export class ExpenseCompositionComponent
         cvman: row.LST_CVMAN,
         isrWithholding: row.COL_RETISR,
         vatWithholding: row.COL_RETIVA,
-        goodDescription: row.DESCRIPCION,
-        budgetItem: row.CLAVE,
+        // goodDescription: row.DESCRIPCION,
+        budgetItem: null,
         changeStatus: false,
         reportDelit: false,
         total,
@@ -622,78 +879,6 @@ export class ExpenseCompositionComponent
       };
       return newRow;
     });
-  }
-
-  private CARGA_BIENES_CSV(file: File) {
-    this.parametercomerService
-      .pupChargeGoods(file)
-      .pipe(take(1))
-      .subscribe((event: any) => {
-        console.log(event);
-        if (typeof event === 'object') {
-          console.log(event.body);
-          if (event.CONT > 0) {
-            let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
-              event.messages
-            );
-            this.dataService.massiveInsert(dataCSV).subscribe({
-              next: response => {
-                this.loader.load = false;
-              },
-              error: err => {
-                this.loader.load = false;
-              },
-            });
-          }
-          // if (event.CONT > 0) {
-          //   this.amount = 0;
-          //   this.vat = 0;
-          //   this.isrWithholding = 0;
-          //   this.vatWithholding = 0;
-          //   this.total = 0;
-          //   this.data = event.messages.map((row: any) => {
-          //     this.amount += row.COL_IMPORTE ? +row.COL_IMPORTE : 0;
-          //     this.vat += row.COL_IVA ? +row.COL_IVA : 0;
-          //     this.isrWithholding += row.COL_RETISR ? +row.COL_RETISR : 0;
-          //     this.vatWithholding += row.COL_RETIVA ? +row.COL_RETIVA : 0;
-          //     let total =
-          //       row.COL_IMPORTE + row.COL_IVA
-          //         ? row.COL_IVA
-          //         : 0 - row.COL_RETISR
-          //         ? row.COL_RETISR
-          //         : 0 - row.COL_RETIVA
-          //         ? row.COL_RETIVA
-          //         : 0;
-          //     this.total += total;
-          //     return {
-          //       iva: row.COL_IVA,
-          //       amount2: row.COL_IMPORTE,
-          //       goodNumber: row.COL_SIAB,
-          //       transferorNumber: row.LNU_MANDATO,
-          //       manCV: row.LST_CVMAN,
-          //       retencionIsr: row.COL_RETISR,
-          //       retencionIva: row.COL_RETIVA,
-          //       description: row.DESCRIPCION,
-          //       mandato: row.CLAVE,
-          //       changeStatus: false,
-          //       reportDelit: false,
-          //       total,
-          //     };
-          //   });
-          //   this.expenseCaptureDataService.dataCompositionExpenses = [
-          //     ...this.data,
-          //   ];
-          //   this.totalItems = this.data.length;
-          //   this.dataTemp = [...this.data];
-          //   this.getPaginated(this.params.value);
-          //   this.GRABA_TOTALES();
-          // }
-        } else {
-          this.loader.load = false;
-        }
-      });
-
-    // this.GRABA_TOTALES();
   }
 
   private GRABA_TOTALES() {
@@ -705,29 +890,63 @@ export class ExpenseCompositionComponent
   }
 
   applyTC() {
+    this.loader.load = true;
     this.dataTemp.forEach(row => {
       if (row) {
-        row.amount2 = +(
-          +(row.amount2 + '') *
+        row.amount = +(
+          +(row.amount + '') *
           (this.exchangeRate.value ? this.exchangeRate.value : 1)
         ).toFixed(2);
-        if (row.iva2 && +row.iva2 > 0) {
-          row.iva2 = +(+row.amount * 0.15).toFixed(2);
+        if (row.iva && +row.iva > 0) {
+          row.iva = +(+row.amount * 0.15).toFixed(2);
         }
-        row.total2 = +(+row.amount2 + (row.iva2 ? +row.iva2 : 0)).toFixed(2);
+        row.total = +(+row.amount + (row.iva ? +row.iva : 0)).toFixed(2);
         this.amount += row.amount ? +row.amount : 0;
-        this.vat += row.iva2 ? +row.iva2 : 0;
+        this.vat += row.iva ? +row.iva : 0;
         this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
         this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
         this.total += row.total ? +row.total : 0;
       }
     });
-    this.getPaginated(this.params.value);
+    // this.getPaginated(this.params.value);
+    this.dataService
+      .updateMassive(
+        this.dataTemp.map(x => {
+          let newRow: any = {
+            amount: x.amount,
+            goodNumber: x.goodNumber,
+            expenseDetailNumber: x.detPaymentsId,
+            expenseNumber: x.paymentsId,
+            vat: x.iva,
+            isrWithholding: x.retencionIsr,
+            vatWithholding: x.retencionIva,
+            cvman: x.manCV,
+            budgetItem: x.departure,
+          };
+          return newRow;
+        })
+      )
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.loader.load = false;
+          this.alert('success', 'Se actualizarón los detalles del gasto ', '');
+          this.getPaginated(this.params.value);
+        },
+        error: err => {
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'No se pudieron actualizar los detalles de gasto',
+            ''
+          );
+        },
+      });
   }
 
   async contabilityMand() {
+    this.loader.load = true;
     if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
-      this.loader.load = true;
       const result = await firstValueFrom(
         this.accountMovementService.getDepuraContmand(this.expenseNumber.value)
       );
@@ -738,6 +957,8 @@ export class ExpenseCompositionComponent
         this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
         this.loader.load = false;
       }
+    } else {
+      this.loader.load = false;
     }
   }
 
@@ -835,20 +1056,42 @@ export class ExpenseCompositionComponent
       });
   }
 
-  // reload() {
-
-  // }
+  reload() {
+    this.loader.load = true;
+    this.expenseCaptureDataService
+      .RECARGA_BIENES_LOTE()
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.loader.load = false;
+            this.getData();
+          } else {
+            this.loader.load = false;
+          }
+        },
+      });
+    // if (this.expenseCaptureDataService.VALIDA_DET()) {
+    //   this.getData();
+    // } else {
+    //   this.loader.load = false;
+    // }
+  }
 
   validates() {
+    this.loader.load = true;
     if (this.eventNumber === null) {
+      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de evento', '');
       return;
     }
     if (this.lotNumber === null || this.lotNumber.value === null) {
+      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de lote', '');
       return;
     }
     if (this.conceptNumber === null || this.conceptNumber.value === null) {
+      this.loader.load = false;
       this.alert(
         'warning',
         'Es necesario tener número de concepto de pago',
@@ -865,6 +1108,7 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
+          this.loader.load = false;
           if (response) {
             console.log(response);
             if (response && response.resData) {
@@ -883,6 +1127,7 @@ export class ExpenseCompositionComponent
         },
         error: err => {
           console.log(err);
+          this.loader.load = false;
           this.alert('error', 'Validación de Bienes', err);
         },
       });

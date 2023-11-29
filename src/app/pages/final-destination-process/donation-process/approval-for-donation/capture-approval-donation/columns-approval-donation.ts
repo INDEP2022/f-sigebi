@@ -47,7 +47,11 @@ export const COPY = {
     sort: false,
     visible: true,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.good?.description;
+      if (row.description) {
+        return row.description;
+      } else {
+        return row.good;
+      }
     },
   },
   amount: {
@@ -73,7 +77,11 @@ export const COPY = {
     visible: true,
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.good?.unit;
+      if (row.description) {
+        return row.unit;
+      } else {
+        return row.good?.unit;
+      }
     },
   },
   status: {
@@ -97,7 +105,7 @@ export const COPY = {
     title: 'Etiqueta Destino',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodEntity?.noEtiqueta;
+      return row.etiquetagood?.description;
     },
   },
   idNoWorker1: {
@@ -227,7 +235,7 @@ export const GODD_ERROR = {
     title: 'No. Bien',
     sort: false,
   },
-  des_error: {
+  error_desc: {
     title: 'Descripción del Error',
     sort: false,
   },

@@ -54,7 +54,7 @@ export class NumeraireConversionAuctionsComponent
     private authService: AuthService
   ) {
     super();
-    this.user = this.authService.decodeToken();
+    this.user = this.authService.decodeToken().preferred_username;
   }
 
   ngOnInit(): void {
@@ -324,6 +324,7 @@ export class NumeraireConversionAuctionsComponent
   }
 
   reporte() {
+    this.loader.load = true;
     let params = {
       DESTYPE: 'SCREEN',
       PARAMFORM: 'NO',
@@ -332,24 +333,31 @@ export class NumeraireConversionAuctionsComponent
     };
     this.siabService.fetchReport('RCOMER_NUMERARIO', params).subscribe({
       next: response => {
-        this.loading = false;
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered',
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
+        console.log(response);
+        this.loader.load = false;
+        if (response) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          this.alert('error', 'El reporte no se encuentra disponible', '');
+        }
       },
       error: err => {
+        this.loader.load = false;
         console.log(err);
+        this.alert('error', 'El reporte no se encuentra disponible', '');
       },
     });
   }

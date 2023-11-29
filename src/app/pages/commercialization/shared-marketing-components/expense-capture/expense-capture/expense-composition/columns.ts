@@ -59,16 +59,20 @@ export const COLUMNS = {
     //   },
     // },
   },
+  detPaymentsId: {
+    title: 'Id',
+    sort: false,
+  },
   departure: {
     title: 'Partida',
     sort: false,
   },
   manCV: {
-    title: 'Transferente',
+    title: 'Ur',
     sort: false,
   },
   mandato: {
-    title: 'Ur',
+    title: 'Transferente',
     sort: false,
   },
   goodNumber: {

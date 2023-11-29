@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   IListResponse,
@@ -18,22 +17,7 @@ export class ParametersModService extends HttpService {
   }
 
   getAll(params?: _Params) {
-    return this.get<IListResponseMessage<IParameterMod>>(
-      this.endpoint,
-      params
-    ).pipe(
-      map(response => {
-        return {
-          ...response,
-          data: response.data.map(x => {
-            return {
-              ...x,
-              address: this.getAddress(x.address),
-            };
-          }),
-        };
-      })
-    );
+    return this.get<IListResponseMessage<IParameterMod>>(this.endpoint, params);
   }
 
   private getAddress(address: string) {
