@@ -531,8 +531,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       });
     });
   }
-  removeAll() {}
-  removeSelect() {}
+  removeAll() { }
+  removeSelect() { }
 
   async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
@@ -556,6 +556,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
 
   getGoodsByStatus() {
+    console.log('....iniciando getGoodsByStatus');
     this.loading = true;
     this.dataTableGood_ = [];
     this.dataTableGood.load(this.dataTableGood_);
@@ -570,6 +571,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       params[
         'filter.transference.nameTransferent'
       ] = `$ilike:${localStorage.getItem('nameT')}`;
+    console.log('....iniciando getGoodsByStatus..llamando..');
     this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;

@@ -4,12 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build node --max_old_space_size=16384 ./node_modules/@angular/cli/bin/ng build --prod",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "prepare": "husky install",
     "format": "prettier --write \"./src/**/*.{ts,json,html}\"",
-    "server": "node --max_old_space_size=8096 ./node_modules/@angular/cli/bin/ng s"
+    "server": "node --max_old_space_size=16384 ./node_modules/@angular/cli/bin/ng s"
   },
   "browser": {
     "fs": false,
@@ -65,7 +65,7 @@
     "rxjs": "^7.5.7",
     "screenfull": "^5.2.0",
     "simple-keyboard": "^3.4.187",
-    "sweetalert2": "^11.4.8",
+    "sweetalert2": "11.4.8",
     "tiff.js": "^1.0.0",
     "tslib": "^2.3.0",
     "uuid": "^9.0.0",
