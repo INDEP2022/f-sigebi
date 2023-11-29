@@ -835,9 +835,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
         body['userProcess'] = actualUser.username;
 
         /** VALIDAR DATOS */
-        body['type'] = 'SOLICITUD_TRANSFERENCIA';
-        body['subtype'] = 'Nueva_Solicitud';
-        body['ssubtype'] = 'TURNAR';
+        body['type'] = 'DOCUMENTACION_COMPLEMENTARIA';
+        body['subtype'] = 'Registro_documentacion';
+        body['ssubtype'] = 'TURNAR_SOLICITUD_DEVOLUCION';
 
         let task: any = {};
         task['id'] = 0;

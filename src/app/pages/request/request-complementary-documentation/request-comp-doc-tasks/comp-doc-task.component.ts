@@ -737,7 +737,7 @@ export abstract class CompDocTasksComponent extends BasePage {
     this.makeResultPaperReport = false;
   }
 
-  nextProcess(process: string) {
+  nextProcess(process: string, reject = false) {
 
     let title = '';
     let next = '';
@@ -840,6 +840,10 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
+    }
+
+    if (reject) {
+      ssubtype = 'REJECT';
     }
 
     return {

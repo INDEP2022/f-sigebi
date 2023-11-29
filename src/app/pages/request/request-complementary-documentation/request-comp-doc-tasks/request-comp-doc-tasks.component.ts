@@ -549,191 +549,70 @@ export class RequestCompDocTasksComponent
     const { title, urlNb, processName, finish, type, subtype, ssubtype
     } = this.nextProcess(this.process);
 
-    this.loadingTurn = true;
     const _task = JSON.parse(localStorage.getItem('Task'));
-    await this.closeTask();
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = type;
+    body['subtype'] = subtype;
+    body['ssubtype'] = ssubtype;
 
-    const createTask = await this.generateFirstTask(processName);
-    if (createTask) {
+    const closeTask = await this.closeTaskExecuteRecepcion(body);
 
-      //Estableciendo valores a transferente, emisora y autoridad
-      let idTransferente = this.requestInfo.transferenceId;
-      let idEmisora = this.requestInfo.stationId;
-      let idAuthoridad = this.requestInfo.authorityId;
-      let nickName = '';
-      let userName = '';
-
-      /** VALIDAR DATOS */
-      //const requestResult: any = await this.updateTurnedRequest(this.requestInfo);
-      if (true) {
-        const actualUser: any = this.authService.decodeToken();
-        let body: any = {};
-        body['idTask'] = this.taskId;
-        body['userProcess'] = actualUser.username;
-
-        /** VALIDAR DATOS */
-        body['type'] = type;
-        body['subtype'] = subtype;
-        body['ssubtype'] = ssubtype;
-
-        let task: any = {};
-        task['id'] = _task.id;
-        task['assignees'] = nickName;
-        task['assigneesDisplayname'] = userName;
-        task['reviewers'] = actualUser.username;
-        task['creator'] = actualUser.username;
-        task['taskNumber'] = Number(this.requestId);
-        task['title'] = title;
-        task['programmingId'] = 0;
-        task['requestId'] = this.requestId;
-        task['expedientId'] = 0;
-        task['urlNb'] = urlNb;
-        task['processName'] = processName;
-        task['idstation'] = idEmisora;
-        task['idTransferee'] = idTransferente;
-        task['idAuthority'] = idAuthoridad;
-        task['idDelegationRegional'] = actualUser.department;
-        body['task'] = task;
-
-        let orderservice: any = {};
-        orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
-        orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
-        orderservice['pIdApplication'] = this.requestId;
-        orderservice['pCurrentDate'] = new Date().toISOString();
-        orderservice['pOrderServiceIn'] = '';
-
-        body['orderservice'] = orderservice;
-
-        const taskResult = await this.createTaskOrderService(body);
-        if (taskResult) {
-          this.loadingTurn = false;
-          this.msgModal(
-            'Se turnó la solicitud con el Folio Nº'
-              .concat(`<strong>${this.requestId}</strong>`),
-            'Solicitud Creada',
-            'success'
-          );
-          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-        }
-      }
+    if (closeTask) {
+      this.msgModal(
+        'Se turno la solicitud con el Folio Nº'
+          .concat(`<strong>${this.requestId}</strong>`),
+        'Solicitud turnada',
+        'success'
+      );
+      this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
     }
   }
 
-  /** VALIDAR */
-  async generateFirstTask(processName) {
+  rejectTask() {
 
-    //POR_TURNAR
+    const { title, urlNb, processName, finish, type, subtype, ssubtype
+    } = this.nextProcess(this.process, true);
 
-    return new Promise(async (resolve, reject) => {
-      this.loadingTurn = true;
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
 
-      this.requestId = this.requestId;
-      const user: any = this.authService.decodeToken();
-      let task: any = {};
-      task['id'] = 0;
-      task['assignees'] = user.username;
-      task['assigneesDisplayname'] = user.username;
-      task['creator'] = user.username;
-      task['taskNumber'] = Number(this.requestId);
-      task['title'] = 'Verificar Cumplimiento con folio: ' + this.requestId;
-      task['programmingId'] = 0;
-      task['requestId'] = this.requestId;
-      task['expedientId'] = 0;
-      task['processName'] = processName;
-      task['idDelegationRegional'] = user.department;
-      task['urlNb'] = 'pages/request/request-comp-doc/create';
-      const taskResult: any = await this.createOnlyTask(task);
-      if (taskResult) {
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = type;
+    body['subtype'] = subtype;
+    body['ssubtype'] = ssubtype;
 
-        this.taskId = Number(taskResult.data[0].id);
-
-        this.loadingTurn = false;
-      }
-      resolve(true);
-
+    this.taskService.createTaskWitOrderService(body).subscribe({
+      next: async resp => {
+        this.msgModal(
+          'Se rechazo la solicitud con el Folio Nº'
+            .concat(`<strong>${this.requestId}</strong>`),
+          'Solicitud rechazada',
+          'success'
+        );
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      },
+      error: error => {
+        this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+      },
     });
+
   }
 
-  /** VALIDAR */
-  createOnlyTask(task: any) {
-    return new Promise((resolve, reject) => {
-      this.taskService.createTask(task).subscribe({
-        next: resp => {
-          if (resp.length == 0) {
-            this.onLoadToast(
-              'error',
-              'Error al crear tarea',
-              'El servicio de crear tareas no esta funcionando por el momento'
-            );
-            reject(false);
-          } else {
-            resolve(resp);
-          }
-        },
-        error: error => {
-          this.onLoadToast(
-            'error',
-            'Error al crear tarea',
-            'El servicio de crear tareas no esta funcionando por el momento'
-          );
-          reject(false);
-        },
-      });
-    });
-  }
-
-  /** VALIDAR */
-  updateTurnedRequest(form: any) {
-    return new Promise((resolve, reject) => {
-      form.requestStatus = 'A_TURNAR';
-      form.receiptRoute = 'FISICA';
-      form.affair = form.affair;
-      form.typeOfTransfer = 'MANUAL';
-      //form.regionalDelegationId = this.delegationId;
-      //form.originInfo = 'SOL_TRANSFERENCIA'
-      //let date = this.requestForm.controls['applicationDate'].value;
-      //form.applicationDate = date.toISOString();
-
-      this.requestService.update(form.id, form).subscribe({
-        next: resp => {
-          resolve(resp);
-        },
-        error: error => {
-          this.loadingTurn = false;
-          this.msgModal('error', 'Error', 'Error al guardar la solicitud');
-          reject(error.error);
-        },
-      });
-    });
-  }
-
-  /** VALIDAR */
-  createTaskOrderService(body: any) {
+  closeTaskExecuteRecepcion(body: any) {
     return new Promise((resolve, reject) => {
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(resp);
         },
         error: error => {
-          this.loadingTurn = false;
-          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          this.alert('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
-      });
-    });
-  }
-
-  closeTask() {
-    return new Promise((resolve, reject) => {
-      const task = JSON.parse(localStorage.getItem('Task'));
-      const taskForm: ITask = {
-        State: 'FINALIZADA',
-      };
-      this.taskService.update(task.id, taskForm).subscribe({
-        next: response => {
-          resolve(true);
-        },
-        error: error => { },
       });
     });
   }
