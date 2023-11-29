@@ -5,6 +5,7 @@ import { OrderServiceEndpoint } from 'src/app/common/constants/endpoints/ms-orde
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IOrderPayment } from '../../models/ms-order-service/order-payment.model';
 import { IServiceVehicle } from '../../models/ms-order-service/order-service-vehicle.model';
 import {
   IOrderService,
@@ -186,6 +187,15 @@ export class OrderServiceService extends HttpService {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IRecepReqModel>>(
       `${OrderServiceEndpoint.OrderServiceCacelled}?${params}`
+    );
+  }
+
+  getOrderPayment(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderPayment>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderPayment>>(
+      `${OrderServiceEndpoint.OrderPayment}?${params}`
     );
   }
 

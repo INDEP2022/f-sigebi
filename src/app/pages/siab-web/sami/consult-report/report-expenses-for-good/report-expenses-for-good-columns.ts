@@ -78,6 +78,12 @@ export const GOODS_VAL_REQ_COLUMNS = {
     type: 'number',
     sort: false,
   },
+
+  prorrateo: {
+    title: 'Prorrateo',
+    type: 'number',
+    sort: false,
+  },
 };
 
 export const GOODS_REC_DOC_COLUMNS = {
@@ -113,6 +119,12 @@ export const GOODS_REC_DOC_COLUMNS = {
 
   goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },
@@ -154,6 +166,12 @@ export const GOODS_PROG_COLUMNS = {
     type: 'number',
     sort: false,
   },
+
+  prorrateo: {
+    title: 'Prorrateo',
+    type: 'number',
+    sort: false,
+  },
 };
 
 export const GOODS_PROG_ENT_COLUMNS = {
@@ -189,6 +207,12 @@ export const GOODS_PROG_ENT_COLUMNS = {
 
   goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },
@@ -230,6 +254,11 @@ export const GOODS_WAREHOUSE_COLUMNS = {
     type: 'number',
     sort: false,
   },
+  prorrateo: {
+    title: 'Prorrateo',
+    type: 'number',
+    sort: false,
+  },
 };
 
 export const GOODS_MANUAL_COLUMNS = {
@@ -268,6 +297,12 @@ export const GOODS_MANUAL_COLUMNS = {
     type: 'number',
     sort: false,
   },
+
+  prorrateo: {
+    title: 'Prorrateo',
+    type: 'number',
+    sort: false,
+  },
 };
 
 export const GOODS_REUB_GOOD_COLUMNS = {
@@ -303,6 +338,12 @@ export const GOODS_REUB_GOOD_COLUMNS = {
 
   goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },
