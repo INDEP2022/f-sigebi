@@ -3,6 +3,84 @@
     <h5 class="title">PENALIZACI&Oacute;N DE CLIENTES</h5>
   </div>
   <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field [control]="form.get('clientId')">
+            <ngx-select
+              (fetchItems)="getClient($event)"
+              [data]="selectClient"
+              [form]="form"
+              value="id"
+              bindLabel="idReasonName"
+              label="Cliente"
+              control="clientId"
+              (change)="changeClient($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Fecha de Penalización"
+            [control]="form.get('penaltiDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="penaltiDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="RFC" [control]="form.get('rfc')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rfc"
+              maxlength="20" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field label="Fecha Inicial" [control]="form.get('startDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker
+              [maxDate]="today"
+              (bsValueChange)="validateDate($event)"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Fecha Final" [control]="form.get('endDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="endDate"
+              [minDate]="minDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-check label="Penalizado" for="1">
+            <input
+              id="1"
+              type="checkbox"
+              class="form-control"
+              formControlName="penaliti" />
+          </form-check>
+        </div>
+      </div>
+    </form>
     <div class="ch-content">
       <h5 class="title">Penalizaciones</h5>
       <div class="buttons">

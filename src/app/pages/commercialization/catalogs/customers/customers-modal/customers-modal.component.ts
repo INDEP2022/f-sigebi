@@ -215,10 +215,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       penaltyInitDate: [null, [Validators.pattern(STRING_PATTERN)]],
       penaltyEndDate: [null, [Validators.pattern(STRING_PATTERN)]],
       penalizeUser: [null, [Validators.pattern(STRING_PATTERN)]],
-      registryNumber: [
-        null,
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
-      ],
+      registryNumber: [null],
     });
     if (this.customers != null) {
       this.edit = true;

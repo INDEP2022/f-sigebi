@@ -4,14 +4,18 @@
       <h5
         class="title"
         *ngIf="
-          this.requestInfo?.affair == 13 || this.requestInfo?.affair == 10
+          this.requestInfo?.affair == 13 ||
+          this.requestInfo?.affair == 10 ||
+          this.requestInfo?.affair == 33
         ">
         {{ title }}
       </h5>
       <h5
         class="title"
         *ngIf="
-          this.requestInfo?.affair != 13 && this.requestInfo?.affair != 10
+          this.requestInfo?.affair != 13 &&
+          this.requestInfo?.affair != 10 &&
+          this.requestInfo?.affair != 33
         ">
         {{ title }}
         {{ requestId }}&#44; Contribuyente&#58; {{ contributor }}
@@ -25,7 +29,7 @@
               type="button"
               class="btn btn-primary btn-sm active"
               (click)="turnRequest()"
-              [disabled]="">
+              [disabled]="loadingTurn">
               Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
             </button>
           </div>
@@ -49,11 +53,21 @@
             </button>
           </div>
         </div>
+        <div class="mx-1" *ngIf="dictumReturn">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="createDictumReturn()">
+            Dictamen Devolución <i class="fa fa-save mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            [disabled]="">
+            [disabled]=""
+            (click)="updateRequest()">
             Guardar <i class="fa fa-save mr-1 float-icon"></i>
           </button>
         </div>
@@ -105,6 +119,46 @@
             <i class="bx bx-notepad mr-1 float-icon"></i> Dictamen Resarcimiento
           </button>
         </div>
+        <div class="mx-1" *ngIf="destinyJob">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openDocument('edit')">
+            <i class="bx bx-notepad mr-1 float-icon"></i>Oficio Destino
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="btnAprove">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="btnAprobar()">
+            <i class="bx bx-mail-send mr-1 float-icon"></i>
+            Aprobar
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="btnDecline">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="btnRechazar()">
+            <i class="bx bx-mail-send mr-1 float-icon"></i>
+            Rechazar
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="sendEmail">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openSendEmail()">
+            <i class="bx bx-mail-send mr-1 float-icon"></i>
+            Enviar Correo de Solicitud
+          </button>
+        </div>
+
         <div class="mx-1">
           <button class="btn btn-primary active btn-sm" (click)="close()">
             Regresar
@@ -174,11 +228,6 @@
                 Regresar <i class="fas fa-arrow-circle-left"></i>
               </a>
             </li>
-            <li>
-              <a class="dropdown-item bg-primary text-light" (click)="close()">
-                Regresar <i class="fas fa-arrow-circle-left"></i>
-              </a>
-            </li>
           </ul>
         </div>
       </div>
@@ -234,6 +283,14 @@
           id="requestSimilarGoodsTab">
           <app-search-request-similar-goods></app-search-request-similar-goods>
         </tab>
+
+        <tab
+          *ngIf="searchAssociateFile"
+          heading="Buscar y Asociar al Expediente"
+          id="associateTab">
+          <app-associate-file></app-associate-file>
+        </tab>
+
         <tab
           *ngIf="selectGoods"
           heading="Seleccionar Bienes"
@@ -242,11 +299,16 @@
         </tab>
         <tab
           *ngIf="selectGoodForEyeVisit"
-          heading="Seleccionar Bienes"
+          heading="Bienes seleccionados"
           id="selectGoodsEyeVisitTab">
           <app-select-good-eye-visit
             [idRequest]="requestId"
             [typeVisit]="typeVisit"></app-select-good-eye-visit>
+        </tab>
+        <tab
+          heading="Verificar Cumplimiento de Bienes"
+          *ngIf="verifyCompliance">
+          verificarCumplimientoBienes
         </tab>
 
         <tab
@@ -320,3 +382,10 @@
     </div>
   </div>
 </app-card>
+<div>
+  <img
+    *ngIf="loadingTurn"
+    src="assets/images/loader-button.gif"
+    alt="loading"
+    id="loading" />
+</div>
