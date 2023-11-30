@@ -295,7 +295,6 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   }
 
   consult() {
-    console.log('getGrafica');
     if (this.form.get('valid').value === 'A') {
       if (
         this.form.get('valid').value &&
