@@ -87,7 +87,7 @@ export class ExpenseLotService extends HttpService {
     pCambiaStatus: string;
     user: string;
     spentId: number;
-    cat_motivos_rev: string[];
+    cat_motivos_rev: { motiveDescription: string; selection: number }[];
   }) {
     return this.post('apps/partial-return', body);
   }

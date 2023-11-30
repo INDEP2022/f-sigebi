@@ -53,5 +53,5 @@ export interface ICancelVtaDTO {
   p_prueba: string;
   user: string;
   comer_detgastos: IComerDetGastosDTO[];
-  cat_motivos_rev: string[];
+  cat_motivos_rev: { motiveDescription: string; selection: number }[];
 }

@@ -16,6 +16,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
 import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -389,9 +390,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.publicLot;
   }
 
-  set publicLot(value) {
-    this.dataService.publicLot = value;
-  }
+  // set publicLot(value) {
+  //   this.dataService.publicLot = value;
+  // }
 
   get folioAtnCustomer() {
     return this.form.get('folioAtnCustomer');
@@ -436,7 +437,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   ngOnInit() {
     this.eventNumber.valueChanges.subscribe({
       next: response => {
-        this.lotNumber.setValue(null, { emitEvent: false });
+        this.publicLot.setValue(null, { emitEvent: false });
       },
     });
     // this.lotNumber.valueChanges.subscribe({
@@ -460,10 +461,18 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     // });
   }
 
-  updateLot(event: any) {
-    if (event) {
-      this.publicLot = event.lotPublic;
+  async selectConcept(concept: IConcept) {
+    await this.getParams(concept.id);
+  }
+
+  updateLot(lot: { lotPublic: string; idLot: string }) {
+    console.log(lot);
+
+    if (lot) {
+      this.lotNumber.setValue(lot.idLot);
       this.nextItemLote();
+    } else {
+      this.lotNumber.setValue(null);
     }
   }
 
@@ -705,13 +714,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           this.URCOORDREGCHATARRA_AUTOMATICO(3)
         );
         console.log(coordChatarra);
-
+        // this.dataService.updateExpenseComposition.next(true);
+        // return;
         this.CARGA_BIENES_LOTE_XDELRES(
           this.eventNumber.value,
           this.lotNumber.value,
           this.conceptNumber.value
         );
       } else {
+        // this.dataService.updateExpenseComposition.next(true);
         this.CARGA_BIENES_LOTE(this.eventNumber.value, this.lotNumber.value);
       }
       if (this.dataService.V_BIEN_REP_ROBO > 0) {
@@ -863,7 +874,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.conceptNumber.setValue(event.conceptNumber);
     this.eventNumber.setValue(event.eventNumber);
     this.lotNumber.setValue(event.lotNumber);
-    this.publicLot = event.comerLot ? event.comerLot.publicLot : null;
+    this.publicLot.setValue(event.comerLot ? event.comerLot.publicLot : null);
     this.clkpv.setValue(event.clkpv);
 
     setTimeout(async () => {
@@ -921,7 +932,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   get pathConcept() {
     return (
-      'comerconcepts/api/v1/concepts/get-all' +
+      'comerconcepts/api/v1/application/query-eat-concepts' +
       (this.address ? '?filter.address=$in:' + this.address + ',C' : 'C')
     );
   }
@@ -934,12 +945,23 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
+  get idEventFilterPath() {
+    return this.eventNumber && this.eventNumber.value
+      ? '?filter.idEvent=' + this.eventNumber.value
+      : '';
+  }
+
+  get idLotFilterPath() {
+    return this.lotNumber && this.lotNumber.value
+      ? (this.idEventFilterPath.length > 0 ? '&' : '?') +
+          'filter.idLot=' +
+          this.lotNumber.value
+      : '';
+  }
+
   get pathLote() {
     return (
-      'lot/api/v1/eat-lots' +
-      (this.eventNumber && this.eventNumber.value
-        ? '?filter.idEvent=' + this.eventNumber.value
-        : '')
+      'lot/api/v1/eat-lots' + this.idEventFilterPath + this.idLotFilterPath
     );
   }
 

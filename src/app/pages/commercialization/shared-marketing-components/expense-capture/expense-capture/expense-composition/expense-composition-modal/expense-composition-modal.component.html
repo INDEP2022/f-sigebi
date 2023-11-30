@@ -62,20 +62,20 @@
             path="goodfinder/api/v1/good-query"
             label="No. Bien"
             formControlName="goodNumber"
-            value="goodId"
+            value="id"
             bindLabel="description"
             paramSearch="filter.description"
             prefixSearch="$ilike"
-            secondParamSearch="filter.goodId"
+            secondParamSearch="filter.id"
             [labelTemplate]="goodLabel"
             [optionTemplate]="goodOption">
           </ng-custom-select-loading>
           <ng-template #goodLabel let-item="item">
-            {{ item.goodId }} - {{ item.description }}
+            {{ item.id }} - {{ item.description }}
           </ng-template>
           <ng-template #goodOption let-item="item">
-            <div [title]="item.goodId + '-' + item.description">
-              {{ item.goodId }} - {{ item.description }}
+            <div [title]="item.id + '-' + item.description">
+              {{ item.id }} - {{ item.description }}
             </div>
           </ng-template>
         </div>
