@@ -964,18 +964,21 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           observations: descripcion + ' ',
         };
 
-        item_.status = statusFinal.status;
-        await this.updateGood(obj);
-
-        let params2 = {
-          propertyNum: item_.goodNumber,
-          status: statusFinal.status,
-          changeDate: new Date(),
-          userChange: this.user,
-          statusChangeProgram: 'FDONACIONES',
-          reasonForChange: descripcion,
-        };
-        await this.insertHistoric(params2);
+        let result_ = await this.updateGood(obj);
+        if (!result_) {
+          i++;
+        } else {
+          item_.status = statusFinal.status;
+          let params2 = {
+            propertyNum: item_.goodNumber,
+            status: statusFinal.status,
+            changeDate: new Date(),
+            userChange: this.user,
+            statusChangeProgram: 'FDONACIONES',
+            reasonForChange: descripcion,
+          };
+          await this.insertHistoric(params2);
+        }
       }
     });
     Promise.all(result).then(item => {
