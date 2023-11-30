@@ -54,7 +54,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
 
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  // params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters1: any = [];
   columnFilters2: any = [];
 
@@ -73,7 +73,6 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       actions: false,
       columns: { ...REPORT_INVOICE_COLUMNS },
       rowClassFunction: (row: any) => {
-        console.log(row.data);
         switch (row.data.id_delegacion) {
           case '0':
             return 'bg-info0 text-white';
@@ -129,6 +128,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
           width: '5%',
           type: 'custom',
           sort: false,
+          filter: false,
           renderComponent: ButtonColumnComponent,
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
@@ -142,6 +142,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
           width: '5%',
           type: 'custom',
           sort: false,
+          filter: false,
           renderComponent: ButtonColumnComponent,
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
@@ -203,8 +204,10 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
               delete this.columnFilters1[field];
             }
           });
-          this.params = this.pageFilter(this.params);
-          this.getDataAll();
+          this.params1 = this.pageFilter(this.params1);
+          this.params2
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.consultInvoices());
         }
       });
 
@@ -236,8 +239,10 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
               delete this.columnFilters1[field];
             }
           });
-          this.params = this.pageFilter(this.params);
-          this.getDetailInvoices();
+          this.params2 = this.pageFilter(this.params2);
+          this.params2
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getDetailInvoices(this.dataDetail));
         }
       });
   }
@@ -290,47 +295,40 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   }
 
   consult() {
+    console.log('getGrafica');
     if (this.form.get('valid').value === 'A') {
       if (
         this.form.get('valid').value &&
-        this.form.get('year').value &&
-        this.form.get('event').value &&
-        this.form.get('typeCFDI').value &&
-        this.form.get('statusInvoice').value &&
-        this.form.get('goods').value
+        this.form.get('year').value
+        // &&
+        // this.form.get('event').value &&
+        // this.form.get('typeCFDI').value &&
+        // this.form.get('statusInvoice').value &&
+        // this.form.get('goods').value
       ) {
         this.validateExcel = true;
         this.show = true;
-        this.array = [];
-        this.dataFormatPercentage = [];
-        this.dataFormat = [];
-        this.data1.load([]);
-        this.data1.refresh();
-        this.data2.load([]);
-        this.data2.refresh();
-        this.consultInvoices();
+        this.params1
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.consultInvoices());
       } else {
         this.alert('warning', 'Debe llenar todos los campos', '');
       }
     } else if (this.form.get('valid').value === 'R') {
       if (
         this.form.get('valid').value &&
-        this.form.get('rangeDate').value &&
-        this.form.get('event').value &&
-        this.form.get('typeCFDI').value &&
-        this.form.get('statusInvoice').value &&
-        this.form.get('goods').value
+        this.form.get('rangeDate').value
+        // &&
+        // this.form.get('event').value &&
+        // this.form.get('typeCFDI').value &&
+        // this.form.get('statusInvoice').value &&
+        // this.form.get('goods').value
       ) {
         this.validateExcel = true;
         this.show = true;
-        this.array = [];
-        this.dataFormatPercentage = [];
-        this.dataFormat = [];
-        this.data1.load([]);
-        this.data1.refresh();
-        this.data2.load([]);
-        this.data2.refresh();
-        this.consultInvoices();
+        this.params1
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.consultInvoices());
       } else {
         this.alert('warning', 'Debe llenar todos los campos', '');
       }
@@ -340,13 +338,21 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   }
 
   async consultInvoices() {
+    this.array = [];
+    this.dataFormatPercentage = [];
+    this.dataFormat = [];
+    this.data1.load([]);
+    this.data1.refresh();
+    this.data2.load([]);
+    this.data2.refresh();
     let getGrafica = await this.getInvoices();
     console.log(getGrafica);
     this.array = getGrafica;
     this.arrayData = this.array.data;
     console.log(this.arrayData);
-    for (let i = 0; i < this.array.count; i++) {
-      if (this.arrayData[i].accountFac > 0) {
+    for (let i = 0; i < this.arrayData.length; i++) {
+      console.log(this.arrayData[i]);
+      if (Number(this.arrayData[i].accountFac) > 0) {
         const data: any = {
           color: this.arrayData[i].color,
           cuenta_fac: this.arrayData[i].accountFac,
@@ -376,9 +382,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         };
         this.dataFormatPercentage.push(data1);
       }
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getDataAll());
+      this.getDataAll();
 
       console.log(this.dataFormatPercentage);
     } else {
@@ -395,7 +399,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     if (this.dataFormatPercentage) {
       this.data1.load(this.dataFormatPercentage);
       this.data1.refresh();
-      this.totalItems = this.dataFormatPercentage.length;
+      this.totalItems = this.array.count;
       this.loading = false;
     }
     /*this.data = this.dataFormatPercentage;
@@ -466,7 +470,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         endDate: endDate,
         goodTp: this.form.get('goods').value,
       };
-      this.params1.getValue()['limit'] = 20;
+      // this.params1.getValue()['limit'] = 20;
       let param = {
         ...this.params1.getValue(),
         ...this.columnFilters1,
@@ -521,11 +525,10 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       this.msInvoiceService.getDetailGetGegrafica(body, param).subscribe({
         next: resp => {
           this.validateExcel = false;
-          //console.log(resp.data);
+          console.log(resp.data);
           this.data2.load(resp.data);
           this.data2.refresh();
-          let resp1 = resp.data;
-          this.totalItems2 = resp1.length;
+          this.totalItems2 = resp.count;
           //console.log(this.totalItems2, resp);
           this.loading = false;
         },
