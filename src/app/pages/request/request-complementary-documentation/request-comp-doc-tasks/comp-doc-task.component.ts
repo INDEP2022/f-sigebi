@@ -1,6 +1,8 @@
 import { inject } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IRequestDocument } from 'src/app/core/models/requests/document.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared';
@@ -33,6 +35,15 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract requestInfo: IRequest;
   protected abstract typeVisit: string;
   protected abstract listGoodSelectedTitle: string;
+
+  protected abstract sendEmail: boolean;
+  protected abstract destinyJob: boolean;
+  protected abstract verifyCompliance: boolean; //NUEVO VERIFICAR
+  protected abstract btnAprove: boolean; //NUEVO VERIFICAR
+  protected abstract btnDecline: boolean; //NUEVO VERIFICAR
+  protected abstract dictumReturn: boolean; //NUEVO VERIFICAR BOTON NUEVO
+
+  docTemplate: IRequestDocument[];
 
   private rejectedService = inject(RejectedGoodService);
 
@@ -338,7 +349,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       /** CASOS DE USO DEVOLUCION */
       case 'register-request-return':
-
         this.title = `DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
         this.regDocForm = true;
         this.searchAssociateFile = true;
@@ -351,15 +361,14 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'verify-compliance-return':
-
         this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
         this.regDocView = true;
-        //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB)
+        this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
         this.selectGoods = true;
         this.expRequest = true;
 
-        //AGREGAR SOLICITAR APROBACIÓN (BOTON)
-        //AGREGAR DICTAMEN DEVOLUCIÓN (BOTON)
+        this.btnAprove = true; //AGREGAR SOLICITAR APROBACIÓN (BOTON) validateDocument verificar
+        this.dictumReturn = true; //AGREGAR DICTAMEN DEVOLUCIÓN (BOTON) validar Nuevo botón
 
         this.turnReq = false;
         this.searchAssociateFile = false;
@@ -369,16 +378,15 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'approve-return':
-
         this.title = `Aprobar Devolución, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
-        //AGREGAR VERIFICAR CUMPLIMIENTO DE BIENES (TAB)
+        this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
 
-        //AGREGAR APROBAR (BOTON)
-        //AGREGAR DICTAMEN DEVOLUCIÓN (BOTON)
-        //AGREGAR RECHAZAR (BOTON)
+        this.btnAprove = true;
+        this.dictumReturn = true; //AGREGAR DICTAMEN DEVOLUCIÓN (BOTON) validar Nuevo botón
+        this.btnDecline = true;
 
         this.turnReq = false;
         this.regDocForm = false;
@@ -391,7 +399,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       /** CASOS DE BIENES SIMILARES */
       case 'register-request-similar-goods':
-
         this.title = `BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
         this.regDocForm = true;
         this.selectGoods = true;
@@ -413,8 +420,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
         break;
-      case 'notify-transfer-goods':
 
+      case 'notify-transfer-goods':
         this.title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV `;
         this.regDocView = true;
         this.selectGoods = true;
@@ -438,7 +445,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'eye-visit-goods':
-
         this.title = `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
         this.regDocView = true;
         this.selectGoods = true;
@@ -462,7 +468,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'validate-eye-visit-goods':
-
         this.title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
         this.regDocView = true;
         this.expRequest = true;
@@ -487,7 +492,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'validate-opinion-assets':
-
         this.regDocForm = true;
         this.expRequest = true;
         this.resultVisits = true;
@@ -569,7 +573,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.selectGoods = true;
         this.guidelines = true;
-        //AGREGAR DATOS DEL DICTAMEN (TAB)
+        this.dictumValidate = true; //AGREGAR DATOS DEL DICTAMEN (TAB)
         this.expRequest = true;
 
         this.createReport = true;
@@ -584,7 +588,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.selectGoods = true;
         this.guidelines = true;
-        //AGREGAR DATOS DEL DICTAMEN (TAB)
+        this.dictumValidate = true; //AGREGAR DATOS DEL DICTAMEN (TAB)
         this.expRequest = true;
 
         this.saveRequest = true;
@@ -621,6 +625,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
         break;
+
       case 'request-information-office':
         this.regDocView = true;
         this.selectGoods = true;
@@ -628,8 +633,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.saveRequest = true;
         this.turnReq = true;
-        //AGREGAR ENVIAR CORREO DE SOLICITUD (BOTON)
-        //AGREGAR OFICIO DESTINO (BOTON)
+        this.sendEmail = true; //AGREGAR ENVIAR CORREO DE SOLICITUD (BOTON)
+        this.destinyJob = true; //AGREGAR OFICIO DESTINO (BOTON)
 
         this.searchAssociateFile = false;
         this.resultEyeVisitReport = false;
@@ -651,8 +656,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.expRequest = true;
 
         this.saveRequest = true;
-        //AGREGAR FINALIZAR (BOTON)
-        //AGREGAR OFICIO DESTINO (BOTON)
+        //AGREGAR FINALIZAR (BOTON) VALIDAR BOTON EXISTENTE
+        this.destinyJob = true; //AGREGAR OFICIO DESTINO (BOTON)
 
         this.turnReq = false;
         this.searchAssociateFile = false;
@@ -807,7 +812,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         title = `Generar Resultado de Análisis Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
         next = 'REGenerarResultadoAnalisis';
         url = 'pages/request/request-comp-doc/tasks/analysis-result-compensation';
-        break;
         break;
       case 'analysis-result-compensation':
         title = `Generar Resultado de Análisis Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;

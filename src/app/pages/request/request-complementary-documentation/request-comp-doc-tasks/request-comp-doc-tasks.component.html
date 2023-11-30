@@ -1,17 +1,17 @@
 <app-card [header]="true">
   <div class="ch-content justify-content-between" header>
     <div class="">
-      <h5
-        class="title"
-        *ngIf="
-          this.requestInfo?.affair == 13 || this.requestInfo?.affair == 10 || this.requestInfo?.affair == 33
+      <h5 class="title" *ngIf="
+          this.requestInfo?.affair == 13 ||
+          this.requestInfo?.affair == 10 ||
+          this.requestInfo?.affair == 33
         ">
         {{ title }}
       </h5>
-      <h5
-        class="title"
-        *ngIf="
-          this.requestInfo?.affair != 13 && this.requestInfo?.affair != 10 && this.requestInfo?.affair != 33
+      <h5 class="title" *ngIf="
+          this.requestInfo?.affair != 13 &&
+          this.requestInfo?.affair != 10 &&
+          this.requestInfo?.affair != 33
         ">
         {{ title }}
         {{ requestId }}&#44; Contribuyente&#58; {{ contributor }}
@@ -21,18 +21,14 @@
       <div class="d-flex flex-row-reverse mt-2" *ngIf="screenWidth >= 1200">
         <ng-template #turnar>
           <div class="mx-1" *ngIf="turnReq && !complementaryDoc">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              (click)="turnRequest()"
+            <button type="button" class="btn btn-primary btn-sm active" (click)="turnRequest()"
               [disabled]="loadingTurn">
               Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
             </button>
           </div>
         </ng-template>
 
-        <div
-          *ngIf="
+        <div *ngIf="
             processDetonate === 'DECOMISO' ||
               processDetonate === 'EXT_DOMINIO' ||
               processDetonate === 'ABANDONO' ||
@@ -40,72 +36,74 @@
             else turnar
           ">
           <div class="mx-1">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              (click)="endRequest()"
-              [disabled]="">
+            <button type="button" class="btn btn-primary btn-sm active" (click)="endRequest()" [disabled]="">
               Finalizar <i aria-hidden="true" class="fa fa-check"></i>
             </button>
           </div>
         </div>
+        <div class="mx-1" *ngIf="dictumReturn">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="createDictumReturn()">
+            Dictamen Devolución <i class="fa fa-save mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            [disabled]=""
-            (click)="updateRequest()">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="updateRequest()">
             Guardar <i class="fa fa-save mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="rejectReq">
-          <button
-            type="button"
-            class="btn btn-danger btn-sm active"
-            [disabled]=""
-            (click)="rejectRequest()">
+          <button type="button" class="btn btn-danger btn-sm active" [disabled]="" (click)="rejectRequest()">
             <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
           </button>
         </div>
         <div class="mx-1" *ngIf="resultEyeVisitReport || makeResultPaperReport">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            [disabled]=""
-            (click)="reportResultEyeVisit()">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="reportResultEyeVisit()">
             Reporte Resultado Visita Ocular
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="notifyReport">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            [disabled]=""
-            (click)="openNotifyReport()">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openNotifyReport()">
             <i class="bx bx-notepad mr-1 float-icon"></i> Reporte de
             Notificacion
           </button>
         </div>
         <div class="mx-1" *ngIf="RequestEconomicResourcesReport">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            [disabled]=""
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]=""
             (click)="openRequestResourcesReport()">
             Solicitud Recursos Económicos
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="createReport">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            [disabled]=""
-            (click)="openReport()">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openReport()">
             <i class="bx bx-notepad mr-1 float-icon"></i> Dictamen Resarcimiento
           </button>
         </div>
+        <div class="mx-1" *ngIf="destinyJob">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openDocument('edit')">
+            <i class="bx bx-notepad mr-1 float-icon"></i>Oficio Destino
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="btnAprove">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="btnAprobar()">
+            <i class="bx bx-mail-send mr-1 float-icon"></i>
+            Aprobar
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="btnDecline">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="btnRechazar()">
+            <i class="bx bx-mail-send mr-1 float-icon"></i>
+            Rechazar
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="sendEmail">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openSendEmail()">
+            <i class="bx bx-mail-send mr-1 float-icon"></i>
+            Enviar Correo de Solicitud
+          </button>
+        </div>
+
         <div class="mx-1">
           <button class="btn btn-primary active btn-sm" (click)="close()">
             Regresar
@@ -115,28 +113,16 @@
       </div>
 
       <div class="" *ngIf="screenWidth < 1200">
-        <div
-          class="btn-group"
-          placement="bottom right"
-          dropdown
-          [isDisabled]="">
-          <button
-            #actionsBtn
-            dropdownToggle
-            type="button"
+        <div class="btn-group" placement="bottom right" dropdown [isDisabled]="">
+          <button #actionsBtn dropdownToggle type="button"
             class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
             aria-controls="dropdown-actions">
             Acciones
           </button>
-          <ul
-            id="dropdown-csv"
-            *dropdownMenu
-            class="dropdown-menu dropdown-menu-right bg-primary"
-            role="menu"
+          <ul id="dropdown-csv" *dropdownMenu class="dropdown-menu dropdown-menu-right bg-primary" role="menu"
             aria-labelledby="processBtn">
             <li role="menuitem">
-              <a class="dropdown-item bg-primary text-light" (click)="(true)"
-                >Dictamen Resarcimiento
+              <a class="dropdown-item bg-primary text-light" (click)="(true)">Dictamen Resarcimiento
                 <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
               </a>
             </li>
@@ -147,26 +133,19 @@
               </a>
             </li>
             <li role="menuitem">
-              <a
-                *ngIf="
+              <a *ngIf="
                   processDetonate === 'DECOMISO' ||
                     processDetonate === 'EXT_DOMINIO' ||
                     processDetonate === 'ABANDONO' ||
                     processDetonate === 'complementaryDoc';
                   else turnarresp
-                "
-                class="dropdown-item bg-primary text-light"
-                (click)="endRequest()">
-                Finalizar <i aria-hidden="true" class="fa fa-check"></i
-              ></a>
+                " class="dropdown-item bg-primary text-light" (click)="endRequest()">
+                Finalizar <i aria-hidden="true" class="fa fa-check"></i></a>
             </li>
             <ng-template #turnarresp>
               <li role="menuitem">
-                <a
-                  class="dropdown-item bg-primary text-light"
-                  (click)="turnRequest()">
-                  Turnar</a
-                >
+                <a class="dropdown-item bg-primary text-light" (click)="turnRequest()">
+                  Turnar</a>
                 <i aria-hidden="true" class="fa fa-share-square"></i>
               </li>
             </ng-template>
@@ -181,24 +160,16 @@
     </div>
   </div>
   <div body>
-    <app-request-information-similar-goods
-      [request]="requestInfo"></app-request-information-similar-goods>
+    <app-request-information-similar-goods [request]="requestInfo"></app-request-information-similar-goods>
 
-    <div
-      *ngIf="processDetonate == 'RES_ESPECIE' && process == 'register-request'">
+    <div *ngIf="processDetonate == 'RES_ESPECIE' && process == 'register-request'">
       <app-card [header]="false" class="p-10">
         <div body>
           <form [formGroup]="emailForm" class="form-material">
             <div class="row">
               <div class="col-md-3">
-                <form-field
-                  [control]="emailForm.get('emailUser')"
-                  label="Correo Usuario">
-                  <input
-                    type="email"
-                    id="email"
-                    class="form-control"
-                    formControlName="emailUser" />
+                <form-field [control]="emailForm.get('emailUser')" label="Correo Usuario">
+                  <input type="email" id="email" class="form-control" formControlName="emailUser" />
                 </form-field>
               </div>
             </div>
@@ -209,69 +180,39 @@
 
     <div>
       <tabset class="md-tabs" #staticTabs>
-        <tab
-          *ngIf="regDocForm"
-          heading="Registro de Documentación"
-          id="documentationTab">
-          <app-register-documentation-form
-            [requestId]="requestId"
+        <tab *ngIf="regDocForm" heading="Registro de Documentación" id="documentationTab">
+          <app-register-documentation-form [requestId]="requestId"
             [process]="process"></app-register-documentation-form>
         </tab>
-        <tab
-          *ngIf="regDocView"
-          heading="Registro de Documentación"
-          id="documentationTab">
-          <app-register-documentation-view
-            [requestId]="requestId"></app-register-documentation-view>
+        <tab *ngIf="regDocView" heading="Registro de Documentación" id="documentationTab">
+          <app-register-documentation-view [requestId]="requestId"></app-register-documentation-view>
         </tab>
-        <tab
-          *ngIf="searchRequestSimGoods"
-          heading="Buscar Solicitudes de Bienes Similares"
-          id="requestSimilarGoodsTab">
+        <tab *ngIf="searchRequestSimGoods" heading="Buscar Solicitudes de Bienes Similares" id="requestSimilarGoodsTab">
           <app-search-request-similar-goods></app-search-request-similar-goods>
         </tab>
-        
+
         <tab *ngIf="searchAssociateFile" heading="Buscar y Asociar al Expediente" id="associateTab">
           <app-associate-file></app-associate-file>
         </tab>
 
-        <tab
-          *ngIf="selectGoods"
-          heading="Seleccionar Bienes"
-          id="selectGoodsTab">
+        <tab *ngIf="selectGoods" heading="Seleccionar Bienes" id="selectGoodsTab">
           <app-select-goods [idRequest]="requestId"></app-select-goods>
         </tab>
-        <tab
-          *ngIf="selectGoodForEyeVisit"
-          heading="Bienes seleccionados"
-          id="selectGoodsEyeVisitTab">
-          <app-select-good-eye-visit
-            [idRequest]="requestId"
-            [typeVisit]="typeVisit"></app-select-good-eye-visit>
+        <tab *ngIf="selectGoodForEyeVisit" heading="Bienes seleccionados" id="selectGoodsEyeVisitTab">
+          <app-select-good-eye-visit [idRequest]="requestId" [typeVisit]="typeVisit"></app-select-good-eye-visit>
+        </tab>
+        <tab heading="Verificar Cumplimiento de Bienes" *ngIf="verifyCompliance">
+          verificarCumplimientoBienes
         </tab>
 
-        <tab
-          *ngIf="validateGoodForEyeVisit"
-          heading="Validar Resultado Visitas"
-          id="validateGoodsEyeVisitTab">
-          <app-validate-eye-visit
-            [idRequest]="requestId"></app-validate-eye-visit>
+        <tab *ngIf="validateGoodForEyeVisit" heading="Validar Resultado Visitas" id="validateGoodsEyeVisitTab">
+          <app-validate-eye-visit [idRequest]="requestId"></app-validate-eye-visit>
         </tab>
-        <tab
-          *ngIf="resultVisits"
-          heading="Resultado Visitas"
-          id="resultVisitsTab">
-          <app-select-good-eye-visit
-            [idRequest]="requestId"
-            [typeVisit]="typeVisit"></app-select-good-eye-visit>
+        <tab *ngIf="resultVisits" heading="Resultado Visitas" id="resultVisitsTab">
+          <app-select-good-eye-visit [idRequest]="requestId" [typeVisit]="typeVisit"></app-select-good-eye-visit>
         </tab>
-        <tab
-          *ngIf="viewSelectedGoods"
-          heading="{{ listGoodSelectedTitle }}"
-          id="goodsListTab">
-          <app-goods-list
-            [requestId]="requestId"
-            [processDetonate]="processDetonate"></app-goods-list>
+        <tab *ngIf="viewSelectedGoods" heading="{{ listGoodSelectedTitle }}" id="goodsListTab">
+          <app-goods-list [requestId]="requestId" [processDetonate]="processDetonate"></app-goods-list>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
           <app-guidelines></app-guidelines>
@@ -279,38 +220,19 @@
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
           <app-register-dictum-val></app-register-dictum-val>
         </tab>
-        <tab
-          *ngIf="expRequest"
-          (selectTab)="expedientSelected(true)"
-          heading="Expediente"
-          id="fileTab">
+        <tab *ngIf="expRequest" (selectTab)="expedientSelected(true)" heading="Expediente" id="fileTab">
           <tabset class="md-tabs" *ngIf="displayExpedient == true">
-            <tab
-              heading="Documentos Solicitud"
-              id="tab1"
-              (selectTab)="requestSelected(1)">
-              <app-doc-request-tab
-                [typeDoc]="typeDoc"
-                [updateInfo]="updateInfo"
+            <tab heading="Documentos Solicitud" id="tab1" (selectTab)="requestSelected(1)">
+              <app-doc-request-tab [typeDoc]="typeDoc" [updateInfo]="updateInfo"
                 [typeModule]="typeModule"></app-doc-request-tab>
             </tab>
-            <tab
-              heading="Documentos Generales"
-              (selectTab)="requestSelected(2)">
+            <tab heading="Documentos Generales" (selectTab)="requestSelected(2)">
               <tabset class="md-tabs">
-                <tab
-                  heading="Documento Expedientes"
-                  id="tab1"
-                  (selectTab)="requestSelected(2)">
-                  <app-doc-request-tab
-                    [typeDoc]="typeDoc"
-                    [typeModule]="typeModule"></app-doc-request-tab>
+                <tab heading="Documento Expedientes" id="tab1" (selectTab)="requestSelected(2)">
+                  <app-doc-request-tab [typeDoc]="typeDoc" [typeModule]="typeModule"></app-doc-request-tab>
                 </tab>
-                <tab
-                  heading="Solicitudes del Expediente"
-                  (selectTab)="requestSelected(3)">
-                  <app-expedients-request-tab
-                    [typeDoc]="typeDoc"
+                <tab heading="Solicitudes del Expediente" (selectTab)="requestSelected(3)">
+                  <app-expedients-request-tab [typeDoc]="typeDoc"
                     [typeModule]="typeModule"></app-expedients-request-tab>
                 </tab>
               </tabset>

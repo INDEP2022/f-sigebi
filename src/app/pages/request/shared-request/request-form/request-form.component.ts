@@ -31,6 +31,7 @@ import { StateOfRepublicService } from '../../../../core/services/catalogs/state
 import { StationService } from '../../../../core/services/catalogs/station.service';
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
 import { RequestService } from '../../../../core/services/requests/request.service';
+import { getConfigAffair } from '../../request-complementary-documentation/request-comp-doc-tasks/catalog-affair';
 
 @Component({
   selector: 'app-create-request',
@@ -45,7 +46,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   bsValue = new Date();
   requestForm: ModelForm<any>;
   isReadOnly: boolean = true;
-  requestId: number = 0;
+  requestId: number = null;
   taskId: number = 0;
   delegationId: number = 0;
   loadingTurn = false;
@@ -746,6 +747,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getRequest(requestId: number | string) {
     this.requestService.getById(requestId).subscribe({
       next: resp => {
+
         this.requestForm.controls['paperNumber'].setValue(resp.paperNumber);
         this.requestForm.controls['keyStateOfRepublic'].setValue(
           resp.keyStateOfRepublic
@@ -794,7 +796,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       confirmButtonText: 'Aceptar',
       allowOutsideClick: false,
     }).then(result => {
-      if (result.isConfirmed) {
+      if (result.isConfirmed && typeMsg == 'success') {
         this.requestForm.reset();
         this.requestForm.controls['applicationDate'].patchValue(this.bsValue);
         this.getRegionalDeleg(new ListParams());
@@ -809,23 +811,21 @@ export class RequestFormComponent extends BasePage implements OnInit {
   idAuthoridad: number = 0;
 
   async turnRequestOp2() {
+
     this.getRegionalDeleg(new ListParams());
     const createTask = await this.generateFirstTask();
     if (createTask) {
       this.loadingTurn = true;
       const form = this.requestForm.getRawValue();
+
       //Estableciendo valores a transferente, emisora y autoridad
       this.idTransferente = form.transferenceId;
       this.idEmisora = form.stationId;
       this.idAuthoridad = form.authorityId;
       form.id = this.requestId;
       const idRequest = form.id;
-      const { title, urlNb, processName } = this.getValuesForTurn();
-      /*  const title =
-        'BIENES SIMILARES Registro de Documentación Complementaria,No. Solicitud: ' +
-        idRequest;
-      const urlNb = 'pages/request/request-comp-doc';
-      const processName = 'similar-good-register-documentation'; */
+
+      const { title, urlNb, processName, type, subtype, ssubtype } = this.getValuesForTurn();
 
       const requestResult: any = await this.updateTurnedRequest(form);
       if (requestResult) {
@@ -835,9 +835,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
         body['userProcess'] = actualUser.username;
 
         /** VALIDAR DATOS */
-        body['type'] = 'DOCUMENTACION_COMPLEMENTARIA';
-        body['subtype'] = 'Registro_documentacion';
-        body['ssubtype'] = 'TURNAR_SOLICITUD_DEVOLUCION';
+        body['type'] = type;
+        body['subtype'] = subtype;
+        body['ssubtype'] = ssubtype;
 
         let task: any = {};
         task['id'] = 0;
@@ -858,18 +858,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['idDelegationRegional'] = actualUser.department;
         body['task'] = task;
 
-        let orderservice: any = {};
-        orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
-        orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
-        orderservice['pIdApplication'] = idRequest;
-        orderservice['pCurrentDate'] = new Date().toISOString();
-        orderservice['pOrderServiceIn'] = '';
-
-        body['orderservice'] = orderservice;
-
-        const taskResult = await this.createTaskOrderService(body);
-        if (taskResult) {
-          this.loadingTurn = false;
+        const taskResult: any = await this.createTaskOrderService(body);
+        this.loadingTurn = false;
+        if (taskResult && taskResult.task != null) {
           this.msgModal(
             'Se turnó la solicitud con el Folio Nº'
               .concat(`<strong>${idRequest}</strong>`)
@@ -878,49 +869,21 @@ export class RequestFormComponent extends BasePage implements OnInit {
             'success'
           );
           this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        } else {
+          this.msgModal(
+            'No se pudo turnar la solicitud con el Folio Nº '
+              .concat(`<strong>${idRequest}</strong>`),
+            'Error',
+            'error'
+          );
         }
       }
     }
   }
 
   getValuesForTurn(): any {
-    const affair = +this.requestForm.controls['affair'].value;
-    let title = '';
-    let url = '';
-    let process = '';
-    switch (affair) {
-
-      case 10: //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
-        title =
-          'DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud:';
-        url = 'pages/request/request-comp-doc/tasks/register-request-return';
-        process = 'DRegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      case 33: //GESTIONAR BINES SIMILARES RESARCIMIENTO
-        title =
-          'BIENES SIMILARES Registro de Documentación Complementaria, No. Solicitud:';
-        url = 'pages/request/request-comp-doc/tasks/register-request-similar-goods';
-        process = 'BSRegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
-        title =
-          'RESOLUCIÓN ADMINISTRATIVA DE PAGO EN ESPECIE Registro de Documentación Complementaria, No. Solicitud:';
-        url = 'pages/request/request-comp-doc/tasks/register-request-compensation';
-        process = 'RERegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      case 41: //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
-        title =
-          'SOLICITUD DE INFORMACIÓN DEL DESTINO DEL BIEN Registro de Documentación Complementaria, No. Solicitud:';
-        url = 'pages/request/request-comp-doc/tasks/register-request-information-goods';
-        process = 'IBRegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      default:
-        break;
-    }
+    const affair = this.requestForm.controls['affair'].value;
+    return getConfigAffair(this.requestId, affair, 'create');
   }
 
   getDelegation(id: number) {

@@ -24,11 +24,10 @@ import { CreateReportComponent } from '../../shared-request/create-report/create
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { CompDocTasksComponent } from './comp-doc-task.component';
-import { de } from 'date-fns/locale';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import Swal from 'sweetalert2';
-import { ITask } from 'src/app/core/models/ms-task/task-model';
+import { getConfigAffair } from './catalog-affair';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -38,6 +37,12 @@ import { ITask } from 'src/app/core/models/ms-task/task-model';
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
   implements OnInit {
+  protected override sendEmail: boolean;
+  protected override destinyJob: boolean;
+  protected override verifyCompliance: boolean;
+  protected override btnAprove: boolean;
+  protected override btnDecline: boolean;
+  protected override dictumReturn: boolean;
   protected override searchAssociateFile: boolean;
   /* CALL TABS DINAMICALY */
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
@@ -211,13 +216,15 @@ export class RequestCompDocTasksComponent
     ).then(async question => {
       if (question.isConfirmed) {
 
-        console.log(this.affair, this.process);
+        this.generateTask();
+
+        if (true) return;
+
 
         switch (this.process) {
           case 'register-request-return':
           case 'verify-compliance-return':
           case 'approve-return':
-            this.generateTask(this.process);
             return;
         }
 
@@ -229,7 +236,7 @@ export class RequestCompDocTasksComponent
           let val = this.affair.toString();
           switch (val) {
             case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
-              this.generateTask(this.affair);
+              this.generateTask();
               break;
             default:
               this.setEmailNotificationTask();
@@ -541,65 +548,37 @@ export class RequestCompDocTasksComponent
   }
 
   /** VALIDAR */
-  async generateTask(affair) {
+  async generateTask() {
 
     console.log("**********");
-    console.log(affair, this.process);
+    console.log(this.affair, this.process);
 
-    const { title, urlNb, processName, finish, type, subtype, ssubtype
-    } = this.nextProcess(this.process);
+    /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
+    if (this.validateTurn()) {
+      this.loadingTurn = true;
+      const { title, url, type, subtype, ssubtype } = getConfigAffair(this.requestId, this.affair, this.process);
 
-    const _task = JSON.parse(localStorage.getItem('Task'));
-    const user: any = this.authService.decodeToken();
-    let body: any = {};
-    body['idTask'] = _task.id;
-    body['userProcess'] = user.username;
-    body['type'] = type;
-    body['subtype'] = subtype;
-    body['ssubtype'] = ssubtype;
+      const _task = JSON.parse(localStorage.getItem('Task'));
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
+      body['idTask'] = _task.id;
+      body['userProcess'] = user.username;
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
 
-    const closeTask = await this.closeTaskExecuteRecepcion(body);
+      const closeTask = await this.closeTaskExecuteRecepcion(body);
 
-    if (closeTask) {
-      this.msgModal(
-        'Se turno la solicitud con el Folio Nº'
-          .concat(`<strong>${this.requestId}</strong>`),
-        'Solicitud turnada',
-        'success'
-      );
-      this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-    }
-  }
-
-  rejectTask() {
-
-    const { title, urlNb, processName, finish, type, subtype, ssubtype
-    } = this.nextProcess(this.process, true);
-
-    const _task = JSON.parse(localStorage.getItem('Task'));
-    const user: any = this.authService.decodeToken();
-    let body: any = {};
-
-    body['idTask'] = _task.id;
-    body['userProcess'] = user.username;
-    body['type'] = type;
-    body['subtype'] = subtype;
-    body['ssubtype'] = ssubtype;
-
-    this.taskService.createTaskWitOrderService(body).subscribe({
-      next: async resp => {
+      if (closeTask) {
         this.msgModal(
-          'Se rechazo la solicitud con el Folio Nº'
+          'Se turno la solicitud con el Folio Nº'
             .concat(`<strong>${this.requestId}</strong>`),
-          'Solicitud rechazada',
+          'Solicitud turnada',
           'success'
         );
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-      },
-      error: error => {
-        this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
-      },
-    });
+      }
+    }
 
   }
 
@@ -635,4 +614,57 @@ export class RequestCompDocTasksComponent
     });
   }
 
+  btnRechazar() {
+
+    const { type, subtype, ssubtype
+    } = this.nextProcess(this.process, true);
+
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = type;
+    body['subtype'] = subtype;
+    body['ssubtype'] = ssubtype;
+
+    this.taskService.createTaskWitOrderService(body).subscribe({
+      next: async resp => {
+        this.msgModal(
+          'Se rechazo la solicitud con el Folio Nº'
+            .concat(`<strong>${this.requestId}</strong>`),
+          'Solicitud rechazada',
+          'success'
+        );
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      },
+      error: error => {
+        this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+      },
+    });
+
+  }
+
+  validateTurn() {
+    return true;
+  }
+
+  openSendEmail() {
+
+  }
+
+  btnAprobar() {
+
+  }
+
+  openDocument(action) {
+
+  }
+
+  createDictumReturn() {
+
+  }
+
 }
+
