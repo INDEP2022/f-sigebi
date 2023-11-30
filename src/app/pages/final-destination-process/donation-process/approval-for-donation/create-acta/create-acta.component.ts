@@ -306,6 +306,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
         });
     }
   }
+
   generaConsec() {
     this.procedureManagementService
       .getFolioMax(Number(localStorage.getItem('area')))
@@ -334,8 +335,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
       captureDate: this.actaRecepttionForm.value.captureDate,
       observations: this.actaRecepttionForm.value.observaciones,
       registreNumber: null,
-      numDelegation1: this.delegation,
-      numDelegation2: null,
+      noDelegation1: this.authService.decodeToken().department,
+      noDelegation2: null,
       identifier: null,
       label: null,
       folioUniversal: this.foolio,
@@ -359,25 +360,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
       },
     });
   }
-  delegationToolbar: any = null;
-  getDelegation(params: FilterParams) {
-    params.addFilter(
-      'id',
-      this.authService.decodeToken().username,
-      SearchFilter.EQ
-    );
-    return this.usersService.getAllSegUsers(params.getParams()).subscribe({
-      next: (value: any) => {
-        const data = value.data[0].usuario;
-        if (data) this.delegationToolbar = data.delegationNumber;
-        localStorage.setItem('area', data.delegationNumber);
-        console.log('SI', data.delegationNumber);
-      },
-      error(err) {
-        console.log('NO');
-      },
-    });
-  }
 
   return() {
     this.modalRef.hide();
@@ -393,6 +375,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.edit ? this.update() : this.agregarActa();
   }
   updateRegister: any;
+
   update() {
     this.loading = true;
     this.donationService

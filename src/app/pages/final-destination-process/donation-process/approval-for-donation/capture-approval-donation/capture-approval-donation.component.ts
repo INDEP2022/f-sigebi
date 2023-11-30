@@ -42,6 +42,7 @@ import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-t
 import {
   IFmComDanc,
   IProcedureFmCom,
+  IPupValidGood,
 } from 'src/app/core/services/ms-good/good-process-model';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
@@ -173,7 +174,10 @@ export class CaptureApprovalDonationComponent
   areaD: any;
   //LABELS DE BOTONES
   pb_label: string = 'Consulta Bienes';
-  VALIDA_B: boolean = true;
+  valida_b: number = 0;
+  val_cambio: number = 0;
+  rop_div: number = 0;
+  carga: number = 0;
 
   constructor(
     private router: Router,
@@ -270,7 +274,8 @@ export class CaptureApprovalDonationComponent
 
   ngOnInit(): void {
     //AGREGADO POR GRIGORK
-    //LLENA LOS DATOS DEL ACTA
+    this.initForm();
+    //SETEA INICIAL RB_REGLAS
     //VERIFICA SI HAY DATOS DEL RASTREADOR
     this.globalVarService
       .getGlobalVars$()
@@ -368,7 +373,6 @@ export class CaptureApprovalDonationComponent
           console.log('traigo parametros');
         }
       });
-    this.initForm();
   }
   addStatus() {
     /* this.data.load(this.goods); */
@@ -396,12 +400,12 @@ export class CaptureApprovalDonationComponent
       const value = this.regisForm.get('activeRadio').value;
       if (value == 0) {
         this.pb_label = 'Consulta Bienes';
-        this.VALIDA_B = false; //0 es false y 1 es true
+        this.valida_b = 0; //0 es false y 1 es true
       } else {
         this.pb_label = 'Carga Bienes';
 
-        if (this.VALIDA_B) {
-          this.VALIDA_B = false; //0 es false y 1 es true
+        if (this.valida_b == 1) {
+          this.valida_b = 0; //0 es false y 1 es true
         }
 
         if ([2, 3].includes(parseInt(value)) && this.estatus == 'ABIERTA') {
@@ -426,8 +430,9 @@ export class CaptureApprovalDonationComponent
       captureDate: [null, []],
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       observaciones: [null],
-      activeRadio: [null],
+      activeRadio: ['0'],
     });
+    this.regisForm.get('activeRadio').setValue('0');
     this.delForm = this.fb.group({
       observaElimina: [null, [Validators.required]],
     });
@@ -1288,24 +1293,6 @@ export class CaptureApprovalDonationComponent
     });
   }
   delegationToolbar: any = null;
-  getDelegation(params: FilterParams) {
-    params.addFilter(
-      'elaborated',
-      this.authService.decodeToken().username,
-      SearchFilter.EQ
-    );
-    return this.usersService.getAllSegUsers(params.getParams()).subscribe({
-      next: (value: any) => {
-        const data = value.data[0].username;
-        if (data) this.delegationToolbar = data.delegationNumber;
-
-        console.log('SI', this.delegationToolbar);
-      },
-      error(err) {
-        console.log('NO');
-      },
-    });
-  }
 
   // Cammbiar formato de fecha
 
@@ -1426,7 +1413,34 @@ export class CaptureApprovalDonationComponent
       this.alert('warning', 'No hay bienes a validar', '');
       return;
     } else {
-      console.log(this.params.getValue());
+      const value = this.regisForm.get('activeRadio').value;
+      console.log(value);
+      if (value == 0) {
+        //PUP_VALIDA_BIENES
+        const body: IPupValidGood = {
+          minutesNumber: parseInt(localStorage.getItem('actaId')),
+          transferorNumber: 0,
+          classificationNumber: 0,
+          goodNumber: 0,
+          status: '',
+          unit: '',
+        };
+        this.goodProcessService.pupValidGood(body).subscribe({});
+      } else {
+        if (value != this.val_cambio) {
+          this.alert(
+            'warning',
+            'Grupo de bien incorrecto',
+            'Para poder validar los bienes, seleccione el grupo al que pertenece'
+          );
+          return;
+        } else {
+          this.valida_b = 1;
+          //PUP_CARGA BIENES
+        }
+      }
+      //!VER SI ESTO TODAVÍA FUNCIONA
+      /* console.log(this.params.getValue());
       this.donationService.getApprove(this.params.getValue()).subscribe({
         next: data => {
           console.log(this.dataDetailDonation);
@@ -1437,9 +1451,10 @@ export class CaptureApprovalDonationComponent
             ''
           );
         },
-      });
+      }); */
     }
   }
+
   findRast() {
     if (this.estatus === 'CERRADA') {
       this.alert(
