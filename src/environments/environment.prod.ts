@@ -16,6 +16,5 @@ export const environment = {
   api_external_userInfo: window.env.api_external_userInfo,
   api_external_typeUser: window.env.api_external_typeUser,
   api_external_rolesUser: window.env.api_external_rolesUser,
-  SOCKET_URL: window.env.SOCKET_URL
-
+  SOCKET_URL: window.env.SOCKET_URL,
 };
