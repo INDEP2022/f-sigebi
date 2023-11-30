@@ -196,58 +196,7 @@ export class CaptureApprovalDonationComponent
 
   ) {
     super();
-    /* this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: {
-        title: 'Acciones',
-        edit: false,
-        add: false,
-        delete: false,
-      },
-      selectedRowIndex: -1,
-      mode: 'external',
-      columns: {
-        name: {
-          filter: false,
-          sort: false,
-          title: 'Selección',
-          type: 'custom',
-          showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-            this.isGoodSelectedValid(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onGoodSelectValid(instance),
-        },
-        proposalKey: {
-          title: 'Ref.',
-          type: 'number',
-          sort: false,
-        },
-        goodNumber: {
-          title: 'No. Bien',
-          type: 'number',
-          sort: false,
-        },
-        description: {
-          title: 'Descripción del Bien',
-          type: 'string',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.description;
-          },
-        },
-        quantity: {
-          title: 'Cantidad',
-          type: 'number',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.quantity;
-          },
-        },
-      },
-    }; */
+
     this.TOTAL_REPORTE = 0;
     this.BIEN_ERROR = 0;
     this.SUM_BIEN = 0;
@@ -1800,7 +1749,7 @@ export class CaptureApprovalDonationComponent
     */
     const idAct = Number(localStorage.getItem('actaId'));
     const body = {
-      'AREA_D': this.areaD,//10
+      'AREA_D': token.department,//10
       'user': token.preferred_username,
       'no_acta': idAct
     };
@@ -1821,7 +1770,7 @@ export class CaptureApprovalDonationComponent
     const token = this.authService.decodeToken();
     const idAct = Number(localStorage.getItem('actaId'));
     const body = {
-      'AREA_D': 10,//this.areaD,
+      'AREA_D': token.department,//this.areaD,
       'user': token.preferred_username,
       'no_acta': idAct
     };
@@ -1851,7 +1800,7 @@ export class CaptureApprovalDonationComponent
     */
     const idAct = Number(localStorage.getItem('actaId'));
     const body = {
-      'AREA_D': 10,//this.areaD,
+      'AREA_D': token.department,//this.areaD,
       'user': token.preferred_username,
       'no_acta': idAct
     };
