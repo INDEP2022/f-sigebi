@@ -142,9 +142,9 @@
     <div *ngIf="show">
       <div class="ch-content mt-5" header>
         <h5 class="title">Detalle de Facturas</h5>
-        <app-columns-select
+        <!-- <app-columns-select
           [(settings)]="settings"
-          [leftList]="true"></app-columns-select>
+          [leftList]="true"></app-columns-select> -->
         <!--<div class="col-md-5 text-end d-flex flex-row-reverse mb-3">
           <div>
             <button
@@ -164,7 +164,7 @@
               [source]="data1"
               (rowSelect)="rowSelect($event)">
             </ng2-smart-table>
-            <app-pagination [params]="params" [totalItems]="totalItems">
+            <app-pagination [params]="params1" [totalItems]="totalItems">
             </app-pagination>
           </div>
           <hr />
