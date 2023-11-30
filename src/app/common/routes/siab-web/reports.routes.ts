@@ -26,6 +26,14 @@ export const REPORTS_ROUTES = [
         label: 'Reporte de Gastos por Bien',
         link: '/pages/siab-web/sami/consult-report/report-expenses-for-good',
       },
+      {
+        label: 'Reporte Consolidado Orden de Ingreso',
+        link: '/pages/siab-web/sami/consult-report/report-consolidated-entry-order',
+      },
+      {
+        label: 'Reporte Consolidado Orden de Pago',
+        link: '/pages/siab-web/sami/consult-report/report-consolidated-payment-order',
+      },
     ],
   },
 ];
