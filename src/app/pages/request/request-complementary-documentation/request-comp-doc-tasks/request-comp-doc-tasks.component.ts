@@ -647,7 +647,74 @@ export class RequestCompDocTasksComponent
   }
 
   validateTurn() {
+
+    switch (this.process) {
+      //GESTIONAR BINES SIMILARES RESARCIMIENTO
+      case 'register-request-return':
+
+        let bienesSimilares = 0;
+        let autoridadOrdenante = null;
+
+
+        if (autoridadOrdenante == null) {
+          this.showError('El valor de Autoridad Ordenante es obligatorio');
+          return false;
+        }
+
+        if (bienesSimilares < 0) {
+          this.showError('No se encontraron bienes similares');
+          return false;
+        }
+
+
+        break;
+      case 'verify-compliance-return':
+        break;
+      case 'approve-return':
+
+        let getEstimatedRowCount = 0;
+
+        if (getEstimatedRowCount == 0) {
+          this.showError('Es necesario ingresar el número de oficio');
+          return false;
+        }
+
+
+        break;
+
+      //GESTIONAR BINES SIMILARES RESARCIMIENTO
+      case 'register-request-similar-goods':
+      case 'notify-transfer-similar-goods':
+      case 'eye-visit-similar-goods':
+      case 'validate-eye-visit-similar-goods':
+      case 'validate-opinion-similar-goods':
+        break;
+
+      //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
+      case 'register-request-compensation':
+      case 'review-guidelines-compensation':
+      case 'analysis-result-compensation':
+      case 'validate-opinion-compensation':
+      case 'notification-taxpayer-compensation':
+
+        break;
+
+      //CASOS INFORMACION DE BIENES
+      case 'register-request-compensation':
+      case 'review-guidelines-compensation':
+      case 'analysis-result-compensation':
+
+        break;
+
+
+
+    }
+
     return true;
+  }
+
+  showError(text) {
+    this.onLoadToast('error', 'Error', text);
   }
 
   openSendEmail() {
