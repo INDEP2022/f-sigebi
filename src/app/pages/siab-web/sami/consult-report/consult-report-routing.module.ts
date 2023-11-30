@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ReportConsolidatedEntryOrderComponent } from './report-consolidated-entry-order/report-consolidated-entry-order.component';
+import { ReportConsolidatedPaymentOrderComponent } from './report-consolidated-payment-order/report-consolidated-payment-order.component';
 import { ReportDocumentGoodComponent } from './report-document-good/report-document-good.component';
 import { ReportDocumentScheduleComponent } from './report-document-schedule/report-document-schedule.component';
 import { ReportDocumentComponent } from './report-document/report-document.component';
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'report-consolidated-entry-order',
     component: ReportConsolidatedEntryOrderComponent,
+  },
+  {
+    path: 'report-consolidated-payment-order',
+    component: ReportConsolidatedPaymentOrderComponent,
   },
   {
     path: 'upload-images',

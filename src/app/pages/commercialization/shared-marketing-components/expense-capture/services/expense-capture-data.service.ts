@@ -849,11 +849,20 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           if (this.formPayment.value !== 'INTERCAMBIO') {
             this.VERIFICA_ACTUALIZACION_EST();
           } else {
-            this.VALIDA_SUBTOTAL_PRECIO(
-              this.data.expenseNumber,
-              this.data.eventNumber,
-              this.data.lotNumber
-            );
+            this.form
+              .get('paymentRequestNumber')
+              .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
+            this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
+            // this.sucessSendSolitudeMessage();
+            if (this.data.formPayment !== 'INTERCAMBIO') {
+              this.VERIFICA_ACTUALIZACION_EST();
+            } else {
+              this.VALIDA_SUBTOTAL_PRECIO(
+                this.data.expenseNumber,
+                this.data.eventNumber,
+                this.data.lotNumber
+              );
+            }
           }
         },
         error: err => {

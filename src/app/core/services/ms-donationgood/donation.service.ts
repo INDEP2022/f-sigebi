@@ -74,7 +74,7 @@ export class DonationService
   }
 
   getEventComDonationFilter(params?: any) {
-    const route = `${DonationEndPoint.eventComDonation}`;
+    const route = `${DonationEndPoint.QuantityProceddingEventComDon}`;
     return this.get(route, params);
   }
 
@@ -82,9 +82,23 @@ export class DonationService
     params?: ListParams
   ): Observable<IListResponse<any>> {
     return this.donationRepository.getAll(
-      DonationEndPoint.DetailEventComDon,
+      //chm --> comment --> DonationEndPoint.DetailEventComDon,
+      DonationEndPoint.DetailProceddingEventComDon,
+      //DonationEndPoint.DetailEventComDon,
       params
     );
+  }
+
+  getErrorEventComDonationDetail(
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.donationRepository.getAll(
+      DonationEndPoint.ErrorProceddingEventComDon,
+      params
+    );
+  }
+  getQuantityEventComDonationDetail(id: string) {
+    return this.get(DonationEndPoint.QuantityProceddingEventComDon + `/${id}`);
   }
 
   getDetailById(body: any) {
