@@ -4,11 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -85,7 +81,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     private parametersService: ParametersService,
     private abandonmentsService: AbandonmentsDeclarationTradesService,
     private datePipe: DatePipe,
-    private delegationService: DelegationService,
+    private delegationService: DelegationService
   ) {
     super();
   }
@@ -93,12 +89,12 @@ export class CreateActaComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.generaConsec();
     this.actaForm();
-    console.log("Folio:" + this.foolio);
+    console.log('Folio:' + this.foolio);
     this.delegation = Number(localStorage.getItem('area'));
     console.log('this.delegation::' + this.delegation);
     //this.consulREG_DEL_DESTR(new ListParams());
     //this.consulREG_DEL_ADMIN(new ListParams());
-    //chm: 
+    //chm:
     this.consulREG_DEL_ADMIN1();
     for (let i = 1900; i <= this.currentYear; i++) {
       this.years.push(i);
@@ -124,7 +120,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     });
     //this.actaRecepttionForm.get('consec').setValue(this.foolio);
     this.actaRecepttionForm.patchValue({
-      consec: this.foolio
+      consec: this.foolio,
     });
     this.actaRecepttionForm.patchValue({
       captureDate: await this.getDate(),
@@ -194,7 +190,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
       },
     });
   }
-
 
   /*CHM
   stagecreated: any = null;
@@ -346,12 +341,12 @@ export class CreateActaComponent extends BasePage implements OnInit {
       elaborationDate: new Date(),
       estatusAct: 'ABIERTA',
       elaborated: this.authService.decodeToken().username,
-      fileId: 0,//this.actaRecepttionForm.value.fileId,
-      witness1: '',//this.actaRecepttionForm.value.testigoOne,
-      witness2: '',//this.actaRecepttionForm.value.testigoOIC,
+      fileId: 0, //this.actaRecepttionForm.value.fileId,
+      witness1: '', //this.actaRecepttionForm.value.testigoOne,
+      witness2: '', //this.actaRecepttionForm.value.testigoOIC,
       actType: 'COMPDON',
       captureDate: this.actaRecepttionForm.value.captureDate,
-      observations: '',//this.actaRecepttionForm.value.observaciones,
+      observations: '', //this.actaRecepttionForm.value.observaciones,
       registreNumber: null,
       numDelegation1: this.authService.decodeToken().department,
       numDelegation2: null,

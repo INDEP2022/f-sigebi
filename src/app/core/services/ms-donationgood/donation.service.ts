@@ -97,9 +97,7 @@ export class DonationService
       params
     );
   }
-  getQuantityEventComDonationDetail(
-    id: string
-  ) {
+  getQuantityEventComDonationDetail(id: string) {
     return this.get(DonationEndPoint.QuantityProceddingEventComDon + `/${id}`);
   }
 

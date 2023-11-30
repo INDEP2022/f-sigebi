@@ -21,7 +21,9 @@
           </div> -->
           <div class="col-md-3 mt-2">
             <div>
-              <form-field [control]="actaRecepttionForm.get('acta')" label="Acta">
+              <form-field
+                [control]="actaRecepttionForm.get('acta')"
+                label="Acta">
                 <ng-select formControlName="acta" class="form-control pt-1">
                   <ng-option value="CPD">CPD</ng-option>
                 </ng-select>
@@ -41,10 +43,18 @@
 
           <div class="col-md-3 mt-2">
             <div>
-              <form-field [control]="actaRecepttionForm.get('delegation')" label="Área">
-                <ng-select formControlName="delegation" class="form-control pt-1">
-                  <ng-option *ngFor="let item of arrayDele" [value]="item.delegacion">{{ item.no_delegacion_2 }} -
-                    {{ item.delegacion }}</ng-option>
+              <form-field
+                [control]="actaRecepttionForm.get('delegation')"
+                label="Área">
+                <ng-select
+                  formControlName="delegation"
+                  class="form-control pt-1">
+                  <ng-option
+                    *ngFor="let item of arrayDele"
+                    [value]="item.delegacion"
+                    >{{ item.no_delegacion_2 }} -
+                    {{ item.delegacion }}</ng-option
+                  >
                 </ng-select>
               </form-field>
             </div>
@@ -82,17 +92,31 @@
           </div>  -->
           <div class="col-md-3 mt-2">
             <div>
-              <form-field [control]="actaRecepttionForm.get('anio')" label="Año">
-                <ng-select class="form-control pt-1" formControlName="anio" [items]="years"
+              <form-field
+                [control]="actaRecepttionForm.get('anio')"
+                label="Año">
+                <ng-select
+                  class="form-control pt-1"
+                  formControlName="anio"
+                  [items]="years"
                   [ngModel]="currentYear"></ng-select>
               </form-field>
             </div>
           </div>
           <div class="col-md-3 mt-2">
             <div>
-              <form-field [control]="actaRecepttionForm.get('consec')" label="Folio">
-                <input min="0" max="99999" pattern="^[0-9]+" type="number" class="form-control pt-1"
-                  formControlName="consec" readonly [ngModel]="foolio" />
+              <form-field
+                [control]="actaRecepttionForm.get('consec')"
+                label="Folio">
+                <input
+                  min="0"
+                  max="99999"
+                  pattern="^[0-9]+"
+                  type="number"
+                  class="form-control pt-1"
+                  formControlName="consec"
+                  readonly
+                  [ngModel]="foolio" />
               </form-field>
             </div>
           </div>
@@ -109,17 +133,30 @@
 
           <div class="col-md-3 mt-2">
             <div>
-              <form-field [control]="actaRecepttionForm.get('captureDate')" label="Fecha Captura">
-                <input [ngClass]="{ 'not-press bg-gray': !disabledSend }" #datepickerElement type="text"
-                  class="form-control pt-1" formControlName="captureDate" bsDatepicker
+              <form-field
+                [control]="actaRecepttionForm.get('captureDate')"
+                label="Fecha Captura">
+                <input
+                  [ngClass]="{ 'not-press bg-gray': !disabledSend }"
+                  #datepickerElement
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="captureDate"
+                  bsDatepicker
                   [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
               </form-field>
             </div>
           </div>
           <div class="col-md-3 mt-2">
             <div>
-              <form-field [control]="actaRecepttionForm.get('claveacta')" label="Clave acta">
-                <input maxlength="100" type="text" class="form-control pt-1" formControlName="claveacta" />
+              <form-field
+                [control]="actaRecepttionForm.get('claveacta')"
+                label="Clave acta">
+                <input
+                  maxlength="100"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="claveacta" />
               </form-field>
             </div>
           </div>
@@ -174,13 +211,19 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button type="button" [disabled]="!actaRecepttionForm.value" class="btn btn-primary active btn-sm"
+        <button
+          type="button"
+          [disabled]="!actaRecepttionForm.value"
+          class="btn btn-primary active btn-sm"
           (click)="confirm()">
           Guardar <i class="fas fa-save bx-sm float-icon"></i>
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active btn-sm" (click)="return()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="return()">
           Cancelar
         </button>
       </div>

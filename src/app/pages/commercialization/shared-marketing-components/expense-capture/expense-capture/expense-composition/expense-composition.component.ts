@@ -208,6 +208,12 @@ export class ExpenseCompositionComponent
     return this.expenseNumber && this.expenseNumber.value;
   }
 
+  get changeStatusFilter() {
+    return this.data
+      ? this.data.filter(row => row.changeStatus && row.changeStatus === true)
+      : [];
+  }
+
   get amount() {
     return this.expenseCaptureDataService.amount;
   }
@@ -582,6 +588,7 @@ export class ExpenseCompositionComponent
   }
 
   async modifyEstatus() {
+    debugger;
     this.loader.load = true;
     this.actionButton = 'Cambio de estatus';
     let filterParams = new FilterParams();
@@ -606,9 +613,9 @@ export class ExpenseCompositionComponent
     if (ls_status) {
       this.sendSolicitud();
     } else if (
-      this.data &&
-      this.data.length > 0 &&
-      this.data[0].goodNumber === null
+      this.changeStatusFilter &&
+      this.changeStatusFilter.length > 0 &&
+      this.changeStatusFilter[0].goodNumber === null
     ) {
       this.sendSolicitud();
     } else {
