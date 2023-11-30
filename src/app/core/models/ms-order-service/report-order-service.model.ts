@@ -3,7 +3,7 @@ export interface IRecepReqModel {
   orderServiceFolio: string;
   contractNumber: string;
   regionalDelegation: number;
-  costService: string;
+  costService: number;
   goodId: string;
   goodNumber: number;
   regionalDelegationName: string;

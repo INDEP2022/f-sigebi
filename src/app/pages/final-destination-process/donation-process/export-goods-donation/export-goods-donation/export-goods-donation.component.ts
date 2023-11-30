@@ -958,7 +958,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         i++;
       } else {
         let obj = {
-          goodId: item_.goodNumber,
+          goodId: item_.goodId,
           id: item_.goodNumber,
           status: statusFinal.status,
           observations: descripcion + ' ',

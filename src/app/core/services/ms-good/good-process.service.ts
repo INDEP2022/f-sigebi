@@ -385,4 +385,16 @@ export class GoodProcessService extends HttpService {
   pupValidGood(body: IPupValidGood) {
     return this.post('application/pupValidGood', body);
   }
+
+  queryDonationGoods(body: any) {
+    return this.post('application/pup-consultation-estate', body);
+  }
+
+  detailProcessClean(body: any) {
+    return this.post('application/detail-process-clean', body);
+  }
+
+  validateDonationGoods(body: any) {
+    return this.post('application/pupValidGood', body);
+  }
 }

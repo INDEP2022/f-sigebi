@@ -60,7 +60,7 @@
           <div class="col-md-6 mb-3 d-flex justify-content-end">
             <button
               (click)="add()"
-              [disabled]="!showFilters"
+              [disabled]="!showAdd"
               type="button"
               tooltip="Nuevo"
               containerClass="tooltip-style"
@@ -134,14 +134,14 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters || !selectedRow"
+              [disabled]="!showAdd || !selectedRow"
               (click)="disperGasto()">
               Dispersa Gasto/Mandato {{ selectedRow?.detPaymentsId }}
             </button>
             <button
               type="button"
               class="btn btn-success btn-sm active mr-2 mt-2"
-              [disabled]="!showFilters"
+              [disabled]="!showAdd"
               (click)="file.click()">
               Cargar Excel/CSV
               <i aria-hidden="true" class="fa fa-upload"></i>
@@ -164,35 +164,35 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="!showAdd"
               (click)="modifyEstatus()">
               Modificar Estatus
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="!showAdd"
               (click)="applyTC()">
               Aplicar TC
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="!showAdd"
               (click)="contabilityMand()">
               Contabilidad Mandatorio
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="!showAdd"
               (click)="reload()">
               Recargar
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="!showAdd"
               (click)="validates()">
               Validados
             </button>

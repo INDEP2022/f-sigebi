@@ -110,6 +110,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           }
         },
       });
+    this.dataService.saveSubject.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        if (response) {
+          this.save();
+        }
+      },
+    });
     // console.log(user);
     this.prepareForm();
   }
@@ -288,6 +295,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             this.loader.load = false;
             this.fillFormSecond({
               ...this.form.value,
+              expenseNumber: response.expenseNumber,
               amount: this.dataService.amount ?? 0,
               vat: this.dataService.vat ?? 0,
               vatWithheld: this.dataService.vatWithholding ?? 0,
@@ -494,36 +502,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.readParams(id);
   }
 
-  async notify() {
-    // console.log('Notificar');
-    if (!this.expenseNumber) {
-      this.alert(
-        'warning',
-        'No puede mandar correo si no a guardado el gasto',
-        ''
-      );
-      return;
-    }
-    // const firstValidation =
-    //   !this.conceptNumber.value &&
-    //   !this.eventNumber.value &&
-    //   !this.clkpv.value &&
-    //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
-    //   !this.dataService.data.providerName;
-    if (
-      !this.conceptNumber.value &&
-      !this.eventNumber.value &&
-      !this.clkpv.value &&
-      !this.dataService.dataCompositionExpenses[0].goodNumber &&
-      !this.dataService.data.providerName
-    ) {
-      this.alert('warning', 'Tiene que llenar alguno de los campos', '');
-      return;
-    }
-    if (!this.dataService.FOLIO_UNIVERSAL) {
-      this.alert('warning', 'No se han escaneado los documentos', '');
-      return;
-    }
+  private async showModalNotify() {
     this.loader.load = true;
     let filterParams = new FilterParams();
     filterParams.addFilter(
@@ -591,6 +570,45 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           this.alert('error', 'No se ha guardado el folio de escaneo', '');
         },
       });
+  }
+  async notify() {
+    // console.log('Notificar');
+
+    if (!this.expenseNumber) {
+      this.alert(
+        'warning',
+        'No puede mandar correo si no a guardado el gasto',
+        ''
+      );
+      return;
+    }
+    // const firstValidation =
+    //   !this.conceptNumber.value &&
+    //   !this.eventNumber.value &&
+    //   !this.clkpv.value &&
+    //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
+    //   !this.dataService.data.providerName;
+    if (
+      !this.conceptNumber.value &&
+      !this.eventNumber.value &&
+      !this.clkpv.value &&
+      !this.dataService.dataCompositionExpenses[0].goodNumber &&
+      !this.dataService.data.providerName
+    ) {
+      this.alert('warning', 'Tiene que llenar alguno de los campos', '');
+      return;
+    }
+    if (!this.dataService.FOLIO_UNIVERSAL) {
+      this.alert('warning', 'No se han escaneado los documentos', '');
+      return;
+    }
+    this.alertQuestion('question', '¿Desea notificar por correo?', '').then(
+      x => {
+        if (x.isConfirmed) {
+          this.showModalNotify();
+        }
+      }
+    );
   }
 
   private getParamValConcept(conceptNumber: number) {
@@ -941,7 +959,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get dataCompositionExpensesToUpdateClasif() {
     return this.dataCompositionExpenses
       ? this.dataCompositionExpenses.filter(
-          row => row.reportDelit && row.reportDelit === true && row.goodNumber
+          row => row.reportDelit && row.reportDelit === true
         )
       : [];
   }
@@ -949,7 +967,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get dataCompositionExpensesStatusChange() {
     return this.dataCompositionExpenses
       ? this.dataCompositionExpenses.filter(
-          row => row.changeStatus && row.changeStatus === true && row.goodNumber
+          row => row.changeStatus && row.changeStatus === true
         )
       : [];
   }
