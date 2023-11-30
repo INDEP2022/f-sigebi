@@ -37,15 +37,14 @@
       </div>
       <div class="row pt-3">
         <div class="col-md-6">
-          <form-field [control]="form.get('fileNumber')" label="No. Expediente">
+          <form-field [control]="form.get('uniqueKey')" label="Clave Unica">
             <input
               type="text"
               class="form-control"
               maxlength="100"
-              formControlName="fileNumber" />
+              formControlName="uniqueKey" />
           </form-field>
         </div>
-
         <div class="col-md-6">
           <form-field
             [control]="form.get('descriptionGood')"
@@ -58,46 +57,14 @@
           </form-field>
         </div>
       </div>
-
-      <div class="row pt-3">
-        <div class="col-md-6">
-          <form-field [control]="form.get('quantity')" label="Cantidad">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="100"
-              formControlName="quantity" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field [control]="form.get('unit')" label="Unidad Medida">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="100"
-              formControlName="unit" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-3">
-        <div class="col-md-6">
-          <form-field [control]="form.get('uniqueKey')" label="Clave Unica">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="100"
-              formControlName="uniqueKey" />
-          </form-field>
-        </div>
-      </div>
       <div class="d-flex justify-content-end">
         <div class="mt-3 btn-toolbar">
-          <button class="btn btn-primary btn-sm active mr-2">
+          <button
+            (click)="showListGoods()"
+            class="btn btn-primary btn-sm active mr-2">
             Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
-          <button class="btn btn-danger btn-sm active">
+          <button (click)="cleanSearch()" class="btn btn-danger btn-sm active">
             Limpiar <i class="fa fa-eraser"></i>
           </button>
         </div>
@@ -110,9 +77,10 @@
       </div>
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
+          [attr.class]="'table-responsive pt-3'"
           [settings]="settings"
-          [source]="infoGoods">
+          [source]="infoGoods"
+          (userRowSelect)="showGoodSelect($event.data)">
         </ng2-smart-table>
         <app-pagination
           [params]="params"
@@ -129,26 +97,26 @@
             <label class="col-lg-4 text-right"
               >Gasto Validación Requisitos&#58;</label
             >
-            <span> $10</span>
+            <span> ${{ costValReq }}</span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right"
               >Gasto Recepción Documental&#58;</label
             >
-            <span> $10</span>
+            <span> ${{ costRecDoc }}</span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right">Gasto Programación&#58;</label>
-            <span>$10 </span>
+            <span>${{ costProg }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right"
               >Gasto Programación Entrega&#58;</label
             >
-            <span> $10 </span>
+            <span> ${{ costProgEnt }} </span>
           </div>
         </form>
       </div>
@@ -158,24 +126,24 @@
             <label class="col-lg-4 text-right"
               >Gasto Almacenaje en Patio/Almacén&#58;</label
             >
-            <span> $10</span>
+            <span> ${{ costWarehouse }}</span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right">Gasto Manual&#58;</label>
-            <span>$10</span>
+            <span>${{ costManual }}</span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right"
               >Gasto Reubicación de bienes&#58;</label
             >
-            <span>$10</span>
+            <span>${{ costReub }}</span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right">Gasto Total&#58;</label>
-            <span> $70 </span>
+            <span> ${{ total }} </span>
           </div>
         </form>
       </div>
@@ -185,13 +153,9 @@
         <tabset>
           <tab heading="Validación Requisitos" id="tab1">
             <div class="row">
-              <div class="btn-toolbar pt-3">
-                <app-columns-select
-                  [(settings)]="settingsValReq"></app-columns-select>
-              </div>
               <div [class]="loadingValReq ? 'table-loading' : ''">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered table-responsive pt-3'"
+                  [attr.class]="'table-responsive pt-3'"
                   [settings]="settingsValReq"
                   [source]="infoValReq">
                 </ng2-smart-table>
@@ -203,13 +167,9 @@
           </tab>
           <tab heading="Recepción Documental">
             <div class="row">
-              <div class="btn-toolbar pt-3">
-                <app-columns-select
-                  [(settings)]="settingsRecDoc"></app-columns-select>
-              </div>
               <div [class]="loadingRecDoc ? 'table-loading' : ''">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered table-responsive pt-3'"
+                  [attr.class]="' table-responsive pt-3'"
                   [settings]="settingsRecDoc"
                   [source]="infoRecDoc">
                 </ng2-smart-table>

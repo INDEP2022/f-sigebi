@@ -63,9 +63,18 @@ export class DonationService
   remove(id: string): Observable<any> {
     return this.donationRepository.remove(api, id);
   }
+  removeEvent(id: string | number) {
+    const route = `${DonationEndPoint.eventComDonation}/${id}`;
+    return this.delete(route);
+  }
 
   getEventComDonation(params?: ListParams) {
     const route = `${DonationEndPoint.eventComDonation}`;
+    return this.get(route, params);
+  }
+
+  getEventComDonationFilter(params?: any) {
+    const route = `${DonationEndPoint.QuantityProceddingEventComDon}`;
     return this.get(route, params);
   }
 
@@ -73,11 +82,31 @@ export class DonationService
     params?: ListParams
   ): Observable<IListResponse<any>> {
     return this.donationRepository.getAll(
-      DonationEndPoint.DetailEventComDon,
+      //chm --> comment --> DonationEndPoint.DetailEventComDon,
+      DonationEndPoint.DetailProceddingEventComDon,
+      //DonationEndPoint.DetailEventComDon,
       params
     );
   }
 
+  getErrorEventComDonationDetail(
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.donationRepository.getAll(
+      DonationEndPoint.ErrorProceddingEventComDon,
+      params
+    );
+  }
+  getQuantityEventComDonationDetail(
+    id: string
+  ) {
+    return this.get(DonationEndPoint.QuantityProceddingEventComDon + `/${id}`);
+  }
+
+  getDetailById(body: any) {
+    const route = `${DonationEndPoint.DetailEventComByID}`;
+    return this.post(route, body);
+  }
   getExcel(body: IExportDetail) {
     const route = `${DonationEndPoint.eventComDonationExcel}`;
     return this.post(route, body);

@@ -174,7 +174,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             const search: any = {
-              captureDate: () => (searchFilter = SearchFilter.EQ),
+              captureDate: () => {
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+              },
               noDelegation1: () => (searchFilter = SearchFilter.EQ),
               elaborated: () => (searchFilter = SearchFilter.EQ),
               estatusAct: () => (searchFilter = SearchFilter.EQ),
@@ -183,7 +186,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             };
             search[filter.field]();
             if (filter.search !== '') {
-              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'captureDate') {
+                this.columnFilter[field] = `${filter.search}`;
+              } else {
+                this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilter[field];
             }
@@ -363,9 +370,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   ) {
     this.loading = true;
 
-    captureDate
-      ? (this.params.getValue()['filter.captureDate'] = `$eq:${captureDate}`)
-      : delete this.params.getValue()['filter.captureDate'];
     closeDate
       ? (this.params.getValue()['filter.closeDate'] = `$eq:${closeDate}`)
       : delete this.params.getValue()['filter.closeDate'];
@@ -388,6 +392,30 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilter,
     };
+    console.log('captureDate', captureDate);
+    if (captureDate) {
+      params['filter.captureDate'] = `$eq:${captureDate}`;
+      // this.params.getValue()['filter.captureDate'] = `$eq:${captureDate}`
+    } else {
+      if (params['filter.captureDate']) {
+        const fechas = params['filter.captureDate'];
+        var fecha1 = new Date(fechas);
+
+        var ano1 = fecha1.getFullYear();
+        var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+        var dia1 = ('0' + fecha1.getDate()).slice(-2);
+        var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+        params['filter.captureDate'] = `$eq:${fechaFormateada1}`;
+        // delete params['filter.impressionDate_'];
+      } else {
+        if (!this.from) delete this.params.getValue()['filter.captureDate'];
+        else params['filter.captureDate'] = `$eq:${this.from}`;
+      }
+    }
+
+    // EVENT_COM_DONACION
+    params['sortBy'] = `captureDate:DESC`;
+    params['filter.actType'] = '$eq:COMPDON';
     this.donationService.getEventComDonation(params).subscribe({
       next: resp => {
         this.data.load(resp.data);
@@ -528,7 +556,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.serviceUser.getAllIndicator(body).subscribe({
         next: resp => {
           if (resp.data) {
-            resolve(resp);
+            resolve(resp.data[0].min);
           } else {
             resolve(null);
           }
@@ -540,11 +568,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     });
   }
 
-  async getFaVal() {
+  async getFaVal(indicated: any) {
     return new Promise((resolve, reject) => {
       let body = {
         pUser: this.authService.decodeToken().username,
-        pIndicatorNumber: 12,
+        pIndicatorNumber: indicated,
       };
       this.serviceUser.getAllFaVal(body).subscribe({
         next: resp => {
@@ -581,34 +609,38 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   async inicialice() {
-    let access = await this.getAccessArea(new ListParams());
-    let FaVal = await this.getFaVal();
+    // let access = await this.getAccessArea(new ListParams());
+    // console.log("access", access)
+
     let indicated = await this.getIndicator();
+    console.log('indicated', indicated);
     if (indicated == null) {
       this.alert(
-        'error',
-        `El Usuario`,
-        'No tiene privilegios para esta pantalla'
+        'warning',
+        `El usuario no tiene privilegios para esta pantalla`,
+        ''
       );
       this.disabledField();
       this.validate = true;
       return;
     }
+
+    let FaVal = await this.getFaVal(indicated);
     const faVal: any = FaVal;
-    const level = faVal[0].fa_val_usuario_ind;
-    console.log(level);
+    const level: any = faVal ? faVal[0].fa_val_usuario_ind : 0;
+    // console.log(level);
     if (level == 0) {
       this.alert(
-        'error',
-        `El Usuario`,
-        'No tiene privilegios para esta pantalla'
+        'warning',
+        `El usuario no tiene privilegios para esta pantalla`,
+        ''
       );
       this.disabledField();
       this.validate = true;
       return;
     } else if (level == 2) {
-      const delegation: any = access;
-      const valDele = delegation[0].delegationNumber;
+      // const delegation: any = access;
+      const valDele = this.authService.decodeToken().department;
       this.form.get('noDelegation1').setValue(valDele);
     } else if (level == 3) {
       this.form

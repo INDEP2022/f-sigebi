@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
-import { secondFormatDateToDate } from 'src/app/shared/utils/date';
+import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../../services/expense-capture-data.service';
 
 @Component({
@@ -11,23 +11,16 @@ import { ExpenseCaptureDataService } from '../../../services/expense-capture-dat
 export class DataReceiptComponent implements OnInit {
   @Input() set expense(value: IComerExpense) {
     if (value) {
+      console.log(value);
       this.invoiceRecNumber.setValue(value.invoiceRecNumber);
       this.numReceipts.setValue(value.numReceipts);
       this.invoiceRecDate.setValue(
-        value.invoiceRecDate
-          ? secondFormatDateToDate(value.invoiceRecDate)
-          : null
+        secondFormatDateToDateAny(value.invoiceRecDate)
       );
-      this.payDay.setValue(
-        value.payDay ? secondFormatDateToDate(value.payDay) : null
-      );
-      this.captureDate.setValue(
-        value.captureDate ? secondFormatDateToDate(value.captureDate) : null
-      );
+      this.payDay.setValue(secondFormatDateToDateAny(value.payDay));
+      this.captureDate.setValue(secondFormatDateToDateAny(value.captureDate));
       this.fecha_contrarecibo.setValue(
-        value.fecha_contrarecibo
-          ? secondFormatDateToDate(value.fecha_contrarecibo)
-          : null
+        secondFormatDateToDateAny(value.fecha_contrarecibo)
       );
       this.attachedDocumentation.setValue(value.attachedDocumentation);
       this.monthExpense.setValue(value.monthExpense);
@@ -42,7 +35,7 @@ export class DataReceiptComponent implements OnInit {
       this.monthExpense10.setValue(value.monthExpense10);
       this.monthExpense11.setValue(value.monthExpense11);
       this.monthExpense12.setValue(value.monthExpense12);
-      this.exchangeRate.setValue(value.exchangeRate);
+      this.exchangeRate.setValue(+value.exchangeRate);
       this.formPayment.setValue(value.formPayment);
       this.comproafmandsae.setValue(value.comproafmandsae);
       this.capturedUser.setValue(value.capturedUser);
@@ -55,7 +48,7 @@ export class DataReceiptComponent implements OnInit {
   }
   listPayments = ['TRANSFERENCIA', 'CHEQUE', 'INTERCAMBIO'];
   listComproaf = [
-    { id: '1', value: 'SAE' },
+    { id: '1', value: 'INDEP' },
     { id: '2', value: 'MANDATO' },
   ];
   constructor(private dataService: ExpenseCaptureDataService) {}

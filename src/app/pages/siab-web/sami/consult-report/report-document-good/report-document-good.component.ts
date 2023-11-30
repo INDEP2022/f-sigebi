@@ -118,7 +118,6 @@ export class ReportDocumentGoodComponent extends BasePage implements OnInit {
     //this.searchForm.get('requestId').setValue(61590);
     this.goodService.getAll(this.params.getValue()).subscribe({
       next: (data: any) => {
-        console.log('goods', data);
         this.loading = false;
         const filterGoodType = data.data.map(async (item: any) => {
           const goodType = await this.getGoodType(item.goodTypeId);
