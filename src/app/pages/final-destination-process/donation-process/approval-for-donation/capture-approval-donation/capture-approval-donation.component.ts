@@ -196,11 +196,59 @@ export class CaptureApprovalDonationComponent
 
   ) {
     super();
+    /* this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        title: 'Acciones',
+        edit: false,
+        add: false,
+        delete: false,
+      },
+      selectedRowIndex: -1,
+      mode: 'external',
+      columns: {
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        proposalKey: {
+          title: 'Ref.',
+          type: 'number',
+          sort: false,
+        },
+        goodNumber: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          title: 'Descripción del Bien',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.goodEntity?.description;
+          },
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.goodEntity?.quantity;
+          },
+        },
+      },
+    }; */
 
-    this.TOTAL_REPORTE = 0;
-    this.BIEN_ERROR = 0;
-    this.SUM_BIEN = 0;
-    //console.log(this.authService.decodeToken());
     this.settings2 = {
       ...this.settings,
       hideSubHeader: false,
@@ -1735,42 +1783,11 @@ export class CaptureApprovalDonationComponent
     );
   }
 
-  //consulta de bienes
-  queryDonationGoods() {
-    const token = this.authService.decodeToken();
-    /*
-    const body: IFmComDanc = {
-      user: token.preferred_username,
-      goodNumber: -1,
-      NO_DELEGACION_2: 0,
-      NO_DELEGACION_1: 0,
-      TOOLBAR_NO_DELEGACION: 0,
-    };
-    */
-    const idAct = Number(localStorage.getItem('actaId'));
-    const body = {
-      'AREA_D': token.department,//10
-      'user': token.preferred_username,
-      'no_acta': idAct
-    };
-    console.log(body);
-    this.goodProcessService.queryDonationGoods(body).subscribe(
-      async res => {
-        console.log(res);
-        console.log(res.data);
-        await this.getDetailProceedingsDevollution(this.idAct);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-
   cleanProcessDonationGoods() {
     const token = this.authService.decodeToken();
     const idAct = Number(localStorage.getItem('actaId'));
     const body = {
-      'AREA_D': token.department,//this.areaD,
+      'AREA_D': 10,//this.areaD,
       'user': token.preferred_username,
       'no_acta': idAct
     };
@@ -1800,7 +1817,7 @@ export class CaptureApprovalDonationComponent
     */
     const idAct = Number(localStorage.getItem('actaId'));
     const body = {
-      'AREA_D': token.department,//this.areaD,
+      'AREA_D': 10,//this.areaD,
       'user': token.preferred_username,
       'no_acta': idAct
     };
@@ -1840,6 +1857,37 @@ export class CaptureApprovalDonationComponent
     };
     console.log(body);
     this.goodProcessService.validateDonationGoods(body).subscribe(
+      async res => {
+        console.log(res);
+        console.log(res.data);
+        await this.getDetailProceedingsDevollution(this.idAct);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  //consulta de bienes
+  queryDonationGoods() {
+    const token = this.authService.decodeToken();
+    /*
+    const body: IFmComDanc = {
+      user: token.preferred_username,
+      goodNumber: -1,
+      NO_DELEGACION_2: 0,
+      NO_DELEGACION_1: 0,
+      TOOLBAR_NO_DELEGACION: 0,
+    };
+    */
+    const idAct = Number(localStorage.getItem('actaId'));
+    const body = {
+      'AREA_D': this.areaD,//10
+      'user': token.preferred_username,
+      'no_acta': idAct
+    };
+    console.log(body);
+    this.goodProcessService.queryDonationGoods(body).subscribe(
       async res => {
         console.log(res);
         console.log(res.data);
