@@ -56,6 +56,40 @@ export class ExpenseCompositionComponent
       ...this.settings,
       columns: COLUMNS,
     };
+    // this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF_DISPLAYED_SUBJECT.pipe(
+    //   takeUntil(this.$unSubscribe)
+    // ).subscribe({
+    //   next: response => {
+    //     let newColumns = COLUMNS;
+    //     if (!response) {
+    //       delete newColumns.reportDelit;
+    //     }
+    //     this.settings = {
+    //       ...this.settings,
+    //       columns: newColumns,
+    //     };
+    //     this.getPaginated(this.params.value);
+    //   },
+    // });
+    this.expenseCaptureDataService.addByLotExpenseComposition
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.log(response);
+          let newData = this.data
+            ? [...this.data, this.newGoodsByLot(response.goods)]
+            : this.newGoodsByLot(response.goods);
+          this.setData(newData);
+        },
+      });
+
+    this.expenseCaptureDataService.resetExpenseComposition
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.notGetData();
+        },
+      });
     this.expenseCaptureDataService.updateExpenseComposition
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
@@ -105,6 +139,41 @@ export class ExpenseCompositionComponent
           this.loader.load = false;
         },
       });
+  }
+
+  private newGoodsByLot(response) {
+    return response.map(x => {
+      return {
+        detPaymentsId: null,
+        paymentsId: null,
+        amount: 0,
+        iva: 0,
+        retencionIsr: 0,
+        retencionIva: 0,
+        transferorNumber: 0,
+        goodNumber: x.no_bien,
+        total: 0,
+        manCV: null,
+        departure: null,
+        origenNB: null,
+        partialGoodNumber: null,
+        priceRiAtp: null,
+        transNumberAtp: null,
+        expendientNumber: null,
+        clasifGoodNumber: null,
+        value: null,
+        description: null,
+        eventId: null,
+        amount2: 0,
+        iva2: 0,
+        total2: 0,
+        parameter: null,
+        mandato: x.cvman,
+        vehiculoCount: null,
+        changeStatus: false,
+        reportDelit: false,
+      };
+    });
   }
 
   get validateAndProcess() {
@@ -360,6 +429,37 @@ export class ExpenseCompositionComponent
     }
   }
 
+  private setData(data) {
+    this.data = data.map(row => {
+      this.amount += row.amount ? +row.amount : 0;
+      this.vat += row.iva ? +row.iva : 0;
+      this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
+      this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
+      this.total += row.total ? +row.total : 0;
+      return {
+        ...row,
+        reportDelit: this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF,
+        V_VALCON_ROBO: this.expenseCaptureDataService.V_VALCON_ROBO,
+        changeStatus: false,
+        goodDescription: row.description,
+      };
+    });
+    this.expenseCaptureDataService.dataCompositionExpenses = [...this.data];
+    console.log(this.expenseCaptureDataService.dataCompositionExpenses);
+
+    this.totalItems = this.data.length;
+    this.dataTemp = [...this.data];
+    this.getPaginated(this.params.value);
+    this.GRABA_TOTALES();
+    this.loading = false;
+    if (this.validateAndProcess) {
+      setTimeout(() => {
+        this.expenseCaptureDataService.validateAndProcessSolicitud();
+        this.validateAndProcess = false;
+      }, 500);
+    }
+  }
+
   override getData() {
     // let params = new FilterParams();
     if (!this.dataService) {
@@ -382,36 +482,7 @@ export class ExpenseCompositionComponent
         next: response => {
           if (response && response.data && response.data.length > 0) {
             console.log(response.data);
-            this.data = response.data.map(row => {
-              this.amount += row.amount ? +row.amount : 0;
-              this.vat += row.iva ? +row.iva : 0;
-              this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
-              this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
-              this.total += row.total ? +row.total : 0;
-              return {
-                ...row,
-                V_VALCON_ROBO: this.expenseCaptureDataService.V_VALCON_ROBO,
-                changeStatus: false,
-                reportDelit: false,
-                goodDescription: row.description,
-              };
-            });
-            this.expenseCaptureDataService.dataCompositionExpenses = [
-              ...this.data,
-            ];
-            console.log(this.expenseCaptureDataService.dataCompositionExpenses);
-
-            this.totalItems = this.data.length;
-            this.dataTemp = [...this.data];
-            this.getPaginated(this.params.value);
-            this.GRABA_TOTALES();
-            this.loading = false;
-            if (this.validateAndProcess) {
-              setTimeout(() => {
-                this.expenseCaptureDataService.validateAndProcessSolicitud();
-                this.validateAndProcess = false;
-              }, 500);
-            }
+            this.setData(response.data);
           } else {
             this.notGetData();
           }

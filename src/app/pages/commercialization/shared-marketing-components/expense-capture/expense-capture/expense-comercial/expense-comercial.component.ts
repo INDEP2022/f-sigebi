@@ -30,6 +30,7 @@ import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.serv
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
+import { ILoadLotResponse } from '../../models/lot';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
@@ -152,9 +153,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private getBody() {
     console.log(this.form.value.dateOfResolution);
-
+    let newBody = { ...this.form.value };
+    delete newBody.publicLot;
     return {
-      ...this.form.value,
+      ...newBody,
       amount: this.dataService.amount ?? 0,
       vat: this.dataService.vat ?? 0,
       vatWithheld: this.dataService.vatWithholding ?? 0,
@@ -239,7 +241,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.errorsClasification = [];
     if (updateOthers) {
       this.dataService.updateOI.next(true);
-      this.dataService.updateExpenseComposition.next(true);
+      this.dataService.resetExpenseComposition.next(true);
       this.dataService.updateFolio.next(true);
     }
   }
@@ -438,6 +440,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.eventNumber.valueChanges.subscribe({
       next: response => {
         this.publicLot.setValue(null, { emitEvent: false });
+        this.lotNumber.setValue(null, { emitEvent: false });
       },
     });
     // this.lotNumber.valueChanges.subscribe({
@@ -642,6 +645,21 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
+  private updateGoodsByLote(response: ILoadLotResponse) {
+    let { selectChange } = response;
+    this.dataService.SELECT_CAMBIA_CLASIF_ENABLED =
+      selectChange.SELECT_CAMBIA_CLASIF_ENABLED;
+    this.dataService.SELECT_CAMBIA_CLASIF_UPDATE =
+      selectChange.SELECT_CAMBIA_CLASIF_UPDATE;
+    this.dataService.V_BIEN_REP_ROBO += selectChange.V_BIEN_REP_ROBO;
+    if (selectChange.SELECT_CAMBIA_CLASIF === 'S') {
+      this.dataService.SELECT_CAMBIA_CLASIF = true;
+    } else {
+      this.dataService.SELECT_CAMBIA_CLASIF = false;
+    }
+    this.dataService.addByLotExpenseComposition.next(response);
+  }
+
   private CARGA_BIENES_LOTE_XDELRES(
     v_id_evento: number,
     v_id_lote: number,
@@ -660,7 +678,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           if (response) {
             console.log(response);
             this.alert('success', 'Se han cargado los bienes del lote', '');
-            this.dataService.updateExpenseComposition.next(true);
+            this.updateGoodsByLote(response);
           }
         },
         error: err => {
@@ -687,7 +705,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           if (response) {
             console.log(response);
             this.alert('success', 'Se han cargado los bienes del lote', '');
-            this.dataService.updateExpenseComposition.next(true);
+            this.updateGoodsByLote(response);
           }
         },
         error: err => {
@@ -705,6 +723,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async nextItemLote() {
+    // this.CARGA_BIENES_LOTE_XDELRES(
+    //   this.eventNumber.value,
+    //   this.lotNumber.value,
+    //   this.conceptNumber.value
+    // );
+    // return;
     if (this.PVALIDADET === 'S') {
       const V_EXIST = await this.getParamValConcept(this.conceptNumber.value);
       console.log(V_EXIST);
@@ -714,22 +738,19 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           this.URCOORDREGCHATARRA_AUTOMATICO(3)
         );
         console.log(coordChatarra);
-        // this.dataService.updateExpenseComposition.next(true);
-        // return;
         this.CARGA_BIENES_LOTE_XDELRES(
           this.eventNumber.value,
           this.lotNumber.value,
           this.conceptNumber.value
         );
       } else {
-        // this.dataService.updateExpenseComposition.next(true);
         this.CARGA_BIENES_LOTE(this.eventNumber.value, this.lotNumber.value);
       }
       if (this.dataService.V_BIEN_REP_ROBO > 0) {
         this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
         this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = true;
-        this.dataService.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
         this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = true;
+        this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = true;
       }
     }
   }
@@ -903,13 +924,34 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
       );
-
+      this.controlsInDet();
       const responseParams = await this.getParams(event.conceptNumber);
       if (!responseParams) {
         return;
       }
       const otherParams = await this.fillOthersParameters();
     }, 500);
+  }
+
+  private controlsInDet() {
+    if (this.dataService.V_VALCON_ROBO > 0) {
+      if (!this.paymentRequestNumber.value) {
+        this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+        this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = false;
+        this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = true;
+        this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = true;
+      } else {
+        this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+        this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = false;
+        this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = false;
+        this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = false;
+      }
+    } else {
+      this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+      this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = false;
+      this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = false;
+      this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = false;
+    }
   }
 
   async fillForm(expense: IComerExpense) {

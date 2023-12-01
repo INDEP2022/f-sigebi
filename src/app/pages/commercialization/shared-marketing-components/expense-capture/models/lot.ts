@@ -55,3 +55,13 @@ export interface ICancelVtaDTO {
   comer_detgastos: IComerDetGastosDTO[];
   cat_motivos_rev: { motiveDescription: string; selection: number }[];
 }
+
+export interface ILoadLotResponse {
+  goods: { cvman: string; no_bien: string }[];
+  selectChange: {
+    SELECT_CAMBIA_CLASIF_UPDATE: boolean;
+    SELECT_CAMBIA_CLASIF_ENABLED: boolean;
+    V_BIEN_REP_ROBO: number;
+    SELECT_CAMBIA_CLASIF: string;
+  };
+}
