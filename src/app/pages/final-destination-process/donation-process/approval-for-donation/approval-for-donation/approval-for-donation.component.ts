@@ -43,7 +43,33 @@ export type IGoodAndAvailable = IGood & {
 @Component({
   selector: 'app-approval-for-donation',
   templateUrl: './approval-for-donation.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: white !important;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ApprovalForDonationComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -115,6 +141,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     return this.form.get('cveActa');
   }
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
+  loadingExport: boolean = false;
   constructor(
     private fb: FormBuilder,
     private donationService: DonationService,
@@ -569,11 +596,13 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     });
   }
 
+  dataSelected: any = null;
   async changeEvent(event: any) {
     if (event) {
       this.selectRow = true;
       this.excelValid = true;
       const data: any = event.data;
+      this.dataSelected = data;
       this.actaId = data.actaId;
       console.log(event.data);
       await this.getDetailComDonation(event.data.actId);
@@ -682,6 +711,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   getEventComDonationExcel(body: any) {
+    this.loadingExport = true;
     let params: any = {
       ...this.params.getValue(),
       ...this.columnFilter,
@@ -701,6 +731,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         // );
       },
       error: error => {
+        this.loadingExport = false;
         this.alert('warning', 'No se pudo descargar el excel', '');
       },
     });
@@ -714,6 +745,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     link.download = nameFile;
     link.click();
     link.remove();
+    this.loadingExport = false;
     this.alert('success', 'El archivo se ha descargado', '');
   }
 
@@ -882,7 +914,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       delegationId: Number(localStorage.getItem('area')),
       nombre_transferente: null,
     };
-
     this.getEventComDonationExcel(this.body);
   }
 
@@ -928,5 +959,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
+  }
+
+  method2(data: any) {
+    console.log('data', this.dataSelected);
+    localStorage.setItem('actaId', this.dataSelected.actId);
+    this.goDetailDonation();
+    // this.alert("success", "AQUI", data)
   }
 }
