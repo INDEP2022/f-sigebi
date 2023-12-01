@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -10,8 +11,11 @@ import {
 import { ICustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { RFC_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CustomersPenaltiesExportAllComponent } from '../customer-penalties-export-all/customer-penalties-export-all.component';
 import { CustomerPenaltiesModalComponent } from '../customer-penalties-modal/customer-penalties-modal.component';
 import { COLUMNS, COLUMNS2 } from './columns';
@@ -37,9 +41,13 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   penalties: ICustomersPenalties;
   user: any;
   eventPenalities: any;
-
+  form: FormGroup = new FormGroup({});
   permission: boolean = false;
   selectRow: boolean = false;
+  selectClient = new DefaultSelect();
+  result: any;
+  today: Date;
+  minDate: Date;
 
   settings2 = { ...this.settings };
 
@@ -47,7 +55,9 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private clientPenaltyService: ClientPenaltyService,
     private authService: AuthService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private fb: FormBuilder,
+    private comerClientsService: ComerClientsService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -241,24 +251,35 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
           this.getData();
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDeductives());
-
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
 
     const user: any = this.authService.decodeToken() as any;
     this.user = user.username;
     console.log(this.user);
     this.validateUser();
+    this.prepareForm();
+    this.getClient(new ListParams());
   }
-
+  private prepareForm() {
+    this.form = this.fb.group({
+      clientId: [null, [Validators.required]],
+      penaltiDate: [null],
+      reasonName: [null],
+      rfc: [null, [Validators.maxLength(20), Validators.pattern(RFC_PATTERN)]],
+      penaliti: [null],
+      startDate: [null],
+      endDate: [null],
+    });
+  }
+  validateDate(date: Date) {
+    if (date) {
+      this.minDate = date;
+      this.form.get('endDate').enable();
+    }
+  }
   getData(id?: string | number) {
-    /*if (id) {
+    if (id) {
       this.params2.getValue()['filter.customerId'] = `$eq:${id}`;
-    }*/
+    }
     let params = {
       ...this.params2.getValue(),
       ...this.columnFilters2,
@@ -340,12 +361,16 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     }
   }
 
-  getDeductives() {
+  getDeductives(id?: string) {
     this.loading = true;
+    if (id) {
+      this.params.getValue()['filter.clientId.id'] = `$eq:${id}`;
+    }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+
     console.log(params);
     this.clientPenaltyService.getAllV2(params).subscribe({
       next: response => {
@@ -492,5 +517,39 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
         this.alert('success', 'Penalizacion', 'Borrado Correctamente');
       },
     });
+  }
+  getClient(params: ListParams) {
+    if (params.text) {
+      if (!isNaN(parseInt(params.text))) {
+        params['filter.id'] = `$eq:${params.text}`;
+        params['search'] = '';
+      } else if (typeof params.text === 'string') {
+        params['filter.reasonName'] = `$ilike:${params.text}`;
+      }
+    }
+    this.comerClientsService.getAllV2(params).subscribe({
+      next: resp => {
+        /*id
+        reasonName*/
+        this.result = resp.data.map(async (item: any) => {
+          item['idReasonName'] = item.id + ' - ' + item.reasonName;
+        });
+        console.log(resp.data);
+        this.selectClient = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.selectClient = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+  changeClient(event: any) {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDeductives(event.id));
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData(event.id));
+    console.log(event);
   }
 }

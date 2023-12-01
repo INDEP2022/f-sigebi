@@ -531,8 +531,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       });
     });
   }
-  removeAll() { }
-  removeSelect() { }
+  removeAll() {}
+  removeSelect() {}
 
   async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
