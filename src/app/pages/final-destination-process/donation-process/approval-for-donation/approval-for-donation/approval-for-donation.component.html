@@ -122,8 +122,14 @@
           <div>
             <button
               class="btn btn-success active btn-sm ml-3"
+              [ngClass]="{ loading: loadingExport }"
+              [disabled]="totalItems3 == 0 || loadingExport"
               (click)="exportAll()">
-              Exportar a Excel <i class="bx bx-download float-icon"></i>
+              Exportar a Excel
+              <i *ngIf="!loadingExport" class="bx bx-download float-icon"></i>
+              <!-- (click)="exportAll()">
+              
+              Exportar a Excel <i class="bx bx-download float-icon"></i> -->
             </button>
           </div>
           <!-- <app-columns-select
@@ -139,6 +145,7 @@
               [attr.class]="'table-responsive'"
               [settings]="settings"
               [source]="data"
+              (dblclick)="method2($event)"
               (rowSelect)="changeEvent($event)">
             </ng2-smart-table>
           </div>

@@ -649,7 +649,7 @@ export class RequestCompDocTasksComponent
         let bienesSimilares = 0;
         let autoridadOrdenante = null;
 
-        if (autoridadOrdenante == null) {
+        if (isNullOrEmpty(autoridadOrdenante)) {
           this.showError('El valor de Autoridad Ordenante es obligatorio');
           return false;
         }
@@ -664,9 +664,16 @@ export class RequestCompDocTasksComponent
         break;
       case 'approve-return':
         let getEstimatedRowCount = 0;
+        let contenido = '';
+        let docNameUcm = '';
 
-        if (getEstimatedRowCount == 0) {
-          this.showError('Es necesario ingresar el número de oficio');
+        if (getEstimatedRowCount == 0 || isNullOrEmpty(contenido)) {
+          this.showError('Es necesario generar el Dictamen de Devolución');
+          return false;
+        }
+
+        if (isNullOrEmpty(docNameUcm)) {
+          this.showError('Es necesario firmar el Dictamen de Devolución');
           return false;
         }
 
@@ -704,9 +711,16 @@ export class RequestCompDocTasksComponent
 
   openSendEmail() {}
 
-  btnAprobar() {}
+  btnAprobar() {
+    //Finalizar la orden de servicio
+    //Turnamos la solicitud
+  }
 
   openDocument(action) {}
 
   createDictumReturn() {}
+}
+
+export function isNullOrEmpty(value: any): boolean {
+  return value === null || value === undefined || (value + '').trim() === '';
 }

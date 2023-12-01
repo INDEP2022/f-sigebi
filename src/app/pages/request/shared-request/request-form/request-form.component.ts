@@ -823,7 +823,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.id = this.requestId;
       const idRequest = form.id;
 
-      const { title, urlNb, processName, type, subtype, ssubtype } =
+      const { title, url, process, type, subtype, ssubtype } =
         this.getValuesForTurn();
 
       const requestResult: any = await this.updateTurnedRequest(form);
@@ -845,12 +845,12 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['reviewers'] = actualUser.username;
         task['creator'] = actualUser.username;
         task['taskNumber'] = Number(idRequest);
-        task['title'] = title + idRequest;
+        task['title'] = title;
         task['programmingId'] = 0;
         task['requestId'] = idRequest;
         task['expedientId'] = 0;
-        task['urlNb'] = urlNb;
-        task['processName'] = processName;
+        task['urlNb'] = url;
+        task['processName'] = process;
         task['idstation'] = this.idEmisora;
         task['idTransferee'] = this.idTransferente;
         task['idAuthority'] = this.idAuthoridad;
