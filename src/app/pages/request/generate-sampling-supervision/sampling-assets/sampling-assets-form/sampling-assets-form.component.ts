@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -117,7 +118,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     private samplingGoodService: SamplingGoodService,
     private delegationService: RegionalDelegationService,
     private massiveGoodService: MassiveGoodService,
-    private deductiveService: DeductiveVerificationService
+    private deductiveService: DeductiveVerificationService,
+    private router: Router
   ) {
     super();
 
@@ -1046,5 +1048,12 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         'La deductiva no ha sido seleccionada a el muestreo'
       );
     }
+  }
+
+  turnSampling() {
+    console.log('this.samplingId', this.sampleId);
+    this.router.navigate([
+      'pages/request/generate-monitoring-sampling/verify-noncompliance',
+    ]);
   }
 }
