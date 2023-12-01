@@ -2,10 +2,13 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -14,14 +17,19 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { ITempDonDetail } from 'src/app/core/models/ms-donation/donation.model';
+import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { GOOD_TRACKER_ORIGINS } from 'src/app/pages/general-processes/goods-tracker/utils/constants/origins';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { IParamsDonac } from '../capture-approval-donation/capture-approval-donation.component';
+
 interface NotData {
   id: number;
   reason: string;
@@ -87,10 +95,12 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   subTitle: string;
   op: string;
   statusGood_: any;
-  origin: string = '';
-  goods: IGood[] = [];
+  origin = GOOD_TRACKER_ORIGINS.DonationGood;
+  goods: ITempDonDetail[] = [];
+  goodT: IGood;
   totalItemsModal: number = 0;
-  // selectedGooods: any[] = [];
+  modelCreate: ITempDonDetail;
+  $trackedGoods = this.store.select(getTrackedGoods);
   selectedRow: any | null = null;
   dataTableGood_: any[] = [];
   idsNotExist: NotData[] = [];
@@ -100,8 +110,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   ngGlobal: any;
   paramsScreen: IParamsDonac = {
     origin: '',
-    recordId: '',
-    area: '',
   };
   params = new BehaviorSubject<ListParams>(new ListParams());
   dataGoodTable: LocalDataSource = new LocalDataSource();
@@ -111,7 +119,28 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   @Output() onSave = new EventEmitter<any>();
+  @ViewChild('file') file: any;
+  @Input() set files(files: any[]) {
+    // debugger;
+    if (files.length === 0) return;
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => console.log(fileReader.result);
+  }
+  goodsList: ITrackedGood[] = [];
+  get good(): ITrackedGood[] {
+    return this.goodsList;
+  }
+  @Input() set good(good: ITrackedGood[]) {
+    if (good.length > 0) {
+      this.goodsList = good;
+    } else {
+      this.goodsList = [];
+    }
+  }
+
   totalItems2: number = 0;
+  radioButton: any;
   constructor(
     private goodService: GoodService,
     private modalRef: BsModalRef,
@@ -120,7 +149,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     private GoodprocessService_: GoodprocessService,
     private statusGoodService: StatusGoodService,
     private activatedRoute: ActivatedRoute,
-    private globalVarService: GlobalVarsService
+    private globalVarService: GlobalVarsService,
+    private store: Store
   ) {
     super();
     // this.settings = {
@@ -132,6 +162,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     //     ...GOODS,
     //   },
     // };
+    console.log("localStorage.getItem('nameT')", localStorage.getItem('nameT'));
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -153,34 +184,89 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onGoodSelectValid(instance),
         },
-        inventoryNumber: {
-          title: 'No. Inventario',
+        goodNumber: {
+          title: 'No. Bien',
           sort: false,
-        },
-        goodId: {
-          title: 'No. Gestión',
-          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.noBien;
+          },
         },
         description: {
           title: 'Descripción',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good.description;
+          },
         },
-        quantity: {
+        amount: {
           title: 'Cantidad',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.amount;
+          },
         },
         status: {
           title: 'Estatus',
           sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.good.status;
+          },
+        },
+        user: {
+          title: 'Usuario',
+          sort: false,
+        },
+        delegation: {
+          title: 'Delegación',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.delegation.description;
+          },
+        },
+        warehouse: {
+          title: 'Almacén',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.warehouse.description;
+          },
+        },
+        bienindicadores: {
+          title: 'Indicador',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.description;
+          },
+        },
+        transference: {
+          title: 'Transferente',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.transference.nameTransferent;
+          },
+        },
+        processExt: {
+          title: 'Process. Ext Dom',
+          sort: false,
+          valuePrepareFunction(cell: any, row: any) {
+            return row.bienindicadores.procesoExtDom;
+          },
         },
       },
-      // rowClassFunction: (row: any) => {
-      //   if (row.data.di_disponible == 'S') {
-      //     return 'bg-success text-white';
-      //   } else {
-      //     return 'bg-dark text-white';
-      //   }
-      // },
+      rowClassFunction: (row: any) => {
+        const typeBg = localStorage.getItem('nameT');
+        if (typeBg == 'CONSULTA DE BIENES') return 'bg-donacion-1 text-black';
+        else if (typeBg == 'COMERCIO EXTERIOR')
+          return 'bg-donacion-2 text-white';
+        else if (typeBg == 'DELITOS FEDERALES')
+          return 'bg-donacion-3 text-black';
+        else if (typeBg == 'OTROS TRANSFERENTES')
+          return 'bg-donacion-4 text-black';
+        else if (row.data.error === 0) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
     };
   }
 
@@ -192,10 +278,13 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         next: global => {
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
-            console.log('RASTREADOR ', this.data);
-            this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
-            this.dataGoodTable.load(this.selectedGooodsValid);
-            this.dataGoodTable.refresh();
+            console.log('RASTREADOR ', this.ngGlobal.REL_BIENES);
+            this.goodById();
+            // this.createMultipleRecords(this.ngGlobal.REL_BIENES);
+            // this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
+            // console.log(this.selectedGooodsValid);
+            // this.dataGoodTable.load(this.selectedGooodsValid);
+            // this.dataGoodTable.refresh();
           }
         },
       });
@@ -203,9 +292,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
         this.origin = paramsQuery['origin'] ?? null;
-        this.paramsScreen.recordId = paramsQuery['recordId'] ?? null;
-        // this.paramsScreen.cveEvent = paramsQuery['cveEvent'] ?? null;
-        this.paramsScreen.area = paramsQuery['area'] ?? null;
         if (this.origin == 'FMCOMDONAC_1') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
@@ -214,11 +300,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
             }
           }
         }
-        if (
-          this.origin != null &&
-          this.paramsScreen.recordId != null &&
-          this.paramsScreen.area != null
-        ) {
+        if (this.origin != null) {
+          // this.isValidOrigin();
           console.log(this.paramsScreen);
         }
       });
@@ -238,11 +321,16 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              inventoryNumber: () => (searchFilter = SearchFilter.ILIKE),
-              goodId: () => (searchFilter = SearchFilter.EQ),
+              goodNumber: () => (searchFilter = SearchFilter.ILIKE),
+              id: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.EQ),
               quantity: () => (searchFilter = SearchFilter.EQ),
               status: () => (searchFilter = SearchFilter.ILIKE),
+              user: () => (searchFilter = SearchFilter.ILIKE),
+              delegationNumber: () => (searchFilter = SearchFilter.EQ),
+              waehouse: () => (searchFilter = SearchFilter.EQ),
+              bienindicadores: () => (searchFilter = SearchFilter.EQ),
+              transference: () => (searchFilter = SearchFilter.EQ),
             };
 
             search[filter.field]();
@@ -295,12 +383,18 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['filter.status'] = 'DON';
+
+    params['filter.status'] = `$eq:DON`;
+    // params[
+    //   'filter.transference.nameTransferent'
+    // ] = `$ilike:${localStorage.getItem('nameT')}`;
     // params['sortBy'] = `goodId:DESC`;
-    this.goodService.getAll(params).subscribe({
+
+    this.donationService.getTempDon(params).subscribe({
       next: data => {
+        this.goods = data.data;
         console.log(data.data);
-        this.totalItems2 = data.count;
+        this.totalItems2 = data.count ?? 0;
         this.dataGoodTable.load(data.data);
         this.dataGoodTable.refresh();
       },
@@ -329,15 +423,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     this.onSave.emit(this.selectedGooodsValid);
     this.modalRef.hide();
   }
-  // onUserRowSelect(row: any): void {
-  //   if (row.isSelected) {
-  //     this.selectedRow = row.data;
-  //   } else {
-  //     this.selectedRow = null;
-  //   }
-
-  //   console.log(this.selectedRow);
-  // }
 
   onUserRowSelect(event: { data: any; selected: any }) {
     this.selectedRow = event.data;
@@ -386,6 +471,21 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       );
     }
   }
+  isGoodSelectedT(_good: ITrackedGood) {
+    const exists = this.selectedGooods.find(
+      good => good.goodNumber == _good.goodNumber
+    );
+    return exists ? true : false;
+  }
+
+  private isValidOrigin() {
+    return (
+      this.origin !== null &&
+      Object.values(GOOD_TRACKER_ORIGINS).includes(
+        this.origin as unknown as GOOD_TRACKER_ORIGINS
+      )
+    );
+  }
   selectedGooodsValid: any[] = [];
   selectedGooods: any[] = [];
   goodsValid: any;
@@ -394,7 +494,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     // if (this.dataRecepcion.length > 0) {
     // let result = this.dataRecepcion.map(async good => {
     let obj: any = {
-      numberProceedings: this.paramsScreen.recordId,
+      numberProceedings: localStorage.getItem('actaId'),
       numberGood: good.goodId,
       amount: good.quantity,
       received: null,
@@ -445,7 +545,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   async getStatusGoodService(status: any) {
     this.statusGoodService.getById(status).subscribe({
       next: async (resp: any) => {
-        console.log('datapruebaJess', resp);
         this.statusGood_ = resp.description;
         // this.statusGoodForm.get('statusGood').setValue(resp.description)
       },
@@ -457,6 +556,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
 
   getGoodsByStatus() {
+    console.log('....iniciando getGoodsByStatus');
     this.loading = true;
     this.dataTableGood_ = [];
     this.dataTableGood.load(this.dataTableGood_);
@@ -465,51 +565,41 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    console.log('1412212', params);
-    params['sortBy'] = `goodId:DESC`;
-    params['filter.status'] != 'ADM';
-    this.goodService.getByGood2(params).subscribe({
+    params['sortBy'] = `goodNumber:DESC`;
+    params['filter.status'] != 'DON';
+    if (localStorage.getItem('nameT'))
+      params[
+        'filter.transference.nameTransferent'
+      ] = `$ilike:${localStorage.getItem('nameT')}`;
+    console.log('....iniciando getGoodsByStatus..llamando..');
+    this.donationService.getTempDon(params).subscribe({
       next: data => {
         this.goods = data.data;
-        console.log('Bienes', this.goods);
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',
-            pNumberGood: item.goodId,
+            pNumberGood: item.goodNumber,
           };
-
+          const nameT = localStorage.getItem('nameT');
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
+          item['nameTransferent'] = nameT;
           if (item.minutesKey) {
             item.di_disponible = 'N';
           }
           item['quantity'] = item.amount;
-          item['di_acta'] = item.minutesKey;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-          // item['id'] = item.goodId;
-
-          // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-          // // console.log('acta', acta);
-          // item['acta_'] = acta;
+          item['id'] = item.minutesKey;
+          item['goodNumber'] = item.goodNumber;
+          item['processExt'] = item.processExt;
         });
 
         Promise.all(result).then(item => {
           this.dataTableGood_ = this.goods;
           this.dataTableGood.load(this.goods);
           this.dataTableGood.refresh();
-          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+
           this.totalItems = data.count;
           this.loading = false;
-          // // console.log(this.bienes);
         });
       },
       error: error => {
@@ -536,6 +626,34 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           resolve('N');
         },
       });
+    });
+  }
+
+  async getGlobalVars() {
+    return new Promise<void>((resolve, reject) => {
+      this.globalVarService
+        .getGlobalVars$()
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: global => {
+            this.ngGlobal = global;
+            if (this.ngGlobal.REL_BIENES) {
+              console.log('RASTREADOR ', this.data);
+            }
+            resolve();
+          },
+          error: reject,
+        });
+    });
+  }
+
+  async goodById() {
+    this.goodService.getGoodByIds(this.ngGlobal.REL_BIENES).subscribe({
+      next: data => {
+        this.goodT = data.data;
+        this.isGoodSelected(this.goodT);
+      },
+      error: () => console.log('no hay bienes'),
     });
   }
 }

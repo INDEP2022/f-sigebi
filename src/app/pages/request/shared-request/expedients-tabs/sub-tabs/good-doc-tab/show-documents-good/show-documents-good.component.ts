@@ -105,7 +105,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    console.log('sampleGood', this.sampleGood);
+
     if (this.idGood && this.idRequest) {
       this.getDocType(new ListParams());
       this.getDocuemntByGood();
@@ -176,10 +176,8 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     let idGood: string = '';
     this.sampleGood.map(item => {
       idGood += `${item.goodId}, `;
-      console.log('idGood d', idGood);
     });
 
-    console.log('idGood f', idGood);
     this.docRequestForm.get('noRequest').setValue(idGood);
     this.idGood = idGood;
   }

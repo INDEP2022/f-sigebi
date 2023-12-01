@@ -17,6 +17,7 @@ import {
   IValNumeOtro,
 } from '../../models/ms-good/good';
 import { IGoodsResDev } from '../../models/ms-rejectedgood/goods-res-dev-model';
+import { IFmComDanc, IProcedureFmCom } from './good-process-model';
 
 @Injectable({
   providedIn: 'root',
@@ -313,6 +314,19 @@ export class GoodProcessService extends HttpService {
     );
   }
 
+  goodResDevInvFilter(_params: ListParams, filter: Object) {
+    const params = this.makeParams(_params);
+    return this.post<IListResponse<IGoodsResDev>>(
+      `${GoodProcessPoints.GetGoodsResDevInvFilter}?${params}`,
+      filter
+    );
+  }
+
+  goodResDevInvReport(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.post(`${GoodProcessPoints.GetGoodsResDevReport}?${params}`, {});
+  }
+
   getGoodCustom(currency: string, good: number) {
     return this.get(
       `${GoodProcessPoints.GetDataCustom}?tCurrency=${currency}&noGood=${good}`
@@ -346,5 +360,33 @@ export class GoodProcessService extends HttpService {
 
   getApplicationData(body: any) {
     return this.post(GoodProcessPoints.ApplicationGetData, body);
+  }
+
+  getApplicationGetDataNoprocedingConsulta(body: any, params: _Params) {
+    return this.post<IListResponse>(
+      GoodProcessPoints.ApplicationGetDataNoprocedingConsulta,
+      body,
+      params
+    );
+  }
+
+  procedureFmcom(body: IProcedureFmCom) {
+    return this.post('application/procdure-fmcomdonac1', body);
+  }
+
+  fmComDonac(body: IFmComDanc) {
+    return this.post('application/fm-com-donac-1-good', body);
+  }
+
+  queryDonationGoods(body: any) {
+    return this.post('application/pup-consultation-estate', body);
+  }
+
+  detailProcessClean(body: any) {
+    return this.post('application/detail-process-clean', body);
+  }
+
+  validateDonationGoods(body: any) {
+    return this.post('application/pupValidGood', body);
   }
 }

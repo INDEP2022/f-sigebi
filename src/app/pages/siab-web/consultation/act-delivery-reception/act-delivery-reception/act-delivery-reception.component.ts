@@ -144,11 +144,7 @@ export class ActDeliveryReceptionComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       recordsSearchCriteria: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(15),
-        ],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(15)],
       ],
     });
   }
@@ -228,12 +224,16 @@ export class ActDeliveryReceptionComponent extends BasePage implements OnInit {
   }
 
   search() {
-    this.criterio = this.form.get('recordsSearchCriteria').value;
-    console.log(this.criterio);
+    if (this.form.get('recordsSearchCriteria').value) {
+      this.criterio = this.form.get('recordsSearchCriteria').value;
+      console.log(this.criterio);
 
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData(this.criterio));
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData(this.criterio));
+    } else {
+      this.alert('error', 'Error se debe ingresar un No. de Acta', ``);
+    }
   }
 
   getData(noActa?: number) {

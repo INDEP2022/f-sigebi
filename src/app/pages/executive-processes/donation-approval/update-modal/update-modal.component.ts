@@ -71,10 +71,7 @@ export class UpdateModalComponent extends BasePage implements OnInit {
       di_cve_ubicacion: [null, [Validators.maxLength(1000)]],
       di_ubicacion1: [null],
       status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      extDomProcess: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      extDomProcess: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

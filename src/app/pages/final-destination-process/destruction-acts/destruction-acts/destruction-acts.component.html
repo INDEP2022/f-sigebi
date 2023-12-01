@@ -22,7 +22,9 @@
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
-              <button class="btn btn-danger btn-sm active mr-3">
+              <button
+                class="btn btn-danger btn-sm active mr-3"
+                (click)="clearForm()">
                 Limpiar <i class="fas fa-eraser"> </i>
               </button>
               <button
@@ -64,6 +66,7 @@
                 formControlName="expedient" />
             </form-field>
             <form-field
+              *ngIf="!isNewProceeding"
               [control]="actForm.get('statusProceeding')"
               class="col"
               label="Estatus del Acta">
@@ -96,7 +99,11 @@
     </app-card>
     <app-card>
       <div body>
-        <form [formGroup]="actForm" class="form-material">
+        <form-loader *ngIf="loadingProcedure"></form-loader>
+        <form
+          *ngIf="!loadingProcedure"
+          [formGroup]="actForm"
+          class="form-material">
           <div class="row mt-3" [class]="!assembleKeybool ? 'disabled' : ''">
             <div class="col">
               <form-field [control]="actForm.get('act')">
@@ -138,6 +145,7 @@
             </form-field>
             <form-field [control]="actForm.get('admin')" class="col">
               <ngx-select
+                [searchable]="false"
                 control="admin"
                 label="Administra"
                 bindLabel="records"
@@ -149,7 +157,7 @@
               class="col"
               label="Folio">
               <input
-                [min]="0"
+                [min]="1"
                 type="number"
                 [max-length]="10"
                 class="form-control"
@@ -328,7 +336,7 @@
             </p>
           </div>
         </div>
-        <div [class]="loading ? 'table-loading' : 'row pt-2'">
+        <div [class]="loadingTable ? 'table-loading' : 'row pt-2'">
           <ng2-smart-table
             class="col-md-12"
             [attr.class]="'table-responsive table-bordered '"
@@ -336,7 +344,7 @@
             [source]="dataGoods"></ng2-smart-table>
         </div>
         <app-pagination
-          *ngIf="!loading"
+          *ngIf="!loadingTable"
           [params]="params"
           [pageSizeOptions]="[5, 10, 20]"
           [limit]="limit"
@@ -365,7 +373,7 @@
           </div>
         </div>
         <hr class="row mb-3 mt-5" />
-        <div [class]="loading ? 'table-loading' : 'row pt-2'">
+        <div [class]="loadingTable ? 'table-loading' : 'row pt-2'">
           <ng2-smart-table
             class="col-md-12"
             [attr.class]="'table-responsive table-bordered '"
@@ -373,7 +381,7 @@
             [source]="dataGoodsAct"></ng2-smart-table>
         </div>
         <app-pagination
-          *ngIf="!loading"
+          *ngIf="!loadingTable"
           [params]="params2"
           [pageSizeOptions]="[5, 10, 20]"
           [limit]="limit2"

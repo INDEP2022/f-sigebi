@@ -36,7 +36,6 @@ export class CustomerService extends HttpService {
   //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients/filterExcel
   //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients/filterExcel?filter.blackList=$eq:S
   getAllClientsExport() {
-    console.log('Hola');
     return this.get<any>(`${this.endpointClients}/filterExcel`);
   }
 

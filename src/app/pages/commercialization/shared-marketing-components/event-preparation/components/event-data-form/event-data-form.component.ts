@@ -454,6 +454,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   }
 
   failureDateChange(failDate: Date) {
+    const { eventTpId } = this.controls;
     if (this.parameters.pDirection == 'I') {
       return;
     }
@@ -461,18 +462,23 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       return;
     }
     const { eventDate, failureDate } = this.controls;
-    if (failDate <= eventDate.value) {
-      this.alert(
-        'error',
-        'Error',
-        'La fecha de fallo no puede menor o igual a la fecha del evento'
-      );
+    if (
+      failDate <= eventDate.value &&
+      ![6, 7].includes(parseInt(eventTpId.value.toString()))
+    ) {
       failureDate.reset();
+      this.alert(
+        'warning',
+        'Verificar fecha',
+        'La fecha de fallo no puede menor o igual a la fecha del evento XD'
+      );
       return;
     }
   }
 
   closingDateChange() {
+    const { eventTpId } = this.controls;
+
     if (this.parameters.pDirection == 'I') {
       return;
     }
@@ -481,10 +487,13 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       return;
     }
 
-    if (failureDate.value <= eventDate.value) {
+    if (
+      failureDate.value <= eventDate.value &&
+      ![6, 7].includes(parseInt(eventTpId.value.toString()))
+    ) {
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Verificar fecha',
         'La fecha de fallo no puede menor o igual a la fecha del evento'
       );
       failureDate.reset();

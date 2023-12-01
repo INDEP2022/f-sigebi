@@ -11,4 +11,6 @@ export enum SpentEndpoints {
   PupObttotDevPenalizes = 'aplication/pup-obttot-dev-penalizes',
   FillExpenses = 'aplication/fill-expenses',
   GetAllExpensesByFilter = 'aplication/query-spent',
+  MassiveDeleteDetExpenses = 'aplication/massiveDeleteComerDetexpenses',
+  MassiveUpdateComerDetexpenses = 'aplication/massiveUpdateComerDetexpenses',
 }

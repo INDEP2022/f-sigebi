@@ -62,11 +62,13 @@ export const DETAIL_REPORT_COLUMNS = {
     title: 'Ruta PDF',
     type: 'string',
     sort: false,
+    filter: false,
   },
   ferutaxml: {
     title: 'Ruta XML',
     type: 'string',
     sort: false,
+    filter: false,
   },
 };
 

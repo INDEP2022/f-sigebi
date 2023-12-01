@@ -215,10 +215,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       penaltyInitDate: [null, [Validators.pattern(STRING_PATTERN)]],
       penaltyEndDate: [null, [Validators.pattern(STRING_PATTERN)]],
       penalizeUser: [null, [Validators.pattern(STRING_PATTERN)]],
-      registryNumber: [
-        null,
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
-      ],
+      registryNumber: [null],
     });
     if (this.customers != null) {
       this.edit = true;
@@ -518,7 +515,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
           this.modalRef.hide();
         },
         error: error => {
-          this.alert('warning', `No es posible crear el cliente`, '');
+          this.alert('warning', `RFC previamente registrado`, '');
           this.modalRef.hide();
         },
       });
@@ -534,9 +531,9 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit
-      ? 'Cliente se ha Actualizado'
-      : 'Cliente se ha Creado';
-    this.alert('success', `${message}`, '');
+      ? 'cliente ha sido actualizado'
+      : 'cliente ha sido creado';
+    this.alert('success', `El ${message}`, '');
     this.loading = true;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

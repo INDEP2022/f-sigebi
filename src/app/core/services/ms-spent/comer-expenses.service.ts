@@ -36,10 +36,7 @@ export class SpentService extends HttpService {
   }
 
   save(body: IComerExpenseDTO) {
-    return this.post<IListResponseMessage<IComerExpense>>(
-      SpentEndpoints.ExpenseComer,
-      body
-    );
+    return this.post<IComerExpense>(SpentEndpoints.ExpenseComer, body);
   }
 
   edit(body: IComerExpenseDTO) {
@@ -47,6 +44,10 @@ export class SpentService extends HttpService {
       SpentEndpoints.ExpenseComer + '/' + body.expenseNumber,
       body
     );
+  }
+
+  remove(id: string) {
+    return this.delete(SpentEndpoints.ExpenseComer + '/' + id);
   }
 
   getAllComerPagosRef(params?: string) {

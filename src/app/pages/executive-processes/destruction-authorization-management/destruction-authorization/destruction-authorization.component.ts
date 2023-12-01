@@ -1085,9 +1085,9 @@ export class DestructionAuthorizationComponent
       ...this.params.getValue(),
     };
 
-    params['filter.typeProceedings'] = `$ilike:RGA`;
+    params['filter.typeProceedings'] = `$eq:RGA`;
 
-    params['filter.keysProceedings'] = `$ilike:${keyProceeding}`;
+    params['filter.keysProceedings'] = `$eq:${keyProceeding}`;
 
     return this.proceedingsDeliveryReceptionService
       .getAllProceedingsDeliveryReception2(params)
