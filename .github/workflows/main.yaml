@@ -12,7 +12,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: "--max-old-space-size=12288"
+      NODE_OPTIONS: "--max-old-space-size=16384"
     steps:
     - name: Install cURL
       run: sudo apt-get install -y curl
@@ -32,7 +32,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '14'
-        node-args: --max-old-space-size=12288
+        node-args: --max-old-space-size=16384
     - name: Enable verbose logging
       run: npm config set loglevel verbose
     - name: Enable verbose logging
@@ -47,7 +47,7 @@ jobs:
           # Realizar la llamada a la API con el cuerpo de la solicitud
           curl -X POST -H "Content-Type: application/json" -d "$body" "${{ secrets.SERVER }}"
     - name: Build application
-      run: npm run build --max-old-space-size=12288
+      run: npm run build --max-old-space-size=16384
     - name: Call API
       run: |
           # Aquí puedes realizar la llamada a la API utilizando cURL o cualquier otra herramienta de tu elección
