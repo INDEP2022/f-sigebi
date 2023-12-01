@@ -17,6 +17,7 @@ import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
 import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
+import { ILoadLotResponse } from '../models/lot';
 import { ExpenseGoodProcessService } from './expense-good-process.service';
 import { ExpenseLotService } from './expense-lot.service';
 import { ExpenseModalService } from './expense-modal.service';
@@ -35,13 +36,16 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   address: string;
   dataCompositionExpenses: IComerDetExpense2[] = [];
   selectedComposition: IComerDetExpense2;
+  addByLotExpenseComposition = new Subject<ILoadLotResponse>();
   updateExpenseComposition = new Subject();
+  resetExpenseComposition = new Subject();
   updateExpenseCompositionAndValidateProcess = new Subject();
   finishProcessSolicitud = new Subject();
   saveSubject = new Subject();
   updateOI = new Subject();
   updateFolio = new Subject();
   P_PRUEBA: number;
+  SELECT_CAMBIA_CLASIF = false;
   PMONTOXMAND: string;
   PDEVCLIENTE: string = null;
   PCAMBIAESTATUS: string;
@@ -73,8 +77,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   V_BIEN_REP_ROBO = 0;
   PB_VEHICULO_REP_ROBO_DISPLAYED = true;
   PB_VEHICULO_REP_ROBO_ENABLED = false;
-  SELECT_CAMBIA_CLASIF_DISPLAYED = true;
   SELECT_CAMBIA_CLASIF_ENABLED = false;
+  SELECT_CAMBIA_CLASIF_UPDATE = false;
   validateAndProcess = false;
   user: any;
   actionButton = '';
@@ -142,8 +146,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.V_BIEN_REP_ROBO = 0;
     this.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
     this.PB_VEHICULO_REP_ROBO_ENABLED = false;
-    this.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
-    this.SELECT_CAMBIA_CLASIF_ENABLED = false;
+    this.SELECT_CAMBIA_CLASIF_ENABLED = true;
+    this.SELECT_CAMBIA_CLASIF_UPDATE = false;
     // this.user = undefined;
     this.validateAndProcess = false;
     this.selectedComposition = null;
@@ -1040,14 +1044,14 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         next: response => {
           this.alert(
             'success',
-            'Se generó la devolución parcial correctamente',
+            'Se generó la cancelación parcial correctamente',
             ''
           );
           this.sucessSendSolitudeMessage();
           this.saveSubject.next(true);
         },
         error: err => {
-          this.alert('error', 'No se pudo generar la devolución parcial', '');
+          this.alert('error', 'No se pudo generar la cancelación parcial', '');
           this.errorSendSolicitudeMessage();
         },
       });
