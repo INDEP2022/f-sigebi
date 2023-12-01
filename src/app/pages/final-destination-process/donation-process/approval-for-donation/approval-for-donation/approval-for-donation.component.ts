@@ -43,7 +43,33 @@ export type IGoodAndAvailable = IGood & {
 @Component({
   selector: 'app-approval-for-donation',
   templateUrl: './approval-for-donation.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: white !important;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ApprovalForDonationComponent extends BasePage implements OnInit {
   form: FormGroup;
