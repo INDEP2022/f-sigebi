@@ -57,7 +57,7 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   escrowNumber: {
-    title: 'No de Fideicomiso',
+    title: 'No. de Fidecomiso',
     sort: false,
   },
   nationalityKey: {
