@@ -173,7 +173,7 @@ export class NumeraireConversionAuctionsComponent
             this.alert(
               'error',
               'No se ha podido realizar el cálculo',
-              'Favor de verificar'
+              err.error.message
             );
           },
         });
@@ -275,7 +275,7 @@ export class NumeraireConversionAuctionsComponent
             this.alert(
               'error',
               'No se pudo realizar la conversión',
-              'Favor de verificar'
+              err.error.message
             );
           },
         });
@@ -310,7 +310,7 @@ export class NumeraireConversionAuctionsComponent
             this.alert(
               'error',
               'No se pudo hacer la conversión parcial',
-              'Favor de verificar'
+              err.error.message
             );
           },
         });
