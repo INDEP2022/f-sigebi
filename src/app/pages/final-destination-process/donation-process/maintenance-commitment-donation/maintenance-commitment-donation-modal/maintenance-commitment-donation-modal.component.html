@@ -91,6 +91,7 @@
               cols="2"
               readonly
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="desStatus"></textarea>
           </form-field>
@@ -117,6 +118,7 @@
               cols="2"
               readonly
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="keyCode"></textarea>
             <!-- <input
@@ -150,6 +152,7 @@
               cols="2"
               readonly
               type="text"
+              maxlength="100"
               class="form-control"
               formControlName="desClasif"></textarea>
             <!-- <input
@@ -231,7 +234,7 @@
             <input type="number" maxlength="15" class="form-control" formControlName="otkey" />
           </form-field>
         </div> -->
-        <div class="col-md-6">
+        <div class="col-md-9">
           <!-- <form-field [control]="form.get('value')" label="Usuario">
             <input type="text" class="form-control" formControlName="value" />
           </form-field> -->
@@ -263,7 +266,7 @@
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div> -->
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field [control]="form.get('valid')" label="Abreviatura">
             <ng-select
               style="margin-top: 5px"
