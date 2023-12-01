@@ -17,6 +17,7 @@ import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
 import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
+import { ILoadLotResponse } from '../models/lot';
 import { ExpenseGoodProcessService } from './expense-good-process.service';
 import { ExpenseLotService } from './expense-lot.service';
 import { ExpenseModalService } from './expense-modal.service';
@@ -35,13 +36,16 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   address: string;
   dataCompositionExpenses: IComerDetExpense2[] = [];
   selectedComposition: IComerDetExpense2;
+  addByLotExpenseComposition = new Subject<ILoadLotResponse>();
   updateExpenseComposition = new Subject();
+  resetExpenseComposition = new Subject();
   updateExpenseCompositionAndValidateProcess = new Subject();
   finishProcessSolicitud = new Subject();
   saveSubject = new Subject();
   updateOI = new Subject();
   updateFolio = new Subject();
   P_PRUEBA: number;
+  SELECT_CAMBIA_CLASIF = false;
   PMONTOXMAND: string;
   PDEVCLIENTE: string = null;
   PCAMBIAESTATUS: string;
@@ -73,12 +77,12 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   V_BIEN_REP_ROBO = 0;
   PB_VEHICULO_REP_ROBO_DISPLAYED = true;
   PB_VEHICULO_REP_ROBO_ENABLED = false;
-  SELECT_CAMBIA_CLASIF_DISPLAYED = true;
   SELECT_CAMBIA_CLASIF_ENABLED = false;
+  SELECT_CAMBIA_CLASIF_UPDATE = false;
   validateAndProcess = false;
   user: any;
   actionButton = '';
-  publicLot: string = null;
+  // publicLot: string = null;
   // Scan Files Data
   formScan: FormGroup;
   delUser: number;
@@ -102,7 +106,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   clean() {
     this.form.reset();
-    this.publicLot = null;
+    // this.publicLot = null;
     this.actionButton = '';
     this.data = null;
     this.validPayment = false;
@@ -142,8 +146,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.V_BIEN_REP_ROBO = 0;
     this.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
     this.PB_VEHICULO_REP_ROBO_ENABLED = false;
-    this.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
-    this.SELECT_CAMBIA_CLASIF_ENABLED = false;
+    this.SELECT_CAMBIA_CLASIF_ENABLED = true;
+    this.SELECT_CAMBIA_CLASIF_UPDATE = false;
     // this.user = undefined;
     this.validateAndProcess = false;
     this.selectedComposition = null;
@@ -249,6 +253,10 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return this.form.get('lotNumber');
   }
 
+  get publicLot() {
+    return this.form.get('publicLot');
+  }
+
   get expenseNumber() {
     return this.form.get('expenseNumber');
   }
@@ -269,6 +277,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
       eventNumber: [null],
       lotNumber: [null],
+      publicLot: [null],
       folioAtnCustomer: [null],
       dateOfResolution: [null],
       clkpv: [null, [Validators.required]],
@@ -310,7 +319,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   VALIDA_DET(V_VALIDA_DET: boolean = null) {
-    if (V_VALIDA_DET === null) {
+    debugger;
+    if (V_VALIDA_DET === false || V_VALIDA_DET === null) {
       const VALIDA_DET = this.dataCompositionExpenses.filter(
         row => row.changeStatus && row.changeStatus === true
       );
@@ -359,6 +369,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   ) {
     // debugger;
     const resultParams = await this.readParams(this.conceptNumber.value);
+    console.log(resultParams);
 
     if (
       this.PCHATMORSINFLUJOPMSR !== 'S' &&
@@ -368,8 +379,15 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.PDEVPARCIAL !== 'S' &&
       this.PCANVTA
     ) {
+      console.log('Entro 1');
+
       if (this.VALIDA_DET(V_VALIDA_DET)) {
+        console.log('Entro procesa');
+
         this.PROCESA_SOLICITUD();
+      } else {
+        console.log('Error solicitud');
+        this.errorSendSolicitudeMessage();
       }
     } else if (this.PVALIDADET === 'S') {
       if (this.lotNumber && this.lotNumber.value) {
@@ -778,6 +796,10 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     );
   }
 
+  get formPayment() {
+    return this.form.get('formPayment');
+  }
+
   private ENVIAR_SIRSAE() {
     this.interfacesirsaeService
       .sendSirsae2({
@@ -785,7 +807,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         conceptId: this.conceptNumber.value,
         comment: this.comment.value,
         clkpv: this.form.get('clkpv').value,
-        paymentWay: this.form.get('formPayment').value,
+        paymentWay: this.formPayment.value,
         user: this.authService.decodeToken().preferred_username,
         spentMonth: this.form.get('monthExpense').value,
         spentMonth2: this.form.get('monthExpense2').value,
@@ -818,8 +840,18 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         next: response => {
           // debugger;
           // this.alert('success', 'Procedimiento ejecutado correctamente', '');
-          if (response.COMER_GASTOS_ID_SOLICITUDPAGO) {
-            this.errorSendSolicitudeMessage();
+          if (!response.COMER_GASTOS_ID_SOLICITUDPAGO) {
+            this.alert('warning', 'Este gasto ya tiene solicitud de pago', '');
+            // this.errorSendSolicitudeMessage();
+          } else {
+            this.form
+              .get('paymentRequestNumber')
+              .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
+            this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
+            // this.sucessSendSolitudeMessage();
+          }
+          if (this.formPayment.value !== 'INTERCAMBIO') {
+            this.VERIFICA_ACTUALIZACION_EST();
           } else {
             this.form
               .get('paymentRequestNumber')
@@ -839,19 +871,30 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         },
         error: err => {
           // this.alert('error', 'No se pudo realizar el envió a SIRSAE', '');
-          // this.alert('error', 'Envio a sirsae', err.error.message);
-          this.errorSendSolicitudeMessage();
+          this.alert('error', 'Envio a sirsae', err.error.message);
+          if (this.formPayment.value !== 'INTERCAMBIO') {
+            this.VERIFICA_ACTUALIZACION_EST();
+          } else {
+            this.VALIDA_SUBTOTAL_PRECIO(
+              this.data.expenseNumber,
+              this.data.eventNumber,
+              this.data.lotNumber
+            );
+          }
+          // this.errorSendSolicitudeMessage();
         },
       });
   }
 
   private async normalSolicitud() {
     let aux = false;
+    debugger;
     aux = await this.VALIDACIONES_SOLICITUD2();
     if (aux) {
-      let AUX_INTERCAMBIO = await this.PUF_VALIDA_PAGOXEVENTO(
-        this.data.formPayment
-      );
+      let AUX_INTERCAMBIO =
+        this.formPayment.value === 'INTERCAMBIO'
+          ? await this.PUF_VALIDA_PAGOXEVENTO(this.formPayment.value)
+          : { data: [1] };
       if (AUX_INTERCAMBIO.data && AUX_INTERCAMBIO.data.length > 0) {
         this.ENVIAR_SIRSAE();
       } else {
@@ -928,7 +971,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   async VERIFICA_ACTUALIZACION_EST() {
-    // debugger;
+    debugger;
     this.P_PRUEBA = 0;
     if (this.PDEVPARCIAL === 'S') {
       this.DEVOLUCION_PARCIAL();
@@ -939,6 +982,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       } else {
         this.CANCELACION_PARCIAL();
       }
+    } else {
+      this.sucessSendSolitudeMessage();
     }
   }
 
@@ -950,9 +995,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         pCambiaStatus: this.PCAMBIAESTATUS,
         user: this.user.preferred_username,
         spentId: this.expenseNumber.value,
-        cat_motivos_rev: this.expenseModalService.selectedMotives.map(
-          x => x.descriptionCause
-        ),
+        cat_motivos_rev: this.expenseModalService.selectedMotives.map(x => {
+          return { motiveDescription: x.descriptionCause, selection: 1 };
+        }),
       })
       .pipe(take(1))
       .subscribe({
@@ -977,7 +1022,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .CANCELACION_PARCIAL({
         pLotId: this.lotNumber.value,
         pEventId: this.eventNumber.value,
-        pLotPub: this.publicLot,
+        pLotPub: this.publicLot.value,
         pSpentId: this.expenseNumber.value,
         pTotIva: this.IVA + '',
         pTotMonto: this.amount + '',
@@ -999,14 +1044,14 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         next: response => {
           this.alert(
             'success',
-            'Se generó la devolución parcial correctamente',
+            'Se generó la cancelación parcial correctamente',
             ''
           );
           this.sucessSendSolitudeMessage();
           this.saveSubject.next(true);
         },
         error: err => {
-          this.alert('error', 'No se pudo generar la devolución parcial', '');
+          this.alert('error', 'No se pudo generar la cancelación parcial', '');
           this.errorSendSolicitudeMessage();
         },
       });
@@ -1022,7 +1067,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         id_lote: this.data.lotNumber,
         id_gasto: this.data.expenseNumber,
         id_evento: this.data.eventNumber,
-        lote_pub: this.publicLot,
+        lote_pub: this.publicLot.value,
         pMotivo: this.data.concepts ? this.data.concepts.description : null,
         id_concepto: this.data.conceptNumber,
         p_prueba: this.P_PRUEBA + '',
@@ -1032,9 +1077,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           .map(x => {
             return { select_cambia_status: 'S', no_bien: x.goodNumber };
           }),
-        cat_motivos_rev: this.expenseModalService.selectedMotives.map(
-          x => x.descriptionCause
-        ),
+        cat_motivos_rev: this.expenseModalService.selectedMotives.map(x => {
+          return { motiveDescription: x.descriptionCause, selection: 1 };
+        }),
       })
       .pipe(take(1))
       .subscribe({

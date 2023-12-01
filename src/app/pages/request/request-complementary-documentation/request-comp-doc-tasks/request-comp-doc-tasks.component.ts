@@ -24,6 +24,10 @@ import { CreateReportComponent } from '../../shared-request/create-report/create
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import Swal from 'sweetalert2';
+import { getConfigAffair } from './catalog-affair';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -32,8 +36,14 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
+  protected override sendEmail: boolean;
+  protected override destinyJob: boolean;
+  protected override verifyCompliance: boolean;
+  protected override btnAprove: boolean;
+  protected override btnDecline: boolean;
+  protected override dictumReturn: boolean;
+  protected override searchAssociateFile: boolean;
   /* CALL TABS DINAMICALY */
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   /**
@@ -78,10 +88,14 @@ export class RequestCompDocTasksComponent
   complementaryDoc: boolean = false;
   typeVisit: string = '';
   affair: number = null;
+  taskId: number = 0;
+
   /**
    * email del usuairo
    */
   emailForm: FormGroup = new FormGroup({});
+
+  loadingTurn = false
 
   /* INJECTIONS
   ============== */
@@ -89,6 +103,9 @@ export class RequestCompDocTasksComponent
   private requestHelperService = inject(RequestHelperService);
   private affairService = inject(AffairService);
   private bsModalRef = inject(BsModalRef);
+  private authService = inject(AuthService);
+  private taskService = inject(TaskService);
+
   //private rejectedService = inject(RejectedGoodService)
 
   /*  */
@@ -176,7 +193,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
@@ -198,10 +215,34 @@ export class RequestCompDocTasksComponent
       'Turnar'
     ).then(async question => {
       if (question.isConfirmed) {
+
+        this.generateTask();
+
+        if (true) return;
+
+
+        switch (this.process) {
+          case 'register-request-return':
+          case 'verify-compliance-return':
+          case 'approve-return':
+            return;
+        }
+
+
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else if (this.process == 'register-request') {
-          this.setEmailNotificationTask();
+
+          let val = this.affair.toString();
+          switch (val) {
+            case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+              this.generateTask();
+              break;
+            default:
+              this.setEmailNotificationTask();
+              break;
+          }
+
         } else if (this.process == 'BSNotificarTransferente') {
           this.setEmailNotificationTask();
         } else if (this.process == 'BSVisitaOcular') {
@@ -219,6 +260,7 @@ export class RequestCompDocTasksComponent
         } else {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         }
+
       }
     });
   }
@@ -252,6 +294,7 @@ export class RequestCompDocTasksComponent
   }
 
   closeSearchRequestSimGoodsTab(recordId: number) {
+    console.log(recordId);
     if (recordId) {
       this.searchRequestSimGoods = false;
     }
@@ -492,4 +535,203 @@ export class RequestCompDocTasksComponent
       } //this.getCities();
     });
   }
+
+  updateRequest() {
+    this.updateInfo = true;
+    this.msgModal(
+      'Se guardó la solicitud con el Folio Nº '.concat(
+        `<strong>${this.requestId}</strong>`
+      ),
+      'Solicitud Guardada',
+      'success'
+    );
+  }
+
+  /** VALIDAR */
+  async generateTask() {
+
+    console.log("**********");
+    console.log(this.affair, this.process);
+
+    /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
+    if (this.validateTurn()) {
+      this.loadingTurn = true;
+      const { title, url, type, subtype, ssubtype } = getConfigAffair(this.requestId, this.affair, this.process);
+
+      const _task = JSON.parse(localStorage.getItem('Task'));
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
+      body['idTask'] = _task.id;
+      body['userProcess'] = user.username;
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
+
+      const closeTask = await this.closeTaskExecuteRecepcion(body);
+
+      if (closeTask) {
+        this.msgModal(
+          'Se turno la solicitud con el Folio Nº'
+            .concat(`<strong>${this.requestId}</strong>`),
+          'Solicitud turnada',
+          'success'
+        );
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    }
+
+  }
+
+  closeTaskExecuteRecepcion(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.alert('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
+
+  /** VALIDAR */
+  msgModal(message: string, title: string, typeMsg: any) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: typeMsg,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.loadingTurn = false;
+      }
+    });
+  }
+
+  btnRechazar() {
+
+    const { type, subtype, ssubtype
+    } = this.nextProcess(this.process, true);
+
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = type;
+    body['subtype'] = subtype;
+    body['ssubtype'] = ssubtype;
+
+    this.taskService.createTaskWitOrderService(body).subscribe({
+      next: async resp => {
+        this.msgModal(
+          'Se rechazo la solicitud con el Folio Nº'
+            .concat(`<strong>${this.requestId}</strong>`),
+          'Solicitud rechazada',
+          'success'
+        );
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      },
+      error: error => {
+        this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+      },
+    });
+
+  }
+
+  validateTurn() {
+
+    switch (this.process) {
+      //GESTIONAR BINES SIMILARES RESARCIMIENTO
+      case 'register-request-return':
+
+        let bienesSimilares = 0;
+        let autoridadOrdenante = null;
+
+
+        if (autoridadOrdenante == null) {
+          this.showError('El valor de Autoridad Ordenante es obligatorio');
+          return false;
+        }
+
+        if (bienesSimilares < 0) {
+          this.showError('No se encontraron bienes similares');
+          return false;
+        }
+
+
+        break;
+      case 'verify-compliance-return':
+        break;
+      case 'approve-return':
+
+        let getEstimatedRowCount = 0;
+
+        if (getEstimatedRowCount == 0) {
+          this.showError('Es necesario ingresar el número de oficio');
+          return false;
+        }
+
+
+        break;
+
+      //GESTIONAR BINES SIMILARES RESARCIMIENTO
+      case 'register-request-similar-goods':
+      case 'notify-transfer-similar-goods':
+      case 'eye-visit-similar-goods':
+      case 'validate-eye-visit-similar-goods':
+      case 'validate-opinion-similar-goods':
+        break;
+
+      //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
+      case 'register-request-compensation':
+      case 'review-guidelines-compensation':
+      case 'analysis-result-compensation':
+      case 'validate-opinion-compensation':
+      case 'notification-taxpayer-compensation':
+
+        break;
+
+      //CASOS INFORMACION DE BIENES
+      case 'register-request-compensation':
+      case 'review-guidelines-compensation':
+      case 'analysis-result-compensation':
+
+        break;
+
+
+
+    }
+
+    return true;
+  }
+
+  showError(text) {
+    this.onLoadToast('error', 'Error', text);
+  }
+
+  openSendEmail() {
+
+  }
+
+  btnAprobar() {
+
+  }
+
+  openDocument(action) {
+
+  }
+
+  createDictumReturn() {
+
+  }
+
 }
+
