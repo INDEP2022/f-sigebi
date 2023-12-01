@@ -1121,7 +1121,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       next: async response => {
         const base64 = response.base64File;
         const nameFile = response.nameFile;
-        await this.downloadExcel(base64, 'ExportaciónBienesExcel.csv');
+        await this.downloadExcel(base64, nameFile);
       },
       error: error => {
         this.loadingExport = false;
