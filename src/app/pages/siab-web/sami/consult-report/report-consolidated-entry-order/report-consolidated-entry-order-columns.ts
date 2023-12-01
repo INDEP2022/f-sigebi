@@ -295,13 +295,13 @@ export const DETAIL_GOODS_ORDER_ENTRY_COLUMNS = {
     sort: false,
   },
 
-  idTransaction: {
+  transactionId: {
     title: 'No. Transacción',
     type: 'number',
     sort: false,
   },
 
-  quantity: {
+  quanity: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
@@ -319,33 +319,33 @@ export const DETAIL_GOODS_ORDER_ENTRY_COLUMNS = {
     sort: false,
   },
 
-  observations: {
-    title: 'Observaciones',
-    type: 'string',
-    sort: false,
-  },
-
-  stateGood: {
+  goodStatus: {
     title: 'Estado Bien',
     type: 'string',
     sort: false,
   },
 
-  observationStateGood: {
+  statusGoodObservations: {
     title: 'Observaciones Estado Bien',
+    type: 'string',
+    sort: false,
+  },
+
+  observations: {
+    title: 'Observaciones',
     type: 'string',
     sort: false,
   },
 };
 
 export const SERVICES_COLUMNS = {
-  typeOrderService: {
+  orderServiceType: {
     title: 'Tipo Orden Servicio',
     type: 'string',
     sort: false,
   },
 
-  comply: {
+  compliments: {
     title: 'Cumplidos',
     type: 'string',
     sort: false,
@@ -357,19 +357,19 @@ export const SERVICES_COLUMNS = {
     sort: false,
   },
 
-  total: {
+  totalamount: {
     title: 'Total',
     type: 'number',
     sort: false,
   },
 
-  porcCump: {
+  porcbirthday: {
     title: 'Porcentaje Cumplido',
     type: 'string',
     sort: false,
   },
 
-  porcFalt: {
+  porcmissing: {
     title: 'Porcentaje Faltante',
     type: 'string',
     sort: false,
@@ -387,13 +387,13 @@ export const SERVICES_COLUMNS = {
     sort: false,
   },
 
-  penaConvencional: {
+  porcGriefConventional: {
     title: 'Pena Convencional',
     type: 'string',
     sort: false,
   },
 
-  porcDeductive: {
+  porcdeductive: {
     title: 'Porcentaje Deductiva',
     type: 'number',
     sort: false,
