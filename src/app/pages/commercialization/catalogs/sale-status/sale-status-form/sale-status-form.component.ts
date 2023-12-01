@@ -93,7 +93,7 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
   handleSuccess() {
     const message: string = this.edit
       ? 'La descripción reportes ha sido actualizado'
-      : 'La estatus ha sido guardado';
+      : 'El estatus ha sido guardado';
     this.alert('success', `${message}`, '');
     this.loading = false;
     this.modalRef.content.callback(true);

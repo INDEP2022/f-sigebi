@@ -13,7 +13,7 @@
         </form-field>
       </div>
       <div class="row">
-        <div class="pb-2 col-md-4">
+        <div class="pb-2 col-md-6">
           <form-field [control]="amount" label="Monto">
             <input
               type="number"
@@ -23,12 +23,13 @@
               [max]="maxAmount" />
           </form-field>
         </div>
-        <div class="pb-2 col-md-4">
+        <div class="pb-2 col-md-6">
           <form-field [control]="date" label="Fecha">
             <input
-              bsDatePicker
-              class="form-control"
+              type="text"
               formControlName="date"
+              class="form-control"
+              bsDatePicker
               readonly />
           </form-field>
         </div>

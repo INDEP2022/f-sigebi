@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  mandxexpensecontId: {
+  departurestop: {
     title: 'Partida Det',
     sort: false,
   },
@@ -21,6 +21,18 @@ export const COLUMNS = {
   },
   cooperation: {
     title: 'Código Operación',
+    sort: false,
+  },
+  spentId: {
+    title: 'Gasto',
+    sort: false,
+  },
+  retentionisr: {
+    title: 'ISR',
+    sort: false,
+  },
+  retentionvat: {
+    title: 'Vat',
     sort: false,
   },
   amount: {

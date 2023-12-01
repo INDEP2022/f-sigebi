@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import {
   ListParams,
   SearchFilter,
@@ -23,6 +22,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
@@ -39,7 +39,33 @@ import { ExportCommunicationService } from './communication.services';
 @Component({
   selector: 'app-export-goods-donation',
   templateUrl: './export-goods-donation.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: white !important;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   totalItems: number = 0;
@@ -79,8 +105,13 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   user: any;
   total: any;
   selectedA: any = false;
-  rel_bienes: any;
+  rel_bienes: any = null;
   selectedGoods: any[] = [];
+  dataSeleccionada: any[] = [];
+  valRastreador: boolean = false;
+  goodsTracker: any = null;
+  loadingExportAndUpdate: boolean = false;
+  loadingExport: boolean = false;
   constructor(
     private router: Router,
     private expedientSamiService: ExpedientSamiService,
@@ -95,7 +126,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     private historyGoodService: HistoryGoodService,
     private authService: AuthService,
     private excelService: ExcelService,
-    private exportCommunicationService: ExportCommunicationService
+    private exportCommunicationService: ExportCommunicationService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
 
@@ -134,18 +166,21 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         title: 'Del_Admin',
         type: 'number',
         sort: false,
+        filter: false,
       },
       delReceives: {
         title: 'Del_Recibe',
         type: 'number',
         sort: false,
+        filter: false,
       },
       recepDate: {
         title: 'Fecha Recepción',
-        filter: {
-          type: 'custom',
-          component: CustomDateFilterComponent,
-        },
+        filter: false,
+        // filter: {
+        //   type: 'custom',
+        //   component: CustomDateFilterComponent,
+        // },
         valuePrepareFunction: (text: string) => {
           return `${text ? text.split('-').reverse().join('/') : ''}`;
         },
@@ -178,8 +213,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
               rowData.cpd = true; // Asume que rowData.cpd representa el valor de la columna 'CPD'
               rowData.rda = false;
               rowData.adm = false;
-              this.updateStatusCheck(true);
+              this.updateStatusCheck(rowData, true);
             } else {
+              rowData.cpd = false;
+              this.updateStatusCheck(rowData, false);
               // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
             }
 
@@ -190,13 +227,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
               isChecked
             );
           });
+          // this.isGoodSelectedCPD(instance);
         },
-        // showAlways: true,
-        // valuePrepareFunction: (isSelected: boolean, row: any) =>
-        //   this.isGoodSelectedCPD(row),
-        // renderComponent: CheckboxElementComponent,
-        // onComponentInitFunction: (instance: CheckboxElementComponent) =>
-        //   this.onGoodSelectCPD(instance),
+        valuePrepareFunction: (isSelected: boolean, row: any) =>
+          this.isGoodSelectedCPD(row),
         sort: false,
       },
       adm: {
@@ -216,8 +250,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
               rowData.adm = true; // Asume que rowData.cpd representa el valor de la columna 'CPD'
               rowData.rda = false;
               rowData.cpd = false;
-              this.updateStatusCheck(true);
+              this.updateStatusCheck(rowData, true);
             } else {
+              rowData.cpd = false;
+              this.updateStatusCheck(rowData, false);
               // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
             }
 
@@ -230,6 +266,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           });
           // this.onGoodSelectCPD_(instance)
         },
+        valuePrepareFunction: (isSelected: boolean, row: any) =>
+          this.isGoodSelectedADM(row),
         sort: false,
       },
       rda: {
@@ -249,8 +287,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
               rowData.rda = true; // Asume que rowData.cpd representa el valor de la columna 'CPD'
               rowData.cpd = false;
               rowData.adm = false;
-              this.updateStatusCheck(true);
+              this.updateStatusCheck(rowData, true);
             } else {
+              rowData.cpd = false;
+              this.updateStatusCheck(rowData, false);
               // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
             }
 
@@ -262,32 +302,72 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
             );
           });
         },
+        valuePrepareFunction: (isSelected: boolean, row: any) =>
+          this.isGoodSelectedRDA(row),
         sort: false,
       },
     };
     this.settings.hideSubHeader = false;
   }
-  updateStatusCheck(instance: any) {
+
+  updateStatusCheck(data: any, valid: boolean) {
     console.log('AQUI ESTAMOS');
+    if (!valid) {
+      this.selectedGoods = this.selectedGoods.filter(
+        (good: any) => data.goodNumber != good.goodNumber
+      );
+    } else {
+      const exists = this.selectedGoods.find(
+        (good: any) => data.goodNumber == good.goodNumber
+      );
+      if (!exists) this.selectedGoods.push(data);
+      else {
+        const bien = this.selectedGoods.find(
+          (good: any) => data.goodNumber == good.goodNumber
+        );
+        this.selectedGoods = this.selectedGoods.filter(
+          (good: any) => bien.goodNumber != good.goodNumber
+        );
+        this.selectedGoods.push(data);
+      }
+      console.log('this.selectedGoods', this.selectedGoods);
+    }
     this.data.refresh();
   }
+
   onGoodSelectCPD(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => this.goodSelectedChangeCPD(data.row, data.toggle),
     });
   }
-  isGoodSelectedCPD(_billing: any) {
+
+  isGoodSelectedCPD(_good: any) {
     const exists = this.selectedGoods.find(
-      (good: any) => good.goodNumber == good.goodNumber && good.cpd == true
+      (good: any) => _good.goodNumber == good.goodNumber && good.cpd == true
     );
     return !exists ? false : true;
   }
-  goodSelectedChangeCPD(billing: any, selected: boolean) {
+
+  isGoodSelectedADM(_good: any) {
+    const exists = this.selectedGoods.find(
+      (good: any) => _good.goodNumber == good.goodNumber && good.adm == true
+    );
+    return !exists ? false : true;
+  }
+
+  isGoodSelectedRDA(_good: any) {
+    const exists = this.selectedGoods.find(
+      (good: any) => _good.goodNumber == good.goodNumber && good.rda == true
+    );
+    return !exists ? false : true;
+  }
+
+  goodSelectedChangeCPD(_good: any, selected: boolean) {
     if (selected) {
-      this.selectedGoods.push(billing);
+      this.selectedGoods.push(_good);
     } else {
       this.selectedGoods = this.selectedGoods.filter(
-        (good: any) => good.goodNumber == good.goodNumber
+        (good: any) => _good.goodNumber != good.goodNumber
       );
     }
   }
@@ -306,8 +386,9 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           this.ngGlobal = global;
           //console.log('GLOBAL ', this.ngGlobal);
           if (this.ngGlobal.REL_BIENES != null) {
-            //console.log('REL_BIENES ', this.ngGlobal.REL_BIENES);
+            console.log('REL_BIENES ', this.ngGlobal.REL_BIENES);
             this.rel_bienes = this.ngGlobal.REL_BIENES;
+            this.ngGlobal.REL_BIENES = null;
           }
         },
       });
@@ -315,12 +396,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.backRastreador(this.rel_bienes);
     }
 
-    this.data.load(this.data1);
-    this.exportCommunicationService.ejecutarFuncion$.subscribe(
-      async (next: any) => {
-        this.data.refresh();
-      }
-    );
+    // this.data.load(this.data1);
   }
 
   getuser() {
@@ -343,65 +419,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       `/pages/parameterization/filters-of-goods-for-donation`,
     ]);
   }
-
-  // async mapearDatos(response: any) {
-  //   this.data1 = []; // Se inicializa vavicio para que no se duplique al dar click
-  //   this.data.load([]);
-  //   // for (let i = 0; i < response.data.length; i++) {
-  //   let arr: any[] = [];
-  //   let result = response.data.map(async (item: any) => {
-  //     let padre =
-  //       item.no_bien_padre_parcializacion != null
-  //         ? item.no_bien_padre_parcializacion
-  //         : '1';
-  //     let dataForm: any = {
-  //       goodNumber: item.no_bien,
-  //       description: item.descripcion,
-  //       amount: item.cantidad,
-  //       clasificationNumb: item.notClassificationWell,
-  //       transferor: item.no_transferente,
-  //       processExtDom: item.proceso_ext_dom,
-  //       id_almacen: item.id_almacen,
-  //       dateRelease: item.dateRelease,
-  //       status: item.estatus,
-  //       unidad: item.unit,
-  //       proceedingsNumber: item.no_expediente,
-  //     };
-  //     const model = {} as IGoodsExportPost;
-  //     (model.noBien = item.no_bien),
-  //       (model.vNoBienPadre = padre),
-  //       (model.vNobienreferencia = item.no_bien_referencia);
-  //     //Servicio1
-  //     let acta: any = 0;
-  //     acta = await this.returnFirst(model);
-  //     if (acta != 0) {
-  //       // Servicio2
-  //       let res: any = await this.returnSecond(acta);
-  //       dataForm.delAdmin = res.del_administra;
-  //       dataForm.delReceives = res.del_recibe;
-  //       dataForm.dateCrecep = res.fecha_recepcion;
-  //       // item['delAdmin'] = res.del_administra;
-  //       // item['delDeliv'] = res.del_recibe;
-  //       // item['recepDate'] = res.fecha_recepcion;
-  //     }
-
-  //     let third: any = await this.returnThird(item.no_expediente);
-  //     dataForm.stationNumber = third.stationNumber;
-  //     dataForm.onlyKey = third.onlyKey;
-  //     // item['no_emisora']= third.no_emisora;
-  //     // item['onlyKey'] = third.onlyKey;
-  //     arr.push(dataForm);
-  //   });
-
-  //   Promise.all(result).then(item => {
-  //     this.data1 = arr;
-  //     this.data.load(arr);
-  //     this.data.refresh();
-  //     this.totalItems = response.count;
-  //     this.loading = false;
-  //   });
-
-  // }
 
   returnFirst(model: any) {
     return new Promise((resolve, reject) => {
@@ -453,6 +470,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
 
   getallCondition() {
     this.boolCon = true;
+    this.valRastreador = false;
+    this.selectedGoods = [];
     this.getall1(this.boolCon, 'si');
   }
 
@@ -463,7 +482,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.loading = true;
     this.data1 = [];
     this.totalItems = 0;
-    this.data.load(this.data1);
+    this.data.load([]);
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -492,6 +511,52 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  getAllOfRastreador(goods: any[], filter: string) {
+    this.loading = true;
+    this.data1 = [];
+    this.totalItems = 0;
+    this.data.load([]);
+
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.goodProcessService
+      .getApplicationGetDataNoprocedingConsulta(goods, params)
+      .subscribe({
+        next: response => {
+          let result = response.data.map(item => {
+            item['rda'];
+            item['adm'];
+            item['cpd'];
+          });
+
+          Promise.all(result).then(item => {
+            this.data1 = response.data;
+            this.data.load(response.data);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
+          });
+        },
+        error: err => {
+          this.data1.push([]);
+          this.data.load([]);
+          this.data.refresh();
+          this.loading = false;
+          if (filter == 'si') {
+            this.valRastreador = false;
+            this.alert(
+              'warning',
+              'No se encontraron los bienes seleccionados en el Rastreador',
+              ''
+            );
+          }
+        },
+      });
   }
 
   filterGetAll() {
@@ -562,12 +627,14 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getall1(this.boolCon, 'no');
+          if (!this.valRastreador) this.getall1(this.boolCon, 'no');
+          else this.getAllOfRastreador(this.goodsTracker, 'no');
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getall1(this.boolCon, 'no'));
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (!this.valRastreador) this.getall1(this.boolCon, 'no');
+      else this.getAllOfRastreador(this.goodsTracker, 'no');
+    });
   }
 
   generarAlerta(response: any, filter: any) {
@@ -673,6 +740,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
                       console.log('DATA FORM ->', dataForm);
                       this.data1.push(dataForm); // invocar todos tres servicios
                       this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
+                      // this.totalItems = res.count;
                     },
                   });
                 }
@@ -684,18 +752,26 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   }
   // SERVIVO PARA RECORRER EL SERVICIO getByGood
   backRastreador(global: any) {
-    this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
+    this.goodTrackerService.PaInsGoodtmptracker_(global).subscribe({
       next: response => {
         this.total = response.count;
+        this.valRastreador = true;
         console.log('respuesta TMPTRAKER', response);
-        for (let i = 0; i < response.data.length; i++) {
-          console.log('entra ---> For');
-          this.addGoodRastreador(response.data[i].goodNumber);
-          this.totalItems = response.count;
-        }
-        console.log('sale del For');
-        window.scrollTo(0, 80);
+
+        let obj = {
+          goodNumber: [],
+        };
+        let result = response.data.map(item => {
+          obj.goodNumber.push(item.goodNumber);
+        });
+        Promise.all(result).then(resp => {
+          this.goodsTracker = obj;
+          this.getAllOfRastreador(this.goodsTracker, 'si');
+          console.log('sale del For');
+          window.scrollTo(0, 80);
+        });
       },
+      error: err => {},
     });
   }
 
@@ -704,51 +780,118 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.adm = false;
     this.cpd = true;
     this.rda = false;
-    this.data1.forEach((item: any) => {
-      if (item.cpd) {
-        item.cpd = false; // Si CPD está seleccionado, deselecciónalo
-      } else {
-        item.cpd = true; // Si CPD no está seleccionado, selecciónalo
-        item.adm = false; // Deselecciona ADM
-        item.rda = false; // Deselecciona RDA
-      }
+    console.log('seleecCPD', this.selectedGoods);
+    this.data.getElements().then(_item => {
+      console.log(_item);
+      let result = _item.map(item => {
+        if (item.cpd) {
+          item.cpd = false;
+          this.selectedGoods = this.selectedGoods.filter(
+            (good: any) => item.goodNumber != good.goodNumber
+          );
+        } else {
+          item.cpd = true;
+          item.adm = false;
+          item.rda = false;
+
+          const exists = this.selectedGoods.find(
+            (good: any) => item.goodNumber == good.goodNumber
+          );
+          if (!exists) {
+            this.selectedGoods.push(item);
+          } else {
+            this.selectedGoods = this.selectedGoods.filter(
+              (good: any) => item.goodNumber != good.goodNumber
+            );
+            this.selectedGoods.push(item);
+          }
+        }
+      });
+      Promise.all(result).then(resp => {
+        console.log('after array selectsCPD: ', this.selectedGoods);
+        this.data.refresh();
+      });
     });
-    this.data.load(this.data1);
-    this.data.refresh();
+    // this.data.refresh;
   }
   // SELECCIONA TODO ADM
   selectAllADM() {
     this.adm = true;
     this.cpd = false;
     this.rda = false;
-    this.data1.forEach((item: any) => {
-      if (item.adm) {
-        item.adm = false;
-      } else {
-        item.adm = true;
-        item.cpd = false;
-        item.rda = false;
-      }
+    console.log('seleecADM', this.selectedGoods);
+
+    this.data.getElements().then(_item => {
+      console.log('asasdasd', _item);
+      let result = _item.map(item => {
+        if (item.adm) {
+          item.adm = false;
+          this.selectedGoods = this.selectedGoods.filter(
+            (good: any) => item.goodNumber != good.goodNumber
+          );
+        } else {
+          item.adm = true;
+          item.cpd = false;
+          item.rda = false;
+
+          const exists = this.selectedGoods.find(
+            (good: any) => item.goodNumber == good.goodNumber
+          );
+          if (!exists) {
+            this.selectedGoods.push(item);
+          } else {
+            this.selectedGoods = this.selectedGoods.filter(
+              (good: any) => item.goodNumber != good.goodNumber
+            );
+            this.selectedGoods.push(item);
+          }
+        }
+      });
+      Promise.all(result).then(resp => {
+        // this.selectedGoods = _item;
+        console.log('after array selectsADM: ', this.selectedGoods);
+        this.data.refresh();
+      });
     });
-    this.data.load(this.data1);
-    this.data.refresh();
+    // this.data.refresh();
   }
   // SELECCIONA TODO RDA
   selectAllRDA() {
     this.adm = false;
     this.cpd = false;
     this.rda = true;
-    this.data1.forEach((item: any) => {
-      if (item.rda) {
-        item.rda = false;
-      } else {
-        item.rda = true;
-        item.cpd = false;
-        item.adm = false;
-      }
+    console.log('seleecRDA', this.selectedGoods);
+    this.data.getElements().then(_item => {
+      let result = _item.map(item => {
+        if (item.rda) {
+          item.rda = false;
+          this.selectedGoods = this.selectedGoods.filter(
+            (good: any) => item.goodNumber != good.goodNumber
+          );
+        } else {
+          item.rda = true;
+          item.cpd = false;
+          item.adm = false;
+
+          const exists = this.selectedGoods.find(
+            (good: any) => item.goodNumber == good.goodNumber
+          );
+          if (!exists) {
+            this.selectedGoods.push(item);
+          } else {
+            this.selectedGoods = this.selectedGoods.filter(
+              (good: any) => item.goodNumber != good.goodNumber
+            );
+            this.selectedGoods.push(item);
+          }
+        }
+      });
+      Promise.all(result).then(resp => {
+        console.log('after array selectsRDA: ', this.selectedGoods);
+        this.data.refresh();
+      });
     });
-    this.data.load(this.data1);
-    this.data.refresh();
+    // this.data.load(this.data1);
   }
 
   selectDataBien(data: any) {
@@ -764,7 +907,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     console.log('PASA DESCRIPCION ->', descripcion); // Se obtiene el valor de description del form y se almacena en la variable descripción
     if (!descripcion) return this.alert('warning', 'Digite la descripción', '');
 
-    let message = 'Se actualizarán el estatus de los bienes';
+    let message = 'Se actualizará el estatus de los bienes';
     let _message = '¿Desea continuar?';
     if (this.rda)
       (_message = ''),
@@ -787,114 +930,88 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     if (this.data.count() == 0)
       return this.alert(
         'warning',
-        'No hay bienes por exportar y actualizar',
+        'No hay bienes para exportar y actualizar',
         ''
       );
-    let arregloPrincipal: any[] = [];
-    let result = this.data1.map(item => {
-      if ([item.cpd, item.adm, item.rda].includes(true)) {
-        let item_: any = {
-          NO_BIEN: item.goodNumber,
-          DESCRIPCION: item.description,
-          CANTIDAD: item.amount,
-          NO_CLASIF_BIEN: item.notClassificationWell,
-          NO_TRANSFERENTE: item.transferor,
-          DEL_ADMINISTRA: item.delAdmin,
-          DEL_RECIBE: item.delReceives,
-          FECHA_RECEPCION: item.dateCrecep,
-          ESTATUS: item.status,
-          PROCESO_EXT_DOM: item.processExtDom,
-          NO_EXPEDIENTE: item.proceedingsNumber,
-          CANTIDAD_PROPUESTA: '0',
-          CANTIDAD_DONADA: '',
-          ID_ALMACEN: item.storeId,
-          FEC_LIBERACION: item.dateRelease,
-          NO_UNIDAD: item.unit,
-          CVE_UNICA: item.onlyKey,
-          NO_EMISORA: item.stationNumber,
+
+    if (this.selectedGoods.length == 0)
+      return this.alert('warning', 'No hay bienes seleccionados', '');
+
+    this.loadingExportAndUpdate = true;
+    let i = 0;
+    let o = 0;
+    let result = this.selectedGoods.map(async item_ => {
+      let action = '';
+      if (item_.rda) action = 'RDON';
+      if (item_.adm) action = 'ADMIN';
+      if (item_.cpd) action = 'CDON';
+
+      let statusFinal: any = await this.returnService(
+        'FDONACIONES',
+        item_.status,
+        item_.processExtDom,
+        action
+      );
+      let descripcion = this.form.get('description').value;
+      o++;
+      if (!statusFinal) {
+        i++;
+      } else {
+        let obj = {
+          goodId: item_.goodId,
+          id: item_.goodNumber,
+          status: statusFinal.status,
+          observations: descripcion + ' ',
         };
-        arregloPrincipal.push(item_);
+
+        let result_ = await this.updateGood(obj);
+        if (!result_) {
+          i++;
+        } else {
+          item_.status = statusFinal.status;
+          let params2 = {
+            propertyNum: item_.goodNumber,
+            status: statusFinal.status,
+            changeDate: new Date(),
+            userChange: this.user,
+            statusChangeProgram: 'FDONACIONES',
+            reasonForChange: descripcion,
+          };
+          await this.insertHistoric(params2);
+        }
       }
     });
     Promise.all(result).then(item => {
-      if (arregloPrincipal.length == 0) {
-        this.alert(
+      if (i == o) {
+        this.alertQuestion(
           'warning',
-          'Seleccione los bienes a exportar',
-          ''
-          // 'Seleccione un estado de los bienes que quiere exportar'
-        );
-        return;
-      }
-
-      this.data.getElements().then(item => {
-        let i = 0;
-        let o = 0;
-        let result = item.map(async (item_: any) => {
-          if ([item_.cpd, item_.adm, item_.rda].includes(true)) {
-            let action = '';
-            if (item_.rda) action = 'RDON';
-            if (item_.adm) action = 'ADMIN';
-            if (item_.cpd) action = 'CDON';
-
-            let statusFinal: any = await this.returnService(
-              'FDONACIONES',
-              item_.status,
-              item_.processExtDom,
-              action
-            );
-            let descripcion = this.form.get('description').value;
-            o++;
-            if (!statusFinal) {
-              i++;
-            } else {
-              let obj = {
-                goodId: item_.goodNumber,
-                id: item_.goodNumber,
-                status: statusFinal.status,
-                observations: descripcion + ' ',
-              };
-              await this.updateGood(obj);
-
-              let params2 = {
-                propertyNum: item_.goodNumber,
-                status: statusFinal.status,
-                changeDate: new Date(),
-                userChange: this.user,
-                statusChangeProgram: 'FDONACIONES',
-                reasonForChange: descripcion,
-              };
-              await this.insertHistoric(params2);
-            }
-          }
-        });
-        Promise.all(result).then(resp => {
-          if (i == o) {
-            this.alertQuestion(
-              'warning',
-              'No se actualizaron el estatus de los bienes seleccionados',
-              '¿Desea descargar el excel?'
-            ).then(async question => {
-              if (question.isConfirmed) {
-                await this.exportToExcelX();
-              }
-            });
+          'No se actualizó el estatus de los bienes seleccionados',
+          '¿Desea descargar el excel?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            await this.exportToExcelX(false);
+            this.loadingExportAndUpdate = false;
           } else {
-            this.getall1(true, 'no');
-            this.alertInfo(
-              'success',
-              'Se actualizaron los bienes correctamente',
-              ''
-            ).then(async question => {
-              // if (question.isConfirmed) {
-              await this.exportToExcelX();
-              // }
-            });
-            // this.alert('success', 'Se actualizaron los bienes correctamente', '');
+            this.loadingExportAndUpdate = false;
           }
         });
-      });
-      return;
+      } else {
+        if (this.valRastreador)
+          this.getAllOfRastreador(this.goodsTracker, 'no');
+        else this.getall1(true, 'no');
+
+        this.alertInfo(
+          'success',
+          'Se actualizaron los bienes correctamente',
+          ''
+        ).then(async question => {
+          // if (question.isConfirmed) {
+          await this.exportToExcelX(false);
+          this.loadingExportAndUpdate = false;
+          // }
+        });
+        // this.alert('success', 'Se actualizaron los bienes correctamente', '');
+      }
     });
   }
 
@@ -944,66 +1061,50 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     console.log('PRUEBA2->');
   }
   // EXPORTAR A EXCEL Y CAMBIAR ESTATUS
-  async exportToExcelX() {
+  async exportToExcelX(filter: boolean) {
     console.log('data select ', this.selectedData);
     let c = 0;
     let n = 0;
     let arregloPrincipal: any[] = [];
-    let result = this.data1.map(item => {
-      if ([item.cpd, item.adm, item.rda].includes(true)) {
-        c++;
-        let item_: any = {
-          NO_BIEN: item.goodNumber,
-          DESCRIPCION: item.description,
-          CANTIDAD: item.amount,
-          NO_CLASIF_BIEN: item.notClassificationWell,
-          NO_TRANSFERENTE: item.transferor,
-          DEL_ADMINISTRA: item.delAdmin,
-          DEL_RECIBE: item.delReceives,
-          FECHA_RECEPCION: item.dateCrecep,
-          ESTATUS: item.status,
-          PROCESO_EXT_DOM: item.processExtDom,
-          NO_EXPEDIENTE: item.proceedingsNumber,
-          CANTIDAD_PROPUESTA: '0',
-          CANTIDAD_DONADA: '',
-          ID_ALMACEN: item.storeId,
-          FEC_LIBERACION: item.dateRelease,
-          NO_UNIDAD: item.unit,
-          CVE_UNICA: item.onlyKey,
-          NO_EMISORA: item.stationNumber,
-        };
-        arregloPrincipal.push(item_);
-      }
+    if (this.selectedGoods.length == 0)
+      return this.alert('warning', 'No hay bienes seleccionados', '');
+    if (filter) this.loadingExport = true;
+    let result = this.selectedGoods.map(item => {
+      // if ([item.cpd, item.adm, item.rda].includes(true)) {
+      c++;
+      let item_: any = {
+        NO_BIEN: item.goodNumber,
+        DESCRIPCION: item.description,
+        CANTIDAD: item.amount,
+        NO_CLASIF_BIEN: item.notClassificationWell,
+        NO_TRANSFERENTE: item.transferor,
+        DEL_ADMINISTRA: item.delAdmin,
+        DEL_RECIBE: item.delReceives,
+        FECHA_RECEPCION: item.dateCrecep,
+        ESTATUS: item.status,
+        PROCESO_EXT_DOM: item.processExtDom,
+        NO_EXPEDIENTE: item.proceedingsNumber,
+        CANTIDAD_PROPUESTA: '0',
+        CANTIDAD_DONADA: '',
+        ID_ALMACEN: item.storeId,
+        FEC_LIBERACION: item.dateRelease,
+        NO_UNIDAD: item.unit,
+        CVE_UNICA: item.onlyKey,
+        NO_EMISORA: item.stationNumber,
+      };
+      arregloPrincipal.push(item_);
+      // }
     });
 
-    if (arregloPrincipal.length == 0) {
-      this.alert(
-        'warning',
-        'Seleccione los bienes a exportar',
-        ''
-        // 'Seleccione un estado de los bienes que quiere exportar'
-      );
-      return;
-    }
     console.log('Data a enviar -> ', arregloPrincipal);
     Promise.all(result).then(item => {
-      const filename: string = 'ExcelDownload';
-      this.excelService.export(arregloPrincipal, { type: 'xlsx', filename });
-      this.alert('success', 'Archivo descargado correctamente', '');
+      setTimeout(() => {
+        const filename: string = 'FDONACIONES';
+        this.excelService.export(arregloPrincipal, { type: 'xlsx', filename });
+        if (filter) this.loadingExport = false;
+        this.alert('success', 'Archivo descargado correctamente', '');
+      }, 1000);
     });
-
-    // let array = {
-    //   data: arregloPrincipal,
-    // };
-    // this.massiveGoodService.exportXlsx(array).subscribe({
-    //   next: response => {
-    //     this.convertAndDownloadExcel(response.base64File, response.fileName);
-    //     this.alert('success', 'Exportación excel', 'Generada correctamente');
-    //   },
-    //   error: err => {
-    //     this.alert('error', 'No se puede copiar el archivo de excel.', '');
-    //   },
-    // });
   }
 
   // CONVERTIR BASE64 a XLSX

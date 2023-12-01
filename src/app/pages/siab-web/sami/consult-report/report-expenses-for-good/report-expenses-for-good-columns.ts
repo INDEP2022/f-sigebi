@@ -5,19 +5,19 @@ export const GOODS_COLUMNS = {
     sort: false,
   },
 
-  typeRelevantName: {
+  relevantTypeId: {
     title: 'Tipo Relevante',
     type: 'string',
     sort: false,
   },
 
-  NoExpediente: {
+  fileNumber: {
     title: 'No. Expediente',
     type: 'string',
     sort: false,
   },
 
-  descriptionGood: {
+  description: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
@@ -29,7 +29,7 @@ export const GOODS_COLUMNS = {
     sort: false,
   },
 
-  unitMed: {
+  unitMeasure: {
     title: 'Unidad de Medida',
     type: 'number',
     sort: false,
@@ -43,265 +43,307 @@ export const GOODS_COLUMNS = {
 };
 
 export const GOODS_VAL_REQ_COLUMNS = {
-  ORD_id_orden_servicio: {
+  orderServiceId: {
     title: 'Orden de Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_folio_orden_servicio: {
+  orderServiceFolio: {
     title: 'Folio Orden Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_no_contrato: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'string',
     sort: false,
   },
 
-  ORD_delegacion_regional: {
+  regionalDelegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
 
-  ORD_costo_servicio: {
+  costService: {
     title: 'Costo Orden de Servicio',
     type: 'number',
     sort: false,
   },
 
-  no_bienes: {
+  goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },
 };
 
 export const GOODS_REC_DOC_COLUMNS = {
-  ORD_id_orden_servicio: {
+  orderServiceId: {
     title: 'Orden de Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_folio_orden_servicio: {
+  orderServiceFolio: {
     title: 'Folio Orden Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_no_contrato: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'string',
     sort: false,
   },
 
-  ORD_delegacion_regional: {
+  regionalDelegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
 
-  ORD_costo_servicio: {
+  costService: {
     title: 'Costo Orden de Servicio',
     type: 'number',
     sort: false,
   },
 
-  no_bienes: {
+  goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },
 };
 
 export const GOODS_PROG_COLUMNS = {
-  ORD_id_orden_servicio: {
+  orderServiceId: {
     title: 'Orden de Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_folio_orden_servicio: {
+  orderServiceFolio: {
     title: 'Folio Orden Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_no_contrato: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'string',
     sort: false,
   },
 
-  ORD_delegacion_regional: {
+  regionalDelegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
 
-  ORD_costo_servicio: {
+  costService: {
     title: 'Costo Orden de Servicio',
     type: 'number',
     sort: false,
   },
 
-  no_bienes: {
+  goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },
 };
 
 export const GOODS_PROG_ENT_COLUMNS = {
-  ORD_id_orden_servicio: {
+  orderServiceId: {
     title: 'Orden de Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_folio_orden_servicio: {
+  orderServiceFolio: {
     title: 'Folio Orden Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_no_contrato: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'string',
     sort: false,
   },
 
-  ORD_delegacion_regional: {
+  regionalDelegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
 
-  ORD_costo_servicio: {
+  costService: {
     title: 'Costo Orden de Servicio',
     type: 'number',
     sort: false,
   },
 
-  no_bienes: {
+  goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },
 };
 
 export const GOODS_WAREHOUSE_COLUMNS = {
-  ORD_id_orden_servicio: {
+  orderServiceId: {
     title: 'Orden de Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_folio_orden_servicio: {
+  orderServiceFolio: {
     title: 'Folio Orden Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_no_contrato: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'string',
     sort: false,
   },
 
-  ORD_delegacion_regional: {
+  regionalDelegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
 
-  ORD_costo_servicio: {
+  costService: {
     title: 'Costo Orden de Servicio',
     type: 'number',
     sort: false,
   },
 
-  no_bienes: {
+  goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },
 };
 
 export const GOODS_MANUAL_COLUMNS = {
-  ORD_id_orden_servicio: {
+  orderServiceId: {
     title: 'Orden de Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_folio_orden_servicio: {
+  orderServiceFolio: {
     title: 'Folio Orden Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_no_contrato: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'string',
     sort: false,
   },
 
-  ORD_delegacion_regional: {
+  regionalDelegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
 
-  ORD_costo_servicio: {
+  costService: {
     title: 'Costo Orden de Servicio',
     type: 'number',
     sort: false,
   },
 
-  no_bienes: {
+  goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },
 };
+
 export const GOODS_REUB_GOOD_COLUMNS = {
-  ORD_id_orden_servicio: {
+  orderServiceId: {
     title: 'Orden de Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_folio_orden_servicio: {
+  orderServiceFolio: {
     title: 'Folio Orden Servicio',
     type: 'string',
     sort: false,
   },
 
-  ORD_no_contrato: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'string',
     sort: false,
   },
 
-  ORD_delegacion_regional: {
+  regionalDelegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
 
-  ORD_costo_servicio: {
+  costService: {
     title: 'Costo Orden de Servicio',
     type: 'number',
     sort: false,
   },
 
-  no_bienes: {
+  goodNumber: {
     title: 'No. Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  prorrateo: {
+    title: 'Prorrateo',
     type: 'number',
     sort: false,
   },

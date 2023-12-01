@@ -170,6 +170,7 @@ export class ExpenseConceptsListComponent
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       conceptId: this.conceptId,
+      address: this.address,
       callback: (body: { id: string }) => {
         if (body) {
           let listParams = new ListParams();
@@ -210,7 +211,10 @@ export class ExpenseConceptsListComponent
                   });
                   this.alert('success', 'Se han copiado los parámetros', '');
                   // this.filesToDelete = [];
-                  this.selectedConcept = body;
+                  setTimeout(() => {
+                    this.selectedConcept = body;
+                  }, 500);
+
                   // this.expenseConceptsService.refreshParams.next(true);
                   // forkJoin(obs).subscribe({
                   //   complete: () => {
@@ -311,10 +315,15 @@ export class ExpenseConceptsListComponent
             error: err => {
               console.log(err);
               // event.confirm.resolve();
+              let errorM = err.error.message;
               this.alert(
                 'error',
-                'Eliminación de Concepto de Pago ' + event.data.id,
-                err.error.message
+                'No se pudo eliminar el concepto de pago ' + event.data.id,
+                errorM
+                  ? errorM.includes('violates foreign key')
+                    ? 'Debe eliminar sus parámetros para poder continuar'
+                    : errorM
+                  : 'Favor de verificar'
               );
             },
           });

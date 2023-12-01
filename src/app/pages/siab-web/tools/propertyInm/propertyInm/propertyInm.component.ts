@@ -202,8 +202,10 @@ export class PropertyInmComponent extends BasePage implements OnInit {
   }
 
   onExportExcel() {
+    this.loader.load = true;
     if (this.array.length === 0 || this.totalItems1 === 0) {
       this.alert('warning', 'Debe seleccionar un valor', '');
+      this.loader.load = false;
       return;
     }
     this.loadingReport = true;
@@ -252,6 +254,7 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
+        this.loader.load = false;
       },
     });
   }
@@ -287,6 +290,7 @@ export class PropertyInmComponent extends BasePage implements OnInit {
     this.loading = false;
     this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
     URL.revokeObjectURL(objURL);
+    this.loader.load = false;
   }
 
   base64ToArrayBuffer(base64String: string) {

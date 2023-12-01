@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Captura de Aprobaci&oacute;n para Donaci&oacute;n</h5>
+    <h5 class="title">Captura de Eventos para Donaci&oacute;n</h5>
   </div>
 
   <div body>
@@ -18,7 +18,9 @@
           <div class="row mt-5">
             <div class="col-5 d-flex align-items-center justify-content-start">
               <span class="badge rounded-pill badge-soft-success">Estatus</span>
-              <div style="font-weight: bold">{{ estatus || '' }}</div>
+              <div style="font-weight: bold">
+                {{ estatus || '' }}
+              </div>
             </div>
           </div>
           <div class="row mt-5">
@@ -68,7 +70,6 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('folio')" label="Folio">
                   <input
-                    #inputValue
                     type="text"
                     class="form-control"
                     formControlName="folio"
@@ -112,20 +113,20 @@
                 <button
                   (click)="agregarCaptura()"
                   type="button"
-                  class="btn btn-info active btn-sm mr-3">
+                  class="btn btn-info active btn-sm mr-3 mt-2">
                   Nuevo Evento
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
-                  class="btn btn-primary active btn-sm mr-3"
+                  class="btn btn-primary active btn-sm mr-3 mt-2"
                   (click)="searchActas()">
                   Buscar Evento
                   <i class="bx bx-search bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
-                  class="btn btn-primary active btn-sm mr-3"
+                  class="btn btn-primary active btn-sm mr-3 mt-2"
                   (click)="cerrarActa()">
                   Cerrar Evento
                   <i class="fas fa-close bx-sm float-icon"></i>
@@ -133,7 +134,7 @@
                 <button
                   (click)="cleanActa()"
                   type="button"
-                  class="btn btn-danger active btn-sm mr-3">
+                  class="btn btn-danger active btn-sm mr-3 mt-2">
                   Limpiar
                   <i class="fa fa-eraser" aria-hidden="true"></i>
                 </button>
@@ -141,47 +142,55 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="row">
             <div class="col-12">
               <h5>Par&aacute;metros para Traer Informaci&oacute;n de SIAB</h5>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
               <div class="row">
                 <div class="col-md-12">
                   <div class="card justify-content-center">
-                    <div class="col-md-6 d-flex flex-column">
+                    <div class="col-md-12 d-flex flex-column">
                       <div
                         class="row ps-4"
                         [ngClass]="{ 'not-press': !activeRadio }">
-                        <form-radio label="Consulta de Bienes">
+                        <form-radio
+                          style="background-color: #c8c8c8"
+                          label="Consulta de Bienes">
+                          <input
+                            type="radio"
+                            formControlName="activeRadio"
+                            value="0"
+                            (change)="enableButtons()" />
+                        </form-radio>
+                        <form-radio
+                          style="background-color: #008080"
+                          label="Com. Exterior KG">
                           <input
                             type="radio"
                             formControlName="activeRadio"
                             value="1"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Com. Exterior KG">
+                        <form-radio
+                          style="background-color: #ffc000"
+                          label="Delitos Federales">
                           <input
                             type="radio"
                             formControlName="activeRadio"
                             value="2"
                             (change)="enableButtons()" />
                         </form-radio>
-                        <form-radio label="Delitos Federales">
+                        <form-radio
+                          style="background-color: #80c000"
+                          label="Otros Trans.">
                           <input
                             type="radio"
                             formControlName="activeRadio"
                             value="3"
-                            (change)="enableButtons()" />
-                        </form-radio>
-                        <form-radio label="Otros Trans.">
-                          <input
-                            type="radio"
-                            formControlName="activeRadio"
-                            value="4"
                             (change)="enableButtons()" />
                         </form-radio>
                       </div>
@@ -190,34 +199,36 @@
                 </div>
               </div>
             </div>
+            <div class="col-md-6 d-flex flex-column align-items-center">
+              <span class="badge rounded-pill">Acta</span>
+              <div style="font-weight: bold">{{ idAct || '' }}</div>
+            </div>
           </div>
-          <div class="row m-3">
+          <div class="row m-6">
             <div class="col-4"></div>
             <div class="col-md-12 text-center">
               <button
-                class="btn btn-secondary btn-sm active me-2"
-                (click)="validaGood()"
-                [disabled]="dataDetailDonationGood">
+                class="btn btn-secondary btn-sm active me-2 mt-2"
+                (click)="validaGood()">
                 Valida Bienes <i class="bx bx-check float-icon"></i>
               </button>
               <button
-                class="btn btn-success btn-sm active me-2"
+                class="btn btn-success btn-sm active me-2 mt-2"
                 type="button"
                 [disabled]="!radio"
-                (click)="exportToExcel()">
+                (click)="exportAll()">
                 Exportar a Excel
                 <i class="bx bx-download float-icon"></i>
               </button>
               <button
-                [disabled]="!bienesVaild"
-                class="btn btn-primary btn-sm active me-2"
+                [disabled]="!radio"
+                class="btn btn-primary btn-sm active me-2 mt-2"
                 (click)="ubicaGood()">
-                Consulta Bienes
+                {{ pb_label }}
                 <i class="bx bx-search float-icon"></i>
               </button>
               <button
-                [disabled]="!radio"
-                class="btn btn-info active btn-sm active"
+                class="btn btn-info active btn-sm active mt-2"
                 (click)="findRast()">
                 Rastreador de Bienes&nbsp;
                 <i class="fas fa-map-marker bx-sm float-icon"></i>
@@ -268,40 +279,24 @@
                     [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings2"
                     (userRowSelect)="rowsSelected($event)"
-                    [source]="dataDetailDonationGood">
+                    [source]="data">
                   </ng2-smart-table>
                 </ng-scrollbar>
                 <app-pagination
-                  [params]="paramsList2"
+                  [params]="params"
                   [totalItems]="totalItems2"></app-pagination>
               </div>
               <div class="row">
-                <div class="col-md-12">
-                  <div>
-                    <form-field
-                      [control]="regisForm.get('observaciones')"
-                      label="Observaciones">
-                      <textarea
-                        maxlength="1000"
-                        type="text"
-                        class="form-control"
-                        [disabled]="!deleteO"
-                        formControlName="observaciones"></textarea>
-                    </form-field>
+                <div class="d-flex justify-content-center">
+                  <div class="col-3">
+                    <span class="text-success mr-5"
+                      ><i class="fa fa-square"></i> Disponibles</span
+                    >
                   </div>
-                </div>
-                <div class="col-md-12">
-                  <div class="row">
-                    <form-field
-                      [control]="regisForm.get('observaElimina')"
-                      [hidden]="!inputVisible"
-                      label="Observaciones Eliminación de Bienes por">
-                      <textarea
-                        maxlength="1000"
-                        type="text"
-                        class="form-control"
-                        formControlName="observaElimina"></textarea>
-                    </form-field>
+                  <div class="col-3">
+                    <span class="text-black"
+                      ><i class="fa fa-square"></i> No disponibles</span
+                    >
                   </div>
                 </div>
               </div>
@@ -309,31 +304,44 @@
           </div>
         </div>
       </div>
-      <!-- <div class="row p-3">
+      <div class="row p-3">
         <div class="col-md-3"></div>
-        <div class="row mt-12 d-flex justify-content-center">
+        <div class="row mt-8 d-flex justify-content-center">
           <div class="col-md-12">
-            <h6>BIENES DEL RASTREADOR</h6>
-            <div class="row"></div>
-            <div class="row justify-content-end mt-3">
-              <div class="col-md-5 buttons pt-3 text-right">
-                <app-columns-select
-                  (settingsChange)="settingsChange($event)"
-                  [settings]="settings2">
-                </app-columns-select>
-              </div>
+            <div>
+              <form-field
+                [control]="regisForm.get('observaciones')"
+                label="Observaciones">
+                <textarea
+                  maxlength="1000"
+                  type="text"
+                  class="form-control"
+                  [disabled]="!deleteO"
+                  formControlName="observaciones"></textarea>
+              </form-field>
             </div>
+          </div>
+          <div class="col-md-12">
             <div class="row">
-              <form-loader *ngIf="loading3"></form-loader>
-              <div class="col-md-12">
-                <app-goods-list
-                  [files]="files"
-                  [changeDescription]="changeDescription"></app-goods-list>
-              </div>
+              <form
+                class="form-material form-horizontal"
+                [formGroup]="delForm"
+                (ngSubmit)="removeSelect()">
+                <form-field
+                  [control]="delForm.get('observaElimina')"
+                  [hidden]="!inputVisible"
+                  label="Observaciones Eliminación de Bienes por">
+                  <textarea
+                    maxlength="1000"
+                    type="text"
+                    class="form-control"
+                    formControlName="observaElimina"></textarea>
+                </form-field>
+              </form>
             </div>
           </div>
         </div>
-      </div> -->
+      </div>
 
       <div footer>
         <div class="d-flex justify-content-center">
@@ -346,11 +354,22 @@
           </div>
           <div class="m-3">
             <button
+              [disabled]="TOTAL_REPORTE < 500"
+              (click)="searchRopaId()"
+              type="button"
+              class="btn btn-primary active btn-sm mr-3">
+              Llena Ropa Div
+              <i class="fas fa-edit bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
               class="btn btn-danger btn-sm active"
               (click)="removeSelect()">
               Elimina Bienes <i class="fa fa-trash-alt"></i>
             </button>
           </div>
+
           <div class="m-3">
             <button
               (click)="actualizarActa()"

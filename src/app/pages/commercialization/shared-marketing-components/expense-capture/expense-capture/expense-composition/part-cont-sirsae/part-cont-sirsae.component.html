@@ -1,0 +1,60 @@
+<app-modal>
+  <div header><h5 class="modal-title">Partidas Contables SIRSAE</h5></div>
+  <div body>
+    <div class="row">
+      <div class="col-6">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active mr-3"
+          (click)="close()">
+          Regresar
+        </button>
+      </div>
+      <div class="col-6 d-flex justify-content-end">
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settings"
+          class="row justify-content-end"></app-columns-select>
+      </div>
+    </div>
+    <div class="row pt-4 pl-0 pr-0 m-0">
+      <div class="col-md-12 p-0">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              #table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data"
+              (userRowSelect)="selectRow($event.data)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+  <div footer>
+    <div class="row partContFooter">
+      <div class="col-md-6 partContFooter-check">
+        <form-check for="apply" label="Aplicar a todos los mandatos">
+          <input
+            type="checkbox"
+            id="apply"
+            [(ngModel)]="apply"
+            class="form-control" />
+        </form-check>
+      </div>
+      <div class="col-md-6 partContFooter-select">
+        <button
+          (click)="confirm()"
+          type="button"
+          class="btn btn-primary active btn-sm"
+          [disabled]="!selected">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

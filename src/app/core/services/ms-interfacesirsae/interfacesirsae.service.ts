@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { InterfaceSirsaeEndpoints } from 'src/app/common/constants/endpoints/ms-interfacesirsae';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import { ISirsaeStateAccountDetail } from '../../models/ms-interfacesirsae/interfacesirsae';
 import {
   ISendSirsae,
@@ -87,6 +90,16 @@ export class InterfacesirsaeService extends HttpService {
   }
 
   sendSirsae2(body: ISirsaeDTO) {
-    return this.post('sirsae/sendSirsae3', body);
+    return this.post<{
+      COMER_GASTOS_ID_SOLICITUDPAGO: any;
+      BLK_TEMP_CADENA: any;
+      COMER_GASTOS_FECHA_SP: any;
+    }>('sirsae/sendSirsae3', body);
+  }
+
+  getProviderId(id: string) {
+    return this.get<IListResponseMessage<any>>(
+      'interfaceesirsae/api/v1/supplier?filter.clkPv=$eq:' + id
+    );
   }
 }

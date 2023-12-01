@@ -60,6 +60,7 @@ export class NumeraireDispersionComponent
       }
     }
     if (changes['selectedExpenseData'] && this.fillData) {
+      this.total = 0;
       this.getData();
     }
   }
@@ -84,6 +85,7 @@ export class NumeraireDispersionComponent
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       row,
+      eventId: this.idEvento,
       callBack: (next: boolean) => {
         this.getData();
       },

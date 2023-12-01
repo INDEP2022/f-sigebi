@@ -25,6 +25,8 @@
       <div class="col-md-12">
         <div [ngClass]="{ 'table-loading': loading }">
           <ng2-smart-table
+            #table
+            id="table"
             [settings]="settings"
             [source]="dataFactGen"
             (edit)="openForm($event.data)"

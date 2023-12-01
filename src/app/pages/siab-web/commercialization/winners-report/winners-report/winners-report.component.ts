@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -75,7 +75,7 @@ export class winnersReportComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      event: [null, [Validators.required]],
+      event: [null, []],
     });
   }
 
@@ -125,54 +125,70 @@ export class winnersReportComponent extends BasePage implements OnInit {
   }
 
   getLoser() {
-    this.loading = true;
-    this.loserr = [];
-    let params = {
-      ...this.params1.getValue(),
-    };
-    let body = {
-      idEventIn: Number(this.form.get('event').value),
-    };
+    if (this.form.get('event').value) {
+      this.loading = true;
+      this.loserr = [];
+      let params = {
+        ...this.params1.getValue(),
+      };
+      let body = {
+        idEventIn: Number(this.form.get('event').value),
+      };
 
-    this.loser.getpaREportLoser(body, params).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.loserr = resp.data;
-        this.data1.load(resp.data);
-        this.data1.refresh();
-        this.loading = false;
-        this.totalItems1 = resp.count;
-        console.log(this.totalItems1);
-        this.showReport = true;
-      },
-      error: err => {
-        console.log(err);
-        this.alert('error', 'No existe Reporte con el Evento Seleccionado', '');
-      },
-    });
+      this.loser.getpaREportLoser(body, params).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.loserr = resp.data;
+          this.data1.load(resp.data);
+          this.data1.refresh();
+          this.loading = false;
+          this.totalItems1 = resp.count;
+          console.log(this.totalItems1);
+          this.showReport = true;
+        },
+        error: err => {
+          console.log(err);
+          this.alert(
+            'error',
+            'No existe reporte con el evento seleccionado',
+            ''
+          );
+        },
+      });
+    } else {
+      this.alert('warning', 'Debe llenar el campo evento', '');
+    }
   }
 
   getWinner() {
-    this.loading = true;
-    this.winnerr = [];
-    let params = {
-      ...this.params.getValue(),
-    };
-    this.winner.lotApp(this.form.get('event').value, params).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.winnerr = resp.data;
-        this.data.load(resp.data);
-        this.data.refresh();
-        this.totalItems = resp.count;
-        this.loading = false;
-        this.showWinners = true;
-      },
-      error: err => {
-        console.log(err);
-        this.alert('error', 'No existe Reporte con el Evento Seleccionado', '');
-      },
-    });
+    if (this.form.get('event').value) {
+      this.loading = true;
+      this.winnerr = [];
+      let params = {
+        ...this.params.getValue(),
+      };
+      this.winner.lotApp(this.form.get('event').value, params).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.winnerr = resp.data;
+          this.data.load(resp.data);
+          this.data.refresh();
+          this.totalItems = resp.count;
+          this.loading = false;
+          this.showWinners = true;
+        },
+        error: err => {
+          console.log(err);
+          this.alert(
+            'error',
+            'No existe Reporte con el evento seleccionado',
+            ''
+          );
+        },
+      });
+    } else {
+      this.alert('warning', 'Debe llenar el campo evento', '');
+    }
   }
 
   exportarLoser() {

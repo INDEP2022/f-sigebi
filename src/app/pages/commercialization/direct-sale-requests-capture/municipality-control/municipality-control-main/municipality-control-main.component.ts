@@ -113,7 +113,7 @@ export class MunicipalityControlMainComponent
               case 'soladjinstgobId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'amount':
+              case 'typeentgobId':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'applicant':
@@ -123,7 +123,7 @@ export class MunicipalityControlMainComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'award':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
@@ -139,6 +139,9 @@ export class MunicipalityControlMainComponent
                 break;
               case 'state':
                 searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.EQ;
                 break;
             }
             if (filter.search !== '') {
@@ -165,6 +168,7 @@ export class MunicipalityControlMainComponent
     };
     this.assignedGoodColumns = [];
     this.assignedGoodTotalItems = 0;
+    this.dataFactGen.reset();
     this.municipalityControlMainService.getSolicitantes(params).subscribe({
       next: response => {
         this.loading = false;
@@ -195,7 +199,7 @@ export class MunicipalityControlMainComponent
         this.onLoadToast(
           'warning',
           'Advertencia',
-          'No se han Encontrado Bienes para el Solicitante Seleccionado'
+          'No se han encontrado bienes para el solicitante seleccionado'
         );
       },
     });
@@ -209,7 +213,7 @@ export class MunicipalityControlMainComponent
     //console.log(row, type);
     this.alertQuestion(
       'question',
-      '¿Desea Eliminar este Registro?',
+      '¿Desea eliminar este registro?',
       '',
       'Eliminar'
     ).then(question => {
@@ -234,7 +238,7 @@ export class MunicipalityControlMainComponent
     };
     this.municipalityControlMainService.deleteSolicitante(body).subscribe({
       next: data => {
-        this.onLoadToast('success', 'Solicitante', 'Eliminado Correctamente');
+        this.onLoadToast('success', 'Se ha eliminado el solicitante', '');
         this.getData();
         // location.reload();
       },
@@ -242,7 +246,7 @@ export class MunicipalityControlMainComponent
         this.onLoadToast(
           'warning',
           'Advertencia',
-          'El Solicitante no se ha Eliminado Correctamente'
+          'El solicitante no se ha eliminado correctamente, verifique que no tenga bienes asignados'
         );
       },
     });
@@ -252,15 +256,16 @@ export class MunicipalityControlMainComponent
     // console.log(row);
     this.msDirectawardService.deleteGoodsById(row.detbienesadjId).subscribe({
       next: data => {
-        this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
+        this.onLoadToast('success', 'Se ha eliminado el bien', '');
         // location.reload();
-        this.getData();
+        //this.getData();
+        this.getDataGoods(this.applicant);
       },
       error: err => {
         this.onLoadToast(
           'warning',
           'Advertencia',
-          'El bien no se ha Eliminado Correctamente'
+          'El bien no se ha eliminado correctamente'
         );
       },
     });

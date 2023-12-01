@@ -71,6 +71,10 @@ export class DataTableComponent extends BasePage implements OnInit {
         add: false,
         position: 'right',
       },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-2"></i>',
+      },
       columns: { ...COLUMNS_DATA_TABLE },
     };
   }
@@ -425,6 +429,8 @@ export class DataTableComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.log('error ', error);
+        this.dataTable1.load([]);
+        this.dataTable1.refresh();
         this.loading = false;
       },
     });

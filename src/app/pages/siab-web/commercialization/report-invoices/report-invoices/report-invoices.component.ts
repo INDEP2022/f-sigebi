@@ -54,7 +54,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
 
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  // params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters1: any = [];
   columnFilters2: any = [];
 
@@ -73,7 +73,6 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       actions: false,
       columns: { ...REPORT_INVOICE_COLUMNS },
       rowClassFunction: (row: any) => {
-        console.log(row.data);
         switch (row.data.id_delegacion) {
           case '0':
             return 'bg-info0 text-white';
@@ -129,6 +128,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
           width: '5%',
           type: 'custom',
           sort: false,
+          filter: false,
           renderComponent: ButtonColumnComponent,
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
@@ -142,6 +142,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
           width: '5%',
           type: 'custom',
           sort: false,
+          filter: false,
           renderComponent: ButtonColumnComponent,
           onComponentInitFunction: (instance: any) => {
             instance.onClick.subscribe((row: any) => {
@@ -203,8 +204,10 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
               delete this.columnFilters1[field];
             }
           });
-          this.params = this.pageFilter(this.params);
-          this.getDataAll();
+          this.params1 = this.pageFilter(this.params1);
+          this.params2
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.consultInvoices());
         }
       });
 
@@ -236,8 +239,10 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
               delete this.columnFilters1[field];
             }
           });
-          this.params = this.pageFilter(this.params);
-          this.getDetailInvoices();
+          this.params2 = this.pageFilter(this.params2);
+          this.params2
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getDetailInvoices(this.dataDetail));
         }
       });
   }
@@ -245,12 +250,12 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       rangeDate: [null, [maxDate(new Date())]],
-      typeCFDI: [null, [Validators.required]],
-      statusInvoice: [null, [Validators.required]],
-      goods: [null, [Validators.required]],
-      event: [null, [Validators.required]],
-      year: [null, [Validators.required]],
-      valid: ['A', [Validators.required]],
+      typeCFDI: [null, []],
+      statusInvoice: [null, []],
+      goods: [null, []],
+      event: [null, []],
+      year: [null, []],
+      valid: ['A', []],
     });
     setTimeout(() => {
       this.getEvent(new ListParams());
@@ -260,14 +265,14 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
 
   changeValid(event: any) {
     if (event == 'A') {
-      this.year.setValidators([Validators.required]);
+      //this.year.setValidators([Validators.required]);
       this.rangeDate.setValidators([]);
       this.form.get('rangeDate').setValue('');
       this.form.get('rangeDate').disable();
       this.form.get('year').enable();
     } else if (event == 'R') {
       this.year.setValidators([]);
-      this.rangeDate.setValidators([Validators.required]);
+      //this.rangeDate.setValidators([Validators.required]);
       this.form.get('year').setValue('');
       this.form.get('year').disable();
       this.form.get('rangeDate').enable();
@@ -290,8 +295,48 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   }
 
   consult() {
-    this.validateExcel = true;
-    this.show = true;
+    if (this.form.get('valid').value === 'A') {
+      if (
+        this.form.get('valid').value &&
+        this.form.get('year').value
+        // &&
+        // this.form.get('event').value &&
+        // this.form.get('typeCFDI').value &&
+        // this.form.get('statusInvoice').value &&
+        // this.form.get('goods').value
+      ) {
+        this.validateExcel = true;
+        this.show = true;
+        this.params1
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.consultInvoices());
+      } else {
+        this.alert('warning', 'Debe llenar todos los campos', '');
+      }
+    } else if (this.form.get('valid').value === 'R') {
+      if (
+        this.form.get('valid').value &&
+        this.form.get('rangeDate').value
+        // &&
+        // this.form.get('event').value &&
+        // this.form.get('typeCFDI').value &&
+        // this.form.get('statusInvoice').value &&
+        // this.form.get('goods').value
+      ) {
+        this.validateExcel = true;
+        this.show = true;
+        this.params1
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.consultInvoices());
+      } else {
+        this.alert('warning', 'Debe llenar todos los campos', '');
+      }
+    } else {
+      this.alert('warning', 'Debe llenar todos los campos', '');
+    }
+  }
+
+  async consultInvoices() {
     this.array = [];
     this.dataFormatPercentage = [];
     this.dataFormat = [];
@@ -299,17 +344,14 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     this.data1.refresh();
     this.data2.load([]);
     this.data2.refresh();
-    this.consultInvoices();
-  }
-
-  async consultInvoices() {
     let getGrafica = await this.getInvoices();
     console.log(getGrafica);
     this.array = getGrafica;
     this.arrayData = this.array.data;
     console.log(this.arrayData);
-    for (let i = 0; i < this.array.count; i++) {
-      if (this.arrayData[i].accountFac > 0) {
+    for (let i = 0; i < this.arrayData.length; i++) {
+      console.log(this.arrayData[i]);
+      if (Number(this.arrayData[i].accountFac) > 0) {
         const data: any = {
           color: this.arrayData[i].color,
           cuenta_fac: this.arrayData[i].accountFac,
@@ -339,9 +381,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         };
         this.dataFormatPercentage.push(data1);
       }
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getDataAll());
+      this.getDataAll();
 
       console.log(this.dataFormatPercentage);
     } else {
@@ -358,7 +398,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     if (this.dataFormatPercentage) {
       this.data1.load(this.dataFormatPercentage);
       this.data1.refresh();
-      this.totalItems = this.dataFormatPercentage.length;
+      this.totalItems = this.array.count;
       this.loading = false;
     }
     /*this.data = this.dataFormatPercentage;
@@ -429,7 +469,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         endDate: endDate,
         goodTp: this.form.get('goods').value,
       };
-      this.params1.getValue()['limit'] = 20;
+      // this.params1.getValue()['limit'] = 20;
       let param = {
         ...this.params1.getValue(),
         ...this.columnFilters1,
@@ -484,11 +524,10 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       this.msInvoiceService.getDetailGetGegrafica(body, param).subscribe({
         next: resp => {
           this.validateExcel = false;
-          //console.log(resp.data);
+          console.log(resp.data);
           this.data2.load(resp.data);
           this.data2.refresh();
-          let resp1 = resp.data;
-          this.totalItems2 = resp1.length;
+          this.totalItems2 = resp.count;
           //console.log(this.totalItems2, resp);
           this.loading = false;
         },
@@ -582,7 +621,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     document.body.removeChild(a);
     this._toastrService.clear();
     this.loading = false;
-    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    this.alert('success', 'El reporte ha sido generado', '');
     URL.revokeObjectURL(objURL);
   }
 

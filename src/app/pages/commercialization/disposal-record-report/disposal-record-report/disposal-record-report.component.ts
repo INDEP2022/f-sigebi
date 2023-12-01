@@ -2,9 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+
 @Component({
   selector: 'app-disposal-record-report',
   templateUrl: './disposal-record-report.component.html',
@@ -16,8 +22,10 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
   today: Date;
   maxDate: Date;
   minDate: Date;
-  params: any;
   estatus: any;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+
   pdfurl =
     'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
 
@@ -34,6 +42,8 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    const initialParams = new ListParams();
+    this.params.next(initialParams);
   }
 
   private prepareForm() {
@@ -65,7 +75,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       this.estatus = this.form.controls['estatusActa'].value;
     }
 
-    this.params = {
+    let params = {
       PN_DELEGACION: this.form.controls['delegation'].value,
       PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
       PN_EXPINI: this.form.controls['PN_EXPINI'].value,
@@ -78,7 +88,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       // noFile: this.form.controls['noFile'].value,
     };
 
-    console.log(this.params);
+    console.log(params);
     const startEx = this.form.get('PN_EXPINI').value;
     const endEx = this.form.get('PN_EXPFIN').value;
 
@@ -122,6 +132,11 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
     this.loading = false;
     this.cleanForm();
   }
+  getRowSelec(event: any) {
+    this.estatus = event;
+    console.log(event);
+  }
+
   onSubmit() {
     if (this.params != null) {
       this.siabService.fetchReport('RGERDESACTAENAJEN', this.params).subscribe({

@@ -116,8 +116,12 @@ export class CustomSelectWidthLoading
         console.log(x);
         // console.log(this.labelTemplate);
         // console.log(this.ngSelect.labelTemplate);
-        if (x && this.updateValues) {
-          this.input$.next(x);
+        if (this.updateValues) {
+          if (x) {
+            this.input$.next(x);
+          } else {
+            this.input$.next('');
+          }
         }
       });
     }

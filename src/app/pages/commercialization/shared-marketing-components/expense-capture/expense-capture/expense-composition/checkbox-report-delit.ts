@@ -53,14 +53,19 @@ export class CheckboxReportDelitComponent implements OnInit {
     // debugger;
     this.checked = this.value;
     const row = this.rowData;
-    if (this.expenseCaptureDataService.V_VALCON_ROBO > 0) {
-      if (row.vehiculoCount === '0') {
-        const firsValidation =
-          !row.reportDelit && row.clasifGoodNumber + '' !== '1606';
-        const secondValidation =
-          row.reportDelit && row.clasifGoodNumber + '' === '1606';
-        if (firsValidation || secondValidation) {
-          this.disabled = true;
+    if (this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF_ENABLED === false) {
+      this.disabled = true;
+    } else {
+      this.disabled = false;
+      if (this.expenseCaptureDataService.V_VALCON_ROBO > 0) {
+        if (row.vehiculoCount === '0') {
+          const firsValidation =
+            !row.reportDelit && row.clasifGoodNumber + '' !== '1606';
+          const secondValidation =
+            row.reportDelit && row.clasifGoodNumber + '' === '1606';
+          if (firsValidation || secondValidation) {
+            this.disabled = true;
+          }
         }
       }
     }

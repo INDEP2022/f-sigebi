@@ -35,7 +35,20 @@
                 title="Gastos del Área Comercial"
                 (selectRow)="fillForm($event)"></app-select-modal-table-shared>
             </div>
-            <div class="col-md-8 col-6" style="text-align: right">
+            <div class="col-md-8 col-12 mb-3 expenseComercial-buttons">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mt-2 mr-2 active"
+                [disabled]="!expenseNumberValue"
+                (click)="delete()">
+                Eliminar
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-warning mt-2 mr-2 active"
+                (click)="clean()">
+                Limpiar
+              </button>
               <button
                 type="button"
                 class="btn btn-sm btn-primary mt-2 active"
@@ -59,20 +72,21 @@
               formControlName="conceptNumber"
               label="Concepto"
               [path]="pathConcept"
-              value="id"
+              value="conceptId"
               bindLabel="description"
               paramSearch="filter.description"
               prefixSearch="$ilike"
-              secondParamSearch="filter.id"
+              secondParamSearch="filter.conceptId"
               [labelTemplate]="conceptLabel"
-              [optionTemplate]="conceptOption">
+              [optionTemplate]="conceptOption"
+              (valueChange)="selectConcept($event)">
             </ng-custom-select-loading>
             <ng-template #conceptLabel let-item="item">
-              {{ item.id }} - {{ item.description }}
+              {{ item.conceptId }} - {{ item.description }}
             </ng-template>
             <ng-template #conceptOption let-item="item">
-              <div [title]="item.id + '-' + item.description">
-                {{ item.id }} - {{ item.description }}
+              <div [title]="item.conceptId + '-' + item.description">
+                {{ item.conceptId }} - {{ item.description }}
               </div>
             </ng-template>
           </div>
@@ -145,23 +159,24 @@
             <ng-custom-select-loading
               [form]="form"
               [updateValues]="true"
-              formControlName="lotNumber"
+              formControlName="publicLot"
               label="Lote"
               [path]="pathLote"
-              value="idLot"
+              value="lotPublic"
               bindLabel="description"
               paramSearch="filter.description"
               prefixSearch="$ilike"
-              secondParamSearch="filter.idLot"
+              secondParamSearch="filter.lotPublic"
               [labelTemplate]="lotLabel"
-              [optionTemplate]="lotOption">
+              [optionTemplate]="lotOption"
+              (valueChange)="updateLot($event)">
             </ng-custom-select-loading>
             <ng-template #lotLabel let-item="item">
-              {{ item.idLot }} - {{ item.description }}
+              {{ item.lotPublic }} - {{ item.description }}
             </ng-template>
             <ng-template #lotOption let-item="item">
-              <div [title]="item.idLot + '-' + item.description">
-                {{ item.idLot }} - {{ item.description }}
+              <div [title]="item.lotPublic + '-' + item.description">
+                {{ item.lotPublic }} - {{ item.description }}
               </div>
             </ng-template>
           </div>

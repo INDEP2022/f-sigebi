@@ -60,7 +60,7 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
           this.handleSuccess(), this.modalRef.hide();
         },
         error: (error: any) => {
-          this.alert('warning', `No es Posible Actualizar la Marca`, '');
+          this.alert('warning', `No es posible actualizar la marca`, '');
           this.modalRef.hide();
         },
       });
@@ -75,7 +75,7 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
           this.modalRef.hide();
         },
         error: error => {
-          this.alert('warning', `Ya Existe una Marca con ese Nombre`, '');
+          this.alert('warning', `Ya existe una marca con ese nombre`, '');
           this.modalRef.hide();
         },
       });
