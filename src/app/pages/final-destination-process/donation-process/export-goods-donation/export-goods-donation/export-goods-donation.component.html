@@ -112,9 +112,8 @@
               <button
                 class="btn btn-success btn-sm active"
                 [ngClass]="{ loading: loadingExport }"
-                [disabled]="selectedGoods.length == 0 || loadingExport"
-                [disabled]="selectedGoods.length == 0"
-                (click)="exportToExcelX(true)">
+                [disabled]="totalItems == 0 || loadingExport"
+                (click)="exportarExcelEndpoint()">
                 Exportar a Excel
                 <i *ngIf="!loadingExport" class="bx bx-download float-icon"></i>
               </button>

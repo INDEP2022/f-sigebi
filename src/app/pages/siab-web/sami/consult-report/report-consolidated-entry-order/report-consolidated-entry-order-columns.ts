@@ -183,13 +183,13 @@ export const ORDER_SERVICE_PAYMENT_COLUMN = {
 };
 
 export const CREDIT_NOTS_COLUMNS = {
-  idNoteCredit: {
+  id: {
     title: 'No. Nota de credito',
     type: 'number',
     sort: false,
   },
 
-  montPago: {
+  amountPay: {
     title: 'Monto Pago',
     type: 'number',
     sort: false,
@@ -201,13 +201,13 @@ export const CREDIT_NOTS_COLUMNS = {
     sort: false,
   },
 
-  montDeduction: {
+  amountDeduction: {
     title: 'Monto de Deducción',
     type: 'number',
     sort: false,
   },
 
-  indAplicate: {
+  indApplied: {
     title: 'Ind. Aplicado',
     type: 'string',
     sort: false,

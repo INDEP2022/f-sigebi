@@ -53,9 +53,12 @@ export class UpdateModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log('this.good', this.good);
     this.form.patchValue(this.good);
+
     this.form.disable();
     this.form.get('extDomProcess').reset();
+    this.form.get('extDomProcess').setValue(this.good.extDomProcess);
     this.form.get('status').reset();
     this.form.get('status').enable();
     this.form.get('extDomProcess').enable();

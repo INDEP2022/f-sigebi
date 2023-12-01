@@ -125,6 +125,7 @@ const routes: Routes = [
         .TransferRequestModule,
     data: { title: 'Solicitudes de transferencia' },
   },
+
   //Generacion de muestreo para supervicon (bienes)
   {
     path: 'generate-monitoring-sampling',
