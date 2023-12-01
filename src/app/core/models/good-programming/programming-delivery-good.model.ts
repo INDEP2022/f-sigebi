@@ -66,4 +66,7 @@ export interface IProgrammingDeliveryGood {
   id?: number;
   foundInd?: string;
   transactionIdNoAce?: number;
+  cost?: number;
+  orderEntryId?: number;
+  transaction?: number;
 }

@@ -1,0 +1,337 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE CONSOLIDADO ORDEN DE PAGO</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = true"
+          *ngIf="!showSearchForm">
+          <i class="fa fa-angle-right" aria-hidden="true"></i>
+          <strong> Buscar</strong></a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = false"
+          *ngIf="showSearchForm">
+          <i class="fa fa-angle-down" aria-hidden="true"></i>
+          <strong> Buscar</strong></a
+        >
+      </p>
+    </div>
+    <!--Formulario de busqueda-->
+    <div *ngIf="showSearchForm">
+      <form [formGroup]="searchForm" class="form-material">
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="searchForm.get('idOrderPayment')"
+              label="No. Orden de Pago">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                formControlName="idOrderPayment" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="searchForm.get('cveZone')"
+              label="clave Zona">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                formControlName="cveZone" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field [control]="searchForm.get('regionalDelegationNumber')">
+              <ngx-select
+                [form]="searchForm"
+                control="regionalDelegationNumber"
+                [data]="regionalsDelegations"
+                value="description"
+                bindLabel="description"
+                label="Delegaci&oacute;n Regional"
+                (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field [control]="searchForm.get('tranferId')">
+              <ngx-select
+                [form]="searchForm"
+                control="tranferId"
+                [showTooltip]="true"
+                [data]="transferences"
+                value="id"
+                bindLabel="nameAndId"
+                label="Transferente"
+                (fetchItems)="getTransferentSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="searchForm.get('noContract')"
+              label="No. Contrato">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                formControlName="noContract" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="d-flex justify-content-end">
+            <div class="mr-auto p-2"></div>
+            <div class="p-2">
+              <button
+                (click)="search()"
+                class="btn btn-primary active btn-sm"
+                style="height: 36px">
+                Buscar <i class="bx bx-search-alt-2"></i>
+              </button>
+            </div>
+            <div class="p-2">
+              <button
+                (click)="cleanForm()"
+                class="btn btn-danger active btn-sm">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex justify-content-start pt-5">
+      <div class="p-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+
+      <div class="p-2">
+        <button
+          (click)="showDeductives()"
+          class="btn btn-primary active btn-sm">
+          Aplicar deductiva <i class="bx bx-file bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+          <form-loader *ngIf="formLoading"></form-loader>
+        </div>
+        <div *ngIf="!formLoading">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered  table-responsive'"
+              [settings]="settings"
+              [source]="paymentsOrder"
+              (userRowSelect)="orderPaymentSelect($event.data)">
+            </ng2-smart-table>
+          </div>
+
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-5">
+      <h5 class="title">Detalle de Orden de Pago</h5>
+
+      <form [formGroup]="form" class="form-material">
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('orderPayDate')"
+              label="Fecha Orden Pago">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="orderPayDate" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('conditionsPay')"
+              label="condiciones Pago">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="conditionsPay" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field [control]="form.get('Subtotal')" label="Subtotal">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="Subtotal" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('delegationName')"
+              label="Delegación Regional">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="delegationName" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('instructionsspecials')"
+              label="Instrucciones Especiales">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="instructionsspecials" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field [control]="form.get('amountvat')" label="Monto IVA">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="amountvat" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('transferentName')"
+              label="Transferente">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="transferentName" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('contractNumber')"
+              label="No. Contrato">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="contractNumber" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field [control]="form.get('description')" label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="description" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Órdenes de Servicio</h5>
+
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <div class="p-2">
+            <app-columns-select
+              [(settings)]="settingsOrderService"></app-columns-select>
+          </div>
+          <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+            <form-loader *ngIf="formLoading"></form-loader>
+          </div>
+          <div *ngIf="!formLoading">
+            <div [class]="loadingOrderService ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered  table-responsive'"
+                [settings]="settingsOrderService"
+                [source]="OrderService">
+              </ng2-smart-table>
+            </div>
+
+            <app-pagination
+              [params]="paramsOrderService"
+              [totalItems]="totalItemsOrderService"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Notas de Crédito</h5>
+
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <div class="p-2">
+            <app-columns-select
+              [(settings)]="settingsCreditsNots"></app-columns-select>
+          </div>
+          <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+            <form-loader *ngIf="formLoading"></form-loader>
+          </div>
+          <div *ngIf="!formLoading">
+            <div [class]="loadingCreditNots ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered  table-responsive'"
+                [settings]="settingsCreditsNots"
+                [source]="creditNots">
+              </ng2-smart-table>
+            </div>
+
+            <app-pagination
+              [params]="paramsCreditsNots"
+              [totalItems]="totalItemsCreditsNots"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

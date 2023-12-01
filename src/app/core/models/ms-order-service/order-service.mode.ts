@@ -70,4 +70,5 @@ export interface IOrderServiceDTO {
   contentRepDrId?: string;
   responsibleDr?: string;
   chargeDr?: string;
+  transferentName?: string;
 }

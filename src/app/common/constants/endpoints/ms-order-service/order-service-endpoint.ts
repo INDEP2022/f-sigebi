@@ -13,4 +13,5 @@ export enum OrderServiceEndpoint {
   OrderServiceCacelled = 'aplication/order-service-cancelled',
   SamplingOrderService = 'sample-order-service',
   SampleOrders = 'sampling-orders',
+  OrderPayment = 'order-payment',
 }

@@ -15,6 +15,7 @@ import {
 } from 'src/app/core/models/good-programming/good-programming';
 import { environment } from 'src/environments/environment';
 import { IUser } from '../../models/catalogs/user.model';
+import { IProgrammingDeliveryGood } from '../../models/good-programming/programming-delivery-good.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
@@ -132,12 +133,14 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     return this.httpClient.get(path);
   }
 
-  getProgrammingDeliveryGood(_params: ListParams) {
+  getProgrammingDeliveryGood(
+    _params: ListParams
+  ): Observable<IListResponse<IProgrammingDeliveryGood>> {
     const params = this.makeParams(_params);
     const deliveryGood = ProgrammingGoodEndpoints.GetDeliveryGoods;
     const path = `${environment.API_URL}/${this.route}/${deliveryGood}?${params}`;
 
-    return this.httpClient.get(path);
+    return this.httpClient.get<IListResponse<IProgrammingDeliveryGood>>(path);
   }
 
   updateProgrammingDeliveryGood(id: number, body: Object) {
