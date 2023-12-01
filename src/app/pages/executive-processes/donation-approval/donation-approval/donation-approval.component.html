@@ -19,8 +19,15 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('preliminaryInquiry')">
-            <ngx-select
+          <form-field
+            [control]="form.get('preliminaryInquiry')"
+            label="Averiguaci&oacute;n Previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="preliminaryInquiry"
+              readonly />
+            <!-- <ngx-select
               [form]="form"
               [readonly]="true"
               [data]="expedientSelec"
@@ -28,11 +35,11 @@
               bindLabel="name"
               control="preliminaryInquiry"
               [searchOnInit]="true"
-              label="Averiguaci&oacute;n Previa"
+              
               termMaxLength="100"
               [showTooltip]="true"
               (change)="onValuesChange($event)">
-            </ngx-select>
+            </ngx-select> -->
           </form-field>
         </div>
         <div class="col-md-3">

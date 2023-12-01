@@ -1107,6 +1107,41 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     });
   }
 
+  // EXPORTAR EXCEL ENDPOINT //
+  exportarExcelEndpoint() {
+    this.loadingExport = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    params.limit = this.totalItems;
+    params.page = 1;
+
+    this.massiveGoodService.getApplicationRegisterCountCsv(params).subscribe({
+      next: async response => {
+        const base64 = response.base64File;
+        const nameFile = response.nameFile;
+        await this.downloadExcel(base64, 'ExportaciónBienesExcel.csv');
+      },
+      error: error => {
+        this.loadingExport = false;
+        this.alert('warning', 'No se pudo descargar el excel', '');
+      },
+    });
+  }
+
+  async downloadExcel(base64String: any, nameFile: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = nameFile;
+    link.click();
+    link.remove();
+    this.loadingExport = false;
+    this.alert('success', 'El archivo se ha descargado', '');
+  }
+
   // CONVERTIR BASE64 a XLSX
   convertAndDownloadExcel(base64String: string, fileName: string) {
     const byteCharacters = atob(base64String);
