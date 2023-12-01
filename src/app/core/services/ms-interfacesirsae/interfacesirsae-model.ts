@@ -57,6 +57,7 @@ export interface ISirsaeDTO {
   comproafmandsae: number;
   lotId: number;
   direction: string;
+  paymentRequestId: any;
 }
 
 export interface ISirsaeScrapDTO {

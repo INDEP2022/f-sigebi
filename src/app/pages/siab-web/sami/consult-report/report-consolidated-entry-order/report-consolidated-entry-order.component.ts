@@ -9,6 +9,7 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -90,7 +91,8 @@ export class ReportConsolidatedEntryOrderComponent
     private regionalDelegationService: RegionalDelegationService,
     private orderEntryService: orderentryService,
     private programmingGoodService: ProgrammingGoodService,
-    private orderServiceService: OrderServiceService
+    private orderServiceService: OrderServiceService,
+    private samplingGoodService: SamplingGoodService
   ) {
     super();
     this.settings = {
@@ -232,6 +234,14 @@ export class ReportConsolidatedEntryOrderComponent
     this.paramsOrderAs
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getOrderPayment());
+
+    this.paramsServices
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getOrderEntryServices());
+
+    this.paramsDetailGoodsOrdEnt
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsOrderEntry());
   }
 
   getOrderPayment() {
@@ -250,6 +260,69 @@ export class ReportConsolidatedEntryOrderComponent
 
   orderPaySelect(orderPayment: IOrderPayment) {
     this.form.patchValue(orderPayment);
+  }
+
+  getOrderEntryServices() {
+    this.loadingServices = true;
+    this.paramsServices.getValue()[
+      'filter.orderIncomeId'
+    ] = `$eq:${this.orderServiceId}`;
+
+    this.orderServiceService
+      .getOrderInService(this.paramsServices.getValue())
+      .subscribe({
+        next: response => {
+          this.infoOrderServices.load(response.data);
+          this.totalItemsService = response.count;
+          this.loadingServices = false;
+        },
+        error: () => {
+          this.loadingServices = false;
+        },
+      });
+  }
+
+  getGoodsOrderEntry() {
+    this.loadingDetailGoodsOrdEntry = true;
+    this.paramsDetailGoodsOrdEnt.getValue()[
+      'filter.orderEntryId'
+    ] = `$eq:${this.orderServiceId}`;
+    this.orderEntryService
+      .getAllGoodOrderEntry(this.paramsDetailGoodsOrdEnt.getValue())
+      .subscribe({
+        next: async goodOrderEnt => {
+          const data: any[] = [];
+          const infoOrderGood = goodOrderEnt.data.map(item => {
+            const params = new BehaviorSubject<ListParams>(new ListParams());
+            params.getValue()[
+              'filter.sampleGoodId'
+            ] = `$eq:${item.samplingGoodId}`;
+            this.samplingGoodService
+              .getSamplingGoods(params.getValue())
+              .subscribe({
+                next: responseSample => {
+                  responseSample.data.map(itemGood => {
+                    item.quanity = itemGood.quantity;
+                    item.description = itemGood.description;
+                    item.unit = itemGood.unit;
+                    item.statusGoodObservations =
+                      itemGood.statusGoodObservations;
+                    item.goodStatus = itemGood.goodStatus;
+                    data.push(item);
+                    this.infoDetailGoodsOrdEntry.load(data);
+                    this.totalItemsDetailGoodsOrdEnt = goodOrderEnt.count;
+                    this.loadingDetailGoodsOrdEntry = false;
+                  });
+                },
+              });
+
+            return item;
+          });
+        },
+        error: () => {
+          this.loadingDetailGoodsOrdEntry = false;
+        },
+      });
   }
 
   cleanForm() {
