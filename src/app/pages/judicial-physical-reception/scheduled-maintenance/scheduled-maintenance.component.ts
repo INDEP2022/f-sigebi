@@ -244,32 +244,45 @@ export class ScheduledMaintenanceComponent
   }
 
   async exportExcel2() {
-    this.loadingExcel = true;
+    if (this.totalItems == 0) {
+      console.log('No hay registros, no descargar');
+      this.alert(
+        'warning',
+        'No hay registros para descargar',
+        'Realice una búsqueda para encontrar registros'
+      );
+    } else {
+      this.loadingExcel = true;
 
-    this.alert(
-      'info',
-      'Reporte de Mantenimiento de Programaciones',
-      'Consiguiendo datos'
-    );
-    const v = this.form.getRawValue();
-    const body = {
-      statusProceedings: v.statusEvento,
-      typeProceedings: v.tipoEvento,
-      elaborate: v.usuario,
-      captureDate: v.rangeDate
-        ?.map((f: Date) => format(f, 'yyyy-MM-dd'))
-        .join(','),
-      description: v.coordRegional?.map((e: any) => `'${e}'`).join(','),
-    };
-    console.log(body);
-    try {
-      const resp = await firstValueFrom(this.excelService.getExcel(body));
-      console.log(resp);
-      this.downloadDocument('Programación de Recepciones', 'excel', resp.file);
-      this.loadingExcel = false;
-    } catch (error) {
-      this.loadingExcel = false;
-      this.alert('error', 'Error', `Error al obtener el documento `);
+      this.alert(
+        'warning',
+        'Reporte de Mantenimiento de Programaciones',
+        'En unos segundos se iniciará la descarga del archivo'
+      );
+      const v = this.form.getRawValue();
+      const body = {
+        statusProceedings: v.statusEvento,
+        typeProceedings: v.tipoEvento,
+        elaborate: v.usuario,
+        captureDate: v.rangeDate
+          ?.map((f: Date) => format(f, 'yyyy-MM-dd'))
+          .join(','),
+        description: v.coordRegional?.map((e: any) => `'${e}'`).join(','),
+      };
+      console.log(body);
+      try {
+        const resp = await firstValueFrom(this.excelService.getExcel(body));
+        console.log(resp);
+        this.downloadDocument(
+          'Programación de Recepciones',
+          'excel',
+          resp.file
+        );
+        this.loadingExcel = false;
+      } catch (error) {
+        this.loadingExcel = false;
+        this.alert('error', 'Error', `Error al obtener el documento `);
+      }
     }
   }
 
