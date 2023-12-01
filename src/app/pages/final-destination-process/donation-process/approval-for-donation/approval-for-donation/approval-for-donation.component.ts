@@ -716,6 +716,11 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilter,
     };
+    if (params['filter.elaborated']) {
+      let res = params['filter.elaborated'].split(':');
+      params['filter.elaborated'] = `$ilike:${res[1].toUpperCase()}`;
+    }
+
     params.page = 1;
     params.limit = this.totalItems3;
     this.donationService.getEventComDonationExcelExport(params).subscribe({
