@@ -373,6 +373,26 @@ export class MaintenanceCommitmentDonationModalComponent
     model.ruleId = Number(data.ruleId);
     model.valid = Number(data.valid);
 
+    let obj = {
+      clave: {
+        labelId: this.data.label.id,
+        status: this.data.status,
+        transfereeId: this.data.transfereeId,
+        clasifId: this.data.clasifId,
+        unit: this.data.unit,
+        ruleId: this.data.ruleId,
+      },
+      labelId: model.labelId,
+      status: model.status,
+      desStatus: model.desStatus,
+      transfereeId: model.transfereeId,
+      desTrans: model.desTrans,
+      clasifId: model.clasifId,
+      desClasif: model.desClasif,
+      unit: model.unit,
+      ruleId: model.ruleId,
+      valid: model.valid,
+    };
     // model.labelId = Number(data.labelId);
     // model.status = data.status;
     // model.desStatus = data.desStatus;
@@ -385,7 +405,7 @@ export class MaintenanceCommitmentDonationModalComponent
     // model.valid = Number(data.valid);
     console.log('data update 2-> ', model);
 
-    this.donationService.editApproveDonation(model).subscribe({
+    this.donationService.editApproveDonation(obj).subscribe({
       next: data => {
         this.handleSuccess();
         this.alert('success', 'Registro actualizado correctamente', '');
@@ -417,10 +437,30 @@ export class MaintenanceCommitmentDonationModalComponent
     model.ruleId = Number(data.ruleId);
     model.valid = Number(data.valid);
     model.amount = Number(data.amount);
-
+    let obj = {
+      clave: {
+        labelId: this.data.label.id,
+        status: this.data.status,
+        transfereeId: this.data.transfereeId,
+        clasifId: this.data.clasifId,
+        unit: this.data.unit,
+        ruleId: this.data.ruleId,
+      },
+      labelId: model.labelId,
+      status: model.status,
+      desStatus: model.desStatus,
+      transfereeId: model.transfereeId,
+      desTrans: model.desTrans,
+      clasifId: model.clasifId,
+      desClasif: model.desClasif,
+      unit: model.unit,
+      ruleId: model.ruleId,
+      valid: model.valid,
+      amount: model.amount,
+    };
     console.log('data update 3-> ', model);
 
-    this.donationService.editApproveDonation(model).subscribe({
+    this.donationService.editApproveDonation(obj).subscribe({
       next: data => {
         this.handleSuccess();
         this.alert('success', 'Registro actualizado correctamente', '');

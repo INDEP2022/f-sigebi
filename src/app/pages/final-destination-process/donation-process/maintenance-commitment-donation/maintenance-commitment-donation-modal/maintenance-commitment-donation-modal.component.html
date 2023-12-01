@@ -86,11 +86,13 @@
 
         <div class="col-md-8 mt-2">
           <form-field [control]="form.get('desStatus')" label="Desc. Estatus.">
-            <input
+            <textarea
+              rows="2"
+              cols="2"
               readonly
               type="text"
               class="form-control"
-              formControlName="desStatus" />
+              formControlName="desStatus"></textarea>
           </form-field>
         </div>
         <div class="col-4 mt-2">
@@ -110,12 +112,19 @@
         </div>
         <div class="col-md-8 mt-2">
           <form-field [control]="form.get('keyCode')" label="Desc. Trans.">
-            <input
+            <textarea
+              rows="2"
+              cols="2"
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="keyCode"></textarea>
+            <!-- <input
               readonly
               type="text"
               maxlength="100"
               class="form-control"
-              formControlName="keyCode" />
+              formControlName="keyCode" /> -->
           </form-field>
         </div>
         <div class="col-4 mt-2">
@@ -136,12 +145,19 @@
         </div>
         <div class="col-8 mt-2">
           <form-field [control]="form.get('desClasif')" label="Desc. Clasif.">
-            <input
+            <textarea
+              rows="2"
+              cols="2"
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="desClasif"></textarea>
+            <!-- <input
               readonly
               type="text"
               maxlength="100"
               class="form-control"
-              formControlName="desClasif" />
+              formControlName="desClasif" /> -->
           </form-field>
         </div>
 

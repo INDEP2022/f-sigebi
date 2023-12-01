@@ -20,7 +20,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field [control]="form.get('captureDate')" label="Fecha Inicio">
             <input
               [maxDate]="maxDate"
@@ -37,7 +37,7 @@
               class="form-control"
               bsDatepicker />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-4">
           <form-field [control]="form.get('estatusAct')" label="Estatus Evento">
             <ng-select
@@ -59,14 +59,13 @@
               label="Coor. Regional"
               [form]="form"
               [data]="delegations$"
-              (fetchItems)="getDels($event)"
+              (fetchItems)="getDelegations($event)"
               bindLabel="description"
+              [searchOnInit]="false"
               control="noDelegation1"
-              [searchOnInit]="true"
               [showTooltip]="true"
               (change)="updateSelectedIds($event)"
               termMaxLength="50"
-              value="id"
               [multiple]="false">
             </ngx-select>
             <ng-template #userLabel let-item="item">
@@ -137,6 +136,7 @@
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
+              #myTable
               [attr.class]="'table-bordered table-responsive'"
               [settings]="settings"
               [source]="data"
