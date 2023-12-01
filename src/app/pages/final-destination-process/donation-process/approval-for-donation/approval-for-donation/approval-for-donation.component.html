@@ -20,7 +20,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field [control]="form.get('captureDate')" label="Fecha Inicio">
             <input
               [maxDate]="maxDate"
@@ -37,7 +37,7 @@
               class="form-control"
               bsDatepicker />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-4">
           <form-field [control]="form.get('estatusAct')" label="Estatus Evento">
             <ng-select
@@ -59,14 +59,13 @@
               label="Coor. Regional"
               [form]="form"
               [data]="delegations$"
-              (fetchItems)="getDels($event)"
+              (fetchItems)="getDelegations($event)"
               bindLabel="description"
+              [searchOnInit]="false"
               control="noDelegation1"
-              [searchOnInit]="true"
               [showTooltip]="true"
               (change)="updateSelectedIds($event)"
               termMaxLength="50"
-              value="id"
               [multiple]="false">
             </ngx-select>
             <ng-template #userLabel let-item="item">
@@ -123,7 +122,6 @@
           <div>
             <button
               class="btn btn-success active btn-sm ml-3"
-              [disabled]="!excelValid"
               (click)="exportAll()">
               Exportar a Excel <i class="bx bx-download float-icon"></i>
             </button>
@@ -137,7 +135,8 @@
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
+              #myTable
+              [attr.class]="'table-responsive'"
               [settings]="settings"
               [source]="data"
               (rowSelect)="changeEvent($event)">
@@ -154,7 +153,7 @@
           <div class="col-md-12">
             <div [class]="loading2 ? 'table-loading' : ''">
               <ng2-smart-table
-                [attr.class]="'table-bordered table-responsive'"
+                [attr.class]="'table-responsive'"
                 [settings]="settings1"
                 [source]="data1"
                 (rowSelect)="selectedDetailActa($event)">
@@ -167,7 +166,7 @@
       </div>
 
       <div class="col-6 align-items-center">
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-6">
             <span class="text-success mr-5"
               ><i class="fa fa-square"></i> Disponibles</span
@@ -178,7 +177,7 @@
               ><i class="fa fa-square"></i> No disponibles</span
             >
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="row pt-4">
         <div class="col-md-8 mb-3"></div>

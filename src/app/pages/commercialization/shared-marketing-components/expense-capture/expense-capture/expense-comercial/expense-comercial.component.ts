@@ -16,6 +16,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
 import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -29,6 +30,7 @@ import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.serv
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
+import { ILoadLotResponse } from '../../models/lot';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
@@ -151,9 +153,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private getBody() {
     console.log(this.form.value.dateOfResolution);
-
+    let newBody = { ...this.form.value };
+    delete newBody.publicLot;
     return {
-      ...this.form.value,
+      ...newBody,
       amount: this.dataService.amount ?? 0,
       vat: this.dataService.vat ?? 0,
       vatWithheld: this.dataService.vatWithholding ?? 0,
@@ -238,7 +241,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.errorsClasification = [];
     if (updateOthers) {
       this.dataService.updateOI.next(true);
-      this.dataService.updateExpenseComposition.next(true);
+      this.dataService.resetExpenseComposition.next(true);
       this.dataService.updateFolio.next(true);
     }
   }
@@ -389,9 +392,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.publicLot;
   }
 
-  set publicLot(value) {
-    this.dataService.publicLot = value;
-  }
+  // set publicLot(value) {
+  //   this.dataService.publicLot = value;
+  // }
 
   get folioAtnCustomer() {
     return this.form.get('folioAtnCustomer');
@@ -436,6 +439,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   ngOnInit() {
     this.eventNumber.valueChanges.subscribe({
       next: response => {
+        this.publicLot.setValue(null, { emitEvent: false });
         this.lotNumber.setValue(null, { emitEvent: false });
       },
     });
@@ -460,10 +464,18 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     // });
   }
 
-  updateLot(event: any) {
-    if (event) {
-      this.publicLot = event.lotPublic;
+  async selectConcept(concept: IConcept) {
+    await this.getParams(concept.id);
+  }
+
+  updateLot(lot: { lotPublic: string; idLot: string }) {
+    console.log(lot);
+
+    if (lot) {
+      this.lotNumber.setValue(lot.idLot);
       this.nextItemLote();
+    } else {
+      this.lotNumber.setValue(null);
     }
   }
 
@@ -633,6 +645,21 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
+  private updateGoodsByLote(response: ILoadLotResponse) {
+    let { selectChange } = response;
+    this.dataService.SELECT_CAMBIA_CLASIF_ENABLED =
+      selectChange.SELECT_CAMBIA_CLASIF_ENABLED;
+    this.dataService.SELECT_CAMBIA_CLASIF_UPDATE =
+      selectChange.SELECT_CAMBIA_CLASIF_UPDATE;
+    this.dataService.V_BIEN_REP_ROBO += selectChange.V_BIEN_REP_ROBO;
+    if (selectChange.SELECT_CAMBIA_CLASIF === 'S') {
+      this.dataService.SELECT_CAMBIA_CLASIF = true;
+    } else {
+      this.dataService.SELECT_CAMBIA_CLASIF = false;
+    }
+    this.dataService.addByLotExpenseComposition.next(response);
+  }
+
   private CARGA_BIENES_LOTE_XDELRES(
     v_id_evento: number,
     v_id_lote: number,
@@ -651,7 +678,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           if (response) {
             console.log(response);
             this.alert('success', 'Se han cargado los bienes del lote', '');
-            this.dataService.updateExpenseComposition.next(true);
+            this.updateGoodsByLote(response);
           }
         },
         error: err => {
@@ -678,7 +705,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           if (response) {
             console.log(response);
             this.alert('success', 'Se han cargado los bienes del lote', '');
-            this.dataService.updateExpenseComposition.next(true);
+            this.updateGoodsByLote(response);
           }
         },
         error: err => {
@@ -696,6 +723,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async nextItemLote() {
+    // this.CARGA_BIENES_LOTE_XDELRES(
+    //   this.eventNumber.value,
+    //   this.lotNumber.value,
+    //   this.conceptNumber.value
+    // );
+    // return;
     if (this.PVALIDADET === 'S') {
       const V_EXIST = await this.getParamValConcept(this.conceptNumber.value);
       console.log(V_EXIST);
@@ -705,7 +738,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           this.URCOORDREGCHATARRA_AUTOMATICO(3)
         );
         console.log(coordChatarra);
-
         this.CARGA_BIENES_LOTE_XDELRES(
           this.eventNumber.value,
           this.lotNumber.value,
@@ -717,8 +749,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (this.dataService.V_BIEN_REP_ROBO > 0) {
         this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
         this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = true;
-        this.dataService.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
         this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = true;
+        this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = true;
       }
     }
   }
@@ -863,7 +895,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.conceptNumber.setValue(event.conceptNumber);
     this.eventNumber.setValue(event.eventNumber);
     this.lotNumber.setValue(event.lotNumber);
-    this.publicLot = event.comerLot ? event.comerLot.publicLot : null;
+    this.publicLot.setValue(event.comerLot ? event.comerLot.publicLot : null);
     this.clkpv.setValue(event.clkpv);
 
     setTimeout(async () => {
@@ -892,13 +924,34 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
       );
-
+      this.controlsInDet();
       const responseParams = await this.getParams(event.conceptNumber);
       if (!responseParams) {
         return;
       }
       const otherParams = await this.fillOthersParameters();
     }, 500);
+  }
+
+  private controlsInDet() {
+    if (this.dataService.V_VALCON_ROBO > 0) {
+      if (!this.paymentRequestNumber.value) {
+        this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+        this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = false;
+        this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = true;
+        this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = true;
+      } else {
+        this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+        this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = false;
+        this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = false;
+        this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = false;
+      }
+    } else {
+      this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+      this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = false;
+      this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = false;
+      this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = false;
+    }
   }
 
   async fillForm(expense: IComerExpense) {
@@ -921,7 +974,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   get pathConcept() {
     return (
-      'comerconcepts/api/v1/concepts/get-all' +
+      'comerconcepts/api/v1/application/query-eat-concepts' +
       (this.address ? '?filter.address=$in:' + this.address + ',C' : 'C')
     );
   }
@@ -934,12 +987,23 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
+  get idEventFilterPath() {
+    return this.eventNumber && this.eventNumber.value
+      ? '?filter.idEvent=' + this.eventNumber.value
+      : '';
+  }
+
+  get idLotFilterPath() {
+    return this.lotNumber && this.lotNumber.value
+      ? (this.idEventFilterPath.length > 0 ? '&' : '?') +
+          'filter.idLot=' +
+          this.lotNumber.value
+      : '';
+  }
+
   get pathLote() {
     return (
-      'lot/api/v1/eat-lots' +
-      (this.eventNumber && this.eventNumber.value
-        ? '?filter.idEvent=' + this.eventNumber.value
-        : '')
+      'lot/api/v1/eat-lots' + this.idEventFilterPath + this.idLotFilterPath
     );
   }
 

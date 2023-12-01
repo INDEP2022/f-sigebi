@@ -1791,8 +1791,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
         next: (data: any) => {
           console.log('Transferentes', data);
           let result = data.data.map(async (item: any) => {
-            item['transfer'] =
-              item.password + ' - ' + item.number + ' - ' + item.name;
+            item['transfer'] = item.password + ' - ' + item.number;
           });
 
           Promise.all(result).then(resp => {
@@ -1914,7 +1913,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
       numDelegation2: null,
       identifier: null,
       label: null,
-      universalFolio: null,
+      universalFolio: this.actaRecepttionForm.value.folio,
       numeraryFolio: null,
       numTransfer: null,
       idTypeProceedings: 'DON',

@@ -142,7 +142,7 @@
               [attr.class]="'table-bordered  table-responsive'"
               [settings]="settings"
               [source]="paymentsOrder"
-              (userRowSelect)="orderPaymentSelect($event.data)">
+              (userRowSelect)="orderPaymentSelect($event.selected)">
             </ng2-smart-table>
           </div>
 

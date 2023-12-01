@@ -1,5 +1,4 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMNS_APPROVAL_DONATION = {
   recordId: {
@@ -206,83 +205,83 @@ export const COPY1 = {
   status: {
     title: 'Estatus',
     sort: false,
-    visible: true,/*
+    visible: true /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.bienindicadores?.estatus;
-    },*/
+    },*/,
   },
   noExpediente: {
     title: 'No. Expediente',
     type: 'number',
     visible: true,
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.bienindicadores?.noExpediente;
-    },*/
+    },*/,
   },
   noEtiqueta: {
     title: 'Etiqueta Destino',
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.etiquetagood?.description;
-    },*/
+    },*/,
   },
   idNoWorker1: {
     title: 'No. Tranf.',
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.transference?.id;
-    },*/
+    },*/,
   },
   idExpWorker1: {
     title: 'Des. Tranf.',
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.transference?.nameTransferent;
-    },*/
+    },*/,
   },
   noClasifBien: {
     title: 'No. Clasif.',
     type: 'number',
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.good?.clasificationGood;
-    },*/
+    },*/,
   },
   procesoExtDom: {
     title: 'Proceso',
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.bienindicadores?.procesoExtDom;
-    },*/
+    },*/,
   },
   warehouseNumb: {
     title: 'No. Almacén',
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.warehouse?.id;
-    },*/
+    },*/,
   },
   warehouse: {
     title: 'Descrip. Almacén',
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.warehouse?.description;
-    },*/
+    },*/,
   },
   warehouseLocat: {
     title: 'Ubica. Almacén ',
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.warehouse?.ubication;
-    },*/
+    },*/,
   },
   coordAdmin: {
     title: 'Coord. Admin.',
-    sort: false,/*
+    sort: false /*
     valuePrepareFunction: (cell: any, row: any) => {
       return row.bienindicadores?.coordination;
-    },*/
+    },*/,
   },
 };
 

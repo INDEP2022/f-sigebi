@@ -10,6 +10,7 @@ import { IOrderPayment } from 'src/app/core/models/ms-order-service/order-paymen
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -46,7 +47,7 @@ export class ReportConsolidatedPaymentOrderComponent
   searchForm: FormGroup = new FormGroup({});
   regionalsDelegations = new DefaultSelect();
   transferences = new DefaultSelect();
-
+  orderPaySelect: IOrderPayment[] = [];
   settingsOrderService = {
     ...TABLE_SETTINGS,
     selectMode: 'multi',
@@ -68,7 +69,8 @@ export class ReportConsolidatedPaymentOrderComponent
     private modalService: BsModalService,
     private modalRef: BsModalRef,
     private orderServiceService: OrderServiceService,
-    private authService: AuthService
+    private authService: AuthService,
+    private orderEntryService: orderentryService
   ) {
     super();
     this.settings = {
@@ -140,13 +142,88 @@ export class ReportConsolidatedPaymentOrderComponent
   }
 
   showDeductives() {
-    let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
+    let delSelect: boolean = false;
+    let transferentSelect: boolean = false;
+    let contractSelect: boolean = false;
 
-    config.initialState = {
-      callback: (next: boolean) => {},
-    };
+    if (this.orderPaySelect.length > 0) {
+      const delegationRegionalFilter = this.orderPaySelect.filter(
+        (item: any) => {
+          if (
+            item.delegationRegionalId ==
+            this.orderPaySelect[0].delegationRegionalId
+          )
+            return item;
+        }
+      );
 
-    this.modalService.show(ShowDeductivesFormComponent, config);
+      if (delegationRegionalFilter.length == this.orderPaySelect.length) {
+        delSelect = true;
+      }
+
+      const transferentFilter = this.orderPaySelect.filter((item: any) => {
+        if (item.transfereeId == this.orderPaySelect[0].transfereeId)
+          return item;
+      });
+
+      if (transferentFilter.length == this.orderPaySelect.length) {
+        transferentSelect = true;
+      }
+
+      const contFilter = this.orderPaySelect.filter((item: any) => {
+        if (item.contractNumber == this.orderPaySelect[0].contractNumber)
+          return item;
+      });
+
+      if (contFilter.length == this.orderPaySelect.length) {
+        contractSelect = true;
+      }
+
+      if (delSelect && transferentSelect && contractSelect) {
+        let folios: string = '';
+        let total: number = 0;
+        this.orderPaySelect.map((item: any) => {
+          if (item.applicationpreorderPayId) {
+            folios += `${item.applicationpreorderPayId}, `;
+            total = Number(item.total) + Number(item.total);
+          }
+        });
+
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-xl modal-dialog-centered',
+        };
+
+        config.initialState = {
+          folio: folios,
+          total: total,
+          delegationId: this.orderPaySelect[0].delegationRegionalId,
+          transferentId: this.orderPaySelect[0].transfereeId,
+          contractNumber: this.orderPaySelect[0].contractNumber,
+          callback: (next: boolean) => {
+            if (next) {
+              this.paramsCreditsNots
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getCreditsNots());
+            }
+          },
+        };
+
+        this.modalService.show(ShowDeductivesFormComponent, config);
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Las ordenes de pago seleccionadas deben de ser de la misma transferente, delegación regional y para el mismo contrato'
+        );
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se debe seleccionar al menos una orden de pago'
+      );
+    }
   }
 
   search() {
@@ -201,10 +278,10 @@ export class ReportConsolidatedPaymentOrderComponent
   }
 
   getOrderService() {
-    const token = this.authService.decodeToken();
+    //const token = this.authService.decodeToken();
     this.paramsOrderService.getValue()[
-      'filter.delegation'
-    ] = `$eq: ${token.department}`;
+      'filter.orderentryDedId'
+    ] = `$eq: ${this.orderPaySelect[0].id}`;
     this.orderServiceService
       .getAllOrderService(this.paramsOrderService.getValue())
       .subscribe({
@@ -219,7 +296,6 @@ export class ReportConsolidatedPaymentOrderComponent
           });
 
           Promise.all(info).then(info => {
-            console.log('info', info);
             this.OrderService.load(info);
             this.totalItemsOrderService = response.count;
           });
@@ -254,12 +330,38 @@ export class ReportConsolidatedPaymentOrderComponent
     });
   }
 
-  orderPaymentSelect(orderPayment: IOrderPayment) {
-    console.log('orderPayment', orderPayment);
-    this.form.patchValue(orderPayment);
+  orderPaymentSelect(orderPayment: IOrderPayment[]) {
+    this.orderPaySelect = orderPayment;
+
+    this.form.patchValue(orderPayment[0]);
+
     this.paramsOrderService
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getOrderService());
+
+    this.paramsCreditsNots
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getCreditsNots());
+  }
+
+  getCreditsNots() {
+    this.loadingCreditNots = true;
+    this.paramsCreditsNots.getValue()[
+      'filter.orderPayId'
+    ] = `$eq:${this.orderPaySelect[0].id}`;
+
+    this.orderEntryService
+      .getCreditNots(this.paramsCreditsNots.getValue())
+      .subscribe({
+        next: response => {
+          this.creditNots.load(response.data);
+          this.totalItemsCreditsNots = response.count;
+          this.loadingCreditNots = false;
+        },
+        error: () => {
+          this.loadingCreditNots = false;
+        },
+      });
   }
 
   cleanForm() {

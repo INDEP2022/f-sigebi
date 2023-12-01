@@ -62,8 +62,8 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.idSample = 302;
     //El id de el muestreo se obtendra de la tarea
+    this.idSample = 302;
     this.getSampleInfo();
     this.initFilterForm();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {

@@ -1,12 +1,12 @@
 export const RELATED_EVENTS_COLUMNS = {
   eventDadId: {
-    title: 'Evento',
+    title: 'Evento Padre',
     sort: false,
     type: 'number',
     //width: '20%',
   },
   id: {
-    title: 'Id Evento Relacionado',
+    title: 'ID Evento Relacionado',
     sort: false,
     type: 'number',
     //width: '20%',

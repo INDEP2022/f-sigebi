@@ -22,4 +22,5 @@ export enum DonationEndPoint {
   Inventary = 'donate-invent-rel/invent-rel',
   CreateInventary = 'donate-invent-rel',
   DetailEventComByID = 'detail-event-com-don/find-one',
+  EventComDonationExcelExport = 'event-com-donation/excel-export',
 }

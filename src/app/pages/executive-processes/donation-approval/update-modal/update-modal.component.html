@@ -12,10 +12,13 @@
         </div>
         <div class="col-md-9">
           <form-field [control]="form.get('description')" label="Descripción">
-            <input
+            <textarea
+              rows="2"
+              cols="2"
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="description">
+            </textarea>
           </form-field>
         </div>
       </div>
@@ -33,10 +36,16 @@
         </div>
         <div class="col-md-9">
           <form-field [control]="form.get('di_ubicacion1')" label="Dirección">
-            <input
+            <textarea
+              rows="2"
+              cols="2"
               type="text"
               class="form-control"
-              formControlName="di_ubicacion1" />
+              formControlName="di_ubicacion1"></textarea>
+            <!-- <input
+              type="text"
+              class="form-control"
+              formControlName="di_ubicacion1" /> -->
           </form-field>
         </div>
       </div>
