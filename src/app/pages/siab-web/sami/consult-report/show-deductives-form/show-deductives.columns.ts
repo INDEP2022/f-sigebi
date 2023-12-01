@@ -1,5 +1,5 @@
 export const PENDING_DEDUCTIVES_COLUMNS = {
-  idNoteCredit: {
+  id: {
     title: 'No. Nota Credito',
     type: 'string',
     sort: false,
@@ -17,7 +17,7 @@ export const PENDING_DEDUCTIVES_COLUMNS = {
     sort: false,
   },
 
-  idreportIndic: {
+  reportIndicatorId: {
     title: 'No. Reporte de indicación',
     type: 'number',
     sort: false,

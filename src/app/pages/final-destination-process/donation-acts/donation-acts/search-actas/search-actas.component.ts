@@ -70,6 +70,11 @@ export class SearchActasComponent extends BasePage implements OnInit {
       columns: {
         ...ACTAS,
       },
+      delete: {
+        deleteButtonContent:
+          '<i class="fa fa-trash text-danger mx-2 ml-5"></i>',
+        confirmDelete: true,
+      },
     };
   }
   ngOnInit(): void {

@@ -68,6 +68,10 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
         add: false,
         position: 'right',
       },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 ml-5"></i>',
+      },
       columns: { ...DONATION_APPROVAL_COLUMNS },
       rowClassFunction: (row: any) => {
         if (row.data.di_disponible === 'S') {
@@ -173,7 +177,7 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
     let _id = this.form.controls['idExpedient'].value;
     this.fileNumber = _id;
     this.consult = true;
-    this.loading = true;
+    // this.loading = true;
     this.expedientService.getById(_id).subscribe({
       next: response => {
         if (response !== null) {
@@ -184,10 +188,10 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
           //TODO: CHECK MESSAGE
           this.alert('warning', this.title, 'No se encontraron registros');
         }
-        this.loading = false;
+        // this.loading = false;
       },
       error: error => {
-        this.loading = false;
+        // this.loading = false;
         this.alert('warning', 'No se encontró el expediente especificado', '');
         this.data.load([]);
         this.data.refresh();
@@ -344,7 +348,7 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
           }
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(UpdateModalComponent, config);
