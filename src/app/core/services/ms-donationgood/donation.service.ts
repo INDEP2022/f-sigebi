@@ -9,8 +9,10 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDetailDonation,
   IDonationGood,
+  IExportDetail,
   IFilterDonation,
   IGoodDonation,
+  ITempDonDetail,
 } from '../../models/ms-donation/donation.model';
 import {
   IDeleteGoodDon,
@@ -61,22 +63,51 @@ export class DonationService
   remove(id: string): Observable<any> {
     return this.donationRepository.remove(api, id);
   }
+  removeEvent(id: string | number) {
+    const route = `${DonationEndPoint.eventComDonation}/${id}`;
+    return this.delete(route);
+  }
 
-  getEventComDonation(params?: ListParams): Observable<IListResponse<any>> {
-    return this.donationRepository.getAll(donationEvent, params);
+  getEventComDonation(params?: ListParams) {
+    const route = `${DonationEndPoint.eventComDonation}`;
+    return this.get(route, params);
+  }
+
+  getEventComDonationFilter(params?: any) {
+    const route = `${DonationEndPoint.QuantityProceddingEventComDon}`;
+    return this.get(route, params);
   }
 
   getEventComDonationDetail(
     params?: ListParams
   ): Observable<IListResponse<any>> {
     return this.donationRepository.getAll(
-      DonationEndPoint.DetailEventComDon,
+      //chm --> comment --> DonationEndPoint.DetailEventComDon,
+      DonationEndPoint.DetailProceddingEventComDon,
+      //DonationEndPoint.DetailEventComDon,
       params
     );
   }
 
-  getExcel() {
-    return this.get(DonationEndPoint.eventComDonationExcel);
+  getErrorEventComDonationDetail(
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.donationRepository.getAll(
+      DonationEndPoint.ErrorProceddingEventComDon,
+      params
+    );
+  }
+  getQuantityEventComDonationDetail(id: string) {
+    return this.get(DonationEndPoint.QuantityProceddingEventComDon + `/${id}`);
+  }
+
+  getDetailById(body: any) {
+    const route = `${DonationEndPoint.DetailEventComByID}`;
+    return this.post(route, body);
+  }
+  getExcel(body: IExportDetail) {
+    const route = `${DonationEndPoint.eventComDonationExcel}`;
+    return this.post(route, body);
   }
 
   createAdmonDonation(model: any) {
@@ -93,7 +124,12 @@ export class DonationService
   getTempGood(params: ListParams) {
     return this.get(DonationEndPoint.TempDonationGood, params);
   }
-
+  getTempDon(params: ListParams) {
+    return this.get(DonationEndPoint.TempDonation, params);
+  }
+  createTempDon(don: ITempDonDetail) {
+    return this.post(DonationEndPoint.TempDonation, don);
+  }
   createApproveDonation(data: any) {
     return this.post(DonationEndPoint.ApproveDonation, data);
   }

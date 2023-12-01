@@ -8,12 +8,20 @@
         <div class="row">
           <div class="col-sm-6 col-md-3">
             <form-field [control]="searchForm.get('event')" label="Evento">
-              <input type="text" formControlName="event" class="form-control" />
+              <input
+                type="number"
+                maxlength="10"
+                formControlName="event"
+                class="form-control" />
             </form-field>
           </div>
           <div class="col-sm-6 col-md-3">
             <form-field [control]="searchForm.get('batch')" label="Lote">
-              <input type="text" formControlName="batch" class="form-control" />
+              <input
+                type="number"
+                maxlength="10"
+                formControlName="batch"
+                class="form-control" />
             </form-field>
           </div>
           <div class="col-sm-6 col-md-3">
@@ -21,18 +29,23 @@
               <ng-custom-select
                 formControlName="bank"
                 class="form-control"
-                path="interfacesirsae/api/v1/banks-sirsae"
-                paramSearch="filter.name_bank"
+                path="catalog/api/v1/bank"
+                paramSearch="filter.bankCode"
                 prefixSearch="$ilike"
-                value="name_bank">
-                <ng-template let-item>{{ item.name_bank }}</ng-template>
+                value="bankCode"
+                [isLoadInOnInit]="true">
+                <ng-template let-item
+                  >{{ item.bankCode }} - {{ item.name }}</ng-template
+                >
               </ng-custom-select>
             </form-field>
           </div>
           <div class="col-sm-6 col-md-3">
             <form-field [control]="searchForm.get('amount')" label="Monto">
               <input
-                type="number"
+                currencyMask
+                type="text"
+                maxlength="11"
                 formControlName="amount"
                 class="form-control" />
             </form-field>
@@ -45,6 +58,7 @@
               label="Referencia">
               <input
                 type="text"
+                maxlength="255"
                 formControlName="reference"
                 class="form-control" />
             </form-field>

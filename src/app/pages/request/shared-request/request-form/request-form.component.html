@@ -29,7 +29,7 @@
       </div>
       <div class="p-2">
         <button
-          [disabled]="requestForm.invalid"
+          [disabled]="requestForm.invalid || !requestId"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="turnRequest()">

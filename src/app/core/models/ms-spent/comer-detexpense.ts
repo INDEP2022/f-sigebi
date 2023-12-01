@@ -1,5 +1,5 @@
 export interface IComerDetExpense {
-  expenseDetailNumber: string;
+  expenseDetailNumber?: string;
   expenseNumber: string;
   amount: string;
   vat: string;
@@ -10,7 +10,7 @@ export interface IComerDetExpense {
   total: string;
   cvman: string;
   budgetItem: string;
-  comerExpenses: ComerExpenses;
+  comerExpenses?: ComerExpenses;
   goods?: any;
   goodDescription?: string;
   changeStatus?: boolean;

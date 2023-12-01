@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -29,6 +29,7 @@ import { PAGE_SETUP_COLUMNS } from './page-setup-columns';
   styles: [],
 })
 export class PageSetupComponent extends BasePage implements OnInit {
+  @ViewChild('table', { static: false }) table: any;
   totalItems: number = 0;
   params = new BehaviorSubject(new FilterParams());
   data: IConfigvtadmun[] = [];
@@ -137,7 +138,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar esta Configuración de Columnas?'
+      '¿Desea eliminar esta configuración de columnas?'
     ).then(question => {
       if (question.isConfirmed) {
         this.remove(pageSetup);
@@ -153,8 +154,8 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración de Columnas',
-          'Eliminada Correctamente'
+          'Se ha eliminado la configuración de columnas',
+          ''
         );
         this.getData();
       },
@@ -162,8 +163,8 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'error',
-          'Error',
-          'Ocurrio un Error al Eliminar la Configuración de Columnas'
+          'Ocurrio un error al eliminar la configuración de columnas',
+          ''
         );
       },
     });
@@ -200,6 +201,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
       ...this.params2.getValue(),
       ...this.columnFilters,
     };
+    params['sortBy'] = `ordencol:ASC`;
     console.log('params', params);
     this.configvtadmunService.getAllFilter(params).subscribe({
       next: response => {
@@ -209,6 +211,18 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.dataFactGen.load(response.data);
         this.dataFactGen.refresh();
+
+        setTimeout(() => {
+          const table = document.getElementById('table');
+          const tbody = table.children[0].children[1].children;
+
+          for (let i = 0; i < tbody.length; i++) {
+            const element: any = tbody[i];
+            const a = (element.children[5].querySelector(
+              'input#checkbox-input'
+            ).disabled = true);
+          }
+        }, 600);
       },
       error: error => (this.loading = false),
     });
@@ -222,7 +236,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio un Error al Actualizar la Configuración de Columnas'
+          'Ocurrio un error al modificar la configuración de columnas'
         );
         return throwError(() => error);
       }),
@@ -230,8 +244,8 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración de Columnas',
-          'Actualizada Correctamente'
+          'Se ha modificado la configuración de columnas',
+          ''
         );
         this.getData();
       })

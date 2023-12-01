@@ -31,9 +31,16 @@ export interface ILoadLotDTO {
   pScreen: string;
 }
 
+export interface ILoadLotDelResDTO {
+  v_id_evento: number;
+  v_id_lote: number;
+  id_concepto: number;
+  cve_pantalla: string;
+}
+
 export interface IComerDetGastosDTO {
   select_cambia_status: string;
-  no_bien: number;
+  no_bien: any;
 }
 
 export interface ICancelVtaDTO {
@@ -46,5 +53,15 @@ export interface ICancelVtaDTO {
   p_prueba: string;
   user: string;
   comer_detgastos: IComerDetGastosDTO[];
-  cat_motivos_rev: string[];
+  cat_motivos_rev: { motiveDescription: string; selection: number }[];
+}
+
+export interface ILoadLotResponse {
+  goods: { cvman: string; no_bien: string }[];
+  selectChange: {
+    SELECT_CAMBIA_CLASIF_UPDATE: boolean;
+    SELECT_CAMBIA_CLASIF_ENABLED: boolean;
+    V_BIEN_REP_ROBO: number;
+    SELECT_CAMBIA_CLASIF: string;
+  };
 }

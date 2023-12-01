@@ -7,6 +7,7 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
@@ -37,6 +38,7 @@ export class NumeraireConversionAuctionsComponent
   ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
   dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
+  user: any;
   constructor(
     private fb: FormBuilder,
     private convNumeraryService: ConvNumeraryService,
@@ -48,9 +50,11 @@ export class NumeraireConversionAuctionsComponent
     private numerarieService: NumerarieService,
     private eventMService: ComermeventosService,
     private eventIService: ComerieventosService,
-    private eventDataService: ComerEventosService
+    private eventDataService: ComerEventosService,
+    private authService: AuthService
   ) {
     super();
+    this.user = this.authService.decodeToken().preferred_username;
   }
 
   ngOnInit(): void {
@@ -231,7 +235,11 @@ export class NumeraireConversionAuctionsComponent
     if (this.selectedEvent.statusVtaId !== 'CNE') {
       this.loader.load = true;
       this.convNumeraryService
-        .convert({ pevent: this.selectedEvent.id, pscreen: 'FCOMER087' })
+        .convert({
+          pevent: this.selectedEvent.id,
+          pscreen: 'FCOMER087',
+          user: this.user,
+        })
         .pipe(take(1))
         .subscribe({
           next: response => {
@@ -252,7 +260,6 @@ export class NumeraireConversionAuctionsComponent
                     this.selectEvent(response[0]);
                     this.alert('success', 'Se ha convertido correctamente', '');
                   } else {
-                    this.loader.load = false;
                     this.alert(
                       'error',
                       'Ocurrio un error al actualizar el evento',
@@ -288,6 +295,7 @@ export class NumeraireConversionAuctionsComponent
         .SP_CONVERSION_ASEG_PARCIAL({
           pevent: this.selectedEvent.id,
           pscreen: 'FCOMER087',
+          user: this.user,
         })
         .pipe(take(1))
         .subscribe({
@@ -316,6 +324,7 @@ export class NumeraireConversionAuctionsComponent
   }
 
   reporte() {
+    this.loader.load = true;
     let params = {
       DESTYPE: 'SCREEN',
       PARAMFORM: 'NO',
@@ -324,24 +333,31 @@ export class NumeraireConversionAuctionsComponent
     };
     this.siabService.fetchReport('RCOMER_NUMERARIO', params).subscribe({
       next: response => {
-        this.loading = false;
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered',
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
+        console.log(response);
+        this.loader.load = false;
+        if (response) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          this.alert('error', 'El reporte no se encuentra disponible', '');
+        }
       },
       error: err => {
+        this.loader.load = false;
         console.log(err);
+        this.alert('error', 'El reporte no se encuentra disponible', '');
       },
     });
   }

@@ -35,13 +35,6 @@
               [maxDate]="maxDate"
               formControlName="closeDate"
               class="form-control"
-              [min]="form.get('captureDate').value"
-              [minDate]="form.get('captureDate').value"
-              [ngModel]="
-                form.get('closeDate').value < form.get('captureDate').value
-                  ? form.get('captureDate').value
-                  : form.get('closeDate').value
-              "
               bsDatepicker />
           </form-field>
         </div>
@@ -53,8 +46,8 @@
               class="form-control"
               [clearable]="false"
               (change)="getRowSelec($event)">
-              <ng-option value="null"></ng-option>
-              <ng-option value="null">TODOS</ng-option>
+              <ng-option value=""></ng-option>
+              <ng-option value="">TODOS</ng-option>
               <ng-option value="ABIERTA">ABIERTA </ng-option>
               <ng-option value="CERRADA">CERRADA </ng-option>
             </ng-select>
@@ -109,8 +102,7 @@
               <button
                 type="button"
                 class="btn btn-primary active btn-sm mr-3"
-                (click)="filterButton()"
-                [disabled]="!form.valid">
+                (click)="filterButton()">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
@@ -131,6 +123,7 @@
           <div>
             <button
               class="btn btn-success active btn-sm ml-3"
+              [disabled]="!excelValid"
               (click)="exportAll()">
               Exportar a Excel <i class="bx bx-download float-icon"></i>
             </button>
@@ -152,24 +145,27 @@
           </div>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [params]="params" [totalItems]="totalItems3">
       </app-pagination>
 
       <hr />
-      <div class="row pt-5">
-        <div class="col-md-12">
-          <div [class]="loading2 ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings1"
-              [source]="data1"
-              (rowSelect)="selectedDetailActa($event)">
-            </ng2-smart-table>
+      <div *ngIf="responseDetail">
+        <div class="row pt-5">
+          <div class="col-md-12">
+            <div [class]="loading2 ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings1"
+                [source]="data1"
+                (rowSelect)="selectedDetailActa($event)">
+              </ng2-smart-table>
+            </div>
           </div>
         </div>
+        <app-pagination [params]="params1" [totalItems]="totalItems1">
+        </app-pagination>
       </div>
-      <app-pagination [params]="params1" [totalItems]="totalItems1">
-      </app-pagination>
+
       <div class="col-6 align-items-center">
         <div class="row">
           <div class="col-6">
@@ -196,6 +192,7 @@
               tooltip="Nuevo"
               containerClass="tooltip-style"
               class="btn btn-primary btn-sm active ml-2 mr-2"
+              [disabled]="!excelValid"
               (click)="goDetailDonation()">
               Captura de Evento <i class="bx bx-edit bx-sm float-icon"></i>
             </button>

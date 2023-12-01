@@ -90,7 +90,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   getInfoUserLog() {
     this.programmingService.getUserInfo().subscribe((data: any) => {
-      console.log('data', data);
       this.userLogName = data.preferred_username;
       if (this.process == 'sampling-assets') {
         this.getTransferentSelect(new ListParams());

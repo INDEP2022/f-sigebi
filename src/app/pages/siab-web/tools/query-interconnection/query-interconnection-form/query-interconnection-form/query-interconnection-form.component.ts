@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 import * as XLSX from 'xlsx';
 
@@ -44,7 +44,7 @@ export class QueryInterconnectionFormComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      file: [null, [Validators.required]],
+      file: [null, []],
     });
   }
 
@@ -65,20 +65,32 @@ export class QueryInterconnectionFormComponent
     }
   }
   consult() {
-    console.log(this.records);
-    if (this.records.length === 0) {
-      this.alert('warning', 'No se encontraron registros', ``);
+    if (this.form.get('file').value) {
+      console.log(this.records);
+      if (this.records.length === 0) {
+        this.alert('warning', 'No se encontraron registros', ``);
+      } else {
+        this.totalRepeated = this.findDuplicateKeys(this.records);
+        this.totalExcelRecords = this.records.length;
+        let totCve = this.totalABuscar(this.records);
+        let splitCve = totCve.split(',');
+        this.splitCveUnicas = splitCve.length;
+        console.log(totCve, splitCve);
+        /*let result = 
+        console.log(result);*/
+      }
     } else {
-      this.totalRepeated = this.findDuplicateKeys(this.records);
-      this.totalExcelRecords = this.records.length;
-      let totCve = this.totalABuscar(this.records);
-      let splitCve = totCve.split(',');
-      this.splitCveUnicas = splitCve.length;
-      console.log(totCve, splitCve);
-      /*let result = 
-      console.log(result);*/
+      this.alert('warning', 'Debe cargar un archivo de excel', '');
     }
+
     //console.log(this.records);
+  }
+
+  download() {
+    if (this.form.get('file').value) {
+    } else {
+      this.alert('warning', 'Debe cargar un archivo de excel', '');
+    }
   }
 
   findDuplicateKeys(dtCveUnicas: any) {

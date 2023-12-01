@@ -26,4 +26,5 @@ export enum PaymentEndPoints {
   GetDataFromView = 'application/getDataFromView',
   InsComerpagrefweb = 'application/ins-comerpagrefweb',
   ApplicationExpRefSol = 'application/exp-ref-sol',
+  ApplicationValidCabms = 'application/valid-cabms',
 }

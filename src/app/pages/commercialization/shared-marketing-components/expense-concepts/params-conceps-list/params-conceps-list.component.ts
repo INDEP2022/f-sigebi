@@ -38,7 +38,12 @@ export class ParamsConcepsListComponent
     super();
     this.params.value.limit = 5;
     this.service = this.parameterService;
-    this.ilikeFilters = ['parameter', 'description'];
+    this.ilikeFilters = [
+      'parameter',
+      'description',
+      'value',
+      'routineCalculation',
+    ];
     this.settings = {
       ...this.settings,
       actions: {
@@ -46,7 +51,7 @@ export class ParamsConcepsListComponent
         position: 'right',
         add: false,
         edit: true,
-        delete: false,
+        delete: true,
       },
       columns: { ...COLUMNS },
     };
@@ -93,7 +98,6 @@ export class ParamsConcepsListComponent
         this.settings = {
           ...this.settings,
           actions: null,
-          columns: { ...COLUMNS },
         };
       } else {
         this.settings = {
@@ -105,12 +109,17 @@ export class ParamsConcepsListComponent
             edit: true,
             delete: false,
           },
-          columns: { ...COLUMNS },
         };
       }
     }
     if (changes['conceptId'] && changes['conceptId'].currentValue) {
+      this.columnFilters = [];
+      this.data.setFilter([], true, false);
+      // this.data.load([]);
       this.getData();
+    }
+    if (changes['conceptId'] && changes['conceptId'].currentValue === null) {
+      this.dataNotFound();
     }
   }
 
@@ -174,7 +183,9 @@ export class ParamsConcepsListComponent
             next: response => {
               this.alert(
                 'success',
-                'Se creo el parámetro por concepto de pago ' + this.conceptId,
+                'El parámetro por concepto de pago ' +
+                  this.conceptId +
+                  ' ha sido creado',
                 ''
               );
               this.getData();
@@ -217,8 +228,9 @@ export class ParamsConcepsListComponent
                 next: response => {
                   this.alert(
                     'success',
-                    'Se pudo actualizar el parámetro con concepto de pago ' +
-                      this.conceptId,
+                    'El parámetro con concepto de pago ' +
+                      this.conceptId +
+                      ' ha sido actualizado',
                     ''
                   );
                   this.getData();
@@ -285,7 +297,7 @@ export class ParamsConcepsListComponent
           this.alert(
             'error',
             'No se pudo eliminar el parámetro ' + row.parameter,
-            ''
+            'Favor de verificar'
           );
         },
       });
@@ -294,6 +306,12 @@ export class ParamsConcepsListComponent
 
   getAddressCode(address: string) {
     return this.expenseConceptsService.getAddressCode(address);
+  }
+
+  override getField(filter: any) {
+    return filter.field !== 'description'
+      ? `filter.${filter.field}`
+      : 'filter.parameterFk.description';
   }
 
   override getParams() {

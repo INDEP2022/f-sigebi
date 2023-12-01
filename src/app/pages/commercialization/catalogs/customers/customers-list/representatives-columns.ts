@@ -33,11 +33,11 @@ export const REPRESENTATIVES_COLUMNS = {
     },
   },
   rfc: {
-    title: 'Registro Federal de Contribuyentes',
+    title: 'RFC',
     sort: false,
   },
   curp: {
-    title: 'Cve. Única de Registro de Población',
+    title: 'CURP',
     sort: false,
   },
   personType: {
@@ -53,11 +53,11 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   identificationNumber: {
-    title: 'Número de Identificación',
+    title: 'No. de Identificación',
     sort: false,
   },
   escrowNumber: {
-    title: 'Número de Fideicomiso',
+    title: 'No. de Fidecomiso',
     sort: false,
   },
   nationalityKey: {
@@ -73,11 +73,11 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   outsideNumber: {
-    title: 'Número Exterior',
+    title: 'No. Exterior',
     sort: false,
   },
   insisdeNumber: {
-    title: 'Número Interior',
+    title: 'No. Interior',
     sort: false,
   },
   city: {

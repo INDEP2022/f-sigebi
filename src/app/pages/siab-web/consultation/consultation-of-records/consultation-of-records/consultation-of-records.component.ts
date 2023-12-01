@@ -22,14 +22,15 @@ export class ConsultationOfRecordsComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       expedient: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(15),
-        ],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(15)],
       ],
     });
   }
 
-  generateDocuments() {}
+  generateDocuments() {
+    if (this.form.get('expedient').value) {
+    } else {
+      this.alert('warning', 'Debe llenar el campo de No. Expediente', '');
+    }
+  }
 }

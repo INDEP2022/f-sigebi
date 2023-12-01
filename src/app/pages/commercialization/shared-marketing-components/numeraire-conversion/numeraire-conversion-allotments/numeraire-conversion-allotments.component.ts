@@ -1,12 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { take } from 'rxjs';
+import { catchError, map, of, take } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { BasePage } from 'src/app/core/shared';
 
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
 import { COLUMNS } from '../numeraire-conversion-auctions/columns';
 import { ComerieventosService } from '../services/comerieventos.service';
@@ -28,14 +30,18 @@ export class NumeraireConversionAllotmentsComponent
   ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
   dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
+  user: any;
   constructor(
     private fb: FormBuilder,
     private convNumeraryService: ConvNumeraryService,
     private comertpEventService: ComerTpEventosService,
     private eventMService: ComermeventosService,
-    private eventIService: ComerieventosService
+    private eventIService: ComerieventosService,
+    private eventDataService: ComerEventosService,
+    private authService: AuthService
   ) {
     super();
+    this.user = this.authService.decodeToken();
   }
 
   get eventService() {
@@ -102,20 +108,57 @@ export class NumeraireConversionAllotmentsComponent
           pevent: this.selectedEvent.id,
           pscreen: 'FCOMER087',
           pdirectionScreen: this.address,
+          user: this.user.preferred_username,
         })
         .pipe(take(1))
         .subscribe({
           next: response => {
-            this.alert(
-              'success',
-              'Proceso Convierte Adjudicación Directa terminado',
-              ''
-            );
+            let params = new FilterParams();
+            params.addFilter('id', this.selectedEvent.id);
+            this.eventDataService
+              .getAllEvents(params.getParams())
+              .pipe(
+                take(1),
+                catchError(x => of({ data: [] as IComerEvent[] })),
+                map(x => x.data)
+              )
+              .subscribe({
+                next: response => {
+                  this.loader.load = false;
+                  if (response && response.length > 0) {
+                    this.selectEvent(response[0]);
+                    this.alert(
+                      'success',
+                      'Proceso Convierte Adjudicación Directa terminado',
+                      ''
+                    );
+                  } else {
+                    this.alert(
+                      'error',
+                      'Ocurrio un error al actualizar el evento',
+                      'Favor de verificar'
+                    );
+                  }
+                },
+                error: err => {
+                  this.alert(
+                    'error',
+                    'Ocurrio un error al actualizar el evento',
+                    'Favor de verificar'
+                  );
+                },
+              });
+
             this.loader.load = false;
           },
           error: err => {
             console.log(err);
             this.loader.load = false;
+            this.alert(
+              'error',
+              'Ocurrio un error al convertir numerario',
+              'Favor de verificar'
+            );
           },
         });
     } else {
