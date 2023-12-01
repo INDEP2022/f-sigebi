@@ -75,12 +75,36 @@ register-request
 DVerificarCumplimiento
 DAprobarDevolucion
 
+---
+
+register-request-return
+verify-compliance-return
+approve-return
+
 -BSRegistroSolicitudes
 BSNotificarTransferente
 BSVisitaOcular
 BSValidarVisitaOcular
 BSValidarDictamen
 
+---
+
+register-request-similar-goods
+notify-transfer-assets
+eye-visit-assets-assets
+validate-eye-visit-assets
+validate-opinion-assets
+
 -RERegistroSolicitudes
 RERevisionLineamientos
 REGenerarResultadoAnalisis
+
+register-request-compensation
+response-office-compensation
+analysis-result-compensation
+
+-IBRegistroSolicitudes
+IBGenerarSolicitudInformacion
+IBRevisionOficioRespuesta
+
+register-request-information-goods

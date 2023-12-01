@@ -52,8 +52,8 @@
   font-size: 14px;
 }
 
-.swal2-container.swal2-top-end > .swal2-popup,
-.swal2-container.swal2-top-right > .swal2-popup {
+.swal2-container.swal2-top-end>.swal2-popup,
+.swal2-container.swal2-top-right>.swal2-popup {
   border-top: 4px solid #c0c0c0;
 }
 
@@ -276,7 +276,7 @@ i {
   font-style: normal !important;
 }
 
-.fill-custom-tab li.nav-item.active > a.nav-link.active {
+.fill-custom-tab li.nav-item.active>a.nav-link.active {
   background-color: #9d2449 !important;
   color: #f0e4d1 !important;
 }
@@ -356,7 +356,7 @@ table:not(.normal-hover) tbody tr:hover {
   top: 32px;
 }
 
-.custom-file-input ~ .custom-file-label::after {
+.custom-file-input~.custom-file-label::after {
   content: 'Examinar' !important;
 }
 
@@ -523,7 +523,7 @@ ng-scrollbar.table-scrollbar {
 .table-container {
   margin-right: 14px !important;
 
-  > div {
+  >div {
     padding: 0px;
     margin-left: 15px;
 
@@ -702,42 +702,32 @@ custom-view-component {
   color: black;
 }
 
-.ng-select.scroll-line.ng-select-multiple
-  .ng-select-container
-  .ng-value-container {
+.ng-select.scroll-line.ng-select-multiple .ng-select-container .ng-value-container {
   overflow-y: auto;
   flex-wrap: nowrap;
 }
 
-.ng-select.scroll-line.ng-select-multiple
-  .ng-select-container
-  .ng-value-container::-webkit-scrollbar,
+.ng-select.scroll-line.ng-select-multiple .ng-select-container .ng-value-container::-webkit-scrollbar,
 .info::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 /* Track */
-.ng-select.scroll-line.ng-select-multiple
-  .ng-select-container
-  .ng-value-container::-webkit-scrollbar-track,
+.ng-select.scroll-line.ng-select-multiple .ng-select-container .ng-value-container::-webkit-scrollbar-track,
 .info::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
 
 /* Handle */
-.ng-select.scroll-line.ng-select-multiple
-  .ng-select-container
-  .ng-value-container::-webkit-scrollbar-thumb,
+.ng-select.scroll-line.ng-select-multiple .ng-select-container .ng-value-container::-webkit-scrollbar-thumb,
 .info::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 12px;
 }
 
 /* Handle on hover */
-.ng-select.scroll-line.ng-select-multiple
-  .ng-select-container
-  .ng-value-container::-webkit-scrollbar-thumb:hover,
+.ng-select.scroll-line.ng-select-multiple .ng-select-container .ng-value-container::-webkit-scrollbar-thumb:hover,
 .info::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
@@ -817,12 +807,30 @@ footer {
 .bg-donacion-1 {
   background-color: #c8c8c8;
 }
+
 .bg-donacion-2 {
   background-color: #008080;
 }
+
 .bg-donacion-3 {
   background-color: #ffc000;
 }
+
 .bg-donacion-4 {
   background-color: #80c000;
+}
+
+.VA_VALDA1 {
+  background-color: #008080; //#003232;
+  width: 100% !important;
+  height: 100% !important;
+  text-align: center;
+}
+
+.VA_VALDA2 {
+  background-color: #ffc000; // #644b00;
+}
+
+.VA_VALDA3 {
+  background-color: #80c000; // #324b00;
 }

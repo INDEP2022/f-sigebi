@@ -11,6 +11,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { HistoricalService } from 'src/app/core/services/ms-historical/historical.service';
@@ -60,13 +61,16 @@ export class CreateActaComponent extends BasePage implements OnInit {
   mes: any;
   date = new Date();
   currentYear: number = new Date().getFullYear();
-  delegation: any = null;
+  delegation: any = 11;
   subdelegation: any = null;
   areaDict: any = null;
   disabledSend: boolean = false;
   get captureDate() {
     return this.actaRecepttionForm.get('captureDate');
   }
+
+  public delegationLst = new DefaultSelect();
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -80,7 +84,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
     private procedureManagementService: ProcedureManagementService,
     private parametersService: ParametersService,
     private abandonmentsService: AbandonmentsDeclarationTradesService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private delegationService: DelegationService,
   ) {
     super();
   }
@@ -88,10 +93,12 @@ export class CreateActaComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.generaConsec();
     this.actaForm();
-    console.log(this.foolio);
+    console.log("Folio:" + this.foolio);
     this.delegation = Number(localStorage.getItem('area'));
-    this.consulREG_DEL_DESTR(new ListParams());
-    this.consulREG_DEL_ADMIN(new ListParams());
+    console.log('this.delegation::' + this.delegation);
+    //this.consulREG_DEL_DESTR(new ListParams());
+    //this.consulREG_DEL_ADMIN(new ListParams());
+    //chm: 
     this.consulREG_DEL_ADMIN1();
     for (let i = 1900; i <= this.currentYear; i++) {
       this.years.push(i);
@@ -100,18 +107,25 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
   async actaForm() {
     this.actaRecepttionForm = this.fb.group({
-      acta: [null, Validators.required],
-      type: [null],
-      administra: [null, Validators.required],
-      consec: [null],
+      acta: ['CPD', Validators.required],
+      //type: [null],
+      //administra: [null, Validators.required],
+      consec: [this.foolio],
       anio: [null],
+      /*
       fileId: [null, [Validators.required]],
       observaciones: [null],
       testigoOne: [null, [Validators.required]],
       testigoOIC: [null, [Validators.required]],
+      */
       captureDate: [null],
+      delegation: [null, Validators.required],
+      claveacta: [null, [Validators.required]],
     });
-    this.actaRecepttionForm.get('consec').setValue(this.foolio);
+    //this.actaRecepttionForm.get('consec').setValue(this.foolio);
+    this.actaRecepttionForm.patchValue({
+      consec: this.foolio
+    });
     this.actaRecepttionForm.patchValue({
       captureDate: await this.getDate(),
     });
@@ -142,26 +156,28 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const _fechaEscritura: any = new Date(fechaEscritura.toISOString());
     return _fechaEscritura;
   }
-  async validacionFirst() {
-    const params = new FilterParams();
-    params.addFilter('numberDelegation2', this.delegation, SearchFilter.EQ);
+  /*
+ async validacionFirst() {
+   const params = new FilterParams();
+   params.addFilter('numberDelegation2', this.delegation, SearchFilter.EQ);
 
-    this.rNomenclaService.getAll(params.getParams()).subscribe({
-      next: async (data: any) => {
-        console.log('datarNomen', data);
-        if (data.count > 1) {
-          this.globalGstRecAdm = 'FILTRAR';
-        } else {
-          this.globalGstRecAdm = this.delegation;
-        }
-        await this.consulREG_DEL_ADMIN(new ListParams());
-      },
-      error: async error => {
-        this.globalGstRecAdm = 'NADA';
-        await this.consulREG_DEL_ADMIN(new ListParams());
-      },
-    });
-  }
+   this.rNomenclaService.getAll(params.getParams()).subscribe({
+     next: async (data: any) => {
+       console.log('datarNomen', data);
+       if (data.count > 1) {
+         this.globalGstRecAdm = 'FILTRAR';
+       } else {
+         this.globalGstRecAdm = this.delegation;
+       }
+       await this.consulREG_DEL_ADMIN(new ListParams());
+     },
+     error: async error => {
+       this.globalGstRecAdm = 'NADA';
+       await this.consulREG_DEL_ADMIN(new ListParams());
+     },
+   });
+ }
+ */
   consulREG_DEL_ADMIN1() {
     let obj = {
       gst_todo: 'TODO',
@@ -170,7 +186,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     };
     this.historicalService.getHistoricalConsultDelegation(obj).subscribe({
       next: (data: any) => {
-        console.log('data', data);
+        console.log('consulREG_DEL_ADMIN1:: data', data);
         this.arrayDele = data.data;
       },
       error: error => {
@@ -179,6 +195,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
     });
   }
 
+
+  /*CHM
   stagecreated: any = null;
   async get___Senders(lparams: ListParams) {
     const params = new FilterParams();
@@ -242,6 +260,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
           });
         },
         error: error => {
+          console.log('consulREG_DEL_ADMIN::'+ JSON.stringify(error));
           this.dele = new DefaultSelect();
         },
       });
@@ -262,17 +281,17 @@ export class CreateActaComponent extends BasePage implements OnInit {
         params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
       }
   }
-
+*/
   agregarActa() {
     const acta = this.actaRecepttionForm.value.acta;
-    const type = this.actaRecepttionForm.value.type;
-    const obser = this.actaRecepttionForm.value.observaciones;
-    const administra = this.actaRecepttionForm.value.administra
-      ? this.actaRecepttionForm.value.administra
-      : 'COMPDON';
+    //const type = this.actaRecepttionForm.value.type;
+    //const obser = this.actaRecepttionForm.value.observaciones;
+    const administra = this.actaRecepttionForm.value.delegation;
+    //  ? this.actaRecepttionForm.value.administra
+    //  : 'COMPDON';
     const consec = this.foolio;
-    this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
-    this.witnessTes = this.actaRecepttionForm.value.testigoOne;
+    //this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
+    //this.witnessTes = this.actaRecepttionForm.value.testigoOne;
     const anio = this.actaRecepttionForm.value.anio;
 
     localStorage.setItem('anio', anio);
@@ -311,7 +330,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       .getFolioMax(Number(localStorage.getItem('area')))
       .subscribe({
         next: (data: any) => {
-          console.log('DATA', data);
+          console.log('generaConsec:: DATA', data);
           this.foolio = data.folioMax;
         },
         error: error => {
@@ -327,14 +346,14 @@ export class CreateActaComponent extends BasePage implements OnInit {
       elaborationDate: new Date(),
       estatusAct: 'ABIERTA',
       elaborated: this.authService.decodeToken().username,
-      fileId: this.actaRecepttionForm.value.fileId,
-      witness1: this.actaRecepttionForm.value.testigoOne,
-      witness2: this.actaRecepttionForm.value.testigoOIC,
+      fileId: 0,//this.actaRecepttionForm.value.fileId,
+      witness1: '',//this.actaRecepttionForm.value.testigoOne,
+      witness2: '',//this.actaRecepttionForm.value.testigoOIC,
       actType: 'COMPDON',
       captureDate: this.actaRecepttionForm.value.captureDate,
-      observations: this.actaRecepttionForm.value.observaciones,
+      observations: '',//this.actaRecepttionForm.value.observaciones,
       registreNumber: null,
-      numDelegation1: this.delegation,
+      numDelegation1: this.authService.decodeToken().department,
       numDelegation2: null,
       identifier: null,
       label: null,
@@ -360,6 +379,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     });
   }
   delegationToolbar: any = null;
+  /*
   getDelegation(params: FilterParams) {
     params.addFilter(
       'id',
@@ -378,6 +398,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       },
     });
   }
+  */
 
   return() {
     this.modalRef.hide();
@@ -414,6 +435,13 @@ export class CreateActaComponent extends BasePage implements OnInit {
         error: error => (this.loading = false),
       });
   }
+
+  getDelegations(params: ListParams) {
+    this.delegationService.getAll(params).subscribe(data => {
+      this.delegationLst = new DefaultSelect(data.data, data.count);
+    });
+  }
+
   // consultREG_TRANSFERENTES(lparams: ListParams) {
   //   console.log('LPARAMS - ', lparams);
   //   let obj = {

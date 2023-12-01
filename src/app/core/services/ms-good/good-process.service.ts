@@ -377,4 +377,16 @@ export class GoodProcessService extends HttpService {
   fmComDonac(body: IFmComDanc) {
     return this.post('application/fm-com-donac-1-good', body);
   }
+
+  queryDonationGoods(body: any) {
+    return this.post('application/pup-consultation-estate', body);
+  }
+
+  detailProcessClean(body: any) {
+    return this.post('application/detail-process-clean', body);
+  }
+
+  validateDonationGoods(body: any) {
+    return this.post('application/pupValidGood', body);
+  }
 }

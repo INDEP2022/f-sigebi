@@ -1,6 +1,8 @@
 import { inject } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IRequestDocument } from 'src/app/core/models/requests/document.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared';
@@ -34,6 +36,15 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract typeVisit: string;
   protected abstract listGoodSelectedTitle: string;
 
+  protected abstract sendEmail: boolean;
+  protected abstract destinyJob: boolean;
+  protected abstract verifyCompliance: boolean; //NUEVO VERIFICAR
+  protected abstract btnAprove: boolean; //NUEVO VERIFICAR
+  protected abstract btnDecline: boolean; //NUEVO VERIFICAR
+  protected abstract dictumReturn: boolean; //NUEVO VERIFICAR BOTON NUEVO
+
+  docTemplate: IRequestDocument[];
+
   private rejectedService = inject(RejectedGoodService);
 
   constructor() {
@@ -44,31 +55,6 @@ export abstract class CompDocTasksComponent extends BasePage {
     if (affair == 13) {
       this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
       this.complementaryDoc = true;
-    } else if (affair == 10) {
-      if (process == 'DRegistroSolicitudes' || process == 'register-request') {
-        this.title = `DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
-      }
-      if (process == 'DVerificarCumplimiento') {
-        this.regDocView = true;
-        this.regDocForm = false;
-        this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
-      }
-      if (process == 'DAprobarDevolucion') {
-        this.title = `Aprobar Devolución, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
-      }
-    } else if (affair == 33) {
-      if (process == 'BSRegistroSolicitudes' || process == 'register-request') {
-        this.title = `BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
-      }
-      if (process == 'BSNotificarTransferente') {
-        this.title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV `;
-      }
-      if (process == 'BSVisitaOcular') {
-        this.title = `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
-      }
-      if (process == 'BSValidarVisitaOcular') {
-        this.title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
-      }
     } else if (affair == 40) {
       if (process == 'RERegistroSolicitudes' || process == 'register-request') {
         this.title = `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No. Solicitud: #: ${this.requestInfo.id}`;
@@ -361,8 +347,333 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
         break;
 
-      /** CASOS DE USO */
-      case '':
+      /** CASOS DE USO DEVOLUCION */
+      case 'register-request-return':
+        this.title = `DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+        this.turnReq = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
+
+        break;
+      case 'verify-compliance-return':
+        this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
+        this.regDocView = true;
+        this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.btnAprove = true; //AGREGAR SOLICITAR APROBACIÓN (BOTON) validateDocument verificar
+        this.dictumReturn = true; //AGREGAR DICTAMEN DEVOLUCIÓN (BOTON) validar Nuevo botón
+
+        this.turnReq = false;
+        this.searchAssociateFile = false;
+        this.searchRequestSimGoods = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
+
+        break;
+      case 'approve-return':
+        this.title = `Aprobar Devolución, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+        this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
+
+        this.btnAprove = true;
+        this.dictumReturn = true; //AGREGAR DICTAMEN DEVOLUCIÓN (BOTON) validar Nuevo botón
+        this.btnDecline = true;
+
+        this.turnReq = false;
+        this.regDocForm = false;
+        this.searchAssociateFile = false;
+        this.searchRequestSimGoods = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
+
+        break;
+
+      /** CASOS DE BIENES SIMILARES */
+      case 'register-request-similar-goods':
+        this.title = `BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
+        this.regDocForm = true;
+        this.selectGoods = true;
+        this.searchAssociateFile = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        this.docRequest = false;
+        this.viewSelectedGoods = false;
+        this.searchRequestSimGoods = false;
+        this.guidelines = false;
+        this.dictumValidate = false;
+        this.notifyReport = false;
+        this.regDocView = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
+        this.createReport = false;
+        this.rejectReq = false;
+        break;
+
+      case 'notify-transfer-goods':
+        this.title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV `;
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.notifyReport = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        this.docRequest = false;
+        this.searchAssociateFile = false;
+        this.viewSelectedGoods = false;
+        this.searchRequestSimGoods = false;
+        this.guidelines = false;
+        this.dictumValidate = false;
+        this.regDocView = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
+        this.createReport = false;
+        this.rejectReq = false;
+
+        break;
+      case 'eye-visit-goods':
+        this.title = `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        this.notifyReport = false;
+        this.docRequest = false;
+        this.searchAssociateFile = false;
+        this.viewSelectedGoods = false;
+        this.searchRequestSimGoods = false;
+        this.guidelines = false;
+        this.dictumValidate = false;
+        this.regDocView = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
+        this.createReport = false;
+        this.rejectReq = false;
+
+        break;
+      case 'validate-eye-visit-goods':
+        this.title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
+        this.regDocView = true;
+        this.expRequest = true;
+        this.validateGoodForEyeVisit = true;
+
+        this.resultEyeVisitReport = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        this.selectGoods = false;
+        this.notifyReport = false;
+        this.docRequest = false;
+        this.searchAssociateFile = false;
+        this.viewSelectedGoods = false;
+        this.searchRequestSimGoods = false;
+        this.guidelines = false;
+        this.dictumValidate = false;
+        this.regDocView = false;
+        this.selectGoodForEyeVisit = false;
+        this.createReport = false;
+        this.rejectReq = false;
+
+        break;
+      case 'validate-opinion-assets':
+        this.regDocForm = true;
+        this.expRequest = true;
+        this.resultVisits = true;
+
+        this.resultEyeVisitReport = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        this.validateGoodForEyeVisit = false;
+        this.selectGoods = false;
+        this.notifyReport = false;
+        this.docRequest = false;
+        this.searchAssociateFile = false;
+        this.viewSelectedGoods = false;
+        this.searchRequestSimGoods = false;
+        this.guidelines = false;
+        this.dictumValidate = false;
+        this.regDocView = false;
+        this.selectGoodForEyeVisit = false;
+        this.createReport = false;
+        this.rejectReq = false;
+
+        break;
+
+      /** CASOS DE RESARCIMIENTO */
+
+      case 'register-request-compensation':
+        this.regDocForm = true;
+        this.searchRequestSimGoods = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.turnReq = true;
+        break;
+
+      case 'response-office-compensation':
+        this.regDocView = true;
+        this.viewSelectedGoods = true;
+        this.guidelines = true;
+        this.expRequest = true;
+        this.docRequest = true;
+
+        this.createReport = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        this.searchRequestSimGoods = false;
+
+        if (affair == 25) {
+          this.regDocView = true;
+          this.viewSelectedGoods = true;
+          this.guidelines = true;
+          this.docRequest = true;
+          this.expRequest = true;
+          this.createReport = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        }
+
+        break;
+
+      case 'analysis-result-compensation':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.guidelines = true;
+        this.expRequest = true;
+
+        this.createReport = true;
+        this.saveRequest = true;
+        this.rejectReq = true;
+        this.turnReq = true;
+
+        this.docRequest = true; //VERIFICAR
+
+        break;
+
+      case 'validate-dictum-compensation':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.guidelines = true;
+        this.dictumValidate = true; //AGREGAR DATOS DEL DICTAMEN (TAB)
+        this.expRequest = true;
+
+        this.createReport = true;
+        this.saveRequest = true;
+        this.rejectReq = true;
+        this.turnReq = true;
+
+        this.docRequest = true; //VERIFICAR
+        break;
+
+      case 'notify-compensation':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.guidelines = true;
+        this.dictumValidate = true; //AGREGAR DATOS DEL DICTAMEN (TAB)
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.turnReq = true;
+        this.notifyReport = true; //VERIFICAR FUNCIÓN
+
+        this.docRequest = true; //VERIFICAR
+        this.createReport = false;
+        this.rejectReq = false;
+
+        break;
+
+      /** CASOS DE INFORMACION DE BIENES */
+
+      case 'register-request-information-goods':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        this.resultEyeVisitReport = false;
+        this.resultVisits = false;
+        this.validateGoodForEyeVisit = false;
+        this.notifyReport = false;
+        this.docRequest = false;
+        this.viewSelectedGoods = false;
+        this.searchRequestSimGoods = false;
+        this.guidelines = false;
+        this.dictumValidate = false;
+        this.regDocView = false;
+        this.createReport = false;
+        this.rejectReq = false;
+        break;
+
+      case 'request-information-office':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.turnReq = true;
+        this.sendEmail = true; //AGREGAR ENVIAR CORREO DE SOLICITUD (BOTON)
+        this.destinyJob = true; //AGREGAR OFICIO DESTINO (BOTON)
+
+        this.searchAssociateFile = false;
+        this.resultEyeVisitReport = false;
+        this.resultVisits = false;
+        this.validateGoodForEyeVisit = false;
+        this.notifyReport = false;
+        this.docRequest = false;
+        this.viewSelectedGoods = false;
+        this.searchRequestSimGoods = false;
+        this.guidelines = false;
+        this.dictumValidate = false;
+        this.regDocView = false;
+        this.createReport = false;
+        this.rejectReq = false;
+        break;
+      case 'response-office':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        //AGREGAR FINALIZAR (BOTON) VALIDAR BOTON EXISTENTE
+        this.destinyJob = true; //AGREGAR OFICIO DESTINO (BOTON)
+
+        this.turnReq = false;
+        this.searchAssociateFile = false;
+        this.resultEyeVisitReport = false;
+        this.resultVisits = false;
+        this.validateGoodForEyeVisit = false;
+        this.notifyReport = false;
+        this.docRequest = false;
+        this.viewSelectedGoods = false;
+        this.searchRequestSimGoods = false;
+        this.guidelines = false;
+        this.dictumValidate = false;
+        this.regDocView = false;
+        this.createReport = false;
+        this.rejectReq = false;
+
         break;
 
       default:
@@ -431,73 +742,112 @@ export abstract class CompDocTasksComponent extends BasePage {
     this.makeResultPaperReport = false;
   }
 
-  nextProcess(affair: number, process: string) {
+  nextProcess(process: string, reject = false) {
 
     let title = '';
     let next = '';
-    let type = 'SOLICITUD_TRANSFERENCIA';
-    let subtype = 'Nueva_Solicitud';
-    let ssubtype = 'TURNAR';
-
-    let url = 'pages/request/request-comp-doc/tasks/register-request';
+    let url = '';
+    let type = '';
+    let subtype = '';
+    let ssubtype = '';
     let finish = false;
 
-    if (affair == 10) {
-      if (process == 'DRegistroSolicitudes' || process == 'register-request') {
+    switch (process) {
+
+      /** CASOS DE USO DEVOLUCION */
+      case 'register-request-return':
         title = `DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
         next = 'DVerificarCumplimiento';
-      }
-      if (process == 'DVerificarCumplimiento') {
+        url = 'pages/request/request-comp-doc/tasks/verify-compliance-return';
+        type = 'DOCUMENTACION_COMPLEMENTARIA';
+        subtype = 'Registro_documentacion';
+        ssubtype = 'TURNAR_SOLICITUD_DEVOLUCION';
+        break;
+      case 'verify-compliance-return':
         title = `Aprobar Devolución, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
         next = 'DAprobarDevolucion'
-      }
-      if (process == 'DAprobarDevolucion') {
+        url = 'pages/request/request-comp-doc/tasks/approve-return';
+        break;
+      case 'approve-return':
         finish = true;
-      }
-    } else if (affair == 33) {
-      if (process == 'BSRegistroSolicitudes' || process == 'register-request') {
+        break;
+
+      /** CASOS DE BIENES SIMILARES */
+      case 'register-request-similar-goods':
         title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV `;
-        next = 'BSNotificarTransferente'
-      }
-      if (process == 'BSNotificarTransferente') {
+        next = 'BSNotificarTransferente';
+        url = 'pages/request/request-comp-doc/tasks/notify-transfer-similar-goods';
+        type = 'DOCUMENTACION_COMPLEMENTARIA';
+        subtype = 'Registro_documentacion';
+        ssubtype = 'TURNAR_SOLICITUD_DEVOLUCION';
+        break;
+      case 'notify-transfer-similar-goods':
         title = `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
         next = 'BSVisitaOcular'
-      }
-      if (process == 'BSVisitaOcular') {
+        url = 'pages/request/request-comp-doc/tasks/eye-visit-similar-goods';
+        break;
+      case 'eye-visit-similar-goods':
         title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
         next = 'BSValidarVisitaOcular'
-      }
-      if (process == 'BSValidarVisitaOcular') {
-        finish = true;
-      }
-    } else if (affair == 40) {
-      if (process == 'RERegistroSolicitudes' || process == 'register-request') {
+        url = 'pages/request/request-comp-doc/tasks/validate-eye-visit-similar-goods';
+        break;
+      case 'validate-eye-visit-similar-goods':
+        title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
+        next = 'BSValidarVisitaOcular'
+        url = 'pages/request/request-comp-doc/tasks/validate-opinion-similar-goods';
+        break;
+      case 'validate-opinion-similar-goods':
+        break;
+
+      /** CASOS RESARCIMIENTO ESPECIE */
+      case 'register-request-compensation':
         title = `Revisión de Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA.`;
         next = 'RERevisionLineamientos';
-      }
-      if (process == 'RERevisionLineamientos') {
+        url = 'pages/request/request-comp-doc/tasks/review-guidelines-compensation';
+        type = 'DOCUMENTACION_COMPLEMENTARIA';
+        subtype = 'Registro_documentacion';
+        ssubtype = 'TURNAR_RESARCIMIENTO_ESPECIE';
+        break;
+      case 'review-guidelines-compensation':
         title = `Generar Resultado de Análisis Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
         next = 'REGenerarResultadoAnalisis';
-      }
-      if (process == 'REGenerarResultadoAnalisis') {
+        url = 'pages/request/request-comp-doc/tasks/analysis-result-compensation';
+        break;
+      case 'analysis-result-compensation':
+        title = `Generar Resultado de Análisis Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
+        next = 'REGenerarResultadoAnalisis';
+        url = 'pages/request/request-comp-doc/tasks/validate-opinion-compensation';
+        break;
+      case 'validate-opinion-compensation':
         title = `Validar Dictamen Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
         next = 'BSValidarDictamen';
-      }
-      if (process == 'BSValidarDictamen') {
-        finish = true;
-      }
-    } else if (affair == 41) {
-      if (process == 'IBRegistroSolicitudes' || process == 'register-request') {
+        url = 'pages/request/request-comp-doc/tasks/notification-taxpayer-compensation';
+        break;
+      case 'notification-taxpayer-compensation':
+        break;
+
+      /** CASOS INFORMACION DE BIENES */
+      case 'register-request-compensation':
         title = `Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud: ${this.requestInfo.id}`;
         next = 'IBGenerarSolicitudInformacion';
-      }
-      if (process == 'IBGenerarSolicitudInformacion') {
+        url = 'pages/request/request-comp-doc/tasks/review-guidelines-compensation';
+        type = 'DOCUMENTACION_COMPLEMENTARIA';
+        subtype = 'Registro_documentacion';
+        ssubtype = 'TURNAR_RESARCIMIENTO_ESPECIE';
+        break;
+      case 'review-guidelines-compensation':
         title = `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${this.requestInfo.id}`;
         next = 'IBRevisionOficioRespuesta';
-      }
-      if (process == 'IBRevisionOficioRespuesta') {
-        finish = true;
-      }
+        url = 'pages/request/request-comp-doc/tasks/analysis-result-compensation';
+        break;
+      case 'analysis-result-compensation':
+
+        break;
+
+    }
+
+    if (reject) {
+      ssubtype = 'REJECT';
     }
 
     return {
