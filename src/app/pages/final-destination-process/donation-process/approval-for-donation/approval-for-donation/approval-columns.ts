@@ -6,7 +6,7 @@ export const APPROVAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  captureDate: {
+  captureDate_: {
     title: 'Fecha Captura',
     type: 'number',
     sort: false,
@@ -16,6 +16,9 @@ export const APPROVAL_COLUMNS = {
     },
     valuePrepareFunction: (text: string) => {
       return `${text ? text.split('-').reverse().join('/') : ''}`;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   elaborated: {

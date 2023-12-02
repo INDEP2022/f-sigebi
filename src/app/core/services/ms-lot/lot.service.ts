@@ -499,4 +499,8 @@ export class LotService extends HttpService {
   pupEntLote(body: any) {
     return this.post(LotEndpoints.pupRemiEntLote, body);
   }
+
+  getEatParametersForLotByFilter(params: HttpParams) {
+    return this.get('eat-parameters-for-lot', params);
+  }
 }

@@ -97,9 +97,7 @@ export class DonationService
       params
     );
   }
-  getQuantityEventComDonationDetail(
-    id: string
-  ) {
+  getQuantityEventComDonationDetail(id: string) {
     return this.get(DonationEndPoint.QuantityProceddingEventComDon + `/${id}`);
   }
 
@@ -202,5 +200,17 @@ export class DonationService
   }
   deleteApproveDonation(data: any) {
     return this.delete(DonationEndPoint.ApproveDonation, data);
+  }
+  getEventComDonationExcelExport(params: any) {
+    return this.get(DonationEndPoint.EventComDonationExcelExport, params);
+  }
+
+  getEventComDonationDetail_(params?: ListParams) {
+    return this.get(
+      //chm --> comment --> DonationEndPoint.DetailEventComDon,
+      DonationEndPoint.DetailEventComDon,
+      //DonationEndPoint.DetailEventComDon,
+      params
+    );
   }
 }

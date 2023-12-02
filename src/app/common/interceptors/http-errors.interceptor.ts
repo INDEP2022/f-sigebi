@@ -186,13 +186,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
         status: statusCode,
         url: response.url,
       });
-      console.log(
-        response.body?.message
-          ? Array.isArray(response.body?.message)
-            ? response.body?.message[0]
-            : response.body?.message
-          : ''
-      );
+
       this.handleError(error);
       throw error;
     }

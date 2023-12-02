@@ -11,6 +11,11 @@ export interface IGoodOrderEntry {
   programmingDeliveryId?: number;
   id?: number;
   origin?: string;
+  description?: string;
+  unit?: string;
+  statusGoodObservations?: string;
+  goodStatus?: string;
   samplingGoodId?: number;
   programmingDeliveryGoodId?: number;
+  quanity?: number;
 }
