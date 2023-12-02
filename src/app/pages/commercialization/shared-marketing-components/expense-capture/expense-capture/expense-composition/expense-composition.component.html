@@ -164,7 +164,7 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showAdd"
+              [disabled]="!showAdd || changeStatusFilter.length === 0"
               (click)="modifyEstatus()">
               Modificar Estatus
             </button>

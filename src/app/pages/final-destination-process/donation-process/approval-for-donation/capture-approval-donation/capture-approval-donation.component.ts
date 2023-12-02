@@ -280,6 +280,7 @@ export class CaptureApprovalDonationComponent
     this.initForm();
     //SETEA INICIAL RB_REGLAS
     //VERIFICA SI HAY DATOS DEL RASTREADOR
+    this.initForm();
     this.globalVarService
       .getGlobalVars$()
       .pipe(takeUntil(this.$unSubscribe))

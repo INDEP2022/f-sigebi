@@ -13,6 +13,7 @@ import {
 import { IRequestEventRelated } from 'src/app/core/models/requests/request-event-related.model';
 import { EventRelatedService } from 'src/app/core/services/ms-event-rel/event-rel.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ComerClientService } from 'src/app/core/services/ms-prepareevent/comer-clients.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -104,7 +105,8 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private comerEventosService: ComerEventosService,
     private eventRelatedService: EventRelatedService,
-    private comerClientService: ComerClientService
+    private comerClientService: ComerClientService,
+    private comerTpEventosService: ComerTpEventosService
   ) {
     super();
 
@@ -141,6 +143,8 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     this.filter();
   }
 
+  descriptionTypeEvent: string = '';
+
   getEvents() {
     this.relatedEventsDataLocal.reset();
 
@@ -167,27 +171,57 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           console.log('Response DEL SERVICIO: ', response.data);
-          let arrEvents: any[] = [];
-          if (response.data) {
-            response.data.forEach((item: any) => {
-              // console.log("item: ", item);
-              let event: any = {
-                id: item.id,
-                process: item.processKey,
-                status: item.statusVtaId,
-                type: item.tpsolavalId,
-                direction: item.address,
-              };
-              // console.log('event: ', event);
-              arrEvents.push(event);
-            });
-          }
 
-          this.loading = false;
-          // this.eventsData = arrEvents; //response.data;
-          this.eventItems = new DefaultSelect(arrEvents, response.count);
-          this.selectEvent();
-          //this.totalItems = response.count;
+          //Traer la descripción del tipo de Evento
+          this.comerTpEventosService
+            .getByIdComerTEvents(response.data[0].eventTpId)
+            .subscribe({
+              next: resp => {
+                console.log(
+                  'Descripción del Tipo de Evento: ',
+                  resp.descReceipt
+                );
+                this.descriptionTypeEvent = resp.descReceipt;
+              },
+              error: error => {
+                console.log(
+                  'Error al obtener la Descripción del Tipo de Evento: ',
+                  error
+                );
+                this.descriptionTypeEvent = 'Sin descripción';
+                console.log(
+                  'Descripción del Tipo de Evento: ',
+                  this.descriptionTypeEvent
+                );
+              },
+            });
+
+          setTimeout(() => {
+            let arrEvents: any[] = [];
+            if (response.data) {
+              response.data.forEach((item: any) => {
+                // console.log("item: ", item);
+                console.log('Id Tipo Evento: ', item.eventTpId);
+
+                let event: any = {
+                  id: item.id,
+                  process: item.processKey,
+                  status: item.statusVtaId,
+                  type: this.descriptionTypeEvent,
+                  direction: item.address,
+                };
+
+                console.log('event let Evento: ', event);
+                arrEvents.push(event);
+              });
+            }
+
+            this.loading = false;
+            // this.eventsData = arrEvents; //response.data;
+            this.eventItems = new DefaultSelect(arrEvents, response.count);
+            this.selectEvent();
+            //this.totalItems = response.count;
+          }, 1500);
         },
         error: () => (
           (this.loading = false),

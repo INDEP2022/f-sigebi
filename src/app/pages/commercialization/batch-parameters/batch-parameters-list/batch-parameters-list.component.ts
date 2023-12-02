@@ -158,7 +158,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       this.form.controls['garantia'].value
     );
 
-    this.serviceLot.getAllComerLotsByFilter(params).subscribe({
+    this.serviceLot.getEatParametersForLotByFilter(params).subscribe({
       next: response => {
         this.lotServiceArray = response.data;
         this.preValidatedSaveAll();
@@ -233,6 +233,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     let count: number = 0;
     if (this.lotServiceArray != null) {
       for (const i of this.lotServiceArray) {
+        console.log('Lot Array', this.lotServiceArray);
         let params: HttpParams = new HttpParams();
         params = params.append('filter.idLot', i.idLot);
 
@@ -243,7 +244,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
               object.idEvent = i?.idEvent;
               object.idLot = i.idLot;
               object.publicLot = i.lotPublic;
-              object.specialGuarantee = i.priceGuarantee;
+              object.garantiaespecial = i.priceGuarantee;
               object.nbOrigin = '';
               this.putLotParams(object);
               count++;

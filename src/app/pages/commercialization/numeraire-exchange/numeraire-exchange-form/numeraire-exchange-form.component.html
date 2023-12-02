@@ -619,15 +619,22 @@
             <div class="col-sm-6 col-md-4 d-flex justify-content-center">
               <div>
                 <div class="col-12">
-                  <input formControlName="checkMovementBank" type="checkbox" />
-                  Genera Mov. Bancarios
+                  <!-- <input formControlName="checkMovementBank" type="checkbox" />
+                  Genera Mov. Bancarios -->
+                  <form-check label="Genera Mov. Bancarios" for="checkGood">
+                    <input
+                      id="checkGood"
+                      type="checkbox"
+                      formControlName="checkMovementBank"
+                      [readOnly]="true" />
+                  </form-check>
                 </div>
                 <div class="col-12">
                   <button
                     [disabled]="loading"
                     class="btn btn-primary active btn-sm"
                     (click)="saveInServer()">
-                    Cambiar a numerario
+                    Cambiar a Numerario
                   </button>
                 </div>
               </div>
