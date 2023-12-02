@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output,
   ViewChild,
@@ -41,7 +42,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   quillInstance: any;
 
   status: string = 'Nuevo';
-  edit: boolean = true;
 
   form: FormGroup = new FormGroup({});
   model: any;
@@ -49,7 +49,8 @@ export class CreateReportComponent extends BasePage implements OnInit {
   isSigned: boolean = false; //VALIDAR
   isSignedReady: boolean = false;
 
-  signed: boolean = true; //VALIDAR
+  @Input() signed: boolean = true; // default value
+  edit: boolean = false;
 
   @Output() refresh = new EventEmitter<true>();
 
