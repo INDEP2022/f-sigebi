@@ -81,7 +81,7 @@ export abstract class CompDocTasksComponent extends BasePage {
     }
   }
 
-  mapTask(process: string, affair?: number) {
+  mapTask(process: string, affair?: number, contributor: string = '') {
     console.log('affair', affair);
     this.disableTabs();
     switch (process) {
@@ -361,7 +361,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'verify-compliance-return':
-        this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
+        this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
         this.selectGoods = true;
@@ -378,7 +378,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'approve-return':
-        this.title = `Aprobar Devolución, No. Solicitud ${this.requestInfo.id}, Contribuyente, PAMA`;
+        this.title = `Aprobar Devolución, No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
@@ -422,7 +422,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
 
       case 'notify-transfer-goods':
-        this.title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV `;
+        this.title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
@@ -445,7 +445,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'eye-visit-goods':
-        this.title = `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
+        this.title = `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
@@ -468,7 +468,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'validate-eye-visit-goods':
-        this.title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
+        this.title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.expRequest = true;
         this.validateGoodForEyeVisit = true;
@@ -492,6 +492,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'validate-opinion-assets':
+        this.title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocForm = true;
         this.expRequest = true;
         this.resultVisits = true;
@@ -516,9 +517,9 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
-      /** CASOS DE RESARCIMIENTO */
-
+      //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
       case 'register-request-compensation':
+
         this.regDocForm = true;
         this.searchRequestSimGoods = true;
         this.selectGoods = true;
@@ -529,7 +530,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
 
       case 'response-office-compensation':
-        this.regDocView = true;
+
+        this.title = `Revisión de Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente  ${contributor}`,
+
+          this.regDocView = true;
         this.viewSelectedGoods = true;
         this.guidelines = true;
         this.expRequest = true;
@@ -555,7 +559,9 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
 
       case 'analysis-result-compensation':
-        this.regDocView = true;
+
+        this.title = `Generar Resultado de Análisis Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`,
+          this.regDocView = true;
         this.selectGoods = true;
         this.guidelines = true;
         this.expRequest = true;
@@ -569,8 +575,11 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
-      case 'validate-dictum-compensation':
-        this.regDocView = true;
+      case 'validate-opinion-compensation':
+
+        this.title = `Validar Dictamen Resarcimiento (EN ESPECIE), No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`,
+
+          this.regDocView = true;
         this.selectGoods = true;
         this.guidelines = true;
         this.dictumValidate = true; //AGREGAR DATOS DEL DICTAMEN (TAB)
@@ -584,8 +593,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.docRequest = true; //VERIFICAR
         break;
 
-      case 'notify-compensation':
-        this.regDocView = true;
+      case 'notification-taxpayer-compensation':
+
+        this.title = `Notificación, No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`,
+
+          this.regDocView = true;
         this.selectGoods = true;
         this.guidelines = true;
         this.dictumValidate = true; //AGREGAR DATOS DEL DICTAMEN (TAB)
@@ -603,7 +615,9 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       /** CASOS DE INFORMACION DE BIENES */
 
-      case 'register-request-information-goods':
+      case 'register-request-compensation':
+
+
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
@@ -626,7 +640,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = false;
         break;
 
-      case 'request-information-office':
+      case 'review-guidelines-compensation':
+
+        this.title = `Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud: ${this.requestInfo.id}`;
+
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
@@ -650,7 +667,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
         break;
-      case 'response-office':
+      case 'analysis-result-compensation':
+
+        this.title = `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${this.requestInfo.id}`;
+
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;

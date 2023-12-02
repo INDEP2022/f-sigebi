@@ -275,6 +275,7 @@ export class CaptureApprovalDonationComponent
     //AGREGADO POR GRIGORK
     //LLENA LOS DATOS DEL ACTA
     //VERIFICA SI HAY DATOS DEL RASTREADOR
+    this.initForm();
     this.globalVarService
       .getGlobalVars$()
       .pipe(takeUntil(this.$unSubscribe))
@@ -372,7 +373,6 @@ export class CaptureApprovalDonationComponent
           console.log('traigo parametros');
         }
       });
-    this.initForm();
   }
   addStatus() {
     /* this.data.load(this.goods); */
