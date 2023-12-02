@@ -8,6 +8,11 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  IBlkBie,
+  IQueryRegAdmin,
+} from 'src/app/core/interfaces/list-response.interface';
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -106,6 +111,10 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   edoPhase: string | number;
 
+  //DATOS TEMPORALES
+  selectGood: any = null;
+  selectGoodAct: any = null;
+
   constructor(
     private fb: FormBuilder,
     private serviceUser: UsersService,
@@ -121,7 +130,12 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   ) {
     super();
 
-    this.settings = { ...this.settings, actions: false };
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      rowClassFunction: (row: { data: { avalaible: any } }) =>
+        row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white',
+    };
     this.settings2 = { ...this.settings, actions: false };
     this.settings.columns = COLUMNSTABL1;
     this.settings2.columns = COLUMNSTABLE2;
@@ -152,6 +166,8 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         this.actForm.get('expedient').setValue(this.qParams.expedient);
         this.searchDataExp();
       });
+
+    this.navigateProceeding();
   }
 
   initializesForm() {
@@ -424,14 +440,55 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.universalFolio.setValue(data.universalFolio);
   }
 
+  //VALIDAR BIENES
+  validatedGood(e: any) {
+    const body: IBlkBie = {
+      status: e.status,
+      proceeedingsNumber: this.actForm.get('expedient').value,
+      goodNumber: e.goodId,
+      screen: 'FACTDESACTASDESTR',
+    };
+
+    return new Promise((resolve, reject) => {
+      this.serviceProcVal.blkBie(body).subscribe(
+        res => {
+          resolve({
+            avalaible: res.available == 'N' ? false : true,
+            bamparo: res.bamparo,
+            status: res.statusGood,
+          });
+        },
+        err => {
+          resolve({
+            avalaible: false,
+            bamparo: null,
+            status: '',
+          });
+        }
+      );
+    });
+  }
+
   //BUSCAR BIENES DE EXPEDIENTE
   searchGoodsByExp() {
     const paramsF = new FilterParams();
     paramsF.addFilter('fileNumber', this.expedient.value);
     this.goodService.getAllFilterDetail(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res);
-        this.dataGoods.load(res.data);
+      async res => {
+        const newData = await Promise.all(
+          res.data.map(async (e: any) => {
+            const resp = await this.validatedGood(e);
+            const jsonResp = JSON.parse(JSON.stringify(resp));
+
+            return {
+              ...e,
+              avalaible: jsonResp.avalaible,
+            };
+          })
+        );
+
+        console.log(newData);
+        this.dataGoods.load(newData);
         this.totalItems = res.count;
         this.loadingTable = false;
       },
@@ -504,6 +561,25 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   }
 
   //TRAER DELEGACION QUE ADMINISTRA
+  getAdmin(params?: any) {
+    const token = this.authService.decodeToken();
+    const body: IQueryRegAdmin = {
+      allGst: token.department == '0' ? 'TODO' : 'NADA',
+      delegatioGnu: parseInt(token.department),
+      recAdmGst: 'FILTRAR',
+    };
+    this.serviceProcVal.regDelAdmin(body).subscribe(
+      res => {
+        console.log(res);
+        this.adminData = new DefaultSelect(res.data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  //TRAER DELEGACION QUE ADMINISTRA
 
   //FUNCION DE AGREGAR CEROS AL FOLIO
   zeroAdd(number: number, lengthS: number) {
@@ -563,7 +639,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       '/' +
       (this.destructor.value != null ? this.destructor.value.delegation : '') +
       '/' +
-      (this.admin.value != null ? this.admin.value : '') +
+      (this.admin.value != null ? this.admin.value.delegation : '') +
       '/' +
       (this.folio.value != null ? this.zeroAdd(this.folio.value, 5) : '') +
       '/' +
@@ -580,6 +656,26 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.month.disable();
     this.year.setValue(format(new Date(), 'yy'));
     this.month.setValue(format(new Date(), 'MM'));
+    this.act.reset();
+    this.status.reset();
+    this.transferent.reset();
+    this.destructor.reset();
+    this.admin.reset();
+    this.folio.reset();
+    this.act2.reset();
+    this.elabDate.reset();
+    this.destroyDate.reset();
+    this.address.reset();
+    this.observation.reset();
+    this.responsible.reset();
+    this.witness.reset();
+    this.witness2.reset();
+    this.destroMethod.reset();
+    this.comptrollerWitness.reset();
+    this.universalFolio.reset();
+    this.dataGoodsAct = new LocalDataSource();
+    this.params2 = new BehaviorSubject<ListParams>(new ListParams());
+    this.totalItems2 = 0;
     this.weaponCveProceedingFn();
   }
 
@@ -603,5 +699,166 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.actForm.reset();
     this.resetTableDataGoods();
     this.resetTableDataGoodsAct();
+  }
+
+  //GUARDAR ACTA
+  saveProceeding() {
+    const body: IProccedingsDeliveryReception = {
+      keysProceedings: this.act2.value,
+      elaborationDate: this.elabDate.value,
+      datePhysicalReception: this.destroyDate.value,
+      address: this.address.value,
+      statusProceedings: 'ABIERTA',
+      elaborate: this.authService.decodeToken().preferred_username,
+      typeProceedings: 'DESTRUCCION',
+      numFile: this.expedient.value,
+      witness1: this.witness.value,
+      witness2: this.witness2.value,
+      destructionMethod: this.destroMethod.value,
+      numDelegation1: this.actForm.get('admin').value.delegationNumber2,
+      numDelegation2:
+        this.actForm.get('admin').value.delegationNumber2 == 11 ? '11' : null,
+      observations: this.actForm.get('observation').value,
+      captureDate: new Date().getTime(),
+      comptrollerWitness: this.comptrollerWitness.value,
+      idTypeProceedings: this.actForm.get('act').value,
+    };
+
+    this.serviceProcVal.postProceeding(body).subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  //NUEVA ACTA
+  newProceedingFn() {
+    this.newProceeding();
+    this.isNewProceeding = true;
+    this.assembleKeybool = true;
+  }
+
+  //NAVEGACION DE ACTAS
+  navigateProceeding() {
+    this.paramsActNavigate
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        if (this.navigateProceedings) {
+          this.loadingProcedure = true;
+          // this.dataGoodAct.load([]);
+          // this.clearInputs();
+          const paramsF = new FilterParams();
+          paramsF.page = params.page;
+          paramsF.limit = 1;
+          paramsF.addFilter('numFile', this.actForm.get('expedient').value);
+          paramsF.addFilter('typeProceedings', 'DESTRUCCION', SearchFilter.IN); //!Un in
+          this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+            res => {
+              console.log(res);
+              this.idProceeding = res.data[0].id.toString();
+              this.fillIncomeProceeding(res.data[0]);
+              this.loadingProcedure = false;
+              this.searchGoodsInDetailProceeding();
+            },
+            err => {
+              this.alert('warning', 'No se encontraron actas', '');
+              this.loadingProcedure = true;
+              this.loading = false;
+            }
+          );
+        }
+      });
+  }
+
+  //SELECCIONAR BIEN A AGREGAR
+  selectGoodFn(e: any) {
+    this.selectGood = e.data;
+    console.log(this.selectGood);
+  }
+
+  selectGoodActFn(e: any) {
+    this.selectGoodAct = e.data;
+    console.log(this.selectGoodAct);
+  }
+
+  //AGREGAR BIENES A ACTA
+  addGoods() {
+    if (this.selectGood == null) {
+      this.alert('warning', 'Seleccione primero el bien a asignar', '');
+      return;
+    }
+
+    if (this.actForm.get('act2').value) {
+      this.alert(
+        'warning',
+        'No existe un acta, en la cual asignar el bien. Capture primero el acta',
+        ''
+      );
+      return;
+    }
+
+    if (
+      ['CERRADO', 'CERRADA'].includes(
+        this.actForm.get('statusProceeding').value
+      )
+    ) {
+      this.alert(
+        'warning',
+        'El acta se encuentra cerrada',
+        'El acta ya esta cerrada, no puede realizar modificaciones a esta'
+      );
+      return;
+    }
+
+    if (this.selectGood.avalaible == false) {
+      this.alert(
+        'warning',
+        'Bien no disponible',
+        'El bien tiene un estatus invalido para ser asignado a alguna acta'
+      );
+      return;
+    }
+
+    //!FALTA AGREGAR LA CLAVE DE ACTA
+
+    //!AGREGAR BIENES A DETALLE_ACTA_ENT_RECEP
+  }
+
+  deleteGood() {
+    if (
+      ['CERRADO', 'CERRADA'].includes(
+        this.actForm.get('statusProceeding').value
+      )
+    ) {
+      this.alert(
+        'warning',
+        'El acta se encuentra cerrada',
+        'El acta ya esta cerrada, no puede realizar modificaciones a esta'
+      );
+      return;
+    }
+
+    if (this.actForm.get('act2').value) {
+      this.alert(
+        'warning',
+        'No existe un acta',
+        'Debe especificar/buscar el acta para despues eliminar el bien de esta'
+      );
+      return;
+    }
+
+    if (this.selectGoodAct == null) {
+      this.alert(
+        'warning',
+        'No hay bien seleccionado',
+        'Debe seleccionar un bien que forme parte del acta primero'
+      );
+      return;
+    }
+
+    //!ELIMINAR BIENES DE DETALLE_ACTA_ENT_RECEP
   }
 }
