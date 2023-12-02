@@ -33,19 +33,23 @@ class Document {
 export class CreateReportComponent extends BasePage implements OnInit {
   @ViewChild('tabsReport', { static: false }) tabsReport?: TabsetComponent;
 
+  //VALIDAR
+
   documents: Document[] = DOCS;
   document: Document = new Document();
   // we use this property to store the quill instance
   quillInstance: any;
 
   status: string = 'Nuevo';
-  edit: boolean = false;
+  edit: boolean = true;
 
   form: FormGroup = new FormGroup({});
   model: any;
 
-  isSigned: boolean = false;
+  isSigned: boolean = false; //VALIDAR
   isSignedReady: boolean = false;
+
+  signed: boolean = true; //VALIDAR
 
   @Output() refresh = new EventEmitter<true>();
 
@@ -81,7 +85,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   confirm() {
     console.log(this.form.value);
     console.log(this.document);
-    //this.edit ? this.update() : this.create();
+    this.edit ? this.update() : this.create(); //VALIDAR
   }
 
   close() {
@@ -105,6 +109,11 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   update() {
+    this.alert(
+      'error',
+      'Error',
+      'No se puede actualizar, por favor intente más tarde.'
+    );
     this.loading = true;
     this.handleSuccess();
     /*this.bankService.update(this.bank.bankCode, this.form.value).subscribe(
