@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SelectModalTableSharedComponent } from 'src/app/@standalone/shared-forms/select-modal-table-shared/select-modal-table-shared.component';
 import { NumeraireConversionAllotmentsComponent } from './numeraire-conversion-allotments/numeraire-conversion-allotments.component';
@@ -30,6 +31,7 @@ import { NumeraireConversionRoutingModule } from './numeraire-conversion-routing
     AccordionModule,
     TabsModule,
     SelectModalTableSharedComponent,
+    ModalModule.forChild(),
   ],
   exports: [
     NumeraireConversionAuctionsComponent,
