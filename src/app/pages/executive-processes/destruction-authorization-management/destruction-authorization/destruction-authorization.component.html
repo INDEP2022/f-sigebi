@@ -4,36 +4,25 @@
       <h5 class="title">
         GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
       </h5>
-      <div class="col-md-6 buttons">
-        <div>
-          <button
-            class="btn btn-primary btn-sm active m-1"
-            (click)="keyProceedingchange()">
-            Consultar Acta
-            <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-          <confirm-button
-            [disabled]="controls.statusProceedings.value == 'CERRADA'"
-            text="Guardar"
-            loadingText="Guardando"
-            [btnSmall]="true"
-            class="m-1"
-            type="button"
-            (confirm)="save()"></confirm-button>
-          <button
-            class="btn btn-danger btn-sm active mr-3"
-            (click)="queryProceeding()">
-            Limpiar <i class="fas fa-eraser"> </i>
-          </button>
-          <button class="btn btn-primary btn-sm active m-1" (click)="update()">
-            Actualizar
-            <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-        </div>
-      </div>
     </div>
   </div>
   <div body>
+    <div class="row mb-5">
+      <div class="col-md-4">
+        <button
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="keyProceedingchange()">
+          Buscar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button
+          class="btn btn-danger btn-sm active"
+          (click)="queryProceeding()">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
+    </div>
+    <hr />
     <form class="form-material" [formGroup]="proceedingForm">
       <div class="row">
         <form-field
@@ -44,7 +33,7 @@
             type="text"
             class="form-control"
             formControlName="id"
-            readonly />
+            [readonly]="controls.statusProceedings.value == 'CERRADA'" />
         </form-field>
 
         <form-field
@@ -53,6 +42,7 @@
           [control]="proceedingForm.get('keysProceedings')">
           <input
             type="text"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             [max-length]="60"
             class="form-control"
             formControlName="keysProceedings" />
@@ -64,6 +54,7 @@
           [control]="proceedingForm.get('affair')">
           <input
             type="text"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             [max-length]="70"
             class="form-control"
             formControlName="affair" />
@@ -91,6 +82,7 @@
           <input
             type="text"
             class="form-control"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             formControlName="elaborationDate"
             bsDatepicker
             [bsConfig]="{
@@ -104,6 +96,7 @@
           <input
             type="text"
             class="form-control"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             formControlName="datePhysicalReception"
             bsDatepicker
             [bsConfig]="{
@@ -118,6 +111,7 @@
             type="text"
             #closeDate
             class="form-control"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             formControlName="closeDate"
             bsDatepicker
             [bsConfig]="{
@@ -125,70 +119,36 @@
             }" />
         </form-field>
       </div>
-      <div class="row pt-4">
-        <form-field
-          class="col-md-9"
-          label="Observaciones"
-          [control]="proceedingForm.get('observations')">
-          <textarea
-            rows="3"
-            maxlength="1000"
-            class="form-control"
-            formControlName="observations"></textarea>
-        </form-field>
-        <div class="col-md-3">
+    </form>
+    <div class="row text-center mb-5">
+      <div class="col-md-12">
+        <div>
+          <confirm-button
+            [disabled]="controls.statusProceedings.value == 'CERRADA'"
+            text="Guardar"
+            loadingText="Guardando"
+            [btnSmall]="true"
+            class="mr-3"
+            type="button"
+            (confirm)="save()"></confirm-button>
+
+          <button class="btn btn-primary btn-sm active mr-3" (click)="update()">
+            Actualizar <i class="fas fa-sync-alt"> </i>
+          </button>
           <button
             (click)="closeProceeding()"
-            class="btn btn-primary btn-sm active"
-            *ngIf="controls.statusProceedings.value != 'CERRADA'">
-            Cerrar Acta <i class="fa fa-check" aria-hidden="true"></i>
-          </button>
-          <!--<button
-            class="btn btn-secondary btn-sm active"
-            *ngIf="controls.statusProceedings.value == 'CERRADA'">
-            Sacar bienes
-          </button>-->
-        </div>
-      </div>
-    </form>
-    <div class="row">
-      <div class="col d-flex justify-content-between">
-        <div>
-          <h5>Folio de Escaneo: {{ controls.universalFolio.value }}</h5>
-        </div>
-        <div>
-          <button
-            [disabled]="loadingReport"
-            (click)="scanRequest()"
-            type="button"
-            class="btn btn-primary active btn-sm">
-            {{ loadingReport ? 'Cargando' : 'Solicitud' }}
-            <i class="bx bx-printer bx-sm float-icon"></i>
-            <img
-              [style.width.px]="20"
-              *ngIf="loadingReport"
-              src="assets/images/loader-button.gif"
-              alt="loading" />
-          </button>
-        </div>
-        <div>
-          <button
-            type="button"
-            class="btn btn-primary active btn-sm"
-            (click)="scan()">
-            Escaneo <i class="bx bx-printer bx-sm float-icon"></i>
-          </button>
-        </div>
-        <div>
-          <button
-            type="button"
-            class="btn btn-primary active btn-sm"
-            (click)="printReport()">
-            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            class="btn btn-primary btn-sm active">
+            {{
+              controls.statusProceedings.value != 'CERRADA'
+                ? 'Cerrar Acta'
+                : 'Sacar bienes'
+            }}
           </button>
         </div>
       </div>
     </div>
+    <hr />
+
     <div class="row pt-5">
       <hr />
       <div class="col-md-6">
@@ -226,6 +186,82 @@
         </div>
       </div>
     </div>
+    <form class="form-material" [formGroup]="proceedingForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="proceedingForm.get('universalFolio')"
+            label="Folio de Escaneo">
+            <input
+              [disabled]="true"
+              type="number"
+              class="form-control"
+              min="1"
+              formControlName="universalFolio"
+              maxlength="15" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <button
+            type="button"
+            data-toggle="tooltip"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="scanRequest()"
+            title="Generar Folio de Escaneo y Solicitud">
+            <i class="bx bxs-file-find"></i>
+          </button>
+          <button
+            type="button"
+            data-toggle="tooltip"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="scan()"
+            title="Escanear">
+            <i class="bx bxs-file"></i>
+          </button>
+          <button
+            type="button"
+            data-toggle="tooltip"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="printReport()"
+            title="Imprimir">
+            <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <form-field
+          class="col-md-12"
+          label="Observaciones"
+          [control]="proceedingForm.get('observations')">
+          <textarea
+            rows="3"
+            maxlength="1000"
+            class="form-control"
+            formControlName="observations"></textarea>
+        </form-field>
+      </div>
+    </form>
+
+    <hr />
+    <div class="row">
+      <div class="col-md-12 table-responsive">
+        <div class="row">
+          <div [class]="loadingGoods ? 'table-loading' : ''">
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loadingGoods ? '0px' : '350px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings3"
+                [source]="goodPDS1"></ng2-smart-table>
+            </ng-scrollbar>
+            <app-pagination
+              [params]="params8"
+              [totalItems]="totalItems3"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
     <hr />
     <div class="row">
       <div class="col-md-12">
@@ -253,25 +289,9 @@
         </div>
       </div>
     </div>
+    <hr />
     <div class="row pt-5">
-      <div class="col-md-6 table-responsive">
-        <div class="row">
-          <div [class]="loadingGoods ? 'table-loading' : ''">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingGoods ? '0px' : '350px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings3"
-                [source]="goodPDS1"></ng2-smart-table>
-            </ng-scrollbar>
-            <app-pagination
-              [params]="params8"
-              [totalItems]="totalItems3"></app-pagination>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 table-responsive">
+      <div class="col-md-12 table-responsive">
         <div class="row">
           <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <!-- <div class="table-responsive"> -->

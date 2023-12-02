@@ -30,6 +30,7 @@
               <button
                 *ngIf="navigateProceedings"
                 id="expedient-number"
+                (click)="newProceedingFn()"
                 class="btn btn-info btn-sm active">
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
@@ -145,10 +146,10 @@
             </form-field>
             <form-field [control]="actForm.get('admin')" class="col">
               <ngx-select
-                [searchable]="false"
+                (fetchItems)="getAdmin($event)"
                 control="admin"
                 label="Administra"
-                bindLabel="records"
+                bindLabel="delegation"
                 [data]="adminData"
                 [form]="actForm"></ngx-select>
             </form-field>
@@ -213,6 +214,7 @@
               <input
                 bsDatepicker
                 [max-length]="10"
+                [maxDate]="actForm.get('elabDate').value"
                 class="form-control"
                 formControlName="destroyDate" />
             </form-field>
@@ -295,7 +297,10 @@
           </div>
           <div class="row mt-5 text-center">
             <div class="col">
-              <button type="button" class="btn btn-primary btn-sm active mr-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="saveProceeding()">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i>
               </button>
@@ -341,6 +346,7 @@
             class="col-md-12"
             [attr.class]="'table-responsive table-bordered '"
             [settings]="settings"
+            (rowSelect)="selectGoodFn($event)"
             [source]="dataGoods"></ng2-smart-table>
         </div>
         <app-pagination
@@ -365,6 +371,7 @@
                 <label for="">Agregar</label>
                 <button
                   type="button"
+                  (click)="addGoods()"
                   class="mx-2 btn btn-secondary btn-sm active">
                   <i class="fa fa-angle-down"></i>
                 </button>
@@ -384,6 +391,7 @@
           *ngIf="!loadingTable"
           [params]="params2"
           [pageSizeOptions]="[5, 10, 20]"
+          (rowSelect)="selectGoodActFn($event)"
           [limit]="limit2"
           [totalItems]="totalItems2"></app-pagination>
       </div>

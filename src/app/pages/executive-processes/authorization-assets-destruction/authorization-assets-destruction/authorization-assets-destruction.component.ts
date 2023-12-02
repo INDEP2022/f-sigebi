@@ -133,7 +133,7 @@ export class AuthorizationAssetsDestructionComponent
     this.form.get('criminalCase').disable();
     this.form.get('circumstantialRecord').disable();
     this.form.get('keyPenalty').disable();
-    this.form.get('noAuth').disable();
+    /* this.form.get('noAuth').disable(); */
     this.form.get('fromDate').disable();
     this.form.get('authNotice').disable();
 
