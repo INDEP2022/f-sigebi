@@ -142,6 +142,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   loadingExport: boolean = false;
+  delegationRegional: any = null;
   constructor(
     private fb: FormBuilder,
     private donationService: DonationService,
@@ -216,9 +217,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
               },
               noDelegation1: () => (searchFilter = SearchFilter.EQ),
-              elaborated: () => (searchFilter = SearchFilter.EQ),
-              estatusAct: () => (searchFilter = SearchFilter.EQ),
-              cveAct: () => (searchFilter = SearchFilter.ILIKE),
+              elaborated_: () => (searchFilter = SearchFilter.ILIKE),
+              estatusAct_: () => (searchFilter = SearchFilter.EQ),
+              cveAct_: () => (searchFilter = SearchFilter.ILIKE),
               closeDate: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
@@ -437,21 +438,21 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
     if (estatusAct) {
       this.params.getValue()['filter.estatusAct'] = `$ilike:${estatusAct}`;
-      // await this.forArrayFilters('eventId', estatusAct);
+      // await this.forArrayFilters('estatusAct_', estatusAct);
     } else {
       delete this.params.getValue()['filter.estatusAct'];
     }
 
     if (elaborated) {
       this.params.getValue()['filter.elaborated'] = `$ilike:${elaborated}`;
-      // await this.forArrayFilters('eventId', elaborated);
+      // await this.forArrayFilters('elaborated_', elaborated);
     } else {
       delete this.params.getValue()['filter.elaborated'];
     }
 
     if (cveAct) {
       this.params.getValue()['filter.cveAct'] = `$ilike:${cveAct}`;
-      // await this.forArrayFilters('cveAct', cveAct);
+      // await this.forArrayFilters('cveAct_', cveAct);
     } else {
       delete this.params.getValue()['filter.cveAct'];
     }
@@ -526,23 +527,40 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     // NoDelegation1 ? (this.params.getValue()['filter.noDelegation1'] = `$eq:${NoDelegation1}`) : delete this.params.getValue()['filter.NoDelegation1'];
     // estatusAct ? (this.params.getValue()['filter.estatusAct'] = `$eq:${estatusAct}`) : delete this.params.getValue()['filter.estatusAct'];
     // elaborated ? (this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`) : delete this.params.getValue()['filter.elaborated'];
-    const estatusAct_ = this.form.get('estatusAct').value
-      ? this.form.get('estatusAct').value
-      : null;
-    const cveAc_ = this.form.get('cveActa').value
-      ? this.form.get('cveActa').value
-      : '';
-    // const noDelegation1_ = this.form.get('noDelegation1').value ? this.form.get('noDelegation1').value.id: 0;
-    const elaborated_ = this.form.get('elaborated').value
-      ? this.form.get('elaborated').value
-      : 0;
+    const estatusAct_ = this.form.get('estatusAct').value;
+    const cveAct_ = this.form.get('cveActa').value;
+    const elaborated_ = this.form.get('elaborated').value;
 
     let params: any = {
       ...this.params.getValue(),
       ...this.columnFilter,
     };
-    // if(cveAc_ && params['filter.cveAct'])
-    //   return
+
+    if (params['filter.cveAct_']) {
+      if (cveAct_) {
+        return;
+      } else {
+        params['filter.cveAct'] = params['filter.cveAct_'];
+        delete params['filter.cveAct_'];
+      }
+    }
+
+    if (params['filter.elaborated_']) {
+      if (elaborated_) {
+        return;
+      } else {
+        params['filter.elaborated'] = params['filter.elaborated_'];
+        delete params['filter.elaborated_'];
+      }
+    }
+    if (params['filter.estatusAct_']) {
+      if (estatusAct_) {
+        return;
+      } else {
+        params['filter.estatusAct'] = params['filter.estatusAct_'];
+        delete params['filter.estatusAct_'];
+      }
+    }
 
     this.loading = true;
     if (params['filter.captureDate_']) {
@@ -557,7 +575,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         'yyyy-MM-dd'
       );
       params['filter.captureDate'] = `$eq:${fechaFormateada1}`;
-      delete this.params.getValue()['filter.captureDate_'];
+      delete params['filter.captureDate_'];
     }
 
     // EVENT_COM_DONACION
@@ -567,6 +585,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       next: resp => {
         let result = resp.data.map(item => {
           item['captureDate_'] = item.captureDate;
+          item['elaborated_'] = item.elaborated;
+          item['estatusAct_'] = item.estatusAct;
+          item['cveAct_'] = item.cveAct;
+          item['noDelegation1_'] = item.noDelegation1;
         });
         Promise.all(result).then(response => {
           this.data.load(resp.data);
@@ -693,7 +715,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
     this.delegationService.getAll(params.getParams()).subscribe({
       next: (data: any) => {
-        this.form.get('noDelegation1').setValue(data.data[0]);
+        this.delegationRegional = data.data[0];
+
+        this.form.get('noDelegation1').setValue(this.delegationRegional);
       },
       error: () => {
         this.getDelegations(new ListParams());
@@ -712,15 +736,71 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   getEventComDonationExcel(body: any) {
     this.loadingExport = true;
+    const estatusAct_ = this.form.get('estatusAct').value;
+    const cveAct_ = this.form.get('cveActa').value;
+    const elaborated_ = this.form.get('elaborated').value;
     let params: any = {
       ...this.params.getValue(),
       ...this.columnFilter,
     };
+    if (params['filter.cveAct_']) {
+      if (cveAct_) {
+        params['filter.cveAct'] = `$ilike:${cveAct_}`;
+        delete params['filter.cveAct_'];
+      } else {
+        params['filter.cveAct'] = params['filter.cveAct_'];
+        delete params['filter.cveAct_'];
+      }
+    }
+
+    if (params['filter.elaborated_']) {
+      if (elaborated_) {
+        params['filter.elaborated'] = `$ilike:${elaborated_}`;
+        delete params['filter.elaborated_'];
+      } else {
+        params['filter.elaborated'] = params['filter.elaborated_'];
+        delete params['filter.elaborated_'];
+      }
+    }
+    if (params['filter.estatusAct_']) {
+      if (estatusAct_) {
+        params['filter.estatusAct'] = `$ilike:${estatusAct_}`;
+        delete params['filter.estatusAct_'];
+      } else {
+        let res = params['filter.estatusAct_'].split(':');
+        params['filter.estatusAct'] = `$ilike:${res[1].toUpperCase()}`;
+        delete params['filter.estatusAct_'];
+      }
+    }
+
     if (params['filter.elaborated']) {
       let res = params['filter.elaborated'].split(':');
       params['filter.elaborated'] = `$ilike:${res[1].toUpperCase()}`;
+      //  delete params['filter.elaborated_'];
     }
+    // if(params['filter.cveAct_']){
+    //   params['filter.cveAct'] = params['filter.cveAct_']
+    //   delete params['filter.cveAct_'];
+    // }
+    // if(params['filter.estatusAct_']){
+    //   params['filter.estatusAct'] = params['filter.estatusAct_']
+    //   delete params['filter.estatusAct_'];
+    // }
 
+    if (params['filter.captureDate_']) {
+      const fechas = params['filter.captureDate_'];
+      var fecha1 = new Date(fechas);
+
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+      var fechaFormateada1 = this.datePipe.transform(
+        params['filter.captureDate_'],
+        'yyyy-MM-dd'
+      );
+      params['filter.captureDate'] = `$eq:${fechaFormateada1}`;
+      delete params['filter.captureDate_'];
+    }
     params.page = 1;
     params.limit = this.totalItems3;
     this.donationService.getEventComDonationExcelExport(params).subscribe({
@@ -899,8 +979,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.data.refresh();
 
     if (this.valUser) {
-      const valDele = this.authService.decodeToken().department;
-      this.getnoDelegation1(valDele);
+      // const valDele = this.authService.decodeToken().department;
+      // this.getnoDelegation1(valDele);
+      this.form.get('noDelegation1').setValue(this.delegationRegional);
       this.form.get('noDelegation1').disable();
     } else {
       this.getDelegations(new ListParams());

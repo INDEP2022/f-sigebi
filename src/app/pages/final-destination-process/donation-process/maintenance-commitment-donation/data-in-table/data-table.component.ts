@@ -18,6 +18,7 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MODAL_CONFIG } from '../../../../../common/constants/modal-config';
 import { MaintenanceCommitmentDonationModalComponent } from '../maintenance-commitment-donation-modal/maintenance-commitment-donation-modal.component';
+import { CheckboxElementComponent_ } from './CheckboxDisabled';
 import { COLUMNS_DATA_TABLE } from './columns-data-table';
 import { COLUMNS_OTHER_TRANS } from './columns-other-transf';
 import { COLUMNS_USER_PERMISSIONS } from './columns-user-permissions';
@@ -82,7 +83,110 @@ export class DataTableComponent extends BasePage implements OnInit {
     if (this.type == 1 || this.type == 2) {
       //comercio exterior
       this.filterComerAndDeli();
-      this.settings.columns = COLUMNS_DATA_TABLE;
+      this.settings.columns = {
+        labelId: {
+          title: 'Etiqueta',
+          valuePrepareFunction: (value: any) => {
+            return value != null ? value.description : '';
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            return true;
+          },
+          type: 'string',
+          sort: false,
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+        desStatus: {
+          title: 'Des. Estatus',
+          type: 'string',
+          sort: false,
+        },
+        transfereeId: {
+          title: 'No. Trans.',
+          // valuePrepareFunction: (value: ITransferee) => {
+          //   return value != null ? value.transferentId : '';
+          // },
+          type: 'number',
+          sort: false,
+        },
+        desTrans: {
+          title: 'Des. Trans.',
+          valuePrepareFunction: (value: any) => {
+            return value != null ? value : '';
+          },
+          type: 'string',
+          sort: false,
+        },
+        clasifId: {
+          title: 'No. Clasif.',
+          type: 'number',
+          sort: false,
+        },
+        desClasif: {
+          title: 'Des. Clasif.',
+          type: 'string',
+          sort: false,
+        },
+        unit: {
+          title: 'Unidad',
+          type: 'string',
+          sort: false,
+        },
+        yes: {
+          title: 'S',
+          type: 'custom',
+          renderComponent: CheckboxElementComponent_,
+          // onComponentInitFunction2: (instance: any) => {
+
+          // },
+          onComponentInitFunction(instance: any) {
+            if (instance?.toggle) {
+              instance.toggle.subscribe((data: any) => {
+                data.row.to = data.toggle;
+              });
+            }
+          },
+          filter: {
+            type: 'checkbox',
+            config: {
+              true: true,
+              false: false,
+              resetText: ' ',
+            },
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            return true;
+          },
+          sort: false,
+        },
+        not: {
+          title: 'N',
+          type: 'custom',
+          // filter: false,
+          renderComponent: CheckboxElementComponent_,
+          onComponentInitFunction(instance: any) {
+            instance.toggle.subscribe((data: any) => {
+              data.row.to = data.toggle;
+            });
+          },
+          filter: {
+            type: 'checkbox',
+            config: {
+              true: true,
+              false: false,
+              resetText: ' ',
+            },
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            return true;
+          },
+          sort: false,
+        },
+      };
     } else if (this.type == 3) {
       //Otros Trans
       this.filterOtrosTrans();
