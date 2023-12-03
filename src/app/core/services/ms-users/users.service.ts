@@ -262,4 +262,8 @@ export class UsersService extends HttpService {
   consultationQuery2(params: ListParams) {
     return this.get<IListResponse>(UserEndpoints.consultationQuery2, params);
   }
+  getOffice(proceso: number, folio: number) {
+    const route = `${UserEndpoints.getOffice}/${proceso}/${folio}`;
+    return this.get<IListResponse>(route);
+  }
 }

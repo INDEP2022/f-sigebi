@@ -56,6 +56,9 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   sendFi: boolean = false;
   viewOf: boolean = false;
   lsbConCopiaList: any[] = [];
+  lsbConCopiaListSelect = new DefaultSelect();
+  usuariocopia: any;
+  usuariocopiaDelete: any;
 
   constructor(
     private fb: FormBuilder,
@@ -236,6 +239,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     }
     let city: any = await this.getCities(new ListParams());
     this.cityList = new DefaultSelect(city.data, city.count);
+    console.log(this.m_comer);
     if (this.m_comer.cve_oficio != null) {
       this.existe = 'SI';
       this.oficio = this.m_comer.cve_oficio.toString();
@@ -270,9 +274,11 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       this.lsbConCopiaList = [];
       let usuOfico: any = await this.getUserOt(this.m_comer.id_oficio);
       console.log(usuOfico);
-      usuOfico.forEach((element: any) => {
-        this.lsbConCopiaList.push(element.usuario + '-' + element.nombre);
-      });
+      if (usuOfico != 0) {
+        usuOfico.forEach((element: any) => {
+          this.lsbConCopiaList.push(element.usuario + '-' + element.nombre);
+        });
+      }
     }
     this.loader.load = false;
   }
@@ -303,8 +309,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       console.log(data);
       this.officeManagementService.postOfficeAvaluo(data).subscribe({
         next: resp => {
-          console.log(resp);
-          res(resp);
+          console.log(resp.data);
+          res(resp.data[0]);
         },
         error: eror => {
           this.loader.load = false;
@@ -371,17 +377,16 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   async getFolio(process: number, folio: number) {
     return new Promise((res, rej) => {
-      //falta endpoit del procedimiento de FA_CONSECUTIVO_OFICIOS
-      // this.cityService.getAllCitys(params).subscribe({
-      //   next: resp => {
-      //     console.log(resp);
-      res('');
-      //   },
-      //   error: eror => {
-      //     this.loader.load = false;
-      //     res(eror);
-      //   },
-      // });
+      this.usersService.getOffice(process, folio).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(resp);
+        },
+        error: eror => {
+          this.loader.load = false;
+          res(eror);
+        },
+      });
     });
   }
   async getText(acta: string) {
@@ -407,7 +412,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         },
         error: eror => {
           this.loader.load = false;
-          res(eror);
+          res(0);
         },
       });
     });
@@ -423,6 +428,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       .postGetListGood(data, this.params.getValue())
       .subscribe({
         next: resp => {
+          console.log(resp);
           this.data.load(resp.data);
           this.data.refresh();
           this.totalItems = resp.count;
@@ -482,21 +488,42 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       },
     });
   }
+  onChangeUsers(data: any) {
+    this.usuariocopia = {};
+    console.log(data);
+    this.usuariocopia = data;
+  }
+  onChangeUsersCopia(data: any) {
+    this.usuariocopiaDelete = {};
+    console.log(data);
+    this.usuariocopiaDelete = data;
+  }
   getAddUser() {
     if (this.form.controls['user'].value) {
-      let usuariocopia: string = '';
-      let verificauser: boolean = false;
-      if (this.lsbConCopiaList.length > 0) {
-        for (const value of this.lsbConCopiaList) {
-          usuariocopia = value.splint('-').toString();
-          if (usuariocopia == this.form.controls['user'].value) {
-            verificauser = true;
-          }
-        }
-        if (verificauser != true) {
-          this.lsbConCopiaList.push(this.form.controls['user'].value);
-        }
-      }
+      this.lsbConCopiaListSelect = new DefaultSelect([], 0, true);
+      this.lsbConCopiaList.push(this.usuariocopia);
+      console.log(this.lsbConCopiaList);
+      this.lsbConCopiaListSelect = new DefaultSelect(
+        this.lsbConCopiaList,
+        this.lsbConCopiaList.length
+      );
+      console.log(this.lsbConCopiaListSelect);
+
+      // let usuariocopia: string = '';
+      // let verificauser: boolean = false;
+      // // if (this.lsbConCopiaList.length > 0) {
+      //   for (const value of this.lsbConCopiaList) {
+      //     console.log(value);
+      //     usuariocopia = value.splint('-').toString();
+      //     if (usuariocopia == this.form.controls['user'].value) {
+      //       verificauser = true;
+      //     }
+      //   }
+      //   if (verificauser != true) {
+      //     this.lsbConCopiaList.push(this.form.controls['user'].value);
+      //     console.log(this.lsbConCopiaList);
+      //   }
+      // }
     } else {
       this.alert('warning', 'Debe Seleccionar un Usuario', '');
     }
@@ -504,12 +531,28 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   getDeleteUser() {
     try {
       if (this.form.controls['lsbConCopiaCCP'].value != null) {
-        if (this.idOficio != null) {
-          //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
-          //eliminar lsbCopia
-        } else {
-          //eliminar lsbCopia
+        let objetoAEliminar = this.usuariocopiaDelete;
+
+        // Encontrar la posición del objeto en el arreglo
+        let index = this.lsbConCopiaList.indexOf(objetoAEliminar);
+
+        // Verificar si se encontró el objeto en el arreglo
+        if (index !== -1) {
+          this.lsbConCopiaListSelect = new DefaultSelect([], 0, true);
+          // Eliminar el objeto utilizando splice
+          this.lsbConCopiaList.splice(index, 1);
+          this.lsbConCopiaListSelect = new DefaultSelect(
+            this.lsbConCopiaList,
+            this.lsbConCopiaList.length
+          );
+          this.form.controls['lsbConCopiaCCP'].reset();
         }
+        // if (this.idOficio != null) {
+        //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
+        //eliminar lsbCopia
+        // } else {
+        //eliminar lsbCopia
+        // }
       }
     } catch (error) {}
   }
@@ -694,6 +737,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     this.form.controls['paragraph3'].disable();
   }
   loadControls() {
+    console.log(this.m_comer);
     this.form.controls['cveService'].setValue(this.m_comer.cve_oficio);
     this.form.controls['sender'].setValue(this.m_comer.remitente);
     this.form.controls['addressee'].setValue(this.m_comer.destinatario);
