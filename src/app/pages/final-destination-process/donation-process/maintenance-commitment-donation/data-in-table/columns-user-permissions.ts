@@ -9,7 +9,7 @@ export const COLUMNS_USER_PERMISSIONS = {
     title: 'Nombre',
     type: 'string',
     sort: false,
-    width: '80%',
+    width: '68%',
   },
   // yes: {
   //   title: 'S',
