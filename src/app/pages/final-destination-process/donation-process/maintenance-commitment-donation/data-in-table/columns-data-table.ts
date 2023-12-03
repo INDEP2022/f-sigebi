@@ -1,4 +1,5 @@
 import { CheckboxElementComponent_ } from './CheckboxDisabled';
+
 export const COLUMNS_DATA_TABLE = {
   labelId: {
     title: 'Etiqueta',
