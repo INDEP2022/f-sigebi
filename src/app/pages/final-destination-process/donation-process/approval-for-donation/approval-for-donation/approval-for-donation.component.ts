@@ -301,7 +301,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       elaborated: [null, []],
     });
 
-    this.getEventComDonation(new ListParams());
+    // this.getEventComDonation(new ListParams());
   }
 
   onSubmit() {}
@@ -399,6 +399,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   getEventComDonation(params: ListParams) {
     // params['sortBy'] = `captureDate:DESC`;
+    if (this.valDele != 0)
+      params['filter.noDelegation1'] = `$eq:${this.valDele}`;
     if (params.text.length > 0)
       params['filter.cveAct'] = `$ilike:${params.text}`;
     params.text = '';
@@ -928,12 +930,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       return;
     } else if (level == 1) {
       this.getDelegations(new ListParams());
+      this.getEventComDonation(new ListParams());
       this.valUser = false;
     } else if (level == 2) {
       this.valUser = true;
       const valDele = this.authService.decodeToken().department;
       this.valDele = valDele;
       this.getnoDelegation1(valDele);
+      this.getEventComDonation(new ListParams());
       this.form.get('noDelegation1').disable();
     } else {
       this.valUser = false;
@@ -941,6 +945,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         .get('elaborated')
         .setValue(this.authService.decodeToken().username);
       this.getDelegations(new ListParams());
+      this.getEventComDonation(new ListParams());
     }
   }
   disabledField() {
