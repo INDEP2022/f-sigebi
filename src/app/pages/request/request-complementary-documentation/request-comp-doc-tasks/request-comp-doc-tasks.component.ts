@@ -17,17 +17,17 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
+import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
-import { CompDocTasksComponent } from './comp-doc-task.component';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { TaskService } from 'src/app/core/services/ms-task/task.service';
-import Swal from 'sweetalert2';
 import { getConfigAffair } from './catalog-affair';
+import { CompDocTasksComponent } from './comp-doc-task.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -36,7 +36,8 @@ import { getConfigAffair } from './catalog-affair';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override sendEmail: boolean;
   protected override destinyJob: boolean;
   protected override verifyCompliance: boolean;
@@ -90,12 +91,14 @@ export class RequestCompDocTasksComponent
   affair: number = null;
   taskId: number = 0;
 
+  signedReport: boolean = false;
+
   /**
    * email del usuairo
    */
   emailForm: FormGroup = new FormGroup({});
 
-  loadingTurn = false
+  loadingTurn = false;
 
   /* INJECTIONS
   ============== */
@@ -193,17 +196,23 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
-  openReport(context?: Partial<CreateReportComponent>): void {
+  openReport(): void {
+    const initialState: Partial<CreateReportComponent> = {
+      signed: this.signedReport,
+    };
+
     const modalRef = this.modalService.show(CreateReportComponent, {
-      initialState: context,
+      initialState: initialState,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+
     modalRef.content.refresh.subscribe(next => {
       if (next) {
-      } //this.getCities();
+        // Perform actions if necessary, e.g., this.getCities();
+      }
     });
   }
 
@@ -215,11 +224,9 @@ export class RequestCompDocTasksComponent
       'Turnar'
     ).then(async question => {
       if (question.isConfirmed) {
-
         this.generateTask();
 
         if (true) return;
-
 
         switch (this.process) {
           case 'register-request-return':
@@ -228,21 +235,18 @@ export class RequestCompDocTasksComponent
             return;
         }
 
-
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else if (this.process == 'register-request') {
-
           let val = this.affair.toString();
           switch (val) {
-            case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+            case '10': //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
               this.generateTask();
               break;
             default:
               this.setEmailNotificationTask();
               break;
           }
-
         } else if (this.process == 'BSNotificarTransferente') {
           this.setEmailNotificationTask();
         } else if (this.process == 'BSVisitaOcular') {
@@ -260,7 +264,6 @@ export class RequestCompDocTasksComponent
         } else {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         }
-
       }
     });
   }
@@ -549,14 +552,17 @@ export class RequestCompDocTasksComponent
 
   /** VALIDAR */
   async generateTask() {
-
-    console.log("**********");
+    console.log('**********');
     console.log(this.affair, this.process);
 
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
     if (this.validateTurn()) {
       this.loadingTurn = true;
-      const { title, url, type, subtype, ssubtype } = getConfigAffair(this.requestId, this.affair, this.process);
+      const { title, url, type, subtype, ssubtype } = getConfigAffair(
+        this.requestId,
+        this.affair,
+        this.process
+      );
 
       const _task = JSON.parse(localStorage.getItem('Task'));
       const user: any = this.authService.decodeToken();
@@ -571,15 +577,15 @@ export class RequestCompDocTasksComponent
 
       if (closeTask) {
         this.msgModal(
-          'Se turno la solicitud con el Folio Nº'
-            .concat(`<strong>${this.requestId}</strong>`),
+          'Se turno la solicitud con el Folio Nº'.concat(
+            `<strong>${this.requestId}</strong>`
+          ),
           'Solicitud turnada',
           'success'
         );
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
       }
     }
-
   }
 
   closeTaskExecuteRecepcion(body: any) {
@@ -615,9 +621,7 @@ export class RequestCompDocTasksComponent
   }
 
   btnRechazar() {
-
-    const { type, subtype, ssubtype
-    } = this.nextProcess(this.process, true);
+    const { type, subtype, ssubtype } = this.nextProcess(this.process, true);
 
     const _task = JSON.parse(localStorage.getItem('Task'));
     const user: any = this.authService.decodeToken();
@@ -632,8 +636,9 @@ export class RequestCompDocTasksComponent
     this.taskService.createTaskWitOrderService(body).subscribe({
       next: async resp => {
         this.msgModal(
-          'Se rechazo la solicitud con el Folio Nº'
-            .concat(`<strong>${this.requestId}</strong>`),
+          'Se rechazo la solicitud con el Folio Nº'.concat(
+            `<strong>${this.requestId}</strong>`
+          ),
           'Solicitud rechazada',
           'success'
         );
@@ -643,15 +648,12 @@ export class RequestCompDocTasksComponent
         this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
       },
     });
-
   }
 
   validateTurn() {
-
     switch (this.process) {
       //GESTIONAR BINES SIMILARES RESARCIMIENTO
       case 'register-request-return':
-
         let bienesSimilares = 0;
         let autoridadOrdenante = null;
 
@@ -665,15 +667,13 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-
         break;
       case 'verify-compliance-return':
         break;
       case 'approve-return':
-
         let getEstimatedRowCount = 0;
-        let contenido = "";
-        let docNameUcm = "";
+        let contenido = '';
+        let docNameUcm = '';
 
         if (getEstimatedRowCount == 0 || isNullOrEmpty(contenido)) {
           this.showError('Es necesario generar el Dictamen de Devolución');
@@ -684,7 +684,6 @@ export class RequestCompDocTasksComponent
           this.showError('Es necesario firmar el Dictamen de Devolución');
           return false;
         }
-
 
         break;
 
@@ -702,18 +701,13 @@ export class RequestCompDocTasksComponent
       case 'analysis-result-compensation':
       case 'validate-opinion-compensation':
       case 'notification-taxpayer-compensation':
-
         break;
 
       //CASOS INFORMACION DE BIENES
       case 'register-request-compensation':
       case 'review-guidelines-compensation':
       case 'analysis-result-compensation':
-
         break;
-
-
-
     }
 
     return true;
@@ -723,25 +717,16 @@ export class RequestCompDocTasksComponent
     this.onLoadToast('error', 'Error', text);
   }
 
-  openSendEmail() {
-
-  }
+  openSendEmail() {}
 
   btnAprobar() {
-
-    //Finalizar la orden de servicio 
+    //Finalizar la orden de servicio
     //Turnamos la solicitud
-
   }
 
-  openDocument(action) {
+  openDocument(action) {}
 
-  }
-
-  createDictumReturn() {
-
-  }
-
+  createDictumReturn() {}
 }
 
 export function isNullOrEmpty(value: any): boolean {
