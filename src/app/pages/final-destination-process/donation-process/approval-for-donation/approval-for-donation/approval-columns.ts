@@ -1,10 +1,13 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const APPROVAL_COLUMNS = {
-  cveAct: {
+  cveAct_: {
     title: 'Clave Evento',
     type: 'string',
     sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   captureDate_: {
     title: 'Fecha Captura',
@@ -21,15 +24,21 @@ export const APPROVAL_COLUMNS = {
       return true;
     },
   },
-  elaborated: {
+  elaborated_: {
     title: 'Ingresó',
     type: 'string',
     sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
-  estatusAct: {
+  estatusAct_: {
     title: 'Estatus Evento',
     type: 'string',
     sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
 };
 
