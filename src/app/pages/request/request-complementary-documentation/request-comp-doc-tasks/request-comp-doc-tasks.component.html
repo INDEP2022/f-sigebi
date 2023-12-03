@@ -308,9 +308,9 @@
         <tab
           heading="Verificar Cumplimiento de Bienes"
           *ngIf="verifyCompliance">
-          verificarCumplimientoBienes
+          <app-verify-compliance-goods
+            nombrePantalla="Verificar Cumplimiento de Bienes"></app-verify-compliance-goods>
         </tab>
-
         <tab
           *ngIf="validateGoodForEyeVisit"
           heading="Validar Resultado Visitas"

@@ -91,6 +91,8 @@ export class RequestCompDocTasksComponent
   affair: number = null;
   taskId: number = 0;
 
+  signedReport: boolean = false;
+
   /**
    * email del usuairo
    */
@@ -196,15 +198,21 @@ export class RequestCompDocTasksComponent
 
   requestRegistered(request: any) {}
 
-  openReport(context?: Partial<CreateReportComponent>): void {
+  openReport(): void {
+    const initialState: Partial<CreateReportComponent> = {
+      signed: this.signedReport,
+    };
+
     const modalRef = this.modalService.show(CreateReportComponent, {
-      initialState: context,
+      initialState: initialState,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+
     modalRef.content.refresh.subscribe(next => {
       if (next) {
-      } //this.getCities();
+        // Perform actions if necessary, e.g., this.getCities();
+      }
     });
   }
 

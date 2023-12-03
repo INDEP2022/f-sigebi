@@ -34,6 +34,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract requestInfo: IRequest;
   protected abstract typeVisit: string;
   protected abstract listGoodSelectedTitle: string;
+  protected abstract signedReport: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -581,6 +582,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = true;
         this.turnReq = true;
 
+        this.signedReport = false;
+
         this.docRequest = true; //VERIFICAR
         break;
 
@@ -589,14 +592,16 @@ export abstract class CompDocTasksComponent extends BasePage {
           (this.regDocView = true);
         this.selectGoods = true;
         this.guidelines = true;
-        this.dictumValidate = true; //AGREGAR DATOS DEL DICTAMEN (TAB)
+        this.dictumValidate = true;
         this.expRequest = true;
 
         this.saveRequest = true;
         this.turnReq = true;
         this.notifyReport = true; //VERIFICAR FUNCIÓN
 
-        this.docRequest = true; //VERIFICAR
+        this.signedReport = true;
+
+        this.docRequest = true;
         this.createReport = false;
         this.rejectReq = false;
 
@@ -661,7 +666,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.expRequest = true;
 
         this.saveRequest = true;
-        //AGREGAR FINALIZAR (BOTON) VALIDAR BOTON EXISTENTE
         this.destinyJob = true; //AGREGAR OFICIO DESTINO (BOTON)
 
         this.turnReq = false;
