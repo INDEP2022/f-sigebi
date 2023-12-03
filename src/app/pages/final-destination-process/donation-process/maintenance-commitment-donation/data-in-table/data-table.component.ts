@@ -165,6 +165,9 @@ export class DataTableComponent extends BasePage implements OnInit {
               case 'yes' || 'not':
                 searchFilter = SearchFilter.IN;
                 break;
+              case 'valid':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -252,7 +255,9 @@ export class DataTableComponent extends BasePage implements OnInit {
               case 'yes' || 'not':
                 searchFilter = SearchFilter.IN;
                 break;
-
+              case 'valid':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -311,6 +316,9 @@ export class DataTableComponent extends BasePage implements OnInit {
                 field = `filter.segUser.name`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
+              case 'abbreviation':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -359,18 +367,18 @@ export class DataTableComponent extends BasePage implements OnInit {
     };
     params['filter.ruleId'] = `$eq:${this.type}`;
 
-    if (params['filter.yes'] || params['filter.not']) {
-      let arr = [];
-      if (params['filter.yes']) arr.push(params['filter.yes']);
-      if (params['filter.not']) arr.push(params['filter.not']);
+    // if (params['filter.yes'] || params['filter.not']) {
+    //   let arr = [];
+    //   if (params['filter.yes']) arr.push(params['filter.yes']);
+    //   if (params['filter.not']) arr.push(params['filter.not']);
 
-      delete params['filter.yes'];
-      delete params['filter.not'];
+    //   delete params['filter.yes'];
+    //   delete params['filter.not'];
 
-      params['filter.valid'] = `$in:${arr.join(',')}`;
-    } else {
-      delete params['filter.valid'];
-    }
+    //   params['filter.valid'] = `$in:${arr.join(',')}`;
+    // } else {
+    //   delete params['filter.valid'];
+    // }
 
     console.log('params 1 -> ', params);
     this.rapproveDonationService.getAllT(params).subscribe({
@@ -414,18 +422,18 @@ export class DataTableComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    if (params['filter.yes'] || params['filter.not']) {
-      let arr = [];
-      if (params['filter.yes']) arr.push(params['filter.yes']);
-      if (params['filter.not']) arr.push(params['filter.not']);
+    // if (params['filter.yes'] || params['filter.not']) {
+    //   let arr = [];
+    //   if (params['filter.yes']) arr.push(params['filter.yes']);
+    //   if (params['filter.not']) arr.push(params['filter.not']);
 
-      delete params['filter.yes'];
-      delete params['filter.not'];
+    //   delete params['filter.yes'];
+    //   delete params['filter.not'];
 
-      params['filter.abbreviation'] = `$in:${arr.join(',')}`;
-    } else {
-      delete params['filter.abbreviation'];
-    }
+    //   params['filter.abbreviation'] = `$in:${arr.join(',')}`;
+    // } else {
+    //   delete params['filter.abbreviation'];
+    // }
     this.tvalTable1Service.getAlls2(params).subscribe({
       next: response => {
         console.log('data tracer ', response);
