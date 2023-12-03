@@ -1542,14 +1542,9 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
     let obj: any = {
       // keysProceedings: ,
-      elaborationDate: this.actaRecepttionForm.value.elaboradate
-        ? await this.correctDate(this.actaRecepttionForm.value.elaboradate)
-        : null,
-      datePhysicalReception: this.actaRecepttionForm.value.datePhysicalReception
-        ? await this.correctDate(
-            this.actaRecepttionForm.value.datePhysicalReception
-          )
-        : null,
+      elaborationDate: this.actaRecepttionForm.value.elaboradate,
+      datePhysicalReception:
+        this.actaRecepttionForm.value.datePhysicalReception,
       // elaborationDate: this.actaRecepttionForm.value.elaboradate,
       // datePhysicalReception:
       //   this.actaRecepttionForm.value.datePhysicalReception,
@@ -1901,14 +1896,9 @@ export class DonationActsComponent extends BasePage implements OnInit {
   async guardarRegistro(cveActa: any) {
     let obj: any = {
       keysProceedings: cveActa,
-      elaborationDate: this.actaRecepttionForm.value.elaboradate
-        ? await this.correctDate(this.actaRecepttionForm.value.elaboradate)
-        : null,
-      datePhysicalReception: this.actaRecepttionForm.value.datePhysicalReception
-        ? await this.correctDate(
-            this.actaRecepttionForm.value.datePhysicalReception
-          )
-        : null,
+      elaborationDate: this.actaRecepttionForm.value.elaboradate,
+      datePhysicalReception:
+        this.actaRecepttionForm.value.datePhysicalReception,
       address: this.actaRecepttionForm.value.direccion,
       statusProceedings: !this.actaRecepttionForm.value.statusActa
         ? 'ABIERTA'
@@ -2099,17 +2089,9 @@ export class DonationActsComponent extends BasePage implements OnInit {
             // await this.createDET();
             let obj: any = {
               // keysProceedings: cveActa,
-              elaborationDate: this.actaRecepttionForm.value.elaboradate
-                ? await this.correctDate(
-                    this.actaRecepttionForm.value.elaboradate
-                  )
-                : null,
-              datePhysicalReception: this.actaRecepttionForm.value
-                .datePhysicalReception
-                ? await this.correctDate(
-                    this.actaRecepttionForm.value.datePhysicalReception
-                  )
-                : null,
+              elaborationDate: this.actaRecepttionForm.value.elaboradate,
+              datePhysicalReception:
+                this.actaRecepttionForm.value.datePhysicalReception,
               // elaborationDate: this.actaRecepttionForm.value.elaboradate,
               // datePhysicalReception:
               //   this.actaRecepttionForm.value.datePhysicalReception,
