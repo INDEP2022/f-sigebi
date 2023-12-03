@@ -6,23 +6,23 @@ export const ACT_DELIVERY_RECEPTION_COLUMNS = {
     title: 'Ver',
     sort: false,
   },*/
-  rank: {
+  numRegister: {
     title: 'No.',
     sort: false,
   },
-  expediente: {
+  numFile: {
     title: 'Expediente',
     sort: false,
   },
-  acta: {
+  keysProceedings: {
     title: 'Acta',
     sort: false,
   },
-  no_acta: {
+  id: {
     title: 'No. Acta',
     sort: false,
   },
-  fecha: {
+  elaborationDate: {
     title: 'Fecha',
     sort: false,
     valuePrepareFunction: (date: Date) => {
@@ -49,7 +49,7 @@ export const ACT_DELIVERY_RECEPTION_COLUMNS = {
       component: CustomDateFilterComponent,
     },
   },
-  estatus: {
+  statusProceedings: {
     title: 'Estatus',
     type: 'html',
     sort: false,

@@ -56,6 +56,9 @@ export class ProceedingsService extends HttpService {
       params
     );
   }
+  getProceedingsDeliveryReception(params: ListParams) {
+    return this.get(ProceedingsEndpoints.ProceedingsDeliveryReception, params);
+  }
 
   updateVaultByProceedingNumber(model: IUpdateVault) {
     return this.post<IResponse>(
