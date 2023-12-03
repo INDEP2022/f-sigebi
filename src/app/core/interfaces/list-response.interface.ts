@@ -24,3 +24,16 @@ export interface IListResponseMessage<T = any> {
   message: string[];
   statusCode?: number;
 }
+
+export interface IBlkBie {
+  status: string;
+  proceeedingsNumber: number;
+  goodNumber: number;
+  screen: string;
+}
+
+export interface IQueryRegAdmin {
+  allGst: string;
+  delegatioGnu: number;
+  recAdmGst: string;
+}

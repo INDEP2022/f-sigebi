@@ -13,11 +13,6 @@
         <div body>
           <div class="d-flex justify-content-end">
             <div class="p-2">
-              <button class="btn btn-primary btn-sm active" (click)="save()">
-                Guardar <i class="bx bx-save"></i>
-              </button>
-            </div>
-            <div class="p-2">
               <button
                 class="btn btn-success btn-sm active"
                 (click)="turnSampling()">
@@ -25,24 +20,29 @@
               </button>
             </div>
             <div class="p-2">
-              <button class="btn btn-primary btn-sm active" (click)="goBack()">
-                Regresar <i class="fas fa-arrow-circle-left"></i>
+              <button class="btn btn-primary btn-sm active" (click)="save()">
+                Guardar <i class="bx bx-save"></i>
               </button>
             </div>
-            <!--<div class="m-3">
+            <!--<div class="p-2">
+              <button class="btn btn-primary btn-sm active" (click)="goBack()">
+                Regresar <i class="fas fa-arrow-circle-left"></i>
+              </button> 
+            </div> -->
+            <div class="p-2">
               <button
                 class="btn btn-secondary btn-sm active"
                 (click)="openAnnexJ()">
-                <i class="bx bx-square-rounded"></i> Anexo J
+                Anexo J <i class="bx bxs-file"></i>
               </button>
             </div>
-            <div class="m-3">
+            <div class="p-2">
               <button
                 class="btn btn-secondary btn-sm active"
                 (click)="opemAnnexK()">
-                <i class="bx bx-square-rounded"></i> Anexo K
+                Anexo K <i class="bx bxs-file"></i>
               </button>
-            </div> -->
+            </div>
           </div>
           <div class="row">
             <div class="justify-content-end"></div>
