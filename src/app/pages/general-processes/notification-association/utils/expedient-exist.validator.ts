@@ -6,7 +6,8 @@ import {
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
-import { BasePage, SweetalertModel } from 'src/app/core/shared/base-page';
+import { SweetalertModel } from 'src/app/core/shared';
+import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 export class ExpedientValidator extends BasePage {
   static createValidator(expedientService: ExpedientService): AsyncValidatorFn {
