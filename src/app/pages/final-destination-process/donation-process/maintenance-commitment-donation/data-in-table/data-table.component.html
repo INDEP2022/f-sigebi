@@ -31,6 +31,7 @@
 <div class="row mt-2">
   <div [class]="loading ? 'table-loading' : ''">
     <ng2-smart-table
+      #myTable
       [attr.class]="'table-bordered table-responsive'"
       [settings]="settings"
       (edit)="loadModal(true, $event)"
