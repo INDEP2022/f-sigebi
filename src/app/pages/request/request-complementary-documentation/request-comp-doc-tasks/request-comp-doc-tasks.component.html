@@ -29,7 +29,7 @@
               type="button"
               class="btn btn-primary btn-sm active"
               (click)="turnRequest()"
-              [disabled]="loadingTurn">
+              [disabled]="!nextTurn">
               Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
             </button>
           </div>
@@ -267,6 +267,7 @@
           heading="Registro de Documentación"
           id="documentationTab">
           <app-register-documentation-form
+            (onChange)="onChangeRegDoc($event)"
             [requestId]="requestId"
             [process]="process"></app-register-documentation-form>
         </tab>
@@ -295,7 +296,7 @@
           *ngIf="selectGoods"
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
-          <app-select-goods [idRequest]="requestId"></app-select-goods>
+          <app-select-goods (onChange)="onSelectGoods($event)" [idRequest]="requestId"></app-select-goods>
         </tab>
         <tab
           *ngIf="selectGoodForEyeVisit"

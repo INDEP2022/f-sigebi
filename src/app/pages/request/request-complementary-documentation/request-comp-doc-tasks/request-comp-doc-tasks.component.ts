@@ -36,8 +36,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override sendEmail: boolean;
   protected override destinyJob: boolean;
   protected override verifyCompliance: boolean;
@@ -81,6 +80,7 @@ export class RequestCompDocTasksComponent
   process: string = '';
   title: string;
   requestInfo: IRequest;
+  taskInfo: any;
   screenWidth: number;
   public typeDoc: string = '';
   public updateInfo: boolean = false;
@@ -99,6 +99,12 @@ export class RequestCompDocTasksComponent
   emailForm: FormGroup = new FormGroup({});
 
   loadingTurn = false;
+  nextTurn = true;
+  validate = {
+    regdoc: true,
+    goods: true,
+  }
+
 
   /* INJECTIONS
   ============== */
@@ -154,14 +160,27 @@ export class RequestCompDocTasksComponent
         this.requestInfo = resp.data[0];
         this.affair = resp.data[0].affair;
         //this.requestId = resp.data[0].id;
-        console.log(this.process, this.affair);
         this.mapTask(this.process, resp.data[0].affair);
         this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
       },
     });
-    this.contributor = 'CARLOS G. PALMA';
+    this.getTaskInfo();
+  }
+
+  getTaskInfo() {
+
+    const _task = JSON.parse(localStorage.getItem('Task'));
+
+    const param = new FilterParams();
+    param.addFilter('id', _task.id);
+    const filter = param.getParams();
+    this.taskService.getAll(filter).subscribe({
+      next: resp => {
+        this.taskInfo = resp.data[0];
+      },
+    });
   }
 
   expedientSelected(event: any) {
@@ -196,7 +215,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
     const initialState: Partial<CreateReportComponent> = {
@@ -552,50 +571,87 @@ export class RequestCompDocTasksComponent
 
   /** VALIDAR */
   async generateTask() {
-    console.log('**********');
-    console.log(this.affair, this.process);
+
+    if (!this.validateTurn()) return;
 
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
-    if (this.validateTurn()) {
-      this.loadingTurn = true;
-      const { title, url, type, subtype, ssubtype } = getConfigAffair(
-        this.requestId,
-        this.affair,
-        this.process
+    this.loadingTurn = true;
+    const { title, url, type, subtype, ssubtype, process, close } = getConfigAffair(
+      this.requestId,
+      this.affair,
+      this.process
+    );
+
+    const user: any = this.authService.decodeToken();
+
+    let body: any = {};
+
+    if (close) body['idTask'] = this.taskInfo.id;
+
+    body['userProcess'] = user.username;
+    body['type'] = type;
+    body['subtype'] = subtype;
+    body['ssubtype'] = ssubtype;
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = this.taskInfo.assignees;
+    task['assigneesDisplayname'] = this.taskInfo.assigneesDisplayname;
+    task['reviewers'] = user.username;
+    task['creator'] = user.username;
+    task['taskNumber'] = Number(this.requestId);
+    task['title'] = title;
+    task['programmingId'] = 0;
+    task['requestId'] = this.requestId;
+    task['expedientId'] = 0;
+    task['urlNb'] = url;
+    task['processName'] = process;
+    task['idstation'] = this.taskInfo.idstation;
+    task['idTransferee'] = this.taskInfo.idTransferee;
+    task['idAuthority'] = this.taskInfo.idAuthority;
+    task['idDelegationRegional'] = user.department;
+    body['task'] = task;
+
+    let orderservice: any = {};
+    orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+    orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+    orderservice['pIdApplication'] = this.requestId;
+    orderservice['pCurrentDate'] = new Date().toISOString();
+    orderservice['pOrderServiceIn'] = '';
+
+    body['orderservice'] = orderservice;
+
+    const closeTask: any = await this.createTaskOrderService(body);
+
+    if (closeTask && !isNullOrEmpty(closeTask.task)) {
+      this.msgModal(
+        'Se turno la solicitud con el Folio Nº'.concat(
+          `<strong>${this.requestId}</strong>`
+        ),
+        'Solicitud turnada',
+        'success'
       );
-
-      const _task = JSON.parse(localStorage.getItem('Task'));
-      const user: any = this.authService.decodeToken();
-      let body: any = {};
-      body['idTask'] = _task.id;
-      body['userProcess'] = user.username;
-      body['type'] = type;
-      body['subtype'] = subtype;
-      body['ssubtype'] = ssubtype;
-
-      const closeTask = await this.closeTaskExecuteRecepcion(body);
-
-      if (closeTask) {
-        this.msgModal(
-          'Se turno la solicitud con el Folio Nº'.concat(
-            `<strong>${this.requestId}</strong>`
-          ),
-          'Solicitud turnada',
-          'success'
-        );
-        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-      }
+      this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+    } else {
+      this.msgModal(
+        'No se pudo turnar la solicitud con el Folio Nº '
+          .concat(`<strong>${this.requestId}</strong>`),
+        'Error',
+        'error'
+      );
     }
+
   }
 
-  closeTaskExecuteRecepcion(body: any) {
+  createTaskOrderService(body: any) {
     return new Promise((resolve, reject) => {
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(resp);
         },
         error: error => {
-          this.alert('error', 'Error', 'No se pudo crear la tarea');
+          this.loadingTurn = false;
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
       });
@@ -645,25 +701,24 @@ export class RequestCompDocTasksComponent
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
       },
       error: error => {
-        this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+        this.onLoadToast('error', 'Error', 'No se pudo rechazar la tarea');
       },
     });
   }
 
   validateTurn() {
     switch (this.process) {
-      //GESTIONAR BINES SIMILARES RESARCIMIENTO
-      case 'register-request-return':
-        let bienesSimilares = 0;
-        let autoridadOrdenante = null;
 
-        if (isNullOrEmpty(autoridadOrdenante)) {
-          this.showError('El valor de Autoridad Ordenante es obligatorio');
+      //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+      case 'register-request-return':
+
+        if (!this.validate.regdoc) {
+          this.showError('Ingrese la información de degistro documentación');
           return false;
         }
 
-        if (bienesSimilares < 0) {
-          this.showError('No se encontraron bienes similares');
+        if (!this.validate.goods) {
+          this.showError('Ingrese seleccionar al menos un bien');
           return false;
         }
 
@@ -713,20 +768,32 @@ export class RequestCompDocTasksComponent
     return true;
   }
 
+  onChangeRegDoc(event) {
+    this.validate.regdoc = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  onSelectGoods(event) {
+    this.validate.goods = event.isValid;
+    console.log("onSelectGoods", event.isValid);
+
+    //Agreagar validaciones en especifico
+  }
+
   showError(text) {
     this.onLoadToast('error', 'Error', text);
   }
 
-  openSendEmail() {}
+  openSendEmail() { }
 
   btnAprobar() {
     //Finalizar la orden de servicio
     //Turnamos la solicitud
   }
 
-  openDocument(action) {}
+  openDocument(action) { }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 }
 
 export function isNullOrEmpty(value: any): boolean {

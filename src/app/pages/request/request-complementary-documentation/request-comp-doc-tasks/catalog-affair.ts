@@ -20,7 +20,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                         process: 'DRegistroSolicitudes',
                         type: 'DOCUMENTACION_COMPLEMENTARIA',
                         subtype: 'Registro_Solicitud',
-                        ssubtype: 'TURNAR'
+                        ssubtype: 'TURNAR',
+                        close: true
                     };
                 case 33: //GESTIONAR BINES SIMILARES RESARCIMIENTO
                     return {
@@ -29,7 +30,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                         process: 'BSRegistroSolicitudes',
                         type: 'DOCUMENTACION_COMPLEMENTARIA',
                         subtype: 'Registro_Solicitud',
-                        ssubtype: 'TURNAR'
+                        ssubtype: 'TURNAR',
+                        close: true
                     };
                 case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
                     return {
@@ -38,7 +40,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                         process: 'RERegistroSolicitudes',
                         type: 'DOCUMENTACION_COMPLEMENTARIA',
                         subtype: 'Registro_Solicitud',
-                        ssubtype: 'TURNAR'
+                        ssubtype: 'TURNAR',
+                        close: true
                     };
                 case 41: //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
                     return {
@@ -47,7 +50,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                         process: 'IBRegistroSolicitudes',
                         type: 'DOCUMENTACION_COMPLEMENTARIA',
                         subtype: 'Registro_Solicitud',
-                        ssubtype: 'TURNAR'
+                        ssubtype: 'TURNAR',
+                        close: true
                     };
             }
             break;
@@ -59,8 +63,9 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 url: 'pages/request/request-comp-doc/tasks/verify-compliance-return',
                 process: 'DVerificarCumplimiento',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
-                subtype: 'Registro_documentacion',
-                ssubtype: 'TURNAR_SOLICITUD_DEVOLUCION'
+                subtype: 'Registro_Solicitud',
+                ssubtype: 'TURNAR',
+                close: true
             };
         case 'verify-compliance-return':
             return {
@@ -68,8 +73,9 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 url: 'pages/request/request-comp-doc/tasks/approve-return',
                 process: 'DAprobarDevolucion',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
-                subtype: 'Registro_documentacion',
-                ssubtype: ''
+                subtype: 'Registro_Solicitud',
+                ssubtype: 'TURNAR',
+                close: true
             };
         case 'approve-return':
             break;
@@ -82,7 +88,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: 'BSNotificarTransferente',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: 'TURNAR_RESARCIMIENTO_ESPECIE'
+                ssubtype: 'TURNAR_RESARCIMIENTO_ESPECIE',
+                close: true
             };
         case 'notify-transfer-similar-goods':
             return {
@@ -91,7 +98,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: 'BSVisitaOcular',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: ''
+                ssubtype: '',
+                close: true
             };
         case 'eye-visit-similar-goods':
             return {
@@ -100,7 +108,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: 'BSValidarVisitaOcular',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: ''
+                ssubtype: '',
+                close: true
             };
         case 'validate-eye-visit-similar-goods':
             return {
@@ -109,7 +118,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: 'BSValidarResultadoVisitaOcular',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: ''
+                ssubtype: '',
+                close: true
             };
         case 'validate-opinion-similar-goods':
             break;
@@ -122,7 +132,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: 'RERevisionLineamientos',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: 'TURNAR_RES_PAGO_ESPECIE'
+                ssubtype: 'TURNAR_RES_PAGO_ESPECIE',
+                close: true
             };
         case 'review-guidelines-compensation':
             return {
@@ -131,7 +142,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: 'REGenerarResultadoAnalisis',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: ''
+                ssubtype: '',
+                close: true
             };
         case 'analysis-result-compensation':
             return {
@@ -140,7 +152,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: '',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: ''
+                ssubtype: '',
+                close: true
             };
         case 'validate-opinion-compensation':
             return {
@@ -149,7 +162,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: '',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: ''
+                ssubtype: '',
+                close: true
             };
         case 'notification-taxpayer-compensation':
             break;
@@ -162,7 +176,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: '',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: 'TURNAR_SOL_INF_BIENES'
+                ssubtype: 'TURNAR_SOL_INF_BIENES',
+                close: true
             };
         case 'review-guidelines-compensation':
             return {
@@ -171,7 +186,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
                 process: '',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
                 subtype: 'Registro_documentacion',
-                ssubtype: ''
+                ssubtype: '',
+                close: true
             };
         case 'analysis-result-compensation':
             break;
@@ -181,7 +197,8 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
         title: '',
         url: '',
         process: '',
-        ssubtype: ''
+        ssubtype: '',
+        close: true
     };
 
 }
