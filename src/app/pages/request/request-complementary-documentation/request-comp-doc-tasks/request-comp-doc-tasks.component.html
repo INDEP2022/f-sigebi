@@ -29,7 +29,7 @@
               type="button"
               class="btn btn-primary btn-sm active"
               (click)="turnRequest()"
-              [disabled]="loadingTurn">
+              [disabled]="!nextTurn">
               Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
             </button>
           </div>
@@ -53,15 +53,14 @@
             </button>
           </div>
         </div>
-        <div class="mx-1" *ngIf="dictumReturn">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            [disabled]=""
-            (click)="createDictumReturn()">
-            Dictamen Devolución <i class="fa fa-save mr-1 float-icon"></i>
-          </button>
-        </div>
+
+                <div class="mx-1" *ngIf="btnRequestAprove">
+                  <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="btnRequestAprobar()">
+                    <i class="bx bx-mail-send mr-1 float-icon"></i>
+                    Solicitar Aprobación
+                  </button>
+                </div>
+        
         <div class="mx-1">
           <button
             type="button"
@@ -138,12 +137,17 @@
             Aprobar
           </button>
         </div>
+        <div class="mx-1" *ngIf="dictumReturn">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openReport()">
+            Dictamen Devolución <i class="fa fa-save mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1" *ngIf="btnDecline">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
             [disabled]=""
-            (click)="btnRechazar()">
+            (click)="rejectRequest()">
             <i class="bx bx-mail-send mr-1 float-icon"></i>
             Rechazar
           </button>
@@ -267,6 +271,7 @@
           heading="Registro de Documentación"
           id="documentationTab">
           <app-register-documentation-form
+            (onChange)="onChangeRegDoc($event)"
             [requestId]="requestId"
             [process]="process"></app-register-documentation-form>
         </tab>
@@ -288,14 +293,16 @@
           *ngIf="searchAssociateFile"
           heading="Buscar y Asociar al Expediente"
           id="associateTab">
-          <app-associate-file></app-associate-file>
+          
+          <app-search-request-similar-goods></app-search-request-similar-goods>
+
         </tab>
 
         <tab
           *ngIf="selectGoods"
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
-          <app-select-goods [idRequest]="requestId"></app-select-goods>
+          <app-select-goods (onChange)="onSelectGoods($event)" [idRequest]="requestId"></app-select-goods>
         </tab>
         <tab
           *ngIf="selectGoodForEyeVisit"
@@ -308,15 +315,13 @@
         <tab
           heading="Verificar Cumplimiento de Bienes"
           *ngIf="verifyCompliance">
-          <app-verify-compliance-goods
-            nombrePantalla="Verificar Cumplimiento de Bienes"></app-verify-compliance-goods>
+          <app-verify-compliance-goods (onChange)="onVerifyCom($event)"></app-verify-compliance-goods>
         </tab>
         <tab
           *ngIf="validateGoodForEyeVisit"
           heading="Validar Resultado Visitas"
           id="validateGoodsEyeVisitTab">
-          <app-validate-eye-visit
-            [idRequest]="requestId"></app-validate-eye-visit>
+          <app-validate-eye-visit></app-validate-eye-visit>
         </tab>
         <tab
           *ngIf="resultVisits"
@@ -353,7 +358,8 @@
               <app-doc-request-tab
                 [typeDoc]="typeDoc"
                 [updateInfo]="updateInfo"
-                [typeModule]="typeModule"></app-doc-request-tab>
+                [typeModule]="typeModule"
+                (onChange)="onSelectFiles($event)"></app-doc-request-tab>
             </tab>
             <tab
               heading="Documentos Generales"
@@ -365,7 +371,9 @@
                   (selectTab)="requestSelected(2)">
                   <app-doc-request-tab
                     [typeDoc]="typeDoc"
-                    [typeModule]="typeModule"></app-doc-request-tab>
+                    [typeModule]="typeModule"
+                    (onChange)="onSelectFiles($event)"
+                    ></app-doc-request-tab>
                 </tab>
                 <tab
                   heading="Solicitudes del Expediente"

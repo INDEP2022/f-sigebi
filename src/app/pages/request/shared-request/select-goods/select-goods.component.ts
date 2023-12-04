@@ -1,10 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, map, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subscription, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
@@ -27,42 +27,8 @@ import {
   SELECT_GOODS_COLUMNS,
 } from './select-goods-columns';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
-const datagood: any = [
-  {
-    amount: 1,
-    amountToReserve: 0,
-    applicationId: 1499,
-    authorityId: 44,
-    codeStore: 'T01',
-    cveState: 2,
-    delegationRegionalId: 1,
-    descriptionGood:
-      '01 PIEZA DE FAX MARCA: SAMSUNG, MODELO: FX500, SERIE: 3110918',
-    destination: 'Ventas',
-    fractionId: '8443.39.01.PZ.',
-    goodId: 5011335,
-    goodresdevId: '4550',
-    inventoryItemId: 173813,
-    inventoryNumber: '0000001756',
-    invoiceRecord: 'BAJA CALIFORNIA-SAT-169-A1-18-09',
-    jobNumber: '800-13-00-02-03-2018-10905',
-    locatorId: 109207,
-    naturalness: 'INVENTARIOS',
-    organizationId: 104,
-    origin: 'INVENTARIOS',
-    proceedingsId: 1108,
-    proceedingsType: 'ABANDONO',
-    relevantTypeId: 8,
-    stateConservation: 'MALO',
-    statePhysical: 'MALO',
-    stationId: 114,
-    subinventory: 'Ventas',
-    transfereeId: 120,
-    uniqueKey: '110-99-06-11-000290',
-    unitExtent: 'PZ',
-  },
-];
 @Component({
   selector: 'app-select-goods',
   templateUrl: './select-goods.component.html',
@@ -93,6 +59,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     actions: false,
     selectMode: 'multi',
   };
+
+  @Output() onChange = new EventEmitter<any>();
 
   constructor(
     private modalService: BsModalService,
@@ -126,7 +94,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           instance.action.subscribe(async (row: any) => {
             /*const process = await component.checkInfoProcess(row);
             if (process) {*/
-            console.log('process', process);
             component.openReserveModal(row);
             /*}*/
           });
@@ -181,7 +148,19 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => {},
+      error: error => { },
+    });
+
+    const param = new FilterParams();
+    param.addFilter('applicationId', this.idRequest);
+    const filter = param.getParams();
+    this.rejectedGoodService.getAll(filter).subscribe({
+      next: response => {
+        response.data.forEach((item: any) => {
+          this.addGood(item);
+        });
+      },
+      error: error => { },
     });
   }
 
@@ -193,7 +172,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -203,7 +182,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         response.recordId;
         this.openModalDocument(idRequest, response.recordId);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -216,7 +195,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => {},
+      callback: (next: boolean) => { },
     };
 
     this.modalService.show(ShowDocumentsGoodComponent, config);
@@ -389,12 +368,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
 
-  viewFile(file: any) {}
+  viewFile(file: any) { }
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -435,13 +414,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   addGood(good: any) {
-    console.log(good);
     delete good.addGood;
     // good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
-
     this.displayColumns();
+    this.selectChanges();
   }
 
   selectGoods(rows: any) {
@@ -549,11 +527,14 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       const subinventory = columnas.find(
         (columna: any) => columna.id === 'subinventory'
       );
-      subinventory.hide = true;
+
       const jobNumber = columnas.find(
         (columna: any) => columna.id === 'jobNumber'
       );
-      jobNumber.hide = true;
+
+      if (!isNullOrEmpty(subinventory)) subinventory.hide = true;
+      if (!isNullOrEmpty(jobNumber)) jobNumber.hide = true;
+
     }
   }
 
@@ -695,4 +676,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  selectChanges() {
+    this.onChange.emit({
+      isValid: this.selectedGoodColumns.length > 0,
+      object: this.selectedGoodColumns,
+    });
+  }
+
 }
