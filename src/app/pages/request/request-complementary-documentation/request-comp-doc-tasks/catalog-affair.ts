@@ -89,8 +89,8 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
                 url: 'pages/request/request-comp-doc/tasks/notify-transfer-similar-goods',
                 process: 'BSNotificarTransferente',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
-                subtype: 'Registro_documentacion',
-                ssubtype: 'TURNAR_RESARCIMIENTO_ESPECIE',
+                subtype: 'Registro_Solicitud',
+                ssubtype: 'TURNAR',
                 close: true
             };
         case 'notify-transfer-similar-goods':
@@ -99,8 +99,8 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
                 url: 'pages/request/request-comp-doc/tasks/eye-visit-similar-goods',
                 process: 'BSVisitaOcular',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
-                subtype: 'Registro_documentacion',
-                ssubtype: '',
+                subtype: 'Registro_Solicitud',
+                ssubtype: 'TURNAR',
                 close: true
             };
         case 'eye-visit-similar-goods':
@@ -109,8 +109,8 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
                 url: 'pages/request/request-comp-doc/tasks/validate-eye-visit-similar-goods',
                 process: 'BSValidarVisitaOcular',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
-                subtype: 'Registro_documentacion',
-                ssubtype: '',
+                subtype: 'Registro_Solicitud',
+                ssubtype: 'TURNAR',
                 close: true
             };
         case 'validate-eye-visit-similar-goods':
@@ -119,8 +119,8 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
                 url: 'pages/request/request-comp-doc/tasks/validate-opinion-similar-goods',
                 process: 'BSValidarResultadoVisitaOcular',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
-                subtype: 'Registro_documentacion',
-                ssubtype: '',
+                subtype: 'Registro_Solicitud',
+                ssubtype: 'TURNAR',
                 close: true
             };
         case 'validate-opinion-similar-goods':

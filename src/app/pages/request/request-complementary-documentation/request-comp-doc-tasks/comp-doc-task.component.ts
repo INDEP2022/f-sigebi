@@ -420,7 +420,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = false;
         break;
 
-      case 'notify-transfer-goods':
+      case 'notify-transfer-similar-goods':
         this.title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.selectGoods = true;
@@ -436,14 +436,13 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchRequestSimGoods = false;
         this.guidelines = false;
         this.dictumValidate = false;
-        this.regDocView = false;
         this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = false;
         this.createReport = false;
         this.rejectReq = false;
 
         break;
-      case 'eye-visit-goods':
+      case 'eye-visit-similar-goods':
         this.title = `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.selectGoods = true;
@@ -466,7 +465,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = false;
 
         break;
-      case 'validate-eye-visit-goods':
+      case 'validate-eye-visit-similar-goods':
         this.title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.expRequest = true;

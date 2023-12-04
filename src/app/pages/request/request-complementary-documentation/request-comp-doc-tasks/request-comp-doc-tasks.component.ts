@@ -36,8 +36,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override btnRequestAprove: boolean;
   protected override sendEmail: boolean;
   protected override destinyJob: boolean;
@@ -229,7 +228,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
     const initialState: Partial<CreateReportComponent> = {
@@ -748,9 +747,10 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'verify-compliance-return':
+
         if (!this.validate.vercom) {
-          //this.showError('Verifique el cumplimiento de los artículos');
-          //return false;
+          this.showError('Verifique el cumplimiento de los artículos');
+          return false;
         }
 
         if (!this.validate.opinion) {
@@ -812,8 +812,8 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.validate.signedNotify) {
-          this.showError('Firme el reporte de notificación');
-          return false;
+          //this.showError('Firme el reporte de notificación');
+          //return false;
         }
 
         break;
@@ -994,14 +994,14 @@ export class RequestCompDocTasksComponent
     this.onLoadToast('error', 'Error', text);
   }
 
-  openSendEmail() {}
+  openSendEmail() { }
 
   btnRequestAprobar() {
     this.alertQuestion(
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question) {
         //Cerrar tarea//
@@ -1025,9 +1025,9 @@ export class RequestCompDocTasksComponent
     //Turnamos la solicitud
   }
 
-  openDocument(action) {}
+  openDocument(action) { }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 }
 
 export function isNullOrEmpty(value: any): boolean {
