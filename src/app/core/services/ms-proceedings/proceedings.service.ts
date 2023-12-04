@@ -11,6 +11,7 @@ import {
   IDetailProceedingsDevollution,
   IDetailProceedingsDevollutionDelete,
   IProceedings,
+  IPufValidTerm,
   IUpdateActasEntregaRecepcion,
 } from '../../models/ms-proceedings/proceedings.model';
 import {
@@ -329,5 +330,9 @@ export class ProceedingsService extends HttpService {
   consultPaValMasive() {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}/FACTCONST_0001`;
     return this.get(route);
+  }
+
+  pufValidTerm(body: IPufValidTerm) {
+    return this.post<{ vban: boolean }>('aplication/puf-valid-term', body);
   }
 }

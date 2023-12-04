@@ -238,6 +238,8 @@ export class ActDeliveryReceptionComponent extends BasePage implements OnInit {
 
   getData(noActa?: number) {
     if (noActa) {
+      this.params.getValue()['filter.typeProceedings'] = `$eq:ENTREGA`;
+
       this.params.getValue()['filter.id'] = `$eq:${noActa}`;
       this.loading = true;
       let param = {
