@@ -289,7 +289,9 @@
           *ngIf="searchAssociateFile"
           heading="Buscar y Asociar al Expediente"
           id="associateTab">
-          <app-associate-file></app-associate-file>
+          
+          <app-search-request-similar-goods></app-search-request-similar-goods>
+
         </tab>
 
         <tab
@@ -354,7 +356,8 @@
               <app-doc-request-tab
                 [typeDoc]="typeDoc"
                 [updateInfo]="updateInfo"
-                [typeModule]="typeModule"></app-doc-request-tab>
+                [typeModule]="typeModule"
+                (onChange)="onSelectFiles($event)"></app-doc-request-tab>
             </tab>
             <tab
               heading="Documentos Generales"
@@ -366,7 +369,9 @@
                   (selectTab)="requestSelected(2)">
                   <app-doc-request-tab
                     [typeDoc]="typeDoc"
-                    [typeModule]="typeModule"></app-doc-request-tab>
+                    [typeModule]="typeModule"
+                    (onChange)="onSelectFiles($event)"
+                    ></app-doc-request-tab>
                 </tab>
                 <tab
                   heading="Solicitudes del Expediente"

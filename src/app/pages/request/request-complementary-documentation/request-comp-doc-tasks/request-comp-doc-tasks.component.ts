@@ -101,8 +101,9 @@ export class RequestCompDocTasksComponent
   loadingTurn = false;
   nextTurn = true;
   validate = {
-    regdoc: true,
-    goods: true,
+    regdoc: false,
+    goods: false,
+    files: false,
   }
 
 
@@ -143,6 +144,8 @@ export class RequestCompDocTasksComponent
     this.emailForm = this.fb.group({
       emailUser: [null],
     });
+
+    this.expedientSelected(true)
   }
 
   @HostListener('window:resize', ['$event'])
@@ -579,7 +582,8 @@ export class RequestCompDocTasksComponent
     const { title, url, type, subtype, ssubtype, process, close } = getConfigAffair(
       this.requestId,
       this.affair,
-      this.process
+      this.process,
+      this.requestInfo
     );
 
     const user: any = this.authService.decodeToken();
@@ -713,14 +717,25 @@ export class RequestCompDocTasksComponent
       case 'register-request-return':
 
         if (!this.validate.regdoc) {
-          this.showError('Ingrese la información de degistro documentación');
+          this.showError('Registre la información de la solicitud');
           return false;
         }
 
         if (!this.validate.goods) {
-          this.showError('Ingrese seleccionar al menos un bien');
+          this.showError('Seleccione los bienes de la solicitud');
           return false;
         }
+
+        if (!this.requestInfo.recordId) {
+          this.showError('Asoicie el expediente de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
 
         break;
       case 'verify-compliance-return':
@@ -775,8 +790,12 @@ export class RequestCompDocTasksComponent
 
   onSelectGoods(event) {
     this.validate.goods = event.isValid;
-    console.log("onSelectGoods", event.isValid);
+    //Agreagar validaciones en especifico
+  }
 
+  onSelectFiles(event) {
+    console.log(event);
+    this.validate.files = event.isValid;
     //Agreagar validaciones en especifico
   }
 

@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -49,8 +51,7 @@ interface searchTable {
 })
 export class DocRequestTabComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
@@ -87,6 +88,9 @@ export class DocRequestTabComponent
   idState: string = '';
   statusTask: any = '';
   task: any;
+
+  @Output() onChange = new EventEmitter<any>();
+
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -160,7 +164,7 @@ export class DocRequestTabComponent
           this.getData(data);
         });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -180,6 +184,7 @@ export class DocRequestTabComponent
     this.typeDoc = onChangeCurrentValue;
     this.setTitle(onChangeCurrentValue);
     this.getInfoRequest();
+
   }
 
   prepareForm(): void {
@@ -293,6 +298,7 @@ export class DocRequestTabComponent
                   this.totalItems = data.length;
 
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -341,6 +347,7 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -393,8 +400,8 @@ export class DocRequestTabComponent
                   this.docExpedient =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
-
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -445,8 +452,8 @@ export class DocRequestTabComponent
                   this.docExpedient =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
-
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x
                   //this.paragraphs.load(x)
                 });
@@ -521,7 +528,7 @@ export class DocRequestTabComponent
           next: data => {
             resolve(data?.description);
           },
-          error: error => {},
+          error: error => { },
         });
     });
   }
@@ -854,7 +861,7 @@ export class DocRequestTabComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -912,7 +919,7 @@ export class DocRequestTabComponent
         next: data => {
           this.selectRegDelegation = new DefaultSelect(data.data, data.count);
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -949,4 +956,20 @@ export class DocRequestTabComponent
         break;
     }
   }
+
+  onChanges() {
+
+    console.log('docExpedient', this.docExpedient);
+    console.log('docRequest', this.docRequest);
+    console.log('data', this.data);
+
+    let list = this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
+
+    this.onChange.emit({
+      isValid: list.length > 0,
+      object: list,
+      type: this.typeDoc,
+    });
+  }
+
 }

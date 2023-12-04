@@ -4,7 +4,9 @@
  * Catálogo de asuntos para la gestión de documentación complementaria
  * @interface
  */
-export function getConfigAffair(requestId, affair, path, contributor = "NA") {
+export function getConfigAffair(requestId, affair, path, request: any = {}) {
+
+    let contributor = 'Contribuyente: ' + request.indicatedTaxpayer + ', PAMA: ' + request.transferenceFile
 
     affair = parseInt(affair);
 
@@ -59,7 +61,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
         //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
         case 'register-request-return':
             return {
-                title: `DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud: ${requestId}, Contribuyente ${contributor}`,
+                title: `DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud: ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/verify-compliance-return',
                 process: 'DVerificarCumplimiento',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -69,7 +71,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
             };
         case 'verify-compliance-return':
             return {
-                title: `Aprobar Devolución, No. Solicitud: ${requestId}, Contribuyente ${contributor}`,
+                title: `Aprobar Devolución, No. Solicitud: ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/approve-return',
                 process: 'DAprobarDevolucion',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -83,7 +85,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
         //GESTIONAR BINES SIMILARES RESARCIMIENTO
         case 'register-request-similar-goods':
             return {
-                title: `BIENES SIMILARES: Notificar a Transferente, No. Solicitud: ${requestId}, Contribuyente ${contributor}`,
+                title: `BIENES SIMILARES: Notificar a Transferente, No. Solicitud: ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/notify-transfer-similar-goods',
                 process: 'BSNotificarTransferente',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -93,7 +95,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
             };
         case 'notify-transfer-similar-goods':
             return {
-                title: `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${requestId}, Contribuyente ${contributor}`,
+                title: `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/eye-visit-similar-goods',
                 process: 'BSVisitaOcular',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -103,7 +105,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
             };
         case 'eye-visit-similar-goods':
             return {
-                title: `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${requestId}, Contribuyente ${contributor}`,
+                title: `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/validate-eye-visit-similar-goods',
                 process: 'BSValidarVisitaOcular',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -113,7 +115,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
             };
         case 'validate-eye-visit-similar-goods':
             return {
-                title: `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${requestId}, Contribuyente ${contributor}`,
+                title: `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/validate-opinion-similar-goods',
                 process: 'BSValidarResultadoVisitaOcular',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -127,7 +129,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
         //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
         case 'register-request-compensation':
             return {
-                title: `Revisión de Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud ${requestId}, Contribuyente ${contributor}`,
+                title: `Revisión de Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/review-guidelines-compensation',
                 process: 'RERevisionLineamientos',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -137,7 +139,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
             };
         case 'review-guidelines-compensation':
             return {
-                title: `Generar Resultado de Análisis Resarcimiento (EN ESPECIE), No. Solicitud ${requestId}, Contribuyente ${contributor}`,
+                title: `Generar Resultado de Análisis Resarcimiento (EN ESPECIE), No. Solicitud ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/analysis-result-compensation',
                 process: 'REGenerarResultadoAnalisis',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -147,7 +149,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
             };
         case 'analysis-result-compensation':
             return {
-                title: `Validar Dictamen Resarcimiento (EN ESPECIE), No. Solicitud ${requestId}, Contribuyente ${contributor}`,
+                title: `Validar Dictamen Resarcimiento (EN ESPECIE), No. Solicitud ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/validate-opinion-compensation',
                 process: '',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -157,7 +159,7 @@ export function getConfigAffair(requestId, affair, path, contributor = "NA") {
             };
         case 'validate-opinion-compensation':
             return {
-                title: `, No. Solicitud ${requestId}, Contribuyente ${contributor}`,
+                title: `, No. Solicitud ${requestId} ${contributor}`,
                 url: 'pages/request/request-comp-doc/tasks/notification-taxpayer-compensation',
                 process: '',
                 type: 'DOCUMENTACION_COMPLEMENTARIA',
