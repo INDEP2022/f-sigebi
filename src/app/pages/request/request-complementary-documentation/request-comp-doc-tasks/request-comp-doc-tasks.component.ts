@@ -36,7 +36,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override btnRequestAprove: boolean;
   protected override sendEmail: boolean;
   protected override destinyJob: boolean;
@@ -106,9 +107,16 @@ export class RequestCompDocTasksComponent
     goods: false,
     files: false,
     vercom: false,
-    opinion: false
-  }
-
+    opinion: false,
+    valvisits: false,
+    signedNotify: false,
+    signedVisit: false,
+    signedDictum: false,
+    signedValDictum: false,
+    guidelines: false,
+    genDictum: false,
+    genValDictum: false,
+  };
 
   /* INJECTIONS
   ============== */
@@ -148,7 +156,7 @@ export class RequestCompDocTasksComponent
       emailUser: [null],
     });
 
-    this.expedientSelected(true)
+    this.expedientSelected(true);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -176,7 +184,6 @@ export class RequestCompDocTasksComponent
   }
 
   getTaskInfo() {
-
     const _task = JSON.parse(localStorage.getItem('Task'));
 
     const param = new FilterParams();
@@ -222,7 +229,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
     const initialState: Partial<CreateReportComponent> = {
@@ -581,17 +588,17 @@ export class RequestCompDocTasksComponent
 
   /** VALIDAR */
   async generateTask() {
-
     if (!this.validateTurn()) return;
 
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
     this.loadingTurn = true;
-    const { title, url, type, subtype, ssubtype, process, close } = getConfigAffair(
-      this.requestId,
-      this.affair,
-      this.process,
-      this.requestInfo
-    );
+    const { title, url, type, subtype, ssubtype, process, close } =
+      getConfigAffair(
+        this.requestId,
+        this.affair,
+        this.process,
+        this.requestInfo
+      );
 
     const user: any = this.authService.decodeToken();
 
@@ -645,13 +652,13 @@ export class RequestCompDocTasksComponent
       this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
     } else {
       this.msgModal(
-        'No se pudo turnar la solicitud con el Folio Nº '
-          .concat(`<strong>${this.requestId}</strong>`),
+        'No se pudo turnar la solicitud con el Folio Nº '.concat(
+          `<strong>${this.requestId}</strong>`
+        ),
         'Error',
         'error'
       );
     }
-
   }
 
   createTaskOrderService(body: any) {
@@ -688,16 +695,15 @@ export class RequestCompDocTasksComponent
   }
 
   taskRechazar(data) {
-
     const _task = JSON.parse(localStorage.getItem('Task'));
     const user: any = this.authService.decodeToken();
     let body: any = {};
 
     body['idTask'] = _task.id;
     body['userProcess'] = user.username;
-    body['type'] = "DOCUMENTACION_COMPLEMENTARIA";
-    body['subtype'] = "Registro_documentacion";
-    body['ssubtype'] = "REJECT";
+    body['type'] = 'DOCUMENTACION_COMPLEMENTARIA';
+    body['subtype'] = 'Registro_documentacion';
+    body['ssubtype'] = 'REJECT';
 
     this.taskService.createTaskWitOrderService(body).subscribe({
       next: async resp => {
@@ -718,10 +724,8 @@ export class RequestCompDocTasksComponent
 
   validateTurn() {
     switch (this.process) {
-
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
       case 'register-request-return':
-
         if (!this.validate.regdoc) {
           this.showError('Registre la información de la solicitud');
           return false;
@@ -742,10 +746,8 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-
         break;
       case 'verify-compliance-return':
-
         if (!this.validate.vercom) {
           //this.showError('Verifique el cumplimiento de los artículos');
           //return false;
@@ -776,24 +778,190 @@ export class RequestCompDocTasksComponent
 
       //GESTIONAR BINES SIMILARES RESARCIMIENTO
       case 'register-request-similar-goods':
+        if (!this.validate.regdoc) {
+          this.showError('Registre la información de la solicitud');
+          return false;
+        }
+
+        if (!this.requestInfo.recordId) {
+          this.showError('Asoicie el expediente de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        break;
+
       case 'notify-transfer-similar-goods':
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.signedNotify) {
+          this.showError('Firme el reporte de notificación');
+          return false;
+        }
+
+        break;
+
       case 'eye-visit-similar-goods':
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        break;
+
       case 'validate-eye-visit-similar-goods':
+        if (!this.validate.valvisits) {
+          this.showError('Verifique resultados de las visitas');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.signedVisit) {
+          this.showError('Firme el reporte de visita ocular');
+          return false;
+        }
+
+        break;
+
       case 'validate-opinion-similar-goods':
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.signedVisit) {
+          this.showError('Firme el reporte de visita ocular');
+          return false;
+        }
+
         break;
 
       //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
       case 'register-request-compensation':
+        if (!this.validate.regdoc) {
+          this.showError('Registre la información de la solicitud');
+          return false;
+        }
+
+        if (!this.requestInfo.recordId) {
+          this.showError('Asoicie solicitud de bienes');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        break;
+
       case 'review-guidelines-compensation':
+        if (!this.validate.guidelines) {
+          this.showError('Verifique las observaciones de lineamientos');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.genDictum) {
+          this.showError('Genera el dictamen de resarcimiento');
+          return false;
+        }
+
+        break;
+
       case 'analysis-result-compensation':
+        if (!this.validate.guidelines) {
+          this.showError('Verifique las observaciones de lineamientos');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.signedDictum) {
+          this.showError('Firme el dictamen de resarcimiento');
+          return false;
+        }
+        break;
+
       case 'validate-opinion-compensation':
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.guidelines) {
+          this.showError('Verifique las observaciones de lineamientos');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.genValDictum) {
+          this.showError('Genera la validación del dictamen de resarcimiento');
+          return false;
+        }
+
+        break;
+
       case 'notification-taxpayer-compensation':
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.signedValDictum) {
+          this.showError('Firme la validación del dictamen de resarcimiento');
+          return false;
+        }
+
         break;
 
       //CASOS INFORMACION DE BIENES
       case 'register-request-compensation':
+        break;
+
       case 'review-guidelines-compensation':
+        break;
+
       case 'analysis-result-compensation':
+        break;
+
         break;
     }
 
@@ -826,13 +994,14 @@ export class RequestCompDocTasksComponent
     this.onLoadToast('error', 'Error', text);
   }
 
-  openSendEmail() { }
+  openSendEmail() {}
 
   btnRequestAprobar() {
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Desea solicitar la aprobación de la solicitud con folio: ' + this.requestId
+      '¿Desea solicitar la aprobación de la solicitud con folio: ' +
+        this.requestId
     ).then(question => {
       if (question) {
         //Cerrar tarea//
@@ -842,7 +1011,6 @@ export class RequestCompDocTasksComponent
   }
 
   btnAprobar() {
-
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -857,9 +1025,9 @@ export class RequestCompDocTasksComponent
     //Turnamos la solicitud
   }
 
-  openDocument(action) { }
+  openDocument(action) {}
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 }
 
 export function isNullOrEmpty(value: any): boolean {
