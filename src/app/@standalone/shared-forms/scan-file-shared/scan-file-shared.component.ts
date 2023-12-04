@@ -28,6 +28,7 @@ import { PreviewDocumentsComponent } from '../../preview-documents/preview-docum
 export class ScanFileSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() formControlName: string = 'folioEscaneo';
+  @Input() nameActa: string = 'acta2';
   @Input() cveDocument: string;
   @Input() noExpedient: string | number;
   @Input() statusProceeding: string;
@@ -36,6 +37,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   @Input() replicateFolioView: boolean = true;
   @Input() actaSC: boolean = false;
   @Input() disabled: boolean = false;
+  @Input() keyTypeDocument: string = 'ENTRE';
 
   @Output() emitfileNumber = new EventEmitter();
 
@@ -111,7 +113,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                         dateRegistrationScan: undefined,
                         userReceivesFile: '',
                         dateReceivesFile: undefined,
-                        keyTypeDocument: 'ENTRE',
+                        keyTypeDocument: this.keyTypeDocument,
                         keySeparator: '60',
                         numberProceedings: this.noExpedient,
                         sheets: '',
@@ -227,7 +229,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                     dateRegistrationScan: undefined,
                     userReceivesFile: '',
                     dateReceivesFile: undefined,
-                    keyTypeDocument: 'ENTRE',
+                    keyTypeDocument: this.keyTypeDocument,
                     keySeparator: '60',
                     numberProceedings: this.noExpedient,
                     sheets: '',
@@ -264,9 +266,10 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                         ),
                       };
                       const paramsF = new FilterParams();
+                      console.log(this.form.get(this.nameActa).value);
                       paramsF.addFilter(
                         'keysProceedings',
-                        this.form.get('acta2').value
+                        this.form.get(this.nameActa).value
                       );
                       /* if (this.actaSC) {
                         paramsF.addFilter(
