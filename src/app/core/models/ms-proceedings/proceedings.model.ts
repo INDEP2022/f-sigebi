@@ -128,3 +128,8 @@ export interface IDetailProceedingsDevollutionDelete {
   numberGood: string | number;
   numberProceedings: string | number;
 }
+
+export interface IPufValidTerm {
+  delegationNumber: number;
+  elaborationDate: string;
+}
