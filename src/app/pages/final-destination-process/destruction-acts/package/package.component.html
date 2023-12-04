@@ -1,0 +1,42 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Paquete</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div [class]="loadingTable ? 'table-loading' : 'row pt-2 scroll-table'">
+        <ng2-smart-table
+          class="col-md-12"
+          (userRowSelect)="selectRowEnc($event)"
+          [settings]="settingsEnc"
+          [source]="dataPackEnc"></ng2-smart-table>
+      </div>
+      <app-pagination
+        *ngIf="!loadingTable"
+        [params]="paramsEnc"
+        [pageSizeOptions]="[5, 10, 20]"
+        [totalItems]="totalItemsEnc"></app-pagination>
+    </div>
+    <div class="row">
+      <div [class]="loadingTable ? 'table-loading' : 'row pt-2'">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settingsDet"
+          [source]="dataPackDet"></ng2-smart-table>
+      </div>
+      <app-pagination
+        *ngIf="!loadingTable"
+        [params]="paramsDet"
+        [pageSizeOptions]="[5, 10, 20]"
+        [totalItems]="totalItemsDet"></app-pagination>
+    </div>
+    <div class="row text-center">
+      <div class="col">
+        <button class="btn btn-primary btn-sm active mr-3">Aceptar</button>
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,13 +1,8 @@
-import { CheckboxElementComponent_ } from './CheckboxDisabled';
+import { ITransferee } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS_DATA_TABLE = {
   labelId: {
     title: 'Etiqueta',
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value.description : '';
-    },
-    filterFunction(cell?: any, search?: string): boolean {
-      return true;
-    },
     type: 'string',
     sort: false,
   },
@@ -17,23 +12,20 @@ export const COLUMNS_DATA_TABLE = {
     sort: false,
   },
   desStatus: {
-    title: 'Des. Estatus',
+    title: 'Des. Status',
     type: 'string',
     sort: false,
   },
   transfereeId: {
     title: 'No. Trans.',
-    // valuePrepareFunction: (value: ITransferee) => {
-    //   return value != null ? value.transferentId : '';
-    // },
+    valuePrepareFunction: (value: ITransferee) => {
+      return value != null ? value.transferentId : '-';
+    },
     type: 'number',
     sort: false,
   },
   desTrans: {
-    title: 'Des. Trans.',
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value : '';
-    },
+    title: 'Des Trans.',
     type: 'string',
     sort: false,
   },
@@ -55,47 +47,22 @@ export const COLUMNS_DATA_TABLE = {
   yes: {
     title: 'S',
     type: 'custom',
-    renderComponent: CheckboxElementComponent_,
+    renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
-      if (instance?.toggle) {
-        instance.toggle.subscribe((data: any) => {
-          data.row.to = data.toggle;
-        });
-      }
-    },
-    filter: {
-      type: 'checkbox',
-      config: {
-        true: true,
-        false: false,
-        resetText: ' ',
-      },
-    },
-    filterFunction(cell?: any, search?: string): boolean {
-      return true;
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
     },
     sort: false,
   },
   not: {
     title: 'N',
     type: 'custom',
-    // filter: false,
-    renderComponent: CheckboxElementComponent_,
+    renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
       });
-    },
-    filter: {
-      type: 'checkbox',
-      config: {
-        true: true,
-        false: false,
-        resetText: ' ',
-      },
-    },
-    filterFunction(cell?: any, search?: string): boolean {
-      return true;
     },
     sort: false,
   },

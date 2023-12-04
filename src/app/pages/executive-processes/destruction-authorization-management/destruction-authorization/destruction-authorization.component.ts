@@ -252,7 +252,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
-        selection: {
+        /* selection: {
           title: '',
           type: 'custom',
           renderComponent: CheckboxElementComponent,
@@ -260,7 +260,7 @@ export class DestructionAuthorizationComponent
             this.onSelectGood(instance),
           filter: false,
           sort: false,
-        },
+        }, */
       },
       hideSubHeader: false,
     };
@@ -271,7 +271,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...GOODS_COLUMNS,
-        selection: {
+        /* selection: {
           title: '',
           sort: false,
           type: 'custom',
@@ -279,7 +279,7 @@ export class DestructionAuthorizationComponent
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGoodPSD(instance),
-        },
+        }, */
       },
       hideSubHeader: false,
       rowClassFunction: (row: any) => {
