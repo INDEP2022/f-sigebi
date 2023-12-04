@@ -43,6 +43,7 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -219,7 +220,9 @@ export class DestructionAuthorizationComponent
     private massiveGoodService: MassiveGoodService,
     private datePipe: DatePipe,
     private goodprocessService: GoodprocessService,
-    private copiesOfficialOpinionService: CopiesOfficialOpinionService
+    private copiesOfficialOpinionService: CopiesOfficialOpinionService,
+    //SERVICIOS AGREGADOS POR GRIGORK
+    private expedientService: ExpedientService
   ) {
     super();
 
@@ -252,7 +255,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
-        selection: {
+        /* selection: {
           title: '',
           type: 'custom',
           renderComponent: CheckboxElementComponent,
@@ -260,7 +263,7 @@ export class DestructionAuthorizationComponent
             this.onSelectGood(instance),
           filter: false,
           sort: false,
-        },
+        }, */
       },
       hideSubHeader: false,
     };
@@ -271,7 +274,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...GOODS_COLUMNS,
-        selection: {
+        /* selection: {
           title: '',
           sort: false,
           type: 'custom',
@@ -279,7 +282,7 @@ export class DestructionAuthorizationComponent
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGoodPSD(instance),
-        },
+        }, */
       },
       hideSubHeader: false,
       rowClassFunction: (row: any) => {

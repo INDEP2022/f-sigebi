@@ -27,7 +27,7 @@
       <div class="row">
         <form-field
           class="col-md-2"
-          label="No."
+          label="No. de Acta"
           [control]="proceedingForm.get('id')">
           <input
             type="text"
@@ -132,10 +132,11 @@
             type="button"
             (confirm)="save()"></confirm-button>
 
-          <button class="btn btn-primary btn-sm active mr-3" (click)="update()">
+          <!-- <button class="btn btn-primary btn-sm active mr-3" (click)="update()">
             Actualizar <i class="fas fa-sync-alt"> </i>
-          </button>
+          </button> -->
           <button
+            *ngIf="controls.statusProceedings.value != 'CERRADA'"
             (click)="closeProceeding()"
             class="btn btn-primary btn-sm active">
             {{
@@ -154,14 +155,9 @@
       <div class="col-md-6">
         <div [class]="loadingActReception ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingActReception ? '0px' : '250px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings4"
-                [source]="actaList2"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings4"
+              [source]="actaList2"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params5"
@@ -171,14 +167,9 @@
       <div class="col-md-6">
         <div [class]="loadingDictation ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingDictation ? '0px' : '250px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings5"
-                [source]="dictaList2"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings5"
+              [source]="dictaList2"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params6"
@@ -247,14 +238,9 @@
       <div class="col-md-12 table-responsive">
         <div class="row">
           <div [class]="loadingGoods ? 'table-loading' : ''">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingGoods ? '0px' : '350px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings3"
-                [source]="goodPDS1"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings3"
+              [source]="goodPDS1"></ng2-smart-table>
             <app-pagination
               [params]="params8"
               [totalItems]="totalItems3"></app-pagination>
@@ -295,14 +281,10 @@
         <div class="row">
           <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <!-- <div class="table-responsive"> -->
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingGoodsByP ? '0px' : '350px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings2"
-                [source]="detailProceedingsList2"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="detailProceedingsList2"></ng2-smart-table>
             <app-pagination
               [params]="params7"
               [totalItems]="totalItems2"></app-pagination>

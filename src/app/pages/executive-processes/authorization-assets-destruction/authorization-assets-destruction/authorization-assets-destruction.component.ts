@@ -239,6 +239,7 @@ export class AuthorizationAssetsDestructionComponent
     });
   }
 
+  //!Esta función está correcta
   expedientChange() {
     this.consult = true;
     this.expediente = Number(this.form.get('idExpedient').value);
@@ -248,7 +249,7 @@ export class AuthorizationAssetsDestructionComponent
       next: resp => {
         console.log(resp);
         this.form.patchValue(resp.data[0]);
-        //this.relationsExpedient();
+        // this.relationsExpedient();
       },
       error: err => {
         this.alert(
