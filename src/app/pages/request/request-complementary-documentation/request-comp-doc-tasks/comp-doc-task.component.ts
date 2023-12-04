@@ -42,6 +42,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract btnAprove: boolean; //NUEVO VERIFICAR
   protected abstract btnDecline: boolean; //NUEVO VERIFICAR
   protected abstract dictumReturn: boolean; //NUEVO VERIFICAR BOTON NUEVO
+  protected abstract btnRequestAprove: boolean; //NUEVO VERIFICAR BOTON NUEVO
 
   docTemplate: IRequestDocument[];
 
@@ -359,14 +360,14 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'verify-compliance-return':
-        //this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`;
+        this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
         this.selectGoodForEyeVisit = true;
 
         this.expRequest = true;
 
-        this.btnAprove = true; //AGREGAR SOLICITAR APROBACIÓN (BOTON) validateDocument verificar
+        this.btnRequestAprove = true; //AGREGAR SOLICITAR APROBACIÓN (BOTON) validateDocument verificar
         this.dictumReturn = true; //AGREGAR DICTAMEN DEVOLUCIÓN (BOTON) validar Nuevo botón
 
         this.turnReq = false;

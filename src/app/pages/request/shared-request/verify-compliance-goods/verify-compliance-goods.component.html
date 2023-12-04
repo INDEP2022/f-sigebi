@@ -62,7 +62,7 @@
                 Verificar Cumplimiento de Bienes
               </h6>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" *ngIf="editable" >
               <div class="d-flex flex-row-reverse">
                 <div class="mx-1">
                   <button class="btn btn-danger btn-sm active" (click)="cancel()">

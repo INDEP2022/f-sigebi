@@ -66,6 +66,7 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
   data = [];
   requestId: number = null;
   process = null;
+  editable: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -78,6 +79,8 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
 
     this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     this.process = this.route.snapshot.paramMap.get('process');
+
+    this.editable = this.process != 'approve-return';
 
     this.getGoods();
 
@@ -106,7 +109,11 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
 
   onChanges() {
     this.onChange.emit({
-      isValid: false,
+      isValid: this.data.filter(x =>
+        x.meetsArticle24 || x.meetsArticle24 == "1" ||
+        x.meetsArticle28 || x.meetsArticle28 == "1" ||
+        x.meetsArticle29 || x.meetsArticle29 == "1"
+      ).length > 0,
       object: this.data,
     });
   }
@@ -128,6 +135,7 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
     });
 
     this.onLoadToast('success', 'Se guardo la verificación de cumplimiento de los bienes');
+    this.onChanges();
 
   }
 
@@ -148,7 +156,6 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.rejectedGoodService.updateGoodsResDev(id, body).subscribe({
         next: res => {
-          console.log('bien actualizado');
           resolve(true);
         },
         error: error => {

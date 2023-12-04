@@ -37,6 +37,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
   implements OnInit {
+  protected override btnRequestAprove: boolean;
   protected override sendEmail: boolean;
   protected override destinyJob: boolean;
   protected override verifyCompliance: boolean;
@@ -104,7 +105,8 @@ export class RequestCompDocTasksComponent
     regdoc: false,
     goods: false,
     files: false,
-    vercom: false
+    vercom: false,
+    opinion: false
   }
 
 
@@ -292,11 +294,12 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  rejectRequest(): void {
+  rejectRequest() {
     const modalRef = this.modalService.show(RejectRequestModalComponent, {
       initialState: {
         title: 'Confirmar Rechazo',
-        message: '¿Está seguro que desea rechazar el análisis?',
+        message:
+          'El resultado de la verificación y análisis documental será rechazado.',
         requestId: this.requestId,
       },
       class: 'modal-md modal-dialog-centered',
@@ -304,6 +307,8 @@ export class RequestCompDocTasksComponent
     });
     modalRef.content.onReject.subscribe((data: boolean) => {
       if (data) {
+        console.log(data);
+        this.taskRechazar(data);
       }
     });
   }
@@ -682,8 +687,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  btnRechazar() {
-    const { type, subtype, ssubtype } = this.nextProcess(this.process, true);
+  taskRechazar(data) {
 
     const _task = JSON.parse(localStorage.getItem('Task'));
     const user: any = this.authService.decodeToken();
@@ -691,9 +695,9 @@ export class RequestCompDocTasksComponent
 
     body['idTask'] = _task.id;
     body['userProcess'] = user.username;
-    body['type'] = type;
-    body['subtype'] = subtype;
-    body['ssubtype'] = ssubtype;
+    body['type'] = "DOCUMENTACION_COMPLEMENTARIA";
+    body['subtype'] = "Registro_documentacion";
+    body['ssubtype'] = "REJECT";
 
     this.taskService.createTaskWitOrderService(body).subscribe({
       next: async resp => {
@@ -741,6 +745,17 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'verify-compliance-return':
+
+        if (!this.validate.vercom) {
+          //this.showError('Verifique el cumplimiento de los artículos');
+          //return false;
+        }
+
+        if (!this.validate.opinion) {
+          //this.showError('Genere el Dictamen de Devolución');
+          //return false;
+        }
+
         break;
       case 'approve-return':
         let getEstimatedRowCount = 0;
@@ -748,13 +763,13 @@ export class RequestCompDocTasksComponent
         let docNameUcm = '';
 
         if (getEstimatedRowCount == 0 || isNullOrEmpty(contenido)) {
-          this.showError('Es necesario generar el Dictamen de Devolución');
-          return false;
+          //this.showError('Es necesario generar el Dictamen de Devolución');
+          //return false;
         }
 
         if (isNullOrEmpty(docNameUcm)) {
-          this.showError('Es necesario firmar el Dictamen de Devolución');
-          return false;
+          //this.showError('Es necesario firmar el Dictamen de Devolución');
+          //return false;
         }
 
         break;
@@ -813,7 +828,31 @@ export class RequestCompDocTasksComponent
 
   openSendEmail() { }
 
+  btnRequestAprobar() {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea solicitar la aprobación de la solicitud con folio: ' + this.requestId
+    ).then(question => {
+      if (question) {
+        //Cerrar tarea//
+        this.generateTask();
+      }
+    });
+  }
+
   btnAprobar() {
+
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea finalizar la tarea registro de documentación complementaria?'
+    ).then(question => {
+      if (question) {
+        //Cerrar tarea//
+      }
+    });
+
     //Finalizar la orden de servicio
     //Turnamos la solicitud
   }

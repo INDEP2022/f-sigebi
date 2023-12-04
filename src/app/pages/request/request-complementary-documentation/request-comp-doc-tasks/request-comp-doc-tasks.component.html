@@ -53,15 +53,14 @@
             </button>
           </div>
         </div>
-        <div class="mx-1" *ngIf="dictumReturn">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            [disabled]=""
-            (click)="createDictumReturn()">
-            Dictamen Devolución <i class="fa fa-save mr-1 float-icon"></i>
-          </button>
-        </div>
+
+                <div class="mx-1" *ngIf="btnRequestAprove">
+                  <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="btnRequestAprobar()">
+                    <i class="bx bx-mail-send mr-1 float-icon"></i>
+                    Solicitar Aprobación
+                  </button>
+                </div>
+        
         <div class="mx-1">
           <button
             type="button"
@@ -138,12 +137,17 @@
             Aprobar
           </button>
         </div>
+        <div class="mx-1" *ngIf="dictumReturn">
+          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openReport()">
+            Dictamen Devolución <i class="fa fa-save mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1" *ngIf="btnDecline">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
             [disabled]=""
-            (click)="btnRechazar()">
+            (click)="rejectRequest()">
             <i class="bx bx-mail-send mr-1 float-icon"></i>
             Rechazar
           </button>

@@ -34,7 +34,7 @@ export class CheckVerifyComplianceComponent
 
     this.field = this.checkId + "";
     this.checkId = this.checkId + this.rowData.good.id.toString();
-    if (this.process != 'approve-return-request') {
+    if (this.process != 'approve-return') {
       this.checkStateEditForm = true;
       this.prepareForm();
     } else {
