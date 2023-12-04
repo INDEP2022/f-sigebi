@@ -1,19 +1,20 @@
 import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const ACT_DESTRUCTION_COLUMNS = {
-  /*no: {
+  numRegister: {
     title: 'No.',
     sort: false,
-  },*/
-  caseNumber: {
+  },
+  numFile: {
     title: 'Expediente',
     sort: false,
   },
-  document: {
+  keysProceedings: {
     title: 'Acta',
     sort: false,
   },
-  noDocument: {
+  id: {
     title: 'No.Acta',
     sort: false,
   },
@@ -25,8 +26,12 @@ export const ACT_DESTRUCTION_COLUMNS = {
       var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
       return formatted;
     },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  status: {
+  statusProceedings: {
     title: 'Estatus',
     type: 'html',
     sort: false,

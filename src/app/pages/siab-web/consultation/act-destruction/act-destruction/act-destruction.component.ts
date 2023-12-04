@@ -9,7 +9,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { ButtonColumnSeeComponent } from 'src/app/shared/components/button-column-see/button-column-see.component';
 import {
   ACT_DESTRUCTION_COLUMNS,
@@ -168,10 +167,7 @@ export class ActDestructionComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.actDestructionForm = this.fb.group({
-      recordsSearchCriteria: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      recordsSearchCriteria: [null, [Validators.required]],
     });
   }
 
@@ -183,16 +179,21 @@ export class ActDestructionComponent extends BasePage implements OnInit {
       .subscribe(() => this.getDataAll(this.noActa));
   }
 
-  getDataAll(act?: number | string) {
+  getDataAll(act?: any) {
     this.loading = true;
+    if (act) {
+      this.params.getValue()['filter.typeProceedings'] = `$eq:DESTRUCCION`;
+      if (!isNaN(act)) {
+        this.params.getValue()['filter.id'] = `$eq:${act}`;
+      } else {
+        this.params.getValue()['filter.keysProceedings'] = `$eq:${act}`;
+      }
+    }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    let body = {
-      acta: act,
-    };
-    this.proceedingsService.getTypeActa(body, params).subscribe({
+    this.proceedingsService.getProceedingsDeliveryReception(params).subscribe({
       next: resp => {
         console.log(resp);
         this.data.load(resp.data);
@@ -212,9 +213,9 @@ export class ActDestructionComponent extends BasePage implements OnInit {
   seeOfficial(event: any) {
     if (event) {
       this.show = true;
-      this.proceedings = event.caseNumber;
-      this.status = event.status;
-      this.minutes = event.document;
+      this.proceedings = event.numFile;
+      this.status = event.statusProceedings;
+      this.minutes = event.keysProceedings;
       var formattedEla = new DatePipe('en-EN').transform(
         event.elaborationDate,
         'dd/MM/yyyy',
@@ -222,7 +223,7 @@ export class ActDestructionComponent extends BasePage implements OnInit {
       );
       this.elaborationDate = formattedEla;
       var formattedReception = new DatePipe('en-EN').transform(
-        event.physicalReceptionDate,
+        event.datePhysicalReception,
         'dd/MM/yyyy',
         'UTC'
       );
@@ -235,25 +236,25 @@ export class ActDestructionComponent extends BasePage implements OnInit {
       this.captureDate = formattedCapture;
       this.address = event.address;
       this.observations = event.observations;
-      this.delivery = event.delivery;
-      this.receives = event.receivedBy;
+      this.delivery = event.witness1;
+      this.receives = event.witness2;
       var formattedElaReceipt = new DatePipe('en-EN').transform(
-        event.receiptCreationDate,
+        event.dateElaborationReceipt,
         'dd/MM/yyyy',
         'UTC'
       );
       this.receiptElaborationDate = formattedElaReceipt;
-      this.witness = event.auditingWitness;
+      this.witness = event.comptrollerWitness;
       var formattedDateGoods = new DatePipe('en-EN').transform(
-        event.goodsDeliveryDate,
+        event.dateDeliveryGood,
         'dd/MM/yyyy',
         'UTC'
       );
       this.deliveryDateOfGoods = formattedDateGoods;
-      this.scanFolio = event.scanningID;
+      this.scanFolio = event.universalFolio;
       this.params1
         .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getDataAllDetail(event.noDocument));
+        .subscribe(() => this.getDataAllDetail(event.id));
     }
   }
 
