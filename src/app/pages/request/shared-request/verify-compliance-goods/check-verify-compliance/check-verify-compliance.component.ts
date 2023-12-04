@@ -44,31 +44,21 @@ export class CheckVerifyComplianceComponent
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    this.changeState();
   }
 
   private prepareForm(): void {
     this.checkForm = this.fb.group({
-      type: [''],
+      type: [this.getCheck()],
     });
-  }
-
-  changeState() {
-    this.checkbox = document.querySelector(
-      '#' + this.checkId
-    ) as HTMLInputElement;
-    if (this.checkbox) {
-      this.checkbox.checked = this.rowData.check;
-    }
   }
 
   change(event: Event) {
     this.checkbox = document.querySelector(
       '#' + this.checkId
     ) as HTMLInputElement;
-    this.checkbox.checked = this.rowData[this.field];
+    this.checkbox.checked = this.getCheck();
     let action: string;
-    this.rowData[this.field]
+    this.getCheck()
       ? (action = 'Quitar Permiso')
       : (action = 'Otorgar Permiso');
     this.alertQuestion(
@@ -78,10 +68,24 @@ export class CheckVerifyComplianceComponent
       action
     ).then(question => {
       if (question.isConfirmed) {
+        this.rowData.change = true;
         this.rowData[this.field] = !this.rowData[this.field];
         this.checkbox.checked = this.rowData[this.field];
       }
     });
+  }
+
+  getCheck() {
+
+    if (this.isNumber(this.rowData[this.field])) {
+      return this.rowData[this.field] == "1";
+    }
+
+    return this.rowData[this.field]
+  }
+
+  isNumber(value: any): boolean {
+    return !isNaN(parseFloat(value)) && isFinite(value);
   }
 
 

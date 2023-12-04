@@ -33,30 +33,30 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
         type: 'number',
       }, // NUMEROS
       subinventory: { title: 'Sub. Inventario', type: 'text' },
-      cumpleArticulo24: {
+      meetsArticle24: {
         title: 'Cumple Articulo 24',
         type: 'custom',
         valuePrepareFunction: (cell: any, row: any) => cell,
         onComponentInitFunction: (instance: any) => {
-          instance.checkId = 'cumpleArticulo24';
+          instance.checkId = 'meetsArticle24';
         },
         renderComponent: CheckVerifyComplianceComponent,
       },
-      cumpleArticulo28: {
+      meetsArticle28: {
         title: 'Cumple Articulo 28',
         type: 'custom',
         valuePrepareFunction: (cell: any, row: any) => cell,
         onComponentInitFunction: (instance: any) => {
-          instance.checkId = 'cumpleArticulo28';
+          instance.checkId = 'meetsArticle28';
         },
         renderComponent: CheckVerifyComplianceComponent,
       },
-      cumpleArticulo29: {
+      meetsArticle29: {
         title: 'Cumple Articulo 29',
         type: 'custom',
         valuePrepareFunction: (cell: any, row: any) => cell,
         onComponentInitFunction: (instance: any) => {
-          instance.checkId = 'cumpleArticulo29';
+          instance.checkId = 'meetsArticle29';
         },
         renderComponent: CheckVerifyComplianceComponent,
       },
@@ -108,6 +108,54 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
     this.onChange.emit({
       isValid: false,
       object: this.data,
+    });
+  }
+
+  save() {
+
+    this.data.filter(x => x.change).forEach(element => {
+
+      const body: any = {
+        meetsArticle24: element.meetsArticle24 ? 1 : 0,
+        meetsArticle28: element.meetsArticle28 ? 1 : 0,
+        meetsArticle29: element.meetsArticle29 ? 1 : 0
+      };
+
+      element.change = false;
+
+      this.updateGood(element.goodresdevId, body);
+
+    });
+
+    this.onLoadToast('success', 'Se guardo la verificación de cumplimiento de los bienes');
+
+  }
+
+  cancel() {
+
+    this.data.forEach(element => {
+      element.change = true;
+      element.meetsArticle24 = 0;
+      element.meetsArticle28 = 0;
+      element.meetsArticle29 = 0;
+    });
+
+    this.data = [...this.data];
+
+  }
+
+  updateGood(id, body: any) {
+    return new Promise((resolve, reject) => {
+      this.rejectedGoodService.updateGoodsResDev(id, body).subscribe({
+        next: res => {
+          console.log('bien actualizado');
+          resolve(true);
+        },
+        error: error => {
+          reject(false);
+          this.onLoadToast('error', 'No se pudieron actualizar los Bienes');
+        },
+      });
     });
   }
 
