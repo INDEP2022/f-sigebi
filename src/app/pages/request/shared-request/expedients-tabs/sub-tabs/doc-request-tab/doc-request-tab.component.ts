@@ -959,10 +959,6 @@ export class DocRequestTabComponent
 
   onChanges() {
 
-    console.log('docExpedient', this.docExpedient);
-    console.log('docRequest', this.docRequest);
-    console.log('data', this.data);
-
     let list = this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
 
     this.onChange.emit({

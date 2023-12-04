@@ -104,6 +104,7 @@ export class RequestCompDocTasksComponent
     regdoc: false,
     goods: false,
     files: false,
+    vercom: false
   }
 
 
@@ -182,6 +183,7 @@ export class RequestCompDocTasksComponent
     this.taskService.getAll(filter).subscribe({
       next: resp => {
         this.taskInfo = resp.data[0];
+        this.title = this.taskInfo.title;
       },
     });
   }
@@ -796,6 +798,12 @@ export class RequestCompDocTasksComponent
   onSelectFiles(event) {
     console.log(event);
     this.validate.files = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  onVerifyCom(event) {
+    console.log(event);
+    this.validate.vercom = event.isValid;
     //Agreagar validaciones en especifico
   }
 

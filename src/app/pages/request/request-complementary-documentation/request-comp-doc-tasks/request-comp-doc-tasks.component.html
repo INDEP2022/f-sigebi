@@ -311,15 +311,13 @@
         <tab
           heading="Verificar Cumplimiento de Bienes"
           *ngIf="verifyCompliance">
-          <app-verify-compliance-goods
-            nombrePantalla="Verificar Cumplimiento de Bienes"></app-verify-compliance-goods>
+          <app-verify-compliance-goods (onChange)="onVerifyCom($event)"></app-verify-compliance-goods>
         </tab>
         <tab
           *ngIf="validateGoodForEyeVisit"
           heading="Validar Resultado Visitas"
           id="validateGoodsEyeVisitTab">
-          <app-validate-eye-visit
-            [idRequest]="requestId"></app-validate-eye-visit>
+          <app-validate-eye-visit></app-validate-eye-visit>
         </tab>
         <tab
           *ngIf="resultVisits"

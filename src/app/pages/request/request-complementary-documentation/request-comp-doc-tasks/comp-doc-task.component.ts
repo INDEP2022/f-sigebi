@@ -359,10 +359,11 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'verify-compliance-return':
-        this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`;
+        //this.title = ` DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
         this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
-        this.selectGoods = true;
+        this.selectGoodForEyeVisit = true;
+
         this.expRequest = true;
 
         this.btnAprove = true; //AGREGAR SOLICITAR APROBACIÓN (BOTON) validateDocument verificar
@@ -371,7 +372,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = false;
         this.searchAssociateFile = false;
         this.searchRequestSimGoods = false;
-        this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = false;
 
         break;

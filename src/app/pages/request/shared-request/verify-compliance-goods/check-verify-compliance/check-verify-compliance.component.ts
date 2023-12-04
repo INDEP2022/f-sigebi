@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -9,25 +10,31 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class CheckVerifyComplianceComponent
   extends BasePage
-  implements OnInit, AfterViewInit
-{
+  implements OnInit, AfterViewInit {
   checkForm: FormGroup = new FormGroup({});
   checkState: boolean = false;
   checkbox: any;
   checkStateEditForm: boolean = false;
-  @Input() checkId: string = 'checkbox';
-  @Input() checkIdField: string = 'nameField';
   @Input() value: string | number;
   @Input() rowData: any;
-  @Input() nombrePantalla: string = 'sinNombre';
+  @Input() checkId: string = 'checkbox';
+  field: string = 'checkbox';
 
-  constructor(private fb: FormBuilder) {
+  requestId: number = null;
+  process = null;
+
+  constructor(private fb: FormBuilder, private route: ActivatedRoute) {
     super();
   }
 
   ngOnInit(): void {
-    this.checkId = this.checkId + this.rowData._id.toString();
-    if (this.nombrePantalla != 'approve-return-request') {
+
+    this.requestId = Number(this.route.snapshot.paramMap.get('request'));
+    this.process = this.route.snapshot.paramMap.get('process');
+
+    this.field = this.checkId + "";
+    this.checkId = this.checkId + this.rowData.good.id.toString();
+    if (this.process != 'approve-return-request') {
       this.checkStateEditForm = true;
       this.prepareForm();
     } else {
@@ -51,7 +58,7 @@ export class CheckVerifyComplianceComponent
       '#' + this.checkId
     ) as HTMLInputElement;
     if (this.checkbox) {
-      this.checkbox.checked = this.checkState;
+      this.checkbox.checked = this.rowData.check;
     }
   }
 
@@ -59,9 +66,9 @@ export class CheckVerifyComplianceComponent
     this.checkbox = document.querySelector(
       '#' + this.checkId
     ) as HTMLInputElement;
-    this.checkbox.checked = this.checkState;
+    this.checkbox.checked = this.rowData[this.field];
     let action: string;
-    this.checkState
+    this.rowData[this.field]
       ? (action = 'Quitar Permiso')
       : (action = 'Otorgar Permiso');
     this.alertQuestion(
@@ -71,9 +78,12 @@ export class CheckVerifyComplianceComponent
       action
     ).then(question => {
       if (question.isConfirmed) {
-        this.checkState = !this.checkState;
-        this.checkbox.checked = this.checkState;
+        this.rowData[this.field] = !this.rowData[this.field];
+        this.checkbox.checked = this.rowData[this.field];
       }
     });
   }
+
+
+
 }
