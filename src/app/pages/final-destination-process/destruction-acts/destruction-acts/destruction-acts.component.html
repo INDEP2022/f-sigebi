@@ -416,6 +416,7 @@
           *ngIf="!loadingTable"
           [params]="params2"
           [pageSizeOptions]="[5, 10, 20]"
+          (rowSelect)="selectGoodActFn($event)"
           [limit]="limit2"
           [totalItems]="totalItems2"></app-pagination>
         <div class="row pt-3">

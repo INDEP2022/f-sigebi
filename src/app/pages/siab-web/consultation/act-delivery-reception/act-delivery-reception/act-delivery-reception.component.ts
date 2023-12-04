@@ -152,17 +152,17 @@ export class ActDeliveryReceptionComponent extends BasePage implements OnInit {
   seeOfficial(event: any) {
     if (event) {
       this.show = true;
-      this.proceedings = event.expediente;
-      this.status = event.estatus;
-      this.minutes = event.acta;
+      this.proceedings = event.numFile;
+      this.status = event.statusProceedings;
+      this.minutes = event.keysProceedings;
       var formattedEla = new DatePipe('en-EN').transform(
-        event.fecha,
+        event.elaborationDate,
         'dd/MM/yyyy',
         'UTC'
       );
       this.elaborationDate = formattedEla;
       var formattedReception = new DatePipe('en-EN').transform(
-        event.physicalReceptionDate,
+        event.datePhysicalReception,
         'dd/MM/yyyy',
         'UTC'
       );
@@ -175,25 +175,25 @@ export class ActDeliveryReceptionComponent extends BasePage implements OnInit {
       this.captureDate = formattedCapture;
       this.address = event.address;
       this.observations = event.observations;
-      this.delivery = event.delivery;
-      this.receives = event.receivedBy;
+      this.delivery = event.witness1;
+      this.receives = event.witness2;
       var formattedElaReceipt = new DatePipe('en-EN').transform(
-        event.receiptCreationDate,
+        event.dateElaborationReceipt,
         'dd/MM/yyyy',
         'UTC'
       );
       this.receiptElaborationDate = formattedElaReceipt;
-      this.witness = event.auditingWitness;
+      this.witness = event.comptrollerWitness;
       var formattedDateGoods = new DatePipe('en-EN').transform(
-        event.goodsDeliveryDate,
+        event.dateDeliveryGood,
         'dd/MM/yyyy',
         'UTC'
       );
       this.deliveryDateOfGoods = formattedDateGoods;
-      this.scanFolio = event.scanningID;
+      this.scanFolio = event.universalFolio;
       this.params1
         .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getDataAllDetail(event.no_acta));
+        .subscribe(() => this.getDataAllDetail(event.id));
     }
   }
 
@@ -232,19 +232,19 @@ export class ActDeliveryReceptionComponent extends BasePage implements OnInit {
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getData(this.criterio));
     } else {
-      this.alert('error', 'Error se debe ingresar un No. de Acta', ``);
+      this.alert('warning', 'Error se debe ingresar un No. de Acta', ``);
     }
   }
 
   getData(noActa?: number) {
     if (noActa) {
-      this.params.getValue()['filter.no_acta'] = `$eq:${noActa}`;
+      this.params.getValue()['filter.id'] = `$eq:${noActa}`;
       this.loading = true;
       let param = {
         ...this.params.getValue(),
         ...this.columnFilters,
       };
-      this.proceedingsDeliveryReceptionService.getSearchActa(param).subscribe({
+      this.proceedingsService.getProceedingsDeliveryReception(param).subscribe({
         next: resp => {
           console.log(resp.data);
           this.totalItems = resp.count;

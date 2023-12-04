@@ -518,7 +518,6 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         const newData = await Promise.all(
           res.data.map(async (e: any) => {
             const resp = await this.validatedGood(e);
-            console.log(resp);
             const jsonResp = JSON.parse(JSON.stringify(resp));
 
             return {
