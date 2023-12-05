@@ -447,7 +447,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private async initScreenI() {
-    debugger;
+    // debugger;
     const list = [];
     let filterParams = new FilterParams();
     let user = 'PLAMAR';
