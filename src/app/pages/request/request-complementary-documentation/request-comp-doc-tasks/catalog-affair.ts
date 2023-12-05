@@ -37,7 +37,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
                     };
                 case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
                     return {
-                        title: `RESOLUCIÓN ADMINISTRATIVA DE PAGO EN ESPECIE Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+                        title: `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
                         url: 'pages/request/request-comp-doc/tasks/register-request-compensation',
                         process: 'RERegistroSolicitudes',
                         type: 'DOCUMENTACION_COMPLEMENTARIA',

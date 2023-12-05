@@ -1,24 +1,8 @@
 <app-card [header]="true">
   <div class="ch-content justify-content-between" header>
     <div class="">
-      <h5
-        class="title"
-        *ngIf="
-          this.requestInfo?.affair == 13 ||
-          this.requestInfo?.affair == 10 ||
-          this.requestInfo?.affair == 33
-        ">
+      <h5 class="title">
         {{ title }}
-      </h5>
-      <h5
-        class="title"
-        *ngIf="
-          this.requestInfo?.affair != 13 &&
-          this.requestInfo?.affair != 10 &&
-          this.requestInfo?.affair != 33
-        ">
-        {{ title }}
-        {{ requestId }}&#44; Contribuyente&#58; {{ contributor }}
       </h5>
     </div>
   </div>
@@ -254,7 +238,7 @@
           *ngIf="searchRequestSimGoods"
           heading="Buscar Solicitudes de Bienes Similares"
           id="requestSimilarGoodsTab">
-          <app-search-request-similar-goods></app-search-request-similar-goods>
+          <app-search-request-similar-goods [selected]="true"></app-search-request-similar-goods>
         </tab>
 
         <tab
