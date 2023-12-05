@@ -185,6 +185,9 @@ export class DestructionAuthorizationComponent
   username: string = null;
   refusedGoods: string[];
 
+  //AGREGADO POR GRIGORK
+  selectGoodProc: any = null;
+
   @ViewChild('focusElement', { static: true })
   focusElement: ElementRef<HTMLInputElement>;
 
@@ -260,7 +263,7 @@ export class DestructionAuthorizationComponent
           type: 'custom',
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onSelectGood(instance),
+            this.onSelectGoodAct(instance),
           filter: false,
           sort: false,
         },
@@ -322,6 +325,24 @@ export class DestructionAuthorizationComponent
 
   private tempArrayGood: any = [];
   private selectedGood: any = null;
+  private goodsAct: any = [];
+
+  onSelectGoodAct(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        if (data.toggle) {
+          console.log(this.goodsAct);
+          this.goodsAct.push(data.row);
+        } else {
+          console.log(data.row.goodNumber);
+          console.log(this.goodsAct);
+          this.goodsAct = this.goodsAct.filter(
+            valor => valor.goodNumber != data.row.goodNumber
+          );
+        }
+      },
+    });
+  }
 
   onSelectGood(instance: CheckboxElementComponent) {
     if (this.controls.statusProceedings.value == 'CERRADA') {
@@ -400,7 +421,9 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (this.controls.statusProceedings.value == 'CERRADA') {
+    if (
+      ['CERRADO', 'CERRADA'].includes(this.controls.statusProceedings.value)
+    ) {
       this.alert(
         'warning',
         'Error',
@@ -409,7 +432,7 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (this.selectedGood.length == 0) {
+    if (this.selectGoodProc == null) {
       this.alert(
         'warning',
         'Error',
@@ -424,8 +447,8 @@ export class DestructionAuthorizationComponent
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.goodIds = this.array1[0].numberGood;
-        this.numberPro = this.array1[0].numberProceedings;
+        this.goodIds = this.selectGoodProc.numberGood;
+        this.numberPro = this.selectGoodProc.numberProceedings;
 
         console.log(this.goodIds, this.numberPro);
         this.deleteDetail();
@@ -1101,7 +1124,7 @@ export class DestructionAuthorizationComponent
 
   resetAll() {
     this.proceedingForm.reset();
-    this.detailProceedingsList = [];
+    this.detailProceedingsList2.load([]);
     this.actaList = [];
     this.dictaList = [];
   }
@@ -1226,6 +1249,11 @@ export class DestructionAuthorizationComponent
     }
   }
 
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
   closeProceeding() {
     const { closeDate, universalFolio, keysProceedings } = this.controls;
     if (!closeDate.value) {
@@ -1271,9 +1299,12 @@ export class DestructionAuthorizationComponent
           return;
         }
         const fecha = this.proceedingForm.get('closeDate').value;
-        const fechaFormateada = this.datePipe.transform(fecha, 'dd/MM/yyyy');
+        /* const fechaFormateada = format(
+          new Date(this.correctDate(fecha)),
+          'dd/MM/yyyy'
+        ); */
         const message = CLOSE_PROCEEDING_MESSAGE(
-          fechaFormateada,
+          this.correctDate(fecha).toString(),
           this.totalItems2,
           keysProceedings.value
         );
@@ -1305,10 +1336,15 @@ export class DestructionAuthorizationComponent
       initialState: {
         message,
         action,
-        proceeding: this.proceedingForm.value,
+        proceeding: {
+          ...this.proceedingForm.value,
+          closeDate: this.correctDate(
+            this.proceedingForm.get('closeDate').value
+          ),
+        },
         callback: (next: boolean) => {
           if (next) {
-            const id = this.controls.keysProceedings.value;
+            const id = this.controls.id.value;
             this.findProceeding(id).subscribe();
           }
         },
@@ -1455,6 +1491,17 @@ export class DestructionAuthorizationComponent
   }
 
   insertGood() {
+    if (
+      ['CERRADO', 'CERRADA'].includes(this.controls.statusProceedings.value)
+    ) {
+      this.alert(
+        'warning',
+        'Error',
+        'La Solicitud ya esta cerrada, no puede realizar modificaciones a esta'
+      );
+      return;
+    }
+
     if (this.array.length === 0) {
       this.alert('warning', 'Debe seleccionar un Bien', '');
       return;
@@ -1550,6 +1597,12 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    console.log(this.tempArrayGood);
+    console.log(this.goodsAct);
+  }
+
+  //SELECT GOOD ACTA
+  selectGoodActa(good: any) {
+    console.log(good);
+    this.selectGoodProc = good.data;
   }
 }

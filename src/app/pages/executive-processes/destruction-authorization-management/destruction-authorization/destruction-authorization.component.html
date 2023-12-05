@@ -127,7 +127,7 @@
           </button> -->
           <button
             *ngIf="controls.statusProceedings.value != 'CERRADA'"
-            (click)="newCloseProceeding()"
+            (click)="closeProceeding()"
             class="btn btn-primary btn-sm active mr-3">
             {{
               controls.statusProceedings.value != 'CERRADA'
@@ -292,6 +292,7 @@
             <!-- <div class="table-responsive"> -->
             <ng2-smart-table
               [settings]="settings2"
+              (userRowSelect)="selectGoodActa($event)"
               [source]="detailProceedingsList2"></ng2-smart-table>
             <app-pagination
               [params]="params7"
