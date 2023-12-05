@@ -51,14 +51,13 @@
         <div class="mx-1" *ngIf="btnRequestAprove">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-sm btn-success active"
             [disabled]=""
             (click)="btnRequestAprobar()">
             Solicitar Aprobación
             <i class="fa fa-envelope"></i>
           </button>
         </div>
-
         <div class="mx-1">
           <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="updateRequest()">
             Guardar <i class="fa fa-save mr-1 float-icon"></i>
@@ -70,26 +69,43 @@
           </button>
         </div>
         <div class="mx-1" *ngIf="resultEyeVisitReport || makeResultPaperReport">
-          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="reportResultEyeVisit()">
+          <button
+            type="button"
+            class="btn btn-info active btn-sm"
+            [disabled]=""
+            (click)="reportResultEyeVisit()">
             Reporte Resultado Visita Ocular
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="notifyReport">
-          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openNotifyReport()">
+          <button
+            type="button"
+            class="btn btn-info active btn-sme"
+            [disabled]=""
+            (click)="openNotifyReport()">
             <i class="bx bx-notepad mr-1 float-icon"></i> Reporte de
             Notificacion
           </button>
         </div>
         <div class="mx-1" *ngIf="RequestEconomicResourcesReport">
-          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openRequestResourcesReport()">
+          <button
+            type="button"
+            class="btn btn-info active btn-sm"
+            [disabled]=""
+            (click)="openRequestResourcesReport()">
             Solicitud Recursos Económicos
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="createReport">
-          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openReport()">
-            <i class="bx bx-notepad mr-1 float-icon"></i> Dictamen Resarcimiento
+          <button
+            type="button"
+            class="btn btn-info active btn-sm"
+            [disabled]=""
+            (click)="openReport()">
+            Dictamen Resarcimiento
+            <i class="bx bx-file bx-m float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="destinyJob">
@@ -98,24 +114,32 @@
           </button>
         </div>
         <div class="mx-1" *ngIf="btnAprove">
-          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="btnAprobar()">
-            <i class="bx bx-mail-send mr-1 float-icon"></i>
+          <button
+            type="button"
+            class="btn btn-sm btn-success active"
+            [disabled]=""
+            (click)="btnAprobar()">
             Aprobar
+            <i class="fa fa-check" aria-hidden="true"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="dictumReturn">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-info active btn-sm"
             [disabled]=""
             (click)="openReport()">
-            Dictamen Devolución <i class="fa fa-save mr-1 float-icon"></i>
+            Dictamen Devolución <i class="bx bx-file bx-m float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="btnDecline">
-          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="rejectRequest()">
-            <i class="bx bx-mail-send mr-1 float-icon"></i>
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active mr-3"
+            [disabled]=""
+            (click)="rejectRequest()">
             Rechazar
+            <i class="bx bx-x bx-m float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="sendEmail">
@@ -143,8 +167,9 @@
           <ul id="dropdown-csv" *dropdownMenu class="dropdown-menu dropdown-menu-right bg-primary" role="menu"
             aria-labelledby="processBtn">
             <li role="menuitem">
-              <a class="dropdown-item bg-primary text-light" (click)="(true)">Dictamen Resarcimiento
-                <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+              <a class="dropdown-item bg-primary text-light" (click)="(true)"
+                >Dictamen Resarcimiento
+                <i class="bx bx-file bx-m float-icon"></i>
               </a>
             </li>
             <li role="menuitem">
