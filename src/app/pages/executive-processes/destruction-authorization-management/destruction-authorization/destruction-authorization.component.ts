@@ -255,7 +255,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
-        /* selection: {
+        selection: {
           title: '',
           type: 'custom',
           renderComponent: CheckboxElementComponent,
@@ -263,7 +263,7 @@ export class DestructionAuthorizationComponent
             this.onSelectGood(instance),
           filter: false,
           sort: false,
-        }, */
+        },
       },
       hideSubHeader: false,
     };
