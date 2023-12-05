@@ -153,16 +153,16 @@
     </form>
     <div class="row mt-4" *ngIf="until">
       <div class="col-md-12">
-        <ng-scrollbar
+        <!-- <ng-scrollbar
           [track]="'all'"
-          [ngStyle]="{ height: loading ? '0px' : '300px' }">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings"
-              [source]="source"></ng2-smart-table>
-          </div>
-        </ng-scrollbar>
+          [ngStyle]="{ height: loading ? '0px' : '300px' }"> -->
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="source"></ng2-smart-table>
+        </div>
+        <!-- </ng-scrollbar> -->
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
