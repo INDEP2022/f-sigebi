@@ -8,6 +8,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared';
 
 @Component({
@@ -16,6 +17,9 @@ import { BasePage } from 'src/app/core/shared';
   styleUrls: [],
 })
 export class PackageComponent extends BasePage implements OnInit {
+  //RECIBO
+  no_acta: any = null;
+
   loadingTable = false;
 
   //NAVEGACION TABLAS
@@ -30,6 +34,7 @@ export class PackageComponent extends BasePage implements OnInit {
 
   //DATOS TEMPORALES
   noPackage: string = null;
+  packagedet: any = null;
 
   settingsEnc = {
     ...this.settings,
@@ -76,7 +81,8 @@ export class PackageComponent extends BasePage implements OnInit {
 
   constructor(
     private bsModel: BsModalRef,
-    private packageGoodService: PackageGoodService
+    private packageGoodService: PackageGoodService,
+    private proceedingService: ProceedingsService
   ) {
     super();
   }
@@ -129,7 +135,6 @@ export class PackageComponent extends BasePage implements OnInit {
 
   selectRowEnc(row: any) {
     const data = row.data;
-    console.log(data);
     this.getListPackageDet(data.numberPackage);
     this.noPackage = data.numberPackage;
   }
@@ -153,5 +158,34 @@ export class PackageComponent extends BasePage implements OnInit {
         this.alert('error', 'Error al obtener los datos', '');
       }
     );
+  }
+
+  selectRowDet(row: any) {
+    const data = row.data;
+    console.log(data);
+    this.packagedet = data;
+  }
+
+  acept() {
+    if (this.packagedet == null) {
+      this.alert('warning', 'Seleccione un paquete detalle', '');
+      return;
+    }
+
+    if (this.noPackage == null) {
+      this.alert('warning', 'Seleccione un paquete', '');
+      return;
+    }
+
+    /* const body: IPbSelPaq = {
+      noPaquete: parseInt(this.noPackage),
+      blkAct: [
+        {
+          no_acta: parseInt(this.no_acta),
+        },
+      ],
+      blkBie: [],
+      blkDet: [],
+    }; */
   }
 }
