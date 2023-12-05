@@ -10,71 +10,9 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     ', PAMA: ' +
     request.transferenceFile;
 
+  affair = parseInt(affair);
+
   switch (path) {
-    //Se crea solicitud decumentación complementaria
-    case 'create':
-      switch (affair) {
-        case 10: //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
-          return {
-            title: `DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-return',
-            process: 'DRegistroSolicitudes',
-            type: 'DOCUMENTACION_COMPLEMENTARIA',
-            subtype: 'Registro_Solicitud',
-            ssubtype: 'TURNAR',
-          };
-        case 33: //GESTIONAR BINES SIMILARES RESARCIMIENTO
-          return {
-            title: `BIENES SIMILARES Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-similar-goods',
-            process: 'BSRegistroSolicitudes',
-            type: 'DOCUMENTACION_COMPLEMENTARIA',
-            subtype: 'Registro_Solicitud',
-            ssubtype: 'TURNAR',
-          };
-        case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
-          return {
-            title: `RESOLUCIÓN ADMINISTRATIVA DE PAGO EN ESPECIE Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-compensation',
-            process: 'RERegistroSolicitudes',
-            type: 'DOCUMENTACION_COMPLEMENTARIA',
-            subtype: 'Registro_Solicitud',
-            ssubtype: 'TURNAR',
-          };
-        case 41: //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
-          return {
-            title: `SOLICITUD DE INFORMACIÓN DEL DESTINO DEL BIEN Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-information-goods',
-            process: 'IBRegistroSolicitudes',
-            type: 'DOCUMENTACION_COMPLEMENTARIA',
-            subtype: 'Registro_Solicitud',
-            ssubtype: 'TURNAR',
-          };
-      }
-      break;
-
-    //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
-    case 'register-request-return':
-      return {
-        title: `DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud: ${requestId}, Contribuyente ${contributor}`,
-        url: 'pages/request/request-comp-doc/tasks/verify-compliance-return',
-        process: 'DVerificarCumplimiento',
-        type: 'DOCUMENTACION_COMPLEMENTARIA',
-        subtype: 'Registro_documentacion',
-        ssubtype: 'TURNAR_SOLICITUD_DEVOLUCION',
-      };
-    case 'verify-compliance-return':
-      return {
-        title: `Aprobar Devolución, No. Solicitud: ${requestId}, Contribuyente ${contributor}`,
-        url: 'pages/request/request-comp-doc/tasks/approve-return',
-        process: 'DAprobarDevolucion',
-        type: 'DOCUMENTACION_COMPLEMENTARIA',
-        subtype: 'Registro_documentacion',
-        ssubtype: '',
-      };
-    case 'approve-return':
-      break;
-
     //Se crea solicitud decumentación complementaria
     case 'create':
       switch (affair) {

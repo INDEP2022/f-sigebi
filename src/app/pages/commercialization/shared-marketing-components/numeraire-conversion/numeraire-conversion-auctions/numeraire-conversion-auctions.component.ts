@@ -1,18 +1,14 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, map, of, take } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
-import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
-import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
-import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
 import { ComerieventosService } from '../services/comerieventos.service';
@@ -30,20 +26,14 @@ export class NumeraireConversionAuctionsComponent
   implements OnInit
 {
   @Input() address: string;
-  reloadExpenses = 0;
-  form: FormGroup = new FormGroup({});
-  selectedExpenseData: IFillExpenseDataCombined;
-  nameEvent = '';
-  showParcial = true;
+
   ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
   dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
   user: any;
+  selectNewEvent: IComerEvent;
   constructor(
-    private fb: FormBuilder,
     private convNumeraryService: ConvNumeraryService,
-    private comertpEventService: ComerTpEventosService,
-    private lotService: LotService,
     private modalService: BsModalService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
@@ -57,9 +47,7 @@ export class NumeraireConversionAuctionsComponent
     this.user = this.authService.decodeToken().preferred_username;
   }
 
-  ngOnInit(): void {
-    this.prepareForm();
-  }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['address'] && changes['address'].currentValue) {
@@ -69,6 +57,14 @@ export class NumeraireConversionAuctionsComponent
         this.showParcial = true;
       }
     }
+  }
+
+  get showParcial() {
+    return this.numerarieService.showParcial;
+  }
+
+  set showParcial(value) {
+    this.numerarieService.showParcial = value;
   }
 
   get eventService() {
@@ -81,18 +77,6 @@ export class NumeraireConversionAuctionsComponent
 
   get updateAllowed() {
     return this.numerarieService.updateAllowed;
-  }
-
-  private prepareForm() {
-    this.form = this.fb.group({
-      idEvent: ['', [Validators.required]],
-      // cveEvent: ['', [Validators.required]],
-      // nameEvent: ['', [Validators.required]],
-      // obsEvent: ['', [Validators.required]],
-      // place: ['', [Validators.required]],
-      // eventDate: ['', [Validators.required]],
-      // failureDate: ['', [Validators.required]],
-    });
   }
 
   get pathEvent() {
@@ -110,73 +94,54 @@ export class NumeraireConversionAuctionsComponent
     this.numerarieService.selectedEvent = value;
   }
 
-  selectEvent(event: IComerEvent) {
-    console.log(event);
-    this.selectedExpenseData = null;
-    this.nameEvent = '';
-    this.reloadExpenses++;
-    this.selectedEvent = {
-      ...event,
-      failureDate: secondFormatDateTofirstFormatDate(event.failureDate),
-      eventDate: secondFormatDateTofirstFormatDate(event.eventDate as string),
-    };
-    this.numerarieService.selectedEventSubject.next(this.selectedEvent);
-    const filterParams = new FilterParams();
-    filterParams.addFilter('id', event.eventTpId);
-    this.comertpEventService
-      .getAllComerTpEvent(filterParams.getParams())
+  get selectedExpenseData() {
+    return this.numerarieService.selectedExpenseData;
+  }
+
+  set selectedExpenseData(value) {
+    this.numerarieService.selectedExpenseData = value;
+  }
+
+  get reloadExpenses() {
+    return this.numerarieService.reloadExpenses;
+  }
+
+  set reloadExpenses(value) {
+    this.numerarieService.reloadExpenses = value;
+  }
+
+  private calculaBody() {
+    this.loader.load = true;
+    this.convNumeraryService
+      .getCentralNumera(this.selectedEvent.id)
       .pipe(take(1))
       .subscribe({
         next: response => {
-          if (response && response.data) {
-            this.nameEvent = response.data[0].description;
-          }
+          this.reloadExpenses++;
+          this.loader.load = false;
+          this.alert('success', 'Se ha calculado correctamente', '');
+        },
+        error: err => {
+          console.log(err);
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'No se ha podido realizar el cálculo',
+            err.error.message
+          );
         },
       });
-    this.validateParcialButtons(event);
-  }
-
-  validateParcialButtons(event: IComerEvent) {
-    if (this.address === 'I') {
-      this.showParcial = true;
-      const filterParams = new FilterParams();
-      filterParams.addFilter('idStatusVta', 'GARA');
-      filterParams.addFilter('idEvent', event.id);
-      this.lotService
-        .getAll(filterParams.getParams())
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            if (response && response.data && response.data.length === 0) {
-              this.showParcial = false;
-            }
-          },
-        });
-    }
   }
 
   calcula() {
-    if (this.selectedEvent.statusVtaId !== 'CNE') {
-      this.loader.load = true;
-      this.convNumeraryService
-        .getCentralNumera(this.selectedEvent.id)
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.reloadExpenses++;
-            this.loader.load = false;
-            this.alert('success', 'Se ha calculado correctamente', '');
-          },
-          error: err => {
-            console.log(err);
-            this.loader.load = false;
-            this.alert(
-              'error',
-              'No se ha podido realizar el cálculo',
-              err.error.message
-            );
-          },
-        });
+    if (this.validNormal) {
+      this.alertQuestion('question', '¿Desea calcular este evento?', '').then(
+        x => {
+          if (x.isConfirmed) {
+            this.calculaBody();
+          }
+        }
+      );
     } else {
       this.alert(
         'warning',
@@ -186,42 +151,60 @@ export class NumeraireConversionAuctionsComponent
     }
   }
 
-  async calculaParc() {
-    if (this.selectedEvent.statusVtaId === 'VEN') {
-      this.loader.load = true;
-      let resultBorra = await firstValueFrom(
-        this.convNumeraryService
-          .SPBorraNumera(this.selectedEvent.id)
-          .pipe(catchError(x => of(x.error)))
-      );
-      if (resultBorra.statusCode !== 200) {
-        this.alert(
-          'error',
-          'No se ha podido calcular parcialmente',
-          resultBorra.message
-        );
-        this.loader.load = false;
-        return;
-      }
-      console.log(resultBorra);
-      let resultParcial = await firstValueFrom(
-        this.convNumeraryService
-          .getSPGastosEventoParcial(this.selectedEvent.id)
-          .pipe(catchError(x => of(x.error)))
-      );
-      if (resultParcial.statusCode !== 200) {
-        this.alert(
-          'error',
-          'No se ha podido calcular parcialmente',
-          resultParcial.message
-        );
-        this.loader.load = false;
-        return;
-      }
+  get validParcial() {
+    return this.selectedEvent
+      ? this.selectedEvent.statusVtaId === 'VEN'
+      : false;
+  }
 
+  private async calculaParcBody() {
+    this.loader.load = true;
+    let resultBorra = await firstValueFrom(
+      this.convNumeraryService
+        .SPBorraNumera(this.selectedEvent.id)
+        .pipe(catchError(x => of(x.error)))
+    );
+    if (resultBorra.statusCode !== 200) {
+      this.alert(
+        'error',
+        'No se ha podido calcular parcialmente',
+        resultBorra.message
+      );
       this.loader.load = false;
-      this.reloadExpenses++;
-      this.alert('success', 'Se ha calculado parcialmente', '');
+      return;
+    }
+    console.log(resultBorra);
+    let resultParcial = await firstValueFrom(
+      this.convNumeraryService
+        .getSPGastosEventoParcial(this.selectedEvent.id)
+        .pipe(catchError(x => of(x.error)))
+    );
+    if (resultParcial.statusCode !== 200) {
+      this.alert(
+        'error',
+        'No se ha podido calcular parcialmente',
+        resultParcial.message
+      );
+      this.loader.load = false;
+      return;
+    }
+
+    this.loader.load = false;
+    this.reloadExpenses++;
+    this.alert('success', 'Se ha calculado parcialmente', '');
+  }
+
+  async calculaParc() {
+    if (this.validParcial) {
+      this.alertQuestion(
+        'question',
+        '¿Desea calcular parcialmente este evento?',
+        ''
+      ).then(x => {
+        if (x.isConfirmed) {
+          this.calculaParcBody();
+        }
+      });
     } else {
       this.alert(
         'warning',
@@ -231,54 +214,89 @@ export class NumeraireConversionAuctionsComponent
     }
   }
 
+  resetForm() {
+    this.selectedEvent = null;
+    this.numerarieService.selectedExpenseData = null;
+    this.reloadExpenses++;
+  }
+
+  selectEvent(event: IComerEvent) {
+    this.selectedExpenseData = null;
+    this.reloadExpenses++;
+    this.selectedEvent = {
+      ...event,
+      failureDate: secondFormatDateTofirstFormatDate(event.failureDate),
+      eventDate: secondFormatDateTofirstFormatDate(event.eventDate as string),
+    };
+    this.numerarieService.selectedEventSubject.next(this.selectedEvent);
+    this.numerarieService.validateParcialButtons(this.address, event);
+  }
+
+  private convierteBody() {
+    this.loader.load = true;
+    this.convNumeraryService
+      .convert({
+        pevent: this.selectedEvent.id,
+        pscreen: 'FCOMER087',
+        user: this.user,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          // this.reloadExpenses++;
+          let params = new FilterParams();
+          params.addFilter('id', this.selectedEvent.id);
+          this.eventDataService
+            .getAllEvents(params.getParams())
+            .pipe(
+              take(1),
+              catchError(x => of({ data: [] as IComerEvent[] })),
+              map(x => x.data)
+            )
+            .subscribe({
+              next: response => {
+                this.loader.load = false;
+                if (response && response.length > 0) {
+                  // this.selectEvent(response[0]);
+                  this.selectNewEvent = response[0];
+                  this.alert('success', 'Se ha convertido correctamente', '');
+                } else {
+                  this.alert(
+                    'error',
+                    'Ocurrio un error al actualizar el evento',
+                    'Favor de verificar'
+                  );
+                }
+              },
+            });
+        },
+        error: err => {
+          console.log(err);
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'No se pudo realizar la conversión',
+            err.error.message
+          );
+        },
+      });
+  }
+
+  get validNormal() {
+    return this.selectedEvent
+      ? this.selectedEvent.statusVtaId !== 'CNE'
+      : false;
+  }
+
   convierte() {
-    if (this.selectedEvent.statusVtaId !== 'CNE') {
-      this.loader.load = true;
-      this.convNumeraryService
-        .convert({
-          pevent: this.selectedEvent.id,
-          pscreen: 'FCOMER087',
-          user: this.user,
-        })
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            // this.reloadExpenses++;
-            let params = new FilterParams();
-            params.addFilter('id', this.selectedEvent.id);
-            this.eventDataService
-              .getAllEvents(params.getParams())
-              .pipe(
-                take(1),
-                catchError(x => of({ data: [] as IComerEvent[] })),
-                map(x => x.data)
-              )
-              .subscribe({
-                next: response => {
-                  this.loader.load = false;
-                  if (response && response.length > 0) {
-                    this.selectEvent(response[0]);
-                    this.alert('success', 'Se ha convertido correctamente', '');
-                  } else {
-                    this.alert(
-                      'error',
-                      'Ocurrio un error al actualizar el evento',
-                      'Favor de verificar'
-                    );
-                  }
-                },
-              });
-          },
-          error: err => {
-            console.log(err);
-            this.loader.load = false;
-            this.alert(
-              'error',
-              'No se pudo realizar la conversión',
-              err.error.message
-            );
-          },
-        });
+    if (this.validNormal) {
+      this.alertQuestion('question', '¿Desea convertir este evento?', '').then(
+        x => {
+          if (x.isConfirmed) {
+            this.convierteBody();
+          }
+        }
+      );
     } else {
       this.alert(
         'warning',
@@ -288,32 +306,44 @@ export class NumeraireConversionAuctionsComponent
     }
   }
 
+  convierteParcBody() {
+    this.loader.load = true;
+    this.convNumeraryService
+      .SP_CONVERSION_ASEG_PARCIAL({
+        pevent: this.selectedEvent.id,
+        pscreen: 'FCOMER087',
+        user: this.user,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.reloadExpenses++;
+          this.loader.load = false;
+          this.alert('success', 'Se ha convertido parcialmente', '');
+        },
+        error: err => {
+          console.log(err.error.message);
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'No se pudo hacer la conversión parcial',
+            err.error.message
+          );
+        },
+      });
+  }
+
   convierteParcial() {
-    if (this.selectedEvent.statusVtaId === 'VEN') {
-      this.loader.load = true;
-      this.convNumeraryService
-        .SP_CONVERSION_ASEG_PARCIAL({
-          pevent: this.selectedEvent.id,
-          pscreen: 'FCOMER087',
-          user: this.user,
-        })
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.reloadExpenses++;
-            this.loader.load = false;
-            this.alert('success', 'Se ha convertido parcialmente', '');
-          },
-          error: err => {
-            console.log(err.error.message);
-            this.loader.load = false;
-            this.alert(
-              'error',
-              'No se pudo hacer la conversión parcial',
-              err.error.message
-            );
-          },
-        });
+    if (this.validParcial) {
+      this.alertQuestion(
+        'question',
+        '¿Desea convertir parcialmente este evento?',
+        ''
+      ).then(x => {
+        if (x.isConfirmed) {
+          this.convierteParcBody();
+        }
+      });
     } else {
       this.alert(
         'warning',

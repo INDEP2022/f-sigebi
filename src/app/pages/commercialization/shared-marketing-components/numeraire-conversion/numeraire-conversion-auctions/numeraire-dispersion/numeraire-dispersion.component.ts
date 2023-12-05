@@ -82,15 +82,22 @@ export class NumeraireDispersionComponent
   }
 
   edit(row: INumeraryxGoods) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      row,
-      eventId: this.idEvento,
-      callBack: (next: boolean) => {
-        this.getData();
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        row,
+        eventId: this.idEvento,
+        callBack: (next: boolean) => {
+          if (next) {
+            this.alert('success', 'Se realizó la edición del bien', '');
+          } else {
+            this.alert('success', 'Se realizó el registro del bien', '');
+          }
+          this.getData();
+        },
       },
     };
-    this.modalService.show(NumeraireDispersionModalComponent, modalConfig);
+    this.modalService.show(NumeraireDispersionModalComponent, config);
   }
 
   override setTotals(data: INumeraryxGoods[]): void {

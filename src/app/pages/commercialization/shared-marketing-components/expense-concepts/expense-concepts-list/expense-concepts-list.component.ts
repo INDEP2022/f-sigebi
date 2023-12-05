@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { firstValueFrom, takeUntil } from 'rxjs';
 
-import { FormControl } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -27,8 +26,6 @@ export class ExpenseConceptsListComponent
 {
   @Input() address: string;
   toggleInformation = true;
-  pageSizeOptions = [5, 10, 20, 25];
-  limit: FormControl = new FormControl(5);
   disabled = false;
   constructor(
     private modalService: BsModalService,
@@ -38,7 +35,6 @@ export class ExpenseConceptsListComponent
     private securityService: SecurityService
   ) {
     super();
-    this.params.value.limit = 5;
     this.service = this.conceptsService;
     this.ilikeFilters = ['description'];
     // if (localStorage.getItem('username') !== 'sigebiadmon') {

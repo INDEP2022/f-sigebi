@@ -27,7 +27,7 @@ export interface IListResponseMessage<T = any> {
 
 export interface IBlkBie {
   status: string;
-  proceeedingsNumber: number;
+  proceedingsNumber: number;
   goodNumber: number;
   screen: string;
 }

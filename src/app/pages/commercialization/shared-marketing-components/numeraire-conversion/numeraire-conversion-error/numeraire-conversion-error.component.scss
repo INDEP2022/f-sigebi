@@ -1,0 +1,13 @@
+:host ::ng-deep ng2-smart-table {
+  .lotePublico {
+    min-width: 80px;
+    text-align: center;
+  }
+  table tr {
+    td {
+      &:nth-child(2) {
+        text-align: center;
+      }
+    }
+  }
+}

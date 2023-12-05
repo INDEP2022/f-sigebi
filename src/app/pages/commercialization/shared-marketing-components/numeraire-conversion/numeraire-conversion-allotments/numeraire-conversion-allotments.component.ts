@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { catchError, map, of, take } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
@@ -9,7 +9,6 @@ import { BasePage } from 'src/app/core/shared';
 
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
-import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
 import { COLUMNS } from '../numeraire-conversion-auctions/columns';
 import { ComerieventosService } from '../services/comerieventos.service';
 import { ComermeventosService } from '../services/comermeventos.service';
@@ -24,13 +23,13 @@ export class NumeraireConversionAllotmentsComponent
   implements OnInit
 {
   @Input() address: string;
-  form: FormGroup = new FormGroup({});
   selectedEvent: IComerEvent = null;
   nameEvent = '';
   ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
   dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
   user: any;
+  selectNewEvent: IComerEvent;
   constructor(
     private fb: FormBuilder,
     private convNumeraryService: ConvNumeraryService,
@@ -52,24 +51,7 @@ export class NumeraireConversionAllotmentsComponent
       : null;
   }
 
-  ngOnInit(): void {
-    this.prepareForm();
-  }
-
-  private prepareForm() {
-    this.form = this.fb.group({
-      idEvent: ['', [Validators.required]],
-      // cveEvent: ['', [Validators.required]],
-      // nameEvent: [
-      //   '',
-      //   [Validators.required, Validators.pattern(STRING_PATTERN)],
-      // ],
-      // obsEvent: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      // place: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      // eventDate: ['', [Validators.required]],
-      // failureDate: ['', [Validators.required]],
-    });
-  }
+  ngOnInit(): void {}
 
   get pathEvent() {
     return (
@@ -78,89 +60,83 @@ export class NumeraireConversionAllotmentsComponent
     );
   }
 
-  selectEvent(event: IComerEvent) {
-    console.log(event);
-    this.nameEvent = '';
-    this.selectedEvent = this.selectedEvent = {
-      ...event,
-      failureDate: secondFormatDateTofirstFormatDate(event.failureDate),
-      eventDate: secondFormatDateTofirstFormatDate(event.eventDate as string),
-    };
-    const filterParams = new FilterParams();
-    filterParams.addFilter('id', event.eventTpId);
-    this.comertpEventService
-      .getAllComerTpEvent(filterParams.getParams())
+  validConvert() {
+    return ['VEN', 'CONC'].includes(
+      this.selectedEvent ? this.selectedEvent.statusVtaId : null
+    );
+  }
+
+  private convierteBody() {
+    this.loader.load = true;
+    this.convNumeraryService
+      .PA_CONVNUMERARIO_ADJUDIR({
+        pevent: this.selectedEvent.id,
+        pscreen: 'FCOMER087',
+        pdirectionScreen: this.address,
+        user: this.user.preferred_username,
+      })
       .pipe(take(1))
       .subscribe({
         next: response => {
-          if (response && response.data) {
-            this.nameEvent = response.data[0].description;
-          }
-        },
-      });
-  }
-
-  convierte() {
-    if (['VEN', 'CONC'].includes(this.selectedEvent.statusVtaId)) {
-      this.loader.load = true;
-      this.convNumeraryService
-        .PA_CONVNUMERARIO_ADJUDIR({
-          pevent: this.selectedEvent.id,
-          pscreen: 'FCOMER087',
-          pdirectionScreen: this.address,
-          user: this.user.preferred_username,
-        })
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            let params = new FilterParams();
-            params.addFilter('id', this.selectedEvent.id);
-            this.eventDataService
-              .getAllEvents(params.getParams())
-              .pipe(
-                take(1),
-                catchError(x => of({ data: [] as IComerEvent[] })),
-                map(x => x.data)
-              )
-              .subscribe({
-                next: response => {
-                  this.loader.load = false;
-                  if (response && response.length > 0) {
-                    this.selectEvent(response[0]);
-                    this.alert(
-                      'success',
-                      'Proceso Convierte Adjudicación Directa terminado',
-                      ''
-                    );
-                  } else {
-                    this.alert(
-                      'error',
-                      'Ocurrio un error al actualizar el evento',
-                      'Favor de verificar'
-                    );
-                  }
-                },
-                error: err => {
+          let params = new FilterParams();
+          params.addFilter('id', this.selectedEvent.id);
+          this.eventDataService
+            .getAllEvents(params.getParams())
+            .pipe(
+              take(1),
+              catchError(x => of({ data: [] as IComerEvent[] })),
+              map(x => x.data)
+            )
+            .subscribe({
+              next: response => {
+                this.loader.load = false;
+                if (response && response.length > 0) {
+                  this.selectNewEvent = response[0];
+                  this.alert(
+                    'success',
+                    'Proceso convierte adjudicación directa terminado',
+                    ''
+                  );
+                } else {
                   this.alert(
                     'error',
                     'Ocurrio un error al actualizar el evento',
                     'Favor de verificar'
                   );
-                },
-              });
+                }
+              },
+              error: err => {
+                this.alert(
+                  'error',
+                  'Ocurrio un error al actualizar el evento',
+                  'Favor de verificar'
+                );
+              },
+            });
 
-            this.loader.load = false;
-          },
-          error: err => {
-            console.log(err);
-            this.loader.load = false;
-            this.alert(
-              'error',
-              'Ocurrio un error al convertir numerario',
-              'Favor de verificar'
-            );
-          },
-        });
+          this.loader.load = false;
+        },
+        error: err => {
+          console.log(err);
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'Ocurrio un error al convertir numerario',
+            'Favor de verificar'
+          );
+        },
+      });
+  }
+
+  convierte() {
+    if (this.validConvert()) {
+      this.alertQuestion('question', '¿Desea convertir este evento?', '').then(
+        x => {
+          if (x.isConfirmed) {
+            this.convierteBody();
+          }
+        }
+      );
     } else {
       this.alert(
         'warning',

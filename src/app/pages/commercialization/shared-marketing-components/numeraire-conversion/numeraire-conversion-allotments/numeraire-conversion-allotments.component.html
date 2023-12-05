@@ -1,4 +1,4 @@
-<form class="form-material" [formGroup]="form">
+<!-- <form class="form-material" [formGroup]="form">
   <div class="row pt-3">
     <div class="col-md-12">
       <app-select-modal-table-shared
@@ -67,4 +67,24 @@
       </button>
     </div>
   </div>
-</form>
+</form> -->
+<app-event-form
+  [address]="address"
+  [selectNewEvent]="selectNewEvent"
+  [eventService]="eventService"
+  [eventColumns]="eventColumns"
+  [ilikeFilters]="ilikeFilters"
+  [dateFilters]="dateFilters"
+  [pathEvent]="pathEvent"></app-event-form>
+
+<div class="row pt-3">
+  <div class="col-md-2">
+    <button
+      type="button"
+      class="btn btn-primary btn-sm active"
+      [disabled]="!validConvert()"
+      (click)="convierte()">
+      Convertir
+    </button>
+  </div>
+</div>

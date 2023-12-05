@@ -9,7 +9,7 @@ import { EVENTO_ERROR_COLUMNS } from './numeraire-conversion-error-columns';
 @Component({
   selector: 'app-numeraire-conversion-error',
   templateUrl: './numeraire-conversion-error.component.html',
-  styles: [],
+  styleUrls: ['./numeraire-conversion-error.component.scss'],
 })
 export class NumeraireConversionErrorComponent
   extends BasePageWidhtDinamicFiltersExtra

@@ -14,10 +14,8 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import {
-  ProceedingsDeliveryReceptionService,
-  ProceedingsService,
-} from 'src/app/core/services/ms-proceedings';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import * as XLSX from 'xlsx';
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
@@ -26,6 +24,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IDetailProceedingsDevollutionDelete } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
@@ -79,6 +78,9 @@ export class AuthorizationAssetsDestructionComponent
 
   numberAct = new DefaultSelect();
 
+  //AGREGADO POR GRIGORK
+  idProceeding: number = 0;
+
   get controls() {
     return this.form.controls;
   }
@@ -89,9 +91,11 @@ export class AuthorizationAssetsDestructionComponent
     private expedientService: ExpedientService,
     private goodService: GoodService,
     private datePipe: DatePipe,
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
     private proceedingsDetailDel: ProceedingsDeliveryReceptionService,
     private proceedingService: ProceedingsService,
-    private serviceDocuments: DocumentsService
+    private serviceDocuments: DocumentsService,
+    private serviceDetailProc: DetailProceeDelRecService
   ) {
     super();
     this.settings = {
@@ -146,12 +150,15 @@ export class AuthorizationAssetsDestructionComponent
         this.form.controls['universalFolio'].setValue(folio);
       }
       this.form.get('idExpedient').setValue(Number(localExpdeient));
-      this.expedientChange();
+      // this.expedientChange();
       localStorage.removeItem('expediente');
     }
+
+    //AGREGADO POR GRIGORK
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.consult) {
-        this.getDetailProceedingsDevolution(this.form.get('noAuth').value);
+        this.searchGoodsInDetailProceeding();
+        // this.getDetailProceedingsDevolution(this.form.get('noAuth').value);
       }
     });
   }
@@ -239,31 +246,7 @@ export class AuthorizationAssetsDestructionComponent
     });
   }
 
-  //!Esta función está correcta
-  expedientChange() {
-    this.consult = true;
-    this.expediente = Number(this.form.get('idExpedient').value);
-    const params: ListParams = {};
-    params['filter.id'] = `$eq:${this.expediente}`;
-    this.expedientService.getAll(params).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.form.patchValue(resp.data[0]);
-        // this.relationsExpedient();
-      },
-      error: err => {
-        this.alert(
-          'warning',
-          this.title,
-          'No se encontrarón registros para este expediente',
-          ''
-        );
-      },
-    });
-    //// buscar en el
-  }
-
-  relationsExpedient(params: ListParams) {
+  /* relationsExpedient(params: ListParams) {
     //this.getGoods();
     this.loading = false;
     this.proceedingsDetailDel.getProceeding3(params).subscribe({
@@ -273,8 +256,8 @@ export class AuthorizationAssetsDestructionComponent
       error: err => {
         this.numberAct = new DefaultSelect();
       },
-    });
-    /*response => {
+    }); */
+  /*response => {
         console.log(response);
         if (response.data === null) {
           this.alert('info', this.title, 'No se encontrarón registros', '');
@@ -314,7 +297,7 @@ export class AuthorizationAssetsDestructionComponent
         );
       }
     );*/
-  }
+  /* } */
 
   async masive() {
     this.loading = true;
@@ -390,13 +373,13 @@ export class AuthorizationAssetsDestructionComponent
       );
       return;
     }
-    /*     detail.forEach(async (element: any) => {
+    detail.forEach(async (element: any) => {
       const model: IDetailProceedingsDevollutionDelete = {
         numberGood: element.numberGood,
         numberProceedings: element.numberProceedings,
       };
       await this.pupDepuraDetalle(model);
-    }); */
+    });
     this.openModal();
     this.getDetailProceedingsDevolution(this.form.get('noAuth').value);
   }
@@ -436,6 +419,8 @@ export class AuthorizationAssetsDestructionComponent
     this.form.reset();
     this.data.load([]);
     this.data.refresh();
+    this.totalItems = 0;
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
   }
 
   async postQuery(det: any[]) {
@@ -594,4 +579,106 @@ export class AuthorizationAssetsDestructionComponent
       this.loading = false;
     };
   }
+
+  //AGREGADO POR GRIGORK
+  //BUSCAR EXPEDIENTE
+  expedientChange() {
+    this.consult = true;
+    this.expediente = Number(this.form.get('idExpedient').value);
+    const params: ListParams = {};
+    params['filter.id'] = `$eq:${this.expediente}`;
+    this.expedientService.getAll(params).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.form.patchValue(resp.data[0]);
+        this.getProceeding();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          this.title,
+          'No se encontrarón registros para este expediente',
+          ''
+        );
+      },
+    });
+    //// buscar en el
+  }
+
+  //BUSCAR ACTAS SEGÚN EXPEDIENTE
+  getProceeding() {
+    const paramsF = new FilterParams();
+    // paramsF.page = params.page;
+    paramsF.limit = 1;
+    paramsF.addFilter('numFile', this.form.get('idExpedient').value);
+    paramsF.addFilter('typeProceedings', 'AXD');
+    this.proceedingsDetailDel.getByFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        const jsonResp = JSON.parse(JSON.stringify(res['data'][0]));
+        this.idProceeding = jsonResp.id;
+        this.form.get('noAuth').setValue(this.idProceeding);
+        this.form.get('authNotice').setValue(jsonResp.keysProceedings);
+        this.form.get('universalFolio').setValue(jsonResp.universalFolio);
+        this.form.get('statusAct').setValue(jsonResp.statusProceedings);
+        this.form
+          .get('fromDate')
+          .setValue(this.correctDate(jsonResp.elaborationDate));
+        this.searchGoodsInDetailProceeding();
+      },
+      err => {
+        console.log(err);
+        this.alert(
+          'warning',
+          'El expediente no tiene actas para autorizar la destrucción',
+          ''
+        );
+      }
+    );
+  }
+
+  //FUNCIÓN PARA OBTENER LA FECHA CORRECTA
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
+  //BUSCAR BIENES EN DETALLE_ACTA_ENT_RECEP
+  searchGoodsInDetailProceeding() {
+    this.loading = true;
+    const paramsF = new FilterParams();
+    paramsF.page = this.params.getValue().page;
+    paramsF.limit = this.params.getValue().limit;
+    this.serviceDetailProc
+      .getGoodsByProceedings(this.idProceeding, paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.data.load(res.data);
+          this.totalItems = res.count;
+          this.loading = false;
+        },
+        err => {
+          this.data.load([]);
+          console.log(err);
+          this.loading = false;
+        }
+      );
+  }
+
+  //BOTON AGREGAR BIENES
+  buttonAddGoods() {
+    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)) {
+      this.alert('warning', 'El acta se encuentra cerrada', '');
+      return;
+    }
+
+    if (this.form.get('idExpedient').value == null) {
+      //PUP_BIENES_EXPEDIENTE;
+    } else {
+      //PUP_BIENES_RASTREADOR;
+    }
+  }
+
+  pupGoodsExp() {}
 }
