@@ -327,18 +327,74 @@
       [optionTemplate]="employeeOption">
     </ng-custom-select-loading>
   </div>
-  <!-- <div class="row mt-4 pl-0">
+  <ng-template #typeOpLabel let-item="item">
+    {{ item.key }} - {{ item.description }}
+  </ng-template>
+  <ng-template #typeOption let-item="item">
+    <div [title]="item.key + '-' + item.description">
+      {{ item.key }} - {{ item.description }}
+    </div>
+  </ng-template>
+  <div class="row mt-4 pl-0" *ngIf="showTipoOp">
     <ng-custom-select-loading
       [form]="form"
       [updateValues]="true"
-      formControlName="requestedUser"
-      label="Solicita"
-      [path]="pathEmpleados"
-      value="ClkDet"
-      bindLabel="MeNomEmp"
-      paramSearch="search"
-      [labelTemplate]="employeeLabel"
-      [optionTemplate]="employeeOption">
+      formControlName="typepe"
+      label="Tip Operación"
+      [path]="pathTypeOp"
+      value="key"
+      bindLabel="description"
+      paramSearch="filter.description"
+      prefixSearch="$ilike"
+      secondParamSearch="filter.key"
+      [labelTemplate]="typeOpLabel"
+      [optionTemplate]="typeOption">
     </ng-custom-select-loading>
-  </div> -->
+  </div>
+  <div class="row mt-4 pl-0" *ngIf="showTipoTram">
+    <ng-template #tramLabel let-item="item">
+      {{ item.documentType }} - {{ item.description }}
+    </ng-template>
+    <ng-template #tramOption let-item="item">
+      <div [title]="item.documentType + '-' + item.description">
+        {{ item.documentType }} - {{ item.description }}
+      </div>
+    </ng-template>
+    <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="tiptram"
+      [forceSeconSearch]="true"
+      [minText]="2"
+      typeToSearchText="Escriba 2 o mas caracteres"
+      label="Tip Tramite"
+      [path]="pathDocument"
+      value="documentType"
+      bindLabel="description"
+      paramSearch="filter.description"
+      prefixSearch="$ilike"
+      secondParamSearch="filter.documentType"
+      [labelTemplate]="tramLabel"
+      [optionTemplate]="tramOption">
+    </ng-custom-select-loading>
+    <!-- <div class="row" *ngIf="showContract">
+      <app-select-modal-table-shared
+        [form]="form"
+        [maxlengthInput]="12"
+        [disabled]="false"
+        [onlyButton]="true"
+        [widthDescription]="false"
+        [haveSelectColumns]="true"
+        [haveColumnFilters]="true"
+        [ilikeFilters]="ilikeFilters"
+        [dateFilters]="dateFilters"
+        label="Contrato"
+        formField="contractNumber"
+        [service]="spentService"
+        [columnsType]="columns"
+        id="expenseNumber"
+        title="Contratos"
+        (selectRow)="fillContract($event)"></app-select-modal-table-shared>
+    </div> -->
+  </div>
 </ng-container>
