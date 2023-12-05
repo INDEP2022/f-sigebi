@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../../services/expense-capture-data.service';
@@ -62,7 +61,7 @@ export class DataReceiptComponent implements OnInit {
     private dataService: ExpenseCaptureDataService,
     public paymentService: ExpensePaymentService
   ) {
-    SearchFilter.NOT;
+    // SearchFilter.NOT;
   }
 
   get pathEmpleados() {
