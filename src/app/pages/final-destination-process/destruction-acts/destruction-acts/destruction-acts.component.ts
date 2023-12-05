@@ -788,9 +788,11 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
     this.serviceProcVal.postProceeding(body).subscribe(
       res => {
+        this.alert('success', 'Acta creada', '');
         console.log(res);
       },
       err => {
+        this.alert('error', 'Error al crear acta', '');
         console.log(err);
       }
     );
