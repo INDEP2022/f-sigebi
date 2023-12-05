@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
 import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
@@ -28,8 +23,6 @@ export class ParamsConceptsModalComponent
   conceptId: string;
   title: string = 'Parámetro del concepto';
   parameterValue: IParameterConcept = null;
-  pageSizeOptions = [5, 10, 20, 25];
-  limit: FormControl = new FormControl(5);
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -38,7 +31,6 @@ export class ParamsConceptsModalComponent
   ) {
     super();
     this.service = this.parametersModService;
-    this.params.value.limit = 5;
     this.ilikeFilters = ['parameter', 'value', 'address'];
     this.settings = {
       ...this.settings,

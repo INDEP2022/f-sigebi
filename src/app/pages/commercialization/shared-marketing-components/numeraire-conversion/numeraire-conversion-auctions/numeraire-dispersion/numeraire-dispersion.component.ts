@@ -75,6 +75,7 @@ export class NumeraireDispersionComponent
       newColumnFilters['filter.cvman'] =
         '$eq:' + this.selectedExpenseData.cvman;
     }
+    newColumnFilters.limit = 1000000;
     return {
       ...this.params.getValue(),
       ...newColumnFilters,
