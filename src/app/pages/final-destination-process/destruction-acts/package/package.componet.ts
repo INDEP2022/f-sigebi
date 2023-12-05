@@ -7,6 +7,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IPbSelPaq } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared';
@@ -92,6 +93,8 @@ export class PackageComponent extends BasePage implements OnInit {
     //Navegador de tablas
     this.navigateEnc();
     this.navigateDet();
+
+    console.log(this.no_acta);
   }
 
   close() {
@@ -177,15 +180,26 @@ export class PackageComponent extends BasePage implements OnInit {
       return;
     }
 
-    /* const body: IPbSelPaq = {
+    const body: IPbSelPaq = {
       noPaquete: parseInt(this.noPackage),
       blkAct: [
         {
           no_acta: parseInt(this.no_acta),
         },
       ],
-      blkBie: [],
-      blkDet: [],
-    }; */
+      /* blkBie: [],
+      blkDet: [], */
+    };
+
+    this.proceedingService.pbSelPaq(body).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', 'Proceso terminado', '');
+      },
+      err => {
+        console.log(err);
+        this.alert('error', 'Se presentó un error inesperado', '');
+      }
+    );
   }
 }
