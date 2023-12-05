@@ -533,6 +533,24 @@ export class BillingsService {
     });
   }
 
+  async getParamterModSab(parametro: any, direccion: any) {
+    const params = new FilterParams();
+    params.page = 1;
+    params.limit = 1;
+    params.addFilter3('filter.parametro', parametro);
+    params.addFilter3('filter.direccion', direccion);
+    return new Promise((resolve, reject) => {
+      this.parameterModService.getParamterMod_(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
   // ============================================================================== //
 
   async getKeyTable(params: any, name: string) {
