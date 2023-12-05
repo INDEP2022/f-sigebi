@@ -101,11 +101,7 @@ export class NumeraireConversionAllotmentsComponent
                 this.loader.load = false;
                 if (response && response.length > 0) {
                   this.selectNewEvent = response[0];
-                  this.alert(
-                    'success',
-                    'Proceso convierte adjudicación directa terminado',
-                    ''
-                  );
+                  this.alert('success', 'Conversión con éxito', '');
                 } else {
                   this.alert(
                     'error',
