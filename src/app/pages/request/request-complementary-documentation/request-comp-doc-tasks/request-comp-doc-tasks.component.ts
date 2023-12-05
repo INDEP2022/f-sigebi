@@ -774,7 +774,7 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
 
@@ -822,7 +822,7 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
 
@@ -874,7 +874,7 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie solicitud de bienes');
+          this.showError('Asocie solicitud de bienes');
           return false;
         }
 
