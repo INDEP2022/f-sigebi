@@ -19,11 +19,13 @@ import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-pr
 import * as XLSX from 'xlsx';
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
+import { IGoodsExpedient } from 'src/app/core/models/catalogs/package.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IDetailProceedingsDevollutionDelete } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import {
   KEYGENERATION_PATTERN,
@@ -95,7 +97,8 @@ export class AuthorizationAssetsDestructionComponent
     private proceedingsDetailDel: ProceedingsDeliveryReceptionService,
     private proceedingService: ProceedingsService,
     private serviceDocuments: DocumentsService,
-    private serviceDetailProc: DetailProceeDelRecService
+    private serviceDetailProc: DetailProceeDelRecService,
+    private serviceMassiveGoods: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -674,11 +677,27 @@ export class AuthorizationAssetsDestructionComponent
     }
 
     if (this.form.get('idExpedient').value == null) {
-      //PUP_BIENES_EXPEDIENTE;
+      this.pupGoodsExp();
     } else {
       //PUP_BIENES_RASTREADOR;
     }
   }
 
-  pupGoodsExp() {}
+  pupGoodsExp() {
+    const body: IGoodsExpedient = {
+      proceedingsNumber: this.form.get('idExpedient').value,
+      minutesNumber: this.idProceeding,
+    };
+
+    this.serviceMassiveGoods.goodsExpedient(body).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', 'Se agregaron los bienes del expediente', '');
+      },
+      err => {
+        console.log(err);
+        this.alert('error', 'No se agregaron los bienes del expediente', '');
+      }
+    );
+  }
 }
