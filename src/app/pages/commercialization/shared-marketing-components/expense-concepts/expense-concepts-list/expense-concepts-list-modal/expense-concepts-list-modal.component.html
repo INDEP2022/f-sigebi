@@ -25,7 +25,6 @@
       <div class="pb-4">
         <form-field [control]="form.get('address')" label="Dirección">
           <ng-select class="form-control" formControlName="address">
-            <ng-option [value]="null">Seleccione una dirección</ng-option>
             <ng-option *ngFor="let dest of directions" [value]="dest.id">
               {{ dest.description }}
             </ng-option>
