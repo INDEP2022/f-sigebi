@@ -19,7 +19,7 @@ export class DetailProceeDelRecService extends HttpService {
     this.microservice = ProceedingsEndpoints.BasePath;
   }
 
-  getGoodsByProceedings(id: string | number, params?: ListParams) {
+  getGoodsByProceedings(id: string | number, params?: any) {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=$eq:${id}`;
     return this.get(route, params);
   }

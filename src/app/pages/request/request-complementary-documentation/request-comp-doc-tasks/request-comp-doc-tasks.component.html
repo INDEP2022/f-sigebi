@@ -54,13 +54,17 @@
           </div>
         </div>
 
-                <div class="mx-1" *ngIf="btnRequestAprove">
-                  <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="btnRequestAprobar()">
-                    <i class="bx bx-mail-send mr-1 float-icon"></i>
-                    Solicitar Aprobación
-                  </button>
-                </div>
-        
+        <div class="mx-1" *ngIf="btnRequestAprove">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="btnRequestAprobar()">
+            <i class="bx bx-mail-send mr-1 float-icon"></i>
+            Solicitar Aprobación
+          </button>
+        </div>
+
         <div class="mx-1">
           <button
             type="button"
@@ -138,7 +142,11 @@
           </button>
         </div>
         <div class="mx-1" *ngIf="dictumReturn">
-          <button type="button" class="btn btn-primary btn-sm active" [disabled]="" (click)="openReport()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openReport()">
             Dictamen Devolución <i class="fa fa-save mr-1 float-icon"></i>
           </button>
         </div>
@@ -293,16 +301,16 @@
           *ngIf="searchAssociateFile"
           heading="Buscar y Asociar al Expediente"
           id="associateTab">
-          
           <app-search-request-similar-goods></app-search-request-similar-goods>
-
         </tab>
 
         <tab
           *ngIf="selectGoods"
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
-          <app-select-goods (onChange)="onSelectGoods($event)" [idRequest]="requestId"></app-select-goods>
+          <app-select-goods
+            (onChange)="onSelectGoods($event)"
+            [idRequest]="requestId"></app-select-goods>
         </tab>
         <tab
           *ngIf="selectGoodForEyeVisit"
@@ -315,7 +323,8 @@
         <tab
           heading="Verificar Cumplimiento de Bienes"
           *ngIf="verifyCompliance">
-          <app-verify-compliance-goods (onChange)="onVerifyCom($event)"></app-verify-compliance-goods>
+          <app-verify-compliance-goods
+            (onChange)="onVerifyCom($event)"></app-verify-compliance-goods>
         </tab>
         <tab
           *ngIf="validateGoodForEyeVisit"
@@ -372,8 +381,7 @@
                   <app-doc-request-tab
                     [typeDoc]="typeDoc"
                     [typeModule]="typeModule"
-                    (onChange)="onSelectFiles($event)"
-                    ></app-doc-request-tab>
+                    (onChange)="onSelectFiles($event)"></app-doc-request-tab>
                 </tab>
                 <tab
                   heading="Solicitudes del Expediente"
