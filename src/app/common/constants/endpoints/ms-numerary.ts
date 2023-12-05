@@ -20,4 +20,6 @@ export enum NumeraryEndpoints {
   TransReg = 'transfer-numerary-region',
   ComerNumeraryGoods = 'comer-numerary-x-goods',
   seqBitacora = 'application/seq-bitacora',
+  loadGoodsVig = 'application/load-goods-vig',
+  loadGoodsSeg = 'application/load-goods-seg',
 }

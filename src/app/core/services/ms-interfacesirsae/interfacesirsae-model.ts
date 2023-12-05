@@ -60,6 +60,46 @@ export interface ISirsaeDTO {
   paymentRequestId: any;
 }
 
+export interface ISirsaeDTOI {
+  spentId: number;
+  conceptId: number;
+  comment: string;
+  clkpv: number;
+  paymentWay: string;
+  user: string;
+  spentMonth: string;
+  spentMonth2: string;
+  spentMonth3: string;
+  spentMonth4: string;
+  spentMonth5: string;
+  spentMonth6: string;
+  spentMonth7: string;
+  spentMonth8: string;
+  spentMonth9: string;
+  spentMonth10: string;
+  spentMonth11: string;
+  spentMonth12: string;
+  paymentDate: string;
+  proofNumber: number;
+  attachedDocumentation: string;
+  recVoucherNumber: string;
+  recVoucherDate: string;
+  contract: string;
+  eventId: number;
+  requestUser: string;
+  authorizeUser: string;
+  capturedUser: string;
+  comproafmandsae: number;
+  direction: string;
+  paymentRequestId: number;
+  contractNumber: number;
+  typeSpent: string;
+  tipTram: string;
+  totDocument: number;
+  adj: string;
+  dateOfResolution: string;
+}
+
 export interface ISirsaeScrapDTO {
   spentId: string;
   payRequestId: string;

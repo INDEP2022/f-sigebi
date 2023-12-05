@@ -169,6 +169,7 @@
               Modificar Estatus
             </button>
             <button
+              *ngIf="address === 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showAdd"
@@ -183,6 +184,7 @@
               Contabilidad Mandatorio
             </button>
             <button
+              *ngIf="address === 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showAdd"
@@ -190,11 +192,19 @@
               Recargar
             </button>
             <button
+              *ngIf="address === 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showAdd"
               (click)="validates()">
               Validados
+            </button>
+            <button
+              *ngIf="address === 'I'"
+              type="button"
+              class="btn btn-sm btn-primary mr-2 mt-2 active"
+              (click)="loadGoodsI()">
+              Carga de Bienes
             </button>
           </td>
         </tr>

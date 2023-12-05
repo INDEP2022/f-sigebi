@@ -274,7 +274,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...GOODS_COLUMNS,
-        /* selection: {
+        selection: {
           title: '',
           sort: false,
           type: 'custom',
@@ -282,7 +282,7 @@ export class DestructionAuthorizationComponent
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGoodPSD(instance),
-        }, */
+        },
       },
       hideSubHeader: false,
       rowClassFunction: (row: any) => {
@@ -371,8 +371,6 @@ export class DestructionAuthorizationComponent
       next: data => {
         this.selectGoodPSD(data.row, data.toggle);
 
-        this.tempArray = [...this.array];
-
         if (data.toggle) {
           // Si el checkbox se selecciona, agregar el elemento al array
           if (!this.array.includes(data.row)) {
@@ -386,6 +384,7 @@ export class DestructionAuthorizationComponent
           }
           console.log(this.array);
         }
+        this.tempArray = [...this.array];
       },
     });
   }
@@ -1468,5 +1467,66 @@ export class DestructionAuthorizationComponent
         this.array = [...this.tempArray];
       },
     });
+  }
+
+  //AGREGADO POR GRIGORK
+  async validateFolio() {
+    return new Promise((resolve, reject) => {
+      this.documentsService
+        .getByFolio(this.proceedingForm.get('universalFolio').value)
+        .subscribe(
+          res => {
+            const data = JSON.parse(JSON.stringify(res));
+            const scanStatus = data.data[0]['scanStatus'];
+            console.log(scanStatus);
+            if (scanStatus === 'ESCANEADO') {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          },
+          err => {
+            resolve(false);
+          }
+        );
+    });
+  }
+
+  async newCloseProceeding() {
+    if (this.proceedingForm.get('closeDate').value == null) {
+      this.alert('warning', 'Debe ingresar la fecha de integración', '');
+      return;
+    }
+
+    if (this.detailProceedingsList2.count() == 0) {
+      this.alert(
+        'warning',
+        'La Solicitud no tiene ningun bien asignado, no se puede cerrar.',
+        ''
+      );
+      return;
+    }
+
+    if (this.proceedingForm.get('universalFolio').value == null) {
+      this.alert(
+        'warning',
+        'La solicitud no tiene folio de escaneo, no se puede cerrar',
+        ''
+      );
+      return;
+    }
+
+    const scanStatus = await this.validateFolio();
+
+    if (!scanStatus) {
+      this.alert(
+        'warning',
+        'La solicitud no tiene documentos escaneados, no se puede cerrar',
+        ''
+      );
+      return;
+    }
+
+    console.log(this.tempArrayGood);
   }
 }

@@ -21,6 +21,7 @@
       <div [class]="loadingTable ? 'table-loading' : 'row pt-2'">
         <ng2-smart-table
           class="col-md-12"
+          (userRowSelect)="selectRowDet($event)"
           [settings]="settingsDet"
           [source]="dataPackDet"></ng2-smart-table>
       </div>

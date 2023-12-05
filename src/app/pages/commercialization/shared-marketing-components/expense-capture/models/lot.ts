@@ -65,3 +65,22 @@ export interface ILoadLotResponse {
     SELECT_CAMBIA_CLASIF: string;
   };
 }
+
+export interface IFillDatosRevDTO {
+  pEvent: number;
+  pGood: number;
+  pScreen: string;
+  reasons: string;
+  reason1: string;
+  reason2: string;
+  reason3: string;
+  reason4: string;
+  reason5: string;
+  reason6: string;
+  reason7: string;
+  reason8: string;
+  reason9: string;
+  reason10: string;
+  cgEvent: number;
+  address: string;
+}
