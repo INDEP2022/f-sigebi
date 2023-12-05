@@ -28,6 +28,7 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -576,13 +577,18 @@ export class RequestCompDocTasksComponent
 
   updateRequest() {
     this.updateInfo = true;
-    this.msgModal(
-      'Se guardó la solicitud con el Folio Nº '.concat(
-        `<strong>${this.requestId}</strong>`
-      ),
-      'Solicitud Guardada',
-      'success'
-    );
+
+    this.requestService.update(this.requestId, this.requestInfo).subscribe({
+      next: resp => {
+        this.msgModal(
+          'Se guardó la solicitud con el Folio Nº '.concat(
+            `<strong>${this.requestId}</strong>`
+          ),
+          'Solicitud Guardada',
+          'success'
+        );
+      },
+    });
   }
 
   /** VALIDAR */
@@ -603,14 +609,18 @@ export class RequestCompDocTasksComponent
 
     let body: any = {};
 
-    if (close) body['idTask'] = this.taskInfo.id;
-
     body['userProcess'] = user.username;
     body['type'] = type;
     body['subtype'] = subtype;
     body['ssubtype'] = ssubtype;
 
     let task: any = {};
+
+    if (close) {
+      body['idTask'] = this.taskInfo.id;
+      task['taskDefinitionId'] = this.taskInfo.id;
+    }
+
     task['id'] = 0;
     task['assignees'] = this.taskInfo.assignees;
     task['assigneesDisplayname'] = this.taskInfo.assigneesDisplayname;
@@ -627,6 +637,7 @@ export class RequestCompDocTasksComponent
     task['idTransferee'] = this.taskInfo.idTransferee;
     task['idAuthority'] = this.taskInfo.idAuthority;
     task['idDelegationRegional'] = user.department;
+
     body['task'] = task;
 
     let orderservice: any = {};
@@ -642,7 +653,7 @@ export class RequestCompDocTasksComponent
 
     if (closeTask && !isNullOrEmpty(closeTask.task)) {
       this.msgModal(
-        'Se turno la solicitud con el Folio Nº'.concat(
+        'Se turno la solicitud con el Folio Nº '.concat(
           `<strong>${this.requestId}</strong>`
         ),
         'Solicitud turnada',
@@ -704,10 +715,17 @@ export class RequestCompDocTasksComponent
     body['subtype'] = 'Registro_documentacion';
     body['ssubtype'] = 'REJECT';
 
+    this.updateTask(this.taskInfo.taskDefinitionId, "PROCESO");
+
+    this.requestInfo.rejectionComment = data.comment;
+    this.requestService.update(this.requestId, this.requestInfo).subscribe({
+      next: resp => { },
+    });
+
     this.taskService.createTaskWitOrderService(body).subscribe({
       next: async resp => {
         this.msgModal(
-          'Se rechazo la solicitud con el Folio Nº'.concat(
+          'Se rechazo la solicitud con el Folio Nº '.concat(
             `<strong>${this.requestId}</strong>`
           ),
           'Solicitud rechazada',
@@ -718,6 +736,21 @@ export class RequestCompDocTasksComponent
       error: error => {
         this.onLoadToast('error', 'Error', 'No se pudo rechazar la tarea');
       },
+    });
+  }
+
+  updateTask(id, state = 'FINALIZADA') {
+    return new Promise((resolve, reject) => {
+      const taskForm: ITask = {
+        State: state,
+        taskDefinitionId: null,
+      };
+      this.taskService.update(id, taskForm).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => { },
+      });
     });
   }
 
@@ -1013,11 +1046,23 @@ export class RequestCompDocTasksComponent
   btnAprobar() {
     this.alertQuestion(
       'question',
-      'Confirmación',
-      '¿Desea finalizar la tarea registro de documentación complementaria?'
-    ).then(question => {
+      'Confirmar Aprobación',
+      `¿Desea APROBAR la solicitud con folio: ${this.requestId}?`
+    ).then(async question => {
       if (question) {
         //Cerrar tarea//
+        let response = await this.updateTask(this.taskInfo.id);
+
+        if (response) {
+          this.msgModal(
+            'Se aprobo la solicitud con el Folio Nº '.concat(
+              `<strong>${this.requestId}</strong>`
+            ),
+            'Solicitud aprobada',
+            'success'
+          );
+          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        }
       }
     });
 
