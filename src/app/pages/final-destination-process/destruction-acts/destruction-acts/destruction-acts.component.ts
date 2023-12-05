@@ -20,7 +20,11 @@ import {
   IDetailProceedingsDeliveryReception,
 } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
-import { IPufValidTerm } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import {
+  IPufValidTerm,
+  IPupMovDestruction,
+  IQueryRegAdminGood,
+} from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -482,7 +486,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   validatedGood(e: any) {
     const body: IBlkBie = {
       status: e.status,
-      proceeedingsNumber: this.actForm.get('expedient').value,
+      proceedingsNumber: this.actForm.get('expedient').value,
       goodNumber: e.goodId,
       screen: 'FACTDESACTASDESTR',
     };
@@ -490,11 +494,12 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.serviceProcVal.blkBie(body).subscribe(
         res => {
+          console.log(res);
           resolve({
             avalaible: res.available == 'N' ? false : true,
             bamparo: res.bamparo,
             status: res.statusGood,
-            minute: res.minutes,
+            minute: res.Minutes,
             di_status: res.diDescriptionGood,
           });
         },
@@ -519,7 +524,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
           res.data.map(async (e: any) => {
             const resp = await this.validatedGood(e);
             const jsonResp = JSON.parse(JSON.stringify(resp));
-
+            console.log(jsonResp);
             return {
               ...e,
               avalaible: jsonResp.avalaible,
@@ -1003,12 +1008,35 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     ) {
       this.pupGenMasiv();
     } else {
-      const resp = await this.getVValido();
-      console.log(resp);
+      this.pupMovimientoActa();
     }
   }
 
-  pupGenMasiv() {}
+  pupGenMasiv() {
+    const body: IQueryRegAdminGood = {
+      selPaq: '',
+      statusRecord: '',
+      blockStatus: '',
+      user: '',
+      packageNumber: '',
+      proceedingNumber: '',
+      minutesNumber: '',
+      typeMinutes: '',
+    };
+
+    this.serviceProceeding.queryRegAdminGood(body).subscribe(
+      res => {
+        console.log(res);
+
+        //!COLOCAR V_STATUS
+        this.alert('success', 'Actualización de paquete', '');
+      },
+      err => {
+        console.log(err);
+        this.alert('error', 'Error al actualizar paquete', '');
+      }
+    );
+  }
 
   async validateFolio() {
     return new Promise((resolve, reject) => {
@@ -1030,11 +1058,12 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     });
   }
 
-  pupMovimientoActa() {
+  async pupMovimientoActa() {
     const user = this.authService.decodeToken().preferred_username;
     if (['CERRADO', 'CERRADA'].includes(this.status.value)) {
       this.openProceeding(user);
     } else {
+      this.closeProceeding(user);
     }
   }
 
@@ -1052,9 +1081,12 @@ export class DestructionActsComponent extends BasePage implements OnInit {
             const lv_TIP_ACTA = 'DS,DESTRUCCION';
             this.closeOpenProceeding();
           } else {
+            this.primaryClose();
           }
         },
-        err => {}
+        err => {
+          this.primaryClose();
+        }
       );
   }
 
@@ -1118,17 +1150,61 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   }
 
   async primaryClose() {
-    this.validInputs();
+    await this.validInputs();
+    const body: IPupMovDestruction = {
+      proceeding: this.idProceeding,
+      screen: 'FACTDESACTASDESTR',
+      proceedingType: 'DESTRUCCION',
+      user: this.authService.decodeToken().preferred_username,
+      date: this.destroyDate.value,
+    };
 
-    //!FALTA QUE EL ENDPOINT HAGA LOOP
-    //!http://sigebimsqa.indep.gob.mx/proceedings/api/v1/aplication/cursor-pup-movement-act-destructuion
+    this.serviceProceeding.pupMovementDestruction(body).subscribe(
+      res => {
+        console.log(res);
+        if (
+          res.message ==
+          '1 o más bienes no cuentan con una constancia de entrega cerrada'
+        ) {
+          this.alert('warning', 'Error al cerrar acta', res.message);
+        } else if (
+          res.message ==
+          'Alguno de los bienes se encuentra en más de una Constancia'
+        ) {
+          this.alert('warning', 'Error al cerrar acta', res.message);
+        } else if (
+          res.message == 'Al tratar de buscar la constancia de los bienes.'
+        ) {
+          this.alert('warning', 'Error al cerrar acta', res.message);
+        } else {
+          this.alert('success', 'Acta cerrada', '');
+        }
+      },
+      err => {
+        this.alert('error', 'Error al cerrar acta', '');
+      }
+    );
   }
 
   async closeOpenProceeding() {
     this.validInputs();
 
-    //!FALTA QUE EL ENDPOINT HAGA LOOP
-    //!http://sigebimsqa.indep.gob.mx/proceedings/api/v1/aplication/cursor-pup-movement-act-destructuion
+    const body: IPupMovDestruction = {
+      proceeding: this.idProceeding,
+      screen: 'FACTDESACTASDESTR',
+      proceedingType: 'DESTRUCCION',
+      user: this.authService.decodeToken().preferred_username,
+      date: this.destroyDate.value,
+    };
+
+    this.serviceProceeding.pupMovementDestruction(body).subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   async validTerm() {
@@ -1234,12 +1310,10 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
-          console.log(res);
-          resolve(res);
+          resolve(true);
         },
         err => {
-          console.log(err);
-          reject(err);
+          resolve(false);
         }
       );
     });

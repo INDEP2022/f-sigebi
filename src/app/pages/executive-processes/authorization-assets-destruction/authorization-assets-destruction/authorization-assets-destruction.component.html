@@ -3,7 +3,7 @@
     <div header>
       <div class="ch-content">
         <h5 class="title">
-          OFICIOS DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N XD
+          OFICIOS DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
         </h5>
       </div>
     </div>
@@ -81,13 +81,12 @@
 
         <div class="col">
           <button
-            [disabled]="!form.valid || textDisabled"
             (click)="addGood()"
             type="button"
-            tooltip="Agregar"
+            tooltip="Agregar bienes"
             containerClass="tooltip-style"
             class="btn btn-info btn-sm active ml-2 mr-2">
-            Agregar <i class="bx bx-plus bx-sm float-icon"></i>
+            Agregar bienes<i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
@@ -129,8 +128,10 @@
         </div>
         <div class="col">
           <div class="justify-content-start">
-            <button (click)="masive()" class="btn btn-sm btn-info mr-3">
-              <i class="fa fa-arrow-down"></i>
+            <button
+              (click)="masive()"
+              class="btn btn-sm btn-primary active mr-3">
+              Masivo
             </button>
             <button
               (click)="closed()"
