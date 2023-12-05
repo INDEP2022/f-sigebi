@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
@@ -27,8 +27,7 @@ import { AssociateFileComponent } from '../../transfer-request/tabs/associate-fi
 })
 export class SearchRequestSimilarGoodsComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
@@ -43,6 +42,9 @@ export class SearchRequestSimilarGoodsComponent
   showDetails: boolean = false;
   requestId: string | number = null;
 
+  @Input() selected: boolean = false;
+
+
   /* injections */
   private requestService = inject(RequestService);
   private goodFinderSerice = inject(GoodFinderService);
@@ -53,9 +55,13 @@ export class SearchRequestSimilarGoodsComponent
 
   constructor(private modalService: BsModalService) {
     super();
+  }
+
+  ngOnInit(): void {
+
     this.settings = {
       ...this.settings,
-      actions: {
+      actions: this.selected ? null : {
         ...this.settings.actions,
         add: false,
         edit: false,
@@ -76,9 +82,7 @@ export class SearchRequestSimilarGoodsComponent
       actions: false,
       columns: { ...COLUMNS2 },
     };
-  }
 
-  ngOnInit(): void {
     this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     //this.data.load(DATA);
     this.getInfoRequest();
@@ -97,7 +101,7 @@ export class SearchRequestSimilarGoodsComponent
       next: response => {
         this.requestInfo = response;
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -259,5 +263,5 @@ export class SearchRequestSimilarGoodsComponent
     });
   }
 
-  confirm(result: boolean) {}
+  confirm(result: boolean) { }
 }
