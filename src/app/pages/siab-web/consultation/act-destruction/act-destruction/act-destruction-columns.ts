@@ -15,7 +15,7 @@ export const ACT_DESTRUCTION_COLUMNS = {
     sort: false,
   },
   id: {
-    title: 'No.Acta',
+    title: 'No. Acta',
     sort: false,
   },
   elaborationDate: {
