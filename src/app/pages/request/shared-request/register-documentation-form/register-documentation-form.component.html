@@ -1,16 +1,10 @@
 <form [formGroup]="registerForm" class="form-material pb-0 mb-0">
   <div class="row mt-3">
     <div class="col-md-6">
-      <h6
-        *ngIf="
-          process != 'similar-good-register-documentation';
-          else titleMail
-        ">
+      <h6 *ngIf="!displayNotifyMails">
         Datos de la Solicitud
       </h6>
-      <ng-template #titleMail>
-        <h6>Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n</h6>
-      </ng-template>
+      <h6 *ngIf="displayNotifyMails">Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n</h6>
     </div>
     <div class="col-md-6">
       <div class="d-flex flex-row-reverse">
@@ -33,7 +27,7 @@
     </div>
   </div>
   <br />
-  <div class="row pt-5" *ngIf="displayNotifyMails == true">
+  <div class="row pt-5" *ngIf="displayNotifyMails">
     <div class="col-md-6">
       <form-field
         [control]="registerForm.get('emailNotification')"

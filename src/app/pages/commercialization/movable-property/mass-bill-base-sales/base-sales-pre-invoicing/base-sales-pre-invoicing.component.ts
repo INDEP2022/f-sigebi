@@ -34,12 +34,14 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { InvoiceFolioSeparate } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { BillingsService } from '../../../billing-m/services/services';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
 import { AuthorizationSOIModalComponent } from './authorization-modal/authorization-modal.component';
 
@@ -77,6 +79,16 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     return this.form.get('idAllotment');
   }
 
+  parameterNumFactImp: any = null; //		:PARAMETER.NUMFACTIMP
+  parameterIva: any = null; //		:PARAMETER.IVA
+  parameterPAutorizado: any = null; //   PARAMETER.P_AUTORIZADO
+  invoiceSelected: any = null;
+  valSortBy: boolean = false;
+
+  disabledCause: boolean = false;
+  disabledDescause: boolean = false;
+  disabledRegCanc: boolean = false;
+  refactura: string = ''; // BLK_CTRL.REFACTURA
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -87,7 +99,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     private dataUser: UsersService,
     private datePipe: DatePipe,
     private authService: AuthService,
-    private eatLotService: LotService
+    private eatLotService: LotService,
+    private siabService: SiabService,
+    private billingsService: BillingsService
   ) {
     super();
 
@@ -320,6 +334,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     this.loading = true;
+    if (!this.valSortBy) params['sortBy'] = `batchId,eventId,customer:ASC`;
     this.comerInvoice.getAllSumInvoice(params).subscribe({
       next: resp => {
         this.loading = false;
@@ -403,6 +418,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       total: [null],
       userV: [null, Validators.required],
       passwordV: [null, Validators.required],
+      order: [null],
+      numberInvoices: [null],
     });
   }
 
@@ -450,7 +467,16 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       }
     });
   }
-
+  aqui() {
+    // DECLARE
+    //   CONTINUA NUMBER(2) := 0;
+    // BEGIN
+    //   CONTINUA := VALIDA_ASIGNACION;
+    //   IF CONTINUA = 1 THEN
+    //     ASIGNA;
+    //   END IF;
+    // END;
+  }
   openModal(): void {
     let config: ModalOptions = {
       initialState: {
@@ -463,7 +489,12 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             invoice[index].Invoice = data.invoice;
             invoice[index].factstatusId = 'FOL';
 
-            await this.updateInvoice(invoice[index]);
+            let resp = await this.updateInvoice(invoice[index]);
+            if (!resp) {
+              this.alert('warning', 'No se pudo actualizar la factura', '');
+            } else {
+              this.alert('success', '', 'Factura actualizada correctamente');
+            }
             this.getAllComer();
 
             //this.dataFilter.load(invoice);
@@ -481,7 +512,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     return firstValueFrom(
       this.comerInvoice.update(data).pipe(
         map(() => true),
-        catchError(() => of(true))
+        catchError(() => of(false))
       )
     );
   }
@@ -491,6 +522,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       initialState: {
         form: this.form,
         callback: (data: boolean, val: number) => {},
+        callback2: (aux_auto: number) => {
+          this.parameterPAutorizado = aux_auto;
+        },
       },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -812,7 +846,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     if (validaFol == 1) {
       //service de actualizar
 
-      this.processMark('FL', 'PREF');
+      this.processMark('FL', 'PREF'); // MARCA_PROCESADO
 
       //service paquete genera folios
 
@@ -831,6 +865,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   }
 
   processMark(procesando: string, valido: string) {
+    // MARCA_PROCESADO
     let aux_status: string = '';
     if ((valido = 'NULL')) {
       aux_status = null;
@@ -854,21 +889,45 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     );
   }
 
-  removeInvoice() {
+  async removeInvoice() {
+    const data: any[] = await this.dataFilter.getAll();
+
+    if (data.length == 0) {
+      this.alert('warning', 'Atención', 'Debe seleccionar un evento');
+      return;
+    }
+
     let aux: number;
 
-    aux = this.validateInvoiceDelete();
+    aux = this.validateInvoiceDelete(); // VALIDA_ELIMINA_FOLIOS
 
     console.log(aux);
 
     if (aux == 1) {
-      this.processMark('EF', 'FOL');
+      this.processMark('EF', 'FOL'); // MARCA_PROCESADO
     }
 
     //ejecutar service paquete elimina folios
+    // **EDWIN 1** // **LISTO** //
+    // COMER_CTRLFACTURA.ELIMINA_FOLIOS(:COMER_FACTURAS.ID_EVENTO, NULL);
+    this.comerInvoice
+      .deleteFolio({ eventId: data[0].eventId, invoiceId: null })
+      .subscribe({
+        next: () => {
+          this.alert('success', 'Folios', 'Eliminados Correctamente');
+          this.getAllComer();
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'Ocurrió un error al intentar eliminar los folios',
+            err.error.message
+          );
+        },
+      });
   }
 
-  validateInvoiceDelete() {
+  validateInvoiceDelete(): number {
     for (let comer in this.isSelect) {
       if (this.isSelect[comer].factstatusId != 'FOL') {
         this.alert(
@@ -984,5 +1043,282 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         catchError(error => of(0))
       )
     );
+  }
+
+  async rowsSelected(event: any) {
+    if (event) {
+      this.invoiceSelected = event.data;
+    }
+  }
+  async exportExcel() {
+    // ** EDWIN ** 2 //
+    // EXPORTACIÓN DE EXCEL //
+  }
+
+  async printInvoice() {
+    const { event } = this.form.value;
+    const data = await this.dataFilter.getAll();
+    if (!this.invoiceSelected) {
+      this.alert('warning', 'Debe seleccionar una factura', '');
+      return;
+    }
+    if (!this.invoiceSelected.eventId) {
+      this.alert('warning', 'Debe seleccionar un evento', '');
+      return;
+    }
+
+    if (!this.invoiceSelected.folioinvoiceId) {
+      this.alert('warning', 'No ha capturado el folio de la factura', '');
+      return;
+    }
+
+    await this.readParameter(); // LEE_PARAMETROS;
+    this.printerInvoice();
+  }
+  printerInvoice() {
+    this.printerReport(this.invoiceSelected.Type, 1); // LLAMA_REPORTE;
+  }
+
+  async readParameter() {
+    // LEE_PARAMETROS
+
+    const num: any = await this.billingsService.getParamterModSab(
+      'NUMFACTIMP',
+      'M'
+    );
+    if (num) this.parameterNumFactImp = num.valor;
+    else this.parameterNumFactImp = null;
+
+    const iva: any = await this.billingsService.getParamterModSab('IVA', 'C');
+    if (iva) this.parameterIva = num.valor;
+    else this.parameterIva = null;
+
+    return true;
+  }
+
+  async printerReport(PTIPO: number, PMODO: number) {
+    // LLAMA_REPORTE
+    let V_DISPOSITIVO: string;
+    let V_IMAGEN: number;
+    let reportName: string = '';
+
+    if (PMODO == 1) {
+      // IMPRIMIR //
+      V_DISPOSITIVO = 'PRINTER';
+      V_IMAGEN = 1;
+    } else if (PMODO == 2) {
+      // VA A PANTALLA Y NO SE IMPRIME LA IMAGEN //
+      V_DISPOSITIVO = 'SCREEN';
+      V_IMAGEN = 0;
+    }
+
+    if (PTIPO == 7) {
+      // PARA IMPRIMIR FACTURA DE VENTA DE BASES //
+      reportName = 'RCOMERFACTURAS_BASES';
+    }
+
+    let params = {
+      PARAMFORM: 'NO',
+      DESTYPE: V_DISPOSITIVO,
+      PEVENTO: this.invoiceSelected.eventId,
+      PFACTURA: this.invoiceSelected.billId,
+    };
+
+    this.runReport(reportName, params);
+  }
+
+  runReport(reportName: string, params: any) {
+    this.siabService
+      // .fetchReport(reportName, params)
+      .fetchReportBlank('blank')
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+  }
+
+  changeOpt(event: any) {
+    if (event == 1) this.paramsList.getValue()['sortBy'] = `batchId:DESC`;
+    if (event == 2)
+      this.paramsList.getValue()['sortBy'] = `delegationNumber:DESC`;
+    if (event == 4) this.paramsList.getValue()['sortBy'] = `Invoice:DESC`;
+
+    this.valSortBy = true;
+    if (!event) this.valSortBy = false;
+
+    this.getAllComer();
+    // this.valDefaultWhere
+  }
+
+  async regCanc() {
+    // REGCANC
+    this.parameterPAutorizado = 0;
+    this.visualCancelYesNot(0);
+  }
+
+  visualCancelYesNot(pYesNo: number) {
+    // VISUALIZA_CANCELA_SINO
+    if (pYesNo == 1) {
+      this.disabledCause = true;
+      this.disabledDescause = true;
+      this.disabledRegCanc = true;
+      this.getRebillData(new ListParams());
+    } else if (pYesNo == 0) {
+      this.disabledCause = false;
+      this.disabledDescause = false;
+      this.disabledRegCanc = false;
+      this.form.get('causerebillId').setValue(null);
+      // this.form.get('descause').setValue(null);
+    }
+  }
+
+  visualInvoice() {
+    if (!this.invoiceSelected) {
+      this.alert('warning', 'Debe seleccionar una factura', '');
+      return;
+    }
+    if (!this.invoiceSelected.eventId) {
+      this.alert('warning', 'Debe seleccionar un evento', '');
+      return;
+    }
+
+    this.printerReport(this.invoiceSelected.Type, 2); // LLAMA_REPORTE;
+  }
+
+  cancelInvoice() {
+    if (!this.invoiceSelected) {
+      this.alert('warning', 'Debe seleccionar una factura', '');
+      return;
+    }
+    // :BLK_CTRL.USUARIO_AUT := NULL;
+    // :BLK_CTRL.PASSWORD_AUT := NULL;
+    let PREG = this.invoiceSelected;
+    this.cancelInvoiceVal(PREG); // -- PRIMERO VALIDAMOS CAUSA Y FOLIO SP
+  }
+
+  cancelInvoiceVal(bill: any) {
+    if (this.form.get('causerebillId').value) {
+      this.visualCancelYesNot(1); // muestra los campos de la causa
+    } else {
+      if (bill.factstatusId == 'CAN')
+        return (
+          this.visualCancelYesNot(0),
+          this.alert('warning', 'No puede procesar una factura cancelada', '')
+        );
+      else if (bill.factstatusId == 'NCR')
+        return (
+          this.visualCancelYesNot(0),
+          this.alert('warning', 'No puede cancelar una factura NCR', '')
+        );
+      // SHOW_VIEW('AUTORIZACION');
+      this.openAutorizacion();
+      // GO_ITEM('BLK_CTRL.USUARIO_AUT');
+    }
+  }
+
+  openAutorizacion() {
+    let config: ModalOptions = {
+      initialState: {
+        form: this.form,
+        callback: (data: boolean, val: number) => {},
+        callback2: (aux_auto: number) => {
+          console.log('aux_auto', aux_auto);
+          this.parameterPAutorizado = aux_auto;
+          this.processingCancelled();
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AuthorizationSOIModalComponent, config);
+  }
+
+  processingCancelled() {
+    if (this.isSelect.length == 0)
+      return this.alert('warning', 'No hay facturas seleccionadas', '');
+
+    let result = this.isSelect.map(async item => {
+      let YYYY = this.datePipe.transform(item.impressionDate, 'YYYY');
+      let CF_LEYENDA = '';
+      let CF_NUEVAFACT: any = 0;
+      if (!item.folioinvoiceId)
+        return this.alert(
+          'warning',
+          `No se puede cancelar una factura sin folio para el evento: ${item.eventId} y lote: ${item.batchId}`,
+          ''
+        );
+      else if (item.series.length > 1)
+        CF_LEYENDA = `ESTE CFDI REFIERE AL CFDI ${item.series}-${item.folioinvoiceId}`;
+      else
+        CF_LEYENDA = `ESTE CFDI REFIERE A LA FACTURA ${item.series}-${item.folioinvoiceId}`;
+
+      if (this.refactura == 'R') {
+        // CREA OTRA FACTURA SIN FOLIO Y CANCELA LA ACTUAL
+        if (Number(YYYY) > 2011) {
+          // SE CANCELA Y SE CREA UN CFDI INGRESO (FAC) Y UN CFDI DE EGRESO (NCR)
+          // **EDWIN** 3//
+          //   CF_NUEVAFACT := COPIA_FACTURA_VTA_BASES(:COMER_FACTURAS.ID_EVENTO,:COMER_FACTURAS.ID_LOTE, :COMER_FACTURAS.ID_FACTURA, CF_LEYENDA, :BLK_CTRL.USUARIO_AUT, 'PREF',1,0,:BLK_TOOLBAR.TOOLBAR_NO_DELEGACION,:BLK_CTRL.CAUSA);
+          CF_NUEVAFACT = await this.copyBillVTABases();
+        }
+        if (CF_NUEVAFACT > 0) {
+          let obj = {
+            billId: item.billId,
+            eventId: item.eventId,
+            IauthorizeDate: new Date(), // FECHA_AUTORIZO
+            userIauthorize: this.authService.decodeToken().preferred_username,
+            causerebillId: this.form.get('causerebillId').value, // ID_CAUSAREFACTURA
+            factstatusId: 'CAN', // ID_ESTATUSFACT
+          };
+          await this.billingsService.updateBillings(obj);
+          // CANCELAR_FACTURA(:COMER_FACTURAS.ID_FACTURA);
+        } else {
+          return this.alert(
+            'error',
+            'Falló la operación, consulte sistemas',
+            ''
+          );
+        }
+      }
+    });
+    Promise.all(result).then(resp => {
+      this.getAllComer();
+    });
+  }
+
+  async copyBillVTABases() {
+    return 1;
+  }
+
+  async sendPackage() {
+    console.log('Consultar con Carlos');
   }
 }

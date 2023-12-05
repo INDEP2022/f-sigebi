@@ -44,6 +44,7 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
     const aux_auto = await this.validateUser(userV, passwordV, aux);
 
     if (aux_auto == 1) {
+      this.modalRef.content.callback2(aux_auto);
       this.modalRef.hide();
     }
   }
@@ -83,6 +84,7 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
     }
 
     // se revisara esto
+    // AUX_CONN := VAL_CONNECT(PUSER, PPASS)
     //const aux_con = await this.valConection()
     //return aux_con
     return 1 || 0;
