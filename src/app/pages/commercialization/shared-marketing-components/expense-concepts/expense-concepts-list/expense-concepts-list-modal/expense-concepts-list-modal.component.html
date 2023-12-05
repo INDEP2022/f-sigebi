@@ -21,14 +21,7 @@
           <input class="form-control" formControlName="id" readonly />
         </form-field>
       </div>
-      <div class="pb-2">
-        <form-field [control]="form.get('description')" label="Descripción">
-          <textarea
-            class="form-control"
-            formControlName="description"
-            maxlength="100"></textarea>
-        </form-field>
-      </div>
+
       <div class="pb-4">
         <form-field [control]="form.get('address')" label="Dirección">
           <ng-select class="form-control" formControlName="address">
@@ -37,6 +30,14 @@
               {{ dest.description }}
             </ng-option>
           </ng-select>
+        </form-field>
+      </div>
+      <div class="pb-2">
+        <form-field [control]="form.get('description')" label="Descripción">
+          <textarea
+            class="form-control"
+            formControlName="description"
+            maxlength="100"></textarea>
         </form-field>
       </div>
       <div>

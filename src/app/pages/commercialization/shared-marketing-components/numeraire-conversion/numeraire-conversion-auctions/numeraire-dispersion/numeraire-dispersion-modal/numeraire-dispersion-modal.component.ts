@@ -61,22 +61,29 @@ export class NumeraireDispersionModalComponent
     return this.form.get('date');
   }
 
-  confirm() {
+  confirmSave() {
     let body = this.form.value;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+    return;
     if (body) {
       let serviceAction = this.row
         ? this.service.edit({ ...body, eventId: this.row.eventId })
         : this.service.add({ ...body, eventId: this.eventId });
       serviceAction.pipe(take(1)).subscribe({
         next: response => {
-          if (this.row) {
-            this.alert('success', 'Se realizó la edición del bien', '');
-          } else {
-            this.alert('success', 'Se realizó el registro del bien', '');
-          }
-
-          this.modalRef.content.callback(true);
+          this.modalRef.content.callback(this.row ? true : false);
           this.modalRef.hide();
+          // debugger;
+          // if (this.row) {
+          //   this.alert('success', 'Se realizó la edición del bien', '');
+          // } else {
+          //   this.alert('success', 'Se realizó el registro del bien', '');
+          // }
+          // setTimeout(() => {
+          //   this.modalRef.content.callback(this.row ? true : false);
+          //   this.modalRef.hide();
+          // }, 500);
         },
         error: err => {
           if (this.row) {

@@ -128,3 +128,49 @@ export interface IDetailProceedingsDevollutionDelete {
   numberGood: string | number;
   numberProceedings: string | number;
 }
+
+export interface IPufValidTerm {
+  delegationNumber: number;
+  elaborationDate: string;
+}
+
+export interface IPbSelPaq {
+  noPaquete: number;
+  blkAct: [
+    {
+      no_acta: number;
+    }
+  ];
+  blkBie: [
+    no_bien: number,
+    di_desc_bien: string,
+    proceso_ext_dom: string,
+    cantidad: number,
+    di_disponible: string
+  ];
+  blkDet: [
+    {
+      no_acta: number;
+      no_bien: number;
+    }
+  ];
+}
+
+export interface IPupMovDestruction {
+  proceeding: string;
+  screen: string;
+  proceedingType: string;
+  user: string;
+  date: string;
+}
+
+export interface IQueryRegAdminGood {
+  selPaq: string;
+  statusRecord: string;
+  blockStatus: string;
+  user: string;
+  packageNumber: string;
+  proceedingNumber: string;
+  minutesNumber: string;
+  typeMinutes: string;
+}

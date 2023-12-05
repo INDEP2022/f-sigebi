@@ -61,7 +61,6 @@ export const DETAIL_PROCEEDINGS_DELIVERY_RECEPTION = {
 export const GOODS_COLUMNS = {
   id: {
     title: 'No. Bien',
-    width: '25px',
     type: 'string',
     sort: false,
   },

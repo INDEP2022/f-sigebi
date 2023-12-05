@@ -7,27 +7,11 @@
     </div>
   </div>
   <div body>
-    <div class="row mb-5">
-      <div class="col-md-4">
-        <button
-          class="btn btn-primary btn-sm active mr-3"
-          (click)="keyProceedingchange()">
-          Buscar
-          <i class="bx bx-search-alt bx-sm float-icon"></i>
-        </button>
-        <button
-          class="btn btn-danger btn-sm active"
-          (click)="queryProceeding()">
-          Limpiar <i class="fas fa-eraser"> </i>
-        </button>
-      </div>
-    </div>
-    <hr />
     <form class="form-material" [formGroup]="proceedingForm">
       <div class="row">
         <form-field
           class="col-md-2"
-          label="No."
+          label="No. de Acta"
           [control]="proceedingForm.get('id')">
           <input
             type="text"
@@ -123,6 +107,12 @@
     <div class="row text-center mb-5">
       <div class="col-md-12">
         <div>
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="keyProceedingchange()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
           <confirm-button
             [disabled]="controls.statusProceedings.value == 'CERRADA'"
             text="Guardar"
@@ -132,17 +122,23 @@
             type="button"
             (confirm)="save()"></confirm-button>
 
-          <button class="btn btn-primary btn-sm active mr-3" (click)="update()">
+          <!-- <button class="btn btn-primary btn-sm active mr-3" (click)="update()">
             Actualizar <i class="fas fa-sync-alt"> </i>
-          </button>
+          </button> -->
           <button
-            (click)="closeProceeding()"
-            class="btn btn-primary btn-sm active">
+            *ngIf="controls.statusProceedings.value != 'CERRADA'"
+            (click)="newCloseProceeding()"
+            class="btn btn-primary btn-sm active mr-3">
             {{
               controls.statusProceedings.value != 'CERRADA'
                 ? 'Cerrar Acta'
                 : 'Sacar bienes'
             }}
+          </button>
+          <button
+            class="btn btn-danger btn-sm active"
+            (click)="queryProceeding()">
+            Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
       </div>
@@ -150,18 +146,12 @@
     <hr />
 
     <div class="row pt-5">
-      <hr />
       <div class="col-md-6">
         <div [class]="loadingActReception ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingActReception ? '0px' : '250px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings4"
-                [source]="actaList2"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings4"
+              [source]="actaList2"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params5"
@@ -171,14 +161,9 @@
       <div class="col-md-6">
         <div [class]="loadingDictation ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingDictation ? '0px' : '250px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings5"
-                [source]="dictaList2"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings5"
+              [source]="dictaList2"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params6"
@@ -234,27 +219,20 @@
           label="Observaciones"
           [control]="proceedingForm.get('observations')">
           <textarea
-            rows="3"
+            rows="2"
             maxlength="1000"
             class="form-control"
             formControlName="observations"></textarea>
         </form-field>
       </div>
     </form>
-
-    <hr />
     <div class="row">
       <div class="col-md-12 table-responsive">
         <div class="row">
           <div [class]="loadingGoods ? 'table-loading' : ''">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingGoods ? '0px' : '350px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings3"
-                [source]="goodPDS1"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings3"
+              [source]="goodPDS1"></ng2-smart-table>
             <app-pagination
               [params]="params8"
               [totalItems]="totalItems3"></app-pagination>
@@ -262,47 +240,46 @@
         </div>
       </div>
     </div>
-    <hr />
     <div class="row">
       <div class="col-md-12">
         <div class="row pt-2">
           <div class="col-md-12 text-center mt-4 mb-4">
-            <button
-              tooltip="Agregar Bien"
-              containerClass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-              type="button"
-              (click)="insertGood()">
-              <!-- Mover uno -->
-              <i class="bx bx-chevron-down bx-md"></i>
-            </button>
-            <button
-              tooltip="Quitar Bien"
-              containerClass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-              type="button"
-              (click)="deleteGood()">
-              <!-- Quitar uno -->
-              <i class="bx bx-chevron-up bx-md"></i>
-            </button>
+            <div class="col-md-3">
+              <label for="">Agregar</label>
+              <button
+                tooltip="Agregar Bien"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="insertGood()">
+                <!-- Mover uno -->
+                <i class="bx bx-chevron-down bx-md"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <label for="">Eliminar</label>
+              <button
+                tooltip="Quitar Bien"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="deleteGood()">
+                <!-- Quitar uno -->
+                <i class="bx bx-chevron-up bx-md"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <hr />
     <div class="row pt-5">
       <div class="col-md-12 table-responsive">
         <div class="row">
           <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <!-- <div class="table-responsive"> -->
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingGoodsByP ? '0px' : '350px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings2"
-                [source]="detailProceedingsList2"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings2"
+              [source]="detailProceedingsList2"></ng2-smart-table>
             <app-pagination
               [params]="params7"
               [totalItems]="totalItems2"></app-pagination>

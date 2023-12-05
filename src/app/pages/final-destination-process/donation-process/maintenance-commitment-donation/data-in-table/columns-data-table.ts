@@ -1,12 +1,7 @@
+import { ITransferee } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
 export const COLUMNS_DATA_TABLE = {
   labelId: {
     title: 'Etiqueta',
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value.description : '';
-    },
-    filterFunction(cell?: any, search?: string): boolean {
-      return true;
-    },
     type: 'string',
     sort: false,
   },
@@ -16,23 +11,20 @@ export const COLUMNS_DATA_TABLE = {
     sort: false,
   },
   desStatus: {
-    title: 'Des. Estatus',
+    title: 'Des. Status',
     type: 'string',
     sort: false,
   },
   transfereeId: {
     title: 'No. Trans.',
-    // valuePrepareFunction: (value: ITransferee) => {
-    //   return value != null ? value.transferentId : '';
-    // },
+    valuePrepareFunction: (value: ITransferee) => {
+      return value != null ? value.transferentId : '-';
+    },
     type: 'number',
     sort: false,
   },
   desTrans: {
-    title: 'Des. Trans.',
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value : '';
-    },
+    title: 'Des Trans.',
     type: 'string',
     sort: false,
   },

@@ -1,0 +1,5 @@
+:host ::ng-deep app-select-modal-table-shared {
+  .form-material .form-group.form-static-label .form-control ~ .float-label {
+    top: -19px;
+  }
+}

@@ -28,6 +28,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     this.microservice = ProceedingsEndpoints.BasePath;
   }
 
+  update2(item: IProceedingDeliveryReception) {
+    return this.put(this.endpoint + '/' + item.id, item);
+  }
+
   postProceeding(data: IProccedingsDeliveryReception) {
     return this.post<IListResponse<IValidations>>(this.endpoint, data);
   }

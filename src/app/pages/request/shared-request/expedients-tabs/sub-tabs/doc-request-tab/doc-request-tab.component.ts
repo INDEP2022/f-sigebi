@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -87,6 +89,9 @@ export class DocRequestTabComponent
   idState: string = '';
   statusTask: any = '';
   task: any;
+
+  @Output() onChange = new EventEmitter<any>();
+
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -293,6 +298,7 @@ export class DocRequestTabComponent
                   this.totalItems = data.length;
 
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -341,6 +347,7 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -393,8 +400,8 @@ export class DocRequestTabComponent
                   this.docExpedient =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
-
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -445,8 +452,8 @@ export class DocRequestTabComponent
                   this.docExpedient =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
-
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x
                   //this.paragraphs.load(x)
                 });
@@ -948,5 +955,16 @@ export class DocRequestTabComponent
       default:
         break;
     }
+  }
+
+  onChanges() {
+    let list =
+      this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
+
+    this.onChange.emit({
+      isValid: list.length > 0,
+      object: list,
+      type: this.typeDoc,
+    });
   }
 }
