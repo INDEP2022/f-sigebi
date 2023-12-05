@@ -641,6 +641,34 @@ export class DestructionAuthorizationComponent
           );
           alertAcep = false;
         }
+        console.log(response.bienes_aceptados);
+        response.bienes_aceptados.forEach(element => {
+          let body = {
+            pVcScreem: 'FESTATUSRGA',
+            pActaNumber: this.proceedingForm.get('id').value,
+            pStatusActa: this.proceedingForm.get('statusProceedings').value,
+            pGoodNumber: element.goodNumber,
+            pDiAvailable: '',
+            pDiActa: this.proceedingForm.get('id').value,
+            pCveActa: this.proceedingForm.get('keysProceedings').value,
+            pAmount: element.amount,
+          };
+          this.massiveGoodService.InsertGood(body).subscribe({
+            next: data => {
+              console.log(data);
+              this.getProceedingGoods();
+            },
+            error: err => {
+              console.log(err);
+              this.alert(
+                'warning',
+                `El Bien: ${this.array[0].id}, ya ha sido ingresado en una solicitud`,
+                ''
+              ); // Asumiendo que 'alert' se encarga de mostrar la alerta
+              this.array = [...this.tempArray];
+            },
+          });
+        });
 
         let alertRech: boolean = true;
         if (response.rechazados > 0) {
@@ -656,6 +684,7 @@ export class DestructionAuthorizationComponent
         this.keyProceedingchange();
 
         this.isInsertDetailRunning = false;
+        this.getProceedingGoods();
 
         // if (response.rechazados > 0) {
         //   const modalConfig = {
