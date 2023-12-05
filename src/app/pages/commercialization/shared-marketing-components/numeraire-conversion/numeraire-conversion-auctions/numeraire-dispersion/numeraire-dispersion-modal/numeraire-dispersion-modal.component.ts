@@ -61,8 +61,11 @@ export class NumeraireDispersionModalComponent
     return this.form.get('date');
   }
 
-  confirm() {
+  confirmSave() {
     let body = this.form.value;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+    return;
     if (body) {
       let serviceAction = this.row
         ? this.service.edit({ ...body, eventId: this.row.eventId })

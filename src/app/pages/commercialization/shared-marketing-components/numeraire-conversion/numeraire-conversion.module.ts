@@ -7,6 +7,7 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SelectModalTableSharedComponent } from 'src/app/@standalone/shared-forms/select-modal-table-shared/select-modal-table-shared.component';
+import { EventFormComponent } from './event-form/event-form.component';
 import { NumeraireConversionAllotmentsComponent } from './numeraire-conversion-allotments/numeraire-conversion-allotments.component';
 import { NumeraireConversionAuctionsComponent } from './numeraire-conversion-auctions/numeraire-conversion-auctions.component';
 import { NumeraireDispersionModalComponent } from './numeraire-conversion-auctions/numeraire-dispersion/numeraire-dispersion-modal/numeraire-dispersion-modal.component';
@@ -23,6 +24,7 @@ import { NumeraireConversionRoutingModule } from './numeraire-conversion-routing
     NumeraireExpensesComponent,
     NumeraireDispersionComponent,
     NumeraireDispersionModalComponent,
+    EventFormComponent,
   ],
   imports: [
     CommonModule,

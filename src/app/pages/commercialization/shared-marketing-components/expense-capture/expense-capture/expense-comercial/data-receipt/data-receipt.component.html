@@ -326,23 +326,19 @@
       [labelTemplate]="employeeLabel"
       [optionTemplate]="employeeOption">
     </ng-custom-select-loading>
-    <!-- <div class="col-md-4">
-      <form-field [control]="requestedUser" label="Solicita">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="requestedUser"
-          maxlength="30" />
-      </form-field>
-    </div>
-    <div class="col-md-8">
-      <form-field [control]="nomEmplRequest" label="">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="nomEmplRequest"
-          maxlength="120" />
-      </form-field>
-    </div> -->
   </div>
+  <!-- <div class="row mt-4 pl-0">
+    <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="requestedUser"
+      label="Solicita"
+      [path]="pathEmpleados"
+      value="ClkDet"
+      bindLabel="MeNomEmp"
+      paramSearch="search"
+      [labelTemplate]="employeeLabel"
+      [optionTemplate]="employeeOption">
+    </ng-custom-select-loading>
+  </div> -->
 </ng-container>

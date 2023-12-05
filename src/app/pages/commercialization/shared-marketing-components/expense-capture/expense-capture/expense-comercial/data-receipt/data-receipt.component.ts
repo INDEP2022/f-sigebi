@@ -44,6 +44,10 @@ export class DataReceiptComponent implements OnInit {
       this.nomEmplcapture.setValue(value.nomEmplcapture);
       this.nomEmplAuthorizes.setValue(value.nomEmplAuthorizes);
       this.nomEmplRequest.setValue(value.nomEmplRequest);
+      this.typepe.setValue(value.typepe);
+      this.tiptram.setValue(value.tiptram);
+      this.contractNumber.setValue(value.contractNumber);
+      this.adj.setValue(value.adj);
     }
   }
   listPayments = ['TRANSFERENCIA', 'CHEQUE', 'INTERCAMBIO'];
@@ -171,6 +175,42 @@ export class DataReceiptComponent implements OnInit {
 
   get nomEmplRequest() {
     return this.form.get('nomEmplRequest');
+  }
+
+  get typepe() {
+    return this.form.get('typepe');
+  }
+
+  get tiptram() {
+    return this.form.get('tiptram');
+  }
+
+  get contractNumber() {
+    return this.form.get('contractNumber');
+  }
+
+  get adj() {
+    return this.form.get('adj');
+  }
+
+  get showTipoOp() {
+    return this.dataService.showTipoOp;
+  }
+
+  get showTipoTram() {
+    return this.dataService.showTipoTram;
+  }
+
+  get showContract() {
+    return this.dataService.showContract;
+  }
+
+  get showTipAdj() {
+    return this.dataService.showTipAdj;
+  }
+
+  get showAdj() {
+    return this.dataService.showTipAdj;
   }
 
   ngOnInit() {}

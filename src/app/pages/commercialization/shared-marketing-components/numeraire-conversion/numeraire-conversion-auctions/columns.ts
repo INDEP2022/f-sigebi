@@ -3,7 +3,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export const COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Id Evento',
     type: 'string',
     sort: false,
   },
