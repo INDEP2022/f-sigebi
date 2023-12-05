@@ -325,7 +325,7 @@
               </button>
               <button
                 class="btn btn-primary btn-sm active"
-                (click)="primaryClose()">
+                (click)="closeButton()">
                 {{ labelButton }}
               </button>
             </div>
@@ -367,7 +367,7 @@
         <div [class]="loadingTable ? 'table-loading' : 'row pt-2'">
           <ng2-smart-table
             class="col-md-12"
-            [attr.class]="'table-responsive table-bordered '"
+            [attr.class]="'table-responsive '"
             [settings]="settings"
             (rowSelect)="selectGoodFn($event)"
             [source]="dataGoods"></ng2-smart-table>
@@ -407,7 +407,7 @@
         <div [class]="loadingTable ? 'table-loading' : 'row pt-2'">
           <ng2-smart-table
             class="col-md-12"
-            [attr.class]="'table-responsive table-bordered '"
+            [attr.class]="'table-responsive'"
             [settings]="settings2"
             (rowSelect)="selectGoodActFn($event)"
             [source]="dataGoodsAct"></ng2-smart-table>

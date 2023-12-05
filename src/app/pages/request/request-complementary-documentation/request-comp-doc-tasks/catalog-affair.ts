@@ -1,4 +1,3 @@
-
 /**
  * @description
  * Catálogo de asuntos para la gestión de documentación complementaria
@@ -10,7 +9,52 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     affair = parseInt(affair);
 
-    switch (path) {
+  switch (path) {
+    //Se crea solicitud decumentación complementaria
+    case 'create':
+      switch (affair) {
+        case 10: //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+          return {
+            title: `DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-request-return',
+            process: 'DRegistroSolicitudes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+        case 33: //GESTIONAR BINES SIMILARES RESARCIMIENTO
+          return {
+            title: `BIENES SIMILARES Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-request-similar-goods',
+            process: 'BSRegistroSolicitudes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+        case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
+          return {
+            title: `RESOLUCIÓN ADMINISTRATIVA DE PAGO EN ESPECIE Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-request-compensation',
+            process: 'RERegistroSolicitudes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+        case 41: //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
+          return {
+            title: `SOLICITUD DE INFORMACIÓN DEL DESTINO DEL BIEN Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-request-information-goods',
+            process: 'IBRegistroSolicitudes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+      }
+      break;
 
         //Se crea solicitud decumentación complementaria
         case 'create':
@@ -37,7 +81,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
                     };
                 case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
                     return {
-                        title: `RESOLUCIÓN ADMINISTRATIVA DE PAGO EN ESPECIE Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+                        title: `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
                         url: 'pages/request/request-comp-doc/tasks/register-request-compensation',
                         process: 'RERegistroSolicitudes',
                         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -124,6 +168,16 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
                 close: true
             };
         case 'validate-opinion-similar-goods':
+            return {
+                title: `BIENES SIMILARES: Elaborar Oficio de Respuesta, No. Solicitud: ${requestId} ${contributor}`,
+                url: 'pages/request/request-comp-doc/tasks/response-letter-similar-goods',
+                process: 'BSElaborarOficioRespuesta',
+                type: 'DOCUMENTACION_COMPLEMENTARIA',
+                subtype: 'Registro_Solicitud',
+                ssubtype: 'TURNAR',
+                close: true
+            };
+        case 'response-letter-similar-goods':
             break;
 
         //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
@@ -203,4 +257,11 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         close: true
     };
 
+  return {
+    title: '',
+    url: '',
+    process: '',
+    ssubtype: '',
+    close: true,
+  };
 }

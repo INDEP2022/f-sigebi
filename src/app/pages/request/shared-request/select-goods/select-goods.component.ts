@@ -21,13 +21,13 @@ import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form
 import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.component';
 import { GrouperGoodFieldComponent } from './grouper-good-field/grouper-good-field.component';
 
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
 import {
   GOODS_RES_DEV_INV_COLUMNS,
   SELECT_GOODS_COLUMNS,
 } from './select-goods-columns';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-select-goods',

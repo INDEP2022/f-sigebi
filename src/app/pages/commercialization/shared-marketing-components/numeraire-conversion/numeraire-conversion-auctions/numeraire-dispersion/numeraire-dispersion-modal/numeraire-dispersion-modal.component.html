@@ -19,8 +19,7 @@
               type="number"
               class="form-control"
               formControlName="amount"
-              [min]="0"
-              [max]="maxAmount" />
+              [min]="0" />
           </form-field>
         </div>
         <div class="pb-2 col-md-6">
@@ -42,7 +41,7 @@
         <confirm-button
           [disabled]="form.invalid"
           text="Aceptar"
-          (confirm)="confirm()">
+          (confirm)="confirmSave()">
         </confirm-button>
       </div>
       <div class="m-3">

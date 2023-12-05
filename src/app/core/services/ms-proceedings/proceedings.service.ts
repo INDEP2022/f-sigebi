@@ -10,8 +10,11 @@ import {
 import {
   IDetailProceedingsDevollution,
   IDetailProceedingsDevollutionDelete,
+  IPbSelPaq,
   IProceedings,
   IPufValidTerm,
+  IPupMovDestruction,
+  IQueryRegAdminGood,
   IUpdateActasEntregaRecepcion,
 } from '../../models/ms-proceedings/proceedings.model';
 import {
@@ -334,5 +337,17 @@ export class ProceedingsService extends HttpService {
 
   pufValidTerm(body: IPufValidTerm) {
     return this.post<{ vban: boolean }>('aplication/puf-valid-term', body);
+  }
+
+  pbSelPaq(body: IPbSelPaq) {
+    return this.post('aplication/pb-sel-paq', body);
+  }
+
+  pupMovementDestruction(body: IPupMovDestruction) {
+    return this.post('aplication/cursor-pup-movement-act-destructuion', body);
+  }
+
+  queryRegAdminGood(body: IQueryRegAdminGood) {
+    return this.post('aplication/query-reg-del-admin-good', body);
   }
 }
