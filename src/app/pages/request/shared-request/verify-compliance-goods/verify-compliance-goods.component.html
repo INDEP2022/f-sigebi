@@ -58,21 +58,19 @@
           </div>
           <div class="row mt-3">
             <div class="col-md-6">
-              <h6>Verificar Cumplimiento de Bienes</h6>
+              <h6>
+                Verificar Cumplimiento de Bienes
+              </h6>
             </div>
-            <div class="col-md-6" *ngIf="editable">
+            <div class="col-md-6" *ngIf="editable" >
               <div class="d-flex flex-row-reverse">
                 <div class="mx-1">
-                  <button
-                    class="btn btn-danger btn-sm active"
-                    (click)="cancel()">
+                  <button class="btn btn-danger btn-sm active" (click)="cancel()">
                     Cancelar
                   </button>
                 </div>
                 <div class="mx-1">
-                  <button
-                    class="btn btn-primary btn-sm active"
-                    (click)="save()">
+                  <button class="btn btn-primary btn-sm active" (click)="save()">
                     Guardar <i class="fa fa-save mr-1"></i>
                   </button>
                 </div>
@@ -81,7 +79,7 @@
           </div>
           <div class="col-sm-12 col-12 col-md-12 p-2">
             <ng2-smart-table
-              [attr.class]="'table-bordered'"
+              [attr.class]="'table-bordered table-responsive'"
               [settings]="tableSettings"
               [source]="data"></ng2-smart-table>
           </div>
