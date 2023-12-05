@@ -3,6 +3,7 @@ import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../../services/expense-capture-data.service';
+import { ExpensePaymentService } from '../../../services/expense-payment.service';
 
 @Component({
   selector: 'app-data-receipt',
@@ -57,7 +58,10 @@ export class DataReceiptComponent implements OnInit {
     { id: '1', value: 'INDEP' },
     { id: '2', value: 'MANDATO' },
   ];
-  constructor(private dataService: ExpenseCaptureDataService) {
+  constructor(
+    private dataService: ExpenseCaptureDataService,
+    public paymentService: ExpensePaymentService
+  ) {
     SearchFilter.NOT;
   }
 
