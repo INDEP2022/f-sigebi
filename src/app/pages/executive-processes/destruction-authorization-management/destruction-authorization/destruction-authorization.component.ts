@@ -409,7 +409,7 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (this.selectedGoods.length == 0) {
+    if (this.selectedGood.length == 0) {
       this.alert(
         'warning',
         'Error',
@@ -1426,8 +1426,6 @@ export class DestructionAuthorizationComponent
   }
 
   insertGood() {
-    console.log(this.array);
-    console.log(this.array[0].goodId);
     if (this.array.length === 0) {
       this.alert('warning', 'Debe seleccionar un Bien', '');
       return;
@@ -1450,12 +1448,8 @@ export class DestructionAuthorizationComponent
     this.massiveGoodService.InsertGood(body).subscribe({
       next: data => {
         console.log(data);
-        if (data.message === true) {
-          this.alert('warning', 'Bien insertado con exito', '');
-          this.getProceedingGoods();
-        } else {
-          this.alert('warning', data.message[0], '');
-        }
+        this.alert('success', 'Bien insertado con exito', '');
+        this.getProceedingGoods();
       },
       error: err => {
         console.log(err);
