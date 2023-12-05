@@ -36,6 +36,9 @@ export class NumerarieService {
               this.showParcial = false;
             }
           },
+          error: err => {
+            this.showParcial = false;
+          },
         });
     }
   }
