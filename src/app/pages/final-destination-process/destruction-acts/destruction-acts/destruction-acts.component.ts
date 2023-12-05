@@ -240,6 +240,9 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   openModalPack() {
     let modalConfig = MODAL_CONFIG;
     modalConfig.class = 'modal-lg';
+    modalConfig.initialState = {
+      no_acta: this.idProceeding,
+    };
     this.modalService.show(PackageComponent, modalConfig);
   }
 
@@ -785,9 +788,11 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
     this.serviceProcVal.postProceeding(body).subscribe(
       res => {
+        this.alert('success', 'Acta creada', '');
         console.log(res);
       },
       err => {
+        this.alert('error', 'Error al crear acta', '');
         console.log(err);
       }
     );

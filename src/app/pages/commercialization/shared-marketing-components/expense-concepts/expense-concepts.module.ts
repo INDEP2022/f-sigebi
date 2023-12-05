@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Routing
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { TextAreaRenderComponent } from 'src/app/shared/render-components/text-area-render/text-area-render.component';
 import { CopyParametersConceptsModalComponent } from './expense-concepts-list/copy-parameters-modal/copy-parameters-modal.component';
 import { ExpenseConceptsListModalComponent } from './expense-concepts-list/expense-concepts-list-modal/expense-concepts-list-modal.component';
@@ -30,6 +31,7 @@ import { ParamsConceptsModalComponent } from './params-conceps-list/params-conce
     SharedModule,
     AccordionModule,
     TextAreaRenderComponent,
+    FormLoaderComponent,
   ],
   exports: [ParamsConcepsListComponent],
 })

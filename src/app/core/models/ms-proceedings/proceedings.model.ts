@@ -141,14 +141,14 @@ export interface IPbSelPaq {
       no_acta: number;
     }
   ];
-  blkBie: [
+  blkBie?: [
     no_bien: number,
     di_desc_bien: string,
     proceso_ext_dom: string,
     cantidad: number,
     di_disponible: string
   ];
-  blkDet: [
+  blkDet?: [
     {
       no_acta: number;
       no_bien: number;

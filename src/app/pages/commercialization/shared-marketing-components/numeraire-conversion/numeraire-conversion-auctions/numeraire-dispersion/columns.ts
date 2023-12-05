@@ -2,7 +2,7 @@ import { formatForIsoDate } from 'src/app/shared/utils/date';
 
 export const COLUMNS = {
   goodNumber: {
-    title: 'Id',
+    title: 'Id Bien',
     sort: false,
     type: 'string',
   },
