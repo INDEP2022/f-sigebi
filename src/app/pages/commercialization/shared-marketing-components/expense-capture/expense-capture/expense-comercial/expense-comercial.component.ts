@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -39,6 +39,7 @@ import { ILoadLotResponse } from '../../models/lot';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
+import { ExpenseMassiveGoodService } from '../../services/expense-massive-good.service';
 import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseScreenService } from '../../services/expense-screen.service';
 import { SpentIService } from '../../services/spentI.service';
@@ -54,7 +55,35 @@ import { NotLoadedsModalComponent } from './not-loadeds-modal/not-loadeds-modal.
 })
 export class ExpenseComercialComponent extends BasePage implements OnInit {
   // params
-  @Input() address: string;
+  private _address: string;
+
+  @Input() get address() {
+    return this._address;
+  }
+  set address(value) {
+    const list = [];
+    if (value === 'M') {
+      this.resetVisiblesM();
+      list.push({ value: 'C', title: 'GENERAL' });
+      list.push({ value: 'M', title: 'MUEBLES' });
+    }
+    if (value === 'I') {
+      this.initScreenI();
+    }
+    this.columns = {
+      ...COLUMNS,
+      address: {
+        ...COLUMNS.address,
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Seleccionar',
+            list,
+          },
+        },
+      },
+    };
+  }
   errorsClasification: any[] = [];
   provider: string;
   PDIRECCION_A = null;
@@ -102,6 +131,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private dictationService: DictationService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
+    private massiveGoodService: ExpenseMassiveGoodService,
     private expenseModalService: ExpenseModalService,
     private parameterService: ParametersConceptsService
   ) {
@@ -417,8 +447,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private async initScreenI() {
+    debugger;
     const list = [];
-
     let filterParams = new FilterParams();
     let user = 'PLAMAR';
     filterParams.addFilter(
@@ -457,7 +487,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showTipAdj = true;
       this.showAdj = true;
       this.showCvePoliza = false;
-      this.address = 'J';
+      this._address = 'J';
       this.dataService.address = 'J';
 
       let filterParams2 = new FilterParams();
@@ -502,7 +532,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (rtDicta2.length > 0) {
         let v_no_tipo = rtDicta2[0].typeNumber;
         if (v_no_tipo === 'GASTOSEG') {
-          this.address = 'S';
+          this._address = 'S';
           this.dataService.address = 'S';
         }
       } else {
@@ -517,7 +547,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showCvePoliza = false;
     }
     if (v_tip_gast === 0) {
-      this.address = 'I';
+      this._address = 'I';
       this.dataService.address = 'I';
       this.PDIRECCION_A = 'C';
       list.push({ value: 'C', title: 'GENERAL' });
@@ -525,32 +555,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
   }
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes['address'] && changes['address'].currentValue) {
-      const list = [];
-      if (changes['address'].currentValue === 'M') {
-        this.resetVisiblesM();
-        list.push({ value: 'C', title: 'GENERAL' });
-        list.push({ value: 'M', title: 'MUEBLES' });
-      }
-      if (changes['address'].currentValue === 'I') {
-        this.initScreenI();
-      }
-      this.columns = {
-        ...COLUMNS,
-        address: {
-          ...COLUMNS.address,
-          filter: {
-            type: 'list',
-            config: {
-              selectText: 'Seleccionar',
-              list,
-            },
-          },
-        },
-      };
-    }
-  }
+  // async ngOnChanges(changes: SimpleChanges) {
+  //   if (changes['address'] && changes['address'].currentValue) {
+
+  //   }
+  // }
 
   get data() {
     return this.dataService.data;
@@ -697,21 +706,97 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
+  private base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    // this.fullService.generatingFileFlag.next({
+    //   progress: 100,
+    //   showText: false,
+    // });
+
+    return bytes.buffer;
+  }
+
+  private downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    // this.excelLoading = true;
+    this.alert('success', 'El reporte se ha descargado', '');
+    URL.revokeObjectURL(objURL);
+  }
+
+  exportExcel() {
+    if (this.expenseNumberValue) {
+      this.alertQuestion('question', '¿Desea exportar el gasto?', '').then(
+        x => {
+          if (x.isConfirmed) {
+            // this.excelLoading = true;
+            this.massiveGoodService
+              .PUP_EXPOR_ARCHIVO_BASE(this.expenseNumberValue)
+              .pipe(take(1))
+              .subscribe({
+                next: data => {
+                  // this.excelLoading = false;
+                  this.alert(
+                    'warning',
+                    'El archivo se esta generando, favor de esperar la descarga',
+                    ''
+                  );
+                  this.downloadDocument('Gastos', 'excel', data);
+                },
+              });
+          }
+        }
+      );
+    } else {
+      this.alert('warning', 'Debe seleccionar un gasto antes de exportar', '');
+    }
+  }
+
   private fillAddressNotM(v_tipo: string) {
     if (v_tipo === 'GASTOINMU') {
-      this.address = 'J';
+      this._address = 'J';
       this.dataService.address = 'J';
     }
     if (v_tipo === 'GASTOVIG') {
-      this.address = 'V';
+      this._address = 'V';
       this.dataService.address = 'V';
     }
     if (v_tipo === 'GASTOSEG') {
-      this.address = 'S';
+      this._address = 'S';
       this.dataService.address = 'S';
     }
     if (v_tipo === 'GASTOADMI') {
-      this.address = 'A';
+      this._address = 'A';
       this.dataService.address = 'A';
     }
   }
@@ -750,7 +835,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (usuarioSolicitaData) {
         this.form.get('requestedUser').setValue(usuarioSolicitaData);
       }
-      this.address = 'I';
+      this._address = 'I';
       this.dataService.address = 'I';
     }
     await this.readParams(concept.id);
@@ -1273,9 +1358,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             : this.PDIRECCION_A
             ? ',' + this.PDIRECCION_A
             : '')
-        : this.address === 'M'
-        ? 'C'
-        : this.PDIRECCION_A)
+        : '')
     );
   }
 
@@ -1409,9 +1492,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
   }
 
-  imprimeDetalle() {
+  validImprimeDetalle() {
     let mandates = this.dataCompositionExpenses.filter(x => x.mandato);
-    if (this.expenseNumber.value && mandates.length > 0) {
+    return this.expenseNumberValue && mandates.length > 0;
+  }
+
+  imprimeDetalle() {
+    if (this.validImprimeDetalle()) {
+      // this.alertQuestion('question','Desea imprimir ')
       this.loader.load = true;
       this.PUP_LANZA_REPORTE(3);
     } else {
