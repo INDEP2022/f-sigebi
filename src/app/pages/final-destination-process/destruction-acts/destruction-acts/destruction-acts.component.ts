@@ -240,6 +240,9 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   openModalPack() {
     let modalConfig = MODAL_CONFIG;
     modalConfig.class = 'modal-lg';
+    modalConfig.initialState = {
+      no_acta: this.idProceeding,
+    };
     this.modalService.show(PackageComponent, modalConfig);
   }
 
