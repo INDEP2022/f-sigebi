@@ -28,7 +28,6 @@ import {
   SELECT_GOODS_COLUMNS,
 } from './select-goods-columns';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-select-goods',
