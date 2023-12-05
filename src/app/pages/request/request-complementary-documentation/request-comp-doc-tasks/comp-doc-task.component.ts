@@ -349,7 +349,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       /** CASOS DE USO DEVOLUCION */
       case 'register-request-return':
-
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
@@ -361,7 +360,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'verify-compliance-return':
-
         this.regDocView = true;
         this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
         this.selectGoodForEyeVisit = true;
@@ -377,7 +375,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'approve-return':
-
         this.regDocView = true;
         this.expRequest = true;
         this.verifyCompliance = true;
@@ -399,7 +396,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       /** CASOS DE BIENES SIMILARES */
       case 'register-request-similar-goods':
-
         this.regDocForm = true;
         this.selectGoods = true;
         this.searchAssociateFile = true;
@@ -422,7 +418,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
 
       case 'notify-transfer-similar-goods':
-
         this.regDocView = true;
         this.selectGoodForEyeVisit = true;
         this.expRequest = true;
@@ -444,7 +439,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'eye-visit-similar-goods':
-
         this.regDocView = true;
         this.selectGoodForEyeVisit = true;
         this.expRequest = true;
@@ -465,7 +459,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'validate-eye-visit-similar-goods':
-
         this.typeVisit = 'selectGood';
         this.regDocView = true;
         this.expRequest = true;
@@ -491,7 +484,6 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
       case 'validate-opinion-similar-goods':
-
         this.typeVisit = 'resultGood';
         this.regDocView = true;
         this.expRequest = true;
@@ -519,7 +511,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
 
       case 'response-letter-similar-goods':
-
         this.typeVisit = 'resultGood';
         this.regDocView = true;
         this.expRequest = true;
@@ -546,8 +537,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = false;
 
         break;
-
-
 
       //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
       case 'register-request-compensation':
@@ -639,7 +628,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       /** CASOS DE INFORMACION DE BIENES */
 
-      case 'register-request-compensation':
+      case 'register-request-information-goods':
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
@@ -663,7 +652,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
 
       case 'review-guidelines-compensation':
-
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
@@ -688,7 +676,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = false;
         break;
       case 'analysis-result-compensation':
-
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
@@ -778,5 +765,4 @@ export abstract class CompDocTasksComponent extends BasePage {
     this.rejectReq = false;
     this.makeResultPaperReport = false;
   }
-
 }
