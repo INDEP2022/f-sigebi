@@ -1,4 +1,7 @@
 :host ::ng-deep ng2-smart-table {
+  .eventId {
+    min-width: 100px;
+  }
   .lotePublico {
     min-width: 80px;
     text-align: center;
