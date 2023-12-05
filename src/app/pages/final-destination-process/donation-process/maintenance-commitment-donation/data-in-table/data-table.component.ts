@@ -195,6 +195,7 @@ export class DataTableComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
+          console.log(change.action);
           console.log(' this.params ', this.params);
           this.getForeignTrade();
         }

@@ -183,6 +183,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.requestId = requestResult.id;
         const user: any = this.authService.decodeToken();
         let task: any = {};
+
         task['id'] = 0;
         task['assignees'] = user.username;
         task['assigneesDisplayname'] = user.username;
@@ -199,7 +200,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['urlNb'] =
           this.op != 2
             ? 'pages/request/list/new-transfer-request'
-            : 'pages/request/request-comp-doc/create';
+            : 'pages/request/request-comp-doc/register-request';
         const taskResult: any = await this.createOnlyTask(task);
         if (taskResult) {
           this.taskId = Number(taskResult.data[0].id);
@@ -269,7 +270,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
         this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -382,7 +383,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     }
   }
 
-  getState(event: any): void { }
+  getState(event: any): void {}
 
   /*getIssue(event?: any, id?: string): void {
     let params = new ListParams();
@@ -491,7 +492,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
               allowOutsideClick: false,
-            }).then(async result => { });
+            }).then(async result => {});
           }
         }
       }
@@ -572,14 +573,13 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
                 body['task'] = task;
 
-                let orderservice: any = {};
+                /*let orderservice: any = {};
                 orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
                 orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
                 orderservice['pIdApplication'] = idRequest;
                 orderservice['pCurrentDate'] = new Date().toISOString();
                 orderservice['pOrderServiceIn'] = '';
-
-                body['orderservice'] = orderservice;
+                body['orderservice'] = orderservice;*/
 
                 const taskResult = await this.createTaskOrderService(body);
                 if (taskResult) {
@@ -747,7 +747,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getRequest(requestId: number | string) {
     this.requestService.getById(requestId).subscribe({
       next: resp => {
-
         this.requestForm.controls['paperNumber'].setValue(resp.paperNumber);
         this.requestForm.controls['keyStateOfRepublic'].setValue(
           resp.keyStateOfRepublic
@@ -811,7 +810,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   idAuthoridad: number = 0;
 
   async turnRequestOp2() {
-
     this.getRegionalDeleg(new ListParams());
     const createTask = await this.generateFirstTask();
     if (createTask) {
@@ -825,7 +823,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.id = this.requestId;
       const idRequest = form.id;
 
-      const { title, url, process, type, subtype, ssubtype } = this.getValuesForTurn();
+      const { title, url, process, type, subtype, ssubtype } =
+        this.getValuesForTurn();
 
       const requestResult: any = await this.updateTurnedRequest(form);
       if (requestResult) {
@@ -871,8 +870,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
           this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
         } else {
           this.msgModal(
-            'No se pudo turnar la solicitud con el Folio Nº '
-              .concat(`<strong>${idRequest}</strong>`),
+            'No se pudo turnar la solicitud con el Folio Nº '.concat(
+              `<strong>${idRequest}</strong>`
+            ),
             'Error',
             'error'
           );

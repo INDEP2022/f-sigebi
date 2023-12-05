@@ -42,6 +42,21 @@
           }
         }
       }
+
+      app-columns-select,
+      .showInMobile {
+        display: none;
+        @media screen and (max-width: 767px) {
+          display: block;
+        }
+      }
+
+      .showInDesktop {
+        display: block;
+        @media screen and (max-width: 767px) {
+          display: none;
+        }
+      }
     }
   }
 }

@@ -7,22 +7,38 @@ import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   IBlkBie,
   IQueryRegAdmin,
 } from 'src/app/core/interfaces/list-response.interface';
+import { IPAAbrirActasPrograma } from 'src/app/core/models/good-programming/good-programming';
+import {
+  IDeleteDetailProceeding,
+  IDetailProceedingsDeliveryReception,
+} from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import {
+  IPufValidTerm,
+  IPupMovDestruction,
+  IQueryRegAdminGood,
+} from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { PackageComponent } from '../package/package.componet';
 import {
   FilterParams,
   ListParams,
@@ -60,6 +76,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   //Formas
   actForm: FormGroup;
+  optionRB: FormGroup;
 
   //Data para select
   records = new DefaultSelect(['DES']);
@@ -114,19 +131,27 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   //DATOS TEMPORALES
   selectGood: any = null;
   selectGoodAct: any = null;
+  proccedingId: any = null;
+
+  //PARA MOSTRAR
+  di_status_good: any = null;
 
   constructor(
     private fb: FormBuilder,
-    private serviceUser: UsersService,
-    private serviceRNomencla: ParametersService,
-    private serviceExpedient: ExpedientService,
-    private serviceProcVal: ProceedingsDeliveryReceptionService,
-    private goodService: GoodService,
-    private serviceDetailProc: DetailProceeDelRecService,
-    private serviceTransferent: TransferenteService,
-    private authService: AuthService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private authService: AuthService,
+    private documentService: DocumentsService,
+    private goodService: GoodService,
+    private modalService: BsModalService,
+    private router: Router,
+    private serviceDetailProc: DetailProceeDelRecService,
+    private serviceExpedient: ExpedientService,
+    private serviceProceeding: ProceedingsService,
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private serviceProgrammingGood: ProgrammingGoodService,
+    private serviceRNomencla: ParametersService,
+    private serviceTransferent: TransferenteService,
+    private serviceUser: UsersService
   ) {
     super();
 
@@ -172,7 +197,6 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   initializesForm() {
     const token = this.authService.decodeToken();
-    console.log(token);
     const routeUser = `?filter.id=$eq:${token.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(
       res => {
@@ -189,7 +213,6 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         paramsF.addFilter('numberDelegation2', this.delUser);
         this.serviceRNomencla.getRNomencla(paramsF.getParams()).subscribe(
           res => {
-            console.log(res);
             this.GSt_rec_adm = 'FILTRAR';
           },
           err => {
@@ -204,6 +227,20 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       },
       err => {}
     );
+
+    this.optionRB.get('option').valueChanges.subscribe(res => {
+      console.log(res);
+      if (res == 'P') {
+        this.openModalPack();
+      }
+    });
+  }
+
+  //MODAL PAQUETE
+  openModalPack() {
+    let modalConfig = MODAL_CONFIG;
+    modalConfig.class = 'modal-lg';
+    this.modalService.show(PackageComponent, modalConfig);
   }
 
   //TODO: FALTA HACER LA VALIDACIONES SI VIENE DE RASTREADOR
@@ -304,6 +341,10 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   }
 
   initForm() {
+    this.optionRB = this.fb.group({
+      option: ['N'],
+    });
+
     this.actForm = this.fb.group({
       expedient: [null],
       prevAv: [null],
@@ -438,13 +479,14 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.comptrollerWitness.setValue(data.comptrollerWitness);
     this.statusProceeding.setValue(data.statusProceedings);
     this.universalFolio.setValue(data.universalFolio);
+    this.proccedingId = data.id;
   }
 
   //VALIDAR BIENES
   validatedGood(e: any) {
     const body: IBlkBie = {
       status: e.status,
-      proceeedingsNumber: this.actForm.get('expedient').value,
+      proceedingsNumber: this.actForm.get('expedient').value,
       goodNumber: e.goodId,
       screen: 'FACTDESACTASDESTR',
     };
@@ -452,10 +494,13 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.serviceProcVal.blkBie(body).subscribe(
         res => {
+          console.log(res);
           resolve({
             avalaible: res.available == 'N' ? false : true,
             bamparo: res.bamparo,
             status: res.statusGood,
+            minute: res.Minutes,
+            di_status: res.diDescriptionGood,
           });
         },
         err => {
@@ -479,10 +524,12 @@ export class DestructionActsComponent extends BasePage implements OnInit {
           res.data.map(async (e: any) => {
             const resp = await this.validatedGood(e);
             const jsonResp = JSON.parse(JSON.stringify(resp));
-
+            console.log(jsonResp);
             return {
               ...e,
               avalaible: jsonResp.avalaible,
+              acta: jsonResp.minute,
+              diStatus: jsonResp.di_status,
             };
           })
         );
@@ -494,6 +541,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       },
       err => {
         this.loadingTable = false;
+        this.dataGoods.load([]);
         this.alert('warning', 'No se encontraron bienes', '');
         console.log(err);
       }
@@ -509,6 +557,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         this.totalItems2 = res.count;
       },
       err => {
+        this.dataGoodsAct.load([]);
         console.log(err);
       }
     );
@@ -701,7 +750,16 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.resetTableDataGoodsAct();
   }
 
-  //GUARDAR ACTA
+  //ADMINISTRAR BOTON GUARDAR
+  saveButton() {
+    if (this.isNewProceeding) {
+      this.saveProceeding();
+    } else {
+      this.updateProceeding();
+    }
+  }
+
+  //GUARDAR NUEVA ACTA
   saveProceeding() {
     const body: IProccedingsDeliveryReception = {
       keysProceedings: this.act2.value,
@@ -714,6 +772,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       numFile: this.expedient.value,
       witness1: this.witness.value,
       witness2: this.witness2.value,
+      responsible: this.responsible.value,
       destructionMethod: this.destroMethod.value,
       numDelegation1: this.actForm.get('admin').value.delegationNumber2,
       numDelegation2:
@@ -732,6 +791,11 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  //ACTUALIZAR ACTA
+  updateProceeding() {
+    //!FUNCIONALIDAD PARA GUAR
   }
 
   //NUEVA ACTA
@@ -781,22 +845,34 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   selectGoodActFn(e: any) {
     this.selectGoodAct = e.data;
+    this.di_status_good = e.data.diStatus;
     console.log(this.selectGoodAct);
   }
 
   //AGREGAR BIENES A ACTA
-  addGoods() {
-    if (this.selectGood == null) {
-      this.alert('warning', 'Seleccione primero el bien a asignar', '');
+  addGood() {
+    this.loadingTable = true;
+    let act2Value = this.actForm.get('act2').value;
+
+    if (/\/\//.test(act2Value) || /\/ \//.test(act2Value)) {
+      this.alert('warning', 'La clave de acta es incorrecta', '');
+      this.loadingTable = false;
       return;
     }
 
-    if (this.actForm.get('act2').value) {
+    if (this.selectGood == null) {
+      this.alert('warning', 'Seleccione primero el bien a asignar', '');
+      this.loadingTable = false;
+      return;
+    }
+
+    if (this.actForm.get('act2').value == null) {
       this.alert(
         'warning',
         'No existe un acta, en la cual asignar el bien. Capture primero el acta',
         ''
       );
+      this.loadingTable = false;
       return;
     }
 
@@ -810,6 +886,17 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         'El acta se encuentra cerrada',
         'El acta ya esta cerrada, no puede realizar modificaciones a esta'
       );
+      this.loadingTable = false;
+      return;
+    }
+
+    if ([null, ''].includes(this.actForm.get('statusProceeding').value)) {
+      this.alert(
+        'warning',
+        'El acta no tiene un estatus válido',
+        'El acta no tiene un estatus válido, no puede realizar modificaciones a esta'
+      );
+      this.loadingTable = false;
       return;
     }
 
@@ -819,15 +906,46 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         'Bien no disponible',
         'El bien tiene un estatus invalido para ser asignado a alguna acta'
       );
+      this.loadingTable = false;
       return;
     }
 
-    //!FALTA AGREGAR LA CLAVE DE ACTA
+    if (this.selectGood.acta != null) {
+      this.alert(
+        'warning',
+        'Bien ya asignado',
+        'El bien ya esta asignado a una acta'
+      );
+      this.loadingTable = false;
+      return;
+    }
 
-    //!AGREGAR BIENES A DETALLE_ACTA_ENT_RECEP
+    const body: IDetailProceedingsDeliveryReception = {
+      numberProceedings: this.proccedingId,
+      numberGood: this.selectGood.goodId,
+      amount: this.selectGood.quantity,
+      exchangeValue: 1,
+      approvedUserXAdmon: this.authService.decodeToken().preferred_username,
+    };
+
+    this.serviceDetailProc.addGoodToProceedings(body).subscribe(
+      res => {
+        console.log(res);
+        this.searchGoodsInDetailProceeding();
+        this.searchGoodsByExp();
+        this.loadingTable = false;
+      },
+      err => {
+        console.log(err);
+        this.alert('error', 'Error al agregar bien', '');
+        this.loadingTable = false;
+      }
+    );
   }
 
   deleteGood() {
+    this.loadingTable = true;
+
     if (
       ['CERRADO', 'CERRADA'].includes(
         this.actForm.get('statusProceeding').value
@@ -838,15 +956,17 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         'El acta se encuentra cerrada',
         'El acta ya esta cerrada, no puede realizar modificaciones a esta'
       );
+      this.loadingTable = false;
       return;
     }
 
-    if (this.actForm.get('act2').value) {
+    if (this.actForm.get('act2').value == null) {
       this.alert(
         'warning',
         'No existe un acta',
         'Debe especificar/buscar el acta para despues eliminar el bien de esta'
       );
+      this.loadingTable = false;
       return;
     }
 
@@ -856,9 +976,346 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         'No hay bien seleccionado',
         'Debe seleccionar un bien que forme parte del acta primero'
       );
+      this.loadingTable = false;
       return;
     }
 
-    //!ELIMINAR BIENES DE DETALLE_ACTA_ENT_RECEP
+    const deleteModel: IDeleteDetailProceeding = {
+      numberGood: this.selectGoodAct.good.goodId,
+      numberProceedings: this.idProceeding,
+    };
+
+    this.serviceDetailProc.deleteDetailProcee(deleteModel).subscribe(
+      res => {
+        console.log(res);
+        this.searchGoodsInDetailProceeding();
+        this.searchGoodsByExp();
+        this.loadingTable = false;
+      },
+      err => {
+        console.log(err);
+        this.alert('error', 'Error al eliminar bien', '');
+        this.loadingTable = false;
+      }
+    );
+  }
+
+  //CERRAR ACTA
+  async closeButton() {
+    if (
+      this.optionRB.get('option').value == 'P' &&
+      ['CERRADO', 'CERRADA'].includes(this.status.value)
+    ) {
+      this.pupGenMasiv();
+    } else {
+      this.pupMovimientoActa();
+    }
+  }
+
+  pupGenMasiv() {
+    const body: IQueryRegAdminGood = {
+      selPaq: '',
+      statusRecord: '',
+      blockStatus: '',
+      user: '',
+      packageNumber: '',
+      proceedingNumber: '',
+      minutesNumber: '',
+      typeMinutes: '',
+    };
+
+    this.serviceProceeding.queryRegAdminGood(body).subscribe(
+      res => {
+        console.log(res);
+
+        //!COLOCAR V_STATUS
+        this.alert('success', 'Actualización de paquete', '');
+      },
+      err => {
+        console.log(err);
+        this.alert('error', 'Error al actualizar paquete', '');
+      }
+    );
+  }
+
+  async validateFolio() {
+    return new Promise((resolve, reject) => {
+      this.documentService.getByFolio(this.universalFolio.value).subscribe(
+        res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
+          console.log(scanStatus);
+          if (scanStatus === 'ESCANEADO') {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+        err => {
+          resolve(false);
+        }
+      );
+    });
+  }
+
+  async pupMovimientoActa() {
+    const user = this.authService.decodeToken().preferred_username;
+    if (['CERRADO', 'CERRADA'].includes(this.status.value)) {
+      this.openProceeding(user);
+    } else {
+      this.closeProceeding(user);
+    }
+  }
+
+  closeProceeding(user: string) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('valUser', user);
+    paramsF.addFilter('valMinutesNumber', this.idProceeding);
+    this.serviceProgrammingGood
+      .getTmpProgValidation(paramsF.getParams())
+      .subscribe(
+        res => {
+          const val_MOVIMIENTO = res.data[0]['valmovement'];
+
+          if (val_MOVIMIENTO == 1) {
+            const lv_TIP_ACTA = 'DS,DESTRUCCION';
+            this.closeOpenProceeding();
+          } else {
+            this.primaryClose();
+          }
+        },
+        err => {
+          this.primaryClose();
+        }
+      );
+  }
+
+  async validInputs() {
+    if (this.act2.value == null) {
+      this.alert('warning', 'No existe acta para cerrar', 'a');
+      return;
+    }
+
+    if (this.elabDate.value == null) {
+      this.alert('warning', 'Debe ingresar la fecha de elaboración', '');
+      return;
+    }
+
+    if (this.destroyDate.value == null) {
+      this.alert('warning', 'Debe ingresar la fecha de destrucción', '');
+      return;
+    }
+
+    if (this.destroyDate.value > this.elabDate.value) {
+      this.alert(
+        'warning',
+        'La fecha de destrucción no puede ser mayor a la fecha de elaboración',
+        ''
+      );
+      return;
+    }
+
+    if (this.universalFolio.value == null) {
+      this.alert('warning', 'Indique el folio de escaneo', '');
+      return;
+    }
+
+    const folioStatus = await this.validateFolio();
+
+    if (!folioStatus) {
+      this.alert('warning', 'No se ha realizado el escaneo', '');
+      return;
+    }
+
+    if (this.comptrollerWitness.value == null) {
+      this.alert('warning', 'Indique el testigo de la contraloría', '');
+      return;
+    }
+
+    if (this.dataGoodsAct.count() == 0) {
+      this.alert(
+        'warning',
+        'No hay bienes en el acta',
+        'El acta no tiene ningun bien asignado, no se puede cerrar'
+      );
+      return;
+    }
+
+    const validTerm = await this.validTerm();
+
+    if (validTerm) {
+      this.alert('warning', 'Está fuera de tiempo para cerrar el acta', '');
+      return;
+    }
+  }
+
+  async primaryClose() {
+    await this.validInputs();
+    const body: IPupMovDestruction = {
+      proceeding: this.idProceeding,
+      screen: 'FACTDESACTASDESTR',
+      proceedingType: 'DESTRUCCION',
+      user: this.authService.decodeToken().preferred_username,
+      date: this.destroyDate.value,
+    };
+
+    this.serviceProceeding.pupMovementDestruction(body).subscribe(
+      res => {
+        console.log(res);
+        if (
+          res.message ==
+          '1 o más bienes no cuentan con una constancia de entrega cerrada'
+        ) {
+          this.alert('warning', 'Error al cerrar acta', res.message);
+        } else if (
+          res.message ==
+          'Alguno de los bienes se encuentra en más de una Constancia'
+        ) {
+          this.alert('warning', 'Error al cerrar acta', res.message);
+        } else if (
+          res.message == 'Al tratar de buscar la constancia de los bienes.'
+        ) {
+          this.alert('warning', 'Error al cerrar acta', res.message);
+        } else {
+          this.alert('success', 'Acta cerrada', '');
+        }
+      },
+      err => {
+        this.alert('error', 'Error al cerrar acta', '');
+      }
+    );
+  }
+
+  async closeOpenProceeding() {
+    this.validInputs();
+
+    const body: IPupMovDestruction = {
+      proceeding: this.idProceeding,
+      screen: 'FACTDESACTASDESTR',
+      proceedingType: 'DESTRUCCION',
+      user: this.authService.decodeToken().preferred_username,
+      date: this.destroyDate.value,
+    };
+
+    this.serviceProceeding.pupMovementDestruction(body).subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  async validTerm() {
+    return new Promise((resolve, reject) => {
+      const body: IPufValidTerm = {
+        delegationNumber: parseInt(this.authService.decodeToken().department),
+        elaborationDate: this.elabDate.value,
+      };
+
+      this.serviceProceeding.pufValidTerm(body).subscribe(
+        res => {
+          resolve(res.vban);
+        },
+        err => {
+          resolve(false);
+        }
+      );
+    });
+  }
+
+  openProceeding(user: string) {
+    this.alertQuestion(
+      'question',
+      `¿Está seguro de abrir el Acta ${this.act2.value}?`,
+      ''
+    ).then(q => {
+      if (q.isConfirmed) {
+        const lv_TIP_ACTA = 'DS,DESTRUCCION';
+        const modelPaOpen: IPAAbrirActasPrograma = {
+          P_NOACTA: this.idProceeding,
+          P_AREATRA: lv_TIP_ACTA,
+          P_PANTALLA: 'FACTDESACTASDESTR',
+          P_TIPOMOV: 2,
+          USUARIO: user,
+        };
+
+        this.serviceProgrammingGood
+          .paOpenProceedingProgam(modelPaOpen)
+          .subscribe(
+            res => {
+              const paramsF = new FilterParams();
+              paramsF.addFilter('valUser', user);
+              paramsF.addFilter('valMinutesNumber', this.idProceeding);
+              this.serviceProgrammingGood
+                .getTmpProgValidation(paramsF.getParams())
+                .subscribe(
+                  async res => {
+                    const val_MOVIMIENTO = res.data[0]['valmovement'];
+
+                    if (val_MOVIMIENTO == 1) {
+                      const resp = await this.getVValido();
+                      if (resp['data'].length > 0) {
+                        this.serviceProgrammingGood
+                          .paRegresaEstAnterior(modelPaOpen)
+                          .subscribe(
+                            res => {
+                              this.alert(
+                                'warning',
+                                'Error al abrir acta',
+                                'El acta no pudo regresar a su estado anterior'
+                              );
+                              return;
+                            },
+                            err => {
+                              this.alert(
+                                'error',
+                                'Error al regresar el estado anterior del acta',
+                                ''
+                              );
+                              return;
+                            }
+                          );
+                      } else {
+                        this.alert('success', 'Acta abierta', '');
+                        return;
+                      }
+                    } else {
+                      this.alert('success', 'Acta abierta', '');
+                      return;
+                    }
+                  },
+                  err => {
+                    this.alert('error', 'Error al abrir acta', '');
+                    return;
+                  }
+                );
+            },
+            err => {
+              this.alert('error', 'Error al abrir acta', '');
+              return;
+            }
+          );
+      }
+    });
+  }
+
+  async getVValido() {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('typeProceedings', 'CONSENTR');
+    paramsF.addFilter('idTypeProceedings', 'E/DES');
+    paramsF.addFilter('statusProceedings', 'CERRADA, CERRADO', SearchFilter.IN);
+    paramsF.addFilter('numFile', this.expedient.value);
+    return new Promise((resolve, reject) => {
+      this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+        res => {
+          resolve(true);
+        },
+        err => {
+          resolve(false);
+        }
+      );
+    });
   }
 }

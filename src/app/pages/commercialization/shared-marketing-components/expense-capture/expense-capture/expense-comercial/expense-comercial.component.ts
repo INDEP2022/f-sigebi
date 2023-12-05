@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   catchError,
@@ -12,16 +13,20 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
+import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
 import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
@@ -52,6 +57,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   @Input() address: string;
   errorsClasification: any[] = [];
   provider: string;
+  PDIRECCION_A = null;
+  showCvePoliza = false;
+  showEvent = true;
+  showLote = true;
   //
   toggleInformation = true;
   ilikeFilters = [
@@ -90,6 +99,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private segAccessAreaService: SegAcessXAreasService,
     private lotService: ExpenseLotService,
     private eventService: EventAppService,
+    private dictationService: DictationService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
     private expenseModalService: ExpenseModalService,
     private parameterService: ParametersConceptsService
   ) {
@@ -155,6 +167,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     console.log(this.form.value.dateOfResolution);
     let newBody = { ...this.form.value };
     delete newBody.publicLot;
+    delete newBody.policie;
     return {
       ...newBody,
       amount: this.dataService.amount ?? 0,
@@ -325,14 +338,203 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       : null;
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  private resetVisiblesM() {
+    this.showEvent = true;
+    this.showLote = true;
+    this.showTipoOp = false;
+    this.showTipoTram = false;
+    this.showContract = false;
+    this.showTipAdj = false;
+    this.showAdj = false;
+    this.showCvePoliza = false;
+    this.VISIBLE_PB_ESTATUS = true;
+    this.VISIBLE_CARGA_BIENES = true;
+    this.VISIBLE_DISPERSA = true;
+  }
+
+  get showTipoOp() {
+    return this.dataService.showTipoOp;
+  }
+
+  get showTipoTram() {
+    return this.dataService.showTipoTram;
+  }
+
+  get showContract() {
+    return this.dataService.showContract;
+  }
+
+  get showTipAdj() {
+    return this.dataService.showTipAdj;
+  }
+
+  get showAdj() {
+    return this.dataService.showAdj;
+  }
+
+  set showTipoOp(value) {
+    this.dataService.showTipoOp = value;
+  }
+
+  set showTipoTram(value) {
+    this.dataService.showTipoTram = value;
+  }
+
+  set showContract(value) {
+    this.dataService.showContract = value;
+  }
+
+  set showTipAdj(value) {
+    this.dataService.showTipAdj = value;
+  }
+
+  set showAdj(value) {
+    this.dataService.showAdj = value;
+  }
+
+  get VISIBLE_PB_ESTATUS() {
+    return this.dataService.VISIBLE_PB_ESTATUS;
+  }
+
+  set VISIBLE_PB_ESTATUS(value) {
+    this.dataService.VISIBLE_PB_ESTATUS = value;
+  }
+
+  get VISIBLE_CARGA_BIENES() {
+    return this.dataService.VISIBLE_CARGA_BIENES;
+  }
+
+  set VISIBLE_CARGA_BIENES(value) {
+    this.dataService.VISIBLE_CARGA_BIENES = value;
+  }
+
+  get VISIBLE_DISPERSA() {
+    return this.dataService.VISIBLE_DISPERSA;
+  }
+
+  set VISIBLE_DISPERSA(value) {
+    this.dataService.VISIBLE_DISPERSA = value;
+  }
+
+  private async initScreenI() {
+    const list = [];
+
+    let filterParams = new FilterParams();
+    let user = 'PLAMAR';
+    filterParams.addFilter(
+      'typeNumber',
+      'GASTOINMU,GASTOVIG,GASTOSEG,GASTOADMI',
+      SearchFilter.IN
+    );
+    filterParams.addFilter('user', user);
+    let v_tip_gast = 0,
+      v_tipo = null;
+    let rtDicta = await firstValueFrom(
+      this.dictationService.getRTdictaAarusr(filterParams.getParams()).pipe(
+        take(1),
+        catchError(x => {
+          return of({ data: [] });
+        }),
+        map(x => x.data)
+      )
+    );
+    if (rtDicta.length > 0) {
+      v_tip_gast = rtDicta.length;
+      v_tipo = rtDicta[0].typeNumber;
+    } else {
+      v_tip_gast = null;
+    }
+    this.showAdj = true;
+    if (v_tip_gast !== 0 && v_tipo !== 'GASTOSEG') {
+      this.showEvent = false;
+      this.showLote = false;
+      this.VISIBLE_PB_ESTATUS = false;
+      this.VISIBLE_CARGA_BIENES = false;
+      this.VISIBLE_DISPERSA = false;
+      this.showTipoOp = true;
+      this.showTipoTram = true;
+      this.showContract = true;
+      this.showTipAdj = true;
+      this.showAdj = true;
+      this.showCvePoliza = false;
+      this.address = 'J';
+      this.dataService.address = 'J';
+
+      let filterParams2 = new FilterParams();
+      filterParams2.addFilter('user', user);
+      let rtDicta2 = await firstValueFrom(
+        this.dictationService.getRTdictaAarusr(filterParams2.getParams()).pipe(
+          take(1),
+          catchError(x => {
+            return of({ data: [] });
+          }),
+          map(x => x.data)
+        )
+      );
+      if (rtDicta2.length > 0) {
+        this.fillAddressNotM(rtDicta2[0].typeNumber);
+      } else {
+        this.alert('warning', 'Usuario no válido', 'Favor de verificar');
+      }
+    } else if (v_tip_gast !== 0 && v_tipo === 'GASTOSEG') {
+      this.showEvent = false;
+      this.showLote = false;
+      this.VISIBLE_PB_ESTATUS = false;
+      this.VISIBLE_CARGA_BIENES = false;
+      this.VISIBLE_DISPERSA = false;
+      this.showTipoOp = true;
+      this.showTipoTram = true;
+      this.showContract = true;
+      this.showTipAdj = true;
+      this.showAdj = true;
+      this.showCvePoliza = false;
+      let filterParams2 = new FilterParams();
+      filterParams2.addFilter('user', user);
+      let rtDicta2 = await firstValueFrom(
+        this.dictationService.getRTdictaAarusr(filterParams2.getParams()).pipe(
+          take(1),
+          catchError(x => {
+            return of({ data: [] });
+          }),
+          map(x => x.data)
+        )
+      );
+      if (rtDicta2.length > 0) {
+        let v_no_tipo = rtDicta2[0].typeNumber;
+        if (v_no_tipo === 'GASTOSEG') {
+          this.address = 'S';
+          this.dataService.address = 'S';
+        }
+      } else {
+        this.alert('warning', 'Usuario no válido', 'Favor de verificar');
+      }
+    } else {
+      this.showTipoOp = false;
+      this.showTipoTram = false;
+      this.showContract = false;
+      this.showTipAdj = false;
+      this.showAdj = false;
+      this.showCvePoliza = false;
+    }
+    if (v_tip_gast === 0) {
+      this.address = 'I';
+      this.dataService.address = 'I';
+      this.PDIRECCION_A = 'C';
+      list.push({ value: 'C', title: 'GENERAL' });
+      list.push({ value: 'I', title: 'INMUEBLES' });
+    }
+  }
+
+  async ngOnChanges(changes: SimpleChanges) {
     if (changes['address'] && changes['address'].currentValue) {
-      const list = [{ value: 'C', title: 'GENERAL' }];
+      const list = [];
       if (changes['address'].currentValue === 'M') {
+        this.resetVisiblesM();
+        list.push({ value: 'C', title: 'GENERAL' });
         list.push({ value: 'M', title: 'MUEBLES' });
       }
       if (changes['address'].currentValue === 'I') {
-        list.push({ value: 'I', title: 'INMUEBLES' });
+        this.initScreenI();
       }
       this.columns = {
         ...COLUMNS,
@@ -437,7 +639,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    this.eventNumber.valueChanges.subscribe({
+    this.eventNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         this.publicLot.setValue(null, { emitEvent: false });
         this.lotNumber.setValue(null, { emitEvent: false });
@@ -464,16 +666,104 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     // });
   }
 
-  async selectConcept(concept: IConcept) {
-    await this.getParams(concept.id);
+  private usuarioCapturaDataI(user: string) {
+    let filterParams = new FilterParams();
+    filterParams.addFilter('description', user, SearchFilter.ILIKE);
+    filterParams.limit = 1;
+    return firstValueFrom(
+      this.parameterService.getAll(filterParams.getParams()).pipe(
+        take(1),
+        catchError(x => of({ data: [] as IParameterConcept[] })),
+        map(x => {
+          return x.data.length > 0 ? x.data[0] : null;
+        })
+      )
+    );
   }
 
-  updateLot(lot: { lotPublic: string; idLot: string }) {
-    console.log(lot);
+  private usuarioParametro(param: string) {
+    let filterParams = new FilterParams();
+    filterParams.addFilter('parameter', param);
+    filterParams.addFilter('address', this.address);
+    filterParams.limit = 1;
+    return firstValueFrom(
+      this.parameterService.getAll(filterParams.getParams()).pipe(
+        take(1),
+        catchError(x => of({ data: [] as IParameterConcept[] })),
+        map(x => {
+          return x.data.length > 0 ? x.data[0] : null;
+        })
+      )
+    );
+  }
 
+  private fillAddressNotM(v_tipo: string) {
+    if (v_tipo === 'GASTOINMU') {
+      this.address = 'J';
+      this.dataService.address = 'J';
+    }
+    if (v_tipo === 'GASTOVIG') {
+      this.address = 'V';
+      this.dataService.address = 'V';
+    }
+    if (v_tipo === 'GASTOSEG') {
+      this.address = 'S';
+      this.dataService.address = 'S';
+    }
+    if (v_tipo === 'GASTOADMI') {
+      this.address = 'A';
+      this.dataService.address = 'A';
+    }
+  }
+
+  async selectConcept(concept: IConcept) {
+    if (this.address !== 'M') {
+      let filterParams = new FilterParams();
+      let user = 'PLAMAR';
+      filterParams.addFilter(
+        'typeNumber',
+        'GASTOINMU,GASTOVIG,GASTOSEG,GASTOADMI',
+        SearchFilter.IN
+      );
+      filterParams.addFilter('user', user);
+      let rtDicta = await firstValueFrom(
+        this.dictationService.getRTdictaAarusr(filterParams.getParams()).pipe(
+          take(1),
+          catchError(x => {
+            return of({ data: [] });
+          }),
+          map(x => x.data)
+        )
+      );
+      if (rtDicta.length > 0) {
+        this.fillAddressNotM(rtDicta[0].typeNumber);
+      }
+      let usuarioCapturaData = await this.usuarioCapturaDataI(user);
+      if (usuarioCapturaData) {
+        this.form.get('capturedUser').setValue(usuarioCapturaData);
+      }
+      let usuarioAutorizaData = await this.usuarioParametro('USUAUTORIZA');
+      if (usuarioAutorizaData) {
+        this.form.get('authorizedUser').setValue(usuarioAutorizaData);
+      }
+      let usuarioSolicitaData = await this.usuarioParametro('USUSOLICITA');
+      if (usuarioSolicitaData) {
+        this.form.get('requestedUser').setValue(usuarioSolicitaData);
+      }
+      this.address = 'I';
+      this.dataService.address = 'I';
+    }
+    await this.readParams(concept.id);
+  }
+
+  updateLot(lot: { lotPublic: string; idLot: string; idEvent: string }) {
+    console.log(lot);
     if (lot) {
       this.lotNumber.setValue(lot.idLot);
-      this.nextItemLote();
+      if (this.address === 'M') {
+        this.nextItemLote();
+      }
+      this.dataService.LS_EVENTO = +lot.idEvent;
     } else {
       this.lotNumber.setValue(null);
     }
@@ -489,7 +779,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (event)
       this.comerEventService
         .getMANDXEVENTO(event.id)
-        .pipe(takeUntil(this.$unSubscribe))
+        .pipe(take(1))
         .subscribe({
           next: response => {
             if (response && response.data) {
@@ -510,7 +800,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     // }, 500);
   }
 
-  getParams(id: string) {
+  readParams(id: string) {
     return this.dataService.readParams(id);
   }
 
@@ -925,7 +1215,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
       );
       this.controlsInDet();
-      const responseParams = await this.getParams(event.conceptNumber);
+      const responseParams = await this.readParams(event.conceptNumber);
       if (!responseParams) {
         return;
       }
@@ -968,23 +1258,41 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get pathComerExpenses() {
     return (
       'spent/api/v1/comer-expenses' +
-      (this.address ? '?filter.address=$in:' + this.address + ',C' : 'C')
+      (this.address ? '?filter.address=$in:' + this.address : '')
     );
   }
 
   get pathConcept() {
     return (
       'comerconcepts/api/v1/application/query-eat-concepts' +
-      (this.address ? '?filter.address=$in:' + this.address + ',C' : 'C')
+      (this.address
+        ? '?filter.address=$in:' +
+          this.address +
+          (this.address === 'M'
+            ? ',C'
+            : this.PDIRECCION_A
+            ? ',' + this.PDIRECCION_A
+            : '')
+        : this.address === 'M'
+        ? 'C'
+        : this.PDIRECCION_A)
     );
   }
 
   get pathEvent() {
     // return 'prepareevent/api/v1/comer-event/getProcess';
     return (
-      'event/api/v1/comer-event?filter.eventTpId:$in:1,2,3,4,5,10' +
-      (this.address ? '&filter.address=$eq:' + this.address : '')
+      'event/api/v1/comer-event?filter.eventTpId:$in:1,2,3,4,5' +
+      (this.address
+        ? (this.address === 'M' ? ',10' : '') +
+          '&filter.address=$eq:' +
+          this.address
+        : '' + (this.address === 'M' ? ',10' : ''))
     );
+  }
+
+  get pathPolicy() {
+    return 'policy/api/v1/policies';
   }
 
   get idEventFilterPath() {
@@ -1041,12 +1349,148 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async sendToSIRSAE() {
-    this.dataService.actionButton = 'SIRSAE';
-    await this.dataService.updateByGoods(true);
+    if (this.address === 'M') {
+      this.dataService.actionButton = 'SIRSAE';
+      await this.dataService.updateByGoods(true);
+    } else {
+      this.dataService.ENVIA_MOTIVOS();
+    }
   }
 
   validationForkJoin(obs: Observable<any>[]) {
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
+  }
+
+  imprimeAny() {
+    this.loader.load = true;
+    if (this.paymentRequestNumber.value) {
+      this.sirsaeService
+        .imprimeAny(this.paymentRequestNumber.value, this.expenseNumber.value)
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.PUP_LANZA_REPORTE(1, 1);
+          },
+          error: err => {
+            this.loader.load = false;
+          },
+        });
+    } else if (this.expenseNumber.value) {
+      this.sirsaeService
+        .viewPreview(this.expenseNumber.value)
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.PUP_LANZA_REPORTE(1, 2);
+          },
+        });
+    } else {
+      this.loader.load = false;
+      this.alert('warning', 'No existe un gasto a visualizar', '');
+    }
+  }
+
+  imprimeRev() {
+    this.loader.load = true;
+    if (this.paymentRequestNumber.value) {
+      this.sirsaeService
+        .insertModuleCont(this.paymentRequestNumber.value)
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.PUP_LANZA_REPORTE(2);
+          },
+          error: err => {
+            this.loader.load = false;
+          },
+        });
+    } else {
+      this.loader.load = false;
+    }
+  }
+
+  imprimeDetalle() {
+    let mandates = this.dataCompositionExpenses.filter(x => x.mandato);
+    if (this.expenseNumber.value && mandates.length > 0) {
+      this.loader.load = true;
+      this.PUP_LANZA_REPORTE(3);
+    } else {
+      this.alert('warning', 'No se encontro datos a imprimir', '');
+    }
+  }
+
+  PUP_LANZA_REPORTE(opcion: number, opcionDelete: number = 0) {
+    let params: any;
+    let obs: Observable<any>;
+    if (opcion === 1) {
+      params = {
+        PSOLICITUDPAGO: this.paymentRequestNumber.value,
+        PARAMFORM: 'NO',
+        PIDGASTO: this.expenseNumber.value,
+      };
+      obs = this.siabService.fetchReport('RPTSOLSER', params).pipe(take(1));
+    } else if (opcion === 2) {
+      params = {
+        PSOLICITUDPAGO: this.paymentRequestNumber.value,
+        PARAMFORM: 'NO',
+      };
+      obs = this.siabService.fetchReport('RPTSOLREV', params).pipe(take(1));
+    } else if (opcion === 3) {
+      params = {
+        PIDGASTO: this.expenseNumber.value,
+        PARAMFORM: 'NO',
+      };
+      obs = this.siabService.fetchReport('RPTSOLDET', params).pipe(take(1));
+    }
+    if (obs) {
+      obs.subscribe({
+        next: response => {
+          console.log(response);
+          this.loader.load = false;
+          if (response) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+            if (opcionDelete === 1) {
+              this.sirsaeService
+                .deleteSol(this.paymentRequestNumber.value)
+                .pipe(take(1))
+                .subscribe();
+            } else if (opcionDelete === 2) {
+              this.sirsaeService
+                .deleteSolServceGast(this.expenseNumber.value)
+                .pipe(take(1))
+                .subscribe();
+            } else if (opcionDelete === 3) {
+              this.sirsaeService
+                .deleteModuleCont(this.expenseNumber.value)
+                .pipe(take(1))
+                .subscribe();
+            }
+          } else {
+            this.alert('error', 'El reporte no se encuentra disponible', '');
+          }
+        },
+        error: err => {
+          this.loader.load = false;
+          this.alert('error', 'El reporte no se encuentra disponible', '');
+        },
+      });
+    } else {
+      this.loader.load = false;
+      this.alert('error', 'El reporte no se encuentra disponible', '');
+    }
   }
 
   async updateClasif() {
