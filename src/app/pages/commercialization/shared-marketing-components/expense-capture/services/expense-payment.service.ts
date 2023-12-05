@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from 'src/app/core/interfaces/list-response.interface';
 import { IContract } from '../models/payment';
 
@@ -26,6 +26,34 @@ export class ExpensePaymentService extends HttpService {
         conceptId,
         pAddress,
       }
+    );
+  }
+
+  getAllFilterSelf(
+    self?: ExpensePaymentService,
+    option?: number,
+    desContract?: string,
+    conceptId?: number,
+    pAddress?: string,
+    params?: _Params
+  ) {
+    let body = {};
+    if (option) {
+      body = { ...body, option };
+    }
+    if (desContract) {
+      body = { ...body, desContract };
+    }
+    if (conceptId) {
+      body = { ...body, conceptId };
+    }
+    if (pAddress) {
+      body = { ...body, pAddress };
+    }
+    return self.post<IListResponseMessage<IContract>>(
+      'application/validate-contract',
+      body,
+      params
     );
   }
 }
