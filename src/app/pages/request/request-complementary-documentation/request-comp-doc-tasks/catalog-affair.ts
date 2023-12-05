@@ -124,6 +124,16 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
                 close: true
             };
         case 'validate-opinion-similar-goods':
+            return {
+                title: `BIENES SIMILARES: Elaborar Oficio de Respuesta, No. Solicitud: ${requestId} ${contributor}`,
+                url: 'pages/request/request-comp-doc/tasks/response-letter-similar-goods',
+                process: 'BSElaborarOficioRespuesta',
+                type: 'DOCUMENTACION_COMPLEMENTARIA',
+                subtype: 'Registro_Solicitud',
+                ssubtype: 'TURNAR',
+                close: true
+            };
+        case 'response-letter-similar-goods':
             break;
 
         //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN

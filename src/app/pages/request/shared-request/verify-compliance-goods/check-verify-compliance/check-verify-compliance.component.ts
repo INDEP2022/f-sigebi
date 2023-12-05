@@ -40,6 +40,9 @@ export class CheckVerifyComplianceComponent
     } else {
       this.checkStateEditForm = false;
     }
+
+    this.value = this.getCheck();
+
   }
 
   override ngAfterViewInit(): void {
