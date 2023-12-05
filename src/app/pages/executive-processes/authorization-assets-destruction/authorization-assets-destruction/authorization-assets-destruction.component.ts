@@ -133,7 +133,7 @@ export class AuthorizationAssetsDestructionComponent
     this.form.get('criminalCase').disable();
     this.form.get('circumstantialRecord').disable();
     this.form.get('keyPenalty').disable();
-    this.form.get('noAuth').disable();
+    /* this.form.get('noAuth').disable(); */
     this.form.get('fromDate').disable();
     this.form.get('authNotice').disable();
 
@@ -239,6 +239,7 @@ export class AuthorizationAssetsDestructionComponent
     });
   }
 
+  //!Esta función está correcta
   expedientChange() {
     this.consult = true;
     this.expediente = Number(this.form.get('idExpedient').value);
@@ -248,7 +249,7 @@ export class AuthorizationAssetsDestructionComponent
       next: resp => {
         console.log(resp);
         this.form.patchValue(resp.data[0]);
-        //this.relationsExpedient();
+        // this.relationsExpedient();
       },
       error: err => {
         this.alert(

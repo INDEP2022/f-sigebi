@@ -183,6 +183,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.requestId = requestResult.id;
         const user: any = this.authService.decodeToken();
         let task: any = {};
+
         task['id'] = 0;
         task['assignees'] = user.username;
         task['assigneesDisplayname'] = user.username;
@@ -199,7 +200,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['urlNb'] =
           this.op != 2
             ? 'pages/request/list/new-transfer-request'
-            : 'pages/request/request-comp-doc/create';
+            : 'pages/request/request-comp-doc/register-request';
         const taskResult: any = await this.createOnlyTask(task);
         if (taskResult) {
           this.taskId = Number(taskResult.data[0].id);
@@ -572,14 +573,13 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
                 body['task'] = task;
 
-                let orderservice: any = {};
+                /*let orderservice: any = {};
                 orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
                 orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
                 orderservice['pIdApplication'] = idRequest;
                 orderservice['pCurrentDate'] = new Date().toISOString();
                 orderservice['pOrderServiceIn'] = '';
-
-                body['orderservice'] = orderservice;
+                body['orderservice'] = orderservice;*/
 
                 const taskResult = await this.createTaskOrderService(body);
                 if (taskResult) {

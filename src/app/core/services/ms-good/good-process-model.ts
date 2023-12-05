@@ -14,3 +14,12 @@ export interface IFmComDanc {
   NO_DELEGACION_1: number;
   TOOLBAR_NO_DELEGACION: number;
 }
+
+export interface IPupValidGood {
+  minutesNumber: number;
+  transferorNumber: number;
+  classificationNumber: number;
+  goodNumber: number;
+  status: string;
+  unit: string;
+}

@@ -36,12 +36,14 @@ import { maxDate } from 'src/app/common/validations/date.validators';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
+import { IFestatus } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -218,7 +220,9 @@ export class DestructionAuthorizationComponent
     private massiveGoodService: MassiveGoodService,
     private datePipe: DatePipe,
     private goodprocessService: GoodprocessService,
-    private copiesOfficialOpinionService: CopiesOfficialOpinionService
+    private copiesOfficialOpinionService: CopiesOfficialOpinionService,
+    //SERVICIOS AGREGADOS POR GRIGORK
+    private expedientService: ExpedientService
   ) {
     super();
 
@@ -251,7 +255,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
-        selection: {
+        /* selection: {
           title: '',
           type: 'custom',
           renderComponent: CheckboxElementComponent,
@@ -259,7 +263,7 @@ export class DestructionAuthorizationComponent
             this.onSelectGood(instance),
           filter: false,
           sort: false,
-        },
+        }, */
       },
       hideSubHeader: false,
     };
@@ -270,7 +274,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...GOODS_COLUMNS,
-        selection: {
+        /* selection: {
           title: '',
           sort: false,
           type: 'custom',
@@ -278,7 +282,7 @@ export class DestructionAuthorizationComponent
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGoodPSD(instance),
-        },
+        }, */
       },
       hideSubHeader: false,
       rowClassFunction: (row: any) => {
@@ -1076,18 +1080,21 @@ export class DestructionAuthorizationComponent
 
   keyProceedingchange() {
     const keyProceeding = this.controls.keysProceedings.value;
-
-    this.findProceeding(keyProceeding).subscribe();
+    const id = this.controls.id.value;
+    console.log(id);
+    this.findProceeding(keyProceeding, id).subscribe();
   }
 
-  findProceeding(keyProceeding: string) {
+  findProceeding(keyProceeding: string, id?: string) {
     let params = {
       ...this.params.getValue(),
     };
 
     params['filter.typeProceedings'] = `$eq:RGA`;
 
-    params['filter.keysProceedings'] = `$eq:${keyProceeding}`;
+    id != null
+      ? (params['filter.id'] = `$eq:${id}`)
+      : (params['filter.keysProceedings'] = `$eq:${keyProceeding}`);
 
     return this.proceedingsDeliveryReceptionService
       .getAllProceedingsDeliveryReception2(params)
@@ -1106,17 +1113,28 @@ export class DestructionAuthorizationComponent
           }
           return throwError(() => error);
         }),
-        map(response => response.data[0]),
+        map(response => {
+          // Primera transformación de los datos
+          console.log(response.data);
+          return response.data;
+        }),
+        map(data => {
+          // Segunda transformación de los datos
+          return data[0];
+        }),
         tap((proceeding: any) => {
-          proceeding.elaborationDate = moment(
-            proceeding.elaborationDate
-          ).format('DD/MM/YYYY');
-          proceeding.datePhysicalReception = moment(
-            proceeding.datePhysicalReception
-          ).format('DD/MM/YYYY');
-          proceeding.closeDate = moment(proceeding.closeDate).format(
-            'DD/MM/YYYY'
-          );
+          proceeding.elaborationDate =
+            proceeding.elaborationDate == null
+              ? null
+              : moment(proceeding.elaborationDate).format('DD/MM/YYYY');
+          proceeding.datePhysicalReception =
+            proceeding.datePhysicalReception == null
+              ? null
+              : moment(proceeding.datePhysicalReception).format('DD/MM/YYYY');
+          proceeding.closeDate =
+            proceeding.closeDate == null
+              ? null
+              : moment(proceeding.closeDate).format('DD/MM/YYYY');
 
           this.proceedingForm.patchValue(proceeding);
           this.getProceedingGoods();
@@ -1163,6 +1181,20 @@ export class DestructionAuthorizationComponent
           origin: 'FESTATUSRGA',
         },
       });
+    }
+  }
+
+  closeProceedingManager() {
+    if (this.controls.statusProceedings.value == 'CERRADA') {
+      const body: IFestatus = {
+        goodNumber: 0,
+        cbApproved: '',
+        vcScreen: 'FESTATUSRGA',
+      };
+
+      // this.proceedingsDeliveryReceptionService.festatus()
+    } else {
+      this.closeProceeding();
     }
   }
 
@@ -1217,7 +1249,18 @@ export class DestructionAuthorizationComponent
           this.totalItems2,
           keysProceedings.value
         );
-        this.openEmail(message, 'C');
+        this.proceedingsDeliveryReceptionService
+          .pupFillDist(this.proceedingForm.get('id').value)
+          .subscribe(
+            res => {
+              console.log(res);
+              this.openEmail(message, 'C');
+            },
+            err => {
+              console.log(err);
+              this.alert('error', 'Se presentó un error inesperado', '');
+            }
+          );
       },
       error: error => {
         this.onLoadToast(

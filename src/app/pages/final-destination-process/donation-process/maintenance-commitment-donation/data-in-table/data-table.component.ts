@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -21,7 +22,6 @@ import { MaintenanceCommitmentDonationModalComponent } from '../maintenance-comm
 import { COLUMNS_DATA_TABLE } from './columns-data-table';
 import { COLUMNS_OTHER_TRANS } from './columns-other-transf';
 import { COLUMNS_USER_PERMISSIONS } from './columns-user-permissions';
-
 @Component({
   selector: 'app-data-table',
   templateUrl: 'data-table.component.html',
@@ -47,7 +47,12 @@ export class DataTableComponent extends BasePage implements OnInit {
   totalItem4: number = 0;
 
   columnFilters: any = [];
+  filterState = {
+    yes: true,
+    not: true,
+  };
 
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private rapproveDonationService: RapproveDonationService,
     private tvalTable1Service: TvalTable1Service,
@@ -77,6 +82,10 @@ export class DataTableComponent extends BasePage implements OnInit {
       },
       columns: { ...COLUMNS_DATA_TABLE },
     };
+    this.filterState = {
+      yes: true,
+      not: true,
+    };
   }
   ngOnInit(): void {
     if (this.type == 1 || this.type == 2) {
@@ -94,6 +103,20 @@ export class DataTableComponent extends BasePage implements OnInit {
     }
   }
 
+  async forArrayFilters(field: any, value: any) {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.field == field) {
+          item.search = value;
+        }
+      });
+    }
+    this.dataTable1.refresh();
+    return true;
+  }
   filterComerAndDeli() {
     this.dataTable1
       .onChanged()
@@ -142,6 +165,9 @@ export class DataTableComponent extends BasePage implements OnInit {
               case 'yes' || 'not':
                 searchFilter = SearchFilter.IN;
                 break;
+              case 'valid':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -169,6 +195,7 @@ export class DataTableComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
+          console.log(change.action);
           console.log(' this.params ', this.params);
           this.getForeignTrade();
         }
@@ -229,7 +256,9 @@ export class DataTableComponent extends BasePage implements OnInit {
               case 'yes' || 'not':
                 searchFilter = SearchFilter.IN;
                 break;
-
+              case 'valid':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -288,6 +317,9 @@ export class DataTableComponent extends BasePage implements OnInit {
                 field = `filter.segUser.name`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
+              case 'abbreviation':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -336,18 +368,18 @@ export class DataTableComponent extends BasePage implements OnInit {
     };
     params['filter.ruleId'] = `$eq:${this.type}`;
 
-    if (params['filter.yes'] || params['filter.not']) {
-      let arr = [];
-      if (params['filter.yes']) arr.push(params['filter.yes']);
-      if (params['filter.not']) arr.push(params['filter.not']);
+    // if (params['filter.yes'] || params['filter.not']) {
+    //   let arr = [];
+    //   if (params['filter.yes']) arr.push(params['filter.yes']);
+    //   if (params['filter.not']) arr.push(params['filter.not']);
 
-      delete params['filter.yes'];
-      delete params['filter.not'];
+    //   delete params['filter.yes'];
+    //   delete params['filter.not'];
 
-      params['filter.valid'] = `$in:${arr.join(',')}`;
-    } else {
-      delete params['filter.valid'];
-    }
+    //   params['filter.valid'] = `$in:${arr.join(',')}`;
+    // } else {
+    //   delete params['filter.valid'];
+    // }
 
     console.log('params 1 -> ', params);
     this.rapproveDonationService.getAllT(params).subscribe({
@@ -391,18 +423,18 @@ export class DataTableComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    if (params['filter.yes'] || params['filter.not']) {
-      let arr = [];
-      if (params['filter.yes']) arr.push(params['filter.yes']);
-      if (params['filter.not']) arr.push(params['filter.not']);
+    // if (params['filter.yes'] || params['filter.not']) {
+    //   let arr = [];
+    //   if (params['filter.yes']) arr.push(params['filter.yes']);
+    //   if (params['filter.not']) arr.push(params['filter.not']);
 
-      delete params['filter.yes'];
-      delete params['filter.not'];
+    //   delete params['filter.yes'];
+    //   delete params['filter.not'];
 
-      params['filter.abbreviation'] = `$in:${arr.join(',')}`;
-    } else {
-      delete params['filter.abbreviation'];
-    }
+    //   params['filter.abbreviation'] = `$in:${arr.join(',')}`;
+    // } else {
+    //   delete params['filter.abbreviation'];
+    // }
     this.tvalTable1Service.getAlls2(params).subscribe({
       next: response => {
         console.log('data tracer ', response);

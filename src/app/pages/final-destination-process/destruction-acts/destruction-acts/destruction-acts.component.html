@@ -5,6 +5,22 @@
   <div body>
     <app-card>
       <div body>
+        <div class="row">
+          <form [formGroup]="optionRB" class="form-material">
+            <div class="col d-flex">
+              <form-radio label="Normal">
+                <input type="radio" formControlName="option" value="N" />
+              </form-radio>
+              <form-radio label="Paquete">
+                <input type="radio" formControlName="option" value="P" />
+              </form-radio>
+            </div>
+          </form>
+        </div>
+      </div>
+    </app-card>
+    <app-card>
+      <div body>
         <form [formGroup]="actForm" class="form-material">
           <div class="row mb-5">
             <div class="col-md-8">
@@ -30,6 +46,7 @@
               <button
                 *ngIf="navigateProceedings"
                 id="expedient-number"
+                (click)="newProceedingFn()"
                 class="btn btn-info btn-sm active">
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
@@ -145,10 +162,10 @@
             </form-field>
             <form-field [control]="actForm.get('admin')" class="col">
               <ngx-select
-                [searchable]="false"
+                (fetchItems)="getAdmin($event)"
                 control="admin"
                 label="Administra"
-                bindLabel="records"
+                bindLabel="delegation"
                 [data]="adminData"
                 [form]="actForm"></ngx-select>
             </form-field>
@@ -213,6 +230,7 @@
               <input
                 bsDatepicker
                 [max-length]="10"
+                [maxDate]="actForm.get('elabDate').value"
                 class="form-control"
                 formControlName="destroyDate" />
             </form-field>
@@ -295,11 +313,19 @@
           </div>
           <div class="row mt-5 text-center">
             <div class="col">
-              <button type="button" class="btn btn-primary btn-sm active mr-3">
+              <button
+                type="button"
+                [disabled]="
+                  ['CERRADO', 'CERRADA'].includes(actForm.get('status').value)
+                "
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="saveButton()">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i>
               </button>
-              <button class="btn btn-primary btn-sm active">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="primaryClose()">
                 {{ labelButton }}
               </button>
             </div>
@@ -314,6 +340,8 @@
             [form]="actForm"
             [formControlName]="'universalFolio'"
             [cveDocument]="actForm.get('act2').value"
+            nameActa="act2"
+            keyTypeDocument="DESTRUCC"
             [noExpedient]="actForm.get('expedient').value"
             [statusProceeding]="actForm.get('statusProceeding').value"
             [cveScreen]="'FACTDESACTASDESTR'"
@@ -341,6 +369,7 @@
             class="col-md-12"
             [attr.class]="'table-responsive table-bordered '"
             [settings]="settings"
+            (rowSelect)="selectGoodFn($event)"
             [source]="dataGoods"></ng2-smart-table>
         </div>
         <app-pagination
@@ -357,6 +386,7 @@
                 <label for="">Eliminar</label>
                 <button
                   type="button"
+                  (click)="deleteGood()"
                   class="mx-2 btn btn-secondary btn-sm active">
                   <i class="fa fa-angle-up"></i>
                 </button>
@@ -365,6 +395,7 @@
                 <label for="">Agregar</label>
                 <button
                   type="button"
+                  (click)="addGood()"
                   class="mx-2 btn btn-secondary btn-sm active">
                   <i class="fa fa-angle-down"></i>
                 </button>
@@ -378,14 +409,19 @@
             class="col-md-12"
             [attr.class]="'table-responsive table-bordered '"
             [settings]="settings2"
+            (rowSelect)="selectGoodActFn($event)"
             [source]="dataGoodsAct"></ng2-smart-table>
         </div>
         <app-pagination
           *ngIf="!loadingTable"
           [params]="params2"
           [pageSizeOptions]="[5, 10, 20]"
+          (rowSelect)="selectGoodActFn($event)"
           [limit]="limit2"
           [totalItems]="totalItems2"></app-pagination>
+        <div class="row pt-3">
+          <label>{{ di_status_good }}</label>
+        </div>
       </div>
     </app-card>
   </div>
