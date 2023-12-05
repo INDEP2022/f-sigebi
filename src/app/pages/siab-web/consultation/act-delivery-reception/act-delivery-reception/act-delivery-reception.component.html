@@ -30,14 +30,6 @@
       </div>
     </form>
     <div class="row">
-      <div class="col-md-8 mb-3"></div>
-      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
-        <app-columns-select
-          [(settings)]="settings"
-          [leftList]="true"></app-columns-select>
-      </div>
-    </div>
-    <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
@@ -132,18 +124,14 @@
 
       <div class="row">
         <div class="col-md-8 mb-3"></div>
-        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
-          <!--<app-columns-select
-            [(settings)]="settings1"
-            [leftList]="true"></app-columns-select>-->
-        </div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3"></div>
       </div>
 
       <div class="row">
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
-              [attr.class]="'table-bordered'"
+              [attr.class]="'table-bordered table-responsive'"
               [settings]="settings1"
               [source]="data1">
             </ng2-smart-table>
