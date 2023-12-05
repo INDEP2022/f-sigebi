@@ -367,31 +367,31 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.expRequest = true;
 
-        this.btnRequestAprove = true; //AGREGAR SOLICITAR APROBACIÓN (BOTON) validateDocument verificar
-        this.dictumReturn = true; //AGREGAR DICTAMEN DEVOLUCIÓN (BOTON) validar Nuevo botón
+        this.btnRequestAprove = true;
+        this.dictumReturn = true;
 
         this.turnReq = false;
         this.searchAssociateFile = false;
         this.searchRequestSimGoods = false;
-        this.validateGoodForEyeVisit = false;
 
         break;
       case 'approve-return':
         this.title = `Aprobar Devolución, No. Solicitud ${this.requestInfo.id}, Contribuyente ${contributor}`;
         this.regDocView = true;
-        this.selectGoods = true;
         this.expRequest = true;
-        this.verifyCompliance = true; //AGREGAR  VERIFICAR CUMPLIMIENTO DE BIENES (TAB) VALIDAR
+        this.verifyCompliance = true;
+        this.selectGoodForEyeVisit = true;
 
         this.btnAprove = true;
-        this.dictumReturn = true; //AGREGAR DICTAMEN DEVOLUCIÓN (BOTON) validar Nuevo botón
+        this.dictumReturn = true;
         this.btnDecline = true;
+
+        this.signedReport = true;
 
         this.turnReq = false;
         this.regDocForm = false;
         this.searchAssociateFile = false;
         this.searchRequestSimGoods = false;
-        this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = false;
 
         break;
@@ -429,6 +429,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.notifyReport = true;
         this.saveRequest = true;
         this.turnReq = true;
+
+        this.signedReport = true;
 
         this.docRequest = false;
         this.searchAssociateFile = false;
@@ -475,6 +477,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.turnReq = true;
 
+        this.signedReport = true;
+
         this.selectGoods = false;
         this.notifyReport = false;
         this.docRequest = false;
@@ -498,6 +502,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.resultEyeVisitReport = true;
         this.saveRequest = true;
         this.turnReq = true;
+
+        this.signedReport = true;
 
         this.validateGoodForEyeVisit = false;
         this.selectGoods = false;
