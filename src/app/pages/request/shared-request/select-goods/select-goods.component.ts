@@ -1,20 +1,10 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, map, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subscription, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
@@ -158,7 +148,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => {},
+      error: error => { },
     });
 
     const param = new FilterParams();
@@ -170,7 +160,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           this.addGood(item);
         });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -182,7 +172,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -192,7 +182,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         response.recordId;
         this.openModalDocument(idRequest, response.recordId);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -205,7 +195,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => {},
+      callback: (next: boolean) => { },
     };
 
     this.modalService.show(ShowDocumentsGoodComponent, config);
@@ -378,12 +368,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
 
-  viewFile(file: any) {}
+  viewFile(file: any) { }
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -544,6 +534,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
       if (!isNullOrEmpty(subinventory)) subinventory.hide = true;
       if (!isNullOrEmpty(jobNumber)) jobNumber.hide = true;
+
     }
   }
 
@@ -692,4 +683,5 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       object: this.selectedGoodColumns,
     });
   }
+
 }
