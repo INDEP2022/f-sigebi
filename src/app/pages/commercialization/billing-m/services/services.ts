@@ -533,12 +533,14 @@ export class BillingsService {
     });
   }
 
-  async getParamterModSab(parametro: any, direccion: any) {
+  async getParamterModSab(parametro: any, direccion: any, user?: any) {
     const params = new FilterParams();
     params.page = 1;
     params.limit = 1;
     params.addFilter3('filter.parametro', parametro);
     params.addFilter3('filter.direccion', direccion);
+    if (user) params.addFilter3('filter.valor', user);
+
     return new Promise((resolve, reject) => {
       this.parameterModService.getParamterMod_(params).subscribe({
         next: response => {
