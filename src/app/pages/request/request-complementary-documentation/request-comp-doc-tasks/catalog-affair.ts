@@ -228,27 +228,27 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       break;
 
     /** CASOS INFORMACION DE BIENES */
-    case 'register-request-compensation':
+    case 'register-request-information-goods':
       return {
         title: `Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud: ${requestId}`,
-        url: 'pages/request/request-comp-doc/tasks/review-guidelines-compensation',
+        url: 'pages/request/request-comp-doc/tasks/respose-office-information-goods',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
       };
-    case 'review-guidelines-compensation':
+    case 'respose-office-information-goods':
       return {
         title: `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${requestId}`,
-        url: 'pages/request/request-comp-doc/tasks/analysis-result-compensation',
+        url: 'pages/request/request-comp-doc/tasks/review-office-information-goods',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
       };
-    case 'analysis-result-compensation':
+    case 'review-office-information-goods':
       break;
   }
 

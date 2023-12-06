@@ -635,7 +635,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.expRequest = true;
 
         this.saveRequest = true;
-        this.turnReq = true;
+        this.turnReq = true; //AGREGAR OFICIO DESTINO (BOTON)
 
         this.resultEyeVisitReport = false;
         this.resultVisits = false;
@@ -649,9 +649,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = false;
         this.createReport = false;
         this.rejectReq = false;
+
         break;
 
-      case 'review-guidelines-compensation':
+      case 'respose-office-information-goods':
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
@@ -671,17 +672,16 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchRequestSimGoods = false;
         this.guidelines = false;
         this.dictumValidate = false;
-        this.regDocView = false;
         this.createReport = false;
         this.rejectReq = false;
         break;
-      case 'analysis-result-compensation':
+      case 'review-office-information-goods':
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
 
         this.saveRequest = true;
-        this.destinyJob = true; //AGREGAR OFICIO DESTINO (BOTON)
+        this.destinyJob = true;
 
         this.turnReq = false;
         this.searchAssociateFile = false;
@@ -694,7 +694,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchRequestSimGoods = false;
         this.guidelines = false;
         this.dictumValidate = false;
-        this.regDocView = false;
         this.createReport = false;
         this.rejectReq = false;
 
