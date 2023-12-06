@@ -54,4 +54,13 @@ export class ConvNumeraryService extends HttpService {
   }) {
     return this.post(this.route.PA_CONVNUMERARIO_ADJUDIR, body);
   }
+
+  PA_CONVNUMERARIO_ADJUDIR2(body: {
+    pevent: number;
+    pscreen: string;
+    pdirectionScreen: string;
+    user: string;
+  }) {
+    return this.post<{ bandera: false }>('pa-conv-numerary-adjudir-2', body);
+  }
 }
