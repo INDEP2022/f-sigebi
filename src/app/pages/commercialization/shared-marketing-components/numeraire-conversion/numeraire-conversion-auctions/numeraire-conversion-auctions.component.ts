@@ -268,54 +268,112 @@ export class NumeraireConversionAuctionsComponent
     }
   }
 
-  private convierteBody() {
-    this.loader.load = true;
-    this.convNumeraryService
-      .convert({
-        pevent: this.selectedEvent.id,
-        pscreen: 'FCOMER087',
-        user: this.user,
-      })
-      .pipe(take(1))
+  private updateEventoConv() {
+    let params = new FilterParams();
+    params.addFilter('id', this.selectedEvent.id);
+    this.eventDataService
+      .getAllEvents(params.getParams())
+      .pipe(
+        take(1),
+        catchError(x => of({ data: [] as IComerEvent[] })),
+        map(x => x.data)
+      )
       .subscribe({
         next: response => {
-          // this.reloadExpenses++;
-          let params = new FilterParams();
-          params.addFilter('id', this.selectedEvent.id);
-          this.eventDataService
-            .getAllEvents(params.getParams())
-            .pipe(
-              take(1),
-              catchError(x => of({ data: [] as IComerEvent[] })),
-              map(x => x.data)
-            )
-            .subscribe({
-              next: response => {
-                this.loader.load = false;
-                if (response && response.length > 0) {
-                  // this.selectEvent(response[0]);
-                  this.selectNewEvent = response[0];
-                  this.alert('success', 'Se ha convertido correctamente', '');
-                } else {
-                  this.alert(
-                    'error',
-                    'Ocurrio un error al actualizar el evento',
-                    'Favor de verificar'
-                  );
-                }
-              },
-            });
-        },
-        error: err => {
-          console.log(err);
           this.loader.load = false;
-          this.alert(
-            'error',
-            'No se pudo realizar la conversión',
-            err.error.message
-          );
+          if (response && response.length > 0) {
+            // this.selectEvent(response[0]);
+            this.selectNewEvent = response[0];
+            this.alert('success', 'Se ha convertido correctamente', '');
+          } else {
+            this.alert(
+              'error',
+              'Ocurrio un error al actualizar el evento',
+              'Favor de verificar'
+            );
+          }
         },
       });
+  }
+
+  private async convierteBody() {
+    this.loader.load = true;
+    if (this.selectedEvent.address === 'M') {
+      this.convNumeraryService
+        .convert({
+          pevent: this.selectedEvent.id,
+          pscreen: 'FCOMER087',
+          user: this.user,
+        })
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            // this.reloadExpenses++;
+            this.updateEventoConv();
+          },
+          error: err => {
+            console.log(err);
+            this.loader.load = false;
+            this.alert(
+              'error',
+              'No se pudo realizar la conversión',
+              err.error.message
+            );
+          },
+        });
+    } else if (this.selectedEvent.address === 'I') {
+      const count = await firstValueFrom(
+        this.convNumeraryService
+          .SP_CONVERSION_ASEG_TOTAL(this.selectedEvent.id, 'FCOMER07')
+          .pipe(
+            catchError(x => of({ processedData: 0 })),
+            map(x => x.processedData)
+          )
+      );
+      if (count === 0) {
+        this.alert('warning', 'No tiene gastos válidos a convertir', '');
+      }
+      const v_count_gara = await firstValueFrom(
+        this.lotService.getStatusCountGaraByEvent(this.selectedEvent.id).pipe(
+          catchError(x => of({ processedData: 0 })),
+          map(x => x.processedData)
+        )
+      );
+      const v_count_numera = await firstValueFrom(
+        this.lotService.getStatusCountComerxlots(this.selectedEvent.id).pipe(
+          catchError(x => of({ processedData: 0 })),
+          map(x => x.processedData)
+        )
+      );
+      if (v_count_gara === 0 && v_count_numera === 0) {
+        this.selectedEvent.statusVtaId = 'CNE';
+        this.eventDataService
+          .update(this.selectedEvent.id, this.selectedEvent)
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              if (count > 0) {
+                this.alert('success', 'Conversión realizada correctamente', '');
+              } else {
+                this.alert('info', 'Conversión realizada', '');
+              }
+              this.updateEventoConv();
+            },
+            error: err => {
+              this.showErrorEstatus(count);
+            },
+          });
+      } else {
+        this.showErrorEstatus(count);
+      }
+    }
+  }
+
+  private showErrorEstatus(count: number) {
+    this.alert('warning', 'No se pudo cambiar el estatus del evento', '');
+    if (count === 0) {
+      this.alert('error', 'No se pudo realizar la conversión', '');
+    }
   }
 
   get validNormal() {
@@ -324,15 +382,32 @@ export class NumeraireConversionAuctionsComponent
       : false;
   }
 
+  get validNormalConvierte() {
+    return this.selectedEvent
+      ? this.selectedEvent.statusVtaId !== 'CNE' &&
+          (this.selectedEvent.address === 'M' ||
+            this.selectedEvent.address === 'I')
+      : false;
+  }
+
   convierte() {
     if (this.validNormal) {
-      this.alertQuestion('question', '¿Desea convertir este evento?', '').then(
-        x => {
+      if (
+        this.selectedEvent.address === 'M' ||
+        this.selectedEvent.address === 'I'
+      ) {
+        this.alertQuestion(
+          'question',
+          '¿Desea convertir este evento?',
+          ''
+        ).then(x => {
           if (x.isConfirmed) {
             this.convierteBody();
           }
-        }
-      );
+        });
+      } else {
+        this.alert('warning', 'Evento debe ser inmueble o mueble', '');
+      }
     } else {
       this.alert(
         'warning',
