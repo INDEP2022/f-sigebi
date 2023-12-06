@@ -80,6 +80,12 @@ export abstract class CompDocTasksComponent extends BasePage {
       if (process == 'IBRevisionOficioRespuesta') {
         this.title = `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${this.requestInfo.id}`;
       }
+    } else if (affair == 27) {
+      this.title = `DECOMISO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 8) {
+      this.title = `ABANDONO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 9) {
+      this.title = `EXTINCIón DE DOMINIO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     }
   }
 
