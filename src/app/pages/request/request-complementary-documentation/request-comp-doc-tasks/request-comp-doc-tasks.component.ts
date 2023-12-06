@@ -791,7 +791,7 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
 
@@ -838,7 +838,7 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
 
@@ -886,8 +886,8 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie solicitud de bienes');
-          return false;
+          //this.showError('Asocie solicitud de bienes');
+          //return false;
         }
 
         if (!this.validate.files) {
@@ -899,8 +899,8 @@ export class RequestCompDocTasksComponent
 
       case 'review-guidelines-compensation':
         if (!this.validate.guidelines) {
-          this.showError('Verifique las observaciones de lineamientos');
-          return false;
+          //this.showError('Verifique las observaciones de lineamientos');
+          //return false;
         }
 
         if (!this.validate.files) {
@@ -909,8 +909,8 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.validate.genDictum) {
-          this.showError('Genera el dictamen de resarcimiento');
-          return false;
+          //this.showError('Genera el dictamen de resarcimiento');
+          //return false;
         }
 
         break;
@@ -1030,6 +1030,11 @@ export class RequestCompDocTasksComponent
 
   showError(text) {
     this.onLoadToast('error', 'Error', text);
+  }
+
+  onSaveGuidelines(row) {
+    console.log(row);
+    this.validate.guidelines = true;
   }
 
   btnRequestAprobar() {

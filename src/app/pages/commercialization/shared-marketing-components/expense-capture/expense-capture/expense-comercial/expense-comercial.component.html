@@ -327,8 +327,24 @@
                 *ngIf="address !== 'M'"
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="!validImprimeDetalle()"
                 (click)="imprimeDetalle()">
                 Imprime Detalle
+              </button>
+              <button
+                *ngIf="address !== 'M'"
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="expenseNumberValue"
+                (click)="exportExcel()">
+                Exportar a Excel
+              </button>
+              <button
+                *ngIf="address !== 'M'"
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                (click)="showRetentions()">
+                Catalogo de Retención
               </button>
               <button
                 *ngIf="address === 'M'"

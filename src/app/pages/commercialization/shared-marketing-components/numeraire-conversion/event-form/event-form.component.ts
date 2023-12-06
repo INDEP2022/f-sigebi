@@ -11,6 +11,7 @@ import { take } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
 import { NumerarieService } from '../services/numerarie.service';
 
 @Component({
@@ -77,9 +78,13 @@ export class EventFormComponent implements OnInit {
     this.form.get('nameEvent').setValue('');
     this.form.get('processKey').setValue(event.processKey);
     this.form.get('statusVtaId').setValue(event.statusVtaId);
-    this.form.get('eventDate').setValue(event.eventDate);
+    this.form
+      .get('eventDate')
+      .setValue(secondFormatDateTofirstFormatDate(event.eventDate as string));
     this.form.get('place').setValue(event.place);
-    this.form.get('failureDate').setValue(event.failureDate);
+    this.form
+      .get('failureDate')
+      .setValue(secondFormatDateTofirstFormatDate(event.failureDate));
     this.form.get('observations').setValue(event.observations);
 
     const filterParams = new FilterParams();
