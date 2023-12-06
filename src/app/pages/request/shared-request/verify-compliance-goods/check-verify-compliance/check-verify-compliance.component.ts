@@ -10,7 +10,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class CheckVerifyComplianceComponent
   extends BasePage
-  implements OnInit, AfterViewInit {
+  implements OnInit, AfterViewInit
+{
   checkForm: FormGroup = new FormGroup({});
   checkState: boolean = false;
   checkbox: any;
@@ -28,11 +29,10 @@ export class CheckVerifyComplianceComponent
   }
 
   ngOnInit(): void {
-
     this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     this.process = this.route.snapshot.paramMap.get('process');
 
-    this.field = this.checkId + "";
+    this.field = this.checkId + '';
     this.checkId = this.checkId + this.rowData.good.id.toString();
     if (this.process != 'approve-return') {
       this.checkStateEditForm = true;
@@ -42,7 +42,6 @@ export class CheckVerifyComplianceComponent
     }
 
     this.value = this.getCheck();
-
   }
 
   override ngAfterViewInit(): void {
@@ -63,22 +62,17 @@ export class CheckVerifyComplianceComponent
     this.rowData.change = true;
     this.rowData[this.field] = !this.rowData[this.field];
     this.checkbox.checked = this.rowData[this.field];
-
   }
 
   getCheck() {
-
     if (this.isNumber(this.rowData[this.field])) {
-      return this.rowData[this.field] == "1";
+      return this.rowData[this.field] == '1';
     }
 
-    return this.rowData[this.field]
+    return this.rowData[this.field];
   }
 
   isNumber(value: any): boolean {
     return !isNaN(parseFloat(value)) && isFinite(value);
   }
-
-
-
 }

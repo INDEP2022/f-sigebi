@@ -31,7 +31,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   fileTypes: any[] = [];
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
@@ -366,5 +367,4 @@ export class RegisterDocumentationFormComponent
   displayNotifyMailsInput() {
     this.displayNotifyMails = this.process == 'register-request-similar-goods';
   }
-
 }
