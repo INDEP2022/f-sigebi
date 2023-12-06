@@ -20,6 +20,7 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FMENTREC_0002' = 'Mantenimiento de Programaciones',
   'FACTREFACTAERCIER' = 'Mantenimiento de Actas',
   'FESTATUSRGA' = 'Gestión de Autorización de Destrucción',
+  'FACTDIRAPROBDESTR' = 'Autorización de Destrucción',
   'FINDICA_0035_1' = 'Capura de Eventos',
   'FACTADBCAMBIOESTAT' = 'Cambio masivo de estatus bienes',
   'FCOMEREVENTOS' = 'Prepración del Evento',
