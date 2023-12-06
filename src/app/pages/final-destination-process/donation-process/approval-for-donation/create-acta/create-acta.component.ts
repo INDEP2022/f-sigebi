@@ -277,6 +277,40 @@ export class CreateActaComponent extends BasePage implements OnInit {
       }
   }
 */
+  onSelectChange(event: any) {
+    console.log(event);
+    this.generarClave();
+    /*
+       const data = this.items.find(
+         item => item[this.value] === event[this.value]
+       );
+   */
+  }
+  onSelectChangeYear(event: any) {
+    console.log(event);
+    this.generarClave();
+  }
+
+  generarClave() {
+    const acta = this.actaRecepttionForm.value.acta;
+    //const type = this.actaRecepttionForm.value.type;
+    //const obser = this.actaRecepttionForm.value.observaciones;
+    const administra = this.actaRecepttionForm.value.delegation;
+    //  ? this.actaRecepttionForm.value.administra
+    //  : 'COMPDON';
+    const consec = this.foolio;
+    //this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
+    //this.witnessTes = this.actaRecepttionForm.value.testigoOne;
+    const anio = this.actaRecepttionForm.value.anio;
+
+    localStorage.setItem('anio', anio);
+
+    this.cveActa = `${acta}/${administra}/${anio}/${this.foolio}`;
+
+    this.actaRecepttionForm.patchValue({
+      claveacta: this.cveActa,
+    });
+  }
   agregarActa() {
     const acta = this.actaRecepttionForm.value.acta;
     //const type = this.actaRecepttionForm.value.type;

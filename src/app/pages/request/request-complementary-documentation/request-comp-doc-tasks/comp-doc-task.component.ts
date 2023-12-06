@@ -628,14 +628,14 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       /** CASOS DE INFORMACION DE BIENES */
 
-      case 'register-request-compensation':
+      case 'register-request-information-goods':
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
         this.expRequest = true;
 
         this.saveRequest = true;
-        this.turnReq = true;
+        this.turnReq = true; //AGREGAR OFICIO DESTINO (BOTON)
 
         this.resultEyeVisitReport = false;
         this.resultVisits = false;
@@ -649,39 +649,38 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = false;
         this.createReport = false;
         this.rejectReq = false;
+
         break;
 
-      case 'review-guidelines-compensation':
+      case 'respose-office-information-goods':
         this.regDocView = true;
-        this.selectGoods = true;
         this.expRequest = true;
+        this.guidelines = true;
 
         this.saveRequest = true;
         this.turnReq = true;
-        this.sendEmail = true; //AGREGAR ENVIAR CORREO DE SOLICITUD (BOTON)
-        this.destinyJob = true; //AGREGAR OFICIO DESTINO (BOTON)
+        this.createReport = true;
 
-        this.searchAssociateFile = false;
         this.resultEyeVisitReport = false;
         this.resultVisits = false;
         this.validateGoodForEyeVisit = false;
         this.notifyReport = false;
         this.docRequest = false;
-        this.viewSelectedGoods = false;
+        this.viewSelectedGoods = true;
+        this.listGoodSelectedTitle = 'Listado de Bienes';
         this.searchRequestSimGoods = false;
-        this.guidelines = false;
         this.dictumValidate = false;
-        this.regDocView = false;
         this.createReport = false;
         this.rejectReq = false;
         break;
-      case 'analysis-result-compensation':
+      case 'review-office-information-goods':
         this.regDocView = true;
         this.selectGoods = true;
         this.expRequest = true;
 
         this.saveRequest = true;
-        this.destinyJob = true; //AGREGAR OFICIO DESTINO (BOTON)
+        this.destinyJob = true;
+        this.finish = true;
 
         this.turnReq = false;
         this.searchAssociateFile = false;
@@ -694,7 +693,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchRequestSimGoods = false;
         this.guidelines = false;
         this.dictumValidate = false;
-        this.regDocView = false;
         this.createReport = false;
         this.rejectReq = false;
 

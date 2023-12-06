@@ -27,5 +27,6 @@ export enum MassiveGoodEndpoints {
   InsertGoodDetail = 'application/insert-good-detail-is',
   getIdentifierCount = 'application/getIdentifierCount',
   ExportGoodProgramming = 'application/exportDataGoodsProgramming',
+  detailDonationEventExcel = 'application/export-excel-donation-good',
   ApplicationRegisterCountCsv = 'application/register-count-csv',
 }

@@ -1,6 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Captura de Eventos para Donaci&oacute;n</h5>
+    <div class="p-2">
+      <button class="btn btn-primary active btn-sm" (click)="return()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>
   </div>
 
   <div body>
@@ -27,26 +33,38 @@
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('type')" label="Tipo">
-                  <input
-                    #inputValue
-                    type="text"
-                    class="form-control"
+                  <ng-select
                     formControlName="type"
-                    readonly />
+                    [searchable]="false"
+                    class="form-control"
+                    [clearable]="false"
+                    (change)="getRowSelec($event)">
+                    <ng-option value="CPD">CPD</ng-option>
+                  </ng-select>
                 </form-field>
               </div>
             </div>
 
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
-                <form-field
-                  [control]="regisForm.get('area')"
-                  label="&Aacute;rea">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="area"
-                    readonly />
+                <!--
+                <form-field [control]="regisForm.get('area')" label="&Aacute;rea">
+                  <input type="text" class="form-control" formControlName="area" readonly />
+                </form-field>
+              -->
+                <form-field [control]="regisForm.get('area')">
+                  <ngx-select
+                    [data]="areas$"
+                    (change)="selectedArea($event)"
+                    (fetchByParamsItems)="readArea($event)"
+                    [fetchByList]="false"
+                    [searchOnInit]="true"
+                    [form]="regisForm"
+                    value="delegation"
+                    bindLabel="delegation"
+                    label="&Aacute;rea"
+                    control="area">
+                  </ngx-select>
                 </form-field>
               </div>
             </div>
@@ -57,12 +75,13 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('year')" label="Año">
                   <input
-                    #inputValue
                     type="text"
                     class="form-control"
                     formControlName="year"
-                    class="form-control"
-                    readonly />
+                    readonly
+                    [bsConfig]="bsConfigToYear"
+                    #dp="bsDatepicker"
+                    bsDatepicker />
                 </form-field>
               </div>
             </div>
@@ -84,13 +103,25 @@
                   [control]="regisForm.get('captureDate')"
                   label="Fecha Captura">
                   <input
-                    type="text"
+                    [maxDate]="maxDate"
+                    bsDatepicker
                     class="form-control"
                     formControlName="captureDate"
                     readonly />
                 </form-field>
               </div>
             </div>
+            <!--
+        <div class="col-md-4">
+          <form-field [control]="form.get('captureDate')" label="Fecha Inicio">
+            <input
+              [maxDate]="maxDate"
+              formControlName="captureDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>              
+            -->
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
@@ -99,7 +130,6 @@
                   [control]="regisForm.get('keyEvent')"
                   label="CVE. Acta">
                   <input
-                    #inputValue
                     type="text"
                     class="form-control"
                     readonly
@@ -215,6 +245,7 @@
               <button
                 class="btn btn-success btn-sm active me-2 mt-2"
                 type="button"
+                [disabled]="!radio"
                 (click)="exportAll()">
                 Exportar a Excel
                 <i class="bx bx-download float-icon"></i>
@@ -228,6 +259,7 @@
               </button>
               <button
                 class="btn btn-info active btn-sm active mt-2"
+                [disabled]="!showPbTracker"
                 (click)="findRast()">
                 Rastreador de Bienes&nbsp;
                 <i class="fas fa-map-marker bx-sm float-icon"></i>
@@ -242,16 +274,16 @@
         <div class="col-md-12 d-flex justify-content-between">
           <span class="text-success">
             <i class="fa fa-check" aria-hidden="true"></i> Cantidad de
-            Bienes&#58; <b>{{ TOTAL_REPORTE }}</b>
+            Bienes&#58; <b>{{ total_report }}</b>
           </span>
           <span class="text-danger"
             ><i class="fa fa-ban" aria-hidden="true"></i> Cantidad de Bienes con
             Error&#58;
-            <b>{{ BIEN_ERROR }}</b>
+            <b>{{ total_bien_error }}</b>
           </span>
           <span class="text-info">
             Suma de Cantidades
-            <b>{{ SUM_BIEN | currency }}</b>
+            <b>{{ total_sum_bien | currency }}</b>
           </span>
         </div>
       </div>
@@ -353,7 +385,7 @@
           </div>
           <div class="m-3">
             <button
-              [disabled]="TOTAL_REPORTE < 500"
+              [disabled]="total_report < 500"
               (click)="searchRopaId()"
               type="button"
               class="btn btn-primary active btn-sm mr-3">
@@ -364,6 +396,7 @@
           <div class="m-3">
             <button
               class="btn btn-danger btn-sm active"
+              [disabled]="!showPbDelete"
               (click)="removeSelect()">
               Elimina Bienes <i class="fa fa-trash-alt"></i>
             </button>

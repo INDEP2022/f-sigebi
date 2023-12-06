@@ -38,52 +38,6 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
           };
         case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
           return {
-            title: `RESOLUCIÓN ADMINISTRATIVA DE PAGO EN ESPECIE Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-compensation',
-            process: 'RERegistroSolicitudes',
-            type: 'DOCUMENTACION_COMPLEMENTARIA',
-            subtype: 'Registro_Solicitud',
-            ssubtype: 'TURNAR',
-            close: true,
-          };
-        case 41: //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
-          return {
-            title: `SOLICITUD DE INFORMACIÓN DEL DESTINO DEL BIEN Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-information-goods',
-            process: 'IBRegistroSolicitudes',
-            type: 'DOCUMENTACION_COMPLEMENTARIA',
-            subtype: 'Registro_Solicitud',
-            ssubtype: 'TURNAR',
-            close: true,
-          };
-      }
-      break;
-
-    //Se crea solicitud decumentación complementaria
-    case 'create':
-      switch (affair) {
-        case 10: //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
-          return {
-            title: `DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-return',
-            process: 'DRegistroSolicitudes',
-            type: 'DOCUMENTACION_COMPLEMENTARIA',
-            subtype: 'Registro_Solicitud',
-            ssubtype: 'TURNAR',
-            close: true,
-          };
-        case 33: //GESTIONAR BINES SIMILARES RESARCIMIENTO
-          return {
-            title: `BIENES SIMILARES Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-similar-goods',
-            process: 'BSRegistroSolicitudes',
-            type: 'DOCUMENTACION_COMPLEMENTARIA',
-            subtype: 'Registro_Solicitud',
-            ssubtype: 'TURNAR',
-            close: true,
-          };
-        case 40: //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
-          return {
             title: `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-request-compensation',
             process: 'RERegistroSolicitudes',
@@ -190,8 +144,8 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         url: 'pages/request/request-comp-doc/tasks/review-guidelines-compensation',
         process: 'RERevisionLineamientos',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
-        subtype: 'Registro_documentacion',
-        ssubtype: 'TURNAR_RES_PAGO_ESPECIE',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
         close: true,
       };
     case 'review-guidelines-compensation':
@@ -200,8 +154,8 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         url: 'pages/request/request-comp-doc/tasks/analysis-result-compensation',
         process: 'REGenerarResultadoAnalisis',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
-        subtype: 'Registro_documentacion',
-        ssubtype: '',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
         close: true,
       };
     case 'analysis-result-compensation':
@@ -210,8 +164,8 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         url: 'pages/request/request-comp-doc/tasks/validate-opinion-compensation',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
-        subtype: 'Registro_documentacion',
-        ssubtype: '',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
         close: true,
       };
     case 'validate-opinion-compensation':
@@ -220,35 +174,35 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         url: 'pages/request/request-comp-doc/tasks/notification-taxpayer-compensation',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
-        subtype: 'Registro_documentacion',
-        ssubtype: '',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
         close: true,
       };
     case 'notification-taxpayer-compensation':
       break;
 
     /** CASOS INFORMACION DE BIENES */
-    case 'register-request-compensation':
+    case 'register-request-information-goods':
       return {
         title: `Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud: ${requestId}`,
-        url: 'pages/request/request-comp-doc/tasks/review-guidelines-compensation',
+        url: 'pages/request/request-comp-doc/tasks/respose-office-information-goods',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
-        subtype: 'Registro_documentacion',
-        ssubtype: 'TURNAR_SOL_INF_BIENES',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
         close: true,
       };
-    case 'review-guidelines-compensation':
+    case 'respose-office-information-goods':
       return {
         title: `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${requestId}`,
-        url: 'pages/request/request-comp-doc/tasks/analysis-result-compensation',
+        url: 'pages/request/request-comp-doc/tasks/review-office-information-goods',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
-        subtype: 'Registro_documentacion',
-        ssubtype: '',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
         close: true,
       };
-    case 'analysis-result-compensation':
+    case 'review-office-information-goods':
       break;
   }
 

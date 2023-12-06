@@ -511,4 +511,8 @@ export class LotService extends HttpService {
   getStatusCountGaraByEvent(idEvent: number) {
     return this.get('app/getStatusCount/' + idEvent);
   }
+
+  getAppsExportExcelComerFacturas(body) {
+    return this.post(LotEndpoints.AppsExportExcelComerFacturas, body);
+  }
 }
