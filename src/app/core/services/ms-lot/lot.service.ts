@@ -5,7 +5,10 @@ import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint
 import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import {
   IPupProcDisp,
   IPupProcEnvSirsae,
@@ -502,6 +505,18 @@ export class LotService extends HttpService {
 
   getEatParametersForLotByFilter(params: HttpParams) {
     return this.get('eat-parameters-for-lot', params);
+  }
+
+  getStatusCountComerxlots(idEvent: number) {
+    return this.get<IListResponseMessage<{ count: number }>>(
+      'app/count-comer-bienesxlotes/' + idEvent
+    );
+  }
+
+  getStatusCountGaraByEvent(idEvent: number) {
+    return this.get<IListResponseMessage<{ count: number }>>(
+      'app/count-comer-lotes/' + idEvent
+    );
   }
 
   getAppsExportExcelComerFacturas(body) {

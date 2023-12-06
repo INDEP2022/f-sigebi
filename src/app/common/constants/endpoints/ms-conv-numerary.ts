@@ -5,6 +5,7 @@ export enum ConvertionNumeraryEndpoints {
   SP_BORRA_NUMERA = 'comer-conv-numerary/delete-event',
   CONVIERTE = 'comer-conv-numerary/convertRep',
   SP_CONVERSION_ASEG_PARCIAL = 'comer-conv-numerary/sp-convertion-aseg-parcialRep',
+  SP_CONVERSION_ASEG_TOTAL = 'comer-conv-numerary/sp-convertion-aseg-total',
   PA_CONVNUMERARIO_ADJUDIR = 'comer-conv-numerary/pa-conv-numerary-adjudir',
 }
 

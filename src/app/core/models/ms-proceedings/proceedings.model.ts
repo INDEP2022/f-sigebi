@@ -157,3 +157,9 @@ export interface IQueryRegAdminGood {
   minutesNumber: string;
   typeMinutes: string;
 }
+
+export interface IAvailableFestatus {
+  goodId: string;
+  status: string;
+  screenkey: string;
+}
