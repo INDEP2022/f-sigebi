@@ -16,12 +16,14 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2';
+import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
@@ -38,6 +40,7 @@ export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
   implements OnInit
 {
+  protected override finish: boolean;
   protected override btnRequestAprove: boolean;
   protected override sendEmail: boolean;
   protected override destinyJob: boolean;
@@ -113,9 +116,12 @@ export class RequestCompDocTasksComponent
     signedVisit: false,
     signedDictum: false,
     signedValDictum: false,
+    signedOffice: false,
     guidelines: false,
     genDictum: false,
+    genOffice: false,
     genValDictum: false,
+    sendEmail: false,
   };
 
   /* INJECTIONS
@@ -343,10 +349,21 @@ export class RequestCompDocTasksComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Desea finalizar la tarea registro de documentación complementaria?'
-    ).then(question => {
+      `¿Desea finalizar la solicitud con folio: ${this.requestId}`
+    ).then(async question => {
       if (question) {
         //Cerrar tarea//
+        let response = await this.updateTask(this.taskInfo.id);
+        if (response) {
+          this.msgModal(
+            'Se finalizo la solicitud con el Folio Nº '.concat(
+              `<strong>${this.requestId}</strong>`
+            ),
+            'Solicitud finalizada',
+            'success'
+          );
+          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        }
       }
     });
   }
@@ -577,6 +594,7 @@ export class RequestCompDocTasksComponent
 
   updateRequest() {
     this.updateInfo = true;
+
     this.msgModal(
       'Se guardó la solicitud con el Folio Nº '.concat(
         `<strong>${this.requestId}</strong>`
@@ -604,14 +622,18 @@ export class RequestCompDocTasksComponent
 
     let body: any = {};
 
-    if (close) body['idTask'] = this.taskInfo.id;
-
     body['userProcess'] = user.username;
     body['type'] = type;
     body['subtype'] = subtype;
     body['ssubtype'] = ssubtype;
 
     let task: any = {};
+
+    if (close) {
+      body['idTask'] = this.taskInfo.id;
+      task['taskDefinitionId'] = this.taskInfo.id;
+    }
+
     task['id'] = 0;
     task['assignees'] = this.taskInfo.assignees;
     task['assigneesDisplayname'] = this.taskInfo.assigneesDisplayname;
@@ -628,6 +650,7 @@ export class RequestCompDocTasksComponent
     task['idTransferee'] = this.taskInfo.idTransferee;
     task['idAuthority'] = this.taskInfo.idAuthority;
     task['idDelegationRegional'] = user.department;
+
     body['task'] = task;
 
     let orderservice: any = {};
@@ -643,7 +666,7 @@ export class RequestCompDocTasksComponent
 
     if (closeTask && !isNullOrEmpty(closeTask.task)) {
       this.msgModal(
-        'Se turno la solicitud con el Folio Nº'.concat(
+        'Se turno la solicitud con el Folio Nº '.concat(
           `<strong>${this.requestId}</strong>`
         ),
         'Solicitud turnada',
@@ -694,6 +717,18 @@ export class RequestCompDocTasksComponent
     });
   }
 
+  openSendEmail(): void {
+    const modalRef = this.modalService.show(SendRequestEmailComponent, {
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSend.subscribe(next => {
+      if (next) {
+        console.log(next);
+      }
+    });
+  }
+
   taskRechazar(data) {
     const _task = JSON.parse(localStorage.getItem('Task'));
     const user: any = this.authService.decodeToken();
@@ -705,10 +740,14 @@ export class RequestCompDocTasksComponent
     body['subtype'] = 'Registro_documentacion';
     body['ssubtype'] = 'REJECT';
 
+    this.updateTask(this.taskInfo.taskDefinitionId, 'PROCESO');
+
+    this.requestInfo.rejectionComment = data.comment;
+
     this.taskService.createTaskWitOrderService(body).subscribe({
       next: async resp => {
         this.msgModal(
-          'Se rechazo la solicitud con el Folio Nº'.concat(
+          'Se rechazo la solicitud con el Folio Nº '.concat(
             `<strong>${this.requestId}</strong>`
           ),
           'Solicitud rechazada',
@@ -719,6 +758,21 @@ export class RequestCompDocTasksComponent
       error: error => {
         this.onLoadToast('error', 'Error', 'No se pudo rechazar la tarea');
       },
+    });
+  }
+
+  updateTask(id, state = 'FINALIZADA') {
+    return new Promise((resolve, reject) => {
+      const taskForm: ITask = {
+        State: state,
+        taskDefinitionId: null,
+      };
+      this.taskService.update(id, taskForm).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {},
+      });
     });
   }
 
@@ -737,7 +791,7 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
 
@@ -784,7 +838,7 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
 
@@ -801,16 +855,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'notify-transfer-similar-goods':
-        if (!this.validate.goods) {
-          this.showError('Seleccione los bienes de la solicitud');
-          return false;
-        }
-
-        if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
-          return false;
-        }
-
         if (!this.validate.signedNotify) {
           //this.showError('Firme el reporte de notificación');
           //return false;
@@ -819,45 +863,17 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'eye-visit-similar-goods':
-        if (!this.validate.goods) {
-          this.showError('Seleccione los bienes de la solicitud');
-          return false;
-        }
-
-        if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
-          return false;
-        }
-
         break;
 
       case 'validate-eye-visit-similar-goods':
-        if (!this.validate.valvisits) {
-          this.showError('Verifique resultados de las visitas');
-          return false;
-        }
-
-        if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
-          return false;
-        }
-
-        if (!this.validate.signedVisit) {
-          this.showError('Firme el reporte de visita ocular');
-          return false;
-        }
+        //Validar aprobacion de visita ocular
 
         break;
 
       case 'validate-opinion-similar-goods':
-        if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
-          return false;
-        }
-
         if (!this.validate.signedVisit) {
-          this.showError('Firme el reporte de visita ocular');
-          return false;
+          //this.showError('Firme el reporte de visita ocular');
+          //return false;
         }
 
         break;
@@ -870,8 +886,8 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie solicitud de bienes');
-          return false;
+          //this.showError('Asocie solicitud de bienes');
+          //return false;
         }
 
         if (!this.validate.files) {
@@ -883,8 +899,8 @@ export class RequestCompDocTasksComponent
 
       case 'review-guidelines-compensation':
         if (!this.validate.guidelines) {
-          this.showError('Verifique las observaciones de lineamientos');
-          return false;
+          //this.showError('Verifique las observaciones de lineamientos');
+          //return false;
         }
 
         if (!this.validate.files) {
@@ -893,8 +909,8 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.validate.genDictum) {
-          this.showError('Genera el dictamen de resarcimiento');
-          return false;
+          //this.showError('Genera el dictamen de resarcimiento');
+          //return false;
         }
 
         break;
@@ -954,14 +970,36 @@ export class RequestCompDocTasksComponent
 
       //CASOS INFORMACION DE BIENES
       case 'register-request-compensation':
+        if (!this.validate.regdoc) {
+          this.showError('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showError('Asoicie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
         break;
 
       case 'review-guidelines-compensation':
+        if (!this.validate.sendEmail) {
+          this.showError('Enviar el correo de notificación al contribuyente');
+          return false;
+        }
+        if (!this.validate.genOffice) {
+          this.showError('Generar el oficio destino');
+          return false;
+        }
         break;
 
       case 'analysis-result-compensation':
-        break;
-
+        if (!this.validate.signedOffice) {
+          this.showError('Firmar el oficio destino');
+          return false;
+        }
         break;
     }
 
@@ -994,7 +1032,10 @@ export class RequestCompDocTasksComponent
     this.onLoadToast('error', 'Error', text);
   }
 
-  openSendEmail() {}
+  onSaveGuidelines(row) {
+    console.log(row);
+    this.validate.guidelines = true;
+  }
 
   btnRequestAprobar() {
     this.alertQuestion(
@@ -1013,11 +1054,23 @@ export class RequestCompDocTasksComponent
   btnAprobar() {
     this.alertQuestion(
       'question',
-      'Confirmación',
-      '¿Desea finalizar la tarea registro de documentación complementaria?'
-    ).then(question => {
+      'Confirmar Aprobación',
+      `¿Desea APROBAR la solicitud con folio: ${this.requestId}?`
+    ).then(async question => {
       if (question) {
         //Cerrar tarea//
+        let response = await this.updateTask(this.taskInfo.id);
+
+        if (response) {
+          this.msgModal(
+            'Se aprobo la solicitud con el Folio Nº '.concat(
+              `<strong>${this.requestId}</strong>`
+            ),
+            'Solicitud aprobada',
+            'success'
+          );
+          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        }
       }
     });
 

@@ -365,8 +365,6 @@ export class RegisterDocumentationFormComponent
   /* METODO PARA VISUALIZAR EL INPUT NOTIFICACIONES ELECTRONICAS
   =============================================================== */
   displayNotifyMailsInput() {
-    if (this.process == 'similar-good-register-documentation') {
-      this.displayNotifyMails = true;
-    }
+    this.displayNotifyMails = this.process == 'register-request-similar-goods';
   }
 }

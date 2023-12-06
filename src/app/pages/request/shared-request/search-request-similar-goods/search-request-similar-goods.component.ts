@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
@@ -43,6 +43,8 @@ export class SearchRequestSimilarGoodsComponent
   showDetails: boolean = false;
   requestId: string | number = null;
 
+  @Input() selected: boolean = false;
+
   /* injections */
   private requestService = inject(RequestService);
   private goodFinderSerice = inject(GoodFinderService);
@@ -53,22 +55,27 @@ export class SearchRequestSimilarGoodsComponent
 
   constructor(private modalService: BsModalService) {
     super();
+  }
+
+  ngOnInit(): void {
     this.settings = {
       ...this.settings,
-      actions: {
-        ...this.settings.actions,
-        add: false,
-        edit: false,
-        delete: false,
-        columnTitle: 'Asociar',
-        custom: [
-          {
-            name: 'associate',
-            title:
-              '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
+      actions: this.selected
+        ? null
+        : {
+            ...this.settings.actions,
+            add: false,
+            edit: false,
+            delete: false,
+            columnTitle: 'Asociar',
+            custom: [
+              {
+                name: 'associate',
+                title:
+                  '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
+              },
+            ],
           },
-        ],
-      },
       columns: { ...COLUMNS },
     };
     this.settings2 = {
@@ -76,9 +83,7 @@ export class SearchRequestSimilarGoodsComponent
       actions: false,
       columns: { ...COLUMNS2 },
     };
-  }
 
-  ngOnInit(): void {
     this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     //this.data.load(DATA);
     this.getInfoRequest();

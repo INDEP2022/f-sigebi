@@ -9,6 +9,7 @@ import { BasePage } from 'src/app/core/shared';
 
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
 import { COLUMNS } from '../numeraire-conversion-auctions/columns';
 import { ComerieventosService } from '../services/comerieventos.service';
 import { ComermeventosService } from '../services/comermeventos.service';
@@ -66,6 +67,14 @@ export class NumeraireConversionAllotmentsComponent
     );
   }
 
+  selectEvent(event: IComerEvent) {
+    this.selectedEvent = {
+      ...event,
+      failureDate: secondFormatDateTofirstFormatDate(event.failureDate),
+      eventDate: secondFormatDateTofirstFormatDate(event.eventDate as string),
+    };
+  }
+
   private convierteBody() {
     this.loader.load = true;
     this.convNumeraryService
@@ -92,11 +101,7 @@ export class NumeraireConversionAllotmentsComponent
                 this.loader.load = false;
                 if (response && response.length > 0) {
                   this.selectNewEvent = response[0];
-                  this.alert(
-                    'success',
-                    'Proceso convierte adjudicación directa terminado',
-                    ''
-                  );
+                  this.alert('success', 'Conversión con éxito', '');
                 } else {
                   this.alert(
                     'error',

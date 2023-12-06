@@ -26,16 +26,18 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
     mode: 'external', // ventana externa
 
     columns: {
-      descriptionGood: { title: 'Descripción', type: 'text' }, // TEXTO
-      goodId: { title: 'No. Gestión', type: 'number' }, // NUMEROS
+      descriptionGood: { title: 'Descripción', type: 'text', sort: false }, // TEXTO
+      goodId: { title: 'No. Gestión', type: 'number', sort: false }, // NUMEROS
       transfereeId: {
         title: 'No. Solicitud Transferencia',
         type: 'number',
+        sort: false,
       }, // NUMEROS
-      subinventory: { title: 'Sub. Inventario', type: 'text' },
+      subinventory: { title: 'Sub. Inventario', type: 'text', sort: false },
       meetsArticle24: {
         title: 'Cumple Articulo 24',
         type: 'custom',
+        sort: false,
         valuePrepareFunction: (cell: any, row: any) => cell,
         onComponentInitFunction: (instance: any) => {
           instance.checkId = 'meetsArticle24';
@@ -45,6 +47,7 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
       meetsArticle28: {
         title: 'Cumple Articulo 28',
         type: 'custom',
+        sort: false,
         valuePrepareFunction: (cell: any, row: any) => cell,
         onComponentInitFunction: (instance: any) => {
           instance.checkId = 'meetsArticle28';
@@ -54,6 +57,7 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
       meetsArticle29: {
         title: 'Cumple Articulo 29',
         type: 'custom',
+        sort: false,
         valuePrepareFunction: (cell: any, row: any) => cell,
         onComponentInitFunction: (instance: any) => {
           instance.checkId = 'meetsArticle29';

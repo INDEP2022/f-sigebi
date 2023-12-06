@@ -150,6 +150,7 @@ export class ExpenseConceptsListComponent
     let config: ModalOptions = {
       initialState: {
         concept: newConcept,
+        address: this.address,
         callback: (next: boolean) => {
           if (next) {
             this.getData();

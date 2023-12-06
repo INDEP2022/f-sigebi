@@ -40,6 +40,8 @@ export class CheckVerifyComplianceComponent
     } else {
       this.checkStateEditForm = false;
     }
+
+    this.value = this.getCheck();
   }
 
   override ngAfterViewInit(): void {
@@ -56,23 +58,10 @@ export class CheckVerifyComplianceComponent
     this.checkbox = document.querySelector(
       '#' + this.checkId
     ) as HTMLInputElement;
-    this.checkbox.checked = this.getCheck();
-    let action: string;
-    this.getCheck()
-      ? (action = 'Quitar Permiso')
-      : (action = 'Otorgar Permiso');
-    this.alertQuestion(
-      'question',
-      '¿Está seguro que desea cambiar los permisos de este usuario?',
-      '',
-      action
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.rowData.change = true;
-        this.rowData[this.field] = !this.rowData[this.field];
-        this.checkbox.checked = this.rowData[this.field];
-      }
-    });
+
+    this.rowData.change = true;
+    this.rowData[this.field] = !this.rowData[this.field];
+    this.checkbox.checked = this.rowData[this.field];
   }
 
   getCheck() {

@@ -506,7 +506,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       'Turnar Solicitud',
       '¿Desea Turnar la solicitud?'
     ).then(async question => {
-      if (question) {
+      if (question.isConfirmed) {
         if (this.op == 2) {
           /*this.getRegionalDeleg(new ListParams());
           const createTask = await this.generateFirstTask();
