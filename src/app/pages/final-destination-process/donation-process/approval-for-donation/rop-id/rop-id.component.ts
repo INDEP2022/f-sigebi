@@ -59,7 +59,7 @@ export class RopIdComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: false,
       columns: {
-        goodId: {
+        goodid: {
           title: 'No. Bien',
           sort: false,
           visible: true,
@@ -67,10 +67,10 @@ export class RopIdComponent extends BasePage implements OnInit {
         description: {
           title: 'Descripción',
           sort: false,
-          visible: true,
+          visible: true /*
           valuePrepareFunction: (cell: any, row: any) => {
             return row.good?.description;
-          },
+          },*/,
         },
         RIC: {
           filter: false,
