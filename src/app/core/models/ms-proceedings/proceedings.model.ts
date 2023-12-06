@@ -136,24 +136,7 @@ export interface IPufValidTerm {
 
 export interface IPbSelPaq {
   noPaquete: number;
-  blkAct: [
-    {
-      no_acta: number;
-    }
-  ];
-  blkBie?: [
-    no_bien: number,
-    di_desc_bien: string,
-    proceso_ext_dom: string,
-    cantidad: number,
-    di_disponible: string
-  ];
-  blkDet?: [
-    {
-      no_acta: number;
-      no_bien: number;
-    }
-  ];
+  screen: string;
 }
 
 export interface IPupMovDestruction {

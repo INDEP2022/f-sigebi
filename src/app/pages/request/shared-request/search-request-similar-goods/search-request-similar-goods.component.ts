@@ -27,7 +27,8 @@ import { AssociateFileComponent } from '../../transfer-request/tabs/associate-fi
 })
 export class SearchRequestSimilarGoodsComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
@@ -44,7 +45,6 @@ export class SearchRequestSimilarGoodsComponent
 
   @Input() selected: boolean = false;
 
-
   /* injections */
   private requestService = inject(RequestService);
   private goodFinderSerice = inject(GoodFinderService);
@@ -58,23 +58,24 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   ngOnInit(): void {
-
     this.settings = {
       ...this.settings,
-      actions: this.selected ? null : {
-        ...this.settings.actions,
-        add: false,
-        edit: false,
-        delete: false,
-        columnTitle: 'Asociar',
-        custom: [
-          {
-            name: 'associate',
-            title:
-              '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
+      actions: this.selected
+        ? null
+        : {
+            ...this.settings.actions,
+            add: false,
+            edit: false,
+            delete: false,
+            columnTitle: 'Asociar',
+            custom: [
+              {
+                name: 'associate',
+                title:
+                  '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
+              },
+            ],
           },
-        ],
-      },
       columns: { ...COLUMNS },
     };
     this.settings2 = {
@@ -101,7 +102,7 @@ export class SearchRequestSimilarGoodsComponent
       next: response => {
         this.requestInfo = response;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -263,5 +264,5 @@ export class SearchRequestSimilarGoodsComponent
     });
   }
 
-  confirm(result: boolean) { }
+  confirm(result: boolean) {}
 }
