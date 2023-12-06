@@ -9,35 +9,24 @@
     <div class="justify-content-end d-flex mb-2"></div>
     <form-loader *ngIf="loadingRop"></form-loader>
     <div class="col-md-12">
-      <ng-scrollbar
-        [track]="'all'"
-        [ngStyle]="{ height: loadingRop ? '0px' : '300px' }">
-        <ng2-smart-table
-          [attr.class]="'table-responsive table-bordered'"
-          [settings]="settingsRop"
-          [source]="dataDetail"
+      <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loadingRop ? '0px' : '300px' }">
+        <ng2-smart-table [attr.class]="'table-responsive table-bordered'" [settings]="settingsRop" [source]="dataDetail"
           (userRowSelect)="onUserRowSelect($event)">
         </ng2-smart-table>
       </ng-scrollbar>
-      <app-pagination [params]="params" [totalItems]="totalItemRrop">
+      <app-pagination [params]="params" [totalItems]="totalItemsRopa">
       </app-pagination>
     </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-primary active btn-sm"
-          (click)="handleSuccess()">
+        <button type="button" class="btn btn-primary active btn-sm" (click)="handleSuccess()">
           Aplica <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
       </div>
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger active btn-sm"
-          (click)="return()">
+        <button type="button" class="btn btn-danger active btn-sm" (click)="return()">
           Salir
         </button>
       </div>

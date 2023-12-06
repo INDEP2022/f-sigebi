@@ -240,4 +240,9 @@ export class MassiveGoodService extends HttpService {
   getCSVStatus(status: number) {
     return this.get(`${MassiveGoodEndpoints.ApplicationCSV}?status=${status}`);
   }
+
+  detailDonationEventExcel(params: any) {
+    return this.post(this.route.detailDonationEventExcel, params);
+  }
+
 }

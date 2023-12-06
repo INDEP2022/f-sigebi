@@ -1,0 +1,49 @@
+<app-modal>
+    <div header class="d-flex justify-content-between">
+        <div>
+            <h5 class="modal-title">Seleccionar &Aacute;rea</h5>
+        </div>
+    </div>
+    <div body>
+        <form [formGroup]="frmArea" class="form-material">
+            <div class="row">
+
+                <div class="col-md-4">
+                    <form-field [control]="frmArea.get('no_Delegation_2')">
+                        <ngx-select label="&Aacute;rea" [form]="frmArea" [data]="delegations$"
+                            (fetchItems)="getDels($event)" bindLabel="description" control="no_Delegation_2"
+                            [searchOnInit]="true" [showTooltip]="true" (change)="updateSelectedIds($event)"
+                            termMaxLength="50" value="id" [multiple]="false">
+                        </ngx-select>
+                        <ng-template #userLabel let-item="item">
+                            {{ item.id + ' - ' + item.description }}
+                        </ng-template>
+                        <ng-template #userOption let-item="item">
+                            <div [title]="item.id + '-' + item.description">
+                                {{ item.id + ' - ' + item.description }}
+                            </div>
+                        </ng-template>
+                    </form-field>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div footer>
+        <div class="d-flex justify-content-center">
+            <div class="m-3">
+                <button type="button" [disabled]="area_d!==-1" class="btn btn-primary active btn-sm"
+                    (click)="onSaveDelegation()">
+                    Aceptar <i class="fas fa-save bx-sm float-icon"></i>
+                </button>
+            </div>
+            <!--
+            <div class="m-3">
+                <button type="button" class="btn btn-danger active btn-sm" (click)="return()">
+                    Cancelar
+                </button>
+            </div>
+        -->
+        </div>
+    </div>
+</app-modal>
