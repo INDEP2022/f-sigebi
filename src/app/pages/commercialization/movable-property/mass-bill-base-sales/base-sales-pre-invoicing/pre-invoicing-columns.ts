@@ -49,9 +49,22 @@ export const PRE_INVOICING_COLUMNS = {
   Type: {
     title: 'Tipo',
     sort: false,
-    valuePrepareFunction: (val: number) => {
-      return val == 7 ? 'Venta de Bases' : '';
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [{ value: 7, title: 'Venta de Bases' }],
+      },
     },
+    valuePrepareFunction: (val: number) => {
+      if (val == 7) {
+        return 'Venta de Bases';
+      }
+      return '';
+    },
+    // valuePrepareFunction: (val: number) => {
+    //   return val == 7 ? 'Venta de Bases' : '';
+    // },
   },
   series: {
     title: 'Serie',
