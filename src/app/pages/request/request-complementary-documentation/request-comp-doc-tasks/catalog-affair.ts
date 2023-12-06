@@ -13,7 +13,6 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
   affair = parseInt(affair);
 
   switch (path) {
-
     //Se crea solicitud decumentación complementaria
     case 'create':
       switch (affair) {

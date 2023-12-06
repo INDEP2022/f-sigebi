@@ -36,6 +36,16 @@ export class ConvNumeraryService extends HttpService {
     return this.post(this.route.SP_CONVERSION_ASEG_PARCIAL, body);
   }
 
+  SP_CONVERSION_ASEG_TOTAL(pevent: number, pscreen: string) {
+    return this.post<{ processedData: number }>(
+      this.route.SP_CONVERSION_ASEG_TOTAL,
+      {
+        pevent,
+        pscreen,
+      }
+    );
+  }
+
   PA_CONVNUMERARIO_ADJUDIR(body: {
     pevent: number;
     pscreen: string;

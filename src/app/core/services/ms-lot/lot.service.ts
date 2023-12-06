@@ -504,6 +504,14 @@ export class LotService extends HttpService {
     return this.get('eat-parameters-for-lot', params);
   }
 
+  getStatusCountComerxlots(idEvent: number) {
+    return this.get('app/getStatusCountComerxlots/' + idEvent);
+  }
+
+  getStatusCountGaraByEvent(idEvent: number) {
+    return this.get('app/getStatusCount/' + idEvent);
+  }
+
   getAppsExportExcelComerFacturas(body) {
     return this.post(LotEndpoints.AppsExportExcelComerFacturas, body);
   }
