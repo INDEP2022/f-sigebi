@@ -113,10 +113,11 @@
         <div class="mx-1" *ngIf="destinyJob">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-info active btn-sm"
             [disabled]=""
-            (click)="openDocument('edit')">
-            <i class="bx bx-notepad mr-1 float-icon"></i>Oficio Destino
+            (click)="openReport()">
+            Oficio Destino
+            <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="btnAprove">
@@ -151,11 +152,11 @@
         <div class="mx-1" *ngIf="sendEmail">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-sm btn-success active"
             [disabled]=""
             (click)="openSendEmail()">
-            <i class="bx bx-mail-send mr-1 float-icon"></i>
             Enviar Correo de Solicitud
+            <i class="bx bx-mail-send mr-1 float-icon"></i>
           </button>
         </div>
 
@@ -339,7 +340,7 @@
             [processDetonate]="processDetonate"></app-goods-list>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
-          <app-guidelines></app-guidelines>
+          <app-guidelines (onSave)="onSaveGuidelines($event)"></app-guidelines>
         </tab>
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
           <app-register-dictum-val></app-register-dictum-val>
@@ -388,10 +389,3 @@
     </div>
   </div>
 </app-card>
-<div>
-  <img
-    *ngIf="loadingTurn"
-    src="assets/images/loader-button.gif"
-    alt="loading"
-    id="loading" />
-</div>

@@ -57,27 +57,38 @@
               <div class="row">
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: btnLoading }"
+                    [disabled]="btnLoading"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="generatePreFacture()">
-                    Genera Prefacturas <i class="bx bxs-file"></i>
+                    Genera Prefacturas
+                    <i *ngIf="!btnLoading" class="bx bxs-file"></i>
                   </button>
                 </div>
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: btnLoading2 }"
+                    [disabled]="btnLoading2"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="generateInvoice()">
-                    Genera Folios <i class="bx bxs-file"></i>
+                    Genera Folios
+                    <i *ngIf="!btnLoading2" class="bx bxs-file"></i>
                   </button>
                 </div>
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: btnLoading3 }"
+                    [disabled]="btnLoading3"
                     type="button"
                     class="btn btn-block btn-red btn-sm active mr-2 mb-2"
                     (click)="removeInvoice()">
                     Eliminar Folios
-                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <i
+                      *ngIf="!btnLoading3"
+                      class="fa fa-trash"
+                      aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -86,23 +97,32 @@
               <div class="row">
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: btnLoading4 }"
+                    [disabled]="btnLoading4"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="updateData()">
-                    Actualiza Datos <i class="fas fa-sync-alt"> </i>
+                    Actualiza Datos
+                    <i *ngIf="!btnLoading4" class="fas fa-sync-alt"> </i>
                   </button>
                 </div>
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: btnLoading5 }"
+                    [disabled]="btnLoading5"
                     type="button"
                     class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
                     (click)="openModal()">
                     Asig. Manual Folios
-                    <i class="bx bx-plus bx-sm float-icon"></i>
+                    <i
+                      *ngIf="!btnLoading5"
+                      class="bx bx-plus bx-sm float-icon"></i>
                   </button>
                 </div>
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: btnLoading6 }"
+                    [disabled]="btnLoading6"
                     type="button"
                     class="btn btn-block btn-danger btn-sm active mr-2 mb-2"
                     (click)="cancelInvoice()">
@@ -115,6 +135,8 @@
               <div class="row">
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: btnLoading7 }"
+                    [disabled]="btnLoading7"
                     type="button"
                     (click)="visualInvoice()"
                     class="btn btn-block btn-primary btn-sm active mr-2 mb-2">
@@ -124,6 +146,8 @@
                 </div>
                 <div class="col-12">
                   <button
+                    [ngClass]="{ loading: btnLoading8 }"
+                    [disabled]="btnLoading8"
                     (click)="printInvoice()"
                     type="button"
                     class="btn btn-block btn-primary active btn-sm mr-2 mb-2">
@@ -134,10 +158,14 @@
                 <div class="col-12">
                   <button
                     (click)="exportExcel()"
+                    [ngClass]="{ loading: btnLoading13 }"
+                    [disabled]="btnLoading13"
                     type="button"
                     class="btn btn-block btn-sm btn-success active mr-2 mb-2">
                     Exportar a Excel
-                    <i class="bx bx-download float-icon"></i>
+                    <i
+                      *ngIf="!btnLoading13"
+                      class="bx bx-download float-icon"></i>
                   </button>
                 </div>
               </div>
