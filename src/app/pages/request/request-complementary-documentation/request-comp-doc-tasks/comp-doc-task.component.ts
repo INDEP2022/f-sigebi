@@ -653,26 +653,22 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'review-guidelines-compensation':
         this.regDocView = true;
-        this.selectGoods = true;
         this.expRequest = true;
+        this.guidelines = true;
 
         this.saveRequest = true;
         this.turnReq = true;
-        this.sendEmail = true; //AGREGAR ENVIAR CORREO DE SOLICITUD (BOTON)
-        this.destinyJob = true; //AGREGAR OFICIO DESTINO (BOTON)
+        this.createReport = true;
 
-        this.searchAssociateFile = false;
         this.resultEyeVisitReport = false;
         this.resultVisits = false;
         this.validateGoodForEyeVisit = false;
         this.notifyReport = false;
         this.docRequest = false;
-        this.viewSelectedGoods = false;
+        this.viewSelectedGoods = true;
+        this.listGoodSelectedTitle = "Listado de Bienes";
         this.searchRequestSimGoods = false;
-        this.guidelines = false;
         this.dictumValidate = false;
-        this.regDocView = false;
-        this.createReport = false;
         this.rejectReq = false;
         break;
       case 'analysis-result-compensation':

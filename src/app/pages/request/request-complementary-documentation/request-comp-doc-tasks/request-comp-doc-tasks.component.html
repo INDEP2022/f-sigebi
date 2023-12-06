@@ -294,7 +294,7 @@
             [processDetonate]="processDetonate"></app-goods-list>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
-          <app-guidelines></app-guidelines>
+          <app-guidelines (onSave)="onSaveGuidelines($event)"></app-guidelines>
         </tab>
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
           <app-register-dictum-val></app-register-dictum-val>
@@ -343,10 +343,3 @@
     </div>
   </div>
 </app-card>
-<div>
-  <img
-    *ngIf="loadingTurn"
-    src="assets/images/loader-button.gif"
-    alt="loading"
-    id="loading" />
-</div>
