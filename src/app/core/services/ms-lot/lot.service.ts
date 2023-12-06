@@ -503,4 +503,8 @@ export class LotService extends HttpService {
   getEatParametersForLotByFilter(params: HttpParams) {
     return this.get('eat-parameters-for-lot', params);
   }
+
+  getAppsExportExcelComerFacturas(body) {
+    return this.post(LotEndpoints.AppsExportExcelComerFacturas, body);
+  }
 }

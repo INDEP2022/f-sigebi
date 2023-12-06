@@ -16,19 +16,20 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2';
+import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
-import { ITask } from 'src/app/core/models/ms-task/task-model';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -37,7 +38,8 @@ import { ITask } from 'src/app/core/models/ms-task/task-model';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override finish: boolean;
   protected override btnRequestAprove: boolean;
   protected override sendEmail: boolean;
@@ -114,9 +116,12 @@ export class RequestCompDocTasksComponent
     signedVisit: false,
     signedDictum: false,
     signedValDictum: false,
+    signedOffice: false,
     guidelines: false,
     genDictum: false,
+    genOffice: false,
     genValDictum: false,
+    sendEmail: false,
   };
 
   /* INJECTIONS
@@ -230,7 +235,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
     const initialState: Partial<CreateReportComponent> = {
@@ -712,6 +717,18 @@ export class RequestCompDocTasksComponent
     });
   }
 
+  openSendEmail(): void {
+    const modalRef = this.modalService.show(SendRequestEmailComponent, {
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSend.subscribe(next => {
+      if (next) {
+        console.log(next);
+      }
+    });
+  }
+
   taskRechazar(data) {
     const _task = JSON.parse(localStorage.getItem('Task'));
     const user: any = this.authService.decodeToken();
@@ -723,7 +740,7 @@ export class RequestCompDocTasksComponent
     body['subtype'] = 'Registro_documentacion';
     body['ssubtype'] = 'REJECT';
 
-    this.updateTask(this.taskInfo.taskDefinitionId, "PROCESO");
+    this.updateTask(this.taskInfo.taskDefinitionId, 'PROCESO');
 
     this.requestInfo.rejectionComment = data.comment;
 
@@ -754,7 +771,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -774,7 +791,7 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
 
@@ -785,7 +802,6 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'verify-compliance-return':
-
         if (!this.validate.vercom) {
           this.showError('Verifique el cumplimiento de los artículos');
           return false;
@@ -822,7 +838,7 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
 
@@ -839,7 +855,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'notify-transfer-similar-goods':
-
         if (!this.validate.signedNotify) {
           //this.showError('Firme el reporte de notificación');
           //return false;
@@ -848,17 +863,14 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'eye-visit-similar-goods':
-
         break;
 
       case 'validate-eye-visit-similar-goods':
-
         //Validar aprobacion de visita ocular
 
         break;
 
       case 'validate-opinion-similar-goods':
-
         if (!this.validate.signedVisit) {
           //this.showError('Firme el reporte de visita ocular');
           //return false;
@@ -874,8 +886,8 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie solicitud de bienes');
-          return false;
+          //this.showError('Asocie solicitud de bienes');
+          //return false;
         }
 
         if (!this.validate.files) {
@@ -887,8 +899,8 @@ export class RequestCompDocTasksComponent
 
       case 'review-guidelines-compensation':
         if (!this.validate.guidelines) {
-          this.showError('Verifique las observaciones de lineamientos');
-          return false;
+          //this.showError('Verifique las observaciones de lineamientos');
+          //return false;
         }
 
         if (!this.validate.files) {
@@ -897,8 +909,8 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.validate.genDictum) {
-          this.showError('Genera el dictamen de resarcimiento');
-          return false;
+          //this.showError('Genera el dictamen de resarcimiento');
+          //return false;
         }
 
         break;
@@ -958,14 +970,36 @@ export class RequestCompDocTasksComponent
 
       //CASOS INFORMACION DE BIENES
       case 'register-request-compensation':
+        if (!this.validate.regdoc) {
+          this.showError('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showError('Asoicie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
         break;
 
       case 'review-guidelines-compensation':
+        if (!this.validate.sendEmail) {
+          this.showError('Enviar el correo de notificación al contribuyente');
+          return false;
+        }
+        if (!this.validate.genOffice) {
+          this.showError('Generar el oficio destino');
+          return false;
+        }
         break;
 
       case 'analysis-result-compensation':
-        break;
-
+        if (!this.validate.signedOffice) {
+          this.showError('Firmar el oficio destino');
+          return false;
+        }
         break;
     }
 
@@ -998,14 +1032,17 @@ export class RequestCompDocTasksComponent
     this.onLoadToast('error', 'Error', text);
   }
 
-  openSendEmail() { }
+  onSaveGuidelines(row) {
+    console.log(row);
+    this.validate.guidelines = true;
+  }
 
   btnRequestAprobar() {
     this.alertQuestion(
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question) {
         //Cerrar tarea//
@@ -1041,9 +1078,9 @@ export class RequestCompDocTasksComponent
     //Turnamos la solicitud
   }
 
-  openDocument(action) { }
+  openDocument(action) {}
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 }
 
 export function isNullOrEmpty(value: any): boolean {

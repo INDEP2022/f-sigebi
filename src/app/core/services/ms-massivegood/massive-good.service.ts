@@ -244,8 +244,8 @@ export class MassiveGoodService extends HttpService {
     return this.get(`${MassiveGoodEndpoints.ApplicationCSV}?status=${status}`);
   }
 
-  getApplicationRegisterCountCsv(params: _Params) {
-    return this.get(MassiveGoodEndpoints.ApplicationRegisterCountCsv, params);
+  detailDonationEventExcel(params: any) {
+    return this.post(this.route.detailDonationEventExcel, params);
   }
 
   goodsExpedient(body: IGoodsExpedient) {

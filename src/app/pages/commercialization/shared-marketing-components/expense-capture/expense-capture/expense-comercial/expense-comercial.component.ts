@@ -47,6 +47,7 @@ import { SpentMService } from '../../services/spentM.service';
 import { NotifyComponent } from '../notify/notify.component';
 import { COLUMNS } from './columns';
 import { NotLoadedsModalComponent } from './not-loadeds-modal/not-loadeds-modal.component';
+import { RetentionsModalComponent } from './retentions-modal/retentions-modal.component';
 
 @Component({
   selector: 'app-expense-comercial',
@@ -198,6 +199,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     let newBody = { ...this.form.value };
     delete newBody.publicLot;
     delete newBody.policie;
+    delete newBody.descontract;
+    delete newBody.padj;
+    delete newBody.psadj;
+    delete newBody.pssadj;
     return {
       ...newBody,
       amount: this.dataService.amount ?? 0,
@@ -1473,9 +1478,17 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
   }
 
+  showRetentions() {
+    let config: ModalOptions = {
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(RetentionsModalComponent, config);
+  }
+
   imprimeRev() {
-    this.loader.load = true;
     if (this.paymentRequestNumber.value) {
+      this.loader.load = true;
       this.sirsaeService
         .insertModuleCont(this.paymentRequestNumber.value)
         .pipe(take(1))
@@ -1488,7 +1501,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           },
         });
     } else {
-      this.loader.load = false;
+      this.alert('warning', 'Requiere una solicitud de pago', '');
     }
   }
 
