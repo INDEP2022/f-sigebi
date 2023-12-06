@@ -38,7 +38,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override finish: boolean;
   protected override btnRequestAprove: boolean;
   protected override sendEmail: boolean;
@@ -234,7 +235,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
     const initialState: Partial<CreateReportComponent> = {
@@ -770,7 +771,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1041,7 +1042,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question) {
         //Cerrar tarea//
@@ -1077,9 +1078,9 @@ export class RequestCompDocTasksComponent
     //Turnamos la solicitud
   }
 
-  openDocument(action) { }
+  openDocument(action) {}
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 }
 
 export function isNullOrEmpty(value: any): boolean {

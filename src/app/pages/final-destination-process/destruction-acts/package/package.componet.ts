@@ -170,10 +170,10 @@ export class PackageComponent extends BasePage implements OnInit {
   }
 
   acept() {
-    if (this.packagedet == null) {
+    /* if (this.packagedet == null) {
       this.alert('warning', 'Seleccione un paquete detalle', '');
       return;
-    }
+    } */
 
     if (this.noPackage == null) {
       this.alert('warning', 'Seleccione un paquete', '');
@@ -182,19 +182,18 @@ export class PackageComponent extends BasePage implements OnInit {
 
     const body: IPbSelPaq = {
       noPaquete: parseInt(this.noPackage),
-      blkAct: [
-        {
-          no_acta: parseInt(this.no_acta),
-        },
-      ],
-      /* blkBie: [],
-      blkDet: [], */
+      screen: 'FACTDESACTASDESTR',
     };
 
     this.proceedingService.pbSelPaq(body).subscribe(
       res => {
         console.log(res);
-        this.alert('success', 'Proceso terminado', '');
+        this.bsModel.content.callback({
+          expedient: res.expedient,
+          proceeding: res.proceeding,
+          insertedRecords: res.insertedRecords,
+        });
+        this.close();
       },
       err => {
         console.log(err);

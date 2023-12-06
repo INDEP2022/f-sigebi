@@ -377,24 +377,108 @@
       [labelTemplate]="tramLabel"
       [optionTemplate]="tramOption">
     </ng-custom-select-loading>
-    <!-- <div class="row" *ngIf="showContract">
-      <app-select-modal-table-shared
+    <div class="d-flex mt-3" *ngIf="showContract">
+      <div>
+        <button
+          type="button"
+          tooltip="Contratos"
+          class="btn btn-primary btn-sm active pl-3"
+          style="width: 36px"
+          [disabled]="!conceptNumberValue || !address"
+          (click)="openContracts()">
+          <i class="bx bx-list-ul bx-sm float-icon"></i>
+        </button>
+      </div>
+
+      <div style="width: 100%; padding-left: 14px">
+        <form-field [control]="form.get('contractNumber')" label="Contrato">
+          <ng-select
+            formControlName="contractNumber"
+            class="form-control scroll-line"
+            bindValue="value"
+            bindLabel="label"
+            [readonly]="true"
+            [items]="contracts">
+          </ng-select>
+        </form-field>
+      </div>
+    </div>
+    <ng-template #tipadjLabel let-item="item">
+      {{ item.clktipadjud }} - {{ item.cvdsc }}
+    </ng-template>
+    <ng-template #tipadjOption let-item="item">
+      <div [title]="item.clktipadjud + '-' + item.cvdsc">
+        {{ item.clktipadjud }} - {{ item.cvdsc }}
+      </div>
+    </ng-template>
+    <div *ngIf="showTipAdj">
+      <div class="row mt-4 pl-3">
+        <ng-custom-select-loading
+          [form]="form"
+          [updateValues]="true"
+          formControlName="padj"
+          label="PADJ"
+          [path]="pathPadj"
+          value="clktipadjud"
+          bindLabel="cvdsc"
+          paramSearch="filter.cvdsc"
+          prefixSearch="$ilike"
+          secondParamSearch="filter.clktipadjud"
+          [labelTemplate]="tipadjLabel"
+          [optionTemplate]="tipadjOption">
+        </ng-custom-select-loading>
+      </div>
+      <div class="row mt-4 pl-3">
+        <ng-custom-select-loading
+          [form]="form"
+          [updateValues]="true"
+          [disabled]="!padjValue"
+          formControlName="psadj"
+          label="PSADJ"
+          [path]="pathPsadj"
+          value="clktipadjud"
+          bindLabel="cvdsc"
+          paramSearch="filter.cvdsc"
+          prefixSearch="$ilike"
+          secondParamSearch="filter.clktipadjud"
+          [labelTemplate]="tipadjLabel"
+          [optionTemplate]="tipadjOption">
+        </ng-custom-select-loading>
+      </div>
+      <div class="row mt-4 pl-3">
+        <ng-custom-select-loading
+          [form]="form"
+          [updateValues]="true"
+          [disabled]="!psadjValue"
+          formControlName="pssadj"
+          label="PSSADJ"
+          [path]="pathPssadj"
+          value="clktipadjud"
+          bindLabel="cvdsc"
+          paramSearch="filter.cvdsc"
+          prefixSearch="$ilike"
+          secondParamSearch="filter.clktipadjud"
+          [labelTemplate]="tipadjLabel"
+          [optionTemplate]="tipadjOption">
+        </ng-custom-select-loading>
+      </div>
+    </div>
+    <div *ngIf="showAdj">
+      <ng-custom-select-loading
         [form]="form"
-        [maxlengthInput]="12"
-        [disabled]="false"
-        [onlyButton]="true"
-        [widthDescription]="false"
-        [haveSelectColumns]="true"
-        [haveColumnFilters]="true"
-        [ilikeFilters]="ilikeFilters"
-        [dateFilters]="dateFilters"
-        label="Contrato"
-        formField="contractNumber"
-        [service]="paymentService"
-        [columnsType]="columns"
-        id="expenseNumber"
-        title="Contratos"
-        (selectRow)="fillContract($event)"></app-select-modal-table-shared>
-    </div> -->
+        [updateValues]="true"
+        [disabled]="!psadjValue"
+        formControlName="adj"
+        label="Adjudicación"
+        [path]="pathPssadj"
+        value="clktipadjud"
+        bindLabel="cvdsc"
+        paramSearch="filter.cvdsc"
+        prefixSearch="$ilike"
+        secondParamSearch="filter.clktipadjud"
+        [labelTemplate]="tipadjLabel"
+        [optionTemplate]="tipadjOption">
+      </ng-custom-select-loading>
+    </div>
   </div>
 </ng-container>

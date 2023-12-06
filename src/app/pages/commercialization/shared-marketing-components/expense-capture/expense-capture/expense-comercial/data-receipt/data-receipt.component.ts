@@ -1,8 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
+import { IContract } from '../../../models/payment';
 import { ExpenseCaptureDataService } from '../../../services/expense-capture-data.service';
 import { ExpensePaymentService } from '../../../services/expense-payment.service';
+import { COLUMNS } from './contract-columns';
+import { ContractsModalComponent } from './contracts-modal/contracts-modal.component';
 
 @Component({
   selector: 'app-data-receipt',
@@ -52,14 +56,16 @@ export class DataReceiptComponent implements OnInit {
     }
   }
   listPayments = ['TRANSFERENCIA', 'CHEQUE', 'INTERCAMBIO'];
-
+  columns = { ...COLUMNS };
+  contracts = [];
   listComproaf = [
     { id: '1', value: 'INDEP' },
     { id: '2', value: 'MANDATO' },
   ];
   constructor(
     private dataService: ExpenseCaptureDataService,
-    public paymentService: ExpensePaymentService
+    public paymentService: ExpensePaymentService,
+    private modalService: BsModalService
   ) {
     // SearchFilter.NOT;
   }
@@ -192,6 +198,14 @@ export class DataReceiptComponent implements OnInit {
     return this.form.get('nomEmplRequest');
   }
 
+  get conceptNumber() {
+    return this.form ? this.form.get('conceptNumber') : null;
+  }
+
+  get conceptNumberValue() {
+    return this.conceptNumber ? this.conceptNumber.value : null;
+  }
+
   get typepe() {
     return this.form.get('typepe');
   }
@@ -202,6 +216,30 @@ export class DataReceiptComponent implements OnInit {
 
   get contractNumber() {
     return this.form.get('contractNumber');
+  }
+
+  get address() {
+    return this.dataService.address;
+  }
+
+  get padj() {
+    return this.form ? this.form.get('padj') : null;
+  }
+
+  get padjValue() {
+    return this.padj ? this.padj.value : null;
+  }
+
+  get psadj() {
+    return this.form ? this.form.get('psadj') : null;
+  }
+
+  get psadjValue() {
+    return this.psadj ? this.psadj.value : null;
+  }
+
+  get pssadj() {
+    return this.form.get('pssadj');
   }
 
   get adj() {
@@ -228,5 +266,50 @@ export class DataReceiptComponent implements OnInit {
     return this.dataService.showTipAdj;
   }
 
+  get pathPadj() {
+    return 'directaward/api/v1/tmp-tip-adj/get-all-tmp-tip-adj-where-1';
+  }
+
+  get pathPsadj() {
+    return (
+      'directaward/api/v1/tmp-tip-adj/get-all-tmp-tip-adj-where-2' +
+      (this.padjValue ? '/' + this.padjValue : '')
+    );
+  }
+
+  get pathPssadj() {
+    return (
+      'directaward/api/v1/tmp-tip-adj/get-all-tmp-tip-adj-where-3' +
+      (this.psadjValue ? '/' + this.psadjValue : '')
+    );
+  }
+
   ngOnInit() {}
+
+  openContracts() {
+    let config: ModalOptions = {
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+      initialState: {
+        callback: (obj: { selected: IContract }) => {
+          let { selected } = obj;
+          if (selected) {
+            this.contracts = [];
+            this.contracts.push({
+              value: selected.contractNumber,
+              label: selected.contractNumber + '-' + selected.desContract,
+            });
+            this.contractNumber.setValue(selected.contractNumber);
+            this.form.get('descontract').setValue(selected.desContract);
+            this.form.get('clkpv').setValue(selected.clkpv);
+            this.form.get('padj').setValue(selected.padj);
+            this.form.get('psadj').setValue(selected.psadj);
+            this.form.get('pssadj').setValue(selected.pssadj);
+            this.form.get('adj').setValue(selected.adj);
+          }
+        },
+      },
+    };
+    this.modalService.show(ContractsModalComponent, config);
+  }
 }
