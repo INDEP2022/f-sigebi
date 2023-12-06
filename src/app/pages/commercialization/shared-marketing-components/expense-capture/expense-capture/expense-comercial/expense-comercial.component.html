@@ -340,6 +340,13 @@
                 Exportar a Excel
               </button>
               <button
+                *ngIf="address !== 'M'"
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                (click)="showRetentions()">
+                Catalogo de Retención
+              </button>
+              <button
                 *ngIf="address === 'M'"
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
