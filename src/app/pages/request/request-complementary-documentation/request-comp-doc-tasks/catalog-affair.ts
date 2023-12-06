@@ -16,6 +16,19 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     //Se crea solicitud decumentación complementaria
     case 'create':
       switch (affair) {
+
+        case 27: //PROCESO DE ABANDONO
+          return {
+            title: `DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-request-return',
+            process: 'DRegistroSolicitudes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+
         case 10: //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
           return {
             title: `DEVOLUCIÓN: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
