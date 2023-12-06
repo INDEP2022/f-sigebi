@@ -8,6 +8,7 @@ import {
   IResponse,
 } from '../../interfaces/list-response.interface';
 import {
+  IAvailableFestatus,
   IDetailProceedingsDevollution,
   IDetailProceedingsDevollutionDelete,
   IPbSelPaq,
@@ -349,5 +350,9 @@ export class ProceedingsService extends HttpService {
 
   queryRegAdminGood(body: IQueryRegAdminGood) {
     return this.post('aplication/query-reg-del-admin-good', body);
+  }
+
+  getAvailableFestatus(body: IAvailableFestatus) {
+    return this.post('aplication/getAvailable', body);
   }
 }

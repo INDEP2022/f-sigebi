@@ -1,7 +1,7 @@
 export interface IProccedingsDeliveryReception {
   id?: number;
   keysProceedings?: string;
-  elaborationDate?: number;
+  elaborationDate?: any;
   datePhysicalReception?: number;
   address?: string;
   statusProceedings?: string;

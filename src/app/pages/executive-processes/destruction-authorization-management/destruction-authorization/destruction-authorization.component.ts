@@ -38,15 +38,18 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IFestatus } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { IAvailableFestatus } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -187,6 +190,7 @@ export class DestructionAuthorizationComponent
 
   //AGREGADO POR GRIGORK
   selectGoodProc: any = null;
+  selectGoodGen: any = null;
 
   @ViewChild('focusElement', { static: true })
   focusElement: ElementRef<HTMLInputElement>;
@@ -218,6 +222,7 @@ export class DestructionAuthorizationComponent
     private store: Store<IDestructionAuth>,
     private segAccessXArea: SegAcessXAreasService,
     private authService: AuthService,
+
     private documentsService: DocumentsService,
     private siabService: SiabService,
     private massiveGoodService: MassiveGoodService,
@@ -225,7 +230,9 @@ export class DestructionAuthorizationComponent
     private goodprocessService: GoodprocessService,
     private copiesOfficialOpinionService: CopiesOfficialOpinionService,
     //SERVICIOS AGREGADOS POR GRIGORK
-    private expedientService: ExpedientService
+    private expedientService: ExpedientService,
+    private proceedingService: ProceedingsService,
+    private goodTrackerService: GoodTrackerService
   ) {
     super();
 
@@ -277,7 +284,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...GOODS_COLUMNS,
-        selection: {
+        /* selection: {
           title: '',
           sort: false,
           type: 'custom',
@@ -285,7 +292,7 @@ export class DestructionAuthorizationComponent
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGoodPSD(instance),
-        },
+        }, */
       },
       hideSubHeader: false,
       rowClassFunction: (row: any) => {
@@ -556,6 +563,19 @@ export class DestructionAuthorizationComponent
           this.setState();
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
+            /* const paramsF = new FilterParams();
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            this.goodTrackerService
+              .getAllTmpTracker(paramsF.getParams())
+              .subscribe(res => {
+                res['data'].forEach(element => {
+                  console.log(element);
+                });
+              },
+              err => {
+
+              }); */
+
             this.insertDetailFromGoodsTracker();
           }
         },
@@ -685,7 +705,7 @@ export class DestructionAuthorizationComponent
               console.log(err);
               this.alert(
                 'warning',
-                `El Bien: ${this.array[0].id}, ya ha sido ingresado en una solicitud`,
+                `El Bien: ${this.selectGoodGen.id}, ya ha sido ingresado en una solicitud`,
                 ''
               ); // Asumiendo que 'alert' se encarga de mostrar la alerta
               this.array = [...this.tempArray];
@@ -1064,10 +1084,28 @@ export class DestructionAuthorizationComponent
     );
   }
 
+  correctDateFormat(dateStr: string): string {
+    if (/^\d{4}[-\/]\d{2}[-\/]\d{2}$/.test(dateStr)) {
+      return dateStr;
+    }
+
+    let parts = dateStr.split(/[-/]/);
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+
   updateProceeding(
     id: string | number,
     proceeding: Partial<IProccedingsDeliveryReception>
   ) {
+    proceeding.closeDate = new Date(
+      this.correctDate(proceeding.closeDate)
+    ).toString();
+    proceeding.elaborationDate = new Date(
+      this.correctDate(
+        this.correctDateFormat(proceeding.elaborationDate.toString())
+      )
+    ).toString();
+    console.log(this.correctDateFormat(proceeding.elaborationDate));
     return this.proceedingsDeliveryReceptionService.update(id, proceeding).pipe(
       catchError(error => {
         this.onLoadToast(
@@ -1370,12 +1408,10 @@ export class DestructionAuthorizationComponent
     this.goodService.getGoodByStatusPDS(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
-          let obj = {
-            vcScreen: 'FESTATUSRGA',
-            goodNumber: item.id,
-          };
-          const di_dispo = await this.goodStatus(obj);
-          item['di_disponible'] = di_dispo;
+          console.log(item);
+          const di_dispo = await this.goodStatus(item);
+          console.log(di_dispo);
+          item['di_disponible'] = di_dispo.DI_DISPONIBLE;
         });
         await Promise.all(result);
         this.show2 = false;
@@ -1445,20 +1481,20 @@ export class DestructionAuthorizationComponent
   }
 
   //StatusBien
-  async goodStatus(id: any): Promise<string> {
+  async goodStatus(item: any): Promise<any> {
     return new Promise<string>((resolve, reject) => {
-      this.goodprocessService.getScreenGood2(id).subscribe({
-        next: async (response: any) => {
-          if (response.data) {
-            resolve('S');
-          } else {
-            resolve('N');
-          }
+      const body: IAvailableFestatus = {
+        goodId: item.id,
+        status: item.status,
+        screenkey: 'FESTATUSRGA',
+      };
+
+      this.proceedingService.getAvailableFestatus(body).subscribe(
+        res => {
+          resolve(res);
         },
-        error: () => {
-          resolve('N');
-        },
-      });
+        err => resolve(err)
+      );
     });
   }
 
@@ -1502,7 +1538,7 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (this.array.length === 0) {
+    if (this.selectGoodGen == null) {
       this.alert('warning', 'Debe seleccionar un Bien', '');
       return;
     }
@@ -1511,15 +1547,25 @@ export class DestructionAuthorizationComponent
       this.alert('warning', 'Es necesario contar con el No. de Acta', '');
       return;
     }
+
+    if (this.selectGoodGen.di_disponible != 'S') {
+      this.alert(
+        'warning',
+        'El Bien no está disponible',
+        'El bien no está disponible para ser agregado'
+      );
+      return;
+    }
+
     let body = {
       pVcScreem: 'FESTATUSRGA',
       pActaNumber: this.proceedingForm.get('id').value,
       pStatusActa: this.proceedingForm.get('statusProceedings').value,
-      pGoodNumber: this.array[0].id,
+      pGoodNumber: this.selectGoodGen.id,
       pDiAvailable: '',
-      pDiActa: this.array[0].requestFolio,
+      pDiActa: this.selectGoodGen.requestFolio,
       pCveActa: this.proceedingForm.get('keysProceedings').value,
-      pAmount: this.array[0].quantity,
+      pAmount: this.selectGoodGen.quantity,
     };
     this.massiveGoodService.InsertGood(body).subscribe({
       next: data => {
@@ -1598,6 +1644,12 @@ export class DestructionAuthorizationComponent
     }
 
     console.log(this.goodsAct);
+  }
+
+  //SELECT GOOD ACTA
+  selectGoodGeneral(good: any) {
+    console.log(good);
+    this.selectGoodGen = good.data;
   }
 
   //SELECT GOOD ACTA
