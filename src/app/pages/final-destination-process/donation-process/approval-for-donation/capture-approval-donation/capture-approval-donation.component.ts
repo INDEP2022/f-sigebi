@@ -2387,6 +2387,17 @@ export class CaptureApprovalDonationComponent
         );
     });
   }
+
+  return() {
+    this.router.navigate(
+      [
+        '/pages/final-destination-process/donation-process/approval-for-donation',
+      ],
+      {
+        queryParams: {},
+      }
+    );
+  }
 }
 
 export interface IParamsDonac {
