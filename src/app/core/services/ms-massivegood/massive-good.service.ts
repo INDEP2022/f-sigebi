@@ -251,4 +251,8 @@ export class MassiveGoodService extends HttpService {
   goodsExpedient(body: IGoodsExpedient) {
     return this.post('application/pup-good-proceedings', body);
   }
+
+  getApplicationRegisterCountCsv(params: _Params) {
+    return this.get(MassiveGoodEndpoints.ApplicationRegisterCountCsv, params);
+  }
 }

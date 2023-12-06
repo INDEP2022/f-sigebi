@@ -45,6 +45,7 @@ import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictat
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -64,6 +65,7 @@ import {
   ACTA_RECEPTION_COLUMNS,
   DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
   DICTATION_COLUMNS,
+  GOODS_COLUMNS,
   PROCEEDINGS_COLUMNS,
 } from './columns';
 import {
@@ -220,6 +222,7 @@ export class DestructionAuthorizationComponent
     private store: Store<IDestructionAuth>,
     private segAccessXArea: SegAcessXAreasService,
     private authService: AuthService,
+
     private documentsService: DocumentsService,
     private siabService: SiabService,
     private massiveGoodService: MassiveGoodService,
@@ -228,7 +231,8 @@ export class DestructionAuthorizationComponent
     private copiesOfficialOpinionService: CopiesOfficialOpinionService,
     //SERVICIOS AGREGADOS POR GRIGORK
     private expedientService: ExpedientService,
-    private proceedingService: ProceedingsService
+    private proceedingService: ProceedingsService,
+    private goodTrackerService: GoodTrackerService
   ) {
     super();
 
@@ -278,9 +282,9 @@ export class DestructionAuthorizationComponent
       //Bienes en estatus PDS
       ...this.settings,
       actions: false,
-      /* columns: {
+      columns: {
         ...GOODS_COLUMNS,
-        selection: {
+        /* selection: {
           title: '',
           sort: false,
           type: 'custom',
@@ -288,8 +292,8 @@ export class DestructionAuthorizationComponent
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGoodPSD(instance),
-        },
-      }, */
+        }, */
+      },
       hideSubHeader: false,
       rowClassFunction: (row: any) => {
         const di_disponible = row.data.di_disponible;
@@ -559,6 +563,19 @@ export class DestructionAuthorizationComponent
           this.setState();
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
+            /* const paramsF = new FilterParams();
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            this.goodTrackerService
+              .getAllTmpTracker(paramsF.getParams())
+              .subscribe(res => {
+                res['data'].forEach(element => {
+                  console.log(element);
+                });
+              },
+              err => {
+
+              }); */
+
             this.insertDetailFromGoodsTracker();
           }
         },
@@ -688,7 +705,7 @@ export class DestructionAuthorizationComponent
               console.log(err);
               this.alert(
                 'warning',
-                `El Bien: ${this.array[0].id}, ya ha sido ingresado en una solicitud`,
+                `El Bien: ${this.selectGoodGen.id}, ya ha sido ingresado en una solicitud`,
                 ''
               ); // Asumiendo que 'alert' se encarga de mostrar la alerta
               this.array = [...this.tempArray];
@@ -1067,10 +1084,28 @@ export class DestructionAuthorizationComponent
     );
   }
 
+  correctDateFormat(dateStr: string): string {
+    if (/^\d{4}[-\/]\d{2}[-\/]\d{2}$/.test(dateStr)) {
+      return dateStr;
+    }
+
+    let parts = dateStr.split(/[-/]/);
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+
   updateProceeding(
     id: string | number,
     proceeding: Partial<IProccedingsDeliveryReception>
   ) {
+    proceeding.closeDate = new Date(
+      this.correctDate(proceeding.closeDate)
+    ).toString();
+    proceeding.elaborationDate = new Date(
+      this.correctDate(
+        this.correctDateFormat(proceeding.elaborationDate.toString())
+      )
+    ).toString();
+    console.log(this.correctDateFormat(proceeding.elaborationDate));
     return this.proceedingsDeliveryReceptionService.update(id, proceeding).pipe(
       catchError(error => {
         this.onLoadToast(
