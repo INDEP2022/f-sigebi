@@ -1,0 +1,30 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Catalogo de Retenciones</h5>
+  </div>
+  <div body>
+    <form-loader *ngIf="loading"></form-loader>
+    <div class="pt-4">
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '300px' }">
+        <ng2-smart-table
+          [attr.class]="'table-responsive table-bordered'"
+          [settings]="settings"
+          [source]="dataPaginated">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-primary active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
