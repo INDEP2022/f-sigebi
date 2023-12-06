@@ -1,28 +1,14 @@
 <app-card [header]="true">
   <div class="ch-content justify-content-between" header>
     <div class="">
-      <h5
-        class="title"
-        *ngIf="
-          this.requestInfo?.affair == 13 ||
-          this.requestInfo?.affair == 10 ||
-          this.requestInfo?.affair == 33
-        ">
+      <h5 class="title">
         {{ title }}
-      </h5>
-      <h5
-        class="title"
-        *ngIf="
-          this.requestInfo?.affair != 13 &&
-          this.requestInfo?.affair != 10 &&
-          this.requestInfo?.affair != 33
-        ">
-        {{ title }}
-        {{ requestId }}&#44; Contribuyente&#58; {{ contributor }}
       </h5>
     </div>
+  </div>
+  <div body>
     <div class="">
-      <div class="d-flex flex-row-reverse mt-2" *ngIf="screenWidth >= 1200">
+      <div class="d-flex flex-row-reverse" *ngIf="screenWidth >= 1200">
         <ng-template #turnar>
           <div class="mx-1" *ngIf="turnReq && !complementaryDoc">
             <button
@@ -37,7 +23,8 @@
 
         <div
           *ngIf="
-            processDetonate === 'DECOMISO' ||
+            finish ||
+              processDetonate === 'DECOMISO' ||
               processDetonate === 'EXT_DOMINIO' ||
               processDetonate === 'ABANDONO' ||
               processDetonate === 'complementaryDoc';
@@ -57,11 +44,11 @@
         <div class="mx-1" *ngIf="btnRequestAprove">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-sm btn-success active"
             [disabled]=""
             (click)="btnRequestAprobar()">
-            <i class="bx bx-mail-send mr-1 float-icon"></i>
             Solicitar Aprobación
+            <i class="fa fa-envelope"></i>
           </button>
         </div>
 
@@ -86,7 +73,7 @@
         <div class="mx-1" *ngIf="resultEyeVisitReport || makeResultPaperReport">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-info active btn-sm"
             [disabled]=""
             (click)="reportResultEyeVisit()">
             Reporte Resultado Visita Ocular
@@ -96,17 +83,17 @@
         <div class="mx-1" *ngIf="notifyReport">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-info active btn-sm"
             [disabled]=""
             (click)="openNotifyReport()">
-            <i class="bx bx-notepad mr-1 float-icon"></i> Reporte de
-            Notificacion
+            Reporte de Notificacion
+            <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="RequestEconomicResourcesReport">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-info active btn-sm"
             [disabled]=""
             (click)="openRequestResourcesReport()">
             Solicitud Recursos Económicos
@@ -116,10 +103,11 @@
         <div class="mx-1" *ngIf="createReport">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-info active btn-sm"
             [disabled]=""
             (click)="openReport()">
-            <i class="bx bx-notepad mr-1 float-icon"></i> Dictamen Resarcimiento
+            Dictamen Resarcimiento
+            <i class="bx bx-file bx-m float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="destinyJob">
@@ -134,30 +122,30 @@
         <div class="mx-1" *ngIf="btnAprove">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-sm btn-success active"
             [disabled]=""
             (click)="btnAprobar()">
-            <i class="bx bx-mail-send mr-1 float-icon"></i>
             Aprobar
+            <i class="fa fa-check" aria-hidden="true"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="dictumReturn">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-info active btn-sm"
             [disabled]=""
             (click)="openReport()">
-            Dictamen Devolución <i class="fa fa-save mr-1 float-icon"></i>
+            Dictamen Devolución <i class="bx bx-file bx-m float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="btnDecline">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-danger btn-sm active mr-3"
             [disabled]=""
             (click)="rejectRequest()">
-            <i class="bx bx-mail-send mr-1 float-icon"></i>
             Rechazar
+            <i class="bx bx-x bx-m float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="sendEmail">
@@ -202,11 +190,13 @@
             <li role="menuitem">
               <a class="dropdown-item bg-primary text-light" (click)="(true)"
                 >Dictamen Resarcimiento
-                <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+                <i class="bx bx-file bx-m float-icon"></i>
               </a>
             </li>
             <li role="menuitem">
-              <a class="dropdown-item bg-primary text-light" (click)="(true)">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="updateRequest()">
                 Guardar
                 <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
               </a>
@@ -244,8 +234,7 @@
         </div>
       </div>
     </div>
-  </div>
-  <div body>
+
     <app-request-information-similar-goods
       [request]="requestInfo"></app-request-information-similar-goods>
 
@@ -285,7 +274,7 @@
         </tab>
         <tab
           *ngIf="regDocView"
-          heading="Registro de Documentación"
+          heading="Información de la solicitud"
           id="documentationTab">
           <app-register-documentation-view
             [requestId]="requestId"></app-register-documentation-view>
@@ -294,7 +283,8 @@
           *ngIf="searchRequestSimGoods"
           heading="Buscar Solicitudes de Bienes Similares"
           id="requestSimilarGoodsTab">
-          <app-search-request-similar-goods></app-search-request-similar-goods>
+          <app-search-request-similar-goods
+            [selected]="true"></app-search-request-similar-goods>
         </tab>
 
         <tab

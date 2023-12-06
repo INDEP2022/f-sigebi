@@ -63,3 +63,8 @@ export interface IPrincipalPackageDec {
   numberPackage: string;
   numberGood: number;
 }
+
+export interface IGoodsExpedient {
+  proceedingsNumber: number;
+  minutesNumber: number;
+}
