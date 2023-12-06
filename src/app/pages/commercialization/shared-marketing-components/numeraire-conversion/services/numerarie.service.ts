@@ -16,6 +16,7 @@ export class NumerarieService {
   selectedExpenseData: IFillExpenseDataCombined;
   reloadExpenses = 0;
   showParcial = true;
+  validParcial = true;
   constructor(
     private lotService: LotService,
     private comertpEventService: ComerTpEventosService
@@ -23,7 +24,7 @@ export class NumerarieService {
 
   validateParcialButtons(address: string, event: IComerEvent) {
     if (address === 'I') {
-      this.showParcial = true;
+      this.validParcial = true;
       const filterParams = new FilterParams();
       filterParams.addFilter('idStatusVta', 'GARA');
       filterParams.addFilter('idEvent', event.id);
@@ -33,11 +34,11 @@ export class NumerarieService {
         .subscribe({
           next: response => {
             if (response && response.data && response.data.length === 0) {
-              this.showParcial = false;
+              this.validParcial = false;
             }
           },
           error: err => {
-            this.showParcial = false;
+            this.validParcial = false;
           },
         });
     }

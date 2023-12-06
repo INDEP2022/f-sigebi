@@ -153,7 +153,8 @@ export class NumeraireConversionAuctionsComponent
 
   get validParcial() {
     return this.selectedEvent
-      ? this.selectedEvent.statusVtaId === 'VEN'
+      ? this.selectedEvent.statusVtaId === 'VEN' &&
+          this.numerarieService.validParcial
       : false;
   }
 
