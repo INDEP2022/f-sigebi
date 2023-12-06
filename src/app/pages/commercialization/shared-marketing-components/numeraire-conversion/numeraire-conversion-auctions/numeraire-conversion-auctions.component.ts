@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
 import { ComerieventosService } from '../services/comerieventos.service';
@@ -31,6 +32,8 @@ export class NumeraireConversionAuctionsComponent
   dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
   user: any;
+
+  validParcial = true;
   selectNewEvent: IComerEvent;
   constructor(
     private convNumeraryService: ConvNumeraryService,
@@ -41,7 +44,8 @@ export class NumeraireConversionAuctionsComponent
     private eventMService: ComermeventosService,
     private eventIService: ComerieventosService,
     private eventDataService: ComerEventosService,
-    private authService: AuthService
+    private authService: AuthService,
+    private lotService: LotService
   ) {
     super();
     this.user = this.authService.decodeToken().preferred_username;
@@ -151,10 +155,9 @@ export class NumeraireConversionAuctionsComponent
     }
   }
 
-  get validParcial() {
+  get validParcialButton() {
     return this.selectedEvent
-      ? this.selectedEvent.statusVtaId === 'VEN' &&
-          this.numerarieService.validParcial
+      ? this.selectedEvent.statusVtaId === 'VEN' && this.validParcial
       : false;
   }
 
@@ -196,7 +199,7 @@ export class NumeraireConversionAuctionsComponent
   }
 
   async calculaParc() {
-    if (this.validParcial) {
+    if (this.validParcialButton) {
       this.alertQuestion(
         'question',
         '¿Desea calcular parcialmente este evento?',
@@ -230,7 +233,39 @@ export class NumeraireConversionAuctionsComponent
       eventDate: secondFormatDateTofirstFormatDate(event.eventDate as string),
     };
     this.numerarieService.selectedEventSubject.next(this.selectedEvent);
-    this.numerarieService.validateParcialButtons(this.address, event);
+    this.validateParcialButtons(this.address, event);
+  }
+
+  validateParcialButtons(address: string, event: IComerEvent) {
+    if (address === 'I') {
+      this.validParcial = true;
+      const filterParams = new FilterParams();
+      filterParams.addFilter('idStatusVta', 'GARA');
+      filterParams.addFilter('idEvent', event.id);
+      this.lotService
+        .getAll(filterParams.getParams())
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response && response.data && response.data.length === 0) {
+              this.validParcial = false;
+              this.alert(
+                'warning',
+                'Botones parciales desactivados',
+                'Porque no cuenta con lote en estatus GARA'
+              );
+            }
+          },
+          error: err => {
+            this.validParcial = false;
+            this.alert(
+              'warning',
+              'Botones parciales desactivados',
+              'Porque no cuenta con lote en estatus GARA'
+            );
+          },
+        });
+    }
   }
 
   private convierteBody() {
@@ -335,7 +370,7 @@ export class NumeraireConversionAuctionsComponent
   }
 
   convierteParcial() {
-    if (this.validParcial) {
+    if (this.validParcialButton) {
       this.alertQuestion(
         'question',
         '¿Desea convertir parcialmente este evento?',
