@@ -261,3 +261,9 @@ export interface NumTransfer {
   active: null;
   risk: null;
 }
+
+export interface IFestatus {
+  goodNumber: number;
+  cbApproved: string;
+  vcScreen: string;
+}

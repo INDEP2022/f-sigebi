@@ -1,7 +1,7 @@
 export const GOODS_COLUMNS = {
   id: {
     title: 'No. Bien',
-    width: '25px',
+    width: '75px',
     type: 'string',
     sort: false,
   },

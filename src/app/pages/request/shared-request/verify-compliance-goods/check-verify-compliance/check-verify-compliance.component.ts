@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -15,65 +16,63 @@ export class CheckVerifyComplianceComponent
   checkState: boolean = false;
   checkbox: any;
   checkStateEditForm: boolean = false;
-  @Input() checkId: string = 'checkbox';
-  @Input() checkIdField: string = 'nameField';
   @Input() value: string | number;
   @Input() rowData: any;
-  @Input() nombrePantalla: string = 'sinNombre';
+  @Input() checkId: string = 'checkbox';
+  field: string = 'checkbox';
 
-  constructor(private fb: FormBuilder) {
+  requestId: number = null;
+  process = null;
+
+  constructor(private fb: FormBuilder, private route: ActivatedRoute) {
     super();
   }
 
   ngOnInit(): void {
-    this.checkId = this.checkId + this.rowData._id.toString();
-    if (this.nombrePantalla != 'approve-return-request') {
+    this.requestId = Number(this.route.snapshot.paramMap.get('request'));
+    this.process = this.route.snapshot.paramMap.get('process');
+
+    this.field = this.checkId + '';
+    this.checkId = this.checkId + this.rowData.good.id.toString();
+    if (this.process != 'approve-return') {
       this.checkStateEditForm = true;
       this.prepareForm();
     } else {
       this.checkStateEditForm = false;
     }
+
+    this.value = this.getCheck();
   }
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    this.changeState();
   }
 
   private prepareForm(): void {
     this.checkForm = this.fb.group({
-      type: [''],
+      type: [this.getCheck()],
     });
-  }
-
-  changeState() {
-    this.checkbox = document.querySelector(
-      '#' + this.checkId
-    ) as HTMLInputElement;
-    if (this.checkbox) {
-      this.checkbox.checked = this.checkState;
-    }
   }
 
   change(event: Event) {
     this.checkbox = document.querySelector(
       '#' + this.checkId
     ) as HTMLInputElement;
-    this.checkbox.checked = this.checkState;
-    let action: string;
-    this.checkState
-      ? (action = 'Quitar Permiso')
-      : (action = 'Otorgar Permiso');
-    this.alertQuestion(
-      'question',
-      '¿Está seguro que desea cambiar los permisos de este usuario?',
-      '',
-      action
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.checkState = !this.checkState;
-        this.checkbox.checked = this.checkState;
-      }
-    });
+
+    this.rowData.change = true;
+    this.rowData[this.field] = !this.rowData[this.field];
+    this.checkbox.checked = this.rowData[this.field];
+  }
+
+  getCheck() {
+    if (this.isNumber(this.rowData[this.field])) {
+      return this.rowData[this.field] == '1';
+    }
+
+    return this.rowData[this.field];
+  }
+
+  isNumber(value: any): boolean {
+    return !isNaN(parseFloat(value)) && isFinite(value);
   }
 }

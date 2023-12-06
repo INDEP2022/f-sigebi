@@ -326,23 +326,159 @@
       [labelTemplate]="employeeLabel"
       [optionTemplate]="employeeOption">
     </ng-custom-select-loading>
-    <!-- <div class="col-md-4">
-      <form-field [control]="requestedUser" label="Solicita">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="requestedUser"
-          maxlength="30" />
-      </form-field>
+  </div>
+  <ng-template #typeOpLabel let-item="item">
+    {{ item.key }} - {{ item.description }}
+  </ng-template>
+  <ng-template #typeOption let-item="item">
+    <div [title]="item.key + '-' + item.description">
+      {{ item.key }} - {{ item.description }}
     </div>
-    <div class="col-md-8">
-      <form-field [control]="nomEmplRequest" label="">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="nomEmplRequest"
-          maxlength="120" />
-      </form-field>
-    </div> -->
+  </ng-template>
+  <div class="row mt-4 pl-0" *ngIf="showTipoOp">
+    <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="typepe"
+      label="Tip Operación"
+      [path]="pathTypeOp"
+      value="key"
+      bindLabel="description"
+      paramSearch="filter.description"
+      prefixSearch="$ilike"
+      secondParamSearch="filter.key"
+      [labelTemplate]="typeOpLabel"
+      [optionTemplate]="typeOption">
+    </ng-custom-select-loading>
+  </div>
+  <div class="row mt-4 pl-0" *ngIf="showTipoTram">
+    <ng-template #tramLabel let-item="item">
+      {{ item.documentType }} - {{ item.description }}
+    </ng-template>
+    <ng-template #tramOption let-item="item">
+      <div [title]="item.documentType + '-' + item.description">
+        {{ item.documentType }} - {{ item.description }}
+      </div>
+    </ng-template>
+    <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="tiptram"
+      [forceSeconSearch]="true"
+      [minText]="2"
+      typeToSearchText="Escriba 2 o mas caracteres"
+      label="Tip Tramite"
+      [path]="pathDocument"
+      value="documentType"
+      bindLabel="description"
+      paramSearch="filter.description"
+      prefixSearch="$ilike"
+      secondParamSearch="filter.documentType"
+      [labelTemplate]="tramLabel"
+      [optionTemplate]="tramOption">
+    </ng-custom-select-loading>
+    <div class="d-flex mt-3" *ngIf="showContract">
+      <div>
+        <button
+          type="button"
+          tooltip="Contratos"
+          class="btn btn-primary btn-sm active pl-3"
+          style="width: 36px"
+          [disabled]="!conceptNumberValue || !address"
+          (click)="openContracts()">
+          <i class="bx bx-list-ul bx-sm float-icon"></i>
+        </button>
+      </div>
+
+      <div style="width: 100%; padding-left: 14px">
+        <form-field [control]="form.get('contractNumber')" label="Contrato">
+          <ng-select
+            formControlName="contractNumber"
+            class="form-control scroll-line"
+            bindValue="value"
+            bindLabel="label"
+            [readonly]="true"
+            [items]="contracts">
+          </ng-select>
+        </form-field>
+      </div>
+    </div>
+    <ng-template #tipadjLabel let-item="item">
+      {{ item.clktipadjud }} - {{ item.cvdsc }}
+    </ng-template>
+    <ng-template #tipadjOption let-item="item">
+      <div [title]="item.clktipadjud + '-' + item.cvdsc">
+        {{ item.clktipadjud }} - {{ item.cvdsc }}
+      </div>
+    </ng-template>
+    <div *ngIf="showTipAdj">
+      <div class="row mt-4 pl-3">
+        <ng-custom-select-loading
+          [form]="form"
+          [updateValues]="true"
+          formControlName="padj"
+          label="PADJ"
+          [path]="pathPadj"
+          value="clktipadjud"
+          bindLabel="cvdsc"
+          paramSearch="filter.cvdsc"
+          prefixSearch="$ilike"
+          secondParamSearch="filter.clktipadjud"
+          [labelTemplate]="tipadjLabel"
+          [optionTemplate]="tipadjOption">
+        </ng-custom-select-loading>
+      </div>
+      <div class="row mt-4 pl-3">
+        <ng-custom-select-loading
+          [form]="form"
+          [updateValues]="true"
+          [disabled]="!padjValue"
+          formControlName="psadj"
+          label="PSADJ"
+          [path]="pathPsadj"
+          value="clktipadjud"
+          bindLabel="cvdsc"
+          paramSearch="filter.cvdsc"
+          prefixSearch="$ilike"
+          secondParamSearch="filter.clktipadjud"
+          [labelTemplate]="tipadjLabel"
+          [optionTemplate]="tipadjOption">
+        </ng-custom-select-loading>
+      </div>
+      <div class="row mt-4 pl-3">
+        <ng-custom-select-loading
+          [form]="form"
+          [updateValues]="true"
+          [disabled]="!psadjValue"
+          formControlName="pssadj"
+          label="PSSADJ"
+          [path]="pathPssadj"
+          value="clktipadjud"
+          bindLabel="cvdsc"
+          paramSearch="filter.cvdsc"
+          prefixSearch="$ilike"
+          secondParamSearch="filter.clktipadjud"
+          [labelTemplate]="tipadjLabel"
+          [optionTemplate]="tipadjOption">
+        </ng-custom-select-loading>
+      </div>
+    </div>
+    <div *ngIf="showAdj">
+      <ng-custom-select-loading
+        [form]="form"
+        [updateValues]="true"
+        [disabled]="!psadjValue"
+        formControlName="adj"
+        label="Adjudicación"
+        [path]="pathPssadj"
+        value="clktipadjud"
+        bindLabel="cvdsc"
+        paramSearch="filter.cvdsc"
+        prefixSearch="$ilike"
+        secondParamSearch="filter.clktipadjud"
+        [labelTemplate]="tipadjLabel"
+        [optionTemplate]="tipadjOption">
+      </ng-custom-select-loading>
+    </div>
   </div>
 </ng-container>

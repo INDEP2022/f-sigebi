@@ -31,6 +31,13 @@ export class ExpenseGoodProcessService extends HttpService {
     return this.post('application/fcomer084', body);
   }
 
+  updateStatus(idLot: number, status: string) {
+    return this.post('application/updateStatus', {
+      idLot,
+      status,
+    });
+  }
+
   CARGA_BIENES_EXCEL(file: File) {
     const filename = file.name;
     const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';

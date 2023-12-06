@@ -9,6 +9,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -40,6 +41,7 @@ export class RegisterDocumentationFormComponent
   @Input() process?: string = '';
   registerForm: FormGroup = new FormGroup({});
   @Output() onRegister = new EventEmitter<any>();
+  @Output() onChange = new EventEmitter<any>();
 
   priorityCheck: boolean = false;
   bsPriorityDate: any;
@@ -55,6 +57,9 @@ export class RegisterDocumentationFormComponent
   selectMinPub = new DefaultSelect<any>();
 
   displayNotifyMails: boolean = false;
+
+  private subscription: Subscription;
+  private loadInfo: boolean = false;
 
   /* injections */
   private readonly requestService = inject(RequestService);
@@ -125,6 +130,18 @@ export class RegisterDocumentationFormComponent
       transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
       emailNotification: [null],
     });
+
+    //Se agrega evento para detectar cambios en el formulario
+    this.subscription = this.registerForm.valueChanges.subscribe(() => {
+      this.formChanges();
+    });
+  }
+
+  formChanges() {
+    this.onChange.emit({
+      isValid: this.registerForm.valid && this.loadInfo,
+      object: this.registerForm.getRawValue(),
+    });
   }
 
   getTypeExpedient(params: ListParams, id?: number | string) {
@@ -192,6 +209,7 @@ export class RegisterDocumentationFormComponent
           this.getAffair(resp.affair);
           this.getPublicMinister(new ListParams());
           this.setFieldsRequired();
+          this.loadInfo = this.registerForm.valid;
         },
         error: error => {
           console.log('No se cargaron datos de la solicitud. ', error);
@@ -274,6 +292,8 @@ export class RegisterDocumentationFormComponent
           next: resp => {
             console.log(resp);
             if (resp.statusCode == 200) {
+              this.loadInfo = true;
+              this.formChanges();
               this.alert('success', 'Correcto', 'Registro Actualizado');
             }
           },
@@ -345,8 +365,6 @@ export class RegisterDocumentationFormComponent
   /* METODO PARA VISUALIZAR EL INPUT NOTIFICACIONES ELECTRONICAS
   =============================================================== */
   displayNotifyMailsInput() {
-    if (this.process == 'similar-good-register-documentation') {
-      this.displayNotifyMails = true;
-    }
+    this.displayNotifyMails = this.process == 'register-request-similar-goods';
   }
 }

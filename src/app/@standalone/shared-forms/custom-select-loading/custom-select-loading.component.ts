@@ -54,6 +54,8 @@ export class CustomSelectWidthLoading
   @Input() formControlName: string = '';
   @Input() path: string;
   @Input() label: string;
+  @Input() minText = 3;
+  @Input() forceSeconSearch = false;
   @Input() loadingText: string = 'Cargando...';
   @Input() typeToSearchText: string = 'Escriba 3 o mas caracteres';
   @Input() multiple: boolean = false;
@@ -236,17 +238,20 @@ export class CustomSelectWidthLoading
     };
     if (text) {
       if (this.secondParamSearch) {
-        if (isNaN(+text)) {
+        if (
+          (this.forceSeconSearch && text.length === this.minText) ||
+          !isNaN(+text)
+        ) {
           return this.fillParams2(
-            this.prefixSearch,
-            this.paramSearch,
+            this.secondPrefixSearch,
+            this.secondParamSearch,
             params,
             text
           );
         } else {
           return this.fillParams2(
-            this.secondPrefixSearch,
-            this.secondParamSearch,
+            this.prefixSearch,
+            this.paramSearch,
             params,
             text
           );
@@ -385,7 +390,7 @@ export class CustomSelectWidthLoading
           // console.log(this.items);
           if (
             text === null ||
-            (!this.firstLoad && isNaN(+text) && text.length < 3)
+            (!this.firstLoad && isNaN(+text) && text.length < this.minText)
           ) {
             return of(null);
           }

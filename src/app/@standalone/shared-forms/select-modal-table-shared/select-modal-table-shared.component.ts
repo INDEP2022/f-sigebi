@@ -52,6 +52,7 @@ export class SelectModalTableSharedComponent
   @Input() override ilikeFilters: string[] = ['description'];
   @Input() override dateFilters: string[] = [];
   @Input() widthDescription = true;
+  @Input() onlyButton = false;
   @Input() label: string;
   @Input() labelName: string;
   @Input() formField: string;

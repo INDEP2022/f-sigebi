@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
+import { PrepareEventEndpoints } from 'src/app/common/constants/endpoints/ms-prepareevent-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from 'src/app/core/interfaces/list-response.interface';
 import { IComerDetBills } from '../models/bills';
 import {
   ICancelVtaDTO,
   IDivideCommandsDTO,
+  IFillDatosRevDTO,
   ILoadLotDelResDTO,
   ILoadLotDTO,
   ILoadLotResponse,
@@ -69,6 +71,10 @@ export class ExpenseLotService extends HttpService {
     return this.post('apps/post-cancela-vta-normal', body);
   }
 
+  PUP_LLENA_DATOSREV(body: IFillDatosRevDTO) {
+    return this.post('apps/pup-fill-rev-data', body);
+  }
+
   CANCELACION_PARCIAL(body: {
     pLotId: number;
     pEventId: number;
@@ -77,6 +83,7 @@ export class ExpenseLotService extends HttpService {
     pTotIva: string;
     pTotMonto: string;
     pTotTot: string;
+    address: string;
     comerDetBills: IComerDetBills[];
   }) {
     return this.post('apps/partial-cancellation', body);
@@ -88,11 +95,19 @@ export class ExpenseLotService extends HttpService {
     pCambiaStatus: string;
     user: string;
     spentId: number;
+    address: string;
     cat_motivos_rev: { motiveDescription: string; selection: number }[];
   }) {
     return this.post('apps/partial-return', body);
   }
-  // update(id) {
-  //   this.put(this.endpoint+'/'+,);
-  // }
+
+  update(body: any) {
+    const id = body.idLot;
+    delete body.idLot;
+    return this.put(this.endpoint + '/' + id, body);
+  }
+
+  getComerGoodXLote(params: _Params) {
+    return this.get(PrepareEventEndpoints.ComerGoodXLote, params);
+  }
 }

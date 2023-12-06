@@ -10,7 +10,11 @@ import {
 import {
   IDetailProceedingsDevollution,
   IDetailProceedingsDevollutionDelete,
+  IPbSelPaq,
   IProceedings,
+  IPufValidTerm,
+  IPupMovDestruction,
+  IQueryRegAdminGood,
   IUpdateActasEntregaRecepcion,
 } from '../../models/ms-proceedings/proceedings.model';
 import {
@@ -55,6 +59,9 @@ export class ProceedingsService extends HttpService {
       body,
       params
     );
+  }
+  getProceedingsDeliveryReception(params: ListParams) {
+    return this.get(ProceedingsEndpoints.ProceedingsDeliveryReception, params);
   }
 
   updateVaultByProceedingNumber(model: IUpdateVault) {
@@ -326,5 +333,21 @@ export class ProceedingsService extends HttpService {
   consultPaValMasive() {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}/FACTCONST_0001`;
     return this.get(route);
+  }
+
+  pufValidTerm(body: IPufValidTerm) {
+    return this.post<{ vban: boolean }>('aplication/puf-valid-term', body);
+  }
+
+  pbSelPaq(body: IPbSelPaq) {
+    return this.post('aplication/pb-sel-paq', body);
+  }
+
+  pupMovementDestruction(body: IPupMovDestruction) {
+    return this.post('aplication/cursor-pup-movement-act-destructuion', body);
+  }
+
+  queryRegAdminGood(body: IQueryRegAdminGood) {
+    return this.post('aplication/query-reg-del-admin-good', body);
   }
 }
