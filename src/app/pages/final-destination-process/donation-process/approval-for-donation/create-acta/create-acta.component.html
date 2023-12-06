@@ -24,7 +24,10 @@
               <form-field
                 [control]="actaRecepttionForm.get('acta')"
                 label="Acta">
-                <ng-select formControlName="acta" class="form-control pt-1">
+                <ng-select
+                  formControlName="acta"
+                  class="form-control pt-1"
+                  [readonly]="true">
                   <ng-option value="CPD">CPD</ng-option>
                 </ng-select>
               </form-field>
@@ -48,7 +51,8 @@
                 label="Área">
                 <ng-select
                   formControlName="delegation"
-                  class="form-control pt-1">
+                  class="form-control pt-1"
+                  (change)="onSelectChange($event)">
                   <ng-option
                     *ngFor="let item of arrayDele"
                     [value]="item.delegacion"
@@ -99,7 +103,8 @@
                   class="form-control pt-1"
                   formControlName="anio"
                   [items]="years"
-                  [ngModel]="currentYear"></ng-select>
+                  [ngModel]="currentYear"
+                  (change)="onSelectChangeYear($event)"></ng-select>
               </form-field>
             </div>
           </div>

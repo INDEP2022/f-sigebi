@@ -7,10 +7,7 @@ import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-mas
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import {
-  IGoodsExpedient,
-  IPackageInfo,
-} from '../../models/catalogs/package.model';
+import { IPackageInfo } from '../../models/catalogs/package.model';
 import {
   IIdentifierCount,
   IMassiveGoodTracker,
@@ -244,11 +241,7 @@ export class MassiveGoodService extends HttpService {
     return this.get(`${MassiveGoodEndpoints.ApplicationCSV}?status=${status}`);
   }
 
-  getApplicationRegisterCountCsv(params: _Params) {
-    return this.get(MassiveGoodEndpoints.ApplicationRegisterCountCsv, params);
-  }
-
-  goodsExpedient(body: IGoodsExpedient) {
-    return this.post('application/pup-good-proceedings', body);
+  detailDonationEventExcel(params: any) {
+    return this.post(this.route.detailDonationEventExcel, params);
   }
 }
