@@ -232,6 +232,7 @@
             <ng-scrollbar [track]="'vertical'" style="height: 550px">
               <ng2-smart-table
                 [settings]="settings3"
+                (userRowSelect)="selectGoodGeneral($event)"
                 [source]="goodPDS1"></ng2-smart-table>
             </ng-scrollbar>
             <app-pagination
