@@ -46,10 +46,10 @@ export class NumeraireConversionAllotmentsComponent
     );
   }
 
-  validConvert() {
-    return ['VEN', 'CONC'].includes(
-      this.selectedEvent ? this.selectedEvent.statusVtaId : null
-    );
+  get validConvert() {
+    return this.selectedEvent
+      ? ['VEN', 'CONC'].includes(this.selectedEvent.statusVtaId)
+      : false;
   }
 
   selectEvent(event: IComerEvent) {
@@ -93,7 +93,7 @@ export class NumeraireConversionAllotmentsComponent
   }
 
   convierte() {
-    if (this.validConvert()) {
+    if (this.validConvert) {
       this.alertQuestion('question', '¿Desea convertir este evento?', '').then(
         x => {
           if (x.isConfirmed) {
