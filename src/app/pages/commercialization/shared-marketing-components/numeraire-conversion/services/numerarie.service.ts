@@ -12,6 +12,7 @@ export class NumerarieService {
   selectedEvent: IComerEvent = null;
   selectedEventSubject = new Subject<IComerEvent>();
   selectedExpenseData: IFillExpenseDataCombined;
+  expenses: IFillExpenseDataCombined[] = [];
   reloadExpenses = 0;
   showParcial = true;
   constructor(private comertpEventService: ComerTpEventosService) {}

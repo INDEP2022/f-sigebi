@@ -20,7 +20,10 @@ import * as XLSX from 'xlsx';
 //Models
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { IGoodsExpedient } from 'src/app/core/models/catalogs/package.model';
+import {
+  IGoodsExpedient,
+  IGoodTracker,
+} from 'src/app/core/models/catalogs/package.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
@@ -34,6 +37,7 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { ModalCorreoComponent } from '../utils/modal-correo/modal-correo.component';
 
@@ -87,25 +91,27 @@ export class AuthorizationAssetsDestructionComponent
   //AGREGADO POR GRIGORK
   idProceeding: number = null;
   numFile: number = null;
+  addGoodFlag: boolean = false;
 
   get controls() {
     return this.form.controls;
   }
   constructor(
     private fb: FormBuilder,
-    private modalService: BsModalService,
-    private sanitizer: DomSanitizer,
-    private expedientService: ExpedientService,
-    private goodService: GoodService,
+    private authService: AuthService,
     private datePipe: DatePipe,
-    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private expedientService: ExpedientService,
+    private globalVarService: GlobalVarsService,
+    private goodService: GoodService,
+    private modalService: BsModalService,
     private proceedingsDetailDel: ProceedingsDeliveryReceptionService,
     private proceedingService: ProceedingsService,
-    private serviceDocuments: DocumentsService,
+    private router: Router,
+    private sanitizer: DomSanitizer,
     private serviceDetailProc: DetailProceeDelRecService,
+    private serviceDocuments: DocumentsService,
     private serviceMassiveGoods: MassiveGoodService,
-    private authService: AuthService,
-    private router: Router
+    private serviceProcVal: ProceedingsDeliveryReceptionService
   ) {
     super();
     this.settings = {
@@ -125,6 +131,19 @@ export class AuthorizationAssetsDestructionComponent
 
   ngOnInit(): void {
     this.prepareForm();
+
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          const ngGlobal = global;
+          if (ngGlobal.REL_BIENES) {
+            console.log(ngGlobal.REL_BIENES);
+            this.pupGoodTrackerFn(ngGlobal.REL_BIENES);
+          }
+        },
+      });
   }
 
   private prepareForm() {
@@ -751,8 +770,10 @@ export class AuthorizationAssetsDestructionComponent
 
   //BOTON AGREGAR BIENES
   buttonAddGoods() {
+    this.addGoodFlag = true;
     if (['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)) {
       this.alert('warning', 'El acta se encuentra cerrada', '');
+      this.addGoodFlag = false;
       return;
     }
 
@@ -778,6 +799,7 @@ export class AuthorizationAssetsDestructionComponent
       },
       error: err => {
         this.alert('warning', this.title, 'No se encontró el expediente');
+        this.addGoodFlag = false;
       },
     });
   }
@@ -786,18 +808,36 @@ export class AuthorizationAssetsDestructionComponent
     const body: IGoodsExpedient = {
       proceedingsNumber: this.form.get('idExpedient').value,
       minutesNumber: this.idProceeding,
+      user: this.authService.decodeToken().preferred_username,
     };
 
     this.serviceMassiveGoods.goodsExpedient(body).subscribe(
-      res => {
+      async res => {
         console.log(res);
-        this.alert('success', 'Se agregaron los bienes del expediente', '');
+        this.addGoodFlag = false;
+        await this.downloadExcel(res.file, 'Bienes_con_errores.xlsx');
+        if (res.blk_det.length == 0) {
+          this.alert('warning', 'No se cargo ninguno bien', '');
+        } else {
+          this.alert('success', `Se cargaron ${res.blk_det.length} bienes`, '');
+        }
       },
       err => {
         console.log(err);
+        this.addGoodFlag = false;
         this.alert('error', 'No se agregaron los bienes del expediente', '');
       }
     );
+  }
+
+  async downloadExcel(base64String: any, nameFile: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = nameFile;
+    link.click();
+    link.remove();
   }
 
   pupGoodTracker() {
@@ -806,10 +846,28 @@ export class AuthorizationAssetsDestructionComponent
       return;
     }
 
+    localStorage.setItem('noActa', this.form.get('noAuth').value);
+
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
         origin: 'FACTDIRAPROBDESTR',
       },
     });
+  }
+
+  pupGoodTrackerFn(globalRelGood: number) {
+    const body: IGoodTracker = {
+      minutesNumber: localStorage.getItem('noActa'),
+      globalRelGood: globalRelGood,
+    };
+
+    this.serviceMassiveGoods.pupGoodTracker(body).subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }
