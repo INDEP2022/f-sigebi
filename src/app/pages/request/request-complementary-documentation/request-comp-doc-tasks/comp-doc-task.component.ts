@@ -49,6 +49,9 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract finish: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract reportValidateDictum: boolean; //NUEVO VERIFICAR BOTON NUEVO
 
+  protected abstract legalStatus: boolean; //NUEVO VERIFICAR BOTON NUEVO
+  protected abstract requestReview: boolean; //NUEVO VERIFICAR BOTON NUEVO
+
   docTemplate: IRequestDocument[];
 
   private rejectedService = inject(RejectedGoodService);
@@ -797,9 +800,9 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.viewSelectedGoods = true;
         this.expRequest = true;
 
-        //this.officeChangeSituation
+        this.legalStatus = true;
         this.saveRequest = true;
-        //this.reviewRequest
+        this.requestReview = true;
 
         break;
       case 'review-result-protection':

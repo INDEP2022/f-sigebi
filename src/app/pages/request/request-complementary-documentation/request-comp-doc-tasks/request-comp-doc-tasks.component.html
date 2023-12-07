@@ -40,7 +40,16 @@
             </button>
           </div>
         </div>
-
+        <div class="mx-1" *ngIf="btnAprove">
+          <button
+            type="button"
+            class="btn btn-sm btn-success active"
+            [disabled]=""
+            (click)="btnAprobar()">
+            Aprobar
+            <i class="fa fa-check" aria-hidden="true"></i>
+          </button>
+        </div>
         <div class="mx-1" *ngIf="btnRequestAprove">
           <button
             type="button"
@@ -51,7 +60,16 @@
             <i class="fa fa-envelope"></i>
           </button>
         </div>
-
+        <div class="mx-1" *ngIf="requestReview">
+          <button
+            type="button"
+            class="btn btn-info active btn-sm"
+            [disabled]=""
+            (click)="btnRequestReview()">
+            Solicitar revisión
+            <i class="bx bx-check mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1">
           <button
             type="button"
@@ -129,6 +147,16 @@
             <i class="bx bx-file bx-m float-icon"></i>
           </button>
         </div>
+        <div class="mx-1" *ngIf="legalStatus">
+          <button
+            type="button"
+            class="btn btn-info active btn-sm"
+            [disabled]=""
+            (click)="reportResultEyeVisit()">
+            Oficio de Cambio de Situación Jurídica
+            <i class="bx bx-notepad mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1" *ngIf="destinyJob">
           <button
             type="button"
@@ -137,16 +165,6 @@
             (click)="openReport()">
             Oficio Destino
             <i class="bx bx-notepad mr-1 float-icon"></i>
-          </button>
-        </div>
-        <div class="mx-1" *ngIf="btnAprove">
-          <button
-            type="button"
-            class="btn btn-sm btn-success active"
-            [disabled]=""
-            (click)="btnAprobar()">
-            Aprobar
-            <i class="fa fa-check" aria-hidden="true"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="dictumReturn">
