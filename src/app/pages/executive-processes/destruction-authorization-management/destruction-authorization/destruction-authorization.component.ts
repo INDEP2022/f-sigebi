@@ -11,7 +11,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { format } from 'date-fns';
-import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -1043,15 +1042,15 @@ export class DestructionAuthorizationComponent
     id: string | number,
     proceeding: Partial<IProccedingsDeliveryReception>
   ) {
+    console.log(
+      this.correctDateFormat(proceeding.elaborationDate.toISOString())
+    );
     proceeding.closeDate = new Date(
       this.correctDate(proceeding.closeDate)
     ).toString();
     proceeding.elaborationDate = new Date(
-      this.correctDate(
-        this.correctDateFormat(proceeding.elaborationDate.toString())
-      )
+      this.correctDate(proceeding.elaborationDate)
     ).toString();
-    console.log(this.correctDateFormat(proceeding.elaborationDate));
     return this.proceedingsDeliveryReceptionService.update(id, proceeding).pipe(
       catchError(error => {
         this.onLoadToast(
@@ -1109,8 +1108,8 @@ export class DestructionAuthorizationComponent
   resetAll() {
     this.proceedingForm.reset();
     this.detailProceedingsList2.load([]);
-    this.actaList = [];
-    this.dictaList = [];
+    this.actaList2 = new LocalDataSource();
+    this.dictaList2 = new LocalDataSource();
   }
 
   keyProceedingchange() {
@@ -1151,6 +1150,7 @@ export class DestructionAuthorizationComponent
         map(response => {
           // Primera transformación de los datos
           console.log(response.data);
+          console.log(new Date(response.data[0].elaborationDate));
           return response.data;
         }),
         map(data => {
@@ -1161,15 +1161,17 @@ export class DestructionAuthorizationComponent
           proceeding.elaborationDate =
             proceeding.elaborationDate == null
               ? null
-              : moment(proceeding.elaborationDate).format('DD/MM/YYYY');
+              : new Date(proceeding.elaborationDate);
           proceeding.datePhysicalReception =
             proceeding.datePhysicalReception == null
               ? null
-              : moment(proceeding.datePhysicalReception).format('DD/MM/YYYY');
+              : this.correctDate(
+                  new Date(proceeding.datePhysicalReception).toString()
+                );
           proceeding.closeDate =
             proceeding.closeDate == null
               ? null
-              : moment(proceeding.closeDate).format('DD/MM/YYYY');
+              : this.correctDate(new Date(proceeding.closeDate).toString());
 
           this.proceedingForm.patchValue(proceeding);
           this.getProceedingGoods();
