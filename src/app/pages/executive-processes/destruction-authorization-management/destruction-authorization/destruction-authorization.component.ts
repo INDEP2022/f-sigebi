@@ -192,6 +192,7 @@ export class DestructionAuthorizationComponent
   selectGoodProc: any = null;
   selectGoodGen: any = null;
   isCommingTracker: boolean = true;
+  flatGoodFlag: boolean = false;
 
   @ViewChild('focusElement', { static: true })
   focusElement: ElementRef<HTMLInputElement>;
@@ -469,7 +470,7 @@ export class DestructionAuthorizationComponent
       .remove(this.goodIds, this.numberPro)
       .subscribe({
         next: () => {
-          this.alert('success', 'Bienes eliminados correctamente', '');
+          this.alert('success', 'Bien eliminado', '');
           this.getProceedingGoods();
         },
         error: err => {},
@@ -614,11 +615,27 @@ export class DestructionAuthorizationComponent
       .subscribe(() => this.getGoodByStatusPDS());
 
     this.navigateGoodsProceeding();
+    this.navigateProceedingsDelivery();
+    this.navigateDictamination();
   }
 
   navigateGoodsProceeding() {
     this.params7.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       this.getProceedingGoods();
+    });
+  }
+
+  navigateProceedingsDelivery() {
+    this.params5.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      const { id } = this.controls;
+      this.searchActa(id.value);
+    });
+  }
+
+  navigateDictamination() {
+    this.params6.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      const { id } = this.controls;
+      this.searchDicta(id.value);
     });
   }
 
@@ -639,7 +656,10 @@ export class DestructionAuthorizationComponent
     this.goodsTrackerLoading = true;
     this.massiveGoodService.goodTracker(body).subscribe({
       next: async response => {
-        console.log(response);
+        await this.downloadExcel(
+          JSON.parse(JSON.stringify(response.bienes_rechazados)).nameFile,
+          'Bienes_con_errores.xlsx'
+        );
         this.goodsTrackerLoading = false;
         if (response.aceptados > 0) {
           this.alert(
@@ -650,10 +670,7 @@ export class DestructionAuthorizationComponent
         } else {
           this.alert('warning', 'No se cargaron bienes', '');
         }
-        await this.downloadExcel(
-          JSON.parse(JSON.stringify(response.bienes_rechazados)).nameFile,
-          'Bienes_con_errores.xlsx'
-        );
+
         this.getProceedingGoods();
       },
       error: error => {
@@ -1341,6 +1358,8 @@ export class DestructionAuthorizationComponent
           const di_dispo = await this.goodStatus(item);
           console.log(di_dispo);
           item['di_disponible'] = di_dispo.DI_DISPONIBLE;
+          item['di_acta'] =
+            di_dispo.DI_ACTA != null ? di_dispo.DI_ACTA[0].cve_acta : null;
         });
         await Promise.all(result);
         this.show2 = false;
@@ -1354,11 +1373,11 @@ export class DestructionAuthorizationComponent
   }
 
   searchActa(id: string | number) {
-    let params = {
-      ...this.params5.getValue(),
-    };
+    const paramsF = new FilterParams();
+    paramsF.page = this.params5.getValue().page;
+    paramsF.limit = this.params5.getValue().limit;
     this.proceedingsDeliveryReceptionService
-      .ProceedingsDetailActa(id, params)
+      .ProceedingsDetailActa(id, paramsF.getParams())
       .subscribe({
         next: resp => {
           this.actaList2.load(resp.data);
@@ -1369,11 +1388,11 @@ export class DestructionAuthorizationComponent
   }
 
   searchDicta(id: string | number) {
-    let params = {
-      ...this.params6.getValue(),
-    };
+    const paramsF = new FilterParams();
+    paramsF.page = this.params6.getValue().page;
+    paramsF.limit = this.params6.getValue().limit;
     this.copiesOfficialOpinionService
-      .ProceedingsDetailDicta(id, params)
+      .ProceedingsDetailDicta(id, paramsF.getParams())
       .subscribe({
         next: (resp: any) => {
           this.dictaList2.load(resp.data);
@@ -1432,29 +1451,23 @@ export class DestructionAuthorizationComponent
   }
 
   onFileChange(event: Event) {
+    this.flatGoodFlag = true;
     const files = (event.target as HTMLInputElement).files[0];
     let formData = new FormData();
     formData.append('file', files);
-    formData.append(
-      'statusProceeding',
-      this.proceedingForm.get('statusProceedings').value
-    );
-    formData.append(
-      'proceedingKey',
-      this.proceedingForm.get('keysProceedings').value
-    );
-    formData.append('proceedingNumber', this.proceedingForm.get('id').value);
-    console.log(formData);
     this.getDataFile(formData);
   }
 
-  getDataFile(data: FormData) {
-    this.massiveGoodService.pupBienesPlano(data).subscribe({
+  getDataFile(data: any) {
+    const filenumber = this.controls.id.value;
+    this.massiveGoodService.pupBienesPlano(data, filenumber).subscribe({
       next: resp => {
+        this.flatGoodFlag = false;
         console.log(resp);
       },
       error: err => {
         console.log(err);
+        this.flatGoodFlag = true;
         this.alert('error', 'Ocurrió un error al leer el archivo', '');
       },
     });

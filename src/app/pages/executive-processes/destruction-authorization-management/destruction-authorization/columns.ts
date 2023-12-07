@@ -78,10 +78,11 @@ export const GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  requestFolio: {
+  di_acta: {
     title: 'Of. Sol.',
     type: 'string',
     sort: false,
+    filter: false,
   },
 };
 
