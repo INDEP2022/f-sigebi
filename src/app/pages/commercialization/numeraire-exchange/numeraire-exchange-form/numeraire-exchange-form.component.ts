@@ -238,6 +238,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     selectedRowIndex: -1,
     actions: false,
     editable: false,
+    noDataMessage: 'No se encontraron registros',
   };
 
   dataTableMassive: IPupValidMassive[] = [];
@@ -450,8 +451,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         // this.formBlkControl.get('tiNewDate').setValue(null);
         this.onLoadToast(
           'warning',
-          'No se Encontró el depósito en la fecha seleccionada',
-          ''
+          'Advertencia',
+          'No se encontró el depósito en la fecha seleccionada'
         );
       },
     });
@@ -598,7 +599,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'Estatus, identificador o clasificador inválido para Cambio a numerario/valores y divisas'
+        'Estatus, identificador o clasificador inválido para cambio a numerario/valores y divisas'
       );
     }
   }
@@ -635,9 +636,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     if (messages.length > 0) {
       this.alert(
         'warning',
-        'El Archivo es inválido',
+        'Atención',
         // `El Archivo no Contiene las Columnas ${messages.join(', ')}`
-        ''
+        'El archivo es inválido'
       );
       return false;
     }

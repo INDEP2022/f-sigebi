@@ -165,14 +165,14 @@ export class ListGoodsComponent extends BasePage implements OnInit {
       if (!vb_encontrado) {
         this.alert(
           'warning',
-          'No se Encontró Ningún Bien que Cumpliera con el Criterio de Conciliación',
+          'No se encontró ningún Bien que cumpliera con el criterio de conciliación',
           ''
         );
       }
     } else {
       this.alert(
         'warning',
-        'No Tiene Capturados Todos los Criterios para Realizar la Conciliación',
+        'No tiene capturados todos los criterios para realizar la conciliación',
         ''
       );
     }
@@ -236,14 +236,14 @@ export class ListGoodsComponent extends BasePage implements OnInit {
   async updateAccountMovement(data: any) {
     this.accountMovementService.update(data).subscribe({
       next: async (response: any) => {
-        this.alert('success', `Datos Actualizados Correctamente`, '');
+        this.alert('success', `Datos actualizados correctamente`, '');
 
         this.modalRef.content.callback(true);
         this.close();
         this.loading = false;
       },
       error: err => {
-        this.alert('error', `Error al Actualizar los Datos`, '');
+        this.alert('error', `Error al actualizar los datos`, '');
         this.loading = false;
       },
     });

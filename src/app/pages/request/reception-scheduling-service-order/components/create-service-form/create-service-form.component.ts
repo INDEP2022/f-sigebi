@@ -63,7 +63,7 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Estás seguro que desea agregar un nuevo servicio?'
+      '¿Está seguro que desea agregar un nuevo servicio?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
