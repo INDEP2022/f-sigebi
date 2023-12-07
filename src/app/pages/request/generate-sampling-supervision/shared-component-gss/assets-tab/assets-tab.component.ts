@@ -3,9 +3,11 @@ import { FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { takeUntil } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
@@ -16,8 +18,8 @@ import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-t
 import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import { listAssets } from '../../generate-formats-verify-noncompliance/store/actions';
 import { Item } from '../../generate-formats-verify-noncompliance/store/item.module';
-import { LIST_PAYMENT_VALIDATIONS } from '../../sampling-assets/sampling-assets-form/columns/list-validation';
 import { LIST_VERIFY_NONCOMPLIANCE } from '../../sampling-assets/sampling-assets-form/columns/list-verify-noncompliance';
+import { EditGoodSampleComponent } from './edit-good-sample/edit-good-sample.component';
 
 @Component({
   selector: 'app-assets-tab',
@@ -38,12 +40,19 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   isReadonly: boolean = false;
   isCheckboxReadonly: boolean = false;
   checkboxTitle: string = '';
+  columns = LIST_VERIFY_NONCOMPLIANCE;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  goodsModified: any = [];
+  totalItems: number = 0;
   settings3 = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      edit: true,
+      delete: false,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
     selectMode: 'multi',
-    columns: LIST_VERIFY_NONCOMPLIANCE,
   };
 
   constructor(
@@ -58,23 +67,39 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('this.idSample', this.idSample);
-    this.getGoodsSampling();
-    //this.setEnableInputs();
-    //this.assetsArray = data;
-    //this.paragraphs3 = data;
-    //console.log(this.willSave);
-    //this.changeSettingTable();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsSampling());
+
+    this.settings3.columns = LIST_VERIFY_NONCOMPLIANCE;
+    this.columns.quantityBreak = {
+      ...this.columns.quantityBreak,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setquantityBreak(data);
+        });
+      },
+    };
+
+    this.columns.statusGoodObservations = {
+      ...this.columns.statusGoodObservations,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setStatusGoodObservations(data);
+        });
+      },
+    };
   }
   ngOnChanges() {
     if (this.filterObject) {
-      console.log('f', this.filterObject);
       if (
         !this.filterObject.noManagement &&
         !this.filterObject.noInventory &&
         !this.filterObject.descriptionAsset
       ) {
-        this.getGoodsSampling();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getGoodsSampling());
       }
 
       if (
@@ -84,7 +109,9 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       ) {
         this.params.getValue()['filter.goodId'] =
           this.filterObject.noManagement;
-        this.getGoodsSampling();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getGoodsSampling());
       }
 
       if (
@@ -96,7 +123,9 @@ export class AssetsTabComponent extends BasePage implements OnInit {
           this.filterObject.noManagement;
         this.params.getValue()['filter.inventoryNumber'] =
           this.filterObject.noInventory;
-        this.getGoodsSampling();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getGoodsSampling());
       }
 
       if (
@@ -106,7 +135,9 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       ) {
         this.params.getValue()['filter.inventoryNumber'] =
           this.filterObject.noInventory;
-        this.getGoodsSampling();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getGoodsSampling());
       }
 
       if (
@@ -118,7 +149,9 @@ export class AssetsTabComponent extends BasePage implements OnInit {
           this.filterObject.noInventory;
         this.params.getValue()['filter.description'] =
           this.filterObject.descriptionAsset;
-        this.getGoodsSampling();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getGoodsSampling());
       }
 
       if (
@@ -128,7 +161,9 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       ) {
         this.params.getValue()['filter.description'] =
           this.filterObject.descriptionAsset;
-        this.getGoodsSampling();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getGoodsSampling());
       }
 
       if (
@@ -140,7 +175,9 @@ export class AssetsTabComponent extends BasePage implements OnInit {
           this.filterObject.noManagement;
         this.params.getValue()['filter.description'] =
           this.filterObject.descriptionAsset;
-        this.getGoodsSampling();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getGoodsSampling());
       }
 
       if (
@@ -154,8 +191,53 @@ export class AssetsTabComponent extends BasePage implements OnInit {
           this.filterObject.descriptionAsset;
         this.params.getValue()['filter.inventoryNumber'] =
           this.filterObject.noInventory;
-        this.getGoodsSampling();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getGoodsSampling());
       }
+    }
+
+    if (this.filterObject == false) {
+      this.params = new BehaviorSubject<ListParams>(new ListParams());
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsSampling());
+    }
+  }
+
+  setquantityBreak(descriptionInput: any) {
+    this.paragraphs3['data'].map((item: any) => {
+      if (item.sampleGoodId === descriptionInput.data.sampleGoodId) {
+        item.quantityBreak = descriptionInput.text;
+
+        this.addGoodModified(item);
+      }
+    });
+  }
+
+  setStatusGoodObservations(descriptionInput: any) {
+    this.paragraphs3['data'].map((item: any) => {
+      if (item.sampleGoodId === descriptionInput.data.sampleGoodId) {
+        item.statusGoodObservations = descriptionInput.text;
+
+        this.addGoodModified(item);
+      }
+    });
+  }
+
+  addGoodModified(good: any) {
+    const index = this.goodsModified.indexOf(good);
+    if (index != -1) {
+      this.goodsModified[index] = good;
+      if (this.goodsModified[index].quantityBreak == '') {
+        this.goodsModified[index].quantityBreak = null;
+      }
+
+      if (this.goodsModified[index].statusGoodObservations == '') {
+        this.goodsModified[index].statusGoodObservations = null;
+      }
+    } else {
+      this.goodsModified.push(good);
     }
   }
 
@@ -163,8 +245,8 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.sampleId'] = this.idSample;
     this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
       next: response => {
-        console.log('samplegfoods', response);
         this.paragraphs3.load(response.data);
+        this.totalItems = response.count;
       },
       error: error => {},
     });
@@ -183,23 +265,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       observationsAsset: [null],
     });
   }
-  changeSettingTable() {
-    if (this.typeTask == 'payment-validatios') {
-      this.settings3 = {
-        ...TABLE_SETTINGS,
-        actions: false,
-        selectMode: 'multi',
-        columns: LIST_PAYMENT_VALIDATIONS,
-      };
-    } else {
-      this.settings3 = {
-        ...TABLE_SETTINGS,
-        actions: false,
-        selectMode: 'multi',
-        columns: LIST_VERIFY_NONCOMPLIANCE,
-      };
-    }
-  }
+
   setEnableInputs(): void {
     if (this.typeTask === 'verify-warehouse-assets') {
       this.checkboxTitle = 'Localizado';
@@ -222,8 +288,6 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       );
       this.assetsSelected.splice(index, 1);
     }
-
-    //cargar los datos al store
     this.store.dispatch(listAssets({ items: this.assetsSelected }));
   }
 
@@ -298,71 +362,117 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 
-  /*changeStatusGood(value: string) {
-    if (this.assetsSelected.length == 0) {
-      this.onLoadToast('info', 'Debe tener selecionado al menos un Bien');
-      return;
+  missingInfo() {
+    if (this.assetsSelected.length > 0) {
+      this.assetsSelected.map((item: any) => {
+        const infoSampleGood = {
+          sampleGoodId: item.sampleGoodId,
+          goodState: 'FALTANTE',
+        };
+
+        this.samplingService.editSamplingGood(infoSampleGood).subscribe({
+          next: response => {
+            this.alert('success', 'Correcto', 'Bien actualizado correctamente');
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getGoodsSampling());
+          },
+          error: error => {
+            this.alert(
+              'warning',
+              'Acción Invalida',
+              'No se pudo actualizar el bien'
+            );
+          },
+        });
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar un bien'
+      );
     }
-    console.log(this.assetsSelected);
-    console.log(this.paragraphs3);
-    this.assetsSelected.map(item => {
-      const index = this.paragraphs3.indexOf(item);
-      if (value == 'F') {
-        this.paragraphs3[index].statusAsset = 'FALTANTE';
-      } else if (value == 'D') {
-        this.paragraphs3[index].statusAsset = 'DAÑADO';
-      }
-    });
-    this.paragraphs3 = [...this.paragraphs3];
-    this.assetsSelected = [];
   }
 
-  changeStatusGoodAproval(value: string) {
-    if (this.assetsSelected.length == 0) {
-      this.onLoadToast('info', 'Debe tener seleccionado al menos un Bien');
-      return;
+  damagedInfo() {
+    if (this.assetsSelected.length > 0) {
+      this.assetsSelected.map((item: any) => {
+        const infoSampleGood = {
+          sampleGoodId: item.sampleGoodId,
+          goodState: 'DAÑADO',
+        };
+
+        this.samplingService.editSamplingGood(infoSampleGood).subscribe({
+          next: response => {
+            this.alert('success', 'Correcto', 'Bien actualizado correctamente');
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getGoodsSampling());
+          },
+          error: error => {
+            this.alert(
+              'warning',
+              'Acción Invalida',
+              'No se pudo actualizar el bien'
+            );
+          },
+        });
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar un bien'
+      );
     }
-    console.log(this.assetsSelected);
-    console.log(this.paragraphs3);
-    this.assetsSelected.map(item => {
-      const index = this.paragraphs3.indexOf(item);
-      if (value == 'A') {
-        this.paragraphs3[index].statusEvaluation = 'APROBAR';
-      } else if (value == 'R') {
-        this.paragraphs3[index].statusEvaluation = 'RECHAZAR';
-      }
+  }
+
+  saveInfoGood() {
+    this.paragraphs3.getElements().then(data => {
+      data.map((item: any, i: number) => {
+        let index = i + 1;
+
+        if (item.quantity >= item.quantityBreak) {
+          this.samplingService.editSamplingGood(item).subscribe({
+            next: () => {
+              if (index == data.length) {
+                this.alert(
+                  'success',
+                  'Acción Correcta',
+                  'Bien actualizado correctamente'
+                );
+                this.params
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getGoodsSampling());
+              }
+            },
+            error: () => {
+              this.alert('error', 'Error', 'Error al actualizar el bien');
+            },
+          });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            `La cantidad faltante o dañada es mayor a la cantidad en el bien ${item.goodId}`
+          );
+        }
+      });
     });
-    this.paragraphs3 = [...this.paragraphs3];
-    this.assetsSelected = [];
   }
 
-  
-  exportCsv() {
-    const filename: string = 'Nombre del archivo';
-    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
-  }
-
-  //preguntar si el formulario y los datos que se guardaran son similare
-  //para sampling-assets-form y este
-  openModals(component: any, data?: any): void {
-    let config: ModalOptions = {
-      initialState: {
-        data: '',
-        typeComponent: 'verify-noncompliance',
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
-        },
+  editSampleGood(good: ISampleGood) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      good,
+      callback: (next: boolean) => {
+        if (next)
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getGoodsSampling());
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.bsModalRef = this.modalService.show(component, config);
-
-    //this.bsModalRef.content.event.subscribe((res: any) => {
-    //cargarlos en el formulario
-    //console.log(res);
-    //this.assetsForm.controls['address'].get('longitud').enable();
-    //this.requestForm.get('receiUser').patchValue(res.user);
-    //});
-  } */
+    this.modalService.show(EditGoodSampleComponent, config);
+  }
 }

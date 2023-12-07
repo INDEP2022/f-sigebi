@@ -31,6 +31,7 @@ export class AssetsFilterComponent implements OnInit {
   }
 
   reset(): void {
+    this.searchEvent.emit(false);
     this.filterForm.reset();
   }
 }
