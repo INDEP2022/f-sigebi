@@ -10,7 +10,8 @@
         class="p-2"
         *ngIf="
           typeTask != 'verify-warehouse-assets' &&
-          typeTask != 'assets-classification'
+          typeTask != 'assets-classification' &&
+          typeTask != 'assets-classification-annexed'
         ">
         <button
           class="btn btn-primary btn-sm active"
@@ -22,7 +23,8 @@
         class="p-2"
         *ngIf="
           typeTask != 'verify-warehouse-assets' &&
-          typeTask != 'assets-classification'
+          typeTask != 'assets-classification' &&
+          typeTask != 'assets-classification-annexed'
         ">
         <button class="btn btn-primary btn-sm active" (click)="uploadImages()">
           Fotograf&iacute;a <i class="bx bx-images"></i>
@@ -32,7 +34,8 @@
         class="p-2"
         *ngIf="
           typeTask != 'verify-warehouse-assets' &&
-          typeTask != 'assets-classification'
+          typeTask != 'assets-classification' &&
+          typeTask != 'assets-classification-annexed'
         ">
         <button
           (click)="generateReport()"
@@ -79,7 +82,9 @@
       </div>
     </div>
 
-    <div class="d-flex justify-content-end">
+    <div
+      class="d-flex justify-content-end"
+      *ngIf="typeTask != 'assets-classification-annexed'">
       <div class="p-2">
         <button
           (click)="generateReport()"
@@ -95,11 +100,25 @@
       </div>
     </div>
 
-    <div class="col-md-12">
+    <div class="col-md-12" *ngIf="typeTask != 'assets-classification-annexed'">
       <ng2-smart-table
         [attr.class]="'table-responsive'"
         [settings]="settings3"
         [source]="paragraphs3"
+        (edit)="editSampleGood($event.data)"
+        (userRowSelect)="goodsSamplingSelect($event)">
+      </ng2-smart-table>
+
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div class="col-md-12" *ngIf="typeTask == 'assets-classification-annexed'">
+      <ng2-smart-table
+        [attr.class]="'table-responsive'"
+        [settings]="settingsView"
+        [source]="paragraphsView"
         (edit)="editSampleGood($event.data)"
         (userRowSelect)="goodsSamplingSelect($event)">
       </ng2-smart-table>
