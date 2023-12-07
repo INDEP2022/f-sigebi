@@ -572,7 +572,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
                 task['idAuthority'] = form.authorityId;
 
                 body['task'] = task;
-
+                //body['pActualStatus'] = 'REGISTRO_SOLICITUD';
                 /*let orderservice: any = {};
                 orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
                 orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
