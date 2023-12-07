@@ -483,32 +483,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = false;
 
         break;
-      case 'validate-opinion-similar-goods':
-        this.typeVisit = 'resultGood';
-        this.regDocView = true;
-        this.expRequest = true;
-        this.resultVisits = true;
-
-        this.resultEyeVisitReport = true;
-        this.saveRequest = true;
-        this.turnReq = true;
-
-        this.signedReport = true;
-
-        this.validateGoodForEyeVisit = false;
-        this.selectGoods = false;
-        this.notifyReport = false;
-        this.docRequest = false;
-        this.searchAssociateFile = false;
-        this.viewSelectedGoods = false;
-        this.searchRequestSimGoods = false;
-        this.guidelines = false;
-        this.dictumValidate = false;
-        this.selectGoodForEyeVisit = false;
-        this.createReport = false;
-        this.rejectReq = false;
-
-        break;
 
       case 'response-letter-similar-goods':
         this.typeVisit = 'resultGood';
@@ -549,7 +523,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
         break;
 
-      case 'response-office-compensation':
+      case 'review-guidelines-compensation':
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.guidelines = true;
@@ -561,17 +535,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
 
         this.searchRequestSimGoods = false;
-
-        if (affair == 25) {
-          this.regDocView = true;
-          this.viewSelectedGoods = true;
-          this.guidelines = true;
-          this.docRequest = true;
-          this.expRequest = true;
-          this.createReport = true;
-          this.saveRequest = true;
-          this.turnReq = true;
-        }
 
         break;
 
@@ -667,7 +630,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.notifyReport = false;
         this.docRequest = false;
         this.viewSelectedGoods = true;
-        this.listGoodSelectedTitle = "Listado de Bienes";
+        this.listGoodSelectedTitle = 'Listado de Bienes';
         this.searchRequestSimGoods = false;
         this.dictumValidate = false;
         this.createReport = false;
