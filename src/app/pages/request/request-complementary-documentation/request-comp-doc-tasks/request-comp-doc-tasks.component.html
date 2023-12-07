@@ -80,13 +80,32 @@
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
+        <div class="mx-1" *ngIf="compensationAct">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openDocument('act')">
+            <i class="bx bx-notepad mr-1 float-icon"></i>Acta de Resarcimiento
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="reportValidateDictum">
+          <button
+            type="button"
+            class="btn btn-info active btn-sm"
+            [disabled]=""
+            (click)="openReport()">
+            Documento Validar Dictamen
+            <i class="bx bx-notepad mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1" *ngIf="notifyReport">
           <button
             type="button"
             class="btn btn-info active btn-sm"
             [disabled]=""
             (click)="openNotifyReport()">
-            Reporte de Notificacion
+            Notificación
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
@@ -273,6 +292,7 @@
             [requestId]="requestId"
             [process]="process"></app-register-documentation-form>
         </tab>
+
         <tab
           *ngIf="regDocView"
           heading="Información de la solicitud"
@@ -287,7 +307,13 @@
           <app-search-request-similar-goods
             [selected]="true"></app-search-request-similar-goods>
         </tab>
-
+        <tab
+          *ngIf="registAppointment"
+          heading="Registro de Cita"
+          id="appointmentTab">
+        </tab>
+        <tab *ngIf="orderEntry" heading="Orden Ingreso" id="entryOrderTab">
+        </tab>
         <tab
           *ngIf="searchAssociateFile"
           heading="Buscar y Asociar al Expediente"

@@ -71,6 +71,11 @@ export class RequestCompDocTasksComponent
   resultVisits: boolean = false;
   RequestEconomicResourcesReport: boolean = false;
   listGoodSelectedTitle: string = 'Listado de Bienes';
+  reportValidateDictum: boolean = false;
+  registAppointment: boolean = false;
+  orderEntry: boolean = false;
+  compensationAct: boolean = false;
+
   /**
    * SET STATUS ACTIONS
    **/
