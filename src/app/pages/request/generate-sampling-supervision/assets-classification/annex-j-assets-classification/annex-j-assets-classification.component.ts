@@ -50,45 +50,49 @@ export class AnnexJAssetsClassificationComponent
       next: response => {
         this.sampleInfo = response.data[0];
 
-        //this.form.patchValue(this.sampleInfo);
+        if (this.typeAnnex == 'annexJ-assets-classification') {
+          if (this.sampleInfo.dateBreak)
+            this.form
+              .get('dateBreak')
+              .setValue(moment(this.sampleInfo.dateBreak).format('DD/MM/YYYY'));
+          if (this.sampleInfo.dateRepServices)
+            this.form
+              .get('dateRepServices')
+              .setValue(
+                moment(this.sampleInfo.dateRepServices).format('DD/MM/YYYY')
+              );
 
-        /*if (response.data[0].responsibleTe)
-          this.signForm.get('name').setValue(response.data[0].responsibleTe);
-        if (response.data[0].tePosition)
-          this.signForm.get('inCharge').setValue(response.data[0].tePosition);
-        if (response.data[0].teTypeSignature)
-          this.signForm
-            .get('tipeSign')
-            .setValue(response.data[0].teTypeSignature); */
+          if (this.sampleInfo.responsibleSae)
+            this.form
+              .get('responsibleSae')
+              .setValue(this.sampleInfo.responsibleSae);
 
-        if (this.sampleInfo.dateBreak)
-          this.form
-            .get('dateBreak')
-            .setValue(moment(this.sampleInfo.dateBreak).format('DD/MM/YYYY'));
-        if (this.sampleInfo.dateRepServices)
-          this.form
-            .get('dateRepServices')
-            .setValue(
-              moment(this.sampleInfo.dateRepServices).format('DD/MM/YYYY')
-            );
+          if (this.sampleInfo.saePosition)
+            this.form.get('saePosition').setValue(this.sampleInfo.saePosition);
 
-        if (this.sampleInfo.responsibleSae)
-          this.form
-            .get('responsibleSae')
-            .setValue(this.sampleInfo.responsibleSae);
+          if (this.sampleInfo.thirdSpecialized)
+            this.form
+              .get('thirdSpecialized')
+              .setValue(this.sampleInfo.thirdSpecialized);
 
-        if (this.sampleInfo.saePosition)
-          this.form.get('saePosition').setValue(this.sampleInfo.saePosition);
+          if (this.sampleInfo.relevantFacts)
+            this.form
+              .get('relevantFacts')
+              .setValue(this.sampleInfo.relevantFacts);
+        }
 
-        if (this.sampleInfo.thirdSpecialized)
-          this.form
-            .get('thirdSpecialized')
-            .setValue(this.sampleInfo.thirdSpecialized);
+        if (this.typeAnnex == 'sign-annexJ-assets-classification') {
+          this.signForm.patchValue(this.sampleInfo);
 
-        if (this.sampleInfo.relevantFacts)
-          this.form
-            .get('relevantFacts')
-            .setValue(this.sampleInfo.relevantFacts);
+          if (this.sampleInfo.responsibleTe)
+            this.signForm.get('name').setValue(this.sampleInfo.responsibleTe);
+          if (this.sampleInfo.tePosition)
+            this.signForm.get('inCharge').setValue(this.sampleInfo.tePosition);
+          if (this.sampleInfo.teTypeSignature)
+            this.signForm
+              .get('tipeSign')
+              .setValue(this.sampleInfo.teTypeSignature);
+        }
       },
     });
   }
@@ -170,51 +174,55 @@ export class AnnexJAssetsClassificationComponent
       }
     }
 
-    /*
-    const typeDocument = 218;
-    const name = this.signForm.get('name').value;
-    const charge = this.signForm.get('inCharge').value;
-    const typeSign = this.signForm.get('tipeSign').value;
-    if (typeSign == 'electronica') {
-      const registerInfoSample = await this.checkInfoRegisterSample(
-        name,
-        charge,
-        typeSign
-      );
-      if (registerInfoSample) {
-        const checkSignature = await this.checkSignatureInfo(
+    if (this.typeAnnex == 'sign-annexJ-assets-classification') {
+      const name = this.signForm.get('name').value;
+      const charge = this.signForm.get('inCharge').value;
+      const typeSign = this.signForm.get('tipeSign').value;
+      if (typeSign == 'electronica') {
+        const registerInfoSample = await this.checkInfoRegisterSample(
           name,
           charge,
-          typeDocument
+          typeSign
+        );
+        if (registerInfoSample) {
+          const checkSignature = await this.checkSignatureInfo(
+            name,
+            charge,
+            typeDocument
+          );
+
+          if (checkSignature) {
+            this.alert(
+              'success',
+              'Acción Correcta',
+              'Firmante agregado correctamente'
+            );
+            this.bsModalRef.content.callback(typeDocument, typeSign);
+            this.close();
+          }
+        }
+      } else if (typeSign == 'autografa') {
+        const registerInfoSample = await this.checkInfoRegisterSample(
+          name,
+          charge,
+          typeSign
         );
 
-        if (checkSignature) {
+        if (registerInfoSample) {
           this.alert(
             'success',
             'Acción Correcta',
-            'Firmante agregado correctamente'
+            'Información registrada correctamente'
           );
           this.bsModalRef.content.callback(typeDocument, typeSign);
           this.close();
         }
       }
-    } else if (typeSign == 'autografa') {
-      const registerInfoSample = await this.checkInfoRegisterSample(
-        name,
-        charge,
-        typeSign
-      );
+    }
 
-      if (registerInfoSample) {
-        this.alert(
-          'success',
-          'Acción Correcta',
-          'Información registrada correctamente'
-        );
-        this.bsModalRef.content.callback(typeDocument, typeSign);
-        this.close();
-      }
-    } */
+    /*
+    const typeDocument = 218;
+    */
   }
 
   checkInfoRegSamClas() {
@@ -238,7 +246,7 @@ export class AnnexJAssetsClassificationComponent
     });
   }
 
-  /*checkInfoRegisterSample(name: string, charge: string, typeSign: string) {
+  checkInfoRegisterSample(name: string, charge: string, typeSign: string) {
     return new Promise((resolve, reject) => {
       const sampleData: ISample = {
         sampleId: this.idSample,
@@ -253,7 +261,7 @@ export class AnnexJAssetsClassificationComponent
         },
       });
     });
-  } */
+  }
 
   checkSignatureInfo(name: string, charge: string, typeDocument: number) {
     return new Promise((resolve, reject) => {

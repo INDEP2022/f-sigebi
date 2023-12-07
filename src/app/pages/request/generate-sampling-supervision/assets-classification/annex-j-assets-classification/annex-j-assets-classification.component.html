@@ -82,52 +82,62 @@
         </div>
       </form>
     </div>
-    <!--
-      <div>
-        <form [formGroup]="signForm" class="form-material">
-          <div class="row pt-4">
-            <div class="col-md-12">
-              <form-field [control]="signForm.get('name')" label="Nombre">
-                <input type="text" class="form-control" formControlName="name" />
-              </form-field>
-            </div>
+
+    <div *ngIf="typeAnnex == 'sign-annexJ-assets-classification'">
+      <form [formGroup]="signForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <form-field [control]="signForm.get('name')" label="Nombre">
+              <input type="text" class="form-control" formControlName="name" />
+            </form-field>
           </div>
-  
-          <div class="row pt-4">
-            <div class="col-md-12">
-              <form-field [control]="signForm.get('inCharge')" label="Cargo">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="inCharge" />
-              </form-field>
-            </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <form-field [control]="signForm.get('inCharge')" label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="inCharge" />
+            </form-field>
           </div>
-  
-          <div class="row pt-5">
-            <label class="control-label col-sm-5" for="pwd"
-              >Tipo de firma&#58;</label
-            >
-            <div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12" style="display: flex">
+            <div style="line-height: 3">
+              <label for="electronica">Tipo de firma:</label>
+            </div>
+            <div style="padding-left: 7px" class="form-check form-check-inline">
               <form-radio label="Electr&oacute;nica">
                 <input
                   type="radio"
                   formControlName="tipeSign"
                   value="electronica"
                   id="electronica"
+                  style="height: 3.5px !important"
                   [checked]="checked" />
               </form-radio>
-  
-              <form-radio label="Autografa">
-                <input
-                  type="radio"
-                  formControlName="tipeSign"
-                  value="autografa"
-                  id="autografa" />
-              </form-radio>
+
+              <div>
+                <form-radio label="Autografa">
+                  <input
+                    type="radio"
+                    formControlName="tipeSign"
+                    style="height: 1.5rem !important"
+                    value="autografa"
+                    id="autografa" />
+                </form-radio>
+              </div>
             </div>
           </div>
-        </form>
+        </div>
+      </form>
+    </div>
+    <!--
+      <div>
+       
       </div>
     -->
     <div footer>

@@ -83,6 +83,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   idRegionalDelegation: number = 0; //parametro pasado desde el padre
   process: string = '';
   orderServiceTask: number = null;
+  typeAnnex: string = '';
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -1427,31 +1428,57 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   updateSample(dDocName: string) {
     return new Promise((resolve, reject) => {
-      const sampleData: ISample = {
-        sampleId: this.idSample,
-        contentId: dDocName,
-      };
+      if (this.typeAnnex == 'annexJ-assets-classification') {
+        const sampleData: ISample = {
+          sampleId: this.idSample,
+          contentId: dDocName,
+        };
 
-      this.samplingGoodService.updateSample(sampleData).subscribe({
-        next: () => {
-          resolve(true);
-        },
-      });
+        this.samplingGoodService.updateSample(sampleData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+        });
+      } else if (this.typeAnnex == 'sign-annexJ-assets-classification') {
+        const sampleData: ISample = {
+          sampleId: this.idSample,
+          contentTeId: dDocName,
+        };
+
+        this.samplingGoodService.updateSample(sampleData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+        });
+      }
     });
   }
 
   updateSampleK(dDocName: string) {
     return new Promise((resolve, reject) => {
-      const sampleData: ISample = {
-        sampleId: this.idSample,
-        contentIdK: dDocName,
-      };
+      if (this.typeAnnex == 'annex-assets-classification') {
+        const sampleData: ISample = {
+          sampleId: this.idSample,
+          contentIdK: dDocName,
+        };
 
-      this.samplingGoodService.updateSample(sampleData).subscribe({
-        next: () => {
-          resolve(true);
-        },
-      });
+        this.samplingGoodService.updateSample(sampleData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+        });
+      } else if (this.typeAnnex == 'sign-annex-assets-classification') {
+        const sampleData: ISample = {
+          sampleId: this.idSample,
+          contentKSaeId: dDocName,
+        };
+
+        this.samplingGoodService.updateSample(sampleData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+        });
+      }
     });
   }
 }
