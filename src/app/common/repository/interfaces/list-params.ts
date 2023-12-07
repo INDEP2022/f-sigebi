@@ -1,11 +1,16 @@
-export class ListParams {
-  text?: string = '';
+export class ListParamsFather {
   [others: string]: string | number;
   page?: number = 1;
-  inicio?: number = 1;
   limit?: number = 10;
+  // filter?: string = '';
+}
+
+export class ListParams extends ListParamsFather {
+  text?: string = '';
+  [others: string]: string | number;
   pageSize?: number = 10;
   take?: number = 10;
+  inicio?: number = 1;
   // filter?: string = '';
 }
 

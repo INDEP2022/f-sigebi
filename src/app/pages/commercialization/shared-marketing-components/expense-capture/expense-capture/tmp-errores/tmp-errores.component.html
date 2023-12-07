@@ -1,0 +1,30 @@
+<accordion [isAnimated]="true">
+  <accordion-group [isOpen]="true" (isOpenChange)="toggleInformation = $event">
+    <div accordion-heading class="row mt-3">
+      <h5 class="title">
+        Errores en validación
+        <i
+          class="bx bx-chevron-down bx-md float-icon-md"
+          style="float: right"
+          [ngClass]="{
+            'rotate-down': toggleInformation,
+            'rotate-up': !toggleInformation
+          }"></i>
+      </h5>
+    </div>
+    <app-card [header]="false">
+      <div body>
+        <div class="row pt-4 pl-0 pr-0 m-0">
+          <div class="col-md-12 p-0">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-responsive table-bordered'"
+                [settings]="settings"
+                [source]="dataPaginated">
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination></div></app-card></accordion-group
+></accordion>

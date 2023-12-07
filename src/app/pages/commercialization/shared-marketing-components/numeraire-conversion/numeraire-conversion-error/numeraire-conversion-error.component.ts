@@ -56,7 +56,7 @@ export class NumeraireConversionErrorComponent
       newColumnFilters['filter.eventId'] = '$eq:' + this.selectedEvent.id;
     }
     if (this.address) {
-      newColumnFilters['filter.event.addres'] = '$in:' + this.address + ',C';
+      newColumnFilters['filter.event.address'] = '$in:' + this.address + ',C';
     }
 
     return {
