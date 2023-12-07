@@ -33,7 +33,7 @@ export interface ISample {
   positionProviderK?: string;
   typeSignatureProviderK?: string;
   contentTeId?: string;
-  contentKSaeId?: number;
+  contentKSaeId?: string;
   contractNumber?: string;
   descBreak?: string;
   dateBreak?: string;
