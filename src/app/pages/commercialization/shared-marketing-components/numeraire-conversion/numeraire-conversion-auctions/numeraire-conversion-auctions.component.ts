@@ -55,6 +55,10 @@ export class NumeraireConversionAuctionsComponent
     }
   }
 
+  get expenses() {
+    return this.numerarieService.expenses;
+  }
+
   get showParcial() {
     return this.numerarieService.showParcial;
   }

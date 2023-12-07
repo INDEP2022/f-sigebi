@@ -35,6 +35,10 @@ export class NumeraireConversionAllotmentsComponent
 
   ngOnInit(): void {}
 
+  resetSelected() {
+    this.selectedEvent = null;
+  }
+
   get pathEvent() {
     return (
       'event/api/v1/comer-event?filter.eventTpId=$eq:3&sortBy=id:ASC' +
