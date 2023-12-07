@@ -1,4 +1,4 @@
-import { CheckboxElementSamplingComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-sampling';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const LIST_DEDUCTIVES_COLUMNS = {
   description: {
@@ -29,7 +29,7 @@ export const LIST_DEDUCTIVES_COLUMNS = {
     class: 'custom-field',
     filter: false,
     disabled: true,
-    renderComponent: CheckboxElementSamplingComponent,
+    renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {},
     sort: false,
   },

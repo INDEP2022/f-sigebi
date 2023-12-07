@@ -29,7 +29,7 @@ export const LIST_PAYMENT_VALIDATIONS = {
     type: 'string',
     sort: false,
   },
-  goodStatus: {
+  goodState: {
     title: 'Estado del bien',
     type: 'string',
     sort: false,

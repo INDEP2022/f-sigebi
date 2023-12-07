@@ -16,7 +16,6 @@ export class DetailAnnexComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    console.log('idSample desde detalle anexo', this.idSample);
     this.initForm();
   }
 
