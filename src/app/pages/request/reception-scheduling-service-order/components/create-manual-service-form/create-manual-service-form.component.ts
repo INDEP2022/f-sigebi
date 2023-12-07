@@ -48,7 +48,7 @@ export class CreateManualServiceFormComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Estás seguro que desea crear el servicio manual?'
+      '¿Está seguro que desea crear el servicio manual?'
     ).then(question => {
       if (question.isConfirmed) {
         const form = this.form.getRawValue();

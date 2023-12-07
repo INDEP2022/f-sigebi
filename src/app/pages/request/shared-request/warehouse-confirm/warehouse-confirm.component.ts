@@ -57,7 +57,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Estás seguro que desea confirmar el alta de almacén?'
+      '¿Está seguro que desea confirmar el alta de almacén?'
     ).then(async question => {
       if (question.isConfirmed) {
         const updateInfo = await this.updateInfoStore();

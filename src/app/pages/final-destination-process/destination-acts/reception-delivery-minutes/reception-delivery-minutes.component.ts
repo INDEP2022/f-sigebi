@@ -153,7 +153,7 @@ export class ReceptionDeliveryMinutesComponent
             this.alert(
               'error',
               'ACTAS DE DESTINO DE BIENES',
-              'No se Encontró Datos con la Clave del Acta Seleccionada'
+              'No se encontraron datos con la clave del acta seleccionada'
             );
           }
         },

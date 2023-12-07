@@ -3,14 +3,14 @@
     <div header>
       <div class="ch-content">
         <h5 class="title">
-          OFICIOS DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N XD
+          OFICIOS DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
         </h5>
       </div>
     </div>
 
     <div body>
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('idExpedient')"
             label="No. Expediente">
@@ -20,25 +20,6 @@
               formControlName="idExpedient" />
           </form-field>
         </div>
-        <div class="col">
-          <div class="justify-content-start">
-            <button
-              [disabled]="!form.valid"
-              (click)="expedientChange()"
-              type="button"
-              class="btn btn-primary active btn-sm mr-3">
-              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-            </button>
-            <button
-              [disabled]="!form.valid"
-              (click)="clean()"
-              class="btn btn-danger btn-sm active mr-3">
-              Limpiar <i class="fas fa-eraser"> </i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
             [control]="form.get('preliminaryInquiry')"
@@ -57,6 +38,8 @@
               formControlName="criminalCase" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
             [control]="form.get('circumstantialRecord')"
@@ -67,9 +50,6 @@
               formControlName="circumstantialRecord" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row pt-4">
         <div class="col-md-4">
           <form-field [control]="form.get('keyPenalty')" label="Toca Penal">
             <input
@@ -78,7 +58,9 @@
               formControlName="keyPenalty" />
           </form-field>
         </div>
+      </div>
 
+      <div class="row pt-4 text-center">
         <div class="col">
           <button
             (click)="buttonAddGoods()"
@@ -126,21 +108,36 @@
               [bsConfig]="bsConfig" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5 text-center">
         <div class="col">
-          <div class="justify-content-start">
-            <button
-              (click)="masive()"
-              class="btn btn-sm btn-primary active mr-3">
-              Masivo
-            </button>
-            <button
-              (click)="closed()"
-              type="button"
-              class="btn btn-sm btn-danger active"
-              [disabled]="textDisabled">
-              {{ textButton }}
-            </button>
-          </div>
+          <button
+            (click)="getProceeding()"
+            type="button"
+            class="btn btn-primary active btn-sm mr-3">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            (click)="newProceeding()"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active mr-3">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+          <button (click)="masive()" class="btn btn-sm btn-primary active mr-3">
+            <i class="fa fa-arrow-down float-icon"></i>
+          </button>
+          <button
+            (click)="closeButton()"
+            type="button"
+            class="btn btn-sm btn-danger active mr-3"
+            [disabled]="textDisabled">
+            {{ textButton }}
+          </button>
+          <button (click)="clean()" class="btn btn-danger btn-sm active mr-3">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
       </div>
 
@@ -201,12 +198,6 @@
                   accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
               </div>
             </div>
-            <!-- <div class="row">
-              <small>
-                Seleccionar archivo de la ruta:
-                src\app\pages\executive-processes\filesTest
-              </small>
-            </div> -->
           </div>
         </div>
       </div>

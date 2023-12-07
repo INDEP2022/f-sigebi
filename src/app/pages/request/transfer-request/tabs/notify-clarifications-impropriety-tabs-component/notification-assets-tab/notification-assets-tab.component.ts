@@ -1854,7 +1854,7 @@ export class NotificationAssetsTabComponent
   }
 
   endClarification() {
-    //this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
     /*this.data.getElements().then(data => {
       data.map((good: IGoodresdev) => {
         if (

@@ -1029,7 +1029,7 @@ export class MassRulingComponent
       const dictation = await this.getDictationForId('other');
       vNO_OF_DICTA = dictation;
     } catch (error) {
-      this.alert('error', '', 'No Se Encontró el Dictamen');
+      this.alert('error', '', 'No Se encontró el Dictamen');
       return;
     }
     const body = {
