@@ -1,6 +1,6 @@
 export interface IMassiveGoodTracker {
   bienes_aceptados: IAprovedGoods[];
-  bienes_rechazados: string[];
+  bienes_rechazados: any[];
   aceptados: number;
   rechazados: number;
 }

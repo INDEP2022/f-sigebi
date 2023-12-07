@@ -4,6 +4,7 @@ export enum GOOD_TRACKER_ORIGINS {
   DetailProceedings = 'FMENTREC_0002',
   MaintenanceProceedings = 'FACTREFACTAERCIER',
   DestructionManagement = 'FESTATUSRGA',
+  AuthorizationAssetsDestruction = 'FACTDIRAPROBDESTR',
   EventosCapture = 'FINDICA_0035_1',
   MassiveChangeStatus = 'FACTADBCAMBIOESTAT',
   EventPreparation = 'FCOMEREVENTOS',

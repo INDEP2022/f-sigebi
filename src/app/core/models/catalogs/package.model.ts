@@ -67,4 +67,10 @@ export interface IPrincipalPackageDec {
 export interface IGoodsExpedient {
   proceedingsNumber: number;
   minutesNumber: number;
+  user: string;
+}
+
+export interface IGoodTracker {
+  minutesNumber?: string;
+  globalRelGood: number;
 }
