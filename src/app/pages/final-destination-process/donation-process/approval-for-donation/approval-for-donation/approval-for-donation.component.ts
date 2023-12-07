@@ -4,7 +4,14 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
-import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  skip,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -36,7 +43,33 @@ export type IGoodAndAvailable = IGood & {
 @Component({
   selector: 'app-approval-for-donation',
   templateUrl: './approval-for-donation.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: white !important;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ApprovalForDonationComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -108,6 +141,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     return this.form.get('cveActa');
   }
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
+  loadingExport: boolean = false;
+  delegationRegional: any = null;
   constructor(
     private fb: FormBuilder,
     private donationService: DonationService,
@@ -182,9 +217,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
               },
               noDelegation1: () => (searchFilter = SearchFilter.EQ),
-              elaborated: () => (searchFilter = SearchFilter.EQ),
-              estatusAct: () => (searchFilter = SearchFilter.EQ),
-              cveAct: () => (searchFilter = SearchFilter.ILIKE),
+              elaborated_: () => (searchFilter = SearchFilter.ILIKE),
+              estatusAct_: () => (searchFilter = SearchFilter.EQ),
+              cveAct_: () => (searchFilter = SearchFilter.ILIKE),
               closeDate: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
@@ -232,8 +267,17 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         }
       });
     this.params1
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDetailComDonation());
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getDetailComDonation();
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {});
+    // this.params1
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getDetailComDonation());
   }
   formatDate(dateString: string): string {
     if (dateString === '') {
@@ -257,7 +301,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       elaborated: [null, []],
     });
 
-    this.getEventComDonation(new ListParams());
+    // this.getEventComDonation(new ListParams());
   }
 
   onSubmit() {}
@@ -355,6 +399,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   getEventComDonation(params: ListParams) {
     // params['sortBy'] = `captureDate:DESC`;
+    if (this.valDele != 0)
+      params['filter.noDelegation1'] = `$eq:${this.valDele}`;
     if (params.text.length > 0)
       params['filter.cveAct'] = `$ilike:${params.text}`;
     params.text = '';
@@ -394,21 +440,21 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
     if (estatusAct) {
       this.params.getValue()['filter.estatusAct'] = `$ilike:${estatusAct}`;
-      // await this.forArrayFilters('eventId', estatusAct);
+      // await this.forArrayFilters('estatusAct_', estatusAct);
     } else {
       delete this.params.getValue()['filter.estatusAct'];
     }
 
     if (elaborated) {
       this.params.getValue()['filter.elaborated'] = `$ilike:${elaborated}`;
-      // await this.forArrayFilters('eventId', elaborated);
+      // await this.forArrayFilters('elaborated_', elaborated);
     } else {
       delete this.params.getValue()['filter.elaborated'];
     }
 
     if (cveAct) {
       this.params.getValue()['filter.cveAct'] = `$ilike:${cveAct}`;
-      // await this.forArrayFilters('cveAct', cveAct);
+      // await this.forArrayFilters('cveAct_', cveAct);
     } else {
       delete this.params.getValue()['filter.cveAct'];
     }
@@ -478,19 +524,47 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     NoDelegation1?: string | number,
     elaborated?: string | number
   ) {
-    this.loading = true;
-
     // closeDate ? (this.params.getValue()['filter.closeDate'] = `$eq:${closeDate}`) : delete this.params.getValue()['filter.closeDate'];
     // cveAct ? (this.params.getValue()['filter.cveAct'] = `$ilike:${cveAct}`) : delete this.params.getValue()['filter.cveAct'];
     // NoDelegation1 ? (this.params.getValue()['filter.noDelegation1'] = `$eq:${NoDelegation1}`) : delete this.params.getValue()['filter.NoDelegation1'];
     // estatusAct ? (this.params.getValue()['filter.estatusAct'] = `$eq:${estatusAct}`) : delete this.params.getValue()['filter.estatusAct'];
     // elaborated ? (this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`) : delete this.params.getValue()['filter.elaborated'];
+    const estatusAct_ = this.form.get('estatusAct').value;
+    const cveAct_ = this.form.get('cveActa').value;
+    const elaborated_ = this.form.get('elaborated').value;
 
     let params: any = {
       ...this.params.getValue(),
       ...this.columnFilter,
     };
 
+    if (params['filter.cveAct_']) {
+      if (cveAct_) {
+        return;
+      } else {
+        params['filter.cveAct'] = params['filter.cveAct_'];
+        delete params['filter.cveAct_'];
+      }
+    }
+
+    if (params['filter.elaborated_']) {
+      if (elaborated_) {
+        return;
+      } else {
+        params['filter.elaborated'] = params['filter.elaborated_'];
+        delete params['filter.elaborated_'];
+      }
+    }
+    if (params['filter.estatusAct_']) {
+      if (estatusAct_) {
+        return;
+      } else {
+        params['filter.estatusAct'] = params['filter.estatusAct_'];
+        delete params['filter.estatusAct_'];
+      }
+    }
+
+    this.loading = true;
     if (params['filter.captureDate_']) {
       const fechas = params['filter.captureDate_'];
       var fecha1 = new Date(fechas);
@@ -503,7 +577,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         'yyyy-MM-dd'
       );
       params['filter.captureDate'] = `$eq:${fechaFormateada1}`;
-      delete this.params.getValue()['filter.captureDate_'];
+      delete params['filter.captureDate_'];
     }
 
     // EVENT_COM_DONACION
@@ -513,6 +587,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       next: resp => {
         let result = resp.data.map(item => {
           item['captureDate_'] = item.captureDate;
+          item['elaborated_'] = item.elaborated;
+          item['estatusAct_'] = item.estatusAct;
+          item['cveAct_'] = item.cveAct;
+          item['noDelegation1_'] = item.noDelegation1;
         });
         Promise.all(result).then(response => {
           this.data.load(resp.data);
@@ -542,18 +620,21 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     });
   }
 
-  changeEvent(event: any) {
+  dataSelected: any = null;
+  async changeEvent(event: any) {
     if (event) {
       this.selectRow = true;
       this.excelValid = true;
       const data: any = event.data;
-      this.getDetailComDonation(this.actaId);
-      this.responseDetail = true;
+      this.dataSelected = data;
+      this.actaId = data.actaId;
       console.log(event.data);
+      await this.getDetailComDonation(event.data.actId);
+      this.responseDetail = true;
     }
   }
 
-  getDetailComDonation(idActa?: number | string) {
+  async getDetailComDonation(idActa?: any) {
     this.loading2 = true;
     if (idActa) {
       this.params1.getValue()['filter.recordId'] = `$eq:${idActa}`;
@@ -636,7 +717,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
     this.delegationService.getAll(params.getParams()).subscribe({
       next: (data: any) => {
-        this.form.get('noDelegation1').setValue(data.data[0]);
+        this.delegationRegional = data.data[0];
+
+        this.form.get('noDelegation1').setValue(this.delegationRegional);
       },
       error: () => {
         this.getDelegations(new ListParams());
@@ -654,10 +737,72 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   getEventComDonationExcel(body: any) {
+    this.loadingExport = true;
+    const estatusAct_ = this.form.get('estatusAct').value;
+    const cveAct_ = this.form.get('cveActa').value;
+    const elaborated_ = this.form.get('elaborated').value;
     let params: any = {
       ...this.params.getValue(),
       ...this.columnFilter,
     };
+    if (params['filter.cveAct_']) {
+      if (cveAct_) {
+        params['filter.cveAct'] = `$ilike:${cveAct_}`;
+        delete params['filter.cveAct_'];
+      } else {
+        params['filter.cveAct'] = params['filter.cveAct_'];
+        delete params['filter.cveAct_'];
+      }
+    }
+
+    if (params['filter.elaborated_']) {
+      if (elaborated_) {
+        params['filter.elaborated'] = `$ilike:${elaborated_}`;
+        delete params['filter.elaborated_'];
+      } else {
+        params['filter.elaborated'] = params['filter.elaborated_'];
+        delete params['filter.elaborated_'];
+      }
+    }
+    if (params['filter.estatusAct_']) {
+      if (estatusAct_) {
+        params['filter.estatusAct'] = `$ilike:${estatusAct_}`;
+        delete params['filter.estatusAct_'];
+      } else {
+        let res = params['filter.estatusAct_'].split(':');
+        params['filter.estatusAct'] = `$ilike:${res[1].toUpperCase()}`;
+        delete params['filter.estatusAct_'];
+      }
+    }
+
+    if (params['filter.elaborated']) {
+      let res = params['filter.elaborated'].split(':');
+      params['filter.elaborated'] = `$ilike:${res[1].toUpperCase()}`;
+      //  delete params['filter.elaborated_'];
+    }
+    // if(params['filter.cveAct_']){
+    //   params['filter.cveAct'] = params['filter.cveAct_']
+    //   delete params['filter.cveAct_'];
+    // }
+    // if(params['filter.estatusAct_']){
+    //   params['filter.estatusAct'] = params['filter.estatusAct_']
+    //   delete params['filter.estatusAct_'];
+    // }
+
+    if (params['filter.captureDate_']) {
+      const fechas = params['filter.captureDate_'];
+      var fecha1 = new Date(fechas);
+
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2);
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+      var fechaFormateada1 = this.datePipe.transform(
+        params['filter.captureDate_'],
+        'yyyy-MM-dd'
+      );
+      params['filter.captureDate'] = `$eq:${fechaFormateada1}`;
+      delete params['filter.captureDate_'];
+    }
     params.page = 1;
     params.limit = this.totalItems3;
     this.donationService.getEventComDonationExcelExport(params).subscribe({
@@ -673,6 +818,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         // );
       },
       error: error => {
+        this.loadingExport = false;
         this.alert('warning', 'No se pudo descargar el excel', '');
       },
     });
@@ -686,6 +832,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     link.download = nameFile;
     link.click();
     link.remove();
+    this.loadingExport = false;
     this.alert('success', 'El archivo se ha descargado', '');
   }
 
@@ -783,12 +930,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       return;
     } else if (level == 1) {
       this.getDelegations(new ListParams());
+      this.getEventComDonation(new ListParams());
       this.valUser = false;
     } else if (level == 2) {
       this.valUser = true;
       const valDele = this.authService.decodeToken().department;
       this.valDele = valDele;
       this.getnoDelegation1(valDele);
+      this.getEventComDonation(new ListParams());
       this.form.get('noDelegation1').disable();
     } else {
       this.valUser = false;
@@ -796,6 +945,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         .get('elaborated')
         .setValue(this.authService.decodeToken().username);
       this.getDelegations(new ListParams());
+      this.getEventComDonation(new ListParams());
     }
   }
   disabledField() {
@@ -834,8 +984,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.data.refresh();
 
     if (this.valUser) {
-      const valDele = this.authService.decodeToken().department;
-      this.getnoDelegation1(valDele);
+      // const valDele = this.authService.decodeToken().department;
+      // this.getnoDelegation1(valDele);
+      this.form.get('noDelegation1').setValue(this.delegationRegional);
       this.form.get('noDelegation1').disable();
     } else {
       this.getDelegations(new ListParams());
@@ -854,7 +1005,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       delegationId: Number(localStorage.getItem('area')),
       nombre_transferente: null,
     };
-
     this.getEventComDonationExcel(this.body);
   }
 
@@ -900,5 +1050,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
+  }
+
+  method2(data: any) {
+    console.log('data', this.dataSelected);
+    localStorage.setItem('actaId', this.dataSelected.actId);
+    this.goDetailDonation();
+    // this.alert("success", "AQUI", data)
   }
 }

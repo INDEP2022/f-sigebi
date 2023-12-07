@@ -1,6 +1,6 @@
 export const COLUMNS = {
   id_gasto: {
-    title: 'Id',
+    title: 'Id Gasto',
     sort: false,
     type: 'string',
   },

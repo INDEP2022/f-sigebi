@@ -403,7 +403,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que desea eliminar los archivos seleccionados?'
+      '¿Está seguro que desea eliminar los archivos seleccionados?'
     );
 
     if (result.isConfirmed) {

@@ -11,6 +11,7 @@
           <i class="bx bx-list-ul bx-sm float-icon"></i>
         </button>
         <form-field
+          [ngStyle]="{ display: onlyButton ? 'none' : 'block' }"
           style="width: calc(100% - 36px)"
           [control]="form.get(formField)"
           [label]="label">

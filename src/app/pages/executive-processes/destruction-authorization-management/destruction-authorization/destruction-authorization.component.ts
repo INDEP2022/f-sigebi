@@ -36,15 +36,20 @@ import { maxDate } from 'src/app/common/validations/date.validators';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
+import { IFestatus } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { IAvailableFestatus } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -183,6 +188,10 @@ export class DestructionAuthorizationComponent
   username: string = null;
   refusedGoods: string[];
 
+  //AGREGADO POR GRIGORK
+  selectGoodProc: any = null;
+  selectGoodGen: any = null;
+
   @ViewChild('focusElement', { static: true })
   focusElement: ElementRef<HTMLInputElement>;
 
@@ -213,12 +222,17 @@ export class DestructionAuthorizationComponent
     private store: Store<IDestructionAuth>,
     private segAccessXArea: SegAcessXAreasService,
     private authService: AuthService,
+
     private documentsService: DocumentsService,
     private siabService: SiabService,
     private massiveGoodService: MassiveGoodService,
     private datePipe: DatePipe,
     private goodprocessService: GoodprocessService,
-    private copiesOfficialOpinionService: CopiesOfficialOpinionService
+    private copiesOfficialOpinionService: CopiesOfficialOpinionService,
+    //SERVICIOS AGREGADOS POR GRIGORK
+    private expedientService: ExpedientService,
+    private proceedingService: ProceedingsService,
+    private goodTrackerService: GoodTrackerService
   ) {
     super();
 
@@ -256,7 +270,7 @@ export class DestructionAuthorizationComponent
           type: 'custom',
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onSelectGood(instance),
+            this.onSelectGoodAct(instance),
           filter: false,
           sort: false,
         },
@@ -270,7 +284,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...GOODS_COLUMNS,
-        selection: {
+        /* selection: {
           title: '',
           sort: false,
           type: 'custom',
@@ -278,7 +292,7 @@ export class DestructionAuthorizationComponent
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGoodPSD(instance),
-        },
+        }, */
       },
       hideSubHeader: false,
       rowClassFunction: (row: any) => {
@@ -318,6 +332,24 @@ export class DestructionAuthorizationComponent
 
   private tempArrayGood: any = [];
   private selectedGood: any = null;
+  private goodsAct: any = [];
+
+  onSelectGoodAct(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        if (data.toggle) {
+          console.log(this.goodsAct);
+          this.goodsAct.push(data.row);
+        } else {
+          console.log(data.row.goodNumber);
+          console.log(this.goodsAct);
+          this.goodsAct = this.goodsAct.filter(
+            valor => valor.goodNumber != data.row.goodNumber
+          );
+        }
+      },
+    });
+  }
 
   onSelectGood(instance: CheckboxElementComponent) {
     if (this.controls.statusProceedings.value == 'CERRADA') {
@@ -367,8 +399,6 @@ export class DestructionAuthorizationComponent
       next: data => {
         this.selectGoodPSD(data.row, data.toggle);
 
-        this.tempArray = [...this.array];
-
         if (data.toggle) {
           // Si el checkbox se selecciona, agregar el elemento al array
           if (!this.array.includes(data.row)) {
@@ -382,6 +412,7 @@ export class DestructionAuthorizationComponent
           }
           console.log(this.array);
         }
+        this.tempArray = [...this.array];
       },
     });
   }
@@ -397,7 +428,9 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (this.controls.statusProceedings.value == 'CERRADA') {
+    if (
+      ['CERRADO', 'CERRADA'].includes(this.controls.statusProceedings.value)
+    ) {
       this.alert(
         'warning',
         'Error',
@@ -406,7 +439,7 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (this.selectedGoods.length == 0) {
+    if (this.selectGoodProc == null) {
       this.alert(
         'warning',
         'Error',
@@ -421,8 +454,8 @@ export class DestructionAuthorizationComponent
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.goodIds = this.array1[0].numberGood;
-        this.numberPro = this.array1[0].numberProceedings;
+        this.goodIds = this.selectGoodProc.numberGood;
+        this.numberPro = this.selectGoodProc.numberProceedings;
 
         console.log(this.goodIds, this.numberPro);
         this.deleteDetail();
@@ -530,6 +563,19 @@ export class DestructionAuthorizationComponent
           this.setState();
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
+            /* const paramsF = new FilterParams();
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            this.goodTrackerService
+              .getAllTmpTracker(paramsF.getParams())
+              .subscribe(res => {
+                res['data'].forEach(element => {
+                  console.log(element);
+                });
+              },
+              err => {
+
+              }); */
+
             this.insertDetailFromGoodsTracker();
           }
         },
@@ -638,6 +684,34 @@ export class DestructionAuthorizationComponent
           );
           alertAcep = false;
         }
+        console.log(response.bienes_aceptados);
+        response.bienes_aceptados.forEach(element => {
+          let body = {
+            pVcScreem: 'FESTATUSRGA',
+            pActaNumber: this.proceedingForm.get('id').value,
+            pStatusActa: this.proceedingForm.get('statusProceedings').value,
+            pGoodNumber: element.goodNumber,
+            pDiAvailable: '',
+            pDiActa: this.proceedingForm.get('id').value,
+            pCveActa: this.proceedingForm.get('keysProceedings').value,
+            pAmount: element.amount,
+          };
+          this.massiveGoodService.InsertGood(body).subscribe({
+            next: data => {
+              console.log(data);
+              this.getProceedingGoods();
+            },
+            error: err => {
+              console.log(err);
+              this.alert(
+                'warning',
+                `El Bien: ${this.selectGoodGen.id}, ya ha sido ingresado en una solicitud`,
+                ''
+              ); // Asumiendo que 'alert' se encarga de mostrar la alerta
+              this.array = [...this.tempArray];
+            },
+          });
+        });
 
         let alertRech: boolean = true;
         if (response.rechazados > 0) {
@@ -653,6 +727,7 @@ export class DestructionAuthorizationComponent
         this.keyProceedingchange();
 
         this.isInsertDetailRunning = false;
+        this.getProceedingGoods();
 
         // if (response.rechazados > 0) {
         //   const modalConfig = {
@@ -1009,10 +1084,28 @@ export class DestructionAuthorizationComponent
     );
   }
 
+  correctDateFormat(dateStr: string): string {
+    if (/^\d{4}[-\/]\d{2}[-\/]\d{2}$/.test(dateStr)) {
+      return dateStr;
+    }
+
+    let parts = dateStr.split(/[-/]/);
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+
   updateProceeding(
     id: string | number,
     proceeding: Partial<IProccedingsDeliveryReception>
   ) {
+    proceeding.closeDate = new Date(
+      this.correctDate(proceeding.closeDate)
+    ).toString();
+    proceeding.elaborationDate = new Date(
+      this.correctDate(
+        this.correctDateFormat(proceeding.elaborationDate.toString())
+      )
+    ).toString();
+    console.log(this.correctDateFormat(proceeding.elaborationDate));
     return this.proceedingsDeliveryReceptionService.update(id, proceeding).pipe(
       catchError(error => {
         this.onLoadToast(
@@ -1069,25 +1162,28 @@ export class DestructionAuthorizationComponent
 
   resetAll() {
     this.proceedingForm.reset();
-    this.detailProceedingsList = [];
+    this.detailProceedingsList2.load([]);
     this.actaList = [];
     this.dictaList = [];
   }
 
   keyProceedingchange() {
     const keyProceeding = this.controls.keysProceedings.value;
-
-    this.findProceeding(keyProceeding).subscribe();
+    const id = this.controls.id.value;
+    console.log(id);
+    this.findProceeding(keyProceeding, id).subscribe();
   }
 
-  findProceeding(keyProceeding: string) {
+  findProceeding(keyProceeding: string, id?: string) {
     let params = {
       ...this.params.getValue(),
     };
 
     params['filter.typeProceedings'] = `$eq:RGA`;
 
-    params['filter.keysProceedings'] = `$eq:${keyProceeding}`;
+    id != null
+      ? (params['filter.id'] = `$eq:${id}`)
+      : (params['filter.keysProceedings'] = `$eq:${keyProceeding}`);
 
     return this.proceedingsDeliveryReceptionService
       .getAllProceedingsDeliveryReception2(params)
@@ -1106,17 +1202,28 @@ export class DestructionAuthorizationComponent
           }
           return throwError(() => error);
         }),
-        map(response => response.data[0]),
+        map(response => {
+          // Primera transformación de los datos
+          console.log(response.data);
+          return response.data;
+        }),
+        map(data => {
+          // Segunda transformación de los datos
+          return data[0];
+        }),
         tap((proceeding: any) => {
-          proceeding.elaborationDate = moment(
-            proceeding.elaborationDate
-          ).format('DD/MM/YYYY');
-          proceeding.datePhysicalReception = moment(
-            proceeding.datePhysicalReception
-          ).format('DD/MM/YYYY');
-          proceeding.closeDate = moment(proceeding.closeDate).format(
-            'DD/MM/YYYY'
-          );
+          proceeding.elaborationDate =
+            proceeding.elaborationDate == null
+              ? null
+              : moment(proceeding.elaborationDate).format('DD/MM/YYYY');
+          proceeding.datePhysicalReception =
+            proceeding.datePhysicalReception == null
+              ? null
+              : moment(proceeding.datePhysicalReception).format('DD/MM/YYYY');
+          proceeding.closeDate =
+            proceeding.closeDate == null
+              ? null
+              : moment(proceeding.closeDate).format('DD/MM/YYYY');
 
           this.proceedingForm.patchValue(proceeding);
           this.getProceedingGoods();
@@ -1166,6 +1273,25 @@ export class DestructionAuthorizationComponent
     }
   }
 
+  closeProceedingManager() {
+    if (this.controls.statusProceedings.value == 'CERRADA') {
+      const body: IFestatus = {
+        goodNumber: 0,
+        cbApproved: '',
+        vcScreen: 'FESTATUSRGA',
+      };
+
+      // this.proceedingsDeliveryReceptionService.festatus()
+    } else {
+      this.closeProceeding();
+    }
+  }
+
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
   closeProceeding() {
     const { closeDate, universalFolio, keysProceedings } = this.controls;
     if (!closeDate.value) {
@@ -1211,13 +1337,27 @@ export class DestructionAuthorizationComponent
           return;
         }
         const fecha = this.proceedingForm.get('closeDate').value;
-        const fechaFormateada = this.datePipe.transform(fecha, 'dd/MM/yyyy');
+        /* const fechaFormateada = format(
+          new Date(this.correctDate(fecha)),
+          'dd/MM/yyyy'
+        ); */
         const message = CLOSE_PROCEEDING_MESSAGE(
-          fechaFormateada,
+          this.correctDate(fecha).toString(),
           this.totalItems2,
           keysProceedings.value
         );
-        this.openEmail(message, 'C');
+        this.proceedingsDeliveryReceptionService
+          .pupFillDist(this.proceedingForm.get('id').value)
+          .subscribe(
+            res => {
+              console.log(res);
+              this.openEmail(message, 'C');
+            },
+            err => {
+              console.log(err);
+              this.alert('error', 'Se presentó un error inesperado', '');
+            }
+          );
       },
       error: error => {
         this.onLoadToast(
@@ -1234,10 +1374,15 @@ export class DestructionAuthorizationComponent
       initialState: {
         message,
         action,
-        proceeding: this.proceedingForm.value,
+        proceeding: {
+          ...this.proceedingForm.value,
+          closeDate: this.correctDate(
+            this.proceedingForm.get('closeDate').value
+          ),
+        },
         callback: (next: boolean) => {
           if (next) {
-            const id = this.controls.keysProceedings.value;
+            const id = this.controls.id.value;
             this.findProceeding(id).subscribe();
           }
         },
@@ -1263,12 +1408,10 @@ export class DestructionAuthorizationComponent
     this.goodService.getGoodByStatusPDS(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
-          let obj = {
-            vcScreen: 'FESTATUSRGA',
-            goodNumber: item.id,
-          };
-          const di_dispo = await this.goodStatus(obj);
-          item['di_disponible'] = di_dispo;
+          console.log(item);
+          const di_dispo = await this.goodStatus(item);
+          console.log(di_dispo);
+          item['di_disponible'] = di_dispo.DI_DISPONIBLE;
         });
         await Promise.all(result);
         this.show2 = false;
@@ -1338,20 +1481,20 @@ export class DestructionAuthorizationComponent
   }
 
   //StatusBien
-  async goodStatus(id: any): Promise<string> {
+  async goodStatus(item: any): Promise<any> {
     return new Promise<string>((resolve, reject) => {
-      this.goodprocessService.getScreenGood2(id).subscribe({
-        next: async (response: any) => {
-          if (response.data) {
-            resolve('S');
-          } else {
-            resolve('N');
-          }
+      const body: IAvailableFestatus = {
+        goodId: item.id,
+        status: item.status,
+        screenkey: 'FESTATUSRGA',
+      };
+
+      this.proceedingService.getAvailableFestatus(body).subscribe(
+        res => {
+          resolve(res);
         },
-        error: () => {
-          resolve('N');
-        },
-      });
+        err => resolve(err)
+      );
     });
   }
 
@@ -1384,9 +1527,18 @@ export class DestructionAuthorizationComponent
   }
 
   insertGood() {
-    console.log(this.array);
-    console.log(this.array[0].goodId);
-    if (this.array.length === 0) {
+    if (
+      ['CERRADO', 'CERRADA'].includes(this.controls.statusProceedings.value)
+    ) {
+      this.alert(
+        'warning',
+        'Error',
+        'La Solicitud ya esta cerrada, no puede realizar modificaciones a esta'
+      );
+      return;
+    }
+
+    if (this.selectGoodGen == null) {
       this.alert('warning', 'Debe seleccionar un Bien', '');
       return;
     }
@@ -1395,25 +1547,31 @@ export class DestructionAuthorizationComponent
       this.alert('warning', 'Es necesario contar con el No. de Acta', '');
       return;
     }
+
+    if (this.selectGoodGen.di_disponible != 'S') {
+      this.alert(
+        'warning',
+        'El Bien no está disponible',
+        'El bien no está disponible para ser agregado'
+      );
+      return;
+    }
+
     let body = {
       pVcScreem: 'FESTATUSRGA',
       pActaNumber: this.proceedingForm.get('id').value,
       pStatusActa: this.proceedingForm.get('statusProceedings').value,
-      pGoodNumber: this.array[0].id,
+      pGoodNumber: this.selectGoodGen.id,
       pDiAvailable: '',
-      pDiActa: this.array[0].requestFolio,
+      pDiActa: this.selectGoodGen.requestFolio,
       pCveActa: this.proceedingForm.get('keysProceedings').value,
-      pAmount: this.array[0].quantity,
+      pAmount: this.selectGoodGen.quantity,
     };
     this.massiveGoodService.InsertGood(body).subscribe({
       next: data => {
         console.log(data);
-        if (data.message === true) {
-          this.alert('warning', 'Bien insertado con exito', '');
-          this.getProceedingGoods();
-        } else {
-          this.alert('warning', data.message[0], '');
-        }
+        this.alert('success', 'Bien insertado con exito', '');
+        this.getProceedingGoods();
       },
       error: err => {
         console.log(err);
@@ -1425,5 +1583,78 @@ export class DestructionAuthorizationComponent
         this.array = [...this.tempArray];
       },
     });
+  }
+
+  //AGREGADO POR GRIGORK
+  async validateFolio() {
+    return new Promise((resolve, reject) => {
+      this.documentsService
+        .getByFolio(this.proceedingForm.get('universalFolio').value)
+        .subscribe(
+          res => {
+            const data = JSON.parse(JSON.stringify(res));
+            const scanStatus = data.data[0]['scanStatus'];
+            console.log(scanStatus);
+            if (scanStatus === 'ESCANEADO') {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          },
+          err => {
+            resolve(false);
+          }
+        );
+    });
+  }
+
+  async newCloseProceeding() {
+    if (this.proceedingForm.get('closeDate').value == null) {
+      this.alert('warning', 'Debe ingresar la fecha de integración', '');
+      return;
+    }
+
+    if (this.detailProceedingsList2.count() == 0) {
+      this.alert(
+        'warning',
+        'La Solicitud no tiene ningun bien asignado, no se puede cerrar.',
+        ''
+      );
+      return;
+    }
+
+    if (this.proceedingForm.get('universalFolio').value == null) {
+      this.alert(
+        'warning',
+        'La solicitud no tiene folio de escaneo, no se puede cerrar',
+        ''
+      );
+      return;
+    }
+
+    const scanStatus = await this.validateFolio();
+
+    if (!scanStatus) {
+      this.alert(
+        'warning',
+        'La solicitud no tiene documentos escaneados, no se puede cerrar',
+        ''
+      );
+      return;
+    }
+
+    console.log(this.goodsAct);
+  }
+
+  //SELECT GOOD ACTA
+  selectGoodGeneral(good: any) {
+    console.log(good);
+    this.selectGoodGen = good.data;
+  }
+
+  //SELECT GOOD ACTA
+  selectGoodActa(good: any) {
+    console.log(good);
+    this.selectGoodProc = good.data;
   }
 }

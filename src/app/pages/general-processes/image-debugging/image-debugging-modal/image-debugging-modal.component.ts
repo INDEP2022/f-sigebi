@@ -91,7 +91,7 @@ export class ImageDebuggingModalComponent extends BasePage implements OnInit {
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
+      '¿Está seguro que desea eliminar las imágenes seleccionadas?'
     );
 
     if (result.isConfirmed) {

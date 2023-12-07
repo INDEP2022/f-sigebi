@@ -17,7 +17,11 @@ import {
   IValNumeOtro,
 } from '../../models/ms-good/good';
 import { IGoodsResDev } from '../../models/ms-rejectedgood/goods-res-dev-model';
-import { IFmComDanc, IProcedureFmCom } from './good-process-model';
+import {
+  IFmComDanc,
+  IProcedureFmCom,
+  IPupValidGood,
+} from './good-process-model';
 
 @Injectable({
   providedIn: 'root',
@@ -374,8 +378,16 @@ export class GoodProcessService extends HttpService {
     return this.post('application/procdure-fmcomdonac1', body);
   }
 
+  procedureFmcomtmp(body: IProcedureFmCom) {
+    return this.post('application/procdure-fmcomdonac1-tmp', body);
+  }
+
   fmComDonac(body: IFmComDanc) {
     return this.post('application/fm-com-donac-1-good', body);
+  }
+
+  pupValidGood(body: IPupValidGood) {
+    return this.post('application/pupValidGood', body);
   }
 
   queryDonationGoods(body: any) {
@@ -388,5 +400,17 @@ export class GoodProcessService extends HttpService {
 
   validateDonationGoods(body: any) {
     return this.post('application/pupValidGood', body);
+  }
+
+  deleteTempDetailEvent(data: any) {
+    return this.post('application/deleteDatailTmp', data);
+  }
+
+  createDatailTmp(data: any) {
+    return this.post('application/createDatailTmp', data);
+  }
+  //detail-process-clean-tmp
+  detailProcessCleanTmp(body: any) {
+    return this.post('application/detail-process-clean-tmp', body);
   }
 }

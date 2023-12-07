@@ -1,65 +1,15 @@
-<form class="form-material" [formGroup]="form">
-  <div class="row pt-3">
-    <div class="col-md-12">
-      <app-select-modal-table-shared
-        *ngIf="address"
-        [form]="form"
-        [maxlengthInput]="12"
-        [disabled]="false"
-        [widthDescription]="false"
-        [haveSelectColumns]="true"
-        [haveColumnFilters]="true"
-        [ilikeFilters]="ilikeFilters"
-        [dateFilters]="dateFilters"
-        label="Evento"
-        formField="idEvent"
-        [service]="eventService"
-        [columnsType]="eventColumns"
-        id="id"
-        title="Evento"
-        (selectRow)="selectEvent($event)"></app-select-modal-table-shared>
-    </div>
-    <div class="col-md-3" *ngIf="selectedEvent != null">
-      <h5 class="font-size-14 d-inline">Nombre de Evento</h5>
-      <p class="mt-2 font-size-28 text-muted">{{ nameEvent }}</p>
-    </div>
-    <div class="col-md-3" *ngIf="selectedEvent != null">
-      <h5 class="font-size-14 d-inline">Clave de Evento</h5>
-      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.processKey }}</p>
-    </div>
-    <div class="col-md-3" *ngIf="selectedEvent != null">
-      <h5 class="font-size-14 d-inline">Estatus de Evento</h5>
-      <p class="mt-2 font-size-28 text-muted">
-        {{ selectedEvent.statusVtaId }}
-      </p>
-    </div>
-    <div class="col-md-3" *ngIf="selectedEvent != null">
-      <h5 class="font-size-14 d-inline">Fecha de Evento</h5>
-      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.eventDate }}</p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6" *ngIf="selectedEvent != null">
-      <h5 class="font-size-14 d-inline">Observaciones</h5>
-      <p class="mt-2 font-size-28 text-muted">
-        {{ selectedEvent.observations }}
-      </p>
-    </div>
-    <div class="col-md-3" *ngIf="selectedEvent != null">
-      <h5 class="font-size-14 d-inline">Lugar</h5>
-      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.place }}</p>
-    </div>
-    <div class="col-md-3" *ngIf="selectedEvent != null">
-      <h5 class="font-size-14 d-inline">Fecha de Fallo</h5>
-      <p class="mt-2 font-size-28 text-muted">
-        {{ selectedEvent.failureDate }}
-      </p>
-    </div>
-  </div>
-</form>
+<app-event-form
+  [address]="address"
+  [selectNewEvent]="selectNewEvent"
+  [eventService]="eventService"
+  [pathEvent]="pathEvent"
+  [eventColumns]="eventColumns"
+  [ilikeFilters]="ilikeFilters"
+  [dateFilters]="dateFilters"
+  (resetEvent)="resetForm()"
+  (selectEventEmit)="selectEvent($event)"></app-event-form>
 
 <div *ngIf="selectedEvent != null">
-  <hr />
   <div class="row pt-5">
     <app-numeraire-expenses
       [event]="selectedEvent"
@@ -80,6 +30,7 @@
             *ngIf="showParcial"
             type="button"
             class="btn btn-secondary btn-sm active mr-3"
+            [disabled]="!validParcialButton"
             (click)="calculaParc()">
             Calcular Parcial
           </button>
@@ -87,18 +38,21 @@
             *ngIf="showParcial"
             type="button"
             class="btn btn-secondary btn-sm active mr-3"
+            [disabled]="!validParcialButton"
             (click)="convierteParcial()">
             Conversión Parcial
           </button>
           <button
             type="button"
             class="btn btn-secondary btn-sm active mr-3"
+            [disabled]="!validNormal"
             (click)="calcula()">
             Calcular
           </button>
           <button
             type="button"
             class="btn btn-secondary btn-sm active mr-3"
+            [disabled]="!validNormalConvierte"
             (click)="convierte()">
             Convertir
           </button>

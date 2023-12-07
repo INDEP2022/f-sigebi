@@ -179,7 +179,8 @@
             <tab
               heading="Verificar Cumplimiento de Bienes"
               *ngIf="verificarCumplimientoBienes">
-              verificarCumplimientoBienes
+              <app-verify-compliance-goods
+                [nombrePantalla]="nombrePantalla"></app-verify-compliance-goods>
             </tab>
             <tab heading="Expediente">
               <tabset class="md-tabs">

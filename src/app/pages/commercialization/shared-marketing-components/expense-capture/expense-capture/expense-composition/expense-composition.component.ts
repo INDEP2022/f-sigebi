@@ -13,10 +13,13 @@ import { ParametersConceptsService } from 'src/app/core/services/ms-commer-conce
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
+import { IGoodsBySeg, IGoodsByVig } from '../../models/numerary';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseDictationService } from '../../services/expense-dictation.service';
 import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
 import { ExpenseModalService } from '../../services/expense-modal.service';
+import { ExpenseNumeraryService } from '../../services/expense-numerary.service';
 import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
 import { COLUMNS } from './columns';
 import { ExpenseCompositionModalComponent } from './expense-composition-modal/expense-composition-modal.component';
@@ -47,7 +50,9 @@ export class ExpenseCompositionComponent
     private goodProcessService: ExpenseGoodProcessService,
     private expenseModalService: ExpenseModalService,
     private accountMovementService: AccountMovementService,
-    private parametercomerService: ExpenseParametercomerService
+    private parametercomerService: ExpenseParametercomerService,
+    private dictationService: ExpenseDictationService,
+    private expenseNumeraryService: ExpenseNumeraryService
   ) {
     super();
     // this.service = this.dataService;
@@ -121,7 +126,11 @@ export class ExpenseCompositionComponent
         next: response => {
           console.log(response);
           this.loader.load = true;
-          this.sendSolicitud(false, true);
+          if (this.address === 'M') {
+            this.sendSolicitud(false, true);
+          } else {
+            this.expenseCaptureDataService.aplyMotivesI();
+          }
         },
       });
     this.expenseCaptureDataService.updateExpenseCompositionAndValidateProcess
@@ -139,6 +148,10 @@ export class ExpenseCompositionComponent
           this.loader.load = false;
         },
       });
+  }
+
+  get address() {
+    return this.expenseCaptureDataService.address;
   }
 
   private newGoodsByLot(response) {
@@ -169,6 +182,76 @@ export class ExpenseCompositionComponent
         total2: 0,
         parameter: null,
         mandato: x.cvman,
+        vehiculoCount: null,
+        changeStatus: false,
+        reportDelit: false,
+      };
+    });
+  }
+
+  private newGoodsBySeg(data: IGoodsBySeg[]) {
+    return data.map(x => {
+      return {
+        detPaymentsId: null,
+        paymentsId: null,
+        amount: x.amount2,
+        iva: x.iva2,
+        retencionIsr: 0,
+        retencionIva: 0,
+        transferorNumber: null,
+        goodNumber: x.goodNumber,
+        total: x.total2,
+        manCV: x.mandate2,
+        departure: null,
+        origenNB: null,
+        partialGoodNumber: null,
+        priceRiAtp: null,
+        transNumberAtp: null,
+        expendientNumber: null,
+        clasifGoodNumber: null,
+        value: null,
+        description: x.description,
+        eventId: null,
+        amount2: x.amount2,
+        iva2: x.iva2,
+        total2: x.total2,
+        parameter: null,
+        mandato: x.mandate2,
+        vehiculoCount: null,
+        changeStatus: false,
+        reportDelit: false,
+      };
+    });
+  }
+
+  private newGoodsByVig(data: IGoodsByVig[]) {
+    return data.map(x => {
+      return {
+        detPaymentsId: null,
+        paymentsId: null,
+        amount: x.amount2,
+        iva: x.iva2,
+        retencionIsr: 0,
+        retencionIva: 0,
+        transferorNumber: x.trasnferentNumber,
+        goodNumber: x.goodNumber,
+        total: x.total2,
+        manCV: x.mandate2,
+        departure: null,
+        origenNB: null,
+        partialGoodNumber: null,
+        priceRiAtp: null,
+        transNumberAtp: null,
+        expendientNumber: null,
+        clasifGoodNumber: null,
+        value: null,
+        description: null,
+        eventId: null,
+        amount2: x.amount2,
+        iva2: x.iva2,
+        total2: x.total2,
+        parameter: null,
+        mandato: x.mandate2,
         vehiculoCount: null,
         changeStatus: false,
         reportDelit: false,
@@ -364,6 +447,55 @@ export class ExpenseCompositionComponent
         this.dataPaginated.refresh();
       });
     });
+  }
+
+  async loadGoodsI() {
+    this.loading = true;
+    let v_tip_gast = await firstValueFrom(
+      this.dictationService.maxInCsv(
+        this.expenseCaptureDataService.user.preferred_username
+      )
+    );
+    if (['GASTOINMU', 'GASTOADMI'].includes(v_tip_gast)) {
+      //ABRE_ARCHIVO_CSV
+    } else if (v_tip_gast === 'GASTOVIG') {
+      //PUP_CARGA_BIENES_VIG;
+      this.expenseNumeraryService
+        .PUP_CARGA_BIENES_VIG(
+          this.expenseCaptureDataService.REGRESA_MES_GASTO(),
+          this.expense.contractNumber
+        )
+        .subscribe({
+          next: response => {
+            if (response.data && response.data.length > 0) {
+              let newData = [...this.data, this.newGoodsByVig(response.data)];
+              this.setData(newData);
+              this.loading = false;
+            } else {
+              this.loading = false;
+              // this.alert('error','')
+            }
+          },
+        });
+    } else if (v_tip_gast === 'GASTOSEG') {
+      //PUP_CARGA_BIENES_SEG;
+      this.expenseNumeraryService
+        .PUP_CARGA_BIENES_SEG(this.form.get('policie').value)
+        .subscribe({
+          next: response => {
+            if (response.data && response.data.length > 0) {
+              let newData = [...this.data, this.newGoodsBySeg(response.data)];
+              this.setData(newData);
+              this.loading = false;
+            } else {
+              // this.alert('error','')
+            }
+          },
+        });
+    } else {
+      this.alert('warning', 'Opción no válida para este concepto', '');
+      this.loading = false;
+    }
   }
 
   add() {
@@ -658,10 +790,7 @@ export class ExpenseCompositionComponent
     this.expenseCaptureDataService.actionButton = value;
   }
 
-  async modifyEstatus() {
-    debugger;
-    this.loader.load = true;
-    this.actionButton = 'Cambio de estatus';
+  private async modifyEstatusM() {
     let filterParams = new FilterParams();
     filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
     if (this.conceptNumber) {
@@ -719,6 +848,45 @@ export class ExpenseCompositionComponent
       } else {
         this.loader.load = false;
       }
+    }
+  }
+
+  private async modifyEstatusI() {
+    let BANDERAS: string;
+    this.expenseCaptureDataService.P_TIPO_CAN = 1;
+    if (!this.conceptNumber.value) {
+      this.alert(
+        'warning',
+        'Necesita seleccionar un concepto antes de continuar',
+        ''
+      );
+      return;
+    }
+    await this.expenseCaptureDataService.readParams(this.conceptNumber.value);
+    if (this.expenseCaptureDataService.PCAMBIAESTATUS) {
+      BANDERAS =
+        'Este concepto no esta parámetrizado para cambiar el estatus del bien a uno no comercializable';
+    }
+    if (this.expenseCaptureDataService.PCANVTA) {
+      BANDERAS =
+        'Este concepto no esta parámetrizado para regresar el estatus del bien, vaya a conceptos y agregue el paramétro';
+    }
+    if (!BANDERAS) {
+      this.loader.load = false;
+      this.sendMotive();
+    } else {
+      this.loader.load = false;
+      this.alert('warning', BANDERAS, '');
+    }
+  }
+  async modifyEstatus() {
+    debugger;
+    this.loader.load = true;
+    this.actionButton = 'Cambio de estatus';
+    if (this.address === 'M') {
+      this.modifyEstatusM();
+    } else {
+      this.modifyEstatusI();
     }
   }
 
@@ -1024,18 +1192,26 @@ export class ExpenseCompositionComponent
 
   async contabilityMand() {
     this.loader.load = true;
-    if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
-      const result = await firstValueFrom(
-        this.accountMovementService.getDepuraContmand(this.expenseNumber.value)
-      );
-      const row = this.data[0];
-      if (row.goodNumber || row.manCV) {
-        this.ESCOJE_MANDCONTA();
+    if (this.address === 'I') {
+      this.contabilityMandBody();
+    } else {
+      if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
+        this.contabilityMandBody();
       } else {
-        this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
         this.loader.load = false;
       }
+    }
+  }
+
+  private async contabilityMandBody() {
+    const result = await firstValueFrom(
+      this.accountMovementService.getDepuraContmand(this.expenseNumber.value)
+    );
+    const row = this.data[0];
+    if (row.goodNumber || row.manCV) {
+      this.ESCOJE_MANDCONTA();
     } else {
+      this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
       this.loader.load = false;
     }
   }

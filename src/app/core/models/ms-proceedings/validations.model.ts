@@ -7,6 +7,7 @@ export interface proceedingsType {
 }
 
 export interface IValidations {
+  id?: number;
   numProceedings: number | null;
   proceedingsType: proceedingsType;
   typeProceedings: string;

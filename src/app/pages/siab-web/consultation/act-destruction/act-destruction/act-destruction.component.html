@@ -7,8 +7,7 @@
   <div body>
     <form [formGroup]="actDestructionForm" class="form-material">
       <div class="row margin-input">
-        <div class="col-md-3"></div>
-        <div class="col-md-3">
+        <div class="col-md-5">
           <form-field
             label="Criterio de Búsqueda de Actas:"
             [control]="actDestructionForm.get('recordsSearchCriteria')">
@@ -31,131 +30,147 @@
         </div>
       </div>
     </form>
-
-    <div class="row">
-      <div class="col-md-8 mb-3"></div>
-      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
-        <app-columns-select
-          [(settings)]="settings"
-          [leftList]="true"></app-columns-select>
-      </div>
-    </div>
-
     <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data">
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
     </div>
 
     <div *ngIf="show">
-      <div class="ch-content">
-        <h5 class="title">Actas Destrucción Detalle</h5>
-      </div>
-      <div class="row margin-input">
-        <div class="col-md-6">
-          <label for="nombre">Expediente:</label>
-          <span style="margin-left: 10px">{{ proceedings }}</span>
+      <form class="form-material">
+        <div class="ch-content">
+          <h5 class="title">Actas Destrucción Detalle</h5>
         </div>
-        <div class="col-md-6">
-          <label for="nombre">Estatus: </label>
-          <span style="margin-left: 10px">{{ status }}</span>
-        </div>
-      </div>
-      <div class="row margin-input pt-3">
-        <div class="col-md-3">
-          <label for="nombre">Acta: </label>
-          <br />{{ minutes }}
-        </div>
-        <div class="col-md-3">
-          <label for="nombre">Fec. Elaboración: </label>
-          <br />{{ elaborationDate }}
-        </div>
-        <div class="col-md-3">
-          <label for="nombre">Fec. Recepción Fisica: </label>
-          <br />{{ receptionDate }}
-        </div>
-        <div class="col-md-3">
-          <label for="nombre">Fec. Captura: </label>
-          <br />{{ captureDate }}
-        </div>
-      </div>
-
-      <div class="row margin-input pt-3">
-        <div class="col-md-6">
-          <label for="nombre">Dirección: </label>
-          <br />{{ address }}
-        </div>
-        <div class="col-md-6">
-          <label for="nombre">Observaciones: </label>
-          <br />{{ observations }}
-        </div>
-      </div>
-
-      <div class="row margin-input pt-3">
-        <div class="col-md-6">
-          <label for="nombre">Entrega: </label>
-          <span style="margin-left: 10px">{{ delivery }}</span>
-        </div>
-        <div class="col-md-6">
-          <label for="nombre">Recibe: </label>
-          <span style="margin-left: 10px">{{ receives }}</span>
-        </div>
-      </div>
-
-      <div class="row margin-input pt-3">
-        <div class="col-md-6">
-          <label for="nombre">Fecha Elaboración Recibo: </label>
-          <span style="margin-left: 10px">{{ receiptElaborationDate }}</span>
-        </div>
-        <div class="col-md-6">
-          <label for="nombre">Testigo de la Contraloría: </label>
-          <span style="margin-left: 10px">{{ witness }}</span>
-        </div>
-      </div>
-
-      <div class="row margin-input pt-3">
-        <div class="col-md-6">
-          <label for="nombre">Fecha Entrega de Bienes: </label>
-          <span style="margin-left: 10px">{{ deliveryDateOfGoods }}</span>
-        </div>
-        <div class="col-md-6">
-          <label for="nombre">Folio de Escaneo: </label>
-          <span style="margin-left: 10px">{{ scanFolio }}</span>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-8 mb-3"></div>
-        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
-          <!--<app-columns-select
-            [(settings)]="settings1"
-            [leftList]="true"></app-columns-select>-->
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings1"
-              [source]="data1">
-            </ng2-smart-table>
+        <div class="row margin-input">
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold">Expediente:</label>
+              <input class="form-control" readonly [value]="proceedings" />
+            </p>
+          </div>
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold">Estatus:</label>
+              <input class="form-control" readonly [value]="status" />
+            </p>
           </div>
         </div>
-        <app-pagination
-          [params]="params1"
-          [totalItems]="totalItems1"></app-pagination>
-      </div>
+        <div class="row margin-input pt-3">
+          <div class="col-md-3">
+            <p>
+              <label style="font-weight: bold">Acta:</label>
+              <input class="form-control" readonly [value]="minutes" />
+            </p>
+          </div>
+          <div class="col-md-3">
+            <p>
+              <label style="font-weight: bold">Fec. Elaboración:</label>
+              <input class="form-control" readonly [value]="elaborationDate" />
+            </p>
+          </div>
+          <div class="col-md-3">
+            <p>
+              <label style="font-weight: bold">Fec. Recepción Fisica:</label>
+              <input class="form-control" readonly [value]="receptionDate" />
+            </p>
+          </div>
+          <div class="col-md-3">
+            <p>
+              <label style="font-weight: bold">Fec. Captura:</label>
+              <input class="form-control" readonly [value]="captureDate" />
+            </p>
+          </div>
+        </div>
+
+        <div class="row margin-input pt-3">
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold">Dirección:</label>
+              <input class="form-control" readonly [value]="address" />
+            </p>
+          </div>
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold">Observaciones:</label>
+              <input class="form-control" readonly [value]="observations" />
+            </p>
+          </div>
+        </div>
+
+        <div class="row margin-input pt-3">
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold">Entrega:</label>
+              <input class="form-control" readonly [value]="delivery" />
+            </p>
+          </div>
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold">Recibe:</label>
+              <input class="form-control" readonly [value]="receives" />
+            </p>
+          </div>
+        </div>
+
+        <div class="row margin-input pt-3">
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold">Fecha Elaboración Recibo:</label>
+              <input
+                class="form-control"
+                readonly
+                [value]="receiptElaborationDate" />
+            </p>
+          </div>
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold"
+                >Testigo de la Contraloría:</label
+              >
+              <input class="form-control" readonly [value]="witness" />
+            </p>
+          </div>
+        </div>
+
+        <div class="row margin-input pt-3">
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold">Fecha Entrega de Bienes:</label>
+              <input
+                class="form-control"
+                readonly
+                [value]="deliveryDateOfGoods" />
+            </p>
+          </div>
+          <div class="col-md-6">
+            <p>
+              <label style="font-weight: bold">Folio de Escaneo:</label>
+              <input class="form-control" readonly [value]="scanFolio" />
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings1"
+                [source]="data1">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination
+            [params]="params1"
+            [totalItems]="totalItems1"></app-pagination>
+        </div>
+      </form>
     </div>
   </div>
 </app-card>

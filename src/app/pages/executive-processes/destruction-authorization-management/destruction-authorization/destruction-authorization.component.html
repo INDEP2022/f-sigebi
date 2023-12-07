@@ -4,33 +4,6 @@
       <h5 class="title">
         GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
       </h5>
-      <div class="col-md-6 buttons">
-        <div>
-          <button
-            class="btn btn-primary btn-sm active m-1"
-            (click)="keyProceedingchange()">
-            Consultar Acta
-            <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-          <confirm-button
-            [disabled]="controls.statusProceedings.value == 'CERRADA'"
-            text="Guardar"
-            loadingText="Guardando"
-            [btnSmall]="true"
-            class="m-1"
-            type="button"
-            (confirm)="save()"></confirm-button>
-          <button
-            class="btn btn-danger btn-sm active mr-3"
-            (click)="queryProceeding()">
-            Limpiar <i class="fas fa-eraser"> </i>
-          </button>
-          <button class="btn btn-primary btn-sm active m-1" (click)="update()">
-            Actualizar
-            <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-        </div>
-      </div>
     </div>
   </div>
   <div body>
@@ -38,13 +11,13 @@
       <div class="row">
         <form-field
           class="col-md-2"
-          label="No."
+          label="No. de Acta"
           [control]="proceedingForm.get('id')">
           <input
             type="text"
             class="form-control"
             formControlName="id"
-            readonly />
+            [readonly]="controls.statusProceedings.value == 'CERRADA'" />
         </form-field>
 
         <form-field
@@ -53,6 +26,7 @@
           [control]="proceedingForm.get('keysProceedings')">
           <input
             type="text"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             [max-length]="60"
             class="form-control"
             formControlName="keysProceedings" />
@@ -64,6 +38,7 @@
           [control]="proceedingForm.get('affair')">
           <input
             type="text"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             [max-length]="70"
             class="form-control"
             formControlName="affair" />
@@ -91,6 +66,7 @@
           <input
             type="text"
             class="form-control"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             formControlName="elaborationDate"
             bsDatepicker
             [bsConfig]="{
@@ -104,6 +80,7 @@
           <input
             type="text"
             class="form-control"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             formControlName="datePhysicalReception"
             bsDatepicker
             [bsConfig]="{
@@ -118,6 +95,7 @@
             type="text"
             #closeDate
             class="form-control"
+            [readonly]="controls.statusProceedings.value == 'CERRADA'"
             formControlName="closeDate"
             bsDatepicker
             [bsConfig]="{
@@ -125,83 +103,54 @@
             }" />
         </form-field>
       </div>
-      <div class="row pt-4">
-        <form-field
-          class="col-md-9"
-          label="Observaciones"
-          [control]="proceedingForm.get('observations')">
-          <textarea
-            rows="3"
-            maxlength="1000"
-            class="form-control"
-            formControlName="observations"></textarea>
-        </form-field>
-        <div class="col-md-3">
-          <button
-            (click)="closeProceeding()"
-            class="btn btn-primary btn-sm active"
-            *ngIf="controls.statusProceedings.value != 'CERRADA'">
-            Cerrar Acta <i class="fa fa-check" aria-hidden="true"></i>
-          </button>
-          <!--<button
-            class="btn btn-secondary btn-sm active"
-            *ngIf="controls.statusProceedings.value == 'CERRADA'">
-            Sacar bienes
-          </button>-->
-        </div>
-      </div>
     </form>
-    <div class="row">
-      <div class="col d-flex justify-content-between">
-        <div>
-          <h5>Folio de Escaneo: {{ controls.universalFolio.value }}</h5>
-        </div>
+    <div class="row text-center mb-5">
+      <div class="col-md-12">
         <div>
           <button
-            [disabled]="loadingReport"
-            (click)="scanRequest()"
-            type="button"
-            class="btn btn-primary active btn-sm">
-            {{ loadingReport ? 'Cargando' : 'Solicitud' }}
-            <i class="bx bx-printer bx-sm float-icon"></i>
-            <img
-              [style.width.px]="20"
-              *ngIf="loadingReport"
-              src="assets/images/loader-button.gif"
-              alt="loading" />
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="keyProceedingchange()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
-        </div>
-        <div>
-          <button
+          <confirm-button
+            [disabled]="controls.statusProceedings.value == 'CERRADA'"
+            text="Guardar"
+            loadingText="Guardando"
+            [btnSmall]="true"
+            class="mr-3"
             type="button"
-            class="btn btn-primary active btn-sm"
-            (click)="scan()">
-            Escaneo <i class="bx bx-printer bx-sm float-icon"></i>
+            (confirm)="save()"></confirm-button>
+
+          <!-- <button class="btn btn-primary btn-sm active mr-3" (click)="update()">
+            Actualizar <i class="fas fa-sync-alt"> </i>
+          </button> -->
+          <button
+            *ngIf="controls.statusProceedings.value != 'CERRADA'"
+            (click)="closeProceeding()"
+            class="btn btn-primary btn-sm active mr-3">
+            {{
+              controls.statusProceedings.value != 'CERRADA'
+                ? 'Cerrar Acta'
+                : 'Sacar bienes'
+            }}
           </button>
-        </div>
-        <div>
           <button
-            type="button"
-            class="btn btn-primary active btn-sm"
-            (click)="printReport()">
-            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            class="btn btn-danger btn-sm active"
+            (click)="queryProceeding()">
+            Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
       </div>
     </div>
+
     <div class="row pt-5">
-      <hr />
       <div class="col-md-6">
         <div [class]="loadingActReception ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingActReception ? '0px' : '250px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings4"
-                [source]="actaList2"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings4"
+              [source]="actaList2"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params5"
@@ -211,14 +160,9 @@
       <div class="col-md-6">
         <div [class]="loadingDictation ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingDictation ? '0px' : '250px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings5"
-                [source]="dictaList2"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings5"
+              [source]="dictaList2"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params6"
@@ -226,11 +170,97 @@
         </div>
       </div>
     </div>
-    <hr />
+    <form class="form-material" [formGroup]="proceedingForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="proceedingForm.get('universalFolio')"
+            label="Folio de Escaneo">
+            <input
+              [disabled]="true"
+              type="number"
+              class="form-control"
+              min="1"
+              formControlName="universalFolio"
+              maxlength="15" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <button
+            type="button"
+            data-toggle="tooltip"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="scanRequest()"
+            title="Generar Folio de Escaneo y Solicitud">
+            <i class="bx bxs-file-find"></i>
+          </button>
+          <button
+            type="button"
+            data-toggle="tooltip"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="scan()"
+            title="Escanear">
+            <i class="bx bxs-file"></i>
+          </button>
+          <button
+            type="button"
+            data-toggle="tooltip"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="printReport()"
+            title="Imprimir">
+            <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <form-field
+          class="col-md-12"
+          label="Observaciones"
+          [control]="proceedingForm.get('observations')">
+          <textarea
+            rows="2"
+            maxlength="1000"
+            class="form-control"
+            formControlName="observations"></textarea>
+        </form-field>
+      </div>
+    </form>
     <div class="row">
-      <div class="col-md-12">
-        <div class="row pt-2">
-          <div class="col-md-12 text-center mt-4 mb-4">
+      <div class="col-md-12 table-responsive">
+        <div class="row">
+          <div [class]="loadingGoods ? 'table-loading' : ''">
+            <ng-scrollbar [track]="'vertical'" style="height: 550px">
+              <ng2-smart-table
+                [settings]="settings3"
+                (userRowSelect)="selectGoodGeneral($event)"
+                [source]="goodPDS1"></ng2-smart-table>
+            </ng-scrollbar>
+            <app-pagination
+              [params]="params8"
+              [totalItems]="totalItems3"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <p class="d-flex justify-content-center">
+          <span class="text-success mr-5"
+            ><i class="fa fa-square"></i> Disponibles</span
+          >
+          <span class="text-black"
+            ><i class="fa fa-square"></i> No disponible</span
+          >
+        </p>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+    <div class="row pt-2 pb-4">
+      <div class="col-md-12 d-flex justify-content-center">
+        <div class="d-flex justify-content-center align-items-sm-center">
+          <div class="col-md-3">
+            <label for="">Agregar</label>
             <button
               tooltip="Agregar Bien"
               containerClass="tooltip-style"
@@ -240,6 +270,9 @@
               <!-- Mover uno -->
               <i class="bx bx-chevron-down bx-md"></i>
             </button>
+          </div>
+          <div class="col-md-3">
+            <label for="">Eliminar</label>
             <button
               tooltip="Quitar Bien"
               containerClass="tooltip-style"
@@ -254,35 +287,14 @@
       </div>
     </div>
     <div class="row pt-5">
-      <div class="col-md-6 table-responsive">
-        <div class="row">
-          <div [class]="loadingGoods ? 'table-loading' : ''">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingGoods ? '0px' : '350px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings3"
-                [source]="goodPDS1"></ng2-smart-table>
-            </ng-scrollbar>
-            <app-pagination
-              [params]="params8"
-              [totalItems]="totalItems3"></app-pagination>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 table-responsive">
+      <div class="col-md-12 table-responsive">
         <div class="row">
           <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <!-- <div class="table-responsive"> -->
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loadingGoodsByP ? '0px' : '350px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings2"
-                [source]="detailProceedingsList2"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings2"
+              (userRowSelect)="selectGoodActa($event)"
+              [source]="detailProceedingsList2"></ng2-smart-table>
             <app-pagination
               [params]="params7"
               [totalItems]="totalItems2"></app-pagination>
