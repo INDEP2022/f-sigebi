@@ -263,7 +263,7 @@ export class NumeraireConversionAuctionsComponent
         .convert({
           pevent: this.selectedEvent.id,
           pscreen: 'FCOMER087',
-          user: this.user,
+          user: this.user.preferred_username,
         })
         .pipe(take(1))
         .subscribe({
@@ -371,7 +371,7 @@ export class NumeraireConversionAuctionsComponent
       .SP_CONVERSION_ASEG_PARCIAL({
         pevent: this.selectedEvent.id,
         pscreen: 'FCOMER087',
-        user: this.user,
+        user: this.user.preferred_username,
       })
       .pipe(take(1))
       .subscribe({
