@@ -9,6 +9,7 @@ import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IGoodsExpedient,
+  IGoodTracker,
   IPackageInfo,
 } from '../../models/catalogs/package.model';
 import {
@@ -250,6 +251,10 @@ export class MassiveGoodService extends HttpService {
 
   goodsExpedient(body: IGoodsExpedient) {
     return this.post('application/pup-good-proceedings', body);
+  }
+
+  pupGoodTracker(body: IGoodTracker) {
+    return this.post('application/pup-good-tracker', body);
   }
 
   getApplicationRegisterCountCsv(params: _Params) {
