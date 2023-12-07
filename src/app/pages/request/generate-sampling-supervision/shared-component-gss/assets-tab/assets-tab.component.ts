@@ -18,7 +18,10 @@ import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-t
 import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import { listAssets } from '../../generate-formats-verify-noncompliance/store/actions';
 import { Item } from '../../generate-formats-verify-noncompliance/store/item.module';
-import { LIST_VERIFY_NONCOMPLIANCE } from '../../sampling-assets/sampling-assets-form/columns/list-verify-noncompliance';
+import {
+  LIST_VERIFY_NONCOMPLIANCE,
+  LIST_VERIFY_VIEW,
+} from '../../sampling-assets/sampling-assets-form/columns/list-verify-noncompliance';
 import { EditGoodSampleComponent } from './edit-good-sample/edit-good-sample.component';
 
 @Component({
@@ -36,6 +39,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   assetsArray: any[] = [];
   assetsSelected: Item[] = [];
   paragraphs3 = new LocalDataSource();
+  paragraphsView = new LocalDataSource();
   jsonToCsv = JSON_TO_CSV;
   isReadonly: boolean = false;
   isCheckboxReadonly: boolean = false;
@@ -53,6 +57,12 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       position: 'right',
     },
     selectMode: 'multi',
+  };
+
+  settingsView = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: LIST_VERIFY_VIEW,
   };
 
   constructor(
@@ -246,6 +256,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
       next: response => {
         this.paragraphs3.load(response.data);
+        this.paragraphsView.load(response.data);
         this.totalItems = response.count;
       },
       error: error => {},
@@ -275,6 +286,8 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       this.checkboxTitle = 'Número Gestión';
       this.isCheckboxReadonly = true;
     } else if (this.typeTask === 'payment-validatios') {
+      this.isReadonly = true;
+    } else if (this.typeTask === 'assets-classification-annexed') {
       this.isReadonly = true;
     }
   }

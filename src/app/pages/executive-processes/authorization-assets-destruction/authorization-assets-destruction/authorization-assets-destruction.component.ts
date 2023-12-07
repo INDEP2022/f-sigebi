@@ -856,10 +856,18 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   pupGoodTrackerFn(globalRelGood: number) {
-    const body: IGoodTracker = {
-      minutesNumber: localStorage.getItem('noActa'),
-      globalRelGood: globalRelGood,
-    };
+    let body: IGoodTracker;
+    console.log(localStorage.getItem('noActa'));
+    !['null', null].includes(localStorage.getItem('noActa'))
+      ? (body = {
+          minutesNumber: localStorage.getItem('noActa'),
+          globalRelGood: globalRelGood,
+          user: this.authService.decodeToken().preferred_username,
+        })
+      : (body = {
+          globalRelGood: globalRelGood,
+          user: this.authService.decodeToken().preferred_username,
+        });
 
     this.serviceMassiveGoods.pupGoodTracker(body).subscribe(
       res => {
