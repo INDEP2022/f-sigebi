@@ -203,6 +203,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     delete newBody.padj;
     delete newBody.psadj;
     delete newBody.pssadj;
+    delete newBody.cadena;
     return {
       ...newBody,
       amount: this.dataService.amount ?? 0,
