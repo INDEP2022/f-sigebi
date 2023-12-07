@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 import { takeUntil } from 'rxjs/operators';
 import {
-  ListParams,
+  ListParamsFather,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from './base-page';
@@ -25,7 +25,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   ilikeFilters: string[] = ['description'];
   haveInitialCharge = true;
   contador = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<ListParamsFather>(new ListParamsFather());
   service: ServiceGetAll<T>;
   subscription: Subscription = new Subscription();
   constructor() {

@@ -191,6 +191,7 @@ export class DestructionAuthorizationComponent
   //AGREGADO POR GRIGORK
   selectGoodProc: any = null;
   selectGoodGen: any = null;
+  isCommingTracker: boolean = true;
 
   @ViewChild('focusElement', { static: true })
   focusElement: ElementRef<HTMLInputElement>;
@@ -563,20 +564,11 @@ export class DestructionAuthorizationComponent
           this.setState();
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
-            /* const paramsF = new FilterParams();
-            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
-            this.goodTrackerService
-              .getAllTmpTracker(paramsF.getParams())
-              .subscribe(res => {
-                res['data'].forEach(element => {
-                  console.log(element);
-                });
-              },
-              err => {
-
-              }); */
-
-            this.insertDetailFromGoodsTracker();
+            console.log(this.ngGlobal.REL_BIENES);
+            if (this.isCommingTracker) {
+              this.insertDetailFromGoodsTracker();
+              this.isCommingTracker = false;
+            }
           }
         },
       });
@@ -620,6 +612,14 @@ export class DestructionAuthorizationComponent
     this.params8
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodByStatusPDS());
+
+    this.navigateGoodsProceeding();
+  }
+
+  navigateGoodsProceeding() {
+    this.params7.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      this.getProceedingGoods();
+    });
   }
 
   setExpedientNum(goodId: number | string) {
@@ -630,118 +630,47 @@ export class DestructionAuthorizationComponent
     });
   }
 
-  private isInsertDetailRunning: boolean = false;
-
   insertDetailFromGoodsTracker() {
-    if (this.isInsertDetailRunning) {
-      return;
-    }
-
-    this.isInsertDetailRunning = true;
     const body = {
-      keyAct: this.controls.keysProceedings.value,
+      keyAct: this.controls.id.value,
       statusAct: 'RGA',
       goodNumber: this.ngGlobal.REL_BIENES,
     };
     this.goodsTrackerLoading = true;
     this.massiveGoodService.goodTracker(body).subscribe({
-      next: response => {
-        const goods = response.bienes_aceptados.map(good => {
-          return {
-            numberGood: Number(good.goodNumber),
-            good: {
-              id: Number(good.goodNumber),
-              description: good.description,
-            },
-            amount: Number(good.amount),
-            numberProceedings: null,
-          };
-        });
-        console.log(goods);
+      next: async response => {
         console.log(response);
-
-        if (
-          response.bienes_aceptados.length > 0 &&
-          !this.controls.numFile.value
-        ) {
-          this.setExpedientNum(response.bienes_aceptados[0].goodNumber);
-        }
-        this.goodTrackerGoods = [
-          ...new Set([...this.goodTrackerGoods, ...goods]),
-        ];
-        this.detailProceedingsList = [
-          ...this.goodTrackerGoods,
-          ...this.detailProceedingsList,
-        ];
-        this.refusedGoods = response.bienes_rechazados;
         this.goodsTrackerLoading = false;
-        let alertAcep: boolean = true;
-        if (response.bienes_aceptados.length > 0) {
+        if (response.aceptados > 0) {
           this.alert(
             'success',
-            'Info',
-            `Se ingresaron: ${response.aceptados} bienes`
+            `Se ingresaron ${response.aceptados} bienes`,
+            ''
           );
-          alertAcep = false;
+        } else {
+          this.alert('warning', 'No se cargaron bienes', '');
         }
-        console.log(response.bienes_aceptados);
-        response.bienes_aceptados.forEach(element => {
-          let body = {
-            pVcScreem: 'FESTATUSRGA',
-            pActaNumber: this.proceedingForm.get('id').value,
-            pStatusActa: this.proceedingForm.get('statusProceedings').value,
-            pGoodNumber: element.goodNumber,
-            pDiAvailable: '',
-            pDiActa: this.proceedingForm.get('id').value,
-            pCveActa: this.proceedingForm.get('keysProceedings').value,
-            pAmount: element.amount,
-          };
-          this.massiveGoodService.InsertGood(body).subscribe({
-            next: data => {
-              console.log(data);
-              this.getProceedingGoods();
-            },
-            error: err => {
-              console.log(err);
-              this.alert(
-                'warning',
-                `El Bien: ${this.selectGoodGen.id}, ya ha sido ingresado en una solicitud`,
-                ''
-              ); // Asumiendo que 'alert' se encarga de mostrar la alerta
-              this.array = [...this.tempArray];
-            },
-          });
-        });
-
-        let alertRech: boolean = true;
-        if (response.rechazados > 0) {
-          this.alert(
-            'error',
-            'Info',
-            `Se rechazaron: ${response.rechazados} bienes`
-          );
-          alertRech = false;
-          return;
-        }
-
-        this.keyProceedingchange();
-
-        this.isInsertDetailRunning = false;
+        await this.downloadExcel(
+          JSON.parse(JSON.stringify(response.bienes_rechazados)).nameFile,
+          'Bienes_con_errores.xlsx'
+        );
         this.getProceedingGoods();
-
-        // if (response.rechazados > 0) {
-        //   const modalConfig = {
-        //     ...MODAL_CONFIG,
-        //     class: 'modal-dialog-centered',
-        //   };
-        //   this.modalRef = this.modalService.show(this.modal, modalConfig);
-        // }
       },
-      error: () => {
+      error: error => {
+        console.log(error);
         this.goodsTrackerLoading = false;
-        this.isInsertDetailRunning = false;
       },
     });
+  }
+
+  async downloadExcel(base64String: any, nameFile: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = nameFile;
+    link.click();
+    link.remove();
   }
 
   insertDetailFromOn() {
@@ -1461,8 +1390,12 @@ export class DestructionAuthorizationComponent
       ...this.params7.getValue(),
     };
     params['filter.numberProceedings'] = `$eq:${proceedingId}`;
+    const paramsF = new FilterParams();
+    paramsF.addFilter('numberProceedings', proceedingId);
+    paramsF.page = this.params7.getValue().page;
+    paramsF.limit = this.params7.getValue().limit;
     this.detailProceeDelRecService
-      .getGoodsByProceedings(proceedingId, params)
+      .getGoodsByProceedings(proceedingId, paramsF.getParams())
       .subscribe({
         next: resp => {
           this.detailProceedingsList = resp.data;
@@ -1511,7 +1444,7 @@ export class DestructionAuthorizationComponent
       this.proceedingForm.get('keysProceedings').value
     );
     formData.append('proceedingNumber', this.proceedingForm.get('id').value);
-
+    console.log(formData);
     this.getDataFile(formData);
   }
 
@@ -1522,6 +1455,7 @@ export class DestructionAuthorizationComponent
       },
       error: err => {
         console.log(err);
+        this.alert('error', 'Ocurrió un error al leer el archivo', '');
       },
     });
   }

@@ -13,11 +13,13 @@ import { ParametersConceptsService } from 'src/app/core/services/ms-commer-conce
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
+import { IPreviewDatosCSV } from '../../models/massive-good';
 import { IGoodsBySeg, IGoodsByVig } from '../../models/numerary';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 import { ExpenseDictationService } from '../../services/expense-dictation.service';
 import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
+import { ExpenseMassiveGoodService } from '../../services/expense-massive-good.service';
 import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseNumeraryService } from '../../services/expense-numerary.service';
 import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
@@ -38,8 +40,10 @@ export class ExpenseCompositionComponent
   toggleInformation = true;
   @ViewChild('table') table: Ng2SmartTableComponent;
   @ViewChild('file') file: any;
+  @ViewChild('fileI') fileI: any;
   ce: boolean = false;
   rr: boolean = false;
+  v_tip_gast: string = '';
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
@@ -52,7 +56,8 @@ export class ExpenseCompositionComponent
     private accountMovementService: AccountMovementService,
     private parametercomerService: ExpenseParametercomerService,
     private dictationService: ExpenseDictationService,
-    private expenseNumeraryService: ExpenseNumeraryService
+    private expenseNumeraryService: ExpenseNumeraryService,
+    private expenseMassiveGoodService: ExpenseMassiveGoodService
   ) {
     super();
     // this.service = this.dataService;
@@ -280,6 +285,15 @@ export class ExpenseCompositionComponent
       this.resetTotals();
       this.getData();
     }
+
+    this.dictationService
+      .maxInCsv(this.expenseCaptureDataService.user.preferred_username)
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.v_tip_gast = response;
+        },
+      });
   }
 
   private resetTotals() {
@@ -449,16 +463,45 @@ export class ExpenseCompositionComponent
     });
   }
 
+  ABRE_ARCHIVO_CSVI(event) {
+    this.loading = true;
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const file = files[0];
+    if (file.name.includes('csv')) {
+      this.expenseMassiveGoodService
+        .ABRE_ARCHIVO_CSV(file)
+        .pipe(take(1))
+        .subscribe(
+          (event: any) => {
+            this.fileI.nativeElement.value = '';
+            if (typeof event === 'object') {
+              console.log(event);
+              if (event.data.length > 0) {
+                let dataCSV: IComerDetExpense[] = this.getComerDetExpenseI(
+                  event.data
+                );
+                this.removeMassive(dataCSV);
+              }
+              //agregar a detalle gasto
+            } else {
+              this.loader.load = false;
+              this.alert('error', 'No se pudo realizar la carga de datos', '');
+            }
+          },
+          error => {
+            this.loader.load = false;
+            this.fileI.nativeElement.value = '';
+            this.alert('error', 'No se pudo realizar la carga de datos', '');
+          }
+        );
+    }
+  }
+
   async loadGoodsI() {
     this.loading = true;
-    let v_tip_gast = await firstValueFrom(
-      this.dictationService.maxInCsv(
-        this.expenseCaptureDataService.user.preferred_username
-      )
-    );
-    if (['GASTOINMU', 'GASTOADMI'].includes(v_tip_gast)) {
-      //ABRE_ARCHIVO_CSV
-    } else if (v_tip_gast === 'GASTOVIG') {
+
+    if (this.v_tip_gast === 'GASTOVIG') {
       //PUP_CARGA_BIENES_VIG;
       this.expenseNumeraryService
         .PUP_CARGA_BIENES_VIG(
@@ -477,7 +520,7 @@ export class ExpenseCompositionComponent
             }
           },
         });
-    } else if (v_tip_gast === 'GASTOSEG') {
+    } else if (this.v_tip_gast === 'GASTOSEG') {
       //PUP_CARGA_BIENES_SEG;
       this.expenseNumeraryService
         .PUP_CARGA_BIENES_SEG(this.form.get('policie').value)
@@ -900,8 +943,6 @@ export class ExpenseCompositionComponent
     // this.file.nativeElement.value = '';
     console.log(file.name);
     if (file.name.includes('csv')) {
-      // this.CARGA_BIENES_CSV(file);
-      // return;
       let filterParams = new FilterParams();
       filterParams.addFilter('parameter', 'VAL_CONCEPTO');
       if (this.conceptNumber) {
@@ -935,40 +976,25 @@ export class ExpenseCompositionComponent
         next: response => {
           this.file.nativeElement.value = '';
           if (response.data && response.data.length > 0) {
-            this.dataService
-              .massiveInsert(
-                response.data.map(row => {
-                  let total = row.amount2 + row.COL_IVA ? row.vat2 : 0;
-                  return {
-                    vat: row.vat2,
-                    amount: row.amount2,
-                    goodNumber: row.goodNumber,
-                    transferorNumber: row.transferorNumber,
-                    cvman: row.mandate2,
-                    isrWithholding: 0,
-                    vatWithholding: 0,
-                    // goodDescription: row.DESCRIPCION,
-                    budgetItem: null,
-                    changeStatus: false,
-                    reportDelit: false,
-                    total,
-                    expenseNumber: this.expenseNumber.value,
-                  };
-                })
-              )
-              .subscribe({
-                next: response => {
-                  this.removeMassive();
-                },
-                error: err => {
-                  this.loader.load = false;
-                  this.alert(
-                    'error',
-                    'No se pudo realizar la carga de datos',
-                    ''
-                  );
-                },
-              });
+            const inserts = response.data.map(row => {
+              let total = row.amount2 + row.COL_IVA ? row.vat2 : 0;
+              return {
+                vat: row.vat2,
+                amount: row.amount2,
+                goodNumber: row.goodNumber,
+                transferorNumber: row.transferorNumber,
+                cvman: row.mandate2,
+                isrWithholding: 0,
+                vatWithholding: 0,
+                // goodDescription: row.DESCRIPCION,
+                budgetItem: null,
+                changeStatus: false,
+                reportDelit: false,
+                total,
+                expenseNumber: this.expenseNumber.value,
+              };
+            });
+            this.removeMassive(inserts);
           } else {
             this.loader.load = false;
             this.alert('error', 'No se pudo realizar la carga de datos', '');
@@ -996,19 +1022,7 @@ export class ExpenseCompositionComponent
               let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
                 event.messages
               );
-              this.dataService.massiveInsert(dataCSV).subscribe({
-                next: response => {
-                  this.removeMassive();
-                },
-                error: err => {
-                  this.loader.load = false;
-                  this.alert(
-                    'error',
-                    'No se pudo realizar la carga de datos',
-                    ''
-                  );
-                },
-              });
+              this.removeMassive(dataCSV);
             }
           } else {
             this.loader.load = false;
@@ -1025,7 +1039,21 @@ export class ExpenseCompositionComponent
     // this.GRABA_TOTALES();
   }
 
-  private removeMassive() {
+  private insertMassive(inserts: IComerDetExpense[]) {
+    this.dataService.massiveInsert(inserts).subscribe({
+      next: response => {
+        this.alert('success', 'Se realizó la carga de datos', '');
+        this.loader.load = false;
+        this.getData();
+      },
+      error: err => {
+        this.loader.load = false;
+        this.alert('error', 'No se pudo realizar la carga de datos', '');
+      },
+    });
+  }
+
+  private removeMassive(inserts: IComerDetExpense[]) {
     this.dataService
       .removeMassive(
         this.data.map(x => {
@@ -1038,9 +1066,7 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
-          this.loader.load = false;
-          this.alert('success', 'Se realizó la carga de datos', '');
-          this.getData();
+          this.insertMassive(inserts);
         },
         error: err => {
           this.loader.load = false;
@@ -1069,19 +1095,7 @@ export class ExpenseCompositionComponent
               let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
                 event.messages
               );
-              this.dataService.massiveInsert(dataCSV).subscribe({
-                next: response => {
-                  this.removeMassive();
-                },
-                error: err => {
-                  this.loader.load = false;
-                  this.alert(
-                    'error',
-                    'No se pudo realizar la carga de datos',
-                    ''
-                  );
-                },
-              });
+              this.removeMassive(dataCSV);
             } else {
               this.loader.load = false;
               this.alert('error', 'No se pudo realizar la carga de datos', '');
@@ -1094,6 +1108,27 @@ export class ExpenseCompositionComponent
           this.alert('error', 'No se pudo realizar la carga de datos', '');
         }
       );
+  }
+
+  private getComerDetExpenseI(data: IPreviewDatosCSV[]) {
+    return data.map(x => {
+      let newRow: IComerDetExpense = {
+        vat: x.iva2 + '',
+        amount: x.amount2 + '',
+        goodNumber: x.goodNumber + '',
+        transferorNumber: x.transferorNumber + '',
+        cvman: x.mandate,
+        isrWithholding: x.retentionIsr2 + '',
+        vatWithholding: x.retentionIva2 + '',
+        // goodDescription: row.DESCRIPCION,
+        budgetItem: null,
+        changeStatus: false,
+        reportDelit: false,
+        total: x.total2 + '',
+        expenseNumber: null,
+      };
+      return newRow;
+    });
   }
 
   private getComerDetExpenseArray(messages: any) {

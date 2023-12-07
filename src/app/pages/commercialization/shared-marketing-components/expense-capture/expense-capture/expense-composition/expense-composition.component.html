@@ -199,13 +199,31 @@
               (click)="validates()">
               Validados
             </button>
-            <button
-              *ngIf="address === 'I'"
+            <!-- <button
+              *ngIf="address !== 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              (click)="loadGoodsI()">
+              (click)="
+                ['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)
+                  ? fileI.click()
+                  : loadGoodsI()
+              ">
+              Carga de Bienes
+            </button> -->
+            <button
+              *ngIf="address !== 'M'"
+              type="button"
+              class="btn btn-sm btn-primary mr-2 mt-2 active"
+              (click)="fileI.click()">
               Carga de Bienes
             </button>
+            <input
+              #fileI
+              type="file"
+              name="fileI"
+              class="d-none"
+              accept=".csv"
+              (change)="ABRE_ARCHIVO_CSVI($event)" />
           </td>
         </tr>
       </div>
