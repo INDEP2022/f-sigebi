@@ -391,7 +391,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         }
       },
       err => {
-        this.alert('error', 'Error', 'No se Encontró Registros');
+        this.alert('error', 'Error', 'No se encontraron registros');
       }
     );
   }
@@ -404,7 +404,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         }
       },
       err => {
-        this.alert('error', 'Error', 'No se Encontró Registros');
+        this.alert('error', 'Error', 'NNo se encontraron registros');
       }
     );
   }
@@ -417,7 +417,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         }
       },
       err => {
-        this.alert('error', 'Error', 'No se Encontró Registros');
+        this.alert('error', 'Error', 'No se encontraron registros');
       }
     );
   }
@@ -431,7 +431,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         }
       },
       err => {
-        this.alert('error', 'Error', 'No se Encontró Registros');
+        this.alert('error', 'Error', 'No se encontraron registros');
       }
     );
   }
@@ -445,7 +445,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         }
       },
       err => {
-        this.alert('error', 'Error', 'No se Encontró Registros');
+        this.alert('error', 'Error', 'No se encontraron registros');
       }
     );
   }
@@ -458,7 +458,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         }
       },
       err => {
-        this.alert('error', 'Error', 'No se Encontró Registros');
+        this.alert('error', 'Error', 'No se encontraron registros');
       }
     );
   }
@@ -474,7 +474,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         }
       },
       err => {
-        this.alert('error', 'Error', 'No se Encontró Registros');
+        this.alert('error', 'Error', 'No se encontraron registros');
       }
     );
   }
