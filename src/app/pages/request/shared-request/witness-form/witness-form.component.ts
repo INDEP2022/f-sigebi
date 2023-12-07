@@ -51,7 +51,7 @@ export class WitnessFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'question',
         'Confirmación',
-        '¿Estás seguro que desea crear un nuevo testigo?'
+        '¿Está seguro que desea crear un nuevo testigo?'
       ).then(question => {
         if (question.isConfirmed) {
           if (this.witnessForm.get('electronicSignature').value == true) {

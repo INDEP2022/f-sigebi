@@ -150,7 +150,7 @@ export class ReceptionDeliveryComponent extends BasePage implements OnInit {
             this.alert(
               'error',
               'ACTAS DE DESTINO DE BIENES',
-              'No se Encontró Datos con la Clave del Acta Seleccionada'
+              'No se encontró datos con la clave del acta seleccionada'
             );
           }
         },
