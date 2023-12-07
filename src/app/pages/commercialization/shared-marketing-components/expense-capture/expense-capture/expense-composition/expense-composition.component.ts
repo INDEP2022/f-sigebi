@@ -464,11 +464,11 @@ export class ExpenseCompositionComponent
   }
 
   ABRE_ARCHIVO_CSVI(event) {
-    this.loading = true;
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const file = files[0];
     if (file.name.includes('csv')) {
+      this.loading = true;
       this.expenseMassiveGoodService
         .ABRE_ARCHIVO_CSV(file)
         .pipe(take(1))
@@ -499,45 +499,55 @@ export class ExpenseCompositionComponent
   }
 
   async loadGoodsI() {
-    this.loading = true;
-
-    if (this.v_tip_gast === 'GASTOVIG') {
-      //PUP_CARGA_BIENES_VIG;
-      this.expenseNumeraryService
-        .PUP_CARGA_BIENES_VIG(
-          this.expenseCaptureDataService.REGRESA_MES_GASTO(),
-          this.expense.contractNumber
-        )
-        .subscribe({
-          next: response => {
-            if (response.data && response.data.length > 0) {
-              let newData = [...this.data, this.newGoodsByVig(response.data)];
-              this.setData(newData);
-              this.loading = false;
-            } else {
-              this.loading = false;
-              // this.alert('error','')
-            }
-          },
-        });
-    } else if (this.v_tip_gast === 'GASTOSEG') {
-      //PUP_CARGA_BIENES_SEG;
-      this.expenseNumeraryService
-        .PUP_CARGA_BIENES_SEG(this.form.get('policie').value)
-        .subscribe({
-          next: response => {
-            if (response.data && response.data.length > 0) {
-              let newData = [...this.data, this.newGoodsBySeg(response.data)];
-              this.setData(newData);
-              this.loading = false;
-            } else {
-              // this.alert('error','')
-            }
-          },
-        });
-    } else {
-      this.alert('warning', 'Opción no válida para este concepto', '');
-      this.loading = false;
+    const response = await this.alertQuestion(
+      'warning',
+      '¿Desea cargar bienes?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loading = true;
+      // this.fileI.nativeElement.click();
+      // return;
+      if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
+        this.fileI.nativeElement.click();
+      } else if (this.v_tip_gast === 'GASTOVIG') {
+        //PUP_CARGA_BIENES_VIG;
+        this.expenseNumeraryService
+          .PUP_CARGA_BIENES_VIG(
+            this.expenseCaptureDataService.REGRESA_MES_GASTO(),
+            this.expense.contractNumber
+          )
+          .subscribe({
+            next: response => {
+              if (response.data && response.data.length > 0) {
+                let newData = [...this.data, this.newGoodsByVig(response.data)];
+                this.setData(newData);
+                this.loading = false;
+              } else {
+                this.loading = false;
+                // this.alert('error','')
+              }
+            },
+          });
+      } else if (this.v_tip_gast === 'GASTOSEG') {
+        //PUP_CARGA_BIENES_SEG;
+        this.expenseNumeraryService
+          .PUP_CARGA_BIENES_SEG(this.form.get('policie').value)
+          .subscribe({
+            next: response => {
+              if (response.data && response.data.length > 0) {
+                let newData = [...this.data, this.newGoodsBySeg(response.data)];
+                this.setData(newData);
+                this.loading = false;
+              } else {
+                // this.alert('error','')
+              }
+            },
+          });
+      } else {
+        this.alert('warning', 'Opción no válida para este concepto', '');
+        this.loading = false;
+      }
     }
   }
 
@@ -923,26 +933,30 @@ export class ExpenseCompositionComponent
     }
   }
   async modifyEstatus() {
-    debugger;
-    this.loader.load = true;
-    this.actionButton = 'Cambio de estatus';
-    if (this.address === 'M') {
-      this.modifyEstatusM();
-    } else {
-      this.modifyEstatusI();
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea modificar los estatus seleccionados?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      this.actionButton = 'Cambio de estatus';
+      if (this.address === 'M') {
+        this.modifyEstatusM();
+      } else {
+        this.modifyEstatusI();
+      }
     }
   }
 
   loadGoods(event: Event) {
-    // this.alert('success', 'Se realizó la carga de datos', '');
-    // return;
-    this.loader.load = true;
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const file = files[0];
     // this.file.nativeElement.value = '';
     console.log(file.name);
     if (file.name.includes('csv')) {
+      this.loader.load = true;
       let filterParams = new FilterParams();
       filterParams.addFilter('parameter', 'VAL_CONCEPTO');
       if (this.conceptNumber) {
@@ -1170,70 +1184,88 @@ export class ExpenseCompositionComponent
     this.expense.totDocument = this.total + '';
   }
 
-  applyTC() {
-    this.loader.load = true;
-    this.dataTemp.forEach(row => {
-      if (row) {
-        row.amount = +(
-          +(row.amount + '') *
-          (this.exchangeRate.value ? this.exchangeRate.value : 1)
-        ).toFixed(2);
-        if (row.iva && +row.iva > 0) {
-          row.iva = +(+row.amount * 0.15).toFixed(2);
+  async applyTC() {
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea aplicar tasa de cambio?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      this.dataTemp.forEach(row => {
+        if (row) {
+          row.amount = +(
+            +(row.amount + '') *
+            (this.exchangeRate.value ? this.exchangeRate.value : 1)
+          ).toFixed(2);
+          if (row.iva && +row.iva > 0) {
+            row.iva = +(+row.amount * 0.15).toFixed(2);
+          }
+          row.total = +(+row.amount + (row.iva ? +row.iva : 0)).toFixed(2);
+          this.amount += row.amount ? +row.amount : 0;
+          this.vat += row.iva ? +row.iva : 0;
+          this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
+          this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
+          this.total += row.total ? +row.total : 0;
         }
-        row.total = +(+row.amount + (row.iva ? +row.iva : 0)).toFixed(2);
-        this.amount += row.amount ? +row.amount : 0;
-        this.vat += row.iva ? +row.iva : 0;
-        this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
-        this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
-        this.total += row.total ? +row.total : 0;
-      }
-    });
-    // this.getPaginated(this.params.value);
-    this.dataService
-      .updateMassive(
-        this.dataTemp.map(x => {
-          let newRow: any = {
-            amount: x.amount,
-            goodNumber: x.goodNumber,
-            expenseDetailNumber: x.detPaymentsId,
-            expenseNumber: x.paymentsId,
-            vat: x.iva,
-            isrWithholding: x.retencionIsr,
-            vatWithholding: x.retencionIva,
-            cvman: x.manCV,
-            budgetItem: x.departure,
-          };
-          return newRow;
-        })
-      )
-      .pipe(take(1))
-      .subscribe({
-        next: response => {
-          this.loader.load = false;
-          this.alert('success', 'Se actualizarón los detalles del gasto ', '');
-          this.getPaginated(this.params.value);
-        },
-        error: err => {
-          this.loader.load = false;
-          this.alert(
-            'error',
-            'No se pudieron actualizar los detalles de gasto',
-            ''
-          );
-        },
       });
+      // this.getPaginated(this.params.value);
+      this.dataService
+        .updateMassive(
+          this.dataTemp.map(x => {
+            let newRow: any = {
+              amount: x.amount,
+              goodNumber: x.goodNumber,
+              expenseDetailNumber: x.detPaymentsId,
+              expenseNumber: x.paymentsId,
+              vat: x.iva,
+              isrWithholding: x.retencionIsr,
+              vatWithholding: x.retencionIva,
+              cvman: x.manCV,
+              budgetItem: x.departure,
+            };
+            return newRow;
+          })
+        )
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.loader.load = false;
+            this.alert(
+              'success',
+              'Se actualizarón los detalles del gasto ',
+              ''
+            );
+            this.getPaginated(this.params.value);
+          },
+          error: err => {
+            this.loader.load = false;
+            this.alert(
+              'error',
+              'No se pudieron actualizar los detalles de gasto',
+              ''
+            );
+          },
+        });
+    }
   }
 
   async contabilityMand() {
-    this.loader.load = true;
-    if (this.address === 'I') {
-      this.contabilityMandBody();
-    } else {
-      if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea aplicar contabilidad mandatoria?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      if (this.address === 'I') {
         this.contabilityMandBody();
       } else {
-        this.loader.load = false;
+        if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
+          this.contabilityMandBody();
+        } else {
+          this.loader.load = false;
+        }
       }
     }
   }
@@ -1345,42 +1377,40 @@ export class ExpenseCompositionComponent
       });
   }
 
-  reload() {
-    this.loader.load = true;
-    this.expenseCaptureDataService
-      .RECARGA_BIENES_LOTE()
-      .pipe(take(1))
-      .subscribe({
-        next: response => {
-          if (response) {
-            this.loader.load = false;
-            this.getData();
-          } else {
-            this.loader.load = false;
-          }
-        },
-      });
-    // if (this.expenseCaptureDataService.VALIDA_DET()) {
-    //   this.getData();
-    // } else {
-    //   this.loader.load = false;
-    // }
+  async reload() {
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea recargar bienes?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      this.expenseCaptureDataService
+        .RECARGA_BIENES_LOTE()
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response) {
+              this.loader.load = false;
+              this.getData();
+            } else {
+              this.loader.load = false;
+            }
+          },
+        });
+    }
   }
 
-  validates() {
-    this.loader.load = true;
+  async validates() {
     if (this.eventNumber === null) {
-      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de evento', '');
       return;
     }
     if (this.lotNumber === null || this.lotNumber.value === null) {
-      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de lote', '');
       return;
     }
     if (this.conceptNumber === null || this.conceptNumber.value === null) {
-      this.loader.load = false;
       this.alert(
         'warning',
         'Es necesario tener número de concepto de pago',
@@ -1388,37 +1418,45 @@ export class ExpenseCompositionComponent
       );
       return;
     }
-    this.parametercomerService
-      .getValidGoods({
-        v_id_evento: this.eventNumber,
-        v_id_lote: this.lotNumber.value,
-        id_concepto: this.conceptNumber.value,
-      })
-      .pipe(take(1))
-      .subscribe({
-        next: response => {
-          this.loader.load = false;
-          if (response) {
-            console.log(response);
-            if (response && response.resData) {
-              const modalConfig = MODAL_CONFIG;
-              modalConfig.initialState = {
-                data: response.resData,
-                callback: (next: boolean) => {},
-              };
-              this.modalService.show(RejectedGoodsComponent, modalConfig);
-            } // this.alert(
-            //   'info',
-            //   'Bienes que no pertenecen a la unidad responsable ligada al concepto seleccionado...',
-            //   ''
-            // );
-          }
-        },
-        error: err => {
-          console.log(err);
-          this.loader.load = false;
-          this.alert('error', 'Validación de Bienes', err);
-        },
-      });
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea validar los bienes?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      this.parametercomerService
+        .getValidGoods({
+          v_id_evento: this.eventNumber,
+          v_id_lote: this.lotNumber.value,
+          id_concepto: this.conceptNumber.value,
+        })
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.loader.load = false;
+            if (response) {
+              console.log(response);
+              if (response && response.resData) {
+                const modalConfig = MODAL_CONFIG;
+                modalConfig.initialState = {
+                  data: response.resData,
+                  callback: (next: boolean) => {},
+                };
+                this.modalService.show(RejectedGoodsComponent, modalConfig);
+              } // this.alert(
+              //   'info',
+              //   'Bienes que no pertenecen a la unidad responsable ligada al concepto seleccionado...',
+              //   ''
+              // );
+            }
+          },
+          error: err => {
+            console.log(err);
+            this.loader.load = false;
+            this.alert('error', 'Validación de Bienes', err);
+          },
+        });
+    }
   }
 }
