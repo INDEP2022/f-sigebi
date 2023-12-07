@@ -106,7 +106,7 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  assignees: {
+  reviewers: {
     //originalAssigneeUser: {
     title: 'Asignado a',
     type: 'string',
