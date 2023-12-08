@@ -19,6 +19,7 @@ import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-pr
 import * as XLSX from 'xlsx';
 //Models
 import { Router } from '@angular/router';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   IGoodsExpedient,
@@ -28,7 +29,10 @@ import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
-import { IDetailProceedingsDevollutionDelete } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import {
+  IDetailProceedingsDevollutionDelete,
+  ITmpUpdateMassive,
+} from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -92,6 +96,12 @@ export class AuthorizationAssetsDestructionComponent
   idProceeding: number = null;
   numFile: number = null;
   addGoodFlag: boolean = false;
+  canSearch: boolean = true;
+  cve_proceeding: string = null;
+  date_proceeding: string = null;
+  statusProceeding: string = null;
+  canNewProceeding: boolean = false;
+  returnTracker: boolean = true;
 
   get controls() {
     return this.form.controls;
@@ -120,7 +130,7 @@ export class AuthorizationAssetsDestructionComponent
       columns: { ...ASSETS_DESTRUCTION_COLUMLNS },
       mode: '',
       rowClassFunction: (row: any) => {
-        if (row.data.di_disponible === 'S') {
+        if (row.available === 'S') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -140,10 +150,21 @@ export class AuthorizationAssetsDestructionComponent
           const ngGlobal = global;
           if (ngGlobal.REL_BIENES) {
             console.log(ngGlobal.REL_BIENES);
-            this.pupGoodTrackerFn(ngGlobal.REL_BIENES);
+            if (this.returnTracker) {
+              this.returnTracker = false;
+              this.pupGoodTrackerFn(ngGlobal.REL_BIENES);
+            }
           }
         },
       });
+
+    //AGREGADO POR GRIGORK
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(result => {
+      console.log(result);
+      if (this.consult) {
+        this.searchGoodsInDetailProceeding();
+      }
+    });
   }
 
   private prepareForm() {
@@ -182,14 +203,6 @@ export class AuthorizationAssetsDestructionComponent
       // this.expedientChange();
       localStorage.removeItem('expediente');
     }
-
-    //AGREGADO POR GRIGORK
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.consult) {
-        this.searchGoodsInDetailProceeding();
-        // this.getDetailProceedingsDevolution(this.form.get('noAuth').value);
-      }
-    });
   }
 
   async openModal() {
@@ -275,83 +288,6 @@ export class AuthorizationAssetsDestructionComponent
     });
   }
 
-  /* relationsExpedient(params: ListParams) {
-    //this.getGoods();
-    this.loading = false;
-    this.proceedingsDetailDel.getProceeding3(params).subscribe({
-      next: resp => {
-        this.numberAct = new DefaultSelect(resp.data, resp.count);
-      },
-      error: err => {
-        this.numberAct = new DefaultSelect();
-      },
-    }); */
-  /*response => {
-        console.log(response);
-        if (response.data === null) {
-          this.alert('info', this.title, 'No se encontrarón registros', '');
-          return;
-        }
-        this.acta = response.data[0];
-        console.log(this.acta);
-        this.form.get('noAuth').setValue(this.acta.id);
-        this.form.get('authNotice').setValue(this.acta.keysProceedings);
-        this.form.get('fromDate').setValue(
-          this.datePipe.transform(this.acta.elaborationDate, 'dd/MM/yyyy')
-        );
-        this.form.get('universalFolio').setValue(this.acta.universalFolio);
-        this.form.get('act').setValue(this.acta.keysProceedings);
-        this.form.get('statusAct').setValue(this.acta.statusProceedings);
-        console.log(this.form.get('fromDate').value);
-
-        //receive
-        // receiptKey clave del que recibe
-        const statusAct = this.acta.statusProceedings; //this.form.get('statusAct').value;
-        console.error('ESATUS ACTA ' + statusAct);
-
-        if (['CERRADO', 'CERRADA'].includes(statusAct)) {
-          this.textDisabled = true;
-        } else if (['ABIERTO', 'ABIERTA'].includes(statusAct)) {
-          this.textDisabled = false;
-        } else if (statusAct === null) {
-          this.textDisabled = true;
-        }
-        this.getDetailProceedingsDevolution(this.form.get('noAuth').value);
-      },
-      error => {
-        this.alert(
-          'error',
-          this.title,
-          'No se encontraron actas con este numero de expediente'
-        );
-      }
-    );*/
-  /* } */
-
-  async masive() {
-    this.loading = true;
-    const data: any[] = await this.data.getAll();
-    data.forEach(item => {
-      if (
-        item.di_disponible === 'S' &&
-        this.acta.keysProceedings !== null &&
-        this.acta.elaborationDate !== null
-      ) {
-        item.fecha = `${this.acta.keysProceedings} ${this.datePipe.transform(
-          this.acta.elaborationDate,
-          'dd-MM-yyyy'
-        )}`;
-        item.aprobado = 'SI';
-      } else {
-        item.fecha = null;
-        item.aprobado = 'NO';
-      }
-    });
-    this.data.load(data);
-    this.data.refresh();
-    this.loading = false;
-  }
-
   async closeButton() {
     if (!['CERRADA', 'CERRADO'].includes(this.acta.statusProceedings)) {
       this.closed();
@@ -425,6 +361,27 @@ export class AuthorizationAssetsDestructionComponent
     //!ENVIAR CORREO
   }
 
+  cleanTmp() {
+    const user = this.authService.decodeToken().preferred_username;
+    const paramsF = new FilterParams();
+    paramsF.addFilter('proceeding', '-1');
+    this.proceedingService
+      .tmpAuthorizationsDestruction(user, paramsF.getParams())
+      .subscribe(
+        res => {
+          this.canNewProceeding = true;
+          this.data.load([]);
+        },
+        err => {
+          this.alert(
+            'warning',
+            'Hubo un problema limpiando la tabla temporal',
+            ''
+          );
+        }
+      );
+  }
+
   pupDepuraDetalle(model: IDetailProceedingsDevollutionDelete) {
     return new Promise((resolve, _reject) => {
       this.proceedingService
@@ -459,7 +416,9 @@ export class AuthorizationAssetsDestructionComponent
     this.data.load([]);
     this.data.refresh();
     this.totalItems = 0;
+    this.canSearch = true;
     this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.consult = false;
   }
 
   async postQuery(det: any[]) {
@@ -636,6 +595,7 @@ export class AuthorizationAssetsDestructionComponent
 
     const paramsF = new FilterParams();
     // paramsF.page = params.page;
+    const user = this.authService.decodeToken().preferred_username;
     paramsF.limit = 1;
     paramsF.addFilter('typeProceedings', 'AXD');
     this.form.get('noAuth').value != null
@@ -645,6 +605,10 @@ export class AuthorizationAssetsDestructionComponent
       res => {
         const jsonResp = JSON.parse(JSON.stringify(res['data'][0]));
         this.idProceeding = jsonResp.id;
+        this.cve_proceeding = jsonResp.keysProceedings;
+        this.date_proceeding = this.correctDate(
+          jsonResp.elaborationDate
+        ).toString();
         this.form.get('noAuth').setValue(this.idProceeding);
         this.form.get('authNotice').setValue(jsonResp.keysProceedings);
         this.form.get('universalFolio').setValue(jsonResp.universalFolio);
@@ -665,7 +629,14 @@ export class AuthorizationAssetsDestructionComponent
     );
   }
 
-  async newProceeding() {
+  newProceeding() {
+    this.canNewProceeding = true;
+    if (!this.data.empty() && this.form.get('noAuth').value != null) {
+      this.cleanTmp();
+    }
+  }
+
+  async saveNewProceeding() {
     if (this.form.get('authNotice').value == null) {
       this.alert(
         'warning',
@@ -715,6 +686,7 @@ export class AuthorizationAssetsDestructionComponent
       res => {
         this.alert('success', 'Acta creada', '');
         console.log(res);
+        this.canNewProceeding = false;
       },
       err => {
         this.alert('error', 'Error al crear acta', '');
@@ -747,22 +719,38 @@ export class AuthorizationAssetsDestructionComponent
 
   //BUSCAR BIENES EN DETALLE_ACTA_ENT_RECEP
   searchGoodsInDetailProceeding() {
+    this.canSearch = false;
     this.loading = true;
+    const user = this.authService.decodeToken().preferred_username;
     const paramsF = new FilterParams();
     paramsF.page = this.params.getValue().page;
     paramsF.limit = this.params.getValue().limit;
-    this.serviceDetailProc
-      .getGoodsByProceedings(this.idProceeding, paramsF.getParams())
+    paramsF.addFilter('proceeding', this.idProceeding);
+    this.proceedingService
+      .tmpAuthorizationsDestruction(user, paramsF.getParams())
       .subscribe(
         res => {
-          console.log(res);
-          this.data.load(res.data);
+          const newData = res.data.map((item: any) => {
+            return {
+              ...item,
+              cve_proceeding: this.cve_proceeding,
+              date_proceeding: format(
+                this.correctDate(this.date_proceeding),
+                'dd/MM/yyyy'
+              ),
+            };
+          });
+
+          console.log(newData);
+          this.data.load(newData);
           this.totalItems = res.count;
           this.loading = false;
+          this.consult = true;
         },
         err => {
           this.data.load([]);
           console.log(err);
+          this.canSearch = true;
           this.loading = false;
         }
       );
@@ -785,8 +773,51 @@ export class AuthorizationAssetsDestructionComponent
     }
   }
 
+  //LLENAR LA TABLA DE BIENES POR USUARIO
+  fillTableGoodsByUser() {
+    this.canSearch = false;
+    this.loading = true;
+    const user = this.authService.decodeToken().preferred_username;
+    const paramsF = new FilterParams();
+    paramsF.page = this.params.getValue().page;
+    paramsF.limit = this.params.getValue().limit;
+    this.proceedingService
+      .tmpAuthorizationsDestruction(user, paramsF.getParams())
+      .subscribe(
+        res => {
+          const newData = res.data.map((item: any) => {
+            return {
+              ...item,
+              cve_proceeding: this.cve_proceeding,
+              date_proceeding: format(
+                this.correctDate(this.date_proceeding),
+                'dd/MM/yyyy'
+              ),
+            };
+          });
+
+          console.log(newData);
+          this.data.load(newData);
+          this.totalItems = res.count;
+          this.loading = false;
+          this.consult = true;
+        },
+        err => {
+          this.data.load([]);
+          console.log(err);
+          this.alert('warning', 'No se encontrarón registros', '');
+          this.canSearch = true;
+          this.loading = false;
+        }
+      );
+  }
+
   //BUSCAR EXPEDIENTE
   expedientChange() {
+    if (this.form.get('noAuth').value == null && this.data.empty()) {
+      this.cleanTmp();
+    }
+
     this.consult = true;
     this.expediente = Number(this.form.get('idExpedient').value);
     const params: ListParams = {};
@@ -820,6 +851,7 @@ export class AuthorizationAssetsDestructionComponent
           this.alert('warning', 'No se cargo ninguno bien', '');
         } else {
           this.alert('success', `Se cargaron ${res.blk_det.length} bienes`, '');
+          this.fillTableGoodsByUser();
         }
       },
       err => {
@@ -841,9 +873,8 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   pupGoodTracker() {
-    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)) {
-      this.alert('warning', 'El acta se encuentra cerrada', '');
-      return;
+    if (this.form.get('noAuth').value == null && this.data.empty()) {
+      this.cleanTmp();
     }
 
     localStorage.setItem('noActa', this.form.get('noAuth').value);
@@ -865,6 +896,7 @@ export class AuthorizationAssetsDestructionComponent
           user: this.authService.decodeToken().preferred_username,
         })
       : (body = {
+          minutesNumber: null,
           globalRelGood: globalRelGood,
           user: this.authService.decodeToken().preferred_username,
         });
@@ -872,6 +904,31 @@ export class AuthorizationAssetsDestructionComponent
     this.serviceMassiveGoods.pupGoodTracker(body).subscribe(
       res => {
         console.log(res);
+        this.fillTableGoodsByUser();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  //MASIVO
+  masiveChange() {
+    if (this.data.empty()) {
+      this.alert('warning', 'No existen bienes para realizar el cambio', '');
+      return;
+    }
+
+    const body: ITmpUpdateMassive = {
+      user: this.authService.decodeToken().preferred_username,
+      proceedingKey: this.form.get('noAuth').value,
+      date: this.form.get('fromDate').value,
+    };
+
+    this.proceedingService.tmpUpdateMassive(body).subscribe(
+      res => {
+        console.log(res);
+        this.fillTableGoodsByUser();
       },
       err => {
         console.log(err);

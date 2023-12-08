@@ -981,7 +981,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           proofNumber: this.form.get('numReceipts').value,
           attachedDocumentation: this.form.get('attachedDocumentation').value,
           recVoucherNumber: this.form.get('invoiceRecNumber').value,
-          recVoucherDate: this.form.get('invoiceRecDate').value,
+          recVoucherDate: this.invoiceRecDate.value,
           contract: this.data.contractNumber,
           eventId: this.eventNumber.value,
           requestUser: this.form.get('requestedUser').value,
@@ -1056,8 +1056,22 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
+  get invoiceRecDate() {
+    return this.form.get('invoiceRecDate');
+  }
+
   private async normalSolicitud() {
     if (this.address === 'M') {
+      if (!this.payDay.value || this.payDay.value === '') {
+        this.alert('warning', 'Necesita fecha de pago', '');
+        this.finishProcessSolicitud.next(false);
+        return;
+      }
+      if (!this.invoiceRecDate.value || this.invoiceRecDate.value === '') {
+        this.alert('warning', 'Necesita fecha de documento', '');
+        this.finishProcessSolicitud.next(false);
+        return;
+      }
       this.SOLICITUD_NORMALM();
     } else {
       if (this.VALIDACIONES_SOLICITUDI()) {

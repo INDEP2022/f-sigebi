@@ -6,6 +6,7 @@ import { INumeraryxGoods } from 'src/app/core/models/ms-numerary/numerary.model'
 import { NumeraryXGoodsService } from 'src/app/core/services/ms-numerary/numerary-x-goods.service';
 import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_POINT_PATTERN } from 'src/app/core/shared/patterns';
+import { formatForIsoDate } from 'src/app/shared/utils/date';
 
 @Component({
   selector: 'app-numeraire-dispersion-modal',
@@ -36,7 +37,7 @@ export class NumeraireDispersionModalComponent
     this.form = this.fb.group({
       numeraryxGoodId: [this.row ? this.row.numeraryxGoodId : null],
       goodNumber: [this.row ? this.row.goodNumber : null],
-      date: [this.row ? this.row.date : null],
+      date: [this.row ? formatForIsoDate(this.row.date, 'string') : null],
       amount: [
         this.row ? this.row.amount : null,
         [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
@@ -49,8 +50,8 @@ export class NumeraireDispersionModalComponent
     return this.row ? this.row.amount : null;
   }
 
-  get numeraryxGoodId() {
-    return this.form.get('numeraryxGoodId');
+  get goodNumber() {
+    return this.form.get('goodNumber');
   }
 
   get amount() {
@@ -63,9 +64,7 @@ export class NumeraireDispersionModalComponent
 
   confirmSave() {
     let body = this.form.value;
-    this.modalRef.content.callback(true);
-    this.modalRef.hide();
-    return;
+    delete body.date;
     if (body) {
       let serviceAction = this.row
         ? this.service.edit({ ...body, eventId: this.row.eventId })
@@ -74,16 +73,6 @@ export class NumeraireDispersionModalComponent
         next: response => {
           this.modalRef.content.callback(this.row ? true : false);
           this.modalRef.hide();
-          // debugger;
-          // if (this.row) {
-          //   this.alert('success', 'Se realizó la edición del bien', '');
-          // } else {
-          //   this.alert('success', 'Se realizó el registro del bien', '');
-          // }
-          // setTimeout(() => {
-          //   this.modalRef.content.callback(this.row ? true : false);
-          //   this.modalRef.hide();
-          // }, 500);
         },
         error: err => {
           if (this.row) {

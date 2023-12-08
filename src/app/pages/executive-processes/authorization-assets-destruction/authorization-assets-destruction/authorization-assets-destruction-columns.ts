@@ -12,13 +12,6 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     title: 'Descripción',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      if (row.good && row.good.description) {
-        return row.good.description;
-      } else {
-        return null;
-      }
-    },
   },
   di_cve_ubicacion: {
     title: 'Ubicación',
@@ -34,39 +27,29 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     title: 'Estatus',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      if (row.good && row.good.status) {
-        return row.good.status;
-      } else {
-        return null;
-      }
-    },
   },
-  fecha: {
+  observationsDestruction: {
     title: 'No. Oficio de Autorización y Fecha',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      if (row.good && row.good.observationDestruction) {
-        return row.good.observationDestruction;
+    valuePrepareFunction: (value: any, row: any) => {
+      if (row.observationsDestruction != null) {
+        return row.observationsDestruction;
       } else {
-        return null;
+        if (row.cve_proceeding != null) {
+          return `${row.cve_proceeding}  ${row.date_proceeding}`;
+        } else {
+          null;
+        }
       }
     },
   },
-  process: {
+  processExtDom: {
     title: 'Ext. Dom',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      if (row.good && row.good.extDomProcess) {
-        return row.good.extDomProcess;
-      } else {
-        return null;
-      }
-    },
   },
-  received: {
+  approved: {
     title: 'Aprobado',
     type: 'custom',
     showAlways: true,
@@ -74,7 +57,7 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     sort: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return row.received == 'S' ? true : false;
+      return row.approved == 'SI' ? true : false;
     },
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
