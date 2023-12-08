@@ -54,6 +54,7 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
         this.sampleInfo = response.data[0];
 
         this.form.patchValue(this.sampleInfo);
+        this.annexForm.patchValue(this.sampleInfo);
       },
     });
   }
@@ -74,8 +75,8 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
       positionCompetitorOne: [null, [Validators.pattern(STRING_PATTERN)]],
       competitorTwo: [null, [Validators.pattern(STRING_PATTERN)]],
       positionCompetitorTwo: [null, [Validators.pattern(STRING_PATTERN)]],
-      nameManagersoul: [null, [Validators.pattern(STRING_PATTERN)]],
-      factsrelevant: [null, [Validators.pattern(STRING_PATTERN)]],
+      managerNameAlm: [null, [Validators.pattern(STRING_PATTERN)]],
+      relevantFacts: [null, [Validators.pattern(STRING_PATTERN)]],
       agreements: [null, [Validators.pattern(STRING_PATTERN)]],
       daterepService: [null, [Validators.pattern(STRING_PATTERN)]],
     });
@@ -119,7 +120,7 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
     }
   }
 
-  async signAnnex(): Promise<void> {
+  async signAnnex() {
     const typeDocument = 219;
     if (this.typeAnnex == 'annex-assets-classification') {
       const providerK = this.form.get('providerK').value;
@@ -143,61 +144,35 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
           this.close();
         }
       }
-    }
+    } else if (this.typeAnnex == 'sign-annex-assets-classification') {
+      const saeResponsibleK = this.annexForm.get('saeResponsibleK').value;
+      const positionSaeK = this.annexForm.get('positionSaeK').value;
+      const typeSaeSignatureK = this.annexForm.get('typeSaeSignatureK').value;
+      let typeFirm: string = '';
+      if (typeSaeSignatureK == 'Y') typeFirm = 'electronica';
+      if (typeSaeSignatureK == 'N') typeFirm = 'autografa';
 
-    /*let typeDoc = 0;
-    const form = this.annexForm.getRawValue();
-
-    const infoSample: ISample = {
-      saeResponsibleK: this.annexForm.get('supplierk').value,
-      positionSaeK: this.annexForm.get('postSupplierk').value,
-      competitorOne: this.annexForm.get('competitor1').value,
-      positionCompetitorOne: this.annexForm.get('postCompetitor1').value,
-      competitorTwo: this.annexForm.get('competitor2').value,
-      positionCompetitorTwo: this.annexForm.get('postCompetitor2').value,
-      managerNameAlm: this.annexForm.get('nameManagersoul').value,
-      relevantFacts: this.annexForm.get('factsrelevant').value,
-      agreements: this.annexForm.get('agreements').value,
-    };
-
-    if (
-      this.typeAnnex === 'annexK-restitution-of-assets' ||
-      this.typeAnnex === 'revition-results'
-    ) {
-      typeDoc = 197;
-      const typesign =
-        this.annexForm.get('guySignatureSupplierk').value == 'Y'
-          ? 'electronica'
-          : 'autografa';
-      const samplerOrder: ISamplingOrder = this.annexData;
-
-      const signForm = {
-        learnedType: typeDoc,
-        learnedId: this.annexData.idSamplingOrder,
-        name: form.supplierk,
-        post: form.postSupplierk,
-      };
-
-      const updateOrdServ = this.orderService.updateSampleOrder(form);
-      const insertSign = this.signatoriesService.create(signForm);
-      forkJoin({ ordeServ: updateOrdServ, sign: insertSign }).subscribe(
-        ({ ordeServ, sign }) => {
-          const idSampleOrder = this.annexData.idSamplingOrder;
-          this.openModal(
-            ShowReportComponentComponent,
-            idSampleOrder,
-            typeDoc,
-            typesign,
-            samplerOrder.idDelegationRegional
+      if (typeSaeSignatureK == 'Y') {
+        const registerInfoSample = await this.checkInfoRegSamSignClas();
+        if (registerInfoSample) {
+          const checkSignature = await this.checkSignatureInfo(
+            saeResponsibleK,
+            positionSaeK,
+            typeDocument
           );
-        },
-        error => {
-          console.log(error);
-          this.onLoadToast('error', 'No se pudo guardar los datos');
+
+          if (checkSignature) {
+            this.alert(
+              'success',
+              'Acción Correcta',
+              'Firmante agregado correctamente'
+            );
+            this.bsModalRef.content.callback(typeDocument, typeFirm);
+            this.close();
+          }
         }
-      );
-    } else {
-    } */
+      }
+    }
   }
 
   checkInfoRegSamClas() {
@@ -206,6 +181,7 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
         sampleId: this.idSample,
         providerK: this.form.get('providerK').value,
         positionProviderK: this.form.get('positionProviderK').value,
+        typeSignatureProviderK: 'Y',
         competitorOne: this.form.get('competitorOne').value,
         positionCompetitorOne: this.form.get('positionCompetitorOne').value,
         competitorTwo: this.form.get('competitorTwo').value,
@@ -213,6 +189,32 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
         managerNameAlm: this.form.get('managerNameAlm').value,
         relevantFacts: this.form.get('relevantFacts').value,
         agreements: this.form.get('agreements').value,
+      };
+
+      this.samplingGoodService.updateSample(sampleData).subscribe({
+        next: () => {
+          resolve(true);
+        },
+      });
+    });
+  }
+
+  checkInfoRegSamSignClas() {
+    return new Promise((resolve, reject) => {
+      const sampleData: ISample = {
+        sampleId: this.idSample,
+        saeResponsibleK: this.annexForm.get('saeResponsibleK').value,
+        positionSaeK: this.annexForm.get('positionSaeK').value,
+        typeSaeSignatureK: this.annexForm.get('typeSaeSignatureK').value,
+        competitorOne: this.annexForm.get('competitorOne').value,
+        positionCompetitorOne: this.annexForm.get('positionCompetitorOne')
+          .value,
+        competitorTwo: this.annexForm.get('competitorTwo').value,
+        positionCompetitorTwo: this.annexForm.get('positionCompetitorTwo')
+          .value,
+        managerNameAlm: this.annexForm.get('managerNameAlm').value,
+        relevantFacts: this.annexForm.get('relevantFacts').value,
+        agreements: this.annexForm.get('agreements').value,
       };
 
       this.samplingGoodService.updateSample(sampleData).subscribe({
@@ -315,13 +317,6 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
-
-    //this.bsModalRef.content.event.subscribe((res: any) => {
-    //cargarlos en el formulario
-    //console.log(res);
-    //this.assetsForm.controls['address'].get('longitud').enable();
-    //this.requestForm.get('receiUser').patchValue(res.user);
-    //});
   }
 
   openAutografoModal(sampleOrder: ISamplingOrder) {
@@ -338,13 +333,4 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
     };
     this.modalService.show(UploadReportReceiptComponent, config);
   }
-
-  /*async setDataParicipants() {
-    //const sampleOrder: any = await this.getSampleOrder();
-    const sampleOrder: any = this.annexData;
-    this.annexForm.get('competitor1').setValue(sampleOrder.competitor1);
-    this.annexForm.get('postCompetitor1').setValue(sampleOrder.postCompetitor1);
-    this.annexForm.get('competitor2').setValue(sampleOrder.competitor2);
-    this.annexForm.get('postCompetitor2').setValue(sampleOrder.postCompetitor2);
-  } */
 }

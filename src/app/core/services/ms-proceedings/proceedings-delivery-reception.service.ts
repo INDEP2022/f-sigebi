@@ -283,7 +283,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
-  ProceedingsDetailActa(id: string | number, params: ListParams) {
+  ProceedingsDetailActa(id: string | number, params: ListParams | string) {
     return this.get<IListResponse<any>>(
       'aplication/get-detail-acta-ent-recep-closed/' + id,
       params
