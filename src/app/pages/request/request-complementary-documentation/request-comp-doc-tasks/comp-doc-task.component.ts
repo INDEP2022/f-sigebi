@@ -667,7 +667,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.notifyReport = false;
         this.docRequest = false;
         this.viewSelectedGoods = true;
-        this.listGoodSelectedTitle = "Listado de Bienes";
+        this.listGoodSelectedTitle = 'Listado de Bienes';
         this.searchRequestSimGoods = false;
         this.dictumValidate = false;
         this.createReport = false;

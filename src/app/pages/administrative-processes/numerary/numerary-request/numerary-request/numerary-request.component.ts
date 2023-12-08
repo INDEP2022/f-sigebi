@@ -741,7 +741,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Eliminar',
-      `¿Estás seguro de eliminar el Bien: ${goodNumber}?`
+      `¿Está seguro de eliminar el Bien: ${goodNumber}?`
     ).then(async answ => {
       if (answ.isConfirmed) {
         if (valid) {
@@ -940,7 +940,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Borrar',
-      `¿Estás seguro de eliminar la solicitud numerario: ${solnumId}?`
+      `¿Está seguro de eliminar la solicitud numerario: ${solnumId}?`
     ).then(ans => {
       if (ans.isConfirmed) {
         this.numEncServ.remove(solnumId).subscribe({

@@ -61,45 +61,12 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     actions: false,
     columns: { ...RELATED_EVENTS_COLUMNS },
   };
-  // createButton: string =
-  //   '<span class="btn btn-success active font-size-12 me-2 mb-2 py-2 px-2">Agregar</span>';
-  // saveButton: string =
-  //   '<span class="btn btn-info active font-size-12 me-2 mb-2 py-2 px-2">Actualizar</span>';
-  // cancelButton: string =
-  //   '<span class="btn btn-warning active font-size-12 text-black me-2 mb-2 py-2 px-2 cancel">Cancelar</span>';
+
   closeTable: boolean = false;
-  // relatedEventsSettings = {
-  //   ...TABLE_SETTINGS,
-  //   mode: 'internal',
-  //   hideSubHeader: false,
-
-  //};
-
-  /*eventsData = [
-    {
-      id: 11122,
-      process: 'DECBMI0107',
-      status: 'CONCILIADO A SIRSAE',
-      type: 'LICITACIÓN',
-      direction: 'INMUEBLES',
-    },
-    {
-      id: 2321,
-      process: 'DECBMI0107',
-      status: 'CONCILIADO A SIRSAE',
-      type: 'LICITACIÓN',
-      direction: 'INMUEBLES',
-    },
-    {
-      id: 3123,
-      process: 'DECBMI0107',
-      status: 'CONCILIADO A SIRSAE',
-      type: 'LICITACIÓN',
-      direction: 'INMUEBLES',
-    },
-  ];*/
 
   relatedEventsData: IRequestEventRelated[] = [];
+
+  events = new DefaultSelect<Partial<any>>();
 
   constructor(
     private fb: FormBuilder,
@@ -109,26 +76,6 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     private comerTpEventosService: ComerTpEventosService
   ) {
     super();
-
-    //this.relatedEventsSettings.columns = RELATED_EVENTS_COLUMNS;
-    // this.relatedEventsSettings.actions.delete = false;
-    // this.relatedEventsSettings.actions.edit = false;
-    // this.relatedEventsSettings.actions.add = false;
-    // this.relatedEventsSettings.
-    // this.relatedEventsSettings.columns = {
-    // ...this.relatedEventsSettings.columns
-    // ,
-    // id: {
-    //   title: 'Evento',
-    //   sort: false,
-    //   type: 'html',
-    //   width: '25%',
-    //   editor: {
-    //     type: 'custom',
-    //     component: SelectRelatedEventComponent,
-    //   },
-    // },
-    // };
   }
 
   ngOnInit(): void {
@@ -145,9 +92,22 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
 
   descriptionTypeEvent: string = '';
 
-  getEvents() {
-    this.relatedEventsDataLocal.reset();
+  getEventsParent(params?: ListParams) {
+    //params['filter.nmtable'] = `$eq:348`;
+    if (params.text) params['filter.eventDadId'] = `$eq:${params.text}`;
 
+    this.eventRelatedService.getAll(params).subscribe({
+      next: (data: any) => {
+        console.log('data', data);
+        this.events = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.events = new DefaultSelect();
+      },
+    });
+  }
+
+  getEvents() {
     // if (params.text == '') {
     //   this.eventItems = new DefaultSelect(this.eventsData, 5);
     // } else {

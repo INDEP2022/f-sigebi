@@ -1051,7 +1051,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   turnSampling() {
-    console.log('this.samplingId', this.sampleId);
     this.router.navigate([
       'pages/request/generate-monitoring-sampling/verify-noncompliance',
     ]);

@@ -19,11 +19,11 @@
                 Turnar muestreo <i class="fa fa-share-square"></i>
               </button>
             </div>
-            <div class="p-2">
+            <!--<div class="p-2">
               <button class="btn btn-primary btn-sm active" (click)="save()">
                 Guardar <i class="bx bx-save"></i>
               </button>
-            </div>
+            </div> -->
             <!--<div class="p-2">
               <button class="btn btn-primary btn-sm active" (click)="goBack()">
                 Regresar <i class="fas fa-arrow-circle-left"></i>
@@ -108,10 +108,10 @@
           </h6>
         </div>
       </div>
-      <div class="row" *ngIf="showFilterAssets" style="padding-left: 1rem">
+      <div class="row" *ngIf="showFilterAssets">
         <form [formGroup]="filterForm" class="form-material">
           <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field
                 [control]="filterForm.get('noManagement')"
                 label="No&#46; Gestión">
@@ -143,21 +143,17 @@
             </div>
           </div>
         </form>
-        <div class="row pt-4">
-          <div class="d-flex justify-content-end">
-            <div class="m-3">
-              <button
-                (click)="searchGoods()"
-                class="btn btn-primary btn-sm active">
-                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-              </button>
-            </div>
-            <div class="m-3">
-              <button class="btn btn-danger btn-sm active">
-                Limpiar <i class="fas fa-eraser"></i>
-              </button>
-            </div>
-          </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="justify-content-end btn-toolbar">
+          <button (click)="searchGoods()" class="btn btn-primary btn-sm active">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+
+          <button class="btn btn-danger btn-sm active">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -172,14 +168,12 @@
         </tab>
         <tab heading="Verificaciones">
           <div class="row pt-2">
-            <div class="col-md-12">
-              <div [class]="loadingDeductives ? 'table-loading' : ''">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered table-responsive'"
-                  [settings]="settings"
-                  [source]="paragraphsDeductivas">
-                </ng2-smart-table>
-              </div>
+            <div [class]="loadingDeductives ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-responsive'"
+                [settings]="settings"
+                [source]="paragraphsDeductivas">
+              </ng2-smart-table>
             </div>
           </div>
           <!--<app-verifications></app-verifications> -->

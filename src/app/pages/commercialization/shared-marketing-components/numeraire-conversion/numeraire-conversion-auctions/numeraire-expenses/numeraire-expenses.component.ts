@@ -66,6 +66,7 @@ export class NumeraireExpensesComponent
             this.data = response.combined.map((row: any) => {
               return { ...row };
             });
+            this.numerarieService.expenses = [...response.combined];
             this.numerarieService.updateAllowed = response.updateAllowed;
             this.totalItems = response.combined.length;
             this.total = +response.totevent.toFixed(2);
@@ -74,12 +75,14 @@ export class NumeraireExpensesComponent
             this.loading = false;
           } else {
             this.notGetData();
+            this.numerarieService.expenses = [];
           }
 
           console.log(response);
         },
         error: err => {
           this.notGetData();
+          this.numerarieService.expenses = [];
         },
       });
   }

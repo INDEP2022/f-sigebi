@@ -11,7 +11,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { format } from 'date-fns';
-import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -38,15 +37,18 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IFestatus } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { IAvailableFestatus } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -187,6 +189,9 @@ export class DestructionAuthorizationComponent
 
   //AGREGADO POR GRIGORK
   selectGoodProc: any = null;
+  selectGoodGen: any = null;
+  isCommingTracker: boolean = true;
+  flatGoodFlag: boolean = false;
 
   @ViewChild('focusElement', { static: true })
   focusElement: ElementRef<HTMLInputElement>;
@@ -218,6 +223,7 @@ export class DestructionAuthorizationComponent
     private store: Store<IDestructionAuth>,
     private segAccessXArea: SegAcessXAreasService,
     private authService: AuthService,
+
     private documentsService: DocumentsService,
     private siabService: SiabService,
     private massiveGoodService: MassiveGoodService,
@@ -225,7 +231,9 @@ export class DestructionAuthorizationComponent
     private goodprocessService: GoodprocessService,
     private copiesOfficialOpinionService: CopiesOfficialOpinionService,
     //SERVICIOS AGREGADOS POR GRIGORK
-    private expedientService: ExpedientService
+    private expedientService: ExpedientService,
+    private proceedingService: ProceedingsService,
+    private goodTrackerService: GoodTrackerService
   ) {
     super();
 
@@ -277,7 +285,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...GOODS_COLUMNS,
-        selection: {
+        /* selection: {
           title: '',
           sort: false,
           type: 'custom',
@@ -285,7 +293,7 @@ export class DestructionAuthorizationComponent
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGoodPSD(instance),
-        },
+        }, */
       },
       hideSubHeader: false,
       rowClassFunction: (row: any) => {
@@ -461,7 +469,7 @@ export class DestructionAuthorizationComponent
       .remove(this.goodIds, this.numberPro)
       .subscribe({
         next: () => {
-          this.alert('success', 'Bienes eliminados correctamente', '');
+          this.alert('success', 'Bien eliminado', '');
           this.getProceedingGoods();
         },
         error: err => {},
@@ -556,7 +564,11 @@ export class DestructionAuthorizationComponent
           this.setState();
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
-            this.insertDetailFromGoodsTracker();
+            console.log(this.ngGlobal.REL_BIENES);
+            if (this.isCommingTracker) {
+              this.insertDetailFromGoodsTracker();
+              this.isCommingTracker = false;
+            }
           }
         },
       });
@@ -600,6 +612,30 @@ export class DestructionAuthorizationComponent
     this.params8
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodByStatusPDS());
+
+    this.navigateGoodsProceeding();
+    this.navigateProceedingsDelivery();
+    this.navigateDictamination();
+  }
+
+  navigateGoodsProceeding() {
+    this.params7.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      this.getProceedingGoods();
+    });
+  }
+
+  navigateProceedingsDelivery() {
+    this.params5.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      const { id } = this.controls;
+      this.searchActa(id.value);
+    });
+  }
+
+  navigateDictamination() {
+    this.params6.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      const { id } = this.controls;
+      this.searchDicta(id.value);
+    });
   }
 
   setExpedientNum(goodId: number | string) {
@@ -610,118 +646,47 @@ export class DestructionAuthorizationComponent
     });
   }
 
-  private isInsertDetailRunning: boolean = false;
-
   insertDetailFromGoodsTracker() {
-    if (this.isInsertDetailRunning) {
-      return;
-    }
-
-    this.isInsertDetailRunning = true;
     const body = {
-      keyAct: this.controls.keysProceedings.value,
+      keyAct: this.controls.id.value,
       statusAct: 'RGA',
       goodNumber: this.ngGlobal.REL_BIENES,
     };
     this.goodsTrackerLoading = true;
     this.massiveGoodService.goodTracker(body).subscribe({
-      next: response => {
-        const goods = response.bienes_aceptados.map(good => {
-          return {
-            numberGood: Number(good.goodNumber),
-            good: {
-              id: Number(good.goodNumber),
-              description: good.description,
-            },
-            amount: Number(good.amount),
-            numberProceedings: null,
-          };
-        });
-        console.log(goods);
-        console.log(response);
-
-        if (
-          response.bienes_aceptados.length > 0 &&
-          !this.controls.numFile.value
-        ) {
-          this.setExpedientNum(response.bienes_aceptados[0].goodNumber);
-        }
-        this.goodTrackerGoods = [
-          ...new Set([...this.goodTrackerGoods, ...goods]),
-        ];
-        this.detailProceedingsList = [
-          ...this.goodTrackerGoods,
-          ...this.detailProceedingsList,
-        ];
-        this.refusedGoods = response.bienes_rechazados;
+      next: async response => {
+        await this.downloadExcel(
+          JSON.parse(JSON.stringify(response.bienes_rechazados)).nameFile,
+          'Bienes_con_errores.xlsx'
+        );
         this.goodsTrackerLoading = false;
-        let alertAcep: boolean = true;
-        if (response.bienes_aceptados.length > 0) {
+        if (response.aceptados > 0) {
           this.alert(
             'success',
-            'Info',
-            `Se ingresaron: ${response.aceptados} bienes`
+            `Se ingresaron ${response.aceptados} bienes`,
+            ''
           );
-          alertAcep = false;
-        }
-        console.log(response.bienes_aceptados);
-        response.bienes_aceptados.forEach(element => {
-          let body = {
-            pVcScreem: 'FESTATUSRGA',
-            pActaNumber: this.proceedingForm.get('id').value,
-            pStatusActa: this.proceedingForm.get('statusProceedings').value,
-            pGoodNumber: element.goodNumber,
-            pDiAvailable: '',
-            pDiActa: this.proceedingForm.get('id').value,
-            pCveActa: this.proceedingForm.get('keysProceedings').value,
-            pAmount: element.amount,
-          };
-          this.massiveGoodService.InsertGood(body).subscribe({
-            next: data => {
-              console.log(data);
-              this.getProceedingGoods();
-            },
-            error: err => {
-              console.log(err);
-              this.alert(
-                'warning',
-                `El Bien: ${this.array[0].id}, ya ha sido ingresado en una solicitud`,
-                ''
-              ); // Asumiendo que 'alert' se encarga de mostrar la alerta
-              this.array = [...this.tempArray];
-            },
-          });
-        });
-
-        let alertRech: boolean = true;
-        if (response.rechazados > 0) {
-          this.alert(
-            'error',
-            'Info',
-            `Se rechazaron: ${response.rechazados} bienes`
-          );
-          alertRech = false;
-          return;
+        } else {
+          this.alert('warning', 'No se cargaron bienes', '');
         }
 
-        this.keyProceedingchange();
-
-        this.isInsertDetailRunning = false;
         this.getProceedingGoods();
-
-        // if (response.rechazados > 0) {
-        //   const modalConfig = {
-        //     ...MODAL_CONFIG,
-        //     class: 'modal-dialog-centered',
-        //   };
-        //   this.modalRef = this.modalService.show(this.modal, modalConfig);
-        // }
       },
-      error: () => {
+      error: error => {
+        console.log(error);
         this.goodsTrackerLoading = false;
-        this.isInsertDetailRunning = false;
       },
     });
+  }
+
+  async downloadExcel(base64String: any, nameFile: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = nameFile;
+    link.click();
+    link.remove();
   }
 
   insertDetailFromOn() {
@@ -1064,10 +1029,28 @@ export class DestructionAuthorizationComponent
     );
   }
 
+  correctDateFormat(dateStr: string): string {
+    if (/^\d{4}[-\/]\d{2}[-\/]\d{2}$/.test(dateStr)) {
+      return dateStr;
+    }
+
+    let parts = dateStr.split(/[-/]/);
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+
   updateProceeding(
     id: string | number,
     proceeding: Partial<IProccedingsDeliveryReception>
   ) {
+    console.log(
+      this.correctDateFormat(proceeding.elaborationDate.toISOString())
+    );
+    proceeding.closeDate = new Date(
+      this.correctDate(proceeding.closeDate)
+    ).toString();
+    proceeding.elaborationDate = new Date(
+      this.correctDate(proceeding.elaborationDate)
+    ).toString();
     return this.proceedingsDeliveryReceptionService.update(id, proceeding).pipe(
       catchError(error => {
         this.onLoadToast(
@@ -1125,8 +1108,8 @@ export class DestructionAuthorizationComponent
   resetAll() {
     this.proceedingForm.reset();
     this.detailProceedingsList2.load([]);
-    this.actaList = [];
-    this.dictaList = [];
+    this.actaList2 = new LocalDataSource();
+    this.dictaList2 = new LocalDataSource();
   }
 
   keyProceedingchange() {
@@ -1167,6 +1150,7 @@ export class DestructionAuthorizationComponent
         map(response => {
           // Primera transformación de los datos
           console.log(response.data);
+          console.log(new Date(response.data[0].elaborationDate));
           return response.data;
         }),
         map(data => {
@@ -1177,15 +1161,17 @@ export class DestructionAuthorizationComponent
           proceeding.elaborationDate =
             proceeding.elaborationDate == null
               ? null
-              : moment(proceeding.elaborationDate).format('DD/MM/YYYY');
+              : new Date(proceeding.elaborationDate);
           proceeding.datePhysicalReception =
             proceeding.datePhysicalReception == null
               ? null
-              : moment(proceeding.datePhysicalReception).format('DD/MM/YYYY');
+              : this.correctDate(
+                  new Date(proceeding.datePhysicalReception).toString()
+                );
           proceeding.closeDate =
             proceeding.closeDate == null
               ? null
-              : moment(proceeding.closeDate).format('DD/MM/YYYY');
+              : this.correctDate(new Date(proceeding.closeDate).toString());
 
           this.proceedingForm.patchValue(proceeding);
           this.getProceedingGoods();
@@ -1370,12 +1356,12 @@ export class DestructionAuthorizationComponent
     this.goodService.getGoodByStatusPDS(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
-          let obj = {
-            vcScreen: 'FESTATUSRGA',
-            goodNumber: item.id,
-          };
-          const di_dispo = await this.goodStatus(obj);
-          item['di_disponible'] = di_dispo;
+          console.log(item);
+          const di_dispo = await this.goodStatus(item);
+          console.log(di_dispo);
+          item['di_disponible'] = di_dispo.DI_DISPONIBLE;
+          item['di_acta'] =
+            di_dispo.DI_ACTA != null ? di_dispo.DI_ACTA[0].cve_acta : null;
         });
         await Promise.all(result);
         this.show2 = false;
@@ -1389,11 +1375,11 @@ export class DestructionAuthorizationComponent
   }
 
   searchActa(id: string | number) {
-    let params = {
-      ...this.params5.getValue(),
-    };
+    const paramsF = new FilterParams();
+    paramsF.page = this.params5.getValue().page;
+    paramsF.limit = this.params5.getValue().limit;
     this.proceedingsDeliveryReceptionService
-      .ProceedingsDetailActa(id, params)
+      .ProceedingsDetailActa(id, paramsF.getParams())
       .subscribe({
         next: resp => {
           this.actaList2.load(resp.data);
@@ -1404,11 +1390,11 @@ export class DestructionAuthorizationComponent
   }
 
   searchDicta(id: string | number) {
-    let params = {
-      ...this.params6.getValue(),
-    };
+    const paramsF = new FilterParams();
+    paramsF.page = this.params6.getValue().page;
+    paramsF.limit = this.params6.getValue().limit;
     this.copiesOfficialOpinionService
-      .ProceedingsDetailDicta(id, params)
+      .ProceedingsDetailDicta(id, paramsF.getParams())
       .subscribe({
         next: (resp: any) => {
           this.dictaList2.load(resp.data);
@@ -1425,8 +1411,12 @@ export class DestructionAuthorizationComponent
       ...this.params7.getValue(),
     };
     params['filter.numberProceedings'] = `$eq:${proceedingId}`;
+    const paramsF = new FilterParams();
+    paramsF.addFilter('numberProceedings', proceedingId);
+    paramsF.page = this.params7.getValue().page;
+    paramsF.limit = this.params7.getValue().limit;
     this.detailProceeDelRecService
-      .getGoodsByProceedings(proceedingId, params)
+      .getGoodsByProceedings(proceedingId, paramsF.getParams())
       .subscribe({
         next: resp => {
           this.detailProceedingsList = resp.data;
@@ -1445,47 +1435,42 @@ export class DestructionAuthorizationComponent
   }
 
   //StatusBien
-  async goodStatus(id: any): Promise<string> {
+  async goodStatus(item: any): Promise<any> {
     return new Promise<string>((resolve, reject) => {
-      this.goodprocessService.getScreenGood2(id).subscribe({
-        next: async (response: any) => {
-          if (response.data) {
-            resolve('S');
-          } else {
-            resolve('N');
-          }
+      const body: IAvailableFestatus = {
+        goodId: item.id,
+        status: item.status,
+        screenkey: 'FESTATUSRGA',
+      };
+
+      this.proceedingService.getAvailableFestatus(body).subscribe(
+        res => {
+          resolve(res);
         },
-        error: () => {
-          resolve('N');
-        },
-      });
+        err => resolve(err)
+      );
     });
   }
 
   onFileChange(event: Event) {
+    this.flatGoodFlag = true;
     const files = (event.target as HTMLInputElement).files[0];
     let formData = new FormData();
     formData.append('file', files);
-    formData.append(
-      'statusProceeding',
-      this.proceedingForm.get('statusProceedings').value
-    );
-    formData.append(
-      'proceedingKey',
-      this.proceedingForm.get('keysProceedings').value
-    );
-    formData.append('proceedingNumber', this.proceedingForm.get('id').value);
-
     this.getDataFile(formData);
   }
 
-  getDataFile(data: FormData) {
-    this.massiveGoodService.pupBienesPlano(data).subscribe({
+  getDataFile(data: any) {
+    const filenumber = this.controls.id.value;
+    this.massiveGoodService.pupBienesPlano(data, filenumber).subscribe({
       next: resp => {
+        this.flatGoodFlag = false;
         console.log(resp);
       },
       error: err => {
         console.log(err);
+        this.flatGoodFlag = true;
+        this.alert('error', 'Ocurrió un error al leer el archivo', '');
       },
     });
   }
@@ -1502,7 +1487,7 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (this.array.length === 0) {
+    if (this.selectGoodGen == null) {
       this.alert('warning', 'Debe seleccionar un Bien', '');
       return;
     }
@@ -1511,15 +1496,25 @@ export class DestructionAuthorizationComponent
       this.alert('warning', 'Es necesario contar con el No. de Acta', '');
       return;
     }
+
+    if (this.selectGoodGen.di_disponible != 'S') {
+      this.alert(
+        'warning',
+        'El Bien no está disponible',
+        'El bien no está disponible para ser agregado'
+      );
+      return;
+    }
+
     let body = {
       pVcScreem: 'FESTATUSRGA',
       pActaNumber: this.proceedingForm.get('id').value,
       pStatusActa: this.proceedingForm.get('statusProceedings').value,
-      pGoodNumber: this.array[0].id,
+      pGoodNumber: this.selectGoodGen.id,
       pDiAvailable: '',
-      pDiActa: this.array[0].requestFolio,
+      pDiActa: this.selectGoodGen.requestFolio,
       pCveActa: this.proceedingForm.get('keysProceedings').value,
-      pAmount: this.array[0].quantity,
+      pAmount: this.selectGoodGen.quantity,
     };
     this.massiveGoodService.InsertGood(body).subscribe({
       next: data => {
@@ -1598,6 +1593,12 @@ export class DestructionAuthorizationComponent
     }
 
     console.log(this.goodsAct);
+  }
+
+  //SELECT GOOD ACTA
+  selectGoodGeneral(good: any) {
+    console.log(good);
+    this.selectGoodGen = good.data;
   }
 
   //SELECT GOOD ACTA

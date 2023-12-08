@@ -242,7 +242,7 @@ export class DeclarationAbandonmentInsuranceComponent
           this.onLoadToast(
             'error',
             'Notificación por Bien',
-            'No se Encontró Registros en Notificación por Bien'
+            'No se encontraron registros en notificación por Bien'
           );
         },
       });

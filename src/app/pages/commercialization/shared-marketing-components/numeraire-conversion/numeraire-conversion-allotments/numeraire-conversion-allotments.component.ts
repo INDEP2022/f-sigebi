@@ -1,15 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { catchError, map, of, take } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { catchError, firstValueFrom, map, of, take } from 'rxjs';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
-import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
-import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
-import { BasePage } from 'src/app/core/shared';
-
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
+import { NumeraireConversion } from '../models/numeraire-conversion';
 import { COLUMNS } from '../numeraire-conversion-auctions/columns';
 import { ComerieventosService } from '../services/comerieventos.service';
 import { ComermeventosService } from '../services/comermeventos.service';
@@ -20,39 +17,27 @@ import { ComermeventosService } from '../services/comermeventos.service';
   styles: [],
 })
 export class NumeraireConversionAllotmentsComponent
-  extends BasePage
+  extends NumeraireConversion
   implements OnInit
 {
-  @Input() address: string;
-  selectedEvent: IComerEvent = null;
-  nameEvent = '';
-  ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
-  dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
-  user: any;
-  selectNewEvent: IComerEvent;
+  selectedEvent: IComerEvent = null;
   constructor(
+    protected override eventMService: ComermeventosService,
+    protected override eventIService: ComerieventosService,
+    protected override eventDataService: ComerEventosService,
+    protected override authService: AuthService,
     private fb: FormBuilder,
-    private convNumeraryService: ConvNumeraryService,
-    private comertpEventService: ComerTpEventosService,
-    private eventMService: ComermeventosService,
-    private eventIService: ComerieventosService,
-    private eventDataService: ComerEventosService,
-    private authService: AuthService
+    private convNumeraryService: ConvNumeraryService
   ) {
-    super();
-    this.user = this.authService.decodeToken();
-  }
-
-  get eventService() {
-    return this.address
-      ? this.address === 'M'
-        ? this.eventMService
-        : this.eventIService
-      : null;
+    super(eventMService, eventIService, authService, eventDataService);
   }
 
   ngOnInit(): void {}
+
+  resetSelected() {
+    this.selectedEvent = null;
+  }
 
   get pathEvent() {
     return (
@@ -61,10 +46,10 @@ export class NumeraireConversionAllotmentsComponent
     );
   }
 
-  validConvert() {
-    return ['VEN', 'CONC'].includes(
-      this.selectedEvent ? this.selectedEvent.statusVtaId : null
-    );
+  get validConvert() {
+    return this.selectedEvent
+      ? ['VEN', 'CONC'].includes(this.selectedEvent.statusVtaId)
+      : false;
   }
 
   selectEvent(event: IComerEvent) {
@@ -75,66 +60,40 @@ export class NumeraireConversionAllotmentsComponent
     };
   }
 
-  private convierteBody() {
+  private async convierteBody() {
     this.loader.load = true;
-    this.convNumeraryService
-      .PA_CONVNUMERARIO_ADJUDIR({
-        pevent: this.selectedEvent.id,
-        pscreen: 'FCOMER087',
-        pdirectionScreen: this.address,
-        user: this.user.preferred_username,
-      })
+    const hizoConversiones = await firstValueFrom(
+      this.convNumeraryService
+        .PA_CONVNUMERARIO_ADJUDIR2({
+          pevent: this.selectedEvent.id,
+          pscreen: 'FCOMER087',
+          pdirectionScreen: this.address,
+          user: this.user.preferred_username,
+        })
+        .pipe(
+          catchError(x => of({ bandera: false })),
+          map(x => x.bandera)
+        )
+    );
+    if (!hizoConversiones) {
+      this.alert('warning', 'No tiene gastos válidos a convertir', '');
+    }
+    this.selectedEvent.statusVtaId = 'CNE';
+    this.eventDataService
+      .update(this.selectedEvent.id, this.selectedEvent)
       .pipe(take(1))
       .subscribe({
         next: response => {
-          let params = new FilterParams();
-          params.addFilter('id', this.selectedEvent.id);
-          this.eventDataService
-            .getAllEvents(params.getParams())
-            .pipe(
-              take(1),
-              catchError(x => of({ data: [] as IComerEvent[] })),
-              map(x => x.data)
-            )
-            .subscribe({
-              next: response => {
-                this.loader.load = false;
-                if (response && response.length > 0) {
-                  this.selectNewEvent = response[0];
-                  this.alert('success', 'Conversión con éxito', '');
-                } else {
-                  this.alert(
-                    'error',
-                    'Ocurrio un error al actualizar el evento',
-                    'Favor de verificar'
-                  );
-                }
-              },
-              error: err => {
-                this.alert(
-                  'error',
-                  'Ocurrio un error al actualizar el evento',
-                  'Favor de verificar'
-                );
-              },
-            });
-
-          this.loader.load = false;
+          this.updateEventoConv(hizoConversiones, this.selectedEvent);
         },
         error: err => {
-          console.log(err);
-          this.loader.load = false;
-          this.alert(
-            'error',
-            'Ocurrio un error al convertir numerario',
-            'Favor de verificar'
-          );
+          this.showErrorEstatus(!hizoConversiones);
         },
       });
   }
 
   convierte() {
-    if (this.validConvert()) {
+    if (this.validConvert) {
       this.alertQuestion('question', '¿Desea convertir este evento?', '').then(
         x => {
           if (x.isConfirmed) {

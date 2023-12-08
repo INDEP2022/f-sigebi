@@ -15,11 +15,11 @@ export const LIST_REPORTS_COLUMN = {
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (value == 'true')
-        return `<span><i class="fa fa-check text-success"></i> Datos completos</span>`;
+        return `<span><i class="fa fa-check text-success"></i> Datos Completos</span>`;
       if (value == 'false')
-        return `<span><i class="fa fa-times text-danger"></i> Datos incorrectos</span>`;
+        return `<span><i class="fa fa-times text-danger"></i> Datos Incorrectos</span>`;
       if (value == null)
-        return `<span><i class="fa fa-times text-danger"></i> Datos incompletos</span>`;
+        return `<span><i class="fa fa-times text-danger"></i> Datos Incompletos</span>`;
 
       return value;
     },

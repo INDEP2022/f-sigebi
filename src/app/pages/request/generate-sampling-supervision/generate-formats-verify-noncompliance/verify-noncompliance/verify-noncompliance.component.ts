@@ -109,7 +109,6 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
     params.getValue()['filter.sampleId'] = `$eq:${302}`;
     this.samplingGoodService.getSample(params.getValue()).subscribe({
       next: response => {
-        console.log('response muestreo', response);
         this.sampleInfo = response.data[0];
       },
       error: () => {},
@@ -137,14 +136,11 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
     this.listItems$ = this.store.select(selectListItems);
 
-    this.listItems$.subscribe(data => {
-      console.log(data);
-    });
+    this.listItems$.subscribe(data => {});
   }
 
   turnSampling() {
     this.isEnableAnex = true;
-
     this.alertQuestion(
       undefined,
       'Confirmación',
@@ -152,7 +148,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
       'Aceptar'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('enviar mensaje');
+        this.router.navigate(['pages/request/assets-clasification']);
       }
     });
   }
