@@ -87,16 +87,15 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   paragraphs3 = new LocalDataSource();
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
-  allDeductives: IDeductiveVerification[] = [];
+  allDeductives: ISamplingDeductive[] = [];
   settings4 = {
     ...TABLE_SETTINGS,
     actions: {
       edit: true,
-      delete: true,
+      delete: false,
       columnTitle: 'Acciones',
       position: 'right',
     },
-    selectMode: 'multi',
   };
   columns4 = LIST_DEDUCTIVES_COLUMNS;
   paragraphsDeductivas = new LocalDataSource();
@@ -156,7 +155,50 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     };
 
     this.getTransferent(new ListParams());
-    //this.paragraphsDeductivas = data;
+  }
+
+  getSampleDeductives() {
+    this.params.getValue()['filter.sampleId'] = `$eq:${this.sampleId}`;
+    this.samplingGoodService
+      .getAllSampleDeductives(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.allDeductives = response.data;
+          this.getDeductives(response.data);
+        },
+        error: () => {
+          this.getDeductivesNew();
+        },
+      });
+  }
+
+  getDeductives(deductivesRelSample: ISamplingDeductive[]) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.deductiveService.getAll(params.getValue()).subscribe({
+      next: response => {
+        const infoDeductives = response.data.map(item => {
+          deductivesRelSample.map(deductiveEx => {
+            if (deductiveEx.deductiveVerificationId == item.id) {
+              item.observations = deductiveEx.observations;
+              item.selected = true;
+            }
+          });
+          return item;
+        });
+        this.paragraphsDeductivas.load(infoDeductives);
+      },
+      error: error => {},
+    });
+  }
+
+  getDeductivesNew() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.deductiveService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.paragraphsDeductivas.load(response.data);
+      },
+      error: error => {},
+    });
   }
 
   initDateForm() {
@@ -191,6 +233,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       this.params2
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getGoods());
+
+      this.getSampleDeductives();
     } else {
       this.alert(
         'warning',
@@ -208,7 +252,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     if (this.listAssetsSelected.length > 0) {
       this.listAssetsSelected.map(item => {
         const sampligGood: ISampleGood = {
-          sampleGoodId: 243,
+          sampleGoodId: 334,
           sampleId: this.sampleId,
           goodId: item.managementNumber,
           goodSiabNumber: item.goodSiabNumber,
@@ -525,9 +569,9 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
               const deductivesRelSample: any =
                 await this.checkExistDeductives();
 
-              this.params4
+              /*this.params4
                 .pipe(takeUntil(this.$unSubscribe))
-                .subscribe(() => this.getDeductives(deductivesRelSample));
+                .subscribe(() => this.getDeductives(deductivesRelSample)); */
             }
           });
         },
@@ -558,38 +602,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           },
         });
     });
-  }
-
-  getDeductives(deductivesRelSample: any) {
-    if (deductivesRelSample == false) {
-      this.deductiveService.getAll(this.params4.getValue()).subscribe({
-        next: response => {
-          this.paragraphsDeductivas.load(response.data);
-          this.allDeductives = response.data;
-        },
-        error: error => {},
-      });
-    }
-
-    if (deductivesRelSample != false) {
-      this.deductiveService.getAll(this.params4.getValue()).subscribe({
-        next: response => {
-          const infoDeductives = response.data.map(item => {
-            deductivesRelSample.map((deductiveEx: any) => {
-              if (deductiveEx.deductiveVerificationId == item.id) {
-                item.observations = deductiveEx.observations;
-                item.selected = true;
-              }
-            });
-            return item;
-          });
-
-          this.paragraphsDeductivas.load(infoDeductives);
-          this.allDeductives = response.data;
-        },
-        error: error => {},
-      });
-    }
   }
 
   getNameTransferent(transferentId: number) {
@@ -632,7 +644,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         },
         error: error => {
           const sample: ISample = {
-            sampleId: this.sampleId,
+            sampleId: 303,
             regionalDelegationId: this.delegationId,
             startDate: initialDate,
             endDate: finalDate,
@@ -645,6 +657,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           this.samplingGoodService.createSample(sample).subscribe({
             next: response => {
               this.sampleId = response.sampleId;
+              console.log('se creo un nuevo muestreo', this.sampleId);
               resolve(true);
             },
             error: error => {
@@ -927,57 +940,86 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     }
   }
 
-  async saveDeductives() {
-    //console.log('checkData', checkData);
+  saveDeductives() {
     if (this.deductivesSel.length > 0) {
-      //const checkDeductivesExist = this.checkDedExist();
-      let count: number = 0;
-      this.alertQuestion(
-        'question',
-        'Confirmación',
-        '¿Desea guardar las deductivas seleccionadas?'
-      ).then(question => {
-        if (question.isConfirmed) {
-          this.deductivesSel.map(item => {
-            count = count + 1;
-            const sampleDeductive: ISamplingDeductive = {
-              //sampleDeductiveId: '357',
-              sampleId: this.sampleId,
-              //orderSampleId: '3',
-              deductiveVerificationId: item.id,
-              indDedictiva: 'N',
-              //userCreation: 'sigebiadmon',
-              //creationDate: null,
-              //userModification: '2023-10-04',
-              //modificationDate: null,
-              version: 1,
-              observations: item.observations,
-            };
+      const deleteDeductives = this.deductivesSel.filter((data: any) => {
+        if (data.selected) return data;
+      });
 
-            this.samplingGoodService
-              .createSampleDeductive(sampleDeductive)
-              .subscribe({
-                next: response => {},
-                error: error => {
-                  this.alert('error', 'Error', 'Error al guardar la deductiva');
-                },
-              });
+      if (deleteDeductives.length > 0) {
+        const deleteVerification = deleteDeductives.map(item => {
+          this.allDeductives.map(data => {
+            if (item.id == data.deductiveVerificationId) {
+              item.sampleDeductiveId = data.sampleDeductiveId;
+            }
           });
 
-          if (count == 1) {
-            this.alert(
-              'success',
-              'Correcto',
-              'Deductivas guardadas correctamente'
-            );
-          }
-        }
+          return item;
+        });
+
+        deleteVerification.map(item => {
+          this.samplingGoodService
+            .deleteSampleDeductive(item.sampleDeductiveId)
+            .subscribe({
+              next: () => {
+                console.log('delete');
+              },
+            });
+        });
+      }
+
+      const addDeductives = this.deductivesSel.filter((data: any) => {
+        if (!data.selected) return data;
       });
+
+      if (addDeductives.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea guardar las deductivas seleccionadas?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            addDeductives.map((item: any, i: number) => {
+              let index = i + 1;
+              const sampleDeductive: ISamplingDeductive = {
+                sampleId: this.sampleId,
+                deductiveVerificationId: item.id,
+                indDedictiva: 'N',
+                version: 1,
+                observations: item.observations,
+              };
+
+              this.samplingGoodService
+                .createSampleDeductive(sampleDeductive)
+                .subscribe({
+                  next: () => {
+                    if (addDeductives.length == index) {
+                      this.alert(
+                        'success',
+                        'Acción Correcta',
+                        'Deductivas agregadas correctamente'
+                      );
+                    }
+                  },
+                  error: error => {
+                    if (addDeductives.length == i) {
+                      this.alert(
+                        'error',
+                        'Error',
+                        'Error al guardar la deductiva'
+                      );
+                    }
+                  },
+                });
+            });
+          }
+        });
+      }
     } else {
       this.alert(
         'warning',
         'Acción Invalida',
-        'Se requiere seleccionar una deductiva'
+        'Se requiere seleccionar o deseleccionar una deductiva'
       );
     }
   }
@@ -1051,8 +1093,117 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   turnSampling() {
-    this.router.navigate([
+    this.paragraphs3.getElements().then(async data => {
+      if (data.length > 0) {
+        const resultEvaluation = data.map(item => {
+          if (!item.evaluationResult) return item;
+        });
+
+        const filterEv = resultEvaluation.filter(item => {
+          return item;
+        });
+
+        if (filterEv.length == 0) {
+          const goodCump = data.map(item => {
+            if (item.evaluationResult == 'CUMPLE') return item;
+          });
+
+          const filterGoodCump = goodCump.filter(item => {
+            return item;
+          });
+
+          if (filterGoodCump.length == data.length) {
+            //const deductivesSelect = await this.checkDeductives();
+            const updateSample = this.updateSample('BIENES CUMPLEN');
+            if (updateSample) {
+              this.alertQuestion(
+                'info',
+                'Acción',
+                'Todos los bienes cumplen con los resultados de evaluación y no ha seleccionado alguna deductiva'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Muestreo Cerrado correctamente'
+                  );
+                }
+              });
+            }
+          } else {
+            const deductivesSelect = await this.checkDeductives();
+            if (deductivesSelect) {
+              const updateSample = this.updateSample('BIENES NO CUMPLEN');
+              if (updateSample) {
+                this.alertQuestion(
+                  'question',
+                  'Confirmación',
+                  '¿Esta seguro que la información es correcta para turnar?'
+                ).then(question => {
+                  if (question.isConfirmed) {
+                    this.router.navigate([
+                      'pages/request/generate-monitoring-sampling/verify-noncompliance',
+                    ]);
+                  }
+                });
+              }
+            } else {
+              this.alert(
+                'warning',
+                'Acción Invalida',
+                'Selecciona una deductiva para continuar'
+              );
+            }
+          }
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'Todos los bienes deben contar con un resultado de evaluación"'
+          );
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Se requiere tener bienes en el muestreo'
+        );
+      }
+    });
+
+    /*this.router.navigate([
       'pages/request/generate-monitoring-sampling/verify-noncompliance',
-    ]);
+    ]); */
+  }
+
+  checkDeductives() {
+    return new Promise((resolve, reject) => {
+      this.params.getValue()['filter.sampleId'] = `$eq:${this.sampleId}`;
+      this.samplingGoodService
+        .getAllSampleDeductives(this.params.getValue())
+        .subscribe({
+          next: response => {
+            resolve(response.data);
+          },
+          error: () => {
+            resolve(false);
+          },
+        });
+    });
+  }
+
+  updateSample(status: string) {
+    return new Promise((resolve, reject) => {
+      const sample: ISample = {
+        sampleId: this.sampleId,
+        sampleStatus: status,
+      };
+
+      this.samplingGoodService.updateSample(sample).subscribe({
+        next: () => {
+          resolve(true);
+        },
+      });
+    });
   }
 }
