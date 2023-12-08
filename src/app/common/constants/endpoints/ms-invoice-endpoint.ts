@@ -101,4 +101,5 @@ export enum ENDPOINT_INVOICE {
   ApplicationUpdateTotalIvaMonto = 'application/update-total-iva-monto',
   ProcedureSera = 'procedure-sera/generate-preinvoice-soi',
   PDelInvoice = 'pk-comer-real-state-invoice/p-del-invoice',
+  CtrlInvoiceCopyBillVtaBases = 'ctrl-invoice/copy-bill-vta-bases',
 }
