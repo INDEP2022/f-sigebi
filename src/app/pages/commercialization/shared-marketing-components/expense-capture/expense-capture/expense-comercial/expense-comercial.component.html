@@ -307,6 +307,7 @@
                 *ngIf="address !== 'M'"
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="!validImprimeAny"
                 (click)="imprimeAny()">
                 Imprime Any
               </button>
@@ -314,6 +315,7 @@
                 *ngIf="address !== 'M'"
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="!validImprimeRev"
                 (click)="imprimeRev()">
                 Imprime Rev
               </button>

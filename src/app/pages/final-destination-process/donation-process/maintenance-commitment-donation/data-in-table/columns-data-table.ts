@@ -4,6 +4,12 @@ export const COLUMNS_DATA_TABLE = {
     title: 'Etiqueta',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   status: {
     title: 'Estatus',

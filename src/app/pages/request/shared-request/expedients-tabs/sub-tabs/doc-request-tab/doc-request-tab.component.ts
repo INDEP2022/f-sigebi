@@ -874,7 +874,12 @@ export class DocRequestTabComponent
   }
 
   openNewDocument() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
     const idRequest = this.idRequest;
     let typeDoc = 'doc-request';
     config.initialState = {
