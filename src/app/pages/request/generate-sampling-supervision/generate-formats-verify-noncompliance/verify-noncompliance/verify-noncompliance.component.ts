@@ -26,7 +26,7 @@ import { selectListItems } from '../store/item.selectors';
   styleUrls: ['./verify-noncompliance.component.scss'],
 })
 export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
-  title: string = `Verificación Incumplimiento ${302}`;
+  title: string = `Verificación Incumplimiento ${303}`;
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
   filterForm: ModelForm<any>;
@@ -63,7 +63,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     //El id de el muestreo se obtendra de la tarea
-    this.idSample = 302;
+    this.idSample = 303;
     this.getSampleInfo();
     this.initFilterForm();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -106,7 +106,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
   getSampleInfo() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.sampleId'] = `$eq:${302}`;
+    params.getValue()['filter.sampleId'] = `$eq:${303}`;
     this.samplingGoodService.getSample(params.getValue()).subscribe({
       next: response => {
         this.sampleInfo = response.data[0];
