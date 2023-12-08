@@ -102,4 +102,6 @@ export enum ENDPOINT_INVOICE {
   ProcedureSera = 'procedure-sera/generate-preinvoice-soi',
   PDelInvoice = 'pk-comer-real-state-invoice/p-del-invoice',
   CtrlInvoiceCopyBillVtaBases = 'ctrl-invoice/copy-bill-vta-bases',
+  ApplicationGetComerPagorefExists = 'application/get-comer-pagoref-exists',
+  ApplicationGeneratePreInvoices = 'application/generate-pre-invoices',
 }
