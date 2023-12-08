@@ -114,18 +114,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
   }
 
   turnSampling() {
-    let message =
-      '¿Esta de acuerdo que la información es correcta para Turnar?';
-    this.alertQuestion(
-      undefined,
-      'Confirmación turnado',
-      message,
-      'Aceptar'
-    ).then(question => {
-      if (question.isConfirmed) {
-        console.log('enviar mensaje');
-      }
-    });
+    this.router.navigate(['pages/request/assets-clasification/sign-annexes']);
   }
 
   saveDeductives() {
@@ -279,7 +268,11 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
         typeAnnex: 'annex-assets-classification',
         callback: async (typeDocument: number, typeSign: string) => {
           if (typeDocument && typeSign) {
-            this.showReportInfo(typeDocument, typeSign);
+            this.showReportInfo(
+              typeDocument,
+              typeSign,
+              'annex-assets-classification'
+            );
           }
         },
       },
@@ -301,7 +294,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
         callback: async (typeDocument: number, typeSign: string) => {
           if (typeAnnex == 'annexJ-assets-classification') {
             if (typeDocument && typeSign) {
-              this.showReportInfo(typeDocument, typeSign);
+              this.showReportInfo(typeDocument, typeSign, typeAnnex);
             }
           }
         },
@@ -312,7 +305,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  showReportInfo(typeDocument: number, typeSign: string) {
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
     const idTypeDoc = typeDocument;
     const idSample = this.idSample;
     const typeFirm = typeSign;
@@ -322,6 +315,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
         idTypeDoc,
         idSample,
         typeFirm,
+        typeAnnex,
         callback: (next: boolean) => {
           if (next) {
             if (typeFirm != 'electronica') {

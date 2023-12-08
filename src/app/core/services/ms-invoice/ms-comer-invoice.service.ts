@@ -356,4 +356,8 @@ export class ComerInvoiceService extends HttpService {
   }) {
     return this.post(ENDPOINT_INVOICE.ProcedureSera, data);
   }
+
+  getCtrlInvoiceCopyBillVtaBases(data: any) {
+    return this.post(ENDPOINT_INVOICE.CtrlInvoiceCopyBillVtaBases, data);
+  }
 }

@@ -73,4 +73,5 @@ export interface IGoodsExpedient {
 export interface IGoodTracker {
   minutesNumber?: string;
   globalRelGood: number;
+  user: string;
 }

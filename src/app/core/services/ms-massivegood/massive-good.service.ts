@@ -30,8 +30,11 @@ export class MassiveGoodService extends HttpService {
     this.microservice = this.route.MassiveGood;
   }
 
-  pupBienesPlano(request: any) {
-    return this.post<any>(`application/pupBienesPlano`, request);
+  pupBienesPlano(request: any, fileNumber: string) {
+    return this.post<any>(
+      `application/pupBienesPlano?fileNumber=${fileNumber}`,
+      request
+    );
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IMassiveGood>> {

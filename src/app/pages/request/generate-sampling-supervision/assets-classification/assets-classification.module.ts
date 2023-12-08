@@ -9,11 +9,13 @@ import { SharedComponentGssModule } from '../shared-component-gss/shared-compone
 import { AnnexJAssetsClassificationComponent } from './annex-j-assets-classification/annex-j-assets-classification.component';
 import { AssetsClassificationRoutingModule } from './assets-classification-routing-module';
 import { AssetsClassificationComponent } from './assets-classification/assets-classification.component';
+import { ClassificationAnnexedSignComponent } from './classification-annexed-sign/classification-annexed-sign.component';
 
 @NgModule({
   declarations: [
     AssetsClassificationComponent,
     AnnexJAssetsClassificationComponent,
+    ClassificationAnnexedSignComponent,
   ],
   imports: [
     CommonModule,
