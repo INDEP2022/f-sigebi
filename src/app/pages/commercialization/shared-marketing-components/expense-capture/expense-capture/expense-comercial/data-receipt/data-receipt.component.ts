@@ -71,7 +71,7 @@ export class DataReceiptComponent implements OnInit {
   }
 
   get pathEmpleados() {
-    return 'interfaceesirsae/api/v1/sirsae/obt-employees';
+    return 'interfacesirsae/api/v1/sirsae/obt-employees';
   }
 
   get pathTypeOp() {

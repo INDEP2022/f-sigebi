@@ -1461,6 +1461,23 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 
+  get validImprimeAny() {
+    return this.form
+      ? (this.paymentRequestNumber && this.paymentRequestNumber.value) ||
+          (this.expenseNumber && this.expenseNumber.value)
+      : false;
+  }
+
+  get validImprimeRev() {
+    return this.form
+      ? this.paymentRequestNumber
+        ? this.paymentRequestNumber.value
+          ? this.paymentRequestNumber.value != ''
+          : false
+        : false
+      : false;
+  }
+
   async imprimeAny() {
     this.loader.load = true;
     let result = await this.alertQuestion('question', '¿Desea imprimir?', '');
