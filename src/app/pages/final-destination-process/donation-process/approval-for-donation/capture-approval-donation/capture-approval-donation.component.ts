@@ -1951,7 +1951,8 @@ export class CaptureApprovalDonationComponent
 
   //Muestra pantalla del rastreador de bienes
   findRast() {
-    if (this.dataDetailDonation == null ) {
+    console.log('findRast'+this.idAct);
+    if (this.idAct <=0) {
       this.alert(
         'warning',
         'Debe especificar/buscar el evento para despues ingresar bienes.',
