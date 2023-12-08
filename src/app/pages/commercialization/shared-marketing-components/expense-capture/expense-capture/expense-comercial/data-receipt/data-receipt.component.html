@@ -463,8 +463,9 @@
         </ng-custom-select-loading>
       </div>
     </div>
-    <div *ngIf="showAdj">
+    <div *ngIf="showAdj" class="row mt-4 ml-2">
       <ng-custom-select-loading
+        style="padding: 0px"
         [form]="form"
         [updateValues]="true"
         [disabled]="!psadjValue"

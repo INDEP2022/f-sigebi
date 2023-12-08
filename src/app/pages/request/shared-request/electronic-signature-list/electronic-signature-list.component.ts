@@ -44,6 +44,7 @@ export class ElectronicSignatureListComponent
   upload() {
     const uploadFile = this.modalService.show(UploadFilesFormComponent, {
       class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
       ignoreBackdropClick: true,
     });
   }

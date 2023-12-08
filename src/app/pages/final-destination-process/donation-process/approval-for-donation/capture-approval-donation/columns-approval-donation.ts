@@ -305,7 +305,7 @@ export const ACTAS = {
   },
 
   actId: {
-    title: 'Id',
+    title: 'Id Evento',
     type: 'number',
     sort: false,
   },

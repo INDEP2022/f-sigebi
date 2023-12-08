@@ -1281,6 +1281,22 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  removeMotiveRefuse() {
+    return new Promise((resolve, reject) => {
+      const body: any = {};
+      body.id = this.requestData.id;
+      body.rejectionComment = null;
+      this.requestService.update(this.requestData.id, body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          reject(true);
+        },
+      });
+    });
+  }
+
   createTaskOrderService(
     request: any,
     title: string,
@@ -1432,8 +1448,20 @@ export class RegistrationOfRequestsComponent
             console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
               console.log('verificar-cumplimiento');
-              await this.updateGoodStatus('CLASIFICAR_BIEN', 'ROP');
-              this.verifyComplianceMethod(); // DE VERIFICAR CUMPLIMIENTO A CLASIFICAR BIEN
+              //Verificar si hay Bienes aclarados
+              const hayAclarados = await this.getGoodInVerificarCumplimiento();
+              if (hayAclarados === true) {
+                console.log('Hay Bienes que fueron Aclardos');
+
+                //Crear tarea de Verificar cumplimiento a Clasificación de Bienes
+                this.verifyComplianceMethod(); // DE VERIFICAR CUMPLIMIENTO A CLASIFICAR BIEN
+              } else {
+                console.log('No hay Bienes que fueron Aclarados');
+
+                await this.updateGoodStatus('CLASIFICAR_BIEN', 'ROP');
+                //Crear tarea de Verificar cumplimiento a Clasificación de Bienes
+                this.verifyComplianceMethod(); // DE VERIFICAR CUMPLIMIENTO A CLASIFICAR BIEN
+              }
             } else if (this.verifyResp === 'sin articulos') {
               this.verifyCumplianteMsg(
                 'Atención',
@@ -1453,10 +1481,25 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'clasificar-bienes') {
           //DE CLASIFICAR BIEN A DESTINO DOCUMENTAL
           this.loader.load = true;
+
+          //Verificar si hay Bienes aclarados
+          const hayAclarados = await this.getGoodInVerificarCumplimiento();
+          if (hayAclarados === true) {
+            console.log('Hay Bienes que fueron Aclardos');
+
+            //Crear tarea de Verificar cumplimiento a Clasificación de Bienes
+            this.classifyGoodMethod(); // DE CLASIFICAR A DESTINO
+          } else {
+            console.log('No hay Bienes que fueron Aclarados');
+
+            await this.updateGoodStatus('DESTINO_DOCUMENTAL', 'ROP');
+            //Crear tarea de Verificar cumplimiento a Clasificación de Bienes
+            this.classifyGoodMethod(); // DE CLASIFICAR A DESTINO
+          }
+
           console.log('clasificar-bienes');
-          await this.updateGoodStatus('DESTINO_DOCUMENTAL', 'ROP');
+
           //creat tarea para destino documental
-          this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
           //DE DESTINO DOCUMENTAL A SOLICITAR APROBACIÓN O NOTIFICACIONES
@@ -1509,10 +1552,11 @@ export class RegistrationOfRequestsComponent
       if (typeCommit === 'proceso-aprovacion') {
         await this.updateGoodStatus('APROBADO', 'VXR');
         this.approveRequestMethod();
+        //Remover motivo de rechazo
+        this.removeMotiveRefuse();
       }
 
       if (typeCommit === 'refuse') {
-        await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO', 'ROP');
         this.motivoRechazo();
       }
     });
@@ -1521,13 +1565,18 @@ export class RegistrationOfRequestsComponent
   //modal de motivo del rechazo
   motivoRechazo() {
     const dataRequest = this.requestData;
+    const id = this.requestData.id;
+    const idTask = this.task.id;
 
     let config: ModalOptions = {
       initialState: {
         dataRequest,
+        id,
+        idTask,
         callback: (next: boolean) => {
           if (next) {
             this.refuseMethod();
+            //this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO', 'ROP');
           }
         },
       },
@@ -1595,6 +1644,92 @@ export class RegistrationOfRequestsComponent
           //this.onLoadToast('error', '');
           console.log('Error de getAllgoodResDev', error);
           resolve(false);
+        },
+      });
+    });
+  }
+
+  getGoodInVerificarCumplimiento() {
+    return new Promise((resolve, reject) => {
+      this.goodfinderService.getGoodAclarado(this.requestData.id).subscribe({
+        next: resp => {
+          resolve(true);
+          console.log(
+            'Bienes de la solicitud: ',
+            resp.data[0],
+            'Cantidad: ',
+            resp.count
+          );
+
+          const i = resp.count;
+
+          for (let i = 0; i < resp.count; i++) {
+            let body: any = { id: 0, goodId: '', processStatus: '' };
+
+            body.id = resp.data[i].id;
+            body.goodId = resp.data[i].goodId;
+            body.processStatus = 'CLASIFICAR_BIEN';
+
+            this.goodService.update(body).subscribe({
+              next: resp => {
+                console.log('Actualizado', resp);
+              },
+              error: error => {
+                console.log('Error: ', error);
+              },
+            });
+          }
+
+          //for para la cantidad
+
+          //setear CLASIFICAR_BIEN
+        },
+        error: error => {
+          resolve(false);
+          console.log('Error: ', error);
+        },
+      });
+    });
+  }
+
+  getGoodInClasificarBien() {
+    return new Promise((resolve, reject) => {
+      this.goodfinderService.getGoodAclarado(this.requestData.id).subscribe({
+        next: resp => {
+          resolve(true);
+          console.log(
+            'Bienes de la solicitud: ',
+            resp.data[0],
+            'Cantidad: ',
+            resp.count
+          );
+
+          const i = resp.count;
+
+          for (let i = 0; i < resp.count; i++) {
+            let body: any = { id: 0, goodId: '', processStatus: '' };
+
+            body.id = resp.data[i].id;
+            body.goodId = resp.data[i].goodId;
+            body.processStatus = 'DESTINO_DOCUMENTAL';
+
+            this.goodService.update(body).subscribe({
+              next: resp => {
+                console.log('Actualizado', resp);
+              },
+              error: error => {
+                console.log('Error: ', error);
+              },
+            });
+          }
+
+          //for para la cantidad
+
+          //setear CLASIFICAR_BIEN
+        },
+        error: error => {
+          resolve(false);
+          console.log('Error: ', error);
         },
       });
     });
@@ -1739,6 +1874,7 @@ export class RegistrationOfRequestsComponent
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
+      keyboard: false,
     };
     this.bsModalRef = this.modalService.show(component, config);
   }
