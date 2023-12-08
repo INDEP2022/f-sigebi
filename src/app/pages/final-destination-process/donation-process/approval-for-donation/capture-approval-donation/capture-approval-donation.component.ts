@@ -1952,6 +1952,14 @@ export class CaptureApprovalDonationComponent
 
   //Muestra pantalla del rastreador de bienes
   findRast() {
+      if (this.dataDetailDonation == null ) {
+        this.alert(
+          'warning',
+          'Debe especificar/buscar el evento para despues ingresar bienes.',
+          ''
+        );
+        return;
+      }
     if (this.estatus === 'CERRADA') {
       this.alert(
         'warning',
