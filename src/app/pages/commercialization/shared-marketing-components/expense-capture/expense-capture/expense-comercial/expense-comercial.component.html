@@ -42,27 +42,21 @@
                 [disabled]="!expenseNumberValue"
                 (click)="delete()">
                 Eliminar
+                <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
               <button
                 type="button"
-                class="btn btn-sm btn-warning mt-2 mr-2 active"
+                class="btn btn-sm btn-danger mt-2 mr-2 active"
                 (click)="clean()">
-                Limpiar
+                Limpiar <i class="fas fa-eraser"> </i>
               </button>
               <button
                 type="button"
                 class="btn btn-sm btn-primary mt-2 active"
                 [disabled]="form.invalid"
                 (click)="save()">
-                Guardar
+                Guardar <i aria-hidden="true" class="fa fa-save"></i>
               </button>
-              <!-- <button
-                type="button"
-                class="btn btn-sm btn-primary mt-2 active"
-                [disabled]="form.invalid"
-                (click)="edit()">
-                Actualizar
-              </button> -->
             </div>
           </div>
           <div class="row mt-4 ml-0">
@@ -313,6 +307,7 @@
                 *ngIf="address !== 'M'"
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="!validImprimeAny"
                 (click)="imprimeAny()">
                 Imprime Any
               </button>
@@ -320,6 +315,7 @@
                 *ngIf="address !== 'M'"
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="!validImprimeRev"
                 (click)="imprimeRev()">
                 Imprime Rev
               </button>

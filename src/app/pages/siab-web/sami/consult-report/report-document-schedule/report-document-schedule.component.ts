@@ -279,7 +279,12 @@ export class ReportDocumentScheduleComponent
   }
 
   openNewDocument() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
     const idRequest = 0;
     let typeDoc = 'doc-request';
     config.initialState = {

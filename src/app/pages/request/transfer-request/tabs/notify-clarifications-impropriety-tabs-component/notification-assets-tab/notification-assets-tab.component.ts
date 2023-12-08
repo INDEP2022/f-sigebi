@@ -445,6 +445,8 @@ export class NotificationAssetsTabComponent
               this.updateStatusGoodTmp(refuseObj.goodId);
             }
           },
+          keyboard: false,
+          ignoreBackdropClick: true,
         };
         this.modalService.show(RefuseClarificationModalComponent, modalConfig);
       } else {
@@ -504,10 +506,14 @@ export class NotificationAssetsTabComponent
             'Los Bienes seleccionados regresarán al proceso de verificar cumplimiento'
           ).then(async question => {
             if (question.isConfirmed) {
+              //Continuar Henry
               //Actualiza a cerrada tarea de notificaciones
               //this.taskService.update()
               const updateData = await this.verifyGoodCompliance();
-              if (updateData == true) {
+              this.changeStatusTask();
+              this.createTaskVerifyCompliance();
+
+              /* if (updateData == true) {
                 let params = new ListParams();
                 params['filter.requestId'] = this.idRequest;
                 params['filter.goodStatus'] = 'ACLARADO';
@@ -525,7 +531,7 @@ export class NotificationAssetsTabComponent
                     );
                   },
                 });
-              }
+              }*/
             }
           });
         }
@@ -866,6 +872,8 @@ export class NotificationAssetsTabComponent
             let config = {
               ...MODAL_CONFIG,
               class: 'modal-lg modal-dialog-centered',
+              keyboard: false,
+              ignoreBackdropClick: true,
             };
 
             config.initialState = {
@@ -898,6 +906,8 @@ export class NotificationAssetsTabComponent
             let config = {
               ...MODAL_CONFIG,
               class: 'modal-lg modal-dialog-centered',
+              keyboard: false,
+              ignoreBackdropClick: true,
             };
             config.initialState = {
               notification,
@@ -1498,6 +1508,8 @@ export class NotificationAssetsTabComponent
             }
           }
         },
+        keyboard: false,
+        ignoreBackdropClick: true,
       },
       class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -1569,6 +1581,7 @@ export class NotificationAssetsTabComponent
                 },
               },
               class: 'modal-lg modal-dialog-centered',
+              keyboard: false,
               ignoreBackdropClick: true,
             };
             this.modalService.show(PrintSatAnswerComponent, config);
@@ -1854,7 +1867,7 @@ export class NotificationAssetsTabComponent
   }
 
   endClarification() {
-    //this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
     /*this.data.getElements().then(data => {
       data.map((good: IGoodresdev) => {
         if (
@@ -2317,6 +2330,8 @@ export class NotificationAssetsTabComponent
           let config = {
             ...MODAL_CONFIG,
             class: 'modal-lg modal-dialog-centered',
+            keyboard: false,
+            ignoreBackdropClick: true,
           };
           const idSolicitud = this.idRequest;
           config.initialState = {

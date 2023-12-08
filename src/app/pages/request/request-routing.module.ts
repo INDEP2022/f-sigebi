@@ -39,19 +39,6 @@ const routes: Routes = [
     },
   },
   {
-    path: 'ssampling-assets',
-    loadChildren: async () =>
-      (
-        await import(
-          './generate-sampling-supervision/generate-formats-verify-noncompliance/generate-formats-verify-noncompliance.module'
-        )
-      ).GenerateFormatsVerifyNoncomplianceModule,
-    data: {
-      title: 'Muestreo Bienes Generar Consulta',
-      screen: 'MUESTREOBIENES',
-    },
-  },
-  {
     path: 'assets-clasification',
     loadChildren: async () =>
       (

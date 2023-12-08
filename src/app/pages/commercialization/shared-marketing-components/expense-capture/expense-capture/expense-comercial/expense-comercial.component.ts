@@ -64,11 +64,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   set address(value) {
     const list = [];
     if (value === 'M') {
+      this._address = value;
       this.resetVisiblesM();
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'M', title: 'MUEBLES' });
-    }
-    if (value === 'I') {
+    } else if (value === 'I') {
       this.initScreenI();
     }
     this.columns = {
@@ -203,6 +203,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     delete newBody.padj;
     delete newBody.psadj;
     delete newBody.pssadj;
+    delete newBody.cadena;
     return {
       ...newBody,
       amount: this.dataService.amount ?? 0,
@@ -807,7 +808,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async selectConcept(concept: IConcept) {
-    if (this.address !== 'M') {
+    if (this.address && this.address !== 'M') {
       let filterParams = new FilterParams();
       let user = 'PLAMAR';
       filterParams.addFilter(
@@ -987,7 +988,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       !this.dataService.dataCompositionExpenses[0].goodNumber &&
       !this.dataService.data.providerName
     ) {
-      this.alert('warning', 'Tiene que llenar alguno de los campos', '');
+      this.alert(
+        'warning',
+        'Tiene que llenar alguno de los campos',
+        'Concepto, Evento, Proveedor, Detalle de gasto con bien'
+      );
       return;
     }
     if (!this.dataService.FOLIO_UNIVERSAL) {
@@ -1437,11 +1442,18 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async sendToSIRSAE() {
-    if (this.address === 'M') {
-      this.dataService.actionButton = 'SIRSAE';
-      await this.dataService.updateByGoods(true);
-    } else {
-      this.dataService.ENVIA_MOTIVOS();
+    let result = await this.alertQuestion(
+      'question',
+      '¿Desea enviar solicitud de pago a sirsae?',
+      ''
+    );
+    if (result.isConfirmed) {
+      if (this.address === 'M') {
+        this.dataService.actionButton = 'SIRSAE';
+        await this.dataService.updateByGoods(true);
+      } else {
+        this.dataService.ENVIA_MOTIVOS();
+      }
     }
   }
 
@@ -1449,32 +1461,52 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 
-  imprimeAny() {
+  get validImprimeAny() {
+    return this.form
+      ? (this.paymentRequestNumber && this.paymentRequestNumber.value) ||
+          (this.expenseNumber && this.expenseNumber.value)
+      : false;
+  }
+
+  get validImprimeRev() {
+    return this.form
+      ? this.paymentRequestNumber
+        ? this.paymentRequestNumber.value
+          ? this.paymentRequestNumber.value != ''
+          : false
+        : false
+      : false;
+  }
+
+  async imprimeAny() {
     this.loader.load = true;
-    if (this.paymentRequestNumber.value) {
-      this.sirsaeService
-        .imprimeAny(this.paymentRequestNumber.value, this.expenseNumber.value)
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.PUP_LANZA_REPORTE(1, 1);
-          },
-          error: err => {
-            this.loader.load = false;
-          },
-        });
-    } else if (this.expenseNumber.value) {
-      this.sirsaeService
-        .viewPreview(this.expenseNumber.value)
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.PUP_LANZA_REPORTE(1, 2);
-          },
-        });
-    } else {
-      this.loader.load = false;
-      this.alert('warning', 'No existe un gasto a visualizar', '');
+    let result = await this.alertQuestion('question', '¿Desea imprimir?', '');
+    if (result.isConfirmed) {
+      if (this.paymentRequestNumber.value) {
+        this.sirsaeService
+          .imprimeAny(this.paymentRequestNumber.value, this.expenseNumber.value)
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.PUP_LANZA_REPORTE(1, 1);
+            },
+            error: err => {
+              this.loader.load = false;
+            },
+          });
+      } else if (this.expenseNumber.value) {
+        this.sirsaeService
+          .viewPreview(this.expenseNumber.value)
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.PUP_LANZA_REPORTE(1, 2);
+            },
+          });
+      } else {
+        this.loader.load = false;
+        this.alert('warning', 'No existe un gasto a visualizar', '');
+      }
     }
   }
 
@@ -1486,22 +1518,25 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.modalService.show(RetentionsModalComponent, config);
   }
 
-  imprimeRev() {
-    if (this.paymentRequestNumber.value) {
-      this.loader.load = true;
-      this.sirsaeService
-        .insertModuleCont(this.paymentRequestNumber.value)
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.PUP_LANZA_REPORTE(2);
-          },
-          error: err => {
-            this.loader.load = false;
-          },
-        });
-    } else {
-      this.alert('warning', 'Requiere una solicitud de pago', '');
+  async imprimeRev() {
+    let result = await this.alertQuestion('question', '¿Desea imprimir?', '');
+    if (result.isConfirmed) {
+      if (this.paymentRequestNumber.value) {
+        this.loader.load = true;
+        this.sirsaeService
+          .insertModuleCont(this.paymentRequestNumber.value)
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.PUP_LANZA_REPORTE(2);
+            },
+            error: err => {
+              this.loader.load = false;
+            },
+          });
+      } else {
+        this.alert('warning', 'Requiere una solicitud de pago', '');
+      }
     }
   }
 
@@ -1510,13 +1545,20 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.expenseNumberValue && mandates.length > 0;
   }
 
-  imprimeDetalle() {
-    if (this.validImprimeDetalle()) {
-      // this.alertQuestion('question','Desea imprimir ')
-      this.loader.load = true;
-      this.PUP_LANZA_REPORTE(3);
-    } else {
-      this.alert('warning', 'No se encontro datos a imprimir', '');
+  async imprimeDetalle() {
+    let result = await this.alertQuestion(
+      'question',
+      '¿Desea imprimir detalle?',
+      ''
+    );
+    if (result.isConfirmed) {
+      if (this.validImprimeDetalle()) {
+        // this.alertQuestion('question','Desea imprimir ')
+        this.loader.load = true;
+        this.PUP_LANZA_REPORTE(3);
+      } else {
+        this.alert('warning', 'No se encontro datos a imprimir', '');
+      }
     }
   }
 

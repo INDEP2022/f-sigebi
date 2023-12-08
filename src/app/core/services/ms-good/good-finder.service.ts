@@ -75,4 +75,9 @@ export class GoodFinderService extends HttpService {
     const route = `${GoodFinderEndpoint.UpdateClassification}/${id}`;
     return this.get(route);
   }
+
+  getGoodAclarado(id: number, params?: _Params) {
+    const route = `${GoodFinderEndpoint.GoodQuery}?filter.requestId=$eq:${id}&filter.goodStatus=ACLARADO`;
+    return this.get(route, params);
+  }
 }

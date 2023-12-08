@@ -174,6 +174,9 @@ export class DonationService
   putDetailDona(model: any) {
     return this.put(DonationEndPoint.DetailEventComDon, model);
   }
+  postDetailDona(model: any) {
+    return this.post(DonationEndPoint.DetailEventComDon, model);
+  }
   getGoodsDonation(params: ListParams) {
     return this.get(DonationEndPoint.GoodsForDonation, params);
   }
@@ -201,6 +204,7 @@ export class DonationService
   deleteApproveDonation(data: any) {
     return this.delete(DonationEndPoint.ApproveDonation, data);
   }
+
   getEventComDonationExcelExport(params: any) {
     return this.get(DonationEndPoint.EventComDonationExcelExport, params);
   }
