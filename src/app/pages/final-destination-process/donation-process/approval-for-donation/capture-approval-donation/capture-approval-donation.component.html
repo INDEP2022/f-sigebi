@@ -43,7 +43,7 @@
                 <form-field [control]="regisForm.get('area')">
                   <ngx-select [data]="areas$" (change)="selectedArea($event)" (fetchByParamsItems)="readArea($event)"
                     [fetchByList]="false" [searchOnInit]="true" [form]="regisForm" value="delegation"
-                    bindLabel="delegation" label="&Aacute;rea" control="area">
+                    bindLabel="delegation" label="&Aacute;rea" control="area" [readonly]="true">
                   </ngx-select>
                 </form-field>
               </div>
@@ -55,7 +55,7 @@
             <div class="col-md-2">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('year')" label="Año">
-                  <input type="text" class="form-control" formControlName="year" readonly [bsConfig]="bsConfigToYear"
+                  <input type="text" class="form-control" formControlName="year" [bsConfig]="bsConfigToYear"
                     #dp="bsDatepicker" bsDatepicker />
                 </form-field>
                 <!--
@@ -77,8 +77,7 @@
             <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('captureDate')" label="Fecha Captura">
-                  <input [maxDate]="maxDate" readonly bsDatepicker class="form-control" formControlName="captureDate"
-                    readonly />
+                  <input [maxDate]="maxDate" bsDatepicker class="form-control" formControlName="captureDate" readonly />
                 </form-field>
               </div>
             </div>

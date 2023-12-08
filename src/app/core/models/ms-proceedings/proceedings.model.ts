@@ -163,3 +163,9 @@ export interface IAvailableFestatus {
   status: string;
   screenkey: string;
 }
+
+export interface ITmpUpdateMassive {
+  user: string;
+  proceedingKey: string;
+  date: string;
+}

@@ -116,10 +116,15 @@ export const COPY = {
     sort: false,
   },
   noetiqueta: {
-    title: 'Etiqueta Destino',
+    title: 'No Etiqueta',
     visible: true,
     sort: false,
   },
+  descripcionetiqueta: {
+    title: 'Etiqueta Destino',
+    visible: true,
+    sort: false,
+  },  
   idnoworker1: {
     title: 'No. Tranf.',
     visible: true,
