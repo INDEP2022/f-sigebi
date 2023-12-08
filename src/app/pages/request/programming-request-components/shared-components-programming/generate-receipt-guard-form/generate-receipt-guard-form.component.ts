@@ -124,6 +124,7 @@ export class GenerateReceiptGuardFormComponent
           },
         },
         class: 'modal-lg modal-dialog-centered',
+        keyboard: false,
         ignoreBackdropClick: true,
       };
       this.modalService.show(PrintReportModalComponent, config);

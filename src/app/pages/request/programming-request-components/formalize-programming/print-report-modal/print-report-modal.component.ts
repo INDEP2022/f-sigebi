@@ -244,7 +244,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           callback: (response: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-        ignoreBackdropClick: true, //ignora el click fuera del modal
+        keyboard: false,
+        ignoreBackdropClick: true,
       };
       this.modalService.show(PreviewDocumentsComponent, config);
     });
@@ -264,6 +265,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         },
       },
       class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
       ignoreBackdropClick: true,
     };
     this.modalService.show(UploadFielsModalComponent, config);
