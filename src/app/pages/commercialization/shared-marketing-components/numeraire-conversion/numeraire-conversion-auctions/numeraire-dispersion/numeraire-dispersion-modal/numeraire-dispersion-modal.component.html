@@ -5,11 +5,8 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div *ngIf="row">
-        <form-field [control]="numeraryxGoodId" label="Id">
-          <input
-            class="form-control"
-            formControlName="numeraryxGoodId"
-            readonly />
+        <form-field [control]="goodNumber" label="Id Bien">
+          <input class="form-control" formControlName="goodNumber" readonly />
         </form-field>
       </div>
       <div class="row">
@@ -28,7 +25,6 @@
               type="text"
               formControlName="date"
               class="form-control"
-              bsDatePicker
               readonly />
           </form-field>
         </div>
