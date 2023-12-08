@@ -111,7 +111,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   disabledCause: boolean = false;
   disabledDescause: boolean = false;
   disabledRegCanc: boolean = false;
-  refactura: string = ''; // BLK_CTRL.REFACTURA
+  refactura: string = 'R'; // BLK_CTRL.REFACTURA
 
   btnLoading: boolean = false;
   btnLoading2: boolean = false;
@@ -537,7 +537,11 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
             delete invoice.delegation;
             let resp = await this.updateInvoice(invoice);
             if (!resp) {
-              this.alert('warning', 'No se pudo actualizar la factura', '');
+              return this.alert(
+                'warning',
+                'No se pudo actualizar la factura',
+                ''
+              );
             } else {
               this.alert('success', '', 'Factura actualizada correctamente');
             }
@@ -663,8 +667,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     if (next == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con los permisos para efectuar esta operación'
+        'No cuenta con los permisos para realizar esta operación',
+        ''
       );
       return 0;
     }
@@ -818,15 +822,22 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   }
 
   async updateData() {
+    if (this.isSelect.length == 0)
+      return this.alert(
+        'warning',
+        'Debe seleccionar facturas para actualizar datos',
+        ''
+      );
     let valid: number = 0;
     const validUser = 1;
-    // = await this.validateUser();
+    await this.validateUser();
 
     if (validUser == 1) {
       valid = 1;
 
       if (valid == 1) {
-        this.isSelect.map(async comer => {
+        this.btnLoading4 = true;
+        let result = this.isSelect.map(async comer => {
           //regxlote primer service
           await this.regXLote(comer.eventId, comer.batchId);
 
@@ -846,9 +857,19 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           await this.dataCoord(comer.eventId, comer.billId);
           //datos_cooreg service
         });
+        Promise.all(result).then(resp => {
+          this.btnLoading4 = false;
+          this.alert('success', 'Proceso terminado correctamente', '');
+          this.getAllComer();
+        });
       }
+    } else {
+      this.alert(
+        'warning',
+        'No cuenta con los permisos para realizar esta operación',
+        ''
+      );
     }
-    this.getAllComer();
   }
 
   async factBases(
@@ -906,9 +927,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
     if (validUser == 0) {
       this.alert(
-        'error',
-        'Error',
-        'No cuenta con los permisos para efectuar esta operación'
+        'warning',
+        'No cuenta con los permisos para realizar esta operación',
+        ''
       );
     } else {
       const data = await this.dataFilter.getAll();
@@ -1019,7 +1040,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     const data: any[] = await this.dataFilter.getAll();
 
     if (data.length == 0) {
-      this.alert('warning', 'Atención', 'Debe seleccionar un evento');
+      this.alert('warning', 'Debe seleccionar un evento', '');
       return;
     }
 
@@ -1082,8 +1103,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     if (userValid == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con los permisos para realizar esta operación'
+        'No cuenta con los permisos para realizar esta operación',
+        ''
       );
     } else {
       if (data.length == 0) {
@@ -1379,8 +1400,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     this.visualCancelYesNot(0);
   }
 
+  // VISUALIZA_CANCELA_SINO
   visualCancelYesNot(pYesNo: number) {
-    // VISUALIZA_CANCELA_SINO
     if (pYesNo == 1) {
       this.disabledCause = true;
       this.disabledDescause = true;
@@ -1409,46 +1430,65 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   }
 
   cancelInvoice() {
-    if (!this.invoiceSelected) {
-      this.alert('warning', 'Debe seleccionar una factura', '');
+    if (this.isSelect.length == 0) {
+      this.alert(
+        'warning',
+        'Debe seleccionar al menos una factura para cancelar',
+        ''
+      );
       return;
     }
     // :BLK_CTRL.USUARIO_AUT := NULL;
     // :BLK_CTRL.PASSWORD_AUT := NULL;
-    let PREG = this.invoiceSelected;
+    let PREG = this.isSelect;
     this.cancelInvoiceVal(PREG); // -- PRIMERO VALIDAMOS CAUSA Y FOLIO SP
   }
 
-  cancelInvoiceVal(bill: any) {
-    if (this.form.get('causerebillId').value) {
+  cancelInvoiceVal(bills: any) {
+    // if(this.isSelect.length == 0)
+    //   return this.alert('warning', 'Debe seleccionar las facturas a cancelar', '')
+    const data: Array<any> = bills;
+    if (!this.form.get('causerebillId').value) {
       this.visualCancelYesNot(1); // muestra los campos de la causa
     } else {
-      if (bill.factstatusId == 'CAN')
-        return (
-          this.visualCancelYesNot(0),
-          this.alert('warning', 'No puede procesar una factura cancelada', '')
-        );
-      else if (bill.factstatusId == 'NCR')
-        return (
-          this.visualCancelYesNot(0),
-          this.alert('warning', 'No puede cancelar una factura NCR', '')
-        );
+      let point = 0;
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].factstatusId == 'CAN') {
+          point = 1;
+          break;
+        } else if (data[i].factstatusId == 'NCR') {
+          point = 2;
+          break;
+        }
+      }
+      if (point == 0) this.openAutorizacion();
+      else if (point == 1)
+        this.visualCancelYesNot(0),
+          this.alert('warning', 'No puede procesar una factura cancelada', '');
+      else if (point == 2)
+        this.visualCancelYesNot(0),
+          this.alert('warning', 'No puede cancelar una factura NCR', '');
       // SHOW_VIEW('AUTORIZACION');
-      this.openAutorizacion();
       // GO_ITEM('BLK_CTRL.USUARIO_AUT');
     }
   }
 
   openAutorizacion() {
+    if (this.isSelect.length == 0)
+      return this.alert(
+        'warning',
+        'No hay facturas seleccionadas para cancelar',
+        ''
+      );
+
     let config: ModalOptions = {
       initialState: {
+        bills: this.isSelect,
         form: this.form,
-        callback: (data: boolean, val: number) => {},
-        // callback2: (aux_auto: number) => {
-        //   console.log('aux_auto', aux_auto);
-        //   this.parameterPAutorizado = aux_auto;
-        //   this.processingCancelled();
-        // },
+        callback: (aux_auto: number) => {
+          this.parameterPAutorizado = aux_auto;
+          if (aux_auto == 1) this.processingCancelled();
+        },
       },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -1458,17 +1498,27 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
   processingCancelled() {
     if (this.isSelect.length == 0)
-      return this.alert('warning', 'No hay facturas seleccionadas', '');
+      return this.alert(
+        'warning',
+        'No hay facturas seleccionadas para cancelar',
+        ''
+      );
 
+    this.btnLoading6 = true;
+    const { causerebillId } = this.form.value;
+    let point = 1;
     let result = this.isSelect.map(async item => {
       let YYYY = this.datePipe.transform(item.impressionDate, 'YYYY');
       let CF_LEYENDA = '';
       let CF_NUEVAFACT: any = 0;
       if (!item.folioinvoiceId)
-        return this.alert(
-          'warning',
-          `No se puede cancelar una factura sin folio para el evento: ${item.eventId} y lote: ${item.batchId}`,
-          ''
+        return (
+          (this.btnLoading6 = false),
+          this.alert(
+            'warning',
+            `No se puede cancelar una factura sin folio para el evento: ${item.eventId} y lote: ${item.batchId}`,
+            ''
+          )
         );
       else if (item.series.length > 1)
         CF_LEYENDA = `ESTE CFDI REFIERE AL CFDI ${item.series}-${item.folioinvoiceId}`;
@@ -1477,11 +1527,32 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
       if (this.refactura == 'R') {
         // CREA OTRA FACTURA SIN FOLIO Y CANCELA LA ACTUAL
+        console.log('da', Number(YYYY));
         if (Number(YYYY) > 2011) {
+          console.log('HOLA');
           // SE CANCELA Y SE CREA UN CFDI INGRESO (FAC) Y UN CFDI DE EGRESO (NCR)
-          // **EDWIN** 3//
-          //   CF_NUEVAFACT := COPIA_FACTURA_VTA_BASES(:COMER_FACTURAS.ID_EVENTO,:COMER_FACTURAS.ID_LOTE, :COMER_FACTURAS.ID_FACTURA, CF_LEYENDA, :BLK_CTRL.USUARIO_AUT, 'PREF',1,0,:BLK_TOOLBAR.TOOLBAR_NO_DELEGACION,:BLK_CTRL.CAUSA);
-          CF_NUEVAFACT = await this.copyBillVTABases();
+          // **EDWIN** 3// ** YELTSIN ** //
+          //   CF_NUEVAFACT := COPIA_FACTURA_VTA_BASES(
+          // :COMER_FACTURAS.ID_EVENTO,
+          // :COMER_FACTURAS.ID_LOTE,
+          //  :COMER_FACTURAS.ID_FACTURA,
+          //  CF_LEYENDA,
+          //  :BLK_CTRL.USUARIO_AUT,
+          //  'PREF',1,0,
+          //  :BLK_TOOLBAR.TOOLBAR_NO_DELEGACION,
+          //  :BLK_CTRL.CAUSA);
+          let obj = {
+            PCFDI: 0,
+            PEVENTO_O: item.eventId,
+            PLOTE: item.batchId,
+            PIDFACTURA_O: item.billId,
+            PDEL_EMITE: this.authService.decodeToken().department,
+            PCAUSA: causerebillId,
+            PESTATUS: 'PREF',
+            PLEYENDA: CF_LEYENDA,
+          };
+          CF_NUEVAFACT = await this.copyBillVTABases(obj);
+          console.log('CF_NUEVAFACT', CF_NUEVAFACT);
         }
         if (CF_NUEVAFACT > 0) {
           let obj = {
@@ -1495,21 +1566,35 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           await this.billingsService.updateBillings(obj);
           // CANCELAR_FACTURA(:COMER_FACTURAS.ID_FACTURA);
         } else {
-          return this.alert(
-            'error',
-            'Falló la operación, consulte sistemas',
-            ''
-          );
+          point = 0;
         }
       }
     });
     Promise.all(result).then(resp => {
-      this.getAllComer();
+      this.btnLoading6 = false;
+      if (point == 0) {
+        return (
+          (this.btnLoading6 = false),
+          this.alert('error', 'Falló la operación, consulte sistemas', '')
+        );
+      } else {
+        this.alert('success', 'Facturas canceladas correctamente', '');
+        this.getAllComer();
+      }
     });
   }
 
-  async copyBillVTABases() {
-    return 1;
+  async copyBillVTABases(obj: any) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoice.getCtrlInvoiceCopyBillVtaBases(obj).subscribe({
+        next: value => {
+          resolve(1);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
   }
 
   async sendPackage() {
