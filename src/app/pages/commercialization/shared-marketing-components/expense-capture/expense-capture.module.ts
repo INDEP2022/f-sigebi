@@ -25,6 +25,7 @@ import { PartContSirsaeComponent } from './expense-capture/expense-composition/p
 import { RejectedGoodsComponent } from './expense-capture/expense-composition/rejected-goods/rejected-goods.component';
 import { NotifyComponent } from './expense-capture/notify/notify.component';
 import { ScanFilesComponent } from './expense-capture/scan-files/scan-files.component';
+import { TmpErroresComponent } from './expense-capture/tmp-errores/tmp-errores.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { ScanFilesComponent } from './expense-capture/scan-files/scan-files.comp
     PartContSirsaeComponent,
     RetentionsModalComponent,
     ContractsModalComponent,
+    TmpErroresComponent,
   ],
   imports: [
     CommonModule,

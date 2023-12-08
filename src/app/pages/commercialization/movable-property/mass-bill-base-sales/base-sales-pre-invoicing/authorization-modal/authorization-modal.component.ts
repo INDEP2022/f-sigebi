@@ -42,9 +42,9 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
     const aux = await this.comerEvent(event);
 
     const aux_auto = await this.validateUser(userV, passwordV, aux);
-
+    console.log('aux_auto', aux_auto);
     if (aux_auto == 1) {
-      this.modalRef.content.callback2(aux_auto);
+      this.modalRef.content.callback(event);
       this.modalRef.hide();
     }
   }

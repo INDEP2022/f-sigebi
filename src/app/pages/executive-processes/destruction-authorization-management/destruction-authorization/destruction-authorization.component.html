@@ -232,6 +232,7 @@
             <ng-scrollbar [track]="'vertical'" style="height: 550px">
               <ng2-smart-table
                 [settings]="settings3"
+                (userRowSelect)="selectGoodGeneral($event)"
                 [source]="goodPDS1"></ng2-smart-table>
             </ng-scrollbar>
             <app-pagination
@@ -314,10 +315,16 @@
                 type="button"
                 tooltip="Agregar"
                 containerClass="tooltip-style"
+                [disabled]="flatGoodFlag"
                 class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="file.click()">
                 Insertar vía Archivo plano
-                <i class="bi bi-file-earmark-excel-fill"></i>
+                <i
+                  *ngIf="!flatGoodFlag"
+                  class="bi bi-file-earmark-excel-fill"></i>
+                <i
+                  *ngIf="flatGoodFlag"
+                  class="spinner-border spinner-border-sm"></i>
               </button>
             </div>
             <div class="m-3">

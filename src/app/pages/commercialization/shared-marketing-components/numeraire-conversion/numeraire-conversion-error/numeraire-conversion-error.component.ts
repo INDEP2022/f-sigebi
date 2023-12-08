@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { takeUntil } from 'rxjs';
 import { IncosConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/incos-conv-numerary.service';
@@ -15,6 +15,7 @@ export class NumeraireConversionErrorComponent
   extends BasePageWidhtDinamicFiltersExtra
   implements OnInit
 {
+  @Input() address: string;
   constructor(
     private dataService: IncosConvNumeraryService,
     private numerarieService: NumerarieService
@@ -53,6 +54,9 @@ export class NumeraireConversionErrorComponent
     let newColumnFilters: any = [];
     if (this.selectedEvent && this.selectedEvent.id) {
       newColumnFilters['filter.eventId'] = '$eq:' + this.selectedEvent.id;
+    }
+    if (this.address) {
+      newColumnFilters['filter.event.address'] = '$in:' + this.address + ',C';
     }
 
     return {

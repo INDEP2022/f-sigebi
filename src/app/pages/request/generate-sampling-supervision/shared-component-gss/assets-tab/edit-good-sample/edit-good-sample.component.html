@@ -1,0 +1,41 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Editar Bien</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('goodState')">
+            <ngx-select
+              [form]="form"
+              control="goodState"
+              [data]="goodState"
+              value="description"
+              bindLabel="description"
+              label="Estado de el Bien"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          [btnSmall]="true"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

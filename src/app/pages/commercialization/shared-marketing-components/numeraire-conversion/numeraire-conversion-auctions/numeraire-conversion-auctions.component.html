@@ -30,7 +30,7 @@
             *ngIf="showParcial"
             type="button"
             class="btn btn-secondary btn-sm active mr-3"
-            [disabled]="!validParcialButton"
+            [disabled]="!validParcialButton || expenses.length === 0"
             (click)="calculaParc()">
             Calcular Parcial
           </button>
@@ -45,14 +45,14 @@
           <button
             type="button"
             class="btn btn-secondary btn-sm active mr-3"
-            [disabled]="!validNormal"
+            [disabled]="!validNormal || expenses.length === 0"
             (click)="calcula()">
             Calcular
           </button>
           <button
             type="button"
             class="btn btn-secondary btn-sm active mr-3"
-            [disabled]="!validNormal"
+            [disabled]="!validNormalConvierte"
             (click)="convierte()">
             Convertir
           </button>

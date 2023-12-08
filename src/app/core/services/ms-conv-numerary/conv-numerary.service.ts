@@ -36,6 +36,16 @@ export class ConvNumeraryService extends HttpService {
     return this.post(this.route.SP_CONVERSION_ASEG_PARCIAL, body);
   }
 
+  SP_CONVERSION_ASEG_TOTAL(pevent: number, pscreen: string) {
+    return this.post<{ processedData: number }>(
+      this.route.SP_CONVERSION_ASEG_TOTAL,
+      {
+        pevent,
+        pscreen,
+      }
+    );
+  }
+
   PA_CONVNUMERARIO_ADJUDIR(body: {
     pevent: number;
     pscreen: string;
@@ -43,5 +53,14 @@ export class ConvNumeraryService extends HttpService {
     user: string;
   }) {
     return this.post(this.route.PA_CONVNUMERARIO_ADJUDIR, body);
+  }
+
+  PA_CONVNUMERARIO_ADJUDIR2(body: {
+    pevent: number;
+    pscreen: string;
+    pdirectionScreen: string;
+    user: string;
+  }) {
+    return this.post<{ bandera: false }>('pa-conv-numerary-adjudir-2', body);
   }
 }

@@ -10,5 +10,6 @@ export interface IDeductive {
   version: number;
   status: number;
   contractNumber?: number;
+  sampleDeductiveId?: number;
   observations?: string;
 }
