@@ -345,10 +345,10 @@ export class CaptureApprovalDonationComponent
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'recordid':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'goodid':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
@@ -357,25 +357,25 @@ export class CaptureApprovalDonationComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'noexpediente':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'noetiqueta':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'idnoworker1':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'idexpworker1':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'noclasifbien':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'procesoextdom':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'warehousenumb':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'warehouse':
                 searchFilter = SearchFilter.ILIKE;
