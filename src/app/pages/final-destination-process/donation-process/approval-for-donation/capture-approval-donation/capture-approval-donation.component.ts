@@ -235,7 +235,10 @@ export class CaptureApprovalDonationComponent
   @ViewChild('grdDetail') grdDetail;
 
   columnFilters: any = [];
-
+  carga : number=0;
+  rop_div: number = 0;
+  tracker_iter:number =0;
+  
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -298,12 +301,14 @@ export class CaptureApprovalDonationComponent
     this.initialize();
 
     this.initForm();
+    this.tracker_iter=0;
     this.globalVarService
       .getGlobalVars$()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: global => {
           this.ngGlobal = global;
+          console.log('DESPUES DE REGRESAR DE RASTREADOR::0::'+this.ngGlobal);
           if (this.ngGlobal.REL_BIENES) {
             const newData = JSON.parse(localStorage.getItem('save_data'));
             const body: IProcedureFmCom = {
@@ -314,9 +319,13 @@ export class CaptureApprovalDonationComponent
               minutesNumber: newData.no_acta,
               goodsRel: this.ngGlobal.REL_BIENES,
             };
-            console.log('DESPUES DE REGRESAR DE RASTREADOR');
-            this.showMessageRast = true;
-            this.validateGoodTracker(body);
+            
+            console.log('DESPUES DE REGRESAR DE RASTREADOR::'+this.tracker_iter);
+            if(this.tracker_iter==0){
+              this.showMessageRast = true;
+              this.validateGoodTracker(body);
+            }
+            this.tracker_iter++;
           }
         },
       });
@@ -543,9 +552,9 @@ export class CaptureApprovalDonationComponent
         localStorage.getItem('area'),
         [Validators.pattern(STRING_PATTERN)],
       ],
-      year: [null, []],
+      year: [{value: null, disabled: true}, []],
       folio: [null],
-      captureDate: [null, []],
+      captureDate: [{value: null, disabled: true}, []],
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       observaciones: [null],
       activeRadio: ['-1'],
@@ -1021,6 +1030,7 @@ export class CaptureApprovalDonationComponent
   }
 
   getEventComDonationExcel(body: any): void {
+    /*
     if (this.estatus === 'CERRADA') {
       this.alert(
         'warning',
@@ -1029,6 +1039,7 @@ export class CaptureApprovalDonationComponent
       );
       return;
     }
+    */
     if (this.data.count() == 0) {
       this.alert('warning', 'No hay bienes para descargar', '');
       return;
@@ -1059,6 +1070,7 @@ export class CaptureApprovalDonationComponent
     documentType: string,
     base64String: string
   ): void {
+    /*
     let documentTypeAvailable = new Map();
     documentTypeAvailable.set(
       'excel',
@@ -1085,6 +1097,16 @@ export class CaptureApprovalDonationComponent
     this.excelLoading = true;
     this.alert('success', 'El reporte se ha descargado', '');
     URL.revokeObjectURL(objURL);
+    */
+      const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = filename;
+    link.click();
+    link.remove();
+    this.excelLoading = false;
+    this.alert('success', 'El archivo se ha descargado', '');
   }
 
   base64ToArrayBuffer(base64String: string) {
@@ -1254,7 +1276,16 @@ export class CaptureApprovalDonationComponent
           'Debe capturar un evento.'
         );
         return;
-      } else if (this.delForm.get('observaElimina').value === null) {
+      }
+      if (this.selectedGooodsEvent.length == 0) {
+        this.alert(
+          'warning',
+          'Debe seleccionar un bien que Forme parte del evento primero',
+          ''
+        );
+        return;
+      }      
+      if (this.delForm.get('observaElimina').value === null) {
         this.alert(
           'warning',
           'Debe llenar las observaciones de la eliminación primero',
@@ -1497,6 +1528,7 @@ export class CaptureApprovalDonationComponent
     this.regisForm.reset();
     this.dataTableGood.load([]);
     this.data.load([]);
+    this.totalItems2=0;
     this.eventDonacion = null;
     this.estatus = null;
     this.selectedGooods = [];
@@ -1508,11 +1540,13 @@ export class CaptureApprovalDonationComponent
     localStorage.removeItem('nameT');
     localStorage.removeItem('actaId');
     this.selectedGooodsEvent = [];
+    this.delForm.reset();
   }
 
   cleanData_() {
     this.dataTableGood.load([]);
     this.data.load([]);
+    this.totalItems2=0;
     this.eventDonacion = null;
     this.estatus = null;
     this.selectedGooods = [];
@@ -1521,6 +1555,7 @@ export class CaptureApprovalDonationComponent
     this.total_bien_error = 0;
     this.total_sum_bien = 0;
     this.selectedGooodsEvent = [];
+    this.delForm.reset();
   }
 
   formatCurrency(amount: string) {
@@ -1764,6 +1799,16 @@ export class CaptureApprovalDonationComponent
       const toolbar_user = this.authService.decodeToken().preferred_username;
       const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
 
+      let expedient=0;
+      this.selectedGooodsEvent.forEach(good => {
+        expedient = good.noexpediente;
+      });
+      if(expedient==0){
+        this.selectedGooodsValid.forEach(good => {
+          expedient = good.noexpediente;
+        });
+      }
+    
       if (
         cadena != 0 &&
         this.authService.decodeToken().preferred_username == toolbar_user
@@ -1788,7 +1833,7 @@ export class CaptureApprovalDonationComponent
               observations: this.eventDonacion.observations,
               registreNumber: null,
               noDelegation1: this.authService.decodeToken().department,
-              fileId: 0, //Number(this.eventDonacion.fileId),
+              fileId: expedient, //Number(this.eventDonacion.fileId),
               noDelegation2: null,
               identifier: this.eventDonacion.identifier,
               folioUniversal: this.eventDonacion.folioUniversal,
@@ -2167,7 +2212,7 @@ export class CaptureApprovalDonationComponent
       res => {
         console.log('validateGoodTracker:::' + JSON.stringify(res));
         console.log(res.message[0]);
-        /*
+        
         if (this.showMessageRast && res.message[0] == 'Los bienes seleccionados no cumplen con las condiciones necesarias.') {
           this.alert(
             'success',
@@ -2176,7 +2221,7 @@ export class CaptureApprovalDonationComponent
           );
         }
         this.showMessageRast = false;
-        */
+        
       },
       err => {
         console.log(err);
