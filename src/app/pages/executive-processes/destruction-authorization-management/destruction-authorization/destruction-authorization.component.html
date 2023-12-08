@@ -113,7 +113,17 @@
             Buscar
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
+          <button
+            *ngIf="!newProceedingFlag"
+            type="button"
+            tooltip="Nueva acta"
+            (click)="newProceedingFn()"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active mr-3">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
           <confirm-button
+            *ngIf="newProceedingFlag"
             [disabled]="controls.statusProceedings.value == 'CERRADA'"
             text="Guardar"
             loadingText="Guardando"
