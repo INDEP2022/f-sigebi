@@ -81,10 +81,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.title = `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${this.requestInfo.id}`;
       }
     } else if (affair == 27) {
+      this.title = `PROCESO DE ABANDONO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 15) {
       this.title = `DECOMISO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
-    } else if (affair == 8) {
-      this.title = `ABANDONO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
-    } else if (affair == 9) {
+    } else if (affair == 16) {
       this.title = `EXTINCIón DE DOMINIO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     }
   }
@@ -147,6 +147,33 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.turnReq = true;
         } else if (affair == 41) {
           //INFORMACION DE BIENES
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+
+        } else if (affair == 15) {
+          ///DECOMISO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        }
+
+        }else if (affair == 16) {
+          //EXTINCION DE DOMINIO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 27) {
+          ///PROCESO DE ABANDONO
           this.regDocForm = true;
           this.searchRequestSimGoods = true;
           this.selectGoods = true;
@@ -702,6 +729,22 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
 
+        break;
+
+
+case 'extinction':
+        this.regDocForm = true;
+
+        this.searchRequestSimGoods = true;
+        this.selectGoods = true;
+        this.viewSelectedGoods = false;
+       
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
+
+        this.turnReq = true;
+        this.createReport = false;
+        this.rejectReq = false;
         break;
 
       default:
