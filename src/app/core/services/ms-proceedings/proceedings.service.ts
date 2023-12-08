@@ -16,6 +16,7 @@ import {
   IPufValidTerm,
   IPupMovDestruction,
   IQueryRegAdminGood,
+  ITmpUpdateMassive,
   IUpdateActasEntregaRecepcion,
 } from '../../models/ms-proceedings/proceedings.model';
 import {
@@ -354,5 +355,19 @@ export class ProceedingsService extends HttpService {
 
   getAvailableFestatus(body: IAvailableFestatus) {
     return this.post('aplication/getAvailable', body);
+  }
+
+  tmpAuthorizationsDestruction(user: string, params?: string) {
+    return this.get(
+      `detail-proceedings-delivery-reception/tmp/?user=${user}`,
+      params
+    );
+  }
+
+  tmpUpdateMassive(body: ITmpUpdateMassive) {
+    return this.post(
+      'detail-proceedings-delivery-reception/update-massive',
+      body
+    );
   }
 }

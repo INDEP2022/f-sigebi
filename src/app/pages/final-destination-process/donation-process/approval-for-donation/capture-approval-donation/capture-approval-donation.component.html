@@ -27,7 +27,7 @@
             </div>
           </div>
           <div class="row mt-5">
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('type')" label="Tipo">
                   <ng-select formControlName="type" [searchable]="false" class="form-control" [clearable]="false"
@@ -38,31 +38,34 @@
               </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
-                <!--
-                <form-field [control]="regisForm.get('area')" label="&Aacute;rea">
-                  <input type="text" class="form-control" formControlName="area" readonly />
-                </form-field>
-              -->
                 <form-field [control]="regisForm.get('area')">
                   <ngx-select [data]="areas$" (change)="selectedArea($event)" (fetchByParamsItems)="readArea($event)"
                     [fetchByList]="false" [searchOnInit]="true" [form]="regisForm" value="delegation"
-                    bindLabel="delegation" label="&Aacute;rea" control="area">
+                    bindLabel="delegation" label="&Aacute;rea" control="area" [readonly]="true">
                   </ngx-select>
                 </form-field>
               </div>
             </div>
+            <div class="col-md-2"></div>
           </div>
 
           <div class="row mt-3">
             <div class="col-md-2">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('year')" label="Año">
-                  <input type="text" class="form-control" formControlName="year" readonly [bsConfig]="bsConfigToYear"
+                  <input type="text" class="form-control" formControlName="year" [bsConfig]="bsConfigToYear"
                     #dp="bsDatepicker" bsDatepicker />
                 </form-field>
+                <!--
+              <form-field [control]="regisForm.get('anio')" label="Año">
+                <ng-select class="form-control pt-1" formControlName="year" [items]="years" [ngModel]="currentYear"
+                  (change)="onSelectChangeYear($event)"></ng-select>
+              </form-field>
+              -->
               </div>
+
             </div>
             <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
@@ -74,22 +77,10 @@
             <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('captureDate')" label="Fecha Captura">
-                  <input [maxDate]="maxDate" readonly bsDatepicker class="form-control" formControlName="captureDate"
-                    readonly />
+                  <input [maxDate]="maxDate" bsDatepicker class="form-control" formControlName="captureDate" readonly />
                 </form-field>
               </div>
             </div>
-            <!--
-        <div class="col-md-4">
-          <form-field [control]="form.get('captureDate')" label="Fecha Inicio">
-            <input
-              [maxDate]="maxDate"
-              formControlName="captureDate"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
-        </div>              
-            -->
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
@@ -215,7 +206,7 @@
               <form-loader *ngIf="loading3"></form-loader>
               <div class="col-md-12">
                 <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading3 ? '0px' : '600px' }">
-                  <ng2-smart-table class="table-responsive" [attr.class]="'table-bordered table-responsive'"
+                  <ng2-smart-table #grdDetail class="table-responsive" [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings2" (userRowSelect)="rowsSelected($event)" [source]="data">
                   </ng2-smart-table>
                 </ng-scrollbar>

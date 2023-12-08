@@ -258,6 +258,23 @@ export class NumeraireConversionAuctionsComponent
 
   private async convierteBody() {
     this.loader.load = true;
+    // this.selectedEvent.statusVtaId = 'CNE';
+    console.log(this.selectedEvent);
+    // this.eventDataService
+    //   .update2(this.selectedEvent.id, {
+    //     statusVtaId: 'CNE',
+    //     eventTpId: +(this.selectedEvent.eventTpId + ''),
+    //   })
+    //   .pipe(take(1))
+    //   .subscribe({
+    //     next: response => {
+    //       this.updateEventoConv(true, this.selectedEvent);
+    //     },
+    //     error: err => {
+    //       this.showErrorEstatus(true);
+    //     },
+    //   });
+    // return;
     if (this.selectedEvent.address === 'M') {
       this.convNumeraryService
         .convert({
@@ -306,9 +323,12 @@ export class NumeraireConversionAuctionsComponent
         )
       );
       if (v_count_gara === 0 && v_count_numera === 0) {
-        this.selectedEvent.statusVtaId = 'CNE';
+        // this.selectedEvent.statusVtaId = 'CNE';
         this.eventDataService
-          .update(this.selectedEvent.id, this.selectedEvent)
+          .update2(this.selectedEvent.id, {
+            statusVtaId: 'CNE',
+            eventTpId: +(this.selectedEvent.eventTpId + ''),
+          })
           .pipe(take(1))
           .subscribe({
             next: response => {
