@@ -2217,7 +2217,8 @@ export class CaptureApprovalDonationComponent
     console.log(body);
     this.goodProcessService.procedureFmcomtmp(body).subscribe(
       res => {
-        console.log('validateGoodTracker:::' + JSON.stringify(res));
+        //console.log('validateGoodTracker:::' + JSON.stringify(res));
+        //solo se muestra el mensaje una sola vez
         console.log(res.message[0]);
         
         if (this.showMessageRast && res.message[0] == 'Los bienes seleccionados no cumplen con las condiciones necesarias.') {
