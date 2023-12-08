@@ -101,6 +101,7 @@ export class AuthorizationAssetsDestructionComponent
   date_proceeding: string = null;
   statusProceeding: string = null;
   canNewProceeding: boolean = false;
+  returnTracker: boolean = true;
 
   get controls() {
     return this.form.controls;
@@ -129,7 +130,7 @@ export class AuthorizationAssetsDestructionComponent
       columns: { ...ASSETS_DESTRUCTION_COLUMLNS },
       mode: '',
       rowClassFunction: (row: any) => {
-        if (row.data.di_disponible === 'S') {
+        if (row.available === 'S') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -149,7 +150,10 @@ export class AuthorizationAssetsDestructionComponent
           const ngGlobal = global;
           if (ngGlobal.REL_BIENES) {
             console.log(ngGlobal.REL_BIENES);
-            this.pupGoodTrackerFn(ngGlobal.REL_BIENES);
+            if (this.returnTracker) {
+              this.returnTracker = false;
+              this.pupGoodTrackerFn(ngGlobal.REL_BIENES);
+            }
           }
         },
       });
@@ -355,6 +359,27 @@ export class AuthorizationAssetsDestructionComponent
 
   openProceeding() {
     //!ENVIAR CORREO
+  }
+
+  cleanTmp() {
+    const user = this.authService.decodeToken().preferred_username;
+    const paramsF = new FilterParams();
+    paramsF.addFilter('proceeding', '-1');
+    this.proceedingService
+      .tmpAuthorizationsDestruction(user, paramsF.getParams())
+      .subscribe(
+        res => {
+          this.canNewProceeding = true;
+          this.data.load([]);
+        },
+        err => {
+          this.alert(
+            'warning',
+            'Hubo un problema limpiando la tabla temporal',
+            ''
+          );
+        }
+      );
   }
 
   pupDepuraDetalle(model: IDetailProceedingsDevollutionDelete) {
@@ -606,7 +631,9 @@ export class AuthorizationAssetsDestructionComponent
 
   newProceeding() {
     this.canNewProceeding = true;
-    //!Eliminar tabla temporal
+    if (!this.data.empty() && this.form.get('noAuth').value != null) {
+      this.cleanTmp();
+    }
   }
 
   async saveNewProceeding() {
@@ -778,6 +805,7 @@ export class AuthorizationAssetsDestructionComponent
         err => {
           this.data.load([]);
           console.log(err);
+          this.alert('warning', 'No se encontrarón registros', '');
           this.canSearch = true;
           this.loading = false;
         }
@@ -786,11 +814,8 @@ export class AuthorizationAssetsDestructionComponent
 
   //BUSCAR EXPEDIENTE
   expedientChange() {
-    if (
-      this.form.get('noAuth').value == null &&
-      this.form.get('statusAct').value == 'ABIERTA'
-    ) {
-      //!LIMPIAR TABLA TEMPORAL
+    if (this.form.get('noAuth').value == null && this.data.empty()) {
+      this.cleanTmp();
     }
 
     this.consult = true;
@@ -848,11 +873,8 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   pupGoodTracker() {
-    if (
-      this.form.get('noAuth').value == null &&
-      this.form.get('statusAct').value == 'ABIERTA'
-    ) {
-      //!LIMPIAR TABLA TEMPORAL
+    if (this.form.get('noAuth').value == null && this.data.empty()) {
+      this.cleanTmp();
     }
 
     localStorage.setItem('noActa', this.form.get('noAuth').value);
@@ -874,6 +896,7 @@ export class AuthorizationAssetsDestructionComponent
           user: this.authService.decodeToken().preferred_username,
         })
       : (body = {
+          minutesNumber: null,
           globalRelGood: globalRelGood,
           user: this.authService.decodeToken().preferred_username,
         });

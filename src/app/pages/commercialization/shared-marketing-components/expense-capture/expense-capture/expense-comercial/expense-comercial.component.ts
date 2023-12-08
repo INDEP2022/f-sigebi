@@ -253,6 +253,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   edit() {
+    // let body = this.getBody();
+    // console.log(this.data);
+    // console.log(this.form.value);
+    // return;
     this.spentService2
       .edit(this.getBody())
       .pipe(take(1))
@@ -1265,7 +1269,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return true;
   }
 
-  private fillFormSecond(event: IComerExpense) {
+  private fillFormSecond(event: any) {
     this.expenseNumber.setValue(event.expenseNumber);
     this.data = event;
     this.provider = event.providerName;
@@ -1280,7 +1284,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.conceptNumber.setValue(event.conceptNumber);
     this.eventNumber.setValue(event.eventNumber);
     this.lotNumber.setValue(event.lotNumber);
-    this.publicLot.setValue(event.comerLot ? event.comerLot.publicLot : null);
+    this.publicLot.setValue(
+      event.publicLot
+        ? event.publicLot
+        : event.comerLot
+        ? event.comerLot.publicLot
+        : null
+    );
     this.clkpv.setValue(event.clkpv);
 
     setTimeout(async () => {
