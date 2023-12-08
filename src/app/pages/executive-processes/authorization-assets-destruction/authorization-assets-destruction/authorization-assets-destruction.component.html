@@ -111,16 +111,21 @@
               [bsConfig]="bsConfig" />
           </form-field>
         </div>
+        <div class="col-md-2">
+          <span>{{ form.get('statusAct').value }}</span>
+        </div>
       </div>
       <div class="row pt-5 text-center">
         <div class="col">
           <button
             (click)="getProceeding()"
+            [disabled]="!canSearch"
             type="button"
             class="btn btn-primary active btn-sm mr-3">
             Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
           <button
+            *ngIf="!canNewProceeding"
             type="button"
             tooltip="Nuevo"
             (click)="newProceeding()"
@@ -128,7 +133,17 @@
             class="btn btn-info btn-sm active mr-3">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
-          <button (click)="masive()" class="btn btn-sm btn-primary active mr-3">
+          <button
+            *ngIf="canNewProceeding"
+            (click)="saveNewProceeding()"
+            type="button"
+            class="btn btn-primary btn-sm active mr-3">
+            Guardar
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+          <button
+            (click)="masiveChange()"
+            class="btn btn-sm btn-primary active mr-3">
             <i class="fa fa-arrow-down float-icon"></i>
           </button>
           <button
