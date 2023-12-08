@@ -598,6 +598,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
           }
         }
       }
+      if (!question.isConfirmed) {
+        console.log('Cancelar');
+      }
     });
   }
 

@@ -7,6 +7,7 @@ import { ComerEventosService } from 'src/app/core/services/ms-event/comer-evento
 import { BasePage } from 'src/app/core/shared';
 import { ComerieventosService } from '../services/comerieventos.service';
 import { ComermeventosService } from '../services/comermeventos.service';
+
 @Component({
   selector: 'app-numeraire-conversion-super',
   template: '',
@@ -37,6 +38,7 @@ export class NumeraireConversion extends BasePage {
   }
 
   protected showErrorEstatus(fail: boolean) {
+    this.loader.load = false;
     this.alert('warning', 'No se pudo cambiar el estatus del evento', '');
     if (fail) {
       this.alert('error', 'No se pudo realizar la conversión', '');

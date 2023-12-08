@@ -222,7 +222,7 @@ export class DataTableComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'labelId':
                 field = 'filter.label.description';
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'type':
                 searchFilter = SearchFilter.EQ;

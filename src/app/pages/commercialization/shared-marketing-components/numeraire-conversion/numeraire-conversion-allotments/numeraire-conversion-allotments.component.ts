@@ -78,9 +78,11 @@ export class NumeraireConversionAllotmentsComponent
     if (!hizoConversiones) {
       this.alert('warning', 'No tiene gastos válidos a convertir', '');
     }
-    this.selectedEvent.statusVtaId = 'CNE';
     this.eventDataService
-      .update(this.selectedEvent.id, this.selectedEvent)
+      .update2(this.selectedEvent.id, {
+        statusVtaId: 'CNE',
+        eventTpId: +(this.selectedEvent.eventTpId + ''),
+      })
       .pipe(take(1))
       .subscribe({
         next: response => {

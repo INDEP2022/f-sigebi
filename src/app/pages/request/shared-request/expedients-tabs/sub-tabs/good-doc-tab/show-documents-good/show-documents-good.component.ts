@@ -757,7 +757,12 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     const idRequest = this.idRequest;
     const idGood = this.idGood;
 
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
 
     config.initialState = {
       programming: this.programming,
