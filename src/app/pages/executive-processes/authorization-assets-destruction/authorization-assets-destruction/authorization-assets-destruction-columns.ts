@@ -36,7 +36,11 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
       if (row.observationsDestruction != null) {
         return row.observationsDestruction;
       } else {
-        return `${row.cve_proceeding}  ${row.date_proceeding}`;
+        if (row.cve_proceeding != null) {
+          return `${row.cve_proceeding}  ${row.date_proceeding}`;
+        } else {
+          null;
+        }
       }
     },
   },
