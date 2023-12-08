@@ -1795,10 +1795,9 @@ export class CaptureApprovalDonationComponent
         );
         return;
       }
-
+//checar el no de expediente
       const toolbar_user = this.authService.decodeToken().preferred_username;
       const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
-
       let expedient=0;
       this.selectedGooodsEvent.forEach(good => {
         expedient = good.noexpediente;
@@ -1952,14 +1951,14 @@ export class CaptureApprovalDonationComponent
 
   //Muestra pantalla del rastreador de bienes
   findRast() {
-      if (this.dataDetailDonation == null ) {
-        this.alert(
-          'warning',
-          'Debe especificar/buscar el evento para despues ingresar bienes.',
-          ''
-        );
-        return;
-      }
+    if (this.dataDetailDonation == null ) {
+      this.alert(
+        'warning',
+        'Debe especificar/buscar el evento para despues ingresar bienes.',
+        ''
+      );
+      return;
+    }
     if (this.estatus === 'CERRADA') {
       this.alert(
         'warning',
