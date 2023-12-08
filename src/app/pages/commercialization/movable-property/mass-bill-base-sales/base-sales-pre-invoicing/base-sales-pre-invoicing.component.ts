@@ -575,24 +575,76 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     // this.dataFilter.refresh();
     // this.totalItems = 0;
     const { event, idAllotment, iva } = this.form.value;
-    next = await this.getLotePass(); // VALIDA_PREFACTURAS
+    next = 1;
+    // await this.getLotePass(); // VALIDA_PREFACTURAS
 
     if (next == 1) {
       const user = this.userService.decodeToken().preferred_username;
       const data = await this.dataFilter.getAll();
-      console.log('data', data);
-      const aux = await this.invoiceGenerate(
-        data[0] ? data[0].eventId : null,
-        data[0] ? data[0].batchId : null,
-        event,
-        iva,
-        idAllotment,
-        this.delegation,
-        user
-      ); // CTRL_GENERA_PREFACTURAS
+      if (!event ?? !data[0].eventId)
+        return this.alert('warning', 'Debe consultar un evento', '');
 
-      if (aux == 0) {
-        //se habre modal verifiacion ususario
+      console.log('data', data);
+      const aux = await this.getApplicationGetComerPagorefExists(
+        event ?? data[0].eventId
+      );
+      // this.invoiceGenerate(
+      //   data[0] ? data[0].eventId : null,
+      //   data[0] ? data[0].batchId : null,
+      //   event,
+      //   iva,
+      //   idAllotment,
+      //   this.delegation,
+      //   user
+      // ); // CTRL_GENERA_PREFACTURAS
+      if (aux == 1) {
+        if (!idAllotment) {
+          let obj = {
+            OPCION: 0,
+            pEvent: event,
+            PLOTE: null,
+            PIDFACTURA: null,
+            delegationNumber: this.delegation,
+            GEN_IVA: iva,
+            LOTE: idAllotment ?? data[0].batchId,
+            toolbarUser: this.userService.decodeToken().preferred_username,
+          };
+          // GENERA_PREFACTURAS(0,:BLK_CTRL.EVENTO, NULL, NULL);
+          await this.getApplicationGeneratePreInvoices(obj);
+        } else {
+          const cont = await this.contLot(event, idAllotment);
+          if (cont == 0) {
+            // --SI NO EXISTE EL EVENTO CON EL LOTE
+            let obj = {
+              OPCION: 1,
+              pEvent: event ?? data[0].eventId,
+              PLOTE: idAllotment ?? data[0].batchId,
+              PIDFACTURA: null,
+              delegationNumber: this.delegation,
+              GEN_IVA: iva,
+              LOTE: idAllotment ?? data[0].batchId,
+              toolbarUser: this.userService.decodeToken().preferred_username,
+            };
+            // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
+            await this.getApplicationGeneratePreInvoices(obj);
+          } else {
+            // --SI EXISTE EL EVENTO CON EL LOTE
+            let obj = {
+              OPCION: 1,
+              pEvent: event ?? data[0].eventId,
+              PLOTE: idAllotment ?? data[0].batchId,
+              PIDFACTURA: null,
+              delegationNumber: this.delegation,
+              GEN_IVA: iva,
+              LOTE: idAllotment ?? data[0].batchId,
+              toolbarUser: this.userService.decodeToken().preferred_username,
+            };
+            // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
+            await this.getApplicationGeneratePreInvoices(obj);
+          }
+        }
+      } else if (aux == 0) {
+        //se abre modal verifiacion ususario
         let config: ModalOptions = {
           initialState: {
             form: this.form,
@@ -625,6 +677,33 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     } else {
       this.alert('warning', 'Operación Denegada', '');
     }
+  }
+
+  async getApplicationGetComerPagorefExists(event: any) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoiceService
+        .getApplicationGetComerPagorefExists(event, event)
+        .subscribe({
+          next: value => {
+            resolve(1);
+          },
+          error: err => {
+            resolve(0);
+          },
+        });
+    });
+  }
+  async getApplicationGeneratePreInvoices(data: any) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoiceService.procedureGenerate(data).subscribe({
+        next: value => {
+          resolve(value.data);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
   }
 
   async generateInvoiceIso(pEvent: any) {
