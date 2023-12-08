@@ -92,21 +92,29 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.generaConsec();
-    this.actaForm();
+    localStorage.setItem('area', this.authService.decodeToken().siglasnivel3);
+    this.generaConsec(this.area_d);
+    //this.actaForm();
     console.log('Folio:' + this.foolio + " - area_d::" + this.area_d);
+
     this.delegation = Number(localStorage.getItem('area'));
     console.log('this.delegation::' + this.delegation);
     //this.consulREG_DEL_DESTR(new ListParams());
     //this.consulREG_DEL_ADMIN(new ListParams());
     //chm:
-    this.consulREG_DEL_ADMIN1();
+    //this.consulREG_DEL_ADMIN1();
     for (let i = 1900; i <= this.currentYear; i++) {
       this.years.push(i);
     }
+    this.actaForm();
   }
 
+  changeFn(event) {
+    console.log('Folio selected::' + event);
+    this.generarClave();
+  }
   async actaForm() {
+    //await this.generaConsec(this.area_d);
     this.actaRecepttionForm = this.fb.group({
       acta: ['CPD', Validators.required],
       //type: [null],
@@ -120,8 +128,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
       testigoOIC: [null, [Validators.required]],
       */
       captureDate: [null],
-      delegation: [null, Validators.required],
-      claveacta: [null, [Validators.required]],
+      delegation: [localStorage.getItem('area'), Validators.required],
+      claveacta: [null],
     });
     //this.actaRecepttionForm.get('consec').setValue(this.foolio);
     this.actaRecepttionForm.patchValue({
@@ -130,6 +138,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.actaRecepttionForm.patchValue({
       captureDate: await this.getDate(),
     });
+
+
   }
   async delegationWhere() {
     return new Promise((resolve, reject) => {
@@ -257,13 +267,15 @@ export class CreateActaComponent extends BasePage implements OnInit {
     }
   }
 
-  generaConsec() {
+  async generaConsec(area_d: number) {
     this.procedureManagementService
-      .getFolioMax(Number(localStorage.getItem('area')))
+      //.getFolioMax(Number(localStorage.getItem('area')))
+      .getFolioMax((area_d == null) ? this.authService.decodeToken().department : area_d)
       .subscribe({
         next: (data: any) => {
           console.log('generaConsec:: DATA', data);
           this.foolio = data.folioMax;
+          this.generarClave();
         },
         error: error => {
           this.foolio = 0;
@@ -369,12 +381,13 @@ export class CreateActaComponent extends BasePage implements OnInit {
         params.addFilter('numberDelegation2', lparams.search, SearchFilter.EQ);
       } else {
         params.addFilter('delegation', lparams.search, SearchFilter.ILIKE);
+        /*
         params.addFilter(
           'numberDelegation2',
           this.area_d == null
             ? this.authService.decodeToken().department
             : this.area_d
-        );
+        );*/
       }
     } else {
       params.addFilter(
