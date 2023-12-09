@@ -105,8 +105,6 @@ export class MandByGoodsComponent
                 this.getData();
               },
             });
-          //update massive
-          this.loading = false;
         } else {
           this.getData();
         }
