@@ -659,10 +659,12 @@ export class DestructionAuthorizationComponent
       next: async response => {
         console.log(response.bienes_rechazados);
 
-        await this.downloadExcel(
-          JSON.parse(JSON.stringify(response.bienes_rechazados)).base64File,
-          'Bienes_con_errores.xlsx'
-        );
+        if (response.rechazados > 0) {
+          await this.downloadExcel(
+            JSON.parse(JSON.stringify(response.bienes_rechazados)).base64File,
+            'Bienes_con_errores.xlsx'
+          );
+        }
 
         this.goodsTrackerLoading = false;
         if (response.aceptados > 0) {
