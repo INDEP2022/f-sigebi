@@ -16,6 +16,7 @@ import {
   IPufValidTerm,
   IPupMovDestruction,
   IQueryRegAdminGood,
+  ITmpCreateAuthoDestroy,
   ITmpUpdateMassive,
   IUpdateActasEntregaRecepcion,
 } from '../../models/ms-proceedings/proceedings.model';
@@ -357,9 +358,13 @@ export class ProceedingsService extends HttpService {
     return this.post('aplication/getAvailable', body);
   }
 
-  tmpAuthorizationsDestruction(user: string, params?: string) {
+  tmpAuthorizationsDestruction(
+    user: string,
+    proceeding?: string,
+    params?: string
+  ) {
     return this.get(
-      `detail-proceedings-delivery-reception/tmp/?user=${user}`,
+      `detail-proceedings-delivery-reception/tmp/?user=${user}&proceeding=${proceeding}`,
       params
     );
   }
@@ -367,6 +372,13 @@ export class ProceedingsService extends HttpService {
   tmpUpdateMassive(body: ITmpUpdateMassive) {
     return this.post(
       'detail-proceedings-delivery-reception/update-massive',
+      body
+    );
+  }
+
+  tmpCreateAuthorization(body: ITmpCreateAuthoDestroy) {
+    return this.post(
+      'detail-proceedings-delivery-reception/create-massive',
       body
     );
   }
