@@ -84,6 +84,7 @@
         <div class="col-md-2">
           <form-field [control]="form.get('noAuth')" label="No. Acta">
             <input
+              [disabled]="canNewProceeding"
               type="text"
               class="form-control"
               formControlName="noAuth"
