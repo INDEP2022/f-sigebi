@@ -585,8 +585,8 @@ export class ExpenseCompositionComponent
   async delete(row: IComerDetExpense2) {
     const response = await this.alertQuestion(
       'warning',
-      'Eliminación Composición de Gasto',
-      '¿Desea eliminar este registro?'
+      '¿Desea eliminar este registro?',
+      ''
     );
     if (response.isConfirmed) {
       this.dataService
@@ -594,6 +594,7 @@ export class ExpenseCompositionComponent
           expenseDetailNumber: row.detPaymentsId,
           expenseNumber: row.paymentsId,
         })
+        .pipe(take(1))
         .subscribe({
           next: response => {
             this.alert(
