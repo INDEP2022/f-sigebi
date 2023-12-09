@@ -7,6 +7,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IRequestLotParam } from 'src/app/core/models/requests/request-lot-params.model';
 import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -21,9 +22,14 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   title: string = 'Parámetro por Lote';
   edit: boolean = false;
 
-  form: ModelForm<any>;
+  form: ModelForm<IRequestLotParam>;
   data: any;
   events = new DefaultSelect();
+
+  requestLotParam: IRequestLotParam;
+
+  validNew: any;
+  validEdit: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -35,6 +41,10 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+
+    console.log('Registro al iniciar', this.requestLotParam);
+    console.log('Nuevo', this.validNew);
+    console.log('Edición', this.validEdit);
   }
 
   private prepareForm() {
@@ -43,7 +53,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
       ],
-      lotePublico: [
+      publicLot: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
       ],
@@ -51,19 +61,25 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
       ],
-      garantia: [
+      specialGuarantee: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
       ],
     });
-    if (this.data != null) {
+    if (this.requestLotParam != null) {
       this.edit = true;
-      this.form.patchValue({
-        idEvent: this.data.idEvent,
-        lotePublico: this.data.publicLot,
-        garantia: this.data.specialGuarantee,
-        idLot: this.data.idLot,
-      });
+      if (this.validNew === true) {
+        this.edit = false;
+        this.requestLotParam.specialGuarantee = null;
+        this.form.patchValue(this.requestLotParam);
+        this.form.get('idEvent')?.disable();
+        this.form.get('publicLot')?.disable();
+        this.form.get('idLot')?.disable();
+      }
+      this.form.patchValue(this.requestLotParam);
+      this.form.get('idEvent')?.disable();
+      this.form.get('publicLot')?.disable();
+      this.form.get('idLot')?.disable();
     }
   }
 
@@ -78,30 +94,32 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     const requestBody: any = {
-      idLot: this.data.idLot,
-      idEvent: Number(this.form.value.idEvent),
-      publicLot: Number(this.form.value.lotePublico),
-      specialGuarantee: Number(this.form.value.garantia),
+      idLot: this.requestLotParam.idLot,
+      idEvent: this.requestLotParam.idEvent,
+      publicLot: this.requestLotParam.publicLot,
+      specialGuarantee: this.form.value.specialGuarantee,
       nbOrigin: null,
     };
 
-    this.lotparamsService.update(this.data.idLot, requestBody).subscribe({
-      next: resp => {
-        this.handleSuccess();
-        this.close();
-      },
-      error: err => {
-        this.handleError();
-      },
-    });
+    this.lotparamsService
+      .update(this.requestLotParam.idLot, requestBody)
+      .subscribe({
+        next: resp => {
+          this.handleSuccess();
+          this.close();
+        },
+        error: err => {
+          this.handleError();
+        },
+      });
   }
 
   create() {
     const requestBody: any = {
-      idLot: Number(this.form.value.idLot),
-      idEvent: Number(this.form.value.idEvent),
-      publicLot: Number(this.form.value.lotePublico),
-      specialGuarantee: Number(this.form.value.garantia),
+      idLot: null,
+      idEvent: this.requestLotParam.idEvent,
+      publicLot: this.requestLotParam.publicLot,
+      specialGuarantee: this.form.value.specialGuarantee,
       nbOrigin: null,
     };
 
