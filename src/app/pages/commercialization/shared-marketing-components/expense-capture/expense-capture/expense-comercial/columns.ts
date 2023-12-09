@@ -1,6 +1,6 @@
 export const COLUMNS = {
   expenseNumber: {
-    title: 'Id',
+    title: 'Id Gasto',
     type: 'string',
     sort: false,
   },

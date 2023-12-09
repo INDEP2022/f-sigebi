@@ -839,9 +839,10 @@ export class CaptureApprovalDonationComponent
             if (item.selected == 1) {
               item.selected = true;
               const exists = this.selectedGooodsEvent.find(
-                good => good == item.goodid
+                good => good.goodid == item.goodid
               );
-              if (!exists) this.selectedGooodsEvent.push(item.goodid);
+              // (!exists) this.selectedGooodsEvent.push(item.goodid);
+              if (!exists) this.selectedGooodsEvent.push(item);
             }
             return item;
           });
@@ -1256,6 +1257,7 @@ export class CaptureApprovalDonationComponent
       );
       return;
     } else {
+      /*
       // console.log('this.actasDefault ', this.actasDefault);
       if (this.dataDetailDonation == null) {
         this.alert(
@@ -1265,6 +1267,7 @@ export class CaptureApprovalDonationComponent
         );
         return;
       }
+      */
       if (this.data.count() == 0) {
         this.alert('warning', 'No hay bienes para eliminar', '');
         return;
@@ -1285,6 +1288,8 @@ export class CaptureApprovalDonationComponent
         );
         return;
       }      
+
+
       if (this.delForm.get('observaElimina').value === null) {
         this.alert(
           'warning',
@@ -1307,7 +1312,7 @@ export class CaptureApprovalDonationComponent
                 console.log('validad bien:::' + good);
                 console.log('bienes en el evento::' + this.selectedGooodsEvent);
                 const exists = this.selectedGooodsEvent.find(
-                  goode => goode == good.goodid
+                  goode => goode.goodid == good.goodid
                 );
                 console.log('bienes existe en evento: ' + exists);
                 if (exists) {
@@ -1799,15 +1804,39 @@ export class CaptureApprovalDonationComponent
       const toolbar_user = this.authService.decodeToken().preferred_username;
       const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
       let expedient=0;
+      /*
       this.selectedGooodsEvent.forEach(good => {
-        expedient = good.noexpediente;
+        expedient = good;
       });
+      */
+      this.selectedGooodsEvent.forEach(good => {
+        if(good.goodid ==good.goodid){
+          expedient = good.noexpediente;
+        }
+      });     
       if(expedient==0){
         this.selectedGooodsValid.forEach(good => {
           expedient = good.noexpediente;
+          //console.log('selectedGooodsValid::'+ good);
+
         });
       }
-    
+    if (expedient == null) {
+        console.log(expedient + ' == null');
+        expedient=0;
+    }
+
+    if (expedient === null) {
+        console.log(expedient + ' === null');
+        expedient=0;
+    }
+
+    if (typeof expedient === 'undefined') {
+        console.log(expedient + ' is undefined');
+        expedient=0;
+    }
+      console.log('Expediente:::'+expedient);
+
       if (
         cadena != 0 &&
         this.authService.decodeToken().preferred_username == toolbar_user
@@ -1819,6 +1848,7 @@ export class CaptureApprovalDonationComponent
           '¿Seguro que desea realizar el cierre de ésta evento?',
           ''
         ).then(async question => {
+          console.log('Expediente::'+expedient);
           if (question.isConfirmed) {
             let obj: any = {
               actId: this.idAct,
@@ -1832,12 +1862,13 @@ export class CaptureApprovalDonationComponent
               observations: this.eventDonacion.observations,
               registreNumber: null,
               noDelegation1: this.authService.decodeToken().department,
-              fileId: expedient, //Number(this.eventDonacion.fileId),
+              fileId: Number(expedient), //Number(this.eventDonacion.fileId),
               noDelegation2: null,
               identifier: this.eventDonacion.identifier,
               folioUniversal: this.eventDonacion.folioUniversal,
               closeDate: new Date(),
             };
+            console.log(obj);
             this.donationService.putEvent(obj, this.idAct).subscribe({
               next: async data => {
                 this.loading = false;
@@ -1951,7 +1982,8 @@ export class CaptureApprovalDonationComponent
 
   //Muestra pantalla del rastreador de bienes
   findRast() {
-    if (this.dataDetailDonation == null ) {
+    console.log('findRast'+this.idAct);
+    if (this.idAct <=0) {
       this.alert(
         'warning',
         'Debe especificar/buscar el evento para despues ingresar bienes.',
@@ -2052,7 +2084,7 @@ export class CaptureApprovalDonationComponent
       if (question.isConfirmed) {
         this.selectedGooodsValid.forEach(good => {
           const exists = this.selectedGooodsEvent.find(
-            goode => goode == good.goodid
+            goode => goode.goodid == good.goodid
           );
           console.log('bien xiste:' + exists);
           let proceed = exists == 'undefined' || exists == null ? false : true;
@@ -2223,7 +2255,7 @@ export class CaptureApprovalDonationComponent
         
         if (this.showMessageRast && res.message[0] == 'Los bienes seleccionados no cumplen con las condiciones necesarias.') {
           this.alert(
-            'success',
+            'warning',
             res.message[0],
             ''
           );

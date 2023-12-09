@@ -659,10 +659,12 @@ export class DestructionAuthorizationComponent
       next: async response => {
         console.log(response.bienes_rechazados);
 
-        await this.downloadExcel(
-          JSON.parse(JSON.stringify(response.bienes_rechazados)).base64File,
-          'Bienes_con_errores.xlsx'
-        );
+        if (response.rechazados > 0) {
+          await this.downloadExcel(
+            JSON.parse(JSON.stringify(response.bienes_rechazados)).base64File,
+            'Bienes_con_errores.xlsx'
+          );
+        }
 
         this.goodsTrackerLoading = false;
         if (response.aceptados > 0) {
@@ -1487,11 +1489,6 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (!this.proceedingForm.get('id').value) {
-      this.alert('warning', 'Es necesario contar con el No. de Acta', '');
-      return;
-    }
-
     if (this.selectGoodGen.di_disponible != 'S') {
       this.alert(
         'warning',
@@ -1501,32 +1498,47 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    let body = {
-      pVcScreem: 'FESTATUSRGA',
-      pActaNumber: this.proceedingForm.get('id').value,
-      pStatusActa: this.proceedingForm.get('statusProceedings').value,
-      pGoodNumber: this.selectGoodGen.id,
-      pDiAvailable: '',
-      pDiActa: this.selectGoodGen.requestFolio,
-      pCveActa: this.proceedingForm.get('keysProceedings').value,
-      pAmount: this.selectGoodGen.quantity,
-    };
-    this.massiveGoodService.InsertGood(body).subscribe({
-      next: data => {
-        console.log(data);
-        this.alert('success', 'Bien insertado con exito', '');
-        this.getProceedingGoods();
-      },
-      error: err => {
-        console.log(err);
-        this.alert(
-          'warning',
-          `El Bien: ${this.array[0].id}, ya ha sido ingresado en una solicitud`,
-          ''
-        ); // Asumiendo que 'alert' se encarga de mostrar la alerta
-        this.array = [...this.tempArray];
-      },
-    });
+    if (this.newProceedingFlag) {
+      const newArray = [];
+      newArray.push(this.selectGoodGen);
+      this.detailProceedingsList2.load(newArray);
+      this.totalItems2 = newArray.length;
+      if (this.detailProceedingsList2.empty()) {
+        this.numFile = this.selectGoodGen.fileNumber;
+      }
+    } else {
+      if (!this.proceedingForm.get('id').value) {
+        this.alert('warning', 'Es necesario contar con el No. de Acta', '');
+        return;
+      }
+
+      let body = {
+        pVcScreem: 'FESTATUSRGA',
+        pActaNumber: this.proceedingForm.get('id').value,
+        pStatusActa: this.proceedingForm.get('statusProceedings').value,
+        pGoodNumber: this.selectGoodGen.id,
+        pDiAvailable: '',
+        pDiActa: this.selectGoodGen.requestFolio,
+        pCveActa: this.proceedingForm.get('keysProceedings').value,
+        pAmount: this.selectGoodGen.quantity,
+      };
+      this.massiveGoodService.InsertGood(body).subscribe({
+        next: data => {
+          console.log(data);
+          this.alert('success', 'Bien insertado con exito', '');
+          this.getProceedingGoods();
+        },
+        error: err => {
+          console.log(err);
+          this.alert(
+            'warning',
+            `El Bien: ${this.array[0].id}, ya ha sido ingresado en una solicitud`,
+            ''
+          ); // Asumiendo que 'alert' se encarga de mostrar la alerta
+          this.array = [...this.tempArray];
+        },
+      });
+    }
   }
 
   //AGREGADO POR GRIGORK
