@@ -1256,6 +1256,7 @@ export class CaptureApprovalDonationComponent
       );
       return;
     } else {
+      /*
       // console.log('this.actasDefault ', this.actasDefault);
       if (this.dataDetailDonation == null) {
         this.alert(
@@ -1265,6 +1266,7 @@ export class CaptureApprovalDonationComponent
         );
         return;
       }
+      */
       if (this.data.count() == 0) {
         this.alert('warning', 'No hay bienes para eliminar', '');
         return;
@@ -1807,7 +1809,22 @@ export class CaptureApprovalDonationComponent
           expedient = good.noexpediente;
         });
       }
-    
+    if (expedient == null) {
+        console.log(expedient + ' == null');
+        expedient=0;
+    }
+
+    if (expedient === null) {
+        console.log(expedient + ' === null');
+        expedient=0;
+    }
+
+    if (typeof expedient === 'undefined') {
+        console.log(expedient + ' is undefined');
+        expedient=0;
+    }
+      console.log('Expediente:::'+expedient);
+
       if (
         cadena != 0 &&
         this.authService.decodeToken().preferred_username == toolbar_user
@@ -1819,6 +1836,7 @@ export class CaptureApprovalDonationComponent
           '¿Seguro que desea realizar el cierre de ésta evento?',
           ''
         ).then(async question => {
+          console.log('Expediente::'+expedient);
           if (question.isConfirmed) {
             let obj: any = {
               actId: this.idAct,
@@ -1838,6 +1856,7 @@ export class CaptureApprovalDonationComponent
               folioUniversal: this.eventDonacion.folioUniversal,
               closeDate: new Date(),
             };
+            console.log(obj);
             this.donationService.putEvent(obj, this.idAct).subscribe({
               next: async data => {
                 this.loading = false;
