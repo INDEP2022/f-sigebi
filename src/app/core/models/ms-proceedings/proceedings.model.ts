@@ -169,3 +169,8 @@ export interface ITmpUpdateMassive {
   proceedingKey: string;
   date: string;
 }
+
+export interface ITmpCreateAuthoDestroy {
+  user: string;
+  proceeding: number;
+}
