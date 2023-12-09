@@ -13,12 +13,12 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     type: 'string',
     sort: false,
   },
-  di_cve_ubicacion: {
+  location: {
     title: 'Ubicación',
     type: 'string',
     sort: false,
   },
-  di_ubicacion1: {
+  address: {
     title: 'Ubicación Exacta',
     type: 'string',
     sort: false,
@@ -28,19 +28,17 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     type: 'string',
     sort: false,
   },
-  observationsDestruction: {
+  cve_proceeding: {
     title: 'No. Oficio de Autorización y Fecha',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any, row: any) => {
       if (row.observationsDestruction != null) {
         return row.observationsDestruction;
+      } else if (value != null) {
+        return `${value}  ${row.date_proceeding}`;
       } else {
-        if (row.cve_proceeding != null) {
-          return `${row.cve_proceeding}  ${row.date_proceeding}`;
-        } else {
-          null;
-        }
+        return 'Prueba';
       }
     },
   },
