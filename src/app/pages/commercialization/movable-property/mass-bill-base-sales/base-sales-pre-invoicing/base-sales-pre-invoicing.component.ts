@@ -450,7 +450,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      event: [null],
+      event: [null, Validators.required],
       idAllotment: [null],
       iva: [0],
       date: [null],
@@ -571,19 +571,27 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     // if(this.dataFilter.count() == 0)
     //   return this.alert("warning", "No hay data para s", "")
     let next: number = 0;
-    // this.dataFilter.load([]);
-    // this.dataFilter.refresh();
-    // this.totalItems = 0;
+    this.dataFilter.load([]);
+    this.dataFilter.refresh();
+    this.totalItems = 0;
+    this.btnLoading = true;
     const { event, idAllotment, iva } = this.form.value;
+
+    if (!event)
+      return (
+        (this.btnLoading = false),
+        this.form.controls['event'].markAsTouched(),
+        this.alert('warning', 'Debe consultar un evento', '')
+      );
+
     next = 1;
     // await this.getLotePass(); // VALIDA_PREFACTURAS
 
     if (next == 1) {
       const user = this.userService.decodeToken().preferred_username;
       const data = await this.dataFilter.getAll();
-      if (!event ?? !data[0].eventId)
-        return this.alert('warning', 'Debe consultar un evento', '');
 
+      const event_ = event ? event : data[0].eventId;
       console.log('data', data);
       const aux = await this.getApplicationGetComerPagorefExists(
         event ?? data[0].eventId
@@ -597,54 +605,57 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       //   this.delegation,
       //   user
       // ); // CTRL_GENERA_PREFACTURAS
+      let val = true;
+      let resul: boolean = true;
       if (aux == 1) {
         if (!idAllotment) {
           let obj = {
             OPCION: 0,
-            pEvent: event,
+            PEVENTO: event,
             PLOTE: null,
             PIDFACTURA: null,
             delegationNumber: this.delegation,
             GEN_IVA: iva,
-            LOTE: idAllotment ?? data[0].batchId,
+            LOTE: null,
             toolbarUser: this.userService.decodeToken().preferred_username,
           };
           // GENERA_PREFACTURAS(0,:BLK_CTRL.EVENTO, NULL, NULL);
-          await this.getApplicationGeneratePreInvoices(obj);
+          resul = await this.getApplicationGeneratePreInvoices(obj);
         } else {
           const cont = await this.contLot(event, idAllotment);
           if (cont == 0) {
             // --SI NO EXISTE EL EVENTO CON EL LOTE
             let obj = {
               OPCION: 1,
-              pEvent: event ?? data[0].eventId,
-              PLOTE: idAllotment ?? data[0].batchId,
+              PEVENTO: event_,
+              PLOTE: idAllotment || data[0].batchId,
               PIDFACTURA: null,
               delegationNumber: this.delegation,
               GEN_IVA: iva,
-              LOTE: idAllotment ?? data[0].batchId,
+              LOTE: idAllotment || data[0].batchId,
               toolbarUser: this.userService.decodeToken().preferred_username,
             };
             // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
-            await this.getApplicationGeneratePreInvoices(obj);
+            resul = await this.getApplicationGeneratePreInvoices(obj);
           } else {
             // --SI EXISTE EL EVENTO CON EL LOTE
             let obj = {
               OPCION: 1,
-              pEvent: event ?? data[0].eventId,
-              PLOTE: idAllotment ?? data[0].batchId,
+              PEVENTO: event_,
+              PLOTE: idAllotment || data[0].batchId,
               PIDFACTURA: null,
               delegationNumber: this.delegation,
               GEN_IVA: iva,
-              LOTE: idAllotment ?? data[0].batchId,
+              LOTE: idAllotment || data[0].batchId,
               toolbarUser: this.userService.decodeToken().preferred_username,
             };
             // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
-            await this.getApplicationGeneratePreInvoices(obj);
+            resul = await this.getApplicationGeneratePreInvoices(obj);
           }
         }
       } else if (aux == 0) {
         //se abre modal verifiacion ususario
+        val = false;
         let config: ModalOptions = {
           initialState: {
             form: this.form,
@@ -652,6 +663,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
               if (event) {
                 // GENERA_PREFACTURAS_SOI(:BLK_CTRL.EVENTO);
                 await this.generateInvoiceIso(event);
+              } else {
+                this.btnLoading = false;
               }
             },
           },
@@ -660,21 +673,39 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         };
         this.modalService.show(AuthorizationSOIModalComponent, config);
       } else if (aux == 2) {
-        this.generateInvoiceIso(event ?? data[0].eventId);
+        val = false;
+        await this.generateInvoiceIso(event ?? data[0].eventId);
       } else if (aux == null) {
+        this.btnLoading = false;
         this.alert(
           'warning',
-          'Atención',
-          'Ha ocurrido un fallo en la generación de prefacturas'
+          'Ha ocurrido un fallo en la generación de prefacturas',
+          ''
         );
         return;
       }
+      if (val) {
+        if (aux == 1)
+          if (!resul)
+            return (
+              (this.btnLoading = false),
+              this.alert(
+                'warning',
+                'Ha ocurrido un fallo en la generación de prefacturas',
+                ''
+              )
+            );
 
-      this.alert('success', 'Prefacturas Generadas', '');
-      this.resetParams();
-      this.columnFilters['filter.eventId'] = `$eq:${event}`;
-      this.getAllComer();
+        this.btnLoading = false;
+        this.alert('success', 'Prefacturas Generadas', '');
+        this.resetParams();
+        this.columnFilters['filter.eventId'] = `$eq:${
+          event ?? data[0].eventId
+        }`;
+        this.getAllComer();
+      }
     } else {
+      this.btnLoading = false;
       this.alert('warning', 'Operación Denegada', '');
     }
   }
@@ -685,7 +716,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         .getApplicationGetComerPagorefExists(event, event)
         .subscribe({
           next: value => {
-            resolve(1);
+            console.log(value);
+            resolve(value.AUX_OI);
           },
           error: err => {
             resolve(0);
@@ -693,16 +725,18 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         });
     });
   }
-  async getApplicationGeneratePreInvoices(data: any) {
+  getApplicationGeneratePreInvoices(data: any): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.comerInvoiceService.procedureGenerate(data).subscribe({
-        next: value => {
-          resolve(value.data);
-        },
-        error: err => {
-          resolve(0);
-        },
-      });
+      this.comerInvoiceService
+        .getApplicationGeneratePreInvoices(data)
+        .subscribe({
+          next: value => {
+            resolve(true);
+          },
+          error: err => {
+            resolve(false);
+          },
+        });
     });
   }
 
@@ -718,12 +752,16 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     };
     let result = await this.generateInvoiceSoi(data);
     if (!result)
-      return this.alert(
-        'warning',
-        'No se pudieron generar las Prefacturas',
-        ''
+      return (
+        (this.btnLoading = false),
+        this.alert(
+          'warning',
+          'Ha ocurrido un fallo en la generación de prefacturas',
+          ''
+        )
       );
 
+    this.btnLoading = false;
     this.alert('success', 'Prefacturas Generadas', '');
     this.resetParams();
     this.columnFilters['filter.eventId'] = `$eq:${event}`;
