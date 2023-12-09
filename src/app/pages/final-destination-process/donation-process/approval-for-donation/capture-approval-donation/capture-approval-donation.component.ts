@@ -1832,7 +1832,7 @@ export class CaptureApprovalDonationComponent
               observations: this.eventDonacion.observations,
               registreNumber: null,
               noDelegation1: this.authService.decodeToken().department,
-              fileId: expedient, //Number(this.eventDonacion.fileId),
+              fileId: Number(expedient), //Number(this.eventDonacion.fileId),
               noDelegation2: null,
               identifier: this.eventDonacion.identifier,
               folioUniversal: this.eventDonacion.folioUniversal,
@@ -1951,7 +1951,8 @@ export class CaptureApprovalDonationComponent
 
   //Muestra pantalla del rastreador de bienes
   findRast() {
-    if (this.dataDetailDonation == null ) {
+    console.log('findRast'+this.idAct);
+    if (this.idAct <=0) {
       this.alert(
         'warning',
         'Debe especificar/buscar el evento para despues ingresar bienes.',
@@ -2223,7 +2224,7 @@ export class CaptureApprovalDonationComponent
         
         if (this.showMessageRast && res.message[0] == 'Los bienes seleccionados no cumplen con las condiciones necesarias.') {
           this.alert(
-            'success',
+            'warning',
             res.message[0],
             ''
           );

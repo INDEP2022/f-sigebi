@@ -239,7 +239,7 @@ export class NumeraireConversionAuctionsComponent
               this.validParcial = false;
               this.alert(
                 'warning',
-                'Botones parciales desactivados',
+                'Botones parciales inhabilitados',
                 'Porque no cuenta con lote en estatus GARA'
               );
             }
@@ -248,7 +248,7 @@ export class NumeraireConversionAuctionsComponent
             this.validParcial = false;
             this.alert(
               'warning',
-              'Botones parciales desactivados',
+              'Botones parciales inhabilitados',
               'Porque no cuenta con lote en estatus GARA'
             );
           },
