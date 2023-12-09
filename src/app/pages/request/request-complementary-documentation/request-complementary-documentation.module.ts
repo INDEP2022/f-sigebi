@@ -7,6 +7,7 @@ import { SharedRequestModule } from '../shared-request/shared-request.module';
 //Routing
 import { RequestCompDocFormComponent } from './request-comp-doc-form/request-comp-doc-form.component';
 //Components
+import { EconomicCompensationModule } from '../economic-compensation/economic-compensation.module';
 import { RequestCompDocTasksComponent } from './request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { RequestComplementaryDocumentationRoutingModule } from './request-complementary-documentation-routing.module';
 
@@ -16,6 +17,7 @@ import { RequestComplementaryDocumentationRoutingModule } from './request-comple
     CommonModule,
     RequestComplementaryDocumentationRoutingModule,
     SharedRequestModule,
+    EconomicCompensationModule,
     SharedModule,
     TabsModule,
   ],
