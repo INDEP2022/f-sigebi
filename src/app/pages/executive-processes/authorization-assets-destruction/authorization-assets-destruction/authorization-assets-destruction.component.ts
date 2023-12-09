@@ -31,6 +31,7 @@ import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import {
   IDetailProceedingsDevollutionDelete,
+  ITmpCreateAuthoDestroy,
   ITmpUpdateMassive,
 } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -129,13 +130,10 @@ export class AuthorizationAssetsDestructionComponent
       actions: false,
       columns: { ...ASSETS_DESTRUCTION_COLUMLNS },
       mode: '',
-      rowClassFunction: (row: any) => {
-        if (row.available === 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
-      },
+      rowClassFunction: (row: { data: { available: any } }) =>
+        row.data.available == 'S'
+          ? 'bg-success text-white'
+          : 'bg-dark text-white',
     };
   }
 
@@ -274,6 +272,7 @@ export class AuthorizationAssetsDestructionComponent
       next: async response => {
         console.log(response);
         const data = await this.postQuery(response.data);
+
         this.data.load(data);
         this.data.refresh();
         this.totalItems = response.count;
@@ -363,21 +362,23 @@ export class AuthorizationAssetsDestructionComponent
 
   cleanTmp() {
     const user = this.authService.decodeToken().preferred_username;
+    const proceeding = '-1';
     const paramsF = new FilterParams();
-    paramsF.addFilter('proceeding', '-1');
     this.proceedingService
-      .tmpAuthorizationsDestruction(user, paramsF.getParams())
+      .tmpAuthorizationsDestruction(user, proceeding, paramsF.getParams())
       .subscribe(
         res => {
           this.canNewProceeding = true;
           this.data.load([]);
         },
         err => {
-          this.alert(
-            'warning',
-            'Hubo un problema limpiando la tabla temporal',
-            ''
-          );
+          if (err.status != 400) {
+            this.alert(
+              'warning',
+              'Hubo un problema limpiando la tabla temporal',
+              ''
+            );
+          }
         }
       );
   }
@@ -419,6 +420,10 @@ export class AuthorizationAssetsDestructionComponent
     this.canSearch = true;
     this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.consult = false;
+    this.form.get('noAuth').enable();
+    this.form.get('authNotice').enable();
+    this.form.get('fromDate').enable();
+    this.canNewProceeding = false;
   }
 
   async postQuery(det: any[]) {
@@ -631,9 +636,21 @@ export class AuthorizationAssetsDestructionComponent
 
   newProceeding() {
     this.canNewProceeding = true;
-    if (!this.data.empty() && this.form.get('noAuth').value != null) {
+    console.log(this.data.count());
+    console.log(this.form.get('noAuth').value);
+    console.log(this.form.get('statusAct').value);
+    if (
+      (this.data.count() != 0 && this.form.get('noAuth').value != null) ||
+      this.form.get('statusAct').value != null
+    ) {
       this.cleanTmp();
+      this.data.load([]);
     }
+
+    this.form.get('noAuth').reset();
+    this.form.get('authNotice').reset();
+    this.form.get('fromDate').reset();
+    this.form.get('statusAct').reset();
   }
 
   async saveNewProceeding() {
@@ -686,7 +703,28 @@ export class AuthorizationAssetsDestructionComponent
       res => {
         this.alert('success', 'Acta creada', '');
         console.log(res);
+        const resJson = JSON.parse(JSON.stringify(res));
+        this.form.get('noAuth').setValue(resJson.id);
+        this.form.get('noAuth').disable();
+        this.form.get('authNotice').disable();
+        this.form.get('fromDate').disable();
         this.canNewProceeding = false;
+
+        const body: ITmpCreateAuthoDestroy = {
+          user: this.authService.decodeToken().preferred_username,
+          proceeding: resJson.id,
+        };
+
+        this.proceedingService.tmpCreateAuthorization(body).subscribe(
+          res => {
+            console.log(res);
+            this.getProceeding();
+          },
+          err => {
+            this.alert('error', 'Error al crear acta', '');
+            console.log(err);
+          }
+        );
       },
       err => {
         this.alert('error', 'Error al crear acta', '');
@@ -723,11 +761,11 @@ export class AuthorizationAssetsDestructionComponent
     this.loading = true;
     const user = this.authService.decodeToken().preferred_username;
     const paramsF = new FilterParams();
+    const proceeding = this.idProceeding.toString();
     paramsF.page = this.params.getValue().page;
     paramsF.limit = this.params.getValue().limit;
-    paramsF.addFilter('proceeding', this.idProceeding);
     this.proceedingService
-      .tmpAuthorizationsDestruction(user, paramsF.getParams())
+      .tmpAuthorizationsDestruction(user, proceeding, paramsF.getParams())
       .subscribe(
         res => {
           const newData = res.data.map((item: any) => {
@@ -741,7 +779,10 @@ export class AuthorizationAssetsDestructionComponent
             };
           });
 
-          console.log(newData);
+          if (this.numFile == null) {
+            this.numFile = res.data[0].expedient;
+          }
+
           this.data.load(newData);
           this.totalItems = res.count;
           this.loading = false;
@@ -796,6 +837,10 @@ export class AuthorizationAssetsDestructionComponent
             };
           });
 
+          if (this.numFile == null) {
+            this.numFile = res.data[0].expedient;
+          }
+
           console.log(newData);
           this.data.load(newData);
           this.totalItems = res.count;
@@ -814,7 +859,7 @@ export class AuthorizationAssetsDestructionComponent
 
   //BUSCAR EXPEDIENTE
   expedientChange() {
-    if (this.form.get('noAuth').value == null && this.data.empty()) {
+    if (this.data.count() == 0) {
       this.cleanTmp();
     }
 
@@ -873,7 +918,9 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   pupGoodTracker() {
-    if (this.form.get('noAuth').value == null && this.data.empty()) {
+    console.log(this.data);
+    console.log(this.data.count());
+    if (this.data.count() == 0) {
       this.cleanTmp();
     }
 
@@ -914,7 +961,7 @@ export class AuthorizationAssetsDestructionComponent
 
   //MASIVO
   masiveChange() {
-    if (this.data.empty()) {
+    if (this.data.count() == 0) {
       this.alert('warning', 'No existen bienes para realizar el cambio', '');
       return;
     }
