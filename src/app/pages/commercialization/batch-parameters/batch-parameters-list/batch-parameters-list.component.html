@@ -5,7 +5,7 @@
   <div body>
     <div>
       <!--  -->
-      <form class="form-material" [formGroup]="form">
+      <!-- <form class="form-material" [formGroup]="form">
         <div class="row">
           <div class="col-md-4">
             <form-field [control]="form.get('idEvent')" label="Id Evento">
@@ -37,9 +37,9 @@
             </form-field>
           </div>
         </div>
-      </form>
+      </form> -->
       <!--  -->
-      <div class="d-flex mb-3">
+      <!-- <div class="d-flex mb-3">
         <div class="ml-auto">
           <button
             class="btn btn-danger btn-sm active mr-3"
@@ -56,8 +56,9 @@
             Agregar <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
-      </div>
+      </div> -->
       <!--  -->
+
       <div class="row">
         <div class="col-md-12">
           <form-loader *ngIf="loading"></form-loader>
@@ -67,6 +68,8 @@
             <ng2-smart-table
               [attr.class]="'table-bordered table-responsive'"
               class="table-responsive"
+              (edit)="editGuarantee($event.data)"
+              (delete)="newGuarantee($event.data)"
               [settings]="settings"
               [source]="lotData">
             </ng2-smart-table>
