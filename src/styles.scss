@@ -845,7 +845,7 @@ footer {
   background-color: #80c000; // #324b00;
 }
 
-//AJUSTES DE FORMA
+//AJUSTES REPORTADOS COMO BUGS
 .ng-dropdown-panel {
   z-index: 100 !important;
   margin-top: 2px !important;
@@ -863,4 +863,16 @@ textarea+.form-bar {
 
 .table-bordered {
  border: 1px solid #ddd !important;
+}
+
+.ng-select .ng-select-container .ng-value-container {
+  padding-left: 0px !important;
+}
+
+.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+    padding-left: 0px !important;
+}
+
+.gicon {
+  width: 10px !important;
 }
