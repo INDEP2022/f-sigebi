@@ -1,10 +1,10 @@
 export const COLUMLNS_CC = {
-  usuario: {
+  user: {
     title: 'Usuario',
     type: 'string',
     sort: false,
   },
-  nombre: {
+  name: {
     title: 'Nombre',
     type: 'string',
     sort: false,
@@ -17,17 +17,17 @@ export const COLUMLNS_CC = {
 };
 
 export const COLUMLNS_DIST = {
-  descripcion: {
+  description: {
     title: 'Para Delegación',
     type: 'string',
     sort: false,
   },
-  usuario: {
+  user: {
     title: 'Usuario',
     type: 'string',
     sort: false,
   },
-  nombre: {
+  name: {
     title: 'Nombre',
     type: 'string',
     sort: false,
