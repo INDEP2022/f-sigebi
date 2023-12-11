@@ -11,6 +11,7 @@ import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.se
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
@@ -62,7 +63,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
   acta: IProceedingDeliveryReception;
   detalleActa: any[];
   mensaje: string;
-  title: string = 'Oficios de Autorización de Destrucción';
+  title: string = 'Oficios de autorización de destrucción';
 
   proceeding: string = null;
   expedient: string = null;
@@ -71,6 +72,9 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
   elaborationDate: any = null;
   dataEmail: any[] = [];
   dataEmailCc: any[] = [];
+
+  dataTotalDist: any[] = [];
+  dataTotalCc: any[] = [];
 
   get user() {
     return this.authService.decodeToken();
@@ -86,6 +90,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     private serviceMassiveGoods: MassiveGoodService,
     private serviceUser: UsersService,
     private tranfergoodService: TranfergoodService,
+    private proceedingService: ProceedingsService,
     private goodprocesServices: GoodProcessService
   ) {
     super();
@@ -132,14 +137,80 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       mensaje: [null],
     });
     this.pupLlenaDist();
+
+    this.paramsDist.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+
+      if (this.dataTotalDist.length > 0) {
+        this.dataDist.load(
+          this.localPagination(
+            this.paramsDist.getValue().page,
+            this.paramsDist.getValue().pageSize,
+            this.dataTotalDist
+          )
+        );
+      }
+    });
+
+    this.paramsCc.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      if (this.dataTotalCc.length > 0) {
+        this.dataCc.load(
+          this.localPagination(
+            this.paramsCc.getValue().page,
+            this.paramsCc.getValue().pageSize,
+            this.dataTotalCc
+          )
+        );
+      }
+    });
   }
 
   async pupLlenaDist() {
     ////// AQUI LO DE LO QUE EDUARDO ME VA A ENTREGAR
-    await this.consultationQuery1();
-    await this.consultationQuery2();
+    /* await this.consultationQuery1();
+    await this.consultationQuery2(); */
+    //!A
+    this.proceedingService.pupFillDist(this.proceeding).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.dataTotalDist = resp.re_DIST;
+        this.dataTotalCc = resp.re_COPIA;
+        this.dataDist.load(
+          this.localPagination(
+            this.paramsDist.getValue().page,
+            this.paramsDist.getValue().pageSize,
+            this.dataTotalDist
+          )
+        );
+        this.dataCc.load(
+          this.localPagination(
+            this.paramsCc.getValue().page,
+            this.paramsCc.getValue().pageSize,
+            this.dataTotalCc
+          )
+        );
+        this.totalItemsDist = resp.re_DIST.length;
+        this.totalItemsCc = resp.re_COPIA.length;
+        this.dataDist.refresh();
+        this.dataCc.refresh();
+      },
+      error: err => {
+        console.log(err);
+        this.dataDist.load([]);
+        this.dataCc.load([]);
+        this.totalItemsDist = 0;
+        this.totalItemsCc = 0;
+      },
+    });
     ////
     this.pupInicializaCorreo('C');
+  }
+
+  localPagination(page: number, pageSize: number, data: any[]): any[] {
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return data.slice(startIndex, endIndex);
   }
 
   onSelectedEmail(instance: CheckboxElementComponent) {
@@ -219,8 +290,8 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       destination: this.dataEmail,
       copy: this.dataEmailCc,
       message: this.form.get('mensaje').value,
-      subject: 'Cambio de Estatus de Bienes a RGA',
-      header: 'Cambio de Estatus de Bienes a RGA',
+      subject: 'Cambio de estatus de bienes a RGA',
+      header: 'Cambio de estatus de bienes a RGA',
     };
 
     this.tranfergoodService.sendEmail(body).subscribe();
@@ -297,7 +368,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     const responde = await this.alertQuestion(
       'question',
       'Esta seguro que desea cerrar el Oficio',
-      '¿Desea Continuar Con el Proceso?'
+      '¿Desea continuar con el proceso?'
     );
     if (responde.isConfirmed) {
       this.sendEmail();
@@ -348,7 +419,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           this.title,
-          'El Oficio Ha Sido Cerrado Correctamente.'
+          'El oficio ha sido cerrado correctamente.'
         );
         this.closed();
       },
@@ -420,9 +491,9 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       });
       let c_ASUNTO: string = null;
       if (p_ACCION === 'C') {
-        c_ASUNTO = 'Cambio de Estatus de Bienes a AXD.';
+        c_ASUNTO = 'Cambio de estatus de bienes a AXD.';
       } else {
-        c_ASUNTO = 'Cambio de Estatus de Bienes de AXD al Estatus anterior.';
+        c_ASUNTO = 'Cambio de estatus de bienes de AXD al estatus anterior.';
       }
       for (let n_I = 1; n_I <= n_CONT; n_I++) {
         ///////  ////////
