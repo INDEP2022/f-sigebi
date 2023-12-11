@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPupCompFolioUniv } from 'src/app/core/models/catalogs/package.model';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
@@ -11,8 +11,10 @@ import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.se
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { COLUMLNS_CC, COLUMLNS_DIST } from '../columns';
 
 interface trec_DIST {
@@ -67,6 +69,8 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
   universalFolio: string = null;
   proceedingKey: string = null;
   elaborationDate: any = null;
+  dataEmail: any[] = [];
+  dataEmailCc: any[] = [];
 
   get user() {
     return this.authService.decodeToken();
@@ -81,6 +85,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     private parametergoodService: ParameterCatService,
     private serviceMassiveGoods: MassiveGoodService,
     private serviceUser: UsersService,
+    private tranfergoodService: TranfergoodService,
     private goodprocesServices: GoodProcessService
   ) {
     super();
@@ -88,13 +93,37 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     this.settingsDist = {
       ...this.settings,
       hideSubHeader: false,
-      columns: { ...COLUMLNS_DIST },
+      actions: false,
+      columns: {
+        ...COLUMLNS_DIST,
+        selection: {
+          title: '',
+          sort: false,
+          filter: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectedEmail(instance),
+        },
+      },
     };
 
     this.settingsCc = {
       ...this.settings,
       hideSubHeader: false,
-      columns: { ...COLUMLNS_CC },
+      actions: false,
+      columns: {
+        ...COLUMLNS_CC,
+        selection: {
+          title: '',
+          sort: false,
+          filter: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectedEmailCc(instance),
+        },
+      },
     };
   }
 
@@ -113,6 +142,38 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     this.pupInicializaCorreo('C');
   }
 
+  onSelectedEmail(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        if (data.toggle) {
+          this.dataEmail.push(data.row);
+          console.log(this.dataEmail);
+        } else {
+          this.dataEmail = this.dataEmail.filter(
+            x => x.email !== data.row.email
+          );
+          console.log(this.dataEmail);
+        }
+      },
+    });
+  }
+
+  onSelectedEmailCc(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        if (data.toggle) {
+          this.dataEmailCc.push(data.row);
+          console.log(this.dataEmailCc);
+        } else {
+          this.dataEmailCc = this.dataEmailCc.filter(
+            x => x.email !== data.row.email
+          );
+          console.log(this.dataEmailCc);
+        }
+      },
+    });
+  }
+
   consultationQuery1() {
     return new Promise((res, _rej) => {
       this.loadingDist = true;
@@ -120,9 +181,10 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
         .consultationQuery1(this.proceeding, this.paramsDist.getValue())
         .subscribe({
           next: resp => {
+            console.log(resp);
             this.dataDist.load(resp.data);
             this.dataDist.refresh();
-            this.totalItemsDist = resp.count;
+            this.totalItemsDist = resp.data.length;
             this.loadingDist = false;
             res(true);
           },
@@ -137,6 +199,33 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     });
   }
 
+  sendEmail() {
+    if (this.dataEmail.length == 0) {
+      this.alert(
+        'warning',
+        'Se debe seleccionar al menos una direccion de correo para poder enviar',
+        ''
+      );
+      return;
+    }
+
+    const dataListEmail = this.dataEmail.map(x => x.email);
+    let dataListEmailCc = [];
+    this.dataEmailCc.length > 0
+      ? (dataListEmailCc = this.dataEmailCc.map(x => x.email))
+      : null;
+
+    let body = {
+      destination: this.dataEmail,
+      copy: this.dataEmailCc,
+      message: this.form.get('mensaje').value,
+      subject: 'Cambio de Estatus de Bienes a RGA',
+      header: 'Cambio de Estatus de Bienes a RGA',
+    };
+
+    this.tranfergoodService.sendEmail(body).subscribe();
+  }
+
   consultationQuery2() {
     return new Promise((res, _rej) => {
       this.loadingCc = true;
@@ -146,7 +235,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
           next: resp => {
             this.dataCc.load(resp.data);
             this.dataCc.refresh();
-            this.totalItemsCc = resp.count;
+            this.totalItemsCc = resp.data.length;
             this.loadingCc = false;
             res(true);
           },
@@ -211,6 +300,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       '¿Desea Continuar Con el Proceso?'
     );
     if (responde.isConfirmed) {
+      this.sendEmail();
       await this.pupCompFolUniv();
     }
   }
@@ -245,6 +335,8 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       delegation: dataJson.delegation,
       subDelegation: dataJson.subDelegation,
       departament: dataJson.departament,
+      elaborationDate: this.elaborationDate,
+      screen: 'FACTDIRAPROBDESTR',
     };
     console.log(body);
     console.log(this.user);
