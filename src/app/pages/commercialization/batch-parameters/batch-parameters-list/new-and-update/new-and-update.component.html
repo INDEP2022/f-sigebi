@@ -5,9 +5,13 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field [control]="form.get('idEvent')" label="Id Evento">
-            <input type="text" class="form-control" formControlName="idEvent" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idEvent"
+              [disabled] />
           </form-field>
         </div>
         <!-- <div class="col-md-6">
@@ -17,25 +21,26 @@
                         </ngx-select>
                     </form-field>
                 </div> -->
-        <div class="col-md-6">
-          <form-field [control]="form.get('lotePublico')" label="Lote Público">
+        <div class="col-md-4">
+          <form-field [control]="form.get('publicLot')" label="Lote Público">
             <input
               type="text"
               class="form-control"
-              formControlName="lotePublico" />
+              formControlName="publicLot"
+              [disabled] />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <form-field [control]="form.get('idLot')" label="Id Lote">
-            <input type="text" class="form-control" formControlName="idLot" />
+            <input type="text" class="form-control" formControlName="idLot" [disabled]/>
           </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('garantia')" label="Garantía">
+        </div> -->
+        <div class="col-md-4">
+          <form-field [control]="form.get('specialGuarantee')" label="Garantía">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="garantia" />
+              formControlName="specialGuarantee" />
           </form-field>
         </div>
       </div>

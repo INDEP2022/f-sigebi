@@ -125,24 +125,26 @@ export class ExpenseCompositionModalComponent
       this.onAddConfirm(this.form.value);
     }
   }
-  private onEditConfirm(body: any) {
-    console.log(body);
+
+  private getBody(body: any) {
     const total = (
       +body.amount +
       +body.vat -
       +body.isrWithholding -
       +body.vatWithholding
     ).toFixed(2);
-    console.log(total);
+    return {
+      ...body,
+      expenseNumber: this.expenseNumber,
+      cvman: this.manCV,
+      total,
+    };
+  }
+  private onEditConfirm(body: any) {
     // return;
     if (body) {
       this.service
-        .edit({
-          ...body,
-          expenseNumber: this.expenseNumber,
-          cvman: this.manCV,
-          total,
-        })
+        .edit(this.getBody(body))
         .pipe(take(1))
         .subscribe({
           next: response => {
@@ -168,25 +170,10 @@ export class ExpenseCompositionModalComponent
   }
 
   private onAddConfirm(body: any) {
-    console.log(body);
-    const total = (
-      +body.amount +
-      +body.vat -
-      +body.isrWithholding -
-      +body.vatWithholding
-    ).toFixed(2);
-    delete body.expenseDetailNumber;
-    let newBody = {
-      ...body,
-      expenseNumber: this.expenseNumber,
-      cvman: this.manCV,
-      total,
-    };
-    console.log(total, this.expenseNumber, newBody);
     // return;
     if (body) {
       this.service
-        .create(newBody)
+        .create(this.getBody(body))
         .pipe(take(1))
         .subscribe({
           next: response => {
