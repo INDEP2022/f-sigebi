@@ -16,7 +16,6 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
-import * as XLSX from 'xlsx';
 //Models
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
@@ -33,6 +32,7 @@ import {
   IDetailProceedingsDevollutionDelete,
   ITmpCreateAuthoDestroy,
   ITmpUpdateMassive,
+  ITmpUpdateOneReg,
 } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -42,6 +42,7 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { ModalCorreoComponent } from '../utils/modal-correo/modal-correo.component';
@@ -103,6 +104,7 @@ export class AuthorizationAssetsDestructionComponent
   statusProceeding: string = null;
   canNewProceeding: boolean = false;
   returnTracker: boolean = true;
+  user: string = null;
 
   get controls() {
     return this.form.controls;
@@ -122,13 +124,29 @@ export class AuthorizationAssetsDestructionComponent
     private serviceDetailProc: DetailProceeDelRecService,
     private serviceDocuments: DocumentsService,
     private serviceMassiveGoods: MassiveGoodService,
-    private serviceProcVal: ProceedingsDeliveryReceptionService
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private documentService: DocumentsService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: { ...ASSETS_DESTRUCTION_COLUMLNS },
+      columns: {
+        ...ASSETS_DESTRUCTION_COLUMLNS,
+        approved: {
+          title: 'Aprobado',
+          type: 'custom',
+          showAlways: true,
+          filter: false,
+          sort: false,
+          renderComponent: CheckboxElementComponent,
+          valuePrepareFunction: (isSelected: any, row: any) => {
+            return row.approved == 'SI' ? true : false;
+          },
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectRow(instance),
+        },
+      },
       mode: '',
       rowClassFunction: (row: { data: { available: any } }) =>
         row.data.available == 'S'
@@ -149,6 +167,68 @@ export class AuthorizationAssetsDestructionComponent
           if (ngGlobal.REL_BIENES) {
             console.log(ngGlobal.REL_BIENES);
             if (this.returnTracker) {
+              this.form
+                .get('noAuth')
+                .setValue(
+                  localStorage.getItem('noActa_FACTDIRAPROBDESTR') != 'null'
+                    ? localStorage.getItem('noActa_FACTDIRAPROBDESTR')
+                    : null
+                );
+              this.form
+                .get('authNotice')
+                .setValue(
+                  localStorage.getItem('authNotice_FACTDIRAPROBDESTR') != 'null'
+                    ? localStorage.getItem('authNotice_FACTDIRAPROBDESTR')
+                    : null
+                );
+
+              this.cve_proceeding =
+                localStorage.getItem('authNotice_FACTDIRAPROBDESTR') != 'null'
+                  ? localStorage.getItem('authNotice_FACTDIRAPROBDESTR')
+                  : null;
+              this.form
+                .get('universalFolio')
+                .setValue(
+                  localStorage.getItem('universalFolio_FACTDIRAPROBDESTR') !=
+                    'null'
+                    ? localStorage.getItem('universalFolio_FACTDIRAPROBDESTR')
+                    : null
+                );
+              this.form
+                .get('statusAct')
+                .setValue(
+                  localStorage.getItem('statusAct_FACTDIRAPROBDESTR') != 'null'
+                    ? localStorage.getItem('statusAct_FACTDIRAPROBDESTR')
+                    : null
+                );
+              this.form
+                .get('fromDate')
+                .setValue(
+                  localStorage.getItem('fromDate_FACTDIRAPROBDESTR') != 'null'
+                    ? this.correctDate(
+                        localStorage.getItem('fromDate_FACTDIRAPROBDESTR')
+                      )
+                    : null
+                );
+
+              this.date_proceeding =
+                localStorage.getItem('fromDate_FACTDIRAPROBDESTR') != 'null'
+                  ? this.correctDate(
+                      localStorage.getItem('fromDate_FACTDIRAPROBDESTR')
+                    ).toString()
+                  : null;
+              this.expediente =
+                localStorage.getItem('numFile_FACTDIRAPROBDESTR') != 'nul'
+                  ? Number(localStorage.getItem('numFile_FACTDIRAPROBDESTR'))
+                  : null;
+
+              localStorage.removeItem('noActa_FACTDIRAPROBDESTR');
+              localStorage.removeItem('authNotice_FACTDIRAPROBDESTR');
+              localStorage.removeItem('universalFolio_FACTDIRAPROBDESTR');
+              localStorage.removeItem('fromDate_FACTDIRAPROBDESTR');
+              localStorage.removeItem('numFile_FACTDIRAPROBDESTR');
+              localStorage.removeItem('statusAct_FACTDIRAPROBDESTR');
+
               this.returnTracker = false;
               this.pupGoodTrackerFn(ngGlobal.REL_BIENES);
             }
@@ -163,6 +243,12 @@ export class AuthorizationAssetsDestructionComponent
         this.searchGoodsInDetailProceeding();
       }
     });
+
+    if (localStorage.getItem('noAuth_scan')) {
+      this.form.get('noAuth').setValue(localStorage.getItem('noAuth_scan'));
+      this.getProceeding();
+    }
+    this.user = this.authService.decodeToken().preferred_username;
   }
 
   private prepareForm() {
@@ -197,41 +283,52 @@ export class AuthorizationAssetsDestructionComponent
       if (folio) {
         this.form.controls['universalFolio'].setValue(folio);
       }
-      this.form.get('idExpedient').setValue(Number(localExpdeient));
+      // this.form.get('idExpedient').setValue(Number(localExpdeient));
       // this.expedientChange();
       localStorage.removeItem('expediente');
     }
   }
 
+  //FUNCION PARA ACTUALIZAR EL APROBADO DEL TMP
+  onSelectRow(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        console.log(data.row);
+        if (
+          !['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)
+        ) {
+          const modelEdit: ITmpUpdateOneReg = {
+            user: this.user,
+            good: data.row.numberGood,
+            approved: data.toggle ? 'SI' : 'NO',
+          };
+          this.proceedingService.tmpUpdateOneReg(modelEdit).subscribe(
+            res => {
+              data.row = data.toggle ? 'SI' : 'NO';
+            },
+            err => {
+              console.log(err);
+            }
+          );
+        } else {
+          this.data.load(this.data['data']);
+        }
+      },
+    });
+  }
+
   async openModal() {
     let config: ModalOptions = {
       initialState: {
-        acta: this.acta,
+        proceeding: this.form.get('noAuth').value,
+        expedient: this.expediente,
+        universalFolio: this.form.get('universalFolio').value,
+        proceedingKey: this.form.get('authNotice').value,
+        elaborationDate: this.form.get('fromDate').value,
         detalleActa: await this.data.getAll(),
-        callback: async (acta: any) => {
-          if (acta.statusProceedings === 'CERRADA') {
-            this.acta = acta;
-            const detail: any[] = await this.data.getAll();
-            this.proceedingsDetailDel.update2(this.acta).subscribe({
-              next: resp => {
-                console.log(resp);
-                detail.forEach(async (element: any) => {
-                  const model: IDetailProceedingsDevollutionDelete = {
-                    numberGood: element.numberGood,
-                    numberProceedings: element.numberProceedings,
-                  };
-                  await this.pupDepuraDetalle(model);
-                });
-                //this.relationsExpedient();
-              },
-              error: err => {
-                this.alert(
-                  'error',
-                  this.title,
-                  'No Se Ha Podido Cerrar el Acta'
-                );
-              },
-            });
+        callback: async result => {
+          if (result) {
+            this.getProceeding();
           }
         },
       },
@@ -242,21 +339,19 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   getDocuments() {
-    return new Promise<number>((res, _rej) => {
-      const params: ListParams = {};
-      params[
-        'filter.associateUniversalFolio'
-      ] = `$eq:${this.acta.universalFolio}`;
-      this.serviceDocuments.getAll(params).subscribe({
-        next: resp => {
-          console.error(resp);
-          res(Number(resp.count));
-        },
-        error: err => {
-          console.log(err);
-          res(0);
-        },
-      });
+    return new Promise((resolve, _rej) => {
+      this.documentService
+        .getByFolio(this.form.get('universalFolio').value)
+        .subscribe(res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
+          console.log(scanStatus);
+          if (scanStatus == 'ESCANEADO') {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        });
     });
   }
 
@@ -288,7 +383,7 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   async closeButton() {
-    if (!['CERRADA', 'CERRADO'].includes(this.acta.statusProceedings)) {
+    if (!['CERRADA', 'CERRADO'].includes(this.form.get('statusAct').value)) {
       this.closed();
     } else {
       this.openProceeding();
@@ -296,7 +391,7 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   async closed() {
-    if (this.form.get('fromDate') === null) {
+    if (this.form.get('fromDate').value === null) {
       this.alert(
         'warning',
         this.title,
@@ -305,7 +400,7 @@ export class AuthorizationAssetsDestructionComponent
       );
       return;
     }
-    if (this.form.get('authNotice') === null) {
+    if (this.form.get('authNotice').value === null) {
       this.alert(
         'warning',
         this.title,
@@ -324,8 +419,9 @@ export class AuthorizationAssetsDestructionComponent
       );
       return;
     }
-    const hojas: number = await this.getDocuments();
-    if (hojas <= 0) {
+    const isScan = await this.getDocuments();
+    console.log(isScan);
+    if (!isScan) {
       this.alert(
         'warning',
         this.title,
@@ -335,8 +431,7 @@ export class AuthorizationAssetsDestructionComponent
       return;
     }
 
-    const detail: any[] = await this.data.getAll();
-    if (detail.length === 0) {
+    if (this.data.count() == 0) {
       this.alert(
         'warning',
         this.title,
@@ -345,15 +440,9 @@ export class AuthorizationAssetsDestructionComponent
       );
       return;
     }
-    detail.forEach(async (element: any) => {
-      const model: IDetailProceedingsDevollutionDelete = {
-        numberGood: element.numberGood,
-        numberProceedings: element.numberProceedings,
-      };
-      await this.pupDepuraDetalle(model);
-    });
+
+    this.dataPurge();
     this.openModal();
-    this.getDetailProceedingsDevolution(this.form.get('noAuth').value);
   }
 
   openProceeding() {
@@ -361,11 +450,10 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   cleanTmp() {
-    const user = this.authService.decodeToken().preferred_username;
     const proceeding = '-1';
     const paramsF = new FilterParams();
     this.proceedingService
-      .tmpAuthorizationsDestruction(user, proceeding, paramsF.getParams())
+      .tmpAuthorizationsDestruction(this.user, proceeding, paramsF.getParams())
       .subscribe(
         res => {
           this.canNewProceeding = true;
@@ -424,6 +512,13 @@ export class AuthorizationAssetsDestructionComponent
     this.form.get('authNotice').enable();
     this.form.get('fromDate').enable();
     this.canNewProceeding = false;
+
+    localStorage.removeItem('noActa_FACTDIRAPROBDESTR');
+    localStorage.removeItem('authNotice_FACTDIRAPROBDESTR');
+    localStorage.removeItem('universalFolio_FACTDIRAPROBDESTR');
+    localStorage.removeItem('fromDate_FACTDIRAPROBDESTR');
+    localStorage.removeItem('numFile_FACTDIRAPROBDESTR');
+    localStorage.removeItem('statusAct_FACTDIRAPROBDESTR');
   }
 
   async postQuery(det: any[]) {
@@ -558,8 +653,7 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   async ReadExcel(event: any) {
-    console.log(this.acta.statusProceedings);
-    if (!this.acta) {
+    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)) {
       this.alert(
         'warning',
         this.title,
@@ -567,20 +661,32 @@ export class AuthorizationAssetsDestructionComponent
       );
       return;
     }
+
     this.loading = true;
-    let file = event.target.files[0];
-    let fileReader = new FileReader();
-    fileReader.readAsBinaryString(file);
-    const dataTable: any[] = await this.data.getAll();
-    fileReader.onload = e => {
-      let workbook = XLSX.read(fileReader.result, { type: 'binary' });
-      let sheetNames = workbook.SheetNames;
-      this.dataFile = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
-      const data = dataTable.concat(this.dataFile);
-      this.data.load(data);
-      this.data.refresh();
-      this.loading = false;
-    };
+    const files = (event.target as HTMLInputElement).files[0];
+    let formData = new FormData();
+    formData.append('file', files);
+    formData.append('user', this.user);
+    this.getDataFile(formData);
+  }
+
+  getDataFile(data: any) {
+    if (this.data.count() == 0) {
+      this.cleanTmp();
+    }
+
+    this.serviceMassiveGoods.pupFlatGoodsDestr(data).subscribe({
+      next: resp => {
+        this.loading = false;
+        this.fillTableGoodsByUser();
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+        this.loading = true;
+        this.alert('error', 'Ocurrió un error al leer el archivo', '');
+      },
+    });
   }
 
   //AGREGADO POR GRIGORK
@@ -600,7 +706,6 @@ export class AuthorizationAssetsDestructionComponent
 
     const paramsF = new FilterParams();
     // paramsF.page = params.page;
-    const user = this.authService.decodeToken().preferred_username;
     paramsF.limit = 1;
     paramsF.addFilter('typeProceedings', 'AXD');
     this.form.get('noAuth').value != null
@@ -618,6 +723,7 @@ export class AuthorizationAssetsDestructionComponent
         this.form.get('authNotice').setValue(jsonResp.keysProceedings);
         this.form.get('universalFolio').setValue(jsonResp.universalFolio);
         this.form.get('statusAct').setValue(jsonResp.statusProceedings);
+        this.expediente = jsonResp.numFile;
         this.form
           .get('fromDate')
           .setValue(this.correctDate(jsonResp.elaborationDate));
@@ -691,7 +797,7 @@ export class AuthorizationAssetsDestructionComponent
       keysProceedings: this.form.get('authNotice').value,
       elaborationDate: this.form.get('fromDate').value,
       statusProceedings: 'ABIERTA',
-      elaborate: this.authService.decodeToken().preferred_username,
+      elaborate: this.user,
       typeProceedings: 'AXD',
       numFile: this.numFile,
       numDelegation1: this.authService.decodeToken().department,
@@ -711,7 +817,7 @@ export class AuthorizationAssetsDestructionComponent
         this.canNewProceeding = false;
 
         const body: ITmpCreateAuthoDestroy = {
-          user: this.authService.decodeToken().preferred_username,
+          user: this.user,
           proceeding: resJson.id,
         };
 
@@ -759,23 +865,23 @@ export class AuthorizationAssetsDestructionComponent
   searchGoodsInDetailProceeding() {
     this.canSearch = false;
     this.loading = true;
-    const user = this.authService.decodeToken().preferred_username;
     const paramsF = new FilterParams();
     const proceeding = this.idProceeding.toString();
     paramsF.page = this.params.getValue().page;
     paramsF.limit = this.params.getValue().limit;
     this.proceedingService
-      .tmpAuthorizationsDestruction(user, proceeding, paramsF.getParams())
+      .tmpAuthorizationsDestruction(this.user, proceeding, paramsF.getParams())
       .subscribe(
         res => {
           const newData = res.data.map((item: any) => {
             return {
               ...item,
-              cve_proceeding: this.cve_proceeding,
-              date_proceeding: format(
-                this.correctDate(this.date_proceeding),
-                'dd/MM/yyyy'
-              ),
+              cve_proceeding:
+                item.available == 'N' ? this.cve_proceeding : null,
+              date_proceeding:
+                item.available == 'N'
+                  ? format(this.correctDate(this.date_proceeding), 'dd/MM/yyyy')
+                  : null,
             };
           });
 
@@ -818,22 +924,22 @@ export class AuthorizationAssetsDestructionComponent
   fillTableGoodsByUser() {
     this.canSearch = false;
     this.loading = true;
-    const user = this.authService.decodeToken().preferred_username;
     const paramsF = new FilterParams();
     paramsF.page = this.params.getValue().page;
     paramsF.limit = this.params.getValue().limit;
     this.proceedingService
-      .tmpAuthorizationsDestruction(user, paramsF.getParams())
+      .tmpAuthorizationsDestruction(this.user, null, paramsF.getParams())
       .subscribe(
         res => {
           const newData = res.data.map((item: any) => {
             return {
               ...item,
-              cve_proceeding: this.cve_proceeding,
-              date_proceeding: format(
-                this.correctDate(this.date_proceeding),
-                'dd/MM/yyyy'
-              ),
+              cve_proceeding:
+                item.available == 'N' ? this.cve_proceeding : null,
+              date_proceeding:
+                item.available == 'N'
+                  ? format(this.correctDate(this.date_proceeding), 'dd/MM/yyyy')
+                  : null,
             };
           });
 
@@ -890,8 +996,9 @@ export class AuthorizationAssetsDestructionComponent
     this.serviceMassiveGoods.goodsExpedient(body).subscribe(
       async res => {
         console.log(res);
+        console.log(res.file);
         this.addGoodFlag = false;
-        await this.downloadExcel(res.file, 'Bienes_con_errores.xlsx');
+        await this.downloadExcel(res.file, 'Bienes_con_errores.csv');
         if (res.blk_det.length == 0) {
           this.alert('warning', 'No se cargo ninguno bien', '');
         } else {
@@ -924,7 +1031,30 @@ export class AuthorizationAssetsDestructionComponent
       this.cleanTmp();
     }
 
-    localStorage.setItem('noActa', this.form.get('noAuth').value);
+    localStorage.setItem(
+      'noActa_FACTDIRAPROBDESTR',
+      this.form.get('noAuth').value
+    );
+    localStorage.setItem(
+      'authNotice_FACTDIRAPROBDESTR',
+      this.form.get('authNotice').value
+    );
+    localStorage.setItem(
+      'universalFolio_FACTDIRAPROBDESTR',
+      this.form.get('universalFolio').value
+    );
+    localStorage.setItem(
+      'statusAct_FACTDIRAPROBDESTR',
+      this.form.get('statusAct').value
+    );
+    localStorage.setItem(
+      'fromDate_FACTDIRAPROBDESTR',
+      this.form.get('fromDate').value
+    );
+    localStorage.setItem(
+      'numFile_FACTDIRAPROBDESTR',
+      this.expediente != null ? this.expediente.toString() : null
+    );
 
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
@@ -951,6 +1081,7 @@ export class AuthorizationAssetsDestructionComponent
     this.serviceMassiveGoods.pupGoodTracker(body).subscribe(
       res => {
         console.log(res);
+        localStorage.removeItem('noActa');
         this.fillTableGoodsByUser();
       },
       err => {
@@ -981,5 +1112,74 @@ export class AuthorizationAssetsDestructionComponent
         console.log(err);
       }
     );
+  }
+
+  //DEPURAR
+  dataPurge() {
+    this.loading = true;
+    this.serviceMassiveGoods.tmpDeleteAuthorization(this.user).subscribe(
+      res => {
+        console.log(res);
+        this.alert(
+          'success',
+          `Se depuró el acta ${this.form.get('noAuth').value}`,
+          ''
+        );
+        this.fillTableGoodsByUser();
+      },
+      err => {
+        console.log(err);
+        this.alert(
+          'warning',
+          'Se presentó un error depurando el acta',
+          'Por favor vuelva a intentarlo'
+        );
+        this.loading = false;
+      }
+    );
+  }
+
+  dataPurgeButton() {
+    if (['CERRADA', 'CERRADO'].includes(this.form.get('statusAct').value)) {
+      this.alert(
+        'warning',
+        'El acta está cerrada',
+        'No puede realizar modificaciones por el estatus del acta'
+      );
+      return;
+    }
+
+    this.alertQuestion(
+      'question',
+      `¿Desea depurar el acta ${this.form.get('noAuth').value}?`,
+      'Se eliminarán todos los bienes que no estén aprobados'
+    ).then(q => {
+      if (q.isConfirmed) {
+        this.dataPurge();
+      }
+    });
+  }
+
+  //GUARDADO DE SAVE
+  massiveSave() {
+    const body: ITmpCreateAuthoDestroy = {
+      user: this.user,
+      proceeding: this.form.get('noAuth').value,
+    };
+
+    this.proceedingService.tmpCreateAuthorization(body).subscribe(
+      res => {
+        console.log(res);
+        this.getProceeding();
+      },
+      err => {
+        this.alert('error', 'Error al crear acta', '');
+        console.log(err);
+      }
+    );
+  }
+
+  selectRowTry(e: any) {
+    console.log(e.data);
   }
 }
