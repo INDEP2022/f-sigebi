@@ -98,7 +98,7 @@
             label="Oficio de Autorizaci&oacute;n">
             <input
               type="text"
-              [readOnly]="!canSearch"
+              [readOnly]="!canSearch && !canNewProceeding"
               class="form-control"
               formControlName="authNotice" />
           </form-field>
@@ -108,7 +108,7 @@
             <input
               type="text"
               class="form-control"
-              [readOnly]="!canSearch"
+              [readOnly]="!canSearch && !canNewProceeding"
               bsDatepicker
               formControlName="fromDate"
               [bsConfig]="bsConfig" />

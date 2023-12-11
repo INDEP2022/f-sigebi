@@ -43,17 +43,21 @@
     <form [formGroup]="requestForm" class="form-material">
       <app-card [header]="false">
         <div body>
-
-          <div class="ms-n2 mb-2 pointer" (click)="showSearchForm = !showSearchForm" [attr.aria-expanded]="!showSearchForm"
+          <div
+            class="ms-n2 mb-2 pointer"
+            (click)="showSearchForm = !showSearchForm"
+            [attr.aria-expanded]="!showSearchForm"
             aria-controls="collapseInfo">
-            <i class="bx bx-chevron-down bx-md float-icon-md" [ngClass]="{
-                      'rotate-down': showSearchForm,
-                      'rotate-up': !showSearchForm
-                    }"></i>
+            <i
+              class="bx bx-chevron-down bx-md float-icon-md"
+              [ngClass]="{
+                'rotate-down': showSearchForm,
+                'rotate-up': !showSearchForm
+              }"></i>
             <h6 class="d-inline">Informaci&oacute;n de la Solicitud</h6>
           </div>
 
-          <div 
+          <div
             id="collapseInfo"
             [isAnimated]="true"
             [collapse]="!showSearchForm">
