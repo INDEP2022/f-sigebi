@@ -2,16 +2,20 @@ import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IRequestLotParam } from 'src/app/core/models/requests/request-lot-params.model';
 import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
+import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
 
 @Component({
   selector: 'app-batch-parameters-list',
@@ -19,8 +23,6 @@ import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
   styles: [],
 })
 export class BatchParametersListComponent extends BasePage implements OnInit {
-  //
-
   lotServiceArray: any[] = [];
   lotServiceArrayTwo: any[] = [];
   adding: boolean = false;
@@ -65,12 +67,15 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
   };
   columnFilters: any = [];
 
+  requestLotParam: IRequestLotParam;
+
   //
 
   constructor(
     private lotparamsService: LotParamsService,
     private fb: FormBuilder,
-    private serviceLot: LotService
+    private serviceLot: LotService,
+    private modalService: BsModalService
   ) {
     super();
     this.paramSettings.columns = BATCH_PARAMETERS_COLUMNS;
@@ -81,10 +86,14 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: false,
+        edit: true,
         add: false,
-        delete: false,
+        delete: true,
         position: 'right',
+      },
+      delete: {
+        deleteButtonContent:
+          '<span class="fa fa-plus text-success mx-2"></span>',
       },
       columns: { ...BATCH_PARAMETERS_COLUMNS },
     };
@@ -279,5 +288,36 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
 
   resetForm() {
     this.form.reset();
+  }
+
+  validNew: boolean = false;
+  validEdit: boolean = false;
+
+  editGuarantee(requestLotParam1?: any) {
+    const modalConfig = MODAL_CONFIG;
+    let validEdit: boolean = true;
+    const requestLotParam = { ...requestLotParam1 };
+    modalConfig.initialState = {
+      requestLotParam,
+      validEdit,
+      callback: (next: boolean) => {
+        if (next) this.getLotParams();
+      },
+    };
+    this.modalService.show(NewAndUpdateComponent, modalConfig);
+  }
+
+  newGuarantee(requestLotParam2?: IRequestLotParam) {
+    const modalConfig = MODAL_CONFIG;
+    let validNew: boolean = true;
+    const requestLotParam = { ...requestLotParam2 };
+    modalConfig.initialState = {
+      requestLotParam,
+      validNew,
+      callback: (next: boolean) => {
+        if (next) this.getLotParams();
+      },
+    };
+    this.modalService.show(NewAndUpdateComponent, modalConfig);
   }
 }
