@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
+import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
+import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
-import { BasePage } from '../../../../../core/shared/base-page';
+import { BasePage, TABLE_SETTINGS } from '../../../../../core/shared/base-page';
 import { AnnexKFormComponent } from '../../generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
+import { LIST_DEDUCTIVES_VIEW_COLUMNS } from '../../sampling-assets/sampling-assets-form/columns/list-deductivas-column';
 import { AnnexJRestitutionFormComponent } from '../annex-j-restitution-form/annex-j-restitution-form.component';
 
 @Component({
@@ -22,9 +26,20 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
   sampleInfo: ISample;
   bsModalRef: BsModalRef;
   idSample: number = 0;
+  loadingDeductives: boolean = false;
+  paragraphsDeductivas = new LocalDataSource();
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  allDeductives: ISamplingDeductive[] = [];
+  settingsDeductives = {
+    ...TABLE_SETTINGS,
+    actions: false,
+
+    columns: LIST_DEDUCTIVES_VIEW_COLUMNS,
+  };
   constructor(
     private modalService: BsModalService,
-    private samplingGoodService: SamplingGoodService
+    private samplingGoodService: SamplingGoodService,
+    private deductiveService: DeductiveVerificationService
   ) {
     super();
   }
@@ -33,6 +48,40 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
     //El id de el muestreo saldra la tarea
     this.idSample = 302;
     this.getSampleInfo();
+    this.getSampleDeductives();
+  }
+
+  getSampleDeductives() {
+    this.params.getValue()['filter.sampleId'] = `$eq:${this.idSample}`;
+    this.samplingGoodService
+      .getAllSampleDeductives(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.allDeductives = response.data;
+          this.getDeductives(response.data);
+        },
+        error: error => {},
+      });
+  }
+
+  getDeductives(deductivesRelSample: ISamplingDeductive[]) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.deductiveService.getAll(params.getValue()).subscribe({
+      next: response => {
+        const infoDeductives = response.data.map(item => {
+          deductivesRelSample.map(deductiveEx => {
+            if (deductiveEx.deductiveVerificationId == item.id) {
+              item.observations = deductiveEx.observations;
+              item.selected = true;
+            }
+          });
+          return item;
+        });
+        this.paragraphsDeductivas.load(infoDeductives);
+        this.loadingDeductives = false;
+      },
+      error: error => {},
+    });
   }
 
   getSampleInfo() {

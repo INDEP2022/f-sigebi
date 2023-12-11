@@ -19,6 +19,7 @@ import { PhotographyFormComponent } from '../../../shared-request/photography-fo
 import { listAssets } from '../../generate-formats-verify-noncompliance/store/actions';
 import { Item } from '../../generate-formats-verify-noncompliance/store/item.module';
 import {
+  LIST_APPROV_VIEW,
   LIST_VERIFY_NONCOMPLIANCE,
   LIST_VERIFY_VIEW,
 } from '../../sampling-assets/sampling-assets-form/columns/list-verify-noncompliance';
@@ -40,6 +41,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   assetsSelected: Item[] = [];
   paragraphs3 = new LocalDataSource();
   paragraphsView = new LocalDataSource();
+  paragraphsApprov = new LocalDataSource();
   jsonToCsv = JSON_TO_CSV;
   isReadonly: boolean = false;
   isCheckboxReadonly: boolean = false;
@@ -63,6 +65,13 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     columns: LIST_VERIFY_VIEW,
+  };
+
+  settingsApprov = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    selectMode: 'multi',
+    columns: LIST_APPROV_VIEW,
   };
 
   constructor(
@@ -252,11 +261,14 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   }
 
   getGoodsSampling() {
+    if (this.typeTask == 'assets-approval')
+      this.params.getValue()['filter.typeRestitution'] = 'EN ESPECIE';
     this.params.getValue()['filter.sampleId'] = this.idSample;
     this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
       next: response => {
         this.paragraphs3.load(response.data);
         this.paragraphsView.load(response.data);
+        this.paragraphsApprov.load(response.data);
         this.totalItems = response.count;
       },
       error: error => {},
@@ -487,5 +499,95 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(EditGoodSampleComponent, config);
+  }
+
+  approveGood() {
+    if (this.assetsSelected.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.assetsSelected.map((item: any) => {
+            const infoSampleGood = {
+              sampleGoodId: item.sampleGoodId,
+              restitutionStatus: 'APROBAR',
+            };
+
+            this.samplingService.editSamplingGood(infoSampleGood).subscribe({
+              next: response => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+                this.params
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getGoodsSampling());
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo actualizar el bien'
+                );
+              },
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar un bien'
+      );
+    }
+  }
+
+  declineGood() {
+    if (this.assetsSelected.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.assetsSelected.map((item: any) => {
+            const infoSampleGood = {
+              sampleGoodId: item.sampleGoodId,
+              restitutionStatus: 'RECHAZAR',
+            };
+
+            this.samplingService.editSamplingGood(infoSampleGood).subscribe({
+              next: response => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+                this.params
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getGoodsSampling());
+              },
+              error: error => {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'No se pudo actualizar el bien'
+                );
+              },
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar un bien'
+      );
+    }
   }
 }
