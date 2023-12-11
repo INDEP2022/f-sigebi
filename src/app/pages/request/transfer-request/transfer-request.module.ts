@@ -26,6 +26,7 @@ import { ClassificationAssetsTabComponent } from './tabs/classify-assets-compone
 import { RequestDetailTabComponent } from './tabs/compliance-verification-components/request-detail-tab/request-detail-tab.component';
 import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
 import { FulfillmentComponent } from './tabs/compliance-verification-components/verify-compliance-tab/fulfillment/fulfillment.component';
+import { InputDateComponent } from './tabs/compliance-verification-components/verify-compliance-tab/input-date/input-date.component';
 import { InputTextComponent } from './tabs/compliance-verification-components/verify-compliance-tab/input-text/input-text.component';
 import { MeasureUnitSaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/measure-unit-sae-input/measure-unit-sae-input.component';
 import { QuantitySaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/quantity-sae-input/quantity-sae-input.component';
@@ -66,6 +67,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     VerifyComplianceTabComponent,
     SaeInputComponent,
     InputTextComponent,
+    InputDateComponent,
     ClassificationAssetsTabComponent,
     ClassifyAssetsTabComponent,
     AdvancedSearchComponent,

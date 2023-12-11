@@ -20,5 +20,4 @@ export class ReportgoodService extends HttpService {
   getReportDynamic(params: ListParams) {
     return this.get(ReportGoodEndpoints.ReportDynamic, params);
   }
-
 }

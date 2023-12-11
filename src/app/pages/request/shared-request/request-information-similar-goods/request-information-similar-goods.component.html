@@ -14,39 +14,40 @@
           }"></i>
         <h6 class="d-inline">Informaci&oacute;n de la Solicitud</h6>
       </div>
-      <div
-        id="collapseInfo"
-        [isAnimated]="true"
-        [collapse]="!toggleInfo">
+      <div id="collapseInfo" [isAnimated]="true" [collapse]="!toggleInfo">
         <div class="row pt-4">
-
           <div class="col-md-4">
             <p class="font-size-13">
-              <strong class="font-size-13">Fecha de Solicitud&#58; </strong> {{ requestInfo?.applicationDate | date : 'dd/MM/YYYY' }}
+              <strong class="font-size-13">Fecha de Solicitud&#58; </strong>
+              {{ requestInfo?.applicationDate | date : 'dd/MM/YYYY' }}
             </p>
           </div>
           <div class="col-md-4">
             <p class="font-size-13">
-              <strong class="font-size-13">No&#46; Solicitud&#58; </strong> {{ requestInfo?.id }}
+              <strong class="font-size-13">No&#46; Solicitud&#58; </strong>
+              {{ requestInfo?.id }}
             </p>
           </div>
           <div class="col-md-4">
             <p class="font-size-13">
-              <strong class="font-size-13">No&#46; Expediente&#58; </strong> {{ requestInfo?.recordId }}
+              <strong class="font-size-13">No&#46; Expediente&#58; </strong>
+              {{ requestInfo?.recordId }}
             </p>
           </div>
-
         </div>
         <div class="row pt-2">
-        
           <div class="col-md-4">
             <p class="font-size-13">
-              <strong class="font-size-13">No&#46; Oficio&#58;</strong> {{ requestInfo?.paperNumber }}
+              <strong class="font-size-13">No&#46; Oficio&#58;</strong>
+              {{ requestInfo?.paperNumber }}
             </p>
           </div>
           <div class="col-md-4">
             <p class="font-size-13">
-              <strong class="font-size-13">Delegaci&oacute;n Regional&#58; </strong> {{ regionalDelegation }}
+              <strong class="font-size-13"
+                >Delegaci&oacute;n Regional&#58;
+              </strong>
+              {{ regionalDelegation }}
             </p>
           </div>
           <div class="col-md-4">
@@ -54,14 +55,13 @@
               <strong class="font-size-13">Estado&#58;</strong> {{ state }}
             </p>
           </div>
-        
         </div>
 
         <div class="row pt-2">
-        
           <div class="col-md-4">
             <p class="font-size-13">
-              <strong class="font-size-13">Transferente&#58;</strong> {{ transferent }}
+              <strong class="font-size-13">Transferente&#58;</strong>
+              {{ transferent }}
             </p>
           </div>
           <div class="col-md-4">
@@ -71,10 +71,10 @@
           </div>
           <div class="col-md-4">
             <p class="font-size-13">
-              <strong class="font-size-13">Autoridad&#58;</strong> {{ authority }}
+              <strong class="font-size-13">Autoridad&#58;</strong>
+              {{ authority }}
             </p>
           </div>
-        
         </div>
 
         <div
