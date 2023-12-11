@@ -14,10 +14,10 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
 import { DOCS } from './template';
-import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 const font = Quill.import('formats/font');
 font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
@@ -72,8 +72,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     ) as string;*/
     this.prepareForm();
 
-    this.getCatTemplates("26");
-
+    this.getCatTemplates('26');
   }
 
   prepareForm(): void {
@@ -183,7 +182,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   async getCatTemplates(type: string) {
-
     let params = new ListParams();
     params['filter.documentTypeId'] = `$eq:${type}`;
 
@@ -194,9 +192,8 @@ export class CreateReportComponent extends BasePage implements OnInit {
         if (resp.data.length > 0) {
           this.document.content = resp.data[0].content;
         }
-
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
