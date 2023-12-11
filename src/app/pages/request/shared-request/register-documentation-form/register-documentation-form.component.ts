@@ -31,8 +31,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   fileTypes: any[] = [];
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
@@ -303,6 +302,7 @@ export class RegisterDocumentationFormComponent
   }
 
   changePriority(event: any) {
+    event.target.blur();
     let checked = event.currentTarget.checked;
     checked = checked === true ? 'Y' : 'N';
     this.registerForm.controls['urgentPriority'].setValue(checked);
