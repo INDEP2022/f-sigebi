@@ -84,6 +84,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   SELECT_CAMBIA_CLASIF_ENABLED = false;
   SELECT_CAMBIA_CLASIF_UPDATE = false;
   validateAndProcess = false;
+  PDIRECCION_A = null;
   user: any;
   actionButton = '';
 

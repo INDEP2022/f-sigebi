@@ -6,6 +6,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IMandExpenseCont } from 'src/app/core/models/ms-accounting/mand-expensecont';
 import { AccountingService } from 'src/app/core/services/ms-accounting/accounting.service';
 import { ICabms } from 'src/app/core/services/ms-payment/payment-service';
+import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_POINT_PATTERN } from 'src/app/core/shared/patterns';
 import { PartContSirsaeComponent } from '../../part-cont-sirsae/part-cont-sirsae.component';
@@ -25,7 +26,8 @@ export class MandByGoodsModalComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private accountingService: AccountingService
+    private accountingService: AccountingService,
+    private detExpenseService: ComerDetexpensesService
   ) {
     super();
     this.prepareForm();
@@ -250,6 +252,46 @@ export class MandByGoodsModalComponent extends BasePage implements OnInit {
     return newBody;
   }
 
+  private getBodyDetail(body: any) {
+    const total = (
+      +body.amount +
+      +body.vat -
+      +body.isrWithholding -
+      +body.vatWithholding
+    ).toFixed(2);
+    let newBody = {
+      ...body,
+      expenseNumber: this.spentId,
+      cvman: this.cvman.value,
+      total,
+    };
+    if (newBody.appliesto === '') {
+      newBody.appliesto = null;
+    }
+    return newBody;
+  }
+
+  private onAddDetailConfirm(body: any) {
+    // return;
+    if (body) {
+      this.detExpenseService
+        .create(this.getBodyDetail(body))
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            // this.alert('success', 'Se ha creado la composición de gasto', '');
+            this.modalRef.content.callback(this.apply);
+            this.modalRef.hide();
+            // this.getData();
+          },
+          error: err => {
+            console.log(err);
+            this.alert('error', 'No se pudo crear la composición de gasto', '');
+          },
+        });
+    }
+  }
+
   private onEditConfirm(body: any) {
     // return;
     if (body) {
@@ -258,22 +300,12 @@ export class MandByGoodsModalComponent extends BasePage implements OnInit {
         .pipe(take(1))
         .subscribe({
           next: response => {
-            this.alert(
-              'success',
-              'Se ha actualizado la composición del gasto ' +
-                body.expenseDetailNumber,
-              ''
-            );
+            this.alert('success', 'Se ha actualizado correctamente', '');
             this.modalRef.content.callback(this.apply);
             this.modalRef.hide();
           },
           error: err => {
-            this.alert(
-              'error',
-              'No se pudo actualizar la composición del gasto ' +
-                body.expenseDetailNumber,
-              ''
-            );
+            this.alert('error', 'No se pudo actualizar', '');
           },
         });
     }
@@ -292,6 +324,16 @@ export class MandByGoodsModalComponent extends BasePage implements OnInit {
             this.alert('success', 'Se ha creado la partida por mandato', '');
             this.modalRef.content.callback(this.apply);
             this.modalRef.hide();
+            // this.onAddDetailConfirm({
+            //   expenseDetailNumber: null,
+            //   amount: '0',
+            //   budgetItem: '0',
+            //   vat: '0',
+            //   isrWithholding: '0',
+            //   vatWithholding: '0',
+            //   transferorNumber: null,
+            //   goodNumber: null,
+            // });
             // this.getData();
           },
           error: err => {
