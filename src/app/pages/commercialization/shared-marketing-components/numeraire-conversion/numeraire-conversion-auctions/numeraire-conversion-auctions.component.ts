@@ -73,7 +73,7 @@ export class NumeraireConversionAuctionsComponent
 
   get pathEvent() {
     return (
-      'event/api/v1/comer-event?filter.eventTpId=$in:0,1,2,3,4,5&sortBy=id:ASC' +
+      'event/api/v1/comer-event?filter.eventTpId=$eq:0,1,2,3,4,5&sortBy=id:ASC' +
       (this.address ? '&filter.address=$eq:' + this.address : '')
     );
   }

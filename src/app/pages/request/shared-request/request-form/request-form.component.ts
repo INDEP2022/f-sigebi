@@ -527,7 +527,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Atención',
-              `Seleccione un usuario para poder turnar la solicitud`
+              `Seleccione un usuario para turnar la solicitud`
             );
             return;
           } else {

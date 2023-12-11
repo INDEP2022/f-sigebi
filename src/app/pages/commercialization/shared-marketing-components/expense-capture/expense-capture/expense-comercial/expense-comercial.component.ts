@@ -4,14 +4,11 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   catchError,
   firstValueFrom,
-  forkJoin,
   map,
-  mergeMap,
   Observable,
   of,
   take,
   takeUntil,
-  tap,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
@@ -46,7 +43,6 @@ import { SpentIService } from '../../services/spentI.service';
 import { SpentMService } from '../../services/spentM.service';
 import { NotifyComponent } from '../notify/notify.component';
 import { COLUMNS } from './columns';
-import { NotLoadedsModalComponent } from './not-loadeds-modal/not-loadeds-modal.component';
 import { RetentionsModalComponent } from './retentions-modal/retentions-modal.component';
 
 @Component({
@@ -55,16 +51,13 @@ import { RetentionsModalComponent } from './retentions-modal/retentions-modal.co
   styleUrls: ['./expense-comercial.component.scss'],
 })
 export class ExpenseComercialComponent extends BasePage implements OnInit {
-  // params
-  private _address: string;
-
   @Input() get address() {
-    return this._address;
+    return this.dataService.address;
   }
   set address(value) {
     const list = [];
     if (value === 'M') {
-      this._address = value;
+      // this._address = value;
       this.resetVisiblesM();
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'M', title: 'MUEBLES' });
@@ -85,9 +78,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       },
     };
   }
-  errorsClasification: any[] = [];
+
   provider: string;
-  PDIRECCION_A = null;
   showCvePoliza = false;
   showEvent = true;
   showLote = true;
@@ -140,6 +132,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.dataService.user = this.authService.decodeToken();
     const filterParams = new FilterParams();
     filterParams.addFilter('user', this.user.preferred_username);
+    // filterParams.addFilter('user', 'HTORTOLERO');
     this.segAccessAreaService
       .getAll(filterParams.getParams())
       .pipe(take(1))
@@ -195,10 +188,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private getBody() {
-    console.log(this.form.value.dateOfResolution);
+    console.log(this.form.value);
     let newBody = { ...this.form.value };
     delete newBody.publicLot;
-    delete newBody.policie;
+    // delete newBody.policie;
     delete newBody.descontract;
     delete newBody.padj;
     delete newBody.psadj;
@@ -291,7 +284,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   clean(updateOthers = true) {
     this.dataService.clean();
     this.provider = null;
-    this.errorsClasification = [];
+
     if (updateOthers) {
       this.dataService.updateOI.next(true);
       this.dataService.resetExpenseComposition.next(true);
@@ -457,10 +450,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private async initScreenI() {
-    // debugger;
+    debugger;
     const list = [];
     let filterParams = new FilterParams();
-    let user = 'PLAMAR';
+    let user = this.user.preferred_username; //'AJIMENEZC';
     filterParams.addFilter(
       'typeNumber',
       'GASTOINMU,GASTOVIG,GASTOSEG,GASTOADMI',
@@ -497,7 +490,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showTipAdj = true;
       this.showAdj = true;
       this.showCvePoliza = false;
-      this._address = 'J';
+      // this._address = 'J';
       this.dataService.address = 'J';
 
       let filterParams2 = new FilterParams();
@@ -527,7 +520,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showContract = true;
       this.showTipAdj = true;
       this.showAdj = true;
-      this.showCvePoliza = false;
+      this.showCvePoliza = true;
       let filterParams2 = new FilterParams();
       filterParams2.addFilter('user', user);
       let rtDicta2 = await firstValueFrom(
@@ -542,7 +535,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (rtDicta2.length > 0) {
         let v_no_tipo = rtDicta2[0].typeNumber;
         if (v_no_tipo === 'GASTOSEG') {
-          this._address = 'S';
+          // this._address = 'S';
           this.dataService.address = 'S';
         }
       } else {
@@ -556,13 +549,22 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showAdj = false;
       this.showCvePoliza = false;
     }
+    // v_tip_gast = 0;
     if (v_tip_gast === 0) {
-      this._address = 'I';
+      // this._address = 'I';
       this.dataService.address = 'I';
       this.PDIRECCION_A = 'C';
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'I', title: 'INMUEBLES' });
     }
+  }
+
+  get PDIRECCION_A() {
+    return this.dataService.PDIRECCION_A;
+  }
+
+  set PDIRECCION_A(value) {
+    this.dataService.PDIRECCION_A = value;
   }
 
   // async ngOnChanges(changes: SimpleChanges) {
@@ -794,27 +796,28 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private fillAddressNotM(v_tipo: string) {
     if (v_tipo === 'GASTOINMU') {
-      this._address = 'J';
+      // this._address = 'J';
       this.dataService.address = 'J';
     }
     if (v_tipo === 'GASTOVIG') {
-      this._address = 'V';
+      // this._address = 'V';
       this.dataService.address = 'V';
     }
     if (v_tipo === 'GASTOSEG') {
-      this._address = 'S';
+      // this._address = 'S';
       this.dataService.address = 'S';
     }
     if (v_tipo === 'GASTOADMI') {
-      this._address = 'A';
+      // this._address = 'A';
       this.dataService.address = 'A';
     }
   }
 
   async selectConcept(concept: IConcept) {
+    if (!concept) return;
     if (this.address && this.address !== 'M') {
       let filterParams = new FilterParams();
-      let user = 'PLAMAR';
+      let user = this.user.preferred_username; //'PLAMAR';
       filterParams.addFilter(
         'typeNumber',
         'GASTOINMU,GASTOVIG,GASTOSEG,GASTOADMI',
@@ -845,7 +848,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (usuarioSolicitaData) {
         this.form.get('requestedUser').setValue(usuarioSolicitaData);
       }
-      this._address = 'I';
+      // this._address = 'I';
       this.dataService.address = 'I';
     }
     await this.readParams(concept.id);
@@ -1195,75 +1198,75 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private validatePaymentCamps(event: IComerExpense) {
     if (!event.clkpv) {
-      this.alert('warning', 'Validación de pagos', 'Requiere proveedor');
+      // this.alert('warning', 'Validación de pagos', 'Requiere proveedor');
       return false;
     }
     if (!event.comment) {
-      this.alert('warning', 'Validación de pagos', 'Requiere servicio');
+      // this.alert('warning', 'Validación de pagos', 'Requiere servicio');
       return false;
     }
     if (!event.conceptNumber) {
-      this.alert(
-        'warning',
-        'Validación de pagos',
-        'No cuenta con un concepto de pago'
-      );
+      // this.alert(
+      //   'warning',
+      //   'Validación de pagos',
+      //   'No cuenta con un concepto de pago'
+      // );
       return false;
     }
     if (!event.numReceipts) {
-      this.alert('warning', 'No cuenta con un número de comprobantes', '');
+      // this.alert('warning', 'No cuenta con un número de comprobantes', '');
       return false;
     }
     if (!event.comproafmandsae) {
-      this.alert(
-        'warning',
-        'Validación de pagos',
-        'Requiere comprobantes a nombre'
-      );
+      // this.alert(
+      //   'warning',
+      //   'Validación de pagos',
+      //   'Requiere comprobantes a nombre'
+      // );
       return false;
     }
     if (!event.attachedDocumentation) {
-      this.alert(
-        'warning',
-        'Validación de pagos',
-        'Requiere documentación anexa'
-      );
+      // this.alert(
+      //   'warning',
+      //   'Validación de pagos',
+      //   'Requiere documentación anexa'
+      // );
       return false;
     }
     if (!event.capturedUser) {
-      this.alert(
-        'warning',
-        'Validación de pagos',
-        'Requiere usuario de captura'
-      );
+      // this.alert(
+      //   'warning',
+      //   'Validación de pagos',
+      //   'Requiere usuario de captura'
+      // );
       return false;
     }
     if (!event.authorizedUser) {
-      this.alert(
-        'warning',
-        'Validación de pagos',
-        'Requiere usuario que autoriza'
-      );
+      // this.alert(
+      //   'warning',
+      //   'Validación de pagos',
+      //   'Requiere usuario que autoriza'
+      // );
       return false;
     }
     if (!event.requestedUser) {
-      this.alert(
-        'warning',
-        'Validación de pagos',
-        'Requiere usuario que solicita'
-      );
+      // this.alert(
+      //   'warning',
+      //   'Validación de pagos',
+      //   'Requiere usuario que solicita'
+      // );
       return false;
     }
     if (!event.formPayment) {
-      this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
+      // this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
       return false;
     }
     if (!event.eventNumber) {
-      this.alert('warning', 'Validación de pagos', 'Requiere número de evento');
+      // this.alert('warning', 'Validación de pagos', 'Requiere número de evento');
       return false;
     }
     if (!event.lotNumber) {
-      this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
+      // this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
       return false;
     }
     return true;
@@ -1294,9 +1297,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.clkpv.setValue(event.clkpv);
 
     setTimeout(async () => {
-      if (!event.descurcoord) {
-        this.alert('warning', 'No se cuenta con coordinación regional', '');
-      }
+      // if (!event.descurcoord) {
+      //   this.alert('warning', 'No se cuenta con coordinación regional', '');
+      // }
       this.descurcoord.setValue(event.descurcoord);
       this.dataService.updateOI.next(true);
       this.dataService.updateExpenseComposition.next(true);
@@ -1431,14 +1434,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.dataCompositionExpenses;
   }
 
-  get dataCompositionExpensesToUpdateClasif() {
-    return this.dataCompositionExpenses
-      ? this.dataCompositionExpenses.filter(
-          row => row.reportDelit && row.reportDelit === true
-        )
-      : [];
-  }
-
   get dataCompositionExpensesStatusChange() {
     return this.dataCompositionExpenses
       ? this.dataCompositionExpenses.filter(
@@ -1465,10 +1460,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.dataService.ENVIA_MOTIVOS();
       }
     }
-  }
-
-  validationForkJoin(obs: Observable<any>[]) {
-    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 
   get validImprimeAny() {
@@ -1644,91 +1635,5 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.loader.load = false;
       this.alert('error', 'El reporte no se encuentra disponible', '');
     }
-  }
-
-  async updateClasif() {
-    const VALIDA_DET = this.dataCompositionExpensesToUpdateClasif;
-    this.errorsClasification = [];
-    if (VALIDA_DET.length === 0) {
-      this.alert(
-        'error',
-        'Actualizar Clasificación a Reporte de Robo',
-        'No se han seleccionado los bienes para realizar el cambio de clasificador a Vehiculo con Reporte de Robo'
-      );
-    } else {
-      this.alertQuestion(
-        'question',
-        'Actualizar Clasificación',
-        '¿Desea cambiar el clasificador de los bienes a Vehiculo con Reporte de Robo?'
-      ).then(x => {
-        if (x.isConfirmed) {
-          let errors: any[] = [];
-          forkJoin(
-            VALIDA_DET.map(async row => {
-              return this.screenService
-                .PUP_VAL_BIEN_ROBO({
-                  goodNumber: row.goodNumber,
-                  type: 'U',
-                  screenKey: 'FCOMER084',
-                  conceptNumber: this.conceptNumber.value,
-                })
-                .pipe(
-                  take(1),
-                  catchError(x => of(null)),
-                  tap(x => {
-                    console.log(x);
-                    if (x === null) {
-                      // console.log('ERROR');
-                      errors.push({ goodNumber: row.goodNumber });
-                    }
-                  })
-                );
-            })
-          )
-            .pipe(
-              takeUntil(this.$unSubscribe),
-              mergeMap(x => this.validationForkJoin(x))
-            )
-            .subscribe(x => {
-              console.log(x);
-
-              if (errors.length === 0) {
-                this.alert(
-                  'success',
-                  'Se realizco el cambio de Clasificación a Vehiculo con Reporte de Robo',
-                  ''
-                );
-              }
-              if (errors.length === VALIDA_DET.length) {
-                this.alert(
-                  'error',
-                  'Registros no encontrados por clave pantalla y número de concepto',
-                  ''
-                );
-              } else if (errors.length > 0) {
-                this.alert(
-                  'warning',
-                  'Cambio de Clasificación a Vehiculo con Reporte de Robo',
-                  'No todos los bienes pudieron cambiar su clasificador por no encontrarse en búsqueda por clave pantalla y número de concepto'
-                );
-              }
-              this.errorsClasification = errors;
-            });
-        }
-      });
-    }
-  }
-
-  showNotLoads() {
-    let config: ModalOptions = {
-      initialState: {
-        data: this.errorsClasification,
-        dataTemp: this.errorsClasification,
-        totalItems: this.errorsClasification.length,
-      },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(NotLoadedsModalComponent, config);
   }
 }
