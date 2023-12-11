@@ -11,6 +11,7 @@ import {
   IGoodsExpedient,
   IGoodTracker,
   IPackageInfo,
+  IPupCompFolioUniv,
 } from '../../models/catalogs/package.model';
 import {
   IIdentifierCount,
@@ -30,11 +31,8 @@ export class MassiveGoodService extends HttpService {
     this.microservice = this.route.MassiveGood;
   }
 
-  pupBienesPlano(request: any, fileNumber: string) {
-    return this.post<any>(
-      `application/pupBienesPlano?fileNumber=${fileNumber}`,
-      request
-    );
+  pupBienesPlano(request: any) {
+    return this.post<any>(`application/pupBienesPlano`, request);
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IMassiveGood>> {
@@ -262,5 +260,17 @@ export class MassiveGoodService extends HttpService {
 
   getApplicationRegisterCountCsv(params: _Params) {
     return this.get(MassiveGoodEndpoints.ApplicationRegisterCountCsv, params);
+  }
+
+  tmpDeleteAuthorization(user: string) {
+    return this.delete(`application/pup-depura-detail/${user}`);
+  }
+
+  pupCompFolioUniv(body: IPupCompFolioUniv) {
+    return this.post('application/pup-comp-folio-univ', body);
+  }
+
+  pupFlatGoodsDestr(body: FormData) {
+    return this.post('application/pup-plain-goods-destr', body);
   }
 }
