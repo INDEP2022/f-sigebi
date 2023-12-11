@@ -14,6 +14,8 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
 import { DOCS } from './template';
 
@@ -58,16 +60,19 @@ export class CreateReportComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private reportgoodService: ReportgoodService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.document.content = this.sanitizer.bypassSecurityTrustHtml(
+    /*this.document.content = this.sanitizer.bypassSecurityTrustHtml(
       this.documents[0].content
-    ) as string;
+    ) as string;*/
     this.prepareForm();
+
+    this.getCatTemplates('26');
   }
 
   prepareForm(): void {
@@ -173,6 +178,22 @@ export class CreateReportComponent extends BasePage implements OnInit {
         this.onLoadToast('success', 'Documento adjuntado correctamente', '');
         this.close();
       }
+    });
+  }
+
+  async getCatTemplates(type: string) {
+    let params = new ListParams();
+    params['filter.documentTypeId'] = `$eq:${type}`;
+
+    this.reportgoodService.getReportDynamic(params).subscribe({
+      next: resp => {
+        console.log(resp);
+
+        if (resp.data.length > 0) {
+          this.document.content = resp.data[0].content;
+        }
+      },
+      error: err => {},
     });
   }
 

@@ -844,3 +844,35 @@ footer {
 .VA_VALDA3 {
   background-color: #80c000; // #324b00;
 }
+
+//AJUSTES REPORTADOS COMO BUGS
+.ng-dropdown-panel {
+  z-index: 100 !important;
+  margin-top: 2px !important;
+}
+
+textarea + .form-bar {
+  margin-top: -3px !important;
+}
+
+@-moz-document url-prefix() {
+  textarea + .form-bar {
+    margin-top: 0px !important;
+  }
+}
+
+.table-bordered {
+  border: 1px solid #ddd !important;
+}
+
+.ng-select .ng-select-container .ng-value-container {
+  padding-left: 0px !important;
+}
+
+.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+  padding-left: 0px !important;
+}
+
+.gicon {
+  width: 10px !important;
+}
