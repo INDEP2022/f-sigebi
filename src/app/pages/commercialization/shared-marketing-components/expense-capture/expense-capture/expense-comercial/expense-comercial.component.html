@@ -153,7 +153,7 @@
             </ng-template>
           </div>
           <div class="row mt-4 ml-0">
-            <div class="col-md-6" *ngIf="showEvent">
+            <div class="col-md-6 pl-0" *ngIf="showEvent">
               <ng-custom-select-loading
                 [form]="form"
                 [updateValues]="true"
@@ -347,26 +347,6 @@
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
                 (click)="showRetentions()">
                 Catalogo de Retención
-              </button>
-              <button
-                *ngIf="address === 'M'"
-                type="button"
-                class="btn btn-sm btn-primary mr-2 mt-2 active"
-                [disabled]="
-                  !conceptNumberValue ||
-                  dataCompositionExpensesToUpdateClasif.length === 0
-                "
-                (click)="updateClasif()">
-                Actualizar Clasificación
-              </button>
-              <button
-                *ngIf="address === 'M'"
-                class="btn btn-sm btn-primary mr-2 mt-2 active"
-                type="button"
-                [disabled]="errorsClasification.length === 0"
-                (click)="showNotLoads()">
-                No Cambiados a Vehículo Robo
-                <i class="fa fa-info-circle"></i>
               </button>
             </td>
           </tr>
