@@ -66,7 +66,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       ...TABLE_SETTINGS,
       //hideSubHeader: false,
       actions: false,
-      selectMode: 'multi',
+      //selectMode: 'multi',
       columns: REQUEST_IN_TURN_COLUMNS,
     };
 

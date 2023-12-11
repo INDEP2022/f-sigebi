@@ -293,8 +293,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       }
     } else {
       this.message(
-        'error',
-        'Seleccione un usuario',
+        'warning',
+        'Atención',
         'Es requerido seleccionar un usuario'
       );
     }
