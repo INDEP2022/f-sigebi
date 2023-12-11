@@ -77,6 +77,16 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
             ssubtype: 'TURNAR',
             close: true,
           };
+        case 13: //REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
+          return {
+            title: `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-compensation-documentation',
+            process: 'DRegistroSolicitudes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
       }
       break;
 
@@ -332,6 +342,9 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       };
 
     case 'review-result-protection':
+      break;
+
+    case 'register-compensation-documentation':
       break;
   }
 

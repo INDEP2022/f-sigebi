@@ -816,6 +816,15 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.btnAprove = true;
         break;
 
+      case 'register-compensation-documentation':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
       default:
         break;
     }
