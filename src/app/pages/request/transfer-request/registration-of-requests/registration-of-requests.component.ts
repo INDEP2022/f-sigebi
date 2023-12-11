@@ -606,7 +606,7 @@ export class RegistrationOfRequestsComponent
       'Finalizar Solicitud',
       '¿Está seguro de finalizar la solicitud actual?',
       'Confirmación',
-      undefined,
+      'question',
       typeCommit
     );
   }
@@ -617,7 +617,7 @@ export class RegistrationOfRequestsComponent
       'Returnar la Solicitud',
       '¿Está seguro de returnar la solicitud actual?',
       'Confirmación',
-      undefined,
+      'question',
       typeCommit
     );
   }
@@ -690,6 +690,24 @@ export class RegistrationOfRequestsComponent
         'Registro_Solicitud',
         'FINALIZAR'
       );
+      if (taskRes) {
+        this.msgGuardado(
+          'success',
+          'Solicitud Finalizada',
+          `Se finalizó la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
+      // }
+    }
+  }
+
+  async finishTask1() {
+    const body: any = {};
+    body['id'] = this.requestData.id;
+    body['requestStatus'] = 'FINALIZADA';
+    const updateReq = await this.updateRequest(body);
+    if (updateReq) {
+      const taskRes = await this.finishTask2(this.task.id);
       if (taskRes) {
         this.msgGuardado(
           'success',
@@ -1363,6 +1381,26 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  finishTask2(taskId: string | number) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
+      body['id'] = taskId;
+      body['State'] = 'FINALIZADA';
+
+      this.taskService.update(taskId, body).subscribe({
+        next: resp => {
+          resolve(true);
+          //this.deleteMsjRefuse();
+        },
+        error: error => {
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
+
   deleteMsjRefuse() {
     const requestObj: object = {
       id: this.requestData.id,
@@ -1428,7 +1466,7 @@ export class RegistrationOfRequestsComponent
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
           console.log('finish');
-          this.finishMethod();
+          this.finishTask1();
         }
         if (typeCommit === 'returnar') {
           console.log('returnar');
