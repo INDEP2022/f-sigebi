@@ -61,7 +61,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
           };
         case 33: //GESTIONAR BINES SIMILARES RESARCIMIENTO
           return {
-            title: `BIENES SIMILARES Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            title: `BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-request-similar-goods',
             process: 'BSRegistroSolicitudes',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -83,6 +83,27 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
           return {
             title: `SOLICITUD DE INFORMACIÓN DEL DESTINO DEL BIEN Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
             url: 'pages/request/request-comp-doc/tasks/register-request-information-goods',
+            process: 'IBRegistroSolicitudes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+        case 25: //RESARCIMIENTO NUMERARIO: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
+          return {
+            title: `RESARCIMIENTO NUMERARIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-request-economic-compensation',
+            process: 'IBRegistroSolicitudes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
+
+        case 2: //AMPARO: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
+          return {
+            title: `AMPARO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-request-protection',
             process: 'IBRegistroSolicitudes',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
@@ -150,18 +171,8 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     case 'validate-eye-visit-similar-goods':
       return {
         title: `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${requestId} ${contributor}`,
-        url: 'pages/request/request-comp-doc/tasks/validate-opinion-similar-goods',
-        process: 'BSValidarResultadoVisitaOcular',
-        type: 'DOCUMENTACION_COMPLEMENTARIA',
-        subtype: 'Registro_Solicitud',
-        ssubtype: 'TURNAR',
-        close: true,
-      };
-    case 'validate-opinion-similar-goods':
-      return {
-        title: `BIENES SIMILARES: Elaborar Oficio de Respuesta, No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/response-letter-similar-goods',
-        process: 'BSElaborarOficioRespuesta',
+        process: 'BSValidarResultadoVisitaOcular',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
@@ -236,6 +247,124 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         close: true,
       };
     case 'review-office-information-goods':
+      break;
+
+    /** CASOS RESARCIMEINTO NUMERARIO */
+    case 'register-request-economic-compensation':
+      return {
+        title: `Solicitar Recursos Económicos, No. Solicitud: ${requestId}`,
+        url: 'pages/request/request-comp-doc/tasks/request-economic-resources',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'request-economic-resources':
+      return {
+        title: `Revisión Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud: ${requestId}`,
+        url: 'pages/request/request-comp-doc/tasks/review-economic-guidelines',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'review-economic-guidelines':
+      return {
+        title: `Generar Resultado de Análisis Resarcimiento (NUMERARIO), No. Solicitud: ${requestId}`,
+        url: 'pages/request/request-comp-doc/tasks/generate-results-economic-compensation',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'generate-results-economic-compensation':
+      return {
+        title: `Validar Dictamen Resarcimiento (Numerario), No. Solicitud: ${requestId}`,
+        url: 'pages/request/request-comp-doc/tasks/validate-dictum-economic',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'validate-dictum-economic':
+      return {
+        title: `Notificación al Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId}`,
+        url: 'pages/request/request-comp-doc/tasks/delivery-notify-request',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'delivery-notify-request':
+      return {
+        title: `Registrar Cita Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId}`,
+        url: 'pages/request/request-comp-doc/tasks/register-taxpayer-date',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'register-taxpayer-date':
+      return {
+        title: `Registrar Orden de Pago, No. Solicitud: ${requestId}`,
+        url: 'pages/request/request-comp-doc/tasks/register-pay-order',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'register-pay-order':
+      return {
+        title: `Generar Acta de Resarcimiento, No. Solicitud: ${requestId} ${contributor}`,
+        url: 'pages/request/request-comp-doc/tasks/generate-compensation-act',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'generate-compensation-act':
+      break;
+
+    /** CASOS AMPARO */
+    case 'register-request-protection':
+      return {
+        title: `Normatividad Amparo, No. Solicitud: ${requestId}`,
+        url: 'pages/request/request-comp-doc/tasks/protection-regulation',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'protection-regulation':
+      return {
+        title: `Revisión de Resultado para Amparo, No. Solicitud: ${requestId}`,
+        url: 'pages/request/request-comp-doc/tasks/review-result-protection',
+        process: '',
+        type: 'DOCUMENTACION_COMPLEMENTARIA',
+        subtype: 'Registro_Solicitud',
+        ssubtype: 'TURNAR',
+        close: true,
+      };
+
+    case 'review-result-protection':
       break;
   }
 

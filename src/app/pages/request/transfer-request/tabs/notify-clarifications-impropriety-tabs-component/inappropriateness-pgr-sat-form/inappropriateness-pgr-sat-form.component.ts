@@ -183,8 +183,8 @@ export class InappropriatenessPgrSatFormComponent
             this.close();
           },
           error: error => {
-            this.loading = false;
-            this.onLoadToast('error', 'No se pudo guardar', '');
+            this.loading = false; //Revisar Error
+            //this.onLoadToast('error', 'No se pudo guardar', '');
           },
         });
     }
@@ -419,6 +419,7 @@ export class InappropriatenessPgrSatFormComponent
           },
         },
         class: 'modal-lg modal-dialog-centered',
+        keyboard: false,
         ignoreBackdropClick: true,
       };
       this.modalService.show(PrintReportModalComponent, config);

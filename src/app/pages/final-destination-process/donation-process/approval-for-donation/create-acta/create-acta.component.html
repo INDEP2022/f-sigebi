@@ -46,6 +46,7 @@
 
           <div class="col-md-3 mt-2">
             <div>
+              <!--
               <form-field
                 [control]="actaRecepttionForm.get('delegation')"
                 label="Área">
@@ -60,6 +61,21 @@
                     {{ item.delegacion }}</ng-option
                   >
                 </ng-select>
+              </form-field>
+            -->
+              <form-field [control]="actaRecepttionForm.get('delegation')">
+                <ngx-select
+                  [data]="areas$"
+                  (change)="selectedArea($event)"
+                  (fetchByParamsItems)="readArea($event)"
+                  [fetchByList]="false"
+                  [searchOnInit]="true"
+                  [form]="actaRecepttionForm"
+                  value="delegation"
+                  bindLabel="delegation"
+                  label="&Aacute;rea"
+                  control="delegation">
+                </ngx-select>
               </form-field>
             </div>
           </div>
@@ -152,7 +168,7 @@
               </form-field>
             </div>
           </div>
-          <div class="col-md-3 mt-2">
+          <div class="col-md-6 mt-2">
             <div>
               <form-field
                 [control]="actaRecepttionForm.get('claveacta')"
@@ -160,7 +176,8 @@
                 <input
                   maxlength="100"
                   type="text"
-                  class="form-control pt-1"
+                  readonly
+                  class="form-control"
                   formControlName="claveacta" />
               </form-field>
             </div>

@@ -42,6 +42,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   addByLotExpenseComposition = new Subject<ILoadLotResponse>();
   updateExpenseComposition = new Subject();
   resetExpenseComposition = new Subject();
+  addErrors = new Subject<{ description: string }[]>();
   updateExpenseCompositionAndValidateProcess = new Subject();
   finishProcessSolicitud = new Subject();
   saveSubject = new Subject();
@@ -376,6 +377,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       psadj: [null],
       pssadj: [null],
       adj: [null],
+      cadena: [null],
     });
   }
 
@@ -979,7 +981,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           proofNumber: this.form.get('numReceipts').value,
           attachedDocumentation: this.form.get('attachedDocumentation').value,
           recVoucherNumber: this.form.get('invoiceRecNumber').value,
-          recVoucherDate: this.form.get('invoiceRecDate').value,
+          recVoucherDate: this.invoiceRecDate.value,
           contract: this.data.contractNumber,
           eventId: this.eventNumber.value,
           requestUser: this.form.get('requestedUser').value,
@@ -1054,17 +1056,100 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
+  get invoiceRecDate() {
+    return this.form.get('invoiceRecDate');
+  }
+
   private async normalSolicitud() {
     if (this.address === 'M') {
+      if (!this.payDay.value || this.payDay.value === '') {
+        this.alert('warning', 'Necesita fecha de pago', '');
+        this.finishProcessSolicitud.next(false);
+        return;
+      }
+      if (!this.invoiceRecDate.value || this.invoiceRecDate.value === '') {
+        this.alert('warning', 'Necesita fecha de documento', '');
+        this.finishProcessSolicitud.next(false);
+        return;
+      }
       this.SOLICITUD_NORMALM();
     } else {
       if (this.VALIDACIONES_SOLICITUDI()) {
-        //this.ENVIAR_SIRSAEI();
+        this.ENVIAR_SIRSAEI();
       }
       if (this.PCANVTA) {
         this.CANCELA_VTA_NORMALI();
       }
     }
+  }
+
+  ENVIAR_SIRSAEI() {
+    this.interfacesirsaeService
+      .sendSirsae4({
+        spentId: this.expenseNumber.value,
+        conceptId: this.conceptNumber.value,
+        comment: this.comment.value,
+        clkpv: this.form.get('clkpv').value,
+        paymentWay: this.formPayment.value,
+        user: this.authService.decodeToken().preferred_username,
+        spentMonth: this.form.get('monthExpense').value,
+        spentMonth2: this.form.get('monthExpense2').value,
+        spentMonth3: this.form.get('monthExpense3').value,
+        spentMonth4: this.form.get('monthExpense4').value,
+        spentMonth5: this.form.get('monthExpense5').value,
+        spentMonth6: this.form.get('monthExpense6').value,
+        spentMonth7: this.form.get('monthExpense7').value,
+        spentMonth8: this.form.get('monthExpense8').value,
+        spentMonth9: this.form.get('monthExpense9').value,
+        spentMonth10: this.form.get('monthExpense10').value,
+        spentMonth11: this.form.get('monthExpense11').value,
+        spentMonth12: this.form.get('monthExpense12').value,
+        paymentDate: this.payDay.value,
+        proofNumber: this.form.get('numReceipts').value,
+        attachedDocumentation: this.form.get('attachedDocumentation').value,
+        recVoucherNumber: this.form.get('invoiceRecNumber').value,
+        recVoucherDate: this.form.get('invoiceRecDate').value,
+        contract: this.data.contractNumber,
+        eventId: this.eventNumber.value,
+        requestUser: this.form.get('requestedUser').value,
+        authorizeUser: this.form.get('authorizedUser').value,
+        capturedUser: this.form.get('capturedUser').value,
+        comproafmandsae: this.form.get('comproafmandsae').value,
+        direction: this.address,
+        paymentRequestId: this.form.get('paymentRequestNumber').value,
+        contractNumber: this.form.get('contract').value,
+        typeSpent: this.form.get('typepe').value,
+        tipTram: this.form.get('tiptram').value,
+        totDocument: this.total,
+        adj: this.form.get('adj').value,
+        dateOfResolution: this.form.get('dateOfResolution').value,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          // debugger;
+          // this.alert('success', 'Procedimiento ejecutado correctamente', '');
+          if (!response.COMER_GASTOS_ID_SOLICITUDPAGO) {
+            this.alert('warning', 'No se pudo realizar el envio a sirsae', '');
+
+            // this.errorSendSolicitudeMessage(true);
+            this.finishProcessSolicitud.next(false);
+          } else {
+            this.form
+              .get('paymentRequestNumber')
+              .setValue(response.COMER_GASTOS_ID_SOLICITUDPAGO);
+            this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
+            if (response.BLK_TEMP_CADENA)
+              this.form.get('cadena').setValue(response.BLK_TEMP_CADENA);
+            this.finishProcessSolicitud.next(true);
+          }
+        },
+        error: err => {
+          this.alert('error', 'Envio a sirsae', err.error.message);
+          this.finishProcessSolicitud.next(false);
+          // this.errorSendSolicitudeMessage(true);
+        },
+      });
   }
 
   private sucessSendSolitudeMessage(isComercialLoading = false) {

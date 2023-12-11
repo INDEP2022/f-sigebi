@@ -71,6 +71,13 @@ export class RequestCompDocTasksComponent
   resultVisits: boolean = false;
   RequestEconomicResourcesReport: boolean = false;
   listGoodSelectedTitle: string = 'Listado de Bienes';
+  reportValidateDictum: boolean = false;
+  registAppointment: boolean = false;
+  orderEntry: boolean = false;
+  compensationAct: boolean = false;
+  legalStatus: boolean = false;
+  requestReview: boolean = false;
+
   /**
    * SET STATUS ACTIONS
    **/
@@ -975,7 +982,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
         if (!this.validate.goods) {
@@ -1044,7 +1051,21 @@ export class RequestCompDocTasksComponent
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
         this.requestId
     ).then(question => {
-      if (question) {
+      if (question.isConfirmed) {
+        //Cerrar tarea//
+        this.generateTask();
+      }
+    });
+  }
+
+  btnRequestReview() {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea solicitar la revisión de la solicitud con folio: ' +
+        this.requestId
+    ).then(question => {
+      if (question.isConfirmed) {
         //Cerrar tarea//
         this.generateTask();
       }
@@ -1057,7 +1078,7 @@ export class RequestCompDocTasksComponent
       'Confirmar Aprobación',
       `¿Desea APROBAR la solicitud con folio: ${this.requestId}?`
     ).then(async question => {
-      if (question) {
+      if (question.isConfirmed) {
         //Cerrar tarea//
         let response = await this.updateTask(this.taskInfo.id);
 

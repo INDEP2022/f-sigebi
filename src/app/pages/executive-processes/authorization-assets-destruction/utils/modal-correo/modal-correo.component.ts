@@ -1,18 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { IPupCompFolioUniv } from 'src/app/core/models/catalogs/package.model';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { COLUMLNS_CC, COLUMLNS_DIST } from '../columns';
 
 interface trec_DIST {
@@ -62,6 +64,14 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
   mensaje: string;
   title: string = 'Oficios de Autorización de Destrucción';
 
+  proceeding: string = null;
+  expedient: string = null;
+  universalFolio: string = null;
+  proceedingKey: string = null;
+  elaborationDate: any = null;
+  dataEmail: any[] = [];
+  dataEmailCc: any[] = [];
+
   get user() {
     return this.authService.decodeToken();
   }
@@ -73,6 +83,9 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private userService: UsersService,
     private parametergoodService: ParameterCatService,
+    private serviceMassiveGoods: MassiveGoodService,
+    private serviceUser: UsersService,
+    private tranfergoodService: TranfergoodService,
     private goodprocesServices: GoodProcessService
   ) {
     super();
@@ -80,18 +93,41 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     this.settingsDist = {
       ...this.settings,
       hideSubHeader: false,
-      columns: { ...COLUMLNS_DIST },
+      actions: false,
+      columns: {
+        ...COLUMLNS_DIST,
+        selection: {
+          title: '',
+          sort: false,
+          filter: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectedEmail(instance),
+        },
+      },
     };
 
     this.settingsCc = {
       ...this.settings,
       hideSubHeader: false,
-      columns: { ...COLUMLNS_CC },
+      actions: false,
+      columns: {
+        ...COLUMLNS_CC,
+        selection: {
+          title: '',
+          sort: false,
+          filter: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectedEmailCc(instance),
+        },
+      },
     };
   }
 
   ngOnInit(): void {
-    console.error(this.detalleActa);
     this.form = this.fb.group({
       mensaje: [null],
     });
@@ -106,16 +142,49 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     this.pupInicializaCorreo('C');
   }
 
+  onSelectedEmail(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        if (data.toggle) {
+          this.dataEmail.push(data.row);
+          console.log(this.dataEmail);
+        } else {
+          this.dataEmail = this.dataEmail.filter(
+            x => x.email !== data.row.email
+          );
+          console.log(this.dataEmail);
+        }
+      },
+    });
+  }
+
+  onSelectedEmailCc(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        if (data.toggle) {
+          this.dataEmailCc.push(data.row);
+          console.log(this.dataEmailCc);
+        } else {
+          this.dataEmailCc = this.dataEmailCc.filter(
+            x => x.email !== data.row.email
+          );
+          console.log(this.dataEmailCc);
+        }
+      },
+    });
+  }
+
   consultationQuery1() {
     return new Promise((res, _rej) => {
       this.loadingDist = true;
       this.userService
-        .consultationQuery1(this.acta.id, this.paramsDist.getValue())
+        .consultationQuery1(this.proceeding, this.paramsDist.getValue())
         .subscribe({
           next: resp => {
+            console.log(resp);
             this.dataDist.load(resp.data);
             this.dataDist.refresh();
-            this.totalItemsDist = resp.count;
+            this.totalItemsDist = resp.data.length;
             this.loadingDist = false;
             res(true);
           },
@@ -130,6 +199,33 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     });
   }
 
+  sendEmail() {
+    if (this.dataEmail.length == 0) {
+      this.alert(
+        'warning',
+        'Se debe seleccionar al menos una direccion de correo para poder enviar',
+        ''
+      );
+      return;
+    }
+
+    const dataListEmail = this.dataEmail.map(x => x.email);
+    let dataListEmailCc = [];
+    this.dataEmailCc.length > 0
+      ? (dataListEmailCc = this.dataEmailCc.map(x => x.email))
+      : null;
+
+    let body = {
+      destination: this.dataEmail,
+      copy: this.dataEmailCc,
+      message: this.form.get('mensaje').value,
+      subject: 'Cambio de Estatus de Bienes a RGA',
+      header: 'Cambio de Estatus de Bienes a RGA',
+    };
+
+    this.tranfergoodService.sendEmail(body).subscribe();
+  }
+
   consultationQuery2() {
     return new Promise((res, _rej) => {
       this.loadingCc = true;
@@ -139,7 +235,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
           next: resp => {
             this.dataCc.load(resp.data);
             this.dataCc.refresh();
-            this.totalItemsCc = resp.count;
+            this.totalItemsCc = resp.data.length;
             this.loadingCc = false;
             res(true);
           },
@@ -182,13 +278,13 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       let c_MENSAJE1: string = 'Estimados:\n\n';
       if (pAccion === 'C') {
         c_MENSAJE1 += `Se les notifica que con esta fecha, ${this.detalleActa.length} registros considerados en el oficio de autorización de `;
-        c_MENSAJE1 += `destrucción número ${this.acta.keysProceedings} cambiaron de estatus a AXD (Bien Autorizado `;
+        c_MENSAJE1 += `destrucción número ${this.proceedingKey} cambiaron de estatus a AXD (Bien Autorizado `;
         c_MENSAJE1 +=
           'para Destrucción), los cuales puede identificar en el SIAB.';
       } else {
         c_MENSAJE1 += `Por medio del presente, se les hace de su conocimiento que en base al Oficio de Autorización ${
-          this.acta.keysProceedings
-        } con Fecha ${this.acta.elaborationDate.toLocaleDateString(
+          this.proceedingKey
+        } con Fecha ${this.elaborationDate.toLocaleDateString(
           'es-MX'
         )}, las cantidades de bienes relacionados a continuación, fueron cambiados a su estatus anterior de AXD.`;
       }
@@ -204,84 +300,63 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       '¿Desea Continuar Con el Proceso?'
     );
     if (responde.isConfirmed) {
-      this.acta.statusProceedings = 'CERRADA';
-      this.modalRef.content.callback(this.acta);
-      this.pupCompFolUniv(
-        this.acta.id,
-        this.acta.numFile,
-        this.acta.universalFolio,
-        this.acta.keysProceedings
-      );
-      this.pupEnvioCorreo('C');
-      this.alert(
-        'success',
-        this.title,
-        'El Oficio Ha Sido Cerrado Correctamente.'
-      );
-      this.closed();
+      this.sendEmail();
+      await this.pupCompFolUniv();
     }
   }
 
-  async pupCompFolUniv(
-    p_NO_ACTA: string | number,
-    p_NO_EXPEDIENTE: string | number,
-    p_FOLIO_UNIVERSAL_ASOC: string | number,
-    p_CVE_ACTA: string
-  ) {
-    const expedients: any[] = await this.expedients(p_NO_ACTA, p_NO_EXPEDIENTE);
-    if (expedients.length === 0) {
-      console.error('Es CEROOOOOO');
-      return;
-    }
-    const routeUser = `?filter.id=$eq:${this.user.preferred_username}`;
-    this.userService.getAllSegUsers(routeUser).subscribe(res => {
-      console.log(res);
-      const resJson = JSON.parse(JSON.stringify(res.data[0]));
-      console.log(resJson);
-      expedients.forEach(element => {
-        const modelDocument: IDocuments = {
-          id: 0,
-          natureDocument: 'ORIGINAL',
-          descriptionDocument: `AUT. ${this.acta.keysProceedings}`,
-          significantDate: format(new Date(), 'MM/yyyy'),
-          scanStatus: 'SOLICITADO',
-          fileStatus: '',
-          userRequestsScan: this.user.preferred_username,
-          scanRequestDate: new Date(),
-          userRegistersScan: '',
-          dateRegistrationScan: undefined,
-          userReceivesFile: '',
-          dateReceivesFile: undefined,
-          keyTypeDocument: 'RGA',
-          keySeparator: '60',
-          numberProceedings: undefined,
-          sheets: '',
-          numberDelegationRequested: resJson.usuario.delegationNumber,
-          numberSubdelegationRequests: resJson.usuario.subdelegationNumber,
-          numberDepartmentRequest: resJson.usuario.departamentNumber,
-          registrationNumber: 0,
-          flyerNumber: 0,
-          userSend: '',
-          areaSends: '',
-          sendDate: undefined,
-          sendFilekey: '',
-          userResponsibleFile: '',
-          mediumId: '',
-          associateUniversalFolio: p_FOLIO_UNIVERSAL_ASOC,
-          dateRegistrationScanningHc: undefined,
-          dateRequestScanningHc: undefined,
-          goodNumber: 0,
-        };
-        this.serviceDocuments.create(modelDocument).subscribe({
-          next: res => {
-            console.log(res);
-          },
-          error: err => {
-            this.alert('error', '', '');
-          },
+  async dataUser() {
+    return new Promise((resolve, _rej) => {
+      const token = this.authService.decodeToken();
+      const routeUser = `?filter.id=$eq:${token.preferred_username}`;
+      this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+        console.log(res);
+        const resJson = JSON.parse(JSON.stringify(res.data[0]));
+        resolve({
+          delegation: resJson.usuario.delegationNumber,
+          subDelegation: resJson.usuario.subdelegationNumber,
+          departament: resJson.usuario.departamentNumber,
         });
       });
     });
+  }
+
+  async pupCompFolUniv() {
+    const dataUser = await this.dataUser();
+    console.log(dataUser);
+    const dataJson = JSON.parse(JSON.stringify(dataUser));
+
+    const body: IPupCompFolioUniv = {
+      proceeding: parseInt(this.proceeding),
+      expedient: parseInt(this.expedient),
+      universalFolio: this.universalFolio,
+      proceedingKey: this.proceedingKey,
+      user: this.user.preferred_username,
+      delegation: dataJson.delegation,
+      subDelegation: dataJson.subDelegation,
+      departament: dataJson.departament,
+      elaborationDate: this.elaborationDate,
+      screen: 'FACTDIRAPROBDESTR',
+    };
+    console.log(body);
+    console.log(this.user);
+
+    this.serviceMassiveGoods.pupCompFolioUniv(body).subscribe(
+      res => {
+        console.log(res);
+        this.pupEnvioCorreo('C');
+        this.alert(
+          'success',
+          this.title,
+          'El Oficio Ha Sido Cerrado Correctamente.'
+        );
+        this.closed();
+      },
+      err => {
+        console.log(err);
+        this.alert('error', 'Se presentó un error al cerrar el acta', '');
+      }
+    );
   }
 
   expedients(pc_NO_ACTA: string | number, pc_NO_EXPEDIENTE: string | number) {
@@ -393,6 +468,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
   }
 
   closed() {
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }

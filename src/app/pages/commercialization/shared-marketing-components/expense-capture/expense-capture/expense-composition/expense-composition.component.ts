@@ -13,11 +13,13 @@ import { ParametersConceptsService } from 'src/app/core/services/ms-commer-conce
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
+import { IPreviewDatosCSV } from '../../models/massive-good';
 import { IGoodsBySeg, IGoodsByVig } from '../../models/numerary';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 import { ExpenseDictationService } from '../../services/expense-dictation.service';
 import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
+import { ExpenseMassiveGoodService } from '../../services/expense-massive-good.service';
 import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseNumeraryService } from '../../services/expense-numerary.service';
 import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
@@ -38,8 +40,10 @@ export class ExpenseCompositionComponent
   toggleInformation = true;
   @ViewChild('table') table: Ng2SmartTableComponent;
   @ViewChild('file') file: any;
+  @ViewChild('fileI') fileI: any;
   ce: boolean = false;
   rr: boolean = false;
+  v_tip_gast: string = '';
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
@@ -52,7 +56,8 @@ export class ExpenseCompositionComponent
     private accountMovementService: AccountMovementService,
     private parametercomerService: ExpenseParametercomerService,
     private dictationService: ExpenseDictationService,
-    private expenseNumeraryService: ExpenseNumeraryService
+    private expenseNumeraryService: ExpenseNumeraryService,
+    private expenseMassiveGoodService: ExpenseMassiveGoodService
   ) {
     super();
     // this.service = this.dataService;
@@ -280,6 +285,15 @@ export class ExpenseCompositionComponent
       this.resetTotals();
       this.getData();
     }
+
+    this.dictationService
+      .maxInCsv(this.expenseCaptureDataService.user.preferred_username)
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.v_tip_gast = response;
+        },
+      });
   }
 
   private resetTotals() {
@@ -449,52 +463,91 @@ export class ExpenseCompositionComponent
     });
   }
 
+  ABRE_ARCHIVO_CSVI(event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const file = files[0];
+    if (file.name.includes('csv')) {
+      this.loading = true;
+      this.expenseMassiveGoodService
+        .ABRE_ARCHIVO_CSV(file)
+        .pipe(take(1))
+        .subscribe(
+          (event: any) => {
+            this.fileI.nativeElement.value = '';
+            if (typeof event === 'object') {
+              console.log(event);
+              if (event.data.length > 0) {
+                let dataCSV: IComerDetExpense[] = this.getComerDetExpenseI(
+                  event.data
+                );
+                this.removeMassive(dataCSV);
+              }
+              //agregar a detalle gasto
+            } else {
+              this.loader.load = false;
+              this.alert('error', 'No se pudo realizar la carga de datos', '');
+            }
+          },
+          error => {
+            this.loader.load = false;
+            this.fileI.nativeElement.value = '';
+            this.alert('error', 'No se pudo realizar la carga de datos', '');
+          }
+        );
+    }
+  }
+
   async loadGoodsI() {
-    this.loading = true;
-    let v_tip_gast = await firstValueFrom(
-      this.dictationService.maxInCsv(
-        this.expenseCaptureDataService.user.preferred_username
-      )
+    const response = await this.alertQuestion(
+      'warning',
+      '¿Desea cargar bienes?',
+      ''
     );
-    if (['GASTOINMU', 'GASTOADMI'].includes(v_tip_gast)) {
-      //ABRE_ARCHIVO_CSV
-    } else if (v_tip_gast === 'GASTOVIG') {
-      //PUP_CARGA_BIENES_VIG;
-      this.expenseNumeraryService
-        .PUP_CARGA_BIENES_VIG(
-          this.expenseCaptureDataService.REGRESA_MES_GASTO(),
-          this.expense.contractNumber
-        )
-        .subscribe({
-          next: response => {
-            if (response.data && response.data.length > 0) {
-              let newData = [...this.data, this.newGoodsByVig(response.data)];
-              this.setData(newData);
-              this.loading = false;
-            } else {
-              this.loading = false;
-              // this.alert('error','')
-            }
-          },
-        });
-    } else if (v_tip_gast === 'GASTOSEG') {
-      //PUP_CARGA_BIENES_SEG;
-      this.expenseNumeraryService
-        .PUP_CARGA_BIENES_SEG(this.form.get('policie').value)
-        .subscribe({
-          next: response => {
-            if (response.data && response.data.length > 0) {
-              let newData = [...this.data, this.newGoodsBySeg(response.data)];
-              this.setData(newData);
-              this.loading = false;
-            } else {
-              // this.alert('error','')
-            }
-          },
-        });
-    } else {
-      this.alert('warning', 'Opción no válida para este concepto', '');
-      this.loading = false;
+    if (response.isConfirmed) {
+      this.loading = true;
+      // this.fileI.nativeElement.click();
+      // return;
+      if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
+        this.fileI.nativeElement.click();
+      } else if (this.v_tip_gast === 'GASTOVIG') {
+        //PUP_CARGA_BIENES_VIG;
+        this.expenseNumeraryService
+          .PUP_CARGA_BIENES_VIG(
+            this.expenseCaptureDataService.REGRESA_MES_GASTO(),
+            this.expense.contractNumber
+          )
+          .subscribe({
+            next: response => {
+              if (response.data && response.data.length > 0) {
+                let newData = [...this.data, this.newGoodsByVig(response.data)];
+                this.setData(newData);
+                this.loading = false;
+              } else {
+                this.loading = false;
+                // this.alert('error','')
+              }
+            },
+          });
+      } else if (this.v_tip_gast === 'GASTOSEG') {
+        //PUP_CARGA_BIENES_SEG;
+        this.expenseNumeraryService
+          .PUP_CARGA_BIENES_SEG(this.form.get('policie').value)
+          .subscribe({
+            next: response => {
+              if (response.data && response.data.length > 0) {
+                let newData = [...this.data, this.newGoodsBySeg(response.data)];
+                this.setData(newData);
+                this.loading = false;
+              } else {
+                // this.alert('error','')
+              }
+            },
+          });
+      } else {
+        this.alert('warning', 'Opción no válida para este concepto', '');
+        this.loading = false;
+      }
     }
   }
 
@@ -532,8 +585,8 @@ export class ExpenseCompositionComponent
   async delete(row: IComerDetExpense2) {
     const response = await this.alertQuestion(
       'warning',
-      'Eliminación Composición de Gasto',
-      '¿Desea eliminar este registro?'
+      '¿Desea eliminar este registro?',
+      ''
     );
     if (response.isConfirmed) {
       this.dataService
@@ -541,6 +594,7 @@ export class ExpenseCompositionComponent
           expenseDetailNumber: row.detPaymentsId,
           expenseNumber: row.paymentsId,
         })
+        .pipe(take(1))
         .subscribe({
           next: response => {
             this.alert(
@@ -880,28 +934,30 @@ export class ExpenseCompositionComponent
     }
   }
   async modifyEstatus() {
-    debugger;
-    this.loader.load = true;
-    this.actionButton = 'Cambio de estatus';
-    if (this.address === 'M') {
-      this.modifyEstatusM();
-    } else {
-      this.modifyEstatusI();
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea modificar los estatus seleccionados?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      this.actionButton = 'Cambio de estatus';
+      if (this.address === 'M') {
+        this.modifyEstatusM();
+      } else {
+        this.modifyEstatusI();
+      }
     }
   }
 
   loadGoods(event: Event) {
-    // this.alert('success', 'Se realizó la carga de datos', '');
-    // return;
-    this.loader.load = true;
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const file = files[0];
     // this.file.nativeElement.value = '';
     console.log(file.name);
     if (file.name.includes('csv')) {
-      // this.CARGA_BIENES_CSV(file);
-      // return;
+      this.loader.load = true;
       let filterParams = new FilterParams();
       filterParams.addFilter('parameter', 'VAL_CONCEPTO');
       if (this.conceptNumber) {
@@ -935,40 +991,25 @@ export class ExpenseCompositionComponent
         next: response => {
           this.file.nativeElement.value = '';
           if (response.data && response.data.length > 0) {
-            this.dataService
-              .massiveInsert(
-                response.data.map(row => {
-                  let total = row.amount2 + row.COL_IVA ? row.vat2 : 0;
-                  return {
-                    vat: row.vat2,
-                    amount: row.amount2,
-                    goodNumber: row.goodNumber,
-                    transferorNumber: row.transferorNumber,
-                    cvman: row.mandate2,
-                    isrWithholding: 0,
-                    vatWithholding: 0,
-                    // goodDescription: row.DESCRIPCION,
-                    budgetItem: null,
-                    changeStatus: false,
-                    reportDelit: false,
-                    total,
-                    expenseNumber: this.expenseNumber.value,
-                  };
-                })
-              )
-              .subscribe({
-                next: response => {
-                  this.removeMassive();
-                },
-                error: err => {
-                  this.loader.load = false;
-                  this.alert(
-                    'error',
-                    'No se pudo realizar la carga de datos',
-                    ''
-                  );
-                },
-              });
+            const inserts = response.data.map(row => {
+              let total = row.amount2 + row.COL_IVA ? row.vat2 : 0;
+              return {
+                vat: row.vat2,
+                amount: row.amount2,
+                goodNumber: row.goodNumber,
+                transferorNumber: row.transferorNumber,
+                cvman: row.mandate2,
+                isrWithholding: 0,
+                vatWithholding: 0,
+                // goodDescription: row.DESCRIPCION,
+                budgetItem: null,
+                changeStatus: false,
+                reportDelit: false,
+                total,
+                expenseNumber: this.expenseNumber.value,
+              };
+            });
+            this.removeMassive(inserts);
           } else {
             this.loader.load = false;
             this.alert('error', 'No se pudo realizar la carga de datos', '');
@@ -996,19 +1037,7 @@ export class ExpenseCompositionComponent
               let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
                 event.messages
               );
-              this.dataService.massiveInsert(dataCSV).subscribe({
-                next: response => {
-                  this.removeMassive();
-                },
-                error: err => {
-                  this.loader.load = false;
-                  this.alert(
-                    'error',
-                    'No se pudo realizar la carga de datos',
-                    ''
-                  );
-                },
-              });
+              this.removeMassive(dataCSV);
             }
           } else {
             this.loader.load = false;
@@ -1025,7 +1054,21 @@ export class ExpenseCompositionComponent
     // this.GRABA_TOTALES();
   }
 
-  private removeMassive() {
+  private insertMassive(inserts: IComerDetExpense[]) {
+    this.dataService.massiveInsert(inserts).subscribe({
+      next: response => {
+        this.alert('success', 'Se realizó la carga de datos', '');
+        this.loader.load = false;
+        this.getData();
+      },
+      error: err => {
+        this.loader.load = false;
+        this.alert('error', 'No se pudo realizar la carga de datos', '');
+      },
+    });
+  }
+
+  private removeMassive(inserts: IComerDetExpense[]) {
     this.dataService
       .removeMassive(
         this.data.map(x => {
@@ -1038,9 +1081,7 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
-          this.loader.load = false;
-          this.alert('success', 'Se realizó la carga de datos', '');
-          this.getData();
+          this.insertMassive(inserts);
         },
         error: err => {
           this.loader.load = false;
@@ -1069,19 +1110,7 @@ export class ExpenseCompositionComponent
               let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
                 event.messages
               );
-              this.dataService.massiveInsert(dataCSV).subscribe({
-                next: response => {
-                  this.removeMassive();
-                },
-                error: err => {
-                  this.loader.load = false;
-                  this.alert(
-                    'error',
-                    'No se pudo realizar la carga de datos',
-                    ''
-                  );
-                },
-              });
+              this.removeMassive(dataCSV);
             } else {
               this.loader.load = false;
               this.alert('error', 'No se pudo realizar la carga de datos', '');
@@ -1094,6 +1123,27 @@ export class ExpenseCompositionComponent
           this.alert('error', 'No se pudo realizar la carga de datos', '');
         }
       );
+  }
+
+  private getComerDetExpenseI(data: IPreviewDatosCSV[]) {
+    return data.map(x => {
+      let newRow: IComerDetExpense = {
+        vat: x.iva2 + '',
+        amount: x.amount2 + '',
+        goodNumber: x.goodNumber + '',
+        transferorNumber: x.transferorNumber + '',
+        cvman: x.mandate,
+        isrWithholding: x.retentionIsr2 + '',
+        vatWithholding: x.retentionIva2 + '',
+        // goodDescription: row.DESCRIPCION,
+        budgetItem: null,
+        changeStatus: false,
+        reportDelit: false,
+        total: x.total2 + '',
+        expenseNumber: null,
+      };
+      return newRow;
+    });
   }
 
   private getComerDetExpenseArray(messages: any) {
@@ -1135,70 +1185,88 @@ export class ExpenseCompositionComponent
     this.expense.totDocument = this.total + '';
   }
 
-  applyTC() {
-    this.loader.load = true;
-    this.dataTemp.forEach(row => {
-      if (row) {
-        row.amount = +(
-          +(row.amount + '') *
-          (this.exchangeRate.value ? this.exchangeRate.value : 1)
-        ).toFixed(2);
-        if (row.iva && +row.iva > 0) {
-          row.iva = +(+row.amount * 0.15).toFixed(2);
+  async applyTC() {
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea aplicar tasa de cambio?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      this.dataTemp.forEach(row => {
+        if (row) {
+          row.amount = +(
+            +(row.amount + '') *
+            (this.exchangeRate.value ? this.exchangeRate.value : 1)
+          ).toFixed(2);
+          if (row.iva && +row.iva > 0) {
+            row.iva = +(+row.amount * 0.15).toFixed(2);
+          }
+          row.total = +(+row.amount + (row.iva ? +row.iva : 0)).toFixed(2);
+          this.amount += row.amount ? +row.amount : 0;
+          this.vat += row.iva ? +row.iva : 0;
+          this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
+          this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
+          this.total += row.total ? +row.total : 0;
         }
-        row.total = +(+row.amount + (row.iva ? +row.iva : 0)).toFixed(2);
-        this.amount += row.amount ? +row.amount : 0;
-        this.vat += row.iva ? +row.iva : 0;
-        this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
-        this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
-        this.total += row.total ? +row.total : 0;
-      }
-    });
-    // this.getPaginated(this.params.value);
-    this.dataService
-      .updateMassive(
-        this.dataTemp.map(x => {
-          let newRow: any = {
-            amount: x.amount,
-            goodNumber: x.goodNumber,
-            expenseDetailNumber: x.detPaymentsId,
-            expenseNumber: x.paymentsId,
-            vat: x.iva,
-            isrWithholding: x.retencionIsr,
-            vatWithholding: x.retencionIva,
-            cvman: x.manCV,
-            budgetItem: x.departure,
-          };
-          return newRow;
-        })
-      )
-      .pipe(take(1))
-      .subscribe({
-        next: response => {
-          this.loader.load = false;
-          this.alert('success', 'Se actualizarón los detalles del gasto ', '');
-          this.getPaginated(this.params.value);
-        },
-        error: err => {
-          this.loader.load = false;
-          this.alert(
-            'error',
-            'No se pudieron actualizar los detalles de gasto',
-            ''
-          );
-        },
       });
+      // this.getPaginated(this.params.value);
+      this.dataService
+        .updateMassive(
+          this.dataTemp.map(x => {
+            let newRow: any = {
+              amount: x.amount,
+              goodNumber: x.goodNumber,
+              expenseDetailNumber: x.detPaymentsId,
+              expenseNumber: x.paymentsId,
+              vat: x.iva,
+              isrWithholding: x.retencionIsr,
+              vatWithholding: x.retencionIva,
+              cvman: x.manCV,
+              budgetItem: x.departure,
+            };
+            return newRow;
+          })
+        )
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.loader.load = false;
+            this.alert(
+              'success',
+              'Se actualizarón los detalles del gasto ',
+              ''
+            );
+            this.getPaginated(this.params.value);
+          },
+          error: err => {
+            this.loader.load = false;
+            this.alert(
+              'error',
+              'No se pudieron actualizar los detalles de gasto',
+              ''
+            );
+          },
+        });
+    }
   }
 
   async contabilityMand() {
-    this.loader.load = true;
-    if (this.address === 'I') {
-      this.contabilityMandBody();
-    } else {
-      if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea aplicar contabilidad mandatoria?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      if (this.address === 'I') {
         this.contabilityMandBody();
       } else {
-        this.loader.load = false;
+        if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
+          this.contabilityMandBody();
+        } else {
+          this.loader.load = false;
+        }
       }
     }
   }
@@ -1310,42 +1378,40 @@ export class ExpenseCompositionComponent
       });
   }
 
-  reload() {
-    this.loader.load = true;
-    this.expenseCaptureDataService
-      .RECARGA_BIENES_LOTE()
-      .pipe(take(1))
-      .subscribe({
-        next: response => {
-          if (response) {
-            this.loader.load = false;
-            this.getData();
-          } else {
-            this.loader.load = false;
-          }
-        },
-      });
-    // if (this.expenseCaptureDataService.VALIDA_DET()) {
-    //   this.getData();
-    // } else {
-    //   this.loader.load = false;
-    // }
+  async reload() {
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea recargar bienes?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      this.expenseCaptureDataService
+        .RECARGA_BIENES_LOTE()
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response) {
+              this.loader.load = false;
+              this.getData();
+            } else {
+              this.loader.load = false;
+            }
+          },
+        });
+    }
   }
 
-  validates() {
-    this.loader.load = true;
+  async validates() {
     if (this.eventNumber === null) {
-      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de evento', '');
       return;
     }
     if (this.lotNumber === null || this.lotNumber.value === null) {
-      this.loader.load = false;
       this.alert('warning', 'Es necesario tener número de lote', '');
       return;
     }
     if (this.conceptNumber === null || this.conceptNumber.value === null) {
-      this.loader.load = false;
       this.alert(
         'warning',
         'Es necesario tener número de concepto de pago',
@@ -1353,37 +1419,45 @@ export class ExpenseCompositionComponent
       );
       return;
     }
-    this.parametercomerService
-      .getValidGoods({
-        v_id_evento: this.eventNumber,
-        v_id_lote: this.lotNumber.value,
-        id_concepto: this.conceptNumber.value,
-      })
-      .pipe(take(1))
-      .subscribe({
-        next: response => {
-          this.loader.load = false;
-          if (response) {
-            console.log(response);
-            if (response && response.resData) {
-              const modalConfig = MODAL_CONFIG;
-              modalConfig.initialState = {
-                data: response.resData,
-                callback: (next: boolean) => {},
-              };
-              this.modalService.show(RejectedGoodsComponent, modalConfig);
-            } // this.alert(
-            //   'info',
-            //   'Bienes que no pertenecen a la unidad responsable ligada al concepto seleccionado...',
-            //   ''
-            // );
-          }
-        },
-        error: err => {
-          console.log(err);
-          this.loader.load = false;
-          this.alert('error', 'Validación de Bienes', err);
-        },
-      });
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea validar los bienes?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.loader.load = true;
+      this.parametercomerService
+        .getValidGoods({
+          v_id_evento: this.eventNumber,
+          v_id_lote: this.lotNumber.value,
+          id_concepto: this.conceptNumber.value,
+        })
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.loader.load = false;
+            if (response) {
+              console.log(response);
+              if (response && response.resData) {
+                const modalConfig = MODAL_CONFIG;
+                modalConfig.initialState = {
+                  data: response.resData,
+                  callback: (next: boolean) => {},
+                };
+                this.modalService.show(RejectedGoodsComponent, modalConfig);
+              } // this.alert(
+              //   'info',
+              //   'Bienes que no pertenecen a la unidad responsable ligada al concepto seleccionado...',
+              //   ''
+              // );
+            }
+          },
+          error: err => {
+            console.log(err);
+            this.loader.load = false;
+            this.alert('error', 'Validación de Bienes', err);
+          },
+        });
+    }
   }
 }

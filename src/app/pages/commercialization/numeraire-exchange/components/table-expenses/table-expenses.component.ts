@@ -64,7 +64,7 @@ export class TableExpensesComponent extends ClassWidthAlert {
       this.alert(
         'warning',
         'Gasto inválido',
-        'Revise el Gasto que va a Ingresar unos de sus Campos es Inválido o es Requerido'
+        'Revise el gasto que va a ingresar unos de sus campos es inválido o es requerido'
       );
       return;
     }
@@ -73,12 +73,12 @@ export class TableExpensesComponent extends ClassWidthAlert {
     }
     const { id, description, import: importValue } = this.form.getRawValue();
 
-    let message = 'Gasto Agregado Correctamente';
+    let message = 'Gasto Agregado';
     if (this.idExpense) {
       const expense = this.expenses.find(x => x.id == this.idExpense);
       expense.description = description;
       expense.import = importValue;
-      message = 'Gasto Actualizado Correctamente';
+      message = 'Gasto Actualizado';
     } else {
       const expense: IExpense = {
         id,
@@ -87,7 +87,7 @@ export class TableExpensesComponent extends ClassWidthAlert {
       };
       this.expenses.push(expense);
     }
-    this.alert('success', message, '');
+    this.alert('success', 'Correcto', '');
     this.closeDialogExpense();
   }
 
@@ -95,7 +95,7 @@ export class TableExpensesComponent extends ClassWidthAlert {
     const confirm = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estas Seguro de Eliminar el Gasto?'
+      '¿Está seguro de eliminar el gasto?'
     );
     if (!confirm.isConfirmed) {
       return;
@@ -142,8 +142,8 @@ export class TableExpensesComponent extends ClassWidthAlert {
     if (expense && !this.isEdit()) {
       showToast({
         icon: 'error',
-        title: 'Gasto Inválido',
-        text: 'El Gasto ya esta Ingresado',
+        title: 'Gasto inválido',
+        text: 'El gasto ya esta ingresado',
       });
       return false;
     }

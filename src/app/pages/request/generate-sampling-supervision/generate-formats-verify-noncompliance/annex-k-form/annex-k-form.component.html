@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title pull-left">Anexo K</h5>
+    <h5 class="modal-title pull-left">Captura Detalles del Anexo</h5>
   </div>
   <div body class="body">
     <div id="signatoryData">
@@ -9,207 +9,296 @@
           <h5>Capturar Datos del Firmante</h5>
         </div>
       </div>
-      <form
-        [formGroup]="annexForm"
-        class="form-material"
-        style="margin-top: 2rem">
-        <div class="row pt-4">
-          <div class="col-md-4">
-            <form-field
-              [control]="annexForm.get('supplierk')"
-              label="&#42;Nombre">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="supplierk" />
-            </form-field>
+      <div *ngIf="typeAnnex == 'annex-assets-classification'">
+        <form [formGroup]="form" class="form-material" style="margin-top: 2rem">
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field [control]="form.get('providerK')" label="Nombre">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="providerK" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('positionProviderK')"
+                label="Cargo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="positionProviderK" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="annexForm.get('postSupplierk')"
-              label="&#42;Cargo">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="postSupplierk" />
-            </form-field>
+          <div class="row pt-2">
+            <div class="col-md-12">
+              <h5>Capturar de Datos de los Participantes</h5>
+            </div>
           </div>
-        </div>
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field [control]="form.get('competitorOne')" label="Nombre">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="competitorOne" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('positionCompetitorOne')"
+                label="Cargo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="positionCompetitorOne" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field [control]="form.get('competitorTwo')" label="Nombre">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="competitorTwo" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('positionCompetitorTwo')"
+                label="Cargo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="positionCompetitorTwo" />
+              </form-field>
+            </div>
+          </div>
 
-        <div class="row pt-4" *ngIf="typeAnnex === 'revition-results'">
-          <div class="col-md-12" style="display: flex">
-            <div style="line-height: 3">
-              <label for="electronica">Tipo de firma</label>
-            </div>
-            <div style="padding-left: 7px">
-              <div>
-                <input
-                  type="radio"
-                  id="electronica"
-                  style="height: 1.5rem !important"
-                  formControlName="guySignatureSupplierk"
-                  value="Y" />
-                <label class="label-annexk" for="electronica"
-                  >Electr&oacute;nica</label
-                >
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  id="autografa"
-                  style="height: 1.5rem !important"
-                  formControlName="guySignatureSupplierk"
-                  value="N" />
-                <label class="label-annexk" for="autografa"
-                  >Aut&oacute;grafa</label
-                >
-              </div>
+          <<<<<<< HEAD
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <h5>Capturar Detalles del Anexo</h5>
             </div>
           </div>
-        </div>
-      </form>
-    </div>
-    <div id="participantData">
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <h5>Capturar de Datos de los Participantes</h5>
-        </div>
+
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('managerNameAlm')"
+                label="Gerente de Almac&eacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="managerNameAlm" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('relevantFacts')"
+                label="Hechos Relevantes">
+                <textarea
+                  type="text"
+                  class="form-control"
+                  formControlName="relevantFacts">
+                </textarea>
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field [control]="form.get('agreements')" label="Acuerdos">
+                <textarea
+                  type="text"
+                  class="form-control"
+                  formControlName="agreements">
+                </textarea>
+              </form-field>
+            </div>
+          </div>
+        </form>
       </div>
-      <form
-        [formGroup]="annexForm"
-        class="form-material"
-        style="margin-top: 2rem">
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="annexForm.get('competitor1')"
-              label="&#42;Nombre">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="competitor1"
-                [readOnly]="readonly" />
-            </form-field>
+
+      <div *ngIf="typeAnnex == 'sign-annex-assets-classification'">
+        <form
+          [formGroup]="annexForm"
+          class="form-material"
+          style="margin-top: 2rem">
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('saeResponsibleK')"
+                label="Nombre">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="saeResponsibleK" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('positionSaeK')"
+                label="Cargo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="positionSaeK" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-6">
-            <form-field
-              [control]="annexForm.get('postCompetitor1')"
-              label="&#42;Cargo">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="postCompetitor1"
-                [readOnly]="readonly" />
-            </form-field>
+
+          <div class="row pt-4">
+            <div class="col-md-12" style="display: flex">
+              <div style="line-height: 3">
+                <label for="electronica">Tipo de firma:</label>
+              </div>
+              <div
+                style="padding-left: 7px"
+                class="form-check form-check-inline">
+                <form-radio label="Electr&oacute;nica">
+                  <input
+                    type="radio"
+                    formControlName="typeSaeSignatureK"
+                    value="Y"
+                    id="Y"
+                    style="height: 3.5px !important"
+                    [checked]="checked" />
+                </form-radio>
+
+                <div>
+                  <form-radio label="Autografa">
+                    <input
+                      type="radio"
+                      formControlName="typeSaeSignatureK"
+                      style="height: 1.5rem !important"
+                      value="N"
+                      id="N" />
+                  </form-radio>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="annexForm.get('competitor2')"
-              label="&#42;Nombre">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="competitor2"
-                [readOnly]="readonly" />
-            </form-field>
+
+          <div class="row pt-2">
+            <div class="col-md-12">
+              <h5>Capturar de Datos de los Participantes</h5>
+            </div>
           </div>
-          <div class="col-md-6">
-            <form-field
-              [control]="annexForm.get('postCompetitor2')"
-              label="&#42;Cargo">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="postCompetitor2"
-                [readOnly]="readonly" />
-            </form-field>
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('competitorOne')"
+                label="Nombre">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="competitorOne" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('positionCompetitorOne')"
+                label="Cargo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="positionCompetitorOne" />
+              </form-field>
+            </div>
           </div>
-        </div>
-      </form>
-    </div>
-    <div id="annexDetail" *ngIf="displayDetailAnnex()">
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <h5>Capturar Detalles del Anexo</h5>
-        </div>
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('competitorTwo')"
+                label="Nombre">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="competitorTwo" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('positionCompetitorTwo')"
+                label="Cargo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="positionCompetitorTwo" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <h5>Capturar Detalles del Anexo</h5>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('managerNameAlm')"
+                label="Gerente de Almac&eacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="managerNameAlm" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('relevantFacts')"
+                label="Hechos Relevantes">
+                <textarea
+                  type="text"
+                  class="form-control"
+                  formControlName="relevantFacts">
+                </textarea>
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('agreements')"
+                label="Acuerdos">
+                <textarea
+                  type="text"
+                  class="form-control"
+                  formControlName="agreements">
+                </textarea>
+              </form-field>
+            </div>
+          </div>
+        </form>
       </div>
-      <form
-        [formGroup]="annexForm"
-        class="form-material"
-        style="margin-top: 2rem">
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="annexForm.get('nameManagersoul')"
-              label="Gerente de Almac&eacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="nameManagersoul" />
-            </form-field>
-          </div>
-          <div class="col-md-6">
-            <form-field
-              [control]="annexForm.get('factsrelevant')"
-              label="Hechos Relevantes">
-              <textarea
-                type="text"
-                class="form-control"
-                formControlName="factsrelevant">
-              </textarea>
-            </form-field>
-          </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="annexForm.get('agreements')"
-              label="Acuerdos">
-              <textarea
-                type="text"
-                class="form-control"
-                formControlName="agreements">
-              </textarea>
-            </form-field>
-          </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="annexForm?.get('daterepService')"
-              label="Fecha reposici&oacute;n servicios">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="daterepService"
-                placeholder=""
-                bsDatepicker />
-            </form-field>
-          </div>
-        </div>
-      </form>
     </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
+      <div class="m-3" *ngIf="typeAnnex == 'annex-assets-classification'">
         <confirm-button
-          [disabled]="!annexForm.valid"
+          [disabled]="!form.valid"
           [loading]="loading"
           [text]="'Firmar Anexo'"
           [loadingText]="'Firmando Anexo'"
           [btnSmall]="true"
           class="mr-2"
           (confirm)="signAnnex()"></confirm-button>
+      </div>
 
-        <!--<button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="signAnnex()">
-          Firmar Anexo
-        </button> -->
+      <div class="m-3" *ngIf="typeAnnex == 'sign-annex-assets-classification'">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          [text]="'Firmar Anexo'"
+          [loadingText]="'Firmando Anexo'"
+          [btnSmall]="true"
+          class="mr-2"
+          (confirm)="signAnnex()"></confirm-button>
       </div>
       <div class="m-3">
         <button

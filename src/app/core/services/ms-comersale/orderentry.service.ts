@@ -35,9 +35,9 @@ export class orderentryService extends HttpService {
     return this.get<IListResponse<IOrderEntry>>(route, params);
   }
 
-  createOrderEntry(body: Object): Observable<IListResponse<IOrderEntry>> {
+  createOrderEntry(body: Object) {
     const route = OrderEntryEndpoints.SAE_NSBDB_ORDER_ENTRY;
-    return this.post<IListResponse<IOrderEntry>>(route, body);
+    return this.post(route, body);
   }
 
   updateOrderEntry(body: IOrderEntry) {

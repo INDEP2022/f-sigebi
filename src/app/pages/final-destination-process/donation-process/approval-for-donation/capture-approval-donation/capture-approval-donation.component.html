@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="row mt-5">
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('type')" label="Tipo">
                   <ng-select
@@ -38,20 +38,16 @@
                     [searchable]="false"
                     class="form-control"
                     [clearable]="false"
-                    (change)="getRowSelec($event)">
+                    (change)="getRowSelec($event)"
+                    [readonly]="true">
                     <ng-option value="CPD">CPD</ng-option>
                   </ng-select>
                 </form-field>
               </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
-                <!--
-                <form-field [control]="regisForm.get('area')" label="&Aacute;rea">
-                  <input type="text" class="form-control" formControlName="area" readonly />
-                </form-field>
-              -->
                 <form-field [control]="regisForm.get('area')">
                   <ngx-select
                     [data]="areas$"
@@ -63,11 +59,13 @@
                     value="delegation"
                     bindLabel="delegation"
                     label="&Aacute;rea"
-                    control="area">
+                    control="area"
+                    [readonly]="true">
                   </ngx-select>
                 </form-field>
               </div>
             </div>
+            <div class="col-md-2"></div>
           </div>
 
           <div class="row mt-3">
@@ -78,12 +76,16 @@
                     type="text"
                     class="form-control"
                     formControlName="year"
-                    readonly
                     [bsConfig]="bsConfigToYear"
                     #dp="bsDatepicker"
                     bsDatepicker />
                 </form-field>
-              </div>
+                <!--
+              <form-field [control]="regisForm.get('anio')" label="Año">
+                <ng-select class="form-control pt-1" formControlName="year" [items]="years" [ngModel]="currentYear"
+                  (change)="onSelectChangeYear($event)"></ng-select>
+              </form-field>
+              --></div>
             </div>
             <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
@@ -111,17 +113,6 @@
                 </form-field>
               </div>
             </div>
-            <!--
-        <div class="col-md-4">
-          <form-field [control]="form.get('captureDate')" label="Fecha Inicio">
-            <input
-              [maxDate]="maxDate"
-              formControlName="captureDate"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
-        </div>              
-            -->
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
@@ -238,6 +229,7 @@
             <div class="col-4"></div>
             <div class="col-md-12 text-center">
               <button
+                [ngClass]="{ loading: loadingVal }"
                 class="btn btn-secondary btn-sm active me-2 mt-2"
                 (click)="validaGood()">
                 Valida Bienes <i class="bx bx-check float-icon"></i>
@@ -306,6 +298,7 @@
                   [track]="'all'"
                   [ngStyle]="{ height: loading3 ? '0px' : '600px' }">
                   <ng2-smart-table
+                    #grdDetail
                     class="table-responsive"
                     [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings2"

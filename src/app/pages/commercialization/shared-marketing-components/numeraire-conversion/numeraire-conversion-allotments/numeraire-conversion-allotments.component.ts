@@ -35,6 +35,10 @@ export class NumeraireConversionAllotmentsComponent
 
   ngOnInit(): void {}
 
+  resetSelected() {
+    this.selectedEvent = null;
+  }
+
   get pathEvent() {
     return (
       'event/api/v1/comer-event?filter.eventTpId=$eq:3&sortBy=id:ASC' +
@@ -42,10 +46,10 @@ export class NumeraireConversionAllotmentsComponent
     );
   }
 
-  validConvert() {
-    return ['VEN', 'CONC'].includes(
-      this.selectedEvent ? this.selectedEvent.statusVtaId : null
-    );
+  get validConvert() {
+    return this.selectedEvent
+      ? ['VEN', 'CONC'].includes(this.selectedEvent.statusVtaId)
+      : false;
   }
 
   selectEvent(event: IComerEvent) {
@@ -74,9 +78,11 @@ export class NumeraireConversionAllotmentsComponent
     if (!hizoConversiones) {
       this.alert('warning', 'No tiene gastos válidos a convertir', '');
     }
-    this.selectedEvent.statusVtaId = 'CNE';
     this.eventDataService
-      .update(this.selectedEvent.id, this.selectedEvent)
+      .update2(this.selectedEvent.id, {
+        statusVtaId: 'CNE',
+        eventTpId: +(this.selectedEvent.eventTpId + ''),
+      })
       .pipe(take(1))
       .subscribe({
         next: response => {
@@ -89,7 +95,7 @@ export class NumeraireConversionAllotmentsComponent
   }
 
   convierte() {
-    if (this.validConvert()) {
+    if (this.validConvert) {
       this.alertQuestion('question', '¿Desea convertir este evento?', '').then(
         x => {
           if (x.isConfirmed) {

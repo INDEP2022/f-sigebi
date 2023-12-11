@@ -9,7 +9,9 @@ import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IGoodsExpedient,
+  IGoodTracker,
   IPackageInfo,
+  IPupCompFolioUniv,
 } from '../../models/catalogs/package.model';
 import {
   IIdentifierCount,
@@ -252,7 +254,23 @@ export class MassiveGoodService extends HttpService {
     return this.post('application/pup-good-proceedings', body);
   }
 
+  pupGoodTracker(body: IGoodTracker) {
+    return this.post('application/pup-good-tracker', body);
+  }
+
   getApplicationRegisterCountCsv(params: _Params) {
     return this.get(MassiveGoodEndpoints.ApplicationRegisterCountCsv, params);
+  }
+
+  tmpDeleteAuthorization(user: string) {
+    return this.delete(`application/pup-depura-detail/${user}`);
+  }
+
+  pupCompFolioUniv(body: IPupCompFolioUniv) {
+    return this.post('application/pup-comp-folio-univ', body);
+  }
+
+  pupFlatGoodsDestr(body: FormData) {
+    return this.post('application/pup-plain-goods-destr', body);
   }
 }

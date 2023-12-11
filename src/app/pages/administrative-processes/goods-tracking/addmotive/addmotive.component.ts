@@ -105,7 +105,7 @@ export class AddmotiveComponent extends BasePage implements OnInit {
     if (areaCorresp != null) {
       this.responsable = areaCorresp;
     } else {
-      this.alert('info', 'Falta Asignar Área Responsable o Delegación.', '');
+      this.alert('info', 'Falta asignar área responsable o delegación.', '');
     }
   }
 
@@ -293,7 +293,7 @@ export class AddmotiveComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se Encontró la Pantalla', '');
+              this.alert('warning', 'No se encontró la pantalla', '');
             }
           } else if (
             this.delegationNumber == LV_RESPONSABLE ||
@@ -310,7 +310,7 @@ export class AddmotiveComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se Encontró la Pantalla', '');
+              this.alert('warning', 'No se encontró la pantalla', '');
             }
           }
         }
@@ -327,12 +327,12 @@ export class AddmotiveComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.alert('warning', 'No se Encontró la Pantalla', '');
+        this.alert('warning', 'No se encontró la pantalla', '');
       }
     } else {
       this.alert(
         'warning',
-        `No Puede Atender este Bien, ya que Usted no Corresponde al Área Responsable: ${V_RESPONSABLE}`,
+        `No puede atender este Bien, ya que usted no corresponde al área responsable: ${V_RESPONSABLE}`,
         ''
       );
     }
@@ -451,7 +451,7 @@ export class AddmotiveComponent extends BasePage implements OnInit {
         }
       );
     } else {
-      this.alert('warning', 'No se Localizó la URL de la Forma', '');
+      this.alert('warning', 'No se localizó la URL de la forma', '');
     }
   }
 

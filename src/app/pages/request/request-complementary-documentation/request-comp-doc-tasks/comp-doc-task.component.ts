@@ -35,6 +35,9 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract typeVisit: string;
   protected abstract listGoodSelectedTitle: string;
   protected abstract signedReport: boolean;
+  protected abstract registAppointment: boolean;
+  protected abstract orderEntry: boolean;
+  protected abstract compensationAct: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -44,6 +47,10 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract dictumReturn: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract btnRequestAprove: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract finish: boolean; //NUEVO VERIFICAR BOTON NUEVO
+  protected abstract reportValidateDictum: boolean; //NUEVO VERIFICAR BOTON NUEVO
+
+  protected abstract legalStatus: boolean; //NUEVO VERIFICAR BOTON NUEVO
+  protected abstract requestReview: boolean; //NUEVO VERIFICAR BOTON NUEVO
 
   docTemplate: IRequestDocument[];
 
@@ -513,32 +520,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = false;
 
         break;
-      case 'validate-opinion-similar-goods':
-        this.typeVisit = 'resultGood';
-        this.regDocView = true;
-        this.expRequest = true;
-        this.resultVisits = true;
-
-        this.resultEyeVisitReport = true;
-        this.saveRequest = true;
-        this.turnReq = true;
-
-        this.signedReport = true;
-
-        this.validateGoodForEyeVisit = false;
-        this.selectGoods = false;
-        this.notifyReport = false;
-        this.docRequest = false;
-        this.searchAssociateFile = false;
-        this.viewSelectedGoods = false;
-        this.searchRequestSimGoods = false;
-        this.guidelines = false;
-        this.dictumValidate = false;
-        this.selectGoodForEyeVisit = false;
-        this.createReport = false;
-        this.rejectReq = false;
-
-        break;
 
       case 'response-letter-similar-goods':
         this.typeVisit = 'resultGood';
@@ -579,7 +560,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
         break;
 
-      case 'response-office-compensation':
+      case 'review-guidelines-compensation':
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.guidelines = true;
@@ -591,17 +572,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
 
         this.searchRequestSimGoods = false;
-
-        if (affair == 25) {
-          this.regDocView = true;
-          this.viewSelectedGoods = true;
-          this.guidelines = true;
-          this.docRequest = true;
-          this.expRequest = true;
-          this.createReport = true;
-          this.saveRequest = true;
-          this.turnReq = true;
-        }
 
         break;
 
@@ -748,6 +718,154 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.selectGoods = true;
         this.expRequest = true;
 
+        break;
+
+      /* RESARCIMIENTO NUMERARIO */
+
+      case 'register-request-economic-compensation':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.turnReq = true;
+        this.saveRequest = true;
+
+        break;
+
+      case 'request-economic-resources':
+        this.regDocView = true;
+        this.viewSelectedGoods = true;
+        this.expRequest = true;
+
+        this.RequestEconomicResourcesReport = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        break;
+
+      case 'review-economic-guidelines':
+        this.regDocView = true;
+        this.viewSelectedGoods = true;
+        this.guidelines = true;
+        this.expRequest = true;
+
+        this.createReport = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        break;
+
+      case 'generate-results-economic-compensation':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.guidelines = true;
+        this.expRequest = true;
+
+        this.createReport = true;
+        this.saveRequest = true;
+        this.rejectReq = true;
+        this.turnReq = true;
+
+        break;
+
+      case 'validate-dictum-economic':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.guidelines = true;
+        this.dictumValidate = true;
+        this.expRequest = true;
+
+        this.reportValidateDictum = true;
+        this.rejectReq = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        break;
+
+      case 'delivery-notify-request':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.guidelines = true;
+        this.dictumValidate = true;
+        this.expRequest = true;
+
+        this.notifyReport = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        break;
+
+      case 'register-taxpayer-date':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.guidelines = true;
+        this.dictumValidate = true;
+        this.registAppointment = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        break;
+
+      case 'register-pay-order':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.guidelines = true;
+        this.dictumValidate = true;
+        this.orderEntry = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        break;
+
+      case 'generate-compensation-act':
+        this.regDocView = true;
+        this.selectGoods = true;
+        this.guidelines = true;
+        this.dictumValidate = true;
+        this.orderEntry = true;
+        this.expRequest = true;
+
+        this.compensationAct = true;
+        this.notifyReport = true;
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      /*AMPARO*/
+      case 'register-request-protection':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.turnReq = true;
+
+        break;
+      case 'protection-regulation':
+        this.regDocView = true;
+        this.viewSelectedGoods = true;
+        this.expRequest = true;
+
+        this.legalStatus = true;
+        this.saveRequest = true;
+        this.requestReview = true;
+
+        break;
+      case 'review-result-protection':
+        this.regDocView = true;
+        this.viewSelectedGoods = true;
+        this.expRequest = true;
+
+        //this.sign
+        this.rejectReq = true;
+        this.saveRequest = true;
+        this.btnAprove = true;
         break;
 
       default:

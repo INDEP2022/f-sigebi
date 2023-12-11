@@ -84,7 +84,7 @@
         <textarea
           class="form-control"
           formControlName="attachedDocumentation"
-          rows="3"></textarea>
+          rows="2"></textarea>
       </form-field>
     </div>
   </div>
@@ -249,69 +249,34 @@
     </div>
   </ng-template>
   <div class="row mt-4 pl-0">
-    <ng-custom-select-loading
-      [form]="form"
-      [updateValues]="true"
-      formControlName="capturedUser"
-      label="Captura"
-      [path]="pathEmpleados"
-      value="ClkDet"
-      bindLabel="MeNomEmp"
-      paramSearch="search"
-      [labelTemplate]="employeeLabel"
-      [optionTemplate]="employeeOption">
-    </ng-custom-select-loading>
-
-    <!-- <div class="col-md-4">
-      <form-field [control]="capturedUser" label="Captura">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="capturedUser"
-          maxlength="30" />
-      </form-field>
+    <div class="col-md-6">
+      <ng-custom-select-loading
+        [form]="form"
+        [updateValues]="true"
+        formControlName="capturedUser"
+        label="Captura"
+        [path]="pathEmpleados"
+        value="ClkDet"
+        bindLabel="MeNomEmp"
+        paramSearch="search"
+        [labelTemplate]="employeeLabel"
+        [optionTemplate]="employeeOption">
+      </ng-custom-select-loading>
     </div>
-    <div class="col-md-8">
-      <form-field [control]="nomEmplcapture" label="">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="nomEmplcapture"
-          maxlength="120" />
-      </form-field>
-    </div> -->
-  </div>
-  <div class="row mt-4 pl-0">
-    <ng-custom-select-loading
-      [form]="form"
-      [updateValues]="true"
-      formControlName="authorizedUser"
-      label="Autoriza"
-      [path]="pathEmpleados"
-      value="ClkDet"
-      bindLabel="MeNomEmp"
-      paramSearch="search"
-      [labelTemplate]="employeeLabel"
-      [optionTemplate]="employeeOption">
-    </ng-custom-select-loading>
-    <!-- <div class="col-md-4">
-      <form-field [control]="authorizedUser" label="Autoriza">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="authorizedUser"
-          maxlength="30" />
-      </form-field>
+    <div class="col-md-6">
+      <ng-custom-select-loading
+        [form]="form"
+        [updateValues]="true"
+        formControlName="authorizedUser"
+        label="Autoriza"
+        [path]="pathEmpleados"
+        value="ClkDet"
+        bindLabel="MeNomEmp"
+        paramSearch="search"
+        [labelTemplate]="employeeLabel"
+        [optionTemplate]="employeeOption">
+      </ng-custom-select-loading>
     </div>
-    <div class="col-md-8">
-      <form-field [control]="nomEmplAuthorizes" label="">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="nomEmplAuthorizes"
-          maxlength="120" />
-      </form-field>
-    </div> -->
   </div>
   <div class="row mt-4 pl-0">
     <ng-custom-select-loading
@@ -463,8 +428,9 @@
         </ng-custom-select-loading>
       </div>
     </div>
-    <div *ngIf="showAdj">
+    <div *ngIf="showAdj" class="row mt-4 ml-2">
       <ng-custom-select-loading
+        style="padding: 0px"
         [form]="form"
         [updateValues]="true"
         [disabled]="!psadjValue"

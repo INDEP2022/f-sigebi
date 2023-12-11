@@ -16,17 +16,6 @@
       <div body>
         <!--CAN WORK1 TABLE-->
         <div class="row">
-          <!-- <div class="col-6">
-            <button
-              (click)="add()"
-              [disabled]="!showFilters"
-              type="button"
-              tooltip="Nuevo"
-              containerClass="tooltip-style"
-              class="btn btn-info btn-sm active ml-2 mr-2">
-              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
-          </div> -->
           <div class="col-md-6 d-flex mb-3">
             <span title="Selecionar Todo" containerClass="tooltip-style">
               <button
@@ -74,25 +63,24 @@
               class="row justify-content-end"></app-columns-select>
           </div>
         </div>
-        <div class="row pt-4 pl-0 pr-0 m-0">
-          <div class="col-md-12 p-0">
-            <div class="" [class]="showFilters ? '' : 'hideFilters'">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  #table
-                  [attr.class]="'table-responsive table-bordered'"
-                  [settings]="settings"
-                  [source]="dataPaginated"
-                  (userRowSelect)="selectRow($event.data)"
-                  (delete)="delete($event.data)"
-                  (edit)="edit($event.data)">
-                </ng2-smart-table>
-              </div>
-            </div>
-          </div>
+        <form-loader *ngIf="loading"></form-loader>
+        <div class="pt-4">
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '300px' }">
+            <ng2-smart-table
+              #table
+              [attr.class]="'table-responsive table-bordered'"
+              [settings]="settings"
+              [source]="dataPaginated"
+              (userRowSelect)="selectRow($event.data)"
+              (delete)="delete($event.data)"
+              (edit)="edit($event.data)">
+            </ng2-smart-table>
+          </ng-scrollbar>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
         <div class="row">
           <div class="col-md-3 mt-4">
             <div class="cantidad">
@@ -200,12 +188,19 @@
               Validados
             </button>
             <button
-              *ngIf="address === 'I'"
+              *ngIf="address !== 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               (click)="loadGoodsI()">
               Carga de Bienes
             </button>
+            <input
+              #fileI
+              type="file"
+              name="fileI"
+              class="d-none"
+              accept=".csv"
+              (change)="ABRE_ARCHIVO_CSVI($event)" />
           </td>
         </tr>
       </div>

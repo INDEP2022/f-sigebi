@@ -1,6 +1,6 @@
 export const SELECT_ADDRESS_COLUMN = {
   id: {
-    title: 'Bien',
+    title: 'ID',
     type: 'string',
     sort: false,
   },
