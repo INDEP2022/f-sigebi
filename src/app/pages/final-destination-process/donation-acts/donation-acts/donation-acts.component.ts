@@ -2116,7 +2116,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
               numDelegation2: null,
               identifier: null,
               label: null,
-              universalFolio: null,
+              universalFolio: this.actaRecepttionForm.value.folio,
               numeraryFolio: null,
               numTransfer: null,
               idTypeProceedings: 'DON',

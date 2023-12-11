@@ -56,6 +56,11 @@ export class ComerEventosService extends HttpService {
     return this.put(route, comerEvent);
   }
 
+  update2(id: string | number, comerEvent: any) {
+    const route = `comer-event/${id}`;
+    return this.put(route, comerEvent);
+  }
+
   remove(id: string | number) {
     const route = `${this.endpoint}/${id}`;
     return this.delete(route);

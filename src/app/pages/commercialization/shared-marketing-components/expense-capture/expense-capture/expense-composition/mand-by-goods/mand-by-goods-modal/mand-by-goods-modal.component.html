@@ -1,0 +1,179 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ row ? 'Editar' : 'Nueva' }} Partida por Mandatos
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="pb-2 col-md-12">
+          <ng-custom-select-loading
+            [form]="form"
+            [updateValues]="true"
+            path="catalog/api/v1/transferent"
+            formControlName="cvman"
+            label="Encargo/Area"
+            value="cvman"
+            bindLabel="nameTransferent"
+            paramSearch="filter.nameTransferent"
+            prefixSearch="$ilike"
+            secondParamSearch="filter.cvman"
+            [labelTemplate]="transferentLabel"
+            [optionTemplate]="transferentOption">
+          </ng-custom-select-loading>
+          <ng-template #transferentLabel let-item="item">
+            {{ item.cvman }} - {{ item.nameTransferent }}
+          </ng-template>
+          <ng-template #transferentOption let-item="item">
+            <div [title]="item.cvman + '-' + item.nameTransferent">
+              {{ item.cvman }} - {{ item.nameTransferent }}
+            </div>
+          </ng-template>
+
+          <!-- <form-field [control]="transferorNumber" label="Transferente">
+            <input class="form-control" formControlName="transferorNumber" />
+          </form-field> -->
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="pb-2 col-md-4">
+          <form-field [control]="amount" label="Monto">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount"
+              [min]="0" />
+          </form-field>
+        </div>
+        <div class="pb-2 col-md-4">
+          <form-field [control]="vat" label="IVA">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="vat"
+              [min]="0" />
+          </form-field>
+        </div>
+        <div class="pb-2 col-md-4">
+          <form-field [control]="retentionvat" label="Retención IVA">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="retentionvat"
+              [min]="0"
+              [max]="vatValue" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="pb-2 col-md-4 col-sm-6">
+          <form-field [control]="retentionisr" label="Retención ISR">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="retentionisr"
+              [min]="0"
+              [max]="amountValue" />
+          </form-field>
+        </div>
+        <div class="pb-2 col-md-4 col-sm-3">
+          <form-field [control]="appliesto" label="Aplica a">
+            <ng-select
+              formControlName="appliesto"
+              class="form-control"
+              placeholder="Seleccione una opción">
+              <ng-option [value]="''">Todos</ng-option>
+              <ng-option value="M">Muebles</ng-option>
+              <ng-option value="I">Inmuebles</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="pb-2 col-md-4 col-sm-3">
+          <form-field [control]="departurestop" label="Partida Det">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="1"
+              formControlName="departurestop" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="pb-2 col-md-8">
+          <div class="d-flex" style="column-gap: 10px">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active p-0"
+              style="width: 36px"
+              (click)="showPartContSirsae()">
+              <i class="bx bx-list-ul bx-sm float-icon"></i>
+            </button>
+            <form-field [control]="cabms" label="Partida Contable">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cabms"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+        <div class="pb-2 col-md-4">
+          <form-field [control]="categorycabms" label="Categoría">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="categorycabms"
+              readonly />
+          </form-field>
+        </div>
+        <div class="pb-2 col-md-12" style="padding-left: 60px">
+          <form-field [control]="descabms" label="Partida Contable Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descabms"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-2" style="padding-left: 60px">
+        <div class="pb-2 pl-0 col-md-6">
+          <form-field [control]="cooperation" label="Código Operación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cooperation"
+              readonly />
+          </form-field>
+        </div>
+        <div class="pb-2 pl-0 col-md-6">
+          <form-field [control]="departure" label="Partida">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cooperation"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          text="Aceptar"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -88,7 +88,7 @@ export class NumeraireDispersionComponent
       initialState: {
         row,
         eventId: this.idEvento,
-        callBack: (next: boolean) => {
+        callback: (next: boolean) => {
           if (next) {
             this.alert('success', 'Se realizó la edición del bien', '');
           } else {
@@ -97,6 +97,8 @@ export class NumeraireDispersionComponent
           this.getData();
         },
       },
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(NumeraireDispersionModalComponent, config);
   }

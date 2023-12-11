@@ -24,6 +24,17 @@ export class AccountingService extends HttpService {
     return this.put(AccountingEndpoints.MandExpenseCont, body);
   }
 
+  create(body: IMandExpenseCont) {
+    return this.post(AccountingEndpoints.MandExpenseCont + '/seq ', body);
+  }
+
+  remove(body: IMandExpenseCont) {
+    return this.delete(AccountingEndpoints.MandExpenseCont, {
+      spentId: body.spentId,
+      mandxexpensecontId: body.mandxexpensecontId,
+    });
+  }
+
   updateMassive(body: IMandExpenseCont[]) {
     return this.put(AccountingEndpoints.MassiveUpdateExpenseCont, body);
   }
