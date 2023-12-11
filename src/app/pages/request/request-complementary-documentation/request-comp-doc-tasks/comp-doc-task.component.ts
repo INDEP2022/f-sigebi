@@ -153,7 +153,6 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.expRequest = true;
           this.saveRequest = true;
           this.turnReq = true;
-
         } else if (affair == 15) {
           ///DECOMISO
           this.regDocForm = true;
@@ -162,9 +161,7 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.expRequest = true;
           this.saveRequest = true;
           this.turnReq = true;
-        }
-
-        }else if (affair == 16) {
+        } else if (affair == 16) {
           //EXTINCION DE DOMINIO
           this.regDocForm = true;
           this.searchRequestSimGoods = true;
@@ -731,20 +728,26 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
-
-case 'extinction':
+      case 'confiscation':
         this.regDocForm = true;
-
-        this.searchRequestSimGoods = true;
+        this.searchAssociateFile = true;
         this.selectGoods = true;
-        this.viewSelectedGoods = false;
-       
-        this.selectGoodForEyeVisit = false;
-        this.validateGoodForEyeVisit = false;
+        this.expRequest = true;
+        break;
 
-        this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
+      case 'extinction':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+        break;
+
+      case 'abandon':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
         break;
 
       default:
