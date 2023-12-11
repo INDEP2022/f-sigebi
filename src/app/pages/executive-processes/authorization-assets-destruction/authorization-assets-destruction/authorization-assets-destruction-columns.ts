@@ -1,5 +1,3 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-
 export let goodCheck: any[] = [];
 
 export const ASSETS_DESTRUCTION_COLUMLNS = {
@@ -33,12 +31,15 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any, row: any) => {
-      if (row.observationsDestruction != null) {
+      if (
+        row.observationsDestruction != null &&
+        row.observationsDestruction != 'null'
+      ) {
         return row.observationsDestruction;
-      } else if (value != null) {
+      } else if (value && value != null) {
         return `${value}  ${row.date_proceeding}`;
       } else {
-        return 'Prueba';
+        return null;
       }
     },
   },
@@ -46,26 +47,5 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     title: 'Ext. Dom',
     type: 'string',
     sort: false,
-  },
-  approved: {
-    title: 'Aprobado',
-    type: 'custom',
-    showAlways: true,
-    filter: false,
-    sort: false,
-    renderComponent: CheckboxElementComponent,
-    valuePrepareFunction: (isSelected: any, row: any) => {
-      return row.approved == 'SI' ? true : false;
-    },
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        if (data.toggle) {
-          console.log(goodCheck);
-          goodCheck.push(data);
-        } else {
-          goodCheck = goodCheck.filter(valor => valor.row.id != data.row.id);
-        }
-      });
-    },
   },
 };

@@ -174,3 +174,9 @@ export interface ITmpCreateAuthoDestroy {
   user: string;
   proceeding: number;
 }
+
+export interface ITmpUpdateOneReg {
+  user: string;
+  good: number;
+  approved: string;
+}
