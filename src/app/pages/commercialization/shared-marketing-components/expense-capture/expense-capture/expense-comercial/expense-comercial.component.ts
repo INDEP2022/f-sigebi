@@ -838,15 +838,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       }
       let usuarioCapturaData = await this.usuarioCapturaDataI(user);
       if (usuarioCapturaData) {
-        this.form.get('capturedUser').setValue(usuarioCapturaData);
+        this.form.get('capturedUser').setValue(usuarioCapturaData.value);
       }
       let usuarioAutorizaData = await this.usuarioParametro('USUAUTORIZA');
       if (usuarioAutorizaData) {
-        this.form.get('authorizedUser').setValue(usuarioAutorizaData);
+        this.form.get('authorizedUser').setValue(usuarioAutorizaData.value);
       }
       let usuarioSolicitaData = await this.usuarioParametro('USUSOLICITA');
       if (usuarioSolicitaData) {
-        this.form.get('requestedUser').setValue(usuarioSolicitaData);
+        this.form.get('requestedUser').setValue(usuarioSolicitaData.value);
       }
       // this._address = 'I';
       this.dataService.address = 'I';
@@ -1511,6 +1511,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.loader.load = false;
         this.alert('warning', 'No existe un gasto a visualizar', '');
       }
+    } else {
+      this.loader.load = false;
     }
   }
 
