@@ -33,6 +33,13 @@ export class MandByGoodsComponent
     this.settings = {
       ...this.settings,
       columns: COLUMNS,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: false,
+      },
     };
   }
 
