@@ -127,14 +127,16 @@
   </div>
 </div>
 <!-- EMPIEZA LOS INPUTS CON CONDICIONAMIENTO -->
-<div class="row">
-  <div class="col-md-4" *ngIf="processDetonate == 'DEVOLUCION'">
+<div class="row mt-5">
+  <div
+    class="col-md-4"
+    *ngIf="processDetonate == 'DEVOLUCION' || showInput('authorityOrdering')">
     <p class="font-size-13">
       <strong class="font-size-13">Autoridad Ordenante&#58; </strong
       >{{ requestDoc?.authorityOrdering }}
     </p>
   </div>
-  <div class="col-md-4" *ngIf="transference == 120">
+  <div class="col-md-4" *ngIf="transference == 120 || showInput('trialType')">
     <p class="font-size-13">
       <strong class="font-size-13">Tipo Juicio&#58; </strong
       >{{ requestDoc?.trialType }}
@@ -142,42 +144,66 @@
   </div>
   <div
     class="col-md-4"
-    *ngIf="processDetonate == 'AMPARO' || transference == 3">
+    *ngIf="
+      processDetonate == 'AMPARO' ||
+      transference == 3 ||
+      showInput('protectNumber')
+    ">
     <p class="font-size-13">
       <strong class="font-size-13">N&uacute;mero Amparo&#58; </strong
       >{{ requestDoc?.protectNumber }}
     </p>
   </div>
-  <div class="col-md-4" *ngIf="transference == 1 || transference == 3">
+  <div
+    class="col-md-4"
+    *ngIf="
+      transference == 1 ||
+      transference == 3 ||
+      showInput('circumstantialRecord')
+    ">
     <p class="font-size-13">
       <strong class="font-size-13">Acta Circunstanciada&#58; </strong
       >{{ requestDoc?.circumstantialRecord }}
     </p>
   </div>
-  <div class="col-md-4" *ngIf="transference == 1 || transference == 3">
+  <div
+    class="col-md-4"
+    *ngIf="
+      transference == 1 || transference == 3 || showInput('previousInquiry')
+    ">
     <p class="font-size-13">
       <strong class="font-size-13">Averiguacion Previa&#58; </strong
       >{{ requestDoc?.previousInquiry }}
     </p>
   </div>
-  <div class="col-md-4" *ngIf="transference == 1 || transference == 3">
+  <div
+    class="col-md-4"
+    *ngIf="transference == 1 || transference == 3 || showInput('lawsuit')">
     <p class="font-size-13">
       <strong class="font-size-13">Causa Penal&#58; </strong
       >{{ requestDoc?.lawsuit }}
     </p>
   </div>
-  <div class="col-md-4" *ngIf="transference == 1 || transference == 3">
+  <div
+    class="col-md-4"
+    *ngIf="transference == 1 || transference == 3 || showInput('tocaPenal')">
     <p class="font-size-13">
       <strong class="font-size-13">Toca Penal&#58; </strong
       >{{ requestDoc?.tocaPenal }}
     </p>
   </div>
-  <div class="col-md-4" *ngIf="transference == 1 || transference == 3">
+  <div
+    class="col-md-4"
+    *ngIf="transference == 1 || transference == 3 || showInput('crime')">
     <p class="font-size-13">
       <strong class="font-size-13">Delito&#58; </strong>{{ requestDoc?.crime }}
     </p>
   </div>
-  <div class="col-md-4" *ngIf="requestDoc?.emailNotification != null">
+  <div
+    class="col-md-4"
+    *ngIf="
+      requestDoc?.emailNotification != null || showInput('emailNotification')
+    ">
     <p class="font-size-13">
       <strong class="font-size-13"
         >Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n&#58; </strong
