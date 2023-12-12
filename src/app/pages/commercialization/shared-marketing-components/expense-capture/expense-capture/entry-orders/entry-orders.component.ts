@@ -105,7 +105,7 @@ export class EntryOrdersComponent
       this.alert('warning', 'Tiene que llenar alguno de los campos', '');
       return;
     }
-    if (!this.expenseCaptureDataService.FOLIO_UNIVERSAL) {
+    if (!this.expenseCaptureDataService.formScan.get('folioUniversal').value) {
       this.loader.load = false;
       this.alert('warning', 'No se han escaneado los documentos', '');
       return;
@@ -113,12 +113,12 @@ export class EntryOrdersComponent
     let filterParams = new FilterParams();
     filterParams.addFilter(
       'id',
-      this.expenseCaptureDataService.FOLIO_UNIVERSAL,
+      this.expenseCaptureDataService.formScan.get('folioUniversal').value,
       SearchFilter.EQ
     );
     filterParams.addFilter(
       'associateUniversalFolio',
-      this.expenseCaptureDataService.FOLIO_UNIVERSAL,
+      this.expenseCaptureDataService.formScan.get('folioUniversal').value,
       SearchFilter.OR
     );
     filterParams.addFilter('sheets', 0, SearchFilter.GT);
@@ -149,7 +149,8 @@ export class EntryOrdersComponent
         delegationNumber: this.delegation,
         subdelegationNumber: this.subDelegation,
         departamentNumber: this.noDepartamento,
-        universalFolio: this.expenseCaptureDataService.FOLIO_UNIVERSAL,
+        universalFolio:
+          this.expenseCaptureDataService.formScan.get('folioUniversal').value,
       })
       .pipe(take(1))
       .subscribe({

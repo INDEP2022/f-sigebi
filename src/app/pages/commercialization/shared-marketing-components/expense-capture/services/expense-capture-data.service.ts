@@ -33,7 +33,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   delegation: number;
   subDelegation: number;
   noDepartamento: number;
-  FOLIO_UNIVERSAL: any;
   address: string;
   LS_EVENTO: number;
   dataCompositionExpenses: IComerDetExpense2[] = [];
@@ -130,7 +129,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.delegation = null;
     this.subDelegation = null;
     this.noDepartamento = null;
-    this.FOLIO_UNIVERSAL = null;
     this.dataCompositionExpenses = [];
     this.P_PRUEBA = undefined;
     this.PMONTOXMAND = undefined;
@@ -340,14 +338,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       dateOfResolution: [null],
       clkpv: [null, [Validators.required]],
       descurcoord: [null],
-      comment: [null],
+      comment: [null, [Validators.required]],
       invoiceRecNumber: [null],
-      numReceipts: [null, [Validators.pattern(NUM_POSITIVE)]],
+      numReceipts: [
+        null,
+        [Validators.required, Validators.pattern(NUM_POSITIVE)],
+      ],
       invoiceRecDate: [null],
       payDay: [null],
       captureDate: [null],
       fecha_contrarecibo: [null],
-      attachedDocumentation: [null],
+      attachedDocumentation: [null, [Validators.required]],
       monthExpense: [null],
       monthExpense2: [null],
       monthExpense3: [null],
@@ -362,12 +363,12 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       monthExpense12: [null],
       exchangeRate: [null, [Validators.pattern(NUM_POSITIVE)]],
       formPayment: [null],
-      comproafmandsae: [null],
-      capturedUser: [null],
+      comproafmandsae: [null, [Validators.required]],
+      capturedUser: [null, [Validators.required]],
       nomEmplcapture: [null],
-      authorizedUser: [null],
+      authorizedUser: [null, [Validators.required]],
       nomEmplAuthorizes: [null],
-      requestedUser: [null],
+      requestedUser: [null, [Validators.required]],
       nomEmplRequest: [null],
       typepe: [null],
       tiptram: [null],
