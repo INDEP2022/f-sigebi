@@ -1624,7 +1624,7 @@ export class DestructionAuthorizationComponent
       this.massiveGoodService.InsertGood(body).subscribe({
         next: data => {
           console.log(data);
-          this.alert('success', 'Bien insertado con exito', '');
+          this.alert('success', 'Bien insertado', '');
           // this.getProceedingGoods();
           this.searchGoodsInDetailProceeding(
             this.proceedingForm.get('id').value
