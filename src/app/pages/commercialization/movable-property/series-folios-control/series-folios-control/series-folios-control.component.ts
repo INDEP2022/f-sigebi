@@ -226,7 +226,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
             const search: any = {
               idTpevent: () => {
                 (field = `filter.${filter.field}.description`),
-                  (searchFilter = SearchFilter.LIKE2);
+                  (searchFilter = SearchFilter.ILIKE);
               },
               commentary: () => (searchFilter = SearchFilter.ILIKE),
             };
