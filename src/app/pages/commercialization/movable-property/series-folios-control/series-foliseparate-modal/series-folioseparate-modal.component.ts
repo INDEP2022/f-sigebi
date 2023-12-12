@@ -12,7 +12,13 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-series-folioseparate-modal',
   templateUrl: './series-folioseparate-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class SeriesFoliosSeparateModalComponent
   extends BasePage
@@ -55,6 +61,13 @@ export class SeriesFoliosSeparateModalComponent
       this.form
         .get('recordNumber')
         .patchValue(this.allotment.comerF.recordUser);
+    } else {
+      this.edit = false;
+      const user = this.userService.decodeToken();
+      this.form
+        .get('recordNumber')
+        .patchValue(user.preferred_username.toUpperCase());
+      this.form.get('recordDate').patchValue(new Date());
     }
 
     console.log(this.folio);
@@ -68,10 +81,27 @@ export class SeriesFoliosSeparateModalComponent
     this.loading = true;
     if (this.edit) {
       const newData = this.form.value;
+      console.log('newData', newData);
+      newData.recordDate = this.datePipe.transform(
+        newData.recordDate,
+        'yyyy-MM-dd'
+      );
 
       newData.recordDate = newData.recordDate.split('/').reverse().join('/');
-
-      this.invoceFolio.updateFolioSeparate(newData).subscribe({
+      let obj = {
+        folioinvoiceId: this.allotment.folioinvoiceId,
+        series: this.allotment.series,
+        invoice: newData.invoice,
+        // pulledapart: "M",
+        // recordNumber: "SIGEBIADMON",
+        // recordDate: allotment,
+        pk: {
+          folioinvoiceId: this.allotment.folioinvoiceId,
+          series: this.allotment.series,
+          invoice: this.allotment.invoice,
+        },
+      };
+      this.invoceFolio.updateFolioSeparate_(obj).subscribe({
         next: () => {
           this.loading = false;
           this.modalRef.hide();
@@ -152,7 +182,7 @@ export class SeriesFoliosSeparateModalComponent
               this.modalRef.content.callback(true, this.folio);
               this.alert('success', 'Folio Apartado', 'Creado correctamente');
             },
-            error: () => {
+            error: err => {
               this.loading = false;
               this.alert(
                 'error',
@@ -162,13 +192,21 @@ export class SeriesFoliosSeparateModalComponent
             },
           });
         },
-        error: () => {
+        error: err => {
           this.loading = false;
-          this.alert(
-            'error',
-            'Error',
-            'Ha ocurrido un error al guardar el folio apartado'
-          );
+          if (err.error.message == 'Ya existe registro') {
+            this.alert(
+              'warning',
+              'Ya existe un registro con este número de folio',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Error',
+              'Ha ocurrido un error al guardar el folio'
+            );
+          }
         },
       });
     }
