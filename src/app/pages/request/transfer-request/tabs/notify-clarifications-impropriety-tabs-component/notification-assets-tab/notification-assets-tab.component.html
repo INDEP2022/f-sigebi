@@ -395,7 +395,12 @@
             <div class="d-flex">
               <div class="mr-auto p-2"></div>
 
-              <div class="p-2">
+              <div
+                class="p-2"
+                *ngIf="
+                  requestData?.typeOfTransfer == 'SAT_SAE' ||
+                  requestData?.typeOfTransfer == 'PGR_SAE'
+                ">
                 <button
                   (click)="reloadData()"
                   class="btn btn-primary btn-sm active">

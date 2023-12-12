@@ -86,6 +86,7 @@
             <input
               type="text"
               class="form-control"
+              [readOnly]="!canSearch"
               formControlName="noAuth"
               minlength="1"
               maxlength="10" />
@@ -97,6 +98,7 @@
             label="Oficio de Autorizaci&oacute;n">
             <input
               type="text"
+              [readOnly]="!canSearch"
               class="form-control"
               formControlName="authNotice" />
           </form-field>
@@ -106,21 +108,34 @@
             <input
               type="text"
               class="form-control"
+              [readOnly]="!canSearch"
               bsDatepicker
               formControlName="fromDate"
               [bsConfig]="bsConfig" />
           </form-field>
         </div>
+        <div class="col-md-2">
+          <span>{{ form.get('statusAct').value }}</span>
+        </div>
       </div>
       <div class="row pt-5 text-center">
         <div class="col">
           <button
+            *ngIf="canSearch"
             (click)="getProceeding()"
             type="button"
             class="btn btn-primary active btn-sm mr-3">
             Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
           <button
+            *ngIf="!canSearch"
+            type="button"
+            (click)="massiveSave()"
+            class="btn btn-primary active btn-sm mr-3">
+            Guardar <i class="fa fa-save"></i>
+          </button>
+          <button
+            *ngIf="!canNewProceeding"
             type="button"
             tooltip="Nuevo"
             (click)="newProceeding()"
@@ -128,15 +143,31 @@
             class="btn btn-info btn-sm active mr-3">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
-          <button (click)="masive()" class="btn btn-sm btn-primary active mr-3">
+          <button
+            *ngIf="canNewProceeding"
+            (click)="saveNewProceeding()"
+            type="button"
+            class="btn btn-primary btn-sm active mr-3">
+            Guardar
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+          <button
+            (click)="masiveChange()"
+            class="btn btn-sm btn-primary active mr-3">
             <i class="fa fa-arrow-down float-icon"></i>
           </button>
           <button
             (click)="closeButton()"
             type="button"
             class="btn btn-sm btn-danger active mr-3"
-            [disabled]="textDisabled">
+            [disabled]="form.get('statusAct').value == null">
             {{ textButton }}
+          </button>
+          <button
+            *ngIf="form.get('statusAct').value == 'ABIERTA'"
+            (click)="dataPurge()"
+            class="btn btn-danger btn-sm active mr-3">
+            Depurar
           </button>
           <button (click)="clean()" class="btn btn-danger btn-sm active mr-3">
             Limpiar <i class="fas fa-eraser"> </i>
@@ -161,6 +192,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered table-responsive'"
               [settings]="settings"
+              (userSelectRow)="selectRowTry($event)"
               [source]="data"
               (userRowSelect)="selectRow($event.data)">
             </ng2-smart-table>
@@ -208,7 +240,8 @@
         <app-scan-file-authorization
           [form]="form"
           [formControlName]="'universalFolio'"
-          [cveDocument]="form.get('act').value"
+          [formControlNameKey]="'authNotice'"
+          [cveDocument]="form.get('authNotice').value"
           [noExpedient]="expediente"
           [actaSC]="false"
           [statusProceeding]="form.get('statusAct').value"

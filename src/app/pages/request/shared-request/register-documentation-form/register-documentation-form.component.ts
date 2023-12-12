@@ -121,7 +121,7 @@ export class RegisterDocumentationFormComponent
       lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
       protectNumber: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       tocaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-      publicMinistry: [null, [Validators.pattern(STRING_PATTERN)]],
+      publicMinistry: [null],
       court: [null, [Validators.pattern(STRING_PATTERN)]],
       crime: [null, [Validators.pattern(STRING_PATTERN)]],
       destinationManagement: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -249,6 +249,16 @@ export class RegisterDocumentationFormComponent
       ]);
     }
 
+    switch (this.process) {
+      case 'register-request-return':
+        this.registerForm.controls['trialType'].setValidators([Validators.required]);
+        this.registerForm.controls['authorityOrdering'].setValidators([Validators.required]);
+        break;
+      case 'register-request-similar-goods':
+
+        break;
+    }
+
     this.registerForm.updateValueAndValidity();
   }
 
@@ -367,4 +377,21 @@ export class RegisterDocumentationFormComponent
   displayNotifyMailsInput() {
     this.displayNotifyMails = this.process == 'register-request-similar-goods';
   }
+
+  showInput(comp) {
+
+    let input = [];
+
+    switch (this.process) {
+      case 'register-request-return':
+        input = ['trialType', 'authorityOrdering'];
+        break;
+      case 'register-request-similar-goods':
+        input = [];
+        break;
+    }
+
+    return input.includes(comp);
+  }
+
 }
