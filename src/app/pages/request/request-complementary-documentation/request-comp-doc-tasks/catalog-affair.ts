@@ -77,6 +77,16 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
             ssubtype: 'TURNAR',
             close: true,
           };
+        case 13: //REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
+          return {
+            title: `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
+            url: 'pages/request/request-comp-doc/tasks/register-compensation-documentation',
+            process: 'DRegistroSolicitudes',
+            type: 'DOCUMENTACION_COMPLEMENTARIA',
+            subtype: 'Registro_Solicitud',
+            ssubtype: 'TURNAR',
+            close: true,
+          };
       }
       break;
 
@@ -219,7 +229,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     /** CASOS RESARCIMEINTO NUMERARIO */
     case 'register-request-economic-compensation':
       return {
-        title: `Solicitar Recursos Económicos, No. Solicitud: ${requestId}`,
+        title: `Solicitar Recursos Económicos, No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/request-economic-resources',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -230,7 +240,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'request-economic-resources':
       return {
-        title: `Revisión Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud: ${requestId}`,
+        title: `Revisión Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/review-economic-guidelines',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -241,7 +251,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'review-economic-guidelines':
       return {
-        title: `Generar Resultado de Análisis Resarcimiento (NUMERARIO), No. Solicitud: ${requestId}`,
+        title: `Generar Resultado de Análisis Resarcimiento (NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/generate-results-economic-compensation',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -252,7 +262,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'generate-results-economic-compensation':
       return {
-        title: `Validar Dictamen Resarcimiento (Numerario), No. Solicitud: ${requestId}`,
+        title: `Validar Dictamen Resarcimiento (Numerario), No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/validate-dictum-economic',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -263,7 +273,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'validate-dictum-economic':
       return {
-        title: `Notificación al Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId}`,
+        title: `Notificación al Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/delivery-notify-request',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -274,7 +284,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'delivery-notify-request':
       return {
-        title: `Registrar Cita Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId}`,
+        title: `Registrar Cita Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/register-taxpayer-date',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -285,7 +295,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'register-taxpayer-date':
       return {
-        title: `Registrar Orden de Pago, No. Solicitud: ${requestId}`,
+        title: `Registrar Orden de Pago, No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/register-pay-order',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -332,6 +342,9 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       };
 
     case 'review-result-protection':
+      break;
+
+    case 'register-compensation-documentation':
       break;
   }
 
