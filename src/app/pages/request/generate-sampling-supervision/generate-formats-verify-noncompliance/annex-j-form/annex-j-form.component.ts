@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
-import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 
 @Component({
   selector: 'app-annex-j-form',
@@ -41,10 +40,10 @@ export class AnnexJFormComponent implements OnInit {
   }
 
   save(): void {
-    console.log(this.signForm.value);
+    /*console.log(this.signForm.value);
 
     //usando el generador de reportes de notify-clarifications/print-report
-    this.openModal(PrintReportModalComponent, '', this.typeAnnex);
+    this.openModal(PrintReportModalComponent, '', this.typeAnnex); */
   }
 
   openModal(component: any, data?: any, typeReport?: String): void {
