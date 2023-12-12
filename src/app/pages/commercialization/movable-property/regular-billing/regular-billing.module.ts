@@ -5,6 +5,7 @@ import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-s
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
+import { GetCfdiComponent } from './get-cfdi/get-cfdi.component';
 import { RegularBillingGenerationAssetsComponent } from './regular-billing-generation-assets/regular-billing-generation-assets.component';
 import { RegularBillingInconsistenciesComponent } from './regular-billing-inconsistencies/regular-billing-inconsistencies.component';
 import { ActModalComponent } from './regular-billing-invoice/act-comp/act-modal.component';
@@ -23,6 +24,7 @@ import { RegularBillingUnsettledComponent } from './regular-billing-unsettled/re
     AuthorizationModalComponent,
     ReferenceModalComponent,
     ActModalComponent,
+    GetCfdiComponent,
   ],
   imports: [
     CommonModule,

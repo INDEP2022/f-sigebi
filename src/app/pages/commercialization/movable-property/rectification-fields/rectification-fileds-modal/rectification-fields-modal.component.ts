@@ -72,9 +72,9 @@ export class RectificationFieldsModalComponent
           this.loading = false;
           if (err.status == 400) {
             this.alert(
-              'error',
-              'Error',
-              'Ya existe campo de Rectificación de Facturas'
+              'warning',
+              'Ya existe campo de Rectificación de Facturas',
+              ''
             );
           } else {
             this.alert('error', 'Error', err.error.message);
@@ -97,9 +97,9 @@ export class RectificationFieldsModalComponent
           this.loading = false;
           if (err.status == 400) {
             this.alert(
-              'error',
-              'Error',
-              'Ya existe campo de Rectificación de Facturas'
+              'warning',
+              'Ya existe campo de Rectificación de Facturas',
+              ''
             );
           } else {
             this.alert('error', 'Error', err.error.message);
