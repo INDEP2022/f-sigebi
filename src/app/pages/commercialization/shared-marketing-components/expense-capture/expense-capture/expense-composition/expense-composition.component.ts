@@ -482,10 +482,6 @@ export class ExpenseCompositionComponent
     return this.form.get('lotNumber');
   }
 
-  get showFilters() {
-    return this.expenseNumber && this.expenseNumber.value && this.validPayment;
-  }
-
   get showAdd() {
     return this.expenseNumber && this.expenseNumber.value;
   }
@@ -593,12 +589,16 @@ export class ExpenseCompositionComponent
             this.fileI.nativeElement.value = '';
             if (typeof event === 'object') {
               console.log(event);
-              if (event.data.length > 0) {
+              if (event.data) {
                 let dataCSV: IComerDetExpense[] = this.getComerDetExpenseI(
-                  event.data
+                  event.data.tmpGasp
                 );
                 this.removeMassive(dataCSV);
+                this.expenseCaptureDataService.addErrors.next(
+                  event.data.tmpError
+                );
               }
+
               //agregar a detalle gasto
             } else {
               this.loader.load = false;
@@ -606,7 +606,9 @@ export class ExpenseCompositionComponent
             }
           },
           error => {
+            console.log(error);
             this.loader.load = false;
+            // this.expenseCaptureDataService.addErrors.next();
             this.fileI.nativeElement.value = '';
             this.alert('error', 'No se pudo realizar la carga de datos', '');
           }
@@ -694,9 +696,9 @@ export class ExpenseCompositionComponent
     this.modalService.show(ExpenseCompositionModalComponent, modalConfig);
   }
 
-  get validPayment() {
-    return this.expenseCaptureDataService.validPayment;
-  }
+  // get validPayment() {
+  //   return this.expenseCaptureDataService.validPayment;
+  // }
 
   async delete(row: IComerDetExpense2) {
     const response = await this.alertQuestion(
@@ -1462,11 +1464,13 @@ export class ExpenseCompositionComponent
         },
         error: err => {
           this.loader.load = false;
-          this.alert(
-            'error',
-            'Ocurrio un error en obtención de mandatos',
-            'Favor de verificar'
-          );
+          this.expenseCaptureDataService.P_CAMBIO = 0;
+          this.showViewMandatos();
+          // this.alert(
+          //   'error',
+          //   'Ocurrio un error en obtención de mandatos',
+          //   'Favor de verificar'
+          // );
         },
       });
   }
