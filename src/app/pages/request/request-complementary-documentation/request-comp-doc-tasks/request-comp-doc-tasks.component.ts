@@ -24,6 +24,7 @@ import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
+import { ChangeLegalStatusComponent } from '../../economic-compensation/change-legal-status/change-legal-status.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
@@ -1267,6 +1268,17 @@ export class RequestCompDocTasksComponent
 
     //Finalizar la orden de servicio
     //Turnamos la solicitud
+  }
+
+  openModal(context?: Partial<ChangeLegalStatusComponent>) {
+    const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    /*modalRef.content.refresh.subscribe(next => {
+      if (next) this.getData();
+    });*/
   }
 
   createDictumReturn() {}
