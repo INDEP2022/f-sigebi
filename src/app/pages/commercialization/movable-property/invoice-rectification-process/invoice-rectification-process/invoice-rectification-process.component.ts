@@ -1,10 +1,15 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import {
+  BsModalRef,
+  BsModalService,
+  ModalDirective,
+  ModalOptions,
+} from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -30,7 +35,7 @@ import { NAME_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ComerRediModalComponent } from '../comer-redi-modal/comer-redi-modal.component';
 import { NewImageModalComponent } from '../new-image-modal/new-image-modal.component';
-import { REDICET_FACTURAS } from './columna';
+import { COLUMNS, REDICET_FACTURAS } from './columna';
 
 @Component({
   selector: 'app-invoice-rectification-process',
@@ -49,6 +54,7 @@ export class InvoiceRectificationProcessComponent
   dataExpide: DefaultSelect = new DefaultSelect();
   dataFilter: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  columnFilters2: any = [];
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   parameter = {
     PDIRECCION: 'M',
@@ -56,7 +62,14 @@ export class InvoiceRectificationProcessComponent
   totalItems: number = 0;
   loadingSearch: boolean = false;
   isSearch: boolean = false;
-
+  @ViewChild('modal', { static: false }) modal?: ModalDirective;
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  dataFilter2: LocalDataSource = new LocalDataSource();
+  _settings = {
+    ...this.settings,
+  };
+  loading2: boolean = false;
+  valResult: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -73,7 +86,12 @@ export class InvoiceRectificationProcessComponent
     private jasperService: SiabService
   ) {
     super();
-
+    this._settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
+    this._settings.hideSubHeader = false;
     this.settings = {
       ...this.settings,
       actions: {
@@ -139,6 +157,54 @@ export class InvoiceRectificationProcessComponent
     this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.totalItems > 0) this.getComerDirectInvoice();
     });
+
+    this.dataFilter2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            const search: any = {
+              jobNot: () => (searchFilter = SearchFilter.EQ),
+              expDate: () => (searchFilter = SearchFilter.EQ),
+              series: () => (searchFilter = SearchFilter.ILIKE),
+              name: () => (searchFilter = SearchFilter.ILIKE),
+              lastnamePat: () => (searchFilter = SearchFilter.ILIKE),
+              lastnameMat: () => (searchFilter = SearchFilter.ILIKE),
+              inrepresentation: () => (searchFilter = SearchFilter.ILIKE),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          // this.filterParams = this.pageFilter(this.filterParams);
+          this.getComerRectInoviceTable();
+        }
+      });
+
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.valResult) this.getComerRectInoviceTable();
+    });
+    // this.filterParams
+    //   .pipe(
+    //     skip(1),
+    //     tap(() => {
+    //       // aquí colocas la función que deseas ejecutar
+    //       this.getComerRectInoviceTable();
+    //     }),
+    //     takeUntil(this.$unSubscribe)
+    //   )
+    //   .subscribe(() => {});
   }
 
   searchData() {
@@ -183,24 +249,66 @@ export class InvoiceRectificationProcessComponent
 
     const params = new ListParams();
 
-    if (jobNot) params['filter.jobNot'] = `${SearchFilter.EQ}:${jobNot}`;
-    if (expDate)
+    if (jobNot) {
+      params['filter.jobNot'] = `${SearchFilter.EQ}:${jobNot}`;
+      this.filterParams.getValue()[
+        'filter.jobNot'
+      ] = `${SearchFilter.EQ}:${jobNot}`;
+    }
+    if (expDate) {
       params['filter.expDate'] = `${SearchFilter.EQ}:${
         typeof expDate == 'string'
           ? expDate.split('/').reverse().join('-')
           : this.datePipe.transform(expDate, 'yyyy-MM-dd')
       }`;
-    if (series) params['filter.series'] = `${SearchFilter.ILIKE}:${series}`;
-    if (Invoice) params['filter.Invoice'] = `${SearchFilter.EQ}:${Invoice}`;
-    if (name) params['filter.name'] = `${SearchFilter.ILIKE}:${name}`;
-    if (lastnameMat)
+      this.filterParams.getValue()['filter.expDate'] = `${SearchFilter.EQ}:${
+        typeof expDate == 'string'
+          ? expDate.split('/').reverse().join('-')
+          : this.datePipe.transform(expDate, 'yyyy-MM-dd')
+      }`;
+    }
+
+    if (series) {
+      params['filter.series'] = `${SearchFilter.ILIKE}:${series}`;
+      this.filterParams.getValue()[
+        'filter.series'
+      ] = `${SearchFilter.ILIKE}:${series}`;
+    }
+    if (Invoice) {
+      params['filter.Invoice'] = `${SearchFilter.EQ}:${Invoice}`;
+      this.filterParams.getValue()[
+        'filter.Invoice'
+      ] = `${SearchFilter.EQ}:${Invoice}`;
+    }
+    if (name) {
+      params['filter.name'] = `${SearchFilter.ILIKE}:${name}`;
+      this.filterParams.getValue()[
+        'filter.name'
+      ] = `${SearchFilter.ILIKE}:${name}`;
+    }
+    if (lastnameMat) {
       params['filter.lastnameMat'] = `${SearchFilter.ILIKE}:${lastnameMat}`;
-    if (lastnamePat)
+      this.filterParams.getValue()[
+        'filter.lastnameMat'
+      ] = `${SearchFilter.ILIKE}:${lastnameMat}`;
+    }
+
+    if (lastnamePat) {
       params['filter.lastnamePat'] = `${SearchFilter.ILIKE}:${lastnamePat}`;
-    if (inrepresentation)
+      this.filterParams.getValue()[
+        'filter.lastnamePat'
+      ] = `${SearchFilter.ILIKE}:${lastnamePat}`;
+    }
+
+    if (inrepresentation) {
       params[
         'filter.inrepresentation'
       ] = `${SearchFilter.ILIKE}:${inrepresentation}`;
+      this.filterParams.getValue()[
+        'filter.inrepresentation'
+      ] = `${SearchFilter.ILIKE}:${inrepresentation}`;
+    }
+
     this.loadingSearch = true;
     this.getComerRectInovice(params);
   }
@@ -228,41 +336,50 @@ export class InvoiceRectificationProcessComponent
   }
 
   getComerRectInovice(params?: ListParams) {
+    console.log('params', params);
     this.comerRectInoviceService.getAll(params).subscribe({
       next: resp => {
-        this.loadingSearch = false;
-        this.isSearch = true;
-        const rectInvoice = resp.data[0];
+        // this.modal.show();
+        if (resp.count > 1) {
+          this.valResult = true;
+          this.getComerRectInoviceTable();
+          this.modal.show();
+        } else if (resp.count == 1) {
+          console.log('resp', resp);
+          this.loadingSearch = false;
+          this.isSearch = true;
+          const rectInvoice = resp.data[0];
 
-        rectInvoice.expDate = rectInvoice.expDate
-          ? rectInvoice.expDate.split('-').reverse().join('/')
-          : null;
+          rectInvoice.expDate = rectInvoice.expDate
+            ? rectInvoice.expDate.split('-').reverse().join('/')
+            : null;
 
-        rectInvoice.billDate = rectInvoice.billDate
-          ? rectInvoice.billDate.split('-').reverse().join('/')
-          : null;
+          rectInvoice.billDate = rectInvoice.billDate
+            ? rectInvoice.billDate.split('-').reverse().join('/')
+            : null;
 
-        rectInvoice.attentionDate = rectInvoice.attentionDate
-          ? rectInvoice.attentionDate.split('-').reverse().join('/')
-          : null;
+          rectInvoice.attentionDate = rectInvoice.attentionDate
+            ? rectInvoice.attentionDate.split('-').reverse().join('/')
+            : null;
 
-        const fecha = rectInvoice.hourAttention
-          ? rectInvoice.hourAttention.split(' ')
-          : null;
+          const fecha = rectInvoice.hourAttention
+            ? rectInvoice.hourAttention.split(' ')
+            : null;
 
-        rectInvoice.hourAttention = rectInvoice.hourAttention
-          ? `${fecha[0].split('-').reverse().join('/')} ${fecha[1]}`
-          : null;
+          rectInvoice.hourAttention = rectInvoice.hourAttention
+            ? `${fecha[0].split('-').reverse().join('/')} ${fecha[1]}`
+            : null;
 
-        this.form.patchValue(rectInvoice);
-        this.paramsList.getValue()[
-          'filter.notJob'
-        ] = `${SearchFilter.EQ}:${rectInvoice.jobNot}`;
-        this.getComerDirectInvoice();
+          this.form.patchValue(rectInvoice);
+          this.paramsList.getValue()[
+            'filter.notJob'
+          ] = `${SearchFilter.EQ}:${rectInvoice.jobNot}`;
+          this.getComerDirectInvoice();
+        }
       },
       error: err => {
         this.loadingSearch = false;
-        this.alert('error', 'Error', 'No se encontraron resultados');
+        this.alert('warning', 'No se encontraron resultados', '');
       },
     });
   }
@@ -505,8 +622,19 @@ export class InvoiceRectificationProcessComponent
     this.form.reset();
     this.dataFilter.load([]);
     this.dataFilter.refresh();
+
+    this.dataFilter2.load([]);
+    this.dataFilter2.refresh();
+    this.totalItems = 0;
+
+    this.rowSelected = null;
+    this.valResult = false;
+
     this.totalItems = 0;
     this.isSearch = false;
+
+    this.filterParams.getValue().removeAllFilters();
+    // this.filterParams.getValue() = {}
     this.form
       .get('hourAttention')
       .patchValue(`${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00`);
@@ -653,7 +781,7 @@ export class InvoiceRectificationProcessComponent
     ];
     AUX_CADENA = parr1;
     AUX_FECHA = `${day} de ${months[Number(month - 1)]} del ${year}`;
-    CADENA = AUX_CADENA.replace('&DIA', AUX_FECHA);
+    if (AUX_CADENA) CADENA = AUX_CADENA.replace('&DIA', AUX_FECHA);
 
     AUX_HORA =
       typeof hourAttention == 'string'
@@ -776,6 +904,79 @@ export class InvoiceRectificationProcessComponent
             },
           });
       }
+    });
+  }
+
+  close() {
+    this.modal.hide();
+  }
+
+  rowSelected: any = null;
+  confirm() {
+    if (!this.rowSelected) return;
+    console.log('resp', this.rowSelected);
+    // this.loadingSearch = false;
+    this.isSearch = true;
+    const rectInvoice = this.rowSelected;
+
+    rectInvoice.expDate = rectInvoice.expDate
+      ? rectInvoice.expDate.split('-').reverse().join('/')
+      : null;
+
+    rectInvoice.billDate = rectInvoice.billDate
+      ? rectInvoice.billDate.split('-').reverse().join('/')
+      : null;
+
+    rectInvoice.attentionDate = rectInvoice.attentionDate
+      ? rectInvoice.attentionDate.split('-').reverse().join('/')
+      : null;
+
+    const fecha = rectInvoice.hourAttention
+      ? rectInvoice.hourAttention.split(' ')
+      : null;
+
+    rectInvoice.hourAttention = rectInvoice.hourAttention
+      ? `${fecha[0].split('-').reverse().join('/')} ${fecha[1]}`
+      : null;
+
+    this.form.patchValue(rectInvoice);
+    this.paramsList.getValue()[
+      'filter.notJob'
+    ] = `${SearchFilter.EQ}:${rectInvoice.jobNot}`;
+    this.getComerDirectInvoice();
+    this.modal.hide();
+  }
+  openModalSearch() {
+    this.modal.show();
+  }
+  selectRow(row: any) {
+    this.rowSelected = row.data;
+  }
+
+  getComerRectInoviceTable() {
+    this.loading2 = true;
+    this.dataFilter2.load([]);
+    this.dataFilter2.refresh();
+    this.totalItems = 0;
+
+    let params = {
+      ...this.filterParams.getValue(),
+      ...this.columnFilters2,
+    };
+
+    this.comerRectInoviceService.getAll(params).subscribe({
+      next: resp => {
+        this.dataFilter2.load(resp.data);
+        this.dataFilter2.refresh();
+        this.totalItems = resp.count;
+        this.loading2 = false;
+      },
+      error: err => {
+        this.dataFilter2.load([]);
+        this.dataFilter2.refresh();
+        this.totalItems = 0;
+        this.loading2 = false;
+      },
     });
   }
 }
