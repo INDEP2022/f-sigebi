@@ -2,6 +2,7 @@ import { IExpedient } from '../ms-expedient/expedient';
 
 export interface IDocuments {
   id?: string | number;
+  universalFolio?: string | number;
   natureDocument: string;
   descriptionDocument?: string;
   significantDate: Date | string;

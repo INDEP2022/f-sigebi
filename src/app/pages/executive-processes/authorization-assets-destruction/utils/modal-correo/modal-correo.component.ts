@@ -75,6 +75,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
 
   dataTotalDist: any[] = [];
   dataTotalCc: any[] = [];
+  sendEmailFlag: boolean = false;
 
   get user() {
     return this.authService.decodeToken();
@@ -194,6 +195,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
         this.totalItemsCc = resp.re_COPIA.length;
         this.dataDist.refresh();
         this.dataCc.refresh();
+        this.pupInicializaCorreo('C');
       },
       error: err => {
         console.log(err);
@@ -204,7 +206,6 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       },
     });
     ////
-    this.pupInicializaCorreo('C');
   }
 
   localPagination(page: number, pageSize: number, data: any[]): any[] {
@@ -277,8 +278,11 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
         'Se debe seleccionar al menos una direccion de correo para poder enviar',
         ''
       );
+      this.sendEmailFlag = false;
       return;
     }
+
+    this.sendEmailFlag = false;
 
     const dataListEmail = this.dataEmail.map(x => x.email);
     let dataListEmailCc = [];
@@ -372,7 +376,9 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     );
     if (responde.isConfirmed) {
       this.sendEmail();
-      await this.pupCompFolUniv();
+      if (this.sendEmail) {
+        await this.pupCompFolUniv();
+      }
     }
   }
 
