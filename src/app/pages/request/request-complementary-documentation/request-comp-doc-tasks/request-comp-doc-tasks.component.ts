@@ -833,11 +833,26 @@ export class RequestCompDocTasksComponent
           //return false;
         }
 
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
         break;
       case 'approve-return':
         let getEstimatedRowCount = 0;
         let contenido = '';
         let docNameUcm = '';
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.signedDictum) {
+          //this.showError('Firme el dictamen de resarcimiento');
+          //return false;
+        }
 
         if (getEstimatedRowCount == 0 || isNullOrEmpty(contenido)) {
           //this.showError('Es necesario generar el Dictamen de Devolución');
@@ -881,14 +896,23 @@ export class RequestCompDocTasksComponent
           //return false;
         }
 
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
         break;
 
       case 'eye-visit-similar-goods':
+        //INTEGRAR EXPEDIENTE
+        //PROGRAMAR FECHAS
         break;
 
       case 'validate-eye-visit-similar-goods':
-        //Validar aprobacion de visita ocular
-
+        //REGISTRO
+        //VALIDAR RESULTADOS
+        //INTEGRAR EXPEDIENTE
+        //REPORTE RESULTADO VISITA OCULAR FIRMAR
         break;
 
       case 'validate-opinion-similar-goods':
@@ -896,7 +920,9 @@ export class RequestCompDocTasksComponent
           //this.showError('Firme el reporte de visita ocular');
           //return false;
         }
-
+        //REGISTRO
+        //INTEGRAR EXPEDIENTE
+        //REPORTE DE RESULTAOD FIRMAR
         break;
 
       //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
@@ -909,6 +935,11 @@ export class RequestCompDocTasksComponent
         if (!this.requestInfo.recordId) {
           //this.showError('Asocie solicitud de bienes');
           //return false;
+        }
+
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
         }
 
         if (!this.validate.files) {
@@ -942,6 +973,11 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
         if (!this.validate.files) {
           this.showError('Suba la documentación de la solicitud');
           return false;
@@ -959,10 +995,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.guidelines) {
-          this.showError('Verifique las observaciones de lineamientos');
-          return false;
-        }
+        //DATOS DEL DICTAMEN
 
         if (!this.validate.files) {
           this.showError('Suba la documentación de la solicitud');
@@ -977,13 +1010,15 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'notification-taxpayer-compensation':
+        //DATOS DEL DICTAMEN
+
         if (!this.validate.files) {
           this.showError('Suba la documentación de la solicitud');
           return false;
         }
 
-        if (!this.validate.signedValDictum) {
-          this.showError('Firme la validación del dictamen de resarcimiento');
+        if (!this.validate.signedNotify) {
+          this.showError('Generar el reporte de notificación');
           return false;
         }
 
@@ -1117,6 +1152,7 @@ export class RequestCompDocTasksComponent
           //this.showError('Registre datos de la cita');
           //return false;
         }
+        //REGISTRO DE CITA
         if (!this.validate.files) {
           this.showError('Suba la documentación de la solicitud');
           return false;
@@ -1124,7 +1160,7 @@ export class RequestCompDocTasksComponent
         break;
       case 'register-pay-orde':
         if (!this.validate.orderEntry) {
-          //this.showError('Registre datos de orden de pago');
+          //this.showError('Registre datos de orden de ingreso');
           //return false;
         }
         if (!this.validate.files) {

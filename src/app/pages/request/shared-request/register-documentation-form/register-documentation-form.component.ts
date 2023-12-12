@@ -31,7 +31,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   fileTypes: any[] = [];
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
@@ -251,11 +252,40 @@ export class RegisterDocumentationFormComponent
 
     switch (this.process) {
       case 'register-request-return':
-        this.registerForm.controls['trialType'].setValidators([Validators.required]);
-        this.registerForm.controls['authorityOrdering'].setValidators([Validators.required]);
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+        ]);
+        this.registerForm.controls['authorityOrdering'].setValidators([
+          Validators.required,
+        ]);
         break;
       case 'register-request-similar-goods':
-
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+        ]);
+        break;
+      case 'register-request-compensation':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+        ]);
+        break;
+      case 'register-request-economic-compensation':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+        ]);
+        break;
+      case 'register-request-information-goods':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+        ]);
+        break;
+      case 'register-request-protection':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+        ]);
+        this.registerForm.controls['protectNumber'].setValidators([
+          Validators.required,
+        ]);
         break;
     }
 
@@ -379,7 +409,6 @@ export class RegisterDocumentationFormComponent
   }
 
   showInput(comp) {
-
     let input = [];
 
     switch (this.process) {
@@ -387,11 +416,22 @@ export class RegisterDocumentationFormComponent
         input = ['trialType', 'authorityOrdering'];
         break;
       case 'register-request-similar-goods':
-        input = [];
+        input = ['trialType'];
+        break;
+      case 'register-request-compensation':
+        input = ['trialType'];
+        break;
+      case 'register-request-economic-compensation':
+        input = ['trialType'];
+        break;
+      case 'register-request-information-goods':
+        input = ['trialType'];
+        break;
+      case 'register-request-protection':
+        input = ['trialType'];
         break;
     }
 
     return input.includes(comp);
   }
-
 }
