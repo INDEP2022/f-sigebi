@@ -38,6 +38,8 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract registAppointment: boolean;
   protected abstract orderEntry: boolean;
   protected abstract compensationAct: boolean;
+  protected abstract viewGuidelines: boolean;
+  protected abstract orderView: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -48,6 +50,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract btnRequestAprove: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract finish: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract reportValidateDictum: boolean; //NUEVO VERIFICAR BOTON NUEVO
+  protected abstract dictumRegister: boolean; //NUEVO VERIFICAR BOTON NUEVO
 
   protected abstract legalStatus: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract requestReview: boolean; //NUEVO VERIFICAR BOTON NUEVO
@@ -706,9 +709,10 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'generate-results-economic-compensation':
         this.regDocView = true;
-        this.selectGoods = true;
+        this.viewSelectedGoods = true;
         this.guidelines = true;
         this.expRequest = true;
+        this.signedReport = true;
 
         this.createReport = true;
         this.saveRequest = true;
@@ -719,8 +723,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'validate-dictum-economic':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
         this.dictumValidate = true;
         this.expRequest = true;
 
@@ -733,9 +737,9 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'delivery-notify-request':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
-        this.dictumValidate = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
+        this.dictumRegister = true;
         this.expRequest = true;
 
         this.notifyReport = true;
@@ -746,9 +750,9 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'register-taxpayer-date':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
-        this.dictumValidate = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
+        this.dictumRegister = true;
         this.registAppointment = true;
         this.expRequest = true;
 
@@ -759,9 +763,9 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'register-pay-order':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
-        this.dictumValidate = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
+        this.dictumRegister = true;
         this.orderEntry = true;
         this.expRequest = true;
 
@@ -772,10 +776,10 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'generate-compensation-act':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
-        this.dictumValidate = true;
-        this.orderEntry = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
+        this.dictumRegister = true;
+        this.orderView = true;
         this.expRequest = true;
 
         this.compensationAct = true;
