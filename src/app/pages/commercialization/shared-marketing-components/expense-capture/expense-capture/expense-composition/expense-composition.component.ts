@@ -589,12 +589,16 @@ export class ExpenseCompositionComponent
             this.fileI.nativeElement.value = '';
             if (typeof event === 'object') {
               console.log(event);
-              if (event.data.length > 0) {
+              if (event.data) {
                 let dataCSV: IComerDetExpense[] = this.getComerDetExpenseI(
-                  event.data
+                  event.data.tmpGasp
                 );
                 this.removeMassive(dataCSV);
+                this.expenseCaptureDataService.addErrors.next(
+                  event.data.tmpError
+                );
               }
+
               //agregar a detalle gasto
             } else {
               this.loader.load = false;
@@ -602,7 +606,9 @@ export class ExpenseCompositionComponent
             }
           },
           error => {
+            console.log(error);
             this.loader.load = false;
+            // this.expenseCaptureDataService.addErrors.next();
             this.fileI.nativeElement.value = '';
             this.alert('error', 'No se pudo realizar la carga de datos', '');
           }
