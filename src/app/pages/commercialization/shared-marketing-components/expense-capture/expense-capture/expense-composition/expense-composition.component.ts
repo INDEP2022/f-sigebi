@@ -482,10 +482,6 @@ export class ExpenseCompositionComponent
     return this.form.get('lotNumber');
   }
 
-  get showFilters() {
-    return this.expenseNumber && this.expenseNumber.value && this.validPayment;
-  }
-
   get showAdd() {
     return this.expenseNumber && this.expenseNumber.value;
   }
@@ -694,9 +690,9 @@ export class ExpenseCompositionComponent
     this.modalService.show(ExpenseCompositionModalComponent, modalConfig);
   }
 
-  get validPayment() {
-    return this.expenseCaptureDataService.validPayment;
-  }
+  // get validPayment() {
+  //   return this.expenseCaptureDataService.validPayment;
+  // }
 
   async delete(row: IComerDetExpense2) {
     const response = await this.alertQuestion(
@@ -1462,11 +1458,13 @@ export class ExpenseCompositionComponent
         },
         error: err => {
           this.loader.load = false;
-          this.alert(
-            'error',
-            'Ocurrio un error en obtención de mandatos',
-            'Favor de verificar'
-          );
+          this.expenseCaptureDataService.P_CAMBIO = 0;
+          this.showViewMandatos();
+          // this.alert(
+          //   'error',
+          //   'Ocurrio un error en obtención de mandatos',
+          //   'Favor de verificar'
+          // );
         },
       });
   }

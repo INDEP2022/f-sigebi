@@ -1147,26 +1147,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
   }
 
-  private validPayments(event: IComerExpense) {
-    return firstValueFrom(
-      this.sirsaeService
-        .validPayments({
-          pClkpv: this.clkpv.value,
-          pComment: this.comment.value,
-          pPayAfmandSae: this.comproafmandsae.value,
-          pNumberVoucher: this.form.get('numReceipts').value,
-          pDocumentationAnexa: this.form.get('attachedDocumentation').value,
-          pUserCapture: this.form.get('capturedUser').value,
-          pUserAuthorize: this.form.get('authorizedUser').value,
-          pUserRequest: this.form.get('requestedUser').value,
-          pFormPay: this.form.get('formPayment').value,
-          pEventId: this.eventNumber.value,
-          pLotePub: this.lotNumber.value,
-        })
-        .pipe(catchError(x => of({ data: false, message: x })))
-    );
-  }
-
   private async fillOthersParameters() {
     const filterParams = new FilterParams();
     filterParams.addFilter('parameter', 'CHCONIVA,IVA', SearchFilter.IN);
@@ -1276,10 +1256,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (this.address !== 'M') {
       this.dataService.address = 'I';
     }
+    this.dataService.validPayment = false;
     this.expenseNumber.setValue(event.expenseNumber);
     this.data = event;
     this.provider = event.providerName;
-    this.dataService.validPayment = false;
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
@@ -1310,18 +1290,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (!this.validatePaymentCamps(event)) {
         return;
       }
-      const responsePayments = await this.validPayments(event);
-      // console.log(responsePayments);
-      if (responsePayments.message[0] !== 'OK') {
-        this.alert(
-          'error',
-          'Sucedió un error en la validación de pagos',
-          'Favor de verificar'
-        );
-        return;
-      } else {
-        this.dataService.validPayment = true;
-      }
+
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
       );
@@ -1496,6 +1465,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             },
             error: err => {
               this.loader.load = false;
+              this.alert('error', 'No se encontraron datos para imprimir', '');
             },
           });
       } else if (this.expenseNumber.value) {
@@ -1508,6 +1478,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             },
             error: err => {
               this.loader.load = false;
+              this.alert('error', 'No se encontraron datos para imprimir', '');
             },
           });
       } else {
@@ -1539,6 +1510,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             },
             error: err => {
               this.loader.load = false;
+              this.alert('error', 'No se encontraron datos para imprimir', '');
             },
           });
       } else {

@@ -30,7 +30,6 @@ import { ExpensePrepareeventService } from './expense-prepareevent.service';
 export class ExpenseCaptureDataService extends ClassWidthAlert {
   form: FormGroup;
   data: IComerExpense;
-  validPayment = false;
   delegation: number;
   subDelegation: number;
   noDepartamento: number;
@@ -87,7 +86,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   PDIRECCION_A = null;
   user: any;
   actionButton = '';
-
+  validPayment = false;
   //show inputs
   showTipoOp = false;
   showTipoTram = false;
