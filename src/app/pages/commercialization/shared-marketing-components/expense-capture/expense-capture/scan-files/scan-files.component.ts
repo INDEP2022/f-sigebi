@@ -11,6 +11,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { IComerDetExpense2 } from 'src/app/core/models/ms-spent/comer-detexpense';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
@@ -143,99 +144,63 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     return this.form.get('conceptNumber');
   }
 
-  get numReceipts() {
-    return this.form.get('numReceipts');
-  }
-
-  get attachedDocumentation() {
-    return this.form.get('attachedDocumentation');
-  }
-
-  get capturedUser() {
-    return this.form.get('capturedUser');
-  }
-
-  get authorizedUser() {
-    return this.form.get('authorizedUser');
-  }
-
-  get requestedUser() {
-    return this.form.get('requestedUser');
-  }
-
-  get formPayment() {
-    return this.form.get('formPayment');
-  }
-
   get eventNumber() {
     return this.form.get('eventNumber');
-  }
-
-  private validatePaymentCamps() {
-    if (
-      !this.clkpv.value &&
-      !this.comment.value &&
-      !this.conceptNumber.value &&
-      !this.numReceipts.value &&
-      !this.comproafmandsae.value &&
-      !this.attachedDocumentation.value &&
-      !this.capturedUser &&
-      !this.authorizedUser.value &&
-      !this.requestedUser.value
-    ) {
-      this.alert('warning', 'Tiene que llenar algún campo requerido', '');
-      return false;
-    }
-    return true;
   }
 
   get expenseNumber() {
     return this.form.get('expenseNumber');
   }
 
-  get clkpv() {
-    return this.form.get('clkpv');
-  }
-
-  get comment() {
-    return this.form.get('comment');
-  }
-
-  get comproafmandsae() {
-    return this.form.get('comproafmandsae');
-  }
-
-  get lotNumber() {
-    return this.form.get('lotNumber');
+  private generateFolioI() {
+    let bienes = this.dataService.dataCompositionExpenses.filter(
+      x => x.goodNumber
+    );
+    if (bienes.length === 0) {
+      this.alert(
+        'warning',
+        'No tiene bienes en detalle de gasto para continuar',
+        ''
+      );
+    } else {
+    }
   }
 
   async generateFolio() {
-    if (!this.validatePaymentCamps()) {
-      return;
-    }
-
     if (this.folioUniversal && this.folioUniversal.value) {
       // debugger;
       this.alert('error', 'Generar Folio', 'El gasto ya cuenta con un folio');
       return;
     }
-    let FOLIO_ASOC: any;
-    const DESCR =
-      'ID GASTO: ' +
-      this.expenseNumber +
-      ' CANCELACION DE VENTA POR SOLICITUD DE AUTORIDAD';
-    let filterDataComposition = this.dataService.dataCompositionExpenses.filter(
-      row => row.expendientNumber !== null
-    );
 
-    if (filterDataComposition.length === 0) {
-      this.alert(
-        'warning',
-        'No cuenta con expediente en los detalles de gasto para continuar',
-        ''
+    let filterDataComposition: IComerDetExpense2[] = [];
+    let bienes: IComerDetExpense2[] = [];
+    if (this.dataService.address === 'M') {
+      filterDataComposition = this.dataService.dataCompositionExpenses.filter(
+        row => row.expendientNumber !== null && row.goodNumber !== null
       );
-      return;
+      if (filterDataComposition.length === 0) {
+        this.alert(
+          'warning',
+          'No cuenta con expediente en los detalles de gasto para continuar',
+          ''
+        );
+        return;
+      }
+    } else {
+      bienes = this.dataService.dataCompositionExpenses.filter(
+        x => x.goodNumber
+      );
+      if (bienes.length === 0) {
+        this.alert(
+          'warning',
+          'No tiene bienes en detalle de gasto para continuar',
+          ''
+        );
+        return;
+      }
     }
+
     if (!this.userData) {
       this.alert(
         'warning',
@@ -245,8 +210,13 @@ export class ScanFilesComponent extends BasePage implements OnInit {
       return;
     }
     filterDataComposition.forEach(async (x, index) => {
-      debugger;
+      // debugger;
       console.log(x);
+      const DESCR =
+        (this.dataService.address === 'M'
+          ? 'ID GASTO: ' + this.expenseNumber
+          : 'BIEN:' + x.goodNumber) +
+        ' CANCELACION DE VENTA POR SOLICITUD DE AUTORIDAD';
       const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${x.expendientNumber}&sortBy=wheelNumber:DESC`;
       const notifications = await firstValueFrom(
         this.serviceNotification
@@ -286,7 +256,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
             sendFilekey: '',
             userResponsibleFile: '',
             mediumId: '',
-            associateUniversalFolio: index > 0 ? FOLIO_ASOC : 0,
+            associateUniversalFolio: index > 0 ? this.folioUniversal.value : 0,
             dateRegistrationScanningHc: null,
             dateRequestScanningHc: null,
             goodNumber: this.expenseNumber.value,
@@ -306,6 +276,12 @@ export class ScanFilesComponent extends BasePage implements OnInit {
           if (index === 0) {
             this.alert('success', 'Se generó el folio de escaneo', '');
             this.folioUniversal.setValue(createDocument.id);
+          }
+          if (this.dataService.address === 'I') {
+            modelDocument.associateUniversalFolio = createDocument.id;
+            await firstValueFrom(
+              this.serviceDocuments.update(createDocument.id, modelDocument)
+            );
           }
         }
       }

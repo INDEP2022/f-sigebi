@@ -78,14 +78,12 @@ export class EntryOrdersComponent
   }
 
   async replyFolio() {
-    this.loader.load = true;
     if (!this.expenseNumber) {
       this.alert(
         'warning',
         'No puede mandar correo si no a guardado el gasto',
         ''
       );
-      this.loader.load = false;
       return;
     }
     // const firstValidation =
@@ -94,22 +92,24 @@ export class EntryOrdersComponent
     //   !this.clkpv.value &&
     //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
     //   !this.dataService.data.providerName;
+    let bienes = this.expenseCaptureDataService.dataCompositionExpenses.filter(
+      x => x.goodNumber
+    );
     if (
       !this.conceptNumber.value &&
       !this.eventNumber.value &&
       !this.clkpv.value &&
-      !this.expenseCaptureDataService.dataCompositionExpenses[0].goodNumber &&
+      bienes.length === 0 &&
       !this.expenseCaptureDataService.data.providerName
     ) {
-      this.loader.load = false;
       this.alert('warning', 'Tiene que llenar alguno de los campos', '');
       return;
     }
     if (!this.expenseCaptureDataService.formScan.get('folioUniversal').value) {
-      this.loader.load = false;
       this.alert('warning', 'No se han escaneado los documentos', '');
       return;
     }
+    this.loader.load = true;
     let filterParams = new FilterParams();
     filterParams.addFilter(
       'id',
@@ -140,7 +140,7 @@ export class EntryOrdersComponent
       return;
     }
     this.expenseGoodProcessService
-      .NOTIFICAR({
+      .replyFolio({
         goodArray: this.expenseCaptureDataService.dataCompositionExpenses
           .filter(x => x.goodNumber)
           .map(x => {

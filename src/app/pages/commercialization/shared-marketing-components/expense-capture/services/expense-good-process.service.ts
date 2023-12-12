@@ -27,7 +27,7 @@ export class ExpenseGoodProcessService extends HttpService {
     });
   }
 
-  NOTIFICAR(body: INotifyDTO) {
+  replyFolio(body: INotifyDTO) {
     return this.post('application/fcomer084', body);
   }
 

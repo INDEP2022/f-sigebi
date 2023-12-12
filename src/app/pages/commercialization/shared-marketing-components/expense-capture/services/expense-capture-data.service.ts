@@ -324,6 +324,48 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return this.form.get('comment');
   }
 
+  get clkpv() {
+    return this.form.get('clkpv');
+  }
+
+  get invoiceRecNumber() {
+    return this.form.get('invoiceRecNumber');
+  }
+
+  get fecha_contrarecibo() {
+    return this.form.get('fecha_contrarecibo');
+  }
+
+  get comproafmandsae() {
+    return this.form.get('comproafmandsae');
+  }
+
+  validateNotifyFirst() {
+    let partidas = this.dataCompositionExpenses.filter(x => x.departure);
+    let mandatos2 = this.dataCompositionExpenses.filter(x => x.manCV);
+    let mandatos = this.dataCompositionExpenses.filter(x => x.mandato);
+    if (
+      !this.conceptNumber.value &&
+      !this.eventNumber.value &&
+      !this.clkpv.value &&
+      !this.comment.value &&
+      !this.lotNumber.value &&
+      !this.invoiceRecNumber.value &&
+      !this.invoiceRecDate.value &&
+      !this.payDay.value &&
+      !this.fecha_contrarecibo.value &&
+      !this.formPayment.value &&
+      !this.comproafmandsae.value &&
+      mandatos2.length === 0 &&
+      partidas.length === 0 &&
+      mandatos.length === 0
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   prepareForm() {
     this.form = this.fb.group({
       expenseNumber: [null, [Validators.pattern(NUM_POSITIVE)]],

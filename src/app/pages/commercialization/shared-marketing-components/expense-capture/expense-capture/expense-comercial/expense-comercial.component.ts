@@ -952,7 +952,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       return;
     }
     this.expenseGoodProcessService
-      .NOTIFICAR({
+      .replyFolio({
         goodArray: this.dataService.dataCompositionExpenses
           .filter(x => x.goodNumber)
           .map(x => {
@@ -1002,19 +1002,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return;
     }
-    // const firstValidation =
-    //   !this.conceptNumber.value &&
-    //   !this.eventNumber.value &&
-    //   !this.clkpv.value &&
-    //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
-    //   !this.dataService.data.providerName;
-    if (
-      !this.conceptNumber.value &&
-      !this.eventNumber.value &&
-      !this.clkpv.value &&
-      !this.dataService.dataCompositionExpenses[0].goodNumber &&
-      !this.dataService.data.providerName
-    ) {
+    if (!this.dataService.validateNotifyFirst()) {
       this.alert(
         'warning',
         'Tiene que llenar alguno de los campos',
