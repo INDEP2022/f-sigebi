@@ -982,7 +982,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
         if (!this.requestInfo.recordId) {
-          this.showError('Asoicie el expediente de la solicitud');
+          this.showError('Asocie el expediente de la solicitud');
           return false;
         }
         if (!this.validate.goods) {

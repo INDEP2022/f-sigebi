@@ -75,3 +75,21 @@ export interface IGoodTracker {
   globalRelGood: number;
   user: string;
 }
+
+export interface IPupCompFolioUniv {
+  proceeding: number;
+  expedient: number;
+  universalFolio: string;
+  proceedingKey: string;
+  user: string;
+  delegation: number;
+  subDelegation: number;
+  departament: number;
+  elaborationDate: string;
+  screen: string;
+}
+
+export interface IPupGoodTrackerRga {
+  identifier: string;
+  user: string;
+}

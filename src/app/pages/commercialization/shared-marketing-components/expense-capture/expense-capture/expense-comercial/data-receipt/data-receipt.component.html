@@ -248,7 +248,15 @@
       {{ item.MeNomAM }}
     </div>
   </ng-template>
-  <div class="row mt-4 pl-0">
+  <ng-template #paramModLabel let-item="item">
+    {{ item.value }} - {{ item.description }}
+  </ng-template>
+  <ng-template #paramModOption let-item="item">
+    <div [title]="item.value + '-' + item.description">
+      {{ item.value }} - {{ item.description }}
+    </div>
+  </ng-template>
+  <div class="row mt-4 pl-0" *ngIf="address === 'M'">
     <div class="col-md-6">
       <ng-custom-select-loading
         [form]="form"
@@ -278,7 +286,7 @@
       </ng-custom-select-loading>
     </div>
   </div>
-  <div class="row mt-4 pl-0">
+  <div class="row mt-4 pl-0" *ngIf="address === 'M'">
     <ng-custom-select-loading
       [form]="form"
       [updateValues]="true"
@@ -290,6 +298,50 @@
       paramSearch="search"
       [labelTemplate]="employeeLabel"
       [optionTemplate]="employeeOption">
+    </ng-custom-select-loading>
+  </div>
+  <div class="row mt-4 pl-0" *ngIf="address !== 'M'">
+    <div class="col-md-6">
+      <ng-custom-select-loading
+        [form]="form"
+        [updateValues]="true"
+        formControlName="capturedUser"
+        label="Captura"
+        [path]="pathCaptura"
+        value="value"
+        bindLabel="description"
+        paramSearch="search"
+        [labelTemplate]="paramModLabel"
+        [optionTemplate]="paramModOption">
+      </ng-custom-select-loading>
+    </div>
+    <div class="col-md-6">
+      <ng-custom-select-loading
+        [form]="form"
+        [updateValues]="true"
+        formControlName="authorizedUser"
+        label="Autoriza"
+        [path]="pathAutoriza"
+        value="value"
+        bindLabel="description"
+        paramSearch="search"
+        [labelTemplate]="paramModLabel"
+        [optionTemplate]="paramModOption">
+      </ng-custom-select-loading>
+    </div>
+  </div>
+  <div class="row mt-4 pl-0" *ngIf="address !== 'M'">
+    <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="requestedUser"
+      label="Solicita"
+      [path]="pathSolicita"
+      value="value"
+      bindLabel="description"
+      paramSearch="search"
+      [labelTemplate]="paramModLabel"
+      [optionTemplate]="paramModOption">
     </ng-custom-select-loading>
   </div>
   <ng-template #typeOpLabel let-item="item">
@@ -389,6 +441,7 @@
           paramSearch="filter.cvdsc"
           prefixSearch="$ilike"
           secondParamSearch="filter.clktipadjud"
+          [readonly]="true"
           [labelTemplate]="tipadjLabel"
           [optionTemplate]="tipadjOption">
         </ng-custom-select-loading>
@@ -406,6 +459,7 @@
           paramSearch="filter.cvdsc"
           prefixSearch="$ilike"
           secondParamSearch="filter.clktipadjud"
+          [readonly]="true"
           [labelTemplate]="tipadjLabel"
           [optionTemplate]="tipadjOption">
         </ng-custom-select-loading>
@@ -423,6 +477,7 @@
           paramSearch="filter.cvdsc"
           prefixSearch="$ilike"
           secondParamSearch="filter.clktipadjud"
+          [readonly]="true"
           [labelTemplate]="tipadjLabel"
           [optionTemplate]="tipadjOption">
         </ng-custom-select-loading>
@@ -442,6 +497,7 @@
         paramSearch="filter.cvdsc"
         prefixSearch="$ilike"
         secondParamSearch="filter.clktipadjud"
+        [readonly]="true"
         [labelTemplate]="tipadjLabel"
         [optionTemplate]="tipadjOption">
       </ng-custom-select-loading>

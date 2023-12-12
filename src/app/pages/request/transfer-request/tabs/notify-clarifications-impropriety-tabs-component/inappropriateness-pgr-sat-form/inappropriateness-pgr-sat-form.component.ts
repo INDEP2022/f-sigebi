@@ -183,8 +183,8 @@ export class InappropriatenessPgrSatFormComponent
             this.close();
           },
           error: error => {
-            this.loading = false;
-            this.onLoadToast('error', 'No se pudo guardar', '');
+            this.loading = false; //Revisar Error
+            //this.onLoadToast('error', 'No se pudo guardar', '');
           },
         });
     }

@@ -337,6 +337,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.close();
     }
 
+    if (this.idTypeDoc == 219 && this.typeFirm == 'autografa') {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.close();
+    }
+
     if (this.idTypeDoc == 103 && this.typeFirm == 'autograf') {
       this.modalRef.content.callback(true, this.typeFirm);
       this.modalRef.hide();

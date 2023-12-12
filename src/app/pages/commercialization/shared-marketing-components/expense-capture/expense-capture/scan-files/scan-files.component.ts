@@ -4,15 +4,17 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, of } from 'rxjs';
+import { catchError, firstValueFrom, of, take, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { IComerDetExpense2 } from 'src/app/core/models/ms-spent/comer-detexpense';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
@@ -30,24 +32,29 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     private dataService: ExpenseCaptureDataService,
     private serviceUser: UsersService,
     private siabService: SiabService,
+    private sirsaeService: InterfacesirsaeService,
     private sanitizer: DomSanitizer,
     private router: Router,
     private modalService: BsModalService,
     private fb: FormBuilder
   ) {
     super();
-    this.form = this.fb.group({
+    this.dataService.formScan = this.fb.group({
       folioUniversal: [null, [Validators.required]],
     });
   }
 
   get form() {
+    return this.dataService.form;
+  }
+
+  get formScan() {
     return this.dataService.formScan;
   }
 
-  set form(value) {
-    this.dataService.formScan = value;
-  }
+  // set form(value) {
+  //   this.dataService.formScan = value;
+  // }
 
   get user() {
     return this.dataService.user;
@@ -100,78 +107,86 @@ export class ScanFilesComponent extends BasePage implements OnInit {
 
   ngOnInit() {
     this.getDataUser();
-    this.dataService.updateFolio.subscribe({
+    this.dataService.updateFolio.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         const filterParams = new FilterParams();
-        filterParams.addFilter('goodNumber', this.expenseNumber);
+        filterParams.addFilter('goodNumber', this.expenseNumber.value);
         filterParams.addFilter(
           'associateUniversalFolio',
           SearchFilter.NULL,
           SearchFilter.NULL
         );
-        this.serviceDocuments.getAll(filterParams.getParams()).subscribe({
-          next: response => {
-            if (response && response.data) {
-              console.log(response);
-              this.dataService.FOLIO_UNIVERSAL = response.data[0].id;
-              this.folioUniversal.setValue(response.data[0].id);
-            }
-          },
-          error: err => {
-            this.alert('warning', 'No cuenta con folio de escaneo', '');
-          },
-        });
+        this.serviceDocuments
+          .getAll(filterParams.getParams())
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              if (response && response.data) {
+                console.log(response);
+                // this.dataService.formScan.get('folioUniversal').S =
+                //   response.data[0].universalFolio;
+                this.folioUniversal.setValue(response.data[0].universalFolio);
+              }
+            },
+            error: err => {
+              // this.alert('warning', 'No cuenta con folio de escaneo', '');
+            },
+          });
       },
     });
   }
 
-  get dataComer() {
-    return this.dataService.data;
-  }
-
-  get valid() {
-    return this.dataComer && this.dataService.validPayment;
-  }
-
-  get expenseNumber() {
-    return this.dataComer.expenseNumber;
+  get folioUniversal() {
+    return this.formScan.get('folioUniversal');
   }
 
   get conceptNumber() {
-    return this.dataComer.conceptNumber;
+    return this.form.get('conceptNumber');
   }
 
   get eventNumber() {
-    return this.dataComer.eventNumber;
+    return this.form.get('eventNumber');
   }
 
-  get folioUniversal() {
-    return this.form.get('folioUniversal');
+  get expenseNumber() {
+    return this.form.get('expenseNumber');
   }
 
   async generateFolio() {
-    debugger;
     if (this.folioUniversal && this.folioUniversal.value) {
+      // debugger;
       this.alert('error', 'Generar Folio', 'El gasto ya cuenta con un folio');
       return;
     }
-    let FOLIO_ASOC: any;
-    const DESCR =
-      'ID GASTO: ' +
-      this.expenseNumber +
-      ' CANCELACION DE VENTA POR SOLICITUD DE AUTORIDAD';
-    let filterDataComposition = this.dataService.dataCompositionExpenses.filter(
-      row => row.expendientNumber !== null
-    );
 
-    if (filterDataComposition.length === 0) {
-      this.alert(
-        'warning',
-        'No cuenta con expediente en los detalles de gasto para continuar',
-        ''
+    let filterDataComposition: IComerDetExpense2[] = [];
+    let bienes: IComerDetExpense2[] = [];
+    if (this.dataService.address === 'M') {
+      filterDataComposition = this.dataService.dataCompositionExpenses.filter(
+        row => row.expendientNumber !== null && row.goodNumber !== null
       );
-      return;
+      if (filterDataComposition.length === 0) {
+        this.alert(
+          'warning',
+          'No cuenta con expediente en los detalles de gasto para continuar',
+          ''
+        );
+        return;
+      }
+    } else {
+      bienes = this.dataService.dataCompositionExpenses.filter(
+        x => x.goodNumber
+      );
+      if (bienes.length === 0) {
+        this.alert(
+          'warning',
+          'No tiene bienes en detalle de gasto para continuar',
+          ''
+        );
+        return;
+      }
     }
+
     if (!this.userData) {
       this.alert(
         'warning',
@@ -180,9 +195,16 @@ export class ScanFilesComponent extends BasePage implements OnInit {
       );
       return;
     }
-    filterDataComposition.forEach(async (x, index) => {
-      debugger;
+    let newArray =
+      this.dataService.address === 'M' ? filterDataComposition : bienes;
+    newArray.forEach(async (x, index) => {
+      // debugger;
       console.log(x);
+      const DESCR =
+        (this.dataService.address === 'M'
+          ? 'ID GASTO: ' + this.expenseNumber
+          : 'BIEN:' + x.goodNumber) +
+        ' CANCELACION DE VENTA POR SOLICITUD DE AUTORIDAD';
       const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${x.expendientNumber}&sortBy=wheelNumber:DESC`;
       const notifications = await firstValueFrom(
         this.serviceNotification
@@ -222,10 +244,10 @@ export class ScanFilesComponent extends BasePage implements OnInit {
             sendFilekey: '',
             userResponsibleFile: '',
             mediumId: '',
-            associateUniversalFolio: index > 0 ? FOLIO_ASOC : 0,
+            associateUniversalFolio: index > 0 ? this.folioUniversal.value : 0,
             dateRegistrationScanningHc: null,
             dateRequestScanningHc: null,
-            goodNumber: this.expenseNumber,
+            goodNumber: this.expenseNumber.value,
           };
           let createDocument = await firstValueFrom(
             this.serviceDocuments.create(modelDocument).pipe(
@@ -242,6 +264,13 @@ export class ScanFilesComponent extends BasePage implements OnInit {
           if (index === 0) {
             this.alert('success', 'Se generó el folio de escaneo', '');
             this.folioUniversal.setValue(createDocument.id);
+          }
+          if (this.dataService.address === 'I') {
+            modelDocument.associateUniversalFolio = createDocument.id;
+            modelDocument.id = createDocument.id;
+            await firstValueFrom(
+              this.serviceDocuments.update(createDocument.id, modelDocument)
+            );
           }
         }
       }
@@ -311,6 +340,9 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     if (this.folioUniversal.value != null) {
       const params = {
         pn_folio: this.folioUniversal.value,
+        PARAMFORM: 'NO',
+        DESTYPE: 'PREVIEW',
+        PRINTJOB: 'YES',
       };
       this.downloadReport('RGERGENSOLICDIGIT', params);
     } else {

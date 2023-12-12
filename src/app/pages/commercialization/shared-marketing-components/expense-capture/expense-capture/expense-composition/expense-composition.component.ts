@@ -1,7 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, map, of, take, takeUntil } from 'rxjs';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import {
+  catchError,
+  firstValueFrom,
+  forkJoin,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import {
@@ -23,6 +34,8 @@ import { ExpenseMassiveGoodService } from '../../services/expense-massive-good.s
 import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseNumeraryService } from '../../services/expense-numerary.service';
 import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
+import { ExpenseScreenService } from '../../services/expense-screen.service';
+import { NotLoadedsModalComponent } from '../expense-comercial/not-loadeds-modal/not-loadeds-modal.component';
 import { COLUMNS } from './columns';
 import { ExpenseCompositionModalComponent } from './expense-composition-modal/expense-composition-modal.component';
 import { MandByGoodsComponent } from './mand-by-goods/mand-by-goods.component';
@@ -44,6 +57,7 @@ export class ExpenseCompositionComponent
   ce: boolean = false;
   rr: boolean = false;
   v_tip_gast: string = '';
+  errorsClasification: any[] = [];
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
@@ -57,7 +71,8 @@ export class ExpenseCompositionComponent
     private parametercomerService: ExpenseParametercomerService,
     private dictationService: ExpenseDictationService,
     private expenseNumeraryService: ExpenseNumeraryService,
-    private expenseMassiveGoodService: ExpenseMassiveGoodService
+    private expenseMassiveGoodService: ExpenseMassiveGoodService,
+    private screenService: ExpenseScreenService
   ) {
     super();
     // this.service = this.dataService;
@@ -97,6 +112,7 @@ export class ExpenseCompositionComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
+          this.errorsClasification = [];
           this.notGetData();
         },
       });
@@ -285,9 +301,9 @@ export class ExpenseCompositionComponent
       this.resetTotals();
       this.getData();
     }
-
+    let usuario = this.expenseCaptureDataService.user.preferred_username; //'AJIMENEZC'; // this.expenseCaptureDataService.user.preferred_username;
     this.dictationService
-      .maxInCsv(this.expenseCaptureDataService.user.preferred_username)
+      .maxInCsv(usuario)
       .pipe(take(1))
       .subscribe({
         next: response => {
@@ -362,12 +378,108 @@ export class ExpenseCompositionComponent
     return this.form.get('conceptNumber');
   }
 
-  get lotNumber() {
-    return this.form.get('lotNumber');
+  get conceptNumberValue() {
+    return this.conceptNumber ? this.conceptNumber.value : null;
   }
 
-  get showFilters() {
-    return this.expenseNumber && this.expenseNumber.value && this.validPayment;
+  get dataCompositionExpensesToUpdateClasif() {
+    return this.dataTemp
+      ? this.dataTemp.filter(row => row.reportDelit && row.reportDelit === true)
+      : [];
+  }
+
+  showNotLoads() {
+    let config: ModalOptions = {
+      initialState: {
+        data: this.errorsClasification,
+        dataTemp: this.errorsClasification,
+        totalItems: this.errorsClasification.length,
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NotLoadedsModalComponent, config);
+  }
+
+  validationForkJoin(obs: Observable<any>[]) {
+    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
+  }
+
+  async updateClasif() {
+    const VALIDA_DET = this.dataCompositionExpensesToUpdateClasif;
+    this.errorsClasification = [];
+    if (VALIDA_DET.length === 0) {
+      this.alert(
+        'error',
+        'Actualizar Clasificación a Reporte de Robo',
+        'No se han seleccionado los bienes para realizar el cambio de clasificador a Vehiculo con Reporte de Robo'
+      );
+    } else {
+      this.alertQuestion(
+        'question',
+        'Actualizar Clasificación',
+        '¿Desea cambiar el clasificador de los bienes a Vehiculo con Reporte de Robo?'
+      ).then(x => {
+        if (x.isConfirmed) {
+          let errors: any[] = [];
+          forkJoin(
+            VALIDA_DET.map(async row => {
+              return this.screenService
+                .PUP_VAL_BIEN_ROBO({
+                  goodNumber: row.goodNumber,
+                  type: 'U',
+                  screenKey: 'FCOMER084',
+                  conceptNumber: this.conceptNumber.value,
+                })
+                .pipe(
+                  take(1),
+                  catchError(x => of(null)),
+                  tap(x => {
+                    console.log(x);
+                    if (x === null) {
+                      // console.log('ERROR');
+                      errors.push({ goodNumber: row.goodNumber });
+                    }
+                  })
+                );
+            })
+          )
+            .pipe(
+              takeUntil(this.$unSubscribe),
+              mergeMap(x => this.validationForkJoin(x))
+            )
+            .subscribe(x => {
+              console.log(x);
+
+              if (errors.length === 0) {
+                this.alert(
+                  'success',
+                  'Se realizco el cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  ''
+                );
+              }
+              if (errors.length === VALIDA_DET.length) {
+                this.alert(
+                  'error',
+                  'Registros no encontrados por clave pantalla y número de concepto',
+                  ''
+                );
+              } else if (errors.length > 0) {
+                this.alert(
+                  'warning',
+                  'Cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'No todos los bienes pudieron cambiar su clasificador por no encontrarse en búsqueda por clave pantalla y número de concepto'
+                );
+              }
+              this.errorsClasification = errors;
+            });
+        }
+      });
+    }
+  }
+
+  get lotNumber() {
+    return this.form.get('lotNumber');
   }
 
   get showAdd() {
@@ -477,12 +589,16 @@ export class ExpenseCompositionComponent
             this.fileI.nativeElement.value = '';
             if (typeof event === 'object') {
               console.log(event);
-              if (event.data.length > 0) {
+              if (event.data) {
                 let dataCSV: IComerDetExpense[] = this.getComerDetExpenseI(
-                  event.data
+                  event.data.tmpGasp
                 );
                 this.removeMassive(dataCSV);
+                this.expenseCaptureDataService.addErrors.next(
+                  event.data.tmpError
+                );
               }
+
               //agregar a detalle gasto
             } else {
               this.loader.load = false;
@@ -490,7 +606,9 @@ export class ExpenseCompositionComponent
             }
           },
           error => {
+            console.log(error);
             this.loader.load = false;
+            // this.expenseCaptureDataService.addErrors.next();
             this.fileI.nativeElement.value = '';
             this.alert('error', 'No se pudo realizar la carga de datos', '');
           }
@@ -578,15 +696,15 @@ export class ExpenseCompositionComponent
     this.modalService.show(ExpenseCompositionModalComponent, modalConfig);
   }
 
-  get validPayment() {
-    return this.expenseCaptureDataService.validPayment;
-  }
+  // get validPayment() {
+  //   return this.expenseCaptureDataService.validPayment;
+  // }
 
   async delete(row: IComerDetExpense2) {
     const response = await this.alertQuestion(
       'warning',
-      'Eliminación Composición de Gasto',
-      '¿Desea eliminar este registro?'
+      '¿Desea eliminar este registro?',
+      ''
     );
     if (response.isConfirmed) {
       this.dataService
@@ -594,6 +712,7 @@ export class ExpenseCompositionComponent
           expenseDetailNumber: row.detPaymentsId,
           expenseNumber: row.paymentsId,
         })
+        .pipe(take(1))
         .subscribe({
           next: response => {
             this.alert(
@@ -1191,6 +1310,11 @@ export class ExpenseCompositionComponent
       ''
     );
     if (response.isConfirmed) {
+      this.amount = 0;
+      this.vat = 0;
+      this.isrWithholding = 0;
+      this.vatWithholding = 0;
+      this.total = 0;
       this.loader.load = true;
       this.dataTemp.forEach(row => {
         if (row) {
@@ -1340,13 +1464,22 @@ export class ExpenseCompositionComponent
         },
         error: err => {
           this.loader.load = false;
-          this.alert(
-            'error',
-            'Ocurrio un error en obtención de mandatos',
-            'Favor de verificar'
-          );
+          this.expenseCaptureDataService.P_CAMBIO = 0;
+          this.showViewMandatos();
+          // this.alert(
+          //   'error',
+          //   'Ocurrio un error en obtención de mandatos',
+          //   'Favor de verificar'
+          // );
         },
       });
+  }
+
+  private viewMandatos() {
+    this.loader.load = false;
+    this.expenseCaptureDataService.P_CAMBIO = 0;
+    //show view mandatos
+    this.showViewMandatos();
   }
 
   private MAND_CONTA() {
@@ -1358,21 +1491,17 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
-          if (response) {
-            this.loader.load = false;
-            this.expenseCaptureDataService.P_CAMBIO = 0;
-            //show view mandatos
-            this.showViewMandatos();
-          }
+          this.viewMandatos();
         },
         error: err => {
-          this.loader.load = false;
-          console.log(err);
-          this.alert(
-            'error',
-            'Ocurrio un error en obtención de mandatos',
-            'Favor de verificar'
-          );
+          this.viewMandatos();
+          // this.loader.load = false;
+          // console.log(err);
+          // this.alert(
+          //   'error',
+          //   'Ocurrio un error en obtención de mandatos',
+          //   'Favor de verificar'
+          // );
         },
       });
   }

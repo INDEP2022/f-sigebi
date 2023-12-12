@@ -43,13 +43,10 @@ export const DETAIL_PROCEEDINGS_DELIVERY_RECEPTION = {
     title: 'No. Bien',
     sort: false,
   },
-  good: {
+  description: {
     title: 'Descripción',
     sort: false,
     type: 'custom',
-    valuePrepareFunction: (value: any) => {
-      return value.description ?? '';
-    },
     renderComponent: SeeMoreComponent,
   },
   amount: {

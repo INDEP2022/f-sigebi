@@ -21,7 +21,12 @@ export class ExpenseMassiveGoodService extends HttpService {
   ABRE_ARCHIVO_CSV(file: File) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.httpClient.post<{ data: IPreviewDatosCSV[] }>(
+    return this.httpClient.post<{
+      data: {
+        tmpGasp: IPreviewDatosCSV[];
+        tmpError: { tmpErrorDescription: string }[];
+      };
+    }>(
       `${this._url}${this.microservice}/${this._prefix}application/pup-preview-datos-csv`,
       formData
     );

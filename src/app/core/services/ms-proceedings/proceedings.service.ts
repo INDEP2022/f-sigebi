@@ -18,6 +18,7 @@ import {
   IQueryRegAdminGood,
   ITmpCreateAuthoDestroy,
   ITmpUpdateMassive,
+  ITmpUpdateOneReg,
   IUpdateActasEntregaRecepcion,
 } from '../../models/ms-proceedings/proceedings.model';
 import {
@@ -364,7 +365,9 @@ export class ProceedingsService extends HttpService {
     params?: string
   ) {
     return this.get(
-      `detail-proceedings-delivery-reception/tmp/?user=${user}&proceeding=${proceeding}`,
+      proceeding != null
+        ? `detail-proceedings-delivery-reception/tmp/?user=${user}&proceeding=${proceeding}`
+        : `detail-proceedings-delivery-reception/tmp/?user=${user}`,
       params
     );
   }
@@ -381,5 +384,16 @@ export class ProceedingsService extends HttpService {
       'detail-proceedings-delivery-reception/create-massive',
       body
     );
+  }
+
+  tmpUpdateOneReg(body: ITmpUpdateOneReg) {
+    return this.post(
+      'detail-proceedings-delivery-reception/update-status',
+      body
+    );
+  }
+
+  pupFillDist(acta: string) {
+    return this.get(`aplication/pup-full-dist/${acta}`);
   }
 }

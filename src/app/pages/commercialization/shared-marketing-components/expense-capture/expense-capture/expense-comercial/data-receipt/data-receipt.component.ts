@@ -82,6 +82,27 @@ export class DataReceiptComponent implements OnInit {
     return 'interfaceesirsae/api/v1/application/getTipoDocumento?sortBy=documentType:ASC&filter.indR=$not:9&filter.KeytypeGuia=$not:$in:2,9';
   }
 
+  get pathCaptura() {
+    return (
+      'comerconcepts/api/v1/parameters-mod/get-all?filter.parameter=$eq:USUCAPTURA&filter.address=$eq:' +
+      this.address
+    );
+  }
+
+  get pathAutoriza() {
+    return (
+      'comerconcepts/api/v1/parameters-mod/get-all?filter.parameter=$eq:USUAUTORIZA&filter.address=$eq:' +
+      this.address
+    );
+  }
+
+  get pathSolicita() {
+    return (
+      'comerconcepts/api/v1/parameters-mod/get-all?filter.parameter=$eq:USUSOLICITA&filter.address=$eq:' +
+      this.address
+    );
+  }
+
   get form() {
     return this.dataService.form;
   }
@@ -302,10 +323,18 @@ export class DataReceiptComponent implements OnInit {
             this.contractNumber.setValue(selected.contractNumber);
             this.form.get('descontract').setValue(selected.desContract);
             this.form.get('clkpv').setValue(selected.clkpv);
-            this.form.get('padj').setValue(selected.padj);
-            this.form.get('psadj').setValue(selected.psadj);
-            this.form.get('pssadj').setValue(selected.pssadj);
-            this.form.get('adj').setValue(selected.adj);
+            setTimeout(() => {
+              this.form.get('padj').setValue(selected.padj);
+            }, 100);
+            setTimeout(() => {
+              this.form.get('psadj').setValue(selected.psadj);
+            }, 200);
+            setTimeout(() => {
+              this.form.get('pssadj').setValue(selected.pssadj);
+            }, 300);
+            setTimeout(() => {
+              this.form.get('adj').setValue(selected.adj);
+            }, 400);
           }
         },
       },

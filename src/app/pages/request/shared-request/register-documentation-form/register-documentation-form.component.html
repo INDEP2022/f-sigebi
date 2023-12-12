@@ -26,7 +26,7 @@
       </div>
     </div>
   </div>
-  <br />
+
   <div class="row pt-5" *ngIf="displayNotifyMails">
     <div class="col-md-6">
       <form-field
@@ -73,7 +73,7 @@
             <input
               id="priority"
               type="checkbox"
-              class=""
+              class="gcheckbox"
               [ngModelOptions]="{ standalone: true }"
               [(ngModel)]="priorityCheck"
               (change)="changePriority($event)" />
