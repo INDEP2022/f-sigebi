@@ -1483,9 +1483,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async imprimeAny() {
-    this.loader.load = true;
     let result = await this.alertQuestion('question', '¿Desea imprimir?', '');
     if (result.isConfirmed) {
+      this.loader.load = true;
       if (this.paymentRequestNumber.value) {
         this.sirsaeService
           .imprimeAny(this.paymentRequestNumber.value, this.expenseNumber.value)
@@ -1514,8 +1514,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.loader.load = false;
         this.alert('warning', 'No existe un gasto a visualizar', '');
       }
-    } else {
-      this.loader.load = false;
     }
   }
 
