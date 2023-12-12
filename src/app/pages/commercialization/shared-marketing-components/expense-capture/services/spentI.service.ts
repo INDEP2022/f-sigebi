@@ -19,8 +19,7 @@ export class SpentIService extends HttpService {
     let PDIRECCION_A = self.dataService.PDIRECCION_A;
     return self.get<IListResponseMessage<IComerExpense>>(
       SpentEndpoints.ExpenseComer +
-        '?filter.address=$in:' +
-        self.dataService.address +
+        '?filter.address=$in:I' +
         (PDIRECCION_A ? ',' + PDIRECCION_A : ''),
       params
     );
