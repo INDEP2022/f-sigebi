@@ -28,7 +28,7 @@ export class ClassificationAnnexedSignComponent
   extends BasePage
   implements OnInit
 {
-  title: string = `Clasificación de bienes (Firma Anexos) ${302}`;
+  title: string = `Clasificación de bienes (Firma Anexos) ${326}`;
   sampleInfo: ISample;
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
@@ -37,7 +37,7 @@ export class ClassificationAnnexedSignComponent
   loadingDeductives: boolean = true;
   paragraphsDeductivas = new LocalDataSource();
   allDeductives: ISamplingDeductive[] = [];
-  idSample: number = 302;
+  idSample: number = 326;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     private samplingGoodService: SamplingGoodService,
@@ -96,7 +96,7 @@ export class ClassificationAnnexedSignComponent
 
   getInfoSample() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.sampleId'] = `$eq:${302}`;
+    params.getValue()['filter.sampleId'] = `$eq:${326}`;
     this.samplingGoodService.getSample(params.getValue()).subscribe({
       next: response => {
         this.sampleInfo = response.data[0];
@@ -149,7 +149,7 @@ export class ClassificationAnnexedSignComponent
         callback: (next: boolean) => {
           if (next) {
             if (typeFirm != 'electronica') {
-              this.uploadDocument();
+              this.uploadDocument(typeDocument);
             } else {
               this.getInfoSample();
             }
@@ -162,10 +162,11 @@ export class ClassificationAnnexedSignComponent
     this.modalService.show(ShowReportComponentComponent, config);
   }
 
-  uploadDocument() {
+  uploadDocument(typeDocument: number) {
+    console.log('typeDocument', typeDocument);
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
-      typeDoc: 218,
+      typeDoc: typeDocument,
       idSample: this.idSample,
       callback: (data: boolean) => {
         if (data) {
