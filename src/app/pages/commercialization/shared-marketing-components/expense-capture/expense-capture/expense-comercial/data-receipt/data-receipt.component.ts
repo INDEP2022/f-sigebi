@@ -328,13 +328,13 @@ export class DataReceiptComponent implements OnInit {
             }, 100);
             setTimeout(() => {
               this.form.get('psadj').setValue(selected.psadj);
-            }, 100);
+            }, 200);
             setTimeout(() => {
               this.form.get('pssadj').setValue(selected.pssadj);
-            }, 100);
+            }, 300);
             setTimeout(() => {
               this.form.get('adj').setValue(selected.adj);
-            }, 100);
+            }, 400);
           }
         },
       },
