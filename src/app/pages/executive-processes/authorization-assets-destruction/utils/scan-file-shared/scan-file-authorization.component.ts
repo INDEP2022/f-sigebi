@@ -74,7 +74,7 @@ export class ScanFileAuthorizationComponent extends BasePage implements OnInit {
       if (this.form.get(this.formControlName).value) {
         this.alertQuestion(
           'question',
-          'El Oficio ya Tiene Folio de Escaneo, ¿Se Reimprime la Solicitud de Digitalización?',
+          'El Oficio ya tiene folio de escaneo, ¿Se reimprime la solicitud de digitalización?',
           '¿Quiere continuar con el proceso?'
         ).then(q => {
           if (q.isConfirmed) {
@@ -267,7 +267,7 @@ export class ScanFileAuthorizationComponent extends BasePage implements OnInit {
         if (this.form.get(this.formControlName).value != null) {
           this.alertQuestion(
             'question',
-            'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta',
+            'Se abrirá la pantalla de escaneo para el folio del acta abierta',
             '¿Deseas continuar?',
             'Continuar'
           ).then(q => {
