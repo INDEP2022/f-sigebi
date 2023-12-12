@@ -1339,9 +1339,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.descurcoord.setValue(event.descurcoord);
       this.dataService.updateOI.next(true);
       this.dataService.updateExpenseComposition.next(true);
-      if (this.address === 'M') {
-        this.dataService.updateFolio.next(true);
-      }
+      this.dataService.updateFolio.next(true);
+      // if (this.address === 'M') {
+      //   this.dataService.updateFolio.next(true);
+      // }
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
       );
@@ -1457,32 +1458,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.dataCompositionExpenses;
   }
 
-  get dataCompositionExpensesStatusChange() {
-    return this.dataCompositionExpenses
-      ? this.dataCompositionExpenses.filter(
-          row => row.changeStatus && row.changeStatus === true
-        )
-      : [];
-  }
-
   get conceptNumberValue() {
     return this.conceptNumber ? this.conceptNumber.value : null;
-  }
-
-  async sendToSIRSAE() {
-    let result = await this.alertQuestion(
-      'question',
-      '¿Desea enviar solicitud de pago a sirsae?',
-      ''
-    );
-    if (result.isConfirmed) {
-      if (this.address === 'M') {
-        this.dataService.actionButton = 'SIRSAE';
-        await this.dataService.updateByGoods(true);
-      } else {
-        this.dataService.ENVIA_MOTIVOS();
-      }
-    }
   }
 
   get validImprimeAny() {
