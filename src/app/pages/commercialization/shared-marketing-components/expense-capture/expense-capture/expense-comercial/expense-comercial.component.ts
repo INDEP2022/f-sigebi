@@ -469,6 +469,42 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.dataService.VISIBLE_DISPERSA = value;
   }
 
+  private async setConceptScreenI(user: string) {
+    let filterParams = new FilterParams();
+    filterParams.addFilter(
+      'typeNumber',
+      'GASTOINMU,GASTOVIG,GASTOSEG,GASTOADMI',
+      SearchFilter.IN
+    );
+    filterParams.addFilter('user', user);
+    let rtDicta = await firstValueFrom(
+      this.dictationService.getRTdictaAarusr(filterParams.getParams()).pipe(
+        take(1),
+        catchError(x => {
+          return of({ data: [] });
+        }),
+        map(x => x.data)
+      )
+    );
+    if (rtDicta.length > 0) {
+      this.fillAddressNotM(rtDicta[0].typeNumber);
+    }
+    let usuarioCapturaData = await this.usuarioCapturaDataI(user);
+    if (usuarioCapturaData) {
+      this.form.get('capturedUser').setValue(usuarioCapturaData.value);
+    }
+    let usuarioAutorizaData = await this.usuarioParametro('USUAUTORIZA');
+    if (usuarioAutorizaData) {
+      this.form.get('authorizedUser').setValue(usuarioAutorizaData.value);
+    }
+    let usuarioSolicitaData = await this.usuarioParametro('USUSOLICITA');
+    if (usuarioSolicitaData) {
+      this.form.get('requestedUser').setValue(usuarioSolicitaData.value);
+    }
+    // this._address = 'I';
+    this.dataService.address = 'I';
+  }
+
   private async initScreenI() {
     // debugger;
     const list = [];
@@ -577,6 +613,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'I', title: 'INMUEBLES' });
     }
+    this.setConceptScreenI(user);
   }
 
   get PDIRECCION_A() {
@@ -712,7 +749,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     filterParams.addFilter('description', user, SearchFilter.ILIKE);
     filterParams.limit = 1;
     return firstValueFrom(
-      this.parameterService.getAll(filterParams.getParams()).pipe(
+      this.parameterModService.getAll(filterParams.getParams()).pipe(
         take(1),
         catchError(x => of({ data: [] as IParameterConcept[] })),
         map(x => {
@@ -728,7 +765,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     filterParams.addFilter('address', this.address);
     filterParams.limit = 1;
     return firstValueFrom(
-      this.parameterService.getAll(filterParams.getParams()).pipe(
+      this.parameterModService.getAll(filterParams.getParams()).pipe(
         take(1),
         catchError(x => of({ data: [] as IParameterConcept[] })),
         map(x => {
@@ -835,41 +872,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   async selectConcept(concept: IConcept) {
     if (!concept) return;
-    if (this.address && this.address !== 'M') {
-      let filterParams = new FilterParams();
-      let user = this.user.preferred_username; //'PLAMAR';
-      filterParams.addFilter(
-        'typeNumber',
-        'GASTOINMU,GASTOVIG,GASTOSEG,GASTOADMI',
-        SearchFilter.IN
-      );
-      filterParams.addFilter('user', user);
-      let rtDicta = await firstValueFrom(
-        this.dictationService.getRTdictaAarusr(filterParams.getParams()).pipe(
-          take(1),
-          catchError(x => {
-            return of({ data: [] });
-          }),
-          map(x => x.data)
-        )
-      );
-      if (rtDicta.length > 0) {
-        this.fillAddressNotM(rtDicta[0].typeNumber);
-      }
-      let usuarioCapturaData = await this.usuarioCapturaDataI(user);
-      if (usuarioCapturaData) {
-        this.form.get('capturedUser').setValue(usuarioCapturaData.value);
-      }
-      let usuarioAutorizaData = await this.usuarioParametro('USUAUTORIZA');
-      if (usuarioAutorizaData) {
-        this.form.get('authorizedUser').setValue(usuarioAutorizaData.value);
-      }
-      let usuarioSolicitaData = await this.usuarioParametro('USUSOLICITA');
-      if (usuarioSolicitaData) {
-        this.form.get('requestedUser').setValue(usuarioSolicitaData.value);
-      }
-      // this._address = 'I';
-      this.dataService.address = 'I';
+    let user = this.user.preferred_username;
+    if (this.address !== 'M') {
+      this.setConceptScreenI(user);
     }
     await this.readParams(concept.id);
   }
