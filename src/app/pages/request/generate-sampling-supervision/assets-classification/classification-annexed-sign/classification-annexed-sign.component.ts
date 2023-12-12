@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -43,7 +44,8 @@ export class ClassificationAnnexedSignComponent
     private deductiveService: DeductiveVerificationService,
     private modalService: BsModalService,
     private wcontentService: WContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private router: Router
   ) {
     super();
     this.settings = {
@@ -102,7 +104,9 @@ export class ClassificationAnnexedSignComponent
     });
   }
 
-  turnSampling() {}
+  turnSampling() {
+    this.router.navigate(['/pages/request/warehouse-verification']);
+  }
 
   openAnnexJ() {
     this.openModal(

@@ -249,7 +249,7 @@
           class="form-control" />
       </form-field>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" *ngIf="showInput('publicMinistry')">
       <ngx-select
         [form]="registerForm"
         control="publicMinistry"
@@ -261,7 +261,7 @@
         value="description">
       </ngx-select>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" *ngIf="showInput('court')">
       <form-field [control]="registerForm.get('court')" label="Juzgado">
         <input
           type="text"
@@ -270,36 +270,28 @@
           formControlName="court" />
       </form-field>
     </div>
+
+      <!-- Datos Agregados de oracle -->
+        <div class="col-md-4" *ngIf="showInput('destinationManagement')">
+          <form-field [control]="registerForm.get('destinationManagement')" label="Gesti&oacute;n de Destino">
+            <input type="text" maxlength="100" class="form-control" formControlName="destinationManagement" />
+          </form-field>
+        </div>
+        <div class="col-md-4" *ngIf="showInput('transferEntNotes')">
+          <form-field [control]="registerForm.get('transferEntNotes')" label="Notas Ent&#46; Transferente">
+            <textarea rows="3" formControlName="transferEntNotes" maxlength="1000" class="form-control"></textarea>
+          </form-field>
+        </div>
+
   </div>
   <!-- Datos Agregados de oracle -->
   <div class="row pt-5">
-    <div class="col-md-4">
-      <form-field
-        [control]="registerForm.get('destinationManagement')"
-        label="Gesti&oacute;n de Destino">
-        <input
-          type="text"
-          maxlength="100"
-          class="form-control"
-          formControlName="destinationManagement" />
-      </form-field>
-    </div>
-    <div class="col-md-4">
-      <form-field
-        [control]="registerForm.get('transferEntNotes')"
-        label="Notas Ent&#46; Transferente">
-        <textarea
-          rows="3"
-          formControlName="transferEntNotes"
-          maxlength="1000"
-          class="form-control"></textarea>
-      </form-field>
-    </div>
+
   </div>
   <!-- Fin -->
   <!-- Se aumento datos del codigo oracle transferente-->
   <div class="row">
-    <div class="col-md-4 pt-5" *ngIf="processDetonate == 'DEVOLUCION'">
+    <div class="col-md-4 pt-5" *ngIf="showInput('authorityOrdering')">
       <form-field
         [control]="registerForm.get('authorityOrdering')"
         label="Autoridad Ordenante">
@@ -310,7 +302,7 @@
           class="form-control" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 120">
+    <div class="col-md-4 pt-5" *ngIf="transference == 120 || showInput('trialType')">
       <form-field [control]="registerForm.get('trialType')" label="Tipo Juicio">
         <input
           type="text"

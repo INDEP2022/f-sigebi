@@ -192,6 +192,10 @@ export class DestructionAuthorizationComponent
   selectGoodGen: any = null;
   isCommingTracker: boolean = true;
   flatGoodFlag: boolean = false;
+  newProceedingFlag: boolean = false;
+  numFile: number = null;
+  dataGoods: any = [];
+  user: string = null;
 
   @ViewChild('focusElement', { static: true })
   focusElement: ElementRef<HTMLInputElement>;
@@ -233,6 +237,7 @@ export class DestructionAuthorizationComponent
     //SERVICIOS AGREGADOS POR GRIGORK
     private expedientService: ExpedientService,
     private proceedingService: ProceedingsService,
+    private readonly goodServices: GoodService,
     private goodTrackerService: GoodTrackerService
   ) {
     super();
@@ -471,6 +476,8 @@ export class DestructionAuthorizationComponent
         next: () => {
           this.alert('success', 'Bien eliminado', '');
           this.getProceedingGoods();
+          this.searchGoodsInDetailProceeding(this.numberPro);
+          this.getGoodByStatusPDS();
         },
         error: err => {},
       });
@@ -531,6 +538,7 @@ export class DestructionAuthorizationComponent
       }
       this.goodTrackerGoods = trackerGoods;
       //this.getProceedingGoods();
+      this.searchGoodsInDetailProceeding(id.value);
       this.searchActa(id.value);
       this.searchDicta(id.value);
     });
@@ -565,8 +573,16 @@ export class DestructionAuthorizationComponent
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
             console.log(this.ngGlobal.REL_BIENES);
+
+            this.newProceedingFlag =
+              localStorage.getItem('newProceedingFlag') == 'S' ? true : false;
+
             if (this.isCommingTracker) {
-              this.insertDetailFromGoodsTracker();
+              if (this.newProceedingFlag) {
+                this.fillLocalDataTracker(this.ngGlobal.REL_BIENES.toString());
+              } else {
+                this.insertDetailFromGoodsTracker();
+              }
               this.isCommingTracker = false;
             }
           }
@@ -616,11 +632,15 @@ export class DestructionAuthorizationComponent
     this.navigateGoodsProceeding();
     this.navigateProceedingsDelivery();
     this.navigateDictamination();
+
+    this.user = this.authService.decodeToken().preferred_username;
   }
 
   navigateGoodsProceeding() {
     this.params7.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      this.getProceedingGoods();
+      if (this.detailProceedingsList2.count() > 0) {
+        this.getProceedingGoods();
+      }
     });
   }
 
@@ -655,10 +675,15 @@ export class DestructionAuthorizationComponent
     this.goodsTrackerLoading = true;
     this.massiveGoodService.goodTracker(body).subscribe({
       next: async response => {
-        await this.downloadExcel(
-          JSON.parse(JSON.stringify(response.bienes_rechazados)).nameFile,
-          'Bienes_con_errores.xlsx'
-        );
+        console.log(response.bienes_rechazados);
+
+        if (response.rechazados > 0) {
+          await this.downloadExcel(
+            JSON.parse(JSON.stringify(response.bienes_rechazados)).base64File,
+            'Bienes_con_errores.xlsx'
+          );
+        }
+
         this.goodsTrackerLoading = false;
         if (response.aceptados > 0) {
           this.alert(
@@ -670,7 +695,7 @@ export class DestructionAuthorizationComponent
           this.alert('warning', 'No se cargaron bienes', '');
         }
 
-        this.getProceedingGoods();
+        // this.getProceedingGoods();
       },
       error: error => {
         console.log(error);
@@ -768,6 +793,15 @@ export class DestructionAuthorizationComponent
     }
 
     this.conserveState = true;
+
+    if (
+      this.proceedingForm.get('id').value == null &&
+      this.proceedingForm.get('statusProceedings').value == null
+    ) {
+      this.newProceedingFlag = true;
+      localStorage.setItem('newProceedingFlag', 'S');
+    }
+
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
         origin: 'FESTATUSRGA',
@@ -775,14 +809,24 @@ export class DestructionAuthorizationComponent
     });
   }
 
+  newProceedingFn() {
+    this.queryProceeding();
+    this.newProceedingFlag = true;
+  }
+
   save() {
-    if (!this.proceedingForm.valid) {
-      this.onLoadToast('error', 'Error', 'El formulario es invalido');
+    if (this.proceedingForm.get('keysProceedings').value == null) {
+      this.alert('warning', 'Debe ingresar un oficio de solicitud', '');
       return;
     }
 
-    if (!this.controls.numFile.value) {
-      this.onLoadToast('error', 'Error', 'Debe ingresar al menos un bien');
+    if (this.detailProceedingsList2.empty()) {
+      this.alert('warning', 'Debe ingresar al menos un bien', '');
+      return;
+    }
+
+    if (this.proceedingForm.get('elaborationDate').value == null) {
+      this.alert('warning', 'Debe especificar la Fecha de Recepción', '');
       return;
     }
 
@@ -790,50 +834,31 @@ export class DestructionAuthorizationComponent
   }
 
   create() {
-    const defaultData = {
-      elaborate: this.username,
-      captureDate: new Date(),
+    const body: IProccedingsDeliveryReception = {
+      elaborate: this.authService.decodeToken().preferred_username,
+      captureDate: new Date().toString(),
       typeProceedings: 'RGA',
       numDelegation1: this.delegation,
       numDelegation2: this.delegation,
+      statusProceedings: 'ABIERTA',
+      keysProceedings: this.proceedingForm.get('keysProceedings').value,
+      numFile: this.numFile,
+      observations: this.proceedingForm.get('observations').value,
+      datePhysicalReception: this.proceedingForm.get('datePhysicalReception')
+        .value,
+      closeDate: this.proceedingForm.get('closeDate').value,
     };
-    if (!this.controls.statusProceedings.value) {
-      this.controls.statusProceedings.setValue('ABIERTA');
-    }
-    this.proceedingForm.patchValue(defaultData);
-    this.loading = true;
-    this.proceedingsDeliveryReceptionService
-      .create(this.proceedingForm.value)
-      .pipe(
-        switchMap(proceeding =>
-          this.saveDetail(proceeding.id).pipe(map(() => proceeding))
-        )
-      )
-      .subscribe({
-        next: proceeding => {
-          const destructionAuth: IDestructionAuth = {
-            ...this.state,
-            form: this.proceedingForm.value,
-            trackerGoods: [],
-          };
-          this.store.dispatch(SetDestructionAuth({ destructionAuth }));
-          this.goodTrackerGoods = [];
-          this.loading = false;
-          this.proceedingForm.patchValue(proceeding);
-          //this.getProceedingGoods();
-          this.onLoadToast('success', 'Acta generada correctamente', '');
-        },
-        error: error => {
-          console.log(error);
 
-          this.loading = false;
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al guardar el acta'
-          );
-        },
-      });
+    console.log(body);
+    this.proceedingsDeliveryReceptionService.create(body).subscribe(
+      res => {
+        console.log(res);
+        this.newProceedingFlag = false;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   saveDetail(numberProceedings: number | string) {
@@ -1103,6 +1128,7 @@ export class DestructionAuthorizationComponent
   queryProceeding() {
     this.resetAll();
     this.queryMode = true;
+    this.newProceedingFlag = false;
   }
 
   resetAll() {
@@ -1174,7 +1200,8 @@ export class DestructionAuthorizationComponent
               : this.correctDate(new Date(proceeding.closeDate).toString());
 
           this.proceedingForm.patchValue(proceeding);
-          this.getProceedingGoods();
+          // this.getProceedingGoods();
+          this.searchGoodsInDetailProceeding(proceeding.id);
           this.searchActa(proceeding.id);
           this.searchDicta(proceeding.id);
         })
@@ -1404,34 +1431,68 @@ export class DestructionAuthorizationComponent
       });
   }
 
-  getProceedingGoods() {
-    const proceedingId = this.proceedingForm.get('id').value;
-    this.loadingGoodsByP = true;
-    let params = {
-      ...this.params7.getValue(),
-    };
-    params['filter.numberProceedings'] = `$eq:${proceedingId}`;
+  cleanTmp() {
+    const proceeding = '-1';
     const paramsF = new FilterParams();
-    paramsF.addFilter('numberProceedings', proceedingId);
+    this.proceedingService
+      .tmpAuthorizationsDestruction(this.user, proceeding, paramsF.getParams())
+      .subscribe(
+        res => {
+          // this.canNewProceeding = true;
+          this.data.load([]);
+        },
+        err => {
+          if (err.status != 400) {
+            this.alert(
+              'warning',
+              'Hubo un problema limpiando la tabla temporal',
+              ''
+            );
+          }
+        }
+      );
+  }
+
+  getProceedingGoods() {
+    // this.canSearch = false;
+    this.loading = true;
+    const paramsF = new FilterParams();
     paramsF.page = this.params7.getValue().page;
     paramsF.limit = this.params7.getValue().limit;
-    this.detailProceeDelRecService
-      .getGoodsByProceedings(proceedingId, paramsF.getParams())
-      .subscribe({
-        next: resp => {
-          this.detailProceedingsList = resp.data;
-          this.detailProceedingsList2.load(resp.data);
-          this.totalItems2 = resp.count;
-          this.loadingGoodsByP = false;
-          this.goodTrackerGoods;
+    this.proceedingService
+      .tmpAuthorizationsDestruction(this.user, null, paramsF.getParams())
+      .subscribe(
+        res => {
+          const newData = res.data.map((item: any) => {
+            return {
+              ...item,
+              /* cve_proceeding:
+                item.available == 'N' ? this.cve_proceeding : null,
+              date_proceeding:
+                item.available == 'N'
+                  ? format(this.correctDate(this.date_proceeding), 'dd/MM/yyyy')
+                  : null, */
+            };
+          });
+
+          /*  if (this.numFile == null) {
+            this.numFile = res.data[0].expedient;
+          } */
+
+          console.log(newData);
+          this.detailProceedingsList2.load(newData);
+          this.totalItems2 = res.count;
+          this.loading = false;
+          // this.consult = true;
         },
-        error: err => {
-          console.log(err);
-          this.totalItems2 = 0;
+        err => {
           this.detailProceedingsList2.load([]);
-          this.loadingGoodsByP = false;
-        },
-      });
+          console.log(err);
+          this.alert('warning', 'No se encontrarón registros', '');
+          // this.canSearch = true;
+          this.loading = false;
+        }
+      );
   }
 
   //StatusBien
@@ -1457,14 +1518,22 @@ export class DestructionAuthorizationComponent
     const files = (event.target as HTMLInputElement).files[0];
     let formData = new FormData();
     formData.append('file', files);
+    formData.append('user', this.user);
+    this.controls.id.value != null
+      ? formData.append('fileNumber', this.controls.id.value)
+      : null;
     this.getDataFile(formData);
   }
 
   getDataFile(data: any) {
-    const filenumber = this.controls.id.value;
-    this.massiveGoodService.pupBienesPlano(data, filenumber).subscribe({
+    if (this.detailProceedingsList2.count() == 0) {
+      this.cleanTmp();
+    }
+
+    this.massiveGoodService.pupBienesPlano(data).subscribe({
       next: resp => {
         this.flatGoodFlag = false;
+        this.getProceedingGoods();
         console.log(resp);
       },
       error: err => {
@@ -1492,11 +1561,6 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (!this.proceedingForm.get('id').value) {
-      this.alert('warning', 'Es necesario contar con el No. de Acta', '');
-      return;
-    }
-
     if (this.selectGoodGen.di_disponible != 'S') {
       this.alert(
         'warning',
@@ -1506,32 +1570,51 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    let body = {
-      pVcScreem: 'FESTATUSRGA',
-      pActaNumber: this.proceedingForm.get('id').value,
-      pStatusActa: this.proceedingForm.get('statusProceedings').value,
-      pGoodNumber: this.selectGoodGen.id,
-      pDiAvailable: '',
-      pDiActa: this.selectGoodGen.requestFolio,
-      pCveActa: this.proceedingForm.get('keysProceedings').value,
-      pAmount: this.selectGoodGen.quantity,
-    };
-    this.massiveGoodService.InsertGood(body).subscribe({
-      next: data => {
-        console.log(data);
-        this.alert('success', 'Bien insertado con exito', '');
-        this.getProceedingGoods();
-      },
-      error: err => {
-        console.log(err);
-        this.alert(
-          'warning',
-          `El Bien: ${this.array[0].id}, ya ha sido ingresado en una solicitud`,
-          ''
-        ); // Asumiendo que 'alert' se encarga de mostrar la alerta
-        this.array = [...this.tempArray];
-      },
-    });
+    if (this.newProceedingFlag) {
+      const newArray = [];
+      newArray.push(this.selectGoodGen);
+      this.detailProceedingsList2.load(newArray);
+      this.totalItems2 = newArray.length;
+      if (this.detailProceedingsList2.empty()) {
+        this.numFile = this.selectGoodGen.fileNumber;
+      }
+    } else {
+      if (!this.proceedingForm.get('id').value) {
+        this.alert('warning', 'Es necesario contar con el No. de Acta', '');
+        return;
+      }
+
+      let body = {
+        pVcScreem: 'FESTATUSRGA',
+        pActaNumber: this.proceedingForm.get('id').value,
+        pStatusActa: this.proceedingForm.get('statusProceedings').value,
+        pGoodNumber: this.selectGoodGen.id,
+        pDiAvailable: '',
+        pDiActa: this.selectGoodGen.requestFolio,
+        pCveActa: this.proceedingForm.get('keysProceedings').value,
+        pAmount: this.selectGoodGen.quantity,
+      };
+      this.massiveGoodService.InsertGood(body).subscribe({
+        next: data => {
+          console.log(data);
+          this.alert('success', 'Bien insertado con exito', '');
+          // this.getProceedingGoods();
+          this.searchGoodsInDetailProceeding(
+            this.proceedingForm.get('id').value
+          );
+          this.getGoodByStatusPDS();
+        },
+        error: err => {
+          console.log(err);
+          this.alert(
+            'warning',
+            `El Bien: ${this.selectGoodGen.id}, ya ha sido ingresado en una solicitud o presenta un error`,
+            ''
+          ); // Asumiendo que 'alert' se encarga de mostrar la alerta
+          this.array = [...this.tempArray];
+        },
+      });
+    }
   }
 
   //AGREGADO POR GRIGORK
@@ -1605,5 +1688,91 @@ export class DestructionAuthorizationComponent
   selectGoodActa(good: any) {
     console.log(good);
     this.selectGoodProc = good.data;
+  }
+
+  //AGREGAR BIENES DE RASTREADOR LOCAL
+  fillLocalDataTracker(ngGlobal: string) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('identificator', ngGlobal);
+    this.goodTrackerService
+      .getAllTmpTracker(paramsF.getParams())
+      .subscribe(res => {
+        console.log(res);
+        this.loading = true;
+        let count = 0;
+        res['data'].forEach(good => {
+          count = count + 1;
+          this.goodServices.getById(good.goodNumber).subscribe({
+            next: response => {
+              console.log(response);
+              const respJson = JSON.parse(JSON.stringify(response)).data[0];
+              const newGoodId = JSON.parse(JSON.stringify(response)).data[0]
+                .goodId;
+
+              const exists = this.dataGoods.some(e => e.goodId === newGoodId);
+              console.log(exists);
+              if (!exists) {
+                this.dataGoods.push({
+                  ...JSON.parse(JSON.stringify(response)).data[0],
+                  avalaible: null,
+                });
+              }
+
+              this.detailProceedingsList2.refresh();
+              this.detailProceedingsList2.load(respJson);
+              /* this.validGood(JSON.parse(JSON.stringify(response)).data[0]); */ //!SE TIENE QUE REVISAR
+            },
+            error: err => {
+              console.log(err);
+            },
+          });
+          if (count === res['data'].length) {
+            this.loading = false;
+          }
+        });
+      });
+  }
+
+  //DATOS DE LA TABLA TEMPORAL
+  searchGoodsInDetailProceeding(idProceeding: string) {
+    // this.canSearch = false; //ver si necesita
+    this.loading = true;
+    const paramsF = new FilterParams();
+    const proceeding = idProceeding;
+    paramsF.page = this.params.getValue().page;
+    paramsF.limit = this.params.getValue().limit;
+    this.proceedingService
+      .tmpAuthorizationsDestruction(this.user, proceeding, paramsF.getParams())
+      .subscribe(
+        res => {
+          const newData = res.data.map((item: any) => {
+            return {
+              ...item,
+              /*  cve_proceeding:
+                item.available == 'N' ? this.cve_proceeding : null,
+              date_proceeding:
+                item.available == 'N'
+                  ? format(this.correctDate(this.date_proceeding), 'dd/MM/yyyy')
+                  : null, */
+            };
+          });
+
+          if (this.numFile == null) {
+            this.numFile = res.data[0].expedient;
+          }
+
+          this.detailProceedingsList2.load(newData);
+          this.totalItems2 = res.count;
+          this.loading = false;
+          // this.consult = true;
+        },
+        err => {
+          this.detailProceedingsList2.load([]);
+          console.log(err);
+          this.totalItems2 = 0;
+          // this.canSearch = true;
+          this.loading = false;
+        }
+      );
   }
 }

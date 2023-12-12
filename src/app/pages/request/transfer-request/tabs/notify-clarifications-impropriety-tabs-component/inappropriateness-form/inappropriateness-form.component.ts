@@ -206,7 +206,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
-            this.onLoadToast('error', 'No se pudo guardar', '');
+            //this.onLoadToast('error', 'No se pudo guardar', '');
           },
         });
     }

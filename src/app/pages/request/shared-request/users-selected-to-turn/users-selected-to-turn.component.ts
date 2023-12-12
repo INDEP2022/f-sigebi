@@ -165,15 +165,17 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   }
 
   selectedRow(user: any) {
-    if (this.idUser == user.data.id) {
-      this.idUser = '';
-      this.validBtn = false;
-    } else {
-      this.validBtn = true;
+
+    if (user.isSelected) {
+      this.user = user.data;
       this.idUser = user.data.id;
+      this.validBtn = true;
+    } else {
+      this.user = { id: null, fullName: null };
+      this.idUser = null;
+      this.validBtn = false;
     }
 
-    this.user = user.data;
   }
   triggerEvent(item: any) {
     this.event.emit(item);
