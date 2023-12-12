@@ -1387,6 +1387,7 @@ export class DestructionAuthorizationComponent
 
   //Trae todos los bienes con estado PDS
   async getGoodByStatusPDS() {
+    console.log('Dispara');
     this.loadingGoods = true;
 
     let params = {
