@@ -235,7 +235,7 @@ export class EmailModalComponent extends BasePage implements OnInit {
   }
 
   sendEmail() {
-    if (!this.array) {
+    if (this.array.length == 0) {
       this.alert(
         'warning',
         'Se debe seleccionar al menos una direccion de correo para poder enviar',
