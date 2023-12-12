@@ -88,3 +88,8 @@ export interface IPupCompFolioUniv {
   elaborationDate: string;
   screen: string;
 }
+
+export interface IPupGoodTrackerRga {
+  identifier: string;
+  user: string;
+}
