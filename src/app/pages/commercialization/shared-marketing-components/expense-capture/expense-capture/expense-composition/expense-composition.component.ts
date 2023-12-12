@@ -582,6 +582,14 @@ export class ExpenseCompositionComponent
   }
 
   async sendToSIRSAE() {
+    if (this.address !== 'M' && !this.eventNumber) {
+      this.alert(
+        'warning',
+        'Tiene que seleccionar un evento para continuar',
+        ''
+      );
+      return;
+    }
     let result = await this.alertQuestion(
       'question',
       '¿Desea enviar solicitud de pago a sirsae?',
@@ -592,6 +600,7 @@ export class ExpenseCompositionComponent
         this.expenseCaptureDataService.actionButton = 'SIRSAE';
         await this.expenseCaptureDataService.updateByGoods(true);
       } else {
+        this.expenseCaptureDataService.P_TIPO_CAN = 2;
         this.expenseCaptureDataService.ENVIA_MOTIVOS();
       }
     }
