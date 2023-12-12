@@ -82,6 +82,27 @@ export class DataReceiptComponent implements OnInit {
     return 'interfaceesirsae/api/v1/application/getTipoDocumento?sortBy=documentType:ASC&filter.indR=$not:9&filter.KeytypeGuia=$not:$in:2,9';
   }
 
+  get pathCaptura() {
+    return (
+      'comerconcepts/api/v1/parameters-mod/get-all?filter.parameter=$eq:USUCAPTURA&filter.address=$eq:' +
+      this.address
+    );
+  }
+
+  get pathAutoriza() {
+    return (
+      'comerconcepts/api/v1/parameters-mod/get-all?filter.parameter=$eq:USUAUTORIZA&filter.address=$eq:' +
+      this.address
+    );
+  }
+
+  get pathSolicita() {
+    return (
+      'comerconcepts/api/v1/parameters-mod/get-all?filter.parameter=$eq:USUSOLICITA&filter.address=$eq:' +
+      this.address
+    );
+  }
+
   get form() {
     return this.dataService.form;
   }

@@ -191,7 +191,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     console.log(this.form.value);
     let newBody = { ...this.form.value };
     delete newBody.publicLot;
-    // delete newBody.policie;
+    delete newBody.policie;
     delete newBody.descontract;
     delete newBody.padj;
     delete newBody.psadj;
@@ -1273,6 +1273,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private fillFormSecond(event: any) {
+    if (this.address !== 'M') {
+      this.address = 'I';
+    }
     this.expenseNumber.setValue(event.expenseNumber);
     this.data = event;
     this.provider = event.providerName;
