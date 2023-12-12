@@ -103,8 +103,8 @@
             type="button"
             class="btn btn-primary btn-sm active"
             [disabled]=""
-            (click)="openDocument('act')">
-            <i class="bx bx-notepad mr-1 float-icon"></i>Acta de Resarcimiento
+            (click)="openReport()">
+            Acta de Resarcimiento<i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="reportValidateDictum">
@@ -334,6 +334,10 @@
         <tab *ngIf="orderEntry" heading="Orden Ingreso" id="entryOrderTab">
           <app-entry-order></app-entry-order>
         </tab>
+        <tab *ngIf="orderView" heading="Orden Ingreso" id="entryOrderTab">
+          <app-entry-order-view></app-entry-order-view>
+        </tab>
+
         <tab
           *ngIf="searchAssociateFile"
           heading="Buscar y Asociar al Expediente"
@@ -388,9 +392,17 @@
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
           <app-guidelines (onSave)="onSaveGuidelines($event)"></app-guidelines>
         </tab>
+        <tab *ngIf="viewGuidelines" heading="Lineamientos" id="guidelinesTab">
+          <app-guidelines-view></app-guidelines-view>
+        </tab>
+
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
           <app-register-dictum-val></app-register-dictum-val>
         </tab>
+        <tab *ngIf="dictumRegister" heading="Datos del Dictamen" id="dictumTab">
+          <app-register-dictum-inf></app-register-dictum-inf>
+        </tab>
+
         <tab
           *ngIf="expRequest"
           (selectTab)="expedientSelected(true)"
