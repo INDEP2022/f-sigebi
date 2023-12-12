@@ -14,72 +14,69 @@
           }"></i>
         <h6 class="d-inline">Informaci&oacute;n de la Solicitud</h6>
       </div>
-      <div
-        class="row"
-        id="collapseInfo"
-        [isAnimated]="true"
-        [collapse]="!toggleInfo">
-        <div class="row pt-2">
+      <div id="collapseInfo" [isAnimated]="true" [collapse]="!toggleInfo">
+        <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label" for=""
-              >Fecha de Solicitud&#58;
-              <span class="fs-4">{{
-                requestInfo?.applicationDate | date : 'dd/MM/YYYY'
-              }}</span></label
-            >
+            <p class="font-size-13">
+              <strong class="font-size-13">Fecha de Solicitud&#58; </strong>
+              {{ requestInfo?.applicationDate | date: 'dd/MM/YYYY' }}
+            </p>
           </div>
           <div class="col-md-4">
-            <label class="label" for=""
-              >No&#46; Solicitud&#58;
-              <span class="fs-4">{{ requestInfo?.id }}</span></label
-            >
+            <p class="font-size-13">
+              <strong class="font-size-13">No&#46; Solicitud&#58; </strong>
+              {{ requestInfo?.id }}
+            </p>
           </div>
           <div class="col-md-4">
-            <label class="label" for=""
-              >No&#46; Expediente&#58;
-              <span class="fs-4">{{ requestInfo?.recordId }}</span></label
-            >
+            <p class="font-size-13">
+              <strong class="font-size-13">No&#46; Expediente&#58; </strong>
+              {{ requestInfo?.recordId }}
+            </p>
           </div>
         </div>
         <div class="row pt-2">
           <div class="col-md-4">
-            <label class="label" for=""
-              >No&#46; Oficio&#58;
-              <span class="fs-4">{{ requestInfo?.paperNumber }}</span></label
-            >
+            <p class="font-size-13">
+              <strong class="font-size-13">No&#46; Oficio&#58;</strong>
+              {{ requestInfo?.paperNumber }}
+            </p>
           </div>
           <div class="col-md-4">
-            <label class="label" for=""
-              >Delegaci&oacute;n Regional&#58;
-              <span class="fs-4">{{ regionalDelegation }}</span></label
-            >
+            <p class="font-size-13">
+              <strong class="font-size-13"
+                >Delegaci&oacute;n Regional&#58;
+              </strong>
+              {{ regionalDelegation }}
+            </p>
           </div>
           <div class="col-md-4">
-            <label class="label" for=""
-              >Estado&#58; <span class="fs-4">{{ state }}</span></label
-            >
+            <p class="font-size-13">
+              <strong class="font-size-13">Estado&#58;</strong> {{ state }}
+            </p>
           </div>
         </div>
+
         <div class="row pt-2">
           <div class="col-md-4">
-            <label class="label" for=""
-              >Transferente&#58;
-              <span class="fs-4">{{ transferent }}</span></label
-            >
+            <p class="font-size-13">
+              <strong class="font-size-13">Transferente&#58;</strong>
+              {{ transferent }}
+            </p>
           </div>
           <div class="col-md-4">
-            <label class="label" for=""
-              >Emisora&#58;
-              <span class="fs-4">{{ station }}</span>
-            </label>
+            <p class="font-size-13">
+              <strong class="font-size-13">Emisora&#58;</strong> {{ station }}
+            </p>
           </div>
           <div class="col-md-4">
-            <label class="label">
-              Autoridad&#58;
-              <span class="fs-4">{{ authority }}</span>
-            </label>
+            <p class="font-size-13">
+              <strong class="font-size-13">Autoridad&#58;</strong>
+              {{ authority }}
+            </p>
           </div>
         </div>
+
         <div
           class="row pt-2"
           *ngIf="requestInfo?.affair != 10 && requestInfo?.affair != 13">

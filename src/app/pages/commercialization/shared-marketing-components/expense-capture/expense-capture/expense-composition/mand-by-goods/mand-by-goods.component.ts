@@ -72,9 +72,7 @@ export class MandByGoodsComponent
     modalConfig.initialState = {
       spentId: this.spentId,
       callback: (next: boolean) => {
-        if (next) {
-          this.getData();
-        }
+        this.getData();
       },
     };
     this.modalService.show(MandByGoodsModalComponent, modalConfig);

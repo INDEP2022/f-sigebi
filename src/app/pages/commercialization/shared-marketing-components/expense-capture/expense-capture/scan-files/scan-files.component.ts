@@ -118,7 +118,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
             }
           },
           error: err => {
-            this.alert('warning', 'No cuenta con folio de escaneo', '');
+            // this.alert('warning', 'No cuenta con folio de escaneo', '');
           },
         });
       },
