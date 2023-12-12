@@ -17,7 +17,9 @@
             type="text"
             class="form-control"
             formControlName="id"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'" />
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || newProceedingFlag
+            " />
         </form-field>
 
         <form-field
@@ -26,7 +28,9 @@
           [control]="proceedingForm.get('keysProceedings')">
           <input
             type="text"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             [max-length]="60"
             class="form-control"
             formControlName="keysProceedings" />
@@ -38,7 +42,9 @@
           [control]="proceedingForm.get('affair')">
           <input
             type="text"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             [max-length]="70"
             class="form-control"
             formControlName="affair" />
@@ -66,7 +72,9 @@
           <input
             type="text"
             class="form-control"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             formControlName="elaborationDate"
             bsDatepicker
             [bsConfig]="{
@@ -80,7 +88,9 @@
           <input
             type="text"
             class="form-control"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             formControlName="datePhysicalReception"
             bsDatepicker
             [bsConfig]="{
@@ -95,7 +105,9 @@
             type="text"
             #closeDate
             class="form-control"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             formControlName="closeDate"
             bsDatepicker
             [bsConfig]="{
@@ -145,9 +157,7 @@
                 : 'Sacar bienes'
             }}
           </button>
-          <button
-            class="btn btn-danger btn-sm active"
-            (click)="queryProceeding()">
+          <button class="btn btn-danger btn-sm active" (click)="clearFn()">
             Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
@@ -235,11 +245,22 @@
         </form-field>
       </div>
     </form>
+    <div class="row text-center mb-4 mt-4">
+      <div class="col">
+        <button
+          class="btn btn-primary btn-sm active"
+          (onClick)="getGoodByStatusPDS()">
+          Cargar bienes
+        </button>
+      </div>
+    </div>
     <div class="row">
       <div class="col-md-12 table-responsive">
         <div class="row">
           <div [class]="loadingGoods ? 'table-loading' : ''">
-            <ng-scrollbar [track]="'vertical'" style="height: 550px">
+            <ng-scrollbar
+              [track]="'vertical'"
+              style="max-height: 550px; min-height: 100px">
               <ng2-smart-table
                 [settings]="settings3"
                 (userRowSelect)="selectGoodGeneral($event)"
