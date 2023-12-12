@@ -265,7 +265,8 @@ export class AssetsTabComponent extends BasePage implements OnInit {
       this.params.getValue()['filter.typeRestitution'] = 'EN ESPECIE';
     if (
       this.typeTask == 'verify-noncompliance' ||
-      this.typeTask == 'assets-classification'
+      this.typeTask == 'assets-classification' ||
+      this.typeTask == 'assets-classification-annexed'
     )
       this.params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
 
