@@ -450,7 +450,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private async initScreenI() {
-    debugger;
+    // debugger;
     const list = [];
     let filterParams = new FilterParams();
     let user = this.user.preferred_username; //'AJIMENEZC';
@@ -1274,7 +1274,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private fillFormSecond(event: any) {
     if (this.address !== 'M') {
-      this.address = 'I';
+      this.dataService.address = 'I';
     }
     this.expenseNumber.setValue(event.expenseNumber);
     this.data = event;
