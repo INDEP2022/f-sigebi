@@ -1506,6 +1506,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             next: response => {
               this.PUP_LANZA_REPORTE(1, 2);
             },
+            error: err => {
+              this.loader.load = false;
+            },
           });
       } else {
         this.loader.load = false;
