@@ -1195,6 +1195,7 @@ export class DestructionAuthorizationComponent
           return data[0];
         }),
         tap((proceeding: any) => {
+          console.log(proceeding);
           proceeding.elaborationDate =
             proceeding.elaborationDate == null
               ? null
@@ -1211,19 +1212,11 @@ export class DestructionAuthorizationComponent
               : this.correctDate(new Date(proceeding.closeDate).toString());
 
           this.proceedingForm.patchValue(proceeding);
-          // this.getProceedingGoods();
           this.searched = true;
           this.searchGoodsInDetailProceeding(proceeding.id);
           this.searchActa(proceeding.id);
           this.searchDicta(proceeding.id);
         })
-        // switchMap(proceeding => {
-        //   const getGoods$ = this.getProceedingGoods(proceeding.id);
-        //   const searchActa$ = this.searchActa(proceeding.id);
-        //   const searchDicta$ = this.searchDicta(proceeding.id);
-
-        //   return forkJoin([getGoods$, searchActa$, searchDicta$]);
-        // })
       );
   }
 
