@@ -563,7 +563,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (rtDicta2.length > 0) {
         this.fillAddressNotM(rtDicta2[0].typeNumber);
       } else {
-        this.alert('warning', 'Usuario no válido', 'Favor de verificar');
+        // this.alert('warning', 'Usuario no válido', 'Favor de verificar');
       }
     } else if (v_tip_gast !== 0 && v_tipo === 'GASTOSEG') {
       this.showEvent = false;
@@ -1270,18 +1270,18 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return false;
     }
-    // if (!this.formPayment.value) {
-    //   this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
-    //   return false;
-    // }
-    // if (!this.eventNumber.value) {
-    //   this.alert('warning', 'Validación de pagos', 'Requiere número de evento');
-    //   return false;
-    // }
-    // if (!this.lotNumber.value) {
-    //   this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
-    //   return false;
-    // }
+    if (!this.formPayment.value) {
+      this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
+      return false;
+    }
+    if (!this.eventNumber.value) {
+      this.alert('warning', 'Validación de pagos', 'Requiere número de evento');
+      return false;
+    }
+    if (!this.lotNumber.value) {
+      this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
+      return false;
+    }
     return true;
   }
 
@@ -1298,7 +1298,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           pUserAuthorize: this.form.get('authorizedUser').value,
           pUserRequest: this.form.get('requestedUser').value,
           pFormPay: this.form.get('formPayment').value,
-          pEventId: +this.eventNumber,
+          pEventId: this.eventNumber.value,
           pLotePub: this.lotNumber.value,
         })
         .pipe(catchError(x => of({ data: false, message: x })))
