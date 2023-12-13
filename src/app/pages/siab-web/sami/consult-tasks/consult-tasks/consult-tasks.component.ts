@@ -663,9 +663,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         next: response => {
           this.loading = false;
           response.data.map(async (item: any) => {
-            // item.taskNumber = item.id;
-            // item.requestId =
-            //   item.requestId != null ? item.requestId : item.programmingId;
+            item.taskNumber = item.id;
+            item.requestId =
+              item.requestId != null ? item.requestId : item.programmingId;
           });
 
           resolve(response);
