@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { take } from 'rxjs';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
 import { IContract } from '../../../models/payment';
@@ -51,13 +52,35 @@ export class DataReceiptComponent implements OnInit {
       this.nomEmplRequest.setValue(value.nomEmplRequest);
       this.typepe.setValue(value.typepe);
       this.tiptram.setValue(value.tiptram);
-      this.contractNumber.setValue(value.contractNumber);
+
       this.adj.setValue(value.adj);
+      if (value.contractNumber) {
+        this.contractNumber.setValue(value.contractNumber);
+        this.paymentService
+          .validateContract(value.contractNumber)
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              if (response.data && response.data.length > 0) {
+                this.form
+                  .get('contractDescription')
+                  .setValue(response.data[0].desContract);
+                this.form
+                  .get('descontract')
+                  .setValue(response.data[0].desContract);
+                this.form.get('clkpv').setValue(response.data[0].clkpv);
+                this.form.get('padj').setValue(response.data[0].padj);
+                this.form.get('psadj').setValue(response.data[0].psadj);
+                this.form.get('pssadj').setValue(response.data[0].pssadj);
+                this.form.get('adj').setValue(response.data[0].adj);
+              }
+            },
+          });
+      }
     }
   }
   listPayments = ['TRANSFERENCIA', 'CHEQUE', 'INTERCAMBIO'];
   columns = { ...COLUMNS };
-  contracts = [];
   listComproaf = [
     { id: '1', value: 'INDEP' },
     { id: '2', value: 'MANDATO' },
@@ -315,26 +338,14 @@ export class DataReceiptComponent implements OnInit {
         callback: (obj: { selected: IContract }) => {
           let { selected } = obj;
           if (selected) {
-            this.contracts = [];
-            this.contracts.push({
-              value: selected.contractNumber,
-              label: selected.contractNumber + '-' + selected.desContract,
-            });
             this.contractNumber.setValue(selected.contractNumber);
+            this.form.get('contractDescription').setValue(selected.desContract);
             this.form.get('descontract').setValue(selected.desContract);
             this.form.get('clkpv').setValue(selected.clkpv);
-            setTimeout(() => {
-              this.form.get('padj').setValue(selected.padj);
-            }, 100);
-            setTimeout(() => {
-              this.form.get('psadj').setValue(selected.psadj);
-            }, 200);
-            setTimeout(() => {
-              this.form.get('pssadj').setValue(selected.pssadj);
-            }, 300);
-            setTimeout(() => {
-              this.form.get('adj').setValue(selected.adj);
-            }, 400);
+            this.form.get('padj').setValue(selected.padj);
+            this.form.get('psadj').setValue(selected.psadj);
+            this.form.get('pssadj').setValue(selected.pssadj);
+            this.form.get('adj').setValue(selected.adj);
           }
         },
       },
