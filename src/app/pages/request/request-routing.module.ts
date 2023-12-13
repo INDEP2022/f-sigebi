@@ -51,8 +51,23 @@ const routes: Routes = [
       screen: 'MUESTREOBIENES',
     },
   },
+
   {
-    path: 'warehouse-verification',
+    path: 'assets-clasification',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/assets-classification/assets-classification.module'
+        )
+      ).AssetsClassificationModule,
+    data: {
+      title: 'Muestreo Bienes Generar Consulta',
+      screen: 'MUESTREOBIENES',
+    },
+  },
+
+  {
+    path: 'warehouse-verification/:id',
     loadChildren: async () =>
       (
         await import(
