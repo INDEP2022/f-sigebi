@@ -700,10 +700,10 @@ export class InvoiceRectificationProcessComponent
       return;
     }
 
-    if (!year) {
-      this.alert('warning', 'Ingrese una Fecha de Expedición', '');
-      return;
-    }
+    // if (!year) {
+    //   this.alert('warning', 'Ingrese una Fecha de Expedición', '');
+    //   return;
+    // }
 
     let config: ModalOptions = {
       initialState: {
@@ -937,10 +937,10 @@ export class InvoiceRectificationProcessComponent
       return;
     }
 
-    if (!year) {
-      this.alert('warning', 'Ingrese una Fecha de Expedición', '');
-      return;
-    }
+    // if (!year) {
+    //   this.alert('warning', 'Ingrese una Fecha de Expedición', '');
+    //   return;
+    // }
 
     this.saveDataSilent();
 

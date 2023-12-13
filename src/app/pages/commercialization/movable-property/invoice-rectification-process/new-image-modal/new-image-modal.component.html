@@ -115,9 +115,39 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field label="imagen Seg" [control]="form.get('image')">
+          <input
+            formControlName="image"
+            #fileChooser
+            type="file"
+            [accept]="['.png', '.jpg', '.jpeg', '.webp']"
+            style="display: none"
+            (change)="fileUpload($event)" />
+          <!-- <form-field [control]="form.get('image')">
+            <input formControlName="image" #fileChooser type="file" [accept]="['.png', '.jpg', '.jpeg', '.webp']" style="display: none;"
+              (change)="fileUpload($event)">
             <input type="text" class="form-control" formControlName="image" />
-          </form-field>
+          </form-field> -->
+          <span>
+            <label
+              for=""
+              style="font-size: 10px; font-weight: 600; color: #74788d"
+              >Imagen Seg</label
+            >
+          </span>
+          <div style="position: relative; width: 145px; height: 150px">
+            <div (click)="cleanPhoto()" class="cancel-btn" *ngIf="imageBase64">
+              <i class="bx bx-x-circle bx-sm float-icon"></i>
+            </div>
+            <div
+              class="file-add"
+              (click)="fileChooser.click()"
+              [ngStyle]="{
+                backgroundImage: 'url(' + imageBase64 + ')',
+                padding: imageBase64 ? '70px' : '65px 65px 65px 110px'
+              }">
+              <i *ngIf="!imageBase64" class="bx bx-plus bx-sm float-icon"></i>
+            </div>
+          </div>
         </div>
       </div>
     </form>
