@@ -1132,10 +1132,28 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
               this.form.get('payDay').setValue(response.COMER_GASTOS_FECHA_SP);
               res(true);
             }
+            if (this.formPayment.value !== 'INTERCAMBIO') {
+              this.VERIFICA_ACTUALIZACION_EST();
+            } else {
+              this.VALIDA_SUBTOTAL_PRECIO(
+                this.expenseNumber.value,
+                this.eventNumber.value,
+                this.lotNumber.value
+              );
+            }
           },
           error: err => {
             this.alert('error', 'Envio a sirsae', err.error.message);
             res(false);
+            if (this.formPayment.value !== 'INTERCAMBIO') {
+              this.VERIFICA_ACTUALIZACION_EST();
+            } else {
+              this.VALIDA_SUBTOTAL_PRECIO(
+                this.expenseNumber.value,
+                this.eventNumber.value,
+                this.lotNumber.value
+              );
+            }
             // this.errorSendSolicitudeMessage(true);
           },
         });
@@ -1164,15 +1182,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       }
     } else {
       this.finishProcessSolicitud.next(true);
-    }
-    if (this.formPayment.value !== 'INTERCAMBIO') {
-      this.VERIFICA_ACTUALIZACION_EST();
-    } else {
-      this.VALIDA_SUBTOTAL_PRECIO(
-        this.expenseNumber.value,
-        this.eventNumber.value,
-        this.lotNumber.value
-      );
     }
   }
 
