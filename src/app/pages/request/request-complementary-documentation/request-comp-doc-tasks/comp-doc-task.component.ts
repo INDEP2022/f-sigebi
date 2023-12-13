@@ -952,6 +952,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.legalStatus = true;
         this.saveRequest = true;
         this.requestReview = true;
+        //Configuracion de reporte VALIDAR FUNCIONAMIENTO
+        //this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
+        //this.signedReport = false;
+        //this.editReport = true;
 
         break;
       case 'review-result-protection':
@@ -962,11 +966,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = true;
         this.saveRequest = true;
         this.btnAprove = true;
-
         //Configuracion de reporte VALIDAR FUNCIONAMIENTO
         //this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
         //this.signedReport = false;
         //this.editReport = true;
+
         break;
 
       case 'register-compensation-documentation':
@@ -977,10 +981,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.finish = true;
 
-        //Configuracion de reporte VALIDAR FUNCIONAMIENTO
-        //this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
-        //this.signedReport = false;
-        //this.editReport = true;
         break;
 
       default:

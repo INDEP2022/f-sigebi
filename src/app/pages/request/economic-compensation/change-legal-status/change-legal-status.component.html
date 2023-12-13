@@ -5,43 +5,115 @@
   <div body>
     <div class="row">
       <div class="col-md-6">
-        <strong>Fecha de solicitud:</strong>
+        <strong>Transferente:</strong>
       </div>
       <div class="col-md-6">
-        <strong>Fecha de autorización:</strong>
+        <strong>Contribuyente y/o Indicado:</strong>
+      </div>
+      <div class="col-md-6 mt-5">
+        <strong>Proceso Detona:</strong>
       </div>
     </div>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material mt-5" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
           <form-field
-            [control]="form.get('typeRelevant')"
-            label="Tipos Relevante">
-            <select class="form-control" formControlName="typeRelevant">
-              <option [value]="null">Seleccione un valor</option>
-              <option [value]="'GASTO 1'">TIPO 1</option>
-              <option [value]="'GASTO 2'">TIPO 2</option>
-              <option [value]="'GASTO 3'">GASTO 3</option>
-            </select>
+            [control]="form.get('corporate')"
+            label="Dirección Corporativa Jurídica">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="corporate" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="form.get('description')"
-            label="Descripci&oacute;n">
+            [control]="form.get('executive')"
+            label="Dirección Ejecutiva Jurídica">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="executive" />
           </form-field>
         </div>
       </div>
       <div class="row mt-3">
         <div class="col-md-6">
           <form-field
-            [control]="form.get('unitOfMeasure')"
-            label="Unidad de medida">
-            <select class="form-control" formControlName="unitOfMeasure">
+            [control]="form.get('receiver')"
+            label="Nombre Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="receiver" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('position')"
+            label="Cargo Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="position" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <form-field [control]="form.get('affair')" label="Asunto">
+            <select class="form-control" formControlName="affair">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'GASTO 1'">PIEZA</option>
+              <option [value]="'GASTO 2'">GASTO 2</option>
+              <option [value]="'GASTO 3'">GASTO 3</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <strong>No. Amparo:</strong>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12">
+          <form-field [control]="form.get('justify')" label="Justificación">
+            <textarea class="form-control" formControlName="justify"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dateProvide')"
+            label="Fehca Proveido">
+            <input
+              type="date"
+              class="form-control"
+              formControlName="dateProvide" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('orderProvide')"
+            label="Encargo Proveido">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="orderProvide" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <strong>Resolución:</strong>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field [control]="form.get('status')" label="Estatus Suspensión">
+            <select class="form-control" formControlName="status">
               <option [value]="null">Seleccione un valor</option>
               <option [value]="'GASTO 1'">PIEZA</option>
               <option [value]="'GASTO 2'">GASTO 2</option>
@@ -50,11 +122,20 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('quantity')" label="Cantidad">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="quantity" />
+          <form-field [control]="form.get('signed')">
+            <div class="form-check">
+              <label
+                class="form-check-label"
+                style="margin-right: 20px"
+                for="signed">
+                Firma por Suplencia
+              </label>
+              <input
+                class="form-check-input"
+                type="checkbox"
+                formControlName="signed"
+                id="signed" />
+            </div>
           </form-field>
         </div>
       </div>
