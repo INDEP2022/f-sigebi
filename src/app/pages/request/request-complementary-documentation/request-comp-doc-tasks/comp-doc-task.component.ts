@@ -375,8 +375,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = false;
 
-
-
         break;
       case 'verify-compliance-return':
         this.regDocView = true;
@@ -466,6 +464,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.NOTIFICACION_EXISTENCIA_BIENES;
+        this.signedReport = true;
+        this.editReport = true;
+
         break;
       case 'eye-visit-similar-goods':
         this.regDocView = true;
@@ -511,6 +514,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.ACTA_RESULTADO_VISITA_OCULAR;
+        this.signedReport = true;
+        this.editReport = true;
+
         break;
 
       case 'response-letter-similar-goods':
@@ -539,6 +547,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.RESULTADO_VISITAS_OCULARES;
+        this.signedReport = true;
+        this.editReport = true;
+
         break;
 
       //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
@@ -565,6 +578,11 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.searchRequestSimGoods = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
 
       case 'analysis-result-compensation':
@@ -579,6 +597,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
 
         this.docRequest = true; //VERIFICAR
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = true;
+        this.editReport = false;
 
         break;
 
@@ -597,6 +620,12 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.signedReport = false;
 
         this.docRequest = true; //VERIFICAR
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DOCUMENTO_VALIDACION_DICTAMEN;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
 
       case 'notification-taxpayer-compensation':
@@ -615,6 +644,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.docRequest = true;
         this.createReport = false;
         this.rejectReq = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.NOTIFICACION_CONTRIBUYENTE;
+        this.signedReport = true;
+        this.editReport = true;
 
         break;
 
@@ -664,6 +698,12 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.createReport = false;
         this.rejectReq = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.OFICIO_DESTINO_BIENES;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
       case 'review-office-information-goods':
         this.regDocView = true;
@@ -687,6 +727,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.createReport = false;
         this.rejectReq = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.OFICIO_DESTINO_BIENES;
+        this.signedReport = true;
+        this.editReport = false;
 
         break;
 
@@ -712,6 +757,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.turnReq = true;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.SOLICITUD_RECURSOS_ECONOMICOS;
+        this.signedReport = true;
+        this.editReport = true;
         break;
 
       case 'review-economic-guidelines':
@@ -723,6 +772,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = true;
         this.saveRequest = true;
         this.turnReq = true;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = false;
+        this.editReport = true;
 
         break;
 
@@ -738,6 +792,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = true;
         this.turnReq = true;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = true;
+        this.editReport = false;
+
         break;
 
       case 'validate-dictum-economic':
@@ -752,6 +811,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.turnReq = true;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DOCUMENTO_VALIDACION_DICTAMEN;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
 
       case 'delivery-notify-request':
@@ -764,6 +828,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.notifyReport = true;
         this.saveRequest = true;
         this.turnReq = true;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.NOTIFICACION_CONTRIBUYENTE;
+        this.signedReport = true;
+        this.editReport = true;
 
         break;
 
@@ -805,6 +874,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.notifyReport = true;
         this.saveRequest = true;
         this.finish = true;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.ACTA_RESARCIMIENTO_ECONOMICO;
+        this.signedReport = true;
+        this.editReport = true;
         break;
 
       /*AMPARO*/
@@ -833,10 +907,14 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.viewSelectedGoods = true;
         this.expRequest = true;
 
-        //this.sign
         this.rejectReq = true;
         this.saveRequest = true;
         this.btnAprove = true;
+
+        //Configuracion de reporte VALIDAR FUNCIONAMIENTO
+        //this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
+        //this.signedReport = false;
+        //this.editReport = true;
         break;
 
       case 'register-compensation-documentation':
@@ -846,6 +924,11 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.saveRequest = true;
         this.finish = true;
+
+        //Configuracion de reporte VALIDAR FUNCIONAMIENTO
+        //this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
+        //this.signedReport = false;
+        //this.editReport = true;
         break;
 
       default:
