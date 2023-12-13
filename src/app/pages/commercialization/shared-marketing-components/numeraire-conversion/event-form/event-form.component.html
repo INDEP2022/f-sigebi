@@ -134,6 +134,7 @@
             formField="idEvent"
             [service]="eventService"
             [columnsType]="eventColumns"
+            [functionFilterName]="functionFilterName"
             id="id"
             title="Evento"
             (selectRow)="selectEvent($event)"></app-select-modal-table-shared>

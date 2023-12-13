@@ -392,4 +392,8 @@ export class ProceedingsService extends HttpService {
       body
     );
   }
+
+  pupFillDist(acta: string) {
+    return this.get(`aplication/pup-full-dist/${acta}`);
+  }
 }

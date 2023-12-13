@@ -31,6 +31,7 @@ export class EventFormComponent implements OnInit {
   @Input() eventColumns: any;
   @Output() resetEvent = new EventEmitter();
   @Output() selectEventEmit = new EventEmitter();
+  @Input() functionFilterName: string = 'getAllFilterSelf';
   constructor(
     private fb: FormBuilder,
     private numerarieService: NumerarieService,

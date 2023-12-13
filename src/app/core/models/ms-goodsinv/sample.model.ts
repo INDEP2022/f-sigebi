@@ -10,7 +10,7 @@ export interface ISample {
   indComplyTime?: string;
   delayDays?: number;
   sampleStatus?: string;
-  regionalDelegationId?: string;
+  regionalDelegationId?: number;
   relevantFacts?: string;
   agreements?: string;
   competitorOne?: string;

@@ -14,6 +14,8 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';

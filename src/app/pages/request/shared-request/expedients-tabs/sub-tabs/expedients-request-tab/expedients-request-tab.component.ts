@@ -20,7 +20,8 @@ import { EXPEDIENTS_REQUEST_COLUMNS } from './expedients-request-columns';
 })
 export class ExpedientsRequestTabComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() typeDoc: string = '';
   @Input() typeModule?: string = '';
   title: string = 'Solicitudes del Expediente';

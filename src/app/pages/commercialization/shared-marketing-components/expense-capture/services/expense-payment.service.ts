@@ -13,8 +13,9 @@ export class ExpensePaymentService extends HttpService {
     this.microservice = 'payment';
   }
 
-  validateContract() {
+  validateContract(contractNumber?: string) {
     let body: any = {};
+    let contractNumberFilter = '';
     if (this.dataService.form.get('conceptNumber').value) {
       body = {
         ...body,
@@ -22,10 +23,13 @@ export class ExpensePaymentService extends HttpService {
       };
     }
     if (this.dataService.address) {
-      body = { ...body, address: this.dataService.address };
+      body = { ...body, pAddress: this.dataService.address };
+    }
+    if (contractNumber) {
+      contractNumberFilter = '?filter.connum=' + contractNumber;
     }
     return this.post<IListResponseMessage<IContract>>(
-      'application/validate-contract',
+      'application/validate-contract' + contractNumberFilter,
       body
     );
   }
@@ -46,7 +50,7 @@ export class ExpensePaymentService extends HttpService {
       };
     }
     if (self.dataService.address) {
-      body = { ...body, address: self.dataService.address };
+      body = { ...body, pAddress: self.dataService.address };
     }
     return self.post<IListResponseMessage<IContract>>(
       'application/validate-contract',

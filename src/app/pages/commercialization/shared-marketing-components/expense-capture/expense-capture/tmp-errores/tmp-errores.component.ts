@@ -20,7 +20,7 @@ export class TmpErroresComponent
       ...this.settings,
       actions: false,
       columns: {
-        description: {
+        tmpErrorDescription: {
           title: 'Descripción',
           sort: false,
           type: 'string',
