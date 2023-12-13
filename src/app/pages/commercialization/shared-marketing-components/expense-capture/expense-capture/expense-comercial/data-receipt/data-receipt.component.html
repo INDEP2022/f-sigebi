@@ -409,82 +409,110 @@
 
       <div style="width: 100%; padding-left: 14px">
         <form-field [control]="form.get('contractNumber')" label="Contrato">
-          <ng-select
+          <input
+            type="text"
+            class="form-control"
             formControlName="contractNumber"
-            class="form-control scroll-line"
-            bindValue="value"
-            bindLabel="label"
-            [readonly]="true"
-            [items]="contracts">
-          </ng-select>
+            readonly />
         </form-field>
       </div>
     </div>
-    <ng-template #tipadjLabel let-item="item">
+    <div class="row ml-0 mr-0 mt-2 p-0" *ngIf="showContract">
+      <form-field
+        [control]="form.get('contractDescription')"
+        label="Contrato Descripción">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="contractDescription"
+          rows="2"
+          readonly></textarea>
+      </form-field>
+    </div>
+    <!-- <ng-template #tipadjLabel let-item="item">
       {{ item.clktipadjud }} - {{ item.cvdsc }}
     </ng-template>
     <ng-template #tipadjOption let-item="item">
       <div [title]="item.clktipadjud + '-' + item.cvdsc">
         {{ item.clktipadjud }} - {{ item.cvdsc }}
       </div>
-    </ng-template>
-    <div *ngIf="showTipAdj">
-      <div class="row mt-4 pl-3">
-        <ng-custom-select-loading
+    </ng-template> -->
+    <div *ngIf="showTipAdj" class="row ml-0 mr-0 mt-2 p-0">
+      <form-field [control]="form.get('padj')" label="PADJ">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="padj"
+          readonly />
+      </form-field>
+
+      <!-- <ng-custom-select-loading
           [form]="form"
           [updateValues]="true"
           formControlName="padj"
           label="PADJ"
           [path]="pathPadj"
-          value="clktipadjud"
+          value="cvdsc"
           bindLabel="cvdsc"
           paramSearch="filter.cvdsc"
           prefixSearch="$ilike"
-          secondParamSearch="filter.clktipadjud"
-          [readonly]="true"
-          [labelTemplate]="tipadjLabel"
-          [optionTemplate]="tipadjOption">
-        </ng-custom-select-loading>
-      </div>
-      <div class="row mt-4 pl-3">
-        <ng-custom-select-loading
+          [readonly]="true">
+        </ng-custom-select-loading> -->
+    </div>
+    <div *ngIf="showTipAdj" class="row ml-0 mr-0 mt-2 p-0">
+      <form-field [control]="form.get('psadj')" label="PSADJ">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="padj"
+          readonly />
+      </form-field>
+      <!-- <ng-custom-select-loading
           [form]="form"
           [updateValues]="true"
           [disabled]="!padjValue"
           formControlName="psadj"
           label="PSADJ"
           [path]="pathPsadj"
-          value="clktipadjud"
+          value="cvdsc"
           bindLabel="cvdsc"
           paramSearch="filter.cvdsc"
           prefixSearch="$ilike"
-          secondParamSearch="filter.clktipadjud"
-          [readonly]="true"
-          [labelTemplate]="tipadjLabel"
-          [optionTemplate]="tipadjOption">
-        </ng-custom-select-loading>
-      </div>
-      <div class="row mt-4 pl-3">
-        <ng-custom-select-loading
+          [readonly]="true">
+        </ng-custom-select-loading> -->
+    </div>
+    <div *ngIf="showTipAdj" class="row ml-0 mr-0 mt-2 p-0">
+      <form-field [control]="form.get('pssadj')" label="PSSADJ">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="pssadj"
+          readonly />
+      </form-field>
+
+      <!-- <ng-custom-select-loading
           [form]="form"
           [updateValues]="true"
           [disabled]="!psadjValue"
           formControlName="pssadj"
           label="PSSADJ"
           [path]="pathPssadj"
-          value="clktipadjud"
+          value="cvdsc"
           bindLabel="cvdsc"
           paramSearch="filter.cvdsc"
           prefixSearch="$ilike"
-          secondParamSearch="filter.clktipadjud"
-          [readonly]="true"
-          [labelTemplate]="tipadjLabel"
-          [optionTemplate]="tipadjOption">
-        </ng-custom-select-loading>
-      </div>
+          [readonly]="true">
+        </ng-custom-select-loading> -->
     </div>
-    <div *ngIf="showAdj" class="row mt-4 ml-2">
-      <ng-custom-select-loading
+    <div *ngIf="showAdj" class="row ml-0 mr-0 mt-2 p-0">
+      <form-field [control]="form.get('adj')" label="Adjudicación">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="adj"
+          readonly />
+      </form-field>
+      <!-- <ng-custom-select-loading
         style="padding: 0px"
         [form]="form"
         [updateValues]="true"
@@ -492,15 +520,12 @@
         formControlName="adj"
         label="Adjudicación"
         [path]="pathPssadj"
-        value="clktipadjud"
+        value="cvdsc"
         bindLabel="cvdsc"
         paramSearch="filter.cvdsc"
         prefixSearch="$ilike"
-        secondParamSearch="filter.clktipadjud"
-        [readonly]="true"
-        [labelTemplate]="tipadjLabel"
-        [optionTemplate]="tipadjOption">
-      </ng-custom-select-loading>
+        [readonly]="true">
+      </ng-custom-select-loading> -->
     </div>
   </div>
 </ng-container>
