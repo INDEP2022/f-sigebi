@@ -1987,7 +1987,7 @@ export class NotificationAssetsTabComponent
   }
 
   endClarification() {
-    this.changeStatusTask();
+    //this.changeStatusTask();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
 
     /*this.data.getElements().then(data => {
