@@ -274,7 +274,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         }),
         takeUntil(this.$unSubscribe)
       )
-      .subscribe(() => { });
+      .subscribe(() => {});
     // this.params1
     //   .pipe(takeUntil(this.$unSubscribe))
     //   .subscribe(() => this.getDetailComDonation());
@@ -304,7 +304,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     // this.getEventComDonation(new ListParams());
   }
 
-  onSubmit() { }
+  onSubmit() {}
 
   getUsers($params: ListParams) {
     let params = new FilterParams();
@@ -666,7 +666,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     });
   }
   goDetailDonation() {
-
     this.router.navigate(
       [
         '/pages/final-destination-process/donation-process/approval-for-donation/capture-approval-donation',
