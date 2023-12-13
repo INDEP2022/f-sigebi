@@ -1,0 +1,77 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('year')" label="Año">
+            <ng-select
+              class="form-control pt-1"
+              formControlName="year"
+              [items]="years"
+              [ngModel]="currentYear"></ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('event')" label="Evento">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="event"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('lote')" label="Lote">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="lote"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            (click)="search()"
+            class="btn btn-sm btn-primary btn-block active"
+            [disabled]="form.invalid">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm btn-block active"
+            (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="row justify-content-end text-end">
+      <div>
+        <button
+          type="button"
+          (click)="search()"
+          class="btn btn-sm btn-success btn-block active"
+          [disabled]="form.invalid">
+          Exportar
+        </button>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <ng2-smart-table
+        [ngStyle]="{
+          height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
+        }"
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
+    </div>
+  </div>
+</app-modal>

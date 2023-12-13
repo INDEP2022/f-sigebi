@@ -213,9 +213,9 @@ export class SeriesFoliosControlModalComponent
       } else {
         this.loading = false;
         this.alert(
-          'error',
-          'Error',
-          'La serie ya esta en uso, no se puede modificar el folio'
+          'warning',
+          'La serie ya esta en uso, no se puede modificar el folio',
+          ''
         );
       }
     } else {

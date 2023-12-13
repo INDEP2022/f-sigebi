@@ -575,6 +575,28 @@ export class ExpenseCompositionComponent
     });
   }
 
+  get dataCompositionExpensesStatusChange() {
+    return this.data
+      ? this.data.filter(row => row.changeStatus && row.changeStatus === true)
+      : [];
+  }
+
+  async sendToSIRSAE() {
+    let result = await this.alertQuestion(
+      'question',
+      '¿Desea enviar solicitud de pago a sirsae?',
+      ''
+    );
+    if (result.isConfirmed) {
+      if (this.address === 'M') {
+        this.expenseCaptureDataService.actionButton = 'SIRSAE';
+        await this.expenseCaptureDataService.updateByGoods(true);
+      } else {
+        this.expenseCaptureDataService.ENVIA_MOTIVOS();
+      }
+    }
+  }
+
   ABRE_ARCHIVO_CSVI(event) {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';

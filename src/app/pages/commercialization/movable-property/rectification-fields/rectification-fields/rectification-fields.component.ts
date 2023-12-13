@@ -112,7 +112,7 @@ export class RectificationFieldsComponent extends BasePage implements OnInit {
         this.loading = false;
         this.dataFilter.load([]);
         this.dataFilter.refresh();
-        this.alert('error', 'Error', err.error.message);
+        // this.alert('error', 'Error', err.error.message);
       },
     });
   }
@@ -139,7 +139,7 @@ export class RectificationFieldsComponent extends BasePage implements OnInit {
 
   remove(data: any) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       '¿Desea Eliminar este registro?'
     ).then(answ => {
@@ -160,8 +160,8 @@ export class RectificationFieldsComponent extends BasePage implements OnInit {
               ) {
                 this.alert(
                   'error',
-                  'Error',
-                  'Debe eliminar las relaciones de este campo'
+                  'Debe eliminar las relaciones de este campo',
+                  ''
                 );
                 return;
               }
