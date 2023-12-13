@@ -4,7 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -95,7 +99,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     localStorage.setItem('area', this.authService.decodeToken().siglasnivel3);
     this.generaConsec(this.area_d);
     //this.actaForm();
-    console.log('Folio:' + this.foolio + " - area_d::" + this.area_d);
+    console.log('Folio:' + this.foolio + ' - area_d::' + this.area_d);
 
     this.delegation = Number(localStorage.getItem('area'));
     console.log('this.delegation::' + this.delegation);
@@ -138,8 +142,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.actaRecepttionForm.patchValue({
       captureDate: await this.getDate(),
     });
-
-
   }
   async delegationWhere() {
     return new Promise((resolve, reject) => {
@@ -270,7 +272,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
   async generaConsec(area_d: number) {
     this.procedureManagementService
       //.getFolioMax(Number(localStorage.getItem('area')))
-      .getFolioMax((area_d == null) ? this.authService.decodeToken().department : area_d)
+      .getFolioMax(
+        area_d == null ? this.authService.decodeToken().department : area_d
+      )
       .subscribe({
         next: (data: any) => {
           console.log('generaConsec:: DATA', data);
@@ -366,7 +370,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
     });
   }
 
-
   //Obtener area
   async readArea(lparams: FilterParams) {
     const params = new FilterParams();
@@ -399,9 +402,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
     }
     console.log(
       'this.stagecreated::' +
-      JSON.stringify(this.stagecreated) +
-      ' - this.area_d::' +
-      this.area_d
+        JSON.stringify(this.stagecreated) +
+        ' - this.area_d::' +
+        this.area_d
     );
     params.addFilter('stageedo', this.stagecreated, SearchFilter.EQ);
     params.sortBy = 'numberDelegation2:ASC';
@@ -422,6 +425,4 @@ export class CreateActaComponent extends BasePage implements OnInit {
       },
     });
   }
-
-
 }

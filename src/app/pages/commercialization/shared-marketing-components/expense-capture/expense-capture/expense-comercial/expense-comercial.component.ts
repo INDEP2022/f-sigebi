@@ -928,8 +928,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.readParams(id);
   }
 
-  private async showModalNotify() {
-    this.loader.load = true;
+  private async getDocuments(addNumexp = false) {
     let filterParams = new FilterParams();
     filterParams.addFilter(
       'id',
@@ -943,6 +942,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
     filterParams.addFilter('sheets', 0, SearchFilter.GT);
     filterParams.addFilter('scanStatus', 'ESCANEADO', SearchFilter.ILIKE);
+    if (addNumexp) {
+      filterParams.addFilter(
+        'numberProceedings',
+        SearchFilter.NULL,
+        SearchFilter.NULL
+      );
+    }
     let documents = await firstValueFrom(
       this.documentService.getAll(filterParams.getParams()).pipe(
         take(1),
@@ -952,10 +958,24 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         })
       )
     );
+    return documents;
+  }
+
+  private async showModalNotify() {
+    this.loader.load = true;
+    let documents = await this.getDocuments();
     if (!documents) {
       this.loader.load = false;
       this.alert('error', 'No a escaneado los documentos', '');
       return;
+    }
+    if (this.address !== 'M') {
+      let documents2 = await this.getDocuments(true);
+      if (!documents2) {
+        this.loader.load = false;
+        this.alert('error', 'No a escaneado los documentos', '');
+        return;
+      }
     }
     this.expenseGoodProcessService
       .replyFolio({
@@ -1008,13 +1028,24 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return;
     }
-    if (!this.dataService.validateNotifyFirst()) {
-      this.alert(
-        'warning',
-        'Tiene que llenar alguno de los campos',
-        'Concepto, Evento, Proveedor, Detalle de gasto con bien'
-      );
-      return;
+    if (this.address === 'M') {
+      if (!this.dataService.validateNotifySecond()) {
+        this.alert(
+          'warning',
+          'Tiene que llenar alguno de los campos',
+          'Concepto, Evento, Proveedor, Detalle de gasto con bien'
+        );
+        return;
+      }
+    } else {
+      if (!this.dataService.validateNotifyFirst()) {
+        this.alert(
+          'warning',
+          'Tiene que llenar alguno de los campos',
+          'Concepto, Evento, Proveedor, Detalle de gasto con bien'
+        );
+        return;
+      }
     }
     if (!this.dataService.formScan.get('folioUniversal').value) {
       this.alert('warning', 'No se han escaneado los documentos', '');

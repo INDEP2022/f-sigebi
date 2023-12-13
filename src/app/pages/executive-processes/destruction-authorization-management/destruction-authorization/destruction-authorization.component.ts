@@ -18,7 +18,6 @@ import {
   catchError,
   forkJoin,
   map,
-  switchMap,
   takeUntil,
   tap,
   throwError,
@@ -200,6 +199,7 @@ export class DestructionAuthorizationComponent
   dataGoods: any = [];
   user: string = null;
   searched: boolean = false;
+  today: Date = new Date();
 
   @ViewChild('focusElement', { static: true })
   focusElement: ElementRef<HTMLInputElement>;
@@ -875,7 +875,7 @@ export class DestructionAuthorizationComponent
     return forkJoin($obs);
   }
 
-  async update() {
+  /* async update() {
     this.loading = true;
     const { id, keysProceedings } = this.controls;
 
@@ -907,7 +907,7 @@ export class DestructionAuthorizationComponent
     } finally {
       this.loading = false;
     }
-  }
+  } */
 
   async scanRequest() {
     const { statusProceedings, universalFolio, numFile, id } = this.controls;
@@ -995,19 +995,7 @@ export class DestructionAuthorizationComponent
       numberSubdelegationRequests: this.subdelegation,
       numberDepartmentRequest: this.department,
     };
-    this.createDocument(document)
-      .pipe(
-        tap(_document => this.controls.universalFolio.setValue(_document.id)),
-        switchMap(_document => {
-          const id = this.controls.id.value;
-          console.log('Cargó');
-          return this.updateProceeding(id, this.proceedingForm.value).pipe(
-            map(() => _document)
-          );
-        }),
-        switchMap(_document => this.generateScanRequestReport())
-      )
-      .subscribe();
+    this.createDocument(document);
   }
 
   async getFlyerNumber(number: string) {
@@ -1028,19 +1016,19 @@ export class DestructionAuthorizationComponent
 
   createDocument(document: IDocuments) {
     this.loadingReport = true;
-    return this.documentsService.create(document).pipe(
-      tap(_document => {
-        this.loadingReport = false;
-      }),
-      catchError(error => {
-        this.loadingReport = false;
-        this.onLoadToast(
-          'error',
-          'Error',
-          'Ocurrió un error al general el documento'
+    this.documentsService.create(document).subscribe(
+      res => {
+        console.log(res);
+        this.proceedingForm.get('universalFolio').setValue(res.id);
+        console.log('creó documento');
+        this.updateProceeding(
+          this.controls.id.value,
+          this.proceedingForm.value
         );
-        return throwError(() => error);
-      })
+      },
+      err => {
+        this.alert('error', 'Error', 'Ocurrió un error al generar el folio');
+      }
     );
   }
 
@@ -1082,24 +1070,32 @@ export class DestructionAuthorizationComponent
     id: string | number,
     proceeding: Partial<IProccedingsDeliveryReception>
   ) {
-    console.log(
-      this.correctDateFormat(proceeding.elaborationDate.toISOString())
-    );
+    /*     const body = {
+      universalFolio: this.proceedingForm.get('universalFolio').value,
+    }; */
+    console.log(proceeding);
     proceeding.closeDate = new Date(
       this.correctDate(proceeding.closeDate)
     ).toString();
     proceeding.elaborationDate = new Date(
       this.correctDate(proceeding.elaborationDate)
     ).toString();
-    return this.proceedingsDeliveryReceptionService.update(id, proceeding).pipe(
-      catchError(error => {
-        this.onLoadToast(
+
+    this.proceedingsDeliveryReceptionService.update(id, proceeding).subscribe(
+      res => {
+        console.log(res);
+        console.log('Cargó');
+        this.generateScanRequestReport().subscribe();
+        this.keyProceedingchange();
+      },
+      err => {
+        console.log(err);
+        this.alert(
           'error',
-          'Error',
-          'Ocurrió un error al actualizar el acta'
+          'No se agregó el folio de escaneo a la solicitud',
+          ''
         );
-        return throwError(() => error);
-      })
+      }
     );
   }
 
@@ -1199,6 +1195,7 @@ export class DestructionAuthorizationComponent
           return data[0];
         }),
         tap((proceeding: any) => {
+          console.log(proceeding);
           proceeding.elaborationDate =
             proceeding.elaborationDate == null
               ? null
@@ -1215,19 +1212,11 @@ export class DestructionAuthorizationComponent
               : this.correctDate(new Date(proceeding.closeDate).toString());
 
           this.proceedingForm.patchValue(proceeding);
-          // this.getProceedingGoods();
           this.searched = true;
           this.searchGoodsInDetailProceeding(proceeding.id);
           this.searchActa(proceeding.id);
           this.searchDicta(proceeding.id);
         })
-        // switchMap(proceeding => {
-        //   const getGoods$ = this.getProceedingGoods(proceeding.id);
-        //   const searchActa$ = this.searchActa(proceeding.id);
-        //   const searchDicta$ = this.searchDicta(proceeding.id);
-
-        //   return forkJoin([getGoods$, searchActa$, searchDicta$]);
-        // })
       );
   }
 
