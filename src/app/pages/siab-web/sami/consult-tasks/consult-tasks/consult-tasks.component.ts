@@ -662,10 +662,14 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.taskService.getTasksByUser(filter).subscribe({
         next: response => {
           this.loading = false;
+          response.data[0].requestId;
           response.data.map(async (item: any) => {
             item.taskNumber = item.id;
-            item.requestId =
-              item.requestId != null ? item.requestId : item.programmingId;
+            if (item.requestId || item.programmingId)
+              item.requestId =
+                item.requestId != null ? item.requestId : item.programmingId;
+
+            if (item.idSampling) item.requestId = item.idSampling;
           });
 
           resolve(response);
