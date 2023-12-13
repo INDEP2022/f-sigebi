@@ -563,11 +563,13 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     if (this.columnFilters.length > 0) {
       console.log('Si entro');
       this.columnFilters.forEach((element: any) => {
-        paramsF.addFilter(
-          element[0].field,
-          element[0].search,
-          element[0].filter
-        );
+        if (['', null, undefined].includes(element[0].search)) {
+          paramsF.addFilter(
+            element[0].field,
+            element[0].search,
+            element[0].filter
+          );
+        }
       });
     }
     console.log(paramsF.getParams());
