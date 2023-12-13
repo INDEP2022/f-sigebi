@@ -5,7 +5,9 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
+import { ReportInvoiceService } from 'src/app/core/services/ms-reportinvoice/reportinvoice-service';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
@@ -18,21 +20,26 @@ export class NewImageModalComponent implements OnInit {
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
 
   form: FormGroup = new FormGroup({});
-
+  dataJob: any;
+  jobNot: any;
+  valData: boolean = false;
+  year: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private reportInvoiceService: ReportInvoiceService
   ) {}
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getRegister();
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
       lastName: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -61,20 +68,78 @@ export class NewImageModalComponent implements OnInit {
         null,
         [
           Validators.required,
-          Validators.maxLength(10),
+          Validators.maxLength(20),
           Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
+          // Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
       cve: [null, [Validators.required]],
       image: [null, [Validators.required]],
     });
   }
-
+  async getRegister() {
+    let params = new ListParams();
+    params['filter.jobNumber'] = `$eq:${this.jobNot}`;
+    params['filter.year'] = `$eq:${this.year}`;
+    this.reportInvoiceService.getAll(params).subscribe({
+      next: resp => {
+        const data = resp.data[0];
+        this.form.patchValue({
+          name: data.name,
+          lastName: data.lastnamePat,
+          motherlastName: data.lastnameMat,
+          idAuth: data.authorize,
+          date: data.date,
+          allotment: data.batch,
+          siab: data.siabSeveral,
+          description: data.descriptionproduction,
+          total: data.total,
+          cve: data.cveProcess,
+          image: data.imagesec,
+        });
+        this.valData = true;
+      },
+      error: err => {
+        this.valData = false;
+      },
+    });
+  }
   close() {
+    this.modalRef.content.callback(this.form.value);
     this.modalRef.hide();
   }
 
+  save() {
+    const data = this.form.value;
+
+    let obj = {
+      year: new Date().getFullYear(),
+      jobNumber: this.jobNot,
+      name: data.name,
+      lastnameMat: data.motherlastName,
+      lastnamePat: data.lastName,
+      authorize: data.idAuth,
+      date: data.date,
+      batch: data.allotment,
+      siabSeveral: data.siab,
+      descriptionproduction: data.description,
+      total: data.total,
+      cveProcess: data.cve,
+      imagesec: data.image,
+    };
+
+    if (this.valData) {
+      this.reportInvoiceService.create(obj).subscribe({
+        next: resp => {},
+        error: err => {},
+      });
+    } else {
+      this.reportInvoiceService.update(obj).subscribe({
+        next: resp => {},
+        error: err => {},
+      });
+    }
+  }
   openPrevImg() {
     let config: ModalOptions = {
       initialState: {
