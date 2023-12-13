@@ -138,7 +138,17 @@
     </div>
     <div footer>
       <div class="d-flex justify-content-center">
-        <div class="m-3">
+        <div class="m-3" *ngIf="typeAnnex == 'annexJ-assets-classification'">
+          <confirm-button
+            [disabled]="!form.valid"
+            [loading]="loading"
+            [btnSmall]="true"
+            class="mr-2"
+            (confirm)="signAnnexJ()"></confirm-button>
+        </div>
+        <div
+          class="m-3"
+          *ngIf="typeAnnex == 'sign-annexJ-assets-classification'">
           <confirm-button
             [disabled]="!signForm.valid"
             [loading]="loading"
