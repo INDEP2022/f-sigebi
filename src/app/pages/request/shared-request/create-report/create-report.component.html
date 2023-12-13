@@ -6,25 +6,20 @@
     <div class="md-tabs">
 
                 <form class="form-material" [formGroup]="form">
-                  <div class="row justify-content-end">
-                    <div class="col-xs-12 col-12 col-md-6" *ngIf="editable">
+                  <div class="row justify-content-start">
+                    <div class="col-xs-12 col-12 col-md-6" *ngIf="editReport">
                       <ngx-select [form]="form" control="template" [data]="formats" [searchable]="false" label="Aplicar Formato"
-                        [loading]="false" loadingText="Cargando..." bindLabel="reportName" value="id">
+                        [loading]="false" loadingText="Cargando..." bindLabel="reportName" value="id"         
+                        (fetchItems)="getCatFormats($event)">
                       </ngx-select>
                     </div>
-                    <div class="col-md-3" *ngIf="editable">
+                    <div class="col-md-3" *ngIf="editReport">
                       <button class="btn btn-primary btn-sm active" (click)="applyFormat()">
                         Aplicar Formato <i class="fa fa-file mr-1"></i>
                       </button>
                     </div>
-                
-                    <div class="col-md-3">
-                      <button class="btn btn-primary btn-sm active" (click)="applyFormat()">
-                        Vista previa <i class="fa fa-file mr-1"></i>
-                      </button>
-                    </div>
 
-                    <div class="col-md-3" *ngIf="!editable">
+                    <div class="col-md-3" *ngIf="!editReport">
                       <button (click)="sign()" class="btn btn-primary active btn-sm">
                         <i class="fa fa-file-signature"></i>
                         Firmar
@@ -36,35 +31,22 @@
 
                 <br />
       <tabset #tabsReport>
-        <tab heading="Reporte" id="editorTab" *ngIf="editable">
-          <!--Templates Editor-->   
-          <quill-editor
-            [sanitize]="true"
-            placeholder="Escribe aquí"
-            [(ngModel)]="format.content"
-            (onEditorCreated)="created($event)"
-            (onContentChanged)="onContentChanged($event)"
+
+        <tab heading="Reporte" id="editReport" *ngIf="editReport">
+          <!--Templates Editor-->
+          <quill-editor [sanitize]="true" placeholder="Escribe aquí" [(ngModel)]="version.content"
+            (onEditorCreated)="created($event)" (onContentChanged)="onContentChanged($event)"
             [styles]="{ height: '40vh', overflow: 'auto' }">
           </quill-editor>
         </tab>
-        <tab heading="Vista Previa" id="previewTab" *ngIf="!editable">
-          <div class="row justify-content-end">
-            <div class="col-md-3">
-              <button
-                (click)="attachDocument()"
-                class="btn btn-primary btn-sm active">
-                <i class="fa fa-check-circle"></i>
-                Adjuntar documento
-              </button>
-            </div>
+        
+        <tab heading="Vista Previa" id="previewTab" *ngIf="isView()">
+          <div style="height: 40vh !important; overflow: auto !important;">
+            <quill-view [content]="version.content" [sanitize]="true" [preserveWhitespace]="true" format="html"></quill-view>
           </div>
-          <quill-view
-            [content]="format.content"
-            [preserveWhitespace]="true"
-            format="object"></quill-view>
-          <!--<button (click)='pdfCreate()'>Vista previa</button>-->
         </tab>
-        <tab heading="Firmar Reporte" id="signTab" *ngIf="isSigned">
+        
+        <tab heading="Firmar Reporte" id="signTab" *ngIf="signReport">
           <app-sign-report (nextStep)="nextStep($event)"></app-sign-report>
         </tab>
       </tabset>

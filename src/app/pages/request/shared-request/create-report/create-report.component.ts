@@ -15,12 +15,10 @@ import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
-import { DOCS } from './template';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ReportService } from 'src/app/core/services/catalogs/reports.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import * as moment from 'moment';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
@@ -51,10 +49,14 @@ export class CreateReportComponent extends BasePage implements OnInit {
   //VALIDAR
   document: Document = new Document();
 
-  editable: boolean = true;
   formats: any = [];
-  version: any = null;
+  version: any = new Document();
   format: any = new Document();
+  loadDoc: any = null;
+
+  editReport = true;
+  signReport = false;
+
 
   tableName: string = null;
   documentTypeId: string = null;
@@ -90,33 +92,44 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
 
-    console.log(this.requestId);
-    console.log(this.process);
-
     this.tableName = 'SOLICITUDES';
     this.documentTypeId = '26';
 
-    this.getCatFormats();
+    this.getCatFormats(new ListParams());
     this.getVersionsDoc();
     this.prepareForm();
+
+
   }
 
   prepareForm(): void {
     this.form = this.fb.group({
-      template: [null, [Validators.required]],
-      content: [null, [Validators.required]],
+      template: ['', [Validators.required]],
+      content: ['', [Validators.required]],
     });
+
+    this.form.get('template').valueChanges.subscribe(value => {
+      this.format = this.formats.data.find(x => x.id == value);
+    });
+
   }
 
-  async getCatFormats() {
+  async getCatFormats(params: ListParams) {
 
-    let params = new ListParams();
-    params['filter.id'] = `$eq:${this.documentTypeId}`;
+    params['shortBy'] = 'reportName';
+    params['limit'] = 100;
+
     this.reportService.getAll(params).subscribe({
       next: resp => {
         this.formats = new DefaultSelect(resp.data, resp.count);
+        let select = this.formats.data.find(x => x.doctoTypeId.id == this.documentTypeId);
+        this.format = select;
+        this.form.get('template').setValue(select.id);
+        this.form.get('template').disable();
       },
-      error: err => { },
+      error: err => {
+        this.formats = new DefaultSelect();
+      },
     });
   }
 
@@ -130,8 +143,11 @@ export class CreateReportComponent extends BasePage implements OnInit {
     this.reportgoodService.getReportDynamic(params).subscribe({
       next: resp => {
         if (resp.data.length > 0) {
-          this.version = resp.data;
+          this.loadDoc = resp.data[0];
+          this.version = this.loadDoc;
         }
+
+        this.loadData();
       },
       error: err => { },
     });
@@ -154,24 +170,21 @@ export class CreateReportComponent extends BasePage implements OnInit {
       ucmDocumentName: null,
       reportFolio: null,
       folioDate: null,
-      reportTemplateId: format.id
+      reportTemplateId: format.id,
+      creationUser: user.username,
+      creationDate: moment(new Date()).format('YYYY-MM-DD'),
+      modificationUser: user.username,
+      modificationDate: moment(new Date()).format('YYYY-MM-DD')
     }
 
-    if (!isNullOrEmpty(this.version)) {
-      doc.id = this.version.id;
-      doc.modificationUser = user.username;
-      doc.modificationDate = moment(new Date()).format('YYYY-MM-DD');
-    } else {
-      doc.creationUser = user.username;
-      doc.creationDate = moment(new Date()).format('YYYY-MM-DD');
-    }
-
-    this.reportgoodService.saveReportDynamic(doc).subscribe({
-      next: resp => {
-
-      },
-      error: err => { },
-    });
+    this.reportgoodService.saveReportDynamic(doc,
+      !isNullOrEmpty(this.loadDoc)).subscribe({
+        next: resp => {
+          this.onLoadToast('success', 'Documento guardado correctamente', '');
+          this.close();
+        },
+        error: err => { },
+      });
 
   }
 
@@ -181,10 +194,65 @@ export class CreateReportComponent extends BasePage implements OnInit {
   };
 
   applyFormat() {
-    if (isNullOrEmpty(this.form.get('template').value)) return;
-    this.format = this.formats.data.find(x => x.id == this.form.get('template').value);
+    this.version = this.format;
+    this.loadData();
   }
 
+  loadData() {
+
+    if (isNullOrEmpty(this.format)) return;
+
+    switch (this.process) {
+      case 'verify-compliance-return':
+
+        //Genera una tabla html en una cadena de texto
+        let table = `<table style="width:100%">
+  <tr>
+    <th>Company</th>
+    <th>Contact</th>
+    <th>Country</th>
+  </tr>
+  <tr>
+    <td>Alfreds Futterkiste</td>
+    <td>Maria Anders</td>
+    <td>Germany</td>
+  </tr>
+  <tr>
+    <td>Centro comercial Moctezuma</td>
+    <td>Francisco Chang</td>
+    <td>Mexico</td>
+  </tr>
+</table><br />`;
+
+
+        /*datos.forEach(dato => {
+          tabla += `
+        <tr>
+          <td>${dato.nombre}</td>
+          <td>${dato.edad}</td>
+        </tr>`;
+        });*/
+
+
+        let content = this.version.content;
+        //content = content.replace('{TABLA_BIENES}', table);
+        //content = content.replace('{FOLIO}', '');
+        //content = content.replace('{FECHA}', '');
+
+        this.version.content = content;
+        this.format.content = content;
+
+        break;
+    }
+  }
+
+  isView() {
+    return !isNullOrEmpty(this.version.content);
+  }
+
+  HTMLSant(html: string) {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
 
 
 
