@@ -301,6 +301,14 @@ export class ExpenseCompositionComponent
       this.resetTotals();
       this.getData2();
     }
+    if (this.address !== 'M') {
+      delete COLUMNS.changeStatus;
+      delete COLUMNS.reportDelit;
+      this.settings = {
+        ...this.settings,
+        columns: COLUMNS,
+      };
+    }
     let usuario = this.expenseCaptureDataService.user.preferred_username; //'AJIMENEZC'; // this.expenseCaptureDataService.user.preferred_username;
     this.dictationService
       .maxInCsv(usuario)
@@ -480,6 +488,13 @@ export class ExpenseCompositionComponent
 
   get lotNumber() {
     return this.form.get('lotNumber');
+  }
+
+  get validateModifyEstatus() {
+    return (
+      this.showAdd &&
+      (this.address === 'M' ? this.changeStatusFilter.length === 0 : true)
+    );
   }
 
   get showAdd() {

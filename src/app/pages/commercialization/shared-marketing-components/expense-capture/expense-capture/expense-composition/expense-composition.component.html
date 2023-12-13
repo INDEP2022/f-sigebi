@@ -19,7 +19,7 @@
           <div class="col-md-6 d-flex mb-3">
             <span title="Selecionar Todo" containerClass="tooltip-style">
               <button
-                *ngIf="data && data.length > 0"
+                *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active"
                 style="
                   width: 100px;
@@ -33,7 +33,7 @@
             >
             <span title="Selecionar Todo" containerClass="tooltip-style">
               <button
-                *ngIf="data && data.length > 0"
+                *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active ml-3"
                 style="
                   width: 100px;
@@ -162,7 +162,7 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showAdd || changeStatusFilter.length === 0"
+              [disabled]="!validateModifyEstatus"
               (click)="modifyEstatus()">
               Modificar Estatus
             </button>
