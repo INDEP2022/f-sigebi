@@ -207,41 +207,13 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'goodId':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'description':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'extDomProcess':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'quantity':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'unit':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
+          if (this.columnFilters.lenght > 0) {
+            if (!this.columnFilters.find(filters)) {
+              this.columnFilters.push(filters);
             }
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
+          } else {
+            this.columnFilters.push(filters);
+          }
 
           this.searchGoodsByExp();
         }
@@ -585,10 +557,20 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   searchGoodsByExp() {
     const paramsF = new FilterParams();
     paramsF.addFilter('fileNumber', this.expedient.value);
-    paramsF.addFilter2(this.columnFilters);
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
     console.log(this.columnFilters);
+    if (this.columnFilters.length > 0) {
+      console.log('Si entro');
+      this.columnFilters.forEach((element: any) => {
+        paramsF.addFilter(
+          element[0].field,
+          element[0].search,
+          element[0].filter
+        );
+      });
+    }
+    console.log(paramsF.getParams());
 
     this.goodService.getAllFilterDetail(paramsF.getParams()).subscribe(
       async res => {
