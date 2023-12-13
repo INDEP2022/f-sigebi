@@ -125,7 +125,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
                 console.log(response);
                 // this.dataService.formScan.get('folioUniversal').S =
                 //   response.data[0].universalFolio;
-                this.folioUniversal.setValue(response.data[0].universalFolio);
+                this.folioUniversal.setValue(response.data[0].id);
               }
             },
             error: err => {
@@ -154,7 +154,6 @@ export class ScanFilesComponent extends BasePage implements OnInit {
 
   async generateFolio() {
     if (this.folioUniversal && this.folioUniversal.value) {
-      // debugger;
       this.alert('error', 'Generar Folio', 'El gasto ya cuenta con un folio');
       return;
     }
@@ -198,7 +197,6 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     let newArray =
       this.dataService.address === 'M' ? filterDataComposition : bienes;
     newArray.forEach(async (x, index) => {
-      // debugger;
       console.log(x);
       const DESCR =
         (this.dataService.address === 'M'
@@ -244,7 +242,8 @@ export class ScanFilesComponent extends BasePage implements OnInit {
             sendFilekey: '',
             userResponsibleFile: '',
             mediumId: '',
-            associateUniversalFolio: index > 0 ? this.folioUniversal.value : 0,
+            associateUniversalFolio:
+              index > 0 ? this.folioUniversal.value : null,
             dateRegistrationScanningHc: null,
             dateRequestScanningHc: null,
             goodNumber: this.expenseNumber.value,

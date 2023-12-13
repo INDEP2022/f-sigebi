@@ -14,7 +14,69 @@
         </div>
       </div>
     </div>
-    <div class="row pt-4">
+
+    <div class="row pt-2" *ngIf="showSample">
+      <h5 class="title">Detalle Muestreo</h5>
+
+      <div style="padding-left: 2rem">
+        <div class="row">
+          <div class="col-md-4">
+            <label for=""
+              >No. Muestreo&#58;
+              <span>{{ sampleInfo?.sampleId }}</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label for=""
+              >Nombre Almac&eacute;n&#58;
+              <span>{{ nameWarehouse }}</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label for=""
+              >Direcci&oacute;n Almac&eacute;n&#58;
+              <span>{{ addressWarehouse }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <label for=""
+              >Delegaci&oacute;n Regional&#58;
+              <span>{{ nameDelegation }}</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label for=""
+              >Periodo Inicial&#58;
+              <span>{{ sampleInfo?.startDate }}</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label for=""
+              >Periodo Final &#58;
+              <span>{{ sampleInfo?.endDate }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <label for=""
+              >Fecha de Elaboraci&oacute;n Muestreo&#58;
+              <span>{{ sampleInfo?.creationDate }}</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label for=""
+              >Transferente&#58;
+              <span>{{ nameTransferente }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-5">
       <form [formGroup]="dateForm" class="form-material">
         <div class="row pt-4">
           <div class="col-md-4">
@@ -53,7 +115,8 @@
         </div>
       </form>
     </div>
-    <div class="row pt-6">
+
+    <div class="row pt-5">
       <h5 class="title">
         <p>
           <a
