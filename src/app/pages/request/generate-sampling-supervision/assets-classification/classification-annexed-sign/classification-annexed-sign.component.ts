@@ -129,8 +129,8 @@ export class ClassificationAnnexedSignComponent
             body['idTask'] = _task.id;
             body['userProcess'] = user.username;
             body['type'] = 'MUESTREO_BIENES';
-            body['subtype'] = 'Verificacion_bienes';
-            body['ssubtype'] = 'RESTITUCION';
+            body['subtype'] = 'Firmar_resultados';
+            body['ssubtype'] = 'VERIFICAR';
 
             let task: any = {};
             task['id'] = 0;
