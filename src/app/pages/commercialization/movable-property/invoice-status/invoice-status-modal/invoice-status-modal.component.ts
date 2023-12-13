@@ -61,7 +61,15 @@ export class InvoiceStatusModalComponent extends BasePage implements OnInit {
         },
         error: err => {
           this.loading = false;
-          this.alert('error', 'Error', err.error.message);
+          if (err.error.message == 'Ya existe un registro con la misma llave') {
+            this.alert(
+              'warning',
+              'Ya existe un registro con la misma llave',
+              ''
+            );
+          } else {
+            this.alert('error', 'Error', err.error.message);
+          }
         },
       });
     } else {
@@ -78,7 +86,15 @@ export class InvoiceStatusModalComponent extends BasePage implements OnInit {
         },
         error: err => {
           this.loading = false;
-          this.alert('error', 'Error', err.error.message);
+          if (err.error.message == 'Ya existe un registro con la misma llave') {
+            this.alert(
+              'warning',
+              'Ya existe un registro con la misma llave',
+              ''
+            );
+          } else {
+            this.alert('error', 'Error', err.error.message);
+          }
         },
       });
     }

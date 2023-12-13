@@ -79,7 +79,7 @@ export class AuthorizationAssetsDestructionComponent
   selectExpedient = new DefaultSelect<IExpedient>();
   rowSelected: boolean = false;
   selectedRow: any = null;
-  title: string = 'Oficios de Autorización de Destrucción';
+  title: string = 'Oficios de autorización de destrucción';
   textButton: string = 'Cerrar';
   expediente: number;
   textDisabled: boolean = true;
@@ -240,13 +240,14 @@ export class AuthorizationAssetsDestructionComponent
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(result => {
       console.log(result);
       if (this.consult) {
-        this.searchGoodsInDetailProceeding();
+        this.fillTableGoodsByUser();
       }
     });
 
     if (localStorage.getItem('noAuth_scan')) {
       this.form.get('noAuth').setValue(localStorage.getItem('noAuth_scan'));
       this.getProceeding();
+      localStorage.removeItem('noAuth_scan');
     }
     this.user = this.authService.decodeToken().preferred_username;
   }
@@ -395,7 +396,7 @@ export class AuthorizationAssetsDestructionComponent
       this.alert(
         'warning',
         this.title,
-        'Debe Ingresar la fecha de Autorización.',
+        'Debe ingresar la fecha de autorización.',
         ''
       );
       return;
@@ -404,7 +405,7 @@ export class AuthorizationAssetsDestructionComponent
       this.alert(
         'warning',
         this.title,
-        'Debe Ingresar el Oficio de Autorización.',
+        'Debe ingresar el oficio de autorización.',
         ''
       );
       return;
@@ -414,7 +415,7 @@ export class AuthorizationAssetsDestructionComponent
       this.alert(
         'warning',
         this.title,
-        'El Oficio No Tiene Folio de Escaneo, No Se Puede Cerrar.',
+        'El oficio no tiene folio de escaneo, no se puede cerrar.',
         ''
       );
       return;
@@ -425,7 +426,7 @@ export class AuthorizationAssetsDestructionComponent
       this.alert(
         'warning',
         this.title,
-        'El Oficio No Tiene Documentos Escaneados, No Se Puede Cerrar.',
+        'El oficio no tiene documentos escaneados, no se puede cerrar.',
         ''
       );
       return;
@@ -435,7 +436,7 @@ export class AuthorizationAssetsDestructionComponent
       this.alert(
         'warning',
         this.title,
-        'El Oficio No Tiene Ningun Bien Asignado, No Se Puede Cerrar.',
+        'El oficio no tiene ningun bien asignado, no se puede cerrar.',
         ''
       );
       return;
@@ -922,7 +923,7 @@ export class AuthorizationAssetsDestructionComponent
 
   //LLENAR LA TABLA DE BIENES POR USUARIO
   fillTableGoodsByUser() {
-    this.canSearch = false;
+    this.form.get('noAuth').value != null ? (this.canSearch = false) : null;
     this.loading = true;
     const paramsF = new FilterParams();
     paramsF.page = this.params.getValue().page;

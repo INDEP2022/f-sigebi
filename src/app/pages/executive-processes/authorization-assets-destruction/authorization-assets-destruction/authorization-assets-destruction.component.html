@@ -98,7 +98,7 @@
             label="Oficio de Autorizaci&oacute;n">
             <input
               type="text"
-              [readOnly]="!canSearch"
+              [readOnly]="!canSearch && !canNewProceeding"
               class="form-control"
               formControlName="authNotice" />
           </form-field>
@@ -108,7 +108,7 @@
             <input
               type="text"
               class="form-control"
-              [readOnly]="!canSearch"
+              [readOnly]="!canSearch && !canNewProceeding"
               bsDatepicker
               formControlName="fromDate"
               [bsConfig]="bsConfig" />
@@ -132,7 +132,7 @@
             type="button"
             (click)="massiveSave()"
             class="btn btn-primary active btn-sm mr-3">
-            Guardar <i class="fa fa-save"></i>
+            Guardar cambios <i class="fa fa-save"></i>
           </button>
           <button
             *ngIf="!canNewProceeding"
@@ -148,10 +148,13 @@
             (click)="saveNewProceeding()"
             type="button"
             class="btn btn-primary btn-sm active mr-3">
-            Guardar
+            Guardar nueva acta
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
           <button
+            type="button"
+            data-toggle="tooltip"
+            title="Cambio masivo de estatus"
             (click)="masiveChange()"
             class="btn btn-sm btn-primary active mr-3">
             <i class="fa fa-arrow-down float-icon"></i>

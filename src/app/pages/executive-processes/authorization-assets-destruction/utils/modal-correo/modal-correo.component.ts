@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPupCompFolioUniv } from 'src/app/core/models/catalogs/package.model';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
@@ -11,8 +11,11 @@ import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.se
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
+import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { COLUMLNS_CC, COLUMLNS_DIST } from '../columns';
 
 interface trec_DIST {
@@ -60,13 +63,19 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
   acta: IProceedingDeliveryReception;
   detalleActa: any[];
   mensaje: string;
-  title: string = 'Oficios de Autorización de Destrucción';
+  title: string = 'Oficios de autorización de destrucción';
 
   proceeding: string = null;
   expedient: string = null;
   universalFolio: string = null;
   proceedingKey: string = null;
   elaborationDate: any = null;
+  dataEmail: any[] = [];
+  dataEmailCc: any[] = [];
+
+  dataTotalDist: any[] = [];
+  dataTotalCc: any[] = [];
+  sendEmailFlag: boolean = false;
 
   get user() {
     return this.authService.decodeToken();
@@ -81,6 +90,8 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     private parametergoodService: ParameterCatService,
     private serviceMassiveGoods: MassiveGoodService,
     private serviceUser: UsersService,
+    private tranfergoodService: TranfergoodService,
+    private proceedingService: ProceedingsService,
     private goodprocesServices: GoodProcessService
   ) {
     super();
@@ -88,13 +99,37 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     this.settingsDist = {
       ...this.settings,
       hideSubHeader: false,
-      columns: { ...COLUMLNS_DIST },
+      actions: false,
+      columns: {
+        ...COLUMLNS_DIST,
+        selection: {
+          title: '',
+          sort: false,
+          filter: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectedEmail(instance),
+        },
+      },
     };
 
     this.settingsCc = {
       ...this.settings,
       hideSubHeader: false,
-      columns: { ...COLUMLNS_CC },
+      actions: false,
+      columns: {
+        ...COLUMLNS_CC,
+        selection: {
+          title: '',
+          sort: false,
+          filter: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectedEmailCc(instance),
+        },
+      },
     };
   }
 
@@ -103,14 +138,112 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       mensaje: [null],
     });
     this.pupLlenaDist();
+
+    this.paramsDist.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+
+      if (this.dataTotalDist.length > 0) {
+        this.dataDist.load(
+          this.localPagination(
+            this.paramsDist.getValue().page,
+            this.paramsDist.getValue().pageSize,
+            this.dataTotalDist
+          )
+        );
+      }
+    });
+
+    this.paramsCc.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      if (this.dataTotalCc.length > 0) {
+        this.dataCc.load(
+          this.localPagination(
+            this.paramsCc.getValue().page,
+            this.paramsCc.getValue().pageSize,
+            this.dataTotalCc
+          )
+        );
+      }
+    });
   }
 
   async pupLlenaDist() {
     ////// AQUI LO DE LO QUE EDUARDO ME VA A ENTREGAR
-    await this.consultationQuery1();
-    await this.consultationQuery2();
+    /* await this.consultationQuery1();
+    await this.consultationQuery2(); */
+    //!A
+    this.proceedingService.pupFillDist(this.proceeding).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.dataTotalDist = resp.re_DIST;
+        this.dataTotalCc = resp.re_COPIA;
+        this.dataDist.load(
+          this.localPagination(
+            this.paramsDist.getValue().page,
+            this.paramsDist.getValue().pageSize,
+            this.dataTotalDist
+          )
+        );
+        this.dataCc.load(
+          this.localPagination(
+            this.paramsCc.getValue().page,
+            this.paramsCc.getValue().pageSize,
+            this.dataTotalCc
+          )
+        );
+        this.totalItemsDist = resp.re_DIST.length;
+        this.totalItemsCc = resp.re_COPIA.length;
+        this.dataDist.refresh();
+        this.dataCc.refresh();
+        this.pupInicializaCorreo('C');
+      },
+      error: err => {
+        console.log(err);
+        this.dataDist.load([]);
+        this.dataCc.load([]);
+        this.totalItemsDist = 0;
+        this.totalItemsCc = 0;
+      },
+    });
     ////
-    this.pupInicializaCorreo('C');
+  }
+
+  localPagination(page: number, pageSize: number, data: any[]): any[] {
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return data.slice(startIndex, endIndex);
+  }
+
+  onSelectedEmail(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        if (data.toggle) {
+          this.dataEmail.push(data.row);
+          console.log(this.dataEmail);
+        } else {
+          this.dataEmail = this.dataEmail.filter(
+            x => x.email !== data.row.email
+          );
+          console.log(this.dataEmail);
+        }
+      },
+    });
+  }
+
+  onSelectedEmailCc(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        if (data.toggle) {
+          this.dataEmailCc.push(data.row);
+          console.log(this.dataEmailCc);
+        } else {
+          this.dataEmailCc = this.dataEmailCc.filter(
+            x => x.email !== data.row.email
+          );
+          console.log(this.dataEmailCc);
+        }
+      },
+    });
   }
 
   consultationQuery1() {
@@ -120,9 +253,10 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
         .consultationQuery1(this.proceeding, this.paramsDist.getValue())
         .subscribe({
           next: resp => {
+            console.log(resp);
             this.dataDist.load(resp.data);
             this.dataDist.refresh();
-            this.totalItemsDist = resp.count;
+            this.totalItemsDist = resp.data.length;
             this.loadingDist = false;
             res(true);
           },
@@ -137,6 +271,36 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     });
   }
 
+  sendEmail() {
+    if (this.dataEmail.length == 0) {
+      this.alert(
+        'warning',
+        'Se debe seleccionar al menos una direccion de correo para poder enviar',
+        ''
+      );
+      this.sendEmailFlag = false;
+      return;
+    }
+
+    this.sendEmailFlag = false;
+
+    const dataListEmail = this.dataEmail.map(x => x.email);
+    let dataListEmailCc = [];
+    this.dataEmailCc.length > 0
+      ? (dataListEmailCc = this.dataEmailCc.map(x => x.email))
+      : null;
+
+    let body = {
+      destination: this.dataEmail,
+      copy: this.dataEmailCc,
+      message: this.form.get('mensaje').value,
+      subject: 'Cambio de estatus de bienes a RGA',
+      header: 'Cambio de estatus de bienes a RGA',
+    };
+
+    this.tranfergoodService.sendEmail(body).subscribe();
+  }
+
   consultationQuery2() {
     return new Promise((res, _rej) => {
       this.loadingCc = true;
@@ -146,7 +310,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
           next: resp => {
             this.dataCc.load(resp.data);
             this.dataCc.refresh();
-            this.totalItemsCc = resp.count;
+            this.totalItemsCc = resp.data.length;
             this.loadingCc = false;
             res(true);
           },
@@ -208,10 +372,13 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
     const responde = await this.alertQuestion(
       'question',
       'Esta seguro que desea cerrar el Oficio',
-      '¿Desea Continuar Con el Proceso?'
+      '¿Desea continuar con el proceso?'
     );
     if (responde.isConfirmed) {
-      await this.pupCompFolUniv();
+      this.sendEmail();
+      if (this.sendEmail) {
+        await this.pupCompFolUniv();
+      }
     }
   }
 
@@ -245,6 +412,8 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       delegation: dataJson.delegation,
       subDelegation: dataJson.subDelegation,
       departament: dataJson.departament,
+      elaborationDate: this.elaborationDate,
+      screen: 'FACTDIRAPROBDESTR',
     };
     console.log(body);
     console.log(this.user);
@@ -256,7 +425,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           this.title,
-          'El Oficio Ha Sido Cerrado Correctamente.'
+          'El oficio ha sido cerrado correctamente.'
         );
         this.closed();
       },
@@ -328,9 +497,9 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       });
       let c_ASUNTO: string = null;
       if (p_ACCION === 'C') {
-        c_ASUNTO = 'Cambio de Estatus de Bienes a AXD.';
+        c_ASUNTO = 'Cambio de estatus de bienes a AXD.';
       } else {
-        c_ASUNTO = 'Cambio de Estatus de Bienes de AXD al Estatus anterior.';
+        c_ASUNTO = 'Cambio de estatus de bienes de AXD al estatus anterior.';
       }
       for (let n_I = 1; n_I <= n_CONT; n_I++) {
         ///////  ////////

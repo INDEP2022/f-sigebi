@@ -39,7 +39,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'assets-clasification',
+    path: 'assets-clasification/:id',
     loadChildren: async () =>
       (
         await import(

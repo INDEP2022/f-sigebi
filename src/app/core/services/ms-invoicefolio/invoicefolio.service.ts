@@ -82,4 +82,8 @@ export class InvoicefolioService extends HttpService {
       `${InvoiceFolioEndPoint.ValidateFoliosAvailable}/${event}/${tpEvent}`
     );
   }
+
+  updateFolioSeparate_(data: any) {
+    return this.put(`${InvoiceFolioEndPoint.FolioSeparte}`, data);
+  }
 }

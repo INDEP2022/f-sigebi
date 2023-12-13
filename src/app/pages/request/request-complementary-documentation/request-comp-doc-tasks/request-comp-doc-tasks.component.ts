@@ -39,8 +39,10 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
+  protected override editReport: boolean;
+  protected override reportTable: string;
+  protected override reportId: string;
   protected override finish: boolean;
   protected override btnRequestAprove: boolean;
   protected override sendEmail: boolean;
@@ -261,7 +263,12 @@ export class RequestCompDocTasksComponent
 
   openReport(): void {
     const initialState: Partial<CreateReportComponent> = {
-      signed: this.signedReport,
+      signReport: this.signedReport,
+      editReport: this.editReport,
+      tableName: this.reportTable,
+      documentTypeId: this.reportId,
+      process: this.process,
+      requestId: this.requestId.toString(),
     };
 
     const modalRef = this.modalService.show(CreateReportComponent, {

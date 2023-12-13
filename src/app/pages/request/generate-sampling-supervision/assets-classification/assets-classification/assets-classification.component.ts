@@ -28,7 +28,7 @@ import { AnnexJAssetsClassificationComponent } from '../annex-j-assets-classific
   styleUrls: ['./assets-classification.component.scss'],
 })
 export class AssetsClassificationComponent extends BasePage implements OnInit {
-  title: string = `Clasificación de bienes ${302}`;
+  title: string = `Clasificación de bienes ${326}`;
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
   willSave: boolean = true;
@@ -64,7 +64,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.idSample = 302;
+    this.idSample = 326;
     this.getInfoSample();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getSampleDeductives();
@@ -105,7 +105,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
 
   getInfoSample() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.sampleId'] = `$eq:${302}`;
+    params.getValue()['filter.sampleId'] = `$eq:${326}`;
     this.samplingGoodService.getSample(params.getValue()).subscribe({
       next: response => {
         this.sampleInfo = response.data[0];

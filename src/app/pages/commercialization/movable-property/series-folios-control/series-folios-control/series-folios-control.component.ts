@@ -3,7 +3,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
@@ -195,13 +195,22 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
             }
           });
           this.paramsList2 = this.pageFilter(this.paramsList2);
-          this.getInvoiceFolioSeparate();
+          this.getInvoiceFolioSeparate(this.isSelect, 'no');
         }
       });
 
-    this.paramsList2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.totalItems2 > 0) this.getInvoiceFolioSeparate();
-    });
+    this.paramsList2
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getInvoiceFolioSeparate(this.isSelect, 'no');
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {});
+    // this.paramsList2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   if (this.totalItems2 > 0) this.getInvoiceFolioSeparate(this.isSelect, 'no');
+    // });
 
     this.dataFilter3
       .onChanged()
@@ -215,7 +224,10 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
 
             const search: any = {
-              idTpevent: () => (searchFilter = SearchFilter.EQ),
+              idTpevent: () => {
+                (field = `filter.${filter.field}.description`),
+                  (searchFilter = SearchFilter.ILIKE);
+              },
               commentary: () => (searchFilter = SearchFilter.ILIKE),
             };
 
@@ -228,13 +240,22 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
             }
           });
           this.paramsList3 = this.pageFilter(this.paramsList3);
-          this.getEventXSerie();
+          this.getEventXSerie(this.isSelect, 'no');
         }
       });
 
-    this.paramsList3.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.totalItems3 > 0) this.getEventXSerie();
-    });
+    this.paramsList3
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getEventXSerie(this.isSelect, 'no');
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {});
+    // this.paramsList3.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   if (this.totalItems3 > 0) this.getEventXSerie();
+    // });
   }
 
   getInvoiceFolio() {
@@ -274,17 +295,19 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
           this.dataFilter.refresh();
 
           this.totalItems = 0;
-          this.alert('error', 'Error', err.error.message);
+          // this.alert('error', 'Error', err.error.message);
         },
       });
   }
 
-  getInvoiceFolioSeparate(folio?: InvoiceFolio) {
+  getInvoiceFolioSeparate(folio?: InvoiceFolio, filter?: string) {
     if (folio && folio.folioinvoiceId) {
       this.isSelect = folio;
       this.columnFilters2[
         'filter.folioinvoiceId'
       ] = `${SearchFilter.EQ}:${folio.folioinvoiceId}`;
+    } else {
+      return;
     }
     this.loading2 = true;
     let params = {
@@ -321,23 +344,27 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
                 `Seleccione un folio para consultar Folios Apartados`
               );
             } else {
-              this.alert(
-                'warning',
-                'Folios Apartados',
-                `No se encontraron registros para este Id Folio: ${this.isSelect.folioinvoiceId}`
-              );
+              if (filter == 'si') {
+                this.alert(
+                  'warning',
+                  'Folios Apartados',
+                  `No se encontraron registros para este Id Folio: ${this.isSelect.folioinvoiceId}`
+                );
+              }
             }
           }
         },
       });
   }
 
-  getEventXSerie(folio?: InvoiceFolio) {
+  getEventXSerie(folio?: InvoiceFolio, filter?: string) {
     if (folio && folio.folioinvoiceId) {
       this.isSelect = folio;
       this.columnFilters3[
         'filter.idInvoiceFolio'
       ] = `${SearchFilter.EQ}:${folio.folioinvoiceId}`;
+    } else {
+      return;
     }
     this.loading3 = true;
     let params = {
@@ -367,11 +394,13 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
               `Seleccione un folio para consultar Tipos de Eventos por Serie`
             );
           } else {
-            this.alert(
-              'warning',
-              'Eventos por Serie',
-              `No se encontraron registros para este Id Folio: ${this.isSelect.folioinvoiceId}`
-            );
+            if (filter == 'si') {
+              this.alert(
+                'warning',
+                'Eventos por Serie',
+                `No se encontraron registros para este Id Folio: ${this.isSelect.folioinvoiceId}`
+              );
+            }
           }
         }
       },
@@ -407,7 +436,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
           if (next) {
             this.isSelect = newData;
             this.getInvoiceFolio();
-            this.getInvoiceFolioSeparate(this.isSelect);
+            this.getInvoiceFolioSeparate(this.isSelect, 'si');
           }
         },
       },
@@ -437,7 +466,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
         folio: this.isSelect,
         callback: (next: boolean) => {
           if (next) {
-            this.getEventXSerie(this.isSelect);
+            this.getEventXSerie(this.isSelect, 'no');
           }
         },
       },
@@ -462,38 +491,56 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
 
   remove(type: string, data: any) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       '¿Desea Eliminar este registro?'
-    ).then(answ => {
+    ).then(async answ => {
       if (answ.isConfirmed) {
         switch (type) {
           case 'folio':
-            this.invoiceService
-              .deleteFolio(Number(data.folioinvoiceId))
-              .subscribe({
-                next: () => {
-                  this.alert('success', 'Folio', 'Eliminado Correctamente');
-                  this.getInvoiceFolio();
-                },
-                error: err => {
-                  if (err.status == 500) {
-                    if (
-                      err.error.message.includes(
-                        'violates foreign key constraint'
-                      )
-                    ) {
-                      this.alert(
-                        'error',
-                        'Error',
-                        'Debe eliminar las relaciones de este folio'
-                      );
-                      return;
-                    }
-                  }
-                  this.alert('error', 'Error', err.error.message);
-                },
-              });
+            let params = new ListParams();
+            params[
+              'filter.idInvoiceFolio'
+            ] = `${SearchFilter.EQ}:${data.folioinvoiceId}`;
+
+            this.eventService.getAllEvents(params).subscribe({
+              next: value => {
+                this.alert(
+                  'warning',
+                  'Debe eliminar las relaciones de este folio',
+                  ''
+                );
+              },
+              error: err => {
+                this.invoiceService
+                  .deleteFolio(Number(data.folioinvoiceId))
+                  .subscribe({
+                    next: () => {
+                      this.alert('success', 'Folio', 'Eliminado Correctamente');
+                      this.getInvoiceFolio();
+                    },
+                    error: err => {
+                      if (err.status == 500) {
+                        if (
+                          err.error.message.includes(
+                            'violates foreign key constraint'
+                          )
+                        ) {
+                          this.alert(
+                            'warning',
+                            // 'Error',
+                            'Debe eliminar las relaciones de este folio',
+                            ''
+                          );
+                          return;
+                        }
+                      }
+                      // this.alert('error', 'Error', err.error.message);
+                    },
+                  });
+              },
+            });
+
             break;
           case 'serie':
             this.eventService
@@ -508,7 +555,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
                     'Tipo de Evento por Serie',
                     'Eliminado Correctamente'
                   );
-                  this.getEventXSerie();
+                  this.getEventXSerie(this.isSelect, 'no');
                 },
                 error: err => {
                   if (err.status == 500) {
@@ -525,7 +572,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
                       return;
                     }
                   }
-                  this.alert('error', 'Error', err.error.message);
+                  // this.alert('error', 'Error', err.error.message);
                 },
               });
             break;
@@ -543,7 +590,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
                     'Folio Apartado',
                     'Eliminado Correctamente'
                   );
-                  this.getInvoiceFolioSeparate();
+                  this.getInvoiceFolioSeparate(this.isSelect, 'no');
                 },
                 error: err => {
                   if (err.status == 500) {
@@ -560,7 +607,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
                       return;
                     }
                   }
-                  this.alert('error', 'Error', err.error.message);
+                  // this.alert('error', 'Error', err.error.message);
                 },
               });
             break;

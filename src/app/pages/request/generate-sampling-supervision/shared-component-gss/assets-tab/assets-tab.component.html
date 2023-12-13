@@ -9,9 +9,9 @@
       <div
         class="p-2"
         *ngIf="
-          typeTask != 'verify-warehouse-assets' &&
-          typeTask != 'assets-classification' &&
-          typeTask != 'assets-classification-annexed'
+          typeTask == 'assets-classification' ||
+          (typeTask != 'verify-warehouse-assets' &&
+            typeTask != 'assets-classification-annexed')
         ">
         <button
           class="btn btn-primary btn-sm active"
@@ -22,9 +22,9 @@
       <div
         class="p-2"
         *ngIf="
-          typeTask != 'verify-warehouse-assets' &&
-          typeTask != 'assets-classification' &&
-          typeTask != 'assets-classification-annexed'
+          typeTask == 'assets-classification' ||
+          (typeTask != 'verify-warehouse-assets' &&
+            typeTask != 'assets-classification-annexed')
         ">
         <button class="btn btn-primary btn-sm active" (click)="uploadImages()">
           Fotograf&iacute;a <i class="bx bx-images"></i>
@@ -33,9 +33,9 @@
       <div
         class="p-2"
         *ngIf="
-          typeTask != 'verify-warehouse-assets' &&
-          typeTask != 'assets-classification' &&
-          typeTask != 'assets-classification-annexed'
+          typeTask == 'assets-classification-annexed' ||
+          typeTask == 'assets-classification' ||
+          typeTask != 'verify-warehouse-assets'
         ">
         <button
           (click)="generateReport()"
@@ -52,15 +52,24 @@
         bienes en el almac&eacute;n
       </p>
     </div>
-    <div class="row pt-4" *ngIf="typeTask === 'payment-validatios'">
+    <div
+      class="row pt-4"
+      *ngIf="
+        typeTask === 'payment-validatios' ||
+        typeTask === 'assets-approval' ||
+        (typeTask != 'payment-validations' &&
+          typeTask != 'verify-noncompliance' &&
+          typeTask != 'assets-classification-annexed' &&
+          typeTask != 'assets-classification')
+      ">
       <div class="d-flex">
         <div class="p-2">
-          <button class="btn btn-success btn-sm active">
+          <button (click)="approveGood()" class="btn btn-success btn-sm active">
             <i class="bx bx-check"></i> Aprobar
           </button>
         </div>
         <div class="p-2">
-          <button class="btn btn-danger btn-sm active">
+          <button (click)="declineGood()" class="btn btn-danger btn-sm active">
             <i class="bx bx-x"></i> Rechazar
           </button>
         </div>
@@ -69,7 +78,10 @@
 
     <div
       class="d-flex justify-content-start"
-      *ngIf="typeTask === 'verify-noncompliance'">
+      *ngIf="
+        typeTask === 'verify-noncompliance' ||
+        typeTask === 'assets-classification'
+      ">
       <div class="p-2">
         <button (click)="missingInfo()" class="btn btn-success btn-sm active">
           Faltantes <i class="bx bx-check"></i>
@@ -85,8 +97,24 @@
     <div
       class="d-flex justify-content-end"
       *ngIf="
+        typeTask === 'verify-noncompliance' ||
+        typeTask === 'assets-classification'
+      ">
+      <div class="p-2">
+        <button (click)="saveInfoGood()" class="btn btn-primary btn-sm active">
+          Guardar <i class="bx bx-save"></i>
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="d-flex justify-content-end"
+      *ngIf="
         typeTask != 'assets-classification-annexed' &&
-        typeTask != 'verify-noncompliance'
+        typeTask != 'verify-noncompliance' &&
+        typeTask != 'payment-validations' &&
+        typeTask != 'assets-approval' &&
+        typeTask != 'assets-classification'
       ">
       <div class="p-2">
         <button
@@ -103,7 +131,13 @@
       </div>
     </div>
 
-    <div class="col-md-12" *ngIf="typeTask != 'assets-classification-annexed'">
+    <div
+      class="col-md-12"
+      *ngIf="
+        typeTask != 'assets-classification-annexed' &&
+        typeTask != 'assets-approval' &&
+        typeTask != 'payment-validations'
+      ">
       <ng2-smart-table
         [attr.class]="'table-responsive'"
         [settings]="settings3"
@@ -117,11 +151,32 @@
         [totalItems]="totalItems"></app-pagination>
     </div>
 
-    <div class="col-md-12" *ngIf="typeTask == 'assets-classification-annexed'">
+    <div
+      class="col-md-12"
+      *ngIf="
+        typeTask == 'assets-classification-annexed' ||
+        (typeTask != 'assets-classification' &&
+          typeTask != 'assets-approval' &&
+          typeTask != 'verify-noncompliance')
+      ">
       <ng2-smart-table
         [attr.class]="'table-responsive'"
         [settings]="settingsView"
         [source]="paragraphsView"
+        (edit)="editSampleGood($event.data)"
+        (userRowSelect)="goodsSamplingSelect($event)">
+      </ng2-smart-table>
+
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div class="col-md-12" *ngIf="typeTask == 'assets-approval'">
+      <ng2-smart-table
+        [attr.class]="'table-responsive'"
+        [settings]="settingsApprov"
+        [source]="paragraphsApprov"
         (edit)="editSampleGood($event.data)"
         (userRowSelect)="goodsSamplingSelect($event)">
       </ng2-smart-table>

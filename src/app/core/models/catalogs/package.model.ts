@@ -85,4 +85,11 @@ export interface IPupCompFolioUniv {
   delegation: number;
   subDelegation: number;
   departament: number;
+  elaborationDate: string;
+  screen: string;
+}
+
+export interface IPupGoodTrackerRga {
+  identifier: string;
+  user: string;
 }

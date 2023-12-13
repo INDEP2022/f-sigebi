@@ -6,6 +6,7 @@ import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared';
 import Swal from 'sweetalert2';
+import { REPORT_DOCUMENTS } from '../../shared-request/create-report/documents';
 
 export abstract class CompDocTasksComponent extends BasePage {
   protected abstract regDocForm: boolean;
@@ -35,6 +36,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract typeVisit: string;
   protected abstract listGoodSelectedTitle: string;
   protected abstract signedReport: boolean;
+  protected abstract editReport: boolean;
   protected abstract registAppointment: boolean;
   protected abstract orderEntry: boolean;
   protected abstract compensationAct: boolean;
@@ -54,6 +56,9 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   protected abstract legalStatus: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract requestReview: boolean; //NUEVO VERIFICAR BOTON NUEVO
+
+  protected abstract reportTable: string;
+  protected abstract reportId: string;
 
   docTemplate: IRequestDocument[];
 
@@ -95,6 +100,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   mapTask(process: string, affair?: number, contributor: string = '') {
     console.log('affair', affair);
+    this.reportTable = 'SOLICITUDES';
+
     this.disableTabs();
     switch (process) {
       case 'register-request':
@@ -368,6 +375,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = false;
 
+
+
         break;
       case 'verify-compliance-return':
         this.regDocView = true;
@@ -382,6 +391,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = false;
         this.searchAssociateFile = false;
         this.searchRequestSimGoods = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_DE_DEVOLUCION;
+        this.signedReport = false;
+        this.editReport = true;
 
         break;
       case 'approve-return':
@@ -401,6 +415,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchAssociateFile = false;
         this.searchRequestSimGoods = false;
         this.validateGoodForEyeVisit = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_DE_DEVOLUCION;
+        this.signedReport = true;
+        this.editReport = false;
 
         break;
 

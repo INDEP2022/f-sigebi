@@ -6,7 +6,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 
@@ -14,10 +14,14 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
-import { SignatureTypeComponent } from '../signature-type/signature-type.component';
-import { DOCS } from './template';
-import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
+import { SignatureTypeComponent } from '../signature-type/signature-type.component';
+import { ReportService } from 'src/app/core/services/catalogs/reports.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import * as moment from 'moment';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 const font = Quill.import('formats/font');
 font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
@@ -31,15 +35,25 @@ class Document {
 @Component({
   selector: 'app-create-report',
   templateUrl: './create-report.component.html',
-  styles: [],
+  styles: [`
+    .ngx-spinner-icon {
+      display: none !important;
+    }
+  `],
 })
 export class CreateReportComponent extends BasePage implements OnInit {
   @ViewChild('tabsReport', { static: false }) tabsReport?: TabsetComponent;
 
-  //VALIDAR
+  documents = [];
 
-  documents: Document[] = DOCS;
+  //VALIDAR
   document: Document = new Document();
+
+  formats: any = [];
+  version: any = new Document();
+  format: any = new Document();
+  loadDoc: any = null;
+
   // we use this property to store the quill instance
   quillInstance: any;
 
@@ -48,11 +62,12 @@ export class CreateReportComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   model: any;
 
-  isSigned: boolean = false; //VALIDAR
-  isSignedReady: boolean = false;
-
-  @Input() signed: boolean = true; // default value
-  edit: boolean = false;
+  @Input() requestId: string = null; // default value
+  @Input() process: string = null; // default value
+  @Input() editReport: boolean = true; // default value
+  @Input() signReport: boolean = false; // default value
+  @Input() tableName: string = null; // default value
+  @Input() documentTypeId: string = null; // default value
 
   @Output() refresh = new EventEmitter<true>();
 
@@ -61,38 +76,188 @@ export class CreateReportComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
-    private reportgoodService: ReportgoodService
+    private readonly authService: AuthService,
+    private reportgoodService: ReportgoodService,
+    private reportService: ReportService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    /*this.document.content = this.sanitizer.bypassSecurityTrustHtml(
-      this.documents[0].content
-    ) as string;*/
+
+    this.tableName = 'SOLICITUDES';
+    this.documentTypeId = '26';
+
+    this.getCatFormats(new ListParams());
+    this.getVersionsDoc();
     this.prepareForm();
 
-    this.getCatTemplates("26");
 
   }
 
   prepareForm(): void {
     this.form = this.fb.group({
-      template: ['template1'],
+      template: ['', [Validators.required]],
+      content: ['', [Validators.required]],
     });
 
     this.form.get('template').valueChanges.subscribe(value => {
-      let template = this.documents.find(temp => temp._id == value);
-      this.document.content = this.sanitizer.bypassSecurityTrustHtml(
-        template.content
-      ) as string;
+      this.format = this.formats.data.find(x => x.id == value);
+    });
+
+  }
+
+  async getCatFormats(params: ListParams) {
+
+    params['shortBy'] = 'reportName';
+    params['limit'] = 100;
+
+    this.reportService.getAll(params).subscribe({
+      next: resp => {
+        this.formats = new DefaultSelect(resp.data, resp.count);
+        let select = this.formats.data.find(x => x.doctoTypeId.id == this.documentTypeId);
+        this.format = select;
+        this.form.get('template').setValue(select.id);
+        this.form.get('template').disable();
+      },
+      error: err => {
+        this.formats = new DefaultSelect();
+      },
     });
   }
+
+  async getVersionsDoc() {
+
+    let params = new ListParams();
+    params['filter.documentTypeId'] = `$eq:${this.documentTypeId}`;
+    params['filter.tableName'] = `$eq:${this.tableName}`;
+    params['filter.registryId'] = `$eq:${this.requestId}`;
+
+    this.reportgoodService.getReportDynamic(params).subscribe({
+      next: resp => {
+        if (resp.data.length > 0) {
+          this.loadDoc = resp.data[0];
+          this.version = this.loadDoc;
+        }
+
+        this.loadData();
+      },
+      error: err => { },
+    });
+  }
+
+  async saveVersionsDoc() {
+
+    if (isNullOrEmpty(this.format)) return;
+
+    const user: any = this.authService.decodeToken();
+    let format = this.formats.data.find(x => x.id == this.form.get('template').value);
+
+    let doc: any = {
+      tableName: this.tableName,
+      registryId: this.requestId,
+      documentTypeId: this.documentTypeId,
+      content: this.format.content,
+      signedReport: "N",
+      version: "1",
+      ucmDocumentName: null,
+      reportFolio: null,
+      folioDate: null,
+      reportTemplateId: format.id,
+      creationUser: user.username,
+      creationDate: moment(new Date()).format('YYYY-MM-DD'),
+      modificationUser: user.username,
+      modificationDate: moment(new Date()).format('YYYY-MM-DD')
+    }
+
+    this.reportgoodService.saveReportDynamic(doc,
+      !isNullOrEmpty(this.loadDoc)).subscribe({
+        next: resp => {
+          this.onLoadToast('success', 'Documento guardado correctamente', '');
+          this.close();
+        },
+        error: err => { },
+      });
+
+  }
+
+  onContentChanged = (event: any) => {
+    this.format.content = event.html;
+    this.form.get('content').setValue(event.html);
+  };
+
+  applyFormat() {
+    this.version = this.format;
+    this.loadData();
+  }
+
+  loadData() {
+
+    if (isNullOrEmpty(this.format)) return;
+
+    switch (this.process) {
+      case 'verify-compliance-return':
+
+        //Genera una tabla html en una cadena de texto
+        let table = `<table style="width:100%">
+  <tr>
+    <th>Company</th>
+    <th>Contact</th>
+    <th>Country</th>
+  </tr>
+  <tr>
+    <td>Alfreds Futterkiste</td>
+    <td>Maria Anders</td>
+    <td>Germany</td>
+  </tr>
+  <tr>
+    <td>Centro comercial Moctezuma</td>
+    <td>Francisco Chang</td>
+    <td>Mexico</td>
+  </tr>
+</table><br />`;
+
+
+        /*datos.forEach(dato => {
+          tabla += `
+        <tr>
+          <td>${dato.nombre}</td>
+          <td>${dato.edad}</td>
+        </tr>`;
+        });*/
+
+
+        let content = this.version.content;
+        //content = content.replace('{TABLA_BIENES}', table);
+        //content = content.replace('{FOLIO}', '');
+        //content = content.replace('{FECHA}', '');
+
+        this.version.content = content;
+        this.format.content = content;
+
+        break;
+    }
+  }
+
+  isView() {
+    return !isNullOrEmpty(this.version.content);
+  }
+
+  HTMLSant(html: string) {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
+
+
+
+
+
+
 
   confirm() {
     console.log(this.form.value);
     console.log(this.document);
-    this.edit ? this.update() : this.create(); //VALIDAR
+    //this.editable ? this.update() : this.create(); //VALIDAR
   }
 
   close() {
@@ -129,12 +294,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
     );*/
   }
 
-  onContentChanged = (event: any) => {
-    console.log(event);
-    this.document.content = event.html;
-    this.quillInstance = event.content;
-  };
-
   created(event: any) {
     this.quillInstance = event.getContents();
     //quillDelta = this.quillInstance.getContents();
@@ -147,7 +306,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.signatureType.subscribe(next => {
-      if (next) {
+      /*if (next) {
         this.isSigned = true;
         this.tabsReport.tabs[0].active = true;
       } else {
@@ -155,17 +314,17 @@ export class CreateReportComponent extends BasePage implements OnInit {
         this.isSigned = false;
         this.tabsReport.tabs[0].disabled = false;
         this.tabsReport.tabs[0].active = true;
-      }
+      }*/
     });
   }
 
   nextStep($event: any): void {
-    if ($event) {
+    /*if ($event) {
       this.isSignedReady = true;
       this.tabsReport.tabs[0].active = true;
     } else {
       this.isSignedReady = false;
-    }
+    }*/
   }
 
   attachDocument() {
@@ -182,23 +341,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
     });
   }
 
-  async getCatTemplates(type: string) {
-
-    let params = new ListParams();
-    params['filter.documentTypeId'] = `$eq:${type}`;
-
-    this.reportgoodService.getReportDynamic(params).subscribe({
-      next: resp => {
-        console.log(resp);
-
-        if (resp.data.length > 0) {
-          this.document.content = resp.data[0].content;
-        }
-
-      },
-      error: err => { },
-    });
-  }
 
   /*pdfCreate(): void {
     const quillDelta = this.quillInstance

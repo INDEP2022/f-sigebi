@@ -130,13 +130,6 @@
                 readOnly />
             </form-field>
           </div>
-          <div class="col-sm-12 col-md-1">
-            <button
-              class="btn btn-danger btn-sm active mt-1"
-              (click)="clearall()">
-              Limpiar <i class="fas fa-eraser"> </i>
-            </button>
-          </div>
         </div>
         <br />
       </form>
@@ -172,8 +165,23 @@
         <br />
         <div class="row">
           <div class="d-flex justify-content-end">
+            <div class="ml-auto mb-3">
+              <button
+                class="btn btn-danger btn-sm active mr-3"
+                (click)="clearall()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+              <app-columns-select
+                [(settings)]="relatedEventsSettings"></app-columns-select>
+              <!--  -->
+            </div>
+            <!-- <div class="col-sm-12 col-md-1 mr-3">
+              <button class="btn btn-danger btn-sm active" (click)="clearall()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
             <app-columns-select
-              [(settings)]="relatedEventsSettings"></app-columns-select>
+              [(settings)]="relatedEventsSettings"></app-columns-select> -->
           </div>
         </div>
         <div class="row">
