@@ -93,6 +93,7 @@
             "
             formControlName="datePhysicalReception"
             bsDatepicker
+            [maxDate]="today"
             [bsConfig]="{
               dateInputFormat: 'DD/MM/YYYY'
             }" />
@@ -197,7 +198,7 @@
             [control]="proceedingForm.get('universalFolio')"
             label="Folio de Escaneo">
             <input
-              [disabled]="true"
+              readonly
               type="number"
               class="form-control"
               min="1"
