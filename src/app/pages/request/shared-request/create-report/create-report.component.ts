@@ -17,8 +17,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
-import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ReportService } from 'src/app/core/services/catalogs/reports.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
