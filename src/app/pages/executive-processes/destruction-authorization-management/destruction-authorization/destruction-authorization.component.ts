@@ -275,7 +275,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: {
         ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
-        selection: {
+        /* selection: {
           title: '',
           type: 'custom',
           renderComponent: CheckboxElementComponent,
@@ -283,7 +283,7 @@ export class DestructionAuthorizationComponent
             this.onSelectGoodAct(instance),
           filter: false,
           sort: false,
-        },
+        }, */
       },
       hideSubHeader: false,
     };
@@ -817,6 +817,7 @@ export class DestructionAuthorizationComponent
         .value,
       closeDate: this.proceedingForm.get('closeDate').value,
       elaborationDate: new Date(),
+      affair: this.proceedingForm.get('affair').value,
     };
 
     console.log(body);
@@ -1559,6 +1560,7 @@ export class DestructionAuthorizationComponent
 
     this.massiveGoodService.newPupFlatGoods(data).subscribe({
       next: resp => {
+        this.alert('info', '', `${resp.aceptados}, ${resp.rechazados}`);
         this.flatGoodFlag = false;
         this.getProceedingGoods();
         console.log(resp);
@@ -1802,4 +1804,6 @@ export class DestructionAuthorizationComponent
         }
       );
   }
+
+  //GUARDAR DATOS DEL ACTA
 }
