@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { take } from 'rxjs';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
 import { IContract } from '../../../models/payment';
@@ -51,8 +52,31 @@ export class DataReceiptComponent implements OnInit {
       this.nomEmplRequest.setValue(value.nomEmplRequest);
       this.typepe.setValue(value.typepe);
       this.tiptram.setValue(value.tiptram);
-      this.contractNumber.setValue(value.contractNumber);
+
       this.adj.setValue(value.adj);
+      if (value.contractNumber) {
+        this.contractNumber.setValue(value.contractNumber);
+        this.paymentService
+          .validateContract(value.contractNumber)
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              if (response.data && response.data.length > 0) {
+                this.form
+                  .get('contractDescription')
+                  .setValue(response.data[0].desContract);
+                this.form
+                  .get('descontract')
+                  .setValue(response.data[0].desContract);
+                this.form.get('clkpv').setValue(response.data[0].clkpv);
+                this.form.get('padj').setValue(response.data[0].padj);
+                this.form.get('psadj').setValue(response.data[0].psadj);
+                this.form.get('pssadj').setValue(response.data[0].pssadj);
+                this.form.get('adj').setValue(response.data[0].adj);
+              }
+            },
+          });
+      }
     }
   }
   listPayments = ['TRANSFERENCIA', 'CHEQUE', 'INTERCAMBIO'];
