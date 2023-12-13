@@ -1,5 +1,4 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { CheckboxElementSamplingComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-sampling';
 
 export const COLUMNS_APPROVAL_DONATION = {
@@ -41,7 +40,7 @@ export const COPY = {
     filter: false,
     disabled: false,
     renderComponent: CheckboxElementSamplingComponent,
-    onComponentInitFunction(instance: any) { },
+    onComponentInitFunction(instance: any) {},
     sort: false,
   },
   recordid: {
@@ -124,7 +123,7 @@ export const COPY = {
     title: 'Etiqueta Destino',
     visible: true,
     sort: false,
-  },  
+  },
   idnoworker1: {
     title: 'No. Tranf.',
     visible: true,

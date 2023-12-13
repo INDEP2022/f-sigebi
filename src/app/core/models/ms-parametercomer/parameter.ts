@@ -381,3 +381,10 @@ export interface IRespLetter {
   paragraph2: string;
   paragraph3: string;
 }
+export interface IParameter_ {
+  parametro: string;
+  valor: string;
+  descriptionparameter: string;
+  direccion: string;
+  tpeventid: number | null;
+}

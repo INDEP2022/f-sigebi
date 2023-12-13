@@ -9,7 +9,7 @@ const routes: Routes = [
     component: AssetsClassificationComponent,
   },
   {
-    path: 'sign-annexes',
+    path: 'sign-annexes/:id',
     component: ClassificationAnnexedSignComponent,
   },
 ];

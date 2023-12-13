@@ -347,14 +347,24 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return this.form.get('comproafmandsae');
   }
 
+  validateNotifySecond() {
+    let bienes = this.dataCompositionExpenses.filter(x => x.goodNumber);
+    if (
+      !this.conceptNumber.value &&
+      !this.eventNumber.value &&
+      !this.clkpv.value &&
+      bienes.length === 0
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   validateNotifyFirst() {
     let partidas = this.dataCompositionExpenses.filter(x => x.departure);
     let mandatos2 = this.dataCompositionExpenses.filter(x => x.manCV);
     let mandatos = this.dataCompositionExpenses.filter(x => x.mandato);
     if (
-      !this.conceptNumber.value &&
-      !this.eventNumber.value &&
-      !this.clkpv.value &&
       !this.comment.value &&
       !this.lotNumber.value &&
       !this.invoiceRecNumber.value &&
@@ -365,7 +375,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       !this.comproafmandsae.value &&
       mandatos2.length === 0 &&
       partidas.length === 0 &&
-      mandatos.length === 0
+      mandatos.length === 0 &&
+      !this.validateNotifySecond()
     ) {
       return false;
     }

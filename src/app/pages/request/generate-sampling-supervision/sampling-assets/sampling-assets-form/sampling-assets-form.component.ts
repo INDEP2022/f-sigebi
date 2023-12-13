@@ -1128,8 +1128,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   createTaskOrderService(body: any) {
-    console.log('body', body);
-
     return new Promise((resolve, reject) => {
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
