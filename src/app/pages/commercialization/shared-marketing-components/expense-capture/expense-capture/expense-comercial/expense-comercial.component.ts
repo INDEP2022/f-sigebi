@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -61,6 +62,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.resetVisiblesM();
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'M', title: 'MUEBLES' });
+      this.form.get('formPayment').setValidators(Validators.required);
+      this.form.get('eventNumber').setValidators(Validators.required);
+      this.form.get('publicLot').setValidators(Validators.required);
     } else if (value === 'I') {
       this.initScreenI();
     }
@@ -155,6 +159,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         }
       },
     });
+    this.dataService.updateExpenseAfterChangeTotalDetail
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (this.expenseNumber.value) {
+            this.edit(false, false);
+          }
+        },
+      });
     // console.log(user);
     this.prepareForm();
   }
@@ -200,9 +213,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     delete newBody.cadena;
     return {
       ...newBody,
+      totDocument: this.dataService.total ?? 0,
       amount: this.dataService.amount ?? 0,
       vat: this.dataService.vat ?? 0,
       vatWithheld: this.dataService.vatWithholding ?? 0,
+      isrWithheld: this.dataService.isrWithholding ?? 0,
       address: this.data ? this.data.address ?? this.address : this.address,
       dateOfResolution: this.form.value.dateOfResolution
         ? (this.form.value.dateOfResolution + '').trim().length > 0
@@ -246,7 +261,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     };
   }
 
-  edit() {
+  edit(showAlert = true, updateDetails = true) {
     // let body = this.getBody();
     // console.log(this.data);
     // console.log(this.form.value);
@@ -257,19 +272,23 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.loader.load = false;
-          this.alert(
-            'success',
-            'Se ha actualizado el gasto ' + this.expenseNumber.value,
-            ''
+          if (showAlert)
+            this.alert(
+              'success',
+              'Se ha actualizado el gasto ' + this.expenseNumber.value,
+              ''
+            );
+          this.fillFormSecond(
+            {
+              ...this.data,
+              ...this.form.value,
+              amount: this.dataService.amount ?? 0,
+              vat: this.dataService.vat ?? 0,
+              vatWithheld: this.dataService.vatWithholding ?? 0,
+              address: this.data.address ?? this.address,
+            },
+            updateDetails
           );
-          this.fillFormSecond({
-            ...this.data,
-            ...this.form.value,
-            amount: this.dataService.amount ?? 0,
-            vat: this.dataService.vat ?? 0,
-            vatWithheld: this.dataService.vatWithholding ?? 0,
-            address: this.data.address ?? this.address,
-          });
         },
         error: err => {
           this.alert(
@@ -317,10 +336,48 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     });
   }
 
-  async save() {
-    if (!this.validatePaymentCamps()) {
-      return;
+  private saveBody(updateDetails = true) {
+    this.loader.load = true;
+    if (this.expenseNumber.value) {
+      this.edit(updateDetails);
+    } else {
+      this.spentService2
+        .save(this.getBody())
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            console.log(response);
+            this.alert('success', 'Se ha creado el gasto correctamente', '');
+            // this.expenseNumber.setValue(response.expenseNumber);
+            this.loader.load = false;
+            this.fillFormSecond(
+              {
+                ...this.form.value,
+                expenseNumber: response.expenseNumber,
+                amount: this.dataService.amount ?? 0,
+                vat: this.dataService.vat ?? 0,
+                vatWithheld: this.dataService.vatWithholding ?? 0,
+                address: this.address,
+              },
+              updateDetails
+            );
+          },
+          error: err => {
+            this.alert(
+              'error',
+              'No se pudo crear el gasto',
+              'Favor de verificar'
+            );
+            this.loader.load = false;
+          },
+        });
     }
+  }
+
+  async save(updateDetails = true) {
+    // if (!this.validatePaymentCamps()) {
+    //   return;
+    // }
     if (this.address === 'M') {
       if (!this.dataService.validPayment) {
         const responsePayments = await this.validPayments();
@@ -337,51 +394,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         }
       }
     }
-
-    this.loader.load = true;
-    // if (this.form.invalid) {
-    //   const invalid = [];
-    //   console.log(this.form.value);
-    //   const controls = this.form.controls;
-    //   for (const name in controls) {
-    //     if (controls[name].invalid) {
-    //       invalid.push(name);
-    //     }
-    //   }
-    //   console.log(invalid);
-    //   return;
-    // }
-    if (this.expenseNumber.value) {
-      this.edit();
-    } else {
-      this.spentService2
-        .save(this.getBody())
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            console.log(response);
-            this.alert('success', 'Se ha creado el gasto correctamente', '');
-            // this.expenseNumber.setValue(response.expenseNumber);
-            this.loader.load = false;
-            this.fillFormSecond({
-              ...this.form.value,
-              expenseNumber: response.expenseNumber,
-              amount: this.dataService.amount ?? 0,
-              vat: this.dataService.vat ?? 0,
-              vatWithheld: this.dataService.vatWithholding ?? 0,
-              address: this.address,
-            });
-          },
-          error: err => {
-            this.alert(
-              'error',
-              'No se pudo crear el gasto',
-              'Favor de verificar'
-            );
-            this.loader.load = false;
-          },
-        });
-    }
+    this.saveBody(updateDetails);
   }
 
   get spentService() {
@@ -1250,14 +1263,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.alert('warning', 'Validación de pagos', 'Requiere servicio');
       return false;
     }
-    // if (!this.conceptNumber.value) {
-    //   this.alert(
-    //     'warning',
-    //     'Validación de pagos',
-    //     'No cuenta con un concepto de pago'
-    //   );
-    //   return false;
-    // }
     if (!this.numReceipts.value) {
       this.alert('warning', 'No cuenta con un número de comprobantes', '');
       return false;
@@ -1344,7 +1349,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
-  private fillFormSecond(event: any) {
+  private fillFormSecond(event: any, updateDetails = true) {
     if (this.address !== 'M') {
       this.dataService.address = 'I';
     }
@@ -1377,7 +1382,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       // }
       this.descurcoord.setValue(event.descurcoord);
       this.dataService.updateOI.next(true);
-      this.dataService.updateExpenseComposition.next(true);
+      this.dataService.updateExpenseComposition.next(updateDetails);
       this.dataService.updateFolio.next(true);
       // if (this.address === 'M') {
       //   this.dataService.updateFolio.next(true);
