@@ -441,6 +441,20 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.comptrollerWitness.disable();
   }
 
+  //DESACTIVAR CAMPOS CUANDO EL ACTA ESTA CERRADAS
+  inputsInNewProceeding() {
+    /* this.assembleKeybool = false */
+    this.elabDate.enable();
+    this.destroyDate.enable();
+    this.address.enable();
+    this.observation.enable();
+    this.responsible.enable();
+    this.witness.enable();
+    this.witness2.enable();
+    this.destroMethod.enable();
+    this.comptrollerWitness.enable();
+  }
+
   //BUSQUEDA DE DATOS DE EXPEDIENTE
   searchDataByExp() {
     this.serviceExpedient.getById(this.expedient.value).subscribe(
@@ -862,6 +876,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   //NUEVA ACTA
   newProceedingFn() {
     this.newProceeding();
+    this.inputsInNewProceeding();
     this.isNewProceeding = true;
     this.assembleKeybool = true;
   }
