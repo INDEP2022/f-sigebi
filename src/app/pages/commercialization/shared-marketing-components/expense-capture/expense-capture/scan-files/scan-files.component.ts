@@ -152,20 +152,6 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     return this.form.get('expenseNumber');
   }
 
-  private generateFolioI() {
-    let bienes = this.dataService.dataCompositionExpenses.filter(
-      x => x.goodNumber
-    );
-    if (bienes.length === 0) {
-      this.alert(
-        'warning',
-        'No tiene bienes en detalle de gasto para continuar',
-        ''
-      );
-    } else {
-    }
-  }
-
   async generateFolio() {
     if (this.folioUniversal && this.folioUniversal.value) {
       // debugger;
@@ -209,7 +195,9 @@ export class ScanFilesComponent extends BasePage implements OnInit {
       );
       return;
     }
-    filterDataComposition.forEach(async (x, index) => {
+    let newArray =
+      this.dataService.address === 'M' ? filterDataComposition : bienes;
+    newArray.forEach(async (x, index) => {
       // debugger;
       console.log(x);
       const DESCR =
@@ -279,6 +267,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
           }
           if (this.dataService.address === 'I') {
             modelDocument.associateUniversalFolio = createDocument.id;
+            modelDocument.id = createDocument.id;
             await firstValueFrom(
               this.serviceDocuments.update(createDocument.id, modelDocument)
             );

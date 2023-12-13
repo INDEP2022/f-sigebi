@@ -48,6 +48,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
 import { UseModalComponent } from '../../mass-bill-base-sales/sat-catalogs/use-comp/use-modal.component';
+import { GetCfdiComponent } from '../get-cfdi/get-cfdi.component';
 import { ActModalComponent } from './act-comp/act-modal.component';
 import { AuthorizationModalComponent } from './authorization-modal/authorization-modal.component';
 import { ReferenceModalComponent } from './reference/reference.component';
@@ -1995,7 +1996,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       '¿Desea continuar?'
     ).then(answer => {
       if (answer.isConfirmed) {
-        this.impresioPackage();
+        let config: ModalOptions = {
+          initialState: {
+            callback: (data: boolean, val: number) => {},
+          },
+          class: 'modal-xl modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(GetCfdiComponent, config);
+        // this.impresioPackage();
       }
     });
   }
@@ -2051,6 +2060,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.form.get('userV').patchValue(null);
     this.form.get('passwordV').patchValue(null);
     let count: number = 0;
+    if (this.isSelect.length == 0)
+      return this.alert(
+        'warning',
+        'Debe seleccionar facturas para cancelar',
+        ''
+      );
 
     for (const invoice of this.isSelect) {
       if (!['CFDI', 'IMP'].includes(invoice.factstatusId)) {

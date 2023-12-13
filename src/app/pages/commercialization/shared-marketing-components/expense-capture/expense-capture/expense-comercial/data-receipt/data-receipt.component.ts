@@ -323,10 +323,18 @@ export class DataReceiptComponent implements OnInit {
             this.contractNumber.setValue(selected.contractNumber);
             this.form.get('descontract').setValue(selected.desContract);
             this.form.get('clkpv').setValue(selected.clkpv);
-            this.form.get('padj').setValue(selected.padj);
-            this.form.get('psadj').setValue(selected.psadj);
-            this.form.get('pssadj').setValue(selected.pssadj);
-            this.form.get('adj').setValue(selected.adj);
+            setTimeout(() => {
+              this.form.get('padj').setValue(selected.padj);
+            }, 100);
+            setTimeout(() => {
+              this.form.get('psadj').setValue(selected.psadj);
+            }, 200);
+            setTimeout(() => {
+              this.form.get('pssadj').setValue(selected.pssadj);
+            }, 300);
+            setTimeout(() => {
+              this.form.get('adj').setValue(selected.adj);
+            }, 400);
           }
         },
       },

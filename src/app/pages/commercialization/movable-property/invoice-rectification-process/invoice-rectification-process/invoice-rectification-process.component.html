@@ -7,22 +7,35 @@
   <div body>
     <div class="d-flex justify-content-end">
       <div class="d-inline">
-        <confirm-button
+        <button
+          type="button"
+          tooltip="Ver más coincidencias"
+          class="btn btn-primary btn-sm active mr-3"
+          [disabled]="!valResult"
+          (click)="openModalSearch()">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+        <button
           text="Buscar"
-          loadingText="Buscando"
-          icon="bx bx-search-alt"
-          class="mr-3"
-          [btnSmall]="true"
-          [loading]="loadingSearch"
-          (confirm)="searchData()"></confirm-button>
-        <button class="btn btn-danger btn-sm active mr-3" (click)="newData()">
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="searchData()">
+          Buscar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button class="btn btn-danger btn-sm active mr-3" (click)="cleanData()">
           Limpiar <i class="fas fa-eraser"> </i>
         </button>
+        <!-- <button type="button" class="btn btn-info btn-sm active" (click)="newData()">
+          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+        </button> -->
       </div>
     </div>
     <form class="form-material mt-5" [formGroup]="form">
       <div class="row">
         <div class="col-md-3 mt-3">
+          <!-- <div class="cs-form">
+            <input type="time" class="form-control" value="10:05 AM" />
+          </div> -->
           <form-field label="No. Oficio" [control]="form.get('jobNot')">
             <input
               type="number"
@@ -315,3 +328,63 @@
     </div>
   </div>
 </app-card>
+<div
+  #modal="bs-modal"
+  [config]="{ ignoreBackdropClick: true }"
+  bsModal
+  class="modal fade w-100">
+  <app-modal class="modal-dialog modalSizeXL modal-dialog-centered">
+    <div header>
+      <h5 class="modal-title">
+        &nbsp;&nbsp;Procesos de Rectificación de Facturas
+      </h5>
+    </div>
+    <div body>
+      <div class="row pt-3">
+        <div class="col-12 d-flex justify-content-end pb-3">
+          <app-columns-select
+            [(settings)]="_settings"
+            [leftList]="true"></app-columns-select>
+        </div>
+        <form-loader *ngIf="loading2"></form-loader>
+        <div>
+          <ng2-smart-table
+            [ngStyle]="{
+              height: loading2 ? '0px' : totalItems > 10 ? '350px' : 'auto'
+            }"
+            [attr.class]="'table-bordered table-responsive mb-4'"
+            (userRowSelect)="selectRow($event)"
+            [settings]="_settings"
+            [source]="dataFilter2">
+          </ng2-smart-table>
+        </div>
+        <div class="overflow-auto card-header-span-fix mt-5">
+          <app-pagination
+            [filterParams]="filterParams"
+            [totalItems]="totalItems">
+          </app-pagination>
+        </div>
+      </div>
+    </div>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!rowSelected"
+            (click)="confirm()">
+            Seleccionar
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-modal>
+</div>

@@ -69,13 +69,22 @@ export class SeriesEventModalComponent extends BasePage implements OnInit {
             'Actualizado Correctamente'
           );
         },
-        error: () => {
+        error: err => {
           this.loading = false;
-          this.alert(
-            'error',
-            'Error',
-            'Ha ocurrido un error al guardar el Tipo de Evento'
-          );
+          console.log('sasd', err.error.message);
+          if (err.error.message == 'Los ids ya fueron registrados') {
+            this.alert(
+              'warning',
+              'Ya existe un registros con este Tipo de Evento',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Ha ocurrido un error al guardar el Tipo de Evento',
+              ''
+            );
+          }
         },
       });
     } else {
@@ -90,13 +99,22 @@ export class SeriesEventModalComponent extends BasePage implements OnInit {
             'Creado Correctamente'
           );
         },
-        error: () => {
+        error: err => {
           this.loading = false;
-          this.alert(
-            'error',
-            'Error',
-            'Ha ocurrido un error al guardar el Tipo de Evento'
-          );
+          console.log('sasd', err.error.message);
+          if (err.error.message == 'Los ids ya fueron registrados') {
+            this.alert(
+              'warning',
+              'Ya existe un registros con este Tipo de Evento',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Error',
+              'Ha ocurrido un error al guardar el Tipo de Evento'
+            );
+          }
         },
       });
     }
