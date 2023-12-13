@@ -43,7 +43,6 @@ export class ProceedingsService extends HttpService {
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
-    console.log(' PROCEEDINGS SERVICE CONSTRUCTOR');
   }
 
   // getAll(params?: ListParams): Observable<IListResponse<IProceedings>> {
@@ -391,5 +390,9 @@ export class ProceedingsService extends HttpService {
       'detail-proceedings-delivery-reception/update-status',
       body
     );
+  }
+
+  pupFillDist(acta: string) {
+    return this.get(`aplication/pup-full-dist/${acta}`);
   }
 }

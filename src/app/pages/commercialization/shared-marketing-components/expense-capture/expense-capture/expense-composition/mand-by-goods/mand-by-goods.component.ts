@@ -33,6 +33,13 @@ export class MandByGoodsComponent
     this.settings = {
       ...this.settings,
       columns: COLUMNS,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: false,
+      },
     };
   }
 
@@ -72,9 +79,7 @@ export class MandByGoodsComponent
     modalConfig.initialState = {
       spentId: this.spentId,
       callback: (next: boolean) => {
-        if (next) {
-          this.getData();
-        }
+        this.getData();
       },
     };
     this.modalService.show(MandByGoodsModalComponent, modalConfig);

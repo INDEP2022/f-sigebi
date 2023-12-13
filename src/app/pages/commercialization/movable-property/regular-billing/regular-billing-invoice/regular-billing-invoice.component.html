@@ -196,6 +196,7 @@
           formControlName="date" />
       </form-field>
     </div>
+    <!-- LISTO -->
     <div class="col-12 col-md-auto">
       <button
         type="button"
@@ -259,6 +260,7 @@
         </ng-template>
       </form-field>
     </div>
+    <!-- LISTO -->
     <div class="col-12 col-md-auto" *ngIf="isCancel">
       <button
         type="button"
@@ -269,24 +271,28 @@
     </div>
 
     <div class="col-12 col-md-auto">
+      <!-- LISTO -->
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
         (click)="generatePreFacture()">
         Genera Prefacturas <i class="bx bxs-file"></i>
       </button>
+      <!-- LISTO -->
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
         (click)="updateData()">
         Actualiza Datos <i class="fas fa-sync-alt"> </i>
       </button>
+      <!-- LISTO -->
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
         (click)="generateInvoice()">
         Genera Folios <i class="bx bxs-file"></i>
       </button>
+      <!-- LISTO -->
       <button
         [disabled]="buttons"
         type="button"
@@ -294,6 +300,7 @@
         (click)="removeInvoice()">
         Eliminar Folios <i class="fa fa-trash" aria-hidden="true"></i>
       </button>
+      <!-- LISTO -->
       <button
         [disabled]="buttons"
         type="button"
@@ -301,12 +308,14 @@
         (click)="viewInvoice()">
         Visualizar Factura <i class="bx bxs-file"></i>
       </button>
+      <!-- LISTO -->
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
         (click)="viewAnexo()">
         Visualiza Anexo <i class="bx bxs-file"></i>
       </button>
+      <!-- LISTO -->
       <button
         [disabled]="buttons"
         type="button"
@@ -320,11 +329,12 @@
         (click)="clientSend()">
         Atención a Clientes <i class="bx bxs-file"></i>
       </button>
+      <!-- LISTO -->
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
         (click)="openURL()">
-        Generar CDFI <i class="bx bxs-file"></i>
+        Generar CFDI <i class="bx bxs-file"></i>
       </button>
       <!-- <button
         [disabled]="buttons"
@@ -451,6 +461,7 @@
           [control]="formFactura.get('importE')"
           label="Importe Egresos">
           <input
+            readonly
             type="text"
             class="form-control"
             currencyMask
@@ -461,6 +472,7 @@
       <div class="col-md-2">
         <form-field [control]="formFactura.get('ivaE')" label="Iva Egresos">
           <input
+            readonly
             type="text"
             class="form-control"
             currencyMask
@@ -471,6 +483,7 @@
       <div class="col-md-2">
         <form-field [control]="formFactura.get('totalE')" label="Total Egresos">
           <input
+            readonly
             type="text"
             class="form-control"
             currencyMask
@@ -481,6 +494,7 @@
       <div class="col-md-2">
         <form-field [control]="formFactura.get('count')" label="No. Factura">
           <input
+            readonly
             type="number"
             class="form-control"
             formControlName="count"
@@ -492,6 +506,7 @@
           [control]="formFactura.get('importI')"
           label="Importe Ingresos">
           <input
+            readonly
             type="text"
             class="form-control"
             currencyMask
@@ -502,6 +517,7 @@
       <div class="col-md-2">
         <form-field [control]="formFactura.get('ivaI')" label="Iva Ingresos">
           <input
+            readonly
             type="text"
             class="form-control"
             currencyMask
@@ -514,6 +530,7 @@
           [control]="formFactura.get('totalI')"
           label="Total Ingresos">
           <input
+            readonly
             type="text"
             class="form-control"
             currencyMask

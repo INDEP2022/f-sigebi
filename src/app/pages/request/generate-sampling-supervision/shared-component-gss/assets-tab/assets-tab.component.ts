@@ -263,6 +263,13 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   getGoodsSampling() {
     if (this.typeTask == 'assets-approval')
       this.params.getValue()['filter.typeRestitution'] = 'EN ESPECIE';
+    if (
+      this.typeTask == 'verify-noncompliance' ||
+      this.typeTask == 'assets-classification' ||
+      this.typeTask == 'assets-classification-annexed'
+    )
+      this.params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
+
     this.params.getValue()['filter.sampleId'] = this.idSample;
     this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
       next: response => {
@@ -389,27 +396,44 @@ export class AssetsTabComponent extends BasePage implements OnInit {
 
   missingInfo() {
     if (this.assetsSelected.length > 0) {
-      this.assetsSelected.map((item: any) => {
-        const infoSampleGood = {
-          sampleGoodId: item.sampleGoodId,
-          goodState: 'FALTANTE',
-        };
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.assetsSelected.map((item: any, i: number) => {
+            let index = i + 1;
+            const infoSampleGood = {
+              sampleGoodId: item.sampleGoodId,
+              goodState: 'FALTANTE',
+            };
 
-        this.samplingService.editSamplingGood(infoSampleGood).subscribe({
-          next: response => {
-            this.alert('success', 'Correcto', 'Bien actualizado correctamente');
-            this.params
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => this.getGoodsSampling());
-          },
-          error: error => {
-            this.alert(
-              'warning',
-              'Acción Invalida',
-              'No se pudo actualizar el bien'
-            );
-          },
-        });
+            this.samplingService.editSamplingGood(infoSampleGood).subscribe({
+              next: () => {
+                if (index == this.assetsSelected.length) {
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Bien actualizado correctamente'
+                  );
+                  this.params
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getGoodsSampling());
+                }
+              },
+              error: () => {
+                if (index == this.assetsSelected.length) {
+                  this.alert(
+                    'warning',
+                    'Acción Invalida',
+                    'No se pudo actualizar el bien'
+                  );
+                }
+              },
+            });
+          });
+        }
       });
     } else {
       this.alert(
@@ -422,27 +446,44 @@ export class AssetsTabComponent extends BasePage implements OnInit {
 
   damagedInfo() {
     if (this.assetsSelected.length > 0) {
-      this.assetsSelected.map((item: any) => {
-        const infoSampleGood = {
-          sampleGoodId: item.sampleGoodId,
-          goodState: 'DAÑADO',
-        };
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.assetsSelected.map((item: any, i: number) => {
+            let index = i + 1;
+            const infoSampleGood = {
+              sampleGoodId: item.sampleGoodId,
+              goodState: 'DAÑADO',
+            };
 
-        this.samplingService.editSamplingGood(infoSampleGood).subscribe({
-          next: response => {
-            this.alert('success', 'Correcto', 'Bien actualizado correctamente');
-            this.params
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => this.getGoodsSampling());
-          },
-          error: error => {
-            this.alert(
-              'warning',
-              'Acción Invalida',
-              'No se pudo actualizar el bien'
-            );
-          },
-        });
+            this.samplingService.editSamplingGood(infoSampleGood).subscribe({
+              next: () => {
+                if (index == this.assetsSelected.length) {
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Bien actualizado correctamente'
+                  );
+                  this.params
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getGoodsSampling());
+                }
+              },
+              error: () => {
+                if (index == this.assetsSelected.length) {
+                  this.alert(
+                    'warning',
+                    'Acción Invalida',
+                    'No se pudo actualizar el bien'
+                  );
+                }
+              },
+            });
+          });
+        }
       });
     } else {
       this.alert(
@@ -454,36 +495,44 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   }
 
   saveInfoGood() {
-    this.paragraphs3.getElements().then(data => {
-      data.map((item: any, i: number) => {
-        let index = i + 1;
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea editar los bienes?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.paragraphs3.getElements().then(data => {
+          data.map((item: any, i: number) => {
+            let index = i + 1;
 
-        if (item.quantity >= item.quantityBreak) {
-          this.samplingService.editSamplingGood(item).subscribe({
-            next: () => {
-              if (index == data.length) {
-                this.alert(
-                  'success',
-                  'Acción Correcta',
-                  'Bien actualizado correctamente'
-                );
-                this.params
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getGoodsSampling());
-              }
-            },
-            error: () => {
-              this.alert('error', 'Error', 'Error al actualizar el bien');
-            },
+            if (item.quantity >= item.quantityBreak) {
+              this.samplingService.editSamplingGood(item).subscribe({
+                next: () => {
+                  if (index == data.length) {
+                    this.alert(
+                      'success',
+                      'Acción Correcta',
+                      'Bien actualizado correctamente'
+                    );
+                    this.params
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getGoodsSampling());
+                  }
+                },
+                error: () => {
+                  this.alert('error', 'Error', 'Error al actualizar el bien');
+                },
+              });
+            } else {
+              this.alert(
+                'warning',
+                'Acción Invalida',
+                `La cantidad faltante o dañada es mayor a la cantidad en el bien ${item.goodId}`
+              );
+            }
           });
-        } else {
-          this.alert(
-            'warning',
-            'Acción Invalida',
-            `La cantidad faltante o dañada es mayor a la cantidad en el bien ${item.goodId}`
-          );
-        }
-      });
+        });
+      }
     });
   }
 

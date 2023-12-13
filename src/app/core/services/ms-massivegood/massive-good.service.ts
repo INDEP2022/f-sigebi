@@ -12,6 +12,7 @@ import {
   IGoodTracker,
   IPackageInfo,
   IPupCompFolioUniv,
+  IPupGoodTrackerRga,
 } from '../../models/catalogs/package.model';
 import {
   IIdentifierCount,
@@ -272,5 +273,13 @@ export class MassiveGoodService extends HttpService {
 
   pupFlatGoodsDestr(body: FormData) {
     return this.post('application/pup-plain-goods-destr', body);
+  }
+
+  newPupFlatGoods(body: FormData) {
+    return this.post('application/pup-flat-goods', body);
+  }
+
+  pupGoodTrackerRga(body: IPupGoodTrackerRga) {
+    return this.post('application/pup-good-tracker-rga', body);
   }
 }

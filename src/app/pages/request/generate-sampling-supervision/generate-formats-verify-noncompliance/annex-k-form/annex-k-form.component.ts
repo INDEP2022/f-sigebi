@@ -121,6 +121,7 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
   }
 
   async signAnnex() {
+    console.log('this.typeAnnex', this.typeAnnex);
     const typeDocument = 219;
     if (this.typeAnnex == 'annex-assets-classification') {
       const providerK = this.form.get('providerK').value;
@@ -144,7 +145,9 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
           this.close();
         }
       }
-    } else if (this.typeAnnex == 'sign-annex-assets-classification') {
+    }
+
+    if (this.typeAnnex == 'sign-annex-assets-classification') {
       const saeResponsibleK = this.annexForm.get('saeResponsibleK').value;
       const positionSaeK = this.annexForm.get('positionSaeK').value;
       const typeSaeSignatureK = this.annexForm.get('typeSaeSignatureK').value;
@@ -152,24 +155,22 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
       if (typeSaeSignatureK == 'Y') typeFirm = 'electronica';
       if (typeSaeSignatureK == 'N') typeFirm = 'autografa';
 
-      if (typeSaeSignatureK == 'Y') {
-        const registerInfoSample = await this.checkInfoRegSamSignClas();
-        if (registerInfoSample) {
-          const checkSignature = await this.checkSignatureInfo(
-            saeResponsibleK,
-            positionSaeK,
-            typeDocument
-          );
+      const registerInfoSample = await this.checkInfoRegSamSignClas();
+      if (registerInfoSample) {
+        const checkSignature = await this.checkSignatureInfo(
+          saeResponsibleK,
+          positionSaeK,
+          typeDocument
+        );
 
-          if (checkSignature) {
-            this.alert(
-              'success',
-              'Acción Correcta',
-              'Firmante agregado correctamente'
-            );
-            this.bsModalRef.content.callback(typeDocument, typeFirm);
-            this.close();
-          }
+        if (checkSignature) {
+          this.alert(
+            'success',
+            'Acción Correcta',
+            'Firmante agregado correctamente'
+          );
+          this.bsModalRef.content.callback(typeDocument, typeFirm);
+          this.close();
         }
       }
     }

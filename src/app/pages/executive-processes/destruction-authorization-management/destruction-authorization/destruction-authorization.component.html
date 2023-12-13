@@ -17,7 +17,9 @@
             type="text"
             class="form-control"
             formControlName="id"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'" />
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || newProceedingFlag
+            " />
         </form-field>
 
         <form-field
@@ -26,7 +28,9 @@
           [control]="proceedingForm.get('keysProceedings')">
           <input
             type="text"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             [max-length]="60"
             class="form-control"
             formControlName="keysProceedings" />
@@ -38,7 +42,9 @@
           [control]="proceedingForm.get('affair')">
           <input
             type="text"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             [max-length]="70"
             class="form-control"
             formControlName="affair" />
@@ -66,7 +72,9 @@
           <input
             type="text"
             class="form-control"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             formControlName="elaborationDate"
             bsDatepicker
             [bsConfig]="{
@@ -80,9 +88,12 @@
           <input
             type="text"
             class="form-control"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             formControlName="datePhysicalReception"
             bsDatepicker
+            [maxDate]="today"
             [bsConfig]="{
               dateInputFormat: 'DD/MM/YYYY'
             }" />
@@ -95,7 +106,9 @@
             type="text"
             #closeDate
             class="form-control"
-            [readonly]="controls.statusProceedings.value == 'CERRADA'"
+            [readonly]="
+              controls.statusProceedings.value == 'CERRADA' || searched
+            "
             formControlName="closeDate"
             bsDatepicker
             [bsConfig]="{
@@ -145,9 +158,7 @@
                 : 'Sacar bienes'
             }}
           </button>
-          <button
-            class="btn btn-danger btn-sm active"
-            (click)="queryProceeding()">
+          <button class="btn btn-danger btn-sm active" (click)="clearFn()">
             Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
@@ -187,7 +198,7 @@
             [control]="proceedingForm.get('universalFolio')"
             label="Folio de Escaneo">
             <input
-              [disabled]="true"
+              readonly
               type="number"
               class="form-control"
               min="1"
@@ -235,16 +246,23 @@
         </form-field>
       </div>
     </form>
+    <div class="row text-center mb-4 mt-4">
+      <div class="col">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="getGoodByStatusPDS()">
+          Cargar bienes
+        </button>
+      </div>
+    </div>
     <div class="row">
-      <div class="col-md-12 table-responsive">
+      <div class="col-md-12">
         <div class="row">
           <div [class]="loadingGoods ? 'table-loading' : ''">
-            <ng-scrollbar [track]="'vertical'" style="height: 550px">
-              <ng2-smart-table
-                [settings]="settings3"
-                (userRowSelect)="selectGoodGeneral($event)"
-                [source]="goodPDS1"></ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [settings]="settings3"
+              (userRowSelect)="selectGoodGeneral($event)"
+              [source]="goodPDS1"></ng2-smart-table>
             <app-pagination
               [params]="params8"
               [totalItems]="totalItems3"></app-pagination>

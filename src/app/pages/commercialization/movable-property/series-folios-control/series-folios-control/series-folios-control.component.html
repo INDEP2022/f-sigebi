@@ -51,7 +51,8 @@
           [source]="dataFilter"
           (edit)="openForm($event.data)"
           (userRowSelect)="
-            getInvoiceFolioSeparate($event.data); getEventXSerie($event.data)
+            getInvoiceFolioSeparate($event.data, 'si');
+            getEventXSerie($event.data, 'si')
           "
           (delete)="remove('folio', $event.data)">
         </ng2-smart-table>

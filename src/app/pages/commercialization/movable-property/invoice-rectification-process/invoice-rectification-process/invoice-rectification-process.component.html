@@ -7,22 +7,35 @@
   <div body>
     <div class="d-flex justify-content-end">
       <div class="d-inline">
-        <confirm-button
+        <button
+          type="button"
+          tooltip="Ver más coincidencias"
+          class="btn btn-primary btn-sm active mr-3"
+          [disabled]="!valResult"
+          (click)="openModalSearch()">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+        <button
           text="Buscar"
-          loadingText="Buscando"
-          icon="bx bx-search-alt"
-          class="mr-3"
-          [btnSmall]="true"
-          [loading]="loadingSearch"
-          (confirm)="searchData()"></confirm-button>
-        <button class="btn btn-danger btn-sm active mr-3" (click)="newData()">
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="searchData()">
+          Buscar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button class="btn btn-danger btn-sm active mr-3" (click)="cleanData()">
           Limpiar <i class="fas fa-eraser"> </i>
         </button>
+        <!-- <button type="button" class="btn btn-info btn-sm active" (click)="newData()">
+          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+        </button> -->
       </div>
     </div>
     <form class="form-material mt-5" [formGroup]="form">
       <div class="row">
         <div class="col-md-3 mt-3">
+          <!-- <div class="cs-form">
+            <input type="time" class="form-control" value="10:05 AM" />
+          </div> -->
           <form-field label="No. Oficio" [control]="form.get('jobNot')">
             <input
               type="number"
@@ -65,7 +78,7 @@
               (blur)="postChangeFolio()" />
           </form-field>
         </div>
-        <div class="col-md-4 mt-3">
+        <div class="col-md-12 mt-3">
           <form-field label="Nombre" [control]="form.get('name')">
             <input
               type="text"
@@ -74,7 +87,7 @@
               oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)" />
           </form-field>
         </div>
-        <div class="col-md-4 mt-3">
+        <div class="col-md-6 mt-3">
           <form-field
             label="Apellido Paterno"
             [control]="form.get('lastnamePat')">
@@ -85,7 +98,7 @@
               oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
           </form-field>
         </div>
-        <div class="col-md-4 mt-3">
+        <div class="col-md-6 mt-3">
           <form-field
             label="Apellido Materno"
             [control]="form.get('lastnameMat')">
@@ -106,6 +119,15 @@
               formControlName="inrepresentation"
               oninput="if(this.value.length > 60) this.value = this.value.slice(0, 60)" />
           </form-field>
+        </div>
+        <div class="col-md-6 mt-3 text-center">
+          <button
+            text="Buscar"
+            class="btn btn-info btn-sm active"
+            (click)="openModal()">
+            Nueva Imagen
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
       <hr />
@@ -220,75 +242,69 @@
           <form-field [control]="form.get('elaborates')">
             <ngx-select
               [data]="dataElabora"
-              [searchOnInit]="true"
+              [searchOnInit]="false"
               (fetchItems)="getParamElabora($event)"
               [form]="form"
-              value="value"
-              bindLabel="value"
+              value="valor"
+              bindLabel="valor"
               label="Elabora"
               [control]="'elaborates'"
-              [searchable]="false"
-              [labelTemplate]="elb"
-              [optionTemplate]="elbd">
+              [searchable]="true">
             </ngx-select>
-            <ng-template #elb let-item="item">
+            <!-- <ng-template #elb let-item="item">
               {{ item.value }}
             </ng-template>
             <ng-template #elbd let-item="item">
               <div [title]="item.value">
-                {{ item.value }}
+                {{ item.valor }}
               </div>
-            </ng-template>
+            </ng-template> -->
           </form-field>
         </div>
         <div class="col-md-4 mt-3">
           <form-field [control]="form.get('check')">
             <ngx-select
               [data]="dataVerifica"
-              [searchOnInit]="true"
+              [searchOnInit]="false"
               (fetchItems)="getParamVerifica($event)"
               [form]="form"
-              value="value"
-              bindLabel="value"
+              value="valor"
+              bindLabel="valor"
               label="Verifica"
               [control]="'check'"
-              [searchable]="false"
-              [labelTemplate]="verf"
-              [optionTemplate]="verfd">
+              [searchable]="true">
             </ngx-select>
-            <ng-template #verf let-item="item">
+            <!-- <ng-template #verf let-item="item">
               {{ item.value }}
             </ng-template>
             <ng-template #verfd let-item="item">
               <div [title]="item.value">
                 {{ item.value }}
               </div>
-            </ng-template>
+            </ng-template> -->
           </form-field>
         </div>
         <div class="col-md-4 mt-3">
           <form-field [control]="form.get('issues')">
             <ngx-select
               [data]="dataExpide"
-              [searchOnInit]="true"
+              [searchOnInit]="false"
               (fetchItems)="getParamExpide($event)"
               [form]="form"
-              value="value"
-              bindLabel="value"
+              value="valor"
+              bindLabel="valor"
               label="Expide"
               [control]="'issues'"
-              [searchable]="false"
-              [labelTemplate]="exp"
-              [optionTemplate]="expd">
+              [searchable]="true">
             </ngx-select>
-            <ng-template #exp let-item="item">
+            <!-- <ng-template #exp let-item="item">
               {{ item.value }}
             </ng-template>
             <ng-template #expd let-item="item">
               <div [title]="item.value">
                 {{ item.value }}
               </div>
-            </ng-template>
+            </ng-template> -->
           </form-field>
         </div>
       </div>
@@ -298,12 +314,15 @@
     <div class="ch-content">
       <h5 class="title"></h5>
       <div class="col-md-12 d-flex justify-content-center text-center buttons">
-        <confirm-button
-          [disabled]="!form.valid"
-          [btnSmall]="true"
-          [loading]="loading"
-          (confirm)="saveData()"></confirm-button>
         <div class="d-inline">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!form.valid"
+            (click)="saveData()">
+            Guardar
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
           <button
             type="button"
             class="btn btn-primary btn-sm active ml-3"
@@ -315,3 +334,66 @@
     </div>
   </div>
 </app-card>
+<div
+  #modal="bs-modal"
+  [config]="{ ignoreBackdropClick: true }"
+  bsModal
+  class="modal fade w-100">
+  <app-modal class="modal-dialog modalSizeXL modal-dialog-centered">
+    <div header>
+      <h5 class="modal-title">
+        &nbsp;&nbsp;Procesos de Rectificación de Facturas
+      </h5>
+    </div>
+    <div body>
+      <div class="row">
+        <div class="col-12 d-flex justify-content-end pb-3">
+          <app-columns-select
+            [(settings)]="_settings"
+            [leftList]="true"></app-columns-select>
+        </div>
+        <form-loader *ngIf="loading2"></form-loader>
+        <div>
+          <ng2-smart-table
+            [ngStyle]="{
+              height: loading2 ? '0px' : totalItems2 > 10 ? '300px' : 'auto'
+            }"
+            [attr.class]="'table-bordered table-responsive mb-4'"
+            (userRowSelect)="selectRow($event)"
+            [settings]="_settings"
+            [source]="dataFilter2"
+            (delete)="removeOficio($event.data)">
+          </ng2-smart-table>
+        </div>
+        <div class="overflow-auto card-header-span-fix mt-5">
+          <app-pagination
+            [filterParams]="filterParams"
+            [totalItems]="totalItems2">
+          </app-pagination>
+        </div>
+      </div>
+    </div>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active"
+            [disabled]="!rowSelected"
+            (click)="confirm()">
+            Seleccionar
+            <i class="fas fa-edit bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-modal>
+</div>

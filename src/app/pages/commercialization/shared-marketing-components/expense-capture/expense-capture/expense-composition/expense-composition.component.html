@@ -122,6 +122,16 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
+              [disabled]="
+                !conceptNumberValue ||
+                dataCompositionExpensesStatusChange.length === 0
+              "
+              (click)="sendToSIRSAE()">
+              Envíar Solicitud de pago a SIRSAE
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showAdd || !selectedRow"
               (click)="disperGasto()">
               Dispersa Gasto/Mandato {{ selectedRow?.detPaymentsId }}
@@ -201,6 +211,26 @@
               class="d-none"
               accept=".csv"
               (change)="ABRE_ARCHIVO_CSVI($event)" />
+            <button
+              *ngIf="address === 'M'"
+              type="button"
+              class="btn btn-sm btn-primary mr-2 mt-2 active"
+              [disabled]="
+                !conceptNumberValue ||
+                dataCompositionExpensesToUpdateClasif.length === 0
+              "
+              (click)="updateClasif()">
+              Actualizar Clasificación
+            </button>
+            <button
+              *ngIf="address === 'M'"
+              class="btn btn-sm btn-primary mr-2 mt-2 active"
+              type="button"
+              [disabled]="errorsClasification.length === 0"
+              (click)="showNotLoads()">
+              No Cambiados a Vehículo Robo
+              <i class="fa fa-info-circle"></i>
+            </button>
           </td>
         </tr>
       </div>
