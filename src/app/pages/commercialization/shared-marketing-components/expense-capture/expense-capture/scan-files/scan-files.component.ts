@@ -109,6 +109,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     this.getDataUser();
     this.dataService.updateFolio.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
+        debugger;
         const filterParams = new FilterParams();
         filterParams.addFilter('goodNumber', this.expenseNumber.value);
         filterParams.addFilter(
@@ -125,7 +126,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
                 console.log(response);
                 // this.dataService.formScan.get('folioUniversal').S =
                 //   response.data[0].universalFolio;
-                this.folioUniversal.setValue(response.data[0].universalFolio);
+                this.folioUniversal.setValue(response.data[0].id);
               }
             },
             error: err => {
@@ -244,7 +245,8 @@ export class ScanFilesComponent extends BasePage implements OnInit {
             sendFilekey: '',
             userResponsibleFile: '',
             mediumId: '',
-            associateUniversalFolio: index > 0 ? this.folioUniversal.value : 0,
+            associateUniversalFolio:
+              index > 0 ? this.folioUniversal.value : null,
             dateRegistrationScanningHc: null,
             dateRequestScanningHc: null,
             goodNumber: this.expenseNumber.value,
