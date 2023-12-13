@@ -191,6 +191,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     console.log(this.form.value);
     let newBody = { ...this.form.value };
     delete newBody.publicLot;
+    delete newBody.contractDescription;
     delete newBody.policie;
     delete newBody.descontract;
     delete newBody.padj;
@@ -563,7 +564,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (rtDicta2.length > 0) {
         this.fillAddressNotM(rtDicta2[0].typeNumber);
       } else {
-        this.alert('warning', 'Usuario no válido', 'Favor de verificar');
+        // this.alert('warning', 'Usuario no válido', 'Favor de verificar');
       }
     } else if (v_tip_gast !== 0 && v_tipo === 'GASTOSEG') {
       this.showEvent = false;
@@ -927,8 +928,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.readParams(id);
   }
 
-  private async showModalNotify() {
-    this.loader.load = true;
+  private async getDocuments(addNumexp = false) {
     let filterParams = new FilterParams();
     filterParams.addFilter(
       'id',
@@ -942,6 +942,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
     filterParams.addFilter('sheets', 0, SearchFilter.GT);
     filterParams.addFilter('scanStatus', 'ESCANEADO', SearchFilter.ILIKE);
+    if (addNumexp) {
+      filterParams.addFilter(
+        'numberProceedings',
+        SearchFilter.NULL,
+        SearchFilter.NULL
+      );
+    }
     let documents = await firstValueFrom(
       this.documentService.getAll(filterParams.getParams()).pipe(
         take(1),
@@ -951,10 +958,24 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         })
       )
     );
+    return documents;
+  }
+
+  private async showModalNotify() {
+    this.loader.load = true;
+    let documents = await this.getDocuments();
     if (!documents) {
       this.loader.load = false;
       this.alert('error', 'No a escaneado los documentos', '');
       return;
+    }
+    if (this.address !== 'M') {
+      let documents2 = await this.getDocuments(true);
+      if (!documents2) {
+        this.loader.load = false;
+        this.alert('error', 'No a escaneado los documentos', '');
+        return;
+      }
     }
     this.expenseGoodProcessService
       .replyFolio({
@@ -1007,13 +1028,24 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return;
     }
-    if (!this.dataService.validateNotifyFirst()) {
-      this.alert(
-        'warning',
-        'Tiene que llenar alguno de los campos',
-        'Concepto, Evento, Proveedor, Detalle de gasto con bien'
-      );
-      return;
+    if (this.address === 'M') {
+      if (!this.dataService.validateNotifySecond()) {
+        this.alert(
+          'warning',
+          'Tiene que llenar alguno de los campos',
+          'Concepto, Evento, Proveedor, Detalle de gasto con bien'
+        );
+        return;
+      }
+    } else {
+      if (!this.dataService.validateNotifyFirst()) {
+        this.alert(
+          'warning',
+          'Tiene que llenar alguno de los campos',
+          'Concepto, Evento, Proveedor, Detalle de gasto con bien'
+        );
+        return;
+      }
     }
     if (!this.dataService.formScan.get('folioUniversal').value) {
       this.alert('warning', 'No se han escaneado los documentos', '');
@@ -1270,18 +1302,25 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return false;
     }
-    // if (!this.formPayment.value) {
-    //   this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
-    //   return false;
-    // }
-    // if (!this.eventNumber.value) {
-    //   this.alert('warning', 'Validación de pagos', 'Requiere número de evento');
-    //   return false;
-    // }
-    // if (!this.lotNumber.value) {
-    //   this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
-    //   return false;
-    // }
+    if (this.address === 'M') {
+      if (!this.formPayment.value) {
+        this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
+        return false;
+      }
+      if (!this.eventNumber.value) {
+        this.alert(
+          'warning',
+          'Validación de pagos',
+          'Requiere número de evento'
+        );
+        return false;
+      }
+      if (!this.lotNumber.value) {
+        this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -1298,7 +1337,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           pUserAuthorize: this.form.get('authorizedUser').value,
           pUserRequest: this.form.get('requestedUser').value,
           pFormPay: this.form.get('formPayment').value,
-          pEventId: +this.eventNumber,
+          pEventId: this.eventNumber.value,
           pLotePub: this.lotNumber.value,
         })
         .pipe(catchError(x => of({ data: false, message: x })))
@@ -1339,9 +1378,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.descurcoord.setValue(event.descurcoord);
       this.dataService.updateOI.next(true);
       this.dataService.updateExpenseComposition.next(true);
-      if (this.address === 'M') {
-        this.dataService.updateFolio.next(true);
-      }
+      this.dataService.updateFolio.next(true);
+      // if (this.address === 'M') {
+      //   this.dataService.updateFolio.next(true);
+      // }
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
       );
@@ -1457,32 +1497,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.dataCompositionExpenses;
   }
 
-  get dataCompositionExpensesStatusChange() {
-    return this.dataCompositionExpenses
-      ? this.dataCompositionExpenses.filter(
-          row => row.changeStatus && row.changeStatus === true
-        )
-      : [];
-  }
-
   get conceptNumberValue() {
     return this.conceptNumber ? this.conceptNumber.value : null;
-  }
-
-  async sendToSIRSAE() {
-    let result = await this.alertQuestion(
-      'question',
-      '¿Desea enviar solicitud de pago a sirsae?',
-      ''
-    );
-    if (result.isConfirmed) {
-      if (this.address === 'M') {
-        this.dataService.actionButton = 'SIRSAE';
-        await this.dataService.updateByGoods(true);
-      } else {
-        this.dataService.ENVIA_MOTIVOS();
-      }
-    }
   }
 
   get validImprimeAny() {

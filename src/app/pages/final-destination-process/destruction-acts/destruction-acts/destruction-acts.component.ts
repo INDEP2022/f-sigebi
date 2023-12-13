@@ -135,6 +135,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   //PARA MOSTRAR
   di_status_good: any = null;
+  columnFilters: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -158,6 +159,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
+      hideSubHeader: false,
       rowClassFunction: (row: { data: { avalaible: any } }) =>
         row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white',
     };
@@ -193,6 +195,29 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       });
 
     this.navigateProceeding();
+    this.navigateGoodTable();
+    this.navigateGoodAct();
+    this.columnFilterTable();
+  }
+
+  columnFilterTable() {
+    this.dataGoods
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          if (this.columnFilters.lenght > 0) {
+            if (!this.columnFilters.find(filters)) {
+              this.columnFilters.push(filters);
+            }
+          } else {
+            this.columnFilters.push(filters);
+          }
+
+          this.searchGoodsByExp();
+        }
+      });
   }
 
   initializesForm() {
@@ -416,6 +441,20 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.comptrollerWitness.disable();
   }
 
+  //DESACTIVAR CAMPOS CUANDO EL ACTA ESTA CERRADAS
+  inputsInNewProceeding() {
+    /* this.assembleKeybool = false */
+    this.elabDate.enable();
+    this.destroyDate.enable();
+    this.address.enable();
+    this.observation.enable();
+    this.responsible.enable();
+    this.witness.enable();
+    this.witness2.enable();
+    this.destroMethod.enable();
+    this.comptrollerWitness.enable();
+  }
+
   //BUSQUEDA DE DATOS DE EXPEDIENTE
   searchDataByExp() {
     this.serviceExpedient.getById(this.expedient.value).subscribe(
@@ -532,6 +571,23 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   searchGoodsByExp() {
     const paramsF = new FilterParams();
     paramsF.addFilter('fileNumber', this.expedient.value);
+    paramsF.page = this.params.value.page;
+    paramsF.limit = this.params.value.limit;
+    console.log(this.columnFilters);
+    if (this.columnFilters.length > 0) {
+      console.log('Si entro');
+      this.columnFilters.forEach((element: any) => {
+        if (['', null, undefined].includes(element[0].search)) {
+          paramsF.addFilter(
+            element[0].field,
+            element[0].search,
+            element[0].filter
+          );
+        }
+      });
+    }
+    console.log(paramsF.getParams());
+
     this.goodService.getAllFilterDetail(paramsF.getParams()).subscribe(
       async res => {
         const newData = await Promise.all(
@@ -564,6 +620,9 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   //BUSCAR BIENES EN DETALLE_ACTA_ENT_RECEP
   searchGoodsInDetailProceeding() {
+    const paramsF = new FilterParams();
+    paramsF.page = this.params2.value.page;
+    paramsF.limit = this.params2.value.limit;
     this.serviceDetailProc.getGoodsByProceedings(this.idProceeding).subscribe(
       res => {
         console.log(res);
@@ -817,8 +876,28 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   //NUEVA ACTA
   newProceedingFn() {
     this.newProceeding();
+    this.inputsInNewProceeding();
     this.isNewProceeding = true;
     this.assembleKeybool = true;
+  }
+
+  //NAVEGACION DE TABLA DE BIENES
+  navigateGoodTable() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      if (this.navigateProceedings) {
+        this.loadingTable = true;
+        this.searchGoodsByExp();
+      }
+    });
+  }
+
+  navigateGoodAct() {
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      if (this.navigateProceedings) {
+        this.loadingTable = true;
+        this.searchGoodsInDetailProceeding();
+      }
+    });
   }
 
   //NAVEGACION DE ACTAS
