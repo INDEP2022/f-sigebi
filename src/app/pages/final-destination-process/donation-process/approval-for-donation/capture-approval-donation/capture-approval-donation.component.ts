@@ -235,10 +235,10 @@ export class CaptureApprovalDonationComponent
   @ViewChild('grdDetail') grdDetail;
 
   columnFilters: any = [];
-  carga : number=0;
+  carga: number = 0;
   rop_div: number = 0;
-  tracker_iter:number =0;
-  
+  tracker_iter: number = 0;
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -301,14 +301,14 @@ export class CaptureApprovalDonationComponent
     this.initialize();
 
     this.initForm();
-    this.tracker_iter=0;
+    this.tracker_iter = 0;
     this.globalVarService
       .getGlobalVars$()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: global => {
           this.ngGlobal = global;
-          console.log('DESPUES DE REGRESAR DE RASTREADOR::0::'+this.ngGlobal);
+          console.log('DESPUES DE REGRESAR DE RASTREADOR::0::' + this.ngGlobal);
           if (this.ngGlobal.REL_BIENES) {
             const newData = JSON.parse(localStorage.getItem('save_data'));
             const body: IProcedureFmCom = {
@@ -319,9 +319,11 @@ export class CaptureApprovalDonationComponent
               minutesNumber: newData.no_acta,
               goodsRel: this.ngGlobal.REL_BIENES,
             };
-            
-            console.log('DESPUES DE REGRESAR DE RASTREADOR::'+this.tracker_iter);
-            if(this.tracker_iter==0){
+
+            console.log(
+              'DESPUES DE REGRESAR DE RASTREADOR::' + this.tracker_iter
+            );
+            if (this.tracker_iter == 0) {
               this.showMessageRast = true;
               this.validateGoodTracker(body);
             }
@@ -552,9 +554,9 @@ export class CaptureApprovalDonationComponent
         localStorage.getItem('area'),
         [Validators.pattern(STRING_PATTERN)],
       ],
-      year: [{value: null, disabled: true}, []],
+      year: [{ value: null, disabled: true }, []],
       folio: [null],
-      captureDate: [{value: null, disabled: true}, []],
+      captureDate: [{ value: null, disabled: true }, []],
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       observaciones: [null],
       activeRadio: ['-1'],
@@ -1099,7 +1101,7 @@ export class CaptureApprovalDonationComponent
     this.alert('success', 'El reporte se ha descargado', '');
     URL.revokeObjectURL(objURL);
     */
-      const mediaType =
+    const mediaType =
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const link = document.createElement('a');
     link.href = mediaType + base64String;
@@ -1287,8 +1289,7 @@ export class CaptureApprovalDonationComponent
           ''
         );
         return;
-      }      
-
+      }
 
       if (this.delForm.get('observaElimina').value === null) {
         this.alert(
@@ -1533,7 +1534,7 @@ export class CaptureApprovalDonationComponent
     this.regisForm.reset();
     this.dataTableGood.load([]);
     this.data.load([]);
-    this.totalItems2=0;
+    this.totalItems2 = 0;
     this.eventDonacion = null;
     this.estatus = null;
     this.selectedGooods = [];
@@ -1551,7 +1552,7 @@ export class CaptureApprovalDonationComponent
   cleanData_() {
     this.dataTableGood.load([]);
     this.data.load([]);
-    this.totalItems2=0;
+    this.totalItems2 = 0;
     this.eventDonacion = null;
     this.estatus = null;
     this.selectedGooods = [];
@@ -1800,42 +1801,41 @@ export class CaptureApprovalDonationComponent
         );
         return;
       }
-//checar el no de expediente
+      //checar el no de expediente
       const toolbar_user = this.authService.decodeToken().preferred_username;
       const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
-      let expedient=0;
+      let expedient = 0;
       /*
       this.selectedGooodsEvent.forEach(good => {
         expedient = good;
       });
       */
       this.selectedGooodsEvent.forEach(good => {
-        if(good.goodid ==good.goodid){
+        if (good.goodid == good.goodid) {
           expedient = good.noexpediente;
         }
-      });     
-      if(expedient==0){
+      });
+      if (expedient == 0) {
         this.selectedGooodsValid.forEach(good => {
           expedient = good.noexpediente;
           //console.log('selectedGooodsValid::'+ good);
-
         });
       }
-    if (expedient == null) {
+      if (expedient == null) {
         console.log(expedient + ' == null');
-        expedient=0;
-    }
+        expedient = 0;
+      }
 
-    if (expedient === null) {
+      if (expedient === null) {
         console.log(expedient + ' === null');
-        expedient=0;
-    }
+        expedient = 0;
+      }
 
-    if (typeof expedient === 'undefined') {
+      if (typeof expedient === 'undefined') {
         console.log(expedient + ' is undefined');
-        expedient=0;
-    }
-      console.log('Expediente:::'+expedient);
+        expedient = 0;
+      }
+      console.log('Expediente:::' + expedient);
 
       if (
         cadena != 0 &&
@@ -1848,7 +1848,7 @@ export class CaptureApprovalDonationComponent
           '¿Seguro que desea realizar el cierre de ésta evento?',
           ''
         ).then(async question => {
-          console.log('Expediente::'+expedient);
+          console.log('Expediente::' + expedient);
           if (question.isConfirmed) {
             let obj: any = {
               actId: this.idAct,
@@ -1982,8 +1982,8 @@ export class CaptureApprovalDonationComponent
 
   //Muestra pantalla del rastreador de bienes
   findRast() {
-    console.log('findRast'+this.idAct);
-    if (this.idAct <=0) {
+    console.log('findRast' + this.idAct);
+    if (this.idAct <= 0) {
       this.alert(
         'warning',
         'Debe especificar/buscar el evento para despues ingresar bienes.',
@@ -2252,16 +2252,15 @@ export class CaptureApprovalDonationComponent
         //console.log('validateGoodTracker:::' + JSON.stringify(res));
         //solo se muestra el mensaje una sola vez
         console.log(res.message[0]);
-        
-        if (this.showMessageRast && res.message[0] == 'Los bienes seleccionados no cumplen con las condiciones necesarias.') {
-          this.alert(
-            'warning',
-            res.message[0],
-            ''
-          );
+
+        if (
+          this.showMessageRast &&
+          res.message[0] ==
+            'Los bienes seleccionados no cumplen con las condiciones necesarias.'
+        ) {
+          this.alert('warning', res.message[0], '');
         }
         this.showMessageRast = false;
-        
       },
       err => {
         console.log(err);
