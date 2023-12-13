@@ -23,7 +23,7 @@ export class VerificationWarehouseAssetsComponent
   extends BasePage
   implements OnInit
 {
-  title: string = `Verificacion de bienes en almacen ${302}`;
+  title: string = `Verificacion de bienes en almacén ${302}`;
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
   sampleInfo: ISample;

@@ -67,7 +67,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'warehouse-verification',
+    path: 'warehouse-verification/:id',
     loadChildren: async () =>
       (
         await import(
