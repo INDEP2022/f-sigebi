@@ -87,6 +87,12 @@ export abstract class CompDocTasksComponent extends BasePage {
       if (process == 'IBRevisionOficioRespuesta') {
         this.title = `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${this.requestInfo.id}`;
       }
+    } else if (affair == 27) {
+      this.title = `PROCESO DE ABANDONO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 15) {
+      this.title = `DECOMISO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
+    } else if (affair == 16) {
+      this.title = `EXTINCIón DE DOMINIO : Registro de Documentación Complementaria, No. Solicitud:   ${this.requestInfo.id} `;
     }
   }
 
@@ -148,6 +154,30 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.turnReq = true;
         } else if (affair == 41) {
           //INFORMACION DE BIENES
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 15) {
+          ///DECOMISO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 16) {
+          //EXTINCION DE DOMINIO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        } else if (affair == 27) {
+          ///PROCESO DE ABANDONO
           this.regDocForm = true;
           this.searchRequestSimGoods = true;
           this.selectGoods = true;
@@ -665,6 +695,28 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.createReport = false;
         this.rejectReq = false;
+
+        break;
+
+      case 'confiscation':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+        break;
+
+      case 'extinction':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+        break;
+
+      case 'abandon':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
 
         break;
 

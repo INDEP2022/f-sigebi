@@ -8,8 +8,15 @@
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="form.get('cveActa')">
-            <ngx-select (fetchItems)="getEventComDonation($event)" [data]="donation" [form]="form" bindLabel="cveAct"
-              value="cveAct" label="Clave Evento" control="cveActa" (change)="onEventChange($event)">
+            <ngx-select
+              (fetchItems)="getEventComDonation($event)"
+              [data]="donation"
+              [form]="form"
+              bindLabel="cveAct"
+              value="cveAct"
+              label="Clave Evento"
+              control="cveActa"
+              (change)="onEventChange($event)">
             </ngx-select>
           </form-field>
         </div>
@@ -33,7 +40,11 @@
         </div> -->
         <div class="col-md-4">
           <form-field [control]="form.get('estatusAct')" label="Estatus Evento">
-            <ng-select formControlName="estatusAct" [searchable]="false" class="form-control" [clearable]="false"
+            <ng-select
+              formControlName="estatusAct"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
               (change)="getRowSelec($event)">
               <ng-option value=""></ng-option>
               <ng-option value="">TODOS</ng-option>
@@ -44,9 +55,18 @@
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('noDelegation1')">
-            <ngx-select label="Coor. Regional" [form]="form" [data]="delegations$" (fetchItems)="getDelegations($event)"
-              bindLabel="description" [searchOnInit]="false" control="noDelegation1" [showTooltip]="true"
-              (change)="updateSelectedIds($event)" termMaxLength="50" [multiple]="false">
+            <ngx-select
+              label="Coor. Regional"
+              [form]="form"
+              [data]="delegations$"
+              (fetchItems)="getDelegations($event)"
+              bindLabel="description"
+              [searchOnInit]="false"
+              control="noDelegation1"
+              [showTooltip]="true"
+              (change)="updateSelectedIds($event)"
+              termMaxLength="50"
+              [multiple]="false">
             </ngx-select>
             <ng-template #userLabel let-item="item">
               {{ item.id + ' - ' + item.description }}
@@ -60,8 +80,16 @@
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('elaborated')">
-            <ngx-select label="Usuario" [form]="form" [data]="users$" (fetchItems)="getUsers($event)"
-              bindLabel="userAndName" control="elaborated" [searchOnInit]="true" [showTooltip]="true" termMaxLength="50"
+            <ngx-select
+              label="Usuario"
+              [form]="form"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="elaborated"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
               value="id">
             </ngx-select>
           </form-field>
@@ -70,7 +98,10 @@
         <div class="row pt-4">
           <div class="col-md-12 d-flex justify-content-center">
             <div>
-              <button type="button" class="btn btn-primary active btn-sm mr-3" (click)="filterButton()">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm mr-3"
+                (click)="filterButton()">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
@@ -89,8 +120,11 @@
         <div class="col-md-8 mb-3"></div>
         <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
           <div>
-            <button class="btn btn-success active btn-sm ml-3" [ngClass]="{ loading: loadingExport }"
-              [disabled]="totalItems3 == 0 || loadingExport" (click)="exportAll()">
+            <button
+              class="btn btn-success active btn-sm ml-3"
+              [ngClass]="{ loading: loadingExport }"
+              [disabled]="totalItems3 == 0 || loadingExport"
+              (click)="exportAll()">
               Exportar a Excel
               <i *ngIf="!loadingExport" class="bx bx-download float-icon"></i>
               <!-- (click)="exportAll()">
@@ -106,8 +140,13 @@
       <div class="row">
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table #myTable [attr.class]="'table-responsive'" [settings]="settings" [source]="data"
-              (dblclick)="method2($event)" (rowSelect)="changeEvent($event)">
+            <ng2-smart-table
+              #myTable
+              [attr.class]="'table-responsive'"
+              [settings]="settings"
+              [source]="data"
+              (dblclick)="method2($event)"
+              (rowSelect)="changeEvent($event)">
             </ng2-smart-table>
           </div>
         </div>
@@ -120,7 +159,10 @@
         <div class="row pt-5">
           <div class="col-md-12">
             <div [class]="loading2 ? 'table-loading' : ''">
-              <ng2-smart-table [attr.class]="'table-responsive'" [settings]="settings1" [source]="data1"
+              <ng2-smart-table
+                [attr.class]="'table-responsive'"
+                [settings]="settings1"
+                [source]="data1"
                 (rowSelect)="selectedDetailActa($event)">
               </ng2-smart-table>
             </div>
@@ -151,8 +193,12 @@
             <!-- <button class="btn btn-primary active btn-sm" routerLink="capture-approval-donation">
               Captura de Evento
             </button> -->
-            <button type="button" tooltip="Nuevo" containerClass="tooltip-style"
-              class="btn btn-primary btn-sm active ml-2 mr-2" (click)="method1()">
+            <button
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active ml-2 mr-2"
+              (click)="method1()">
               Captura de Evento <i class="bx bx-edit bx-sm float-icon"></i>
             </button>
           </div>
