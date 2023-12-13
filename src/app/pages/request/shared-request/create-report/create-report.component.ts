@@ -54,13 +54,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   format: any = new Document();
   loadDoc: any = null;
 
-  editReport = true;
-  signReport = false;
-
-
-  tableName: string = null;
-  documentTypeId: string = null;
-
   // we use this property to store the quill instance
   quillInstance: any;
 
@@ -69,12 +62,12 @@ export class CreateReportComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   model: any;
 
-  isSigned: boolean = false; //VALIDAR
-  isSignedReady: boolean = false;
-
-  @Input() signed: boolean = true; // default value
   @Input() requestId: string = null; // default value
   @Input() process: string = null; // default value
+  @Input() editReport: boolean = true; // default value
+  @Input() signReport: boolean = false; // default value
+  @Input() tableName: string = null; // default value
+  @Input() documentTypeId: string = null; // default value
 
   @Output() refresh = new EventEmitter<true>();
 
@@ -313,7 +306,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.signatureType.subscribe(next => {
-      if (next) {
+      /*if (next) {
         this.isSigned = true;
         this.tabsReport.tabs[0].active = true;
       } else {
@@ -321,17 +314,17 @@ export class CreateReportComponent extends BasePage implements OnInit {
         this.isSigned = false;
         this.tabsReport.tabs[0].disabled = false;
         this.tabsReport.tabs[0].active = true;
-      }
+      }*/
     });
   }
 
   nextStep($event: any): void {
-    if ($event) {
+    /*if ($event) {
       this.isSignedReady = true;
       this.tabsReport.tabs[0].active = true;
     } else {
       this.isSignedReady = false;
-    }
+    }*/
   }
 
   attachDocument() {

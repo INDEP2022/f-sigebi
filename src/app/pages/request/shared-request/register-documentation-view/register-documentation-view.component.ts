@@ -14,8 +14,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class RegisterDocumentationViewComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   @Input() requestId: number;
   requestDoc: IRequest;
   transference: number = null;
@@ -104,7 +103,6 @@ export class RegisterDocumentationViewComponent
 
   showInput(comp) {
     let input = [];
-    console.log('ESTE ES MI PROCESO' + this.process);
     switch (this.process) {
       case 'register-request-return':
       case 'verify-compliance-return':
