@@ -454,7 +454,7 @@ export class ExpenseCompositionComponent
               if (errors.length === 0) {
                 this.alert(
                   'success',
-                  'Se realizco el cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'Se realizado el cambio de Clasificación a Vehiculo con Reporte de Robo',
                   ''
                 );
               }
@@ -573,6 +573,37 @@ export class ExpenseCompositionComponent
         this.dataPaginated.refresh();
       });
     });
+  }
+
+  get dataCompositionExpensesStatusChange() {
+    return this.data
+      ? this.data.filter(row => row.changeStatus && row.changeStatus === true)
+      : [];
+  }
+
+  async sendToSIRSAE() {
+    if (this.address !== 'M' && !this.eventNumber) {
+      this.alert(
+        'warning',
+        'Tiene que seleccionar un evento para continuar',
+        ''
+      );
+      return;
+    }
+    let result = await this.alertQuestion(
+      'question',
+      '¿Desea enviar solicitud de pago a sirsae?',
+      ''
+    );
+    if (result.isConfirmed) {
+      if (this.address === 'M') {
+        this.expenseCaptureDataService.actionButton = 'SIRSAE';
+        await this.expenseCaptureDataService.updateByGoods(true);
+      } else {
+        this.expenseCaptureDataService.P_TIPO_CAN = 2;
+        this.expenseCaptureDataService.ENVIA_MOTIVOS();
+      }
+    }
   }
 
   ABRE_ARCHIVO_CSVI(event) {
@@ -758,7 +789,7 @@ export class ExpenseCompositionComponent
     this.loading = false;
     if (this.validateAndProcess) {
       setTimeout(() => {
-        this.expenseCaptureDataService.validateAndProcessSolicitud();
+        this.expenseCaptureDataService.validateAndProcessSolicitud(true);
         this.validateAndProcess = false;
       }, 500);
     }

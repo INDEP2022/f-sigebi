@@ -528,7 +528,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
         });
     }
-
     if (this.typeDoc == 218) {
       const token = this.authService.decodeToken();
       const formData = {
@@ -571,6 +570,47 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
         });
     }
+    if (this.typeDoc == 219) {
+      const token = this.authService.decodeToken();
+      const formData = {
+        keyDoc: this.idSample,
+        xNivelRegistroNSBDB: 'Bien',
+        xNombreProceso: 'Muestreo Bienes',
+        xDelegacionRegional: token.department,
+        DocTitle: 'Anexo K',
+        dSecurityGroup: 'Public',
+        xTipoDocumento: 219,
+      };
+
+      const extension = '.pdf';
+      const docName = 'Anexo K';
+
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: async response => {
+            const updateSample = await this.updateSamplek(response.dDocName);
+            if (updateSample) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
   }
 
   updateSample(dDocName: string) {
@@ -578,6 +618,21 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       const sampleData: ISample = {
         sampleId: this.idSample,
         contentTeId: dDocName,
+      };
+
+      this.samplingGoodService.updateSample(sampleData).subscribe({
+        next: () => {
+          resolve(true);
+        },
+      });
+    });
+  }
+
+  updateSamplek(dDocName: string) {
+    return new Promise((resolve, reject) => {
+      const sampleData: ISample = {
+        sampleId: this.idSample,
+        contentKSaeId: dDocName,
       };
 
       this.samplingGoodService.updateSample(sampleData).subscribe({

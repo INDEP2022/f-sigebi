@@ -117,7 +117,7 @@ export class InvoiceStatusComponent extends BasePage implements OnInit {
         this.totalItems = 0;
         this.dataFilter.load([]);
         this.dataFilter.refresh();
-        this.alert('error', 'Error', err.error.message);
+        // this.alert('error', 'Error', err.error.message);
         this.loading = false;
       },
     });
@@ -125,9 +125,9 @@ export class InvoiceStatusComponent extends BasePage implements OnInit {
 
   remove(data: any) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
-      '¿Desea Eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(answ => {
       if (answ.isConfirmed) {
         this.statusInvoiceService.remove(data.id).subscribe({
@@ -145,9 +145,9 @@ export class InvoiceStatusComponent extends BasePage implements OnInit {
                 err.error.message.includes('violates foreign key constraint')
               ) {
                 this.alert(
-                  'error',
-                  'Error',
-                  'Debe eliminar las relaciones de este estatus'
+                  'warning',
+                  'Debe eliminar las relaciones de este estatus',
+                  ''
                 );
                 return;
               }

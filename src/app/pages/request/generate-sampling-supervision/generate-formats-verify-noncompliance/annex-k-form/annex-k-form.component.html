@@ -77,7 +77,6 @@
             </div>
           </div>
 
-          <<<<<<< HEAD
           <div class="row pt-4">
             <div class="col-md-12">
               <h5>Capturar Detalles del Anexo</h5>
@@ -292,7 +291,7 @@
 
       <div class="m-3" *ngIf="typeAnnex == 'sign-annex-assets-classification'">
         <confirm-button
-          [disabled]="!form.valid"
+          [disabled]="!annexForm.valid"
           [loading]="loading"
           [text]="'Firmar Anexo'"
           [loadingText]="'Firmando Anexo'"
