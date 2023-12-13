@@ -821,7 +821,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       const questionResponse3 = await this.alertQuestion(
         'question',
         'Advertencia',
-        '¿Desea cambiar los Bienes a numerario?'
+        '¿Desea cambiar los bienes a numerario?'
       );
       if (questionResponse3.isConfirmed) {
         await this.pupValidateMassive();
@@ -1095,7 +1095,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
                 this.alert(
                   'warning',
                   'Advertencia',
-                  'Verificar que el estatus de los Bienes sea Administración'
+                  'Verificar que el estatus de los bienes sea Administración'
                 );
                 this.clear();
               } else {
