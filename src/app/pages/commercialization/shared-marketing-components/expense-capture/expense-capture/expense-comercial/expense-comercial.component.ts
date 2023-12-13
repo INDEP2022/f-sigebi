@@ -191,6 +191,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     console.log(this.form.value);
     let newBody = { ...this.form.value };
     delete newBody.publicLot;
+    delete newBody.contractDescription;
     delete newBody.policie;
     delete newBody.descontract;
     delete newBody.padj;
@@ -1270,18 +1271,25 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return false;
     }
-    if (!this.formPayment.value) {
-      this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
-      return false;
+    if (this.address === 'M') {
+      if (!this.formPayment.value) {
+        this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
+        return false;
+      }
+      if (!this.eventNumber.value) {
+        this.alert(
+          'warning',
+          'Validación de pagos',
+          'Requiere número de evento'
+        );
+        return false;
+      }
+      if (!this.lotNumber.value) {
+        this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
+        return false;
+      }
     }
-    if (!this.eventNumber.value) {
-      this.alert('warning', 'Validación de pagos', 'Requiere número de evento');
-      return false;
-    }
-    if (!this.lotNumber.value) {
-      this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
-      return false;
-    }
+
     return true;
   }
 

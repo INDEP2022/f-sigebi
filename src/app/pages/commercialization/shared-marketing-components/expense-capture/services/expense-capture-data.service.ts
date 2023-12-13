@@ -422,6 +422,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       typepe: [null],
       tiptram: [null],
       contractNumber: [null],
+      contractDescription: [null],
       descontract: [null],
       padj: [null],
       psadj: [null],
