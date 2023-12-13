@@ -147,7 +147,9 @@ export class GoodService extends HttpService {
     return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
   }
 
-  getAllFilterDetail(params?: string): Observable<IListResponse<IGood>> {
+  getAllFilterDetail(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(
       `${GoodEndpoints.Good}/getAllGoodWDetail?${params}`
     );
