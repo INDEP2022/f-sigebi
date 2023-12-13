@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -9,10 +9,13 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
+import Swal from 'sweetalert2';
 import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { UploadReportReceiptComponent } from '../../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { AnnexKFormComponent } from '../../generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
@@ -28,7 +31,6 @@ export class ClassificationAnnexedSignComponent
   extends BasePage
   implements OnInit
 {
-  title: string = `Clasificación de bienes (Firma Anexos) ${326}`;
   sampleInfo: ISample;
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
@@ -37,7 +39,8 @@ export class ClassificationAnnexedSignComponent
   loadingDeductives: boolean = true;
   paragraphsDeductivas = new LocalDataSource();
   allDeductives: ISamplingDeductive[] = [];
-  idSample: number = 326;
+  idSample: number = 0;
+  title: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     private samplingGoodService: SamplingGoodService,
@@ -45,9 +48,14 @@ export class ClassificationAnnexedSignComponent
     private modalService: BsModalService,
     private wcontentService: WContentService,
     private sanitizer: DomSanitizer,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService,
+    private taskService: TaskService
   ) {
     super();
+    this.idSample = Number(this.activatedRoute.snapshot.paramMap.get('id'));
+    this.title = `Clasificación de bienes (Firma Anexos) ${this.idSample}`;
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -96,7 +104,7 @@ export class ClassificationAnnexedSignComponent
 
   getInfoSample() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.sampleId'] = `$eq:${326}`;
+    params.getValue()['filter.sampleId'] = `$eq:${this.idSample}`;
     this.samplingGoodService.getSample(params.getValue()).subscribe({
       next: response => {
         this.sampleInfo = response.data[0];
@@ -105,7 +113,91 @@ export class ClassificationAnnexedSignComponent
   }
 
   turnSampling() {
-    this.router.navigate(['/pages/request/warehouse-verification']);
+    if (this.sampleInfo.contentTeId && this.sampleInfo.contentKSaeId) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea turnar el muestreo?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const updateStatusSample: any = await this.updateStatusSample();
+          if (updateStatusSample) {
+            const user: any = this.authService.decodeToken();
+            const _task = JSON.parse(localStorage.getItem('Task'));
+            let body: any = {};
+
+            body['idTask'] = _task.id;
+            body['userProcess'] = user.username;
+            body['type'] = 'MUESTREO_BIENES';
+            body['subtype'] = 'Verificacion_bienes';
+            body['ssubtype'] = 'RESTITUCION';
+
+            let task: any = {};
+            task['id'] = 0;
+            task['assignees'] = user.username;
+            task['assigneesDisplayname'] = user.username;
+            task['creator'] = user.username;
+            task['reviewers'] = user.username;
+
+            task['idSampling'] = this.idSample;
+            task[
+              'title'
+            ] = `Verificacion de bienes en almacén ${this.idSample}`;
+            task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
+            task['idTransferee'] = this.sampleInfo.transfereeId;
+            task['processName'] = 'Verificacion_bienes';
+            task['urlNb'] = 'pages/request/warehouse-verification';
+            body['task'] = task;
+
+            const taskResult: any = await this.createTaskOrderService(body);
+            this.loading = false;
+            if (taskResult || taskResult == false) {
+              this.msgGuardado(
+                'success',
+                'Creación de Tarea Correcta',
+                `Verificacion de bienes en almacén ${this.idSample}`
+              );
+            }
+          }
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Debe firmar los Anexos J y K del muestreo'
+      );
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    });
   }
 
   openAnnexJ() {
@@ -163,7 +255,6 @@ export class ClassificationAnnexedSignComponent
   }
 
   uploadDocument(typeDocument: number) {
-    console.log('typeDocument', typeDocument);
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       typeDoc: typeDocument,
@@ -255,5 +346,21 @@ export class ClassificationAnnexedSignComponent
 
   getSearchForm(searchForm: any) {
     this.filterObject = searchForm;
+  }
+
+  updateStatusSample() {
+    return new Promise((resolve, reject) => {
+      const sample: ISample = {
+        sampleId: this.idSample,
+        sampleStatus: 'VERIFICACION BIENES',
+      };
+
+      this.samplingGoodService.updateSample(sample).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {},
+      });
+    });
   }
 }

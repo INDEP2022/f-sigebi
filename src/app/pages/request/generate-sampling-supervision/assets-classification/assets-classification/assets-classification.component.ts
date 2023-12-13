@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -11,9 +11,12 @@ import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-v
 import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import Swal from 'sweetalert2';
 import { BasePage, TABLE_SETTINGS } from '../../../../../core/shared/base-page';
 import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { UploadReportReceiptComponent } from '../../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
@@ -28,12 +31,12 @@ import { AnnexJAssetsClassificationComponent } from '../annex-j-assets-classific
   styleUrls: ['./assets-classification.component.scss'],
 })
 export class AssetsClassificationComponent extends BasePage implements OnInit {
-  title: string = `Clasificación de bienes ${326}`;
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
   willSave: boolean = true;
   loadingDeductives: boolean = false;
   sampleInfo: ISample;
+  title: string = '';
   idSample: number = 0;
   filterObject: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -47,9 +50,14 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
     private router: Router,
     private deductiveService: DeductiveVerificationService,
     private wcontentService: WContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService,
+    private taskService: TaskService
   ) {
     super();
+    this.idSample = Number(this.activatedRoute.snapshot.paramMap.get('id'));
+    this.title = `Clasificación de bienes ${this.idSample}`;
     this.settings = {
       ...TABLE_SETTINGS,
       actions: {
@@ -64,7 +72,6 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.idSample = 326;
     this.getInfoSample();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getSampleDeductives();
@@ -105,7 +112,7 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
 
   getInfoSample() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.sampleId'] = `$eq:${326}`;
+    params.getValue()['filter.sampleId'] = `$eq:${this.idSample}`;
     this.samplingGoodService.getSample(params.getValue()).subscribe({
       next: response => {
         this.sampleInfo = response.data[0];
@@ -113,8 +120,146 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
     });
   }
 
-  turnSampling() {
-    this.router.navigate(['pages/request/assets-clasification/sign-annexes']);
+  async turnSampling() {
+    const goodsSample: any = await this.getGoodsSample();
+
+    const stateGood = goodsSample.filter(item => {
+      if (!item.goodState) return item;
+    });
+
+    if (stateGood.length == 0) {
+      if (this.sampleInfo.contentId) {
+        if (this.sampleInfo.contentIdK) {
+          const updateStatusSample: any = await this.updateStatusSample();
+          if (updateStatusSample) {
+            this.alertQuestion(
+              'question',
+              'Confirmación',
+              '¿Desea turnar el muestreo?'
+            ).then(async question => {
+              if (question.isConfirmed) {
+                const user: any = this.authService.decodeToken();
+                const _task = JSON.parse(localStorage.getItem('Task'));
+                let body: any = {};
+
+                body['idTask'] = _task.id;
+                body['userProcess'] = user.username;
+                body['type'] = 'MUESTREO_BIENES';
+                body['subtype'] = 'Clasificar_bienes';
+                body['ssubtype'] = 'FIRMAR';
+
+                let task: any = {};
+                task['id'] = 0;
+                task['assignees'] = user.username;
+                task['assigneesDisplayname'] = user.username;
+                task['creator'] = user.username;
+                task['reviewers'] = user.username;
+
+                task['idSampling'] = this.idSample;
+                task[
+                  'title'
+                ] = `Muestreo Bienes: Clasificación de Bienes (Firma Anexos) ${this.idSample}`;
+                task['idDelegationRegional'] =
+                  this.sampleInfo.regionalDelegationId;
+                task['idTransferee'] = this.sampleInfo.transfereeId;
+                task['processName'] = 'Clasificar_bienes';
+                task['urlNb'] =
+                  'pages/request/assets-clasification/sign-annexes';
+                body['task'] = task;
+
+                const taskResult: any = await this.createTaskOrderService(body);
+                this.loading = false;
+                if (taskResult || taskResult == false) {
+                  this.msgGuardado(
+                    'success',
+                    'Creación de Tarea Correcta',
+                    `Muestreo Bienes: Clasificación de Bienes (Firma Anexos) ${this.idSample}`
+                  );
+                }
+              }
+            });
+          }
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'Es necesario generar el Anexo K'
+          );
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Es necesario generar el Anexo J'
+        );
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Debe clasificar todos los bienes que no cumplieron con el resultado de evaluación'
+      );
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    });
+  }
+
+  updateStatusSample() {
+    return new Promise((resolve, reject) => {
+      const sample: ISample = {
+        sampleId: this.idSample,
+        sampleStatus: 'FALTANTES',
+      };
+
+      this.samplingGoodService.updateSample(sample).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {},
+      });
+    });
+  }
+
+  getGoodsSample() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.sampleId'] = this.idSample;
+      params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
+      this.samplingGoodService.getSamplingGoods(params.getValue()).subscribe({
+        next: response => {
+          resolve(response.data);
+        },
+        error: () => {},
+      });
+    });
   }
 
   saveDeductives() {
@@ -203,12 +348,26 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
     }
   }
 
-  openAnnexJ() {
-    this.openModal(
-      AnnexJAssetsClassificationComponent,
-      this.idSample,
-      'annexJ-assets-classification'
-    );
+  async openAnnexJ() {
+    const goodsSample: any = await this.getGoodsSample();
+
+    const stateGood = goodsSample.filter(item => {
+      if (!item.goodState) return item;
+    });
+
+    if (stateGood.length == 0) {
+      this.openModal(
+        AnnexJAssetsClassificationComponent,
+        this.idSample,
+        'annexJ-assets-classification'
+      );
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Debe clasificar todos los bienes que no cumplieron con el resultado de evaluación'
+      );
+    }
   }
 
   showAnnexJ() {
@@ -261,25 +420,51 @@ export class AssetsClassificationComponent extends BasePage implements OnInit {
     this.modalService.show(PreviewDocumentsComponent, config);
   }
 
-  opemAnnexK() {
-    let config: ModalOptions = {
-      initialState: {
-        idSample: this.idSample,
-        typeAnnex: 'annex-assets-classification',
-        callback: async (typeDocument: number, typeSign: string) => {
-          if (typeDocument && typeSign) {
-            this.showReportInfo(
-              typeDocument,
-              typeSign,
-              'annex-assets-classification'
-            );
-          }
+  async opemAnnexK() {
+    const deductivesSample = await this.checkSampleDeductives();
+
+    if (deductivesSample) {
+      let config: ModalOptions = {
+        initialState: {
+          idSample: this.idSample,
+          typeAnnex: 'annex-assets-classification',
+          callback: async (typeDocument: number, typeSign: string) => {
+            if (typeDocument && typeSign) {
+              this.showReportInfo(
+                typeDocument,
+                typeSign,
+                'annex-assets-classification'
+              );
+            }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.bsModalRef = this.modalService.show(AnnexKFormComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.bsModalRef = this.modalService.show(AnnexKFormComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Para generar el Anexo K es necesario seleccionar alguna deductiva'
+      );
+    }
+  }
+
+  checkSampleDeductives() {
+    return new Promise((resolve, reject) => {
+      this.params.getValue()['filter.sampleId'] = `$eq:${this.idSample}`;
+      this.samplingGoodService
+        .getAllSampleDeductives(this.params.getValue())
+        .subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: () => {
+            resolve(false);
+          },
+        });
+    });
   }
 
   getSearchForm(searchForm: any) {
