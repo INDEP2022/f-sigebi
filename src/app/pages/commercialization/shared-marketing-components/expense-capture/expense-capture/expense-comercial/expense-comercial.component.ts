@@ -191,6 +191,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     console.log(this.form.value);
     let newBody = { ...this.form.value };
     delete newBody.publicLot;
+    delete newBody.contractDescription;
     delete newBody.policie;
     delete newBody.descontract;
     delete newBody.padj;

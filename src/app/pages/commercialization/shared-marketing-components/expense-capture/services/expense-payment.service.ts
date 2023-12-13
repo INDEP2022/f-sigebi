@@ -22,7 +22,7 @@ export class ExpensePaymentService extends HttpService {
       };
     }
     if (this.dataService.address) {
-      body = { ...body, address: this.dataService.address };
+      body = { ...body, pAddress: this.dataService.address };
     }
     return this.post<IListResponseMessage<IContract>>(
       'application/validate-contract',
@@ -46,7 +46,7 @@ export class ExpensePaymentService extends HttpService {
       };
     }
     if (self.dataService.address) {
-      body = { ...body, address: self.dataService.address };
+      body = { ...body, pAddress: self.dataService.address };
     }
     return self.post<IListResponseMessage<IContract>>(
       'application/validate-contract',

@@ -57,7 +57,6 @@ export class DataReceiptComponent implements OnInit {
   }
   listPayments = ['TRANSFERENCIA', 'CHEQUE', 'INTERCAMBIO'];
   columns = { ...COLUMNS };
-  contracts = [];
   listComproaf = [
     { id: '1', value: 'INDEP' },
     { id: '2', value: 'MANDATO' },
@@ -315,26 +314,14 @@ export class DataReceiptComponent implements OnInit {
         callback: (obj: { selected: IContract }) => {
           let { selected } = obj;
           if (selected) {
-            this.contracts = [];
-            this.contracts.push({
-              value: selected.contractNumber,
-              label: selected.contractNumber + '-' + selected.desContract,
-            });
             this.contractNumber.setValue(selected.contractNumber);
+            this.form.get('contractDescription').setValue(selected.desContract);
             this.form.get('descontract').setValue(selected.desContract);
             this.form.get('clkpv').setValue(selected.clkpv);
-            setTimeout(() => {
-              this.form.get('padj').setValue(selected.padj);
-            }, 100);
-            setTimeout(() => {
-              this.form.get('psadj').setValue(selected.psadj);
-            }, 200);
-            setTimeout(() => {
-              this.form.get('pssadj').setValue(selected.pssadj);
-            }, 300);
-            setTimeout(() => {
-              this.form.get('adj').setValue(selected.adj);
-            }, 400);
+            this.form.get('padj').setValue(selected.padj);
+            this.form.get('psadj').setValue(selected.psadj);
+            this.form.get('pssadj').setValue(selected.pssadj);
+            this.form.get('adj').setValue(selected.adj);
           }
         },
       },
