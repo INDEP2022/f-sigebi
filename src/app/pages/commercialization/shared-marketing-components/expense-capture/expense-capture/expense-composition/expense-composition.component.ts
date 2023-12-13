@@ -454,7 +454,7 @@ export class ExpenseCompositionComponent
               if (errors.length === 0) {
                 this.alert(
                   'success',
-                  'Se realizco el cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'Se realizado el cambio de Clasificación a Vehiculo con Reporte de Robo',
                   ''
                 );
               }
@@ -789,7 +789,7 @@ export class ExpenseCompositionComponent
     this.loading = false;
     if (this.validateAndProcess) {
       setTimeout(() => {
-        this.expenseCaptureDataService.validateAndProcessSolicitud();
+        this.expenseCaptureDataService.validateAndProcessSolicitud(true);
         this.validateAndProcess = false;
       }, 500);
     }

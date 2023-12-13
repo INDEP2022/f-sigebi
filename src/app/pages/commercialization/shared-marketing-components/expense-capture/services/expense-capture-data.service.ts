@@ -442,7 +442,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         row => row.changeStatus && row.changeStatus === true
       );
       if (VALIDA_DET.length === 0) {
-        this.alert('error', 'Debe seleccionar al menos un bien', '');
+        this.alert(
+          'error',
+          'Debe seleccionar al menos un bien para cambio estatus',
+          ''
+        );
         return false;
       } else {
         return true;
@@ -474,9 +478,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     // this.comerDetService.remove()
   }
 
-  validateAndProcessSolicitud() {
-    if (this.VALIDA_DET()) {
+  validateAndProcessSolicitud(validate: boolean = false) {
+    if (this.VALIDA_DET(validate)) {
       this.PROCESA_SOLICITUD();
+    } else {
+      this.finishProcessSolicitud.next(false);
     }
   }
 
@@ -484,7 +490,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
-    // debugger;
+    debugger;
     const resultParams = await this.readParams(this.conceptNumber.value);
     console.log(resultParams);
 
@@ -619,7 +625,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private async MONTO_TOT_EVENTO() {
-    let lotFinalPrice = 0;
+    let lotFinalPrice = await firstValueFrom(
+      this.accountingService.getLotFinalTotal(this.expenseNumber.value)
+    );
     if (lotFinalPrice) {
       if (
         lotFinalPrice !==
@@ -968,8 +976,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     if (!this.validateMonths()) return false;
     const TOT_CABECERA = +this.data.totDocument;
     const TOT_DETALLES = this.total;
+    this.totalMandatos = await firstValueFrom(
+      this.accountingService.getMandateTotal(this.expenseNumber.value)
+    );
     const TOT_MANDATOS = this.totalMandatos;
-    if (TOT_DETALLES === TOT_CABECERA) {
+    if (TOT_DETALLES === TOT_CABECERA && TOT_MANDATOS === TOT_DETALLES) {
     } else {
       this.alert(
         'error',

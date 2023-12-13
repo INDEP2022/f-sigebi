@@ -109,7 +109,6 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     this.getDataUser();
     this.dataService.updateFolio.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
-        debugger;
         const filterParams = new FilterParams();
         filterParams.addFilter('goodNumber', this.expenseNumber.value);
         filterParams.addFilter(
@@ -155,7 +154,6 @@ export class ScanFilesComponent extends BasePage implements OnInit {
 
   async generateFolio() {
     if (this.folioUniversal && this.folioUniversal.value) {
-      // debugger;
       this.alert('error', 'Generar Folio', 'El gasto ya cuenta con un folio');
       return;
     }
@@ -199,7 +197,6 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     let newArray =
       this.dataService.address === 'M' ? filterDataComposition : bienes;
     newArray.forEach(async (x, index) => {
-      // debugger;
       console.log(x);
       const DESCR =
         (this.dataService.address === 'M'
