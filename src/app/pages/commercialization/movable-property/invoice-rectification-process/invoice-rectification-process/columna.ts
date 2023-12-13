@@ -62,4 +62,9 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
+  year: {
+    title: 'Año',
+    type: 'string',
+    sort: false,
+  },
 };

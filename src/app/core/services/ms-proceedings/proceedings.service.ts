@@ -43,7 +43,6 @@ export class ProceedingsService extends HttpService {
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
-    console.log(' PROCEEDINGS SERVICE CONSTRUCTOR');
   }
 
   // getAll(params?: ListParams): Observable<IListResponse<IProceedings>> {

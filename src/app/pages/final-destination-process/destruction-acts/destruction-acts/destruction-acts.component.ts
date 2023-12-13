@@ -136,6 +136,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   //PARA MOSTRAR
   di_status_good: any = null;
   columnFilters: any = [];
+  completeFilters: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -207,16 +208,37 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
-          if (this.columnFilters.lenght > 0) {
-            if (!this.columnFilters.find(filters)) {
-              this.columnFilters.push(filters);
+          this.completeFilters = filters;
+          filters.map((filter: any) => {
+            let searchFilter = SearchFilter.ILIKE;
+            if (filter.search !== '') {
+              this.columnFilters[
+                filter.field
+              ] = `${searchFilter}:${filter.search}`;
+            }
+          });
+          this.searchGoodsByExp();
+        }
+
+        /* if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          console.log(this.columnFilters);
+          console.log(this.columnFilters.length);
+          if (this.columnFilters.length > 0) {
+            if (
+              this.columnFilters.find(
+                (e: any) => e.field == filters[0].field
+              ) == null
+            ) {
+              this.columnFilters.push(filters[0]);
             }
           } else {
-            this.columnFilters.push(filters);
+            console.log('Hizo esto');
+            this.columnFilters.push(filters[0]);
           }
 
           this.searchGoodsByExp();
-        }
+        } */
       });
   }
 
@@ -547,7 +569,6 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.serviceProcVal.blkBie(body).subscribe(
         res => {
-          console.log(res);
           resolve({
             avalaible: res.available == 'N' ? false : true,
             bamparo: res.bamparo,
@@ -574,19 +595,15 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
     console.log(this.columnFilters);
-    if (this.columnFilters.length > 0) {
-      console.log('Si entro');
-      this.columnFilters.forEach((element: any) => {
-        if (['', null, undefined].includes(element[0].search)) {
-          paramsF.addFilter(
-            element[0].field,
-            element[0].search,
-            element[0].filter
-          );
-        }
-      });
+    for (let data of this.completeFilters) {
+      if (data.search != null && data.search != '') {
+        paramsF.addFilter(
+          data.field,
+          data.search,
+          data.field != 'goodId' ? SearchFilter.ILIKE : SearchFilter.EQ
+        );
+      }
     }
-    console.log(paramsF.getParams());
 
     this.goodService.getAllFilterDetail(paramsF.getParams()).subscribe(
       async res => {
@@ -594,7 +611,6 @@ export class DestructionActsComponent extends BasePage implements OnInit {
           res.data.map(async (e: any) => {
             const resp = await this.validatedGood(e);
             const jsonResp = JSON.parse(JSON.stringify(resp));
-            console.log(jsonResp);
             return {
               ...e,
               avalaible: jsonResp.avalaible,

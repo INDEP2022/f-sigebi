@@ -60,6 +60,7 @@ export class InvoiceRectificationProcessComponent
     PDIRECCION: 'M',
   };
   totalItems: number = 0;
+  totalItems2: number = 0;
   loadingSearch: boolean = false;
   isSearch: boolean = false;
   @ViewChild('modal', { static: false }) modal?: ModalDirective;
@@ -70,6 +71,7 @@ export class InvoiceRectificationProcessComponent
   };
   loading2: boolean = false;
   valResult: boolean = false;
+  dataJob: any = null;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -88,7 +90,18 @@ export class InvoiceRectificationProcessComponent
     super();
     this._settings = {
       ...this.settings,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        edit: false,
+        delete: true,
+        add: false,
+      },
+      delete: {
+        deleteButtonContent:
+          '<i class="fa ml-5 fa-trash text-danger mx-2"></i>',
+        confirmDelete: true,
+      },
       columns: { ...COLUMNS },
     };
     this._settings.hideSubHeader = false;
@@ -177,6 +190,7 @@ export class InvoiceRectificationProcessComponent
               lastnamePat: () => (searchFilter = SearchFilter.ILIKE),
               lastnameMat: () => (searchFilter = SearchFilter.ILIKE),
               inrepresentation: () => (searchFilter = SearchFilter.ILIKE),
+              year: () => (searchFilter = SearchFilter.EQ),
             };
 
             search[filter.field]();
@@ -254,6 +268,8 @@ export class InvoiceRectificationProcessComponent
       this.filterParams.getValue()[
         'filter.jobNot'
       ] = `${SearchFilter.EQ}:${jobNot}`;
+    } else {
+      delete this.filterParams.getValue()['filter.jobNot'];
     }
     if (expDate) {
       params['filter.expDate'] = `${SearchFilter.EQ}:${
@@ -266,6 +282,8 @@ export class InvoiceRectificationProcessComponent
           ? expDate.split('/').reverse().join('-')
           : this.datePipe.transform(expDate, 'yyyy-MM-dd')
       }`;
+    } else {
+      delete this.filterParams.getValue()['filter.expDate'];
     }
 
     if (series) {
@@ -273,24 +291,32 @@ export class InvoiceRectificationProcessComponent
       this.filterParams.getValue()[
         'filter.series'
       ] = `${SearchFilter.ILIKE}:${series}`;
+    } else {
+      delete this.filterParams.getValue()['filter.series'];
     }
     if (Invoice) {
       params['filter.Invoice'] = `${SearchFilter.EQ}:${Invoice}`;
       this.filterParams.getValue()[
         'filter.Invoice'
       ] = `${SearchFilter.EQ}:${Invoice}`;
+    } else {
+      delete this.filterParams.getValue()['filter.Invoice'];
     }
     if (name) {
       params['filter.name'] = `${SearchFilter.ILIKE}:${name}`;
       this.filterParams.getValue()[
         'filter.name'
       ] = `${SearchFilter.ILIKE}:${name}`;
+    } else {
+      delete this.filterParams.getValue()['filter.name'];
     }
     if (lastnameMat) {
       params['filter.lastnameMat'] = `${SearchFilter.ILIKE}:${lastnameMat}`;
       this.filterParams.getValue()[
         'filter.lastnameMat'
       ] = `${SearchFilter.ILIKE}:${lastnameMat}`;
+    } else {
+      delete this.filterParams.getValue()['filter.lastnameMat'];
     }
 
     if (lastnamePat) {
@@ -298,6 +324,8 @@ export class InvoiceRectificationProcessComponent
       this.filterParams.getValue()[
         'filter.lastnamePat'
       ] = `${SearchFilter.ILIKE}:${lastnamePat}`;
+    } else {
+      delete this.filterParams.getValue()['filter.lastnamePat'];
     }
 
     if (inrepresentation) {
@@ -307,6 +335,8 @@ export class InvoiceRectificationProcessComponent
       this.filterParams.getValue()[
         'filter.inrepresentation'
       ] = `${SearchFilter.ILIKE}:${inrepresentation}`;
+    } else {
+      delete this.filterParams.getValue()['filter.inrepresentation'];
     }
 
     this.loadingSearch = true;
@@ -349,7 +379,7 @@ export class InvoiceRectificationProcessComponent
           this.loadingSearch = false;
           this.isSearch = true;
           const rectInvoice = resp.data[0];
-
+          this.dataJob = rectInvoice;
           rectInvoice.expDate = rectInvoice.expDate
             ? rectInvoice.expDate.split('-').reverse().join('/')
             : null;
@@ -458,8 +488,10 @@ export class InvoiceRectificationProcessComponent
           : saveData.billDate;
 
       this.comerRectInoviceService.create(saveData).subscribe({
-        next: () => {
+        next: resp => {
+          console.log('resp', resp);
           this.isSearch = true;
+          this.dataJob = resp;
           this.alert(
             'success',
             'Rectificación de Factura',
@@ -467,7 +499,15 @@ export class InvoiceRectificationProcessComponent
           );
         },
         error: err => {
-          this.alert('error', 'Error', err.error.message);
+          if (err.error.message == 'Los ids ya fueron registrados') {
+            this.alert(
+              'warning',
+              "Los ID's ya fueron registrados",
+              'Existe un registro con el No. Oficio en el Año de Expedición, verifique'
+            );
+          } else {
+            this.alert('error', 'Error', err.error.message);
+          }
         },
       });
     }
@@ -507,8 +547,10 @@ export class InvoiceRectificationProcessComponent
           : saveData.billDate;
 
       this.comerRectInoviceService.create(saveData).subscribe({
-        next: () => {
+        next: resp => {
           this.isSearch = true;
+          this.dataJob = resp;
+          // this.alert("success","aqui","")
         },
         error: err => {
           this.alert('error', 'Error', err.error.message);
@@ -518,7 +560,7 @@ export class InvoiceRectificationProcessComponent
   }
 
   setYear(date?: string) {
-    if (this.isSearch) return;
+    // if (this.isSearch) return;
     const { expDate } = this.form.value;
     let year =
       typeof expDate == 'string'
@@ -530,11 +572,15 @@ export class InvoiceRectificationProcessComponent
   }
 
   getParamElabora(params?: ListParams) {
-    params[
-      'filter.address'
-    ] = `${SearchFilter.EQ}:${this.parameter.PDIRECCION}`;
-    params['filter.parameter'] = `${SearchFilter.EQ}:USUELARECT`;
-    this.parameterModsService.getAll(params).subscribe({
+    params['filter.direccion'] = `${this.parameter.PDIRECCION}`;
+    params['filter.parametro'] = `USUELARECT`;
+
+    if (params?.text) params['filter.valor'] = params.text;
+    // params[
+    //   'filter.address'
+    // ] = `${SearchFilter.EQ}:${this.parameter.PDIRECCION}`;
+    // params['filter.parameter'] = `${SearchFilter.EQ}:USUELARECT`;
+    this.parameterModsService.getAll_(params).subscribe({
       next: resp => {
         this.dataElabora = new DefaultSelect(resp.data, resp.count);
       },
@@ -543,12 +589,13 @@ export class InvoiceRectificationProcessComponent
       },
     });
   }
+
   getParamVerifica(params?: ListParams) {
-    params[
-      'filter.address'
-    ] = `${SearchFilter.EQ}:${this.parameter.PDIRECCION}`;
-    params['filter.parameter'] = `${SearchFilter.EQ}:USUVERRECT`;
-    this.parameterModsService.getAll(params).subscribe({
+    params['filter.direccion'] = `${this.parameter.PDIRECCION}`;
+    params['filter.parametro'] = `USUVERRECT`;
+
+    if (params?.text) params['filter.valor'] = params.text;
+    this.parameterModsService.getAll_(params).subscribe({
       next: resp => {
         this.dataVerifica = new DefaultSelect(resp.data, resp.count);
       },
@@ -559,11 +606,16 @@ export class InvoiceRectificationProcessComponent
   }
 
   getParamExpide(params?: ListParams) {
-    params[
-      'filter.address'
-    ] = `${SearchFilter.EQ}:${this.parameter.PDIRECCION}`;
-    params['filter.parameter'] = `${SearchFilter.EQ}:USUEXPRECT`;
-    this.parameterModsService.getAll(params).subscribe({
+    params['filter.direccion'] = `${this.parameter.PDIRECCION}`;
+    params['filter.parametro'] = `USUEXPRECT`;
+
+    if (params?.text) params['filter.valor'] = params.text;
+
+    // params[
+    //   'filter.address'
+    // ] = `${SearchFilter.EQ}:${this.parameter.PDIRECCION}`;
+    // params['filter.parameter'] = `${SearchFilter.EQ}:USUEXPRECT`;
+    this.parameterModsService.getAll_(params).subscribe({
       next: resp => {
         this.dataExpide = new DefaultSelect(resp.data, resp.count);
       },
@@ -618,14 +670,14 @@ export class InvoiceRectificationProcessComponent
       .patchValue(`${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00`);
   }
 
-  cleanData() {
+  async cleanData() {
     this.form.reset();
     this.dataFilter.load([]);
     this.dataFilter.refresh();
 
     this.dataFilter2.load([]);
     this.dataFilter2.refresh();
-    this.totalItems = 0;
+    this.totalItems2 = 0;
 
     this.rowSelected = null;
     this.valResult = false;
@@ -633,6 +685,7 @@ export class InvoiceRectificationProcessComponent
     this.totalItems = 0;
     this.isSearch = false;
 
+    this.dataJob = null;
     this.filterParams.getValue().removeAllFilters();
     // this.filterParams.getValue() = {}
     this.form
@@ -641,10 +694,42 @@ export class InvoiceRectificationProcessComponent
   }
 
   openModal(): void {
-    const modalRef = this.modalService.show(NewImageModalComponent, {
+    const { jobNot, year } = this.form.value;
+    if (!jobNot) {
+      this.alert('warning', 'Ingrese un Número de Oficio', '');
+      return;
+    }
+
+    // if (!year) {
+    //   this.alert('warning', 'Ingrese una Fecha de Expedición', '');
+    //   return;
+    // }
+
+    let config: ModalOptions = {
+      initialState: {
+        dataJob: this.dataJob,
+        jobNot,
+        year,
+        callback: (form: any) => {
+          if (form) {
+            const { billDate } = this.form.value;
+            if (!billDate) {
+              this.form.get('name').setValue(form.name);
+              this.form.get('lastnamePat').setValue(form.lastName);
+              this.form.get('lastnameMat').setValue(form.motherlastName);
+              this.form.get('billDate').setValue(form.date);
+            }
+          }
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
+    };
+    this.modalService.show(NewImageModalComponent, config);
+    // const modalRef = this.modalService.show(NewImageModalComponent, {
+    //   class: 'modal-lg modal-dialog-centered',
+    //   ignoreBackdropClick: true,
+    // });
   }
 
   openForm(data: any) {}
@@ -653,7 +738,7 @@ export class InvoiceRectificationProcessComponent
     const { jobNot } = this.form.value;
 
     if (!jobNot) {
-      this.alert('error', 'Error', 'Ingrese un Número de Oficio');
+      this.alert('warning', 'Ingrese un Número de Oficio', '');
       return;
     }
 
@@ -670,9 +755,9 @@ export class InvoiceRectificationProcessComponent
             callback: (data: any) => {
               console.log(data);
             },
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true, //ignora el click fuera del modal
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
         };
         this.modalService.show(PreviewDocumentsComponent, config);
       },
@@ -713,7 +798,9 @@ export class InvoiceRectificationProcessComponent
   }
 
   getFirmantes() {
-    const { issues } = this.form.value;
+    const { issues, jobNot } = this.form.value;
+
+    if (!jobNot) return;
 
     const user = this.authService.decodeToken();
 
@@ -759,7 +846,12 @@ export class InvoiceRectificationProcessComponent
     const parr3 = await this.getValor('PARRAFO3_REF');
     const parr4 = await this.getValor('PARRAFO4_REF');
 
-    let date = this.datePipe.transform(attentionDate, 'yyyy/MM/dd');
+    let date: any = null;
+    if (typeof attentionDate == 'string') {
+      date = attentionDate;
+    } else {
+      date = this.datePipe.transform(attentionDate, 'yyyy/MM/dd');
+    }
 
     const day = Number(date.split('/')[2]);
     const month = Number(date.split('/')[1]);
@@ -782,7 +874,6 @@ export class InvoiceRectificationProcessComponent
     AUX_CADENA = parr1;
     AUX_FECHA = `${day} de ${months[Number(month - 1)]} del ${year}`;
     if (AUX_CADENA) CADENA = AUX_CADENA.replace('&DIA', AUX_FECHA);
-
     AUX_HORA =
       typeof hourAttention == 'string'
         ? this.datePipe.transform(
@@ -829,22 +920,27 @@ export class InvoiceRectificationProcessComponent
 
   async getValor(param: string) {
     const filter = new ListParams();
-    filter['filter.parameter'] = `${SearchFilter.EQ}:${param}`;
+    filter['filter.parametro'] = `${param}`;
     return firstValueFrom(
-      this.parameterModsService.getAll(filter).pipe(
-        map(resp => resp.data[0].value),
+      this.parameterModsService.getAll_(filter).pipe(
+        map(resp => resp.data[0].valor),
         catchError(() => of(null))
       )
     );
   }
 
   openModalSeparate(context?: any) {
-    const { jobNot } = this.form.value;
+    const { jobNot, year } = this.form.value;
 
     if (!jobNot) {
-      this.alert('error', 'Error', 'Ingrese un número de oficio');
+      this.alert('warning', 'Ingrese un número de oficio', '');
       return;
     }
+
+    // if (!year) {
+    //   this.alert('warning', 'Ingrese una Fecha de Expedición', '');
+    //   return;
+    // }
 
     this.saveDataSilent();
 
@@ -918,6 +1014,7 @@ export class InvoiceRectificationProcessComponent
     // this.loadingSearch = false;
     this.isSearch = true;
     const rectInvoice = this.rowSelected;
+    this.dataJob = rectInvoice;
 
     rectInvoice.expDate = rectInvoice.expDate
       ? rectInvoice.expDate.split('-').reverse().join('/')
@@ -953,11 +1050,11 @@ export class InvoiceRectificationProcessComponent
     this.rowSelected = row.data;
   }
 
-  getComerRectInoviceTable() {
+  async getComerRectInoviceTable() {
     this.loading2 = true;
     this.dataFilter2.load([]);
     this.dataFilter2.refresh();
-    this.totalItems = 0;
+    this.totalItems2 = 0;
 
     let params = {
       ...this.filterParams.getValue(),
@@ -968,15 +1065,61 @@ export class InvoiceRectificationProcessComponent
       next: resp => {
         this.dataFilter2.load(resp.data);
         this.dataFilter2.refresh();
-        this.totalItems = resp.count;
+        this.totalItems2 = resp.count;
         this.loading2 = false;
       },
       error: err => {
         this.dataFilter2.load([]);
         this.dataFilter2.refresh();
-        this.totalItems = 0;
+        this.totalItems2 = 0;
         this.loading2 = false;
       },
+    });
+  }
+
+  removeOficio(data: any) {
+    this.alertQuestion(
+      'question',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(answ => {
+      if (answ.isConfirmed) {
+        let body = {
+          jobNot: data.jobNot,
+          year: data.year,
+        };
+        this.comerRectInoviceService.remove(body).subscribe({
+          next: async () => {
+            this.alert('success', 'Registro Eliminado Correctamente', '');
+
+            if (
+              this.dataJob.jobNot == data.jobNot &&
+              this.dataJob.year == data.year
+            ) {
+              await this.cleanData();
+              await this.getComerRectInoviceTable();
+            } else {
+              await this.getComerRectInoviceTable();
+            }
+          },
+          error: err => {
+            if (err.status == 500) {
+              if (
+                err.error.message.includes('violates foreign key constraint')
+              ) {
+                this.alert(
+                  'warning',
+                  'Debe eliminar las relaciones de este registro',
+                  ''
+                );
+                return;
+              }
+            } else {
+              this.alert('error', 'Error', err.error.message);
+            }
+          },
+        });
+      }
     });
   }
 }
