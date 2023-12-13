@@ -271,23 +271,32 @@
       </form-field>
     </div>
 
-      <!-- Datos Agregados de oracle -->
-        <div class="col-md-4" *ngIf="showInput('destinationManagement')">
-          <form-field [control]="registerForm.get('destinationManagement')" label="Gesti&oacute;n de Destino">
-            <input type="text" maxlength="100" class="form-control" formControlName="destinationManagement" />
-          </form-field>
-        </div>
-        <div class="col-md-4" *ngIf="showInput('transferEntNotes')">
-          <form-field [control]="registerForm.get('transferEntNotes')" label="Notas Ent&#46; Transferente">
-            <textarea rows="3" formControlName="transferEntNotes" maxlength="1000" class="form-control"></textarea>
-          </form-field>
-        </div>
-
+    <!-- Datos Agregados de oracle -->
+    <div class="col-md-4" *ngIf="showInput('destinationManagement')">
+      <form-field
+        [control]="registerForm.get('destinationManagement')"
+        label="Gesti&oacute;n de Destino">
+        <input
+          type="text"
+          maxlength="100"
+          class="form-control"
+          formControlName="destinationManagement" />
+      </form-field>
+    </div>
+    <div class="col-md-4" *ngIf="showInput('transferEntNotes')">
+      <form-field
+        [control]="registerForm.get('transferEntNotes')"
+        label="Notas Ent&#46; Transferente">
+        <textarea
+          rows="3"
+          formControlName="transferEntNotes"
+          maxlength="1000"
+          class="form-control"></textarea>
+      </form-field>
+    </div>
   </div>
   <!-- Datos Agregados de oracle -->
-  <div class="row pt-5">
-
-  </div>
+  <div class="row pt-5"></div>
   <!-- Fin -->
   <!-- Se aumento datos del codigo oracle transferente-->
   <div class="row">
@@ -302,7 +311,9 @@
           class="form-control" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 120 || showInput('trialType')">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="transference == 120 || showInput('trialType')">
       <form-field [control]="registerForm.get('trialType')" label="Tipo Juicio">
         <input
           type="text"
@@ -313,7 +324,11 @@
     </div>
     <div
       class="col-md-4 pt-5"
-      *ngIf="processDetonate == 'AMPARO' || transference == 3">
+      *ngIf="
+        processDetonate == 'AMPARO' ||
+        transference == 3 ||
+        showInput('protectNumber')
+      ">
       <form-field
         [control]="registerForm.get('protectNumber')"
         label="N&uacute;mero Amparo">
@@ -325,7 +340,13 @@
           min="0" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="
+        transference == 1 ||
+        transference == 3 ||
+        showInput('circumstantialRecord')
+      ">
       <form-field
         [control]="registerForm.get('circumstantialRecord')"
         label="Acta Circunstanciada">
@@ -336,7 +357,11 @@
           maxlength="100" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="
+        transference == 1 || transference == 3 || showInput('previousInquiry')
+      ">
       <form-field
         [control]="registerForm.get('previousInquiry')"
         label="Averiguacion Previa">
@@ -347,7 +372,9 @@
           maxlength="100" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="transference == 1 || transference == 3 || showInput('lawsuit')">
       <form-field [control]="registerForm.get('lawsuit')" label="Causa Penal">
         <input
           type="text"
@@ -358,7 +385,9 @@
     </div>
     <!-- </div>
   <div class="row pt-5"> -->
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="transference == 1 || transference == 3 || showInput('tocaPenal')">
       <form-field [control]="registerForm.get('tocaPenal')" label="Toca Penal">
         <input
           type="text"
@@ -367,7 +396,9 @@
           formControlName="tocaPenal" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="transference == 1 || transference == 3 || showInput('crime')">
       <form-field [control]="registerForm.get('crime')" label="Delito">
         <input
           type="text"
@@ -378,7 +409,11 @@
     </div>
     <!-- </div>
   <div class="row pt-5" > -->
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="
+        transference == 1 || transference == 3 || showInput('domainExtinction')
+      ">
       <form-field
         [control]="registerForm.get('domainExtinction')"
         label="Extinci&oacute;n de Dominio">

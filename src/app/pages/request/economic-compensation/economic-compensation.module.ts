@@ -11,6 +11,7 @@ import { RegisterAppointmentTabComponent } from './components/register-appointme
 import { RegisterDictumInformationComponent } from './components/register-dictum-information/register-dictum-information.component';
 import { RegisterDictumValidationComponent } from './components/register-dictum-validation/register-dictum-validation.component';
 import { EconomicCompensationRoutingModule } from './economic-compensation-routing.module';
+import { ChangeLegalStatusComponent } from './change-legal-status/change-legal-status.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { EconomicCompensationRoutingModule } from './economic-compensation-routi
     EntryOrderViewComponent,
     RegisterDictumValidationComponent,
     RegisterDictumInformationComponent,
+    ChangeLegalStatusComponent,
   ],
   imports: [
     CommonModule,
