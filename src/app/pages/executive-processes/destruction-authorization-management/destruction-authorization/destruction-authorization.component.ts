@@ -760,6 +760,11 @@ export class DestructionAuthorizationComponent
     ) {
       this.newProceedingFlag = true;
       localStorage.setItem('newProceedingFlag', 'S');
+    } else {
+      localStorage.setItem(
+        'idProceeding_FESTATUSRGA',
+        this.proceedingForm.get('id').value
+      );
     }
 
     console.log(this.detailProceedingsList2.count());
@@ -1637,6 +1642,7 @@ export class DestructionAuthorizationComponent
         this.alert('info', '', `${resp.aceptados}, ${resp.rechazados}`);
         this.flatGoodFlag = false;
         this.getProceedingGoods();
+        this.massiveSave();
         console.log(resp);
       },
       error: err => {
