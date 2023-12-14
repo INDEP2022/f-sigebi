@@ -270,6 +270,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
             await firstValueFrom(
               this.serviceDocuments.update(createDocument.id, modelDocument)
             );
+            localStorage.setItem('fcomer084I_folio', createDocument.id + '');
           }
         }
       }
@@ -278,6 +279,12 @@ export class ScanFilesComponent extends BasePage implements OnInit {
 
   goToScan() {
     localStorage.setItem('eventExpense', JSON.stringify(this.dataService.data));
+    if (this.dataService.address !== 'M') {
+      localStorage.setItem(
+        'fcomer084I_folio',
+        JSON.stringify(this.folioUniversal.value)
+      );
+    }
 
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: {
