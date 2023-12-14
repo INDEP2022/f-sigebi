@@ -760,6 +760,11 @@ export class DestructionAuthorizationComponent
     ) {
       this.newProceedingFlag = true;
       localStorage.setItem('newProceedingFlag', 'S');
+    } else {
+      localStorage.setItem(
+        'idProceeding_FESTATUSRGA',
+        this.proceedingForm.get('id').value
+      );
     }
 
     console.log(this.detailProceedingsList2.count());
