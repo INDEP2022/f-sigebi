@@ -626,8 +626,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = true;
         this.turnReq = true;
 
-        this.docRequest = true; //VERIFICAR
-
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
         this.signedReport = true;

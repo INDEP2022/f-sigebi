@@ -180,7 +180,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       };
     case 'validate-eye-visit-similar-goods':
       return {
-        title: `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${requestId} ${contributor}`,
+        title: `Bienes Similares: Elaborar Oficio de Respuesta, No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/response-letter-similar-goods',
         process: 'BSValidarResultadoVisitaOcular',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -224,7 +224,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       };
     case 'validate-opinion-compensation':
       return {
-        title: `, No. Solicitud ${requestId} ${contributor}`,
+        title: `Notificación al Contribuyente (Resarcimiento EN ESPECIE), No. Solicitud ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/notification-taxpayer-compensation',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -273,7 +273,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'request-economic-resources':
       return {
-        title: `Revisión Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud: ${requestId}${contributor}`,
+        title: `Revisión Lineamientos Resarcimiento (NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/review-economic-guidelines',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
