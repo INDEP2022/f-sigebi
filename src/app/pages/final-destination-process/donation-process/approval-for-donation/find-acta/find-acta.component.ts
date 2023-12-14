@@ -65,7 +65,7 @@ export class FindActaComponent extends BasePage implements OnInit {
       actions: {
         title: 'Acciones',
         delete: true,
-        edit: true,
+        edit: false,
         add: false,
       },
       columns: {
