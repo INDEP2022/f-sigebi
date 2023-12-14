@@ -99,6 +99,7 @@ export enum ENDPOINT_LINKS {
   Regulatory = 'catalog/regulatory',
   ResponseRepuve = 'catalog/response-repuve',
   Response = 'catalog/response',
+  Reports = 'catalog/reports',
   RevisionReason = 'catalog/revision-reason',
   RevisionReasonAll = 'catalog/revision-reason/get-all',
   RevisionReasonAll2 = 'revision-reason/get-all',

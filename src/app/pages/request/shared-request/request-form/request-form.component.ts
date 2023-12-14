@@ -32,6 +32,7 @@ import { StationService } from '../../../../core/services/catalogs/station.servi
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
 import { RequestService } from '../../../../core/services/requests/request.service';
 import { getConfigAffair } from '../../request-complementary-documentation/request-comp-doc-tasks/catalog-affair';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-create-request',
@@ -87,6 +88,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   selectedRegDel: any = null;
   displayOfficeCenter: boolean = false;
+  currentRequest: any = null;
 
   constructor(
     public fb: FormBuilder,
@@ -124,10 +126,11 @@ export class RequestFormComponent extends BasePage implements OnInit {
         if (data != null) {
           this.idTransferer = data;
           this.getStation(data);
-        } else {
-          this.requestForm.controls['stationId'].setValue(null);
-          this.requestForm.controls['authorityId'].setValue(null);
         }
+
+        this.requestForm.controls['stationId'].setValue(null);
+        this.requestForm.controls['authorityId'].setValue(null);
+
       }
     );
 
@@ -137,6 +140,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           this.idStation = data;
           this.getAuthority(new ListParams());
         }
+        this.requestForm.controls['authorityId'].setValue(null);
       }
     );
   }
@@ -270,7 +274,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
         this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -383,7 +387,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     }
   }
 
-  getState(event: any): void {}
+  getState(event: any): void { }
 
   /*getIssue(event?: any, id?: string): void {
     let params = new ListParams();
@@ -478,8 +482,12 @@ export class RequestFormComponent extends BasePage implements OnInit {
         let date = this.requestForm.controls['applicationDate'].value;
         form.applicationDate = date.toISOString();
 
-        const createRequest = await this.createRequest(this.requestForm.value);
-        if (createRequest) {
+        if (isNullOrEmpty(this.currentRequest)) {
+          this.currentRequest = await this.createRequest(this.requestForm.value);
+          console.log('currentRequest', this.currentRequest);
+        }
+
+        if (this.currentRequest) {
           const updateRequest = await this.updateSavedRequest(form);
           if (updateRequest) {
             this.loadingTurn = false;
@@ -492,7 +500,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
               allowOutsideClick: false,
-            }).then(async result => {});
+            }).then(async result => { });
           }
         }
       }

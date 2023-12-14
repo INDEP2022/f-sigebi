@@ -24,6 +24,7 @@ import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
+import { ChangeLegalStatusComponent } from '../../economic-compensation/change-legal-status/change-legal-status.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
@@ -38,8 +39,10 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
+  protected override editReport: boolean;
+  protected override reportTable: string;
+  protected override reportId: string;
   protected override finish: boolean;
   protected override btnRequestAprove: boolean;
   protected override sendEmail: boolean;
@@ -77,6 +80,9 @@ export class RequestCompDocTasksComponent
   compensationAct: boolean = false;
   legalStatus: boolean = false;
   requestReview: boolean = false;
+  viewGuidelines: boolean = false;
+  dictumRegister: boolean = false;
+  orderView: boolean = false;
 
   /**
    * SET STATUS ACTIONS
@@ -113,22 +119,33 @@ export class RequestCompDocTasksComponent
   loadingTurn = false;
   nextTurn = true;
   validate = {
-    regdoc: false,
-    goods: false,
-    files: false,
-    vercom: false,
-    opinion: false,
-    valvisits: false,
-    signedNotify: false,
-    signedVisit: false,
-    signedDictum: false,
-    signedValDictum: false,
-    signedOffice: false,
-    guidelines: false,
-    genDictum: false,
-    genOffice: false,
-    genValDictum: false,
-    sendEmail: false,
+    //reportes firmar
+    signedNotify: false, //FIRMA DE REPORTE DE NOTIFICACION
+    signedVisit: false, //FIRMA DE REPORTE DE VISITA OCULAR
+    signedDictum: false, //FIRMA DE DICTAMEN RESARCIMIENTO
+    signedValDictum: false, //FIRMA DE VALIDACION DICTAMEN RESARCIMIENTO
+    signedOffice: false, //FIRMA DE OFICIO DESTINO
+    //reportes generar
+    genDictum: false, //GENERAR DICTAMEN RESARCIMIENTO
+    genOffice: false, //GENERAR OFFICIO DESTINO
+    genEconomicResources: false, //GENERAR RECURSOS ECONOMICOS
+    genValDictum: false, //GENERAR VALIDACION DICTAMEN
+    opinion: false, //DICTAMEN DE DEVOLUCION
+
+    //button
+    sendEmail: false, //NOTIFICACION AL CONTRIBUYENTE
+
+    //tabs
+    regdoc: false, //REGISTRAR DOCUMENTACIÓN
+    goods: false, //SELECCIONAR BIENES
+    files: false, //EXPEDIENTE
+    guidelines: false, //LINEAMINEOTS
+    valvisits: false, //VALIDAR VISITA OCULAR
+    vercom: false, //VERIFICAR CUMPLIMIENTO
+    dictudData: false, //DATOS DEL DICTAMEN
+    dictudDataReg: false, //DATOS DEL DICTAMENT REGISTRAR
+    registerAppointment: false, //REGISTRAR CITA
+    orderEntry: false, //ORDEN DE INGRESO
   };
 
   /* INJECTIONS
@@ -246,7 +263,12 @@ export class RequestCompDocTasksComponent
 
   openReport(): void {
     const initialState: Partial<CreateReportComponent> = {
-      signed: this.signedReport,
+      signReport: this.signedReport,
+      editReport: this.editReport,
+      tableName: this.reportTable,
+      documentTypeId: this.reportId,
+      process: this.process,
+      requestId: this.requestId.toString(),
     };
 
     const modalRef = this.modalService.show(CreateReportComponent, {
@@ -819,11 +841,26 @@ export class RequestCompDocTasksComponent
           //return false;
         }
 
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
         break;
       case 'approve-return':
         let getEstimatedRowCount = 0;
         let contenido = '';
         let docNameUcm = '';
+
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.signedDictum) {
+          //this.showError('Firme el dictamen de resarcimiento');
+          //return false;
+        }
 
         if (getEstimatedRowCount == 0 || isNullOrEmpty(contenido)) {
           //this.showError('Es necesario generar el Dictamen de Devolución');
@@ -867,14 +904,23 @@ export class RequestCompDocTasksComponent
           //return false;
         }
 
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
         break;
 
       case 'eye-visit-similar-goods':
+        //INTEGRAR EXPEDIENTE
+        //PROGRAMAR FECHAS
         break;
 
       case 'validate-eye-visit-similar-goods':
-        //Validar aprobacion de visita ocular
-
+        //REGISTRO
+        //VALIDAR RESULTADOS
+        //INTEGRAR EXPEDIENTE
+        //REPORTE RESULTADO VISITA OCULAR FIRMAR
         break;
 
       case 'validate-opinion-similar-goods':
@@ -882,7 +928,9 @@ export class RequestCompDocTasksComponent
           //this.showError('Firme el reporte de visita ocular');
           //return false;
         }
-
+        //REGISTRO
+        //INTEGRAR EXPEDIENTE
+        //REPORTE DE RESULTAOD FIRMAR
         break;
 
       //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
@@ -895,6 +943,11 @@ export class RequestCompDocTasksComponent
         if (!this.requestInfo.recordId) {
           //this.showError('Asocie solicitud de bienes');
           //return false;
+        }
+
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
         }
 
         if (!this.validate.files) {
@@ -928,6 +981,11 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
         if (!this.validate.files) {
           this.showError('Suba la documentación de la solicitud');
           return false;
@@ -945,10 +1003,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.guidelines) {
-          this.showError('Verifique las observaciones de lineamientos');
-          return false;
-        }
+        //DATOS DEL DICTAMEN
 
         if (!this.validate.files) {
           this.showError('Suba la documentación de la solicitud');
@@ -963,13 +1018,15 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'notification-taxpayer-compensation':
+        //DATOS DEL DICTAMEN
+
         if (!this.validate.files) {
           this.showError('Suba la documentación de la solicitud');
           return false;
         }
 
-        if (!this.validate.signedValDictum) {
-          this.showError('Firme la validación del dictamen de resarcimiento');
+        if (!this.validate.signedNotify) {
+          this.showError('Generar el reporte de notificación');
           return false;
         }
 
@@ -1006,6 +1063,127 @@ export class RequestCompDocTasksComponent
         if (!this.validate.signedOffice) {
           this.showError('Firmar el oficio destino');
           return false;
+        }
+        break;
+
+      /*NUMERARIO*/
+
+      case 'register-request-economic-compensation':
+        if (!this.validate.regdoc) {
+          this.showError('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showError('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        break;
+      case 'request-economic-resources':
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+        /*if (!this.validate.genEconomicResources) {
+          this.showError('Generar la solicitud de recursos económicos');
+          return false;
+        }*/
+
+        break;
+      case 'review-economic-guidelines':
+        if (!this.validate.guidelines) {
+          //this.showError('Verifique las observaciones de lineamientos');
+          //return false;
+        }
+        if (!this.validate.genDictum) {
+          //this.showError('Generar el dictamen de resarcimiento');
+          //return false;
+        }
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+
+        break;
+      case 'generate-results-economic-compensation':
+        if (!this.validate.signedDictum) {
+          //this.showError('Firme el dictamen de resarcimiento');
+          //return false;
+        }
+        if (!this.validate.guidelines) {
+          //this.showError('Verifique las observaciones de lineamientos');
+          //return false;
+        }
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+      case 'validate-dictum-economic':
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+        if (!this.validate.dictudData) {
+          //this.showError('Registre datos del dictamen');
+          //return false;
+        }
+        if (!this.validate.genValDictum) {
+          //this.showError('Genera la validación del dictamen de resarcimiento');
+          //return false;
+        }
+        break;
+      case 'delivery-notify-request':
+        if (!this.validate.dictudData) {
+          //this.showError('Registre datos del dictamen');
+          //return false;
+        }
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+        if (!this.validate.signedNotify) {
+          //this.showError('Firme el reporte de notificación');
+          //return false;
+        }
+        break;
+      case 'register-taxpayer-date':
+        if (!this.validate.registerAppointment) {
+          //this.showError('Registre datos de la cita');
+          //return false;
+        }
+        //REGISTRO DE CITA
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+      case 'register-pay-orde':
+        if (!this.validate.orderEntry) {
+          //this.showError('Registre datos de orden de ingreso');
+          //return false;
+        }
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+      case 'generate-compensation-act':
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+        if (!this.validate.genDictum) {
+          //this.showError('Genera el dictamen de resarcimiento');
+          //return false;
         }
         break;
     }
@@ -1099,7 +1277,16 @@ export class RequestCompDocTasksComponent
     //Turnamos la solicitud
   }
 
-  openDocument(action) {}
+  openModal(context?: Partial<ChangeLegalStatusComponent>) {
+    const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    /*modalRef.content.refresh.subscribe(next => {
+      if (next) this.getData();
+    });*/
+  }
 
   createDictumReturn() {}
 }

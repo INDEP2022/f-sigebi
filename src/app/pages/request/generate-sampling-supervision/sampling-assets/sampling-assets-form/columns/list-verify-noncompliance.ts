@@ -195,11 +195,11 @@ export const LIST_APPROV_VIEW = {
     sort: false,
   },
 
-  repositionDate: {
+  /*repositionDate: {
     title: 'Fecha Reposición',
     type: 'string',
     sort: false,
-  },
+  }, */
   evaluationResult: {
     title: 'Resultado Evaluación',
     type: 'string',
