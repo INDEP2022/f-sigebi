@@ -27,13 +27,13 @@
                   <i class="bx bx-search-alt bx-sm float-icon"></i>
                 </button>
               </div> -->
-            <form-field [control]="eventForm.get('event')">
-              <!-- <input
+            <form-field [control]="eventForm.get('event')" label="Evento Padre">
+              <input
                 formControlName="event"
                 class="form-control"
-                type="number" /> -->
+                type="number" />
 
-              <ngx-select
+              <!-- <ngx-select
                 (fetchItems)="getEventsParent($event)"
                 [searchOnInit]="true"
                 [data]="events"
@@ -42,17 +42,25 @@
                 bindLabel="eventDadId"
                 label="Evento Padre"
                 control="event">
-              </ngx-select>
+              </ngx-select> -->
             </form-field>
           </div>
-          <div class="col-sm-12 col-md-2" style="margin-top: 0.5%">
-            <button
+          <div class="col-sm-12 col-md-2">
+            <confirm-button
+              text="Buscar"
+              className="btn btn-primary active btn-sm"
+              [disabled]="eventForm.invalid"
+              [loading]="loading"
+              loadingText="Buscando"
+              (confirm)="getEvents()">
+            </confirm-button>
+            <!-- <button
               type="button"
               class="btn btn-primary active btn-sm"
-              (click)="getEvents()"
-              [disabled]="!eventForm.valid">
+              (click)=""
+              [disabled]="!.valid">
               Buscar<i class="bx bx-search-alt bx-sm float-icon"></i>
-            </button>
+            </button> -->
           </div>
         </div>
         <br />
