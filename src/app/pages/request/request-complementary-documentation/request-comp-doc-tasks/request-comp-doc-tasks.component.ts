@@ -39,7 +39,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override editReport: boolean;
   protected override reportTable: string;
   protected override reportId: string;
@@ -380,7 +381,7 @@ export class RequestCompDocTasksComponent
       'Confirmación',
       `¿Desea finalizar la solicitud con folio: ${this.requestId}`
     ).then(async question => {
-      if (question) {
+      if (question.isConfirmed) {
         //Cerrar tarea//
         let response = await this.updateTask(this.taskInfo.id);
         if (response) {
@@ -1184,6 +1185,60 @@ export class RequestCompDocTasksComponent
         if (!this.validate.genDictum) {
           //this.showError('Genera el dictamen de resarcimiento');
           //return false;
+        }
+        break;
+      case 'register-seizures':
+        if (!this.validate.regdoc) {
+          this.showError('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showError('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+      case 'register-abandonment-goods':
+        if (!this.validate.regdoc) {
+          this.showError('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showError('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+      case 'register-protections-goods':
+        if (!this.validate.regdoc) {
+          this.showError('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showError('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showError('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showError('Suba la documentación de la solicitud');
+          return false;
         }
         break;
     }

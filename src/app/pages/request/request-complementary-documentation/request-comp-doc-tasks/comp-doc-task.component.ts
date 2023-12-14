@@ -626,8 +626,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = true;
         this.turnReq = true;
 
-        this.docRequest = true; //VERIFICAR
-
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
         this.signedReport = true;
@@ -981,6 +979,38 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.finish = true;
 
+        break;
+
+      //NUEVO
+
+      case 'register-seizures':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-abandonment-goods':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-domain-extinction':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
         break;
 
       default:
