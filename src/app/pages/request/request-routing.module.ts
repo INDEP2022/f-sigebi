@@ -80,7 +80,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'restitution-assets-numeric',
+    path: 'restitution-assets-numeric/:id',
     loadChildren: async () =>
       (
         await import(
@@ -94,7 +94,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'deposit-payment-validations',
+    path: 'deposit-payment-validations/:id',
     loadChildren: async () =>
       (
         await import(

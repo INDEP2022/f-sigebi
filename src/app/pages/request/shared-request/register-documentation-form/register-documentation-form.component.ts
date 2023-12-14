@@ -31,8 +31,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   fileTypes: any[] = [];
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
@@ -230,61 +229,61 @@ export class RegisterDocumentationFormComponent
       ]);
     } else if (this.transference == 3) {
       this.registerForm.controls['lawsuit'].setValidators([
-        Validators.required,
+        Validators.required, Validators.pattern(STRING_PATTERN)
       ]);
       this.registerForm.controls['tocaPenal'].setValidators([
-        Validators.required,
+        Validators.required, Validators.pattern(STRING_PATTERN)
       ]);
       this.registerForm.controls['protectNumber'].setValidators([
-        Validators.required,
+        Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)
       ]);
     } else if (this.transference == 120) {
       this.registerForm.controls['trialType'].setValidators([
-        Validators.required,
+        Validators.required, Validators.pattern(STRING_PATTERN)
       ]);
     }
 
     if (this.processDetonate == 'AMPARO') {
       this.registerForm.controls['protectNumber'].setValidators([
-        Validators.required,
+        Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)
       ]);
     }
 
     switch (this.process) {
       case 'register-request-return':
         this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
+          Validators.required, Validators.pattern(STRING_PATTERN)
         ]);
         this.registerForm.controls['authorityOrdering'].setValidators([
-          Validators.required,
+          Validators.required, Validators.pattern(STRING_PATTERN)
         ]);
         break;
       case 'register-request-similar-goods':
         this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
+          Validators.required, Validators.pattern(STRING_PATTERN)
         ]);
         break;
       case 'register-request-compensation':
         this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
+          Validators.required, Validators.pattern(STRING_PATTERN)
         ]);
         break;
       case 'register-request-economic-compensation':
         this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
+          Validators.required, Validators.pattern(STRING_PATTERN)
         ]);
         break;
       case 'register-request-information-goods':
         this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
+          Validators.required, Validators.pattern(STRING_PATTERN)
         ]);
         break;
       case 'register-request-protection':
         this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
+          Validators.required, Validators.pattern(STRING_PATTERN)
         ]);
         this.registerForm.controls['protectNumber'].setValidators([
-          Validators.required,
+          Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)
         ]);
         break;
     }

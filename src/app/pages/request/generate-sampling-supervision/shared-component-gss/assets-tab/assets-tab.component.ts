@@ -86,6 +86,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('typeTask', this.typeTask);
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsSampling());
@@ -270,6 +271,8 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     )
       this.params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
 
+    if (this.typeTask == 'payment-validations')
+      this.params.getValue()['filter.typeRestitution'] = 'NUMERARIO';
     this.params.getValue()['filter.sampleId'] = this.idSample;
     this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
       next: response => {
@@ -562,6 +565,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
             const infoSampleGood = {
               sampleGoodId: item.sampleGoodId,
               restitutionStatus: 'APROBAR',
+              goodStatus: 'APROBADO_NUMERARIO',
             };
 
             this.samplingService.editSamplingGood(infoSampleGood).subscribe({
@@ -607,6 +611,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
             const infoSampleGood = {
               sampleGoodId: item.sampleGoodId,
               restitutionStatus: 'RECHAZAR',
+              goodStatus: 'RECHAZADO_NUMERARIO',
             };
 
             this.samplingService.editSamplingGood(infoSampleGood).subscribe({

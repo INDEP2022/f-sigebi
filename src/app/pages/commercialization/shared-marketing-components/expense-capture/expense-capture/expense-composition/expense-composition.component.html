@@ -19,7 +19,7 @@
           <div class="col-md-6 d-flex mb-3">
             <span title="Selecionar Todo" containerClass="tooltip-style">
               <button
-                *ngIf="data && data.length > 0"
+                *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active"
                 style="
                   width: 100px;
@@ -33,8 +33,9 @@
             >
             <span title="Selecionar Todo" containerClass="tooltip-style">
               <button
-                *ngIf="data && data.length > 0"
+                *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active ml-3"
+                [disabled]="!SELECT_CAMBIA_CLASIF_ENABLED"
                 style="
                   width: 100px;
                   display: flex;
@@ -63,8 +64,9 @@
               class="row justify-content-end"></app-columns-select>
           </div>
         </div>
-        <form-loader *ngIf="loading"></form-loader>
+
         <div class="pt-4">
+          <form-loader *ngIf="loading"></form-loader>
           <ng-scrollbar
             [track]="'all'"
             [ngStyle]="{ height: loading ? '0px' : '300px' }">
@@ -85,26 +87,26 @@
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Monto</label>
-              <div>{{ amount | number : '1.2-2' }}</div>
+              <div>{{ amount | number: '1.2-2' }}</div>
             </div>
           </div>
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">IVA</label>
-              <div>{{ vat | number : '1.2-2' }}</div>
+              <div>{{ vat | number: '1.2-2' }}</div>
             </div>
           </div>
 
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Retención ISR</label>
-              <div>{{ isrWithholding | number : '1.2-2' }}</div>
+              <div>{{ isrWithholding | number: '1.2-2' }}</div>
             </div>
           </div>
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Retención IVA</label>
-              <div>{{ vatWithholding | number : '1.2-2' }}</div>
+              <div>{{ vatWithholding | number: '1.2-2' }}</div>
             </div>
           </div>
         </div>
@@ -112,7 +114,7 @@
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Total</label>
-              <div>{{ total | number : '1.2-2' }}</div>
+              <div>{{ total | number: '1.2-2' }}</div>
             </div>
           </div>
         </div>
@@ -162,7 +164,7 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showAdd || changeStatusFilter.length === 0"
+              [disabled]="!validateModifyEstatus"
               (click)="modifyEstatus()">
               Modificar Estatus
             </button>
@@ -179,7 +181,7 @@
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showAdd"
               (click)="contabilityMand()">
-              Contabilidad Mandatorio
+              Contabilidad Mandatos
             </button>
             <button
               *ngIf="address === 'M'"

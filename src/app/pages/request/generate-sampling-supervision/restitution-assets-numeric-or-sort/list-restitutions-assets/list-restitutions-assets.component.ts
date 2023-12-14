@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -32,7 +32,7 @@ export class ListRestitutionsAssetsComponent
   jsonToCsv = JSON_TO_CSV;
   paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
-  idSample: number = 0;
+  @Input() idSample: number = 0;
   totalItems: number = 0;
   columns = LIST_RESTITUTION_COLUMNS;
   goodsModified: any = [];
@@ -51,7 +51,6 @@ export class ListRestitutionsAssetsComponent
   }
 
   ngOnInit(): void {
-    this.idSample = 302;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsSampling());
@@ -91,6 +90,7 @@ export class ListRestitutionsAssetsComponent
 
   getGoodsSampling() {
     this.params.getValue()['filter.sampleId'] = this.idSample;
+    this.params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
     this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
       next: response => {
         const info = response.data.map(item => {
