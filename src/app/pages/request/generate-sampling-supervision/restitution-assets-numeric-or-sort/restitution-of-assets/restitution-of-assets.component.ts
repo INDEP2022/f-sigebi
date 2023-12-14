@@ -268,11 +268,9 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
-          console.log('resp', resp);
           resolve(true);
         },
         error: error => {
-          console.log('error', error);
           resolve(false);
         },
       });
