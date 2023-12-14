@@ -928,26 +928,43 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       );
       return false;
     }
-    if (this.form.get('numReceipts').value) {
+    if (!this.form.get('numReceipts').value) {
       this.alert('error', 'Debe especificar el número de comprobantes', '');
       return false;
     }
     this.totalMandatos = 0;
     this.totalMandatos = await firstValueFrom(
-      this.spentService.getTotalByMandate(this.expenseNumber.value)
+      this.accountingService.getMandateTotal(this.expenseNumber.value)
     );
+    const TOT_MANDATOS = +(this.totalMandatos + '');
     const TOT_CABECERA = +this.data.totDocument;
     const TOT_DETALLES = this.total;
-    const TOT_MANDATOS = this.totalMandatos;
-    if (TOT_DETALLES === TOT_CABECERA && TOT_DETALLES === TOT_MANDATOS) {
-    } else {
+    if (TOT_DETALLES !== TOT_CABECERA) {
       this.alert(
-        'error',
+        'warning',
         'Validación Solicitud',
-        'Los montos no cuadran Verifique la Contabilidad de Mandatos'
+        'Los montos no cuadran actualize el gasto'
       );
       return false;
     }
+    if (TOT_DETALLES !== TOT_MANDATOS) {
+      this.alert(
+        'warning',
+        'Validación Solicitud',
+        'Los montos no cuadran verifique la contabilidad de mandatos'
+      );
+      return false;
+    }
+
+    // if (TOT_DETALLES === TOT_CABECERA && TOT_DETALLES === TOT_MANDATOS) {
+    // } else {
+    //   this.alert(
+    //     'error',
+    //     'Validación Solicitud',
+    //     'Los montos no cuadran Verifique la Contabilidad de Mandatos'
+    //   );
+    //   return false;
+    // }
     let filterParams = new FilterParams();
     filterParams.addFilter('spentId', this.expenseNumber.value);
     filterParams.addFilter('departure', SearchFilter.NULL, SearchFilter.NULL);
@@ -1206,9 +1223,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       let validaciones = await this.VALIDACIONES_SOLICITUDI();
       if (validaciones) {
         this.ENVIAR_SIRSAEI();
+      } else {
+        this.finishProcessSolicitud.next(false);
       }
       if (this.PCANVTA) {
         this.CANCELA_VTA_NORMALI();
+      } else {
+        this.finishProcessSolicitud.next(false);
       }
     }
   }

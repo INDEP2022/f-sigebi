@@ -601,10 +601,10 @@ export class ExpenseCompositionComponent
   }
 
   async sendToSIRSAE() {
-    if (this.address !== 'M' && !this.eventNumber) {
+    if (this.address !== 'M' && !this.form.get('contractNumber').value) {
       this.alert(
         'warning',
-        'Tiene que seleccionar un evento para continuar',
+        'Tiene que seleccionar un contrato para continuar',
         ''
       );
       return;
@@ -1088,11 +1088,11 @@ export class ExpenseCompositionComponent
       return;
     }
     await this.expenseCaptureDataService.readParams(this.conceptNumber.value);
-    if (this.expenseCaptureDataService.PCAMBIAESTATUS) {
+    if (!this.expenseCaptureDataService.PCAMBIAESTATUS) {
       BANDERAS =
         'Este concepto no esta parámetrizado para cambiar el estatus del bien a uno no comercializable';
     }
-    if (this.expenseCaptureDataService.PCANVTA) {
+    if (!this.expenseCaptureDataService.PCANVTA) {
       BANDERAS =
         'Este concepto no esta parámetrizado para regresar el estatus del bien, vaya a conceptos y agregue el paramétro';
     }

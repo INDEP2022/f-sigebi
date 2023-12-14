@@ -305,7 +305,7 @@
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
                 [disabled]="!validImprimeAny"
                 (click)="imprimeAny()">
-                Imprime Any
+                Imprime Anv
               </button>
               <button
                 *ngIf="address !== 'M'"
@@ -327,7 +327,7 @@
                 *ngIf="address !== 'M'"
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
-                [disabled]="expenseNumberValue"
+                [disabled]="!validateExportExcel"
                 (click)="exportExcel()">
                 Exportar a Excel
               </button>
