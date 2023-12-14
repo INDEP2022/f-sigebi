@@ -121,7 +121,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response) {
-            this.getData();
+            this.getData2();
           }
         },
       });
@@ -159,7 +159,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           this.validateAndProcess = true;
-          this.getData();
+          this.getData2();
         },
       });
     this.expenseCaptureDataService.finishProcessSolicitud
@@ -299,7 +299,7 @@ export class ExpenseCompositionComponent
   override ngOnInit(): void {
     if (this.haveInitialCharge) {
       this.resetTotals();
-      this.getData();
+      this.getData2();
     }
     let usuario = this.expenseCaptureDataService.user.preferred_username; //'AJIMENEZC'; // this.expenseCaptureDataService.user.preferred_username;
     this.dictationService
@@ -706,7 +706,7 @@ export class ExpenseCompositionComponent
       expenseNumber: this.expenseNumber.value,
       callback: (next: boolean) => {
         if (next) {
-          this.getData();
+          this.getData2(this.data.length === 0);
         }
       },
     };
@@ -720,7 +720,7 @@ export class ExpenseCompositionComponent
       comerDetExpense: row,
       callback: (next: boolean) => {
         if (next) {
-          this.getData();
+          this.getData2();
         }
       },
     };
@@ -751,7 +751,7 @@ export class ExpenseCompositionComponent
               'Composición de Gasto ' + row.detPaymentsId,
               'Eliminado correctamente'
             );
-            this.getData();
+            this.getData2();
           },
           error: err => {
             this.alert(
@@ -764,7 +764,7 @@ export class ExpenseCompositionComponent
     }
   }
 
-  private setData(data) {
+  private setData(data, loadContMands = false) {
     this.data = data.map(row => {
       this.amount += row.amount ? +row.amount : 0;
       this.vat += row.iva ? +row.iva : 0;
@@ -785,6 +785,9 @@ export class ExpenseCompositionComponent
     this.totalItems = this.data.length;
     this.dataTemp = [...this.data];
     this.getPaginated(this.params.value);
+    if (loadContMands) {
+      this.contabilityMandBody(false);
+    }
     this.GRABA_TOTALES();
     this.loading = false;
     if (this.validateAndProcess) {
@@ -795,7 +798,7 @@ export class ExpenseCompositionComponent
     }
   }
 
-  override getData() {
+  getData2(loadContMands = false) {
     // let params = new FilterParams();
     if (!this.dataService) {
       return;
@@ -817,7 +820,7 @@ export class ExpenseCompositionComponent
         next: response => {
           if (response && response.data && response.data.length > 0) {
             console.log(response.data);
-            this.setData(response.data);
+            this.setData(response.data, loadContMands);
           } else {
             this.notGetData();
           }
@@ -895,7 +898,7 @@ export class ExpenseCompositionComponent
                     'Se realizo la división de pagos entre los mandatos',
                     ''
                   );
-                  this.getData();
+                  this.getData2();
                 },
                 error: err => {
                   this.showErrorDisperGasto();
@@ -1208,7 +1211,7 @@ export class ExpenseCompositionComponent
       next: response => {
         this.alert('success', 'Se realizó la carga de datos', '');
         this.loader.load = false;
-        this.getData();
+        this.getData2();
       },
       error: err => {
         this.loader.load = false;
@@ -1332,6 +1335,9 @@ export class ExpenseCompositionComponent
     this.expense.vatWithheld = this.vatWithholding + '';
     this.expense.isrWithheld = this.isrWithholding + '';
     this.expense.totDocument = this.total + '';
+    // this.expenseCaptureDataService.updateExpenseAfterChangeTotalDetail.next(
+    //   true
+    // );
   }
 
   async applyTC() {
@@ -1408,7 +1414,7 @@ export class ExpenseCompositionComponent
   async contabilityMand() {
     const response = await this.alertQuestion(
       'question',
-      '¿Desea aplicar contabilidad mandatoria?',
+      '¿Desea aplicar contabilidad de mandatos?',
       ''
     );
     if (response.isConfirmed) {
@@ -1425,32 +1431,36 @@ export class ExpenseCompositionComponent
     }
   }
 
-  private async contabilityMandBody() {
+  private async contabilityMandBody(viewMandatos = true) {
     const result = await firstValueFrom(
       this.accountMovementService.getDepuraContmand(this.expenseNumber.value)
     );
     const row = this.data[0];
-    if (row.goodNumber || row.manCV) {
-      this.ESCOJE_MANDCONTA();
+    let goods = this.data.filter(x => x.goodNumber);
+    let mandatos = this.data.filter(x => x.manCV);
+    if (goods.length > 0 || mandatos.length > 0) {
+      this.ESCOJE_MANDCONTA(viewMandatos);
     } else {
-      this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
+      if (viewMandatos)
+        this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
       this.loader.load = false;
     }
   }
 
-  private ESCOJE_MANDCONTA() {
+  private ESCOJE_MANDCONTA(viewMandatos = true) {
     if (this.expenseCaptureDataService.P_MANDCONTIPO === 'N') {
-      this.MAND_CONTA();
+      this.MAND_CONTA(viewMandatos);
     } else {
       let filterGoodNumber = this.data.filter(row => row.goodNumber);
       if (filterGoodNumber.length > 0) {
-        this.MANDA_CONTA_TPBIEN();
+        this.MANDA_CONTA_TPBIEN(viewMandatos);
       } else {
-        this.alert(
-          'warning',
-          'Para procesar la contabilidad en este concepto se requiere capturar bienes',
-          ''
-        );
+        if (viewMandatos)
+          this.alert(
+            'warning',
+            'Para procesar la contabilidad en este concepto se requiere capturar bienes',
+            ''
+          );
         this.loader.load = false;
       }
     }
@@ -1477,7 +1487,7 @@ export class ExpenseCompositionComponent
     // );
   }
 
-  private MANDA_CONTA_TPBIEN() {
+  private MANDA_CONTA_TPBIEN(viewMandatos = true) {
     this.dataService
       .mandContaTpBien({
         idGastos: this.expenseNumber.value,
@@ -1490,13 +1500,13 @@ export class ExpenseCompositionComponent
             this.loader.load = false;
             this.expenseCaptureDataService.P_CAMBIO = 0;
             //show view mandatos
-            this.showViewMandatos();
+            if (viewMandatos) this.showViewMandatos();
           }
         },
         error: err => {
           this.loader.load = false;
           this.expenseCaptureDataService.P_CAMBIO = 0;
-          this.showViewMandatos();
+          if (viewMandatos) this.showViewMandatos();
           // this.alert(
           //   'error',
           //   'Ocurrio un error en obtención de mandatos',
@@ -1513,7 +1523,7 @@ export class ExpenseCompositionComponent
     this.showViewMandatos();
   }
 
-  private MAND_CONTA() {
+  private MAND_CONTA(viewMandatos = true) {
     this.dataService
       .mandConta({
         idGastos: this.expenseNumber.value,
@@ -1522,10 +1532,10 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
-          this.viewMandatos();
+          if (viewMandatos) this.viewMandatos();
         },
         error: err => {
-          this.viewMandatos();
+          if (viewMandatos) this.viewMandatos();
           // this.loader.load = false;
           // console.log(err);
           // this.alert(
@@ -1552,7 +1562,7 @@ export class ExpenseCompositionComponent
           next: response => {
             if (response) {
               this.loader.load = false;
-              this.getData();
+              this.getData2();
             } else {
               this.loader.load = false;
             }
