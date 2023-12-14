@@ -617,9 +617,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showAdj = false;
       this.showCvePoliza = false;
     }
-    // v_tip_gast = 0;
     if (v_tip_gast === 0) {
-      // this._address = 'I';
       this.dataService.address = 'I';
       this.PDIRECCION_A = 'C';
       list.push({ value: 'C', title: 'GENERAL' });
