@@ -624,6 +624,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         this.dataGoods.load(newData);
         this.totalItems = res.count;
         this.loadingTable = false;
+        this.navigateProceedings = true;
       },
       err => {
         this.loadingTable = false;
