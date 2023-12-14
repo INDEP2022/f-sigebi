@@ -119,6 +119,7 @@ export class NotifyComponent extends BasePage implements OnInit {
       ', respecto al número de siab. ' +
       V_TOTAL_B +
       '  Por lo que esta venta queda cancelada, esto con el fin de que se realicen las acciones correspondientes por cada área.';
+    this.alert('warning', 'Esta función aún no ha sido habilitada', '');
     console.log(this.form.get('para'), this.form.get('cc'));
     console.log(message);
   }

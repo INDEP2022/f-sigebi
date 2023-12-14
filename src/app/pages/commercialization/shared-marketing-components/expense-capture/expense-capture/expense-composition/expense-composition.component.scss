@@ -12,6 +12,12 @@
         }
       }
 
+      form-loader {
+        .loader {
+          top: -260px;
+        }
+      }
+
       .customSelect {
         position: absolute;
         z-index: 100;

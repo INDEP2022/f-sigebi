@@ -55,10 +55,9 @@
     <div
       class="row pt-4"
       *ngIf="
-        typeTask === 'payment-validatios' ||
+        typeTask === 'payment-validations' ||
         typeTask === 'assets-approval' ||
-        (typeTask != 'payment-validations' &&
-          typeTask != 'verify-noncompliance' &&
+        (typeTask != 'verify-noncompliance' &&
           typeTask != 'assets-classification-annexed' &&
           typeTask != 'assets-classification')
       ">
@@ -157,6 +156,7 @@
         typeTask == 'assets-classification-annexed' ||
         (typeTask != 'assets-classification' &&
           typeTask != 'assets-approval' &&
+          typeTask != 'payment-validations' &&
           typeTask != 'verify-noncompliance')
       ">
       <ng2-smart-table
@@ -172,7 +172,11 @@
         [totalItems]="totalItems"></app-pagination>
     </div>
 
-    <div class="col-md-12" *ngIf="typeTask == 'assets-approval'">
+    <div
+      class="col-md-12"
+      *ngIf="
+        typeTask == 'assets-approval' || typeTask == 'payment-validations'
+      ">
       <ng2-smart-table
         [attr.class]="'table-responsive'"
         [settings]="settingsApprov"

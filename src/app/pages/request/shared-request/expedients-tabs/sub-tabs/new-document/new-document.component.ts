@@ -189,7 +189,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   typedocuments(params: ListParams) {
     this.wContentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+        this.typesDocuments = new DefaultSelect(resp.data, resp.length);
       },
     });
   }
@@ -215,7 +215,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 
-  typeDocumentSelect(item: ITypeDocument) {
+  typeDocumentSelect(item) {
+    console.log(item);
     this.typeDocument = item.ddocType;
   }
 
@@ -280,7 +281,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
+        xcomments: this.newDocForm.get('observations').value,
         xNombreProceso: 'Ejecutar Recepcion',
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:
@@ -340,7 +341,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -368,8 +369,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
-        xNombreProceso: 'Clasificar Bien',
+        xcomments: this.newDocForm.get('observations').value,
+        xnombreProceso: 'Clasificar Bien',
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:
           this.newDocForm.get('returnOpinionFolio').value,
@@ -430,7 +431,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -453,7 +454,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
+        xcomments: this.newDocForm.get('observations').value,
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:
           this.newDocForm.get('returnOpinionFolio').value,
@@ -513,7 +514,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -536,7 +537,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
+        xcomments: this.newDocForm.get('observations').value,
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:
           this.newDocForm.get('returnOpinionFolio').value,
@@ -595,7 +596,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -618,7 +619,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
+        xcomments: this.newDocForm.get('observations').value,
         xNombreProceso: 'Aclaración Bien',
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:
@@ -680,7 +681,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
   }
@@ -689,7 +690,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() {}
+  handleSuccess() { }
 
   getStateSelect(params?: ListParams) {
     params['filter.sortBy'] = 'descCondition:ASC';
