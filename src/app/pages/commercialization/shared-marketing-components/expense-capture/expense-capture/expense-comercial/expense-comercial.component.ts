@@ -16,7 +16,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
+import { IEatConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
 import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
@@ -884,13 +884,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
   }
 
-  async selectConcept(concept: IConcept) {
+  async selectConcept(concept: IEatConcept) {
+    console.log(concept);
     if (!concept) return;
     let user = this.user.preferred_username;
     if (this.address !== 'M') {
       this.setConceptScreenI(user);
     }
-    await this.readParams(concept.id);
+    await this.readParams(concept.conceptId);
   }
 
   updateLot(lot: { lotPublic: string; idLot: string; idEvent: string }) {
@@ -1046,7 +1047,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Tiene que llenar alguno de los campos',
-          'Concepto, Evento, Proveedor, Detalle de gasto con bien'
+          'Concepto, Evento, Proveedor, Composición de gastos con bien'
         );
         return;
       }
@@ -1055,7 +1056,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Tiene que llenar alguno de los campos',
-          'Concepto, Evento, Proveedor, Detalle de gasto con bien'
+          'Concepto, Evento, Proveedor, Composición de gastos con bien'
         );
         return;
       }
@@ -1089,10 +1090,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private URCOORDREGCHATARRA_AUTOMATICO(opcion: number) {
-    return this.eventService.urcoordRegChatarraAutomatic(
-      this.conceptNumber.value,
-      opcion
-    );
+    return this.eventService
+      .urcoordRegChatarraAutomatic(this.conceptNumber.value, opcion)
+      .pipe(
+        take(1),
+        catchError(x => of({ data: [] }))
+      );
   }
 
   private updateGoodsByLote(response: ILoadLotResponse) {
@@ -1184,10 +1187,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       console.log(V_EXIST);
       if (V_EXIST) {
         // console.log(V_EXIST);
-        let coordChatarra = await firstValueFrom(
+        let coorsdChatarra = await firstValueFrom(
           this.URCOORDREGCHATARRA_AUTOMATICO(3)
         );
-        console.log(coordChatarra);
+        if (coorsdChatarra.data.length > 0) {
+          this.descurcoord.setValue(coorsdChatarra.data[0].UNIDAD_PRESUPUESTAL);
+        }
+        console.log(coorsdChatarra);
         this.CARGA_BIENES_LOTE_XDELRES(
           this.eventNumber.value,
           this.lotNumber.value,
@@ -1507,10 +1513,19 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   get validImprimeAny() {
-    return this.form
-      ? (this.paymentRequestNumber && this.paymentRequestNumber.value) ||
-          (this.expenseNumber && this.expenseNumber.value)
-      : false;
+    if (this.form) {
+      if (this.paymentRequestNumber && this.paymentRequestNumber.value) {
+        return true;
+      }
+      if (this.expenseNumber && this.expenseNumber.value) {
+        return (
+          this.form.get('captureDate') &&
+          this.form.get('captureDate').value &&
+          this.form.get('captureDate').value.length > 0
+        );
+      }
+    }
+    return false;
   }
 
   get validImprimeRev() {
@@ -1529,7 +1544,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.loader.load = true;
       if (this.paymentRequestNumber.value) {
         this.sirsaeService
-          .imprimeAny(this.paymentRequestNumber.value, this.expenseNumber.value)
+          .imprimeAny(
+            +this.paymentRequestNumber.value,
+            +this.expenseNumber.value
+          )
           .pipe(take(1))
           .subscribe({
             next: response => {
@@ -1542,7 +1560,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           });
       } else if (this.expenseNumber.value) {
         this.sirsaeService
-          .viewPreview(this.expenseNumber.value)
+          .viewPreview(+this.expenseNumber.value)
           .pipe(take(1))
           .subscribe({
             next: response => {

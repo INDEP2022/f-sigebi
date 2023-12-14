@@ -19,7 +19,7 @@
           <div class="col-md-6 d-flex mb-3">
             <span title="Selecionar Todo" containerClass="tooltip-style">
               <button
-                *ngIf="data && data.length > 0"
+                *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active"
                 style="
                   width: 100px;
@@ -33,8 +33,9 @@
             >
             <span title="Selecionar Todo" containerClass="tooltip-style">
               <button
-                *ngIf="data && data.length > 0"
+                *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active ml-3"
+                [disabled]="!SELECT_CAMBIA_CLASIF_ENABLED"
                 style="
                   width: 100px;
                   display: flex;
@@ -63,8 +64,9 @@
               class="row justify-content-end"></app-columns-select>
           </div>
         </div>
-        <form-loader *ngIf="loading"></form-loader>
+
         <div class="pt-4">
+          <form-loader *ngIf="loading"></form-loader>
           <ng-scrollbar
             [track]="'all'"
             [ngStyle]="{ height: loading ? '0px' : '300px' }">
@@ -162,7 +164,7 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showAdd || changeStatusFilter.length === 0"
+              [disabled]="!validateModifyEstatus"
               (click)="modifyEstatus()">
               Modificar Estatus
             </button>

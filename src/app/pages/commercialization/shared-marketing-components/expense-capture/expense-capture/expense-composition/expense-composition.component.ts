@@ -171,6 +171,10 @@ export class ExpenseCompositionComponent
       });
   }
 
+  get SELECT_CAMBIA_CLASIF_ENABLED() {
+    return this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF_ENABLED;
+  }
+
   get address() {
     return this.expenseCaptureDataService.address;
   }
@@ -300,6 +304,14 @@ export class ExpenseCompositionComponent
     if (this.haveInitialCharge) {
       this.resetTotals();
       this.getData2();
+    }
+    if (this.address !== 'M') {
+      delete COLUMNS.changeStatus;
+      delete COLUMNS.reportDelit;
+      this.settings = {
+        ...this.settings,
+        columns: COLUMNS,
+      };
     }
     let usuario = this.expenseCaptureDataService.user.preferred_username; //'AJIMENEZC'; // this.expenseCaptureDataService.user.preferred_username;
     this.dictationService
@@ -480,6 +492,13 @@ export class ExpenseCompositionComponent
 
   get lotNumber() {
     return this.form.get('lotNumber');
+  }
+
+  get validateModifyEstatus() {
+    return (
+      this.showAdd &&
+      (this.address === 'M' ? this.changeStatusFilter.length === 0 : true)
+    );
   }
 
   get showAdd() {
