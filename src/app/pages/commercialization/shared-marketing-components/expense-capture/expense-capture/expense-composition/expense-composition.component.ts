@@ -171,6 +171,10 @@ export class ExpenseCompositionComponent
       });
   }
 
+  get SELECT_CAMBIA_CLASIF_ENABLED() {
+    return this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF_ENABLED;
+  }
+
   get address() {
     return this.expenseCaptureDataService.address;
   }

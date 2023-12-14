@@ -1047,7 +1047,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Tiene que llenar alguno de los campos',
-          'Concepto, Evento, Proveedor, Detalle de gasto con bien'
+          'Concepto, Evento, Proveedor, Composición de gastos con bien'
         );
         return;
       }
@@ -1056,7 +1056,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Tiene que llenar alguno de los campos',
-          'Concepto, Evento, Proveedor, Detalle de gasto con bien'
+          'Concepto, Evento, Proveedor, Composición de gastos con bien'
         );
         return;
       }
@@ -1513,10 +1513,19 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   get validImprimeAny() {
-    return this.form
-      ? (this.paymentRequestNumber && this.paymentRequestNumber.value) ||
-          (this.expenseNumber && this.expenseNumber.value)
-      : false;
+    if (this.form) {
+      if (this.paymentRequestNumber && this.paymentRequestNumber.value) {
+        return true;
+      }
+      if (this.expenseNumber && this.expenseNumber.value) {
+        return (
+          this.form.get('captureDate') &&
+          this.form.get('captureDate').value &&
+          this.form.get('captureDate').value.length > 0
+        );
+      }
+    }
+    return false;
   }
 
   get validImprimeRev() {

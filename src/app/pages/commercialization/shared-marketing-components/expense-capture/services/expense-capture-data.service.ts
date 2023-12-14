@@ -889,7 +889,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       if (VALIDA_DET.length === 0) {
         this.alert(
           'warning',
-          'Debe tener al menos un detalle de gasto marcado para cambio de estatus',
+          'Debe tener al menos una composición de gasto marcado para cambio de estatus',
           ''
         );
         return false;
@@ -1557,7 +1557,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     );
     if (detailWidthGoods.length === 0) {
       this.finishProcessSolicitud.next(true);
-      this.alert('warning', 'Requiere algun bien en el detalle de gasto', '');
+      this.alert(
+        'warning',
+        'Requiere algun bien en la composición de gastos',
+        ''
+      );
       return;
     }
     let reasons = '';

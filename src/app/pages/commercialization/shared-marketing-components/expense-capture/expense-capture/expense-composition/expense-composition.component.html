@@ -35,6 +35,7 @@
               <button
                 *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active ml-3"
+                [disabled]="!SELECT_CAMBIA_CLASIF_ENABLED"
                 style="
                   width: 100px;
                   display: flex;
@@ -63,8 +64,9 @@
               class="row justify-content-end"></app-columns-select>
           </div>
         </div>
-        <form-loader *ngIf="loading"></form-loader>
+
         <div class="pt-4">
+          <form-loader *ngIf="loading"></form-loader>
           <ng-scrollbar
             [track]="'all'"
             [ngStyle]="{ height: loading ? '0px' : '300px' }">
