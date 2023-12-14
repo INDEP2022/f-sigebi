@@ -217,4 +217,8 @@ export class DonationService
       params
     );
   }
+
+  getConsecDonation(params: ListParams) {
+    return this.post(DonationEndPoint.ConecutivoActaDnation, params);
+  }
 }
