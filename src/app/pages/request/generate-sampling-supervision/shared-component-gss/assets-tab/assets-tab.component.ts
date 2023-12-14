@@ -561,7 +561,8 @@ export class AssetsTabComponent extends BasePage implements OnInit {
         '¿Desea editar el bien?'
       ).then(question => {
         if (question.isConfirmed) {
-          this.assetsSelected.map((item: any) => {
+          this.assetsSelected.map((item: any, i: number) => {
+            let index = i + 1;
             const infoSampleGood = {
               sampleGoodId: item.sampleGoodId,
               restitutionStatus: 'APROBAR',
@@ -569,22 +570,26 @@ export class AssetsTabComponent extends BasePage implements OnInit {
             };
 
             this.samplingService.editSamplingGood(infoSampleGood).subscribe({
-              next: response => {
-                this.alert(
-                  'success',
-                  'Correcto',
-                  'Bien actualizado correctamente'
-                );
-                this.params
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getGoodsSampling());
+              next: () => {
+                if (index == this.assetsSelected.length) {
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Bien actualizado correctamente'
+                  );
+                  this.params
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getGoodsSampling());
+                }
               },
-              error: error => {
-                this.alert(
-                  'warning',
-                  'Acción Invalida',
-                  'No se pudo actualizar el bien'
-                );
+              error: () => {
+                if (index == this.assetsSelected.length) {
+                  this.alert(
+                    'warning',
+                    'Acción Invalida',
+                    'No se pudo actualizar el bien'
+                  );
+                }
               },
             });
           });

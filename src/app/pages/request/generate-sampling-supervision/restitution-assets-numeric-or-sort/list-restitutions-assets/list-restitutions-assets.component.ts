@@ -33,6 +33,7 @@ export class ListRestitutionsAssetsComponent
   paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Input() idSample: number = 0;
+  @Input() filterObject: any;
   totalItems: number = 0;
   columns = LIST_RESTITUTION_COLUMNS;
   goodsModified: any = [];
@@ -65,8 +66,32 @@ export class ListRestitutionsAssetsComponent
     };
   }
 
+  ngOnChanges() {
+    if (this.filterObject != false && this.filterObject) {
+      if (this.filterObject.noManagement)
+        this.params.getValue()['filter.goodId'] =
+          this.filterObject.noManagement;
+
+      if (this.filterObject.noInventory)
+        this.params.getValue()['filter.inventoryNumber'] =
+          this.filterObject.noInventory;
+
+      if (this.filterObject.descriptionAsset)
+        this.params.getValue()['filter.description'] =
+          this.filterObject.descriptionAsset;
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsSampling());
+    } else if (this.filterObject == false) {
+      this.params = new BehaviorSubject<ListParams>(new ListParams());
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsSampling());
+    }
+  }
+
   setRepositionDate(descriptionInput: any) {
-    console.log('descriptionInput', descriptionInput);
     this.paragraphs['data'].map((item: any) => {
       if (item.repositionDate === descriptionInput.data.repositionDate) {
         item.repositionDate = descriptionInput.text;
@@ -107,9 +132,7 @@ export class ListRestitutionsAssetsComponent
     });
   }
 
-  updateMyDate(event: any) {
-    console.log(event);
-  }
+  updateMyDate(event: any) {}
 
   uploadExpedient(): void {
     //if (this.assetsSelected.length == 0) return;
@@ -135,7 +158,6 @@ export class ListRestitutionsAssetsComponent
       );
       this.assetsSelected.splice(index, 1);
     }
-    console.log(this.assetsSelected);
   }
 
   numerari(): void {
@@ -252,7 +274,6 @@ export class ListRestitutionsAssetsComponent
         };
         this.samplingService.editSamplingGood(sampleGood).subscribe({
           next: response => {
-            console.log('response', response);
             this.alert('success', 'Correcto', 'Bien actualizado correctamente');
           },
         });
