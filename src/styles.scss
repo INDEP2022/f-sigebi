@@ -793,6 +793,11 @@ custom-view-component {
   margin-bottom: 0px !important;
 }
 
+#testAcc2 .card .card-block {
+  padding: 0px 0px !important;
+  margin-bottom: 0px !important;
+}
+
 #checkbox_fcomer div div {
   margin-top: -21px;
   margin-left: 15px;
@@ -843,4 +848,36 @@ footer {
 
 .VA_VALDA3 {
   background-color: #80c000; // #324b00;
+}
+
+//AJUSTES REPORTADOS COMO BUGS
+.ng-dropdown-panel {
+  z-index: 100 !important;
+  margin-top: 2px !important;
+}
+
+textarea + .form-bar {
+  margin-top: -3px !important;
+}
+
+@-moz-document url-prefix() {
+  textarea + .form-bar {
+    margin-top: 0px !important;
+  }
+}
+
+.table-bordered {
+  border: 1px solid #ddd !important;
+}
+
+.ng-select .ng-select-container .ng-value-container {
+  padding-left: 0px !important;
+}
+
+.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+  padding-left: 0px !important;
+}
+
+.gicon {
+  width: 10px !important;
 }

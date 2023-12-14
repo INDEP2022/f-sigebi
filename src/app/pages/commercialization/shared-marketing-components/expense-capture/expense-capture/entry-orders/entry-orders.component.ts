@@ -57,6 +57,14 @@ export class EntryOrdersComponent
     return this.expenseCaptureDataService.eventNumber;
   }
 
+  get eventNumberValue() {
+    return this.form
+      ? this.expenseCaptureDataService.eventNumber
+        ? this.expenseCaptureDataService.eventNumber.value
+        : null
+      : null;
+  }
+
   get lotNumber() {
     return this.expenseCaptureDataService.lotNumber;
   }
@@ -78,14 +86,12 @@ export class EntryOrdersComponent
   }
 
   async replyFolio() {
-    this.loader.load = true;
     if (!this.expenseNumber) {
       this.alert(
         'warning',
         'No puede mandar correo si no a guardado el gasto',
         ''
       );
-      this.loader.load = false;
       return;
     }
     // const firstValidation =
@@ -94,31 +100,33 @@ export class EntryOrdersComponent
     //   !this.clkpv.value &&
     //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
     //   !this.dataService.data.providerName;
+    let bienes = this.expenseCaptureDataService.dataCompositionExpenses.filter(
+      x => x.goodNumber
+    );
     if (
       !this.conceptNumber.value &&
       !this.eventNumber.value &&
       !this.clkpv.value &&
-      !this.expenseCaptureDataService.dataCompositionExpenses[0].goodNumber &&
+      bienes.length === 0 &&
       !this.expenseCaptureDataService.data.providerName
     ) {
-      this.loader.load = false;
       this.alert('warning', 'Tiene que llenar alguno de los campos', '');
       return;
     }
-    if (!this.expenseCaptureDataService.FOLIO_UNIVERSAL) {
-      this.loader.load = false;
+    if (!this.expenseCaptureDataService.formScan.get('folioUniversal').value) {
       this.alert('warning', 'No se han escaneado los documentos', '');
       return;
     }
+    this.loader.load = true;
     let filterParams = new FilterParams();
     filterParams.addFilter(
       'id',
-      this.expenseCaptureDataService.FOLIO_UNIVERSAL,
+      this.expenseCaptureDataService.formScan.get('folioUniversal').value,
       SearchFilter.EQ
     );
     filterParams.addFilter(
       'associateUniversalFolio',
-      this.expenseCaptureDataService.FOLIO_UNIVERSAL,
+      this.expenseCaptureDataService.formScan.get('folioUniversal').value,
       SearchFilter.OR
     );
     filterParams.addFilter('sheets', 0, SearchFilter.GT);
@@ -140,7 +148,7 @@ export class EntryOrdersComponent
       return;
     }
     this.expenseGoodProcessService
-      .NOTIFICAR({
+      .replyFolio({
         goodArray: this.expenseCaptureDataService.dataCompositionExpenses
           .filter(x => x.goodNumber)
           .map(x => {
@@ -149,7 +157,8 @@ export class EntryOrdersComponent
         delegationNumber: this.delegation,
         subdelegationNumber: this.subDelegation,
         departamentNumber: this.noDepartamento,
-        universalFolio: this.expenseCaptureDataService.FOLIO_UNIVERSAL,
+        universalFolio:
+          this.expenseCaptureDataService.formScan.get('folioUniversal').value,
       })
       .pipe(take(1))
       .subscribe({

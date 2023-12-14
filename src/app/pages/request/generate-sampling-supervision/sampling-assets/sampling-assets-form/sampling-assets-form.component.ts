@@ -21,11 +21,13 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ExcelService } from '../../../../../common/services/excel.service';
@@ -60,6 +62,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   loadingGoodInv: boolean = false;
   displaySearchAssetsBtn: boolean = false;
+  showSample: boolean = false;
   settings2 = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -70,6 +73,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   paragraphs2 = new LocalDataSource();
   totalItems2: number = 0;
   listAssetsSelected: any[] = [];
+  nameDelegation: string = '';
   deductivesSel: IDeductive[] = [];
   settings3 = {
     ...TABLE_SETTINGS,
@@ -87,24 +91,26 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   paragraphs3 = new LocalDataSource();
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
-  allDeductives: IDeductiveVerification[] = [];
+  allDeductives: ISamplingDeductive[] = [];
   settings4 = {
     ...TABLE_SETTINGS,
     actions: {
       edit: true,
-      delete: true,
+      delete: false,
       columnTitle: 'Acciones',
       position: 'right',
     },
-    selectMode: 'multi',
   };
   columns4 = LIST_DEDUCTIVES_COLUMNS;
   paragraphsDeductivas = new LocalDataSource();
 
-  delegationId: string = '';
+  delegationId: number = 0;
   storeSelected: any = {};
-
+  sampleInfo: ISample;
   selectTransferent = new DefaultSelect();
+  addressWarehouse: string = '';
+  nameWarehouse: string = '';
+  nameTransferente: string = '';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -119,36 +125,26 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     private delegationService: RegionalDelegationService,
     private massiveGoodService: MassiveGoodService,
     private deductiveService: DeductiveVerificationService,
-    private router: Router
+    private router: Router,
+    private goodsQueryService: GoodsQueryService,
+    private taskService: TaskService
   ) {
     super();
 
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
-      selectMode: 'multi',
       columns: LIST_WAREHOUSE_COLUMN,
     };
   }
 
   ngOnInit(): void {
-    this.delegationId = this.getRegionalDelegationId();
+    this.delegationId = Number(this.getRegionalDelegationId());
 
     this.initDateForm();
     this.initSearchForm();
-
+    this.getTransferent(new ListParams());
     this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
-
-    /*this.columns4.observation = {
-      ...this.columns4.observation,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          console.log('Observaciones?', data);
-          this.deductivesObservations(data);
-        });
-      },
-    };
-     */
 
     this.columns4.selected = {
       ...this.columns4.selected,
@@ -156,14 +152,57 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     };
 
     this.getTransferent(new ListParams());
-    //this.paragraphsDeductivas = data;
+  }
+
+  getSampleDeductives() {
+    this.params.getValue()['filter.sampleId'] = `$eq:${this.sampleId}`;
+    this.samplingGoodService
+      .getAllSampleDeductives(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.allDeductives = response.data;
+          this.getDeductives(response.data);
+        },
+        error: () => {
+          this.getDeductivesNew();
+        },
+      });
+  }
+
+  getDeductives(deductivesRelSample: ISamplingDeductive[]) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.deductiveService.getAll(params.getValue()).subscribe({
+      next: response => {
+        const infoDeductives = response.data.map(item => {
+          deductivesRelSample.map(deductiveEx => {
+            if (deductiveEx.deductiveVerificationId == item.id) {
+              item.observations = deductiveEx.observations;
+              item.selected = true;
+            }
+          });
+          return item;
+        });
+        this.paragraphsDeductivas.load(infoDeductives);
+      },
+      error: error => {},
+    });
+  }
+
+  getDeductivesNew() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.deductiveService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.paragraphsDeductivas.load(response.data);
+      },
+      error: error => {},
+    });
   }
 
   initDateForm() {
     this.dateForm = this.fb.group({
       initialDate: [null, [Validators.required]],
       finalDate: [null, [Validators.required]],
-      transferent: [null],
+      transferent: [null, [Validators.required]],
     });
     //this.paragraphs = data;
     //this.paragraphs2 = data2;
@@ -186,16 +225,24 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   goodSearch() {
     const startPeriod = this.dateForm.get('initialDate').value;
     const endPeriod = this.dateForm.get('finalDate').value;
-
-    if (startPeriod && endPeriod) {
-      this.params2
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getGoods());
+    const transferent = this.dateForm.get('transferent').value;
+    if (transferent) {
+      if (startPeriod && endPeriod) {
+        this.params2
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getGoods());
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Se debe capturar una fecha de periodo inicial y final'
+        );
+      }
     } else {
       this.alert(
         'warning',
-        'Advertencia',
-        'Se debe capturar una fecha de periodo inicial y final'
+        'Acción Invalida',
+        'Se requiere seleccionar una transferente'
       );
     }
   }
@@ -208,7 +255,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     if (this.listAssetsSelected.length > 0) {
       this.listAssetsSelected.map(item => {
         const sampligGood: ISampleGood = {
-          sampleGoodId: 243,
           sampleId: this.sampleId,
           goodId: item.managementNumber,
           goodSiabNumber: item.goodSiabNumber,
@@ -244,6 +290,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             this.params2
               .pipe(takeUntil(this.$unSubscribe))
               .subscribe(() => this.getGoods());
+
+            this.getSampleDeductives();
           },
         });
       });
@@ -337,123 +385,22 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   search() {
-    if (
-      this.searchForm.get('id').value &&
-      !this.searchForm.get('code').value &&
-      !this.searchForm.get('nameWarehouse').value &&
-      !this.searchForm.get('address').value
-    )
-      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
-        this.searchForm.get('id').value
-      }`;
+    const id = this.searchForm.get('id').value;
+    const code = this.searchForm.get('code').value;
+    const nameWarehouse = this.searchForm.get('nameWarehouse').value;
+    const address = this.searchForm.get('address').value;
+    const transferent = this.dateForm.get('transferent').value;
 
-    if (
-      this.searchForm.get('code').value &&
-      !this.searchForm.get('id').value &&
-      !this.searchForm.get('nameWarehouse').value &&
-      !this.searchForm.get('address').value
-    )
-      this.params.getValue()['filter.postalCode'] =
-        this.searchForm.get('code').value;
+    if (id) this.params.getValue()['filter.organizationCode'] = id;
+    if (code) this.params.getValue()['filter.postalCode'] = code;
+    if (nameWarehouse) this.params.getValue()['filter.name'] = nameWarehouse;
+    if (address) this.params.getValue()['filter.address1'] = address;
+    //if (transferent)
+    //this.params.getValue()['filter.organizationCode'] = transferent;
 
-    if (
-      this.searchForm.get('nameWarehouse').value &&
-      !this.searchForm.get('id').value &&
-      !this.searchForm.get('code').value &&
-      !this.searchForm.get('address').value
-    )
-      this.params.getValue()['filter.name'] =
-        this.searchForm.get('nameWarehouse').value;
-
-    if (
-      this.searchForm.get('address').value &&
-      !this.searchForm.get('id').value &&
-      !this.searchForm.get('code').value &&
-      !this.searchForm.get('nameWarehouse').value
-    )
-      this.params.getValue()['filter.descriptiveValue'] =
-        this.searchForm.get('address').value;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getCatAlmacenView();
     });
-
-    //
-    if (
-      this.searchForm.get('id').value &&
-      this.searchForm.get('code').value &&
-      !this.searchForm.get('nameWarehouse').value &&
-      !this.searchForm.get('address').value
-    ) {
-      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
-        this.searchForm.get('id').value
-      }`;
-
-      this.params.getValue()['filter.postalCode'] =
-        this.searchForm.get('code').value;
-    }
-
-    if (
-      this.searchForm.get('id').value &&
-      this.searchForm.get('code').value &&
-      this.searchForm.get('nameWarehouse').value &&
-      !this.searchForm.get('address').value
-    ) {
-      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
-        this.searchForm.get('id').value
-      }`;
-
-      this.params.getValue()['filter.postalCode'] =
-        this.searchForm.get('code').value;
-
-      this.params.getValue()['filter.name'] =
-        this.searchForm.get('nameWarehouse').value;
-    }
-
-    if (
-      this.searchForm.get('id').value &&
-      this.searchForm.get('code').value &&
-      this.searchForm.get('nameWarehouse').value &&
-      this.searchForm.get('address').value
-    ) {
-      this.params.getValue()['filter.stockSiabNumber'] = `$eq:${
-        this.searchForm.get('id').value
-      }`;
-
-      this.params.getValue()['filter.postalCode'] =
-        this.searchForm.get('code').value;
-
-      this.params.getValue()['filter.name'] =
-        this.searchForm.get('nameWarehouse').value;
-
-      this.params.getValue()['filter.descriptiveValue'] =
-        this.searchForm.get('address').value;
-    }
-
-    if (
-      !this.searchForm.get('id').value &&
-      this.searchForm.get('code').value &&
-      !this.searchForm.get('nameWarehouse').value &&
-      this.searchForm.get('address').value
-    ) {
-      this.params.getValue()['filter.postalCode'] =
-        this.searchForm.get('code').value;
-
-      this.params.getValue()['filter.descriptiveValue'] =
-        this.searchForm.get('address').value;
-    }
-
-    if (
-      !this.searchForm.get('id').value &&
-      !this.searchForm.get('code').value &&
-      this.searchForm.get('nameWarehouse').value &&
-      this.searchForm.get('address').value
-    ) {
-      this.params.getValue()['filter.name'] =
-        this.searchForm.get('nameWarehouse').value;
-
-      this.params.getValue()['filter.descriptiveValue'] =
-        this.searchForm.get('address').value;
-    }
   }
 
   getRegionalDelegationId() {
@@ -475,7 +422,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => {
-        this.onLoadToast('info', 'No se encontraron registros');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron almacenes');
         this.loading = false;
       },
     });
@@ -524,10 +471,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
               const deductivesRelSample: any =
                 await this.checkExistDeductives();
-
-              this.params4
-                .pipe(takeUntil(this.$unSubscribe))
-                .subscribe(() => this.getDeductives(deductivesRelSample));
+              if (deductivesRelSample == false) {
+                this.getDeductivesNew();
+              } else {
+                this.params4
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getDeductives(deductivesRelSample));
+              }
             }
           });
         },
@@ -560,38 +510,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  getDeductives(deductivesRelSample: any) {
-    if (deductivesRelSample == false) {
-      this.deductiveService.getAll(this.params4.getValue()).subscribe({
-        next: response => {
-          this.paragraphsDeductivas.load(response.data);
-          this.allDeductives = response.data;
-        },
-        error: error => {},
-      });
-    }
-
-    if (deductivesRelSample != false) {
-      this.deductiveService.getAll(this.params4.getValue()).subscribe({
-        next: response => {
-          const infoDeductives = response.data.map(item => {
-            deductivesRelSample.map((deductiveEx: any) => {
-              if (deductiveEx.deductiveVerificationId == item.id) {
-                item.observations = deductiveEx.observations;
-                item.selected = true;
-              }
-            });
-            return item;
-          });
-
-          this.paragraphsDeductivas.load(infoDeductives);
-          this.allDeductives = response.data;
-        },
-        error: error => {},
-      });
-    }
-  }
-
   getNameTransferent(transferentId: number) {
     return new Promise((resolve, reject) => {
       this.transferentService.getById(transferentId).subscribe({
@@ -620,19 +538,22 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       const finalDate = moment(this.dateForm.get('finalDate').value).format(
         'YYYY-MM-DD'
       );
+
+      const transferent = this.dateForm.get('transferent').value;
       const params = new BehaviorSubject<ListParams>(new ListParams());
 
       params.getValue()['filter.startDate'] = initialDate;
       params.getValue()['filter.endDate'] = finalDate;
+      params.getValue()['filter.transfereeId'] = `$eq:${transferent}`;
 
       this.samplingGoodService.getSample(params.getValue()).subscribe({
         next: response => {
           this.sampleId = response.data[0].sampleId;
+          this.getInfoSample(response.data[0].sampleId);
           resolve(true);
         },
-        error: error => {
+        error: () => {
           const sample: ISample = {
-            sampleId: this.sampleId,
             regionalDelegationId: this.delegationId,
             startDate: initialDate,
             endDate: finalDate,
@@ -640,11 +561,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             numeraryInstance: 'INSTANCIA_INICIADA',
             warehouseId: this.storeSelected.organizationCode,
             version: 1,
+            transfereeId: this.dateForm.get('transferent').value,
           };
 
           this.samplingGoodService.createSample(sample).subscribe({
             next: response => {
               this.sampleId = response.sampleId;
+              this.getInfoSample(this.sampleId);
               resolve(true);
             },
             error: error => {
@@ -656,77 +579,52 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  /*turnForm() {
-    Swal.fire({
-      title: 'Confirmación Turnado',
-      text: '¿Está seguro que la información es correcta para turnar?',
-      icon: undefined,
-      width: 450,
-      showCancelButton: true,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#b38e5d',
-      confirmButtonText: 'Aceptar',
-      allowOutsideClick: false,
-    }).then(result => {
-      if (result.isConfirmed) {
-        const size = this.paragraphs3.length;
-        const evaResult = this.paragraphs3.filter(x => x.resultTest != null);
-        debugger;
-        if (size == 0) {
-          this.onLoadToast('info', 'No hay bienes agregados');
-          return;
-        }
-
-        if (size != evaResult.length) {
-          this.onLoadToast(
-            'info',
-            'Todos los bienes deben contar con un Resultado de Evaluación'
-          );
-          return;
-        }
-
-        const cumple = this.paragraphs3.filter(x => x.resultTest == 'CUMPLE');
-        const noCumple = this.paragraphs3.filter(
-          x => x.resultTest == 'NO CUMPLE'
+  getInfoSample(idSample: number) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.sampleId'] = `$eq:${idSample}`;
+    this.samplingGoodService.getSample(params.getValue()).subscribe({
+      next: async response => {
+        const delegationName: any = await this.getNameDelegation(
+          response.data[0].regionalDelegationId
         );
-        if (cumple.length == size) {
-          const deductivesSize = this.paragraphsDeductivas.length;
-          const deductivesSelected = this.paragraphsDeductivas.filter(
-            x => x.selected == true
+
+        if (delegationName) {
+          this.nameDelegation = delegationName;
+          const transferent: any = await this.getNameTransferent(
+            response.data[0].transfereeId
           );
 
-          if (deductivesSelected.length == 0) {
-            //popBienesCumplen
-            this.openModals(
-              TurnModalComponent,
-              '',
-              'popBienesCumplen',
-              'modal-lg'
-            );
-          } else {
-            //confirmacionTurnado
-            this.openModals(
-              TurnModalComponent,
-              '',
-              'confirmacionTurnado',
-              'modal-lg'
-            );
-          }
-        } else {
-          const deductivesSelected = this.paragraphsDeductivas.filter(
-            x => x.selected == true
-          );
-
-          if (deductivesSelected.length == 0) {
-            this.onLoadToast('info', 'Seleccione al menos una deductiva');
-            return;
-          } else {
-            this.openModals(TurnModalComponent, '', 'popTurna', 'modal-lg');
-          }
+          if (transferent) this.nameTransferente = transferent;
         }
-      }
+
+        response.data[0].startDate = moment(response.data[0].startDate).format(
+          'DD/MM/YYYY'
+        );
+        response.data[0].endDate = moment(response.data[0].endDate).format(
+          'DD/MM/YYYY'
+        );
+        response.data[0].creationDate = moment(
+          response.data[0].creationDate
+        ).format('DD/MM/YYYY');
+
+        this.sampleInfo = response.data[0];
+        this.showWarehouseInfo();
+        this.showSample = true;
+      },
     });
-  } */
+  }
+
+  showWarehouseInfo() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.organizationCode'] = this.sampleInfo?.warehouseId;
+    this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
+      next: response => {
+        this.addressWarehouse = response.data[0].address1;
+        this.nameWarehouse = response.data[0].name;
+      },
+      error: error => {},
+    });
+  }
 
   openModals(
     component: any,
@@ -775,10 +673,12 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   getTransferent(params: ListParams) {
     params['sortBy'] = 'nameTransferent:ASC';
     params['filter.status'] = `$eq:${1}`;
-    params['filter.typeTransferent'] = `$eq:NO`;
     this.transferentService.getAll(params).subscribe({
       next: data => {
         this.selectTransferent = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectTransferent = new DefaultSelect();
       },
     });
   }
@@ -808,7 +708,9 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         '¿Desea modificar el resultado de evaluación?'
       ).then(question => {
         if (question.isConfirmed) {
-          this.listAssetsCopiedSelected.map(item => {
+          this.listAssetsCopiedSelected.map((item: any, i: number) => {
+            let index = i + 1;
+
             const sampleGood: ISampleGood = {
               sampleGoodId: item.sampleGoodId,
               sampleId: item.sampleId,
@@ -816,22 +718,26 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             };
 
             this.samplingGoodService.editSamplingGood(sampleGood).subscribe({
-              next: response => {
-                this.alert(
-                  'success',
-                  'Acción Correcta',
-                  'Resultado de evaluación actualizado correctamente'
-                );
-                this.params3
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getSampligGoods());
+              next: () => {
+                if (this.listAssetsCopiedSelected.length == index) {
+                  this.alert(
+                    'success',
+                    'Acción Correcta',
+                    'Resultado de evaluación actualizado correctamente'
+                  );
+                  this.params3
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getSampligGoods());
+                }
               },
-              error: error => {
-                this.alert(
-                  'error',
-                  'Error',
-                  'Error al actualizar el resultado de evaluación'
-                );
+              error: () => {
+                if (this.listAssetsCopiedSelected.length == index) {
+                  this.alert(
+                    'error',
+                    'Error',
+                    'Error al actualizar el resultado de evaluación'
+                  );
+                }
               },
             });
           });
@@ -854,7 +760,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         '¿Desea modificar el resultado de evaluación?'
       ).then(question => {
         if (question.isConfirmed) {
-          this.listAssetsCopiedSelected.map(item => {
+          this.listAssetsCopiedSelected.map((item: any, i: number) => {
+            let index = i + 1;
             const sampleGood: ISampleGood = {
               sampleGoodId: item.sampleGoodId,
               sampleId: item.sampleId,
@@ -862,22 +769,26 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             };
 
             this.samplingGoodService.editSamplingGood(sampleGood).subscribe({
-              next: response => {
-                this.alert(
-                  'success',
-                  'Acción Correcta',
-                  'Resultado de evaluación actualizado correctamente'
-                );
-                this.params3
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getSampligGoods());
+              next: () => {
+                if (index == this.listAssetsCopiedSelected.length) {
+                  this.alert(
+                    'success',
+                    'Acción Correcta',
+                    'Resultado de evaluación actualizado correctamente'
+                  );
+                  this.params3
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getSampligGoods());
+                }
               },
-              error: error => {
-                this.alert(
-                  'error',
-                  'Error',
-                  'Error al actualizar el resultado de evaluación'
-                );
+              error: () => {
+                if (index == this.listAssetsCopiedSelected.length) {
+                  this.alert(
+                    'error',
+                    'Error',
+                    'Error al actualizar el resultado de evaluación'
+                  );
+                }
               },
             });
           });
@@ -898,7 +809,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         this.samplingGoodService
           .deleteSamplingGood(item.sampleGoodId)
           .subscribe({
-            next: response => {
+            next: () => {
               this.alert(
                 'success',
                 'Acción Correcta',
@@ -909,7 +820,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
                 .pipe(takeUntil(this.$unSubscribe))
                 .subscribe(() => this.getGoods());
             },
-            error: error => {
+            error: () => {
               this.alert(
                 'error',
                 'Error',
@@ -927,29 +838,48 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     }
   }
 
-  async saveDeductives() {
-    //console.log('checkData', checkData);
+  saveDeductives() {
     if (this.deductivesSel.length > 0) {
-      //const checkDeductivesExist = this.checkDedExist();
-      let count: number = 0;
+      const deleteDeductives = this.deductivesSel.filter((data: any) => {
+        if (data.selected) return data;
+      });
+
+      if (deleteDeductives.length > 0) {
+        const deleteVerification = deleteDeductives.map(item => {
+          this.allDeductives.map(data => {
+            if (item.id == data.deductiveVerificationId) {
+              item.sampleDeductiveId = data.sampleDeductiveId;
+            }
+          });
+
+          return item;
+        });
+
+        deleteVerification.map(item => {
+          this.samplingGoodService
+            .deleteSampleDeductive(item.sampleDeductiveId)
+            .subscribe({
+              next: () => {},
+            });
+        });
+      }
+
+      const addDeductives = this.deductivesSel.filter((data: any) => {
+        if (data.selected == null) return data;
+      });
+
       this.alertQuestion(
         'question',
         'Confirmación',
         '¿Desea guardar las deductivas seleccionadas?'
       ).then(question => {
         if (question.isConfirmed) {
-          this.deductivesSel.map(item => {
-            count = count + 1;
+          addDeductives.map((item: any, i: number) => {
+            let index = i + 1;
             const sampleDeductive: ISamplingDeductive = {
-              //sampleDeductiveId: '357',
               sampleId: this.sampleId,
-              //orderSampleId: '3',
               deductiveVerificationId: item.id,
               indDedictiva: 'N',
-              //userCreation: 'sigebiadmon',
-              //creationDate: null,
-              //userModification: '2023-10-04',
-              //modificationDate: null,
               version: 1,
               observations: item.observations,
             };
@@ -957,33 +887,39 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
             this.samplingGoodService
               .createSampleDeductive(sampleDeductive)
               .subscribe({
-                next: response => {},
-                error: error => {
-                  this.alert('error', 'Error', 'Error al guardar la deductiva');
+                next: () => {
+                  if (addDeductives.length == index) {
+                    this.alert(
+                      'success',
+                      'Acción Correcta',
+                      'Deductivas agregadas correctamente'
+                    );
+                  }
+                },
+                error: () => {
+                  if (addDeductives.length == index) {
+                    this.alert(
+                      'error',
+                      'Error',
+                      'Error al guardar la deductiva'
+                    );
+                  }
                 },
               });
           });
-
-          if (count == 1) {
-            this.alert(
-              'success',
-              'Correcto',
-              'Deductivas guardadas correctamente'
-            );
-          }
         }
       });
     } else {
       this.alert(
         'warning',
         'Acción Invalida',
-        'Se requiere seleccionar una deductiva'
+        'Se requiere seleccionar o deseleccionar una deductiva'
       );
     }
   }
 
   deductivesSelect(event: any) {
-    this.deductivesSel = event.selected;
+    this.deductivesSel.push(event.selected[0]);
   }
 
   editDeductive(deductive: IDeductive) {
@@ -992,13 +928,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       deductive,
       callback: (next: boolean, deductive: IDeductiveVerification) => {
         if (next) {
-          //this.paragraphsDeductivas.load([deductive]);
-          const deductives = this.allDeductives.map((item: any) => {
-            if (deductive.id == item.id)
-              item.description = deductive.description;
-            return item;
-          });
-          this.paragraphsDeductivas.load(deductives);
+          this.getSampleDeductives();
         }
       },
     };
@@ -1051,9 +981,179 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   turnSampling() {
-    console.log('this.samplingId', this.sampleId);
-    this.router.navigate([
+    this.paragraphs3.getElements().then(async data => {
+      if (data.length > 0) {
+        const resultEvaluation = data.map(item => {
+          if (!item.evaluationResult) return item;
+        });
+
+        const filterEv = resultEvaluation.filter(item => {
+          return item;
+        });
+
+        if (filterEv.length == 0) {
+          const goodCump = data.map(item => {
+            if (item.evaluationResult == 'CUMPLE') return item;
+          });
+
+          const filterGoodCump = goodCump.filter(item => {
+            return item;
+          });
+
+          if (filterGoodCump.length == data.length) {
+            //const deductivesSelect = await this.checkDeductives();
+            const updateSample = this.updateSample('BIENES CUMPLEN');
+            if (updateSample) {
+              this.alertQuestion(
+                'info',
+                'Acción',
+                'Todos los bienes cumplen con los resultados de evaluación y no ha seleccionado alguna deductiva'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Muestreo Cerrado correctamente'
+                  );
+                }
+              });
+            }
+          } else {
+            const deductivesSelect = await this.checkDeductives();
+            if (deductivesSelect) {
+              const updateSample = this.updateSample('BIENES NO CUMPLEN');
+              if (updateSample) {
+                this.alertQuestion(
+                  'question',
+                  'Confirmación',
+                  '¿Esta seguro que la información es correcta para turnar?'
+                ).then(async question => {
+                  if (question.isConfirmed) {
+                    this.createTaskSample();
+                  }
+                });
+              }
+            } else {
+              this.alert(
+                'warning',
+                'Acción Invalida',
+                'Selecciona una deductiva para continuar'
+              );
+            }
+          }
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'Todos los bienes deben contar con un resultado de evaluación"'
+          );
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Se requiere tener bienes en el muestreo'
+        );
+      }
+    });
+
+    /*this.router.navigate([
       'pages/request/generate-monitoring-sampling/verify-noncompliance',
-    ]);
+    ]); */
+  }
+
+  checkDeductives() {
+    return new Promise((resolve, reject) => {
+      this.params.getValue()['filter.sampleId'] = `$eq:${this.sampleId}`;
+      this.samplingGoodService
+        .getAllSampleDeductives(this.params.getValue())
+        .subscribe({
+          next: response => {
+            resolve(response.data);
+          },
+          error: () => {
+            resolve(false);
+          },
+        });
+    });
+  }
+
+  updateSample(status: string) {
+    return new Promise((resolve, reject) => {
+      const sample: ISample = {
+        sampleId: this.sampleId,
+        sampleStatus: status,
+      };
+
+      this.samplingGoodService.updateSample(sample).subscribe({
+        next: () => {
+          resolve(true);
+        },
+      });
+    });
+  }
+
+  async createTaskSample() {
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+
+    body['type'] = 'MUESTREO_BIENES';
+    body['subtype'] = 'Generar_muestreo';
+    body['ssubtype'] = 'TURNAR';
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = user.username;
+    task['assigneesDisplayname'] = user.username;
+    task['creator'] = user.username;
+    task['reviewers'] = user.username;
+
+    task['idSampling'] = this.sampleId;
+    task['title'] = `Muestreo Bienes: Clasificación de Bienes ${this.sampleId}`;
+    task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
+    task['idTransferee'] = this.sampleInfo.transfereeId;
+    task['processName'] = 'Clasificar_bienes';
+    task['urlNb'] = 'pages/request/assets-clasification';
+    body['task'] = task;
+
+    const taskResult: any = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult || taskResult == false) {
+      this.msgGuardado(
+        'success',
+        'Creación de Tarea Correcta',
+        `Se creó la tarea Muestreo Bienes: Clasificación de Bienes: ${this.sampleId}`
+      );
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    });
   }
 }

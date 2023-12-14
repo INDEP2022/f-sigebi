@@ -90,4 +90,8 @@ export class FileBrowserService extends HttpService {
   moveFile(invoiceNumber: string | number, jobNumber: string | number) {
     return this.post('file-browser/moveFile', { invoiceNumber, jobNumber });
   }
+
+  getRouteBillingSavebillingSiab(data: FormData) {
+    return this.post('route-billing/savebillingSiab', data);
+  }
 }

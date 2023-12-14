@@ -7,6 +7,15 @@ export interface IConcept {
   numerary: string;
 }
 
+export interface IEatConcept {
+  conceptId: string;
+  description: string;
+  routineCalculation?: any;
+  automatic?: any;
+  address: string;
+  numerary: string;
+}
+
 export interface IConceptCopy {
   parametro: string;
   descripcion: string;

@@ -445,6 +445,8 @@ export class NotificationAssetsTabComponent
               this.updateStatusGoodTmp(refuseObj.goodId);
             }
           },
+          keyboard: false,
+          ignoreBackdropClick: true,
         };
         this.modalService.show(RefuseClarificationModalComponent, modalConfig);
       } else {
@@ -504,27 +506,15 @@ export class NotificationAssetsTabComponent
             'Los Bienes seleccionados regresarán al proceso de verificar cumplimiento'
           ).then(async question => {
             if (question.isConfirmed) {
+              //Continuar Henry
               //Actualiza a cerrada tarea de notificaciones
               //this.taskService.update()
               const updateData = await this.verifyGoodCompliance();
-              if (updateData == true) {
-                let params = new ListParams();
-                params['filter.requestId'] = this.idRequest;
-                params['filter.goodStatus'] = 'ACLARADO';
+              //this.changeStatusTask();
+              //this.createTaskVerifyCompliance();
 
-                this.goodService.getAll(params).subscribe({
-                  next: resp => {
-                    this.changeStatusTask();
-                    this.createTaskVerifyCompliance();
-                  },
-                  error: error => {
-                    this.msgGuardado2(
-                      'warning',
-                      'Atención',
-                      `La solicitud ya no cuenta con Bienes para continuar`
-                    );
-                  },
-                });
+              if (updateData == true) {
+                this.createTaskVerifyCompliance(); //Crea tarea de Verificar Cumplimiento
               }
             }
           });
@@ -544,6 +534,7 @@ export class NotificationAssetsTabComponent
   }
 
   verifyGoodCompliance() {
+    console.log('Cambiando estatus a los Bienes');
     return new Promise((resolve, reject) => {
       this.goodsReject.getElements().then(data => {
         data.map((bien: IGoodresdev) => {
@@ -554,10 +545,18 @@ export class NotificationAssetsTabComponent
             .getAllFilter(this.paramsCheckInfo.getValue())
             .subscribe({
               next: response => {
-                response.data.map(async notification => {
+                console.log(
+                  'Ejecutando -> this.rejectedGoodService.getAllFilter... del Bien:',
+                  bien.goodid
+                );
+                response.data.find(async notification => {
+                  console.log('Cantidad: ', response.data);
                   if (
                     notification.clarificationType == 'SOLICITAR_ACLARACION'
                   ) {
+                    console.log(
+                      "Condición validada: notification.clarificationType == 'SOLICITAR_ACLARACION'"
+                    );
                     if (
                       (notification.answered == 'ACLARADA' &&
                         notification.clarification.clarification !=
@@ -566,6 +565,9 @@ export class NotificationAssetsTabComponent
                         notification.clarification.clarification !=
                           'INDIVIDUALIZACIÓN DE BIENES')
                     ) {
+                      console.log(
+                        "Ejecutando -> notification.clarificationType == 'SOLICITAR_ACLARACION' (PRIMERA)"
+                      );
                       const updateStatusGood = await this.updateStatusGood(
                         'ACLARADO',
                         'VERIFICAR_CUMPLIMIENTO',
@@ -585,6 +587,9 @@ export class NotificationAssetsTabComponent
                         notification.clarification.clarification ==
                           'INDIVIDUALIZACIÓN DE BIENES')
                     ) {
+                      console.log(
+                        "Ejecutando -> notification.answered == 'ACLARADA' && notification.clarification.clarification == 'INDIVIDUALIZACIÓN DE BIENES')"
+                      );
                       const updateStatusGood = await this.updateStatusGood(
                         'IMPROCEDENTE',
                         'IMPROCEDENTE',
@@ -600,7 +605,13 @@ export class NotificationAssetsTabComponent
                   } else if (
                     notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
                   ) {
+                    console.log(
+                      "Condición validada: notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA'"
+                    );
                     if (notification.answered == 'IMPROCEDENTE') {
+                      console.log(
+                        "Ejecutando -> notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA' (IMPROCEDENTE)"
+                      );
                       const updateStatusGood = await this.updateStatusGood(
                         'IMPROCEDENTE',
                         'IMPROCEDENTE',
@@ -613,6 +624,12 @@ export class NotificationAssetsTabComponent
                         resolve(true);
                       }
                     } else if (notification.answered == 'RECHAZADA') {
+                      console.log(
+                        "Condición validada: notification.answered == 'RECHAZADA'"
+                      );
+                      console.log(
+                        "Ejecutando -> notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA' (RECHAZADA)"
+                      );
                       const updateStatusGood = await this.updateStatusGood(
                         'ACLARADO',
                         'VERIFICAR_CUMPLIMIENTO',
@@ -638,34 +655,143 @@ export class NotificationAssetsTabComponent
   /* Metodo para la creación de tarea */
   async createTaskVerifyCompliance() {
     const oldTask: any = await this.getOldTask();
-    if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/verify-compliance';
-      const from = 'SOLICITAR_ACLARACION';
-      const to = 'VERIFICAR_CUMPLIMIENTO';
-      const user: any = this.authService.decodeToken();
 
-      const taskResult = await this.createTaskOrderService(
-        this.requestData,
-        title,
-        url,
-        from,
-        to,
-        true,
-        this.task?.id,
-        user.username,
-        'SOLICITUD_TRANSFERENCIA',
-        'NotificarAclaracion_Improcedencia',
-        'VERIFICAR_CUMPLIMIENTO'
-      );
-      if (taskResult === true) {
-        this.msgGuardado(
-          'success',
-          'Creación de tarea exitosa',
-          `Se creó la tarea verificar cumplimiento con el ID: ${this.requestData.id}`
-        );
-      }
-    }
+    let params01 = new ListParams();
+    params01['filter.requestId'] = this.idRequest;
+
+    this.goodService.getAll(params01).subscribe({
+      next: async resp => {
+        //Si hay Bienes en la solicitud...
+        console.log('Si hay Bienes en la solicitud...');
+
+        let params02 = new ListParams();
+        params02['filter.requestId'] = this.idRequest;
+        params02['filter.processStatus'] = 'VERIFICAR_CUMPLIMIENTO';
+        params02['filter.goodStatus'] = 'ACLARADO';
+
+        console.log('Parámetros para buscar en good', params02);
+
+        this.goodService.getAll(params02).subscribe({
+          next: async resp => {
+            //Si hay Bienes que fueron aclarados y verifican cumplimiento
+            //Crear tarea de Verificar Cumplimiento
+            console.log(
+              'Si hay Bienes que fueron aclarados y verifican cumplimiento...Crear tarea de Verificar Cumplimiento'
+            );
+
+            if (oldTask.assignees != '') {
+              const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+              const url = 'pages/request/transfer-request/verify-compliance';
+              const from = 'SOLICITAR_ACLARACION';
+              const to = 'VERIFICAR_CUMPLIMIENTO';
+              const user: any = this.authService.decodeToken();
+
+              const taskResult = await this.createTaskOrderService(
+                this.requestData,
+                title,
+                url,
+                from,
+                to,
+                true,
+                this.task?.id,
+                user.username,
+                'SOLICITUD_TRANSFERENCIA',
+                'NotificarAclaracion_Improcedencia',
+                'VERIFICAR_CUMPLIMIENTO'
+              );
+              if (taskResult === true) {
+                this.msgGuardado(
+                  'success',
+                  'Creación de tarea exitosa',
+                  `Se creó la tarea verificar cumplimiento con el ID: ${this.requestData.id}`
+                );
+              }
+            }
+          },
+
+          error: error => {
+            //si no hay Bienes aclarados y en Verificar Cumpliento
+            //Entonces verificar que haya bienes en SOLICITAR_APROBACION en proceso estatus y bien estatus
+            console.log(
+              'si no hay Bienes aclarados y en Verificar Cumpliento, Entonces verificar que haya bienes en SOLICITAR_APROBACION en proceso estatus y bien estatus'
+            );
+            let params03 = new ListParams();
+            params03['filter.requestId'] = this.idRequest;
+            params03['filter.goodStatus'] = 'SOLICITAR_APROBACION';
+            params03['filter.processStatus'] = 'SOLICITAR_APROBACION';
+
+            console.log('Parámetros para buscar en good', params03);
+
+            this.goodService.getAll(params03).subscribe({
+              next: resp => {
+                //Si si hay bienes con SOLICITAR_APROBACION en proceso estatus y bien estatus
+                //Entonces crear tarea de Aprobar Solicitud
+                console.log(
+                  'Si si hay bienes con SOLICITAR_APROBACION en proceso estatus y bien estatus, Entonces crear tarea de Aprobar Solicitud'
+                );
+                const user: any = this.authService.decodeToken();
+                let task: any = {};
+                task['id'] = 0;
+                task['reviewers'] = user.username;
+                task['assignees'] = this.task.assignees;
+                task['assigneesDisplayname'] = this.task.displayName;
+                task['creator'] = user.username;
+                task['taskNumber'] = Number(this.requestData.id);
+                task[
+                  'title'
+                ] = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+                task['programmingId'] = 0;
+                task['requestId'] = this.requestData.id;
+                task['expedientId'] = this.requestData.recordId;
+                task['idDelegationRegional'] = user.department;
+                task['urlNb'] =
+                  'pages/request/transfer-request/process-approval';
+                task['idstation'] = this.requestData?.stationId;
+                task['idTransferee'] = this.requestData?.transferenceId;
+                task['idAuthority'] = this.requestData?.authorityId;
+                task['idDelegationRegional'] = user.department;
+
+                this.taskService.createTask(task).subscribe({
+                  next: resp => {
+                    console.log(
+                      'Se creó la tarea de aprobar, por que no hay bienes para verificar'
+                    );
+                    this.msgGuardado(
+                      'success',
+                      'Creación de tarea exitosa',
+                      `Se creó la tarea aprobar solicitud: ${this.requestData.id}`
+                    );
+                  },
+                  error: error => {
+                    console.log(error);
+
+                    this.onLoadToast(
+                      'error',
+                      'Error',
+                      'No se pudo crear la tarea de Aprobación de Solicitud'
+                    );
+                  },
+                });
+              },
+              error: error => {
+                console.log(
+                  'Si no hay bienes con SOLICITAR_APROBACION en proceso estatus y bien estatus, Entonces solo cerrar tarea de Notificaciones.'
+                );
+                //Si no hay bienes con SOLICITAR_APROBACION en proceso estatus y bien estatus
+                //Entonces solo cerrar tarea de Notificaciones.
+
+                this.msgGuardado2(
+                  'warning',
+                  'Atención',
+                  `La solicitud ya no cuenta con Bienes para continuar`
+                );
+              },
+            });
+          },
+        });
+      },
+      error: async error => {},
+    });
   }
 
   getOldTask() {
@@ -866,6 +992,8 @@ export class NotificationAssetsTabComponent
             let config = {
               ...MODAL_CONFIG,
               class: 'modal-lg modal-dialog-centered',
+              keyboard: false,
+              ignoreBackdropClick: true,
             };
 
             config.initialState = {
@@ -898,6 +1026,8 @@ export class NotificationAssetsTabComponent
             let config = {
               ...MODAL_CONFIG,
               class: 'modal-lg modal-dialog-centered',
+              keyboard: false,
+              ignoreBackdropClick: true,
             };
             config.initialState = {
               notification,
@@ -1498,6 +1628,8 @@ export class NotificationAssetsTabComponent
             }
           }
         },
+        keyboard: false,
+        ignoreBackdropClick: true,
       },
       class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -1569,6 +1701,7 @@ export class NotificationAssetsTabComponent
                 },
               },
               class: 'modal-lg modal-dialog-centered',
+              keyboard: false,
               ignoreBackdropClick: true,
             };
             this.modalService.show(PrintSatAnswerComponent, config);
@@ -1854,7 +1987,9 @@ export class NotificationAssetsTabComponent
   }
 
   endClarification() {
-    //this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+    //this.changeStatusTask();
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+
     /*this.data.getElements().then(data => {
       data.map((good: IGoodresdev) => {
         if (
@@ -1917,6 +2052,7 @@ export class NotificationAssetsTabComponent
 
   updateStatusTask(dataTask: ITask) {
     //Contruir objeto con valores para Task
+    console.log('Cerrando tarea de notificaciones');
     const model: ITask = {
       id: dataTask.id,
       taskNumber: dataTask.taskNumber,
@@ -2002,9 +2138,11 @@ export class NotificationAssetsTabComponent
           };
           this.goodService.update(good).subscribe({
             next: data => {
+              console.log('if (statusGood)', data);
               resolve(true);
             },
             error: error => {
+              console.log('if (statusGood)', error);
               resolve(false);
             },
           });
@@ -2018,8 +2156,13 @@ export class NotificationAssetsTabComponent
             processStatus: statusProcess,
           };
           this.goodService.update(good).subscribe({
-            next: data => {},
-            error: error => {},
+            next: data => {
+              console.log('if (statusProcess)', data);
+            },
+
+            error: error => {
+              console.log('if (statusProcess', error);
+            },
           });
         }
       } else if (typeOrigin == 'DOC_COMPLEMENTARIA') {
@@ -2317,6 +2460,8 @@ export class NotificationAssetsTabComponent
           let config = {
             ...MODAL_CONFIG,
             class: 'modal-lg modal-dialog-centered',
+            keyboard: false,
+            ignoreBackdropClick: true,
           };
           const idSolicitud = this.idRequest;
           config.initialState = {
@@ -2370,7 +2515,7 @@ export class NotificationAssetsTabComponent
       allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
-        this.endClarification();
+        this.changeStatusTask();
       }
     });
   }
@@ -2387,7 +2532,8 @@ export class NotificationAssetsTabComponent
       allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
-        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        this.changeStatusTask();
+        //this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
       }
     });
   }

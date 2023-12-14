@@ -157,3 +157,26 @@ export interface IQueryRegAdminGood {
   minutesNumber: string;
   typeMinutes: string;
 }
+
+export interface IAvailableFestatus {
+  goodId: string;
+  status: string;
+  screenkey: string;
+}
+
+export interface ITmpUpdateMassive {
+  user: string;
+  proceedingKey: string;
+  date: string;
+}
+
+export interface ITmpCreateAuthoDestroy {
+  user: string;
+  proceeding: number;
+}
+
+export interface ITmpUpdateOneReg {
+  user: string;
+  good: number;
+  approved: string;
+}

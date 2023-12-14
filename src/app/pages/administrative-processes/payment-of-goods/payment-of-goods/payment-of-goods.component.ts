@@ -85,7 +85,7 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         this.title,
-        'En Espera de Respuesta por Parte del SAMI, El Proceso no Puede Continuar.'
+        'En espera de Rrspuesta por parte de SAMI, El proceso no puede continuar.'
       );
       return;
     }
@@ -94,7 +94,7 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       case 2:
         const resp = await this.alertQuestion(
           'question',
-          '¿Continua con la Generación de la Referencia?',
+          '¿Continua con la generación de la referencia?',
           '¿Desea Continua?'
         );
         if (resp.isConfirmed) {
@@ -104,8 +104,8 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       case 3:
         const resp2 = await this.alertQuestion(
           'question',
-          '¿Continua con el Envío de la Referencia A SAMI?',
-          '¿Desea Continua?'
+          '¿Continua con el envio de la referencia a SAMI?',
+          '¿Desea continuar?'
         );
         if (resp2.isConfirmed) {
           this.pupEnviaReferencia();
@@ -114,8 +114,8 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       case 4:
         const resp3 = await this.alertQuestion(
           'question',
-          '¿Continua con la Validación de Pago de Referencia?',
-          '¿Desea Continua?'
+          '¿Continua con la validación de pago de referencia?',
+          '¿Desea continuar?'
         );
         if (resp3.isConfirmed) {
           this.pupValidaPago();
@@ -124,8 +124,8 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       case 5:
         const resp4 = await this.alertQuestion(
           'question',
-          '¿Continua con la Generación de OI?',
-          '¿Desea Continua?'
+          '¿Continua con la generación de OI?',
+          '¿Desea continuar?'
         );
         if (resp4.isConfirmed) {
           this.pupGeneraOi();
@@ -134,8 +134,8 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       case 6:
         const resp5 = await this.alertQuestion(
           'question',
-          '¿Continua con el Envío de OI a SIRSAE?',
-          '¿Desea Continua?'
+          '¿Continua con el envío de OI a SIRSAE?',
+          '¿Desea continuar?'
         );
         if (resp5.isConfirmed) {
           this.pupEnvioOiSirsae(1);
@@ -144,8 +144,8 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       case 7:
         const resp6 = await this.alertQuestion(
           'question',
-          '¿Continua con la Recepción de OI de SIRSAE?',
-          '¿Desea Continua?'
+          '¿Continua con la recepción de OI de SIRSAE?',
+          '¿Desea continuar?'
         );
         if (resp6.isConfirmed) {
           this.pupEnvioOiSirsae(2);
@@ -154,8 +154,8 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       case 8:
         const resp7 = await this.alertQuestion(
           'question',
-          '¿Continua con la Validación de Pago de la OI?',
-          '¿Desea Continua?'
+          '¿Continua con la validación de pago de la OI?',
+          '¿Desea continuar?'
         );
         if (resp7.isConfirmed) {
           this.pupValidaPagoOi();
@@ -164,8 +164,8 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       case 9:
         const resp8 = await this.alertQuestion(
           'question',
-          '¿Continua con el Envío de OI a SAMI?',
-          '¿Desea Continua?'
+          '¿Continua con el envio de OI a SAMI?',
+          '¿Desea continuar?'
         );
         if (resp8.isConfirmed) {
           this.pupEnvioOiNsb();
@@ -195,7 +195,7 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       c_SAE_NSB_UR
     );
     if (c_REFERENCIA === null) {
-      this.alert('error', this.title, 'No se generó la Referencia.');
+      this.alert('error', this.title, 'No se generó la referencia.');
     } else {
       await this.updateSaeNsbGoodsNeH(c_REFERENCIA);
       this.saeNsbGoodsNeH.procStatus = this.blkControl.statusProc + 1;
@@ -203,7 +203,7 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
       this.alert(
         'success',
         this.title,
-        `Se generó la Referencia: ${c_REFERENCIA}`
+        `Se generó la referencia: ${c_REFERENCIA}`
       );
     }
   }
@@ -228,7 +228,7 @@ export class PaymentOfGoodsComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             this.title,
-            'No se Encontró Parámetro de Unidad Responsable.'
+            'No se encontró parámetro de unidad responsable.'
           );
         },
       });

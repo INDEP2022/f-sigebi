@@ -70,6 +70,13 @@ export class EmailModalComponent extends BasePage implements OnInit {
           sort: false,
           type: 'custom',
           renderComponent: CheckboxElementComponent,
+          valuePrepareFunction: (cell: any, row: any) => {
+            if (this.array.includes(row.bookEmail)) {
+              return true;
+            } else {
+              return false;
+            }
+          },
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectedEmail(instance),
         },
@@ -87,6 +94,13 @@ export class EmailModalComponent extends BasePage implements OnInit {
           sort: false,
           type: 'custom',
           renderComponent: CheckboxElementComponent,
+          valuePrepareFunction: (cell: any, row: any) => {
+            if (this.array2.includes(row.bookEmail)) {
+              return true;
+            } else {
+              return false;
+            }
+          },
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectedEmailCopy(instance),
         },
@@ -176,12 +190,14 @@ export class EmailModalComponent extends BasePage implements OnInit {
           if (!this.array.includes(data.row.bookEmail)) {
             this.array.push(data.row.bookEmail);
           }
+          console.log(this.array);
         } else {
           // Si el checkbox se deselecciona, eliminar el elemento del array
           const index = this.array.indexOf(data.row.bookEmail);
           if (index !== -1) {
             this.array.splice(index, 1);
           }
+          console.log(this.array);
         }
         // Ahora puedes realizar la consulta, teniendo en cuenta los cambios en this.array
       },
@@ -199,12 +215,14 @@ export class EmailModalComponent extends BasePage implements OnInit {
           if (!this.array2.includes(data.row.bookEmail)) {
             this.array2.push(data.row.bookEmail);
           }
+          console.log(this.array2);
         } else {
           // Si el checkbox se deselecciona, eliminar el elemento del array
           const index = this.array2.indexOf(data.row.bookEmail);
           if (index !== -1) {
             this.array2.splice(index, 1);
           }
+          console.log(this.array2);
         }
 
         // Ahora puedes realizar la consulta, teniendo en cuenta los cambios en this.array
@@ -235,7 +253,7 @@ export class EmailModalComponent extends BasePage implements OnInit {
   }
 
   sendEmail() {
-    if (!this.array) {
+    if (this.array.length == 0) {
       this.alert(
         'warning',
         'Se debe seleccionar al menos una direccion de correo para poder enviar',

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, map, of, take } from 'rxjs';
@@ -9,8 +9,9 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
+import { NumeraireConversion } from '../models/numeraire-conversion';
 import { ComerieventosService } from '../services/comerieventos.service';
 import { ComermeventosService } from '../services/comermeventos.service';
 import { NumerarieService } from '../services/numerarie.service';
@@ -22,29 +23,24 @@ import { COLUMNS } from './columns';
   styleUrls: ['./numeraire-conversion-auctions.component.scss'],
 })
 export class NumeraireConversionAuctionsComponent
-  extends BasePage
+  extends NumeraireConversion
   implements OnInit
 {
-  @Input() address: string;
-
-  ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
-  dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
-  user: any;
-  selectNewEvent: IComerEvent;
+  validParcial = true;
   constructor(
     private convNumeraryService: ConvNumeraryService,
     private modalService: BsModalService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
+    private lotService: LotService,
     private numerarieService: NumerarieService,
-    private eventMService: ComermeventosService,
-    private eventIService: ComerieventosService,
-    private eventDataService: ComerEventosService,
-    private authService: AuthService
+    protected override eventMService: ComermeventosService,
+    protected override eventIService: ComerieventosService,
+    protected override eventDataService: ComerEventosService,
+    protected override authService: AuthService
   ) {
-    super();
-    this.user = this.authService.decodeToken().preferred_username;
+    super(eventMService, eventIService, authService, eventDataService);
   }
 
   ngOnInit(): void {}
@@ -59,6 +55,10 @@ export class NumeraireConversionAuctionsComponent
     }
   }
 
+  get expenses() {
+    return this.numerarieService.expenses;
+  }
+
   get showParcial() {
     return this.numerarieService.showParcial;
   }
@@ -67,21 +67,13 @@ export class NumeraireConversionAuctionsComponent
     this.numerarieService.showParcial = value;
   }
 
-  get eventService() {
-    return this.address
-      ? this.address === 'M'
-        ? this.eventMService
-        : this.eventIService
-      : null;
-  }
-
   get updateAllowed() {
     return this.numerarieService.updateAllowed;
   }
 
   get pathEvent() {
     return (
-      'event/api/v1/comer-event?filter.eventTpId=$in:0,1,2,3,4,5&sortBy=id:ASC' +
+      'event/api/v1/comer-event?filter.eventTpId=$eq:0,1,2,3,4,5&sortBy=id:ASC' +
       (this.address ? '&filter.address=$eq:' + this.address : '')
     );
   }
@@ -151,9 +143,9 @@ export class NumeraireConversionAuctionsComponent
     }
   }
 
-  get validParcial() {
+  get validParcialButton() {
     return this.selectedEvent
-      ? this.selectedEvent.statusVtaId === 'VEN'
+      ? this.selectedEvent.statusVtaId === 'VEN' && this.validParcial
       : false;
   }
 
@@ -195,7 +187,7 @@ export class NumeraireConversionAuctionsComponent
   }
 
   async calculaParc() {
-    if (this.validParcial) {
+    if (this.validParcialButton) {
       this.alertQuestion(
         'question',
         '¿Desea calcular parcialmente este evento?',
@@ -229,57 +221,127 @@ export class NumeraireConversionAuctionsComponent
       eventDate: secondFormatDateTofirstFormatDate(event.eventDate as string),
     };
     this.numerarieService.selectedEventSubject.next(this.selectedEvent);
-    this.numerarieService.validateParcialButtons(this.address, event);
+    this.validateParcialButtons(this.address, event);
   }
 
-  private convierteBody() {
+  validateParcialButtons(address: string, event: IComerEvent) {
+    if (address === 'I') {
+      this.validParcial = true;
+      const filterParams = new FilterParams();
+      filterParams.addFilter('idStatusVta', 'GARA');
+      filterParams.addFilter('idEvent', event.id);
+      this.lotService
+        .getAll(filterParams.getParams())
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response && response.data && response.data.length === 0) {
+              this.validParcial = false;
+              this.alert(
+                'warning',
+                'Botones parciales inhabilitados',
+                'Porque no cuenta con lote en estatus GARA'
+              );
+            }
+          },
+          error: err => {
+            this.validParcial = false;
+            this.alert(
+              'warning',
+              'Botones parciales inhabilitados',
+              'Porque no cuenta con lote en estatus GARA'
+            );
+          },
+        });
+    }
+  }
+
+  private async convierteBody() {
     this.loader.load = true;
-    this.convNumeraryService
-      .convert({
-        pevent: this.selectedEvent.id,
-        pscreen: 'FCOMER087',
-        user: this.user,
-      })
-      .pipe(take(1))
-      .subscribe({
-        next: response => {
-          // this.reloadExpenses++;
-          let params = new FilterParams();
-          params.addFilter('id', this.selectedEvent.id);
-          this.eventDataService
-            .getAllEvents(params.getParams())
-            .pipe(
-              take(1),
-              catchError(x => of({ data: [] as IComerEvent[] })),
-              map(x => x.data)
-            )
-            .subscribe({
-              next: response => {
-                this.loader.load = false;
-                if (response && response.length > 0) {
-                  // this.selectEvent(response[0]);
-                  this.selectNewEvent = response[0];
-                  this.alert('success', 'Se ha convertido correctamente', '');
-                } else {
-                  this.alert(
-                    'error',
-                    'Ocurrio un error al actualizar el evento',
-                    'Favor de verificar'
-                  );
-                }
-              },
-            });
-        },
-        error: err => {
-          console.log(err);
-          this.loader.load = false;
-          this.alert(
-            'error',
-            'No se pudo realizar la conversión',
-            err.error.message
-          );
-        },
-      });
+    // this.selectedEvent.statusVtaId = 'CNE';
+    console.log(this.selectedEvent);
+    // this.eventDataService
+    //   .update2(this.selectedEvent.id, {
+    //     statusVtaId: 'CNE',
+    //     eventTpId: +(this.selectedEvent.eventTpId + ''),
+    //   })
+    //   .pipe(take(1))
+    //   .subscribe({
+    //     next: response => {
+    //       this.updateEventoConv(true, this.selectedEvent);
+    //     },
+    //     error: err => {
+    //       this.showErrorEstatus(true);
+    //     },
+    //   });
+    // return;
+    if (this.selectedEvent.address === 'M') {
+      this.convNumeraryService
+        .convert({
+          pevent: this.selectedEvent.id,
+          pscreen: 'FCOMER087',
+          user: this.user.preferred_username,
+        })
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            // this.reloadExpenses++;
+            this.updateEventoConv(true, this.selectedEvent);
+          },
+          error: err => {
+            console.log(err);
+            this.loader.load = false;
+            this.alert(
+              'error',
+              'No se pudo realizar la conversión',
+              err.error.message
+            );
+          },
+        });
+    } else if (this.selectedEvent.address === 'I') {
+      const count = await firstValueFrom(
+        this.convNumeraryService
+          .SP_CONVERSION_ASEG_TOTAL(this.selectedEvent.id, 'FCOMER07')
+          .pipe(
+            catchError(x => of({ processedData: 0 })),
+            map(x => x.processedData)
+          )
+      );
+      if (count === 0) {
+        this.alert('warning', 'No tiene gastos válidos a convertir', '');
+      }
+      const v_count_gara = await firstValueFrom(
+        this.lotService.getStatusCountGaraByEvent(this.selectedEvent.id).pipe(
+          catchError(x => of({ data: [{ count: 0 }] })),
+          map(x => x.data[0].count)
+        )
+      );
+      const v_count_numera = await firstValueFrom(
+        this.lotService.getStatusCountComerxlots(this.selectedEvent.id).pipe(
+          catchError(x => of({ data: [{ count: 0 }] })),
+          map(x => x.data[0].count)
+        )
+      );
+      if (v_count_gara === 0 && v_count_numera === 0) {
+        // this.selectedEvent.statusVtaId = 'CNE';
+        this.eventDataService
+          .update2(this.selectedEvent.id, {
+            statusVtaId: 'CNE',
+            eventTpId: +(this.selectedEvent.eventTpId + ''),
+          })
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.updateEventoConv(count > 0, this.selectedEvent);
+            },
+            error: err => {
+              this.showErrorEstatus(count === 0);
+            },
+          });
+      } else {
+        this.showErrorEstatus(count === 0);
+      }
+    }
   }
 
   get validNormal() {
@@ -288,15 +350,32 @@ export class NumeraireConversionAuctionsComponent
       : false;
   }
 
+  get validNormalConvierte() {
+    return this.selectedEvent
+      ? this.selectedEvent.statusVtaId !== 'CNE' &&
+          (this.selectedEvent.address === 'M' ||
+            this.selectedEvent.address === 'I')
+      : false;
+  }
+
   convierte() {
     if (this.validNormal) {
-      this.alertQuestion('question', '¿Desea convertir este evento?', '').then(
-        x => {
+      if (
+        this.selectedEvent.address === 'M' ||
+        this.selectedEvent.address === 'I'
+      ) {
+        this.alertQuestion(
+          'question',
+          '¿Desea convertir este evento?',
+          ''
+        ).then(x => {
           if (x.isConfirmed) {
             this.convierteBody();
           }
-        }
-      );
+        });
+      } else {
+        this.alert('warning', 'Evento debe ser inmueble o mueble', '');
+      }
     } else {
       this.alert(
         'warning',
@@ -312,7 +391,7 @@ export class NumeraireConversionAuctionsComponent
       .SP_CONVERSION_ASEG_PARCIAL({
         pevent: this.selectedEvent.id,
         pscreen: 'FCOMER087',
-        user: this.user,
+        user: this.user.preferred_username,
       })
       .pipe(take(1))
       .subscribe({
@@ -334,7 +413,7 @@ export class NumeraireConversionAuctionsComponent
   }
 
   convierteParcial() {
-    if (this.validParcial) {
+    if (this.validParcialButton) {
       this.alertQuestion(
         'question',
         '¿Desea convertir parcialmente este evento?',

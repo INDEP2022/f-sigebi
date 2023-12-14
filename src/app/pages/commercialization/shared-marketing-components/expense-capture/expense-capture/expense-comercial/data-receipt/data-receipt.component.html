@@ -84,7 +84,7 @@
         <textarea
           class="form-control"
           formControlName="attachedDocumentation"
-          rows="3"></textarea>
+          rows="2"></textarea>
       </form-field>
     </div>
   </div>
@@ -248,72 +248,45 @@
       {{ item.MeNomAM }}
     </div>
   </ng-template>
-  <div class="row mt-4 pl-0">
-    <ng-custom-select-loading
-      [form]="form"
-      [updateValues]="true"
-      formControlName="capturedUser"
-      label="Captura"
-      [path]="pathEmpleados"
-      value="ClkDet"
-      bindLabel="MeNomEmp"
-      paramSearch="search"
-      [labelTemplate]="employeeLabel"
-      [optionTemplate]="employeeOption">
-    </ng-custom-select-loading>
-
-    <!-- <div class="col-md-4">
-      <form-field [control]="capturedUser" label="Captura">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="capturedUser"
-          maxlength="30" />
-      </form-field>
+  <ng-template #paramModLabel let-item="item">
+    {{ item.value }} - {{ item.description }}
+  </ng-template>
+  <ng-template #paramModOption let-item="item">
+    <div [title]="item.value + '-' + item.description">
+      {{ item.value }} - {{ item.description }}
     </div>
-    <div class="col-md-8">
-      <form-field [control]="nomEmplcapture" label="">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="nomEmplcapture"
-          maxlength="120" />
-      </form-field>
-    </div> -->
-  </div>
-  <div class="row mt-4 pl-0">
-    <ng-custom-select-loading
-      [form]="form"
-      [updateValues]="true"
-      formControlName="authorizedUser"
-      label="Autoriza"
-      [path]="pathEmpleados"
-      value="ClkDet"
-      bindLabel="MeNomEmp"
-      paramSearch="search"
-      [labelTemplate]="employeeLabel"
-      [optionTemplate]="employeeOption">
-    </ng-custom-select-loading>
-    <!-- <div class="col-md-4">
-      <form-field [control]="authorizedUser" label="Autoriza">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="authorizedUser"
-          maxlength="30" />
-      </form-field>
+  </ng-template>
+  <div class="row mt-4 pl-0" *ngIf="address === 'M'">
+    <div class="col-md-6">
+      <ng-custom-select-loading
+        [form]="form"
+        [updateValues]="true"
+        formControlName="capturedUser"
+        label="Captura"
+        [path]="pathEmpleados"
+        value="ClkDet"
+        bindLabel="MeNomEmp"
+        paramSearch="search"
+        [labelTemplate]="employeeLabel"
+        [optionTemplate]="employeeOption">
+      </ng-custom-select-loading>
     </div>
-    <div class="col-md-8">
-      <form-field [control]="nomEmplAuthorizes" label="">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="nomEmplAuthorizes"
-          maxlength="120" />
-      </form-field>
-    </div> -->
+    <div class="col-md-6">
+      <ng-custom-select-loading
+        [form]="form"
+        [updateValues]="true"
+        formControlName="authorizedUser"
+        label="Autoriza"
+        [path]="pathEmpleados"
+        value="ClkDet"
+        bindLabel="MeNomEmp"
+        paramSearch="search"
+        [labelTemplate]="employeeLabel"
+        [optionTemplate]="employeeOption">
+      </ng-custom-select-loading>
+    </div>
   </div>
-  <div class="row mt-4 pl-0">
+  <div class="row mt-4 pl-0" *ngIf="address === 'M'">
     <ng-custom-select-loading
       [form]="form"
       [updateValues]="true"
@@ -325,6 +298,50 @@
       paramSearch="search"
       [labelTemplate]="employeeLabel"
       [optionTemplate]="employeeOption">
+    </ng-custom-select-loading>
+  </div>
+  <div class="row mt-4 pl-0" *ngIf="address !== 'M'">
+    <div class="col-md-6">
+      <ng-custom-select-loading
+        [form]="form"
+        [updateValues]="true"
+        formControlName="capturedUser"
+        label="Captura"
+        [path]="pathCaptura"
+        value="value"
+        bindLabel="description"
+        paramSearch="search"
+        [labelTemplate]="paramModLabel"
+        [optionTemplate]="paramModOption">
+      </ng-custom-select-loading>
+    </div>
+    <div class="col-md-6">
+      <ng-custom-select-loading
+        [form]="form"
+        [updateValues]="true"
+        formControlName="authorizedUser"
+        label="Autoriza"
+        [path]="pathAutoriza"
+        value="value"
+        bindLabel="description"
+        paramSearch="search"
+        [labelTemplate]="paramModLabel"
+        [optionTemplate]="paramModOption">
+      </ng-custom-select-loading>
+    </div>
+  </div>
+  <div class="row mt-4 pl-0" *ngIf="address !== 'M'">
+    <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="requestedUser"
+      label="Solicita"
+      [path]="pathSolicita"
+      value="value"
+      bindLabel="description"
+      paramSearch="search"
+      [labelTemplate]="paramModLabel"
+      [optionTemplate]="paramModOption">
     </ng-custom-select-loading>
   </div>
   <ng-template #typeOpLabel let-item="item">
@@ -377,24 +394,138 @@
       [labelTemplate]="tramLabel"
       [optionTemplate]="tramOption">
     </ng-custom-select-loading>
-    <!-- <div class="row" *ngIf="showContract">
-      <app-select-modal-table-shared
+    <div class="d-flex mt-3" *ngIf="showContract">
+      <div>
+        <button
+          type="button"
+          tooltip="Contratos"
+          class="btn btn-primary btn-sm active pl-3"
+          style="width: 36px"
+          [disabled]="!conceptNumberValue || !address"
+          (click)="openContracts()">
+          <i class="bx bx-list-ul bx-sm float-icon"></i>
+        </button>
+      </div>
+
+      <div style="width: 100%; padding-left: 14px">
+        <form-field [control]="form.get('contractNumber')" label="Contrato">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="contractNumber"
+            readonly />
+        </form-field>
+      </div>
+    </div>
+    <div class="row ml-0 mr-0 mt-2 p-0" *ngIf="showContract">
+      <form-field
+        [control]="form.get('contractDescription')"
+        label="Contrato Descripción">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="contractDescription"
+          rows="2"
+          readonly></textarea>
+      </form-field>
+    </div>
+    <!-- <ng-template #tipadjLabel let-item="item">
+      {{ item.clktipadjud }} - {{ item.cvdsc }}
+    </ng-template>
+    <ng-template #tipadjOption let-item="item">
+      <div [title]="item.clktipadjud + '-' + item.cvdsc">
+        {{ item.clktipadjud }} - {{ item.cvdsc }}
+      </div>
+    </ng-template> -->
+    <div *ngIf="showTipAdj" class="row ml-0 mr-0 mt-2 p-0">
+      <form-field [control]="form.get('padj')" label="PADJ">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="padj"
+          readonly />
+      </form-field>
+
+      <!-- <ng-custom-select-loading
+          [form]="form"
+          [updateValues]="true"
+          formControlName="padj"
+          label="PADJ"
+          [path]="pathPadj"
+          value="cvdsc"
+          bindLabel="cvdsc"
+          paramSearch="filter.cvdsc"
+          prefixSearch="$ilike"
+          [readonly]="true">
+        </ng-custom-select-loading> -->
+    </div>
+    <div *ngIf="showTipAdj" class="row ml-0 mr-0 mt-2 p-0">
+      <form-field [control]="form.get('psadj')" label="PSADJ">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="padj"
+          readonly />
+      </form-field>
+      <!-- <ng-custom-select-loading
+          [form]="form"
+          [updateValues]="true"
+          [disabled]="!padjValue"
+          formControlName="psadj"
+          label="PSADJ"
+          [path]="pathPsadj"
+          value="cvdsc"
+          bindLabel="cvdsc"
+          paramSearch="filter.cvdsc"
+          prefixSearch="$ilike"
+          [readonly]="true">
+        </ng-custom-select-loading> -->
+    </div>
+    <div *ngIf="showTipAdj" class="row ml-0 mr-0 mt-2 p-0">
+      <form-field [control]="form.get('pssadj')" label="PSSADJ">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="pssadj"
+          readonly />
+      </form-field>
+
+      <!-- <ng-custom-select-loading
+          [form]="form"
+          [updateValues]="true"
+          [disabled]="!psadjValue"
+          formControlName="pssadj"
+          label="PSSADJ"
+          [path]="pathPssadj"
+          value="cvdsc"
+          bindLabel="cvdsc"
+          paramSearch="filter.cvdsc"
+          prefixSearch="$ilike"
+          [readonly]="true">
+        </ng-custom-select-loading> -->
+    </div>
+    <div *ngIf="showAdj" class="row ml-0 mr-0 mt-2 p-0">
+      <form-field [control]="form.get('adj')" label="Adjudicación">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="adj"
+          readonly />
+      </form-field>
+      <!-- <ng-custom-select-loading
+        style="padding: 0px"
         [form]="form"
-        [maxlengthInput]="12"
-        [disabled]="false"
-        [onlyButton]="true"
-        [widthDescription]="false"
-        [haveSelectColumns]="true"
-        [haveColumnFilters]="true"
-        [ilikeFilters]="ilikeFilters"
-        [dateFilters]="dateFilters"
-        label="Contrato"
-        formField="contractNumber"
-        [service]="paymentService"
-        [columnsType]="columns"
-        id="expenseNumber"
-        title="Contratos"
-        (selectRow)="fillContract($event)"></app-select-modal-table-shared>
-    </div> -->
+        [updateValues]="true"
+        [disabled]="!psadjValue"
+        formControlName="adj"
+        label="Adjudicación"
+        [path]="pathPssadj"
+        value="cvdsc"
+        bindLabel="cvdsc"
+        paramSearch="filter.cvdsc"
+        prefixSearch="$ilike"
+        [readonly]="true">
+      </ng-custom-select-loading> -->
+    </div>
   </div>
 </ng-container>

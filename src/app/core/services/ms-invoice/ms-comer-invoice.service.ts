@@ -356,4 +356,18 @@ export class ComerInvoiceService extends HttpService {
   }) {
     return this.post(ENDPOINT_INVOICE.ProcedureSera, data);
   }
+
+  getCtrlInvoiceCopyBillVtaBases(data: any) {
+    return this.post(ENDPOINT_INVOICE.CtrlInvoiceCopyBillVtaBases, data);
+  }
+
+  getApplicationGetComerPagorefExists(pEvent: any, pEventId: any) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationGetComerPagorefExists}/${pEvent}/${pEventId}`
+    );
+  }
+
+  getApplicationGeneratePreInvoices(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationGeneratePreInvoices, data);
+  }
 }

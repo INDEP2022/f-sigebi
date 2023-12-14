@@ -1,54 +1,56 @@
 import { Injectable } from '@angular/core';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from 'src/app/core/interfaces/list-response.interface';
-import { IContract } from '../models/payment';
+import { IContract, IRetention } from '../models/payment';
+import { ExpenseCaptureDataService } from './expense-capture-data.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExpensePaymentService extends HttpService {
-  constructor() {
+  constructor(private dataService: ExpenseCaptureDataService) {
     super();
     this.microservice = 'payment';
   }
 
-  validateContract(
-    option: number,
-    desContract: string,
-    conceptId: number,
-    pAddress: string
-  ) {
+  validateContract(contractNumber?: string) {
+    let body: any = {};
+    let contractNumberFilter = '';
+    if (this.dataService.form.get('conceptNumber').value) {
+      body = {
+        ...body,
+        conceptId: this.dataService.form.get('conceptNumber').value,
+      };
+    }
+    if (this.dataService.address) {
+      body = { ...body, pAddress: this.dataService.address };
+    }
+    if (contractNumber) {
+      contractNumberFilter = '?filter.connum=' + contractNumber;
+    }
     return this.post<IListResponseMessage<IContract>>(
-      'application/validate-contract',
-      {
-        option,
-        desContract,
-        conceptId,
-        pAddress,
-      }
+      'application/validate-contract' + contractNumberFilter,
+      body
     );
   }
 
-  getAllFilterSelf(
-    self?: ExpensePaymentService,
-    option?: number,
-    desContract?: string,
-    conceptId?: number,
-    pAddress?: string,
-    params?: _Params
-  ) {
-    let body = {};
-    if (option) {
-      body = { ...body, option };
+  catalogRetentions(params?: _Params) {
+    return this.get<IListResponseMessage<IRetention>>(
+      'application/valid-retention-type',
+      params
+    );
+  }
+
+  getAllFilterSelf(self?: ExpensePaymentService, params?: _Params) {
+    let body: any = { OPTION: 2 };
+    if (self.dataService.form.get('conceptNumber').value) {
+      body = {
+        ...body,
+        conceptId: self.dataService.form.get('conceptNumber').value,
+      };
     }
-    if (desContract) {
-      body = { ...body, desContract };
-    }
-    if (conceptId) {
-      body = { ...body, conceptId };
-    }
-    if (pAddress) {
-      body = { ...body, pAddress };
+    if (self.dataService.address) {
+      body = { ...body, pAddress: self.dataService.address };
     }
     return self.post<IListResponseMessage<IContract>>(
       'application/validate-contract',

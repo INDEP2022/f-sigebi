@@ -1,24 +1,22 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   catchError,
   firstValueFrom,
-  forkJoin,
   map,
-  mergeMap,
   Observable,
   of,
   take,
   takeUntil,
-  tap,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
+import { IEatConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
 import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
@@ -46,7 +44,7 @@ import { SpentIService } from '../../services/spentI.service';
 import { SpentMService } from '../../services/spentM.service';
 import { NotifyComponent } from '../notify/notify.component';
 import { COLUMNS } from './columns';
-import { NotLoadedsModalComponent } from './not-loadeds-modal/not-loadeds-modal.component';
+import { RetentionsModalComponent } from './retentions-modal/retentions-modal.component';
 
 @Component({
   selector: 'app-expense-comercial',
@@ -54,20 +52,20 @@ import { NotLoadedsModalComponent } from './not-loadeds-modal/not-loadeds-modal.
   styleUrls: ['./expense-comercial.component.scss'],
 })
 export class ExpenseComercialComponent extends BasePage implements OnInit {
-  // params
-  private _address: string;
-
   @Input() get address() {
-    return this._address;
+    return this.dataService.address;
   }
   set address(value) {
     const list = [];
     if (value === 'M') {
+      // this._address = value;
       this.resetVisiblesM();
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'M', title: 'MUEBLES' });
-    }
-    if (value === 'I') {
+      this.form.get('formPayment').setValidators(Validators.required);
+      this.form.get('eventNumber').setValidators(Validators.required);
+      this.form.get('publicLot').setValidators(Validators.required);
+    } else if (value === 'I') {
       this.initScreenI();
     }
     this.columns = {
@@ -84,9 +82,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       },
     };
   }
-  errorsClasification: any[] = [];
+
   provider: string;
-  PDIRECCION_A = null;
   showCvePoliza = false;
   showEvent = true;
   showLote = true;
@@ -139,6 +136,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.dataService.user = this.authService.decodeToken();
     const filterParams = new FilterParams();
     filterParams.addFilter('user', this.user.preferred_username);
+    // filterParams.addFilter('user', 'HTORTOLERO');
     this.segAccessAreaService
       .getAll(filterParams.getParams())
       .pipe(take(1))
@@ -161,6 +159,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         }
       },
     });
+    this.dataService.updateExpenseAfterChangeTotalDetail
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (this.expenseNumber.value) {
+            this.edit(false, false);
+          }
+        },
+      });
     // console.log(user);
     this.prepareForm();
   }
@@ -194,15 +201,23 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private getBody() {
-    console.log(this.form.value.dateOfResolution);
+    console.log(this.form.value);
     let newBody = { ...this.form.value };
     delete newBody.publicLot;
+    delete newBody.contractDescription;
     delete newBody.policie;
+    delete newBody.descontract;
+    delete newBody.padj;
+    delete newBody.psadj;
+    delete newBody.pssadj;
+    delete newBody.cadena;
     return {
       ...newBody,
+      totDocument: this.dataService.total ?? 0,
       amount: this.dataService.amount ?? 0,
       vat: this.dataService.vat ?? 0,
       vatWithheld: this.dataService.vatWithholding ?? 0,
+      isrWithheld: this.dataService.isrWithholding ?? 0,
       address: this.data ? this.data.address ?? this.address : this.address,
       dateOfResolution: this.form.value.dateOfResolution
         ? (this.form.value.dateOfResolution + '').trim().length > 0
@@ -246,26 +261,34 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     };
   }
 
-  edit() {
+  edit(showAlert = true, updateDetails = true) {
+    // let body = this.getBody();
+    // console.log(this.data);
+    // console.log(this.form.value);
+    // return;
     this.spentService2
       .edit(this.getBody())
       .pipe(take(1))
       .subscribe({
         next: response => {
           this.loader.load = false;
-          this.alert(
-            'success',
-            'Se ha actualizado el gasto ' + this.expenseNumber.value,
-            ''
+          if (showAlert)
+            this.alert(
+              'success',
+              'Se ha actualizado el gasto ' + this.expenseNumber.value,
+              ''
+            );
+          this.fillFormSecond(
+            {
+              ...this.data,
+              ...this.form.value,
+              amount: this.dataService.amount ?? 0,
+              vat: this.dataService.vat ?? 0,
+              vatWithheld: this.dataService.vatWithholding ?? 0,
+              address: this.data.address ?? this.address,
+            },
+            updateDetails
           );
-          this.fillFormSecond({
-            ...this.data,
-            ...this.form.value,
-            amount: this.dataService.amount ?? 0,
-            vat: this.dataService.vat ?? 0,
-            vatWithheld: this.dataService.vatWithholding ?? 0,
-            address: this.data.address ?? this.address,
-          });
         },
         error: err => {
           this.alert(
@@ -281,7 +304,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   clean(updateOthers = true) {
     this.dataService.clean();
     this.provider = null;
-    this.errorsClasification = [];
+
     if (updateOthers) {
       this.dataService.updateOI.next(true);
       this.dataService.resetExpenseComposition.next(true);
@@ -313,22 +336,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     });
   }
 
-  save() {
+  private saveBody(updateDetails = true) {
     this.loader.load = true;
-    // if (this.form.invalid) {
-    //   const invalid = [];
-    //   console.log(this.form.value);
-    //   const controls = this.form.controls;
-    //   for (const name in controls) {
-    //     if (controls[name].invalid) {
-    //       invalid.push(name);
-    //     }
-    //   }
-    //   console.log(invalid);
-    //   return;
-    // }
     if (this.expenseNumber.value) {
-      this.edit();
+      this.edit(updateDetails);
     } else {
       this.spentService2
         .save(this.getBody())
@@ -339,14 +350,17 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             this.alert('success', 'Se ha creado el gasto correctamente', '');
             // this.expenseNumber.setValue(response.expenseNumber);
             this.loader.load = false;
-            this.fillFormSecond({
-              ...this.form.value,
-              expenseNumber: response.expenseNumber,
-              amount: this.dataService.amount ?? 0,
-              vat: this.dataService.vat ?? 0,
-              vatWithheld: this.dataService.vatWithholding ?? 0,
-              address: this.address,
-            });
+            this.fillFormSecond(
+              {
+                ...this.form.value,
+                expenseNumber: response.expenseNumber,
+                amount: this.dataService.amount ?? 0,
+                vat: this.dataService.vat ?? 0,
+                vatWithheld: this.dataService.vatWithholding ?? 0,
+                address: this.address,
+              },
+              updateDetails
+            );
           },
           error: err => {
             this.alert(
@@ -358,6 +372,29 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           },
         });
     }
+  }
+
+  async save(updateDetails = true) {
+    // if (!this.validatePaymentCamps()) {
+    //   return;
+    // }
+    if (this.address === 'M') {
+      if (!this.dataService.validPayment) {
+        const responsePayments = await this.validPayments();
+        // console.log(responsePayments);
+        if (responsePayments.message[0] !== 'OK') {
+          this.alert(
+            'error',
+            'Sucedió un error en la validación de pagos',
+            'Favor de verificar'
+          );
+          return;
+        } else {
+          this.dataService.validPayment = true;
+        }
+      }
+    }
+    this.saveBody(updateDetails);
   }
 
   get spentService() {
@@ -446,11 +483,47 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.dataService.VISIBLE_DISPERSA = value;
   }
 
+  private async setConceptScreenI(user: string) {
+    let filterParams = new FilterParams();
+    filterParams.addFilter(
+      'typeNumber',
+      'GASTOINMU,GASTOVIG,GASTOSEG,GASTOADMI',
+      SearchFilter.IN
+    );
+    filterParams.addFilter('user', user);
+    let rtDicta = await firstValueFrom(
+      this.dictationService.getRTdictaAarusr(filterParams.getParams()).pipe(
+        take(1),
+        catchError(x => {
+          return of({ data: [] });
+        }),
+        map(x => x.data)
+      )
+    );
+    if (rtDicta.length > 0) {
+      this.fillAddressNotM(rtDicta[0].typeNumber);
+    }
+    let usuarioCapturaData = await this.usuarioCapturaDataI(user);
+    if (usuarioCapturaData) {
+      this.form.get('capturedUser').setValue(usuarioCapturaData.value);
+    }
+    let usuarioAutorizaData = await this.usuarioParametro('USUAUTORIZA');
+    if (usuarioAutorizaData) {
+      this.form.get('authorizedUser').setValue(usuarioAutorizaData.value);
+    }
+    let usuarioSolicitaData = await this.usuarioParametro('USUSOLICITA');
+    if (usuarioSolicitaData) {
+      this.form.get('requestedUser').setValue(usuarioSolicitaData.value);
+    }
+    // this._address = 'I';
+    this.dataService.address = 'I';
+  }
+
   private async initScreenI() {
     // debugger;
     const list = [];
     let filterParams = new FilterParams();
-    let user = 'PLAMAR';
+    let user = this.user.preferred_username; //'AJIMENEZC';
     filterParams.addFilter(
       'typeNumber',
       'GASTOINMU,GASTOVIG,GASTOSEG,GASTOADMI',
@@ -471,8 +544,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (rtDicta.length > 0) {
       v_tip_gast = rtDicta.length;
       v_tipo = rtDicta[0].typeNumber;
-    } else {
-      v_tip_gast = null;
     }
     this.showAdj = true;
     if (v_tip_gast !== 0 && v_tipo !== 'GASTOSEG') {
@@ -487,7 +558,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showTipAdj = true;
       this.showAdj = true;
       this.showCvePoliza = false;
-      this._address = 'J';
+      // this._address = 'J';
       this.dataService.address = 'J';
 
       let filterParams2 = new FilterParams();
@@ -504,7 +575,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (rtDicta2.length > 0) {
         this.fillAddressNotM(rtDicta2[0].typeNumber);
       } else {
-        this.alert('warning', 'Usuario no válido', 'Favor de verificar');
+        // this.alert('warning', 'Usuario no válido', 'Favor de verificar');
       }
     } else if (v_tip_gast !== 0 && v_tipo === 'GASTOSEG') {
       this.showEvent = false;
@@ -517,7 +588,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showContract = true;
       this.showTipAdj = true;
       this.showAdj = true;
-      this.showCvePoliza = false;
+      this.showCvePoliza = true;
       let filterParams2 = new FilterParams();
       filterParams2.addFilter('user', user);
       let rtDicta2 = await firstValueFrom(
@@ -532,7 +603,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (rtDicta2.length > 0) {
         let v_no_tipo = rtDicta2[0].typeNumber;
         if (v_no_tipo === 'GASTOSEG') {
-          this._address = 'S';
+          // this._address = 'S';
           this.dataService.address = 'S';
         }
       } else {
@@ -547,12 +618,21 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showCvePoliza = false;
     }
     if (v_tip_gast === 0) {
-      this._address = 'I';
       this.dataService.address = 'I';
       this.PDIRECCION_A = 'C';
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'I', title: 'INMUEBLES' });
+    } else {
+      this.setConceptScreenI(user);
     }
+  }
+
+  get PDIRECCION_A() {
+    return this.dataService.PDIRECCION_A;
+  }
+
+  set PDIRECCION_A(value) {
+    this.dataService.PDIRECCION_A = value;
   }
 
   // async ngOnChanges(changes: SimpleChanges) {
@@ -667,6 +747,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       setTimeout(() => {
         localStorage.removeItem('eventExpense');
       }, 500);
+      this.dataService.formScan
+        .get('folioUniversal')
+        .setValue(localStorage.getItem('fcomer084I_folio'));
+      setTimeout(() => {
+        localStorage.removeItem('fcomer084I_folio');
+      }, 500);
     }
     // this.expenseModalService.selectedMotivesSubject.subscribe({
     //   next: response => {
@@ -680,7 +766,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     filterParams.addFilter('description', user, SearchFilter.ILIKE);
     filterParams.limit = 1;
     return firstValueFrom(
-      this.parameterService.getAll(filterParams.getParams()).pipe(
+      this.parameterModService.getAll(filterParams.getParams()).pipe(
         take(1),
         catchError(x => of({ data: [] as IParameterConcept[] })),
         map(x => {
@@ -696,7 +782,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     filterParams.addFilter('address', this.address);
     filterParams.limit = 1;
     return firstValueFrom(
-      this.parameterService.getAll(filterParams.getParams()).pipe(
+      this.parameterModService.getAll(filterParams.getParams()).pipe(
         take(1),
         catchError(x => of({ data: [] as IParameterConcept[] })),
         map(x => {
@@ -784,61 +870,31 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private fillAddressNotM(v_tipo: string) {
     if (v_tipo === 'GASTOINMU') {
-      this._address = 'J';
+      // this._address = 'J';
       this.dataService.address = 'J';
     }
     if (v_tipo === 'GASTOVIG') {
-      this._address = 'V';
+      // this._address = 'V';
       this.dataService.address = 'V';
     }
     if (v_tipo === 'GASTOSEG') {
-      this._address = 'S';
+      // this._address = 'S';
       this.dataService.address = 'S';
     }
     if (v_tipo === 'GASTOADMI') {
-      this._address = 'A';
+      // this._address = 'A';
       this.dataService.address = 'A';
     }
   }
 
-  async selectConcept(concept: IConcept) {
+  async selectConcept(concept: IEatConcept) {
+    console.log(concept);
+    if (!concept) return;
+    let user = this.user.preferred_username;
     if (this.address !== 'M') {
-      let filterParams = new FilterParams();
-      let user = 'PLAMAR';
-      filterParams.addFilter(
-        'typeNumber',
-        'GASTOINMU,GASTOVIG,GASTOSEG,GASTOADMI',
-        SearchFilter.IN
-      );
-      filterParams.addFilter('user', user);
-      let rtDicta = await firstValueFrom(
-        this.dictationService.getRTdictaAarusr(filterParams.getParams()).pipe(
-          take(1),
-          catchError(x => {
-            return of({ data: [] });
-          }),
-          map(x => x.data)
-        )
-      );
-      if (rtDicta.length > 0) {
-        this.fillAddressNotM(rtDicta[0].typeNumber);
-      }
-      let usuarioCapturaData = await this.usuarioCapturaDataI(user);
-      if (usuarioCapturaData) {
-        this.form.get('capturedUser').setValue(usuarioCapturaData);
-      }
-      let usuarioAutorizaData = await this.usuarioParametro('USUAUTORIZA');
-      if (usuarioAutorizaData) {
-        this.form.get('authorizedUser').setValue(usuarioAutorizaData);
-      }
-      let usuarioSolicitaData = await this.usuarioParametro('USUSOLICITA');
-      if (usuarioSolicitaData) {
-        this.form.get('requestedUser').setValue(usuarioSolicitaData);
-      }
-      this._address = 'I';
-      this.dataService.address = 'I';
+      this.setConceptScreenI(user);
     }
-    await this.readParams(concept.id);
+    await this.readParams(concept.conceptId);
   }
 
   updateLot(lot: { lotPublic: string; idLot: string; idEvent: string }) {
@@ -889,23 +945,29 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.readParams(id);
   }
 
-  private async showModalNotify() {
-    this.loader.load = true;
+  private async getDocuments(addNumexp = false) {
     let filterParams = new FilterParams();
     filterParams.addFilter(
       'id',
-      this.dataService.FOLIO_UNIVERSAL,
+      this.dataService.formScan.get('folioUniversal').value,
       SearchFilter.EQ
     );
     filterParams.addFilter(
       'associateUniversalFolio',
-      this.dataService.FOLIO_UNIVERSAL,
+      this.dataService.formScan.get('folioUniversal').value,
       SearchFilter.OR
     );
     filterParams.addFilter('sheets', 0, SearchFilter.GT);
     filterParams.addFilter('scanStatus', 'ESCANEADO', SearchFilter.ILIKE);
+    if (addNumexp) {
+      filterParams.addFilter(
+        'numberProceedings',
+        SearchFilter.NULL,
+        SearchFilter.NULL
+      );
+    }
     let documents = await firstValueFrom(
-      this.documentService.getAll().pipe(
+      this.documentService.getAll(filterParams.getParams()).pipe(
         take(1),
         catchError(x => of({ data: null, message: x })),
         map(x => {
@@ -913,13 +975,27 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         })
       )
     );
+    return documents;
+  }
+
+  private async showModalNotify() {
+    this.loader.load = true;
+    let documents = await this.getDocuments();
     if (!documents) {
       this.loader.load = false;
       this.alert('error', 'No a escaneado los documentos', '');
       return;
     }
+    if (this.address !== 'M') {
+      let documents2 = await this.getDocuments(true);
+      if (!documents2) {
+        this.loader.load = false;
+        this.alert('error', 'No a escaneado los documentos', '');
+        return;
+      }
+    }
     this.expenseGoodProcessService
-      .NOTIFICAR({
+      .replyFolio({
         goodArray: this.dataService.dataCompositionExpenses
           .filter(x => x.goodNumber)
           .map(x => {
@@ -928,7 +1004,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         delegationNumber: this.delegation,
         subdelegationNumber: this.subDelegation,
         departamentNumber: this.noDepartamento,
-        universalFolio: this.dataService.FOLIO_UNIVERSAL,
+        universalFolio: this.dataService.formScan.get('folioUniversal').value,
       })
       .pipe(take(1))
       .subscribe({
@@ -969,23 +1045,26 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return;
     }
-    // const firstValidation =
-    //   !this.conceptNumber.value &&
-    //   !this.eventNumber.value &&
-    //   !this.clkpv.value &&
-    //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
-    //   !this.dataService.data.providerName;
-    if (
-      !this.conceptNumber.value &&
-      !this.eventNumber.value &&
-      !this.clkpv.value &&
-      !this.dataService.dataCompositionExpenses[0].goodNumber &&
-      !this.dataService.data.providerName
-    ) {
-      this.alert('warning', 'Tiene que llenar alguno de los campos', '');
-      return;
+    if (this.address === 'M') {
+      if (!this.dataService.validateNotifySecond()) {
+        this.alert(
+          'warning',
+          'Tiene que llenar alguno de los campos',
+          'Concepto, Evento, Proveedor, Composición de gastos con bien'
+        );
+        return;
+      }
+    } else {
+      if (!this.dataService.validateNotifyFirst()) {
+        this.alert(
+          'warning',
+          'Tiene que llenar alguno de los campos',
+          'Concepto, Evento, Proveedor, Composición de gastos con bien'
+        );
+        return;
+      }
     }
-    if (!this.dataService.FOLIO_UNIVERSAL) {
+    if (!this.dataService.formScan.get('folioUniversal').value) {
       this.alert('warning', 'No se han escaneado los documentos', '');
       return;
     }
@@ -1014,10 +1093,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   private URCOORDREGCHATARRA_AUTOMATICO(opcion: number) {
-    return this.eventService.urcoordRegChatarraAutomatic(
-      this.conceptNumber.value,
-      opcion
-    );
+    return this.eventService
+      .urcoordRegChatarraAutomatic(this.conceptNumber.value, opcion)
+      .pipe(
+        take(1),
+        catchError(x => of({ data: [] }))
+      );
   }
 
   private updateGoodsByLote(response: ILoadLotResponse) {
@@ -1109,10 +1190,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       console.log(V_EXIST);
       if (V_EXIST) {
         // console.log(V_EXIST);
-        let coordChatarra = await firstValueFrom(
+        let coorsdChatarra = await firstValueFrom(
           this.URCOORDREGCHATARRA_AUTOMATICO(3)
         );
-        console.log(coordChatarra);
+        if (coorsdChatarra.data.length > 0) {
+          this.descurcoord.setValue(coorsdChatarra.data[0].UNIDAD_PRESUPUESTAL);
+        }
+        console.log(coorsdChatarra);
         this.CARGA_BIENES_LOTE_XDELRES(
           this.eventNumber.value,
           this.lotNumber.value,
@@ -1128,26 +1212,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = true;
       }
     }
-  }
-
-  private validPayments(event: IComerExpense) {
-    return firstValueFrom(
-      this.sirsaeService
-        .validPayments({
-          pClkpv: this.clkpv.value,
-          pComment: this.comment.value,
-          pPayAfmandSae: this.comproafmandsae.value,
-          pNumberVoucher: this.form.get('numReceipts').value,
-          pDocumentationAnexa: this.form.get('attachedDocumentation').value,
-          pUserCapture: this.form.get('capturedUser').value,
-          pUserAuthorize: this.form.get('authorizedUser').value,
-          pUserRequest: this.form.get('requestedUser').value,
-          pFormPay: this.form.get('formPayment').value,
-          pEventId: this.eventNumber.value,
-          pLotePub: this.lotNumber.value,
-        })
-        .pipe(catchError(x => of({ data: false, message: x })))
-    );
   }
 
   private async fillOthersParameters() {
@@ -1179,28 +1243,40 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
-  private validatePaymentCamps(event: IComerExpense) {
-    if (!event.clkpv) {
+  get numReceipts() {
+    return this.form.get('numReceipts');
+  }
+
+  get attachedDocumentation() {
+    return this.form.get('attachedDocumentation');
+  }
+
+  get capturedUser() {
+    return this.form.get('capturedUser');
+  }
+
+  get authorizedUser() {
+    return this.form.get('authorizedUser');
+  }
+
+  get requestedUser() {
+    return this.form.get('requestedUser');
+  }
+
+  private validatePaymentCamps() {
+    if (!this.clkpv.value) {
       this.alert('warning', 'Validación de pagos', 'Requiere proveedor');
       return false;
     }
-    if (!event.comment) {
+    if (!this.comment.value) {
       this.alert('warning', 'Validación de pagos', 'Requiere servicio');
       return false;
     }
-    if (!event.conceptNumber) {
-      this.alert(
-        'warning',
-        'Validación de pagos',
-        'No cuenta con un concepto de pago'
-      );
-      return false;
-    }
-    if (!event.numReceipts) {
+    if (!this.numReceipts.value) {
       this.alert('warning', 'No cuenta con un número de comprobantes', '');
       return false;
     }
-    if (!event.comproafmandsae) {
+    if (!this.comproafmandsae.value) {
       this.alert(
         'warning',
         'Validación de pagos',
@@ -1208,7 +1284,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return false;
     }
-    if (!event.attachedDocumentation) {
+    if (!this.attachedDocumentation.value) {
       this.alert(
         'warning',
         'Validación de pagos',
@@ -1216,7 +1292,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return false;
     }
-    if (!event.capturedUser) {
+    if (!this.capturedUser) {
       this.alert(
         'warning',
         'Validación de pagos',
@@ -1224,7 +1300,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return false;
     }
-    if (!event.authorizedUser) {
+    if (!this.authorizedUser.value) {
       this.alert(
         'warning',
         'Validación de pagos',
@@ -1232,7 +1308,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return false;
     }
-    if (!event.requestedUser) {
+    if (!this.requestedUser.value) {
       this.alert(
         'warning',
         'Validación de pagos',
@@ -1240,26 +1316,56 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
       return false;
     }
-    if (!event.formPayment) {
-      this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
-      return false;
+    if (this.address === 'M') {
+      if (!this.formPayment.value) {
+        this.alert('warning', 'Validación de pagos', 'Requiere Forma de Pago');
+        return false;
+      }
+      if (!this.eventNumber.value) {
+        this.alert(
+          'warning',
+          'Validación de pagos',
+          'Requiere número de evento'
+        );
+        return false;
+      }
+      if (!this.lotNumber.value) {
+        this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
+        return false;
+      }
     }
-    if (!event.eventNumber) {
-      this.alert('warning', 'Validación de pagos', 'Requiere número de evento');
-      return false;
-    }
-    if (!event.lotNumber) {
-      this.alert('warning', 'Validación de pagos', 'Requiere número de lote');
-      return false;
-    }
+
     return true;
   }
 
-  private fillFormSecond(event: IComerExpense) {
+  private validPayments() {
+    return firstValueFrom(
+      this.sirsaeService
+        .validPayments({
+          pClkpv: this.clkpv.value,
+          pComment: this.comment.value,
+          pPayAfmandSae: this.comproafmandsae.value,
+          pNumberVoucher: this.form.get('numReceipts').value,
+          pDocumentationAnexa: this.form.get('attachedDocumentation').value,
+          pUserCapture: this.form.get('capturedUser').value,
+          pUserAuthorize: this.form.get('authorizedUser').value,
+          pUserRequest: this.form.get('requestedUser').value,
+          pFormPay: this.form.get('formPayment').value,
+          pEventId: this.eventNumber.value,
+          pLotePub: this.lotNumber.value,
+        })
+        .pipe(catchError(x => of({ data: false, message: x })))
+    );
+  }
+
+  private fillFormSecond(event: any, updateDetails = true) {
+    if (this.address !== 'M') {
+      this.dataService.address = 'I';
+    }
+    this.dataService.validPayment = false;
     this.expenseNumber.setValue(event.expenseNumber);
     this.data = event;
     this.provider = event.providerName;
-    this.dataService.validPayment = false;
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
@@ -1270,32 +1376,26 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.conceptNumber.setValue(event.conceptNumber);
     this.eventNumber.setValue(event.eventNumber);
     this.lotNumber.setValue(event.lotNumber);
-    this.publicLot.setValue(event.comerLot ? event.comerLot.publicLot : null);
+    this.publicLot.setValue(
+      event.publicLot
+        ? event.publicLot
+        : event.comerLot
+        ? event.comerLot.publicLot
+        : null
+    );
     this.clkpv.setValue(event.clkpv);
 
     setTimeout(async () => {
-      if (!event.descurcoord) {
-        this.alert('warning', 'No se cuenta con coordinación regional', '');
-      }
+      // if (!event.descurcoord) {
+      //   this.alert('warning', 'No se cuenta con coordinación regional', '');
+      // }
       this.descurcoord.setValue(event.descurcoord);
       this.dataService.updateOI.next(true);
-      this.dataService.updateExpenseComposition.next(true);
+      this.dataService.updateExpenseComposition.next(updateDetails);
       this.dataService.updateFolio.next(true);
-      if (!this.validatePaymentCamps(event)) {
-        return;
-      }
-      const responsePayments = await this.validPayments(event);
-      // console.log(responsePayments);
-      if (responsePayments.message[0] !== 'OK') {
-        this.alert(
-          'error',
-          'Sucedió un error en la validación de pagos',
-          'Favor de verificar'
-        );
-        return;
-      } else {
-        this.dataService.validPayment = true;
-      }
+      // if (this.address === 'M') {
+      //   this.dataService.updateFolio.next(true);
+      // }
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
       );
@@ -1411,84 +1511,104 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.dataCompositionExpenses;
   }
 
-  get dataCompositionExpensesToUpdateClasif() {
-    return this.dataCompositionExpenses
-      ? this.dataCompositionExpenses.filter(
-          row => row.reportDelit && row.reportDelit === true
-        )
-      : [];
-  }
-
-  get dataCompositionExpensesStatusChange() {
-    return this.dataCompositionExpenses
-      ? this.dataCompositionExpenses.filter(
-          row => row.changeStatus && row.changeStatus === true
-        )
-      : [];
-  }
-
   get conceptNumberValue() {
     return this.conceptNumber ? this.conceptNumber.value : null;
   }
 
-  async sendToSIRSAE() {
-    if (this.address === 'M') {
-      this.dataService.actionButton = 'SIRSAE';
-      await this.dataService.updateByGoods(true);
-    } else {
-      this.dataService.ENVIA_MOTIVOS();
+  get validImprimeAny() {
+    if (this.form) {
+      if (this.paymentRequestNumber && this.paymentRequestNumber.value) {
+        return true;
+      }
+      if (this.expenseNumber && this.expenseNumber.value) {
+        return (
+          this.form.get('captureDate') &&
+          this.form.get('captureDate').value &&
+          this.form.get('captureDate').value.length > 0
+        );
+      }
+    }
+    return false;
+  }
+
+  get validImprimeRev() {
+    return this.form
+      ? this.paymentRequestNumber
+        ? this.paymentRequestNumber.value
+          ? this.paymentRequestNumber.value != ''
+          : false
+        : false
+      : false;
+  }
+
+  async imprimeAny() {
+    let result = await this.alertQuestion('question', '¿Desea imprimir?', '');
+    if (result.isConfirmed) {
+      this.loader.load = true;
+      if (this.paymentRequestNumber.value) {
+        this.sirsaeService
+          .imprimeAny(
+            +this.paymentRequestNumber.value,
+            +this.expenseNumber.value
+          )
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.PUP_LANZA_REPORTE(1, 1);
+            },
+            error: err => {
+              this.loader.load = false;
+              this.alert('error', 'No se encontraron datos para imprimir', '');
+            },
+          });
+      } else if (this.expenseNumber.value) {
+        this.sirsaeService
+          .viewPreview(+this.expenseNumber.value)
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.PUP_LANZA_REPORTE(1, 2);
+            },
+            error: err => {
+              this.loader.load = false;
+              this.alert('error', 'No se encontraron datos para imprimir', '');
+            },
+          });
+      } else {
+        this.loader.load = false;
+        this.alert('warning', 'No existe un gasto a visualizar', '');
+      }
     }
   }
 
-  validationForkJoin(obs: Observable<any>[]) {
-    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
+  showRetentions() {
+    let config: ModalOptions = {
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(RetentionsModalComponent, config);
   }
 
-  imprimeAny() {
-    this.loader.load = true;
-    if (this.paymentRequestNumber.value) {
-      this.sirsaeService
-        .imprimeAny(this.paymentRequestNumber.value, this.expenseNumber.value)
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.PUP_LANZA_REPORTE(1, 1);
-          },
-          error: err => {
-            this.loader.load = false;
-          },
-        });
-    } else if (this.expenseNumber.value) {
-      this.sirsaeService
-        .viewPreview(this.expenseNumber.value)
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.PUP_LANZA_REPORTE(1, 2);
-          },
-        });
-    } else {
-      this.loader.load = false;
-      this.alert('warning', 'No existe un gasto a visualizar', '');
-    }
-  }
-
-  imprimeRev() {
-    this.loader.load = true;
-    if (this.paymentRequestNumber.value) {
-      this.sirsaeService
-        .insertModuleCont(this.paymentRequestNumber.value)
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.PUP_LANZA_REPORTE(2);
-          },
-          error: err => {
-            this.loader.load = false;
-          },
-        });
-    } else {
-      this.loader.load = false;
+  async imprimeRev() {
+    let result = await this.alertQuestion('question', '¿Desea imprimir?', '');
+    if (result.isConfirmed) {
+      if (this.paymentRequestNumber.value) {
+        this.loader.load = true;
+        this.sirsaeService
+          .insertModuleCont(this.paymentRequestNumber.value)
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.PUP_LANZA_REPORTE(2);
+            },
+            error: err => {
+              this.loader.load = false;
+              this.alert('error', 'No se encontraron datos para imprimir', '');
+            },
+          });
+      } else {
+        this.alert('warning', 'Requiere una solicitud de pago', '');
+      }
     }
   }
 
@@ -1497,13 +1617,27 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.expenseNumberValue && mandates.length > 0;
   }
 
-  imprimeDetalle() {
-    if (this.validImprimeDetalle()) {
-      // this.alertQuestion('question','Desea imprimir ')
-      this.loader.load = true;
-      this.PUP_LANZA_REPORTE(3);
-    } else {
-      this.alert('warning', 'No se encontro datos a imprimir', '');
+  get validateExportExcel() {
+    let mandatos = this.dataService.dataCompositionExpenses.filter(
+      x => x.manCV
+    );
+    return this.expenseNumberValue && mandatos.length > 0;
+  }
+
+  async imprimeDetalle() {
+    let result = await this.alertQuestion(
+      'question',
+      '¿Desea imprimir detalle?',
+      ''
+    );
+    if (result.isConfirmed) {
+      if (this.validImprimeDetalle()) {
+        // this.alertQuestion('question','Desea imprimir ')
+        this.loader.load = true;
+        this.PUP_LANZA_REPORTE(3);
+      } else {
+        this.alert('warning', 'No se encontro datos a imprimir', '');
+      }
     }
   }
 
@@ -1579,91 +1713,5 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.loader.load = false;
       this.alert('error', 'El reporte no se encuentra disponible', '');
     }
-  }
-
-  async updateClasif() {
-    const VALIDA_DET = this.dataCompositionExpensesToUpdateClasif;
-    this.errorsClasification = [];
-    if (VALIDA_DET.length === 0) {
-      this.alert(
-        'error',
-        'Actualizar Clasificación a Reporte de Robo',
-        'No se han seleccionado los bienes para realizar el cambio de clasificador a Vehiculo con Reporte de Robo'
-      );
-    } else {
-      this.alertQuestion(
-        'question',
-        'Actualizar Clasificación',
-        '¿Desea cambiar el clasificador de los bienes a Vehiculo con Reporte de Robo?'
-      ).then(x => {
-        if (x.isConfirmed) {
-          let errors: any[] = [];
-          forkJoin(
-            VALIDA_DET.map(async row => {
-              return this.screenService
-                .PUP_VAL_BIEN_ROBO({
-                  goodNumber: row.goodNumber,
-                  type: 'U',
-                  screenKey: 'FCOMER084',
-                  conceptNumber: this.conceptNumber.value,
-                })
-                .pipe(
-                  take(1),
-                  catchError(x => of(null)),
-                  tap(x => {
-                    console.log(x);
-                    if (x === null) {
-                      // console.log('ERROR');
-                      errors.push({ goodNumber: row.goodNumber });
-                    }
-                  })
-                );
-            })
-          )
-            .pipe(
-              takeUntil(this.$unSubscribe),
-              mergeMap(x => this.validationForkJoin(x))
-            )
-            .subscribe(x => {
-              console.log(x);
-
-              if (errors.length === 0) {
-                this.alert(
-                  'success',
-                  'Se realizco el cambio de Clasificación a Vehiculo con Reporte de Robo',
-                  ''
-                );
-              }
-              if (errors.length === VALIDA_DET.length) {
-                this.alert(
-                  'error',
-                  'Registros no encontrados por clave pantalla y número de concepto',
-                  ''
-                );
-              } else if (errors.length > 0) {
-                this.alert(
-                  'warning',
-                  'Cambio de Clasificación a Vehiculo con Reporte de Robo',
-                  'No todos los bienes pudieron cambiar su clasificador por no encontrarse en búsqueda por clave pantalla y número de concepto'
-                );
-              }
-              this.errorsClasification = errors;
-            });
-        }
-      });
-    }
-  }
-
-  showNotLoads() {
-    let config: ModalOptions = {
-      initialState: {
-        data: this.errorsClasification,
-        dataTemp: this.errorsClasification,
-        totalItems: this.errorsClasification.length,
-      },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(NotLoadedsModalComponent, config);
   }
 }

@@ -42,17 +42,21 @@
         </div>
         <div class="col-md-12">
           <form-field [control]="form.get('description')" label="Descripción">
-            <input
+            <textarea
               type="text"
+              rows="3"
+              cols="3"
               class="form-control"
               formControlName="description"
-              oninput="if(this.value.length > 250) this.value = this.value.slice(0, 250)" />
+              oninput="if(this.value.length > 250) this.value = this.value.slice(0, 250)"></textarea>
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field [control]="form.get('comments')" label="Comentarios">
             <textarea
               type="text"
+              rows="4"
+              cols="4"
               class="form-control"
               formControlName="comments"
               oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)"></textarea>

@@ -9,6 +9,7 @@ import { IMandExpenseCont } from 'src/app/core/models/ms-accounting/mand-expense
 import { ICabms } from 'src/app/core/services/ms-payment/payment-service';
 import { PartContSirsaeComponent } from '../part-cont-sirsae/part-cont-sirsae.component';
 import { COLUMNS } from './columns';
+import { MandByGoodsModalComponent } from './mand-by-goods-modal/mand-by-goods-modal.component';
 
 @Component({
   selector: 'app-mand-by-goods',
@@ -31,13 +32,90 @@ export class MandByGoodsComponent
     this.service = this.dataService;
     this.settings = {
       ...this.settings,
-      actions: false,
       columns: COLUMNS,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: false,
+      },
     };
   }
 
   selectRow(row: IMandExpenseCont) {
     this.selected = row;
+  }
+
+  async delete(row: IMandExpenseCont) {
+    const response = await this.alertQuestion(
+      'warning',
+      '¿Desea eliminar este registro?',
+      ''
+    );
+    if (response.isConfirmed) {
+      this.dataService
+        .remove(row)
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            this.alert('success', 'Elemento eliminado correctamente', '');
+            this.getData();
+          },
+          error: err => {
+            this.alert(
+              'error',
+              'No se pudo eliminar la partida por mandato ' +
+                row.mandxexpensecontId,
+              'Favor de verificar'
+            );
+          },
+        });
+    }
+  }
+
+  add() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      spentId: this.spentId,
+      callback: (next: boolean) => {
+        this.getData();
+      },
+    };
+    this.modalService.show(MandByGoodsModalComponent, modalConfig);
+  }
+
+  edit(row: IMandExpenseCont) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      spentId: this.spentId,
+      row,
+      callback: (next: boolean) => {
+        if (next) {
+          this.dataService
+            .updateMassive(this.dataTemp)
+            .pipe(take(1))
+            .subscribe({
+              next: response => {
+                this.getData();
+                this.alert('success', 'Partidas actualizada correctamente', '');
+              },
+              error: err => {
+                this.loading = false;
+                this.alert(
+                  'success',
+                  'No se pudieron actualizar las partidas',
+                  'Favor de verificar'
+                );
+                this.getData();
+              },
+            });
+        } else {
+          this.getData();
+        }
+      },
+    };
+    this.modalService.show(MandByGoodsModalComponent, modalConfig);
   }
 
   showPartContSirsae() {
@@ -133,7 +211,7 @@ export class MandByGoodsComponent
   override setTotals(data: IMandExpenseCont[]): void {
     this.total = 0;
     data.forEach(x => {
-      this.total += +x.amount;
+      this.total += +x.total;
     });
     this.total = this.total.toFixed(2);
   }

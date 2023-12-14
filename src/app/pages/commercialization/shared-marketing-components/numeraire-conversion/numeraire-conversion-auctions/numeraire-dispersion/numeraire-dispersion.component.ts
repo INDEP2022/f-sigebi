@@ -1,11 +1,13 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { take } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { INumeraryxGoods } from 'src/app/core/models/ms-numerary/numerary.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { NumeraryXGoodsService } from 'src/app/core/services/ms-numerary/numerary-x-goods.service';
 import { TABLE_SETTINGS } from 'src/app/core/shared/base-page';
-import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
+import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { COLUMNS } from './columns';
 import { NumeraireDispersionModalComponent } from './numeraire-dispersion-modal/numeraire-dispersion-modal.component';
 
@@ -15,7 +17,7 @@ import { NumeraireDispersionModalComponent } from './numeraire-dispersion-modal/
   styleUrls: ['./numeraire-dispersion.component.scss'],
 })
 export class NumeraireDispersionComponent
-  extends BasePageTableNotServerPagination<INumeraryxGoods>
+  extends BasePageWidhtDinamicFiltersExtra<INumeraryxGoods>
   implements OnInit
 {
   @Input() selectedExpenseData: IFillExpenseDataCombined;
@@ -23,12 +25,14 @@ export class NumeraireDispersionComponent
   @Input() updateAllowed = false;
   toggleInformation = true;
   total = 0;
-  fillData = false;
+  fillData = true;
   constructor(
     private modalService: BsModalService,
-    private dataService: NumeraryXGoodsService
+    private dataService: NumeraryXGoodsService,
+    private eventService: ComerEventosService
   ) {
     super();
+    this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
       columns: COLUMNS,
@@ -62,7 +66,27 @@ export class NumeraireDispersionComponent
     if (changes['selectedExpenseData'] && this.fillData) {
       this.total = 0;
       this.getData();
+      this.getTotals();
     }
+  }
+
+  private getTotals() {
+    let body: any = {
+      eventId: +(this.idEvento + ''),
+      apply: 'S',
+      spentId: +(this.selectedExpenseData.id_gasto + ''),
+    };
+    if (this.selectedExpenseData.cvman) {
+      body.cvman = this.selectedExpenseData.cvman;
+    }
+    this.eventService
+      .getTotalNumeraryxGoodsEventApplySpent(body)
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          this.total = response;
+        },
+      });
   }
 
   override getParams() {
@@ -75,10 +99,11 @@ export class NumeraireDispersionComponent
       newColumnFilters['filter.cvman'] =
         '$eq:' + this.selectedExpenseData.cvman;
     }
-    newColumnFilters.limit = 1000000;
+    // newColumnFilters.limit = 1000000;
     return {
       ...this.params.getValue(),
       ...newColumnFilters,
+      ...this.columnFilters,
     };
   }
 
@@ -88,7 +113,7 @@ export class NumeraireDispersionComponent
       initialState: {
         row,
         eventId: this.idEvento,
-        callBack: (next: boolean) => {
+        callback: (next: boolean) => {
           if (next) {
             this.alert('success', 'Se realizó la edición del bien', '');
           } else {
@@ -97,16 +122,18 @@ export class NumeraireDispersionComponent
           this.getData();
         },
       },
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(NumeraireDispersionModalComponent, config);
   }
 
-  override setTotals(data: INumeraryxGoods[]): void {
-    this.total = 0;
-    data.forEach(x => {
-      this.total += +x.amount;
-    });
-    this.total = +this.total.toFixed(2);
-    this.fillData = true;
-  }
+  // override setTotals(data: INumeraryxGoods[]): void {
+  //   this.total = 0;
+  //   data.forEach(x => {
+  //     this.total += +x.amount;
+  //   });
+  //   this.total = +this.total.toFixed(2);
+  //   this.fillData = true;
+  // }
 }

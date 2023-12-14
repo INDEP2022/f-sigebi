@@ -9,6 +9,7 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { FileUploadModule } from '../../../../utils/file-upload/file-upload.module';
 import { AssetsFilterComponent } from './assets-filter/assets-filter.component';
 import { AssetsTabComponent } from './assets-tab/assets-tab.component';
+import { EditGoodSampleComponent } from './assets-tab/edit-good-sample/edit-good-sample.component';
 import { DeductivesComponent } from './deductives/deductives.component';
 import { DetailAnnexComponent } from './detail-annex/detail-annex.component';
 import { GssInputFieldComponent } from './gss-input-field/gss-input-field.component';
@@ -34,6 +35,7 @@ import { VerificationsComponent } from './verifications/verifications.component'
     DetailAnnexComponent,
     UploadImgFieldModalComponent,
     GssInputFieldComponent,
+    EditGoodSampleComponent,
   ],
   exports: [
     AssetsFilterComponent,

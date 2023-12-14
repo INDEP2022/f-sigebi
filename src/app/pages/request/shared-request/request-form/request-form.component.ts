@@ -32,6 +32,7 @@ import { StationService } from '../../../../core/services/catalogs/station.servi
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
 import { RequestService } from '../../../../core/services/requests/request.service';
 import { getConfigAffair } from '../../request-complementary-documentation/request-comp-doc-tasks/catalog-affair';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-create-request',
@@ -87,6 +88,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   selectedRegDel: any = null;
   displayOfficeCenter: boolean = false;
+  currentRequest: any = null;
 
   constructor(
     public fb: FormBuilder,
@@ -124,10 +126,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
         if (data != null) {
           this.idTransferer = data;
           this.getStation(data);
-        } else {
-          this.requestForm.controls['stationId'].setValue(null);
-          this.requestForm.controls['authorityId'].setValue(null);
         }
+
+        this.requestForm.controls['stationId'].setValue(null);
+        this.requestForm.controls['authorityId'].setValue(null);
       }
     );
 
@@ -137,6 +139,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           this.idStation = data;
           this.getAuthority(new ListParams());
         }
+        this.requestForm.controls['authorityId'].setValue(null);
       }
     );
   }
@@ -478,8 +481,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
         let date = this.requestForm.controls['applicationDate'].value;
         form.applicationDate = date.toISOString();
 
-        const createRequest = await this.createRequest(this.requestForm.value);
-        if (createRequest) {
+        if (isNullOrEmpty(this.currentRequest)) {
+          this.currentRequest = await this.createRequest(
+            this.requestForm.value
+          );
+          console.log('currentRequest', this.currentRequest);
+        }
+
+        if (this.currentRequest) {
           const updateRequest = await this.updateSavedRequest(form);
           if (updateRequest) {
             this.loadingTurn = false;
@@ -506,7 +515,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       'Turnar Solicitud',
       '¿Desea Turnar la solicitud?'
     ).then(async question => {
-      if (question) {
+      if (question.isConfirmed) {
         if (this.op == 2) {
           /*this.getRegionalDeleg(new ListParams());
           const createTask = await this.generateFirstTask();
@@ -527,7 +536,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Atención',
-              `Seleccione un usuario para poder turnar la solicitud`
+              `Seleccione un usuario para turnar la solicitud`
             );
             return;
           } else {
@@ -573,13 +582,13 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
                 body['task'] = task;
 
-                /*let orderservice: any = {};
+                let orderservice: any = {};
                 orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
                 orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
                 orderservice['pIdApplication'] = idRequest;
                 orderservice['pCurrentDate'] = new Date().toISOString();
                 orderservice['pOrderServiceIn'] = '';
-                body['orderservice'] = orderservice;*/
+                body['orderservice'] = orderservice;
 
                 const taskResult = await this.createTaskOrderService(body);
                 if (taskResult) {
@@ -597,6 +606,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
             }
           }
         }
+      }
+      if (!question.isConfirmed) {
+        console.log('Cancelar');
       }
     });
   }

@@ -58,7 +58,6 @@ export class SamplingDetailComponent implements OnInit {
     params.getValue()['filter.organizationCode'] = this.sampleInfo?.warehouseId;
     this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
         this.addressWarehouse = response.data[0].address1;
         this.nameWarehouse = response.data[0].name;
       },

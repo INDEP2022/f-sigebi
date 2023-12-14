@@ -42,9 +42,12 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
     const aux = await this.comerEvent(event);
 
     const aux_auto = await this.validateUser(userV, passwordV, aux);
-
+    console.log('aux_auto', aux_auto);
     if (aux_auto == 1) {
-      this.modalRef.content.callback2(aux_auto);
+      this.modalRef.content.callback(event);
+      this.modalRef.hide();
+    } else {
+      this.modalRef.content.callback(null);
       this.modalRef.hide();
     }
   }
@@ -79,6 +82,11 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
     } else if (domain == 'R') {
       const aux_auto = await this.viewDelegationUser(user, aux);
       if (aux_auto == 0) {
+        this.alert(
+          'warning',
+          'El usuario no tiene atributos sobre la regional de la factura',
+          ''
+        );
         return 0;
       }
     }
@@ -93,7 +101,7 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
   async viewDelegationUser(user: string, delegation: number) {
     return firstValueFrom(
       this.comerInvoiceService.procedureGenerate(null).pipe(
-        map(() => 0),
+        map(() => 1),
         catchError(() => of(0))
       )
     );
@@ -111,6 +119,7 @@ export class AuthorizationSOIModalComponent extends BasePage implements OnInit {
   }
 
   close() {
+    this.modalRef.content.callback(null);
     this.modalRef.hide();
   }
 }

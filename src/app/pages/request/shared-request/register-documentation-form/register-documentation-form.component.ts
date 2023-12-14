@@ -122,7 +122,7 @@ export class RegisterDocumentationFormComponent
       lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
       protectNumber: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       tocaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-      publicMinistry: [null, [Validators.pattern(STRING_PATTERN)]],
+      publicMinistry: [null],
       court: [null, [Validators.pattern(STRING_PATTERN)]],
       crime: [null, [Validators.pattern(STRING_PATTERN)]],
       destinationManagement: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -231,23 +231,75 @@ export class RegisterDocumentationFormComponent
     } else if (this.transference == 3) {
       this.registerForm.controls['lawsuit'].setValidators([
         Validators.required,
+        Validators.pattern(STRING_PATTERN),
       ]);
       this.registerForm.controls['tocaPenal'].setValidators([
         Validators.required,
+        Validators.pattern(STRING_PATTERN),
       ]);
       this.registerForm.controls['protectNumber'].setValidators([
         Validators.required,
+        Validators.pattern(POSITVE_NUMBERS_PATTERN),
       ]);
     } else if (this.transference == 120) {
       this.registerForm.controls['trialType'].setValidators([
         Validators.required,
+        Validators.pattern(STRING_PATTERN),
       ]);
     }
 
     if (this.processDetonate == 'AMPARO') {
       this.registerForm.controls['protectNumber'].setValidators([
         Validators.required,
+        Validators.pattern(POSITVE_NUMBERS_PATTERN),
       ]);
+    }
+
+    switch (this.process) {
+      case 'register-request-return':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]);
+        this.registerForm.controls['authorityOrdering'].setValidators([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]);
+        break;
+      case 'register-request-similar-goods':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]);
+        break;
+      case 'register-request-compensation':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]);
+        break;
+      case 'register-request-economic-compensation':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]);
+        break;
+      case 'register-request-information-goods':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]);
+        break;
+      case 'register-request-protection':
+        this.registerForm.controls['trialType'].setValidators([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]);
+        this.registerForm.controls['protectNumber'].setValidators([
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ]);
+        break;
     }
 
     this.registerForm.updateValueAndValidity();
@@ -303,6 +355,7 @@ export class RegisterDocumentationFormComponent
   }
 
   changePriority(event: any) {
+    event.target.blur();
     let checked = event.currentTarget.checked;
     checked = checked === true ? 'Y' : 'N';
     this.registerForm.controls['urgentPriority'].setValue(checked);
@@ -366,5 +419,32 @@ export class RegisterDocumentationFormComponent
   =============================================================== */
   displayNotifyMailsInput() {
     this.displayNotifyMails = this.process == 'register-request-similar-goods';
+  }
+
+  showInput(comp) {
+    let input = [];
+
+    switch (this.process) {
+      case 'register-request-return':
+        input = ['trialType', 'authorityOrdering'];
+        break;
+      case 'register-request-similar-goods':
+        input = ['trialType'];
+        break;
+      case 'register-request-compensation':
+        input = ['trialType'];
+        break;
+      case 'register-request-economic-compensation':
+        input = ['trialType'];
+        break;
+      case 'register-request-information-goods':
+        input = ['trialType'];
+        break;
+      case 'register-request-protection':
+        input = ['trialType'];
+        break;
+    }
+
+    return input.includes(comp);
   }
 }

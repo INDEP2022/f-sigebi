@@ -257,6 +257,7 @@ export class DocRequestTabComponent
       .subscribe({
         next: async res => {
           this.data = [];
+
           if (this.typeDoc == 'doc-request') {
             if (this.requestInfo.transferenceId == 1) {
               const filterDoc = res.data.filter((item: any) => {
@@ -464,7 +465,7 @@ export class DocRequestTabComponent
             }
           }
 
-          // this.loading = false;
+          this.loading = false;
         },
         error: error => {
           this.loading = false;
@@ -624,6 +625,7 @@ export class DocRequestTabComponent
         this.paragraphs.load(filter);
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -638,6 +640,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -652,6 +655,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -666,6 +670,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -680,6 +685,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -694,6 +700,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -708,6 +715,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -722,6 +730,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -736,6 +745,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -750,6 +760,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -764,6 +775,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -778,6 +790,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -793,6 +806,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -813,6 +827,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
   }
@@ -874,7 +889,12 @@ export class DocRequestTabComponent
   }
 
   openNewDocument() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
     const idRequest = this.idRequest;
     let typeDoc = 'doc-request';
     config.initialState = {

@@ -1058,4 +1058,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.goDetailDonation();
     // this.alert("success", "AQUI", data)
   }
+  method1() {
+    this.clean();
+    this.goDetailDonation();
+  }
 }

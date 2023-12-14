@@ -73,4 +73,8 @@ export class SpentService extends HttpService {
   postExpedientureExpended(body: any) {
     return this.post(`expenditure-exerted`, body);
   }
+
+  getTotalByMandate(idSpent: number) {
+    return this.get('aplication/GetTotalSpent/' + idSpent);
+  }
 }

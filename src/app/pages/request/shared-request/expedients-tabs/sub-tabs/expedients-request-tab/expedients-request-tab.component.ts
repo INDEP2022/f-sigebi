@@ -81,8 +81,11 @@ export class ExpedientsRequestTabComponent
           });
           this.paragraphs = filterInfo;
           this.totalItems = data.count;
+          this.loading = false;
         },
-        error: error => {},
+        error: error => {
+          this.loading = false;
+        },
       });
     }
   }

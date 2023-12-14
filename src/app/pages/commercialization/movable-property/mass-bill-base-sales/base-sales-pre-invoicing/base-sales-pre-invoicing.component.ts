@@ -44,11 +44,34 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BillingsService } from '../../../billing-m/services/services';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
 import { AuthorizationSOIModalComponent } from './authorization-modal/authorization-modal.component';
+import { AutorizationModal2Component } from './autorization-modal2/autorization-modal2.component';
 
 @Component({
   selector: 'app-base-sales-pre-invoicing',
   templateUrl: './base-sales-pre-invoicing.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   show1 = false;
@@ -88,7 +111,22 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   disabledCause: boolean = false;
   disabledDescause: boolean = false;
   disabledRegCanc: boolean = false;
-  refactura: string = ''; // BLK_CTRL.REFACTURA
+  refactura: string = 'R'; // BLK_CTRL.REFACTURA
+
+  btnLoading: boolean = false;
+  btnLoading2: boolean = false;
+  btnLoading3: boolean = false;
+  btnLoading4: boolean = false;
+  btnLoading5: boolean = false;
+  btnLoading6: boolean = false;
+  btnLoading7: boolean = false;
+  btnLoading8: boolean = false;
+  btnLoading9: boolean = false;
+  btnLoading10: boolean = false;
+  btnLoading11: boolean = false;
+  btnLoading12: boolean = false;
+  btnLoading13: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -101,7 +139,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private eatLotService: LotService,
     private siabService: SiabService,
-    private billingsService: BillingsService
+    private billingsService: BillingsService,
+    private comerInvoiceService: ComerInvoiceService
   ) {
     super();
 
@@ -280,7 +319,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.paramsList.getValue().limit = 500;
     this.paramsList.getValue()['filter.tpevent'] = `${SearchFilter.EQ}:${11}`;
-    this.paramsList.getValue()['sortBy'] = 'batchId,eventId,customer:ASC';
+    this.paramsList.getValue()['sortBy'] = 'batchId,eventId:ASC';
     this.prepareForm();
 
     this.dataFilter
@@ -333,8 +372,11 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
+
+    if (!params['filter.eventId']) return;
+
     this.loading = true;
-    if (!this.valSortBy) params['sortBy'] = `batchId,eventId,customer:ASC`;
+    if (!this.valSortBy) params['sortBy'] = `batchId,eventId:ASC`;
     this.comerInvoice.getAllSumInvoice(params).subscribe({
       next: resp => {
         this.loading = false;
@@ -408,7 +450,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      event: [null],
+      event: [null, Validators.required],
       idAllotment: [null],
       iva: [0],
       date: [null],
@@ -478,20 +520,28 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     // END;
   }
   openModal(): void {
+    if (!this.invoiceSelected)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
+
     let config: ModalOptions = {
       initialState: {
         callback: async (next: boolean, data: InvoiceFolioSeparate) => {
           if (next) {
-            const invoice: any[] = await this.dataFilter.getAll();
-            const index = invoice.findIndex(inv => inv == this.isSelect[0]);
-            invoice[index].series = data.series;
-            invoice[index].folioinvoiceId = data.folioinvoiceId;
-            invoice[index].Invoice = data.invoice;
-            invoice[index].factstatusId = 'FOL';
-
-            let resp = await this.updateInvoice(invoice[index]);
+            // const invoice: any[] = await this.dataFilter.getAll();
+            // const index = invoice.findIndex(inv => inv == this.isSelect[0]);
+            const invoice = this.invoiceSelected;
+            invoice.series = data.series;
+            invoice.folioinvoiceId = data.folioinvoiceId;
+            invoice.Invoice = data.invoice;
+            invoice.factstatusId = 'FOL';
+            delete invoice.delegation;
+            let resp = await this.updateInvoice(invoice);
             if (!resp) {
-              this.alert('warning', 'No se pudo actualizar la factura', '');
+              return this.alert(
+                'warning',
+                'No se pudo actualizar la factura',
+                ''
+              );
             } else {
               this.alert('success', '', 'Factura actualizada correctamente');
             }
@@ -518,60 +568,213 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   }
 
   async generatePreFacture() {
-    let config: ModalOptions = {
-      initialState: {
-        form: this.form,
-        callback: (data: boolean, val: number) => {},
-        callback2: (aux_auto: number) => {
-          this.parameterPAutorizado = aux_auto;
-        },
-      },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(AuthorizationSOIModalComponent, config);
-
-    return;
+    // if(this.dataFilter.count() == 0)
+    //   return this.alert("warning", "No hay data para s", "")
     let next: number = 0;
     this.dataFilter.load([]);
     this.dataFilter.refresh();
     this.totalItems = 0;
+    this.btnLoading = true;
     const { event, idAllotment, iva } = this.form.value;
-    next = await this.getLotePass();
+
+    if (!event)
+      return (
+        (this.btnLoading = false),
+        this.form.controls['event'].markAsTouched(),
+        this.alert('warning', 'Debe consultar un evento', '')
+      );
+
+    next = 1;
+    // await this.getLotePass(); // VALIDA_PREFACTURAS
 
     if (next == 1) {
       const user = this.userService.decodeToken().preferred_username;
       const data = await this.dataFilter.getAll();
-      const aux = await this.invoiceGenerate(
-        data[0] ? data[0].eventId : null,
-        data[0] ? data[0].batchId : null,
-        event,
-        iva,
-        idAllotment,
-        this.delegation,
-        user
+
+      const event_ = event ? event : data[0].eventId;
+      console.log('data', data);
+      const aux = await this.getApplicationGetComerPagorefExists(
+        event ?? data[0].eventId
       );
-
-      if (aux == 0) {
-        //se habre modal verifiacion ususario
-      }
-
-      if (!aux) {
+      // this.invoiceGenerate(
+      //   data[0] ? data[0].eventId : null,
+      //   data[0] ? data[0].batchId : null,
+      //   event,
+      //   iva,
+      //   idAllotment,
+      //   this.delegation,
+      //   user
+      // ); // CTRL_GENERA_PREFACTURAS
+      let val = true;
+      let resul: boolean = true;
+      if (aux == 1) {
+        if (!idAllotment) {
+          let obj = {
+            OPCION: 0,
+            PEVENTO: event,
+            PLOTE: null,
+            PIDFACTURA: null,
+            delegationNumber: this.delegation,
+            GEN_IVA: iva,
+            LOTE: null,
+            toolbarUser: this.userService.decodeToken().preferred_username,
+          };
+          // GENERA_PREFACTURAS(0,:BLK_CTRL.EVENTO, NULL, NULL);
+          resul = await this.getApplicationGeneratePreInvoices(obj);
+        } else {
+          const cont = await this.contLot(event, idAllotment);
+          if (cont == 0) {
+            // --SI NO EXISTE EL EVENTO CON EL LOTE
+            let obj = {
+              OPCION: 1,
+              PEVENTO: event_,
+              PLOTE: idAllotment || data[0].batchId,
+              PIDFACTURA: null,
+              delegationNumber: this.delegation,
+              GEN_IVA: iva,
+              LOTE: idAllotment || data[0].batchId,
+              toolbarUser: this.userService.decodeToken().preferred_username,
+            };
+            // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
+            resul = await this.getApplicationGeneratePreInvoices(obj);
+          } else {
+            // --SI EXISTE EL EVENTO CON EL LOTE
+            let obj = {
+              OPCION: 1,
+              PEVENTO: event_,
+              PLOTE: idAllotment || data[0].batchId,
+              PIDFACTURA: null,
+              delegationNumber: this.delegation,
+              GEN_IVA: iva,
+              LOTE: idAllotment || data[0].batchId,
+              toolbarUser: this.userService.decodeToken().preferred_username,
+            };
+            // GENERA_PREFACTURAS(1, NVL(:BLK_CTRL.EVENTO,:COMER_FACTURAS.ID_EVENTO), NVL(:BLK_CTRL.LOTE,:COMER_FACTURAS.ID_LOTE),NULL);
+            resul = await this.getApplicationGeneratePreInvoices(obj);
+          }
+        }
+      } else if (aux == 0) {
+        //se abre modal verifiacion ususario
+        val = false;
+        let config: ModalOptions = {
+          initialState: {
+            form: this.form,
+            callback: async (event: any) => {
+              if (event) {
+                // GENERA_PREFACTURAS_SOI(:BLK_CTRL.EVENTO);
+                await this.generateInvoiceIso(event);
+              } else {
+                this.btnLoading = false;
+              }
+            },
+          },
+          class: 'modal-md modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(AuthorizationSOIModalComponent, config);
+      } else if (aux == 2) {
+        val = false;
+        await this.generateInvoiceIso(event ?? data[0].eventId);
+      } else if (aux == null) {
+        this.btnLoading = false;
         this.alert(
           'warning',
-          'Atención',
-          'Ha ocurrido un fallo en la generación de prefacturas'
+          'Ha ocurrido un fallo en la generación de prefacturas',
+          ''
         );
         return;
       }
+      if (val) {
+        if (aux == 1)
+          if (!resul)
+            return (
+              (this.btnLoading = false),
+              this.alert(
+                'warning',
+                'Ha ocurrido un fallo en la generación de prefacturas',
+                ''
+              )
+            );
 
-      this.alert('success', 'Prefacturas Generadas', '');
-      this.resetParams();
-      this.columnFilters['filter.eventId'] = `$eq:${event}`;
-      this.getAllComer();
+        this.btnLoading = false;
+        this.alert('success', 'Prefacturas Generadas', '');
+        this.resetParams();
+        this.columnFilters['filter.eventId'] = `$eq:${
+          event ?? data[0].eventId
+        }`;
+        this.getAllComer();
+      }
     } else {
+      this.btnLoading = false;
       this.alert('warning', 'Operación Denegada', '');
     }
+  }
+
+  async getApplicationGetComerPagorefExists(event: any) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoiceService
+        .getApplicationGetComerPagorefExists(event, event)
+        .subscribe({
+          next: value => {
+            console.log(value);
+            resolve(value.AUX_OI);
+          },
+          error: err => {
+            resolve(0);
+          },
+        });
+    });
+  }
+  getApplicationGeneratePreInvoices(data: any): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.comerInvoiceService
+        .getApplicationGeneratePreInvoices(data)
+        .subscribe({
+          next: value => {
+            resolve(true);
+          },
+          error: err => {
+            resolve(false);
+          },
+        });
+    });
+  }
+
+  async generateInvoiceIso(pEvent: any) {
+    const { event, idAllotment, iva } = this.form.value;
+    let data = {
+      pEvent,
+      ctrlBatch: idAllotment,
+      ctrlGenIva: iva,
+      ctrlEvent: event,
+      toolbarNoDelegation: this.delegation,
+      toolbarUser: this.userService.decodeToken().preferred_username,
+    };
+    let result = await this.generateInvoiceSoi(data);
+    if (!result)
+      return (
+        (this.btnLoading = false),
+        this.alert(
+          'warning',
+          'Ha ocurrido un fallo en la generación de prefacturas',
+          ''
+        )
+      );
+
+    this.btnLoading = false;
+    this.alert('success', 'Prefacturas Generadas', '');
+    this.resetParams();
+    this.columnFilters['filter.eventId'] = `$eq:${event}`;
+    this.getAllComer();
+  }
+
+  async generateInvoiceSoi(data: any) {
+    return firstValueFrom(
+      this.comerInvoiceService.procedureGenerate(data).pipe(
+        map(() => true),
+        catchError(() => of(false))
+      )
+    );
   }
 
   async getLotePass() {
@@ -581,8 +784,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     if (next == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con los permisos para efectuar esta operación'
+        'No cuenta con los permisos para realizar esta operación',
+        ''
       );
       return 0;
     }
@@ -653,7 +856,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     this.paramsList = new BehaviorSubject(new ListParams());
     this.paramsList.getValue().limit = 500;
     this.paramsList.getValue()['filter.tpevent'] = `${SearchFilter.EQ}:${11}`;
-    this.paramsList.getValue()['sortBy'] = 'batchId,eventId,customer:ASC';
+    this.paramsList.getValue()['sortBy'] = 'batchId,eventId:ASC';
     this.dataFilter.reset();
     this.settings = {
       ...this.settings,
@@ -736,18 +939,26 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   }
 
   async updateData() {
+    if (this.isSelect.length == 0)
+      return this.alert(
+        'warning',
+        'Debe seleccionar facturas para actualizar datos',
+        ''
+      );
     let valid: number = 0;
-    const validUser = await this.validateUser();
+    const validUser = 1;
+    await this.validateUser();
 
     if (validUser == 1) {
       valid = 1;
 
       if (valid == 1) {
-        this.isSelect.map(async comer => {
+        this.btnLoading4 = true;
+        let result = this.isSelect.map(async comer => {
           //regxlote primer service
           await this.regXLote(comer.eventId, comer.batchId);
 
-          if (Number(comer.Type) == 7) {
+          if (comer.Type == 7) {
             const { iva } = this.form.value;
             await this.factBases(
               comer.eventId,
@@ -763,7 +974,18 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           await this.dataCoord(comer.eventId, comer.billId);
           //datos_cooreg service
         });
+        Promise.all(result).then(resp => {
+          this.btnLoading4 = false;
+          this.alert('success', 'Proceso terminado correctamente', '');
+          this.getAllComer();
+        });
       }
+    } else {
+      this.alert(
+        'warning',
+        'No cuenta con los permisos para realizar esta operación',
+        ''
+      );
     }
   }
 
@@ -812,7 +1034,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
   async validateUser() {
     const user = this.userService.decodeToken().username.toUpperCase();
-    return firstValueFrom(of(1));
+    const next = await this.validatePreFactura();
+    return next;
   }
 
   async generateInvoice() {
@@ -821,9 +1044,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
     if (validUser == 0) {
       this.alert(
-        'error',
-        'Error',
-        'No cuenta con los permisos para efectuar esta operación'
+        'warning',
+        'No cuenta con los permisos para realizar esta operación',
+        ''
       );
     } else {
       const data = await this.dataFilter.getAll();
@@ -840,32 +1063,64 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     let validaFol: number = 0;
 
     const data = await this.dataFilter.getAll();
+    const event = data[0].eventId;
 
-    validaFol = await this.validateInvoice(data[0].tpevent, data[0].eventId);
+    validaFol = await this.validateInvoice(data[0].tpevent, event);
 
     if (validaFol == 1) {
       //service de actualizar
 
-      this.processMark('FL', 'PREF'); // MARCA_PROCESADO
+      // MARCA_PROCESADO
+      await this.processMark('FL', 'PREF');
 
-      //service paquete genera folios
+      // COMER_CTRLFACTURA.GENERA_FOLIOS(:COMER_FACTURAS.ID_EVENTO, :COMER_FACTURAS.TPEVENTO);
+      await this.generateInvoiceCtrl(event, data[0].tpevent);
 
-      this.verifyProv();
+      // VERIFICA_PROV_CANCE;
+      await this.verifyProv();
+
+      // MODIFICA_WHERE_DETALLE(PEVENTO);
+      this.alert('success', 'Se generaron los folios correctamente', '');
+      this.resetParams();
+      this.columnFilters['filter.eventId'] = `$eq:${event}`;
+      this.getAllComer();
     }
+  }
+
+  async generateInvoiceCtrl(pEvent: string, ptpevento: string) {
+    return firstValueFrom(
+      this.comerInvoice.generateFolio({ pEvent, ptpevento }).pipe(
+        map(() => true),
+        catchError(() => of(false))
+      )
+    );
   }
 
   async verifyProv() {
     const data: any[] = await this.dataFilter.getAll();
 
-    data.map(comer => {
+    let result = data.map(async comer => {
       if (comer.archImgtemp && comer.Invoice && comer.factstatusId != 'CAN') {
-        comer.factstatusId = 'FOL';
+        let obj = {
+          billId: comer.billId,
+          eventId: comer.eventId,
+          factstatusId: 'FOL',
+        };
+        let result = await this.billingsService.updateBillings(obj);
+        if (result) {
+          comer.factstatusId = 'FOL';
+        }
+        // comer.factstatusId = 'FOL';
       }
+    });
+
+    Promise.all(result).then(resp => {
+      this.dataFilter.refresh();
     });
   }
 
-  processMark(procesando: string, valido: string) {
-    // MARCA_PROCESADO
+  // MARCA_PROCESADO
+  async processMark(procesando: string, valido: string) {
     let aux_status: string = '';
     if ((valido = 'NULL')) {
       aux_status = null;
@@ -873,9 +1128,18 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       aux_status = valido;
     }
 
-    this.isSelect.map(comer => {
+    this.isSelect.map(async comer => {
       if (comer.factstatusId == aux_status) {
-        comer.process = procesando;
+        let obj = {
+          billId: comer.billId,
+          eventId: comer.eventId,
+          process: procesando,
+        };
+        let result = await this.billingsService.updateBillings(obj);
+
+        if (result) {
+          comer.process = procesando;
+        }
       }
     });
   }
@@ -893,7 +1157,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     const data: any[] = await this.dataFilter.getAll();
 
     if (data.length == 0) {
-      this.alert('warning', 'Atención', 'Debe seleccionar un evento');
+      this.alert('warning', 'Debe seleccionar un evento', '');
       return;
     }
 
@@ -905,6 +1169,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
     if (aux == 1) {
       this.processMark('EF', 'FOL'); // MARCA_PROCESADO
+    } else if (aux == 0) {
+      return;
     }
 
     //ejecutar service paquete elimina folios
@@ -918,11 +1184,15 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           this.getAllComer();
         },
         error: err => {
-          this.alert(
-            'error',
-            'Ocurrió un error al intentar eliminar los folios',
-            err.error.message
-          );
+          if (err.status == 400) {
+            this.alert('warning', 'No se encontraron registros', '');
+          } else {
+            this.alert(
+              'error',
+              'Ocurrió un error al intentar eliminar los folios',
+              err.error.message
+            );
+          }
         },
       });
   }
@@ -932,8 +1202,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       if (this.isSelect[comer].factstatusId != 'FOL') {
         this.alert(
           'warning',
-          'Soló se puede eliminar folios de facturas con estatus FOL, si lo desea puede cancelarla',
-          ''
+          'Soló se puede eliminar folios de facturas con estatus FOL',
+          'Si lo desea puede cancelarla'
         );
         return 0;
       }
@@ -950,8 +1220,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     if (userValid == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con los permisos para realizar esta operación'
+        'No cuenta con los permisos para realizar esta operación',
+        ''
       );
     } else {
       if (data.length == 0) {
@@ -1051,8 +1321,70 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     }
   }
   async exportExcel() {
-    // ** EDWIN ** 2 //
+    // ** EDWIN ** 2 // ENDPOINT LISTO // YELTSIN
     // EXPORTACIÓN DE EXCEL //
+    const data: any[] = await this.dataFilter.getAll();
+
+    if (data.length == 0)
+      return this.alert('warning', 'Debe consultar un evento', '');
+
+    if (this.isSelect.length == 0)
+      return this.alert(
+        'warning',
+        'No hay facturas seleccionadas para exportar',
+        ''
+      );
+
+    this.btnLoading13 = true;
+    let arr = this.isSelect;
+    let result = arr.map(async item => {
+      let obj = {
+        billId: item.billId,
+        eventId: item.eventId,
+        process: 'EX',
+      };
+      await this.billingsService.updateBillings(obj);
+    });
+
+    Promise.all(result).then(resp => {
+      let body = {
+        eventId: data[0].eventId,
+      };
+      this.eatLotService.getAppsExportExcelComerFacturas(body).subscribe({
+        next: async response => {
+          let result_ = arr.map(async item => {
+            let obj = {
+              billId: item.billId,
+              eventId: item.eventId,
+              process: null,
+            };
+            await this.billingsService.updateBillings(obj);
+          });
+
+          Promise.all(result_).then(async resp => {
+            const base64 = response.base64File;
+            const nameFile = response.nameFile;
+            await this.downloadExcel(base64, nameFile);
+          });
+        },
+        error: err => {
+          this.btnLoading13 = false;
+          this.alert('warning', 'No se pudo descargar el excel', '');
+        },
+      });
+    });
+  }
+
+  async downloadExcel(base64String: any, nameFile: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = nameFile;
+    link.click();
+    link.remove();
+    this.btnLoading13 = false;
+    this.alert('success', 'El archivo se ha descargado', '');
   }
 
   async printInvoice() {
@@ -1167,10 +1499,10 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   }
 
   changeOpt(event: any) {
-    if (event == 1) this.paramsList.getValue()['sortBy'] = `batchId:DESC`;
+    if (event == 1) this.paramsList.getValue()['sortBy'] = `batchId:ASC`;
     if (event == 2)
-      this.paramsList.getValue()['sortBy'] = `delegationNumber:DESC`;
-    if (event == 4) this.paramsList.getValue()['sortBy'] = `Invoice:DESC`;
+      this.paramsList.getValue()['sortBy'] = `delegationNumber:ASC`;
+    if (event == 4) this.paramsList.getValue()['sortBy'] = `Invoice:ASC`;
 
     this.valSortBy = true;
     if (!event) this.valSortBy = false;
@@ -1185,8 +1517,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     this.visualCancelYesNot(0);
   }
 
+  // VISUALIZA_CANCELA_SINO
   visualCancelYesNot(pYesNo: number) {
-    // VISUALIZA_CANCELA_SINO
     if (pYesNo == 1) {
       this.disabledCause = true;
       this.disabledDescause = true;
@@ -1215,66 +1547,95 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   }
 
   cancelInvoice() {
-    if (!this.invoiceSelected) {
-      this.alert('warning', 'Debe seleccionar una factura', '');
+    if (this.isSelect.length == 0) {
+      this.alert(
+        'warning',
+        'Debe seleccionar al menos una factura para cancelar',
+        ''
+      );
       return;
     }
     // :BLK_CTRL.USUARIO_AUT := NULL;
     // :BLK_CTRL.PASSWORD_AUT := NULL;
-    let PREG = this.invoiceSelected;
+    let PREG = this.isSelect;
     this.cancelInvoiceVal(PREG); // -- PRIMERO VALIDAMOS CAUSA Y FOLIO SP
   }
 
-  cancelInvoiceVal(bill: any) {
-    if (this.form.get('causerebillId').value) {
+  cancelInvoiceVal(bills: any) {
+    // if(this.isSelect.length == 0)
+    //   return this.alert('warning', 'Debe seleccionar las facturas a cancelar', '')
+    const data: Array<any> = bills;
+    if (!this.form.get('causerebillId').value) {
       this.visualCancelYesNot(1); // muestra los campos de la causa
     } else {
-      if (bill.factstatusId == 'CAN')
-        return (
-          this.visualCancelYesNot(0),
-          this.alert('warning', 'No puede procesar una factura cancelada', '')
-        );
-      else if (bill.factstatusId == 'NCR')
-        return (
-          this.visualCancelYesNot(0),
-          this.alert('warning', 'No puede cancelar una factura NCR', '')
-        );
+      let point = 0;
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].factstatusId == 'CAN') {
+          point = 1;
+          break;
+        } else if (data[i].factstatusId == 'NCR') {
+          point = 2;
+          break;
+        }
+      }
+      if (point == 0) this.openAutorizacion();
+      else if (point == 1)
+        this.visualCancelYesNot(0),
+          this.alert('warning', 'No puede procesar una factura cancelada', '');
+      else if (point == 2)
+        this.visualCancelYesNot(0),
+          this.alert('warning', 'No puede cancelar una factura NCR', '');
       // SHOW_VIEW('AUTORIZACION');
-      this.openAutorizacion();
       // GO_ITEM('BLK_CTRL.USUARIO_AUT');
     }
   }
 
   openAutorizacion() {
+    if (this.isSelect.length == 0)
+      return this.alert(
+        'warning',
+        'No hay facturas seleccionadas para cancelar',
+        ''
+      );
+
     let config: ModalOptions = {
       initialState: {
+        bills: this.isSelect,
         form: this.form,
-        callback: (data: boolean, val: number) => {},
-        callback2: (aux_auto: number) => {
-          console.log('aux_auto', aux_auto);
+        callback: (aux_auto: number) => {
           this.parameterPAutorizado = aux_auto;
-          this.processingCancelled();
+          if (aux_auto == 1) this.processingCancelled();
         },
       },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(AuthorizationSOIModalComponent, config);
+    this.modalService.show(AutorizationModal2Component, config);
   }
 
   processingCancelled() {
     if (this.isSelect.length == 0)
-      return this.alert('warning', 'No hay facturas seleccionadas', '');
+      return this.alert(
+        'warning',
+        'No hay facturas seleccionadas para cancelar',
+        ''
+      );
 
+    this.btnLoading6 = true;
+    const { causerebillId } = this.form.value;
+    let point = 1;
     let result = this.isSelect.map(async item => {
       let YYYY = this.datePipe.transform(item.impressionDate, 'YYYY');
       let CF_LEYENDA = '';
       let CF_NUEVAFACT: any = 0;
       if (!item.folioinvoiceId)
-        return this.alert(
-          'warning',
-          `No se puede cancelar una factura sin folio para el evento: ${item.eventId} y lote: ${item.batchId}`,
-          ''
+        return (
+          (this.btnLoading6 = false),
+          this.alert(
+            'warning',
+            `No se puede cancelar una factura sin folio para el evento: ${item.eventId} y lote: ${item.batchId}`,
+            ''
+          )
         );
       else if (item.series.length > 1)
         CF_LEYENDA = `ESTE CFDI REFIERE AL CFDI ${item.series}-${item.folioinvoiceId}`;
@@ -1283,11 +1644,32 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
       if (this.refactura == 'R') {
         // CREA OTRA FACTURA SIN FOLIO Y CANCELA LA ACTUAL
+        console.log('da', Number(YYYY));
         if (Number(YYYY) > 2011) {
+          console.log('HOLA');
           // SE CANCELA Y SE CREA UN CFDI INGRESO (FAC) Y UN CFDI DE EGRESO (NCR)
-          // **EDWIN** 3//
-          //   CF_NUEVAFACT := COPIA_FACTURA_VTA_BASES(:COMER_FACTURAS.ID_EVENTO,:COMER_FACTURAS.ID_LOTE, :COMER_FACTURAS.ID_FACTURA, CF_LEYENDA, :BLK_CTRL.USUARIO_AUT, 'PREF',1,0,:BLK_TOOLBAR.TOOLBAR_NO_DELEGACION,:BLK_CTRL.CAUSA);
-          CF_NUEVAFACT = await this.copyBillVTABases();
+          // **EDWIN** 3// ** YELTSIN ** //
+          //   CF_NUEVAFACT := COPIA_FACTURA_VTA_BASES(
+          // :COMER_FACTURAS.ID_EVENTO,
+          // :COMER_FACTURAS.ID_LOTE,
+          //  :COMER_FACTURAS.ID_FACTURA,
+          //  CF_LEYENDA,
+          //  :BLK_CTRL.USUARIO_AUT,
+          //  'PREF',1,0,
+          //  :BLK_TOOLBAR.TOOLBAR_NO_DELEGACION,
+          //  :BLK_CTRL.CAUSA);
+          let obj = {
+            PCFDI: 0,
+            PEVENTO_O: item.eventId,
+            PLOTE: item.batchId,
+            PIDFACTURA_O: item.billId,
+            PDEL_EMITE: this.authService.decodeToken().department,
+            PCAUSA: causerebillId,
+            PESTATUS: 'PREF',
+            PLEYENDA: CF_LEYENDA,
+          };
+          CF_NUEVAFACT = await this.copyBillVTABases(obj);
+          console.log('CF_NUEVAFACT', CF_NUEVAFACT);
         }
         if (CF_NUEVAFACT > 0) {
           let obj = {
@@ -1301,21 +1683,35 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           await this.billingsService.updateBillings(obj);
           // CANCELAR_FACTURA(:COMER_FACTURAS.ID_FACTURA);
         } else {
-          return this.alert(
-            'error',
-            'Falló la operación, consulte sistemas',
-            ''
-          );
+          point = 0;
         }
       }
     });
     Promise.all(result).then(resp => {
-      this.getAllComer();
+      this.btnLoading6 = false;
+      if (point == 0) {
+        return (
+          (this.btnLoading6 = false),
+          this.alert('error', 'Falló la operación, consulte sistemas', '')
+        );
+      } else {
+        this.alert('success', 'Facturas canceladas correctamente', '');
+        this.getAllComer();
+      }
     });
   }
 
-  async copyBillVTABases() {
-    return 1;
+  async copyBillVTABases(obj: any) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoice.getCtrlInvoiceCopyBillVtaBases(obj).subscribe({
+        next: value => {
+          resolve(1);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
   }
 
   async sendPackage() {

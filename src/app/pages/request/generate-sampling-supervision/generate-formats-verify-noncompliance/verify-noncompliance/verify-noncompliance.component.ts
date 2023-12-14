@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
@@ -15,6 +16,8 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { AppState } from '../../../../../app.reducers';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage, TABLE_SETTINGS } from '../../../../../core/shared/base-page';
+import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { LIST_DEDUCTIVES_COLUMNS } from '../../sampling-assets/sampling-assets-form/columns/list-deductivas-column';
 import { AnnexJFormComponent } from '../annex-j-form/annex-j-form.component';
 import { AnnexKFormComponent } from '../annex-k-form/annex-k-form.component';
@@ -26,7 +29,7 @@ import { selectListItems } from '../store/item.selectors';
   styleUrls: ['./verify-noncompliance.component.scss'],
 })
 export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
-  title: string = `Verificación Incumplimiento ${302}`;
+  title: string = `Verificación Incumplimiento ${326}`;
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
   filterForm: ModelForm<any>;
@@ -50,7 +53,8 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
     private store: Store<AppState>,
     private samplingGoodService: SamplingGoodService,
     private deductiveService: DeductiveVerificationService,
-    private router: Router
+    private router: Router,
+    private samplingService: SamplingGoodService
   ) {
     super();
     this.settings = {
@@ -63,7 +67,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     //El id de el muestreo se obtendra de la tarea
-    this.idSample = 302;
+    this.idSample = 326;
     this.getSampleInfo();
     this.initFilterForm();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -106,10 +110,9 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
   getSampleInfo() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.sampleId'] = `$eq:${302}`;
+    params.getValue()['filter.sampleId'] = `$eq:${326}`;
     this.samplingGoodService.getSample(params.getValue()).subscribe({
       next: response => {
-        console.log('response muestreo', response);
         this.sampleInfo = response.data[0];
       },
       error: () => {},
@@ -125,7 +128,31 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
   }
 
   openAnnexJ(): void {
-    this.openModal(AnnexJFormComponent, '', 'annexJ-verify-noncompliance');
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      'Desea generar el reporte J?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        const getAllGoodNoCum: any = await this.getSampleGoods();
+        const filterGoods = getAllGoodNoCum.filter(item => {
+          if (item.goodState == null) return item;
+        });
+        if (filterGoods.length == 0) {
+          this.openModal(
+            AnnexJFormComponent,
+            '',
+            'annexJ-verify-noncompliance'
+          );
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'Debe clasificar al menos un bien que no cumplio con los resultados de evaluación'
+          );
+        }
+      }
+    });
   }
 
   opemAnnexK(): void {
@@ -137,14 +164,35 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
     this.listItems$ = this.store.select(selectListItems);
 
-    this.listItems$.subscribe(data => {
-      console.log(data);
-    });
+    this.listItems$.subscribe(data => {});
   }
 
-  turnSampling() {
-    this.isEnableAnex = true;
+  async turnSampling() {
+    const getAllGoodNoCum: any = await this.getSampleGoods();
 
+    const filterGoods = getAllGoodNoCum.filter(item => {
+      if (item.goodState == null) return item;
+    });
+
+    if (filterGoods.length == 0) {
+      if (!this.sampleInfo.contentId) {
+        this.router.navigate(['pages/request/assets-clasification']);
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Es necesario generar el Anexo J'
+        );
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Debe clasificar todos los bienes que no cumplieron con el resultado de evaluación'
+      );
+    }
+    /*
+    this.isEnableAnex = true;
     this.alertQuestion(
       undefined,
       'Confirmación',
@@ -152,8 +200,24 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
       'Aceptar'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('enviar mensaje');
+        this.router.navigate(['pages/request/assets-clasification']);
       }
+    }); */
+  }
+
+  getSampleGoods() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
+      params.getValue()['filter.sampleId'] = this.idSample;
+      this.samplingService.getSamplingGoods(params.getValue()).subscribe({
+        next: response => {
+          resolve(response.data);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -166,21 +230,58 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
       initialState: {
         data: data,
         typeAnnex: typeAnnex,
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
+        callback: (typeDocument: number, typeSign: string) => {
+          if (typeDocument && typeSign) {
+            this.showReportInfo(typeDocument, typeSign, typeAnnex);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(component, config);
+  }
 
-    //this.bsModalRef.content.event.subscribe((res: any) => {
-    //cargarlos en el formulario
-    //console.log(res);
-    //this.assetsForm.controls['address'].get('longitud').enable();
-    //this.requestForm.get('receiUser').patchValue(res.user);
-    //});
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const idSample = this.idSample;
+    const typeFirm = typeSign;
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        idTypeDoc,
+        idSample,
+        typeFirm,
+        typeAnnex,
+        callback: (next: boolean) => {
+          if (next) {
+            if (typeFirm != 'electronica') {
+              this.uploadDocument();
+            } else {
+              this.getSampleInfo();
+            }
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  uploadDocument() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      typeDoc: 218,
+      idSample: this.idSample,
+      callback: (data: boolean) => {
+        if (data) {
+          this.getSampleInfo();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
   }
 
   goBack() {

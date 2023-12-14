@@ -8,3 +8,9 @@ export interface IContract {
   pssadj: any;
   adj: any;
 }
+
+export interface IRetention {
+  indRetention: number;
+  redcs: string;
+  typeRetention: string;
+}
