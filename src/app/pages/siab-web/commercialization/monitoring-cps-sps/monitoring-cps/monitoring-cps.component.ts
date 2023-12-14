@@ -30,6 +30,7 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
   // Boolean
   show: boolean = false;
   checkedSiab: boolean = false;
+  checkedSirsae: boolean = false;
 
   // Array Ngx-Select
   @Input() fullEvents: any;
@@ -106,11 +107,16 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
 
   siabCheckedChanged() {
     this.checkedSiab = true;
+    this.checkedSirsae = false;
     this.form.get('year').disable();
+    this.form.get('event').enable();
   }
 
   sirsaeCheckedChanged() {
+    this.checkedSiab = false;
+    this.checkedSirsae = true;
     this.form.get('event').disable();
+    this.form.get('year').enable();
   }
 
   fullTableSiabOrSirsae() {

@@ -718,11 +718,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = true;
 
         this.resultEyeVisitReport = false;
-        this.resultVisits = false;
-        this.validateGoodForEyeVisit = false;
-        this.notifyReport = false;
         this.docRequest = false;
-        this.viewSelectedGoods = true;
         this.listGoodSelectedTitle = 'Listado de Bienes';
         this.searchRequestSimGoods = false;
         this.dictumValidate = false;
