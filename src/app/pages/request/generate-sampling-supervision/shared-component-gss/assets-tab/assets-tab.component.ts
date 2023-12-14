@@ -86,6 +86,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('typeTask', this.typeTask);
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsSampling());

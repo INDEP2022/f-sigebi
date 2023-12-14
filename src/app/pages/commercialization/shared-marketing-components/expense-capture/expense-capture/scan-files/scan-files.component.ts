@@ -179,7 +179,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
       if (bienes.length === 0) {
         this.alert(
           'warning',
-          'No tiene bienes en detalle de gasto para continuar',
+          'No tiene bienes en composición de gastos para continuar',
           ''
         );
         return;
