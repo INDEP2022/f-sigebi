@@ -108,6 +108,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   getEvents() {
+    this.loading = true;
     // if (params.text == '') {
     //   this.eventItems = new DefaultSelect(this.eventsData, 5);
     // } else {
@@ -131,6 +132,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           console.log('Response DEL SERVICIO: ', response.data);
+          this.loading = true;
 
           //Traer la descripción del tipo de Evento
           this.comerTpEventosService
