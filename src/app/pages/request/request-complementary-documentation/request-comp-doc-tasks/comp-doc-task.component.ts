@@ -983,6 +983,38 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
+      //NUEVO
+
+      case 'register-seizures':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-abandonment-goods':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-domain-extinction':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
       default:
         break;
     }

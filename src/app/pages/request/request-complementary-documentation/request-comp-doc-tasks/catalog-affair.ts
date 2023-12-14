@@ -16,10 +16,10 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     //Se crea solicitud decumentación complementaria
     case 'create':
       switch (affair) {
-        case 15: //DECOMISO
+        case 30: //DECOMISO
           return {
             title: `DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/confiscation',
+            url: 'pages/request/request-comp-doc/tasks/register-seizures',
             process: 'confiscation',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
@@ -30,7 +30,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         case 16: //extincion de dominio
           return {
             title: `EXTINCION DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/extinction',
+            url: 'pages/request/request-comp-doc/tasks/register-domain-extinction',
             process: 'ExtinciondeDominio',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
@@ -41,7 +41,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         case 27: //PROCESO DE ABANDONO
           return {
             title: `ABANDONO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/abandon',
+            url: 'pages/request/request-comp-doc/tasks/register-abandonment-goods',
             process: 'ProcesoAbandono',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
@@ -378,6 +378,12 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       break;
 
     case 'register-compensation-documentation':
+      break;
+    case 'register-seizures':
+      break;
+    case 'register-abandonment-goods':
+      break;
+    case 'register-domain-extinction':
       break;
   }
 
