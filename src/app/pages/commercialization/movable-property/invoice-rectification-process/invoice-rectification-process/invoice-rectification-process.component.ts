@@ -40,7 +40,13 @@ import { COLUMNS, REDICET_FACTURAS } from './columna';
 @Component({
   selector: 'app-invoice-rectification-process',
   templateUrl: './invoice-rectification-process.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class InvoiceRectificationProcessComponent
   extends BasePage
@@ -404,6 +410,9 @@ export class InvoiceRectificationProcessComponent
           this.paramsList.getValue()[
             'filter.notJob'
           ] = `${SearchFilter.EQ}:${rectInvoice.jobNot}`;
+          this.paramsList.getValue()[
+            'filter.year'
+          ] = `${SearchFilter.EQ}:${rectInvoice.year}`;
           this.getComerDirectInvoice();
         }
       },
@@ -560,7 +569,7 @@ export class InvoiceRectificationProcessComponent
   }
 
   setYear(date?: string) {
-    // if (this.isSearch) return;
+    if (this.isSearch) return;
     const { expDate } = this.form.value;
     let year =
       typeof expDate == 'string'
@@ -704,7 +713,7 @@ export class InvoiceRectificationProcessComponent
     //   this.alert('warning', 'Ingrese una Fecha de Expedición', '');
     //   return;
     // }
-
+    console.log('dataJob', this.form.value);
     let config: ModalOptions = {
       initialState: {
         dataJob: this.dataJob,
@@ -726,10 +735,6 @@ export class InvoiceRectificationProcessComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(NewImageModalComponent, config);
-    // const modalRef = this.modalService.show(NewImageModalComponent, {
-    //   class: 'modal-lg modal-dialog-centered',
-    //   ignoreBackdropClick: true,
-    // });
   }
 
   openForm(data: any) {}
@@ -942,7 +947,7 @@ export class InvoiceRectificationProcessComponent
     //   return;
     // }
 
-    this.saveDataSilent();
+    // this.saveDataSilent();
 
     let config: ModalOptions = {
       initialState: {
@@ -954,6 +959,9 @@ export class InvoiceRectificationProcessComponent
               this.paramsList.getValue()[
                 'filter.notJob'
               ] = `${SearchFilter.EQ}:${jobNot}`;
+              this.paramsList.getValue()[
+                'filter.year'
+              ] = `${SearchFilter.EQ}:${year}`;
             }
             this.getComerDirectInvoice();
           }
@@ -967,7 +975,7 @@ export class InvoiceRectificationProcessComponent
 
   remove(data: any) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       '¿Desea Eliminar este registro?'
     ).then(answ => {
@@ -1014,7 +1022,7 @@ export class InvoiceRectificationProcessComponent
     // this.loadingSearch = false;
     this.isSearch = true;
     const rectInvoice = this.rowSelected;
-    this.dataJob = rectInvoice;
+    this.dataJob = this.rowSelected;
 
     rectInvoice.expDate = rectInvoice.expDate
       ? rectInvoice.expDate.split('-').reverse().join('/')
@@ -1036,10 +1044,17 @@ export class InvoiceRectificationProcessComponent
       ? `${fecha[0].split('-').reverse().join('/')} ${fecha[1]}`
       : null;
 
+    console.log('rectInvoice', rectInvoice);
     this.form.patchValue(rectInvoice);
+
     this.paramsList.getValue()[
       'filter.notJob'
     ] = `${SearchFilter.EQ}:${rectInvoice.jobNot}`;
+
+    this.paramsList.getValue()[
+      'filter.year'
+    ] = `${SearchFilter.EQ}:${rectInvoice.year}`;
+
     this.getComerDirectInvoice();
     this.modal.hide();
   }
@@ -1078,6 +1093,8 @@ export class InvoiceRectificationProcessComponent
   }
 
   removeOficio(data: any) {
+    // console.log("this.dataJob", this.dataJob)
+    // console.log("data", data)
     this.alertQuestion(
       'question',
       'Eliminar',
@@ -1089,18 +1106,22 @@ export class InvoiceRectificationProcessComponent
           year: data.year,
         };
         this.comerRectInoviceService.remove(body).subscribe({
-          next: async () => {
+          next: async resp => {
             this.alert('success', 'Registro Eliminado Correctamente', '');
 
-            if (
-              this.dataJob.jobNot == data.jobNot &&
-              this.dataJob.year == data.year
-            ) {
-              await this.cleanData();
-              await this.getComerRectInoviceTable();
-            } else {
-              await this.getComerRectInoviceTable();
-            }
+            if (this.dataJob)
+              if (
+                this.dataJob.jobNot == data.jobNot &&
+                this.dataJob.year == data.year
+              ) {
+                await this.cleanData();
+                await this.getComerRectInoviceTable();
+              } else {
+                await this.getComerRectInoviceTable();
+              }
+            else await this.getComerRectInoviceTable();
+
+            this.rowSelected = null;
           },
           error: err => {
             if (err.status == 500) {
