@@ -10,7 +10,6 @@ import {
   BsLocaleService,
 } from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { esLocale } from 'ngx-bootstrap/locale';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CardComponent } from './components/card/card.component';
@@ -46,6 +45,7 @@ import { ButtonColumnComponent } from './components/button-column/button-column.
 import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
+import { CustomDatepickerEs } from './utils/CustomDatepickerEs';
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -149,7 +149,7 @@ export const customCurrencyMaskConfig = {
 })
 export class SharedModule {
   constructor(private localeService: BsLocaleService) {
-    defineLocale('es', esLocale);
+    defineLocale('es', CustomDatepickerEs);
     this.localeService.use('es');
   }
 }

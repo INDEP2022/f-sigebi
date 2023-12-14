@@ -93,6 +93,7 @@
             "
             formControlName="datePhysicalReception"
             bsDatepicker
+            [maxDate]="today"
             [bsConfig]="{
               dateInputFormat: 'DD/MM/YYYY'
             }" />
@@ -197,7 +198,7 @@
             [control]="proceedingForm.get('universalFolio')"
             label="Folio de Escaneo">
             <input
-              [disabled]="true"
+              readonly
               type="number"
               class="form-control"
               min="1"
@@ -210,7 +211,7 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active mr-3"
-            (click)="scanRequest()"
+            (click)="scanRequestReport()"
             title="Generar Folio de Escaneo y Solicitud">
             <i class="bx bxs-file-find"></i>
           </button>

@@ -569,7 +569,7 @@ export class InvoiceRectificationProcessComponent
   }
 
   setYear(date?: string) {
-    if (this.isSearch) return;
+    // if (this.isSearch) return;
     const { expDate } = this.form.value;
     let year =
       typeof expDate == 'string'

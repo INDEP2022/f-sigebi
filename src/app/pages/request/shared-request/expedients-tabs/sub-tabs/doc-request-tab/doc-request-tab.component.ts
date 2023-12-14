@@ -625,6 +625,7 @@ export class DocRequestTabComponent
         this.paragraphs.load(filter);
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -639,6 +640,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -653,6 +655,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -667,6 +670,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -681,6 +685,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -695,6 +700,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -709,6 +715,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -723,6 +730,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -737,6 +745,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -751,6 +760,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -765,6 +775,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -779,6 +790,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -794,6 +806,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -814,6 +827,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
   }

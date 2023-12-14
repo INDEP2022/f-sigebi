@@ -9,7 +9,6 @@ import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
-import { ITypeDocument } from 'src/app/core/models/ms-wcontent/type-document';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -189,7 +188,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   typedocuments(params: ListParams) {
     this.wContentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+        this.typesDocuments = new DefaultSelect(resp.data, resp.length);
       },
     });
   }
@@ -215,7 +214,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 
-  typeDocumentSelect(item: ITypeDocument) {
+  typeDocumentSelect(item) {
+    console.log(item);
     this.typeDocument = item.ddocType;
   }
 
@@ -280,7 +280,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
+        xcomments: this.newDocForm.get('observations').value,
         xNombreProceso: 'Ejecutar Recepcion',
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:
@@ -368,8 +368,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
-        xNombreProceso: 'Clasificar Bien',
+        xcomments: this.newDocForm.get('observations').value,
+        xnombreProceso: 'Clasificar Bien',
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:
           this.newDocForm.get('returnOpinionFolio').value,
@@ -453,7 +453,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
+        xcomments: this.newDocForm.get('observations').value,
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:
           this.newDocForm.get('returnOpinionFolio').value,
@@ -536,7 +536,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
+        xcomments: this.newDocForm.get('observations').value,
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:
           this.newDocForm.get('returnOpinionFolio').value,
@@ -618,7 +618,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xremitente: this.newDocForm.get('sender').value,
         xcargoRemitente: this.newDocForm.get('senderCharge').value,
         xresponsable: this.newDocForm.get('responsible').value,
-        xComments: this.newDocForm.get('observations').value,
+        xcomments: this.newDocForm.get('observations').value,
         xNombreProceso: 'Aclaración Bien',
         xnoOficio: this.newDocForm.get('noOfi').value,
         xfolioDictamenDevolucion:

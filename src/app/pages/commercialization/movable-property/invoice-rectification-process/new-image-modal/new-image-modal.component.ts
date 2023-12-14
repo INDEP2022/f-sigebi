@@ -237,7 +237,6 @@ export class NewImageModalComponent extends BasePage implements OnInit {
 
     return new File([u8arr], filename, { type: mime });
   }
-
   cleanPhoto() {
     this.imageBase64 = null;
     this.image = null;

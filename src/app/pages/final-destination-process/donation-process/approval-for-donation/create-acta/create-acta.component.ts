@@ -4,7 +4,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -66,6 +71,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
   areas$ = new DefaultSelect<any>();
   area_d: any;
 
+  //info del evento de donacion
+  eventDonacion: IGoodDonation;
+
   get captureDate() {
     return this.actaRecepttionForm.get('captureDate');
   }
@@ -92,17 +100,18 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('OPERACION::' + this.edit + ' - idActa::' + this.idActa);
+
     localStorage.setItem('area', this.authService.decodeToken().siglasnivel3);
-    this.generaConsec(this.area_d);
+    if (!this.edit) {
+      this.generaConsec(this.area_d);
+    }
     //this.actaForm();
-    console.log('Folio:' + this.foolio + " - area_d::" + this.area_d);
+    console.log('Folio:' + this.foolio + ' - area_d::' + this.area_d);
 
     this.delegation = Number(localStorage.getItem('area'));
     console.log('this.delegation::' + this.delegation);
-    //this.consulREG_DEL_DESTR(new ListParams());
-    //this.consulREG_DEL_ADMIN(new ListParams());
-    //chm:
-    //this.consulREG_DEL_ADMIN1();
+
     for (let i = 1900; i <= this.currentYear; i++) {
       this.years.push(i);
     }
@@ -117,30 +126,90 @@ export class CreateActaComponent extends BasePage implements OnInit {
     //await this.generaConsec(this.area_d);
     this.actaRecepttionForm = this.fb.group({
       acta: ['CPD', Validators.required],
-      //type: [null],
-      //administra: [null, Validators.required],
       consec: [this.foolio],
-      anio: [null],
-      /*
-      fileId: [null, [Validators.required]],
-      observaciones: [null],
-      testigoOne: [null, [Validators.required]],
-      testigoOIC: [null, [Validators.required]],
-      */
+      anio: [this.currentYear],
       captureDate: [null],
       delegation: [localStorage.getItem('area'), Validators.required],
       claveacta: [null],
     });
-    //this.actaRecepttionForm.get('consec').setValue(this.foolio);
-    this.actaRecepttionForm.patchValue({
-      consec: this.foolio,
-    });
-    this.actaRecepttionForm.patchValue({
-      captureDate: await this.getDate(),
-    });
-
-
+    if (!this.edit) {
+      this.actaRecepttionForm.patchValue({
+        consec: this.foolio,
+      });
+      this.actaRecepttionForm.patchValue({
+        captureDate: await this.getDate(),
+      });
+    } else {
+      this.getComerDonation(this.idActa);
+    }
   }
+
+  getComerDonation(idActa: number) {
+    this.donationService.getByIdEvent(idActa).subscribe({
+      next: (data: any) => {
+        console.log('0.data:getComerDonation::::' + data);
+        this.eventDonacion = data;
+
+        console.log(
+          '1.data:getComerDonation::' + JSON.stringify(this.eventDonacion)
+        );
+        const dateCapture =
+          this.eventDonacion.captureDate != null
+            ? new Date(this.eventDonacion.captureDate)
+            : null;
+        const formattedfecCapture =
+          dateCapture != null ? this.formatDate(dateCapture) : null;
+
+        const ultimosCincoDigitos = this.eventDonacion.cveAct.slice(-5);
+        var pos = this.eventDonacion.cveAct.lastIndexOf('/');
+        var anio = parseInt(this.eventDonacion.cveAct.substring(pos - 4, pos));
+        var folio = this.eventDonacion.cveAct.substring(pos + 1);
+        var pos1 = this.eventDonacion.cveAct.indexOf('/');
+        var area = this.eventDonacion.cveAct.substring(pos1 + 1, pos - 5);
+        console.log(
+          'datos acta:::anio:: ' +
+            anio +
+            ' ::folio:: ' +
+            folio +
+            '::area:: ' +
+            area
+        );
+        this.foolio = Number(folio != null ? folio : 0);
+        this.actaRecepttionForm.patchValue({
+          acta: 'CPD',
+        });
+        this.actaRecepttionForm.patchValue({
+          consec:
+            this.eventDonacion.folioUniversal == null
+              ? folio
+              : data.folioUniversal,
+        });
+        this.actaRecepttionForm.patchValue({
+          anio: anio,
+        });
+        this.actaRecepttionForm.patchValue({
+          claveacta: this.eventDonacion.cveAct,
+        });
+        this.actaRecepttionForm.patchValue({
+          captureDate: formattedfecCapture,
+        });
+        this.actaRecepttionForm.patchValue({
+          delegation: area,
+        });
+      },
+      error: () => {
+        console.error('error');
+      },
+    });
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${day}/${month}/${year}`;
+  }
+
   async delegationWhere() {
     return new Promise((resolve, reject) => {
       if (this.delegation != null) {
@@ -270,7 +339,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
   async generaConsec(area_d: number) {
     this.procedureManagementService
       //.getFolioMax(Number(localStorage.getItem('area')))
-      .getFolioMax((area_d == null) ? this.authService.decodeToken().department : area_d)
+      .getFolioMax(
+        area_d == null ? this.authService.decodeToken().department : area_d
+      )
       .subscribe({
         next: (data: any) => {
           console.log('generaConsec:: DATA', data);
@@ -334,9 +405,102 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
   confirm() {
-    this.edit ? this.update() : this.agregarActa();
+    this.edit ? this.updateActa() : this.agregarActa();
   }
   updateRegister: any;
+
+  async updateActa() {
+    const acta = this.actaRecepttionForm.value.acta;
+    const administra = this.actaRecepttionForm.value.delegation;
+    const consec = this.foolio;
+    const anio = this.actaRecepttionForm.value.anio;
+    const fechacaptura = this.actaRecepttionForm.value.captureDate;
+    //const claveacta = this.actaRecepttionForm.value.captureDate;
+    let faltante = '';
+    console.log('ACTA:::' + acta);
+    if (acta == null || acta == '') {
+      faltante = ' acta,';
+    }
+    if (administra == null || administra == '') {
+      faltante = faltante + ' área,';
+    }
+    if (consec == null || consec == 0) {
+      faltante = faltante + ' folio,';
+    }
+    if (anio == null || anio == '') {
+      faltante = faltante + ' anio,';
+    }
+    if (faltante != '') {
+      faltante = faltante.substring(0, faltante.length - 1);
+      this.alert('warning', 'Falta ingresar informacion: ' + faltante, '');
+      return;
+    }
+
+    localStorage.setItem('area', administra);
+    localStorage.setItem('anio', anio);
+
+    this.cveActa = `${acta}/${administra}/${anio}/${this.foolio}`;
+    console.log('cveActa -->', this.cveActa);
+    localStorage.setItem('cveAc', this.cveActa);
+
+    if (this.eventDonacion != null) {
+      if (this.eventDonacion.estatusAct == 'CERRADA') {
+        this.alert('warning', 'el evento ya se encuentra cerrado', '');
+        return;
+      }
+
+      this.alertQuestion(
+        'question',
+        '¿Seguro que desea actualizar el evento?',
+        ''
+      ).then(async question => {
+        if (question.isConfirmed) {
+          let obj: any = {
+            actId: this.idActa,
+            cveAct: this.cveActa,
+            elaborationDate: this.eventDonacion.elaborationDate,
+            estatusAct: this.eventDonacion.estatusAct,
+            elaborated: this.eventDonacion.elaborated,
+            witness1: this.eventDonacion.witness1,
+            witness2: this.eventDonacion.witness2,
+            actType: this.eventDonacion.actType,
+            observations: this.eventDonacion.observations,
+            registreNumber: null,
+            noDelegation1: this.eventDonacion.noDelegation1,
+            fileId: Number(
+              this.eventDonacion.fileId == null ? 0 : this.eventDonacion.fileId
+            ),
+            noDelegation2: this.eventDonacion.noDelegation2,
+            identifier: this.eventDonacion.identifier,
+            folioUniversal: this.eventDonacion.folioUniversal,
+            closeDate: this.eventDonacion.closeDate,
+          };
+          console.log(obj);
+          this.donationService.putEvent(obj, this.idActa).subscribe({
+            next: async data => {
+              this.loading = false;
+              console.log('updateacta::' + JSON.stringify(data));
+              this.newRegister = data;
+              this.idActa = data.id;
+              this.alert(
+                'success',
+                'El Evento se ha actualizado correctamente',
+                ''
+              );
+              this.handleSuccess();
+            },
+            error: error => {
+              this.alert(
+                'error',
+                'Ocurrió un error al actualizar el evento',
+                ''
+              );
+            },
+          });
+        }
+      });
+    }
+  }
 
   update() {
     this.loading = true;
@@ -365,7 +529,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
       this.delegationLst = new DefaultSelect(data.data, data.count);
     });
   }
-
 
   //Obtener area
   async readArea(lparams: FilterParams) {
@@ -399,9 +562,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
     }
     console.log(
       'this.stagecreated::' +
-      JSON.stringify(this.stagecreated) +
-      ' - this.area_d::' +
-      this.area_d
+        JSON.stringify(this.stagecreated) +
+        ' - this.area_d::' +
+        this.area_d
     );
     params.addFilter('stageedo', this.stagecreated, SearchFilter.EQ);
     params.sortBy = 'numberDelegation2:ASC';
@@ -422,6 +585,4 @@ export class CreateActaComponent extends BasePage implements OnInit {
       },
     });
   }
-
-
 }

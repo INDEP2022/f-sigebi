@@ -4,64 +4,64 @@
   </div>
   <div body>
     <div class="md-tabs">
-      <div class="d-flex justify-content-end">
-        <div>
-          <button
-            (click)="sign()"
-            class="btn btn-primary active btn-sm"
-            *ngIf="!isSigned && signed">
-            <i class="fa fa-file-signature"></i>
-            Firmar
-          </button>
+      <form class="form-material" [formGroup]="form">
+        <div class="row justify-content-start">
+          <div class="col-xs-12 col-12 col-md-6" *ngIf="editReport">
+            <ngx-select
+              [form]="form"
+              control="template"
+              [data]="formats"
+              [searchable]="false"
+              label="Aplicar Formato"
+              [loading]="false"
+              loadingText="Cargando..."
+              bindLabel="reportName"
+              value="id"
+              (fetchItems)="getCatFormats($event)">
+            </ngx-select>
+          </div>
+          <div class="col-md-3" *ngIf="editReport">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="applyFormat()">
+              Aplicar Formato <i class="fa fa-file mr-1"></i>
+            </button>
+          </div>
+
+          <div class="col-md-3" *ngIf="!editReport">
+            <button (click)="sign()" class="btn btn-primary active btn-sm">
+              <i class="fa fa-file-signature"></i>
+              Firmar
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
+
+      <br />
       <tabset #tabsReport>
-        <tab heading="Editar" id="editorTab" *ngIf="!isSigned">
+        <tab heading="Reporte" id="editReport" *ngIf="editReport">
           <!--Templates Editor-->
-          <form class="form-material" [formGroup]="form">
-            <div class="row justify-content-end">
-              <div class="col-xs-12 col-12 col-md-6">
-                <form-field
-                  [control]="form.get('template')"
-                  label="Aplicar Formato">
-                  <select class="form-control" formControlName="template">
-                    <option [value]="null">Seleccione un valor</option>
-                    <option value="template1">Formato 1</option>
-                    <option value="template2">Formato 2</option>
-                    <option value="template3">Formato 3</option>
-                  </select>
-                </form-field>
-              </div>
-            </div>
-          </form>
           <quill-editor
-            *ngIf="document"
             [sanitize]="true"
             placeholder="Escribe aquí"
-            [(ngModel)]="document.content"
+            [(ngModel)]="version.content"
             (onEditorCreated)="created($event)"
             (onContentChanged)="onContentChanged($event)"
             [styles]="{ height: '40vh', overflow: 'auto' }">
           </quill-editor>
         </tab>
-        <tab heading="Vista Previa" id="previewTab">
-          <div class="row justify-content-end" *ngIf="isSignedReady">
-            <div class="col-md-3">
-              <button
-                (click)="attachDocument()"
-                class="btn btn-primary btn-sm active">
-                <i class="fa fa-check-circle"></i>
-                Adjuntar documento
-              </button>
-            </div>
+
+        <tab heading="Vista Previa" id="previewTab" *ngIf="isView()">
+          <div style="height: 40vh !important; overflow: auto !important">
+            <quill-view
+              [content]="version.content"
+              [sanitize]="true"
+              [preserveWhitespace]="true"
+              format="html"></quill-view>
           </div>
-          <quill-view
-            [content]="quillInstance"
-            [preserveWhitespace]="true"
-            format="object"></quill-view>
-          <!--<button (click)='pdfCreate()'>Vista previa</button>-->
         </tab>
-        <tab heading="Firmar Reporte" id="signTab" *ngIf="isSigned">
+
+        <tab heading="Firmar Reporte" id="signTab" *ngIf="signReport">
           <app-sign-report (nextStep)="nextStep($event)"></app-sign-report>
         </tab>
       </tabset>
@@ -73,7 +73,7 @@
         <confirm-button
           [disabled]="!form.valid"
           [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
+          (confirm)="saveVersionsDoc()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

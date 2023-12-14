@@ -452,15 +452,12 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       .getUsers(params)
       .pipe(
         catchError(e => {
-          if (e.status == 400) {
-            return of({ ObtenUsuarioResult: {} });
-          }
-          this.onLoadToast(
+          /*this.onLoadToast(
             'error',
             'Ocurrió un error al cargar los datos',
             'Inténtelo más tarde'
-          );
-          throw e;
+          );*/
+          return of({ ObtenUsuarioResult: {} });
         })
       )
       .subscribe({

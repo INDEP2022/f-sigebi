@@ -24,6 +24,7 @@ export class RegisterDocumentationViewComponent
   typeExpedient: string = '';
   affair: string = '';
   originInfo: string = '';
+  @Input() process?: string = '';
 
   //INJECTIONS
   private requestService = inject(RequestService);
@@ -99,5 +100,54 @@ export class RegisterDocumentationViewComponent
       .subscribe((data: any) => {
         this.originInfo = data.description;
       });
+  }
+
+  showInput(comp) {
+    let input = [];
+    switch (this.process) {
+      case 'register-request-return':
+      case 'verify-compliance-return':
+      case 'approve-return':
+        input = ['trialType', 'authorityOrdering', 'crime'];
+        break;
+      case 'register-request-similar-goods':
+      case 'notify-transfer-similar-goods':
+      case 'eye-visit-similar-goods':
+      case 'validate-eye-visit-similar-goods':
+      case 'response-letter-similar-goods':
+        input = ['trialType', 'crime'];
+        break;
+      case 'register-request-compensation':
+      case 'review-guidelines-compensation':
+      case 'analysis-result-compensation':
+      case 'validate-opinion-compensation':
+      case 'notification-taxpayer-compensation':
+        input = ['trialType', 'crime'];
+        break;
+      case 'register-request-information-goods':
+      case 'respose-office-information-goods':
+      case 'review-office-information-goods':
+        input = ['trialType', 'crime'];
+        break;
+      case 'register-request-economic-compensation':
+      case 'request-economic-resources':
+      case 'review-economic-guidelines':
+      case 'generate-results-economic-compensation':
+      case 'validate-dictum-economic':
+      case 'delivery-notify-request':
+      case 'register-taxpayer-date':
+      case 'register-pay-order':
+      case 'generate-compensation-act':
+        input = ['trialType', 'crime'];
+        break;
+      case 'register-request-protection':
+      case 'protection-regulation':
+      case 'review-result-protection':
+      case 'register-compensation-documentation':
+        input = ['protectNumber', 'crime', 'trialType'];
+        break;
+    }
+
+    return input.includes(comp);
   }
 }

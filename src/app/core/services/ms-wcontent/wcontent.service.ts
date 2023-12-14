@@ -57,7 +57,10 @@ export class WContentService extends HttpWContentService {
   }
 
   getDocumentTypes(params: ListParams): Observable<IListResponse<IDocTypes>> {
-    return this.get<IListResponse<IDocTypes>>(WContentEndpoint.DocumentTypes);
+    return this.get<IListResponse<IDocTypes>>(
+      WContentEndpoint.DocumentTypes,
+      params
+    );
   }
 
   getDocumentos(

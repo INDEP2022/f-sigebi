@@ -32,6 +32,10 @@ export const COLUMNS = {
     sort: false,
   },
   retentionvat: {
+    title: 'Retención Vat',
+    sort: false,
+  },
+  vat: {
     title: 'Vat',
     sort: false,
   },
