@@ -128,6 +128,11 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   actDate: any;
   dataProceeding: any;
   clear: boolean = false;
+
+  //AGREGADO POR GRIGORK
+  labelSaveProceeding: string = 'Guardar nueva acta';
+  //----------------------------------------------
+
   constructor(
     private fb: FormBuilder,
     private expedientService: ExpedientService,
@@ -690,7 +695,11 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   }
 
   openModal(newOrEdit: boolean, data: any) {
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-dialog-centered modal-lg',
+      ignoreBackdropClick: true,
+    };
     modalConfig.initialState = {
       newOrEdit,
       data,
@@ -1159,23 +1168,26 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   }
 
   selectNew() {
-    if (this.ActaNew == 'Nueva Acta') {
-      const elaborationDate = new Date();
-      const day = elaborationDate.getDate().toString().padStart(2, '0');
-      const month = (elaborationDate.getMonth() + 1)
-        .toString()
-        .padStart(2, '0');
-      const year = elaborationDate.getFullYear();
-      const formattedDate = `${day}/${month}/${year}`;
-      this.ActaNew = 'Guardar';
-      this.formAct.reset();
-      this.formAct.get('elabDate').setValue(formattedDate);
-      this.newA = true;
-      this.boton = false;
-      this.campos = true;
-      this.select = true;
-    } else if (this.ActaNew == 'Guardar') {
+    const elaborationDate = new Date();
+    const day = elaborationDate.getDate().toString().padStart(2, '0');
+    const month = (elaborationDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = elaborationDate.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`;
+    this.ActaNew = 'Guardar';
+    this.formAct.reset();
+    this.formAct.get('elabDate').setValue(formattedDate);
+    this.newA = true;
+    this.boton = false;
+    this.campos = true;
+    this.select = true;
+    this.labelSaveProceeding = 'Guardar nueva acta';
+  }
+
+  saveProceeding() {
+    if (this.labelSaveProceeding == 'Guardar nueva acta') {
       this.validaConsec();
+    } else {
+      console.log('this.formAct ', this.formAct.value);
     }
   }
 
