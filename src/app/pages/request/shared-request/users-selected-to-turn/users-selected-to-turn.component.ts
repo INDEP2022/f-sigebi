@@ -124,6 +124,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
         this.loading = false;
+        this.validBtn = false;
       },
       error: error => {
         this.loading = false;
@@ -156,6 +157,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
         this.loading = false;
+        this.validBtn = false;
       },
       error: error => {
         console.log('error', error);
