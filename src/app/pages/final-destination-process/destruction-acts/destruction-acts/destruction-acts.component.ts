@@ -447,7 +447,6 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   searchDataExp() {
     this.loadingProcedure = true;
     this.loadingTable = true;
-    this.clearForm();
     this.searchDataByExp();
   }
   //DESACTIVAR CAMPOS CUANDO EL ACTA ESTA CERRADAS
