@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -8,10 +9,13 @@ import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-v
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
 import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import Swal from 'sweetalert2';
 import { LIST_DEDUCTIVES_COLUMNS } from '../../sampling-assets/sampling-assets-form/columns/list-deductivas-column';
 
 @Component({
@@ -20,10 +24,10 @@ import { LIST_DEDUCTIVES_COLUMNS } from '../../sampling-assets/sampling-assets-f
   styleUrls: ['./approve-restitution.component.scss'],
 })
 export class ApproveRestitutionComponent extends BasePage implements OnInit {
-  title: string = 'Aprobación del bien';
+  title: string = 'Aprobación de bienes';
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
-  idSample: number = 302;
+
   sampleInfo: ISample;
   data: any;
   filterObject: any;
@@ -35,11 +39,16 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
   annexDetail: any[] = [];
   allDeductives: IDeductiveVerification[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  idSample: number = 0;
   constructor(
     private samplingGoodService: SamplingGoodService,
     private fb: FormBuilder,
     private deductiveService: DeductiveVerificationService,
-    private samplingService: SamplingGoodService
+    private samplingService: SamplingGoodService,
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService,
+    private router: Router,
+    private taskService: TaskService
   ) {
     super();
     this.settings = {
@@ -51,6 +60,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.idSample = Number(this.activatedRoute.snapshot.paramMap.get('id'));
     this.getSampleInfo();
     this.initFilterForm();
     this.getSampleDeductives();
@@ -99,7 +109,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
 
   getSampleInfo() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.sampleId'] = `$eq:${303}`;
+    params.getValue()['filter.sampleId'] = `$eq:${this.idSample}`;
     this.samplingGoodService.getSample(params.getValue()).subscribe({
       next: response => {
         this.sampleInfo = response.data[0];
@@ -143,11 +153,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
                     'APROBAR'
                   );
                   if (updateGoodsSample) {
-                    this.alert(
-                      'success',
-                      'Correcto',
-                      'Muestreo de bien aprobado correctamente'
-                    );
+                    this.closeTask();
                   }
                 }
               });
@@ -169,11 +175,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
                       'RECHAZAR'
                     );
                     if (updateGoodsSample) {
-                      this.alert(
-                        'success',
-                        'Correcto',
-                        'Muestreo de bien aprobado correctamente'
-                      );
+                      this.closeTask();
                     }
                   }
                 });
@@ -263,6 +265,58 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
           },
         });
       });
+    });
+  }
+
+  async closeTask() {
+    const user: any = this.authService.decodeToken();
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    let body: any = {};
+
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = 'MUESTREO_BIENES';
+    body['subtype'] = 'Verificar_pago';
+    body['ssubtype'] = 'CERRAR';
+
+    const taskResult: any = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult || taskResult == false) {
+      this.msgGuardado(
+        'success',
+        'Cierre de Tarea Correctamente',
+        `Muestreo de bien aprobado correctamente`
+      );
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
     });
   }
 

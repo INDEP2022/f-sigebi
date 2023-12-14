@@ -107,7 +107,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'assets-approval',
+    path: 'assets-approval/:id',
     loadChildren: async () =>
       (
         await import(
