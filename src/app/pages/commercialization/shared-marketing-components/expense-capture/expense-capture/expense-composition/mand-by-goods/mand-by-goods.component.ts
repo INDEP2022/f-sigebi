@@ -211,7 +211,7 @@ export class MandByGoodsComponent
   override setTotals(data: IMandExpenseCont[]): void {
     this.total = 0;
     data.forEach(x => {
-      this.total += +x.amount;
+      this.total += +x.total;
     });
     this.total = this.total.toFixed(2);
   }
