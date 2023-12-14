@@ -1614,6 +1614,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.expenseNumberValue && mandates.length > 0;
   }
 
+  get validateExportExcel() {
+    let mandatos = this.dataService.dataCompositionExpenses.filter(
+      x => x.manCV
+    );
+    return this.expenseNumberValue && mandatos.length > 0;
+  }
+
   async imprimeDetalle() {
     let result = await this.alertQuestion(
       'question',
