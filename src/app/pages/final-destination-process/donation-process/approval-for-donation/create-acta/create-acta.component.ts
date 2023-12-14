@@ -70,6 +70,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
   stagecreated: any = 2;
   areas$ = new DefaultSelect<any>();
   area_d: any;
+  nivelusuario: number = 1;
+  delegation1: number = -1;
+  delegation2: number = -1;
 
   //info del evento de donacion
   eventDonacion: IGoodDonation;
@@ -101,11 +104,15 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log('OPERACION::'+ this.edit + ' - idActa::'+ this.idActa);
+    console.log('OPERACION::delegation1::'+ this.delegation1 + ' - delegation2::'+ this.delegation2 + ' - nivelusuario::'+ this.nivelusuario);
 
     localStorage.setItem('area', this.authService.decodeToken().siglasnivel3);
+    /*
     if(!this.edit){
-      this.generaConsec(this.area_d);
+      //this.generaConsec(this.area_d);
+      this.generaConsecDona();
     }
+    */
     //this.actaForm();
     console.log('Folio:' + this.foolio + ' - area_d::' + this.area_d);
 
@@ -141,6 +148,10 @@ export class CreateActaComponent extends BasePage implements OnInit {
       });
     }else{
       this.getComerDonation(this.idActa);
+    }
+    if(!this.edit){
+      //this.generaConsec(this.area_d);
+      this.generaConsecDona();
     }
   }
 
@@ -327,7 +338,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     }
   }
 
-  async generaConsec(area_d: number) {
+  async generaConsec_(area_d: number) {
     this.procedureManagementService
       //.getFolioMax(Number(localStorage.getItem('area')))
       .getFolioMax(
@@ -337,6 +348,33 @@ export class CreateActaComponent extends BasePage implements OnInit {
         next: (data: any) => {
           console.log('generaConsec:: DATA', data);
           this.foolio = data.folioMax;
+          this.generarClave();
+        },
+        error: error => {
+          this.foolio = 0;
+        },
+      });
+  }
+
+   async generaConsecDona(area_d?: number) {
+    const administra = this.actaRecepttionForm.value.delegation;
+    const consec = this.foolio;
+    const anio = this.actaRecepttionForm.value.anio;
+
+    let body = {
+      delegationNumber2: this.delegation2,
+      toolbarDelegationNumber: this.delegation1,
+      type:'CPD',
+      userLevel: this.nivelusuario,
+      year: anio== null?this.currentYear:anio
+    };
+    console.log('generaConsecDona::'+ JSON.stringify(body))
+    this.donationService
+      .getConsecDonation(body)
+      .subscribe({
+        next: (data: any) => {
+          console.log('generaConsec:: DATA', data);
+          this.foolio = data.consec;
           this.generarClave();
         },
         error: error => {
