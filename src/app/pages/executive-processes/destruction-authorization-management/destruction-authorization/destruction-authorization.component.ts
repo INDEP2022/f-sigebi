@@ -428,7 +428,7 @@ export class DestructionAuthorizationComponent
     if (!this.controls.keysProceedings.value) {
       this.alert(
         'warning',
-        'Error',
+        'No se ha especificado el Oficio de Solicitud',
         'Debe especificar/buscar la Solicitud para despues eliminar el bien de esta'
       );
       return;
@@ -439,7 +439,7 @@ export class DestructionAuthorizationComponent
     ) {
       this.alert(
         'warning',
-        'Error',
+        'Solictud cerrada',
         'La Solicitud ya esta cerrada, no puede realizar modificaciones a esta'
       );
       return;
@@ -448,7 +448,7 @@ export class DestructionAuthorizationComponent
     if (this.selectGoodProc == null) {
       this.alert(
         'warning',
-        'Error',
+        'No se ha seleccionado un bien',
         'Debe seleccionar un bien que forme parte de la Solicitud primero'
       );
       return;
@@ -477,7 +477,9 @@ export class DestructionAuthorizationComponent
           this.alert('success', 'Bien eliminado', '');
           this.getProceedingGoods();
           this.searchGoodsInDetailProceeding(this.numberPro);
-          this.getGoodByStatusPDS();
+          if (this.goodPDS1.count() > 0) {
+            this.getGoodByStatusPDS();
+          }
         },
         error: err => {},
       });
@@ -580,8 +582,8 @@ export class DestructionAuthorizationComponent
               localStorage.getItem('newProceedingFlag') == 'S' ? true : false;
 
             if (this.isCommingTracker) {
-              this.insertDetailFromGoodsTracker();
               this.isCommingTracker = false;
+              this.insertDetailFromGoodsTracker();
             }
           }
         },
@@ -636,7 +638,9 @@ export class DestructionAuthorizationComponent
     this.navigateDictamination();
 
     this.user = this.authService.decodeToken().preferred_username;
+  }
 
+  researchWhenReturn() {
     const idProceedingReturn = localStorage.getItem('idProceeding_FESTATUSRGA');
     if (
       idProceedingReturn &&
@@ -646,7 +650,7 @@ export class DestructionAuthorizationComponent
       console.log('Cargo');
       this.proceedingForm.get('id').setValue(idProceedingReturn);
       localStorage.removeItem('idProceeding_FESTATUSRGA');
-      this.rechargeData();
+      this.keyProceedingchange();
     }
   }
 
@@ -692,7 +696,6 @@ export class DestructionAuthorizationComponent
     this.massiveGoodService.pupGoodTrackerRga(body).subscribe({
       next: async response => {
         console.log(response);
-        this.getProceedingGoods();
 
         if (response.rechazados > 0) {
           await this.downloadExcel(
@@ -708,6 +711,23 @@ export class DestructionAuthorizationComponent
             `Se ingresaron ${response.aceptados} bienes`,
             ''
           );
+
+          if (
+            this.proceedingForm.get('id').value != null ||
+            localStorage.getItem('idProceeding_FESTATUSRGA') != null
+          ) {
+            if (
+              this.proceedingForm.get('id').value == null &&
+              localStorage.getItem('idProceeding_FESTATUSRGA') != null
+            ) {
+              this.proceedingForm
+                .get('id')
+                .setValue(localStorage.getItem('idProceeding_FESTATUSRGA'));
+              localStorage.removeItem('idProceeding_FESTATUSRGA');
+            }
+            this.massiveSave();
+          }
+
           console.log(response.bienes_aceptados);
           this.numFile == null
             ? (this.numFile = response.bienes_aceptados[0].expedient)
@@ -715,6 +735,8 @@ export class DestructionAuthorizationComponent
         } else {
           this.alert('warning', 'No se cargaron bienes', '');
         }
+
+        this.getProceedingGoods();
       },
       error: error => {
         console.log(error);
@@ -739,7 +761,11 @@ export class DestructionAuthorizationComponent
 
   insertFromGoodsTracker() {
     if (this.controls.statusProceedings.value == 'CERRADA') {
-      this.alert('warning', 'Error', 'La Solicitud ya esta cerrada');
+      this.alert(
+        'warning',
+        'Solicitud cerrada',
+        'La Solicitud ya esta cerrada, no puede realizar modificaciones a esta'
+      );
       return;
     }
 
@@ -1612,6 +1638,17 @@ export class DestructionAuthorizationComponent
 
   onFileChange(event: Event) {
     if (
+      ['CERRADO', 'CERRADA'].includes(this.controls.statusProceedings.value)
+    ) {
+      this.alert(
+        'warning',
+        'Error',
+        'La Solicitud ya esta cerrada, no puede realizar modificaciones a esta'
+      );
+      return;
+    }
+
+    if (
       this.controls.id.value == null ||
       this.controls.statusProceedings.value == null
     ) {
@@ -1644,6 +1681,9 @@ export class DestructionAuthorizationComponent
         this.getProceedingGoods();
         this.massiveSave();
         console.log(resp);
+        if (this.goodPDS1.count() > 0) {
+          this.getGoodByStatusPDS();
+        }
       },
       error: err => {
         console.log(err);
@@ -1679,51 +1719,39 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    if (this.newProceedingFlag) {
-      const newArray = [];
-      newArray.push(this.selectGoodGen);
-      this.detailProceedingsList2.load(newArray);
-      this.totalItems2 = newArray.length;
-      if (this.detailProceedingsList2.empty()) {
-        this.numFile = this.selectGoodGen.fileNumber;
-      }
-    } else {
-      if (!this.proceedingForm.get('id').value) {
-        this.alert('warning', 'Es necesario contar con el No. de Acta', '');
-        return;
-      }
-
-      let body = {
-        pVcScreem: 'FESTATUSRGA',
-        pActaNumber: this.proceedingForm.get('id').value,
-        pStatusActa: this.proceedingForm.get('statusProceedings').value,
-        pGoodNumber: this.selectGoodGen.id,
-        pDiAvailable: '',
-        pDiActa: this.selectGoodGen.requestFolio,
-        pCveActa: this.proceedingForm.get('keysProceedings').value,
-        pAmount: this.selectGoodGen.quantity,
-      };
-      this.massiveGoodService.InsertGood(body).subscribe({
-        next: data => {
-          console.log(data);
-          this.alert('success', 'Bien insertado', '');
-          // this.getProceedingGoods();
-          this.searchGoodsInDetailProceeding(
-            this.proceedingForm.get('id').value
-          );
-          this.getGoodByStatusPDS();
-        },
-        error: err => {
-          console.log(err);
-          this.alert(
-            'warning',
-            `El Bien: ${this.selectGoodGen.id}, ya ha sido ingresado en una solicitud o presenta un error`,
-            ''
-          ); // Asumiendo que 'alert' se encarga de mostrar la alerta
-          this.array = [...this.tempArray];
-        },
-      });
+    if (!this.proceedingForm.get('id').value) {
+      this.alert('warning', 'Es necesario contar con el No. de Acta', '');
+      return;
     }
+
+    let body = {
+      pVcScreem: 'FESTATUSRGA',
+      pActaNumber: this.proceedingForm.get('id').value,
+      pStatusActa: this.proceedingForm.get('statusProceedings').value,
+      pGoodNumber: this.selectGoodGen.id,
+      pDiAvailable: '',
+      pDiActa: this.selectGoodGen.requestFolio,
+      pCveActa: this.proceedingForm.get('keysProceedings').value,
+      pAmount: this.selectGoodGen.quantity,
+    };
+    this.massiveGoodService.InsertGood(body).subscribe({
+      next: data => {
+        console.log(data);
+        this.alert('success', 'Bien insertado', '');
+        // this.getProceedingGoods();
+        this.searchGoodsInDetailProceeding(this.proceedingForm.get('id').value);
+        this.getGoodByStatusPDS();
+      },
+      error: err => {
+        console.log(err);
+        this.alert(
+          'warning',
+          `El Bien: ${this.selectGoodGen.id}, ya ha sido ingresado en una solicitud o presenta un error`,
+          ''
+        ); // Asumiendo que 'alert' se encarga de mostrar la alerta
+        this.array = [...this.tempArray];
+      },
+    });
   }
 
   //AGREGADO POR GRIGORK
