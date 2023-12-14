@@ -56,11 +56,11 @@ export class GoodErrorComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'goodId':
+              case 'goodid':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'error_desc':
-                searchFilter = SearchFilter.EQ;
+              case 'error':
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -86,8 +86,10 @@ export class GoodErrorComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
   getError() {
+    this.dataFactError.load([]);
+    this.totalItemsError=0;
     this.loadingError = true;
-    this.params.getValue()['filter.recordId'] = `$eq:${localStorage.getItem(
+    this.params.getValue()['filter.recordid'] = `$eq:${localStorage.getItem(
       'actaId'
     )}`;
     //this.params.getValue()['filter.error'] = `$not:${0}`;
@@ -95,8 +97,8 @@ export class GoodErrorComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilterError,
     };
-    params['filter.recordId'] = `$eq:${localStorage.getItem('actaId')}`;
-
+    params['filter.recordid'] = `$eq:${localStorage.getItem('actaId')}`;
+console.log('paramas:::' + JSON.stringify(params));
     this.donationService.getErrorEventComDonationDetail(params).subscribe({
       next: resp => {
         console.log(resp.data);

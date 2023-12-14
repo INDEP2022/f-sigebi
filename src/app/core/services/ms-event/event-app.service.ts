@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -69,7 +72,12 @@ export class EventAppService extends HttpService {
   }
 
   urcoordRegChatarraAutomatic(conceptId: number, option: number) {
-    return this.post(`${this.endpoint}/ur-coor-dreg-scrap-automatic`, {
+    return this.post<
+      IListResponseMessage<{
+        UNIDAD_PRESUPUESTAL: string;
+        CVDSC: string;
+      }>
+    >(`${this.endpoint}/ur-coor-dreg-scrap-automatic`, {
       conceptId,
       option,
     });

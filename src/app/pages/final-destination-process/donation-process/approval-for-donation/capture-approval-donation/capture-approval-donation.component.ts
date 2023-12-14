@@ -681,6 +681,14 @@ export class CaptureApprovalDonationComponent
 
   //Consultar bie
   ubicaGood() {
+    if (this.idAct <= 0) {
+      this.alert(
+        'warning',
+        'Debe especificar/buscar el evento para despues ingresar bienes.',
+        ''
+      );
+      return;
+    }
     if (this.estatus === 'CERRADA') {
       this.alert(
         'warning',
@@ -801,10 +809,12 @@ export class CaptureApprovalDonationComponent
   }
 
   async getDetailProceedingsDevollution(id?: any) {
+    this.cleanDataDetail();
+    /*
     this.total_report = 0;
     this.total_bien_error = 0;
     this.total_sum_bien = 0;
-
+    */
     const token = this.authService.decodeToken();
 
     this.loading3 = true;
@@ -1009,6 +1019,14 @@ export class CaptureApprovalDonationComponent
   }
 
   exportAll(): void {
+    if (this.idAct <= 0) {
+      this.alert(
+        'warning',
+        'Debe especificar/buscar el evento para despues ingresar bienes.',
+        ''
+      );
+      return;
+    }
     let value = this.regisForm.get('activeRadio').value;
     if (value == null || value == 'null') {
       value = '0';
@@ -1057,7 +1075,7 @@ export class CaptureApprovalDonationComponent
             'El archivo se esta generando, favor de esperar la descarga',
             ''
           );
-          this.downloadDocument('Detalle-Donacion', 'excel', data.base64File);
+          this.downloadDocument('Detalle-Donacion', 'csv', data.base64File);
         },
         error: error => {
           this.excelLoading = false;
@@ -1101,11 +1119,14 @@ export class CaptureApprovalDonationComponent
     this.alert('success', 'El reporte se ha descargado', '');
     URL.revokeObjectURL(objURL);
     */
+    //const mediaType =
+    //  'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const mediaType =
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const link = document.createElement('a');
     link.href = mediaType + base64String;
-    link.download = filename;
+    //link.href = 'data:text/csv;charset=utf-8,' + encodeURI(base64String);
+    link.download = filename+'.csv';
     link.click();
     link.remove();
     this.excelLoading = false;
@@ -1549,11 +1570,10 @@ export class CaptureApprovalDonationComponent
     this.delForm.reset();
   }
 
-  cleanData_() {
+  cleanDataDetail() {
     this.dataTableGood.load([]);
     this.data.load([]);
     this.totalItems2 = 0;
-    this.eventDonacion = null;
     this.estatus = null;
     this.selectedGooods = [];
     this.Exportdate = false;
@@ -1722,7 +1742,8 @@ export class CaptureApprovalDonationComponent
       fileNumber: this.fileNumber,
       expedient: this.fileNumber,
       area_d: this.area_d,
-      create,
+      edit: create,
+      idActa: this.idAct,
       // testigoOne,
     };
 
@@ -1999,7 +2020,7 @@ export class CaptureApprovalDonationComponent
       );
       return;
     }
-    this.cleanData_();
+    this.cleanDataDetail();
     const newBody = {
       no_acta: this.idAct,
       area_d: this.area_d,

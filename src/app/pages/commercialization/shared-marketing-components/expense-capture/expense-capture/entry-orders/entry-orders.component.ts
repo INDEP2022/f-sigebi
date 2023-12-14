@@ -57,6 +57,14 @@ export class EntryOrdersComponent
     return this.expenseCaptureDataService.eventNumber;
   }
 
+  get eventNumberValue() {
+    return this.form
+      ? this.expenseCaptureDataService.eventNumber
+        ? this.expenseCaptureDataService.eventNumber.value
+        : null
+      : null;
+  }
+
   get lotNumber() {
     return this.expenseCaptureDataService.lotNumber;
   }

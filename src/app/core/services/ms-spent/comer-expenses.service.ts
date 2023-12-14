@@ -75,6 +75,6 @@ export class SpentService extends HttpService {
   }
 
   getTotalByMandate(idSpent: number) {
-    return this.get('application/GetTotalSpent/' + idSpent);
+    return this.get('aplication/GetTotalSpent/' + idSpent);
   }
 }
