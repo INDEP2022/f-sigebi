@@ -1261,7 +1261,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         recVoucherNumber: this.form.get('invoiceRecNumber').value,
         recVoucherDate: this.form.get('invoiceRecDate').value,
         contract: null,
-        eventId: this.eventNumber.value,
+        eventId: +(this.eventNumber.value + ''),
         requestUser: this.form.get('requestedUser').value,
         authorizeUser: this.form.get('authorizedUser').value,
         capturedUser: this.form.get('capturedUser').value,

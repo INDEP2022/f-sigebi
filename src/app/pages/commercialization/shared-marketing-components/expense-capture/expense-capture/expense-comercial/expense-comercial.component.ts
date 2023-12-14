@@ -747,6 +747,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       setTimeout(() => {
         localStorage.removeItem('eventExpense');
       }, 500);
+      this.dataService.formScan
+        .get('folioUniversal')
+        .setValue(localStorage.getItem('fcomer084I_folio'));
+      setTimeout(() => {
+        localStorage.removeItem('fcomer084I_folio');
+      }, 500);
     }
     // this.expenseModalService.selectedMotivesSubject.subscribe({
     //   next: response => {
