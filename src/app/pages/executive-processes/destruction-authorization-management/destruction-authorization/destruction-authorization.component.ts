@@ -1642,6 +1642,7 @@ export class DestructionAuthorizationComponent
         this.alert('info', '', `${resp.aceptados}, ${resp.rechazados}`);
         this.flatGoodFlag = false;
         this.getProceedingGoods();
+        this.massiveSave();
         console.log(resp);
       },
       error: err => {
