@@ -6,6 +6,7 @@ import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared';
 import Swal from 'sweetalert2';
+import { REPORT_DOCUMENTS } from '../../shared-request/create-report/documents';
 
 export abstract class CompDocTasksComponent extends BasePage {
   protected abstract regDocForm: boolean;
@@ -35,9 +36,12 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract typeVisit: string;
   protected abstract listGoodSelectedTitle: string;
   protected abstract signedReport: boolean;
+  protected abstract editReport: boolean;
   protected abstract registAppointment: boolean;
   protected abstract orderEntry: boolean;
   protected abstract compensationAct: boolean;
+  protected abstract viewGuidelines: boolean;
+  protected abstract orderView: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -48,9 +52,13 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract btnRequestAprove: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract finish: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract reportValidateDictum: boolean; //NUEVO VERIFICAR BOTON NUEVO
+  protected abstract dictumRegister: boolean; //NUEVO VERIFICAR BOTON NUEVO
 
   protected abstract legalStatus: boolean; //NUEVO VERIFICAR BOTON NUEVO
   protected abstract requestReview: boolean; //NUEVO VERIFICAR BOTON NUEVO
+
+  protected abstract reportTable: string;
+  protected abstract reportId: string;
 
   docTemplate: IRequestDocument[];
 
@@ -98,6 +106,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   mapTask(process: string, affair?: number, contributor: string = '') {
     console.log('affair', affair);
+    this.reportTable = 'SOLICITUDES';
+
     this.disableTabs();
     switch (process) {
       case 'register-request':
@@ -410,6 +420,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchAssociateFile = false;
         this.searchRequestSimGoods = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_DE_DEVOLUCION;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
       case 'approve-return':
         this.regDocView = true;
@@ -428,6 +443,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.searchAssociateFile = false;
         this.searchRequestSimGoods = false;
         this.validateGoodForEyeVisit = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_DE_DEVOLUCION;
+        this.signedReport = true;
+        this.editReport = false;
 
         break;
 
@@ -474,6 +494,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.NOTIFICACION_EXISTENCIA_BIENES;
+        this.signedReport = true;
+        this.editReport = true;
+
         break;
       case 'eye-visit-similar-goods':
         this.regDocView = true;
@@ -519,6 +544,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.ACTA_RESULTADO_VISITA_OCULAR;
+        this.signedReport = true;
+        this.editReport = true;
+
         break;
 
       case 'response-letter-similar-goods':
@@ -547,6 +577,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.RESULTADO_VISITAS_OCULARES;
+        this.signedReport = true;
+        this.editReport = true;
+
         break;
 
       //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
@@ -573,6 +608,11 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.searchRequestSimGoods = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
 
       case 'analysis-result-compensation':
@@ -587,6 +627,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
 
         this.docRequest = true; //VERIFICAR
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = true;
+        this.editReport = false;
 
         break;
 
@@ -605,6 +650,12 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.signedReport = false;
 
         this.docRequest = true; //VERIFICAR
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DOCUMENTO_VALIDACION_DICTAMEN;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
 
       case 'notification-taxpayer-compensation':
@@ -623,6 +674,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.docRequest = true;
         this.createReport = false;
         this.rejectReq = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.NOTIFICACION_CONTRIBUYENTE;
+        this.signedReport = true;
+        this.editReport = true;
 
         break;
 
@@ -672,6 +728,12 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.createReport = false;
         this.rejectReq = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.OFICIO_DESTINO_BIENES;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
       case 'review-office-information-goods':
         this.regDocView = true;
@@ -695,6 +757,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.createReport = false;
         this.rejectReq = false;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.OFICIO_DESTINO_BIENES;
+        this.signedReport = true;
+        this.editReport = false;
 
         break;
 
@@ -742,6 +809,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.turnReq = true;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.SOLICITUD_RECURSOS_ECONOMICOS;
+        this.signedReport = true;
+        this.editReport = true;
         break;
 
       case 'review-economic-guidelines':
@@ -754,25 +825,36 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.turnReq = true;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
 
       case 'generate-results-economic-compensation':
         this.regDocView = true;
-        this.selectGoods = true;
+        this.viewSelectedGoods = true;
         this.guidelines = true;
         this.expRequest = true;
+        this.signedReport = true;
 
         this.createReport = true;
         this.saveRequest = true;
         this.rejectReq = true;
         this.turnReq = true;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = true;
+        this.editReport = false;
+
         break;
 
       case 'validate-dictum-economic':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
         this.dictumValidate = true;
         this.expRequest = true;
 
@@ -781,26 +863,36 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.turnReq = true;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DOCUMENTO_VALIDACION_DICTAMEN;
+        this.signedReport = false;
+        this.editReport = true;
+
         break;
 
       case 'delivery-notify-request':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
-        this.dictumValidate = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
+        this.dictumRegister = true;
         this.expRequest = true;
 
         this.notifyReport = true;
         this.saveRequest = true;
         this.turnReq = true;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.NOTIFICACION_CONTRIBUYENTE;
+        this.signedReport = true;
+        this.editReport = true;
+
         break;
 
       case 'register-taxpayer-date':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
-        this.dictumValidate = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
+        this.dictumRegister = true;
         this.registAppointment = true;
         this.expRequest = true;
 
@@ -811,9 +903,9 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'register-pay-order':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
-        this.dictumValidate = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
+        this.dictumRegister = true;
         this.orderEntry = true;
         this.expRequest = true;
 
@@ -824,16 +916,21 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'generate-compensation-act':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
-        this.dictumValidate = true;
-        this.orderEntry = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
+        this.dictumRegister = true;
+        this.orderView = true;
         this.expRequest = true;
 
         this.compensationAct = true;
         this.notifyReport = true;
         this.saveRequest = true;
         this.finish = true;
+
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.ACTA_RESARCIMIENTO_ECONOMICO;
+        this.signedReport = true;
+        this.editReport = true;
         break;
 
       /*AMPARO*/
@@ -855,6 +952,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.legalStatus = true;
         this.saveRequest = true;
         this.requestReview = true;
+        //Configuracion de reporte VALIDAR FUNCIONAMIENTO
+        //this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
+        //this.signedReport = false;
+        //this.editReport = true;
 
         break;
       case 'review-result-protection':
@@ -862,10 +963,24 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.viewSelectedGoods = true;
         this.expRequest = true;
 
-        //this.sign
         this.rejectReq = true;
         this.saveRequest = true;
         this.btnAprove = true;
+        //Configuracion de reporte VALIDAR FUNCIONAMIENTO
+        //this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
+        //this.signedReport = false;
+        //this.editReport = true;
+
+        break;
+
+      case 'register-compensation-documentation':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+
         break;
 
       default:
