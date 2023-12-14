@@ -4,7 +4,6 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { RFC_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PROOF_DELIVERY_COLUMNS } from './proof-delivery-columns';
 
@@ -30,6 +29,10 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
   delegations: any[] = [];
   public: any[] = [];
   rfcs: any[] = [];
+
+  delegationsDe = new DefaultSelect();
+  publicDe = new DefaultSelect();
+  rfcsDe = new DefaultSelect();
 
   //String
   year: string = '';
@@ -62,15 +65,24 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     }, 1000);
   }
 
-  //
+  private prepareForm() {
+    this.form = this.fb.group({
+      event: [null, [Validators.required]],
+      delegation: [null],
+      allotment: [null],
+      rfc: [null],
+    });
+  }
 
   loadDataEventSelected(event: any) {
     console.log('Esto trae la seleccion: ', event);
-    this.serviceInvoice.getInvoiceByEvent(event.eventId).subscribe({
+    const params = new ListParams();
+    params['filter.eventId'] = `$eq:${event.eventId}`;
+    this.serviceInvoice.getInvoiceByEvent(params).subscribe({
       next: response => {
         this.getRrcs(this.array('rfc', response.data));
-        this.getPublic(this.array('lote_publico', response.data));
-        this.getDelegations(this.array('no_delegacion', response.data));
+        this.getPublic(this.array('publicLot', response.data));
+        this.getDelegations(this.array('delegationNumber', response.data));
         this.fillGridInvoces(response.data);
         this.dataFilter = response.data;
         this.filterInvoices();
@@ -104,7 +116,7 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
         console.log('El arreglo filtrado: ', this.dataFilter);
       }
       this.fillGridInvoces(this.dataFilter);
-      this.form.reset();
+      // this.form.reset();
     }
   }
 
@@ -113,10 +125,10 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     const arrayTwoLocal: any[] = [];
 
     for (const item of array) {
-      if (!rfcProcessed.has(item[variable])) {
-        rfcProcessed.add(item[variable]);
-        arrayTwoLocal.push(item);
-      }
+      // if (!rfcProcessed.has(item[variable])) {
+      // rfcProcessed.add(item[variable]);
+      arrayTwoLocal.push(item);
+      // }
     }
 
     return arrayTwoLocal;
@@ -134,7 +146,7 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     });
   }
 
-  delegationChangeIndex() {
+  delegationChangeIndex(delegation: any) {
     if (this.form.controls['allotment'].value == null) {
       this.getPublic(this.array('lote_publico', this.dataFilter));
     }
@@ -143,7 +155,7 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     }
   }
 
-  publicChangeIndex() {
+  publicChangeIndex(allotment: any) {
     if (this.form.controls['rfc'].value == null) {
       this.getRrcs(this.array('rfc', this.dataFilter));
     }
@@ -152,7 +164,7 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     }
   }
 
-  rfcChangeIndex() {
+  rfcChangeIndex(rfc: any) {
     if (this.form.controls['allotment'].value == null) {
       this.getPublic(this.array('allotment', this.dataFilter));
     }
@@ -162,27 +174,23 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
   }
 
   getDelegations(data: any) {
+    console.log(data);
     this.delegations = data;
+    this.delegationsDe = new DefaultSelect(
+      this.delegations,
+      this.delegations.length
+    );
+    console.log(this.delegationsDe);
   }
 
   getPublic(data: any) {
     this.public = data;
+    this.publicDe = new DefaultSelect(this.public, this.public.length);
   }
 
   getRrcs(data: any) {
     this.rfcs = data;
-  }
-
-  private prepareForm() {
-    this.form = this.fb.group({
-      event: [null, [Validators.required]],
-      delegation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      allotment: [null, [Validators.required]],
-      rfc: [null, [Validators.required, Validators.pattern(RFC_PATTERN)]],
-    });
+    this.rfcsDe = new DefaultSelect(this.rfcs, this.rfcs.length);
   }
 
   fillGridInvoces(data: any[]) {
