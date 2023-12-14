@@ -164,7 +164,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       rowClassFunction: (row: { data: { avalaible: any } }) =>
         row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white',
     };
-    this.settings2 = { ...this.settings, actions: false };
+    this.settings2 = { ...this.settings, actions: false, hideSubheader: true };
     this.settings.columns = COLUMNSTABL1;
     this.settings2.columns = COLUMNSTABLE2;
   }
@@ -447,6 +447,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   searchDataExp() {
     this.loadingProcedure = true;
     this.loadingTable = true;
+    this.clearForm();
     this.searchDataByExp();
   }
   //DESACTIVAR CAMPOS CUANDO EL ACTA ESTA CERRADAS
