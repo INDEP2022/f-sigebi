@@ -40,6 +40,7 @@ export class ComerRediModalComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
+    console.log('this.factura', this.factura);
     this.form = this.fb.group({
       year: [this.factura.year],
       notJob: [this.factura.jobNot],

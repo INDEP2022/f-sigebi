@@ -87,7 +87,7 @@ export class GoodErrorComponent extends BasePage implements OnInit {
   }
   getError() {
     this.dataFactError.load([]);
-    this.totalItemsError=0;
+    this.totalItemsError = 0;
     this.loadingError = true;
     this.params.getValue()['filter.recordid'] = `$eq:${localStorage.getItem(
       'actaId'
@@ -98,7 +98,7 @@ export class GoodErrorComponent extends BasePage implements OnInit {
       ...this.columnFilterError,
     };
     params['filter.recordid'] = `$eq:${localStorage.getItem('actaId')}`;
-console.log('paramas:::' + JSON.stringify(params));
+    console.log('paramas:::' + JSON.stringify(params));
     this.donationService.getErrorEventComDonationDetail(params).subscribe({
       next: resp => {
         console.log(resp.data);

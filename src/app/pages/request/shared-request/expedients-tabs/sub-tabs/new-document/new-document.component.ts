@@ -9,7 +9,6 @@ import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
-import { ITypeDocument } from 'src/app/core/models/ms-wcontent/type-document';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -341,7 +340,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -431,7 +430,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -514,7 +513,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -596,7 +595,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -681,7 +680,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
   }
@@ -690,7 +689,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() { }
+  handleSuccess() {}
 
   getStateSelect(params?: ListParams) {
     params['filter.sortBy'] = 'descCondition:ASC';

@@ -1126,7 +1126,7 @@ export class CaptureApprovalDonationComponent
     const link = document.createElement('a');
     link.href = mediaType + base64String;
     //link.href = 'data:text/csv;charset=utf-8,' + encodeURI(base64String);
-    link.download = filename+'.csv';
+    link.download = filename + '.csv';
     link.click();
     link.remove();
     this.excelLoading = false;
