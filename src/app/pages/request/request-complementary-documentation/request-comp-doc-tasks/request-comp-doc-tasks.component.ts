@@ -39,7 +39,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override editReport: boolean;
   protected override reportTable: string;
   protected override reportId: string;

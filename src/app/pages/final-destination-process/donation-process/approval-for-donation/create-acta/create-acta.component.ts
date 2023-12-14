@@ -100,10 +100,10 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('OPERACION::'+ this.edit + ' - idActa::'+ this.idActa);
+    console.log('OPERACION::' + this.edit + ' - idActa::' + this.idActa);
 
     localStorage.setItem('area', this.authService.decodeToken().siglasnivel3);
-    if(!this.edit){
+    if (!this.edit) {
       this.generaConsec(this.area_d);
     }
     //this.actaForm();
@@ -132,26 +132,27 @@ export class CreateActaComponent extends BasePage implements OnInit {
       delegation: [localStorage.getItem('area'), Validators.required],
       claveacta: [null],
     });
-    if(!this.edit){
+    if (!this.edit) {
       this.actaRecepttionForm.patchValue({
         consec: this.foolio,
       });
       this.actaRecepttionForm.patchValue({
         captureDate: await this.getDate(),
       });
-    }else{
+    } else {
       this.getComerDonation(this.idActa);
     }
   }
 
-    getComerDonation(idActa:number) {
-
-      this.donationService.getByIdEvent(idActa).subscribe({
+  getComerDonation(idActa: number) {
+    this.donationService.getByIdEvent(idActa).subscribe({
       next: (data: any) => {
         console.log('0.data:getComerDonation::::' + data);
         this.eventDonacion = data;
 
-        console.log('1.data:getComerDonation::' + JSON.stringify(this.eventDonacion));
+        console.log(
+          '1.data:getComerDonation::' + JSON.stringify(this.eventDonacion)
+        );
         const dateCapture =
           this.eventDonacion.captureDate != null
             ? new Date(this.eventDonacion.captureDate)
@@ -165,13 +166,23 @@ export class CreateActaComponent extends BasePage implements OnInit {
         var folio = this.eventDonacion.cveAct.substring(pos + 1);
         var pos1 = this.eventDonacion.cveAct.indexOf('/');
         var area = this.eventDonacion.cveAct.substring(pos1 + 1, pos - 5);
-        console.log('datos acta:::anio:: ' + anio + ' ::folio:: ' + folio + '::area:: '+area);
-        this.foolio = Number(folio !=null ? folio:0);
+        console.log(
+          'datos acta:::anio:: ' +
+            anio +
+            ' ::folio:: ' +
+            folio +
+            '::area:: ' +
+            area
+        );
+        this.foolio = Number(folio != null ? folio : 0);
         this.actaRecepttionForm.patchValue({
           acta: 'CPD',
         });
         this.actaRecepttionForm.patchValue({
-          consec: this.eventDonacion.folioUniversal == null ? folio : data.folioUniversal,
+          consec:
+            this.eventDonacion.folioUniversal == null
+              ? folio
+              : data.folioUniversal,
         });
         this.actaRecepttionForm.patchValue({
           anio: anio,
@@ -184,9 +195,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
         });
         this.actaRecepttionForm.patchValue({
           delegation: area,
-        });                       
-        
-
+        });
       },
       error: () => {
         console.error('error');
@@ -400,30 +409,29 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
   updateRegister: any;
 
-    async updateActa() {
-
+  async updateActa() {
     const acta = this.actaRecepttionForm.value.acta;
     const administra = this.actaRecepttionForm.value.delegation;
     const consec = this.foolio;
     const anio = this.actaRecepttionForm.value.anio;
     const fechacaptura = this.actaRecepttionForm.value.captureDate;
     //const claveacta = this.actaRecepttionForm.value.captureDate;
-    let faltante='';
-    console.log('ACTA:::'+acta);
-    if(acta == null || acta ==''){
-        faltante=' acta,'
-    } 
-    if(administra == null || administra == ''){
-        faltante=faltante +' área,'   
+    let faltante = '';
+    console.log('ACTA:::' + acta);
+    if (acta == null || acta == '') {
+      faltante = ' acta,';
     }
-    if(consec == null || consec == 0) {
-        faltante=faltante +' folio,';    
-    }        
-    if(anio == null || anio == ''){
-       faltante=faltante +' anio,';   
+    if (administra == null || administra == '') {
+      faltante = faltante + ' área,';
     }
-    if(faltante != ''){
-      faltante= faltante.substring(0,faltante.length-1); 
+    if (consec == null || consec == 0) {
+      faltante = faltante + ' folio,';
+    }
+    if (anio == null || anio == '') {
+      faltante = faltante + ' anio,';
+    }
+    if (faltante != '') {
+      faltante = faltante.substring(0, faltante.length - 1);
       this.alert('warning', 'Falta ingresar informacion: ' + faltante, '');
       return;
     }
@@ -441,47 +449,56 @@ export class CreateActaComponent extends BasePage implements OnInit {
         return;
       }
 
-        this.alertQuestion(
-          'question',
-          '¿Seguro que desea actualizar el evento?',
-          ''
-        ).then(async question => {
-          if (question.isConfirmed) {
-            let obj: any = {
-              actId: this.idActa,
-              cveAct: this.cveActa,
-              elaborationDate: this.eventDonacion.elaborationDate,
-              estatusAct: this.eventDonacion.estatusAct,
-              elaborated: this.eventDonacion.elaborated,
-              witness1: this.eventDonacion.witness1,
-              witness2: this.eventDonacion.witness2,
-              actType: this.eventDonacion.actType,
-              observations: this.eventDonacion.observations,
-              registreNumber: null,
-              noDelegation1: this.eventDonacion.noDelegation1,
-              fileId: Number(this.eventDonacion.fileId == null?0:this.eventDonacion.fileId),
-              noDelegation2: this.eventDonacion.noDelegation2,
-              identifier: this.eventDonacion.identifier,
-              folioUniversal: this.eventDonacion.folioUniversal,
-              closeDate: this.eventDonacion.closeDate
-            };
-            console.log(obj);
-            this.donationService.putEvent(obj, this.idActa).subscribe({
-              next: async data => {
-                this.loading = false;
-                console.log('updateacta::'+JSON.stringify(data));
-                this.newRegister = data;
-                this.idActa = data.id;
-                this.alert('success', 'El Evento se ha actualizado correctamente', '');
-                this.handleSuccess();                
-              },
-              error: error => {
-                this.alert('error', 'Ocurrió un error al actualizar el evento', '');
-              },
-            });
-          }
-        });
-      
+      this.alertQuestion(
+        'question',
+        '¿Seguro que desea actualizar el evento?',
+        ''
+      ).then(async question => {
+        if (question.isConfirmed) {
+          let obj: any = {
+            actId: this.idActa,
+            cveAct: this.cveActa,
+            elaborationDate: this.eventDonacion.elaborationDate,
+            estatusAct: this.eventDonacion.estatusAct,
+            elaborated: this.eventDonacion.elaborated,
+            witness1: this.eventDonacion.witness1,
+            witness2: this.eventDonacion.witness2,
+            actType: this.eventDonacion.actType,
+            observations: this.eventDonacion.observations,
+            registreNumber: null,
+            noDelegation1: this.eventDonacion.noDelegation1,
+            fileId: Number(
+              this.eventDonacion.fileId == null ? 0 : this.eventDonacion.fileId
+            ),
+            noDelegation2: this.eventDonacion.noDelegation2,
+            identifier: this.eventDonacion.identifier,
+            folioUniversal: this.eventDonacion.folioUniversal,
+            closeDate: this.eventDonacion.closeDate,
+          };
+          console.log(obj);
+          this.donationService.putEvent(obj, this.idActa).subscribe({
+            next: async data => {
+              this.loading = false;
+              console.log('updateacta::' + JSON.stringify(data));
+              this.newRegister = data;
+              this.idActa = data.id;
+              this.alert(
+                'success',
+                'El Evento se ha actualizado correctamente',
+                ''
+              );
+              this.handleSuccess();
+            },
+            error: error => {
+              this.alert(
+                'error',
+                'Ocurrió un error al actualizar el evento',
+                ''
+              );
+            },
+          });
+        }
+      });
     }
   }
 

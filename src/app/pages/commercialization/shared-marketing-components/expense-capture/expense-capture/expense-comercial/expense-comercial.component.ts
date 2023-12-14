@@ -544,8 +544,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (rtDicta.length > 0) {
       v_tip_gast = rtDicta.length;
       v_tipo = rtDicta[0].typeNumber;
-    } else {
-      v_tip_gast = null;
     }
     this.showAdj = true;
     if (v_tip_gast !== 0 && v_tipo !== 'GASTOSEG') {
@@ -619,15 +617,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.showAdj = false;
       this.showCvePoliza = false;
     }
-    // v_tip_gast = 0;
     if (v_tip_gast === 0) {
-      // this._address = 'I';
       this.dataService.address = 'I';
       this.PDIRECCION_A = 'C';
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'I', title: 'INMUEBLES' });
+    } else {
+      this.setConceptScreenI(user);
     }
-    this.setConceptScreenI(user);
   }
 
   get PDIRECCION_A() {
@@ -749,6 +746,12 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.fillForm(JSON.parse(localStorage.getItem('eventExpense')));
       setTimeout(() => {
         localStorage.removeItem('eventExpense');
+      }, 500);
+      this.dataService.formScan
+        .get('folioUniversal')
+        .setValue(localStorage.getItem('fcomer084I_folio'));
+      setTimeout(() => {
+        localStorage.removeItem('fcomer084I_folio');
       }, 500);
     }
     // this.expenseModalService.selectedMotivesSubject.subscribe({
