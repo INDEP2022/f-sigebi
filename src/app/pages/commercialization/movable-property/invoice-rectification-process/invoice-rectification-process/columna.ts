@@ -23,6 +23,7 @@ export const COLUMNS = {
     title: 'No. Oficio',
     type: 'string',
     sort: false,
+    width: '10%',
   },
   expDate: {
     title: 'Fecha de Expedición',
@@ -41,11 +42,18 @@ export const COLUMNS = {
     title: 'Serie',
     type: 'string',
     sort: false,
+    width: '10%',
   },
   name: {
     title: 'Nombre',
     type: 'string',
     sort: false,
+  },
+  year: {
+    title: 'Año',
+    type: 'string',
+    sort: false,
+    width: '10%',
   },
   lastnamePat: {
     title: 'Apellido Paterno',
@@ -62,9 +70,9 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  year: {
-    title: 'Año',
-    type: 'string',
-    sort: false,
-  },
+  // year: {
+  //   title: 'Año',
+  //   type: 'string',
+  //   sort: false,
+  // },
 };

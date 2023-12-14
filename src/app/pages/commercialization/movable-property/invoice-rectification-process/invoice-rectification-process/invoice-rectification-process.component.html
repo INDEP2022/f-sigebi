@@ -38,6 +38,7 @@
           </div> -->
           <form-field label="No. Oficio" [control]="form.get('jobNot')">
             <input
+              [readonly]="dataJob"
               type="number"
               class="form-control"
               formControlName="jobNot"
@@ -48,6 +49,7 @@
         <div class="col-md-3 mt-3">
           <form-field [control]="form.get('expDate')" label="Fecha Expedición">
             <input
+              [ngClass]="{ 'not-press bg-gray': dataJob }"
               type="text"
               class="form-control"
               bsDatepicker
@@ -123,6 +125,7 @@
         <div class="col-md-6 mt-3 text-center">
           <button
             text="Buscar"
+            [disabled]="!dataJob"
             class="btn btn-info btn-sm active"
             (click)="openModal()">
             Nueva Imagen
@@ -206,6 +209,7 @@
         <div class="d-inline">
           <button
             type="button"
+            [disabled]="!dataJob"
             class="btn btn-info btn-sm active mb-3"
             (click)="openModalSeparate()">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>

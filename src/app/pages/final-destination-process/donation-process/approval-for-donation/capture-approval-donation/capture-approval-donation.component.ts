@@ -661,12 +661,22 @@ export class CaptureApprovalDonationComponent
         if (isNaN(anio)) {
           return null;
         }
+        folio = data.folioUniversal == null ? folio : data.folioUniversal;
+        folio = ('000000' + folio).slice(-6);
+        //console.log('FOLIOOO-x::::'+x);
+        console.log('FOLIOOO::::' + folio);
+        //folio = this.padLeft(folio,'6', 0 );
+        console.log('FOLIOO1::::' + folio);
+        /*
+        if(folio !==null && folio.length<=5){
+          folio = this.padLeft(folio,'6', 0 );
+        }
+        */
+
         console.log('5.data:getComerDonation::::');
         //this.regisForm.get('year').setValue(localStorage.getItem('anio'));
         this.regisForm.get('year').setValue(anio);
-        this.regisForm
-          .get('folio')
-          .setValue(data.folioUniversal == null ? folio : data.folioUniversal);
+        this.regisForm.get('folio').setValue(folio);
         this.regisForm.get('keyEvent').setValue(this.eventDonacion.cveAct);
         this.regisForm.get('captureDate').setValue(formattedfecCapture);
         console.log('Se disparó aquí: getComerDonation');
@@ -1126,7 +1136,7 @@ export class CaptureApprovalDonationComponent
     const link = document.createElement('a');
     link.href = mediaType + base64String;
     //link.href = 'data:text/csv;charset=utf-8,' + encodeURI(base64String);
-    link.download = filename+'.csv';
+    link.download = filename + '.csv';
     link.click();
     link.remove();
     this.excelLoading = false;
@@ -1557,7 +1567,7 @@ export class CaptureApprovalDonationComponent
     this.data.load([]);
     this.totalItems2 = 0;
     this.eventDonacion = null;
-    this.estatus = null;
+    //this.estatus = null;
     this.selectedGooods = [];
     this.Exportdate = false;
     this.idAct = 0;
@@ -1574,7 +1584,7 @@ export class CaptureApprovalDonationComponent
     this.dataTableGood.load([]);
     this.data.load([]);
     this.totalItems2 = 0;
-    this.estatus = null;
+    //this.estatus = null;
     this.selectedGooods = [];
     this.Exportdate = false;
     this.total_report = 0;
@@ -1744,7 +1754,9 @@ export class CaptureApprovalDonationComponent
       area_d: this.area_d,
       edit: create,
       idActa: this.idAct,
-      // testigoOne,
+      delegation1: this.no_delegacion_1,
+      delegation2: this.no_delegacion_2,
+      nivelusuario: this.nivel_usuario,
     };
 
     let modalRef = this.modalService.show(CreateActaComponent, modalConfig);
@@ -2784,6 +2796,11 @@ export class CaptureApprovalDonationComponent
         }
       }
     });
+  }
+
+  padLeft(text: string, padChar: string, size: number): string {
+    console.log('padLeft::' + text);
+    return (String(padChar).repeat(size) + text).substr(size * -1, size);
   }
 }
 
