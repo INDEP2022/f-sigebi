@@ -733,8 +733,6 @@ export class DestructionAuthorizationComponent
           this.numFile == null
             ? (this.numFile = response.bienes_aceptados[0].expedient)
             : '';
-        } else {
-          this.alert('warning', 'No se cargaron bienes', '');
         }
 
         this.getProceedingGoods();
