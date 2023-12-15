@@ -255,7 +255,7 @@ export class AuthorizationAssetsDestructionComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      idExpedient: [null, [Validators.required]],
+      idExpedient: [null, []],
       preliminaryInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
       criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       circumstantialRecord: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -916,7 +916,6 @@ export class AuthorizationAssetsDestructionComponent
 
     if (this.form.get('idExpedient').value != null) {
       this.expedientChange();
-      console.log('');
     } else {
       this.pupGoodTracker();
     }
@@ -1002,6 +1001,7 @@ export class AuthorizationAssetsDestructionComponent
         this.addGoodFlag = false;
 
         if (res.rechazados > 0) {
+          console.log('rechazados', res.rechazados);
           await this.downloadExcel(res.file, 'Bienes_con_errores.csv');
         }
 
@@ -1087,7 +1087,10 @@ export class AuthorizationAssetsDestructionComponent
     this.serviceMassiveGoods.pupGoodTracker(body).subscribe(
       res => {
         console.log(res);
-        this.downloadExcel(res.file, 'Bienes_con_errores.csv');
+        if (res.rechazados > 0) {
+          console.log('rechazados aquí: ', res.rechazados);
+          this.downloadExcel(res.file, 'Bienes_con_errores.csv');
+        }
         localStorage.removeItem('noActa_FACTDIRAPROBDESTR');
         this.fillTableGoodsByUser();
       },
@@ -1195,6 +1198,8 @@ export class AuthorizationAssetsDestructionComponent
       initialState: {
         callback: (result: any) => {
           console.log(result);
+          this.form.get('noAuth').setValue(result.id);
+          this.getProceeding();
         },
       },
       class: 'modal-lg modal-dialog-centered',
