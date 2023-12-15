@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -412,7 +413,7 @@ export class ModalCorreoComponent extends BasePage implements OnInit {
       delegation: dataJson.delegation,
       subDelegation: dataJson.subDelegation,
       departament: dataJson.departament,
-      elaborationDate: this.elaborationDate,
+      elaborationDate: format(this.elaborationDate, 'dd/MM/yyyy'),
       screen: 'FACTDIRAPROBDESTR',
     };
     console.log(body);
