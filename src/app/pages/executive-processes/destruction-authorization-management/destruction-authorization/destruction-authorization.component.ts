@@ -636,6 +636,7 @@ export class DestructionAuthorizationComponent
     this.navigateGoodsProceeding();
     this.navigateProceedingsDelivery();
     this.navigateDictamination();
+    this.researchWhenReturn();
 
     this.user = this.authService.decodeToken().preferred_username;
   }
@@ -809,8 +810,22 @@ export class DestructionAuthorizationComponent
   clearFn() {
     this.cleanTmp();
     this.searched = false;
-    this.goodPDS1.load([]);
     this.queryProceeding();
+    this.goodPDS1.load([]);
+    this.totalItems = 0;
+    this.totalItems2 = 0;
+    this.totalItems3 = 0;
+    this.totalItems4 = 0;
+    this.totalItems5 = 0;
+    this.totalItems6 = 0;
+    this.params.next(new ListParams());
+    this.params2.next(new ListParams());
+    this.params3.next(new ListParams());
+    this.params4.next(new ListParams());
+    this.params5.next(new ListParams());
+    this.params6.next(new ListParams());
+    this.params7.next(new ListParams());
+    this.params8.next(new ListParams());
   }
 
   newProceedingFn() {
@@ -1092,7 +1107,6 @@ export class DestructionAuthorizationComponent
     this.loadingReport = true;
     this.documentsService.create(document).subscribe(
       res => {
-        this.generateScanRequestReport();
         console.log(res);
         this.proceedingForm.get('universalFolio').setValue(res.id);
         console.log('creó documento');
@@ -1642,7 +1656,7 @@ export class DestructionAuthorizationComponent
     ) {
       this.alert(
         'warning',
-        'Error',
+        'Acta cerrada',
         'La Solicitud ya esta cerrada, no puede realizar modificaciones a esta'
       );
       return;
