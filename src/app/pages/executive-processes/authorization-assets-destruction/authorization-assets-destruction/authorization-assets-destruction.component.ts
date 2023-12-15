@@ -45,6 +45,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
+import { ListKeyProceedingsComponent } from '../list-key-proceedings/list-key-proceedings.component';
 import { ModalCorreoComponent } from '../utils/modal-correo/modal-correo.component';
 
 interface Blk {
@@ -999,7 +1000,11 @@ export class AuthorizationAssetsDestructionComponent
         console.log(res);
         console.log(res.file);
         this.addGoodFlag = false;
-        await this.downloadExcel(res.file, 'Bienes_con_errores.csv');
+
+        if (res.rechazados > 0) {
+          await this.downloadExcel(res.file, 'Bienes_con_errores.csv');
+        }
+
         if (res.blk_det.length == 0) {
           this.alert('warning', 'No se cargo ninguno bien', '');
         } else {
@@ -1066,10 +1071,10 @@ export class AuthorizationAssetsDestructionComponent
 
   pupGoodTrackerFn(globalRelGood: number) {
     let body: IGoodTracker;
-    console.log(localStorage.getItem('noActa'));
-    !['null', null].includes(localStorage.getItem('noActa'))
+    console.log(localStorage.getItem('noActa_FACTDIRAPROBDESTR'));
+    !['null', null].includes(localStorage.getItem('noActa_FACTDIRAPROBDESTR'))
       ? (body = {
-          minutesNumber: localStorage.getItem('noActa'),
+          minutesNumber: localStorage.getItem('noActa_FACTDIRAPROBDESTR'),
           globalRelGood: globalRelGood,
           user: this.authService.decodeToken().preferred_username,
         })
@@ -1082,7 +1087,8 @@ export class AuthorizationAssetsDestructionComponent
     this.serviceMassiveGoods.pupGoodTracker(body).subscribe(
       res => {
         console.log(res);
-        localStorage.removeItem('noActa');
+        this.downloadExcel(res.file, 'Bienes_con_errores.csv');
+        localStorage.removeItem('noActa_FACTDIRAPROBDESTR');
         this.fillTableGoodsByUser();
       },
       err => {
@@ -1182,5 +1188,19 @@ export class AuthorizationAssetsDestructionComponent
 
   selectRowTry(e: any) {
     console.log(e.data);
+  }
+
+  openListProceedings() {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (result: any) => {
+          console.log(result);
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+
+    this.modalService.show(ListKeyProceedingsComponent, config);
   }
 }
