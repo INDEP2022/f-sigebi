@@ -103,6 +103,14 @@
               formControlName="authNotice" />
           </form-field>
         </div>
+        <div class="col-sm-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="openListProceedings()">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
+        </div>
         <div class="col-md-2">
           <form-field [control]="form.get('fromDate')" label="Fecha">
             <input

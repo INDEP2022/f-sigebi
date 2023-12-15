@@ -63,6 +63,8 @@ export class ApprovalDelegationComponent extends BasePage implements OnInit {
     this.getDelegations(params).subscribe();
   }
   getDelegations(params: FilterParams) {
+    params.addFilter('etapaEdo', 2);
+    //params['filter.etapaEdo'] = `$eq:2`;
     return this.delegationService.getAll(params.getParams()).pipe(
       catchError(error => {
         this.delegations$ = new DefaultSelect([], 0, true);
@@ -81,6 +83,7 @@ export class ApprovalDelegationComponent extends BasePage implements OnInit {
     );
   }
   updateSelectedIds(event: any) {
+    console.log('Area selected::' + event);
     if (this.frmArea && this.frmArea.get('no_Delegation_2')) {
       this.idDelegation = this.frmArea.get('no_Delegation_2').value;
     }
@@ -88,8 +91,9 @@ export class ApprovalDelegationComponent extends BasePage implements OnInit {
   }
 
   onSaveDelegation() {
-    const name = this.frmArea.get('no_Delegation_2').value;
-    if (name == -1 || name == null) {
+    const area_d = this.frmArea.get('no_Delegation_2').value;
+    console.log('area_d::'+area_d);
+    if (area_d == -1 || area_d == null) {
       this.alert(
         'warning',
         'Para continuar, es necesario seleccionar una &aacute;rea.',
@@ -97,7 +101,7 @@ export class ApprovalDelegationComponent extends BasePage implements OnInit {
       );
       return;
     } else {
-      this.onSave.emit(name);
+      this.onSave.emit(area_d);
       this.modalRef.hide();
     }
   }
