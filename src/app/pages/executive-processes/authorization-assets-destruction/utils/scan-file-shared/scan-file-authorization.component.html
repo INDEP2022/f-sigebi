@@ -10,9 +10,9 @@
             [control]="form.get(formControlName)"
             label="Folio de Escaneo">
             <input
-              [disabled]="disabled"
               type="number"
               class="form-control"
+              readOnly
               min="1"
               [formControlName]="formControlName"
               maxlength="15" />

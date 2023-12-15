@@ -3,7 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
-import { UploadExpedientFormComponent } from '../../shared-component-gss/upload-expedient-form/upload-expedient-form.component';
 import { UploadImagesFormComponent } from '../../shared-component-gss/upload-images-form/upload-images-form.component';
 
 var data = [
@@ -61,7 +60,7 @@ export class ListAssetsApprovedFormComponent implements OnInit {
 
   uploadExpedient() {
     //if (this.assetsSelected.length == 0) return;
-    this.openModals(UploadExpedientFormComponent, '');
+    //this.openModals(UploadExpedientFormComponent, '');
   }
 
   uploadImages(): void {

@@ -38,6 +38,7 @@ import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-req
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ModalProceedingsComponent } from '../modal-proceedings/modal-proceedings.component';
 import { PackageComponent } from '../package/package.componet';
 import {
   FilterParams,
@@ -199,6 +200,17 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.navigateGoodTable();
     this.navigateGoodAct();
     this.columnFilterTable();
+
+    if (
+      localStorage.getItem('expediente') &&
+      localStorage.getItem('expediente') != 'null'
+    ) {
+      this.actForm
+        .get('expedient')
+        .setValue(localStorage.getItem('expediente'));
+      this.searchDataExp();
+      localStorage.removeItem('expediente');
+    }
   }
 
   columnFilterTable() {
@@ -845,6 +857,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     if (this.isNewProceeding) {
       this.saveProceeding();
     } else {
+      console.log('Cargo');
       this.updateProceeding();
     }
   }
@@ -875,8 +888,25 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
     this.serviceProcVal.postProceeding(body).subscribe(
       res => {
-        this.alert('success', 'Acta creada', '');
         console.log(res);
+        this.alert('success', 'Se creó una nueva acta', '');
+        this.act.reset();
+        this.status.reset();
+        this.transferent.reset();
+        this.destructor.reset();
+        this.admin.reset();
+        this.folio.reset();
+        this.act.disable();
+        this.status.disable();
+        this.transferent.disable();
+        this.destructor.disable();
+        this.admin.disable();
+        this.folio.disable();
+        const jsonResp = JSON.parse(JSON.stringify(res));
+        console.log(jsonResp);
+        this.idProceeding = jsonResp.id;
+        this.act2.setValue(jsonResp.keysProceedings);
+        this.isNewProceeding = false;
       },
       err => {
         this.alert('error', 'Error al crear acta', '');
@@ -887,7 +917,28 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   //ACTUALIZAR ACTA
   updateProceeding() {
-    //!FUNCIONALIDAD PARA GUAR
+    const body: IProccedingsDeliveryReception = {
+      elaborationDate: this.elabDate.value,
+      datePhysicalReception: this.destroyDate.value,
+      address: this.address.value,
+      numFile: this.expedient.value,
+      witness1: this.witness.value,
+      witness2: this.witness2.value,
+      responsible: this.responsible.value,
+      destructionMethod: this.destroMethod.value,
+      observations: this.actForm.get('observation').value,
+      comptrollerWitness: this.comptrollerWitness.value,
+    };
+    this.serviceProcVal.editProceeding(this.idProceeding, body).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', 'Acta actualizada', '');
+      },
+      err => {
+        this.alert('error', 'Error al actualizar acta', '');
+        console.log(err);
+      }
+    );
   }
 
   //NUEVA ACTA
@@ -1429,5 +1480,51 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         }
       );
     });
+  }
+
+  //MODAL DE ACTAS
+  openListProceeding() {
+    let modalConfig = MODAL_CONFIG;
+    (modalConfig.class = 'modal-lg modal-dialog-centered'),
+      (modalConfig.ignoreBackdropClick = true),
+      (modalConfig.initialState = {
+        no_acta: this.idProceeding,
+        callback: (data: any) => {
+          console.log(data);
+          this.idProceeding = data.id;
+          this.expedient.setValue(data.numFile);
+          this.act2.setValue(data.keysProceedings);
+          this.elabDate.setValue(this.correctDate(data.elaborationDate));
+          this.destroyDate.setValue(
+            this.correctDate(data.datePhysicalReception)
+          );
+          this.address.setValue(data.address);
+          this.universalFolio.setValue(data.universalFolio);
+          this.observation.setValue(data.observations);
+          this.responsible.setValue(data.responsible);
+          this.witness.setValue(data.witness1);
+          this.witness2.setValue(data.witness2);
+          this.destroMethod.setValue(data.destructionMethod);
+          this.comptrollerWitness.setValue(data.comptrollerWitness);
+          this.searchGoodsInDetailProceeding();
+          this.serviceExpedient.getById(data.numFile).subscribe(
+            res => {
+              console.log(res);
+              this.prevAv.setValue(res.preliminaryInquiry);
+              this.criminalCase.setValue(res.criminalCase);
+              this.expType = res.expedientType;
+              this.noTransfer = res.transferNumber;
+
+              this.searchGoodsByExp();
+            },
+            err => {
+              this.loadingProcedure = false;
+              this.loadingTable = false;
+              console.log(err);
+            }
+          );
+        },
+      });
+    this.modalService.show(ModalProceedingsComponent, modalConfig);
   }
 }
