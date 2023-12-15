@@ -10,19 +10,20 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import * as moment from 'moment';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ReportService } from 'src/app/core/services/catalogs/reports.service';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
-import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 
 const font = Quill.import('formats/font');
 font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
@@ -82,9 +83,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     private readonly authService: AuthService,
     private reportgoodService: ReportgoodService,
     private reportService: ReportService,
-    private wcontentService: WContentService,
-
-
+    private wcontentService: WContentService
   ) {
     super();
   }
@@ -141,15 +140,13 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.loadDoc = resp.data[0];
           this.version = this.loadDoc;
 
-
-
           const report = await this.generateReport();
           console.log(report);
         }
 
         this.loadData();
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
@@ -185,7 +182,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
           this.close();
         },
-        error: err => { },
+        error: err => {},
       });
   }
 
@@ -197,6 +194,47 @@ export class CreateReportComponent extends BasePage implements OnInit {
   applyFormat() {
     this.version = this.format;
     this.loadData();
+  }
+
+  openDoc(data: any): void {
+    /*this.wContentService
+      .obtainFile(data.dDocName)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(data => {
+        let blob = this.dataURItoBlob(data);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      });*/
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfurl: string) {
+    console.log(pdfurl);
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   loadData() {
@@ -341,7 +379,12 @@ export class CreateReportComponent extends BasePage implements OnInit {
   generateReport() {
     return new Promise((resolve, reject) => {
       this.wcontentService
-        .downloadDinamycReport("sae.rptdesign", "SOLICITUDES", this.requestId, this.documentTypeId)
+        .downloadDinamycReport(
+          'sae.rptdesign',
+          'SOLICITUDES',
+          this.requestId,
+          this.documentTypeId
+        )
         .subscribe({
           next: (resp: any) => {
             if (resp) {
@@ -375,23 +418,5 @@ export class CreateReportComponent extends BasePage implements OnInit {
     }).catch(err=>{
       console.log(err)
     });
-  }*/
-
-  /*openPrevPdf(pdfurl:string) {
-    console.log(pdfurl)
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
   }*/
 }
