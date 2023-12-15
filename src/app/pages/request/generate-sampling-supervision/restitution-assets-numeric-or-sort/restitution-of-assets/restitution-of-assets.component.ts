@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
@@ -15,9 +16,11 @@ import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { BasePage, TABLE_SETTINGS } from '../../../../../core/shared/base-page';
+import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
+import { AnnexJAssetsClassificationComponent } from '../../assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
 import { AnnexKFormComponent } from '../../generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
 import { LIST_DEDUCTIVES_VIEW_COLUMNS } from '../../sampling-assets/sampling-assets-form/columns/list-deductivas-column';
-import { AnnexJRestitutionFormComponent } from '../annex-j-restitution-form/annex-j-restitution-form.component';
 
 @Component({
   selector: 'app-restitution-of-assets',
@@ -125,14 +128,36 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
 
   openAnnexJ(): void {
     this.openModal(
-      AnnexJRestitutionFormComponent,
-      '',
-      'annexJ-restitution-of-assets'
+      AnnexJAssetsClassificationComponent,
+      this.idSample,
+      'sign-annexJ-assets-classification'
     );
   }
 
   opemAnnexK(): void {
-    this.openModal(AnnexKFormComponent, '', 'annexK-restitution-of-assets');
+    let config: ModalOptions = {
+      initialState: {
+        idSample: this.idSample,
+        typeAnnex: 'sign-annex-assets-classification',
+        callback: async (typeDocument: number, typeSign: string) => {
+          if (typeDocument && typeSign) {
+            this.showReportInfo(
+              typeDocument,
+              typeSign,
+              'sign-annex-assets-classification'
+            );
+            //this.showReportInfo(
+            //typeDocument,
+            //typeSign,
+            //'sign-annex-assets-classification'
+            //);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AnnexKFormComponent, config);
   }
 
   async turnSampling() {
@@ -222,23 +247,62 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
   openModal(component: any, data?: any, typeAnnex?: string): void {
     let config: ModalOptions = {
       initialState: {
-        data: data,
+        idSample: this.idSample,
         typeAnnex: typeAnnex,
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
+        callback: async (typeDocument: number, typeSign: string) => {
+          if (typeAnnex == 'sign-annexJ-assets-classification') {
+            if (typeDocument && typeSign) {
+              this.showReportInfo(typeDocument, typeSign, typeAnnex);
+            }
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.bsModalRef = this.modalService.show(component, config);
+    this.modalService.show(component, config);
+  }
 
-    //this.bsModalRef.content.event.subscribe((res: any) => {
-    //cargarlos en el formulario
-    //console.log(res);
-    //this.assetsForm.controls['address'].get('longitud').enable();
-    //this.requestForm.get('receiUser').patchValue(res.user);
-    //});
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const idSample = this.idSample;
+    const typeFirm = typeSign;
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        idTypeDoc,
+        idSample,
+        typeFirm,
+        typeAnnex,
+        callback: (next: boolean) => {
+          if (next) {
+            if (typeFirm != 'electronica') {
+              this.uploadDocument(typeDocument);
+            } else {
+              this.getSampleInfo();
+            }
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  uploadDocument(typeDocument: number) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      typeDoc: typeDocument,
+      idSample: this.idSample,
+      callback: (data: boolean) => {
+        if (data) {
+          this.getSampleInfo();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
   }
 
   async createTask(numeraryRest: any, espRest: any) {
