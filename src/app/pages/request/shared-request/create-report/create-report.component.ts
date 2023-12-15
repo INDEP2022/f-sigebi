@@ -22,6 +22,7 @@ import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgoo
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 
 const font = Quill.import('formats/font');
 font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
@@ -80,7 +81,10 @@ export class CreateReportComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private readonly authService: AuthService,
     private reportgoodService: ReportgoodService,
-    private reportService: ReportService
+    private reportService: ReportService,
+    private wcontentService: WContentService,
+
+
   ) {
     super();
   }
@@ -132,15 +136,20 @@ export class CreateReportComponent extends BasePage implements OnInit {
     params['filter.registryId'] = `$eq:${this.requestId}`;
 
     this.reportgoodService.getReportDynamic(params).subscribe({
-      next: resp => {
+      next: async resp => {
         if (resp.data.length > 0) {
           this.loadDoc = resp.data[0];
           this.version = this.loadDoc;
+
+
+
+          const report = await this.generateReport();
+          console.log(report);
         }
 
         this.loadData();
       },
-      error: err => {},
+      error: err => { },
     });
   }
 
@@ -176,7 +185,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
           this.close();
         },
-        error: err => {},
+        error: err => { },
       });
   }
 
@@ -326,6 +335,31 @@ export class CreateReportComponent extends BasePage implements OnInit {
         this.onLoadToast('success', 'Documento adjuntado correctamente', '');
         this.close();
       }
+    });
+  }
+
+  generateReport() {
+    return new Promise((resolve, reject) => {
+      this.wcontentService
+        .downloadDinamycReport("sae.rptdesign", "SOLICITUDES", this.requestId, this.documentTypeId)
+        .subscribe({
+          next: (resp: any) => {
+            if (resp) {
+              resolve(resp);
+            } else {
+              resolve(null);
+            }
+          },
+          error: error => {
+            this.loader.load = false;
+            this.toast(
+              'error',
+              'Error al guardar',
+              'No se pudo generar el reporte de volante'
+            );
+            reject('false');
+          },
+        });
     });
   }
 
