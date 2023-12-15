@@ -80,7 +80,7 @@ export class AuthorizationAssetsDestructionComponent
   selectExpedient = new DefaultSelect<IExpedient>();
   rowSelected: boolean = false;
   selectedRow: any = null;
-  title: string = 'Oficios de autorización de destrucción';
+  title: string = 'Oficio de autorización de destrucción';
   textButton: string = 'Cerrar';
   expediente: number;
   textDisabled: boolean = true;
