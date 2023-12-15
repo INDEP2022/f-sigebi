@@ -69,17 +69,14 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
   stagecreated: any = 2;
   areas$ = new DefaultSelect<any>();
+  //indica la delegacion a trabajar
   area_d: any;
-  nivelusuario: number = 1;
+  nivelusuario: number = -1;
   delegation1: number = -1;
   delegation2: number = -1;
 
   //info del evento de donacion
   eventDonacion: IGoodDonation;
-
-  get captureDate() {
-    return this.actaRecepttionForm.get('captureDate');
-  }
 
   public delegationLst = new DefaultSelect();
 
@@ -114,13 +111,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
     );
 
     localStorage.setItem('area', this.authService.decodeToken().siglasnivel3);
-    /*
-    if(!this.edit){
-      //this.generaConsec(this.area_d);
-      this.generaConsecDona();
-    }
-    */
-    //this.actaForm();
     console.log('Folio:' + this.foolio + ' - area_d::' + this.area_d);
 
     this.delegation = Number(localStorage.getItem('area'));
@@ -379,7 +369,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
     let body = {
       delegationNumber2: this.delegation2,
-      toolbarDelegationNumber: this.delegation1,
+      toolbarDelegationNumber: (this.delegation1==null)?this.delegation2:this.delegation1,
       type: 'CPD',
       userLevel: this.nivelusuario,
       year: anio == null ? this.currentYear : anio,
@@ -411,8 +401,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
       captureDate: this.actaRecepttionForm.value.captureDate,
       observations: '', //this.actaRecepttionForm.value.observaciones,
       registreNumber: null,
-      noDelegation1: this.authService.decodeToken().department,
-      noDelegation2: null,
+      noDelegation1: (this.delegation1==null)?this.delegation2:this.delegation1,
+      noDelegation2: this.delegation2,
       identifier: null,
       label: null,
       folioUniversal: this.foolio,
