@@ -142,7 +142,7 @@ export class ClassificationAnnexedSignComponent
             task['idSampling'] = this.idSample;
             task[
               'title'
-            ] = `Verificacion de bienes en almacén ${this.idSample}`;
+            ] = `Muestreo Bienes: Verificacion de bienes en almacén ${this.idSample}`;
             task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
             task['idTransferee'] = this.sampleInfo.transfereeId;
             task['processName'] = 'Verificacion_bienes';
@@ -155,7 +155,7 @@ export class ClassificationAnnexedSignComponent
               this.msgGuardado(
                 'success',
                 'Creación de Tarea Correcta',
-                `Verificacion de bienes en almacén ${this.idSample}`
+                `Muestreo Bienes: Verificacion de bienes en almacén ${this.idSample}`
               );
             }
           }
