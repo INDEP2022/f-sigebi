@@ -1360,7 +1360,10 @@ export class ExpenseCompositionComponent
   }
 
   get pathPolicy() {
-    return 'policy/api/v1/policies';
+    return (
+      'policy/api/v1/policies' +
+      (!this.havePolicie ? '?filter.idSpent=$null' : '')
+    );
   }
 
   private CARGA_BIENES_CSV_VALIDADOS(file: File) {
