@@ -1198,6 +1198,7 @@ export class AuthorizationAssetsDestructionComponent
       initialState: {
         callback: (result: any) => {
           console.log(result);
+          this.consult = true;
           this.form.get('noAuth').setValue(result.id);
           this.getProceeding();
         },
