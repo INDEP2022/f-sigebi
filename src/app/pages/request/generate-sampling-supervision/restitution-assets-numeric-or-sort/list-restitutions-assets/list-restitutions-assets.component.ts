@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
@@ -11,8 +12,8 @@ import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
-import { UploadExpedientFormComponent } from '../../shared-component-gss/upload-expedient-form/upload-expedient-form.component';
-import { UploadImagesFormComponent } from '../../shared-component-gss/upload-images-form/upload-images-form.component';
+import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
+import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import { DataCaptureForEntryOrderFormComponent } from '../data-capture-for-entry-order-form/data-capture-for-entry-order-form.component';
 import { LIST_RESTITUTION_COLUMNS } from './list-restitution-columns';
 
@@ -33,6 +34,7 @@ export class ListRestitutionsAssetsComponent
   paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Input() idSample: number = 0;
+  @Input() filterObject: any;
   totalItems: number = 0;
   columns = LIST_RESTITUTION_COLUMNS;
   goodsModified: any = [];
@@ -65,8 +67,32 @@ export class ListRestitutionsAssetsComponent
     };
   }
 
+  ngOnChanges() {
+    if (this.filterObject != false && this.filterObject) {
+      if (this.filterObject.noManagement)
+        this.params.getValue()['filter.goodId'] =
+          this.filterObject.noManagement;
+
+      if (this.filterObject.noInventory)
+        this.params.getValue()['filter.inventoryNumber'] =
+          this.filterObject.noInventory;
+
+      if (this.filterObject.descriptionAsset)
+        this.params.getValue()['filter.description'] =
+          this.filterObject.descriptionAsset;
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsSampling());
+    } else if (this.filterObject == false) {
+      this.params = new BehaviorSubject<ListParams>(new ListParams());
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsSampling());
+    }
+  }
+
   setRepositionDate(descriptionInput: any) {
-    console.log('descriptionInput', descriptionInput);
     this.paragraphs['data'].map((item: any) => {
       if (item.repositionDate === descriptionInput.data.repositionDate) {
         item.repositionDate = descriptionInput.text;
@@ -107,18 +133,50 @@ export class ListRestitutionsAssetsComponent
     });
   }
 
-  updateMyDate(event: any) {
-    console.log(event);
-  }
+  updateMyDate(event: any) {}
 
   uploadExpedient(): void {
-    //if (this.assetsSelected.length == 0) return;
-    this.openModals(UploadExpedientFormComponent, '');
+    if (this.assetsSelected.length > 0) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modalSizeXL modal-dialog-centered',
+      };
+
+      config.initialState = {
+        sampleGood: this.assetsSelected,
+        typeDoc: 'good',
+        process: 'sampling-assets',
+        callback: (next: boolean) => {},
+      };
+
+      this.modalService.show(ShowDocumentsGoodComponent, config);
+    } else {
+      this.alert('warning', 'Acción Invalida', 'Seleccione un bien');
+    }
+    /*//if (this.assetsSelected.length == 0) return;
+    this.openModals(UploadExpedientFormComponent, ''); */
   }
 
   uploadImages(): void {
+    if (this.assetsSelected.length > 0) {
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modalSizeXL modal-dialog-centered',
+      };
+
+      config.initialState = {
+        sampleGood: this.assetsSelected,
+        typeDoc: 'good',
+        process: 'sampling-assets',
+        callback: (next: boolean) => {},
+      };
+
+      this.modalService.show(PhotographyFormComponent, config);
+    } else {
+      this.alert('warning', 'Acción Invalida', 'Seleccione un bien');
+    }
     //if (this.listAssetsCopiedSelected.length == 0) return;
-    this.openModals(UploadImagesFormComponent, '');
+    //this.openModals(UploadImagesFormComponent, '');
   }
 
   exportCsv() {
@@ -135,7 +193,6 @@ export class ListRestitutionsAssetsComponent
       );
       this.assetsSelected.splice(index, 1);
     }
-    console.log(this.assetsSelected);
   }
 
   numerari(): void {
@@ -252,7 +309,6 @@ export class ListRestitutionsAssetsComponent
         };
         this.samplingService.editSamplingGood(sampleGood).subscribe({
           next: response => {
-            console.log('response', response);
             this.alert('success', 'Correcto', 'Bien actualizado correctamente');
           },
         });

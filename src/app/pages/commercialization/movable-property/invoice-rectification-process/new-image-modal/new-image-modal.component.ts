@@ -7,7 +7,10 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { ReportInvoiceService } from 'src/app/core/services/ms-reportinvoice/reportinvoice-service';
+import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
@@ -48,7 +51,7 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
     `,
   ],
 })
-export class NewImageModalComponent implements OnInit {
+export class NewImageModalComponent extends BasePage implements OnInit {
   imagenurl =
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
 
@@ -59,17 +62,23 @@ export class NewImageModalComponent implements OnInit {
   year: any;
   imageBase64: string;
   image: File;
-
+  image_: any = null;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
-    private reportInvoiceService: ReportInvoiceService
-  ) {}
+    private reportInvoiceService: ReportInvoiceService,
+    private authService: AuthService,
+    private fileBrowserService: FileBrowserService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log('dataJob', this.dataJob);
+
     this.getRegister();
   }
 
@@ -110,13 +119,13 @@ export class NewImageModalComponent implements OnInit {
         ],
       ],
       cve: [null, [Validators.required]],
-      image: [null, [Validators.required]],
+      image: [null],
     });
   }
   async getRegister() {
     let params = new ListParams();
-    params['filter.jobNumber'] = `$eq:${this.jobNot}`;
-    // params['filter.year'] = `$eq:${this.year}`;
+    params['filter.jobNumber'] = `$eq:${this.dataJob.jobNot}`;
+    params['filter.year'] = `$eq:${this.dataJob.year}`;
     this.reportInvoiceService.getAll(params).subscribe({
       next: resp => {
         const data = resp.data[0];
@@ -149,8 +158,8 @@ export class NewImageModalComponent implements OnInit {
     const data = this.form.value;
 
     let obj = {
-      year: new Date().getFullYear(),
-      jobNumber: this.jobNot,
+      year: this.dataJob.year,
+      jobNumber: this.dataJob.jobNot,
       name: data.name,
       lastnameMat: data.motherlastName,
       lastnamePat: data.lastName,
@@ -164,6 +173,29 @@ export class NewImageModalComponent implements OnInit {
       imagesec: data.image,
     };
 
+    const formData = new FormData();
+    formData.append(
+      'userPassword',
+      this.authService.decodeToken().preferred_username.toUpperCase()
+    );
+    formData.append('jobNumber', this.jobNot);
+    formData.append('tmpImage', this.image_);
+
+    this.fileBrowserService.getRouteBillingSavebillingSiab(formData).subscribe({
+      next: async value => {
+        await this.saveData(obj);
+        this.alert(
+          'success',
+          'Se generó correctamente la imagen correctamente',
+          ''
+        );
+      },
+      error: err => {
+        this.alert('error', 'No se pudo generar la imagen', '');
+      },
+    });
+  }
+  async saveData(obj: any) {
     if (this.valData) {
       this.reportInvoiceService.create(obj).subscribe({
         next: resp => {},
@@ -193,15 +225,6 @@ export class NewImageModalComponent implements OnInit {
     this.modalService.show(PreviewDocumentsComponent, config);
   }
 
-  fileUpload(event: any) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      this.imageBase64 = e.target.result as string;
-      this.image = this.base64ToFile(e.target.result as string);
-    };
-    if (event?.target) reader.readAsDataURL(event.target.files[0] as File);
-  }
-
   base64ToFile(base64: string): File {
     const [datatype, data] = base64.split(',');
     const mime = datatype.match(/:(.*?);/)[1];
@@ -217,5 +240,38 @@ export class NewImageModalComponent implements OnInit {
   cleanPhoto() {
     this.imageBase64 = null;
     this.image = null;
+  }
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1)
+      return console.log('No files selected, or more than of allowed');
+    this.fileUpload(event);
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = e => {
+      // this.imageBase64 = e.target.result as string;
+      // this.image = this.base64ToFile(e.target.result as string);
+      this.image_ = files[0];
+
+      // this.readExcel(files[0])};
+    };
+  }
+
+  fileUpload(event: any) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1)
+      return console.log('No files selected, or more than of allowed');
+    const reader = new FileReader();
+    reader.onload = e => {
+      this.imageBase64 = e.target.result as string;
+      this.image = this.base64ToFile(e.target.result as string);
+    };
+    if (event?.target) {
+      reader.readAsDataURL(event.target.files[0] as File);
+      this.image = event.target.files[0];
+      this.image_ = files[0];
+      console.log('this.image', this.image_);
+    }
   }
 }

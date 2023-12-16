@@ -7,7 +7,7 @@
   <div body>
     <form [formGroup]="frmArea" class="form-material">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-10 mt-2">
           <form-field [control]="frmArea.get('no_Delegation_2')">
             <ngx-select
               label="&Aacute;rea"
@@ -19,8 +19,10 @@
               [searchOnInit]="true"
               [showTooltip]="true"
               (change)="updateSelectedIds($event)"
-              termMaxLength="50"
+              termMaxLength="100"
               value="id"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption"
               [multiple]="false">
             </ngx-select>
             <ng-template #userLabel let-item="item">

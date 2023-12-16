@@ -10,52 +10,59 @@
     </div>
     <form class="form-material" [formGroup]="form">
       <div class="row pt-4">
-        <div class="row pt-3">
-          <div class="col-md-2">
-            <form-field [control]="form.get('typeGood')" label="Tipo Bien">
-              <ng-select
-                formControlName="typeGood"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false">
-                <ng-option value="A">Seleccione el Tipo de Bien</ng-option>
-                <ng-option value="M">Bienes Muebles</ng-option>
-                <ng-option value="I">Bienes Inmuebles</ng-option>
-              </ng-select>
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-2 pt-3">
-          <form-field [control]="form.get('event')" label="No. Evento">
-            <input type="text" class="form-control" formControlName="event" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('typeGood')" label="Tipo Bien">
+            <ng-select
+              formControlName="typeGood"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="A">Seleccione el Tipo de Bien</ng-option>
+              <ng-option value="M">Bienes Muebles</ng-option>
+              <ng-option value="I">Bienes Inmuebles</ng-option>
+            </ng-select>
           </form-field>
         </div>
-        <div class="col-md-2 pt-3">
-          <form-field
-            [control]="form.get('transferee')"
-            label="No. Transferente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="transferee" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              [form]="form"
+              control="event"
+              (fetchItems)="getEvent($event)"
+              label="Evento"
+              [data]="event"
+              bindLabel="evento"
+              [searchOnInit]="true"
+              value="id_evento">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-2 pt-3">
-          <form-field [control]="form.get('allotment')" label="No. Lote">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="allotment" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('transferee')">
+            <ngx-select
+              [form]="form"
+              control="transferee"
+              (fetchItems)="getTransferee($event)"
+              label="Transferente"
+              [data]="transfer"
+              bindLabel="evento"
+              [searchOnInit]="true"
+              value="id_evento">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-2 pt-3">
-          <form-field
-            [control]="form.get('DescEvent')"
-            label="Descripción Evento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="DescEvent" />
+        <div class="col-md-4 pt-3">
+          <form-field [control]="form.get('allotment')">
+            <ngx-select
+              [form]="form"
+              control="allotment"
+              (fetchItems)="getAllotment($event)"
+              label="Lote"
+              [data]="allotment"
+              bindLabel="evento"
+              [searchOnInit]="true"
+              value="id_evento">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4 pt-3">
@@ -205,15 +212,15 @@
         <div class="col-md-12">
           <div [class]="loading3 ? 'table-loading' : ''">
             <div class="table-responsive">
-              <ng-scrollbar
+              <!-- <ng-scrollbar
                 [track]="'all'"
-                [ngStyle]="{ height: loading ? '0px' : '220px' }">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settings3"
-                  [source]="data2">
-                </ng2-smart-table>
-              </ng-scrollbar>
+                [ngStyle]="{ height: loading ? '0px' : '220px' }"> -->
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings3"
+                [source]="data2">
+              </ng2-smart-table>
+              <!-- </ng-scrollbar> -->
               <app-pagination [params]="params2" [totalItems]="totalItems2">
               </app-pagination>
             </div>
@@ -225,15 +232,11 @@
       <div class="col-md-12">
         <div [class]="loading2 ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng-scrollbar
-              [track]="'all'"
-              [ngStyle]="{ height: loading ? '0px' : '220px' }">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings"
-                [source]="data1">
-              </ng2-smart-table>
-            </ng-scrollbar>
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
             <app-pagination [params]="params1" [totalItems]="totalItems1">
             </app-pagination>
           </div>

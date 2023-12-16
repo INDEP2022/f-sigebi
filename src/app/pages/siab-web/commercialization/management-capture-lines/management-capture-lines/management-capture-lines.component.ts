@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -40,7 +41,8 @@ export class managementCaptureLinesComponent
     private modalService: BsModalService,
     private capturelineService: CapturelineService,
     private comerClientsService: ComerClientsService,
-    private comerLotService: ComerLotService
+    private comerLotService: ComerLotService,
+    private servicePipe: DatePipe
   ) {
     super();
     this.settings = {
@@ -218,7 +220,7 @@ export class managementCaptureLinesComponent
       this.alert(
         'warning',
         'Atención',
-        'No es posible generar lineas de captura de Garantias de Seriedad'
+        'No es posible generar lineas de captura de garantias de seriedad'
       );
       return;
     }
@@ -265,19 +267,22 @@ export class managementCaptureLinesComponent
       P_PARAMETRO: this.formAdm.controls['typeReference'].value,
       P_MONTO: this.formAdm.controls['amount'].value,
       P_IND_MOV: 'C',
-      P_FECVIGENCIA: this.formAdm.controls['dateValidity'].value,
+      P_FECVIGENCIA: this.servicePipe.transform(
+        this.formAdm.controls['dateValidity'].value,
+        'dd/MM/yyyy'
+      ),
       P_MONTO_PENA: this.formAdm.controls['amountPenality'].value,
     };
     this.capturelineService.postSpGenIc2(data).subscribe({
       next: resp => {
-        this.alert('success', 'Datos Registrados', '');
+        this.alert('success', 'Datos registrados', '');
         this.formAdm.reset();
         this.searchLC();
       },
       error: eror => {
         this.alert(
           'warning',
-          'No se Registraron los datos volver a intentarlo',
+          'No se registraron los datos volver a intentarlo',
           ''
         );
       },
