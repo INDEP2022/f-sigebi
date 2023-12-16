@@ -42,7 +42,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   LS_EVENTO: number;
   dataCompositionExpenses: IComerDetExpense2[] = [];
   selectedComposition: IComerDetExpense2;
-  addByLotExpenseComposition = new Subject<ILoadLotResponse>();
+  addByLotExpenseComposition = new Subject<ILoadLotResponse[]>();
   updateExpenseComposition = new Subject();
   resetExpenseComposition = new Subject();
   updateExpenseAfterChangeTotalDetail = new Subject();
@@ -53,7 +53,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   updateOI = new Subject();
   updateFolio = new Subject();
   P_PRUEBA: number;
-  SELECT_CAMBIA_CLASIF = false;
+  havePolicie = false;
   PMONTOXMAND: string;
   PDEVCLIENTE: string = null;
   PCAMBIAESTATUS: string;
@@ -83,6 +83,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   total = 0;
   totalMandatos = 0;
   V_BIEN_REP_ROBO = 0;
+  SELECT_CAMBIA_ESTATUS_ENABLED = true;
   PB_VEHICULO_REP_ROBO_DISPLAYED = true;
   PB_VEHICULO_REP_ROBO_ENABLED = false;
   SELECT_CAMBIA_CLASIF_ENABLED = false;
@@ -98,6 +99,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   showContract = false;
   showTipAdj = false;
   showAdj = false;
+  showCvePoliza = false;
   //show buttons
   VISIBLE_PB_ESTATUS = true;
   VISIBLE_CARGA_BIENES = true;
@@ -130,6 +132,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   clean() {
     this.form.reset();
+    this.havePolicie = false;
     // this.publicLot = null;
     this.actionButton = '';
     this.data = null;
@@ -262,7 +265,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.VALBIEVEND = row.VALBIEVEND ?? 'N';
     this.PNOENVIASIRSAE = row.PNOENVIASIRSAE ?? 'N';
     this.PDEVPARCIALBIEN = row.PDEVPARCIALBIEN ?? 'N';
+    if (this.PVALIDADET !== row.PVALIDADET) {
+      setTimeout(() => {
+        this.updateExpenseComposition.next(true);
+      }, 100);
+    }
     this.PVALIDADET = row.PVALIDADET ?? 'N';
+    if (this.PVALIDADET === 'S') {
+      this.SELECT_CAMBIA_ESTATUS_ENABLED = true;
+    } else {
+      this.SELECT_CAMBIA_ESTATUS_ENABLED = false;
+    }
   }
 
   readParams(conceptId: string) {

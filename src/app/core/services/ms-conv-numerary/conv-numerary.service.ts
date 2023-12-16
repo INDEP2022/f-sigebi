@@ -61,6 +61,9 @@ export class ConvNumeraryService extends HttpService {
     pdirectionScreen: string;
     user: string;
   }) {
-    return this.post<{ bandera: false }>('pa-conv-numerary-adjudir-2', body);
+    return this.post<{ bandera: false }>(
+      'comer-conv-numerary/pa-conv-numerary-adjudir-2',
+      body
+    );
   }
 }

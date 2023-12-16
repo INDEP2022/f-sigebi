@@ -73,6 +73,10 @@ export class EntryOrdersComponent
     return this.expenseCaptureDataService.conceptNumber;
   }
 
+  get conceptNumberValue() {
+    return this.conceptNumber ? this.conceptNumber.value : null;
+  }
+
   get clkpv() {
     return this.form.get('clkpv');
   }
@@ -83,6 +87,10 @@ export class EntryOrdersComponent
       this.expenseCaptureDataService.expenseNumber.value &&
       this.expenseCaptureDataService.validPayment
     );
+  }
+
+  get dataCompositionExpenses() {
+    return this.expenseCaptureDataService.dataCompositionExpenses;
   }
 
   async replyFolio() {
@@ -100,9 +108,7 @@ export class EntryOrdersComponent
     //   !this.clkpv.value &&
     //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
     //   !this.dataService.data.providerName;
-    let bienes = this.expenseCaptureDataService.dataCompositionExpenses.filter(
-      x => x.goodNumber
-    );
+    let bienes = this.dataCompositionExpenses.filter(x => x.goodNumber);
     if (
       !this.conceptNumber.value &&
       !this.eventNumber.value &&
@@ -149,7 +155,7 @@ export class EntryOrdersComponent
     }
     this.expenseGoodProcessService
       .replyFolio({
-        goodArray: this.expenseCaptureDataService.dataCompositionExpenses
+        goodArray: this.dataCompositionExpenses
           .filter(x => x.goodNumber)
           .map(x => {
             return { goodNumber: +x.goodNumber };

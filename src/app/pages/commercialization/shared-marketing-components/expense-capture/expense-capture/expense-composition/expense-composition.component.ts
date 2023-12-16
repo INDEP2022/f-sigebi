@@ -24,6 +24,7 @@ import { ParametersConceptsService } from 'src/app/core/services/ms-commer-conce
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
+import { ILoadLotResponse } from '../../models/lot';
 import { IPreviewDatosCSV } from '../../models/massive-good';
 import { IGoodsBySeg, IGoodsByVig } from '../../models/numerary';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
@@ -102,8 +103,8 @@ export class ExpenseCompositionComponent
         next: response => {
           console.log(response);
           let newData = this.data
-            ? [...this.data, this.newGoodsByLot(response.goods)]
-            : this.newGoodsByLot(response.goods);
+            ? [...this.data, ...this.newGoodsByLot(response)]
+            : this.newGoodsByLot(response);
           this.setData(newData);
         },
       });
@@ -175,12 +176,26 @@ export class ExpenseCompositionComponent
     return this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF_ENABLED;
   }
 
+  get SELECT_CAMBIA_ESTATUS_ENABLED() {
+    return this.expenseCaptureDataService.SELECT_CAMBIA_ESTATUS_ENABLED;
+  }
+
   get address() {
     return this.expenseCaptureDataService.address;
   }
 
-  private newGoodsByLot(response) {
+  private newGoodsByLot(response: ILoadLotResponse[]) {
     return response.map(x => {
+      let reportDelit = false;
+      let SELECT_CAMBIA_CLASIF_ENABLED = null;
+      if (this.expenseCaptureDataService.V_VALCON_ROBO > 0) {
+        reportDelit = x.valGoodSteal
+          ? x.valGoodSteal.SELECT_CAMBIA_CLASIF === 'S'
+          : false;
+        SELECT_CAMBIA_CLASIF_ENABLED = x.valGoodSteal
+          ? x.valGoodSteal.SELECT_CAMBIA_CLASIF_ENABLED
+          : null;
+      }
       return {
         detPaymentsId: null,
         paymentsId: null,
@@ -209,7 +224,8 @@ export class ExpenseCompositionComponent
         mandato: x.cvman,
         vehiculoCount: null,
         changeStatus: false,
-        reportDelit: false,
+        reportDelit,
+        SELECT_CAMBIA_CLASIF_ENABLED,
       };
     });
   }
@@ -568,24 +584,21 @@ export class ExpenseCompositionComponent
     this.rr = !this.rr;
     this.dataPaginated.getElements().then(_item => {
       let result = _item.map(item => {
-        let result = _item.map(item => {
-          item.reportDelit = this.rr;
-        });
         if (item.V_VALCON_ROBO > 0) {
-          if (
-            item.vehiculoCount === 0 &&
-            item.reportDelit &&
-            item.clasifGoodNumber + '' !== '1606'
-          ) {
-            item.reportDelit = false;
-          } else if (
-            item.vehiculoCount === 0 &&
-            !item.reportDelit &&
-            item.clasifGoodNumber + '' === '1606'
-          ) {
-            item.reportDelit = true;
+          if (item.vehiculoCount + '' === '0') {
+            const firsValidation =
+              !item.reportDelit && item.clasifGoodNumber + '' !== '1606';
+            const secondValidation =
+              item.reportDelit && item.clasifGoodNumber + '' === '1606';
+            if (firsValidation || secondValidation) {
+            } else {
+              item.reportDelit = this.rr;
+            }
+          } else {
+            item.reportDelit = this.rr;
           }
         }
+        return item;
       });
       Promise.all(result).then(resp => {
         // console.log('after array selectsCPD: ', this.selectedGoods);
@@ -639,25 +652,27 @@ export class ExpenseCompositionComponent
             this.fileI.nativeElement.value = '';
             if (typeof event === 'object') {
               console.log(event);
-              if (event.data) {
-                let dataCSV: IComerDetExpense[] = this.getComerDetExpenseI(
-                  event.data.tmpGasp
-                );
-                this.removeMassive(dataCSV);
-                this.expenseCaptureDataService.addErrors.next(
-                  event.data.tmpError
-                );
+              if (event) {
+                if (event.tmpGasp) {
+                  let dataCSV: IComerDetExpense[] = this.getComerDetExpenseI(
+                    event.tmpGasp
+                  );
+                  this.insertMassive(dataCSV);
+                }
+                if (event.tmpError) {
+                  this.expenseCaptureDataService.addErrors.next(event.tmpError);
+                }
               }
 
               //agregar a detalle gasto
             } else {
-              this.loader.load = false;
+              this.loading = false;
               this.alert('error', 'No se pudo realizar la carga de datos', '');
             }
           },
           error => {
             console.log(error);
-            this.loader.load = false;
+            this.loading = false;
             // this.expenseCaptureDataService.addErrors.next();
             this.fileI.nativeElement.value = '';
             this.alert('error', 'No se pudo realizar la carga de datos', '');
@@ -666,15 +681,52 @@ export class ExpenseCompositionComponent
     }
   }
 
+  get havePolicie() {
+    return this.expenseCaptureDataService.havePolicie;
+  }
+
+  get validChargeGoods() {
+    if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
+      return true;
+    } else if (this.v_tip_gast === 'GASTOVIG') {
+      return this.form ? this.form.get('contractNumber').value : false;
+    } else if (this.v_tip_gast === 'GASTOSEG') {
+      return this.form ? this.form.get('policie').value : false;
+    } else {
+      return true;
+    }
+  }
+
   async loadGoodsI() {
     const response = await this.alertQuestion(
-      'warning',
+      'question',
       '¿Desea cargar bienes?',
       ''
     );
     if (response.isConfirmed) {
       this.loading = true;
       // this.fileI.nativeElement.click();
+      // this.expenseNumeraryService
+      //   .PUP_CARGA_BIENES_VIG(
+      //     this.expenseCaptureDataService.REGRESA_MES_GASTO(),
+      //     this.expense.contractNumber
+      //   )
+      //   .subscribe({
+      //     next: response => {
+      //       if (response.data && response.data.length > 0) {
+      //         let newData = [...this.data, this.newGoodsByVig(response.data)];
+      //         this.setData(newData);
+      //         this.loading = false;
+      //       } else {
+      //         this.loading = false;
+      //         // this.alert('error','')
+      //       }
+      //     },
+      //     error: err => {
+      //       this.loading = false;
+      //       this.alert('error', 'No se pudo realizar la carga de bienes', '');
+      //     },
+      //   });
       // return;
       if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
         this.fileI.nativeElement.click();
@@ -683,34 +735,53 @@ export class ExpenseCompositionComponent
         this.expenseNumeraryService
           .PUP_CARGA_BIENES_VIG(
             this.expenseCaptureDataService.REGRESA_MES_GASTO(),
-            this.expense.contractNumber
+            this.form.get('contractNumber').value
           )
           .subscribe({
             next: response => {
               if (response.data && response.data.length > 0) {
-                let newData = [...this.data, this.newGoodsByVig(response.data)];
-                this.setData(newData);
-                this.loading = false;
+                this.getData2();
+                // let newData = this.data
+                //   ? [...this.data, ...this.newGoodsByVig(response.data)]
+                //   : this.newGoodsByVig(response.data);
+                // this.setData(newData);
+                // this.loading = false;
               } else {
                 this.loading = false;
+                this.alert('error', 'No se encontraron datos', '');
                 // this.alert('error','')
               }
+            },
+            error: err => {
+              this.loading = false;
+              this.alert('error', 'No se pudo realizar la carga de bienes', '');
             },
           });
       } else if (this.v_tip_gast === 'GASTOSEG') {
         //PUP_CARGA_BIENES_SEG;
         this.expenseNumeraryService
-          .PUP_CARGA_BIENES_SEG(this.form.get('policie').value)
+          .PUP_CARGA_BIENES_SEG(
+            this.form.get('policie').value,
+            +this.expenseNumber.value
+          )
           .subscribe({
             next: response => {
+              console.log(response);
               if (response.data && response.data.length > 0) {
-                let newData = [...this.data, this.newGoodsBySeg(response.data)];
-                this.setData(newData);
-                this.loading = false;
+                // debugger;
+                // let newData = this.data
+                //   ? [...this.data, ...this.newGoodsBySeg(response.data)]
+                //   : this.newGoodsBySeg(response.data);
+                // this.setData(newData);
+                // this.loading = false;
+                this.getData2();
               } else {
                 // this.alert('error','')
+                this.loading = false;
+                this.alert('error', 'No se encontraron datos', '');
               }
             },
+            error: err => {},
           });
       } else {
         this.alert('warning', 'Opción no válida para este concepto', '');
@@ -784,15 +855,35 @@ export class ExpenseCompositionComponent
   }
 
   private setData(data, loadContMands = false) {
+    this.expenseCaptureDataService.V_BIEN_REP_ROBO = 0;
     this.data = data.map(row => {
       this.amount += row.amount ? +row.amount : 0;
       this.vat += row.iva ? +row.iva : 0;
       this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
       this.vatWithholding += row.retencionIva ? +row.retencionIva : 0;
       this.total += row.total ? +row.total : 0;
+      let reportDelit = false;
+      // debugger;
+      if (this.expenseCaptureDataService.V_VALCON_ROBO > 0) {
+        if (row.labelNumber + '' === '6') {
+          reportDelit = false;
+        } else {
+          if (row.clasifGoodNumber + '' === '1606') {
+            reportDelit = true;
+          } else if (row.alternateClassificationNumber + '' === '16') {
+            reportDelit = false;
+            this.expenseCaptureDataService.V_BIEN_REP_ROBO++;
+          } else if (
+            row.clasifGoodNumber + '' !== '1606' &&
+            row.alternateClassificationNumber + '' !== '16'
+          ) {
+            reportDelit = false;
+          }
+        }
+      }
       return {
         ...row,
-        reportDelit: this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF,
+        reportDelit,
         V_VALCON_ROBO: this.expenseCaptureDataService.V_VALCON_ROBO,
         changeStatus: false,
         goodDescription: row.description,
@@ -890,18 +981,22 @@ export class ExpenseCompositionComponent
         next: response => {
           console.log(response);
           if (response.data && response.data.length > 0) {
-            let result = response.data[1];
+            this.loader.load = false;
+            let result = response.data.filter(
+              x => x.id_detgasto + '' == row.paymentsId
+            );
+            let result2 = result.pop();
             this.dataService
               .updateMassive(
                 this.dataTemp.map(x => {
                   let newRow: any = {
-                    amount: result.MONTO2,
+                    amount: result2.MONTO2,
                     goodNumber: x.goodNumber,
                     expenseDetailNumber: x.detPaymentsId,
                     expenseNumber: x.paymentsId,
-                    vat: result.iva2,
-                    isrWithholding: result.retencion_isr2,
-                    vatWithholding: result.retencion_iva2,
+                    vat: result2.iva2,
+                    isrWithholding: result2.retencion_isr2,
+                    vatWithholding: result2.retencion_iva2,
                     cvman: x.manCV,
                     budgetItem: x.departure,
                   };
@@ -1128,7 +1223,7 @@ export class ExpenseCompositionComponent
     // this.file.nativeElement.value = '';
     console.log(file.name);
     if (file.name.includes('csv')) {
-      this.loader.load = true;
+      this.loading = true;
       let filterParams = new FilterParams();
       filterParams.addFilter('parameter', 'VAL_CONCEPTO');
       if (this.conceptNumber) {
@@ -1163,7 +1258,6 @@ export class ExpenseCompositionComponent
           this.file.nativeElement.value = '';
           if (response.data && response.data.length > 0) {
             const inserts = response.data.map(row => {
-              let total = row.amount2 + row.COL_IVA ? row.vat2 : 0;
               return {
                 vat: row.vat2,
                 amount: row.amount2,
@@ -1176,19 +1270,19 @@ export class ExpenseCompositionComponent
                 budgetItem: null,
                 changeStatus: false,
                 reportDelit: false,
-                total,
+                total: row.total,
                 expenseNumber: this.expenseNumber.value,
               };
             });
-            this.removeMassive(inserts);
+            this.insertMassive(inserts);
           } else {
-            this.loader.load = false;
+            this.loading = false;
             this.alert('error', 'No se pudo realizar la carga de datos', '');
           }
         },
         error: err => {
           this.file.nativeElement.value = '';
-          this.loader.load = false;
+          this.loading = false;
           this.alert('error', 'No se pudo realizar la carga de datos', '');
         },
       });
@@ -1208,15 +1302,15 @@ export class ExpenseCompositionComponent
               let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
                 event.messages
               );
-              this.removeMassive(dataCSV);
+              this.insertMassive(dataCSV);
             }
           } else {
-            this.loader.load = false;
+            this.loading = false;
             this.alert('error', 'No se pudo realizar la carga de datos', '');
           }
         },
         error => {
-          this.loader.load = false;
+          this.loading = false;
           this.file.nativeElement.value = '';
           this.alert('error', 'No se pudo realizar la carga de datos', '');
         }
@@ -1229,17 +1323,17 @@ export class ExpenseCompositionComponent
     this.dataService.massiveInsert(inserts).subscribe({
       next: response => {
         this.alert('success', 'Se realizó la carga de datos', '');
-        this.loader.load = false;
-        this.getData2();
+        this.loading = false;
+        this.removeMassive();
       },
       error: err => {
-        this.loader.load = false;
+        this.loading = false;
         this.alert('error', 'No se pudo realizar la carga de datos', '');
       },
     });
   }
 
-  private removeMassive(inserts: IComerDetExpense[]) {
+  private removeMassive() {
     this.dataService
       .removeMassive(
         this.data.map(x => {
@@ -1252,13 +1346,21 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
-          this.insertMassive(inserts);
+          this.getData2();
         },
         error: err => {
-          this.loader.load = false;
+          this.loading = false;
           this.alert('error', 'No se pudo realizar la carga de datos', '');
         },
       });
+  }
+
+  get showCvePoliza() {
+    return this.expenseCaptureDataService.showCvePoliza;
+  }
+
+  get pathPolicy() {
+    return 'policy/api/v1/policies';
   }
 
   private CARGA_BIENES_CSV_VALIDADOS(file: File) {
@@ -1281,15 +1383,15 @@ export class ExpenseCompositionComponent
               let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
                 event.messages
               );
-              this.removeMassive(dataCSV);
+              this.insertMassive(dataCSV);
             } else {
-              this.loader.load = false;
+              this.loading = false;
               this.alert('error', 'No se pudo realizar la carga de datos', '');
             }
           }
         },
         error => {
-          this.loader.load = false;
+          this.loading = false;
           this.file.nativeElement.value = '';
           this.alert('error', 'No se pudo realizar la carga de datos', '');
         }
@@ -1299,19 +1401,19 @@ export class ExpenseCompositionComponent
   private getComerDetExpenseI(data: IPreviewDatosCSV[]) {
     return data.map(x => {
       let newRow: IComerDetExpense = {
-        vat: x.iva2 + '',
-        amount: x.amount2 + '',
+        vat: +(x.iva2 + ''),
+        amount: +(x.amount2 + ''),
         goodNumber: x.goodNumber + '',
         transferorNumber: x.transferorNumber + '',
-        cvman: x.mandate,
-        isrWithholding: x.retentionIsr2 + '',
-        vatWithholding: x.retentionIva2 + '',
+        cvman: x.mandate2,
+        isrWithholding: +(x.retentionIsr2 + ''),
+        vatWithholding: +(x.retentionIva2 + ''),
         // goodDescription: row.DESCRIPCION,
         budgetItem: null,
         changeStatus: false,
         reportDelit: false,
-        total: x.total2 + '',
-        expenseNumber: null,
+        total: +(x.total2 + ''),
+        expenseNumber: this.expenseNumber.value,
       };
       return newRow;
     });
@@ -1377,11 +1479,11 @@ export class ExpenseCompositionComponent
           row.amount = +(
             +(row.amount + '') *
             (this.exchangeRate.value ? this.exchangeRate.value : 1)
-          ).toFixed(2);
+          );
           if (row.iva && +row.iva > 0) {
-            row.iva = +(+row.amount * 0.15).toFixed(2);
+            row.iva = +(+row.amount * 0.15);
           }
-          row.total = +(+row.amount + (row.iva ? +row.iva : 0)).toFixed(2);
+          row.total = +(+row.amount + (row.iva ? +row.iva : 0));
           this.amount += row.amount ? +row.amount : 0;
           this.vat += row.iva ? +row.iva : 0;
           this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;

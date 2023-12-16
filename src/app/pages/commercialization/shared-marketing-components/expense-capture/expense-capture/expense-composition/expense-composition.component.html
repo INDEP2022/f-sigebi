@@ -21,6 +21,7 @@
               <button
                 *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active"
+                [disabled]="!SELECT_CAMBIA_ESTATUS_ENABLED"
                 style="
                   width: 100px;
                   display: flex;
@@ -87,26 +88,26 @@
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Monto</label>
-              <div>{{ amount | number: '1.2-2' }}</div>
+              <div>{{ amount | number : '1.2-2' }}</div>
             </div>
           </div>
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">IVA</label>
-              <div>{{ vat | number: '1.2-2' }}</div>
+              <div>{{ vat | number : '1.2-2' }}</div>
             </div>
           </div>
 
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Retención ISR</label>
-              <div>{{ isrWithholding | number: '1.2-2' }}</div>
+              <div>{{ isrWithholding | number : '1.2-2' }}</div>
             </div>
           </div>
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Retención IVA</label>
-              <div>{{ vatWithholding | number: '1.2-2' }}</div>
+              <div>{{ vatWithholding | number : '1.2-2' }}</div>
             </div>
           </div>
         </div>
@@ -114,10 +115,35 @@
           <div class="col-md-3 mt-4">
             <div class="cantidad">
               <label for="">Total</label>
-              <div>{{ total | number: '1.2-2' }}</div>
+              <div>{{ total | number : '1.2-2' }}</div>
             </div>
           </div>
         </div>
+
+        <form class="form-material" [formGroup]="form" *ngIf="showCvePoliza">
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              [updateValues]="true"
+              formControlName="policie"
+              label="Cve Poliza"
+              [path]="pathPolicy"
+              value="policyKeyId"
+              bindLabel="description"
+              [readonly]="!havePolicie"
+              [labelTemplate]="policieLabel"
+              [optionTemplate]="policieOption">
+            </ng-custom-select-loading>
+          </div>
+          <ng-template #policieLabel let-item="item">
+            {{ item.policyKeyId }} - {{ item.description }}
+          </ng-template>
+          <ng-template #policieOption let-item="item">
+            <div [title]="item.policyKeyId + '-' + item.description">
+              {{ item.policyKeyId }} - {{ item.description }}
+            </div>
+          </ng-template>
+        </form>
 
         <tr>
           <td colspan="5" align="center">
@@ -204,6 +230,7 @@
               *ngIf="address !== 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
+              [disabled]="!validChargeGoods"
               (click)="loadGoodsI()">
               Carga de Bienes
             </button>

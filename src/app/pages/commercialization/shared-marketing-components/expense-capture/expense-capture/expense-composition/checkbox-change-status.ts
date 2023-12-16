@@ -11,7 +11,7 @@ import { IComerDetExpense2 } from 'src/app/core/models/ms-spent/comer-detexpense
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 
 @Component({
-  selector: 'app-checkbox-report-element',
+  selector: 'app-checkbox-status-element',
   template: `
     <div class="row justify-content-center">
       <input
@@ -37,7 +37,7 @@ import { ExpenseCaptureDataService } from '../../services/expense-capture-data.s
     `,
   ],
 })
-export class CheckboxReportDelitComponent implements OnInit {
+export class CheckboxChangeStatusComponent implements OnInit {
   checked: boolean;
   disabled: boolean;
   @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
@@ -53,28 +53,12 @@ export class CheckboxReportDelitComponent implements OnInit {
     // debugger;
     this.checked = this.value;
     const row = this.rowData;
-    if (this.expenseCaptureDataService.SELECT_CAMBIA_CLASIF_ENABLED === false) {
+    if (
+      this.expenseCaptureDataService.SELECT_CAMBIA_ESTATUS_ENABLED === false
+    ) {
       this.disabled = true;
     } else {
       this.disabled = false;
-      if (this.expenseCaptureDataService.V_VALCON_ROBO > 0) {
-        if (row.SELECT_CAMBIA_CLASIF_ENABLED === false) {
-          this.disabled = true;
-        } else if (
-          row.SELECT_CAMBIA_CLASIF_ENABLED === null ||
-          row.SELECT_CAMBIA_CLASIF_ENABLED === undefined
-        ) {
-          if (row.vehiculoCount + '' === '0') {
-            const firsValidation =
-              !row.reportDelit && row.clasifGoodNumber + '' !== '1606';
-            const secondValidation =
-              row.reportDelit && row.clasifGoodNumber + '' === '1606';
-            if (firsValidation || secondValidation) {
-              this.disabled = true;
-            }
-          }
-        }
-      }
     }
   }
 
