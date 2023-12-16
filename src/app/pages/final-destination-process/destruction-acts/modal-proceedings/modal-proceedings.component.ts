@@ -107,7 +107,7 @@ export class ModalProceedingsComponent extends BasePage implements OnInit {
         'info',
         'Se buscó por ' +
           (prevAvValue != null ? 'Averiguación Previa' : 'Causa Penal'),
-        'El número de expediente se cambio a un select que corresponde con la búsqueda.\nSe cargará el primer expediente de la lista.'
+        'Los expedientes se mostrarán como lista de consulta que corresponde con la búsqueda.\nSe cargará el primer expediente de la lista.'
       );
       this.getExpedients();
     }
