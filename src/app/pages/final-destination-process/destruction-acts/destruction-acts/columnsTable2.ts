@@ -1,15 +1,8 @@
 export const COLUMNSTABLE2 = {
-  'good.goodId': {
+  numberGood: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      if (row.good && row.good.goodId) {
-        return row.good.goodId;
-      } else {
-        return null;
-      }
-    },
   },
   'good.description': {
     title: 'Descripcion',
