@@ -34,6 +34,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
   willSave: boolean = false;
   filterForm: ModelForm<any>;
   loadingDeductives: boolean = false;
+  disabledButton: boolean = false;
   paragraphsDeductivas = new LocalDataSource();
   //datos para el detalle de anexo
   annexDetail: any[] = [];
@@ -64,6 +65,19 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
     this.getSampleInfo();
     this.initFilterForm();
     this.getSampleDeductives();
+    this.checkStatusTask();
+  }
+
+  checkStatusTask() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = `$eq:${_task.id}`;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        if (response.data[0].State == 'FINALIZADA') this.disabledButton = true;
+      },
+      error: () => ({}),
+    });
   }
 
   getSampleDeductives() {
