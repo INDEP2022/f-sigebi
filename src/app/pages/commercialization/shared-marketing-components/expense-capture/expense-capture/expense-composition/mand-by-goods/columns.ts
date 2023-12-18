@@ -28,15 +28,15 @@ export const COLUMNS = {
     sort: false,
   },
   retentionisr: {
-    title: 'ISR',
+    title: 'Retención ISR',
     sort: false,
   },
   retentionvat: {
-    title: 'Retención Vat',
+    title: 'Retención IVA',
     sort: false,
   },
   vat: {
-    title: 'Vat',
+    title: 'IVA',
     sort: false,
   },
   amount: {

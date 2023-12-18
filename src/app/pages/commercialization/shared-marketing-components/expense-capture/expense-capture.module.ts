@@ -17,6 +17,7 @@ import { DataReceiptComponent } from './expense-capture/expense-comercial/data-r
 import { ExpenseComercialComponent } from './expense-capture/expense-comercial/expense-comercial.component';
 import { NotLoadedsModalComponent } from './expense-capture/expense-comercial/not-loadeds-modal/not-loadeds-modal.component';
 import { RetentionsModalComponent } from './expense-capture/expense-comercial/retentions-modal/retentions-modal.component';
+import { CheckboxChangeStatusComponent } from './expense-capture/expense-composition/checkbox-change-status';
 import { CheckboxReportDelitComponent } from './expense-capture/expense-composition/checkbox-report-delit';
 import { ExpenseCompositionModalComponent } from './expense-capture/expense-composition/expense-composition-modal/expense-composition-modal.component';
 import { ExpenseCompositionComponent } from './expense-capture/expense-composition/expense-composition.component';
@@ -40,6 +41,7 @@ import { TmpErroresComponent } from './expense-capture/tmp-errores/tmp-errores.c
     NotLoadedsModalComponent,
     ExpenseCompositionModalComponent,
     CheckboxReportDelitComponent,
+    CheckboxChangeStatusComponent,
     RejectedGoodsComponent,
     MandByGoodsComponent,
     PartContSirsaeComponent,

@@ -7,9 +7,14 @@ import { ScanFileSharedComponent } from 'src/app/@standalone/shared-forms/scan-f
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DestructionActsRoutingModule } from './destruction-acts-routing.module';
 import { DestructionActsComponent } from './destruction-acts/destruction-acts.component';
+import { ModalProceedingsComponent } from './modal-proceedings/modal-proceedings.component';
 import { PackageComponent } from './package/package.componet';
 @NgModule({
-  declarations: [DestructionActsComponent, PackageComponent],
+  declarations: [
+    DestructionActsComponent,
+    PackageComponent,
+    ModalProceedingsComponent,
+  ],
   imports: [
     CommonModule,
     DestructionActsRoutingModule,

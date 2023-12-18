@@ -60,6 +60,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
+import { ListKeyProceedingsComponent } from '../../authorization-assets-destruction/list-key-proceedings/list-key-proceedings.component';
 import { EmailModalComponent } from '../email-modal/email-modal.component';
 import { CLOSE_PROCEEDING_MESSAGE } from '../email-modal/messages/close-proceeding-message';
 import {
@@ -636,6 +637,7 @@ export class DestructionAuthorizationComponent
     this.navigateGoodsProceeding();
     this.navigateProceedingsDelivery();
     this.navigateDictamination();
+    this.researchWhenReturn();
 
     this.user = this.authService.decodeToken().preferred_username;
   }
@@ -732,8 +734,6 @@ export class DestructionAuthorizationComponent
           this.numFile == null
             ? (this.numFile = response.bienes_aceptados[0].expedient)
             : '';
-        } else {
-          this.alert('warning', 'No se cargaron bienes', '');
         }
 
         this.getProceedingGoods();
@@ -809,8 +809,22 @@ export class DestructionAuthorizationComponent
   clearFn() {
     this.cleanTmp();
     this.searched = false;
-    this.goodPDS1.load([]);
     this.queryProceeding();
+    this.goodPDS1.load([]);
+    this.totalItems = 0;
+    this.totalItems2 = 0;
+    this.totalItems3 = 0;
+    this.totalItems4 = 0;
+    this.totalItems5 = 0;
+    this.totalItems6 = 0;
+    this.params.next(new ListParams());
+    this.params2.next(new ListParams());
+    this.params3.next(new ListParams());
+    this.params4.next(new ListParams());
+    this.params5.next(new ListParams());
+    this.params6.next(new ListParams());
+    this.params7.next(new ListParams());
+    this.params8.next(new ListParams());
   }
 
   newProceedingFn() {
@@ -1092,7 +1106,6 @@ export class DestructionAuthorizationComponent
     this.loadingReport = true;
     this.documentsService.create(document).subscribe(
       res => {
-        this.generateScanRequestReport();
         console.log(res);
         this.proceedingForm.get('universalFolio').setValue(res.id);
         console.log('creó documento');
@@ -1642,7 +1655,7 @@ export class DestructionAuthorizationComponent
     ) {
       this.alert(
         'warning',
-        'Error',
+        'Acta cerrada',
         'La Solicitud ya esta cerrada, no puede realizar modificaciones a esta'
       );
       return;
@@ -1913,5 +1926,21 @@ export class DestructionAuthorizationComponent
       );
   }
 
-  //GUARDAR DATOS DEL ACTA
+  //MODAL PARA SELECCIONAR ACTAS
+  openListProceedings() {
+    let config: ModalOptions = {
+      initialState: {
+        typeProceedings: 'RGA',
+        callback: (result: any) => {
+          console.log(result);
+          this.proceedingForm.get('id').setValue(result.id);
+          this.keyProceedingchange();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+
+    this.modalService.show(ListKeyProceedingsComponent, config);
+  }
 }
