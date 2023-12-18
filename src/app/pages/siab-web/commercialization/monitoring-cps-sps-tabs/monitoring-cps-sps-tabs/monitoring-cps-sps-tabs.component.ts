@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -51,7 +52,7 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
   columnsExpenses: any[] = [];
 
   // Paginador
-  paramsFilter: any;
+  paramsFilter = new HttpParams();
   paramsSiab = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsSiab: number = 0;
   //
@@ -85,9 +86,9 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
     this.paramsSirsae
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.fullDataTableSiabOrSirsae());
-    // this.paramsExpenses
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.fullExpenses());
+    this.paramsExpenses
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.fullExpenses());
   }
 
   //
@@ -96,15 +97,17 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
 
   fullDataTableSiabOrSirsae(event?: any) {
     console.log(event);
+    console.log(this.paramsFilter);
     let events: any;
     if (event != undefined) {
       events = event;
+      this.paramsFilter = events;
     } else {
       console.log(this.paramsFilter);
       events = this.paramsFilter;
     }
 
-    if (events?.updates[3].value == 'SIAB') {
+    if (events.system == 'SIAB') {
       this.dataSirsae.load([]);
       this.dataSirsae.refresh();
       this.totalItemsSirsae = 0;
@@ -112,10 +115,11 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
       this.dataExpenses.refresh();
       this.totalItemsExpenses = 0;
 
-      this.paramsFilter = events;
-      console.log(this.paramsFilter);
+      let params = {
+        ...this.paramsSiab.getValue(),
+      };
       this.servicePayment
-        .postIdentifiesPaymentsInconsistency(events, this.paramsSiab.getValue())
+        .postIdentifiesPaymentsInconsistency(events, params)
         .subscribe({
           next: response => {
             this.columnsSiab = [];
@@ -129,7 +133,7 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
             this.dataSiab.refresh();
           },
         });
-    } else if (events?.updates[3].value == 'SIRSAE') {
+    } else if (events.system == 'SIRSAE') {
       this.dataSiab.load([]);
       this.dataSiab.refresh();
       this.totalItemsSiab = 0;
@@ -137,20 +141,24 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
       this.dataExpenses.refresh();
       this.totalItemsExpenses = 0;
 
-      this.paramsFilter = events;
-      this.servicePayment.postIdentifiesPaymentsInconsistency(event).subscribe({
-        next: response => {
-          this.columnsSiab = [];
-          this.columnsSiab = response.data;
-          this.totalItemsSirsae = response.count || 0;
-          this.dataSirsae.load(this.columnsSiab);
-          this.dataSirsae.refresh();
-        },
-        error: error => {
-          this.dataSirsae.load([]);
-          this.dataSirsae.refresh();
-        },
-      });
+      let params = {
+        ...this.paramsSirsae.getValue(),
+      };
+      this.servicePayment
+        .postIdentifiesPaymentsInconsistency(event, params)
+        .subscribe({
+          next: response => {
+            this.columnsSiab = [];
+            this.columnsSiab = response.data;
+            this.totalItemsSirsae = response.count || 0;
+            this.dataSirsae.load(this.columnsSiab);
+            this.dataSirsae.refresh();
+          },
+          error: error => {
+            this.dataSirsae.load([]);
+            this.dataSirsae.refresh();
+          },
+        });
     }
   }
 
@@ -162,7 +170,9 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
     this.dataSirsae.refresh();
     this.totalItemsSirsae = 0;
 
-    let params: ListParams = new ListParams();
+    let params = {
+      ...this.paramsExpenses.getValue(),
+    };
     this.serviceSpent.getExpenses(params).subscribe({
       next: response => {
         this.columnsSiab = [];
