@@ -102,7 +102,10 @@ export class RegisterDocumentationFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       paperDate: [null, [Validators.required]],
-      authorityOrdering: [null, [Validators.pattern(STRING_PATTERN)]],
+      authorityOrdering: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       affair: [null],
       receiptRoute: [null],
       typeOfTransfer: [null],
@@ -113,7 +116,10 @@ export class RegisterDocumentationFormComponent
         [Validators.pattern(NUM_POSITIVE), Validators.maxLength(13)],
       ],
       emailOfOwner: [null, [Validators.pattern(EMAIL_PATTERN)]],
-      trialType: [null, [Validators.pattern(STRING_PATTERN)]],
+      trialType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       trial: [null, [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
       circumstantialRecord: [null, [Validators.pattern(STRING_PATTERN)]],

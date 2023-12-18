@@ -83,6 +83,7 @@
       [attr.class]="'table-bordered table-responsive'"
       [settings]="selectedGoodSettings"
       [source]="selectedGoodColumns"
+      (viewFile)="openDetail($event)"
       (userRowSelect)="selectGoods($event)">
     </ng2-smart-table>
     <div class="table-padding"></div>
