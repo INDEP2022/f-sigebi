@@ -8,7 +8,7 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>ACCIONES</h5>
         </div>
-        <form class="form-material" [formGroup]="form">
+        <form id="testBottomMargin" class="form-material" [formGroup]="form">
           <div class="row mt-3">
             <div class="col-md-3">
               <form-field [control]="form.get('event')" label="Evento">
@@ -82,7 +82,7 @@
                     [ngClass]="{ loading: btnLoading3 }"
                     [disabled]="btnLoading3"
                     type="button"
-                    class="btn btn-block btn-red btn-sm active mr-2 mb-2"
+                    class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
                     (click)="removeInvoice()">
                     Eliminar Folios
                     <i
