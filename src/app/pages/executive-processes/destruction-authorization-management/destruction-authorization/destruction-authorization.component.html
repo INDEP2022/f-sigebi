@@ -21,7 +21,6 @@
               controls.statusProceedings.value == 'CERRADA' || newProceedingFlag
             " />
         </form-field>
-
         <form-field
           class="col-md-4"
           label="Oficio de Solicitud"
@@ -125,6 +124,12 @@
             (click)="keyProceedingchange()">
             Buscar
             <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="openListProceedings()">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
           <button
             *ngIf="!newProceedingFlag"
