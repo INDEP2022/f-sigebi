@@ -40,6 +40,7 @@ export class VerificationWarehouseAssetsComponent
   totalItems: number = 0;
   deductivesSel: IDeductive[] = [];
   loadingDeductives: boolean = false;
+  disabledButton: boolean = false;
   allDeductives: ISamplingDeductive[] = [];
   allSampleGoods: ISampleGood[] = [];
   settingsDeductive = {
@@ -74,6 +75,19 @@ export class VerificationWarehouseAssetsComponent
     //Id de muestreo se obtiene de la tarea
     this.getSampleInfo();
     this.getSampleDeductives();
+    this.checkStatusTask();
+  }
+
+  checkStatusTask() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = `$eq:${_task.id}`;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        if (response.data[0].State == 'FINALIZADA') this.disabledButton = true;
+      },
+      error: () => ({}),
+    });
   }
 
   getSampleInfo() {
@@ -91,6 +105,7 @@ export class VerificationWarehouseAssetsComponent
 
   getGoodsSampling() {
     this.params.getValue()['filter.sampleId'] = this.idSample;
+    this.params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
     this.samplingService.getSamplingGoods(this.params.getValue()).subscribe({
       next: response => {
         this.paragraphs.load(response.data);
@@ -314,6 +329,29 @@ export class VerificationWarehouseAssetsComponent
 
   getSearchForm(event: any) {
     this.filterObject = event;
+
+    if (this.filterObject != false) {
+      if (this.filterObject.noManagement)
+        this.params.getValue()['filter.goodId'] =
+          this.filterObject.noManagement;
+
+      if (this.filterObject.noInventory)
+        this.params.getValue()['filter.inventoryNumber'] =
+          this.filterObject.noInventory;
+
+      if (this.filterObject.descriptionAsset)
+        this.params.getValue()['filter.description'] =
+          this.filterObject.descriptionAsset;
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsSampling());
+    } else if (this.filterObject == false) {
+      this.params = new BehaviorSubject<ListParams>(new ListParams());
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsSampling());
+    }
   }
 
   goodsSamplingSelect(event: any) {

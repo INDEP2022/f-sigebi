@@ -88,13 +88,12 @@ export class PreviewDocumentsComponent extends BasePage implements OnInit {
     this.loading = true;
     const merged = this.mergeConfig(DEFAULT_CONFIG, this.moduleConfig);
     this.config = this.mergeConfig(merged, this.config);
-    console.log(this.config);
-    console.log(this.documento.urlDoc);
+
     this.triggerConfigBinding();
     this.zoom > 0 ? this.zoomInit(this.zoom) : null;
     // this.zoomInit(1.4);
     if (this.documento.type == 'pdf') this.loading = false;
-    console.log(this.documento.type);
+
     this.overSizeFiles();
   }
 

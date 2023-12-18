@@ -16,7 +16,6 @@
           <i class="bx bx-list-plus bx-sm float-icon"></i>
         </button>
         <button
-          text="Buscar"
           class="btn btn-primary btn-sm active mr-3"
           (click)="searchData()">
           Buscar
@@ -48,8 +47,8 @@
         </div>
         <div class="col-md-3 mt-3">
           <form-field [control]="form.get('expDate')" label="Fecha Expedición">
+            <!-- [ngClass]="{ 'not-press bg-gray': dataJob }" -->
             <input
-              [ngClass]="{ 'not-press bg-gray': dataJob }"
               type="text"
               class="form-control"
               bsDatepicker
@@ -124,7 +123,6 @@
         </div>
         <div class="col-md-6 mt-3 text-center">
           <button
-            text="Buscar"
             [disabled]="!dataJob"
             class="btn btn-info btn-sm active"
             (click)="openModal()">

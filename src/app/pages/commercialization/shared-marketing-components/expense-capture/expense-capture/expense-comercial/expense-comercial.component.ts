@@ -29,11 +29,11 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
+import { PolicyService } from 'src/app/core/services/ms-policy/policy.service';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDateAny } from 'src/app/shared/utils/date';
-import { ILoadLotResponse } from '../../models/lot';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
@@ -84,7 +84,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   provider: string;
-  showCvePoliza = false;
   showEvent = true;
   showLote = true;
   //
@@ -129,6 +128,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private massiveGoodService: ExpenseMassiveGoodService,
+    private policyService: PolicyService,
     private expenseModalService: ExpenseModalService,
     private parameterService: ParametersConceptsService
   ) {
@@ -417,6 +417,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.VISIBLE_PB_ESTATUS = true;
     this.VISIBLE_CARGA_BIENES = true;
     this.VISIBLE_DISPERSA = true;
+  }
+
+  get showCvePoliza() {
+    return this.dataService.showCvePoliza;
+  }
+
+  set showCvePoliza(value) {
+    this.dataService.showCvePoliza = value;
   }
 
   get showTipoOp() {
@@ -747,18 +755,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       setTimeout(() => {
         localStorage.removeItem('eventExpense');
       }, 500);
-      this.dataService.formScan
-        .get('folioUniversal')
-        .setValue(localStorage.getItem('fcomer084I_folio'));
-      setTimeout(() => {
-        localStorage.removeItem('fcomer084I_folio');
-      }, 500);
     }
-    // this.expenseModalService.selectedMotivesSubject.subscribe({
-    //   next: response => {
-    //     console.log(response);
-    //   },
-    // });
   }
 
   private usuarioCapturaDataI(user: string) {
@@ -895,6 +892,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.setConceptScreenI(user);
     }
     await this.readParams(concept.conceptId);
+    if (this.address === 'M') {
+      this.dataService.V_VALCON_ROBO = await firstValueFrom(
+        this.screenService.PUP_VAL_CONCEP_ROBO(concept.conceptId)
+      );
+      await this.dataService.getLS_ESTATUS(+concept.conceptId);
+      this.controlsInDet();
+    }
   }
 
   updateLot(lot: { lotPublic: string; idLot: string; idEvent: string }) {
@@ -986,14 +990,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.alert('error', 'No a escaneado los documentos', '');
       return;
     }
-    if (this.address !== 'M') {
-      let documents2 = await this.getDocuments(true);
-      if (!documents2) {
-        this.loader.load = false;
-        this.alert('error', 'No a escaneado los documentos', '');
-        return;
-      }
-    }
+    // if (this.address !== 'M') {
+    //   let documents2 = await this.getDocuments(true);
+    //   if (!documents2) {
+    //     this.loader.load = false;
+    //     this.alert('error', 'No a escaneado los documentos', '');
+    //     return;
+    //   }
+    // }
     this.expenseGoodProcessService
       .replyFolio({
         goodArray: this.dataService.dataCompositionExpenses
@@ -1101,21 +1105,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       );
   }
 
-  private updateGoodsByLote(response: ILoadLotResponse) {
-    let { selectChange } = response;
-    this.dataService.SELECT_CAMBIA_CLASIF_ENABLED =
-      selectChange.SELECT_CAMBIA_CLASIF_ENABLED;
-    this.dataService.SELECT_CAMBIA_CLASIF_UPDATE =
-      selectChange.SELECT_CAMBIA_CLASIF_UPDATE;
-    this.dataService.V_BIEN_REP_ROBO += selectChange.V_BIEN_REP_ROBO;
-    if (selectChange.SELECT_CAMBIA_CLASIF === 'S') {
-      this.dataService.SELECT_CAMBIA_CLASIF = true;
-    } else {
-      this.dataService.SELECT_CAMBIA_CLASIF = false;
-    }
-    this.dataService.addByLotExpenseComposition.next(response);
-  }
-
   private CARGA_BIENES_LOTE_XDELRES(
     v_id_evento: number,
     v_id_lote: number,
@@ -1134,7 +1123,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           if (response) {
             console.log(response);
             this.alert('success', 'Se han cargado los bienes del lote', '');
-            this.updateGoodsByLote(response);
+            this.dataService.addByLotExpenseComposition.next(response.data);
           }
         },
         error: err => {
@@ -1158,10 +1147,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: response => {
-          if (response) {
+          if (response && response.data && response.data.length > 0) {
             console.log(response);
             this.alert('success', 'Se han cargado los bienes del lote', '');
-            this.updateGoodsByLote(response);
+            this.dataService.addByLotExpenseComposition.next(response.data);
           }
         },
         error: err => {
@@ -1358,7 +1347,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
-  private fillFormSecond(event: any, updateDetails = true) {
+  private async fillFormSecond(event: any, updateDetails = true) {
     if (this.address !== 'M') {
       this.dataService.address = 'I';
     }
@@ -1373,6 +1362,17 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       secondFormatDateToDateAny(event.dateOfResolution)
     );
     this.comment.setValue(event.comment);
+
+    if (
+      this.address === 'M' &&
+      this.conceptNumber.value !== event.conceptNumber
+    ) {
+      this.dataService.V_VALCON_ROBO = await firstValueFrom(
+        this.screenService.PUP_VAL_CONCEP_ROBO(event.conceptNumber)
+      );
+      await this.dataService.getLS_ESTATUS(+event.conceptNumber);
+      this.controlsInDet();
+    }
     this.conceptNumber.setValue(event.conceptNumber);
     this.eventNumber.setValue(event.eventNumber);
     this.lotNumber.setValue(event.lotNumber);
@@ -1396,10 +1396,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       // if (this.address === 'M') {
       //   this.dataService.updateFolio.next(true);
       // }
-      this.dataService.V_VALCON_ROBO = await firstValueFrom(
-        this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
-      );
-      this.controlsInDet();
       const responseParams = await this.readParams(event.conceptNumber);
       if (!responseParams) {
         return;
@@ -1429,9 +1425,30 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
   }
 
+  set havePolicie(value) {
+    this.dataService.havePolicie = value;
+  }
+
   async fillForm(expense: IComerExpense) {
-    console.log(event);
+    // console.log(event);
     this.clean(false);
+    if (this.showCvePoliza) {
+      let filterParams = new FilterParams();
+      filterParams.addFilter('idSpent', expense.expenseNumber);
+      this.policyService.getAllPolicies(filterParams.getParams()).subscribe({
+        next: response => {
+          if (response && response.data && response.data.length > 0) {
+            this.form.get('policie').setValue(response.data[0].policyKeyId);
+            this.havePolicie = true;
+          } else {
+            this.havePolicie = false;
+          }
+        },
+        error: err => {
+          this.havePolicie = false;
+        },
+      });
+    }
     this.fillFormSecond(expense);
   }
 
@@ -1449,7 +1466,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   get pathConcept() {
     return (
-      'comerconcepts/api/v1/application/query-eat-concepts' +
+      'comerconcepts/api/v1/application/query-eat-concepts?sortBy=conceptId:ASC' +
       (this.address
         ? '?filter.address=$in:' +
           this.address +
@@ -1465,36 +1482,33 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get pathEvent() {
     // return 'prepareevent/api/v1/comer-event/getProcess';
     return (
-      'event/api/v1/comer-event?filter.eventTpId:$in:1,2,3,4,5' +
-      (this.address
-        ? (this.address === 'M' ? ',10' : '') +
-          '&filter.address=$eq:' +
-          this.address
-        : '' + (this.address === 'M' ? ',10' : ''))
+      'event/api/v1/comer-event?sortBy=id:ASC&filter.eventTpId:$in:1,2,3,4,5' +
+      (this.address ? '&filter.address=$eq:' + this.address : '')
+      // (this.address
+      //   ? (this.address === 'M' ? ',10' : '') +
+      //     '&filter.address=$eq:' +
+      //     this.address
+      //   : '' + (this.address === 'M' ? ',10' : ''))
     );
-  }
-
-  get pathPolicy() {
-    return 'policy/api/v1/policies';
   }
 
   get idEventFilterPath() {
     return this.eventNumber && this.eventNumber.value
-      ? '?filter.idEvent=' + this.eventNumber.value
+      ? '&filter.idEvent=' + this.eventNumber.value
       : '';
   }
 
   get idLotFilterPath() {
     return this.lotNumber && this.lotNumber.value
-      ? (this.idEventFilterPath.length > 0 ? '&' : '?') +
-          'filter.idLot=' +
-          this.lotNumber.value
+      ? '&filter.idLot=' + this.lotNumber.value
       : '';
   }
 
   get pathLote() {
     return (
-      'lot/api/v1/eat-lots' + this.idEventFilterPath + this.idLotFilterPath
+      'lot/api/v1/eat-lots?sortBy=lotPublic:ASC' +
+      this.idEventFilterPath +
+      this.idLotFilterPath
     );
   }
 
@@ -1520,7 +1534,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (this.paymentRequestNumber && this.paymentRequestNumber.value) {
         return true;
       }
+
       if (this.expenseNumber && this.expenseNumber.value) {
+        return true;
         return (
           this.form.get('captureDate') &&
           this.form.get('captureDate').value &&

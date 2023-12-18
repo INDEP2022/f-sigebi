@@ -57,8 +57,9 @@ export interface ICancelVtaDTO {
 }
 
 export interface ILoadLotResponse {
-  goods: { cvman: string; no_bien: string }[];
-  selectChange: {
+  cvman: string;
+  no_bien: string;
+  valGoodSteal: {
     SELECT_CAMBIA_CLASIF_UPDATE: boolean;
     SELECT_CAMBIA_CLASIF_ENABLED: boolean;
     V_BIEN_REP_ROBO: number;
