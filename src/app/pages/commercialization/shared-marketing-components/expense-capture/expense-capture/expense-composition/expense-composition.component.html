@@ -21,6 +21,7 @@
               <button
                 *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active"
+                [disabled]="!SELECT_CAMBIA_ESTATUS_ENABLED"
                 style="
                   width: 100px;
                   display: flex;
@@ -119,6 +120,31 @@
           </div>
         </div>
 
+        <form class="form-material" [formGroup]="form" *ngIf="showCvePoliza">
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              [updateValues]="true"
+              formControlName="policie"
+              label="Cve Poliza"
+              [path]="pathPolicy"
+              value="policyKeyId"
+              bindLabel="description"
+              [readonly]="!havePolicie"
+              [labelTemplate]="policieLabel"
+              [optionTemplate]="policieOption">
+            </ng-custom-select-loading>
+          </div>
+          <ng-template #policieLabel let-item="item">
+            {{ item.policyKeyId }} - {{ item.description }}
+          </ng-template>
+          <ng-template #policieOption let-item="item">
+            <div [title]="item.policyKeyId + '-' + item.description">
+              {{ item.policyKeyId }} - {{ item.description }}
+            </div>
+          </ng-template>
+        </form>
+
         <tr>
           <td colspan="5" align="center">
             <button
@@ -204,6 +230,7 @@
               *ngIf="address !== 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
+              [disabled]="!validChargeGoods"
               (click)="loadGoodsI()">
               Carga de Bienes
             </button>

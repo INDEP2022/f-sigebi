@@ -138,6 +138,8 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   di_status_good: any = null;
   columnFilters: any = [];
   completeFilters: any[] = [];
+  columnFiltersAct: any = [];
+  completeFiltersAct: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -200,6 +202,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.navigateGoodTable();
     this.navigateGoodAct();
     this.columnFilterTable();
+    this.columnFilterTableAct();
 
     if (
       localStorage.getItem('expediente') &&
@@ -231,26 +234,27 @@ export class DestructionActsComponent extends BasePage implements OnInit {
           });
           this.searchGoodsByExp();
         }
+      });
+  }
 
-        /* if (change.action === 'filter') {
+  columnFilterTableAct() {
+    this.dataGoodsAct
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
           let filters = change.filter.filters;
-          console.log(this.columnFilters);
-          console.log(this.columnFilters.length);
-          if (this.columnFilters.length > 0) {
-            if (
-              this.columnFilters.find(
-                (e: any) => e.field == filters[0].field
-              ) == null
-            ) {
-              this.columnFilters.push(filters[0]);
+          this.completeFiltersAct = filters;
+          filters.map((filter: any) => {
+            let searchFilter = SearchFilter.ILIKE;
+            if (filter.search !== '') {
+              this.columnFiltersAct[
+                filter.field
+              ] = `${searchFilter}:${filter.search}`;
             }
-          } else {
-            console.log('Hizo esto');
-            this.columnFilters.push(filters[0]);
-          }
-
-          this.searchGoodsByExp();
-        } */
+          });
+          this.searchGoodsInDetailProceeding();
+        }
       });
   }
 
@@ -607,6 +611,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
     console.log(this.columnFilters);
+
     for (let data of this.completeFilters) {
       if (data.search != null && data.search != '') {
         paramsF.addFilter(
@@ -652,17 +657,33 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.page = this.params2.value.page;
     paramsF.limit = this.params2.value.limit;
-    this.serviceDetailProc.getGoodsByProceedings(this.idProceeding).subscribe(
-      res => {
-        console.log(res);
-        this.dataGoodsAct.load(res.data);
-        this.totalItems2 = res.count;
-      },
-      err => {
-        this.dataGoodsAct.load([]);
-        console.log(err);
+
+    for (let data of this.completeFiltersAct) {
+      if (data.search != null && data.search != '') {
+        paramsF.addFilter(
+          data.field,
+          data.search,
+          data.field != 'numberGood' ? SearchFilter.ILIKE : SearchFilter.EQ
+        );
       }
-    );
+    }
+
+    this.serviceDetailProc
+      .getGoodsByProceedings(this.idProceeding, paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.dataGoodsAct.load(res.data);
+          this.totalItems2 = res.count;
+          this.loadingTable = false;
+        },
+        err => {
+          this.dataGoodsAct.load([]);
+          this.totalItems2 = 0;
+          console.log(err);
+          this.loadingTable = false;
+        }
+      );
   }
 
   //CAMBIAR BOTON SEGÚN ESTADO
@@ -1491,6 +1512,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         no_acta: this.idProceeding,
         callback: (data: any) => {
           console.log(data);
+          this.navigateProceedings = true;
           this.idProceeding = data.id;
           this.expedient.setValue(data.numFile);
           this.act2.setValue(data.keysProceedings);
