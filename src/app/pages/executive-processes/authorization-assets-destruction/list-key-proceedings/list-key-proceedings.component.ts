@@ -17,6 +17,7 @@ import { COLUMNSLIST } from './columns-list-key';
   styleUrls: [],
 })
 export class ListKeyProceedingsComponent extends BasePage implements OnInit {
+  typeProceedings: string = 'AXD';
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -60,7 +61,7 @@ export class ListKeyProceedingsComponent extends BasePage implements OnInit {
       }
     }
 
-    paramsF.addFilter('typeProceedings', 'AXD');
+    paramsF.addFilter('typeProceedings', this.typeProceedings);
     this.proceedingsDetailDel.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
