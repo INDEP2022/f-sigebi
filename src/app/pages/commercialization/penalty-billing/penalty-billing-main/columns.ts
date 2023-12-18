@@ -28,6 +28,9 @@ export const PEN_INVOICING_COLUMNS = {
       type: 'custom',
       component: CustomDateFilterComponent,
     },
+    filterFunction: () => {
+      return true;
+    },
   },
   customer: {
     title: 'Cliente',
@@ -116,5 +119,41 @@ export const PEN_INVOICING_COLUMNS = {
       type: 'custom',
       component: CustomFilterComponent,
     },
+  },
+  cvman: {
+    title: 'Transferente',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  Iauthorize: {
+    title: 'Autoriza',
+    sort: false,
+  },
+  street: {
+    title: 'Calle',
+    sort: false,
+  },
+  cologne: {
+    title: 'Colonia',
+    sort: false,
+  },
+  municipality: {
+    title: 'Municipio',
+    sort: false,
+  },
+  state: {
+    title: 'Estado',
+    sort: false,
+  },
+  rfc: {
+    title: 'R.F.C.',
+    sort: false,
+  },
+  cop: {
+    title: 'Cp',
+    sort: false,
   },
 };
