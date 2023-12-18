@@ -17,7 +17,7 @@ export class ReportInvoiceService extends HttpService {
 
   create(data: any) {
     const route = `comer-rectfactimgnews`;
-    return this.get(route, data);
+    return this.post(route, data);
   }
 
   update(data: any) {

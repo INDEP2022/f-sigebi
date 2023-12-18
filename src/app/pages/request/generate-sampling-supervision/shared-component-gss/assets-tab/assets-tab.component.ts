@@ -35,6 +35,7 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   @Input() typeTask: string = '';
   @Input() idSample: number = 0;
   @Input() filterObject: any;
+  @Input() disabledButton: boolean;
   bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
   assetsArray: any[] = [];
@@ -86,7 +87,6 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('typeTask', this.typeTask);
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsSampling());
@@ -540,17 +540,25 @@ export class AssetsTabComponent extends BasePage implements OnInit {
   }
 
   editSampleGood(good: ISampleGood) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      good,
-      callback: (next: boolean) => {
-        if (next)
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getGoodsSampling());
-      },
-    };
-    this.modalService.show(EditGoodSampleComponent, config);
+    if (!this.disabledButton) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        good,
+        callback: (next: boolean) => {
+          if (next)
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getGoodsSampling());
+        },
+      };
+      this.modalService.show(EditGoodSampleComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'La tarea ya se completo verifique'
+      );
+    }
   }
 
   approveGood() {

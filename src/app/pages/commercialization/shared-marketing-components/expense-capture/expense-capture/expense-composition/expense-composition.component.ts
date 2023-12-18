@@ -5,7 +5,6 @@ import {
   catchError,
   firstValueFrom,
   forkJoin,
-  map,
   mergeMap,
   Observable,
   of,
@@ -511,10 +510,29 @@ export class ExpenseCompositionComponent
   }
 
   get validateModifyEstatus() {
-    return (
-      this.showAdd &&
-      (this.address === 'M' ? this.changeStatusFilter.length === 0 : true)
-    );
+    let validation = this.showAdd;
+    if (this.address === 'I') {
+      return validation;
+    }
+    if (validation) {
+      if (this.LS_ESTATUS) {
+        return true;
+      } else if (this.goodFilter.length === 0) {
+        return true;
+      } else {
+        if (this.eventNumber) {
+          if (
+            this.expense.comerEven &&
+            this.expense.comerEven.eventTpId === '10'
+          ) {
+            return this.changeStatusFilter.length > 0;
+          } else {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   get showAdd() {
@@ -525,6 +543,10 @@ export class ExpenseCompositionComponent
     return this.data
       ? this.data.filter(row => row.changeStatus && row.changeStatus === true)
       : [];
+  }
+
+  get goodFilter() {
+    return this.data ? this.data.filter(row => row.goodNumber) : [];
   }
 
   get amount() {
@@ -605,12 +627,6 @@ export class ExpenseCompositionComponent
         this.dataPaginated.refresh();
       });
     });
-  }
-
-  get dataCompositionExpensesStatusChange() {
-    return this.data
-      ? this.data.filter(row => row.changeStatus && row.changeStatus === true)
-      : [];
   }
 
   async sendToSIRSAE() {
@@ -913,6 +929,9 @@ export class ExpenseCompositionComponent
     if (!this.dataService) {
       return;
     }
+    if (!this.expenseNumber.value) {
+      return;
+    }
     this.resetTotals();
     this.loading = true;
     let params = this.getParams();
@@ -1110,33 +1129,17 @@ export class ExpenseCompositionComponent
     this.expenseCaptureDataService.actionButton = value;
   }
 
+  get LS_ESTATUS() {
+    return this.expenseCaptureDataService.LS_ESTATUS;
+  }
+
   private async modifyEstatusM() {
-    let filterParams = new FilterParams();
-    filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
-    if (this.conceptNumber) {
-      filterParams.addFilter('conceptId', this.conceptNumber.value);
-    }
     // let dataContent = await this.dataPaginated.getAll();
     // console.log(dataContent);
-    let ls_status = await firstValueFrom(
-      this.parameterService.getAll(filterParams.getParams()).pipe(
-        catchError(x => of(null)),
-        map(x => {
-          if (x) {
-            return x.data ? (x.data.length > 0 ? x.data[0].value : null) : null;
-          } else {
-            return null;
-          }
-        })
-      )
-    );
-    if (ls_status) {
+    // let ls_status = await this.expenseCaptureDataService.getLS_ESTATUS();
+    if (this.LS_ESTATUS) {
       this.sendSolicitud();
-    } else if (
-      this.changeStatusFilter &&
-      this.changeStatusFilter.length > 0 &&
-      this.changeStatusFilter[0].goodNumber === null
-    ) {
+    } else if (this.goodFilter.length === 0) {
       this.sendSolicitud();
     } else {
       if (this.eventNumber) {

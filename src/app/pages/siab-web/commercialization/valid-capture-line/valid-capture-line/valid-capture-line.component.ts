@@ -55,16 +55,22 @@ export class validCaptureLineComponent extends BasePage implements OnInit {
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'caseNumber':
-                searchFilter = SearchFilter.EQ;
+              case 'estatus':
+                searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'noDocument':
+              case 'tipo':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'cliente':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'fec_vigencia':
+                filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
             }
             if (filter.search !== '') {
@@ -81,10 +87,19 @@ export class validCaptureLineComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      typeEvent: [null, []],
-      idEvent: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      allotment: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      idClient: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      typeEvent: [null, [Validators.required]],
+      idEvent: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+      ],
+      allotment: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+      ],
+      idClient: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+      ],
     });
   }
 

@@ -9,9 +9,16 @@
       <app-card [header]="false">
         <div body>
           <div class="d-flex justify-content-end">
-            <div class="p-2">
+            <div class="p-2" *ngIf="!disabledButton">
               <button
                 class="btn btn-primary btn-sm active"
+                (click)="turnSampling()">
+                Turnar muestreo <i class="bx bxs-right-arrow-square"></i>
+              </button>
+            </div>
+            <div class="p-2" *ngIf="disabledButton">
+              <button
+                class="btn btn-primary disabled btn-sm active"
                 (click)="turnSampling()">
                 Turnar muestreo <i class="bx bxs-right-arrow-square"></i>
               </button>
@@ -95,6 +102,7 @@
             [willSave]="willSave"
             [idSample]="idSample"
             [filterObject]="filterObject"
+            [disabledButton]="disabledButton"
             [typeTask]="'assets-approval'"></app-assets-tab>
         </tab>
         <tab heading="Deductivas">
