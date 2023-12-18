@@ -42,6 +42,7 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   allDeductives: ISamplingDeductive[] = [];
   filterObject: any;
+  disabledButton: boolean = false;
   filterForm: FormGroup = new FormGroup({});
   settingsDeductives = {
     ...TABLE_SETTINGS,
@@ -68,6 +69,19 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
     this.getSampleInfo();
     this.getSampleDeductives();
     this.initFilterForm();
+    this.checkStatusTask();
+  }
+
+  checkStatusTask() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = `$eq:${_task.id}`;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        if (response.data[0].State == 'FINALIZADA') this.disabledButton = true;
+      },
+      error: () => ({}),
+    });
   }
 
   initFilterForm() {
