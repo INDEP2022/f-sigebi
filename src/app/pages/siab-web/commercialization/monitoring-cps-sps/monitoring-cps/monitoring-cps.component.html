@@ -14,7 +14,7 @@
               <form-radio label="Inconsistencias desde SIAB">
                 <input
                   type="radio"
-                  [value]="true"
+                  value="SIAB"
                   formControlName="radioOne"
                   (change)="siabCheckedChanged()" />
               </form-radio>
@@ -23,8 +23,8 @@
               <form-radio label="Inconsistencia desde SIRSAE">
                 <input
                   type="radio"
-                  formControlName="radioTwo"
-                  [value]="true"
+                  formControlName="radioOne"
+                  value="SIRSAE"
                   (change)="sirsaeCheckedChanged()" />
               </form-radio>
             </div>
@@ -75,7 +75,7 @@
             <div class="col-md-6">
               <form-field [control]="form.get('to')" label="Al:">
                 <input
-                  [maxDate]="maxDate"
+                  [maxDate]="today"
                   formControlName="to"
                   class="form-control"
                   [minDate]="form.get('from').value"

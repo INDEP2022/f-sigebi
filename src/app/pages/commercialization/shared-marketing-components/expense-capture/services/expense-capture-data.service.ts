@@ -42,7 +42,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   LS_EVENTO: number;
   dataCompositionExpenses: IComerDetExpense2[] = [];
   selectedComposition: IComerDetExpense2;
-  addByLotExpenseComposition = new Subject<ILoadLotResponse>();
+  addByLotExpenseComposition = new Subject<ILoadLotResponse[]>();
   updateExpenseComposition = new Subject();
   resetExpenseComposition = new Subject();
   updateExpenseAfterChangeTotalDetail = new Subject();
@@ -53,7 +53,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   updateOI = new Subject();
   updateFolio = new Subject();
   P_PRUEBA: number;
-  SELECT_CAMBIA_CLASIF = false;
+  havePolicie = false;
   PMONTOXMAND: string;
   PDEVCLIENTE: string = null;
   PCAMBIAESTATUS: string;
@@ -83,6 +83,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   total = 0;
   totalMandatos = 0;
   V_BIEN_REP_ROBO = 0;
+  SELECT_CAMBIA_ESTATUS_ENABLED = true;
   PB_VEHICULO_REP_ROBO_DISPLAYED = true;
   PB_VEHICULO_REP_ROBO_ENABLED = false;
   SELECT_CAMBIA_CLASIF_ENABLED = false;
@@ -98,6 +99,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   showContract = false;
   showTipAdj = false;
   showAdj = false;
+  showCvePoliza = false;
   //show buttons
   VISIBLE_PB_ESTATUS = true;
   VISIBLE_CARGA_BIENES = true;
@@ -130,6 +132,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   clean() {
     this.form.reset();
+    this.havePolicie = false;
     // this.publicLot = null;
     this.actionButton = '';
     this.data = null;
@@ -262,7 +265,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.VALBIEVEND = row.VALBIEVEND ?? 'N';
     this.PNOENVIASIRSAE = row.PNOENVIASIRSAE ?? 'N';
     this.PDEVPARCIALBIEN = row.PDEVPARCIALBIEN ?? 'N';
+    if (this.PVALIDADET !== row.PVALIDADET) {
+      setTimeout(() => {
+        this.updateExpenseComposition.next(true);
+      }, 100);
+    }
     this.PVALIDADET = row.PVALIDADET ?? 'N';
+    if (this.PVALIDADET === 'S') {
+      this.SELECT_CAMBIA_ESTATUS_ENABLED = true;
+    } else {
+      this.SELECT_CAMBIA_ESTATUS_ENABLED = false;
+    }
   }
 
   readParams(conceptId: string) {
@@ -1388,6 +1401,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         user: this.user.preferred_username,
         spentId: this.expenseNumber.value,
         address: 'M',
+        idConcepto: this.conceptNumber.value,
         cat_motivos_rev: this.expenseModalService.selectedMotives.map(x => {
           return { motiveDescription: x.descriptionCause, selection: 1 };
         }),
@@ -1401,6 +1415,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           //   ''
           // );
           // this.sucessSendSolitudeMessage();
+          this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           this.updateExpenseComposition.next(true);
         },
@@ -1419,17 +1434,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         pEventId: this.eventNumber.value,
         pLotPub: this.publicLot.value,
         pSpentId: this.expenseNumber.value,
-        pTotIva: this.IVA + '',
-        pTotMonto: this.amount + '',
-        pTotTot: this.total + '',
+        pTotIva: this.IVA,
+        pTotMonto: this.amount,
+        pTotTot: this.total,
+        pConceptId: this.conceptNumber.value,
         address: 'M',
+        pPrueba: this.P_PRUEBA,
         comerDetBills: this.dataCompositionExpenses.map(x => {
           return {
             selectChangeStatus: x.changeStatus ? 'S' : 'N',
-            goodNumber: +x.goodNumber,
-            pConceptId: this.conceptNumber.value,
+            goodNumber: x.goodNumber ? +x.goodNumber : null,
             plot2: this.lotNumber.value,
-            pProof: this.P_PRUEBA,
             pChangeStatus: this.PCAMBIAESTATUS,
             pUser: this.user.preferred_username,
           };
@@ -1443,6 +1458,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           //   'Se generó la cancelación parcial correctamente',
           //   ''
           // );
+          this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           // this.sucessSendSolitudeMessage();
           this.updateExpenseComposition.next(true);
@@ -1498,6 +1514,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .subscribe({
         next: response => {
           // this.sucessSendSolitudeMessage();
+          if (response) {
+            this.P_PRUEBA = response.prueba;
+          }
           this.alert(
             'success',
             'Se generó la cancelación de venta correctamente',
@@ -1524,13 +1543,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   private async CANCELA_VTA_NORMALI() {
     if (this.lotNumber.value) {
-      this.lotService
-        .update({
+      await firstValueFrom(
+        this.lotService.update({
           idLote: this.lotNumber.value,
           idStatusVta: 'CDEV',
         })
-        .pipe(take(1))
-        .subscribe();
+      );
+
       this.REGRESA_ESTATUS_BIEN();
     } else {
       this.alert('warning', 'Necesita seleccionar un lote para continuar', '');
@@ -1597,7 +1616,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .PUP_LLENA_DATOSREV({
         pEvent: this.eventNumber.value,
         pGood: +detailWidthGoods[0].goodNumber,
-        pScreen: 'FCOMER084',
+        pScreen: 'FCOMER084_I',
         reasons,
         reason1: '',
         reason2: '',

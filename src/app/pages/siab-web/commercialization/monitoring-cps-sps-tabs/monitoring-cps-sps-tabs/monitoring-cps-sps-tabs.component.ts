@@ -81,10 +81,10 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
     this.fullYear();
     this.paramsSiab
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.fullDataTableSiabOrSirsae(this.paramsFilter));
+      .subscribe(() => this.fullDataTableSiabOrSirsae());
     this.paramsSirsae
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.fullDataTableSiabOrSirsae(this.paramsFilter));
+      .subscribe(() => this.fullDataTableSiabOrSirsae());
     // this.paramsExpenses
     //   .pipe(takeUntil(this.$unSubscribe))
     //   .subscribe(() => this.fullExpenses());
@@ -94,12 +94,17 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
 
   fullYear() {}
 
-  fullDataTableSiabOrSirsae(event: any) {
-    console.log(
-      'El tipo de evento de los parametros -  el sistema: ',
-      event?.updates[3].value
-    );
-    if (event?.updates[3].value == 'SIAB') {
+  fullDataTableSiabOrSirsae(event?: any) {
+    console.log(event);
+    let events: any;
+    if (event != undefined) {
+      events = event;
+    } else {
+      console.log(this.paramsFilter);
+      events = this.paramsFilter;
+    }
+
+    if (events?.updates[3].value == 'SIAB') {
       this.dataSirsae.load([]);
       this.dataSirsae.refresh();
       this.totalItemsSirsae = 0;
@@ -107,21 +112,24 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
       this.dataExpenses.refresh();
       this.totalItemsExpenses = 0;
 
-      this.paramsFilter = event;
-      this.servicePayment.postIdentifiesPaymentsInconsistency(event).subscribe({
-        next: response => {
-          this.columnsSiab = [];
-          this.columnsSiab = response.data;
-          this.totalItemsSiab = response.count || 0;
-          this.dataSiab.load(this.columnsSiab);
-          this.dataSiab.refresh();
-        },
-        error: error => {
-          this.dataSiab.load([]);
-          this.dataSiab.refresh();
-        },
-      });
-    } else if (event?.updates[3].value == 'SIRSAE') {
+      this.paramsFilter = events;
+      console.log(this.paramsFilter);
+      this.servicePayment
+        .postIdentifiesPaymentsInconsistency(events, this.paramsSiab.getValue())
+        .subscribe({
+          next: response => {
+            this.columnsSiab = [];
+            this.columnsSiab = response.data;
+            this.totalItemsSiab = response.count || 0;
+            this.dataSiab.load(this.columnsSiab);
+            this.dataSiab.refresh();
+          },
+          error: error => {
+            this.dataSiab.load([]);
+            this.dataSiab.refresh();
+          },
+        });
+    } else if (events?.updates[3].value == 'SIRSAE') {
       this.dataSiab.load([]);
       this.dataSiab.refresh();
       this.totalItemsSiab = 0;
@@ -129,7 +137,7 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
       this.dataExpenses.refresh();
       this.totalItemsExpenses = 0;
 
-      this.paramsFilter = event;
+      this.paramsFilter = events;
       this.servicePayment.postIdentifiesPaymentsInconsistency(event).subscribe({
         next: response => {
           this.columnsSiab = [];

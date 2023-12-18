@@ -126,6 +126,7 @@ export class monitoringSpsComponent extends BasePage implements OnInit {
       this.servicePipe.transform(this.form.controls['to'].value, 'dd/MM/yyyy')
     );
     params = params.append('concepts', this.formTwo.controls['concepts'].value);
+    console.log(params);
     this.fullExpensesEmit.emit(params);
   }
 

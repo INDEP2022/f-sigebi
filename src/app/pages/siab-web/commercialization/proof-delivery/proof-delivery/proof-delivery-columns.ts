@@ -1,17 +1,17 @@
 export const PROOF_DELIVERY_COLUMNS = {
-  id_factura: {
+  voucherId: {
     title: 'Id. Factura',
     sort: false,
   },
-  id_evento: {
+  eventId: {
     title: 'Evento',
     sort: false,
   },
-  cve_procesotp: {
+  processTpKey: {
     title: 'Cve. Evento',
     sort: false,
   },
-  lote_publico: {
+  publicLot: {
     title: 'LP',
     sort: false,
   },
@@ -23,15 +23,15 @@ export const PROOF_DELIVERY_COLUMNS = {
     title: 'RFC',
     sort: false,
   },
-  fe_fecha_firmado: {
+  signedDate: {
     title: 'Fecha Timbrado',
     sort: false,
   },
-  factura: {
+  voucher: {
     title: 'Factura',
     sort: false,
   },
-  delegacion_desc: {
+  descDescription: {
     title: 'Delegación',
     sort: false,
   },
