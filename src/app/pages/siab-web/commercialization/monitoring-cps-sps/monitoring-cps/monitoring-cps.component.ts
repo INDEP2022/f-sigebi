@@ -128,29 +128,28 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
   }
 
   fullSiab() {
-    let params = new HttpParams();
-    params = params.append(
-      'eventId',
-      this.form.controls['event'].value?.idevento
-    );
-    params = params.append(
-      'startDate',
-      this.servicePipe.transform(this.form.controls['from'].value, 'dd/MM/yyyy')
-    );
-    params = params.append(
-      'endDate',
-      this.servicePipe.transform(this.form.controls['to'].value, 'dd/MM/yyyy')
-    );
-    params = params.append('system', 'SIAB');
+    let params = {
+      eventId: this.form.controls['event'].value?.idevento,
+      startDate: this.servicePipe.transform(
+        this.form.controls['from'].value,
+        'dd/MM/yyyy'
+      ),
+      endDate: this.servicePipe.transform(
+        this.form.controls['to'].value,
+        'dd/MM/yyyy'
+      ),
+      system: 'SIAB',
+    };
     this.dataSiabParamsFilter.emit(params);
   }
 
   fullSirsae() {
-    let params = new HttpParams();
-    params = params.append('eventId', 0);
-    params = params.append('startDate', '');
-    params = params.append('endDate', '');
-    params = params.append('system', 'SIRSAE');
+    let params = {
+      eventId: 0,
+      startDate: '',
+      endDate: '',
+      system: 'SIRSAE',
+    };
     this.dataSiabParamsFilter.emit(params);
   }
 
