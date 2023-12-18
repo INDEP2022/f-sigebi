@@ -896,6 +896,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUP_VAL_CONCEP_ROBO(concept.conceptId)
       );
+      await this.dataService.getLS_ESTATUS(+concept.conceptId);
       this.controlsInDet();
     }
   }
@@ -1369,6 +1370,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUP_VAL_CONCEP_ROBO(event.conceptNumber)
       );
+      await this.dataService.getLS_ESTATUS(+event.conceptNumber);
       this.controlsInDet();
     }
     this.conceptNumber.setValue(event.conceptNumber);
@@ -1447,7 +1449,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         },
       });
     }
-
     this.fillFormSecond(expense);
   }
 
