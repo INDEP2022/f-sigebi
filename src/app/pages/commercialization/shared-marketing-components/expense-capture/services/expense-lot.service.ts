@@ -85,15 +85,17 @@ export class ExpenseLotService extends HttpService {
   CANCELACION_PARCIAL(body: {
     pLotId: number;
     pEventId: number;
-    pLotPub: string;
+    pLotPub: number;
     pSpentId: number;
-    pTotIva: string;
-    pTotMonto: string;
-    pTotTot: string;
+    pTotIva: number;
+    pTotMonto: number;
+    pConceptId: number;
+    pTotTot: number;
     address: string;
+    pPrueba: number;
     comerDetBills: IComerDetBills[];
   }) {
-    return this.post('apps/partial-cancellation', body);
+    return this.post<number>('apps/partial-cancellation', body);
   }
 
   DEVOLUCION_PARCIAL(body: {
@@ -103,9 +105,10 @@ export class ExpenseLotService extends HttpService {
     user: string;
     spentId: number;
     address: string;
+    idConcepto: number;
     cat_motivos_rev: { motiveDescription: string; selection: number }[];
   }) {
-    return this.post('apps/partial-return', body);
+    return this.post<number>('apps/partial-return', body);
   }
 
   update(body: any) {
