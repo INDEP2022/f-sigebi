@@ -1401,6 +1401,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         user: this.user.preferred_username,
         spentId: this.expenseNumber.value,
         address: 'M',
+        idConcepto: this.conceptNumber.value,
         cat_motivos_rev: this.expenseModalService.selectedMotives.map(x => {
           return { motiveDescription: x.descriptionCause, selection: 1 };
         }),
@@ -1414,6 +1415,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           //   ''
           // );
           // this.sucessSendSolitudeMessage();
+          this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           this.updateExpenseComposition.next(true);
         },
@@ -1432,17 +1434,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         pEventId: this.eventNumber.value,
         pLotPub: this.publicLot.value,
         pSpentId: this.expenseNumber.value,
-        pTotIva: this.IVA + '',
-        pTotMonto: this.amount + '',
-        pTotTot: this.total + '',
+        pTotIva: this.IVA,
+        pTotMonto: this.amount,
+        pTotTot: this.total,
+        pConceptId: this.conceptNumber.value,
         address: 'M',
+        pPrueba: this.P_PRUEBA,
         comerDetBills: this.dataCompositionExpenses.map(x => {
           return {
             selectChangeStatus: x.changeStatus ? 'S' : 'N',
-            goodNumber: +x.goodNumber,
-            pConceptId: this.conceptNumber.value,
+            goodNumber: x.goodNumber ? +x.goodNumber : null,
             plot2: this.lotNumber.value,
-            pProof: this.P_PRUEBA,
             pChangeStatus: this.PCAMBIAESTATUS,
             pUser: this.user.preferred_username,
           };
@@ -1456,6 +1458,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           //   'Se generó la cancelación parcial correctamente',
           //   ''
           // );
+          this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           // this.sucessSendSolitudeMessage();
           this.updateExpenseComposition.next(true);
@@ -1511,6 +1514,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .subscribe({
         next: response => {
           // this.sucessSendSolitudeMessage();
+          if (response) {
+            this.P_PRUEBA = response.prueba;
+          }
           this.alert(
             'success',
             'Se generó la cancelación de venta correctamente',
@@ -1537,13 +1543,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   private async CANCELA_VTA_NORMALI() {
     if (this.lotNumber.value) {
-      this.lotService
-        .update({
+      await firstValueFrom(
+        this.lotService.update({
           idLote: this.lotNumber.value,
           idStatusVta: 'CDEV',
         })
-        .pipe(take(1))
-        .subscribe();
+      );
+
       this.REGRESA_ESTATUS_BIEN();
     } else {
       this.alert('warning', 'Necesita seleccionar un lote para continuar', '');
@@ -1610,7 +1616,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .PUP_LLENA_DATOSREV({
         pEvent: this.eventNumber.value,
         pGood: +detailWidthGoods[0].goodNumber,
-        pScreen: 'FCOMER084',
+        pScreen: 'FCOMER084_I',
         reasons,
         reason1: '',
         reason2: '',
