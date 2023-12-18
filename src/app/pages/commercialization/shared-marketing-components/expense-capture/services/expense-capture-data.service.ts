@@ -781,6 +781,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       // console.log(resultSP);
       this.errorSendSolicitudeMessage();
       return;
+    } else {
+      this.form.get('idOrdinginter').setValue(resultOI.lst_order);
     }
     const resultSP = await this.ENVIA_SIRSAE_CHATARRA_SP({
       spentId: this.expenseNumber.value,
