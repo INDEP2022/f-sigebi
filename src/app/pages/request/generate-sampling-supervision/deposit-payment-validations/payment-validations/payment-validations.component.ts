@@ -36,6 +36,7 @@ export class PaymentValidationsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterObject: any;
   allDeductives: IDeductiveVerification[] = [];
+  disabledButton: boolean = false;
   constructor(
     private samplingGoodService: SamplingGoodService,
     private fb: FormBuilder,
@@ -60,6 +61,19 @@ export class PaymentValidationsComponent extends BasePage implements OnInit {
     this.getSampleInfo();
     this.initFilterForm();
     this.getSampleDeductives();
+    this.checkStatusTask();
+  }
+
+  checkStatusTask() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = `$eq:${_task.id}`;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        if (response.data[0].State == 'FINALIZADA') this.disabledButton = true;
+      },
+      error: () => ({}),
+    });
   }
 
   getSampleDeductives() {

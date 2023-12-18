@@ -20,9 +20,16 @@
     <div id="annex">
       <div class="row pt-4">
         <div class="d-flex justify-content-end">
-          <div class="p-2">
+          <div class="p-2" *ngIf="!disabledButton">
             <button
               class="btn btn-primary btn-sm active"
+              (click)="turnSampling()">
+              Turnar muestreo <i class="fa fa-share-square"></i>
+            </button>
+          </div>
+          <div class="p-2" *ngIf="disabledButton">
+            <button
+              class="btn btn-primary disabled btn-sm active"
               (click)="turnSampling()">
               Turnar muestreo <i class="fa fa-share-square"></i>
             </button>
@@ -124,7 +131,8 @@
         <tab heading="Bienes" id="tab1">
           <app-list-restitutions-assets
             [idSample]="idSample"
-            [filterObject]="filterObject"></app-list-restitutions-assets>
+            [filterObject]="filterObject"
+            [disabledButton]="disabledButton"></app-list-restitutions-assets>
         </tab>
         <tab heading="Deductivas">
           <div class="row pt-2">
