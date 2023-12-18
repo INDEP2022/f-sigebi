@@ -227,6 +227,11 @@ export class SearchRequestSimilarGoodsComponent
     this.openModal(AssociateFileComponent, 'doc-expedient', request);
   }
 
+  async selectGood() {
+    //const request = await this.getRequest();
+    //this.openModal(AssociateFileComponent, 'doc-expedient', request);
+  }
+
   openModal(component: any, typeDoc: string, parameters?: any) {
     let config: ModalOptions = {
       initialState: {

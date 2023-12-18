@@ -784,6 +784,7 @@ export class RequestCompDocTasksComponent
           'success'
         );
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        //VALIDAR NAVEGACION
       },
       error: error => {
         this.onLoadToast('error', 'Error', 'No se pudo rechazar la tarea');

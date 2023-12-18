@@ -944,7 +944,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
       case 'protection-regulation':
         this.regDocView = true;
-        this.viewSelectedGoods = true;
+        this.selectGoodForEyeVisit = true;
         this.expRequest = true;
 
         this.legalStatus = true;
