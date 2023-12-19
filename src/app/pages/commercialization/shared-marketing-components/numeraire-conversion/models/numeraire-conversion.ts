@@ -47,7 +47,7 @@ export class NumeraireConversion extends BasePage {
 
   protected updateEventoConv(hizoConversiones: boolean, event: IComerEvent) {
     let params = new FilterParams();
-    params.addFilter('id', event.id);
+    params.addFilter('id', +(event.id + ''));
     this.eventDataService
       .getAllEvents(params.getParams())
       .pipe(
