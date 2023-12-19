@@ -1,16 +1,26 @@
 export const LIST_ORDERS_SELECTED_COLUMNS = {
   orderServiceId: {
-    title: 'No. Ordern Servicio',
+    title: 'No. Orden Servicio',
+    type: 'number',
+    sort: false,
+  },
+  fileId: {
+    title: 'No. Expediente',
+    type: 'number',
+    sort: false,
+  },
+  requestId: {
+    title: 'No. Solicitud',
     type: 'text',
     sort: false,
   },
   orderServiceFolio: {
-    title: 'Folio Ordern Servicio',
+    title: 'Folio Orden Servicio',
     type: 'text',
     sort: false,
   },
   orderServiceType: {
-    title: 'Tipo Ordern Servicio',
+    title: 'Tipo Orden Servicio',
     type: 'text',
     sort: false,
   },
@@ -19,13 +29,9 @@ export const LIST_ORDERS_SELECTED_COLUMNS = {
     type: 'text',
     sort: false,
   },
-  requestId: {
-    title: 'No. Solicitud',
-    type: 'text',
-    sort: false,
-  },
+
   costService: {
-    title: 'Costo Servicios',
+    title: 'Costo Servicio',
     type: 'text',
     sort: false,
   },
