@@ -706,14 +706,15 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
-      case 'respose-office-information-goods':
+      case 'response-office-information-goods':
         this.regDocView = true;
+        this.viewSelectedGoods = true;
         this.expRequest = true;
-        this.guidelines = true;
 
         this.saveRequest = true;
         this.turnReq = true;
-        this.createReport = true;
+        this.destinyJob = true;
+        this.sendEmail = true;
 
         this.resultEyeVisitReport = false;
         this.resultVisits = false;

@@ -14,7 +14,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class RegisterDocumentationViewComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   @Input() requestId: number;
   requestDoc: IRequest;
   transference: number = null;
@@ -124,7 +125,7 @@ export class RegisterDocumentationViewComponent
         input = ['trialType', 'crime'];
         break;
       case 'register-request-information-goods':
-      case 'respose-office-information-goods':
+      case 'response-office-information-goods':
       case 'review-office-information-goods':
         input = ['trialType', 'crime'];
         break;
