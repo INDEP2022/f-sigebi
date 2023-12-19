@@ -107,7 +107,7 @@ export class ComerDetexpensesService extends HttpService {
   }
 
   getExpenses(body: ListParams) {
-    return this.post(SpentEndpoints.GetAllExpensesByFilter, body);
+    return this.post(SpentEndpoints.GetAllExpensesByFilter, {}, body);
   }
 
   removeMassive(
