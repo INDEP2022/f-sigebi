@@ -400,9 +400,18 @@ export class NumeraireConversionAuctionsComponent
       .pipe(take(1))
       .subscribe({
         next: response => {
-          this.reloadExpenses++;
+          console.log(response);
           this.loader.load = false;
-          this.alert('success', 'Se ha convertido parcialmente', '');
+          if (response.message && response.message[0] === 'Sin data') {
+            this.alert(
+              'error',
+              'No se pudo hacer la conversión parcial',
+              'No se encontro data'
+            );
+          } else {
+            this.reloadExpenses++;
+            this.alert('success', 'Se ha convertido parcialmente', '');
+          }
         },
         error: err => {
           console.log(err.error.message);
