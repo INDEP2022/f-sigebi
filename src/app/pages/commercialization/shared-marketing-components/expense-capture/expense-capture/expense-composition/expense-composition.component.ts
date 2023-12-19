@@ -1122,10 +1122,29 @@ export class ExpenseCompositionComponent
     // let dataContent = await this.dataPaginated.getAll();
     // console.log(dataContent);
     // let ls_status = await this.expenseCaptureDataService.getLS_ESTATUS();
+    debugger;
     if (this.LS_ESTATUS) {
-      this.sendSolicitud();
+      const response = await this.alertQuestion(
+        'question',
+        '¿Desea modificar los estatus?',
+        ''
+      );
+      if (response.isConfirmed) {
+        this.loader.load = true;
+        this.actionButton = 'Cambio de estatus';
+        this.sendSolicitud();
+      }
     } else if (this.goodFilter.length === 0) {
-      this.sendSolicitud();
+      const response = await this.alertQuestion(
+        'question',
+        '¿Desea modificar los estatus?',
+        ''
+      );
+      if (response.isConfirmed) {
+        this.loader.load = true;
+        this.actionButton = 'Cambio de estatus';
+        this.sendSolicitud();
+      }
     } else {
       if (this.eventNumber) {
         if (
@@ -1135,12 +1154,21 @@ export class ExpenseCompositionComponent
           let V_VALIDA_DET = await this.validateSelectedGoods();
           if (V_VALIDA_DET) {
             // hideView Mandatos
-            this.sendSolicitud(V_VALIDA_DET);
-            this.alert(
-              'success',
-              'Modificar Estatus',
-              'Realizado Correctamente'
+            const response = await this.alertQuestion(
+              'question',
+              '¿Desea modificar los estatus seleccionados?',
+              ''
             );
+            if (response.isConfirmed) {
+              this.loader.load = true;
+              this.actionButton = 'Cambio de estatus';
+              this.sendSolicitud(V_VALIDA_DET);
+              this.alert(
+                'success',
+                'Modificar Estatus',
+                'Realizado Correctamente'
+              );
+            }
           } else {
             this.loader.load = false;
             this.alert(
@@ -1188,17 +1216,18 @@ export class ExpenseCompositionComponent
     }
   }
   async modifyEstatus() {
-    const response = await this.alertQuestion(
-      'question',
-      '¿Desea modificar los estatus seleccionados?',
-      ''
-    );
-    if (response.isConfirmed) {
-      this.loader.load = true;
-      this.actionButton = 'Cambio de estatus';
-      if (this.address === 'M') {
-        this.modifyEstatusM();
-      } else {
+    debugger;
+    if (this.address === 'M') {
+      this.modifyEstatusM();
+    } else {
+      const response = await this.alertQuestion(
+        'question',
+        '¿Desea modificar los estatus?',
+        ''
+      );
+      if (response.isConfirmed) {
+        this.loader.load = true;
+        this.actionButton = 'Cambio de estatus';
         this.modifyEstatusI();
       }
     }
