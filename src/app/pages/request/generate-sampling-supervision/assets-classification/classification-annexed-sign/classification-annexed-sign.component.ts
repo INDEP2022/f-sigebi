@@ -41,6 +41,7 @@ export class ClassificationAnnexedSignComponent
   allDeductives: ISamplingDeductive[] = [];
   idSample: number = 0;
   title: string = '';
+  disabledButton: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     private samplingGoodService: SamplingGoodService,
@@ -67,6 +68,19 @@ export class ClassificationAnnexedSignComponent
   ngOnInit(): void {
     this.getInfoSample();
     this.getSampleDeductives();
+    this.checkStatusTask();
+  }
+
+  checkStatusTask() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = `$eq:${_task.id}`;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        if (response.data[0].State == 'FINALIZADA') this.disabledButton = true;
+      },
+      error: () => ({}),
+    });
   }
 
   getSampleDeductives() {

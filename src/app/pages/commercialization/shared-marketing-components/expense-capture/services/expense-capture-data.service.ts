@@ -75,6 +75,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   PVALIDADET: string;
   CHCONIVA: string;
   IVA: number;
+  LS_ESTATUS: string;
   V_VALCON_ROBO = 0;
   amount = 0;
   vat = 0;
@@ -557,11 +558,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
-  private async getLS_ESTATUS() {
+  async getLS_ESTATUS(conceptId?: number) {
     const filterParams = new FilterParams();
-    filterParams.addFilter('conceptId', this.conceptNumber.value);
+    filterParams.addFilter('conceptId', conceptId ?? this.conceptNumber.value);
     filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
-    return await firstValueFrom(
+    this.LS_ESTATUS = await firstValueFrom(
       this.parameterService.getAll(filterParams.getParams()).pipe(
         catchError(x => of(null)),
         map(x => (x && x.data && x.data.length > 0 ? x.data[0].value : null))
@@ -599,8 +600,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         return;
       }
     }
-    let LS_ESTATUS = await this.getLS_ESTATUS();
-    if (LS_ESTATUS) {
+
+    if (this.LS_ESTATUS) {
       this.ENVIA_SOLICITUD();
     } else {
       if (!this.dataCompositionExpenses[0].goodNumber) {
@@ -781,6 +782,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       // console.log(resultSP);
       this.errorSendSolicitudeMessage();
       return;
+    } else {
+      this.form.get('idOrdinginter').setValue(resultOI.lst_order);
     }
     const resultSP = await this.ENVIA_SIRSAE_CHATARRA_SP({
       spentId: this.expenseNumber.value,
@@ -1401,6 +1404,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         user: this.user.preferred_username,
         spentId: this.expenseNumber.value,
         address: 'M',
+        idConcepto: this.conceptNumber.value,
         cat_motivos_rev: this.expenseModalService.selectedMotives.map(x => {
           return { motiveDescription: x.descriptionCause, selection: 1 };
         }),
@@ -1414,6 +1418,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           //   ''
           // );
           // this.sucessSendSolitudeMessage();
+          this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           this.updateExpenseComposition.next(true);
         },
@@ -1432,17 +1437,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         pEventId: this.eventNumber.value,
         pLotPub: this.publicLot.value,
         pSpentId: this.expenseNumber.value,
-        pTotIva: this.IVA + '',
-        pTotMonto: this.amount + '',
-        pTotTot: this.total + '',
+        pTotIva: this.IVA,
+        pTotMonto: this.amount,
+        pTotTot: this.total,
+        pConceptId: this.conceptNumber.value,
         address: 'M',
+        pPrueba: this.P_PRUEBA,
         comerDetBills: this.dataCompositionExpenses.map(x => {
           return {
             selectChangeStatus: x.changeStatus ? 'S' : 'N',
-            goodNumber: +x.goodNumber,
-            pConceptId: this.conceptNumber.value,
+            goodNumber: x.goodNumber ? +x.goodNumber : null,
             plot2: this.lotNumber.value,
-            pProof: this.P_PRUEBA,
             pChangeStatus: this.PCAMBIAESTATUS,
             pUser: this.user.preferred_username,
           };
@@ -1456,6 +1461,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           //   'Se generó la cancelación parcial correctamente',
           //   ''
           // );
+          this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           // this.sucessSendSolitudeMessage();
           this.updateExpenseComposition.next(true);
@@ -1511,6 +1517,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .subscribe({
         next: response => {
           // this.sucessSendSolitudeMessage();
+          if (response) {
+            this.P_PRUEBA = response.prueba;
+          }
           this.alert(
             'success',
             'Se generó la cancelación de venta correctamente',
@@ -1537,13 +1546,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   private async CANCELA_VTA_NORMALI() {
     if (this.lotNumber.value) {
-      this.lotService
-        .update({
+      await firstValueFrom(
+        this.lotService.update({
           idLote: this.lotNumber.value,
           idStatusVta: 'CDEV',
         })
-        .pipe(take(1))
-        .subscribe();
+      );
+
       this.REGRESA_ESTATUS_BIEN();
     } else {
       this.alert('warning', 'Necesita seleccionar un lote para continuar', '');
@@ -1610,7 +1619,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .PUP_LLENA_DATOSREV({
         pEvent: this.eventNumber.value,
         pGood: +detailWidthGoods[0].goodNumber,
-        pScreen: 'FCOMER084',
+        pScreen: 'FCOMER084_I',
         reasons,
         reason1: '',
         reason2: '',
