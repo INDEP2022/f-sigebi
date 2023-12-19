@@ -223,10 +223,14 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'id_delegacion':
+              case 'id_factura':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'cuenta_fac':
+              case 'id_lote':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fecha':
+                filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -234,9 +238,9 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilters1[field];
+              delete this.columnFilters2[field];
             }
           });
           this.params2 = this.pageFilter(this.params2);
@@ -254,8 +258,8 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       statusInvoice: [null, []],
       goods: [null, []],
       event: [null, []],
-      year: [null, []],
-      valid: ['A', []],
+      year: [null, [Validators.required]],
+      valid: ['A', [Validators.required]],
     });
     setTimeout(() => {
       this.getEvent(new ListParams());
@@ -287,8 +291,11 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       this.dataFormat = [];
       this.data1.load([]);
       this.data1.refresh();
+      this.totalItems = 0;
       this.data2.load([]);
       this.data2.refresh();
+      this.totalItems2 = 0;
+      this.show = false;
       console.log(this.data);
     }
     console.warn('Your order has been submitted');
@@ -520,7 +527,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         ...this.params2.getValue(),
         ...this.columnFilters2,
       };
-      console.log(body);
+      console.log(param);
       this.msInvoiceService.getDetailGetGegrafica(body, param).subscribe({
         next: resp => {
           this.validateExcel = false;

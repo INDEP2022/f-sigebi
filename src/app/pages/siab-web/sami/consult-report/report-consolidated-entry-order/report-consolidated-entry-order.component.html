@@ -9,8 +9,9 @@
           class="text-color"
           (click)="showSearchForm = true"
           *ngIf="!showSearchForm">
-          <i class="fa fa-angle-right" aria-hidden="true"></i>
-          <strong> Buscar</strong></a
+          <h5>
+            <i class="fa fa-angle-right" aria-hidden="true"></i> Buscar
+          </h5></a
         >
       </p>
 
@@ -19,15 +20,14 @@
           class="text-color"
           (click)="showSearchForm = false"
           *ngIf="showSearchForm">
-          <i class="fa fa-angle-down" aria-hidden="true"></i>
-          <strong> Buscar</strong></a
+          <h5><i class="fa fa-angle-down" aria-hidden="true"></i> Buscar</h5></a
         >
       </p>
     </div>
     <div *ngIf="showSearchForm">
       <form [formGroup]="searchForm" class="form-material">
         <div class="row pt-3">
-          <div class="col-md-4">
+          <div class="col-md-2">
             <form-field
               [control]="searchForm.get('idOrderEntry')"
               label="No. Orden de Ingreso">
@@ -38,7 +38,7 @@
                 formControlName="idOrderEntry" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-2">
             <form-field
               [control]="searchForm.get('startDate')"
               label="Fecha de Ingreso">
@@ -49,7 +49,7 @@
                 bsDatepicker />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-2">
             <form-field [control]="searchForm.get('endDate')" label="Fecha Fin">
               <input
                 class="form-control"
@@ -58,10 +58,8 @@
                 bsDatepicker />
             </form-field>
           </div>
-        </div>
 
-        <div class="row pt-3">
-          <div class="col-md-6">
+          <div class="col-md-2">
             <form-field [control]="searchForm.get('regionalDelegationNumber')">
               <ngx-select
                 [form]="searchForm"
@@ -73,7 +71,8 @@
                 (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
             </form-field>
           </div>
-          <div class="col-md-6">
+
+          <div class="col-md-4">
             <form-field
               [control]="searchForm.get('noContract')"
               label="No. Contrato">
@@ -86,6 +85,17 @@
           </div>
         </div>
       </form>
+      <!--
+        <form [formGroup]="searchForm" class="form-material">
+          <div class="row pt-3">
+            
+           
+            
+          </div>
+  
+     
+        </form>
+      -->
 
       <div class="row">
         <div class="d-flex justify-content-end">
@@ -108,7 +118,7 @@
     </div>
     <h5 class="title">Listado de Órdenes de Ingreso</h5>
     <div class="row pt-4">
-      <div class="btn-toolbar pt-3">
+      <div class="btn-toolbar pt-3 justify-content-end">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
       <div [class]="loading ? 'table-loading' : ''">
@@ -126,7 +136,7 @@
 
     <h5 class="title pt-3">Detalle de Bienes Prog. Entrega</h5>
     <div class="row pt-3">
-      <div class="btn-toolbar pt-3">
+      <div class="btn-toolbar pt-3 justify-content-end">
         <app-columns-select
           [(settings)]="settingsDetailGoodsProgDel"></app-columns-select>
       </div>
@@ -144,7 +154,7 @@
 
     <h5 class="title pt-3">Detalle de Bienes Orden Ingreso</h5>
     <div class="row pt-3">
-      <div class="btn-toolbar pt-3">
+      <div class="btn-toolbar pt-3 justify-content-end">
         <app-columns-select
           [(settings)]="settingsDetailGoodsOrderEnt"></app-columns-select>
       </div>
@@ -162,7 +172,7 @@
 
     <h5 class="title pt-3">Detalle de Servicios</h5>
     <div class="row pt-3">
-      <div class="btn-toolbar pt-3">
+      <div class="btn-toolbar pt-3 justify-content-end">
         <app-columns-select
           [(settings)]="settingsServices"></app-columns-select>
       </div>
@@ -180,7 +190,7 @@
 
     <h5 class="title pt-3">Órdenes de Pago Asociadas</h5>
     <div class="row pt-3">
-      <div class="btn-toolbar pt-3">
+      <div class="btn-toolbar pt-3 justify-content-end">
         <app-columns-select [(settings)]="settingsOrderAs"></app-columns-select>
       </div>
       <div [class]="loadingOrderAs ? 'table-loading' : ''">
@@ -214,7 +224,7 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('areaApplicant')"
-            label="Area Solicitante">
+            label="Área Solicitante">
             <input
               type="text"
               class="form-control"
@@ -229,7 +239,7 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('addressAreaApplication')"
-            label="Dirección Area Solicitante">
+            label="Dirección Área Solicitante">
             <input
               type="text"
               class="form-control"

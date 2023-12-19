@@ -5,6 +5,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { MassiveFilePhotoSaveZipService } from 'src/app/core/services/ms-ldocuments/massive-file-photo-save-zip.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
@@ -27,7 +28,8 @@ export class UploadImagesComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private goodFinderService: GoodFinderService,
     private dataService: GoodPhotosService,
-    private massiveFilePhotoSaveZipService: MassiveFilePhotoSaveZipService
+    private massiveFilePhotoSaveZipService: MassiveFilePhotoSaveZipService,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -40,8 +42,7 @@ export class UploadImagesComponent extends BasePage implements OnInit {
       },
 
       edit: {
-        editButtonContent:
-          '<i class="fa fa-eye tooltip="Ver" containerClass="tooltip-style" text-primary mx-2" ></i>',
+        editButtonContent: '<i class="fa fa-eye text-primary mx-2 ml-5" ></i>',
       },
       selectMode: '',
       columns: LIST_ASSETS_COLUMNS_GOODFINDER,
@@ -56,6 +57,8 @@ export class UploadImagesComponent extends BasePage implements OnInit {
 
   getGoodsRequest() {
     this.loading = true;
+    const user: any = this.authService.decodeToken();
+    this.params.getValue()['filter.delegationNumber'] = user.department;
     this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
       next: data => {
         this.paragraphs.load(data.data);

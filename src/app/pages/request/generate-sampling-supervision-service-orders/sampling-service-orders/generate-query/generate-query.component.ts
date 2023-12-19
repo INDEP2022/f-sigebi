@@ -1,11 +1,13 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
+import { ISamplingOrderService } from 'src/app/core/models/ms-order-service/sampling-order-service.model';
 import { ISamplingOrder } from 'src/app/core/models/ms-order-service/sampling-order.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
@@ -38,30 +40,26 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   storeSelected: any = null;
   deductives: any = [];
   allDeductives: any = [];
-
+  showSampleInfo: boolean = false;
   sampleOrderForm: FormGroup = new FormGroup({});
-  /**
-   * La orden de servicio se crea en una vista anterior
-   * se utiliza para crear le muestreo orden servicio
-   * se utiliza para crear deductivas
-   */
-  SampleOrderId: number = 3;
 
+  SampleOrderId: number = 0;
+  sampleOrderInfo: ISamplingOrder;
   sendData: any[] = [];
   //Datos Anexo para pasar
   dataAnnex: any;
 
-  private zoneGeoService = inject(ZoneGeographicService);
-  private zones = inject(ZonesService);
-  private orderService = inject(OrderServiceService);
-  private authService = inject(AuthService);
-  private deleRegService = inject(RegionalDelegationService);
-  private samplinggoodService = inject(SamplingGoodService);
-
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private bsModalRef: BsModalRef
+    private bsModalRef: BsModalRef,
+    private zoneGeoService: ZoneGeographicService,
+    private zones: ZonesService,
+    private orderService: OrderServiceService,
+    private authService: AuthService,
+    private deleRegService: RegionalDelegationService,
+    private samplinggoodService: SamplingGoodService,
+    private transferentService: TransferenteService
   ) {
     super();
   }
@@ -77,16 +75,14 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     this.initAnexForm();
     this.getgeographicalAreaSelect(new ListParams());
 
-    //obtener muestreo orden
-    //create a muestreo de orden solo una ves cuando se inicializa el componente
     //this.newSampleOrder();
   }
 
   initForm() {
     this.orderServiceForm = this.fb.group({
       geographicalArea: [null],
-      samplingPeriod: [null],
-      contractNumber: ['SAE/00084/2018'],
+      samplingPeriod: [null, [Validators.required]],
+      contractNumber: [null, [Validators.required]],
     });
   }
 
@@ -119,13 +115,16 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     return delegation.department;
   }
 
-  searchOrders() {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getData(data);
-    });
+  async searchOrders() {
+    const checkExistSampleOrder: any = await this.checkExistSampleOrder();
+    if (checkExistSampleOrder) {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getData();
+      });
+    }
   }
 
-  getData(params: ListParams) {
+  getData() {
     this.loading = true;
     const deleReg = this.getDelegReg();
     const body = {
@@ -135,48 +134,127 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       ),
       regionalDelegationId: deleReg,
     };
-    const page = params.page;
-    const limit = params.limit;
     this.orderService
-      .getSamplingOrderView(body, page, limit)
-      .pipe(
-        catchError((e: any) => {
-          if (e.status == 400) return of({ data: [], count: 0 });
-          return e;
-        })
-      )
+      .getSamplingOrderView(body, this.params.getValue())
       .subscribe({
-        next: resp => {
-          const result = resp.data.map(async (item: any) => {
+        next: response => {
+          const result = response.data.map(async (item: any) => {
             const delegation: any = await this.getDelegationRegional(
               item.regionalDelegation
             );
+            const transferent: any = await this.getTransferentName(
+              item.transferent
+            );
             item['delegationName'] = delegation;
+            item['transferentName'] = transferent;
+            return item;
           });
 
-          Promise.all(result).then(() => {
-            this.paragraphs = resp.data;
-            this.totalItems = resp.count;
+          Promise.all(result).then(data => {
+            this.paragraphs = data;
+            this.totalItems = response.count;
             this.loading = false;
           });
         },
+        error: error => {},
       });
   }
 
-  addOrders(): void {
-    if (this.selectedRows.length == 0) {
-      this.onLoadToast('info', 'Seleccione al menos una orden de servicio');
-      return;
+  getTransferentName(id: number) {
+    return new Promise((resolve, reject) => {
+      this.transferentService.getById(id).subscribe({
+        next: response => {
+          resolve(response.nameTransferent);
+        },
+      });
+    });
+  }
+
+  async addOrders(): Promise<void> {
+    if (this.selectedRows.length > 0) {
+      const checkExistSampleOrder: any = await this.checkExistSampleOrder();
+      if (checkExistSampleOrder) this.addOrdersToSample();
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Seleccione al menos una orden de servico'
+      );
     }
-    this.sendData = this.selectedRows;
-    setTimeout(() => {
-      this.selectedRows = [];
-      const table = this.table.grid.getRows();
-      for (let i = 0; i < table.length; i++) {
-        const element = table[i];
-        element.isSelected = false;
+  }
+
+  checkExistSampleOrder() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.dateCreation'] = moment(new Date()).format(
+        'YYYY-MM-DD'
+      );
+      params.getValue()['filter.periodSampling'] = moment(
+        this.orderServiceForm.get('samplingPeriod').value
+      ).format('YYYY-MM-DD');
+
+      params.getValue()['filter.numberContract'] =
+        this.orderServiceForm.get('contractNumber').value;
+      this.orderService.getAllSampleOrder(params.getValue()).subscribe({
+        next: response => {
+          this.SampleOrderId = response.data[0].idSamplingOrder;
+          response.data[0].dateCreation = moment(
+            response.data[0].dateCreation
+          ).format('DD/MM/YYYY');
+          this.sampleOrderInfo = response.data[0];
+          this.showSampleInfo = true;
+          resolve(true);
+        },
+        error: async () => {
+          const createOrder: any = await this.newSampleOrder();
+          if (createOrder) resolve(true);
+        },
+      });
+    });
+  }
+
+  addOrdersToSample() {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea agregar las ordenes de servicio a el muestreo?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.selectedRows.map((item: any, i: number) => {
+          let index = i + 1;
+          const data: ISamplingOrderService = {
+            orderServiceId: item.orderServiceId,
+            sampleOrderId: this.SampleOrderId,
+            creationDate: moment(new Date()).format('YYYY-MM-DD'),
+            modificationDate: moment(new Date()).format('YYYY-MM-DD'),
+            userCreation: this.authService.decodeToken().username,
+            userModification: this.authService.decodeToken().username,
+            version: 1,
+          };
+
+          this.orderService.createSamplingOrderService(data).subscribe({
+            next: () => {
+              if (this.selectedRows.length == index) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Ordenes se servicio agregadas al muestreo'
+                );
+              }
+            },
+            error: () => {
+              if (this.selectedRows.length == index) {
+                this.alert(
+                  'error',
+                  'Error',
+                  'No se pudo guardar la orden de servicio'
+                );
+              }
+            },
+          });
+        });
       }
-    }, 500);
+    });
   }
 
   rowsSelected(event: any) {
@@ -190,11 +268,13 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   getgeographicalAreaSelect(params: ListParams) {
     this.zoneGeoService.getAll(params).subscribe({
       next: resp => {
-        console.log(resp);
         this.geographicalAreaSelected = new DefaultSelect(
           resp.data,
           resp.count
         );
+      },
+      error: () => {
+        this.geographicalAreaSelected = new DefaultSelect();
       },
     });
   }
@@ -204,7 +284,6 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       this.geographicalAreaSelected = new DefaultSelect();
       this.contractNumberSelected = new DefaultSelect();
     } else {
-      console.log(event);
       const value = { contractNumber: event.contractNumber };
       this.getContractNumberSelect(value);
     }
@@ -215,7 +294,6 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     const deductivesSelected = this.deductives.filter(
       (x: any) => x.selected == true
     );
-    console.log(deductivesSelected);
 
     if (deductivesSelected.length == 0) {
       this.onLoadToast(
@@ -302,28 +380,39 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   }
 
   newSampleOrder() {
-    const body: ISamplingOrder = {
-      idSamplingOrder: 3,
-      dateCreation: moment(new Date()).format('YYYY-MM-DD'),
-      dateModification: moment(new Date()).format('YYYY-MM-DD'),
-      userCreation: this.authService.decodeToken().username,
-      userModification: this.authService.decodeToken().username,
-      idDelegationRegional: +this.authService.decodeToken().department,
-      dateturned: moment(new Date()).format('YYYY-MM-DD'),
-    };
-    this.orderService.createSampleOrder(body).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.SampleOrderId = resp.data.id;
-      },
-      error: error => {
-        console.log(error);
-      },
+    return new Promise((resolve, reject) => {
+      const body: ISamplingOrder = {
+        idSamplingOrder: 4,
+        dateCreation: moment(new Date()).format('YYYY-MM-DD'),
+        dateModification: moment(new Date()).format('YYYY-MM-DD'),
+        userCreation: this.authService.decodeToken().username,
+        userModification: this.authService.decodeToken().username,
+        idDelegationRegional: +this.authService.decodeToken().department,
+        dateturned: moment(new Date()).format('YYYY-MM-DD'),
+        numberContract: this.orderServiceForm.get('contractNumber').value,
+        periodSampling: moment(
+          this.orderServiceForm.get('samplingPeriod').value
+        ).format('YYYY-MM-DD'),
+      };
+      this.orderService.createSampleOrder(body).subscribe({
+        next: resp => {
+          this.SampleOrderId = resp.data.idSamplingOrder;
+          resp.data.dateCreation = moment(resp.data.dateCreation).format(
+            'DD/MM/YYYY'
+          );
+          this.sampleOrderInfo = resp.data;
+          this.showSampleInfo = true;
+          resolve(true);
+        },
+        error: () => {
+          this.alert('error', 'Error', 'Error al crear la orden de muestreo');
+          resolve(false);
+        },
+      });
     });
   }
 
   getStoreSelected(event: any) {
-    console.log(event);
     this.storeSelected = event;
   }
 

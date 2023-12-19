@@ -37,7 +37,7 @@
       </div>
       <div class="row pt-3">
         <div class="col-md-6">
-          <form-field [control]="form.get('uniqueKey')" label="Clave Unica">
+          <form-field [control]="form.get('uniqueKey')" label="Clave Única">
             <input
               type="text"
               class="form-control"
@@ -72,7 +72,7 @@
     </form>
     <h5 class="title pt-3">Listado de Bienes</h5>
     <div class="row pt-4">
-      <div class="btn-toolbar pt-3">
+      <div class="btn-toolbar pt-3 justify-content-end">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
       <div [class]="loading ? 'table-loading' : ''">
@@ -181,7 +181,7 @@
           </tab>
           <tab heading="Programación">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsProg"></app-columns-select>
               </div>
@@ -199,7 +199,7 @@
           </tab>
           <tab heading="Programación Entrega">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsProgEnt"></app-columns-select>
               </div>
@@ -217,7 +217,7 @@
           </tab>
           <tab heading="Almacenaje">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsWarehouse"></app-columns-select>
               </div>
@@ -235,7 +235,7 @@
           </tab>
           <tab heading="Manual">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsManual"></app-columns-select>
               </div>
@@ -253,7 +253,7 @@
           </tab>
           <tab heading="Reubicación de Bienes">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsReubGood"></app-columns-select>
               </div>
