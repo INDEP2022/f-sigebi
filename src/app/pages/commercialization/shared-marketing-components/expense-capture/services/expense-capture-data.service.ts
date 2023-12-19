@@ -652,10 +652,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private async MONTO_TOT_EVENTO() {
+    debugger;
     let lotFinalPrice = await firstValueFrom(
-      this.accountingService.getLotFinalTotal(this.expenseNumber.value)
+      this.accountingService.getLotFinalTotal(this.eventNumber.value)
     );
-    if (lotFinalPrice) {
+    if (+(lotFinalPrice + '')) {
       if (
         lotFinalPrice !==
         this.amount + this.vat - this.isrWithholding - this.vatWithholding
@@ -676,6 +677,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private VALIDA_CHATARRA_MOR_SIN_FLUJO() {
+    debugger;
     if (this.isrWithholding <= 0) {
       this.alert(
         'error',
