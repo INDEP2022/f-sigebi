@@ -9,8 +9,9 @@
           class="text-color"
           (click)="showSearchForm = true"
           *ngIf="!showSearchForm">
-          <i class="fa fa-angle-right" aria-hidden="true"></i>
-          <strong> Buscar</strong></a
+          <h5>
+            <i class="fa fa-angle-right" aria-hidden="true"></i> Buscar
+          </h5></a
         >
       </p>
 
@@ -19,16 +20,15 @@
           class="text-color"
           (click)="showSearchForm = false"
           *ngIf="showSearchForm">
-          <i class="fa fa-angle-down" aria-hidden="true"></i>
-          <strong> Buscar</strong></a
+          <h5><i class="fa fa-angle-down" aria-hidden="true"></i> Buscar</h5></a
         >
       </p>
     </div>
-    <!--Formulario de busqueda-->
+
     <div *ngIf="showSearchForm">
       <form [formGroup]="searchForm" class="form-material">
         <div class="row pt-3">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <form-field
               [control]="searchForm.get('idOrderPayment')"
               label="No. Orden de Pago">
@@ -39,8 +39,7 @@
                 formControlName="idOrderPayment" />
             </form-field>
           </div>
-
-          <div class="col-md-6">
+          <div class="col-md-4">
             <form-field
               [control]="searchForm.get('cveZone')"
               label="clave Zona">
@@ -49,6 +48,17 @@
                 class="form-control"
                 maxlength="100"
                 formControlName="cveZone" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('noContract')"
+              label="No. Contrato">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                formControlName="noContract" />
             </form-field>
           </div>
         </div>
@@ -82,17 +92,7 @@
           </div>
         </div>
         <div class="row pt-3">
-          <div class="col-md-6">
-            <form-field
-              [control]="searchForm.get('noContract')"
-              label="No. Contrato">
-              <input
-                type="text"
-                class="form-control"
-                maxlength="100"
-                formControlName="noContract" />
-            </form-field>
-          </div>
+          <div class="col-md-6"></div>
         </div>
 
         <div class="row">

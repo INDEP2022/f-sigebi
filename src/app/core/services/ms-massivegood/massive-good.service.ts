@@ -68,6 +68,14 @@ export class MassiveGoodService extends HttpService {
     const route = `${this.route.MassiveChargeGoods}/${id}`;
     return this.get(route);
   }
+  getLosersReport(id: string | number) {
+    const route = `${this.route.losersReport}/${id}`;
+    return this.get(route);
+  }
+  getWinnersReport(id: string | number) {
+    const route = `${this.route.winnersReport}/${id}`;
+    return this.get(route);
+  }
 
   getObtnGoodExcel(id: string | number) {
     const route = `${this.route.ObtnGoodPag}?filter.clasif=$in:${id}`;

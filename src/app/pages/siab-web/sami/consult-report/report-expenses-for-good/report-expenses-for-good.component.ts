@@ -166,12 +166,14 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     const descriptionGood = this.form.get('descriptionGood').value;
     const uniqueKey = this.form.get('uniqueKey').value;
 
-    if (idGood) this.params.getValue()['filter.goodId'] = idGood;
+    if (idGood) this.params.getValue()['filter.goodId'] = `$eq:${idGood}`;
     if (idTypeRelevant)
       this.params.getValue()['filter.relevantTypeId'] = idTypeRelevant;
     if (descriptionGood)
       this.params.getValue()['filter.description'] = descriptionGood;
-    if (uniqueKey) this.params.getValue()['filter.uniqueKey'] = uniqueKey;
+    if (uniqueKey) {
+      this.params.getValue()['filter.uniqueKey'] = uniqueKey;
+    }
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -182,6 +184,7 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     this.loading = true;
     const user: any = this.authService.decodeToken();
     this.params.getValue()['filter.delegationNumber'] = user.department;
+
     this.goodService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.infoGoods.load(response.data);
@@ -190,6 +193,9 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
+        this.infoGoods = new LocalDataSource();
+        this.totalItems = 0;
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
       },
     });
   }

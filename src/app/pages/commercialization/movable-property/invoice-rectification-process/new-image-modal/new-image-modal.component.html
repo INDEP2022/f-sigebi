@@ -3,167 +3,181 @@
     <h5 class="modal-title">Datos para imagen</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="form.get('name')" label="Nombre">
-            <input
-              maxlength="30"
-              type="text"
-              class="form-control"
-              formControlName="name" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field label="Apellido Paterno" [control]="form.get('lastName')">
-            <input
-              maxlength="30"
-              type="text"
-              class="form-control"
-              formControlName="lastName" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            label="Apellido Materno"
-            [control]="form.get('motherlastName')">
-            <input
-              maxlength="30"
-              type="text"
-              class="form-control"
-              formControlName="motherlastName" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-4">
-          <form-field label="Autoriza" [control]="form.get('idAuth')">
-            <input
-              maxlength="60"
-              type="text"
-              class="form-control"
-              formControlName="idAuth" />
-          </form-field>
+    <form-loader *ngIf="loading"></form-loader>
 
-          <!-- <app-user-shared
-            [form]="form"
-            [userField]="'idAuth'"
-            [label]="'Autoriza'"></app-user-shared> -->
+    <div *ngIf="!loading">
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-md-4">
+            <form-field [control]="form.get('name')" label="Nombre">
+              <input
+                maxlength="30"
+                type="text"
+                class="form-control"
+                formControlName="name" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              label="Apellido Paterno"
+              [control]="form.get('lastName')">
+              <input
+                maxlength="30"
+                type="text"
+                class="form-control"
+                formControlName="lastName" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              label="Apellido Materno"
+              [control]="form.get('motherlastName')">
+              <input
+                maxlength="30"
+                type="text"
+                class="form-control"
+                formControlName="motherlastName" />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('date')" label="Fecha Expedición">
-            <input
-              type="text"
-              placeholder=""
-              class="form-control"
-              bsDatepicker
-              formControlName="date"
-              [bsConfig]="{ isAnimated: true }" />
-          </form-field>
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <form-field label="Autoriza" [control]="form.get('idAuth')">
+              <input
+                maxlength="60"
+                type="text"
+                class="form-control"
+                formControlName="idAuth" />
+            </form-field>
+
+            <!-- <app-user-shared
+              [form]="form"
+              [userField]="'idAuth'"
+              [label]="'Autoriza'"></app-user-shared> -->
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('date')" label="Fecha Expedición">
+              <input
+                type="text"
+                placeholder=""
+                class="form-control"
+                bsDatepicker
+                formControlName="date"
+                [bsConfig]="{
+                  dateInputFormat: 'DD/MM/YYYY',
+                  isAnimated: true
+                }" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field label="Lote" [control]="form.get('allotment')">
+              <input
+                type="number"
+                oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+                class="form-control"
+                formControlName="allotment" />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
-          <form-field label="Lote" [control]="form.get('allotment')">
-            <input
-              type="number"
-              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
-              class="form-control"
-              formControlName="allotment" />
-          </form-field>
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <form-field label="Siab/Varios" [control]="form.get('siab')">
+              <input
+                maxlength="10"
+                type="text"
+                class="form-control"
+                formControlName="siab" />
+            </form-field>
+          </div>
+          <div class="col-md-8">
+            <form-field label="Descripción" [control]="form.get('description')">
+              <textarea
+                maxlength="100"
+                cols="2"
+                rows="2"
+                type="text"
+                class="form-control"
+                formControlName="description">
+              </textarea>
+            </form-field>
+          </div>
         </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-4">
-          <form-field label="Siab/Varios" [control]="form.get('siab')">
-            <input
-              maxlength="10"
-              type="text"
-              class="form-control"
-              formControlName="siab" />
-          </form-field>
-        </div>
-        <div class="col-md-8">
-          <form-field label="Descripción" [control]="form.get('description')">
-            <textarea
-              maxlength="100"
-              cols="2"
-              rows="2"
-              type="text"
-              class="form-control"
-              formControlName="description">
-            </textarea>
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-4">
-          <form-field label="Total" [control]="form.get('total')">
-            <input
-              maxlength="20"
-              currencyMask
-              type="text"
-              class="form-control"
-              formControlName="total" />
-          </form-field>
-        </div>
-        <div class="col-md-8">
-          <form-field label="Cve. Proceso/Mandato" [control]="form.get('cve')">
-            <input
-              maxlength="60"
-              type="text"
-              class="form-control"
-              formControlName="cve" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field style="display: none" [control]="form.get('image')">
-            <input
-              type="file"
-              id="file"
-              name="file"
-              #fileChooser
-              [accept]="'image/*'"
-              value="{this.state.image}"
-              onChange="{this.uploadFile}"
-              (change)="fileUpload($event)" />
-            <!-- <input type="file" class="form-control" formControlName="image" (change)="fileUpload($event)"/> -->
-          </form-field>
-          <span>
-            <label
-              for=""
-              style="font-size: 10px; font-weight: 600; color: #74788d"
-              >Imagen Seg</label
-            >
-          </span>
-          <div style="position: relative; width: 145px; height: 150px">
-            <div (click)="cleanPhoto()" class="cancel-btn" *ngIf="imageBase64">
-              <i
-                class="bx bx-x-circle bx-sm float-icon"
-                style="
-                  padding: 1px;
-                  background-color: #ffffff;
-                  border-radius: 10px;
-                "></i>
-            </div>
-            <div
-              class="file-add"
-              (click)="fileChooser.click()"
-              [ngStyle]="{
-                backgroundImage: 'url(' + imageBase64 + ')',
-                padding: imageBase64 ? '70px' : '65px 65px 65px 110px'
-              }">
-              <i *ngIf="!imageBase64" class="bx bx-plus bx-sm float-icon"></i>
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <form-field label="Total" [control]="form.get('total')">
+              <input
+                maxlength="20"
+                currencyMask
+                type="text"
+                class="form-control"
+                formControlName="total" />
+            </form-field>
+          </div>
+          <div class="col-md-8">
+            <form-field
+              label="Cve. Proceso/Mandato"
+              [control]="form.get('cve')">
+              <input
+                maxlength="60"
+                type="text"
+                class="form-control"
+                formControlName="cve" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field style="display: none" [control]="form.get('image')">
+              <input
+                type="file"
+                id="file"
+                name="file"
+                #fileChooser
+                [accept]="'image/*'"
+                value="{this.state.image}"
+                onChange="{this.uploadFile}"
+                (change)="fileUpload($event)" />
+              <!-- <input type="file" class="form-control" formControlName="image" (change)="fileUpload($event)"/> -->
+            </form-field>
+            <span>
+              <label
+                for=""
+                style="font-size: 10px; font-weight: 600; color: #74788d"
+                >Imagen Seg</label
+              >
+            </span>
+            <div style="position: relative; width: 145px; height: 150px">
+              <div
+                (click)="cleanPhoto()"
+                class="cancel-btn"
+                *ngIf="imageBase64">
+                <i
+                  class="bx bx-x-circle bx-sm float-icon"
+                  style="
+                    padding: 1px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                  "></i>
+              </div>
+              <div
+                class="file-add"
+                (click)="fileChooser.click()"
+                [ngStyle]="{
+                  backgroundImage: 'url(' + imageBase64 + ')',
+                  padding: imageBase64 ? '70px' : '65px 65px 65px 110px'
+                }">
+                <i *ngIf="!imageBase64" class="bx bx-plus bx-sm float-icon"></i>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
           type="button"
-          [disabled]="form.invalid || !image"
+          [disabled]="form.invalid"
           class="btn btn-sm btn-primary active"
           (click)="save()">
           Generar Imagen

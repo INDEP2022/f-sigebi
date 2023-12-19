@@ -109,6 +109,15 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   dataInvoice: any = null;
   parameterNumFactImp: any = null;
+
+  btnLoading: boolean = false;
+  btnLoading2: boolean = false;
+  btnLoading3: boolean = false;
+  btnLoading4: boolean = false;
+  btnLoading5: boolean = false;
+  btnLoading6: boolean = false;
+  btnLoading7: boolean = false;
+  btnLoading8: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -175,11 +184,29 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
               price: () => (searchFilter = SearchFilter.ILIKE),
               vat: () => (searchFilter = SearchFilter.ILIKE),
               total: () => (searchFilter = SearchFilter.ILIKE),
+              cvman: () => (searchFilter = SearchFilter.ILIKE),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              Iauthorize: () => (searchFilter = SearchFilter.ILIKE),
+              street: () => (searchFilter = SearchFilter.ILIKE),
+              cologne: () => (searchFilter = SearchFilter.ILIKE),
+              municipality: () => (searchFilter = SearchFilter.ILIKE),
+              state: () => (searchFilter = SearchFilter.ILIKE),
+              rfc: () => (searchFilter = SearchFilter.ILIKE),
+              cop: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
 
             if (filter.search !== '') {
+              if (
+                filter.field == 'eventDate' ||
+                filter.field == 'impressionDate'
+              ) {
+                filter.search = this.datePipe.transform(
+                  filter.search,
+                  'yyyy-MM-dd'
+                );
+              }
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -226,7 +253,8 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
       } else {
         params['filter.description'] = `${SearchFilter.ILIKE}:${params.text}`;
       }
-
+    delete params.text;
+    delete params['search'];
     // if (params.text) {
     //   const isNum = parseInt(params.text);
     //   isNum ? (params['filter.id'] = `${SearchFilter.EQ}:${params.text}`)
@@ -248,6 +276,14 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
   getDelegation(params?: ListParams) {
     params['limit'] = 50;
     params['sortBy'] = 'id:ASC';
+    if (params.text) {
+      const isNum = parseInt(params.text);
+      isNum
+        ? (params['filter.id'] = `${SearchFilter.EQ}:${params.text}`)
+        : (params[
+            'filter.description'
+          ] = `${SearchFilter.ILIKE}:${params.text}`);
+    }
     this.delegationService.getAll(params).subscribe({
       next: resp => {
         this.delegations = new DefaultSelect(resp.data, resp.count);
@@ -269,6 +305,8 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
             'filter.nameTransferent'
           ] = `${SearchFilter.ILIKE}:${params.text}`);
     }
+    delete params.text;
+    delete params['search'];
     this.transferentService.getAll(params).subscribe({
       next: resp => {
         this.dataTransferent = new DefaultSelect(resp.data, resp.count);
@@ -414,7 +452,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         },
       });
   }
-
+  valEvent: boolean = false;
   checkEvent({ id_evento }: any) {
     if (id_evento) {
       this.comerEventService.getDataTpEvents(Number(id_evento)).subscribe({
@@ -425,6 +463,8 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
               'El evento no existe, debe crear un evento antes de emitir una factura',
               ''
             );
+            this.valEvent = false;
+            this.getLoteByEvent(new ListParams());
             return;
           }
 
@@ -441,6 +481,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
             );
           this.billingForm.get('tpevent').patchValue(resp.tpevento ?? '');
           this.getLoteByEvent(new ListParams());
+          this.valEvent = true;
         },
         error: () => {
           this.alert(
@@ -448,6 +489,8 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
             'No existe la información para el evento seleccionado, no podra emitir una factura',
             ''
           );
+          this.valEvent = false;
+          this.getLoteByEvent(new ListParams());
         },
       });
     }
@@ -461,8 +504,10 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         if (resp.count > 1) {
           this.valResult = true;
           this.modal.show();
+          this.loadingSearch = false;
           this.getComerFacturasTable();
         } else if (resp.count == 1) {
+          this.loadingSearch = false;
           const value = resp.data[0];
           this.dataInvoice = value;
           value.eventDate = value.eventDate
@@ -650,7 +695,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     const { billId, eventId } = this.billingForm.value;
     const user = this.authSerivce.decodeToken();
     let validUser: number;
-
+    this.btnLoading = true;
     validUser = await this.getUser(user.username.toUpperCase());
 
     if (validUser == 0) {
@@ -659,6 +704,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         'No cuenta con los permisos para efectuar esta operación',
         ''
       );
+      this.btnLoading = false;
       return;
     } else {
       if (!billId) {
@@ -667,8 +713,10 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           'Debe guardar los datos de la facturación',
           'También podría seleccionar una factura creada previamente'
         );
+        this.btnLoading = false;
         return;
       } else if (!eventId) {
+        this.btnLoading = false;
         this.alert('warning', 'Debe especificar un evento', '');
         return;
       }
@@ -715,9 +763,11 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
             })
             .subscribe({
               next: () => {
+                this.btnLoading = false;
                 this.alert('success', 'Folios Generados Correctamente', '');
               },
               error: () => {
+                this.btnLoading = false;
                 this.alert(
                   'error',
                   'Ha ocurrido un error al intentar generar los folios',
@@ -727,10 +777,12 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
             });
         },
         error: err => {
+          this.btnLoading = false;
           return this.alert('error', 'Error', err.error.message);
         },
       });
     } else {
+      this.btnLoading = false;
       this.alert('warning', 'No existen folios disponibles', '');
     }
   }
@@ -763,14 +815,16 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     );
   }
 
-  deleteFolios() {
+  async deleteFolios() {
     const { billId, eventId } = this.billingForm.value;
-
+    this.btnLoading2 = true;
     if (!billId) {
+      this.btnLoading2 = false;
       this.alert('warning', 'Debe existir el folio de facturación', '');
       return;
     }
     if (!eventId) {
+      this.btnLoading2 = false;
       this.alert('warning', 'Debe seleccionar un evento', '');
       return;
     }
@@ -779,7 +833,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     aux = 1;
 
     if (aux == 1) {
-      this.changeProcess('EF', 'FOL');
+      await this.changeProcess('EF', 'FOL');
     }
     const dataUpdate = this.billingForm.value;
     dataUpdate.impressionDate = dataUpdate.impressionDate
@@ -804,15 +858,26 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           .deleteFolio({ eventId, invoiceId: billId })
           .subscribe({
             next: () => {
+              this.btnLoading2 = false;
               this.alert('success', 'Folios Eliminados Correctamente', '');
             },
             error: err => {
-              this.alert('error', 'Error', err.error.message);
+              this.btnLoading2 = false;
+              if ('No se encontrarón registros.' == err.error.message) {
+                this.alert('warning', 'No se encontrarón registros.', '');
+              } else {
+                this.alert('error', 'Error', err.error.message);
+              }
             },
           });
       },
       error: err => {
-        this.alert('error', 'Error', err.error.message);
+        this.btnLoading2 = false;
+        if ('No se encontrarón registros.' == err.error.message) {
+          this.alert('warning', 'No se encontrarón registros', '');
+        } else {
+          this.alert('error', 'Error', err.error.message);
+        }
       },
     });
   }
@@ -827,9 +892,10 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     }
 
     if (factstatusId == aux_status) {
+      await this.update(this.billingForm.value, process);
       this.billingForm.get('process').patchValue(process);
     }
-    return;
+    return true;
   }
 
   async update(comer: any, procesando: any) {
@@ -839,6 +905,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
       process: procesando,
     };
     let result = await this.billingsService.updateBillings(obj);
+    return result;
   }
 
   openPrevInvoice() {
@@ -1021,7 +1088,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
 
   obtImg(img: string) {}
 
-  archiv() {
+  async archiv() {
     const { factstatusId, archImgtemp, eventId, billId } =
       this.billingForm.value;
     if (factstatusId == 'FOL' && !archImgtemp) {
@@ -1029,7 +1096,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         .get('archImgtemp')
         .patchValue(`C:\IMTMPSIAB\TMP_${eventId}_${billId}.BMP`);
     }
-    this.changeProcess('AR', 'FOL');
+    await this.changeProcess('AR', 'FOL');
     //lip comit silencioso guardar datos
   }
 
@@ -1089,12 +1156,17 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
       return;
     }
 
+    console.log('SI');
+    console.log('causerebillId', causerebillId);
+    console.log('this.refactureTemp', this.refactureTemp);
     if (!causerebillId) {
       this.displayCancel = true;
+      // this.btnLoading4 = false;
     } else if (causerebillId) {
       if (this.refactureTemp == 'R') {
         // -- CREA OTRA FACTURA SIN FOLIO Y CANCELA LA ACTUAL
         this.cancelComerInovice();
+        this.btnLoading4 = true;
         CF_LEYENDA = `CANCELA Y SUSTITUYE A LA FACTURA ${series} - ${Invoice}`;
 
         const body: any = {
@@ -1111,6 +1183,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           pOcionCan: null,
         };
 
+        // COMER_CTRLFACTURA.COPIA_FACTURA
         CF_NUEVAFACT = await this.copyInovice(body);
 
         if (CF_NUEVAFACT > 0) {
@@ -1135,17 +1208,24 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
 
           this.comerInvoice.update(this.billingForm.value).subscribe({
             next: () => {
-              this.getComerFacturas(billId);
+              let params = new FilterParams();
+              params.addFilter('billId', billId, SearchFilter.EQ);
+              this.getComerFacturas(params);
+              this.btnLoading4 = false;
             },
             error: err => {
+              this.btnLoading4 = false;
               this.alert('error', 'Error', err.error.message);
             },
           });
         } else {
-          this.alert('error', 'Error', 'No se pudo cancelar la factura');
+          this.btnLoading4 = false;
+          this.alert('error', 'No se pudo cancelar la factura', '');
         }
       } else if (this.refactureTemp == 'C') {
+        this.btnLoading4 = true;
         this.cancelComerInovice();
+        this.btnLoading4 = false;
       }
     }
   }
@@ -1179,6 +1259,8 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
   }
 
   resetData() {
+    this.valEvent = false;
+    this.displayCancel = false;
     this.billingForm.reset();
     this.billingForm.get('Type').patchValue(20);
     this.billingForm.get('tpinvoiceId').patchValue('P');

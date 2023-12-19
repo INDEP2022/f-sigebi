@@ -8,7 +8,7 @@ import {
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { addDays } from 'date-fns';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
@@ -35,7 +35,7 @@ export class RequestRecordTabComponent
   implements OnInit, OnChanges
 {
   @Input() pgr: boolean;
-  @Input() requestForm: ModelForm<IRequest>;
+  @Input() requestForm: IFormGroup<IRequest>;
   requiredFieldText: 'Campo requerido';
   submitted = false;
   bsReceptionValue = new Date();

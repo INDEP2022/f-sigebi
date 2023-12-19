@@ -37,6 +37,9 @@ export const COLUMNS = {
       type: 'custom',
       component: CustomDateFilterComponent,
     },
+    filterFunction: () => {
+      return true;
+    },
   },
   series: {
     title: 'Serie',
@@ -67,6 +70,78 @@ export const COLUMNS = {
   },
   inrepresentation: {
     title: 'Representante',
+    type: 'string',
+    sort: false,
+  },
+  attentionDate: {
+    title: 'Fecha',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      if (!text) return null;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction: () => {
+      return true;
+    },
+  },
+  documentspresented: {
+    title: 'Documentos Presentados',
+    type: 'string',
+    sort: false,
+  },
+  elaborates: {
+    title: 'Elabora',
+    type: 'string',
+    sort: false,
+  },
+  check: {
+    title: 'Verifica',
+    type: 'string',
+    sort: false,
+  },
+  issues: {
+    title: 'Expide',
+    type: 'string',
+    sort: false,
+  },
+  hourAttention: {
+    title: 'Hora',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      if (!text) return null;
+      let data = text.split(' ');
+      return `${
+        text
+          ? data[0].split('T')[0].split('-').reverse().join('/') + ' ' + data[1]
+          : ''
+      }`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction: () => {
+      return true;
+    },
+  },
+  paragraph1: {
+    title: 'Párrafo 1',
+    type: 'string',
+    sort: false,
+  },
+  paragraph3: {
+    title: 'Párrafo 3',
+    type: 'string',
+    sort: false,
+  },
+  paragraph4: {
+    title: 'Párrafo 4',
     type: 'string',
     sort: false,
   },

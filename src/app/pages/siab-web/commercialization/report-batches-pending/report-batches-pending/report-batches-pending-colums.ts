@@ -70,7 +70,7 @@ export const CAPTURE_LINES_CLIENTS = {
     sort: false,
   },
   lote_publico: {
-    title: 'Lote Publico',
+    title: 'Lote Público',
     sort: false,
   },
   descripcion: {
