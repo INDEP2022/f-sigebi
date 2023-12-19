@@ -5,7 +5,6 @@ import {
   catchError,
   firstValueFrom,
   forkJoin,
-  map,
   mergeMap,
   Observable,
   of,
@@ -121,6 +120,7 @@ export class ExpenseCompositionComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
+          console.log(response);
           if (response) {
             this.getData2();
           }
@@ -159,6 +159,7 @@ export class ExpenseCompositionComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
+          console.log(response);
           this.validateAndProcess = true;
           this.getData2();
         },
@@ -318,6 +319,7 @@ export class ExpenseCompositionComponent
 
   override ngOnInit(): void {
     if (this.haveInitialCharge) {
+      console.log(this.haveInitialCharge);
       this.resetTotals();
       this.getData2();
     }
@@ -463,7 +465,6 @@ export class ExpenseCompositionComponent
                   take(1),
                   catchError(x => of(null)),
                   tap(x => {
-                    console.log(x);
                     if (x === null) {
                       // console.log('ERROR');
                       errors.push({ goodNumber: row.goodNumber });
@@ -477,8 +478,6 @@ export class ExpenseCompositionComponent
               mergeMap(x => this.validationForkJoin(x))
             )
             .subscribe(x => {
-              console.log(x);
-
               if (errors.length === 0) {
                 this.alert(
                   'success',
@@ -511,10 +510,29 @@ export class ExpenseCompositionComponent
   }
 
   get validateModifyEstatus() {
-    return (
-      this.showAdd &&
-      (this.address === 'M' ? this.changeStatusFilter.length === 0 : true)
-    );
+    let validation = this.showAdd;
+    if (this.address === 'I') {
+      return validation;
+    }
+    if (validation) {
+      if (this.LS_ESTATUS) {
+        return true;
+      } else if (this.goodFilter.length === 0) {
+        return true;
+      } else {
+        if (this.eventNumber) {
+          if (
+            this.expense.comerEven &&
+            this.expense.comerEven.eventTpId === '10'
+          ) {
+            return this.changeStatusFilter.length > 0;
+          } else {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   get showAdd() {
@@ -525,6 +543,10 @@ export class ExpenseCompositionComponent
     return this.data
       ? this.data.filter(row => row.changeStatus && row.changeStatus === true)
       : [];
+  }
+
+  get goodFilter() {
+    return this.data ? this.data.filter(row => row.goodNumber) : [];
   }
 
   get amount() {
@@ -607,12 +629,6 @@ export class ExpenseCompositionComponent
     });
   }
 
-  get dataCompositionExpensesStatusChange() {
-    return this.data
-      ? this.data.filter(row => row.changeStatus && row.changeStatus === true)
-      : [];
-  }
-
   async sendToSIRSAE() {
     if (this.address !== 'M' && !this.form.get('contractNumber').value) {
       this.alert(
@@ -651,7 +667,6 @@ export class ExpenseCompositionComponent
           (event: any) => {
             this.fileI.nativeElement.value = '';
             if (typeof event === 'object') {
-              console.log(event);
               if (event) {
                 if (event.tmpGasp) {
                   let dataCSV: IComerDetExpense[] = this.getComerDetExpenseI(
@@ -671,7 +686,6 @@ export class ExpenseCompositionComponent
             }
           },
           error => {
-            console.log(error);
             this.loading = false;
             // this.expenseCaptureDataService.addErrors.next();
             this.fileI.nativeElement.value = '';
@@ -741,11 +755,6 @@ export class ExpenseCompositionComponent
             next: response => {
               if (response.data && response.data.length > 0) {
                 this.getData2();
-                // let newData = this.data
-                //   ? [...this.data, ...this.newGoodsByVig(response.data)]
-                //   : this.newGoodsByVig(response.data);
-                // this.setData(newData);
-                // this.loading = false;
               } else {
                 this.loading = false;
                 this.alert('error', 'No se encontraron datos', '');
@@ -766,14 +775,7 @@ export class ExpenseCompositionComponent
           )
           .subscribe({
             next: response => {
-              console.log(response);
               if (response.data && response.data.length > 0) {
-                // debugger;
-                // let newData = this.data
-                //   ? [...this.data, ...this.newGoodsBySeg(response.data)]
-                //   : this.newGoodsBySeg(response.data);
-                // this.setData(newData);
-                // this.loading = false;
                 this.getData2();
               } else {
                 // this.alert('error','')
@@ -856,6 +858,10 @@ export class ExpenseCompositionComponent
 
   private setData(data, loadContMands = false) {
     this.expenseCaptureDataService.V_BIEN_REP_ROBO = 0;
+    this.total = 0;
+    this.amount = 0;
+    this.isrWithholding = 0;
+    this.vatWithholding = 0;
     this.data = data.map(row => {
       this.amount += row.amount ? +row.amount : 0;
       this.vat += row.iva ? +row.iva : 0;
@@ -890,8 +896,6 @@ export class ExpenseCompositionComponent
       };
     });
     this.expenseCaptureDataService.dataCompositionExpenses = [...this.data];
-    console.log(this.expenseCaptureDataService.dataCompositionExpenses);
-
     this.totalItems = this.data.length;
     this.dataTemp = [...this.data];
     this.getPaginated(this.params.value);
@@ -913,6 +917,9 @@ export class ExpenseCompositionComponent
     if (!this.dataService) {
       return;
     }
+    if (!this.expenseNumber.value) {
+      return;
+    }
     this.resetTotals();
     this.loading = true;
     let params = this.getParams();
@@ -929,7 +936,6 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response && response.data && response.data.length > 0) {
-            console.log(response.data);
             this.setData(response.data, loadContMands);
           } else {
             this.notGetData();
@@ -979,7 +985,6 @@ export class ExpenseCompositionComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          console.log(response);
           if (response.data && response.data.length > 0) {
             this.loader.load = false;
             let result = response.data.filter(
@@ -1099,7 +1104,6 @@ export class ExpenseCompositionComponent
 
   private async validateSelectedGoods() {
     let dataContent = await this.dataPaginated.getAll();
-    console.log(dataContent);
     let selectedChangeStatus = dataContent.filter(
       (row: any) => row.changeStatus === true
     );
@@ -1110,33 +1114,17 @@ export class ExpenseCompositionComponent
     this.expenseCaptureDataService.actionButton = value;
   }
 
+  get LS_ESTATUS() {
+    return this.expenseCaptureDataService.LS_ESTATUS;
+  }
+
   private async modifyEstatusM() {
-    let filterParams = new FilterParams();
-    filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
-    if (this.conceptNumber) {
-      filterParams.addFilter('conceptId', this.conceptNumber.value);
-    }
     // let dataContent = await this.dataPaginated.getAll();
     // console.log(dataContent);
-    let ls_status = await firstValueFrom(
-      this.parameterService.getAll(filterParams.getParams()).pipe(
-        catchError(x => of(null)),
-        map(x => {
-          if (x) {
-            return x.data ? (x.data.length > 0 ? x.data[0].value : null) : null;
-          } else {
-            return null;
-          }
-        })
-      )
-    );
-    if (ls_status) {
+    // let ls_status = await this.expenseCaptureDataService.getLS_ESTATUS();
+    if (this.LS_ESTATUS) {
       this.sendSolicitud();
-    } else if (
-      this.changeStatusFilter &&
-      this.changeStatusFilter.length > 0 &&
-      this.changeStatusFilter[0].goodNumber === null
-    ) {
+    } else if (this.goodFilter.length === 0) {
       this.sendSolicitud();
     } else {
       if (this.eventNumber) {
@@ -1221,7 +1209,6 @@ export class ExpenseCompositionComponent
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const file = files[0];
     // this.file.nativeElement.value = '';
-    console.log(file.name);
     if (file.name.includes('csv')) {
       this.loading = true;
       let filterParams = new FilterParams();
@@ -1294,10 +1281,8 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe(
         (event: any) => {
-          console.log(event);
           this.file.nativeElement.value = '';
           if (typeof event === 'object') {
-            console.log(event.body);
             if (event.CONT > 0) {
               let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
                 event.messages
@@ -1378,10 +1363,8 @@ export class ExpenseCompositionComponent
       .pipe(take(1))
       .subscribe(
         (event: any) => {
-          console.log(event);
           this.file.nativeElement.value = '';
           if (typeof event === 'object') {
-            console.log(event.body);
             if (event.CONT > 0) {
               let dataCSV: IComerDetExpense[] = this.getComerDetExpenseArray(
                 event.messages
@@ -1424,8 +1407,6 @@ export class ExpenseCompositionComponent
 
   private getComerDetExpenseArray(messages: any) {
     return messages.map((row: any) => {
-      console.log(row);
-
       let total =
         row.COL_IMPORTE + row.COL_IVA
           ? row.COL_IVA
@@ -1730,7 +1711,6 @@ export class ExpenseCompositionComponent
           next: response => {
             this.loader.load = false;
             if (response) {
-              console.log(response);
               if (response && response.resData) {
                 const modalConfig = MODAL_CONFIG;
                 modalConfig.initialState = {

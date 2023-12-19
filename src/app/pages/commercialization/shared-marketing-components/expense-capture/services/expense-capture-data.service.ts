@@ -75,6 +75,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   PVALIDADET: string;
   CHCONIVA: string;
   IVA: number;
+  LS_ESTATUS: string;
   V_VALCON_ROBO = 0;
   amount = 0;
   vat = 0;
@@ -248,7 +249,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.IVA = 0;
   }
 
-  fillParams(row: IReadParameter) {
+  private fillParams(row: IReadParameter, updateComposition: boolean = true) {
     console.log(row);
     this.PMONTOXMAND = row.PMONTOXMAND;
     this.PDEVCLIENTE = row.PDEVCLIENTE;
@@ -265,7 +266,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.VALBIEVEND = row.VALBIEVEND ?? 'N';
     this.PNOENVIASIRSAE = row.PNOENVIASIRSAE ?? 'N';
     this.PDEVPARCIALBIEN = row.PDEVPARCIALBIEN ?? 'N';
-    if (this.PVALIDADET !== row.PVALIDADET) {
+    if (updateComposition && this.PVALIDADET !== row.PVALIDADET) {
       setTimeout(() => {
         this.updateExpenseComposition.next(true);
       }, 100);
@@ -278,7 +279,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
-  readParams(conceptId: string) {
+  readParams(conceptId: string, updateComposition: boolean = true) {
     return firstValueFrom(
       this.parameterService.readParameters(+conceptId, this.address).pipe(
         take(1),
@@ -290,7 +291,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         map(response => {
           console.log(response);
           if (response) {
-            this.fillParams(response);
+            this.fillParams(response, updateComposition);
             return true;
           } else {
             this.alert('warning', 'El concepto no está parametrizado', '');
@@ -557,11 +558,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
-  private async getLS_ESTATUS() {
+  async getLS_ESTATUS(conceptId?: number) {
     const filterParams = new FilterParams();
-    filterParams.addFilter('conceptId', this.conceptNumber.value);
+    filterParams.addFilter('conceptId', conceptId ?? this.conceptNumber.value);
     filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
-    return await firstValueFrom(
+    this.LS_ESTATUS = await firstValueFrom(
       this.parameterService.getAll(filterParams.getParams()).pipe(
         catchError(x => of(null)),
         map(x => (x && x.data && x.data.length > 0 ? x.data[0].value : null))
@@ -599,8 +600,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         return;
       }
     }
-    let LS_ESTATUS = await this.getLS_ESTATUS();
-    if (LS_ESTATUS) {
+
+    if (this.LS_ESTATUS) {
       this.ENVIA_SOLICITUD();
     } else {
       if (!this.dataCompositionExpenses[0].goodNumber) {
@@ -781,6 +782,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       // console.log(resultSP);
       this.errorSendSolicitudeMessage();
       return;
+    } else {
+      this.form.get('idOrdinginter').setValue(resultOI.lst_order);
     }
     const resultSP = await this.ENVIA_SIRSAE_CHATARRA_SP({
       spentId: this.expenseNumber.value,

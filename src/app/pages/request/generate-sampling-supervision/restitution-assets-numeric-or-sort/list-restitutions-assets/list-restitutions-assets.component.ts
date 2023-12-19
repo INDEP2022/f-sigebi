@@ -35,6 +35,7 @@ export class ListRestitutionsAssetsComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Input() idSample: number = 0;
   @Input() filterObject: any;
+  @Input() disabledButton: boolean;
   totalItems: number = 0;
   columns = LIST_RESTITUTION_COLUMNS;
   goodsModified: any = [];

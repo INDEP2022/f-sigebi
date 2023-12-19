@@ -92,6 +92,15 @@ export class FileBrowserService extends HttpService {
   }
 
   getRouteBillingSavebillingSiab(data: FormData) {
+    // CREAR IMÁGENES
     return this.post('route-billing/savebillingSiab', data);
+  }
+  getRouteBillingAllBillingSiab(data: any) {
+    // TODAS LAS IMÁGENES
+    return this.post('route-billing/allBillingSiab', data);
+  }
+  getRouteBillingBillingSiab(data: any) {
+    // OBTENCIÓN DE BASE64
+    return this.post('route-billing/billingSiab', data);
   }
 }
