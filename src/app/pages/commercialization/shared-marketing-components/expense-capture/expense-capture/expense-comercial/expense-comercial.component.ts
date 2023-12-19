@@ -1386,7 +1386,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       //   this.alert('warning', 'No se cuenta con coordinación regional', '');
       // }
       this.descurcoord.setValue(event.descurcoord);
-      this.dataService.updateOI.next(true);
+
       this.dataService.updateExpenseComposition.next(updateDetails);
       this.dataService.updateFolio.next(true);
       // if (this.address === 'M') {
@@ -1399,6 +1399,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (!responseParams) {
         return;
       }
+      this.dataService.updateOI.next(true);
       const otherParams = await this.fillOthersParameters();
     }, 500);
   }
