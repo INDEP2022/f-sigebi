@@ -29,4 +29,6 @@ export enum MassiveGoodEndpoints {
   ExportGoodProgramming = 'application/exportDataGoodsProgramming',
   detailDonationEventExcel = 'application/export-excel-donation-good',
   ApplicationRegisterCountCsv = 'application/register-count-csv',
+  losersReport = 'application/export-query-losers-report',
+  winnersReport = 'application/export-query-winners-report',
 }

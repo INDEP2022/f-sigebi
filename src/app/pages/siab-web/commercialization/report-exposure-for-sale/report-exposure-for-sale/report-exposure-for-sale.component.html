@@ -28,7 +28,7 @@
               value="0" />
           </form-radio>
         </div>
-        <div class="col-md-4" *ngIf="txtSearch">
+        <div class="col-md-6" *ngIf="txtSearch">
           <label
             for=""
             style="font-size: 10px; font-weight: 600; color: #74788d"
@@ -42,7 +42,7 @@
               (change)="chargeFile($event)" />
           </form-field>
         </div>
-        <div class="col-md-2 mt-5" *ngIf="txtSearch">
+        <div class="col-md-3 mt-5 d-flex" *ngIf="txtSearch">
           <div class="justify-content-center">
             <!-- [disabled]="validTxt"-->
             <button
