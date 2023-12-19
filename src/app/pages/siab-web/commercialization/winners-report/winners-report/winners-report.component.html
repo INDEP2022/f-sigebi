@@ -7,7 +7,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-7">
           <form-field [control]="form.get('event')">
             <!--<input type="text" class="form-control" formControlName="event" />-->
             <ngx-select
@@ -21,7 +21,10 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
@@ -29,6 +32,8 @@
             (click)="getWinner()">
             Reporte Ganadores <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
+        </div>
+        <div class="col-md-4">
           <button
             type="button"
             class="btn btn-primary btn-sm active m-2"
@@ -37,6 +42,8 @@
             Reporte No Ganadores
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
+        </div>
+        <div class="col-md-4">
           <button class="btn btn-danger btn-sm active" (click)="clean()">
             Limpiar <i class="fas fa-eraser"> </i>
           </button>
