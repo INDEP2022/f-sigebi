@@ -190,7 +190,9 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     this.loading = true;
     const user: any = this.authService.decodeToken();
     this.params.getValue()['filter.delegationNumber'] = user.department;
+
     this.params.getValue()['filter.fractionId'] = '$not:$null';
+
     this.goodService.getAll(this.params.getValue()).subscribe({
       next: response => {
         const info = response.data.map(item => {
