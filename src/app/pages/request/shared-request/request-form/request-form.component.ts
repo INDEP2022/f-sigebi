@@ -427,7 +427,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   affairChange(e: any) {
     console.log(e);
-    if (
+    /*if (
       e.processDetonate == 'ABANDONO' ||
       e.processDetonate == 'EXT_DOMINIO' ||
       e.processDetonate == 'DECOMISO'
@@ -435,7 +435,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.displayOfficeCenter = true;
     } else {
       this.displayOfficeCenter = false;
-    }
+    }*/
   }
 
   openModalSelectUser() {
@@ -691,7 +691,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loadingTurn = false;
-          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          this.onLoadToast('error', 'Error', 'El proceso seleccionado no tiene una tarea configurada');
           reject(false);
         },
       });
