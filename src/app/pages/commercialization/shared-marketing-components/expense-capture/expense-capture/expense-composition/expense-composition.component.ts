@@ -1178,8 +1178,16 @@ export class ExpenseCompositionComponent
             );
           }
         } else {
-          this.loader.load = false;
-          this.sendMotive();
+          const response = await this.alertQuestion(
+            'question',
+            '¿Desea seleccionar motivos para modificar estatus?',
+            ''
+          );
+          if (response.isConfirmed) {
+            this.actionButton = 'Cambio de estatus';
+            this.loader.load = false;
+            this.sendMotive();
+          }
         }
       } else {
         this.loader.load = false;
