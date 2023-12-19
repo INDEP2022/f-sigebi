@@ -891,7 +891,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (this.address !== 'M') {
       this.setConceptScreenI(user);
     }
-    await this.readParams(concept.conceptId);
+    await this.dataService.readParams(concept.conceptId);
     if (this.address === 'M') {
       this.dataService.V_VALCON_ROBO = await firstValueFrom(
         this.screenService.PUP_VAL_CONCEP_ROBO(concept.conceptId)
@@ -943,10 +943,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     // setTimeout(() => {
     //   this.reloadLote = !this.reloadLote;
     // }, 500);
-  }
-
-  readParams(id: string) {
-    return this.dataService.readParams(id);
   }
 
   private async getDocuments(addNumexp = false) {
@@ -1396,7 +1392,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       // if (this.address === 'M') {
       //   this.dataService.updateFolio.next(true);
       // }
-      const responseParams = await this.readParams(event.conceptNumber);
+      const responseParams = await this.dataService.readParams(
+        event.conceptNumber,
+        false
+      );
       if (!responseParams) {
         return;
       }
