@@ -105,7 +105,7 @@ export class NumeraireConversionAuctionsComponent
   private calculaBody() {
     this.loader.load = true;
     this.convNumeraryService
-      .getCentralNumera(this.selectedEvent.id)
+      .getCentralNumera(+(this.selectedEvent.id + ''))
       .pipe(take(1))
       .subscribe({
         next: response => {
@@ -153,7 +153,7 @@ export class NumeraireConversionAuctionsComponent
     this.loader.load = true;
     let resultBorra = await firstValueFrom(
       this.convNumeraryService
-        .SPBorraNumera(this.selectedEvent.id)
+        .SPBorraNumera(+(this.selectedEvent.id + ''))
         .pipe(catchError(x => of(x.error)))
     );
     if (resultBorra.statusCode !== 200) {
@@ -168,7 +168,7 @@ export class NumeraireConversionAuctionsComponent
     console.log(resultBorra);
     let resultParcial = await firstValueFrom(
       this.convNumeraryService
-        .getSPGastosEventoParcial(this.selectedEvent.id)
+        .getSPGastosEventoParcial(+(this.selectedEvent.id + ''))
         .pipe(catchError(x => of(x.error)))
     );
     if (resultParcial.statusCode !== 200) {
@@ -229,7 +229,7 @@ export class NumeraireConversionAuctionsComponent
       this.validParcial = true;
       const filterParams = new FilterParams();
       filterParams.addFilter('idStatusVta', 'GARA');
-      filterParams.addFilter('idEvent', event.id);
+      filterParams.addFilter('idEvent', +(event.id + ''));
       this.lotService
         .getAll(filterParams.getParams())
         .pipe(take(1))
@@ -278,7 +278,7 @@ export class NumeraireConversionAuctionsComponent
     if (this.selectedEvent.address === 'M') {
       this.convNumeraryService
         .convert({
-          pevent: this.selectedEvent.id,
+          pevent: +(this.selectedEvent.id + ''),
           pscreen: 'FCOMER087',
           user: this.user.preferred_username,
         })
@@ -301,7 +301,7 @@ export class NumeraireConversionAuctionsComponent
     } else if (this.selectedEvent.address === 'I') {
       const count = await firstValueFrom(
         this.convNumeraryService
-          .SP_CONVERSION_ASEG_TOTAL(this.selectedEvent.id, 'FCOMER07')
+          .SP_CONVERSION_ASEG_TOTAL(+(this.selectedEvent.id + ''), 'FCOMER07')
           .pipe(
             catchError(x => of({ processedData: 0 })),
             map(x => x.processedData)
@@ -311,21 +311,25 @@ export class NumeraireConversionAuctionsComponent
         this.alert('warning', 'No tiene gastos válidos a convertir', '');
       }
       const v_count_gara = await firstValueFrom(
-        this.lotService.getStatusCountGaraByEvent(this.selectedEvent.id).pipe(
-          catchError(x => of({ data: [{ count: 0 }] })),
-          map(x => x.data[0].count)
-        )
+        this.lotService
+          .getStatusCountGaraByEvent(+(this.selectedEvent.id + ''))
+          .pipe(
+            catchError(x => of({ data: [{ count: 0 }] })),
+            map(x => x.data[0].count)
+          )
       );
       const v_count_numera = await firstValueFrom(
-        this.lotService.getStatusCountComerxlots(this.selectedEvent.id).pipe(
-          catchError(x => of({ data: [{ count: 0 }] })),
-          map(x => x.data[0].count)
-        )
+        this.lotService
+          .getStatusCountComerxlots(+(this.selectedEvent.id + ''))
+          .pipe(
+            catchError(x => of({ data: [{ count: 0 }] })),
+            map(x => x.data[0].count)
+          )
       );
       if (v_count_gara === 0 && v_count_numera === 0) {
         // this.selectedEvent.statusVtaId = 'CNE';
         this.eventDataService
-          .update2(this.selectedEvent.id, {
+          .update2(+(this.selectedEvent.id + ''), {
             statusVtaId: 'CNE',
             eventTpId: +(this.selectedEvent.eventTpId + ''),
           })
@@ -389,7 +393,7 @@ export class NumeraireConversionAuctionsComponent
     this.loader.load = true;
     this.convNumeraryService
       .SP_CONVERSION_ASEG_PARCIAL({
-        pevent: this.selectedEvent.id,
+        pevent: +(this.selectedEvent.id + ''),
         pscreen: 'FCOMER087',
         user: this.user.preferred_username,
       })
@@ -437,7 +441,7 @@ export class NumeraireConversionAuctionsComponent
     let params = {
       DESTYPE: 'SCREEN',
       PARAMFORM: 'NO',
-      PEVENTO: this.selectedEvent.id,
+      PEVENTO: +(this.selectedEvent.id + ''),
       PCVEPROCESO: this.selectedEvent.processKey,
     };
     this.siabService.fetchReport('RCOMER_NUMERARIO', params).subscribe({
