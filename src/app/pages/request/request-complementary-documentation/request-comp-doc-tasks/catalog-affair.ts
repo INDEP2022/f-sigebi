@@ -239,14 +239,14 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     case 'register-request-information-goods':
       return {
         title: `Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud: ${requestId}`,
-        url: 'pages/request/request-comp-doc/tasks/respose-office-information-goods',
+        url: 'pages/request/request-comp-doc/tasks/response-office-information-goods',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
       };
-    case 'respose-office-information-goods':
+    case 'response-office-information-goods':
       return {
         title: `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${requestId}`,
         url: 'pages/request/request-comp-doc/tasks/review-office-information-goods',

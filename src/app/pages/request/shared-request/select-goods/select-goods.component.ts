@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -32,6 +32,7 @@ import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.com
 import { GrouperGoodFieldComponent } from './grouper-good-field/grouper-good-field.component';
 
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { SeeInformationComponent } from '../expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
 import {
   GOODS_RES_DEV_INV_COLUMNS,
@@ -60,6 +61,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() idRequest: number = 0;
   goodSelected: boolean = false;
   jsonBody: any = {};
+
   goodSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -109,6 +111,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           });
         },
       },
+
       viewFile: {
         title: 'Expediente',
         type: 'custom',
@@ -117,7 +120,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
             //component.requesInfo(row.requestId);
-            //component.viewFile(row);
+            component.viewFile(row);
           });
         },
       },
@@ -132,10 +135,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            //component.requesInfo(row.requestId);
+            component.viewFile(row);
           });
         },
       },
+
       /*goodGrouper: {
         title: 'Nombre del Bien Agrupador',
         type: 'custom',
@@ -425,7 +429,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   addGood(good: any) {
     delete good.addGood;
-    // good = Object.assign({ viewFile: '' }, good);
+    good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
     this.displayColumns();
@@ -488,6 +492,23 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         console.log(this.selectedGoods, this.selectedGoodColumns);*/
       }
     });
+  }
+
+  openDetail(data: any): void {
+    this.openModalInformation(data, 'detail');
+  }
+
+  private openModalInformation(data: any, typeInfo: string) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        typeInfo,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(SeeInformationComponent, config);
   }
 
   openSiabSearch() {

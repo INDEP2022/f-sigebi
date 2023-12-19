@@ -222,105 +222,63 @@ export class RegisterDocumentationFormComponent
   ================================================ */
   setFieldsRequired() {
     if (this.transference == 1) {
-      this.registerForm.controls['previousInquiry'].setValidators([
-        Validators.required,
-      ]);
-      this.registerForm.controls['circumstantialRecord'].setValidators([
-        Validators.required,
-      ]);
+      this.setValidatorAndUpdate('previousInquiry', [Validators.required]);
+      this.setValidatorAndUpdate('circumstantialRecord', [Validators.required]);
     } else if (this.transference == 3) {
-      this.registerForm.controls['lawsuit'].setValidators([
+      this.setValidatorAndUpdate('lawsuit', [
         Validators.required,
         Validators.pattern(STRING_PATTERN),
       ]);
-      this.registerForm.controls['tocaPenal'].setValidators([
+      this.setValidatorAndUpdate('tocaPenal', [
         Validators.required,
         Validators.pattern(STRING_PATTERN),
       ]);
-      this.registerForm.controls['protectNumber'].setValidators([
+      this.setValidatorAndUpdate('protectNumber', [
         Validators.required,
         Validators.pattern(POSITVE_NUMBERS_PATTERN),
       ]);
     } else if (this.transference == 120) {
-      this.registerForm.controls['trialType'].setValidators([
+      this.setValidatorAndUpdate('trialType', [
         Validators.required,
         Validators.pattern(STRING_PATTERN),
       ]);
     }
 
     if (this.processDetonate == 'AMPARO') {
-      this.registerForm.controls['protectNumber'].setValidators([
+      this.setValidatorAndUpdate('protectNumber', [
         Validators.required,
         Validators.pattern(POSITVE_NUMBERS_PATTERN),
       ]);
     }
 
-    switch (this.process) {
-      case 'register-request-return':
-        this.registerForm.controls['trialType'].setValidators([
+    const processCases = {
+      'register-request-return': ['trialType', 'authorityOrdering'],
+      'register-request-similar-goods': ['trialType'],
+      'register-request-compensation': ['trialType'],
+      'register-request-economic-compensation': ['trialType'],
+      'register-request-information-goods': ['trialType'],
+      'register-request-protection': ['trialType', 'protectNumber'],
+      'register-seizures': ['trialType'],
+      'register-abandonment-goods': ['trialType'],
+      'register-domain-extinction': ['trialType'],
+    };
+
+    if (processCases[this.process]) {
+      processCases[this.process].forEach(control => {
+        this.setValidatorAndUpdate(control, [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
         ]);
-        this.registerForm.controls['authorityOrdering'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-similar-goods':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-compensation':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-economic-compensation':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-information-goods':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-request-protection':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        this.registerForm.controls['protectNumber'].setValidators([
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-        ]);
-        break;
-      case 'register-seizures':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-abandonment-goods':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
-      case 'register-domain-extinction':
-        this.registerForm.controls['trialType'].setValidators([
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-        ]);
-        break;
+      });
     }
 
     this.registerForm.updateValueAndValidity();
+  }
+
+  setValidatorAndUpdate(controlName, validators) {
+    this.registerForm.controls[controlName].setValidators(validators);
+    //this.registerForm.controls[controlName].markAsTouched();
+    this.registerForm.controls[controlName].updateValueAndValidity();
   }
 
   cancelRequest() {

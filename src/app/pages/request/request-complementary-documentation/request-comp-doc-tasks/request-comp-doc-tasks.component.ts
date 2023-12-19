@@ -39,7 +39,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override editReport: boolean;
   protected override reportTable: string;
   protected override reportId: string;
@@ -259,7 +260,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
     const initialState: Partial<CreateReportComponent> = {
@@ -783,6 +784,7 @@ export class RequestCompDocTasksComponent
           'success'
         );
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        //VALIDAR NAVEGACION
       },
       error: error => {
         this.onLoadToast('error', 'Error', 'No se pudo rechazar la tarea');
@@ -800,7 +802,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -924,7 +926,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'validate-opinion-similar-goods':
-
         if (!this.validate.signedVisit) {
           this.showWarning('Firme el reporte de visita ocular');
           return false;
@@ -1013,7 +1014,9 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.validate.genValDictum) {
-          this.showWarning('Genera la validación del dictamen de resarcimiento');
+          this.showWarning(
+            'Genera la validación del dictamen de resarcimiento'
+          );
           return false;
         }
 
@@ -1090,7 +1093,6 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'request-economic-resources':
-
         if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
@@ -1141,7 +1143,9 @@ export class RequestCompDocTasksComponent
           return false;
         }
         if (!this.validate.genValDictum) {
-          this.showWarning('Genera la validación del dictamen de resarcimiento');
+          this.showWarning(
+            'Genera la validación del dictamen de resarcimiento'
+          );
           return false;
         }
         break;
@@ -1289,7 +1293,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1305,7 +1309,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1325,7 +1329,6 @@ export class RequestCompDocTasksComponent
       if (question.isConfirmed) {
         //Cerrar tarea//
         if (this.validateTurn()) {
-
           let response = await this.updateTask(this.taskInfo.id);
 
           if (response) {
@@ -1338,10 +1341,7 @@ export class RequestCompDocTasksComponent
             );
             this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
           }
-
         }
-
-
       }
     });
 
@@ -1360,7 +1360,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 }
 
 export function isNullOrEmpty(value: any): boolean {
