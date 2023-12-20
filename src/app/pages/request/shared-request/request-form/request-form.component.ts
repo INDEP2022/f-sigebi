@@ -426,8 +426,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   affairChange(e: any) {
-    console.log(e);
-    /*if (
+    if (
       e.processDetonate == 'ABANDONO' ||
       e.processDetonate == 'EXT_DOMINIO' ||
       e.processDetonate == 'DECOMISO'
@@ -435,7 +434,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.displayOfficeCenter = true;
     } else {
       this.displayOfficeCenter = false;
-    }*/
+    }
   }
 
   openModalSelectUser() {
