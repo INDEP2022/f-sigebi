@@ -1,3 +1,4 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { ComerF } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
 
 export const BILLING_FOLIO_COLUMNS = {
@@ -26,5 +27,15 @@ export const BILLING_FOLIO_COLUMNS = {
     title: 'Fecha Registro',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      return val ? val.split('-').reverse().join('/') : '';
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction: () => {
+      return true;
+    },
   },
 };

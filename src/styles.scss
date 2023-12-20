@@ -793,6 +793,11 @@ custom-view-component {
   margin-bottom: 0px !important;
 }
 
+#testAcc2 .card .card-block {
+  padding: 0px 0px !important;
+  margin-bottom: 0px !important;
+}
+
 #checkbox_fcomer div div {
   margin-top: -21px;
   margin-left: 15px;
@@ -875,4 +880,8 @@ textarea + .form-bar {
 
 .gicon {
   width: 10px !important;
+}
+
+#testBottomMargin {
+  margin-bottom: 0px !important;
 }

@@ -331,12 +331,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
     this.showGarantia = false;
     this.showLiquidacion = false;
     this.showFilter = true;
-    if (
-      this.formFilter.get('lot').value &&
-      this.formFilter.get('customer').value &&
-      this.formFilter.get('status').value &&
-      this.formFilter.get('view').value
-    ) {
+    if (this.formFilter.get('lot').value) {
       this.publicLotBody = this.formFilter.get('lot').value;
       this.customerBody = this.formFilter.get('customer').value;
       this.statusBody = this.formFilter.get('status').value;

@@ -40,7 +40,13 @@ import { COLUMNS, REDICET_FACTURAS } from './columna';
 @Component({
   selector: 'app-invoice-rectification-process',
   templateUrl: './invoice-rectification-process.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class InvoiceRectificationProcessComponent
   extends BasePage
@@ -72,6 +78,7 @@ export class InvoiceRectificationProcessComponent
   loading2: boolean = false;
   valResult: boolean = false;
   dataJob: any = null;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -191,11 +198,36 @@ export class InvoiceRectificationProcessComponent
               lastnameMat: () => (searchFilter = SearchFilter.ILIKE),
               inrepresentation: () => (searchFilter = SearchFilter.ILIKE),
               year: () => (searchFilter = SearchFilter.EQ),
+              attentionDate: () => (searchFilter = SearchFilter.EQ),
+              documentspresented: () => (searchFilter = SearchFilter.ILIKE),
+              elaborates: () => (searchFilter = SearchFilter.ILIKE),
+              check: () => (searchFilter = SearchFilter.ILIKE),
+              issues: () => (searchFilter = SearchFilter.ILIKE),
+              hourAttention: () => (searchFilter = SearchFilter.EQ),
+              paragraph1: () => (searchFilter = SearchFilter.ILIKE),
+              paragraph3: () => (searchFilter = SearchFilter.ILIKE),
+              paragraph4: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
 
             if (filter.search !== '') {
+              if (filter.field == 'expDate') {
+                filter.search = this.datePipe.transform(
+                  filter.search,
+                  'yyyy-MM-dd'
+                );
+              }
+
+              if (filter.field == 'hourAttention') {
+                let data = this.datePipe.transform(
+                  filter.search,
+                  'yyyy-MM-dd HH:mm:ss'
+                );
+                let arry = data.split(' ');
+                filter.search = `$eq:${arry[0]}T${arry[1]}.000Z`;
+              }
+
               this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters2[field];
@@ -249,17 +281,17 @@ export class InvoiceRectificationProcessComponent
       yearPrice,
     } = this.form.value;
 
-    if (
-      !jobNot &&
-      !expDate &&
-      !series &&
-      !Invoice &&
-      !name &&
-      !lastnameMat &&
-      !lastnamePat &&
-      !inrepresentation
-    )
-      return;
+    // if (
+    //   !jobNot &&
+    //   !expDate &&
+    //   !series &&
+    //   !Invoice &&
+    //   !name &&
+    //   !lastnameMat &&
+    //   !lastnamePat &&
+    //   !inrepresentation
+    // )
+    //   return;
 
     const params = new ListParams();
 
@@ -339,8 +371,126 @@ export class InvoiceRectificationProcessComponent
       delete this.filterParams.getValue()['filter.inrepresentation'];
     }
 
+    if (attentionDate) {
+      params['filter.attentionDate'] = `${SearchFilter.EQ}:${
+        typeof attentionDate == 'string'
+          ? attentionDate.split('/').reverse().join('-')
+          : this.datePipe.transform(attentionDate, 'yyyy-MM-dd')
+      }`;
+      this.filterParams.getValue()['filter.attentionDate'] = `${
+        SearchFilter.EQ
+      }:${
+        typeof attentionDate == 'string'
+          ? attentionDate.split('/').reverse().join('-')
+          : this.datePipe.transform(attentionDate, 'yyyy-MM-dd')
+      }`;
+    } else {
+      delete this.filterParams.getValue()['filter.attentionDate'];
+    }
+
+    if (documentspresented) {
+      params[
+        'filter.documentspresented'
+      ] = `${SearchFilter.ILIKE}:${documentspresented}`;
+      this.filterParams.getValue()[
+        'filter.documentspresented'
+      ] = `${SearchFilter.ILIKE}:${documentspresented}`;
+    } else {
+      delete this.filterParams.getValue()['filter.documentspresented'];
+    }
+
+    if (elaborates) {
+      params['filter.elaborates'] = `${SearchFilter.ILIKE}:${elaborates}`;
+      this.filterParams.getValue()[
+        'filter.elaborates'
+      ] = `${SearchFilter.ILIKE}:${elaborates}`;
+    } else {
+      delete this.filterParams.getValue()['filter.elaborates'];
+    }
+
+    if (check) {
+      params['filter.check'] = `${SearchFilter.ILIKE}:${check}`;
+      this.filterParams.getValue()[
+        'filter.check'
+      ] = `${SearchFilter.ILIKE}:${check}`;
+    } else {
+      delete this.filterParams.getValue()['filter.check'];
+    }
+
+    if (issues) {
+      params['filter.issues'] = `${SearchFilter.ILIKE}:${issues}`;
+      this.filterParams.getValue()[
+        'filter.issues'
+      ] = `${SearchFilter.ILIKE}:${issues}`;
+    } else {
+      delete this.filterParams.getValue()['filter.issues'];
+    }
+
+    if (paragraph1) {
+      params['filter.paragraph1'] = `${SearchFilter.ILIKE}:${paragraph1}`;
+      this.filterParams.getValue()[
+        'filter.paragraph1'
+      ] = `${SearchFilter.ILIKE}:${paragraph1}`;
+    } else {
+      delete this.filterParams.getValue()['filter.paragraph1'];
+    }
+
+    if (paragraph4) {
+      params['filter.paragraph4'] = `${SearchFilter.ILIKE}:${paragraph4}`;
+      this.filterParams.getValue()[
+        'filter.paragraph4'
+      ] = `${SearchFilter.ILIKE}:${paragraph4}`;
+    } else {
+      delete this.filterParams.getValue()['filter.paragraph4'];
+    }
+
+    if (paragraph3) {
+      params['filter.paragraph3'] = `${SearchFilter.ILIKE}:${paragraph3}`;
+      this.filterParams.getValue()[
+        'filter.paragraph3'
+      ] = `${SearchFilter.ILIKE}:${paragraph3}`;
+    } else {
+      delete this.filterParams.getValue()['filter.paragraph3'];
+    }
+
+    if (hourAttention) {
+      console.log('hourAttention', hourAttention);
+      params['filter.hourAttention'] = this.getFilterHour(hourAttention);
+      // `${SearchFilter.EQ}:${
+      //   typeof hourAttention == 'string'
+      //     ? hourAttention.split('/').reverse().join('-')
+      //     : this.datePipe.transform(hourAttention, 'yyyy-MM-dd')
+      // }`;
+
+      this.filterParams.getValue()['filter.hourAttention'] =
+        this.getFilterHour(hourAttention);
+      // `${
+      //   typeof hourAttention == 'string'
+      //     ? hourAttention.split('/').reverse().join('-')
+      //     : this.datePipe.transform(
+      //       hourAttention,
+      //       'yyyy-MM-dd HH:mm:ss'
+      //     )
+      // }`;
+
+      // this.filterParams.getValue()['filter.hourAttention'] = `$eq:${this.filterParams.getValue()['filter.hourAttention']}T00:00:00.000Z`
+    } else {
+      delete this.filterParams.getValue()['filter.hourAttention'];
+    }
+
     this.loadingSearch = true;
     this.getComerRectInovice(params);
+  }
+
+  getFilterHour(hourAttention: any) {
+    if (typeof hourAttention == 'string') {
+      let data = hourAttention.split(' ');
+      return `$eq:${data[0].split('/').reverse().join('-')}T${data[1]}:00.000Z`;
+    } else {
+      let data = this.datePipe.transform(hourAttention, 'yyyy-MM-dd HH:mm:ss');
+      let arry = data.split(' ');
+      return `$eq:${arry[0]}T${arry[1]}.000Z`;
+    }
   }
 
   getComerDirectInvoice() {
@@ -404,6 +554,9 @@ export class InvoiceRectificationProcessComponent
           this.paramsList.getValue()[
             'filter.notJob'
           ] = `${SearchFilter.EQ}:${rectInvoice.jobNot}`;
+          this.paramsList.getValue()[
+            'filter.year'
+          ] = `${SearchFilter.EQ}:${rectInvoice.year}`;
           this.getComerDirectInvoice();
         }
       },
@@ -704,7 +857,7 @@ export class InvoiceRectificationProcessComponent
     //   this.alert('warning', 'Ingrese una Fecha de Expedición', '');
     //   return;
     // }
-
+    console.log('dataJob', this.form.value);
     let config: ModalOptions = {
       initialState: {
         dataJob: this.dataJob,
@@ -726,10 +879,6 @@ export class InvoiceRectificationProcessComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(NewImageModalComponent, config);
-    // const modalRef = this.modalService.show(NewImageModalComponent, {
-    //   class: 'modal-lg modal-dialog-centered',
-    //   ignoreBackdropClick: true,
-    // });
   }
 
   openForm(data: any) {}
@@ -942,7 +1091,7 @@ export class InvoiceRectificationProcessComponent
     //   return;
     // }
 
-    this.saveDataSilent();
+    // this.saveDataSilent();
 
     let config: ModalOptions = {
       initialState: {
@@ -954,6 +1103,9 @@ export class InvoiceRectificationProcessComponent
               this.paramsList.getValue()[
                 'filter.notJob'
               ] = `${SearchFilter.EQ}:${jobNot}`;
+              this.paramsList.getValue()[
+                'filter.year'
+              ] = `${SearchFilter.EQ}:${year}`;
             }
             this.getComerDirectInvoice();
           }
@@ -967,7 +1119,7 @@ export class InvoiceRectificationProcessComponent
 
   remove(data: any) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
       '¿Desea Eliminar este registro?'
     ).then(answ => {
@@ -1014,7 +1166,7 @@ export class InvoiceRectificationProcessComponent
     // this.loadingSearch = false;
     this.isSearch = true;
     const rectInvoice = this.rowSelected;
-    this.dataJob = rectInvoice;
+    this.dataJob = this.rowSelected;
 
     rectInvoice.expDate = rectInvoice.expDate
       ? rectInvoice.expDate.split('-').reverse().join('/')
@@ -1036,10 +1188,17 @@ export class InvoiceRectificationProcessComponent
       ? `${fecha[0].split('-').reverse().join('/')} ${fecha[1]}`
       : null;
 
+    console.log('rectInvoice', rectInvoice);
     this.form.patchValue(rectInvoice);
+
     this.paramsList.getValue()[
       'filter.notJob'
     ] = `${SearchFilter.EQ}:${rectInvoice.jobNot}`;
+
+    this.paramsList.getValue()[
+      'filter.year'
+    ] = `${SearchFilter.EQ}:${rectInvoice.year}`;
+
     this.getComerDirectInvoice();
     this.modal.hide();
   }
@@ -1078,6 +1237,8 @@ export class InvoiceRectificationProcessComponent
   }
 
   removeOficio(data: any) {
+    // console.log("this.dataJob", this.dataJob)
+    // console.log("data", data)
     this.alertQuestion(
       'question',
       'Eliminar',
@@ -1089,18 +1250,22 @@ export class InvoiceRectificationProcessComponent
           year: data.year,
         };
         this.comerRectInoviceService.remove(body).subscribe({
-          next: async () => {
+          next: async resp => {
             this.alert('success', 'Registro Eliminado Correctamente', '');
 
-            if (
-              this.dataJob.jobNot == data.jobNot &&
-              this.dataJob.year == data.year
-            ) {
-              await this.cleanData();
-              await this.getComerRectInoviceTable();
-            } else {
-              await this.getComerRectInoviceTable();
-            }
+            if (this.dataJob)
+              if (
+                this.dataJob.jobNot == data.jobNot &&
+                this.dataJob.year == data.year
+              ) {
+                await this.cleanData();
+                await this.getComerRectInoviceTable();
+              } else {
+                await this.getComerRectInoviceTable();
+              }
+            else await this.getComerRectInoviceTable();
+
+            this.rowSelected = null;
           },
           error: err => {
             if (err.status == 500) {

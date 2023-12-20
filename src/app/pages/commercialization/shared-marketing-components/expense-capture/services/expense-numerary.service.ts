@@ -20,10 +20,10 @@ export class ExpenseNumeraryService extends HttpService {
     );
   }
 
-  PUP_CARGA_BIENES_SEG(policy: string) {
+  PUP_CARGA_BIENES_SEG(policy: string, spentId: number) {
     return this.post<IListResponseMessage<IGoodsBySeg>>(
       NumeraryEndpoints.loadGoodsSeg,
-      { policy }
+      { policy, spentId }
     );
   }
 }

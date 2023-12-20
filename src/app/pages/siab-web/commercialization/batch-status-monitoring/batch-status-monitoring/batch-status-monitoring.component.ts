@@ -7,8 +7,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { JSON_TO_MAYUS } from 'src/app/pages/admin/home/constants/json-to-csv';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   BIEN_LOTES_COLUMNS,
   GRV_DETALLES_COLUMNS,
@@ -70,6 +70,11 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
     ...this.settings,
     actions: false,
   };
+
+  event = new DefaultSelect();
+  transfer = new DefaultSelect();
+  allotment = new DefaultSelect();
+
   constructor(
     private fb: FormBuilder,
     private comerEventosService: ComerEventosService,
@@ -141,16 +146,10 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       typeGood: [null, [Validators.required]],
-      event: [null, [Validators.required]],
-      DescEvent: [null, [Validators.required]],
-      transferee: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      allotment: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      event: [null],
+      DescEvent: [null],
+      transferee: [null],
+      allotment: [null],
     });
   }
 
@@ -196,12 +195,12 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
     }
 
     let body = {
-      pOption: 8, //Cambio de status - 3, historial
-      pTypeGood: this.form.get('typeGood').value,
-      pEventKey: this.form.get('event').value,
-      pLot: this.form.get('allotment').value,
-      pTrans: this.form.get('transferee').value,
-      pEvent: this.form.get('DescEvent').value,
+      pOption: 1, //Cambio de status - 3, historial
+      pTypeGood: '',
+      pEventKey: '',
+      pLot: 0,
+      pTrans: 0,
+      pEvent: 0,
     };
 
     let params = {
@@ -229,34 +228,34 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
       return;
     }
 
-    if (!this.form.get('event').value) {
-      this.alert('warning', 'Es necesario ingresar un Evento', '');
-      return;
-    }
-    if (!this.form.get('transferee').value) {
-      this.alert(
-        'warning',
-        'Es necesario ingresar una No. de Transferente',
-        ''
-      );
-      return;
-    }
-    if (!this.form.get('allotment').value) {
-      this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
-      return;
-    }
+    // if (!this.form.get('event').value) {
+    //   this.alert('warning', 'Es necesario ingresar un Evento', '');
+    //   return;
+    // }
+    // if (!this.form.get('transferee').value) {
+    //   this.alert(
+    //     'warning',
+    //     'Es necesario ingresar una No. de Transferente',
+    //     ''
+    //   );
+    //   return;
+    // }
+    // if (!this.form.get('allotment').value) {
+    //   this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
+    //   return;
+    // }
 
-    if (!this.form.get('DescEvent').value) {
-      this.alert(
-        'warning',
-        'Es necesario ingresar la Descripción del Evento',
-        ''
-      );
-      return;
-    }
+    // if (!this.form.get('DescEvent').value) {
+    //   this.alert(
+    //     'warning',
+    //     'Es necesario ingresar la Descripción del Evento',
+    //     ''
+    //   );
+    //   return;
+    // }
 
     let body = {
-      pOption: 2, //Cambio de status - 3, historial
+      pOption: 1, //Cambio de status - 3, historial
       pTypeGood: this.form.get('typeGood').value,
       pEventKey: this.form.get('event').value,
       pLot: this.form.get('allotment').value,
@@ -639,5 +638,63 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
 
   cerrarModal() {
     this.modal.hide();
+  }
+
+  getEvent(params: ListParams) {
+    console.log(params.text);
+    let body = {
+      pOption: 5, //Cambio de status - 3, historial
+      pTypeGood: this.form.get('typeGood').value,
+      pEventKey: this.form.get('event').value,
+      pLot: this.form.get('allotment').value,
+      pTrans: this.form.get('transferee').value,
+      pEvent: this.form.get('DescEvent').value,
+    };
+    this.comerEventosService.getLoteExport(body, params).subscribe({
+      next: resp => {
+        this.event = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.event = new DefaultSelect();
+      },
+    });
+  }
+  getTransferee(params: ListParams) {
+    console.log(params.text);
+    let body = {
+      pOption: 6, //Cambio de status - 3, historial
+      pTypeGood: this.form.get('typeGood').value,
+      pEventKey: this.form.get('event').value,
+      pLot: this.form.get('allotment').value,
+      pTrans: this.form.get('transferee').value,
+      pEvent: this.form.get('DescEvent').value,
+    };
+    this.comerEventosService.getLoteExport(body, params).subscribe({
+      next: resp => {
+        this.transfer = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.transfer = new DefaultSelect();
+      },
+    });
+  }
+  getAllotment(params: ListParams) {
+    console.log(params.text);
+    let body = {
+      pOption: 7, //Cambio de status - 3, historial
+      pTypeGood: this.form.get('typeGood').value,
+      pEventKey: this.form.get('event').value,
+      pLot: this.form.get('allotment').value,
+      pTrans: this.form.get('transferee').value,
+      pEvent: this.form.get('DescEvent').value,
+    };
+    this.comerEventosService.getLoteExport(body, params).subscribe({
+      next: resp => {
+        this.allotment = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.allotment = new DefaultSelect();
+      },
+    });
   }
 }

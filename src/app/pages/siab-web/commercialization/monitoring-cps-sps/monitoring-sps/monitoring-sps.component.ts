@@ -112,20 +112,18 @@ export class monitoringSpsComponent extends BasePage implements OnInit {
   }
 
   fullExpenses() {
-    let params = new HttpParams();
-    params = params.append(
-      'eventId',
-      this.form.controls['event'].value?.idevento
-    );
-    params = params.append(
-      'startDate',
-      this.servicePipe.transform(this.form.controls['from'].value, 'dd/MM/yyyy')
-    );
-    params = params.append(
-      'endDate',
-      this.servicePipe.transform(this.form.controls['to'].value, 'dd/MM/yyyy')
-    );
-    params = params.append('concepts', this.formTwo.controls['concepts'].value);
+    let params = {
+      eventId: this.form.controls['event'].value?.idevento,
+      startDate: this.servicePipe.transform(
+        this.form.controls['from'].value,
+        'dd/MM/yyyy'
+      ),
+      endDate: this.servicePipe.transform(
+        this.form.controls['to'].value,
+        'dd/MM/yyyy'
+      ),
+      system: this.formTwo.controls['concepts'].value,
+    };
     this.fullExpensesEmit.emit(params);
   }
 
