@@ -57,6 +57,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
   set address(value) {
     const list = [];
+    // debugger;
     if (value === 'M') {
       // this._address = value;
       this.resetVisiblesM();
@@ -511,6 +512,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (rtDicta.length > 0) {
       this.fillAddressNotM(rtDicta[0].typeNumber);
     }
+    debugger;
+    this.dataService.address = 'I';
     let usuarioCapturaData = await this.usuarioCapturaDataI(user);
     if (usuarioCapturaData) {
       this.form.get('capturedUser').setValue(usuarioCapturaData.value);
@@ -524,7 +527,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.form.get('requestedUser').setValue(usuarioSolicitaData.value);
     }
     // this._address = 'I';
-    this.dataService.address = 'I';
   }
 
   private async initScreenI() {
