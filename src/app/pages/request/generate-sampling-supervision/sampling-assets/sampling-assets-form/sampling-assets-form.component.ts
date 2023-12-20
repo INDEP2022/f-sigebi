@@ -447,7 +447,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.params2.getValue()['filter.finalPeriod'] = `$btw:${
       this.dateForm.get('initialDate').value
     }, ${this.dateForm.get('finalDate').value}`;
-    this.params2.getValue()['filter.delRegionalId'] = this.delegationId;
+    //this.params2.getValue()['filter.delRegionalId'] = this.delegationId;
     this.samplingGoodService
       .getSamplingGoodFilter(this.params2.getValue())
       .subscribe({
