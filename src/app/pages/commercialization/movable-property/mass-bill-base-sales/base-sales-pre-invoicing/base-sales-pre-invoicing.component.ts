@@ -543,7 +543,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
                 ''
               );
             } else {
-              this.alert('success', '', 'Factura actualizada correctamente');
+              this.alert('success', 'Factura actualizada correctamente', '');
             }
             this.getAllComer();
 
@@ -574,6 +574,10 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     this.dataFilter.load([]);
     this.dataFilter.refresh();
     this.totalItems = 0;
+    this.form.get('price').patchValue(null);
+    this.form.get('ivaT').patchValue(null);
+    this.form.get('total').patchValue(null);
+
     this.btnLoading = true;
     const { event, idAllotment, iva } = this.form.value;
 
@@ -584,8 +588,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         this.alert('warning', 'Debe consultar un evento', '')
       );
 
-    next = 1;
-    // await this.getLotePass(); // VALIDA_PREFACTURAS
+    next = await this.getLotePass(); // VALIDA_PREFACTURAS
 
     if (next == 1) {
       const user = this.userService.decodeToken().preferred_username;

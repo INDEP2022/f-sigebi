@@ -77,20 +77,6 @@
                     <i *ngIf="!btnLoading2" class="bx bxs-file"></i>
                   </button>
                 </div>
-                <div class="col-12">
-                  <button
-                    [ngClass]="{ loading: btnLoading3 }"
-                    [disabled]="btnLoading3"
-                    type="button"
-                    class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
-                    (click)="removeInvoice()">
-                    Eliminar Folios
-                    <i
-                      *ngIf="!btnLoading3"
-                      class="fa fa-trash"
-                      aria-hidden="true"></i>
-                  </button>
-                </div>
               </div>
             </div>
             <div class="col-3">
@@ -178,6 +164,20 @@
                     class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
                     (click)="allSelect()">
                     Selec. Todos <i class="fas fa-edit bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="col-12">
+                  <button
+                    [ngClass]="{ loading: btnLoading3 }"
+                    [disabled]="btnLoading3"
+                    type="button"
+                    class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
+                    (click)="removeInvoice()">
+                    Eliminar Folios
+                    <i
+                      *ngIf="!btnLoading3"
+                      class="fa fa-trash"
+                      aria-hidden="true"></i>
                   </button>
                 </div>
                 <!-- <div class="col-12">
