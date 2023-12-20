@@ -119,7 +119,9 @@
     </div>
     <div class="d-flex justify-content-start pt-5">
       <div class="p-2">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settings"></app-columns-select>
       </div>
 
       <div class="p-2">
@@ -283,6 +285,7 @@
         <div class="col-md-12">
           <div class="p-2">
             <app-columns-select
+              [leftList]="true"
               [(settings)]="settingsOrderService"></app-columns-select>
           </div>
           <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
@@ -312,6 +315,7 @@
         <div class="col-md-12">
           <div class="p-2">
             <app-columns-select
+              [leftList]="true"
               [(settings)]="settingsCreditsNots"></app-columns-select>
           </div>
           <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">

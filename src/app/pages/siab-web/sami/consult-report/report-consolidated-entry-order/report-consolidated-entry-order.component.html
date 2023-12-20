@@ -65,7 +65,7 @@
                 [form]="searchForm"
                 control="regionalDelegationNumber"
                 [data]="regionalsDelegations"
-                value="description"
+                value="id"
                 bindLabel="description"
                 label="Delegaci&oacute;n Regional"
                 (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
@@ -119,7 +119,9 @@
     <h5 class="title">Listado de Órdenes de Ingreso</h5>
     <div class="row pt-4">
       <div class="btn-toolbar pt-3 justify-content-end">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settings"></app-columns-select>
       </div>
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
@@ -138,6 +140,7 @@
     <div class="row pt-3">
       <div class="btn-toolbar pt-3 justify-content-end">
         <app-columns-select
+          [leftList]="true"
           [(settings)]="settingsDetailGoodsProgDel"></app-columns-select>
       </div>
       <div [class]="loadingDetailGoodsProgDel ? 'table-loading' : ''">
@@ -156,6 +159,7 @@
     <div class="row pt-3">
       <div class="btn-toolbar pt-3 justify-content-end">
         <app-columns-select
+          [leftList]="true"
           [(settings)]="settingsDetailGoodsOrderEnt"></app-columns-select>
       </div>
       <div [class]="loadingDetailGoodsOrdEntry ? 'table-loading' : ''">
@@ -174,6 +178,7 @@
     <div class="row pt-3">
       <div class="btn-toolbar pt-3 justify-content-end">
         <app-columns-select
+          [leftList]="true"
           [(settings)]="settingsServices"></app-columns-select>
       </div>
       <div [class]="loadingServices ? 'table-loading' : ''">
@@ -191,7 +196,9 @@
     <h5 class="title pt-3">Órdenes de Pago Asociadas</h5>
     <div class="row pt-3">
       <div class="btn-toolbar pt-3 justify-content-end">
-        <app-columns-select [(settings)]="settingsOrderAs"></app-columns-select>
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settingsOrderAs"></app-columns-select>
       </div>
       <div [class]="loadingOrderAs ? 'table-loading' : ''">
         <ng2-smart-table
