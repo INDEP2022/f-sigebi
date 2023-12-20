@@ -46,7 +46,6 @@ export class ViewDetailGoodsComponent extends BasePage implements OnInit {
     this.initForm();
     this.getRegionalDelegation();
     this.getTransferent();
-    this.getState();
   }
 
   getRegionalDelegation() {
