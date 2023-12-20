@@ -171,7 +171,8 @@ export class NumeraireConversionAuctionsComponent
         .getSPGastosEventoParcial(+(this.selectedEvent.id + ''))
         .pipe(catchError(x => of(x.error)))
     );
-    if (resultParcial.statusCode !== 200) {
+    console.log(resultParcial);
+    if (resultParcial.statusCode && resultParcial.statusCode !== 200) {
       this.alert(
         'error',
         'No se ha podido calcular parcialmente',

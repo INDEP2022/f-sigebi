@@ -54,6 +54,8 @@ export interface IGood {
   fecApprovedDestLegal?: any;
   fecComplianceAbandonment?: any;
   fecNotificationAbandonment?: any;
+  relevantTypeId?: string;
+  relevantTypeName?: string;
   observationAbandoment?: any;
   fecConfAbandoment?: any;
   delegationNumber?: { id: string; description: string };
@@ -98,6 +100,7 @@ export interface IGood {
   uniqueKey?: any;
   userAuthorizesChangeNumera?: any;
   AuthorizesChangeNumerary?: any;
+  fraccion?: IFraccion;
   fecRatifiesChangeNumerary?: any;
   physicstateName?: string;
   userRatifiesChange?: any;
