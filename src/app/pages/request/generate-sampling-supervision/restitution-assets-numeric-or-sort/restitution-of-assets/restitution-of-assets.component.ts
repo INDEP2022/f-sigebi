@@ -9,6 +9,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
 import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
@@ -43,6 +44,7 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
   allDeductives: ISamplingDeductive[] = [];
   filterObject: any;
   disabledButton: boolean = false;
+  checkAgainGoods: boolean = false;
   filterForm: FormGroup = new FormGroup({});
   settingsDeductives = {
     ...TABLE_SETTINGS,
@@ -78,7 +80,13 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
     params.getValue()['filter.id'] = `$eq:${_task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
-        if (response.data[0].State == 'FINALIZADA') this.disabledButton = true;
+        console.log('task', response);
+        if (response.data[0].State == 'FINALIZADA') {
+          this.disabledButton = true;
+        }
+        if (response.data[0].userComment == 'check-again') {
+          this.checkAgainGoods = true;
+        }
       },
       error: () => ({}),
     });
@@ -247,6 +255,7 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
       const params = new BehaviorSubject<ListParams>(new ListParams());
       params.getValue()['filter.sampleId'] = this.idSample;
       params.getValue()['filter.evaluationResult'] = 'NO CUMPLE';
+      params.getValue()['filter.indVerification'] = 'Y';
       this.samplingGoodService.getSamplingGoods(params.getValue()).subscribe({
         next: response => {
           resolve(response.data);
@@ -320,81 +329,93 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
   }
 
   async createTask(numeraryRest: any, espRest: any) {
-    if (numeraryRest.length > 0) {
-      const user: any = this.authService.decodeToken();
-      const _task = JSON.parse(localStorage.getItem('Task'));
-      let body: any = {};
+    const closeTaskRestitution: any = await this.closeTaskRestition();
+    if (closeTaskRestitution) {
+      if (numeraryRest.length > 0) {
+        const user: any = this.authService.decodeToken();
+        const _task = JSON.parse(localStorage.getItem('Task'));
+        let body: any = {};
 
-      body['idTask'] = _task.id;
-      body['userProcess'] = user.username;
-      body['type'] = 'MUESTREO_BIENES';
-      body['subtype'] = 'Verificar_pago';
-      body['ssubtype'] = 'CREATE';
+        body['idTask'] = _task.id;
+        body['userProcess'] = user.username;
+        body['type'] = 'MUESTREO_BIENES';
+        body['subtype'] = 'Verificar_pago';
+        body['ssubtype'] = 'CREATE';
 
-      let task: any = {};
-      task['id'] = 0;
-      task['assignees'] = user.username;
-      task['assigneesDisplayname'] = user.username;
-      task['creator'] = user.username;
-      task['reviewers'] = user.username;
+        let task: any = {};
+        task['id'] = 0;
+        task['assignees'] = user.username;
+        task['assigneesDisplayname'] = user.username;
+        task['creator'] = user.username;
+        task['reviewers'] = user.username;
 
-      task['idSampling'] = this.idSample;
-      task[
-        'title'
-      ] = `Validación de pago de ficha de deposito para el avalúo de los bienes ${this.idSample}`;
-      task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
-      task['idTransferee'] = this.sampleInfo.transfereeId;
-      task['processName'] = 'Verificacion_pago';
-      task['urlNb'] = 'pages/request/deposit-payment-validations';
-      body['task'] = task;
+        task['idSampling'] = this.idSample;
+        task[
+          'title'
+        ] = `Validación de pago de ficha de deposito para el avalúo de los bienes ${this.idSample}`;
+        task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
+        task['idTransferee'] = this.sampleInfo.transfereeId;
+        task['processName'] = 'Verificacion_pago';
+        task['urlNb'] = 'pages/request/deposit-payment-validations';
+        body['task'] = task;
 
-      const taskResult: any = await this.createTaskOrderService(body);
-      this.loading = false;
-      if (taskResult || taskResult == false) {
-        this.msgGuardado(
-          'success',
-          'Creación de Tarea Correcta',
-          `Validación de pago de ficha de deposito para el avalúo de los bienes ${this.idSample}`
-        );
+        const taskResult: any = await this.createTaskOrderService(body);
+        this.loading = false;
       }
-    } else if (espRest.length > 0) {
-      const user: any = this.authService.decodeToken();
-      const _task = JSON.parse(localStorage.getItem('Task'));
-      let body: any = {};
 
-      body['idTask'] = _task.id;
-      body['userProcess'] = user.username;
-      body['type'] = 'MUESTREO_BIENES';
-      body['subtype'] = 'Aprobar_restitucion';
-      body['ssubtype'] = 'CREATE';
+      if (espRest.length > 0) {
+        const user: any = this.authService.decodeToken();
+        const _task = JSON.parse(localStorage.getItem('Task'));
+        let body: any = {};
 
-      let task: any = {};
-      task['id'] = 0;
-      task['assignees'] = user.username;
-      task['assigneesDisplayname'] = user.username;
-      task['creator'] = user.username;
-      task['reviewers'] = user.username;
+        body['idTask'] = _task.id;
+        body['userProcess'] = user.username;
+        body['type'] = 'MUESTREO_BIENES';
+        body['subtype'] = 'Aprobar_restitucion';
+        body['ssubtype'] = 'CREATE';
 
-      task['idSampling'] = this.idSample;
-      task[
-        'title'
-      ] = `Muestreo Bienes: Validación de restitución en especie de los bienes ${this.idSample}`;
-      task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
-      task['idTransferee'] = this.sampleInfo.transfereeId;
-      task['processName'] = 'Aprobar_restitucion';
-      task['urlNb'] = 'pages/request/assets-approval';
-      body['task'] = task;
+        let task: any = {};
+        task['id'] = 0;
+        task['assignees'] = user.username;
+        task['assigneesDisplayname'] = user.username;
+        task['creator'] = user.username;
+        task['reviewers'] = user.username;
 
-      const taskResult: any = await this.createTaskOrderService(body);
-      this.loading = false;
-      if (taskResult || taskResult == false) {
-        this.msgGuardado(
-          'success',
-          'Creación de Tarea Correcta',
-          `Muestreo Bienes: Validación de restitución en especie de los bienes ${this.idSample}`
-        );
+        task['idSampling'] = this.idSample;
+        task[
+          'title'
+        ] = `Muestreo Bienes: Validación de restitución en especie de los bienes ${this.idSample}`;
+        task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
+        task['idTransferee'] = this.sampleInfo.transfereeId;
+        task['processName'] = 'Aprobar_restitucion';
+        task['urlNb'] = 'pages/request/assets-approval';
+        body['task'] = task;
+
+        const taskResult: any = await this.createTaskOrderService(body);
+        this.loading = false;
+        if (taskResult || taskResult == false) {
+          this.msgGuardado(
+            'success',
+            'Creación de Tarea Correcta',
+            `Muestreo Bienes: Validación de restitución en especie de los bienes ${this.idSample}`
+          );
+        }
       }
     }
+  }
+
+  closeTaskRestition() {
+    return new Promise((resolve, reject) => {
+      const _task = JSON.parse(localStorage.getItem('Task'));
+      const task: ITask = {
+        State: 'FINALIZADA',
+      };
+      this.taskService.update(_task.id, task).subscribe({
+        next: () => {
+          resolve(true);
+        },
+      });
+    });
   }
 
   createTaskOrderService(body: any) {

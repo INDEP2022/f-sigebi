@@ -1,5 +1,3 @@
-import { InputDateComponent } from '../../../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/input-date/input-date.component';
-
 export const LIST_RESTITUTION_COLUMNS = {
   goodId: {
     title: 'No. Gestión',
@@ -31,7 +29,20 @@ export const LIST_RESTITUTION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  repositionDate: {
+
+  evaluationResult: {
+    title: 'Resultado Evaluación',
+    type: 'string',
+    sort: false,
+  },
+
+  goodState: {
+    title: 'Estado del Bien',
+    type: 'string',
+    sort: false,
+  },
+
+  /*repositionDate: {
     title: 'Fecha Reposición',
     type: 'custom',
     class: 'custom-field',
@@ -39,9 +50,15 @@ export const LIST_RESTITUTION_COLUMNS = {
     renderComponent: InputDateComponent,
     onComponentInitFunction(instance?: any) {},
     sort: false,
-  },
+  }, */
 
   quantityBreak: {
+    title: 'Cantidad faltante/dañado',
+    type: 'string',
+    sort: false,
+  },
+
+  statusGoodObservations: {
     title: 'Cantidad faltante/dañado',
     type: 'string',
     sort: false,
