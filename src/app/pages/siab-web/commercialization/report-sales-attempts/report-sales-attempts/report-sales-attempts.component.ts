@@ -244,6 +244,10 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       error: err => {
         console.log(err);
         this.alert('error', 'No se Encontraron Registros', '');
+        this.source.load([]);
+        this.until3 = false;
+        this.source.refresh();
+        this.totalItems3 = 0;
       },
     });
   }
@@ -261,7 +265,6 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       pType: 0,
       pSubtypes: '',
       pStatus: '',
-      ...this.params.getValue(),
     };
     console.log(body);
     this.getparEportAttemptsVta
@@ -307,6 +310,10 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         error: err => {
           console.log(err);
           this.alert('error', 'No se Encontraron Registros', '');
+          this.source.load([]);
+          this.until = false;
+          this.source.refresh();
+          this.totalItems = 0;
         },
       });
   }
@@ -445,8 +452,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     let body = {
       pType: resultArray[0].typeNumber,
       pSubtypes: resultArray[0].subTypeNumber,
-      pStatus: resultStatus[0].status,
-      ...this.params2.getValue(),
+      pStatus: this.form.get('typeStatus').value,
     };
     console.log(params);
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
@@ -455,6 +461,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
         if (this.totalItems2 === 0) {
           this.alert('error', 'No se encontraron registros', '');
+
           this.loadingBtn3 = false;
           return;
         }

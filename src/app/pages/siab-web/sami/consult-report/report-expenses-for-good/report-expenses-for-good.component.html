@@ -13,7 +13,7 @@
     <h5 class="title pt-3">Buscar</h5>
     <form [formGroup]="form" class="form-material">
       <div class="row pt-3">
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field [control]="form.get('idGood')" label="No. Bien">
             <input
               type="text"
@@ -23,21 +23,21 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('idTypeRelevant')"
-            label="Tipo Relevante">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="100"
-              formControlName="idTypeRelevant" />
+        <div class="col-md-3">
+          <form-field [control]="form.get('idTypeRelevant')">
+            <ngx-select
+              [form]="form"
+              control="idTypeRelevant"
+              [data]="typeRelevant"
+              value="id"
+              bindLabel="description"
+              label="Tipo Relevante"
+              (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
           </form-field>
         </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-6">
-          <form-field [control]="form.get('uniqueKey')" label="Clave Unica">
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('uniqueKey')" label="Clave Única">
             <input
               type="text"
               class="form-control"
@@ -45,7 +45,8 @@
               formControlName="uniqueKey" />
           </form-field>
         </div>
-        <div class="col-md-6">
+
+        <div class="col-md-3">
           <form-field
             [control]="form.get('descriptionGood')"
             label="Descripción Bien">
@@ -72,8 +73,10 @@
     </form>
     <h5 class="title pt-3">Listado de Bienes</h5>
     <div class="row pt-4">
-      <div class="btn-toolbar pt-3">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="btn-toolbar pt-3 justify-content-end">
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settings"></app-columns-select>
       </div>
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
@@ -181,8 +184,9 @@
           </tab>
           <tab heading="Programación">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsProg"></app-columns-select>
               </div>
               <div [class]="loadingProg ? 'table-loading' : ''">
@@ -199,8 +203,9 @@
           </tab>
           <tab heading="Programación Entrega">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsProgEnt"></app-columns-select>
               </div>
               <div [class]="loadingProgEnt ? 'table-loading' : ''">
@@ -217,8 +222,9 @@
           </tab>
           <tab heading="Almacenaje">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsWarehouse"></app-columns-select>
               </div>
               <div [class]="loadingWarehouse ? 'table-loading' : ''">
@@ -235,8 +241,9 @@
           </tab>
           <tab heading="Manual">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsManual"></app-columns-select>
               </div>
               <div [class]="loadingMan ? 'table-loading' : ''">
@@ -253,8 +260,9 @@
           </tab>
           <tab heading="Reubicación de Bienes">
             <div class="row">
-              <div class="btn-toolbar pt-3">
+              <div class="btn-toolbar pt-3 justify-content-end">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="settingsReubGood"></app-columns-select>
               </div>
               <div [class]="loadingReubGood ? 'table-loading' : ''">

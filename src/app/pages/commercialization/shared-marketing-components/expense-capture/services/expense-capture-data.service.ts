@@ -249,7 +249,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.IVA = 0;
   }
 
-  fillParams(row: IReadParameter) {
+  private fillParams(row: IReadParameter, updateComposition: boolean = true) {
     console.log(row);
     this.PMONTOXMAND = row.PMONTOXMAND;
     this.PDEVCLIENTE = row.PDEVCLIENTE;
@@ -266,7 +266,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.VALBIEVEND = row.VALBIEVEND ?? 'N';
     this.PNOENVIASIRSAE = row.PNOENVIASIRSAE ?? 'N';
     this.PDEVPARCIALBIEN = row.PDEVPARCIALBIEN ?? 'N';
-    if (this.PVALIDADET !== row.PVALIDADET) {
+    if (updateComposition && this.PVALIDADET !== row.PVALIDADET) {
       setTimeout(() => {
         this.updateExpenseComposition.next(true);
       }, 100);
@@ -279,7 +279,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
-  readParams(conceptId: string) {
+  readParams(conceptId: string, updateComposition: boolean = true) {
     return firstValueFrom(
       this.parameterService.readParameters(+conceptId, this.address).pipe(
         take(1),
@@ -291,7 +291,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         map(response => {
           console.log(response);
           if (response) {
-            this.fillParams(response);
+            this.fillParams(response, updateComposition);
             return true;
           } else {
             this.alert('warning', 'El concepto no está parametrizado', '');
@@ -652,10 +652,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private async MONTO_TOT_EVENTO() {
+    debugger;
     let lotFinalPrice = await firstValueFrom(
-      this.accountingService.getLotFinalTotal(this.expenseNumber.value)
+      this.accountingService.getLotFinalTotal(this.eventNumber.value)
     );
-    if (lotFinalPrice) {
+    if (+(lotFinalPrice + '')) {
       if (
         lotFinalPrice !==
         this.amount + this.vat - this.isrWithholding - this.vatWithholding
@@ -676,6 +677,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private VALIDA_CHATARRA_MOR_SIN_FLUJO() {
+    debugger;
     if (this.isrWithholding <= 0) {
       this.alert(
         'error',
