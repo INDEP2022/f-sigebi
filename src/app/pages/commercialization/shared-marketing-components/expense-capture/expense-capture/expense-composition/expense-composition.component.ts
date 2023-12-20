@@ -987,27 +987,24 @@ export class ExpenseCompositionComponent
         next: response => {
           if (response.data && response.data.length > 0) {
             this.loader.load = false;
+            console.log(response.data, row);
+            debugger;
             let result = response.data.filter(
-              x => x.id_detgasto + '' == row.paymentsId
+              x => x.id_detgasto + '' == row.detPaymentsId + ''
             );
             let result2 = result.pop();
             this.dataService
-              .updateMassive(
-                this.dataTemp.map(x => {
-                  let newRow: any = {
-                    amount: result2.MONTO2,
-                    goodNumber: x.goodNumber,
-                    expenseDetailNumber: x.detPaymentsId,
-                    expenseNumber: x.paymentsId,
-                    vat: result2.iva2,
-                    isrWithholding: result2.retencion_isr2,
-                    vatWithholding: result2.retencion_iva2,
-                    cvman: x.manCV,
-                    budgetItem: x.departure,
-                  };
-                  return newRow;
-                })
-              )
+              .edit({
+                amount: result2.MONTO2,
+                goodNumber: row.goodNumber,
+                expenseDetailNumber: row.detPaymentsId,
+                expenseNumber: row.paymentsId,
+                vat: result2.iva2,
+                isrWithholding: result2.retencion_isr2,
+                vatWithholding: result2.retencion_iva2,
+                cvman: row.manCV,
+                budgetItem: row.departure,
+              })
               .pipe(take(1))
               .subscribe({
                 next: response => {
@@ -1023,6 +1020,38 @@ export class ExpenseCompositionComponent
                   this.showErrorDisperGasto();
                 },
               });
+            // this.dataService
+            //   .updateMassive(
+            //     this.dataTemp.map(x => {
+            //       let newRow: any = {
+            //         amount: result2.MONTO2,
+            //         goodNumber: x.goodNumber,
+            //         expenseDetailNumber: x.detPaymentsId,
+            //         expenseNumber: x.paymentsId,
+            //         vat: result2.iva2,
+            //         isrWithholding: result2.retencion_isr2,
+            //         vatWithholding: result2.retencion_iva2,
+            //         cvman: x.manCV,
+            //         budgetItem: x.departure,
+            //       };
+            //       return newRow;
+            //     })
+            //   )
+            //   .pipe(take(1))
+            //   .subscribe({
+            //     next: response => {
+            //       this.loader.load = false;
+            //       this.alert(
+            //         'success',
+            //         'Se realizo la división de pagos entre los mandatos',
+            //         ''
+            //       );
+            //       this.getData2();
+            //     },
+            //     error: err => {
+            //       this.showErrorDisperGasto();
+            //     },
+            //   });
           } else {
             this.showErrorDisperGasto();
           }
@@ -1499,7 +1528,7 @@ export class ExpenseCompositionComponent
         if (row) {
           row.amount = +(
             +(row.amount + '') *
-            (this.exchangeRate.value ? this.exchangeRate.value : 1)
+            (this.expense.exchangeRate ? this.expense.exchangeRate : 1)
           );
           if (row.iva && +row.iva > 0) {
             row.iva = +(+row.amount * 0.15);
