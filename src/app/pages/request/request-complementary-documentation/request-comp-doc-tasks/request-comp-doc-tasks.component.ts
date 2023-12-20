@@ -856,6 +856,10 @@ export class RequestCompDocTasksComponent
     });
   }
 
+  isFinalTask() {
+    return true;
+  }
+
   validateTurn() {
     switch (this.process) {
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
