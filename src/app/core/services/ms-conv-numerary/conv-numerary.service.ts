@@ -29,8 +29,8 @@ export class ConvNumeraryService extends HttpService {
   }
 
   SP_CONVERSION_ASEG_PARCIAL(body: {
-    event: number;
-    screen: string;
+    pevent: number;
+    pscreen: string;
     user: string;
   }) {
     return this.post(this.route.SP_CONVERSION_ASEG_PARCIAL, body);
