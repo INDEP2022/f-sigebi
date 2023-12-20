@@ -198,9 +198,8 @@ export class DetailAssetsTabComponentComponent
     private relevantTypeService: TypeRelevantService,
     private goodDomicilieService: GoodDomiciliesService,
     private goodProcessService: GoodProcessService,
-    private strategyService: StrategyServiceService
-  ) //private goodService2: GoodService2,
-  {
+    private strategyService: StrategyServiceService //private goodService2: GoodService2,
+  ) {
     super();
     this.atributActSettings = {
       ...this.settings,
@@ -388,6 +387,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnInit(): void {
+    console.log('Tarea:', this.process);
     this.detailAssetsInfo = this.detailAssets.value;
     this.classificationNumber = +this.detailAssetsInfo?.goodClassNumber;
     //Cambiar la forma de traer el clasificador
