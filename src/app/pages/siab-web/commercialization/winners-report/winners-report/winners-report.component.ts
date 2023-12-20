@@ -3,13 +3,14 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { CapturelineService } from 'src/app/core/services/ms-capture-line/captureline.service';
 import { ComerGoodsXLotService } from 'src/app/core/services/ms-comersale/comer-goods-x-lot.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WINNERS_REPORT_COLUMNS } from './winners-report-columns';
@@ -46,7 +47,8 @@ export class winnersReportComponent extends BasePage implements OnInit {
     private event: CapturelineService,
     private loser: ComerGoodsXLotService,
     private winner: LotService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -192,111 +194,50 @@ export class winnersReportComponent extends BasePage implements OnInit {
   }
 
   exportarLoser() {
+    this.loader.load = true;
     if (this.data1.count() == 0) {
       this.alert('warning', 'No hay Bienes en la Tabla', '');
+      this.loader.load = false;
       return;
     }
 
     const filename = 'Reporte No Ganadores';
-
-    let params = {
-      ...this.params1.getValue(),
-    };
-    let body = {
-      idEventIn: Number(this.form.get('event').value),
-    };
-
-    this.loser.getpaREportLoser(body, params).subscribe({
-      next: resp => {
-        const allData = resp.data;
-
-        // Si hay más páginas de datos, recuperarlas
-        const totalPages = Math.ceil(resp.count / params.pageSize);
-        const additionalRequests = [];
-
-        for (let page = 2; page <= totalPages; page++) {
-          params.page = page;
-          additionalRequests.push(this.loser.getpaREportLoser(body, params));
-        }
-
-        // Combinar todos los registros en this.line
-        forkJoin(additionalRequests).subscribe({
-          next: additionalResponses => {
-            for (const additionalResp of additionalResponses) {
-              allData.push(...additionalResp.data);
-            }
-
-            this.excelService.export(allData, { type: 'csv', filename });
-            this.alert(
-              'success',
-              'Reporte No Ganardores',
-              'Exportado Correctamente'
-            );
-          },
-          error: err => {
-            console.log(err);
-          },
-        });
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
+    this.massiveGoodService
+      .getLosersReport(this.form.get('event').value)
+      .subscribe({
+        next: resp => {
+          this._downloadExcelFromBase64(resp.base64File, filename);
+          this.loader.load = false;
+        },
+        error: err => {
+          console.log(err);
+          this.loader.load = false;
+        },
+      });
   }
 
   exportarWinner() {
+    this.loader.load = true;
     if (this.data.count() == 0) {
       this.alert('warning', 'No hay Bienes en la Tabla', '');
+      this.loader.load = false;
       return;
     }
 
     const filename = 'Reporte Ganadores';
 
-    let params = {
-      ...this.params.getValue(),
-    };
-    this.winner.lotApp(this.form.get('event').value, params).subscribe({
-      next: resp => {
-        const allData = resp.data;
-
-        // Si hay más páginas de datos, recuperarlas
-        const totalPages = Math.ceil(resp.count / params.pageSize);
-        const additionalRequests: any[] = [];
-
-        for (let page = 2; page <= totalPages; page++) {
-          params.page = page;
-          console.log(this.form.get('event').value, params);
-          additionalRequests.push(
-            this.winner.lotApp(this.form.get('event').value, params)
-          );
-        }
-        setTimeout(() => {
-          console.log(additionalRequests);
-        }, 1000);
-
-        // Combinar todos los registros en this.line
-        forkJoin(additionalRequests).subscribe({
-          next: additionalResponses => {
-            for (const additionalResp of additionalResponses) {
-              allData.push(...additionalResp.data);
-            }
-
-            this.excelService.export(allData, { type: 'csv', filename });
-            this.alert(
-              'success',
-              'Reporte Ganardores',
-              'Exportado Correctamente'
-            );
-          },
-          error: err => {
-            console.log(err);
-          },
-        });
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
+    this.massiveGoodService
+      .getWinnersReport(this.form.get('event').value)
+      .subscribe({
+        next: resp => {
+          this._downloadExcelFromBase64(resp.base64File, filename);
+          this.loader.load = false;
+        },
+        error: err => {
+          console.log(err);
+          this.loader.load = false;
+        },
+      });
   }
 
   clean() {

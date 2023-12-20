@@ -38,6 +38,7 @@ import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-req
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ModalProceedingsComponent } from '../modal-proceedings/modal-proceedings.component';
 import { PackageComponent } from '../package/package.componet';
 import {
   FilterParams,
@@ -137,6 +138,8 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   di_status_good: any = null;
   columnFilters: any = [];
   completeFilters: any[] = [];
+  columnFiltersAct: any = [];
+  completeFiltersAct: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -164,7 +167,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       rowClassFunction: (row: { data: { avalaible: any } }) =>
         row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white',
     };
-    this.settings2 = { ...this.settings, actions: false };
+    this.settings2 = { ...this.settings, actions: false, hideSubheader: true };
     this.settings.columns = COLUMNSTABL1;
     this.settings2.columns = COLUMNSTABLE2;
   }
@@ -199,6 +202,18 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.navigateGoodTable();
     this.navigateGoodAct();
     this.columnFilterTable();
+    this.columnFilterTableAct();
+
+    if (
+      localStorage.getItem('expediente') &&
+      localStorage.getItem('expediente') != 'null'
+    ) {
+      this.actForm
+        .get('expedient')
+        .setValue(localStorage.getItem('expediente'));
+      this.searchDataExp();
+      localStorage.removeItem('expediente');
+    }
   }
 
   columnFilterTable() {
@@ -219,26 +234,27 @@ export class DestructionActsComponent extends BasePage implements OnInit {
           });
           this.searchGoodsByExp();
         }
+      });
+  }
 
-        /* if (change.action === 'filter') {
+  columnFilterTableAct() {
+    this.dataGoodsAct
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
           let filters = change.filter.filters;
-          console.log(this.columnFilters);
-          console.log(this.columnFilters.length);
-          if (this.columnFilters.length > 0) {
-            if (
-              this.columnFilters.find(
-                (e: any) => e.field == filters[0].field
-              ) == null
-            ) {
-              this.columnFilters.push(filters[0]);
+          this.completeFiltersAct = filters;
+          filters.map((filter: any) => {
+            let searchFilter = SearchFilter.ILIKE;
+            if (filter.search !== '') {
+              this.columnFiltersAct[
+                filter.field
+              ] = `${searchFilter}:${filter.search}`;
             }
-          } else {
-            console.log('Hizo esto');
-            this.columnFilters.push(filters[0]);
-          }
-
-          this.searchGoodsByExp();
-        } */
+          });
+          this.searchGoodsInDetailProceeding();
+        }
       });
   }
 
@@ -595,6 +611,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
     console.log(this.columnFilters);
+
     for (let data of this.completeFilters) {
       if (data.search != null && data.search != '') {
         paramsF.addFilter(
@@ -640,17 +657,33 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.page = this.params2.value.page;
     paramsF.limit = this.params2.value.limit;
-    this.serviceDetailProc.getGoodsByProceedings(this.idProceeding).subscribe(
-      res => {
-        console.log(res);
-        this.dataGoodsAct.load(res.data);
-        this.totalItems2 = res.count;
-      },
-      err => {
-        this.dataGoodsAct.load([]);
-        console.log(err);
+
+    for (let data of this.completeFiltersAct) {
+      if (data.search != null && data.search != '') {
+        paramsF.addFilter(
+          data.field,
+          data.search,
+          data.field != 'numberGood' ? SearchFilter.ILIKE : SearchFilter.EQ
+        );
       }
-    );
+    }
+
+    this.serviceDetailProc
+      .getGoodsByProceedings(this.idProceeding, paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.dataGoodsAct.load(res.data);
+          this.totalItems2 = res.count;
+          this.loadingTable = false;
+        },
+        err => {
+          this.dataGoodsAct.load([]);
+          this.totalItems2 = 0;
+          console.log(err);
+          this.loadingTable = false;
+        }
+      );
   }
 
   //CAMBIAR BOTON SEGÚN ESTADO
@@ -845,6 +878,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     if (this.isNewProceeding) {
       this.saveProceeding();
     } else {
+      console.log('Cargo');
       this.updateProceeding();
     }
   }
@@ -875,8 +909,25 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
     this.serviceProcVal.postProceeding(body).subscribe(
       res => {
-        this.alert('success', 'Acta creada', '');
         console.log(res);
+        this.alert('success', 'Se creó una nueva acta', '');
+        this.act.reset();
+        this.status.reset();
+        this.transferent.reset();
+        this.destructor.reset();
+        this.admin.reset();
+        this.folio.reset();
+        this.act.disable();
+        this.status.disable();
+        this.transferent.disable();
+        this.destructor.disable();
+        this.admin.disable();
+        this.folio.disable();
+        const jsonResp = JSON.parse(JSON.stringify(res));
+        console.log(jsonResp);
+        this.idProceeding = jsonResp.id;
+        this.act2.setValue(jsonResp.keysProceedings);
+        this.isNewProceeding = false;
       },
       err => {
         this.alert('error', 'Error al crear acta', '');
@@ -887,7 +938,28 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   //ACTUALIZAR ACTA
   updateProceeding() {
-    //!FUNCIONALIDAD PARA GUAR
+    const body: IProccedingsDeliveryReception = {
+      elaborationDate: this.elabDate.value,
+      datePhysicalReception: this.destroyDate.value,
+      address: this.address.value,
+      numFile: this.expedient.value,
+      witness1: this.witness.value,
+      witness2: this.witness2.value,
+      responsible: this.responsible.value,
+      destructionMethod: this.destroMethod.value,
+      observations: this.actForm.get('observation').value,
+      comptrollerWitness: this.comptrollerWitness.value,
+    };
+    this.serviceProcVal.editProceeding(this.idProceeding, body).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', 'Acta actualizada', '');
+      },
+      err => {
+        this.alert('error', 'Error al actualizar acta', '');
+        console.log(err);
+      }
+    );
   }
 
   //NUEVA ACTA
@@ -1429,5 +1501,52 @@ export class DestructionActsComponent extends BasePage implements OnInit {
         }
       );
     });
+  }
+
+  //MODAL DE ACTAS
+  openListProceeding() {
+    let modalConfig = MODAL_CONFIG;
+    (modalConfig.class = 'modal-lg modal-dialog-centered'),
+      (modalConfig.ignoreBackdropClick = true),
+      (modalConfig.initialState = {
+        no_acta: this.idProceeding,
+        callback: (data: any) => {
+          console.log(data);
+          this.navigateProceedings = true;
+          this.idProceeding = data.id;
+          this.expedient.setValue(data.numFile);
+          this.act2.setValue(data.keysProceedings);
+          this.elabDate.setValue(this.correctDate(data.elaborationDate));
+          this.destroyDate.setValue(
+            this.correctDate(data.datePhysicalReception)
+          );
+          this.address.setValue(data.address);
+          this.universalFolio.setValue(data.universalFolio);
+          this.observation.setValue(data.observations);
+          this.responsible.setValue(data.responsible);
+          this.witness.setValue(data.witness1);
+          this.witness2.setValue(data.witness2);
+          this.destroMethod.setValue(data.destructionMethod);
+          this.comptrollerWitness.setValue(data.comptrollerWitness);
+          this.searchGoodsInDetailProceeding();
+          this.serviceExpedient.getById(data.numFile).subscribe(
+            res => {
+              console.log(res);
+              this.prevAv.setValue(res.preliminaryInquiry);
+              this.criminalCase.setValue(res.criminalCase);
+              this.expType = res.expedientType;
+              this.noTransfer = res.transferNumber;
+
+              this.searchGoodsByExp();
+            },
+            err => {
+              this.loadingProcedure = false;
+              this.loadingTable = false;
+              console.log(err);
+            }
+          );
+        },
+      });
+    this.modalService.show(ModalProceedingsComponent, modalConfig);
   }
 }

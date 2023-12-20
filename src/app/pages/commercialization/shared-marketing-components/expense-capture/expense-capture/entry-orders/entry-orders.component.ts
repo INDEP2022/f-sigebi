@@ -57,12 +57,24 @@ export class EntryOrdersComponent
     return this.expenseCaptureDataService.eventNumber;
   }
 
+  get eventNumberValue() {
+    return this.form
+      ? this.expenseCaptureDataService.eventNumber
+        ? this.expenseCaptureDataService.eventNumber.value
+        : null
+      : null;
+  }
+
   get lotNumber() {
     return this.expenseCaptureDataService.lotNumber;
   }
 
   get conceptNumber() {
     return this.expenseCaptureDataService.conceptNumber;
+  }
+
+  get conceptNumberValue() {
+    return this.conceptNumber ? this.conceptNumber.value : null;
   }
 
   get clkpv() {
@@ -75,6 +87,10 @@ export class EntryOrdersComponent
       this.expenseCaptureDataService.expenseNumber.value &&
       this.expenseCaptureDataService.validPayment
     );
+  }
+
+  get dataCompositionExpenses() {
+    return this.expenseCaptureDataService.dataCompositionExpenses;
   }
 
   async replyFolio() {
@@ -92,9 +108,7 @@ export class EntryOrdersComponent
     //   !this.clkpv.value &&
     //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
     //   !this.dataService.data.providerName;
-    let bienes = this.expenseCaptureDataService.dataCompositionExpenses.filter(
-      x => x.goodNumber
-    );
+    let bienes = this.dataCompositionExpenses.filter(x => x.goodNumber);
     if (
       !this.conceptNumber.value &&
       !this.eventNumber.value &&
@@ -141,7 +155,7 @@ export class EntryOrdersComponent
     }
     this.expenseGoodProcessService
       .replyFolio({
-        goodArray: this.expenseCaptureDataService.dataCompositionExpenses
+        goodArray: this.dataCompositionExpenses
           .filter(x => x.goodNumber)
           .map(x => {
             return { goodNumber: +x.goodNumber };
@@ -202,7 +216,12 @@ export class EntryOrdersComponent
   }
 
   override getData() {
-    if (!this.dataService || !this.eventNumber || !this.lotNumber) {
+    if (
+      !this.dataService ||
+      !this.eventNumber ||
+      !this.lotNumber ||
+      !this.clkpv.value
+    ) {
       return;
     }
     this.loading = true;
@@ -227,10 +246,24 @@ export class EntryOrdersComponent
             this.loading = false;
           } else {
             this.notGetData();
+            if (this.expenseCaptureDataService.PDEVCLIENTE) {
+              this.alert(
+                'warning',
+                'Ordenes de Ingreso',
+                'Este lote no tiene reportado, pagos en exceso, verifique'
+              );
+            }
           }
         },
         error: err => {
           this.notGetData();
+          if (this.expenseCaptureDataService.PDEVCLIENTE) {
+            this.alert(
+              'warning',
+              'Ordenes de Ingreso',
+              'Este lote no tiene reportado, pagos en exceso, verifique'
+            );
+          }
         },
       });
   }

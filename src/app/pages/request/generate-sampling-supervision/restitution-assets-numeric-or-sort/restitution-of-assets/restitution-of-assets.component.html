@@ -20,16 +20,18 @@
     <div id="annex">
       <div class="row pt-4">
         <div class="d-flex justify-content-end">
-          <div class="p-2">
+          <div class="p-2" *ngIf="!disabledButton">
             <button
               class="btn btn-primary btn-sm active"
               (click)="turnSampling()">
               Turnar muestreo <i class="fa fa-share-square"></i>
             </button>
           </div>
-          <!--<div class="p-2">
-            <button class="btn btn-primary btn-sm active" (click)="save()">
-              Guardar <i class="fa fa-save"></i>
+          <div class="p-2" *ngIf="disabledButton">
+            <button
+              class="btn btn-primary disabled btn-sm active"
+              (click)="turnSampling()">
+              Turnar muestreo <i class="fa fa-share-square"></i>
             </button>
           </div>
           <div class="p-2">
@@ -45,7 +47,13 @@
               (click)="opemAnnexK()">
               Anexo K <i class="bx bxs-file"></i>
             </button>
-          </div> -->
+          </div>
+          <!--<div class="p-2">
+            <button class="btn btn-primary btn-sm active" (click)="save()">
+              Guardar <i class="fa fa-save"></i>
+            </button>
+          </div>
+          -->
         </div>
       </div>
     </div>
@@ -122,7 +130,9 @@
       <tabset class="md-tabs">
         <tab heading="Bienes" id="tab1">
           <app-list-restitutions-assets
-            [idSample]="idSample"></app-list-restitutions-assets>
+            [idSample]="idSample"
+            [filterObject]="filterObject"
+            [disabledButton]="disabledButton"></app-list-restitutions-assets>
         </tab>
         <tab heading="Deductivas">
           <div class="row pt-2">

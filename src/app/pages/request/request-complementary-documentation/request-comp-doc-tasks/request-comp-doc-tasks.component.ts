@@ -42,8 +42,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override editReport: boolean;
   protected override reportTable: string;
   protected override reportId: string;
@@ -101,7 +100,7 @@ export class RequestCompDocTasksComponent
   processDetonate: string = '';
   process: string = '';
   title: string;
-  requestInfo: IRequest;
+  requestInfo: any;
   taskInfo: any;
   screenWidth: number;
   public typeDoc: string = '';
@@ -217,6 +216,7 @@ export class RequestCompDocTasksComponent
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
+
     this.requestService.getAll(filter).subscribe({
       next: resp => {
         this.requestInfo = resp.data[0];
@@ -226,8 +226,20 @@ export class RequestCompDocTasksComponent
         this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
+
+        this.requestService.getById(requestId).subscribe({
+          next: resp => {
+            this.requestInfo.detail = resp;
+          },
+        });
+
       },
     });
+
+
+
+
+
     this.getTaskInfo();
   }
 
@@ -277,7 +289,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
     const initialState: Partial<CreateReportComponent> = {
@@ -295,9 +307,10 @@ export class RequestCompDocTasksComponent
       ignoreBackdropClick: true,
     });
 
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-        // Perform actions if necessary, e.g., this.getCities();
+    modalRef.content.refresh.subscribe(response => {
+      if (response.upload) {
+        this.requestInfo.detail.reportSheet = response.upload ? 'Y' : 'N';
+        this.updateRequest(false);
       }
     });
   }
@@ -403,17 +416,21 @@ export class RequestCompDocTasksComponent
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        let response = await this.updateTask(this.taskInfo.id);
-        if (response) {
-          this.msgModal(
-            'Se finalizo la solicitud con el Folio Nº '.concat(
-              `<strong>${this.requestId}</strong>`
-            ),
-            'Solicitud finalizada',
-            'success'
-          );
-          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+
+        if (this.validateTurn()) {
+          let response = await this.updateTask(this.taskInfo.id);
+          if (response) {
+            this.msgModal(
+              'Se finalizo la solicitud con el Folio Nº '.concat(
+                `<strong>${this.requestId}</strong>`
+              ),
+              'Solicitud finalizada',
+              'success'
+            );
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+          }
         }
+
       }
     });
   }
@@ -642,16 +659,28 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  updateRequest() {
+  updateRequest(alert = true) {
     this.updateInfo = true;
+    let request: any = { ...this.requestInfo.detail };
 
-    this.msgModal(
-      'Se guardó la solicitud con el Folio Nº '.concat(
-        `<strong>${this.requestId}</strong>`
-      ),
-      'Solicitud Guardada',
-      'success'
-    );
+    this.requestService.update(this.requestId, request).subscribe({
+      next: resp => {
+        if (alert) {
+          this.alert(
+            'success',
+            'Correcto',
+            'Registro Actualizado',
+          );
+        }
+      },
+      error: error => {
+        if (alert) {
+          this.alert('error', 'Error', 'Error al guardar la solicitud');
+        }
+      },
+    });
+
+
   }
 
   /** VALIDAR */
@@ -822,7 +851,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -858,7 +887,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.opinion) {
+        if (this.requestInfo.detail.reportSheet != 'Y') {
           this.showWarning('Genere el Dictamen de Devolución');
           return false;
         }
@@ -1268,6 +1297,21 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
+
+      case 'register-compensation-documentation':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
     }
 
     return true;
@@ -1313,7 +1357,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1329,7 +1373,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1395,7 +1439,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 }
 
 export function isNullOrEmpty(value: any): boolean {

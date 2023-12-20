@@ -426,7 +426,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   affairChange(e: any) {
-    console.log(e);
     if (
       e.processDetonate == 'ABANDONO' ||
       e.processDetonate == 'EXT_DOMINIO' ||
@@ -691,7 +690,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loadingTurn = false;
-          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          this.onLoadToast('error', 'Error', 'El proceso seleccionado no tiene una tarea configurada');
           reject(false);
         },
       });

@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { ISampleGood } from 'src/app/core/models/ms-goodsinv/sampling-good-view.model';
@@ -11,11 +13,14 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { BasePage, TABLE_SETTINGS } from '../../../../../core/shared/base-page';
+import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
+import { AnnexJAssetsClassificationComponent } from '../../assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
 import { AnnexKFormComponent } from '../../generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
 import { LIST_DEDUCTIVES_VIEW_COLUMNS } from '../../sampling-assets/sampling-assets-form/columns/list-deductivas-column';
-import { AnnexJRestitutionFormComponent } from '../annex-j-restitution-form/annex-j-restitution-form.component';
 
 @Component({
   selector: 'app-restitution-of-assets',
@@ -36,6 +41,9 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
   paragraphsDeductivas = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   allDeductives: ISamplingDeductive[] = [];
+  filterObject: any;
+  disabledButton: boolean = false;
+  filterForm: FormGroup = new FormGroup({});
   settingsDeductives = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -49,7 +57,8 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private taskService: TaskService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private fb: FormBuilder
   ) {
     super();
   }
@@ -59,6 +68,28 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
     this.idSample = Number(this.activatedRoute.snapshot.paramMap.get('id'));
     this.getSampleInfo();
     this.getSampleDeductives();
+    this.initFilterForm();
+    this.checkStatusTask();
+  }
+
+  checkStatusTask() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = `$eq:${_task.id}`;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        if (response.data[0].State == 'FINALIZADA') this.disabledButton = true;
+      },
+      error: () => ({}),
+    });
+  }
+
+  initFilterForm() {
+    this.filterForm = this.fb.group({
+      noManagement: [null],
+      noInventory: [null],
+      descriptionAsset: [null, [Validators.pattern(STRING_PATTERN)]],
+    });
   }
 
   getSampleDeductives() {
@@ -105,18 +136,42 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
     });
   }
 
-  getSearchForm(event: any): void {}
+  getSearchForm(filter: any): void {
+    this.filterObject = filter;
+  }
 
   openAnnexJ(): void {
     this.openModal(
-      AnnexJRestitutionFormComponent,
-      '',
-      'annexJ-restitution-of-assets'
+      AnnexJAssetsClassificationComponent,
+      this.idSample,
+      'sign-annexJ-assets-classification'
     );
   }
 
   opemAnnexK(): void {
-    this.openModal(AnnexKFormComponent, '', 'annexK-restitution-of-assets');
+    let config: ModalOptions = {
+      initialState: {
+        idSample: this.idSample,
+        typeAnnex: 'sign-annex-assets-classification',
+        callback: async (typeDocument: number, typeSign: string) => {
+          if (typeDocument && typeSign) {
+            this.showReportInfo(
+              typeDocument,
+              typeSign,
+              'sign-annex-assets-classification'
+            );
+            //this.showReportInfo(
+            //typeDocument,
+            //typeSign,
+            //'sign-annex-assets-classification'
+            //);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AnnexKFormComponent, config);
   }
 
   async turnSampling() {
@@ -166,7 +221,7 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
         '¿Esta de acuerdo que la información es correcta para turnar el muestreo?'
       ).then(question => {
         if (question.isConfirmed) {
-          this.createTask();
+          this.createTask(numeraryRest, espRest);
         }
       });
     } else {
@@ -206,61 +261,139 @@ export class RestitutionOfAssetsComponent extends BasePage implements OnInit {
   openModal(component: any, data?: any, typeAnnex?: string): void {
     let config: ModalOptions = {
       initialState: {
-        data: data,
+        idSample: this.idSample,
         typeAnnex: typeAnnex,
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
+        callback: async (typeDocument: number, typeSign: string) => {
+          if (typeAnnex == 'sign-annexJ-assets-classification') {
+            if (typeDocument && typeSign) {
+              this.showReportInfo(typeDocument, typeSign, typeAnnex);
+            }
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.bsModalRef = this.modalService.show(component, config);
-
-    //this.bsModalRef.content.event.subscribe((res: any) => {
-    //cargarlos en el formulario
-    //console.log(res);
-    //this.assetsForm.controls['address'].get('longitud').enable();
-    //this.requestForm.get('receiUser').patchValue(res.user);
-    //});
+    this.modalService.show(component, config);
   }
 
-  async createTask() {
-    const user: any = this.authService.decodeToken();
-    const _task = JSON.parse(localStorage.getItem('Task'));
-    let body: any = {};
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const idSample = this.idSample;
+    const typeFirm = typeSign;
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        idTypeDoc,
+        idSample,
+        typeFirm,
+        typeAnnex,
+        callback: (next: boolean) => {
+          if (next) {
+            if (typeFirm != 'electronica') {
+              this.uploadDocument(typeDocument);
+            } else {
+              this.getSampleInfo();
+            }
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
 
-    body['idTask'] = _task.id;
-    body['userProcess'] = user.username;
-    body['type'] = 'MUESTREO_BIENES';
-    body['subtype'] = 'Verificar_pago';
-    body['ssubtype'] = 'CREATE';
+  uploadDocument(typeDocument: number) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      typeDoc: typeDocument,
+      idSample: this.idSample,
+      callback: (data: boolean) => {
+        if (data) {
+          this.getSampleInfo();
+        }
+      },
+    };
 
-    let task: any = {};
-    task['id'] = 0;
-    task['assignees'] = user.username;
-    task['assigneesDisplayname'] = user.username;
-    task['creator'] = user.username;
-    task['reviewers'] = user.username;
+    this.modalService.show(UploadReportReceiptComponent, config);
+  }
 
-    task['idSampling'] = this.idSample;
-    task[
-      'title'
-    ] = `Validación de pago de ficha de deposito para el avalúo de los bienes ${this.idSample}`;
-    task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
-    task['idTransferee'] = this.sampleInfo.transfereeId;
-    task['processName'] = 'Verificacion_pago';
-    task['urlNb'] = 'pages/request/deposit-payment-validations';
-    body['task'] = task;
+  async createTask(numeraryRest: any, espRest: any) {
+    if (numeraryRest.length > 0) {
+      const user: any = this.authService.decodeToken();
+      const _task = JSON.parse(localStorage.getItem('Task'));
+      let body: any = {};
 
-    const taskResult: any = await this.createTaskOrderService(body);
-    this.loading = false;
-    if (taskResult || taskResult == false) {
-      this.msgGuardado(
-        'success',
-        'Creación de Tarea Correcta',
-        `Validación de pago de ficha de deposito para el avalúo de los bienes ${this.idSample}`
-      );
+      body['idTask'] = _task.id;
+      body['userProcess'] = user.username;
+      body['type'] = 'MUESTREO_BIENES';
+      body['subtype'] = 'Verificar_pago';
+      body['ssubtype'] = 'CREATE';
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = user.username;
+      task['assigneesDisplayname'] = user.username;
+      task['creator'] = user.username;
+      task['reviewers'] = user.username;
+
+      task['idSampling'] = this.idSample;
+      task[
+        'title'
+      ] = `Validación de pago de ficha de deposito para el avalúo de los bienes ${this.idSample}`;
+      task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
+      task['idTransferee'] = this.sampleInfo.transfereeId;
+      task['processName'] = 'Verificacion_pago';
+      task['urlNb'] = 'pages/request/deposit-payment-validations';
+      body['task'] = task;
+
+      const taskResult: any = await this.createTaskOrderService(body);
+      this.loading = false;
+      if (taskResult || taskResult == false) {
+        this.msgGuardado(
+          'success',
+          'Creación de Tarea Correcta',
+          `Validación de pago de ficha de deposito para el avalúo de los bienes ${this.idSample}`
+        );
+      }
+    } else if (espRest.length > 0) {
+      const user: any = this.authService.decodeToken();
+      const _task = JSON.parse(localStorage.getItem('Task'));
+      let body: any = {};
+
+      body['idTask'] = _task.id;
+      body['userProcess'] = user.username;
+      body['type'] = 'MUESTREO_BIENES';
+      body['subtype'] = 'Aprobar_restitucion';
+      body['ssubtype'] = 'CREATE';
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = user.username;
+      task['assigneesDisplayname'] = user.username;
+      task['creator'] = user.username;
+      task['reviewers'] = user.username;
+
+      task['idSampling'] = this.idSample;
+      task[
+        'title'
+      ] = `Muestreo Bienes: Validación de restitución en especie de los bienes ${this.idSample}`;
+      task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
+      task['idTransferee'] = this.sampleInfo.transfereeId;
+      task['processName'] = 'Aprobar_restitucion';
+      task['urlNb'] = 'pages/request/assets-approval';
+      body['task'] = task;
+
+      const taskResult: any = await this.createTaskOrderService(body);
+      this.loading = false;
+      if (taskResult || taskResult == false) {
+        this.msgGuardado(
+          'success',
+          'Creación de Tarea Correcta',
+          `Muestreo Bienes: Validación de restitución en especie de los bienes ${this.idSample}`
+        );
+      }
     }
   }
 

@@ -307,6 +307,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   getSampligGoods() {
     this.loadingGoods = true;
     this.params3.getValue()['filter.sampleId'] = this.sampleId;
+    this.params3.getValue()['filter.sampleId'] = this.sampleId;
     this.samplingGoodService
       .getSamplingGoods(this.params3.getValue())
       .subscribe({
@@ -440,7 +441,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.params2.getValue()['filter.finalPeriod'] = `$btw:${
       this.dateForm.get('initialDate').value
     }, ${this.dateForm.get('finalDate').value}`;
-
+    this.params2.getValue()['filter.delRegionalId'] = this.delegationId;
     this.samplingGoodService
       .getSamplingGoodFilter(this.params2.getValue())
       .subscribe({
@@ -460,6 +461,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           });
 
           Promise.all(showInfo).then(async info => {
+            console.log('info', info);
             this.paragraphs2.load(info);
             this.loadingGoodInv = false;
             this.totalItems2 = resp.data.length;

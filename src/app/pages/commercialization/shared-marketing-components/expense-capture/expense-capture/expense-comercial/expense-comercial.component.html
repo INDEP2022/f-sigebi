@@ -127,31 +127,7 @@
               Datos del evento al cual se asociará el gasto
             </h5>
           </div>
-          <div class="row mt-4 ml-0" *ngIf="showCvePoliza">
-            <ng-custom-select-loading
-              [form]="form"
-              [updateValues]="true"
-              formControlName="policie"
-              label="Cve Poliza"
-              [path]="pathPolicy"
-              value="policyKeyId"
-              bindLabel="description"
-              paramSearch="filter.description"
-              prefixSearch="$ilike"
-              secondParamSearch="filter.policyKeyId"
-              [labelTemplate]="policieLabel"
-              [optionTemplate]="policieOption"
-              (valueChange)="reloadLoteEvent($event)">
-            </ng-custom-select-loading>
-            <ng-template #policieLabel let-item="item">
-              {{ item.policyKeyId }} - {{ item.description }}
-            </ng-template>
-            <ng-template #policieOption let-item="item">
-              <div [title]="item.policyKeyId + '-' + item.description">
-                {{ item.policyKeyId }} - {{ item.description }}
-              </div>
-            </ng-template>
-          </div>
+
           <div class="row mt-4 ml-0">
             <div class="col-md-6 pl-0" *ngIf="showEvent">
               <ng-custom-select-loading
@@ -305,7 +281,7 @@
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
                 [disabled]="!validImprimeAny"
                 (click)="imprimeAny()">
-                Imprime Any
+                Imprime Anv
               </button>
               <button
                 *ngIf="address !== 'M'"
@@ -327,7 +303,7 @@
                 *ngIf="address !== 'M'"
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
-                [disabled]="expenseNumberValue"
+                [disabled]="!validateExportExcel"
                 (click)="exportExcel()">
                 Exportar a Excel
               </button>

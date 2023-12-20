@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { catchError, map, of } from 'rxjs';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { PrepareEventEndpoints } from 'src/app/common/constants/endpoints/ms-prepareevent-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -60,11 +61,17 @@ export class ExpenseLotService extends HttpService {
   }
 
   CARGA_BIENES_LOTE(body: ILoadLotDTO) {
-    return this.post<ILoadLotResponse>('apps/load-goods-lot', body);
+    return this.post<IListResponseMessage<ILoadLotResponse>>(
+      'apps/load-goods-lot',
+      body
+    );
   }
 
   CARGA_BIENES_LOTE_DELRES(body: ILoadLotDelResDTO) {
-    return this.post<ILoadLotResponse>('apps/carga-bienes-lote-xdelres', body);
+    return this.post<IListResponseMessage<ILoadLotResponse>>(
+      'apps/carga-bienes-lote-xdelres',
+      body
+    );
   }
 
   CANCELA_VTA_NORMAL(body: ICancelVtaDTO) {
@@ -78,15 +85,17 @@ export class ExpenseLotService extends HttpService {
   CANCELACION_PARCIAL(body: {
     pLotId: number;
     pEventId: number;
-    pLotPub: string;
+    pLotPub: number;
     pSpentId: number;
-    pTotIva: string;
-    pTotMonto: string;
-    pTotTot: string;
+    pTotIva: number;
+    pTotMonto: number;
+    pConceptId: number;
+    pTotTot: number;
     address: string;
+    pPrueba: number;
     comerDetBills: IComerDetBills[];
   }) {
-    return this.post('apps/partial-cancellation', body);
+    return this.post<number>('apps/partial-cancellation', body);
   }
 
   DEVOLUCION_PARCIAL(body: {
@@ -96,9 +105,10 @@ export class ExpenseLotService extends HttpService {
     user: string;
     spentId: number;
     address: string;
+    idConcepto: number;
     cat_motivos_rev: { motiveDescription: string; selection: number }[];
   }) {
-    return this.post('apps/partial-return', body);
+    return this.post<number>('apps/partial-return', body);
   }
 
   update(body: any) {
@@ -109,5 +119,18 @@ export class ExpenseLotService extends HttpService {
 
   getComerGoodXLote(params: _Params) {
     return this.get(PrepareEventEndpoints.ComerGoodXLote, params);
+  }
+
+  spentExpedientWhere(idGasto: number) {
+    return this.get<{ data: { no_expediente: string }[] }>(
+      'apps/spent-expendient-where/' + idGasto
+    ).pipe(
+      catchError(x => of({ data: [] })),
+      map(x => (x.data.length > 0 ? x.data.map(x => x.no_expediente) : []))
+    );
+  }
+
+  foliosAsociadosExpediente_a_Null(idGasto: number) {
+    return this.put('apps/update-document/' + idGasto);
   }
 }

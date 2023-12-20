@@ -9,18 +9,25 @@
       <app-card [header]="false">
         <div body>
           <div class="d-flex justify-content-end">
-            <div class="p-2">
+            <div class="p-2" *ngIf="!disabledButton">
               <button
                 class="btn btn-primary btn-sm active"
                 (click)="verifyTurn()">
                 Turnar muestreo <i class="fa fa-share-square"></i>
               </button>
             </div>
-            <div class="p-2">
+            <div class="p-2" *ngIf="disabledButton">
+              <button
+                class="btn btn-primary disabled btn-sm active"
+                (click)="verifyTurn()">
+                Turnar muestreo <i class="fa fa-share-square"></i>
+              </button>
+            </div>
+            <!--<div class="p-2">
               <button class="btn btn-primary btn-sm active" (click)="save()">
                 Guardar <i class="fa fa-save"></i>
               </button>
-            </div>
+            </div> -->
           </div>
           <div class="row">
             <div class="col-md-12">
@@ -114,11 +121,6 @@
           <app-pagination
             [params]="params"
             [totalItems]="totalItems"></app-pagination>
-          <!--<app-assets-tab
-            [willSave]="willSave"
-            [idSample]="idSample"
-            [filterObject]="filterObject"
-            [typeTask]="'verify-warehouse-assets'"></app-assets-tab> -->
         </tab>
         <tab heading="Deductivas">
           <div [class]="loadingDeductives ? 'table-loading' : ''">

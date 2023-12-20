@@ -631,6 +631,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.signedReport = true;
         this.editReport = false;
 
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = true;
+        this.editReport = false;
+
         break;
 
       case 'validate-opinion-compensation':
@@ -717,11 +722,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.sendEmail = true;
 
         this.resultEyeVisitReport = false;
-        this.resultVisits = false;
-        this.validateGoodForEyeVisit = false;
-        this.notifyReport = false;
         this.docRequest = false;
-        this.viewSelectedGoods = true;
         this.listGoodSelectedTitle = 'Listado de Bienes';
         this.searchRequestSimGoods = false;
         this.dictumValidate = false;

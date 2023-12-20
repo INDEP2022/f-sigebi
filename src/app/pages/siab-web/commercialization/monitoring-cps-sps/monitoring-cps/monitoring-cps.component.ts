@@ -30,6 +30,7 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
   // Boolean
   show: boolean = false;
   checkedSiab: boolean = false;
+  checkedSirsae: boolean = false;
 
   // Array Ngx-Select
   @Input() fullEvents: any;
@@ -106,11 +107,16 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
 
   siabCheckedChanged() {
     this.checkedSiab = true;
+    this.checkedSirsae = false;
     this.form.get('year').disable();
+    this.form.get('event').enable();
   }
 
   sirsaeCheckedChanged() {
+    this.checkedSiab = false;
+    this.checkedSirsae = true;
     this.form.get('event').disable();
+    this.form.get('year').enable();
   }
 
   fullTableSiabOrSirsae() {
@@ -122,29 +128,28 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
   }
 
   fullSiab() {
-    let params = new HttpParams();
-    params = params.append(
-      'eventId',
-      this.form.controls['event'].value?.idevento
-    );
-    params = params.append(
-      'startDate',
-      this.servicePipe.transform(this.form.controls['from'].value, 'dd/MM/yyyy')
-    );
-    params = params.append(
-      'endDate',
-      this.servicePipe.transform(this.form.controls['to'].value, 'dd/MM/yyyy')
-    );
-    params = params.append('system', 'SIAB');
+    let params = {
+      eventId: this.form.controls['event'].value?.idevento,
+      startDate: this.servicePipe.transform(
+        this.form.controls['from'].value,
+        'dd/MM/yyyy'
+      ),
+      endDate: this.servicePipe.transform(
+        this.form.controls['to'].value,
+        'dd/MM/yyyy'
+      ),
+      system: 'SIAB',
+    };
     this.dataSiabParamsFilter.emit(params);
   }
 
   fullSirsae() {
-    let params = new HttpParams();
-    params = params.append('eventId', 0);
-    params = params.append('startDate', '');
-    params = params.append('endDate', '');
-    params = params.append('system', 'SIRSAE');
+    let params = {
+      eventId: 0,
+      startDate: '',
+      endDate: '',
+      system: 'SIRSAE',
+    };
     this.dataSiabParamsFilter.emit(params);
   }
 

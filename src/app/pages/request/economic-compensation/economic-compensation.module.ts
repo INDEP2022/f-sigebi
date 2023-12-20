@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { SharedModule } from '../../../shared/shared.module';
+import { ChangeLegalStatusComponent } from './change-legal-status/change-legal-status.component';
 import { DictumInformationTabComponent } from './components/dictum-information-tab/dictum-information-tab.component';
 import { EntryOrderViewComponent } from './components/entry-order-view/entry-order-view.component';
 import { EntryOrderComponent } from './components/entry-order/entry-order.component';
@@ -11,7 +12,6 @@ import { RegisterAppointmentTabComponent } from './components/register-appointme
 import { RegisterDictumInformationComponent } from './components/register-dictum-information/register-dictum-information.component';
 import { RegisterDictumValidationComponent } from './components/register-dictum-validation/register-dictum-validation.component';
 import { EconomicCompensationRoutingModule } from './economic-compensation-routing.module';
-import { ChangeLegalStatusComponent } from './change-legal-status/change-legal-status.component';
 
 @NgModule({
   declarations: [
@@ -40,4 +40,4 @@ import { ChangeLegalStatusComponent } from './change-legal-status/change-legal-s
     RegisterDictumInformationComponent,
   ],
 })
-export class EconomicCompensationModule {}
+export class EconomicCompensationModule { }

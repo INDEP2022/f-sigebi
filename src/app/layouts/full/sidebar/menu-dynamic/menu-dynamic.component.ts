@@ -28,6 +28,7 @@ export class MenuDynamicComponent implements OnInit {
 
     if (item.label === 'Captura de Gastos') {
       localStorage.removeItem('eventExpense');
+      localStorage.removeItem('fcomer084I_folio');
     }
   }
 }

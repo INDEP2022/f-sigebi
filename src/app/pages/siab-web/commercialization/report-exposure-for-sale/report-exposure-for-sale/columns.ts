@@ -179,19 +179,19 @@ export const CONSULT_COLUMNS = {
       component: CustomDateFilterComponent,
     },
   },
-  creationDate: {
-    title: 'Fecha Creación',
-    sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
-      return formatted;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateFilterComponent,
-    },
-  },
+  // creationDate: {
+  //   title: 'Fecha Creación',
+  //   sort: false,
+  //   valuePrepareFunction: (date: Date) => {
+  //     var raw = new Date(date);
+  //     var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+  //     return formatted;
+  //   },
+  //   filter: {
+  //     type: 'custom',
+  //     component: CustomDateFilterComponent,
+  //   },
+  // },
   goodType: {
     title: 'Tipo Bien',
     sort: false,

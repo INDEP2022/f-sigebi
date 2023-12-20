@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PolicyEndpoint } from 'src/app/common/constants/endpoints/policy-endpoint';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
-import { HttpService } from '../../../common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import { HttpService, _Params } from '../../../common/services/http.service';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import {
   IDeletePolicyXGood,
+  IPolicy,
   IPolicyXBien,
   IPolicyxRequest,
 } from '../../models/ms-policy/policy.model';
@@ -48,6 +52,13 @@ export class PolicyService extends HttpService {
   ): Observable<IListResponse> {
     return this.get<IListResponse>(
       `${PolicyEndpoint.getPolicesXRight}?filter.policyKeyId=$eq:${Key}`,
+      params
+    );
+  }
+
+  getAllPolicies(params?: _Params) {
+    return this.get<IListResponseMessage<IPolicy>>(
+      PolicyEndpoint.getPolicies,
       params
     );
   }

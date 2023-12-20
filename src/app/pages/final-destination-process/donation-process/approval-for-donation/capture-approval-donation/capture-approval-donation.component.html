@@ -18,7 +18,7 @@
         <div class="col-md-6 border-right border-secondary" id="column">
           <div class="row">
             <div class="col-12">
-              <h5>Registro</h5>
+              <h5>Evento</h5>
             </div>
           </div>
           <div class="row mt-5">
@@ -129,27 +129,36 @@
               </div>
             </div>
             <div class="row m-3">
-              <div class="col-4"></div>
+              <!--<div class="col-4"></div>-->
               <div class="col-md-12 text-center">
                 <button
-                  (click)="agregarCaptura()"
+                  (click)="agregarCaptura(false)"
                   type="button"
                   class="btn btn-info active btn-sm mr-3 mt-2">
-                  Nuevo Evento
+                  Nuevo
                   <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <button
+                  (click)="agregarCaptura(true)"
+                  [disabled]="idAct == 0"
+                  type="button"
+                  class="btn btn-info active btn-sm mr-3 mt-2">
+                  Editar
+                  <i class="bx bx-edit bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
                   class="btn btn-primary active btn-sm mr-3 mt-2"
                   (click)="searchActas()">
-                  Buscar Evento
+                  Buscar
                   <i class="bx bx-search bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
+                  [disabled]="idAct == 0"
                   class="btn btn-primary active btn-sm mr-3 mt-2"
                   (click)="cerrarActa()">
-                  Cerrar Evento
+                  Cerrar
                   <i class="fas fa-close bx-sm float-icon"></i>
                 </button>
                 <button
@@ -312,16 +321,18 @@
               </div>
               <div class="row">
                 <div class="d-flex justify-content-center">
-                  <div class="col-3">
+                  <div class="col-4"></div>
+                  <div class="col-2">
                     <span class="text-success mr-5"
                       ><i class="fa fa-square"></i> Disponibles</span
                     >
                   </div>
-                  <div class="col-3">
+                  <div class="col-2">
                     <span class="text-black"
                       ><i class="fa fa-square"></i> No disponibles</span
                     >
                   </div>
+                  <div class="col-4"></div>
                 </div>
               </div>
             </div>

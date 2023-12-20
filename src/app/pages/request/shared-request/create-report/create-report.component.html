@@ -31,7 +31,7 @@
             </button>
           </div>
 
-          <div class="col-md-3" *ngIf="!editReport">
+          <div class="col-md-3" *ngIf="!editReport && !signReportTab">
             <button (click)="sign()" class="btn btn-primary active btn-sm">
               Firmar
               <i class="fa fa-file-signature"></i>
@@ -40,7 +40,7 @@
 
           <div class="col-md-3">
             <button
-              (click)="openDoc('test')"
+              (click)="openDoc()"
               class="btn btn-primary active btn-sm">
               Visualizar <i class="fa fa-eye mr-1"></i>
             </button>
@@ -72,7 +72,7 @@
           </div>
         </tab>
 
-        <tab heading="Firmar Reporte" id="signTab" *ngIf="signReport">
+        <tab heading="Firmar Reporte" id="signTab" *ngIf="signReportTab">
           <app-sign-report (nextStep)="nextStep($event)"></app-sign-report>
         </tab>
       </tabset>

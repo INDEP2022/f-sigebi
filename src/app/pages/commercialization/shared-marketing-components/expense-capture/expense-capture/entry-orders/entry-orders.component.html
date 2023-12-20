@@ -47,12 +47,16 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
+              [disabled]="
+                !conceptNumberValue || dataCompositionExpenses.length === 0
+              "
               (click)="replyFolio()">
               Replicar Folio y Guarda
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
+              [disabled]="!eventNumberValue"
               (click)="reload()">
               Obtener Ordenes de Ingreso
             </button>

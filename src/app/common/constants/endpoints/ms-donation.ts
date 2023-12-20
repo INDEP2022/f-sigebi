@@ -24,4 +24,5 @@ export enum DonationEndPoint {
   DetailEventComByID = 'detail-event-com-don/find-one',
   DeleteDetailTmpEvent = 'deleteDatailTmp',
   EventComDonationExcelExport = 'event-com-donation/excel-export',
+  ConecutivoActaDnation = 'application/query-number-invoice',
 }
