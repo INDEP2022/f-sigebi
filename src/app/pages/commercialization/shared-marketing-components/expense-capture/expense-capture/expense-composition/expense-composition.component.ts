@@ -987,8 +987,10 @@ export class ExpenseCompositionComponent
         next: response => {
           if (response.data && response.data.length > 0) {
             this.loader.load = false;
+            console.log(response.data, row);
+            // debugger;
             let result = response.data.filter(
-              x => x.id_detgasto + '' == row.paymentsId
+              x => x.id_detgasto + '' == row.detPaymentsId + ''
             );
             let result2 = result.pop();
             this.dataService

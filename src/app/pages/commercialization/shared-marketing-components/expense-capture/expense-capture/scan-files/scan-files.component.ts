@@ -267,6 +267,8 @@ export class ScanFilesComponent extends BasePage implements OnInit {
         if (!createDocument) {
           this.alert('error', 'No se pudo generar el folio de escaneo', '');
           return;
+        } else {
+          this.alert('success', 'Folio generado correctamente', '');
         }
         this.folioUniversal.setValue(createDocument.id);
       }
