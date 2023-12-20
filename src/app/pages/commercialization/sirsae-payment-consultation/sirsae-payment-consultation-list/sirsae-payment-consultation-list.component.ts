@@ -117,7 +117,7 @@ export class SirsaePaymentConsultationListComponent
       },
       error: () => {
         this.loading = false;
-        this.onLoadToast('error', 'Error', 'No se Encontraron Registros');
+        this.onLoadToast('warning', 'Atención', 'No se encontraron registros');
         this.totalItems = 0;
       },
     });
@@ -128,7 +128,7 @@ export class SirsaePaymentConsultationListComponent
     const { reference, startDate, endDate, bank, status } = this.form.value;
 
     if (reference) {
-      filters.addFilter('reference', reference, SearchFilter.LIKE);
+      filters.addFilter('reference', reference, SearchFilter.ILIKE);
     }
     if (startDate || endDate) {
       const initDate = startDate || endDate;
@@ -140,7 +140,7 @@ export class SirsaePaymentConsultationListComponent
       );
     }
     if (bank) {
-      filters.addFilter('ifdsc', bank, SearchFilter.LIKE);
+      filters.addFilter('accountbank.name_bank', bank, SearchFilter.ILIKE);
     }
     if (status) {
       filters.addFilter('statusMov', status);
@@ -178,11 +178,11 @@ export class SirsaePaymentConsultationListComponent
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'accountbank':
-                field = `filter.accountbank.name_bank`;
+                field = `filter.accountbank.id`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'ifdsc':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.LIKE2;
                 break;
               case 'reference':
                 searchFilter = SearchFilter.ILIKE;
