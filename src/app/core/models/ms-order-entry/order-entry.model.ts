@@ -46,4 +46,5 @@ export interface IOrderEntry {
   InvoicePaySirsae?: number;
   paySirsaeDate?: string;
   transfereeId?: number;
+  delegationName: string;
 }

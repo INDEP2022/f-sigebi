@@ -4,11 +4,6 @@
       <div class="mr-auto p-2">
         <h5 class="title">Muestreo Ordenes de Servicio&#58; {{ title }}</h5>
       </div>
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
-          Turnar muestreo <i class="bx bxs-right-arrow-square"></i>
-        </button>
-      </div>
     </div>
   </div>
   <div body>
@@ -17,28 +12,69 @@
         <div class="p-2">
           <button
             class="btn btn-primary btn-sm active"
-            (click)="searchOrders()">
-            Buscar Ordenes <i class="bx bxs-component"></i>
-          </button>
-        </div>
-        <div class="p-2">
-          <button
-            class="btn btn-secondary btn-sm active"
-            (click)="openAnnexK()">
-            Anexo K <i class="bx bxs-file"></i>
+            (click)="turnSampling()">
+            Turnar muestreo <i class="fa fa-share-square"></i>
           </button>
         </div>
       </div>
     </div>
+
+    <div class="row pt-4" *ngIf="showSampleInfo">
+      <h5 class="title">Detalles de Muestreo Generado</h5>
+
+      <div class="col-md-4 pt-4">
+        <div class="form-group">
+          <label class="text-right mr-2">No. Muestreo Orden&#58;</label>
+          <span class="fs-4"> {{ sampleOrderInfo.idSamplingOrder }}</span>
+        </div>
+      </div>
+      <div class="col-md-4 pt-4">
+        <div class="form-group">
+          <label class="text-right mr-2">Fecha Creación Muestreo&#58;</label>
+          <span class="fs-4"> {{ sampleOrderInfo.dateCreation }}</span>
+        </div>
+      </div>
+    </div>
+
     <div id="verify-service-orders">
-      <div class="row">
-        <h5>Verificaci&oacute;n de ordenes de servicio</h5>
+      <div class="row pt-5">
+        <h5>Verificaci&oacute;n de Órdenes de Servicio</h5>
+      </div>
+
+      <div class="row pt-2">
+        <div class="d-flex justify-content-end">
+          <div class="p-2">
+            <confirm-button
+              [disabled]="!orderServiceForm.valid"
+              [loading]="loading"
+              [text]="'Buscar Ordenes'"
+              [loadingText]="'Buscando'"
+              [icon]="'bx bxs-component'"
+              [btnSmall]="true"
+              class="mr-2"
+              (confirm)="searchOrders()"></confirm-button>
+            <!--
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="searchOrders()">
+                Buscar Ordenes <i class="bx bxs-component"></i>
+              </button>
+            -->
+          </div>
+          <div class="p-2">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="openAnnexK()">
+              Anexo K <i class="bx bxs-file"></i>
+            </button>
+          </div>
+        </div>
       </div>
       <div>
-        <div>
+        <div class="pt-5">
           <form [formGroup]="orderServiceForm" class="form-material">
             <div class="row pt-4">
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <form-field
                   [control]="orderServiceForm.get('geographicalArea')">
                   <ngx-select
@@ -47,16 +83,16 @@
                     [data]="geographicalAreaSelected"
                     value="id"
                     bindLabel="description"
-                    label="Area Geográfica"
+                    label="Zona Geográfica"
                     (fetchItems)="getgeographicalAreaSelect($event)"
                     (change)="zoneGeographChange($event)">
                   </ngx-select>
                 </form-field>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <form-field
                   [control]="orderServiceForm.get('samplingPeriod')"
-                  label="*Periodo Muestreo">
+                  label="Periodo Muestreo">
                   <input
                     type="text"
                     class="form-control"
@@ -65,9 +101,7 @@
                     bsDatepicker />
                 </form-field>
               </div>
-            </div>
-            <div class="row pt-4">
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <form-field
                   [control]="orderServiceForm.get('contractNumber')"
                   label="No. Contrato">
@@ -76,15 +110,6 @@
                     class="form-control"
                     formControlName="contractNumber"
                     id="contractNumber" />
-                  <!-- <ngx-select
-                    [form]="orderServiceForm"
-                    control="contractNumber"
-                    [data]="contractNumberSelected"
-                    value="contractNumber"
-                    bindLabel="contractNumber"
-                    label="&#42;No&#46; contrato"
-                    (fetchItems)="getContractNumberSelect($event)">
-                  </ngx-select> -->
                 </form-field>
               </div>
             </div>
@@ -100,7 +125,7 @@
                   tooltip="Agregar"
                   (click)="addOrders()"
                   containerClass="tooltip-style"
-                  class="btn btn-info btn-sm active">
+                  class="btn btn-primary btn-sm active">
                   Agregar <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
               </div>
@@ -113,17 +138,14 @@
           </div>
           <div class="row">
             <div class="col-md-12">
-              <!-- <ng-scrollbar track="all" style="min-height: 170px; border: none"> -->
               <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
-                  #table
                   (userRowSelect)="rowsSelected($event)"
                   [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings"
                   [source]="paragraphs">
                 </ng2-smart-table>
               </div>
-              <!-- </ng-scrollbar> -->
             </div>
             <app-pagination
               [params]="params"
@@ -149,13 +171,13 @@
                 getDeductives($event)
               "></app-create-deductives>
           </tab>
-          <tab heading="Datos Anexo">
+          <!--<tab heading="Datos Anexo">
             <app-annex-data
               [SampleOrderId]="SampleOrderId"
               [sampleOrderForm]="sampleOrderForm"
               [dataAnnex]="dataAnnex"
               [typeComponent]="'generate-query'"></app-annex-data>
-          </tab>
+          </tab> -->
           <tab heading="Detalles Almacén">
             <app-warehouse-detail
               [SampleOrderId]="SampleOrderId"

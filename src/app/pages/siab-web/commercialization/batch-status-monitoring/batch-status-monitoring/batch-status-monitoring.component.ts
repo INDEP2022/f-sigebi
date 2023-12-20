@@ -228,31 +228,31 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
       return;
     }
 
-    if (!this.form.get('event').value) {
-      this.alert('warning', 'Es necesario ingresar un Evento', '');
-      return;
-    }
-    if (!this.form.get('transferee').value) {
-      this.alert(
-        'warning',
-        'Es necesario ingresar una No. de Transferente',
-        ''
-      );
-      return;
-    }
-    if (!this.form.get('allotment').value) {
-      this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
-      return;
-    }
+    // if (!this.form.get('event').value) {
+    //   this.alert('warning', 'Es necesario ingresar un Evento', '');
+    //   return;
+    // }
+    // if (!this.form.get('transferee').value) {
+    //   this.alert(
+    //     'warning',
+    //     'Es necesario ingresar una No. de Transferente',
+    //     ''
+    //   );
+    //   return;
+    // }
+    // if (!this.form.get('allotment').value) {
+    //   this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
+    //   return;
+    // }
 
-    if (!this.form.get('DescEvent').value) {
-      this.alert(
-        'warning',
-        'Es necesario ingresar la Descripción del Evento',
-        ''
-      );
-      return;
-    }
+    // if (!this.form.get('DescEvent').value) {
+    //   this.alert(
+    //     'warning',
+    //     'Es necesario ingresar la Descripción del Evento',
+    //     ''
+    //   );
+    //   return;
+    // }
 
     let body = {
       pOption: 1, //Cambio de status - 3, historial

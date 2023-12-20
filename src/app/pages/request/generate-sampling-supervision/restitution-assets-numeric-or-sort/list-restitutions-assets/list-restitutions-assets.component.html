@@ -6,15 +6,29 @@
   </div>
   <div class="row pt-4">
     <div class="d-flex justify-content-end">
-      <div class="m-3">
+      <div class="m-3" *ngIf="!disabledButton">
         <button
           class="btn btn-primary btn-sm active"
           (click)="uploadExpedient()">
           Expediente <i class="bx bx-detail"></i>
         </button>
       </div>
-      <div class="m-3">
+      <div class="m-3" *ngIf="disabledButton">
+        <button
+          class="btn btn-primary disabled btn-sm active"
+          (click)="uploadExpedient()">
+          Expediente <i class="bx bx-detail"></i>
+        </button>
+      </div>
+      <div class="m-3" *ngIf="!disabledButton">
         <button class="btn btn-primary btn-sm active" (click)="uploadImages()">
+          Fotograf&iacute;a <i class="bx bx-images"></i>
+        </button>
+      </div>
+      <div class="m-3" *ngIf="disabledButton">
+        <button
+          class="btn btn-primary disabled btn-sm active"
+          (click)="uploadImages()">
           Fotograf&iacute;a <i class="bx bx-images"></i>
         </button>
       </div>
@@ -35,7 +49,7 @@
     </div>
   </div>
 
-  <div class="row pt-4">
+  <div class="row pt-4" *ngIf="!disabledButton">
     <div class="d-flex">
       <div class="p-2">
         <button class="btn btn-success btn-sm active" (click)="numerari()">
@@ -49,6 +63,32 @@
       </div>
       <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="saveInfoGood()">
+          Guardar <i class="bx bx-save"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row pt-4" *ngIf="disabledButton">
+    <div class="d-flex">
+      <div class="p-2">
+        <button
+          class="btn btn-success disabled btn-sm active"
+          (click)="numerari()">
+          Numerario <i class="bx bx-check"></i>
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          class="btn btn-success disabled btn-sm active"
+          (click)="inSort()">
+          En Especie <i class="bx bx-check"></i>
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          class="btn btn-primary disabled btn-sm active"
+          (click)="saveInfoGood()">
           Guardar <i class="bx bx-save"></i>
         </button>
       </div>

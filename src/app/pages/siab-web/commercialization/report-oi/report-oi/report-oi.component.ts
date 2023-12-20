@@ -63,9 +63,12 @@ export class reportOiComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      rangeDate: [null, [maxDate(new Date())]],
-      typeAuction: [null, []],
-      idEvent: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      rangeDate: [null, [maxDate(new Date()), Validators.required]],
+      typeAuction: [null, [Validators.required]],
+      idEvent: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.required],
+      ],
     });
     this.formReport = this.fb.group({
       NameReport: [null, [Validators.pattern(STRING_PATTERN)]],

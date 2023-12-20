@@ -130,7 +130,7 @@
               [path]="pathPolicy"
               value="policyKeyId"
               bindLabel="description"
-              [readonly]="!havePolicie"
+              [readonly]="havePolicie"
               [labelTemplate]="policieLabel"
               [optionTemplate]="policieOption">
             </ng-custom-select-loading>
@@ -152,8 +152,7 @@
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="
                 !conceptNumberValue ||
-                (address === 'M' &&
-                  dataCompositionExpensesStatusChange.length === 0)
+                (address === 'M' && changeStatusFilter.length === 0)
               "
               (click)="sendToSIRSAE()">
               Envíar Solicitud de pago a SIRSAE

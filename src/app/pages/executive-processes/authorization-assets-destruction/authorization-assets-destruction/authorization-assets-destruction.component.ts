@@ -726,12 +726,14 @@ export class AuthorizationAssetsDestructionComponent
         this.form.get('universalFolio').setValue(jsonResp.universalFolio);
         this.form.get('statusAct').setValue(jsonResp.statusProceedings);
         this.expediente = jsonResp.numFile;
+        this.consult = true;
         this.form
           .get('fromDate')
           .setValue(this.correctDate(jsonResp.elaborationDate));
         this.searchGoodsInDetailProceeding();
       },
       err => {
+        this.consult = false;
         console.log(err);
         this.alert(
           'warning',

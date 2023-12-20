@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const VALID_CAPTURE_LINE_COLUMNS = {
   lc: {
     title: 'Id',
@@ -26,13 +28,13 @@ export const VALID_CAPTURE_LINE_COLUMNS = {
   fec_vigencia: {
     title: 'Fecha Vigencia',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   rfc: {
