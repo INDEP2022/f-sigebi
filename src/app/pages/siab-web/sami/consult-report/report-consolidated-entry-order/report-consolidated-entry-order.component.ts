@@ -109,6 +109,9 @@ export class ReportConsolidatedEntryOrderComponent
   ngOnInit(): void {
     this.prepareForm();
     this.getRegionalDelegationSelect(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getOrderEntry());
   }
 
   prepareForm() {
