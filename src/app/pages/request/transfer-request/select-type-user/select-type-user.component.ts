@@ -164,6 +164,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   userSelected(event: any) {
     if (event.isSelected) {
       this.user = event.data;
+      console.log('Datos del usuario seleccionado a returnar', this.user);
     } else {
       this.user = null;
     }
@@ -453,7 +454,12 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['idstation'] = request?.stationId;
       task['idTransferee'] = request?.transferenceId;
       task['idAuthority'] = request?.authorityId;
-      task['idDelegationRegional'] = user.department;
+
+      if (ssubtype == 'RETURNAR') {
+        task['idDelegationRegional'] = this.user.departament;
+      } else {
+        task['idDelegationRegional'] = user.department;
+      }
 
       if (this.task1?.createdDate != null) {
         task['createdDate'] = this.task1?.createdDate;

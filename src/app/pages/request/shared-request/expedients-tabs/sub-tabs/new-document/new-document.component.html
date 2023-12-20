@@ -8,17 +8,16 @@
       <form class="form-material" [formGroup]="newDocForm">
         <div class="row">
           <div class="col-md-12">
-            <ngx-select
-              [form]="newDocForm"
-              control="docType"
-              (fetchItems)="typedocuments($event)"
-              [data]="typesDocuments"
-              label="Tipo de Documento"
-              value="ddocType"
-              bindLabel="ddescription">
-            </ngx-select>
-
-            <!--  <div
+            <!--<ngx-select
+            [form]="newDocForm"
+            (change)="typeDocumentSelect($event)"
+            control="docType"
+            (fetchItems)="typedocuments($event)"
+            [data]="selectTypeDoc"
+            label="Tipo de Documento"
+            value="ddocType"
+            bindLabel="ddescription"></ngx-select> -->
+            <div
               [formGroup]="newDocForm"
               class="form-group form-secondary form-static-label">
               <ng-select
@@ -41,7 +40,7 @@
                 >Tipo de Documento <span style="color: #ad4766">*</span></label
               >
             </div>
-          --></div>
+          </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-12">
