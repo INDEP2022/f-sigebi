@@ -54,8 +54,9 @@ export class AppraisalGoodsTableComponent
           filter: {
             type: 'list',
             config: {
+              selectText: 'Todos',
               list: [
-                { value: '', title: 'Todos' },
+                // { value: '', title: 'Todos' },
                 { value: 'S', title: 'Si' },
                 { value: 'N', title: 'No' },
               ],
