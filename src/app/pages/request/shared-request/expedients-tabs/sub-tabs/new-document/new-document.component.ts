@@ -9,6 +9,7 @@ import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { ITypeDocument } from 'src/app/core/models/ms-wcontent/type-document';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -190,7 +191,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     console.log(params);
     this.wContentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typesDocuments = new DefaultSelect(resp.data, resp.length);
+        this.typesDocuments = resp.data;
       },
     });
   }
@@ -216,7 +217,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 
-  typeDocumentSelect(item) {
+  typeDocumentSelect(item: ITypeDocument) {
     console.log(item);
     this.typeDocument = item.ddocType;
   }
