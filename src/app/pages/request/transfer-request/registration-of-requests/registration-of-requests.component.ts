@@ -162,6 +162,7 @@ export class RegistrationOfRequestsComponent
   processView() {
     this.route.data.forEach((item: any) => {
       this.process = item.process;
+      console.log('Tipo de proceso:', this.process);
     });
   }
 
