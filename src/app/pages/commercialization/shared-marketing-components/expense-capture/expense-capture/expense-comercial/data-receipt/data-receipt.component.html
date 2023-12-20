@@ -27,6 +27,7 @@
           class="form-control"
           ngModel
           bsDatepicker
+          onkeydown="return false"
           formControlName="invoiceRecDate" />
         <!-- <input
           type="text"
@@ -42,7 +43,7 @@
           ngModel
           bsDatepicker
           formControlName="payDay"
-          readonly />
+          onkeydown="return false" />
         <!-- <input
           type="text"
           class="form-control"
@@ -56,7 +57,8 @@
           class="form-control"
           ngModel
           bsDatepicker
-          formControlName="captureDate" />
+          formControlName="captureDate"
+          onkeydown="return false" />
         <!-- <input
           type="text"
           class="form-control"
@@ -70,7 +72,8 @@
           class="form-control"
           ngModel
           bsDatepicker
-          formControlName="fecha_contrarecibo" />
+          formControlName="fecha_contrarecibo"
+          onkeydown="return false" />
         <!-- <input
           type="text"
           class="form-control"
