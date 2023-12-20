@@ -32,12 +32,12 @@ import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.com
 import { GrouperGoodFieldComponent } from './grouper-good-field/grouper-good-field.component';
 
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
-import { SeeInformationComponent } from '../expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
 import {
   GOODS_RES_DEV_INV_COLUMNS,
   SELECT_GOODS_COLUMNS,
 } from './select-goods-columns';
+import { ViewDetailGoodsComponent } from './view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
 
 @Component({
@@ -57,6 +57,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   goodColumns = new LocalDataSource();
   selectedGoodColumns: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<FilterParams>(new FilterParams());
+
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idRequest: number = 0;
   goodSelected: boolean = false;
@@ -120,7 +122,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
             //component.requesInfo(row.requestId);
-            component.viewFile(row);
+            component.getFormSeach(row.solicitudId);
+            console.log(row);
+            //component.viewFile(row);
           });
         },
       },
@@ -136,6 +140,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
             component.viewFile(row);
+            console.log(row);
+            component.getFormSeach(row.applicationId);
           });
         },
       },
@@ -154,6 +160,19 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       ...this.selectedGoodSettings.columns,
     };
     //this.selectedGoodColumns = datagood;
+  }
+
+  getFormSeach(recordId: any) {
+    this.requestService.getById(recordId).subscribe({
+      next: resp => {
+        console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
+        this.openDetail(resp);
+      },
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'No se encontraron registros', '');
+      },
+    });
   }
 
   getInfoRequest() {
@@ -508,7 +527,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(SeeInformationComponent, config);
+    this.modalService.show(ViewDetailGoodsComponent, config);
   }
 
   openSiabSearch() {

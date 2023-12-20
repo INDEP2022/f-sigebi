@@ -11,7 +11,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
+import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -23,6 +25,7 @@ import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2';
+import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
 import { ChangeLegalStatusComponent } from '../../economic-compensation/change-legal-status/change-legal-status.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
@@ -111,6 +114,14 @@ export class RequestCompDocTasksComponent
 
   signedReport: boolean = false;
 
+  //test
+  isDelegationsVisible: boolean = true;
+  settingsTwo: any;
+  dataThree: LocalDataSource = new LocalDataSource();
+  dataCheckDelegation: any[] = [];
+  paramsDelegation = new BehaviorSubject(new ListParams());
+  totalItemsDelegation: number = 0;
+
   /**
    * email del usuairo
    */
@@ -169,6 +180,12 @@ export class RequestCompDocTasksComponent
     private fb: FormBuilder
   ) {
     super();
+    this.settingsTwo = {
+      ...this.settings,
+      selectMode: 'multi',
+      actions: false,
+      columns: { ...DELEGATION_COLUMNS_REPORT },
+    };
     this.screenWidth =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -298,7 +315,10 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  turnRequest() {
+  async turnRequest() {
+    if (this.process == 'register-taxpayer-date') {
+      await this.openDelegation();
+    }
     this.alertQuestion(
       'question',
       `¿Desea turnar la solicitud con Folio ${this.requestId}?`,
@@ -1393,9 +1413,24 @@ export class RequestCompDocTasksComponent
     //Turnamos la solicitud
   }
 
+  openDelegation(context?: Partial<ChangeLegalStatusComponent>) {
+    return new Promise<void>(resolve => {
+      const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
+        initialState: { ...context, isDelegationsVisible: true },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+
+      // Resuelve la promesa cuando el modal se cierra
+      modalRef.onHidden.subscribe(() => {
+        resolve();
+      });
+    });
+  }
+
   openModal(context?: Partial<ChangeLegalStatusComponent>) {
     const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
-      initialState: { ...context },
+      initialState: { ...context, isDelegationsVisible: false },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
