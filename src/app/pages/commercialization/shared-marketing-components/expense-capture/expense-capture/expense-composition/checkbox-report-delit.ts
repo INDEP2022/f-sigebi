@@ -64,6 +64,9 @@ export class CheckboxReportDelitComponent implements OnInit {
           row.SELECT_CAMBIA_CLASIF_ENABLED === null ||
           row.SELECT_CAMBIA_CLASIF_ENABLED === undefined
         ) {
+          if (row.labelNumber && row.labelNumber + '' === '6') {
+            this.disabled = true;
+          }
           if (row.vehiculoCount + '' === '0') {
             const firsValidation =
               !row.reportDelit && row.clasifGoodNumber + '' !== '1606';

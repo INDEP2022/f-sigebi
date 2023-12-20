@@ -1004,6 +1004,7 @@ export class ExpenseCompositionComponent
                 vatWithholding: result2.retencion_iva2,
                 cvman: row.manCV,
                 budgetItem: row.departure,
+                total: result2.total2,
               })
               .pipe(take(1))
               .subscribe({
