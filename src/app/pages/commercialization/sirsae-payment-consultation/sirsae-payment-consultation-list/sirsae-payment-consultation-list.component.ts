@@ -42,7 +42,8 @@ export class SirsaePaymentConsultationListComponent
     hideSubHeader: false,
     columns: CONSULT_SIRSAE_COLUMNS,
   };
-  tableSource = new LocalDataSource();
+  tableSource: LocalDataSource = new LocalDataSource();
+
   statusesMov: { id: number; statusDescription: string }[] = [];
   constructor(private interfaceSirsaeService: InterfaceSirsaeService) {
     super();
@@ -111,8 +112,9 @@ export class SirsaePaymentConsultationListComponent
     this.interfaceSirsaeService.getAccountDetail(paramsEn).subscribe({
       next: res => {
         console.log(res);
-        this.totalItems = res.count;
+        this.totalItems = res.count || 0;
         this.tableSource.load(res.data);
+        this.tableSource.refresh();
         this.loading = false;
       },
       error: () => {
