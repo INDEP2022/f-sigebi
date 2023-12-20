@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
@@ -49,7 +50,8 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private wContentService: WContentService
   ) {
     super();
     this.settings = {
@@ -155,22 +157,31 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
               allGoodsSample
             );
             if (checkApproveRes.length == allGoodsSample.length) {
-              this.alertQuestion(
-                'question',
-                'Todos los bienes han sido aprobados en el pago de la ficha de orden de ingreso.',
-                '¿Esta de acuerdo que la información es correcta para finalizar?'
-              ).then(async question => {
-                if (question.isConfirmed) {
-                  const updateGoodsSample = await this.updateGoodSample(
-                    checkApproveRes,
-                    'APROBADO_NUMERARIO',
-                    'APROBAR'
-                  );
-                  if (updateGoodsSample) {
-                    this.closeTask();
+              const checkUpdateImage: any = await this.checkExistImages();
+              if (checkUpdateImage) {
+                this.alertQuestion(
+                  'question',
+                  'Todos los bienes han sido aprobados en el pago de la ficha de orden de ingreso.',
+                  '¿Esta de acuerdo que la información es correcta para finalizar?'
+                ).then(async question => {
+                  if (question.isConfirmed) {
+                    const updateGoodsSample = await this.updateGoodSample(
+                      checkApproveRes,
+                      'APROBADO_NUMERARIO',
+                      'APROBAR'
+                    );
+                    if (updateGoodsSample) {
+                      this.closeTask();
+                    }
                   }
-                }
-              });
+                });
+              } else {
+                this.alert(
+                  'warning',
+                  'Acción Invalida',
+                  'Es requerido adjuntar una fotografia'
+                );
+              }
             } else {
               const checkDeclineRes: any = await this.checkDeclineRes(
                 allGoodsSample
@@ -179,17 +190,19 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
               if (checkDeclineRes.length > 0) {
                 this.alertQuestion(
                   'question',
-                  'Hay bienes que han sido rechazados en el pago de la ficha de orden de ingreso.',
+                  'Hay bienes Rechazados.',
                   '¿Esta de acuerdo que la información es correcta para turnar?'
                 ).then(async question => {
                   if (question.isConfirmed) {
-                    const updateGoodsSample = await this.updateGoodSample(
-                      checkApproveRes,
+                    const updateGoodsSample: any = await this.updateGoodSample(
+                      checkDeclineRes,
                       'RECHAZADO_NUMERARIO',
                       'RECHAZAR'
                     );
+                    console.log('updateGoodsSample', updateGoodsSample);
                     if (updateGoodsSample) {
                       this.closeTask();
+                      this.createTask();
                     }
                   }
                 });
@@ -218,7 +231,7 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
   checkResultEvaluation(goodsSample: ISampleGood[]) {
     return new Promise((resolve, reject) => {
       const filter = goodsSample.filter((good: any) => {
-        if (!good.restitutionStatus) return good;
+        if (good.restitutionStatus == 'PENDIENTE_LIBERACION') return good;
       });
 
       if (filter.length > 0) {
@@ -334,7 +347,76 @@ export class ApproveRestitutionComponent extends BasePage implements OnInit {
     });
   }
 
-  save() {}
+  checkExistImages() {
+    return new Promise(async (resolve, reject) => {
+      const goodNumerary: any = await this.getGoods();
+      let good: string = '';
+      goodNumerary.map(item => {
+        good += item.goodId;
+      });
+      const formDatra: Object = {
+        xidBien: good,
+      };
+      this.wContentService.getDocumentos(formDatra).subscribe({
+        next: response => {
+          const _data = response.data.filter((img: any) => {
+            if (img.dDocType == 'DigitalMedia') {
+              return img;
+            }
+          });
+
+          if (_data.length > 0) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  async createTask() {
+    const user: any = this.authService.decodeToken();
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    let body: any = {};
+
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = 'MUESTREO_BIENES';
+    body['subtype'] = 'Verificacion_bienes';
+    body['ssubtype'] = 'RESTITUCION';
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = user.username;
+    task['assigneesDisplayname'] = user.username;
+    task['creator'] = user.username;
+    task['reviewers'] = user.username;
+
+    task['idSampling'] = this.idSample;
+    task[
+      'title'
+    ] = `Muestreo de bienes: Clasificación de bienes por tipo de restitución ${this.idSample}`;
+    task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
+    task['idTransferee'] = this.sampleInfo.transfereeId;
+    task['processName'] = 'RESTITUCION';
+    task['userComment'] = 'check-again';
+    task['urlNb'] = 'pages/request/restitution-assets-numeric';
+    body['task'] = task;
+
+    const taskResult: any = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult || taskResult == false) {
+      this.msgGuardado(
+        'success',
+        'Creación de Tarea Correcta',
+        `Muestreo de bienes: Clasificación de bienes por tipo de restitución ${this.idSample}`
+      );
+    }
+  }
 
   getSearchForm(event: any) {
     this.filterObject = this.filterForm.value;

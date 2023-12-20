@@ -3,18 +3,6 @@
     <div class="mr-auto p-2">
       <h5 class="title">{{ title }}</h5>
     </div>
-    <!--<div class="d-flex">
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
-          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
-        </button>
-      </div>
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active" (click)="save()">
-          <i class="bx bx-save"></i> Guardar
-        </button>
-      </div>
-    </div> -->
   </div>
   <div body>
     <div id="annex">
@@ -34,26 +22,6 @@
               Turnar muestreo <i class="fa fa-share-square"></i>
             </button>
           </div>
-          <!--<div class="p-2">
-            <button
-              class="btn btn-secondary btn-sm active"
-              (click)="openAnnexJ()">
-              Anexo J <i class="bx bxs-file"></i>
-            </button>
-          </div>
-          <div class="p-2">
-            <button
-              class="btn btn-secondary btn-sm active"
-              (click)="opemAnnexK()">
-              Anexo K <i class="bx bxs-file"></i>
-            </button>
-          </div> -->
-          <!--<div class="p-2">
-            <button class="btn btn-primary btn-sm active" (click)="save()">
-              Guardar <i class="fa fa-save"></i>
-            </button>
-          </div>
-          -->
         </div>
       </div>
     </div>
@@ -132,6 +100,7 @@
           <app-list-restitutions-assets
             [idSample]="idSample"
             [filterObject]="filterObject"
+            [checkAgainGoods]="checkAgainGoods"
             [disabledButton]="disabledButton"></app-list-restitutions-assets>
         </tab>
         <tab heading="Deductivas">
@@ -144,13 +113,7 @@
               </ng2-smart-table>
             </div>
           </div>
-          <!--<app-verifications></app-verifications> -->
         </tab>
-        <!--<tab heading="Detalles Anexo">
-          <app-detail-annex
-            [annexData]="annexDetail"
-            [idSample]="idSample"></app-detail-annex>
-        </tab> -->
       </tabset>
     </div>
   </div>

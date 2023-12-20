@@ -1043,21 +1043,24 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
   async generateInvoice() {
     const { event } = this.form.value;
+    this.btnLoading2 = true;
     const validUser = await this.validateUser();
 
-    if (validUser == 0) {
+    if (validUser == 1) {
       this.alert(
         'warning',
         'No cuenta con los permisos para realizar esta operación',
         ''
       );
+      this.btnLoading2 = false;
     } else {
       const data = await this.dataFilter.getAll();
       if (!event && !data[0]) {
         this.alert('warning', 'Debe especificar un evento', '');
+        this.btnLoading2 = false;
         return;
       }
-
+      console.log('AQUIII');
       this.procedureInvoice();
     }
   }
@@ -1074,8 +1077,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       //service de actualizar
 
       // MARCA_PROCESADO
-      await this.processMark('FL', 'PREF');
-
+      let res = await this.processMark('FL', 'PREF');
+      console.log('res', res);
       // COMER_CTRLFACTURA.GENERA_FOLIOS(:COMER_FACTURAS.ID_EVENTO, :COMER_FACTURAS.TPEVENTO);
       await this.generateInvoiceCtrl(event, data[0].tpevent);
 
@@ -1087,6 +1090,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       this.resetParams();
       this.columnFilters['filter.eventId'] = `$eq:${event}`;
       this.getAllComer();
+      this.btnLoading2 = false;
+    } else {
+      this.btnLoading2 = false;
     }
   }
 
@@ -1125,19 +1131,21 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
   // MARCA_PROCESADO
   async processMark(procesando: string, valido: string) {
     let aux_status: string = '';
-    if ((valido = 'NULL')) {
+    if (valido == null) {
       aux_status = null;
     } else {
       aux_status = valido;
     }
 
-    this.isSelect.map(async comer => {
+    let result = this.isSelect.map(async comer => {
+      console.log('SI', comer.factstatusId + '==' + aux_status);
       if (comer.factstatusId == aux_status) {
         let obj = {
           billId: comer.billId,
           eventId: comer.eventId,
           process: procesando,
         };
+        console.log('SI');
         let result = await this.billingsService.updateBillings(obj);
 
         if (result) {
@@ -1145,12 +1153,15 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         }
       }
     });
+    Promise.all(result).then(resp => {
+      return true;
+    });
   }
 
   async validateInvoice(tpEvento: string, id_evento: string) {
     return firstValueFrom(
       this.comerInvoice.validateFolio({ tpEvento, id_evento }).pipe(
-        map(resp => resp),
+        map(resp => resp.rspta),
         catchError(() => of(0))
       )
     );
@@ -1165,14 +1176,16 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     }
 
     let aux: number;
-
+    this.btnLoading3 = true;
     aux = this.validateInvoiceDelete(); // VALIDA_ELIMINA_FOLIOS
 
     console.log(aux);
 
     if (aux == 1) {
-      this.processMark('EF', 'FOL'); // MARCA_PROCESADO
+      let ress = await this.processMark('EF', 'FOL'); // MARCA_PROCESADO
+      console.log('AQUI', ress);
     } else if (aux == 0) {
+      this.btnLoading3 = false;
       return;
     }
 
@@ -1185,11 +1198,14 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         next: () => {
           this.alert('success', 'Folios', 'Eliminados Correctamente');
           this.getAllComer();
+          this.btnLoading3 = false;
         },
         error: err => {
           if (err.status == 400) {
+            this.btnLoading3 = false;
             this.alert('warning', 'No se encontraron registros', '');
           } else {
+            this.btnLoading3 = false;
             this.alert(
               'error',
               'Ocurrió un error al intentar eliminar los folios',
@@ -1633,6 +1649,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       let CF_NUEVAFACT: any = 0;
       if (!item.folioinvoiceId)
         return (
+          (point = 2),
           (this.btnLoading6 = false),
           this.alert(
             'warning',
@@ -1697,9 +1714,10 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
           (this.btnLoading6 = false),
           this.alert('error', 'Falló la operación, consulte sistemas', '')
         );
-      } else {
+      } else if (point == 1) {
         this.alert('success', 'Facturas canceladas correctamente', '');
         this.getAllComer();
+      } else {
       }
     });
   }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
@@ -30,15 +30,22 @@ export class AutorizationModal2Component extends BasePage implements OnInit {
     private authService: AuthService,
     private comerEventService: ComerEventService,
     private userService: UsersService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private fb: FormBuilder
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.user = this.authService.decodeToken();
+    this.prepareForm();
   }
-
+  prepareForm() {
+    this.form = this.fb.group({
+      userV: [null, Validators.required],
+      passwordV: [null, Validators.required],
+    });
+  }
   async validate() {
     const { userV, passwordV, event } = this.form.value;
     // const aux = await this.comerEvent(event);
