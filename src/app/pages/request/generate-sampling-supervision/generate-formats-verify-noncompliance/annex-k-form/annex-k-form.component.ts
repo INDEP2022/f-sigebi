@@ -121,7 +121,6 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
   }
 
   async signAnnex() {
-    console.log('this.typeAnnex', this.typeAnnex);
     const typeDocument = 219;
     if (this.typeAnnex == 'annex-assets-classification') {
       const providerK = this.form.get('providerK').value;
