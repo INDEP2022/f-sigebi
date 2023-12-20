@@ -5,6 +5,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOrderEntry } from 'src/app/core/models/ms-order-entry/order-entry.model';
 import { IOrderPayment } from 'src/app/core/models/ms-order-service/order-payment.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -92,7 +93,8 @@ export class ReportConsolidatedEntryOrderComponent
     private orderEntryService: orderentryService,
     private programmingGoodService: ProgrammingGoodService,
     private orderServiceService: OrderServiceService,
-    private samplingGoodService: SamplingGoodService
+    private samplingGoodService: SamplingGoodService,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -167,8 +169,9 @@ export class ReportConsolidatedEntryOrderComponent
       this.params.getValue()[
         'filter.delegationRegionalId'
       ] = `$eq:${regionalDelegationNumber}`;
-    if (noContract)
+    if (noContract) {
       this.params.getValue()['filter.contractNumber'] = `$eq:${noContract}`;
+    }
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -177,15 +180,43 @@ export class ReportConsolidatedEntryOrderComponent
 
   getOrderEntry() {
     this.loading = true;
+    const user: any = this.authService.decodeToken();
+    //this.params.getValue()['filter.delegationRegionalId'] = user.department;
     this.orderEntryService.getAllOrderEntry(this.params.getValue()).subscribe({
       next: response => {
-        this.infoOrderService.load(response.data);
-        this.totalItems = response.count;
-        this.loading = false;
+        const info = response.data.map(async item => {
+          const delegationName: any = await this.getDelegationName(
+            item.delegationRegionalId
+          );
+
+          item.delegationName = delegationName;
+          return item;
+        });
+
+        Promise.all(info).then(data => {
+          this.infoOrderService.load(data);
+          this.totalItems = response.count;
+          this.loading = false;
+        });
       },
       error: () => {
         this.loading = false;
+        this.totalItems = 0;
+        this.infoOrderService = new LocalDataSource();
       },
+    });
+  }
+
+  getDelegationName(id: number) {
+    return new Promise((resolve, reject) => {
+      this.regionalDelegationService.getById(id).subscribe({
+        next: response => {
+          resolve(response.description);
+        },
+        error: () => {
+          resolve('SIN DELEGACIÓN');
+        },
+      });
     });
   }
 

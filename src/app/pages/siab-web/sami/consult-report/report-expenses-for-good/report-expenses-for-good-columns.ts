@@ -5,7 +5,7 @@ export const GOODS_COLUMNS = {
     sort: false,
   },
 
-  relevantTypeId: {
+  relevantTypeName: {
     title: 'Tipo Relevante',
     type: 'string',
     sort: false,
