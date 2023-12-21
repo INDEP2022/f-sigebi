@@ -96,7 +96,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('test' + this.selectedGoodParams);
     this.getInfoRequest();
     const self = this;
     this.goodSettings.columns = {

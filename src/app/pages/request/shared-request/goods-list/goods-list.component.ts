@@ -5,10 +5,11 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
 import { SELECT_GOODS_LIST_COLUMNS } from './select-good-list-columns';
-import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
 
 @Component({
   selector: 'app-goods-list',
@@ -48,7 +49,10 @@ export class GoodsListComponent extends BasePage implements OnInit {
   private rejectedGoodService = inject(RejectedGoodService);
   private typeRelevantService = inject(TypeRelevantService);
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private requestService: RequestService
+  ) {
     super();
     this.selectedGoodSettings.columns = SELECT_GOODS_LIST_COLUMNS;
   }
@@ -63,7 +67,7 @@ export class GoodsListComponent extends BasePage implements OnInit {
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            component.viewFile(row);
+            component.getFormSeach(row.applicationId);
           });
         },
       },
@@ -119,6 +123,19 @@ export class GoodsListComponent extends BasePage implements OnInit {
     });
   }
 
+  getFormSeach(recordId: any) {
+    this.requestService.getById(recordId).subscribe({
+      next: resp => {
+        console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
+        this.viewFile(resp);
+      },
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'No se encontraron registros', '');
+      },
+    });
+  }
+
   viewFile(data: any) {
     console.log(data);
     this.openModalInformation(data, 'detail');
@@ -129,7 +146,7 @@ export class GoodsListComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
