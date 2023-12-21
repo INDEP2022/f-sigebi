@@ -1153,7 +1153,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.genEconomicResources) {
+        if (this.requestInfo.detail.reportSheet != 'Y') {
           this.showWarning('Generar la solicitud de recursos económicos');
           return false;
         }
@@ -1164,7 +1164,7 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        if (!this.validate.genDictum) {
+        if (this.requestInfo.detail.reportSheet != 'Y') {
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
