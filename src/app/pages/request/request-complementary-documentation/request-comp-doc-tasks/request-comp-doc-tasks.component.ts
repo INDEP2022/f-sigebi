@@ -43,6 +43,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
   implements OnInit {
+  protected override selectGoodNotForEyeVisit: boolean;
+  protected override selectGoodsNot: boolean;
   protected override editReport: boolean;
   protected override reportTable: string;
   protected override reportId: string;

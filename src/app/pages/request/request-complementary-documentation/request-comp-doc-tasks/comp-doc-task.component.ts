@@ -42,6 +42,8 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract compensationAct: boolean;
   protected abstract viewGuidelines: boolean;
   protected abstract orderView: boolean;
+  protected abstract selectGoodsNot: boolean;
+  protected abstract selectGoodNotForEyeVisit: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -938,6 +940,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
+        this.selectGoodsNot = true;
+
         this.expRequest = true;
 
         this.saveRequest = true;
@@ -947,6 +951,7 @@ export abstract class CompDocTasksComponent extends BasePage {
       case 'protection-regulation':
         this.regDocView = true;
         this.selectGoodForEyeVisit = true;
+        this.selectGoodNotForEyeVisit = true;
         this.expRequest = true;
 
         this.legalStatus = true;

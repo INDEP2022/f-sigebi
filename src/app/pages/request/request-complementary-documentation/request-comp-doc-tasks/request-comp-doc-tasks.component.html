@@ -352,6 +352,11 @@
           <app-select-goods
             (onChange)="onSelectGoods($event)"
             [idRequest]="requestId"></app-select-goods>
+
+          <div *ngIf="selectGoodsNot">
+            <app-goods-not-transferred></app-goods-not-transferred>
+          </div>
+
         </tab>
         <tab
           *ngIf="selectGoodForEyeVisit"
@@ -361,6 +366,11 @@
             [idRequest]="requestId"
             [typeVisit]="typeVisit"></app-select-good-eye-visit>
         </tab>
+
+        <div *ngIf="selectGoodNotForEyeVisit">
+          <app-goods-not-transferred></app-goods-not-transferred>
+        </div>
+        
         <tab
           heading="Verificar Cumplimiento de Bienes"
           *ngIf="verifyCompliance">
