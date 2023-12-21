@@ -404,25 +404,36 @@
         <div
           class="col-md-4"
           *ngIf="transferenceNumber === 903 && siglasNivel1 === 'DCCR'">
-          <form-field
+          <ngx-select
+            [searchOnInit]="true"
+            [form]="requestForm"
+            control="regionalDelegationId"
+            (fetchItems)="getRegionalDelegation($event)"
+            [data]="regionalsDelegations"
+            [searchable]="true"
+            label="Delegación Regional"
+            bindLabel="description"
+            value="id">
+          </ngx-select>
+          <!-- <form-field
             label="Delegación Regional"
             [control]="requestForm.get('regionalDelegationId')">
             <ng-select class="form-control">
-              <ng-option value="1">NORTE</ng-option>
-              <ng-option value="2">NORESTE</ng-option>
-              <ng-option value="3">PACÍFICO</ng-option>
-              <ng-option value="4">BAJÍO</ng-option>
-              <ng-option value="5">SURESTE</ng-option>
-              <ng-option value="6">PENINSULAR</ng-option>
-              <ng-option value="7">CENTRO SUR</ng-option>
-              <ng-option value="8">BAJA CALIFORNIA</ng-option>
-              <ng-option value="9">NOROESTE</ng-option>
-              <ng-option value="10">OCCIDENTE</ng-option>
-              <ng-option value="11">GOLFO</ng-option>
-              <ng-option value="12">METROPOLITANA</ng-option>
-              <ng-option value="13">OFICINAS CENTRALES</ng-option>
+              <ng-option value="1">1 - BAJA CALIFORNIA</ng-option>
+              <ng-option value="2">2 - NOROESTE</ng-option>
+              <ng-option value="3">3 - NORTE</ng-option>
+              <ng-option value="4">4 - NORESTE</ng-option>
+              <ng-option value="5">5 - PACÍFICO</ng-option>
+              <ng-option value="6">6 - OCCIDENTE</ng-option>
+              <ng-option value="7">7 - BAJÍO</ng-option>
+              <ng-option value="8">8 - GOLFO</ng-option>
+              <ng-option value="9">9 - SURESTE</ng-option>
+              <ng-option value="10">10 - PENINSULAR</ng-option>
+              <ng-option value="11">11 - METROPOLITANA</ng-option>
+              <ng-option value="12">12 - CENTRO SUR</ng-option>
+              <ng-option value="13">13 - OFICINAS CENTRALES</ng-option>
             </ng-select>
-          </form-field>
+          </form-field>  -->
         </div>
         <div class="col-md-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
           <form-field
