@@ -125,7 +125,7 @@ export class RegisterDocumentationViewComponent
         input = ['trialType', 'crime'];
         break;
       case 'register-request-information-goods':
-      case 'respose-office-information-goods':
+      case 'response-office-information-goods':
       case 'review-office-information-goods':
         input = ['trialType', 'crime'];
         break;

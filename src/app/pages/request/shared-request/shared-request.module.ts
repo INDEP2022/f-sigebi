@@ -78,6 +78,7 @@ import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goo
 import { GrouperGoodFieldComponent } from './select-goods/grouper-good-field/grouper-good-field.component';
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
 import { SelectGoodsComponent } from './select-goods/select-goods.component';
+import { ViewDetailGoodsComponent } from './select-goods/view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
 import { ModalAssignGoodGrouperComponent } from './select-similar-goods/modal-assign-good-grouper/modal-assign-good-grouper.component';
 import { ModalModifyDatesComponent } from './select-similar-goods/modal-modify-dates/modal-modify-dates.component';
@@ -205,6 +206,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GrouperGoodFieldComponent,
     InputFieldComponent,
     EvaluationSelectFieldComponent,
+    ViewDetailGoodsComponent,
   ],
   imports: [
     CommonModule,

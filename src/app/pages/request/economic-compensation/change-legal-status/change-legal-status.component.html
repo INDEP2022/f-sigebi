@@ -1,8 +1,13 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Oficio de Cambio de Situación Jurídica</h5>
+    <h5 *ngIf="isDelegationsVisible" class="modal-title">
+      Selecciona la Delegación
+    </h5>
+    <h5 *ngIf="isJuridicVisible" class="modal-title">
+      Oficio de Cambio de Situación Jurídica
+    </h5>
   </div>
-  <div body>
+  <div body *ngIf="isJuridicVisible">
     <div class="row">
       <div class="col-md-6">
         <strong>Transferente:</strong>
@@ -87,7 +92,7 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('dateProvide')"
-            label="Fehca Proveido">
+            label="Fecha Proveido">
             <input
               type="date"
               class="form-control"
@@ -141,12 +146,32 @@
       </div>
     </form>
   </div>
+  <div body *ngIf="isDelegationsVisible">
+    <div class="row">
+      <div class="m-3">
+        <ng2-smart-table
+          [settings]="settingsTwo"
+          [source]="dataThree"
+          (userRowSelect)="checkAcceptDelegations($event)"></ng2-smart-table>
+        <!--  -->
+        <app-pagination
+          [params]="paramsDelegation"
+          [totalItems]="totalItemsDelegation"></app-pagination>
+      </div>
+    </div>
+  </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          *ngIf="isJuridicVisible"
           [type]="'button'"
           [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
+        <confirm-button
+          *ngIf="isDelegationsVisible"
+          [type]="'button'"
+          [disabled]="!isSelected"
           (click)="close()"></confirm-button>
       </div>
       <div class="m-3">
