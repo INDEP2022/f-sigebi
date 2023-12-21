@@ -23,7 +23,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control"
+              class="form-control label"
               formControlName="inaiUser"
               [clearable]="false"
               [items]="users"
@@ -59,7 +59,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control"
+              class="form-control label"
               formControlName="inaiUnit"
               [clearable]="false"
               [items]="units"
@@ -106,7 +106,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control"
+              class="form-control label"
               formControlName="inaiFile"
               [clearable]="false"
               [items]="files"
@@ -152,7 +152,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control"
+              class="form-control label"
               formControlName="provisionInai"
               [clearable]="false"
               [items]="dispositions"
@@ -200,7 +200,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control"
+              class="form-control label"
               formControlName="inaiOfficial"
               [clearable]="false"
               [items]="users"
@@ -238,7 +238,7 @@
             [control]="associateFileForm.get('expedientDate')"
             label="Fecha Expediente">
             <input
-              class="form-control"
+              class="form-control label"
               formControlName="expedientDate"
               bsDatepicker
               ngModel
@@ -264,7 +264,7 @@
             [control]="associateFileForm.get('reserveDateInai')"
             label="Fecha de Reserva">
             <input
-              class="form-control"
+              class="form-control label"
               formControlName="reserveDateInai"
               bsDatepicker />
           </form-field>
@@ -287,7 +287,7 @@
             label="Fojas">
             <input
               type="number"
-              class="form-control"
+              class="form-control label"
               formControlName="sheetsInai"
               min="0"
               oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
@@ -311,7 +311,7 @@
             label="Legajos">
             <input
               type="number"
-              class="form-control"
+              class="form-control label"
               formControlName="filesInai"
               min="0"
               oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />

@@ -42,6 +42,8 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract compensationAct: boolean;
   protected abstract viewGuidelines: boolean;
   protected abstract orderView: boolean;
+  protected abstract selectGoodsNot: boolean;
+  protected abstract selectGoodNotForEyeVisit: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -626,7 +628,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = true;
         this.turnReq = true;
 
-        this.docRequest = true; //VERIFICAR
+        //Configuracion de reporte
+        this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
+        this.signedReport = true;
+        this.editReport = false;
 
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.DICTAMEN_RESARCIMIENTO;
@@ -708,14 +713,15 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
-      case 'respose-office-information-goods':
+      case 'response-office-information-goods':
         this.regDocView = true;
+        this.viewSelectedGoods = true;
         this.expRequest = true;
-        this.guidelines = true;
 
         this.saveRequest = true;
         this.turnReq = true;
-        this.createReport = true;
+        this.destinyJob = true;
+        this.sendEmail = true;
 
         this.resultEyeVisitReport = false;
         this.docRequest = false;
@@ -733,8 +739,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
       case 'review-office-information-goods':
         this.regDocView = true;
-        this.selectGoods = true;
         this.expRequest = true;
+        this.viewSelectedGoods = true;
 
         this.saveRequest = true;
         this.destinyJob = true;
@@ -747,7 +753,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.validateGoodForEyeVisit = false;
         this.notifyReport = false;
         this.docRequest = false;
-        this.viewSelectedGoods = false;
         this.searchRequestSimGoods = false;
         this.guidelines = false;
         this.dictumValidate = false;
@@ -785,7 +790,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       /* RESARCIMIENTO NUMERARIO */
 
-      case 'register-request-economic-compensation':
+      case 'register-request-economic':
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
@@ -828,7 +833,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
-      case 'generate-results-economic-compensation':
+      case 'generate-results-economic':
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.guidelines = true;
@@ -934,6 +939,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
+        this.selectGoodsNot = true;
+
         this.expRequest = true;
 
         this.saveRequest = true;
@@ -942,7 +949,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
       case 'protection-regulation':
         this.regDocView = true;
-        this.viewSelectedGoods = true;
+        this.selectGoodForEyeVisit = true;
+        this.selectGoodNotForEyeVisit = true;
         this.expRequest = true;
 
         this.legalStatus = true;
@@ -977,6 +985,38 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.finish = true;
 
+        break;
+
+      //NUEVO
+
+      case 'register-seizures':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-abandonment-goods':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
+        break;
+
+      case 'register-domain-extinction':
+        this.regDocForm = true;
+        this.searchAssociateFile = true;
+        this.selectGoods = true;
+        this.expRequest = true;
+
+        this.saveRequest = true;
+        this.finish = true;
         break;
 
       default:
