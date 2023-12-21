@@ -381,9 +381,18 @@ export class ReportConsolidatedPaymentOrderComponent
 
   cleanForm() {
     this.searchForm.reset();
+    this.form.reset();
+
     this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getOrderPayment());
+
+    this.paymentsOrder = new LocalDataSource();
+    this.orderService = new LocalDataSource();
+    this.creditNots = new LocalDataSource();
+    this.totalItemsCreditsNots = 0;
+    this.totalItemsOrderService = 0;
+    this.totalItems = 0;
   }
 }
