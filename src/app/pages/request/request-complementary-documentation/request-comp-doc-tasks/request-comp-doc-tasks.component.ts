@@ -34,6 +34,10 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -300,6 +304,11 @@ export class RequestCompDocTasksComponent
     if (!this.nextTurn) {
       this.showWarning('Vista previa no disponible');
       return;
+    }
+
+    if (this.signedReport) {
+      //this.openSignature();
+      //return;
     }
 
     const initialState: Partial<CreateReportComponent> = {
@@ -1439,7 +1448,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  openModal(context?: Partial<ChangeLegalStatusComponent>) {
+  openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
     const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
       initialState: { ...context, isDelegationsVisible: false },
       class: 'modal-lg modal-dialog-centered',
@@ -1451,6 +1460,11 @@ export class RequestCompDocTasksComponent
   }
 
   createDictumReturn() { }
+
+  //Agregar servicios de validacion de turnado
+  //Reportes dinamicos
+  //Firma de reportes
+
 }
 
 export function isNullOrEmpty(value: any): boolean {
