@@ -20,7 +20,6 @@ import { ClassificateVehicleFormComponent } from './classificate-vehicle-form/cl
 import { CommentsFormComponent } from './comments-form/comments-form.component';
 import { ComplementaryRequestInformationComponent } from './complementary-request-information/complementary-request-information.component';
 import { ConfirmProgrammingComponent } from './confirm-programming/confirm-programming.component';
-import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
 import { ReadInfoDomicileComponent } from './detail-assets-tab-component/read-info-domicile/read-info-domicile.component';
@@ -158,7 +157,6 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RequestInformationRejectComponent,
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
-    CreateDeductivesComponent,
     CreateReportComponent,
     EventDetailFormComponent,
     RejectRequestModalComponent,
@@ -248,7 +246,6 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
     EventDetailFormComponent,
-    CreateDeductivesComponent,
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
     ViewReportComponent,
