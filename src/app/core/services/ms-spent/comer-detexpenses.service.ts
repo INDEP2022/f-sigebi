@@ -119,4 +119,11 @@ export class ComerDetexpensesService extends HttpService {
   updateMassive(body: IComerDetExpense2[]) {
     return this.put(SpentEndpoints.MassiveUpdateComerDetexpenses, body);
   }
+
+  getValidatesCvmans(eventId: number, lotId: number) {
+    return this.post<IListResponseMessage<{ cvman: string; key: string }>>(
+      'aplication/query-validate-transfer',
+      { eventId, lotId }
+    );
+  }
 }

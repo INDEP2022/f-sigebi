@@ -394,8 +394,8 @@ export class NumeraireConversionAuctionsComponent
     this.loader.load = true;
     this.convNumeraryService
       .SP_CONVERSION_ASEG_PARCIAL({
-        pevent: +(this.selectedEvent.id + ''),
-        pscreen: 'FCOMER087',
+        event: +(this.selectedEvent.id + ''),
+        screen: 'FCOMER087',
         user: this.user.preferred_username,
       })
       .pipe(take(1))
