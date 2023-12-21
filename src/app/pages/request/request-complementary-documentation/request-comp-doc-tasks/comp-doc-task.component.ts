@@ -739,8 +739,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         break;
       case 'review-office-information-goods':
         this.regDocView = true;
-        this.selectGoods = true;
         this.expRequest = true;
+        this.viewSelectedGoods = true;
 
         this.saveRequest = true;
         this.destinyJob = true;
@@ -753,7 +753,6 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.validateGoodForEyeVisit = false;
         this.notifyReport = false;
         this.docRequest = false;
-        this.viewSelectedGoods = false;
         this.searchRequestSimGoods = false;
         this.guidelines = false;
         this.dictumValidate = false;

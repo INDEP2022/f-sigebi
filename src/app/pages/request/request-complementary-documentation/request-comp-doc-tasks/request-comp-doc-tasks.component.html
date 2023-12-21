@@ -365,11 +365,12 @@
           <app-select-good-eye-visit
             [idRequest]="requestId"
             [typeVisit]="typeVisit"></app-select-good-eye-visit>
+          <div *ngIf="selectGoodNotForEyeVisit">
+            <app-goods-not-transferred></app-goods-not-transferred>
+          </div>
         </tab>
 
-        <div *ngIf="selectGoodNotForEyeVisit">
-          <app-goods-not-transferred></app-goods-not-transferred>
-        </div>
+      
         
         <tab
           heading="Verificar Cumplimiento de Bienes"
