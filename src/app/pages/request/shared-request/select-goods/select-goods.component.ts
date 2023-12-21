@@ -181,7 +181,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => { },
+      error: error => {},
     });
 
     const param = new FilterParams();
@@ -193,7 +193,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           this.addGood(item);
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -205,7 +205,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -215,7 +215,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         response.recordId;
         this.openModalDocument(idRequest, response.recordId);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -228,7 +228,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => { },
+      callback: (next: boolean) => {},
     };
 
     this.modalService.show(ShowDocumentsGoodComponent, config);
@@ -401,12 +401,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
-  viewFile(file: any) { }
+  viewFile(file: any) {}
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -522,7 +522,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

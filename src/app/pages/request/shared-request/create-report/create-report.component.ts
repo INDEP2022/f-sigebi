@@ -24,7 +24,6 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
-import { takeUntil } from 'rxjs';
 
 const font = Quill.import('formats/font');
 font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
@@ -146,12 +145,11 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
         this.loadData();
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
   async saveVersionsDoc(close = true) {
-
     if (isNullOrEmpty(this.format)) return;
 
     const user: any = this.authService.decodeToken();
@@ -185,7 +183,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
             this.close();
           }
         },
-        error: err => { },
+        error: err => {},
       });
   }
 
@@ -200,7 +198,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   async openDoc(): Promise<void> {
-
     await this.saveVersionsDoc(false);
 
     if (isNullOrEmpty(this.format)) return;
@@ -213,7 +210,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
       const fileURL = URL.createObjectURL(file);
       this.openPrevPdf(fileURL);
     }
-
   }
 
   dataURItoBlob(dataURI: any) {
@@ -305,7 +301,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   close() {
     this.refresh.emit({
-      upload: !isNullOrEmpty(this.loadDoc)
+      upload: !isNullOrEmpty(this.loadDoc),
     });
     this.modalRef.hide();
   }
@@ -323,7 +319,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   handleSuccess() {
     this.loading = false;
     this.refresh.emit({
-      upload: !isNullOrEmpty(this.loadDoc)
+      upload: !isNullOrEmpty(this.loadDoc),
     });
     this.modalRef.hide();
   }

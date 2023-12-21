@@ -19,7 +19,6 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ITask } from 'src/app/core/models/ms-task/task-model';
-import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
@@ -42,7 +41,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override selectGoodNotForEyeVisit: boolean;
   protected override selectGoodsNot: boolean;
   protected override editReport: boolean;
@@ -234,13 +234,8 @@ export class RequestCompDocTasksComponent
             this.requestInfo.detail = resp;
           },
         });
-
       },
     });
-
-
-
-
 
     this.getTaskInfo();
   }
@@ -292,10 +287,9 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
-
     //validar nextTurn
     if (!this.nextTurn) {
       this.showWarning('Vista previa no disponible');
@@ -440,7 +434,6 @@ export class RequestCompDocTasksComponent
             this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
           }
         }
-
       }
     });
   }
@@ -676,11 +669,7 @@ export class RequestCompDocTasksComponent
     this.requestService.update(this.requestId, request).subscribe({
       next: resp => {
         if (alert) {
-          this.alert(
-            'success',
-            'Correcto',
-            'Registro Actualizado',
-          );
+          this.alert('success', 'Correcto', 'Registro Actualizado');
         }
       },
       error: error => {
@@ -689,8 +678,6 @@ export class RequestCompDocTasksComponent
         }
       },
     });
-
-
   }
 
   /** VALIDAR */
@@ -861,13 +848,12 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
   validateTurn() {
-
     switch (this.process) {
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
       case 'register-request-return':
@@ -1368,7 +1354,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1384,7 +1370,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1450,7 +1436,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 }
 
 export function isNullOrEmpty(value: any): boolean {
