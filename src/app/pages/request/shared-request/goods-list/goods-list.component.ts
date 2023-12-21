@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -8,6 +8,7 @@ import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/reje
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
 import { SELECT_GOODS_LIST_COLUMNS } from './select-good-list-columns';
+import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
 
 @Component({
   selector: 'app-goods-list',
@@ -118,8 +119,22 @@ export class GoodsListComponent extends BasePage implements OnInit {
     });
   }
 
-  viewFile(file: any) {
-    console.log(file);
+  viewFile(data: any) {
+    console.log(data);
+    this.openModalInformation(data, 'detail');
+  }
+
+  private openModalInformation(data: any, typeInfo: string) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        typeInfo,
+        callback: (next: boolean) => { },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ViewDetailGoodsComponent, config);
   }
 
   displayGrouperName() {
