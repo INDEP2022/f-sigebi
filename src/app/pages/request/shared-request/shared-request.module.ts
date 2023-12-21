@@ -20,7 +20,6 @@ import { ClassificateVehicleFormComponent } from './classificate-vehicle-form/cl
 import { CommentsFormComponent } from './comments-form/comments-form.component';
 import { ComplementaryRequestInformationComponent } from './complementary-request-information/complementary-request-information.component';
 import { ConfirmProgrammingComponent } from './confirm-programming/confirm-programming.component';
-import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
 import { ReadInfoDomicileComponent } from './detail-assets-tab-component/read-info-domicile/read-info-domicile.component';
@@ -79,6 +78,7 @@ import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goo
 import { GrouperGoodFieldComponent } from './select-goods/grouper-good-field/grouper-good-field.component';
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
 import { SelectGoodsComponent } from './select-goods/select-goods.component';
+import { ViewDetailGoodsComponent } from './select-goods/view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
 import { ModalAssignGoodGrouperComponent } from './select-similar-goods/modal-assign-good-grouper/modal-assign-good-grouper.component';
 import { ModalModifyDatesComponent } from './select-similar-goods/modal-modify-dates/modal-modify-dates.component';
@@ -157,7 +157,6 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RequestInformationRejectComponent,
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
-    CreateDeductivesComponent,
     CreateReportComponent,
     EventDetailFormComponent,
     RejectRequestModalComponent,
@@ -207,6 +206,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GrouperGoodFieldComponent,
     InputFieldComponent,
     EvaluationSelectFieldComponent,
+    ViewDetailGoodsComponent,
   ],
   imports: [
     CommonModule,
@@ -246,7 +246,6 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
     EventDetailFormComponent,
-    CreateDeductivesComponent,
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
     ViewReportComponent,

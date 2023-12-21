@@ -132,6 +132,7 @@ export class VerifyComplianceTabComponent
   ngOnInit(): void {
     console.log('Activando tab: verify-compliance-tab');
     console.log('Info de la solicitud', this.requestObject);
+    console.log('Tarea en que se activa el la pestaña:', this.process, process);
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;

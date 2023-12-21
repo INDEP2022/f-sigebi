@@ -20,7 +20,10 @@
               (fetchItems)="getCatFormats($event)">
             </ngx-select>
           </div>
-          <div class="col-md-3" *ngIf="editReport">
+          <div
+            class="col-md-3"
+            style="align-items: horizontal"
+            *ngIf="editReport">
             <button
               class="btn btn-primary btn-sm active"
               (click)="applyFormat()">
@@ -28,10 +31,16 @@
             </button>
           </div>
 
-          <div class="col-md-3" *ngIf="!editReport">
+          <div class="col-md-3" *ngIf="!editReport && !signReportTab">
             <button (click)="sign()" class="btn btn-primary active btn-sm">
-              <i class="fa fa-file-signature"></i>
               Firmar
+              <i class="fa fa-file-signature"></i>
+            </button>
+          </div>
+
+          <div class="col-md-3">
+            <button (click)="openDoc()" class="btn btn-primary active btn-sm">
+              Visualizar <i class="fa fa-eye mr-1"></i>
             </button>
           </div>
         </div>
@@ -61,7 +70,7 @@
           </div>
         </tab>
 
-        <tab heading="Firmar Reporte" id="signTab" *ngIf="signReport">
+        <tab heading="Firmar Reporte" id="signTab" *ngIf="signReportTab">
           <app-sign-report (nextStep)="nextStep($event)"></app-sign-report>
         </tab>
       </tabset>

@@ -160,16 +160,34 @@
         <tabset class="md-tabs">
           <tab heading="Ordenes Servicio" id="tab1">
             <app-list-service-orders
-              [SampleOrderId]="SampleOrderId"
+              [SampleOrderId]="sampleOrderId"
+              [reloadInfo]="reloadInfo"
               [orders]="sendData"></app-list-service-orders>
           </tab>
           <tab heading="Deductivas">
-            <app-create-deductives
-              [SampleOrderId]="SampleOrderId"
-              [typeComponent]="'generate-query'"
-              (deductivesSelected)="
-                getDeductives($event)
-              "></app-create-deductives>
+            <div class="justify-content-end btn-toolbar">
+              <button
+                (click)="saveDeductives()"
+                type="button"
+                class="btn btn-primary btn-sm active ml-2 mr-2">
+                Guardar
+                <i class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="row pt-2">
+              <div class="col-md-12">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered table-responsive'"
+                    [settings]="settings4"
+                    (edit)="editDeductive($event.data)"
+                    (delete)="deleteDeductive($event.data)"
+                    (userRowSelect)="deductivesSelect($event)"
+                    [source]="paragraphsDeductivas">
+                  </ng2-smart-table>
+                </div>
+              </div>
+            </div>
           </tab>
           <!--<tab heading="Datos Anexo">
             <app-annex-data
@@ -180,7 +198,7 @@
           </tab> -->
           <tab heading="Detalles Almacén">
             <app-warehouse-detail
-              [SampleOrderId]="SampleOrderId"
+              [SampleOrderId]="sampleOrderId"
               (storeSelected)="getStoreSelected($event)"></app-warehouse-detail>
           </tab>
         </tabset>

@@ -115,4 +115,15 @@ export class WContentService extends HttpWContentService {
 
     return this.http.get(url, { responseType: 'blob' });
   }
+
+  downloadDinamycReport(
+    reportName: string,
+    tableName: string,
+    requestId: string,
+    docId: string
+  ) {
+    const url = `${environment.API_CONTENT}${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${tableName},${requestId},${docId}`;
+
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }
