@@ -293,7 +293,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         close: true,
       };
 
-    case 'generate-results-economic-compensation':
+    case 'generate-results-economic':
       return {
         title: `Validar Dictamen Resarcimiento (Numerario), No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/validate-dictum-economic',

@@ -61,6 +61,7 @@
       <div class="m-3">
         <confirm-button
           [text]="'Continuar'"
+          [btnSmall]="true"
           [disabled]="form.invalid"
           [loading]="loading"
           [text]="'Continuar'"
@@ -69,7 +70,10 @@
       </div>
 
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

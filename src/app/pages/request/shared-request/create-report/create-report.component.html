@@ -32,17 +32,17 @@
           </div>
 
           <div class="col-md-3" *ngIf="!editReport && !signReportTab">
-            <button (click)="sign()" class="btn btn-primary active btn-sm">
-              Firmar
+            <button (click)="openSignature()" class="btn btn-primary active btn-sm">
+              Firmar reporte
               <i class="fa fa-file-signature"></i>
             </button>
           </div>
 
           <div class="col-md-3">
             <button
-              (click)="openDoc()"
+              (click)="showFile()"
               class="btn btn-primary active btn-sm">
-              Visualizar <i class="fa fa-eye mr-1"></i>
+              Vista previa <i class="fa fa-eye mr-1"></i>
             </button>
           </div>
         </div>
@@ -62,7 +62,7 @@
           </quill-editor>
         </tab>
 
-        <tab heading="Vista Previa" id="previewTab" *ngIf="isView()">
+        <tab heading="Vista Previa" id="previewTab" *ngIf="!editReport">
           <div style="height: 40vh !important; overflow: auto !important">
             <quill-view
               [content]="version.content"
@@ -80,7 +80,7 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
+      <div class="m-3"  *ngIf="editReport">
         <confirm-button
           [disabled]="!form.valid"
           [loading]="loading"

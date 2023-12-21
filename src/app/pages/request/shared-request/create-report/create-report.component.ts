@@ -25,6 +25,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
 import { takeUntil } from 'rxjs';
+import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 const font = Quill.import('formats/font');
 font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
@@ -92,9 +96,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    //this.tableName = 'SOLICITUDES';
-    //this.documentTypeId = '26';
-
     this.getCatFormats(new ListParams());
     this.getVersionsDoc();
     this.prepareForm();
@@ -117,13 +118,21 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
     this.reportService.getAll(params).subscribe({
       next: resp => {
-        this.formats = new DefaultSelect(resp.data, resp.count);
-        let select = this.formats.data.find(
-          x => x.doctoTypeId.id == this.documentTypeId
-        );
-        this.format = select;
-        this.form.get('template').setValue(select.id);
-        this.form.get('template').disable();
+
+        let ids = this.documentTypeId.split(',');
+        let list = resp.data.filter(x => ids.includes(x.doctoTypeId.id));
+
+        console.log(list);
+
+        if (list.length > 0) {
+          this.format = list[0];
+          this.form.get('template').setValue(list[0].id);
+          this.formats = new DefaultSelect(list, list.length);
+        } else {
+          this.formats = new DefaultSelect(resp.data, resp.count);
+        }
+
+
       },
       error: err => {
         this.formats = new DefaultSelect();
@@ -347,7 +356,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     //quillDelta = this.quillInstance.getContents();
   }
 
-  sign(context?: Partial<SignatureTypeComponent>): void {
+  sign00(context?: Partial<SignatureTypeComponent>): void {
     const modalRef = this.modalService.show(SignatureTypeComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
@@ -420,17 +429,93 @@ export class CreateReportComponent extends BasePage implements OnInit {
     });
   }
 
-  /*pdfCreate(): void {
-    const quillDelta = this.quillInstance
-    console.log(quillDelta)
-    pdfExporter.generatePdf(quillDelta,).then((blob:any)=>{
-          console.log(blob)
-          let pdfurl = window.URL.createObjectURL(blob);
-          this.openPrevPdf(pdfurl)
-          // open the window
-          //let newWin = window.open(downloadURL,"newpdf.pdf");
-    }).catch(err=>{
-      console.log(err)
+  showFile() {
+    this.wContentService.obtainFile("SAE568245").subscribe({
+      next: response => {
+        let blob = this.dataURItoBlob(response);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      },
+      error: error => { },
     });
-  }*/
+  }
+
+  idSample = "328";
+
+  openSignature() {
+    this.openModal(
+      AnnexJAssetsClassificationComponent,
+      this.idSample,
+      'sign-annexJ-assets-classification'
+    );
+    this.close();
+
+  }
+
+  openModal(component: any, idSample?: any, typeAnnex?: string): void {
+    let config: ModalOptions = {
+      initialState: {
+        idSample: idSample,
+        typeAnnex: typeAnnex,
+        callback: async (typeDocument: number, typeSign: string) => {
+
+          console.log(typeDocument);
+          console.log(typeSign);
+
+          if (typeAnnex == 'sign-annexJ-assets-classification') {
+            if (typeDocument && typeSign) {
+              this.showReportInfo(typeDocument, typeSign, typeAnnex);
+            }
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(component, config);
+  }
+
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const idSample = this.idSample;
+    const typeFirm = typeSign;
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        idTypeDoc,
+        idSample,
+        typeFirm,
+        typeAnnex,
+        callback: (next: boolean) => {
+          if (next) {
+            if (typeFirm != 'electronica') {
+              this.uploadDocument(typeDocument);
+            } else {
+              //this.getInfoSample();
+            }
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  uploadDocument(typeDocument: number) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      typeDoc: typeDocument,
+      idSample: this.idSample,
+      callback: (data: boolean) => {
+        if (data) {
+          //this.getInfoSample();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
+  }
+
 }
