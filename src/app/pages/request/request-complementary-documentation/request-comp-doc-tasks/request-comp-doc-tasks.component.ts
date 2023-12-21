@@ -255,6 +255,7 @@ export class RequestCompDocTasksComponent
       next: resp => {
         this.taskInfo = resp.data[0];
         this.title = this.taskInfo.title;
+        this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
       },
     });
   }
@@ -294,6 +295,13 @@ export class RequestCompDocTasksComponent
   requestRegistered(request: any) { }
 
   openReport(): void {
+
+    //validar nextTurn
+    if (!this.nextTurn) {
+      this.showWarning('Vista previa no disponible');
+      return;
+    }
+
     const initialState: Partial<CreateReportComponent> = {
       signReport: this.signedReport,
       editReport: this.editReport,
@@ -858,11 +866,8 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  isFinalTask() {
-    return true;
-  }
-
   validateTurn() {
+
     switch (this.process) {
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
       case 'register-request-return':

@@ -34,7 +34,7 @@
               type="button"
               class="btn btn-primary btn-sm active"
               (click)="endRequest()"
-              [disabled]="">
+              [disabled]="!nextTurn">
               Finalizar <i aria-hidden="true" class="fa fa-check"></i>
             </button>
           </div>
@@ -43,7 +43,7 @@
           <button
             type="button"
             class="btn btn-sm btn-success active"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="btnAprobar()">
             Aprobar
             <i class="fa fa-check" aria-hidden="true"></i>
@@ -53,7 +53,7 @@
           <button
             type="button"
             class="btn btn-sm btn-success active"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="btnRequestAprobar()">
             Solicitar Aprobación
             <i class="fa fa-envelope"></i>
@@ -63,7 +63,7 @@
           <button
             type="button"
             class="btn btn-info active btn-sm"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="btnRequestReview()">
             Solicitar revisión
             <i class="bx bx-check mr-1 float-icon"></i>
@@ -73,7 +73,7 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="updateRequest()">
             Guardar <i class="fa fa-save mr-1 float-icon"></i>
           </button>
@@ -82,7 +82,7 @@
           <button
             type="button"
             class="btn btn-danger btn-sm active"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="rejectRequest()">
             <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
           </button>
