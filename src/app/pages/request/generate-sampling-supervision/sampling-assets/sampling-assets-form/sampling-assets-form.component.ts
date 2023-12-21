@@ -152,6 +152,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     };
 
     this.getTransferent(new ListParams());
+    this.setDelegation();
+  }
+
+  async setDelegation() {
+    const nameDelegation: any = await this.getNameDelegation(this.delegationId);
+    if (nameDelegation)
+      this.dateForm.get('delegationName').setValue(nameDelegation);
   }
 
   getSampleDeductives() {
@@ -203,9 +210,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       initialDate: [null, [Validators.required]],
       finalDate: [null, [Validators.required]],
       transferent: [null, [Validators.required]],
+      delegationName: [null],
     });
-    //this.paragraphs = data;
-    //this.paragraphs2 = data2;
   }
 
   initSearchForm() {
@@ -441,7 +447,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.params2.getValue()['filter.finalPeriod'] = `$btw:${
       this.dateForm.get('initialDate').value
     }, ${this.dateForm.get('finalDate').value}`;
-    this.params2.getValue()['filter.delRegionalId'] = this.delegationId;
+    //this.params2.getValue()['filter.delRegionalId'] = this.delegationId;
     this.samplingGoodService
       .getSamplingGoodFilter(this.params2.getValue())
       .subscribe({
@@ -461,7 +467,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           });
 
           Promise.all(showInfo).then(async info => {
-            console.log('info', info);
             this.paragraphs2.load(info);
             this.loadingGoodInv = false;
             this.totalItems2 = resp.data.length;

@@ -156,7 +156,7 @@ export class ClassificationAnnexedSignComponent
             task['idSampling'] = this.idSample;
             task[
               'title'
-            ] = `Muestreo Bienes: Verificacion de bienes en almacén ${this.idSample}`;
+            ] = `Muestreo Bienes: Verificación de bienes en almacén ${this.idSample}`;
             task['idDelegationRegional'] = this.sampleInfo.regionalDelegationId;
             task['idTransferee'] = this.sampleInfo.transfereeId;
             task['processName'] = 'Verificacion_bienes';

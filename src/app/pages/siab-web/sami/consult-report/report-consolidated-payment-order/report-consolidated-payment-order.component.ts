@@ -75,7 +75,6 @@ export class ReportConsolidatedPaymentOrderComponent
     super();
     this.settings = {
       ...TABLE_SETTINGS,
-      selectMode: 'multi',
       actions: false,
       columns: PAYMENT_ORDER_COLUMNS,
     };
@@ -85,6 +84,9 @@ export class ReportConsolidatedPaymentOrderComponent
     this.prepareForm();
     this.getRegionalDelegationSelect(new ListParams());
     this.getTransferentSelect(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getOrderPayment());
   }
 
   prepareForm() {
@@ -250,6 +252,10 @@ export class ReportConsolidatedPaymentOrderComponent
 
   getOrderPayment() {
     this.loading = true;
+    const user: any = this.authService.decodeToken();
+    this.params.getValue()[
+      'filter.delegationRegionalId'
+    ] = `$eq:${user.department}`;
     this.orderServiceService.getOrderPayment(this.params.getValue()).subscribe({
       next: response => {
         const info = response.data.map(async item => {

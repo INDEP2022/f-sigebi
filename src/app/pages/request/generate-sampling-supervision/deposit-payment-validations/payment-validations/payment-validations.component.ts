@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { BasePage, TABLE_SETTINGS } from '../../../../../core/shared/base-page';
@@ -44,7 +45,8 @@ export class PaymentValidationsComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
     private taskService: TaskService,
-    private router: Router
+    private router: Router,
+    private wContentService: WContentService
   ) {
     super();
     this.idSample = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -132,21 +134,6 @@ export class PaymentValidationsComponent extends BasePage implements OnInit {
     this.filterObject = this.filterForm.value;
   }
 
-  finishSampling() {
-    let message =
-      'Se a concluido la Aprobación de Restitución de bienes. ¿Esta de acuerdo que la información es correcta para guardar?';
-    this.alertQuestion(
-      undefined,
-      'Confirmación turnado',
-      message,
-      'Aceptar'
-    ).then(question => {
-      if (question.isConfirmed) {
-        console.log('enviar mensaje');
-      }
-    });
-  }
-
   async turnSampling() {
     const goodNumerary: any = await this.getSampleGoods();
 
@@ -164,33 +151,53 @@ export class PaymentValidationsComponent extends BasePage implements OnInit {
       });
 
       if (approvate.length == goodNumerary.length) {
-        this.alertQuestion(
-          'question',
-          'Confirmación',
-          'Todos los bienes han sido aprobados en el pago de la ficha de orden de ingreso. ¿Esta de acuerdo que la información es correcta para finalizar?'
-        ).then(async question => {
-          if (question.isConfirmed) {
-            const updateSampleGood = await this.updateSampleGood(goodNumerary);
-            if (updateSampleGood) {
-              this.createTask();
+        const checkUpdateImage: any = await this.checkExistImages();
+        if (checkUpdateImage) {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            'Todos los bienes han sido aprobados en el pago de la ficha de orden de ingreso. ¿Esta de acuerdo que la información es correcta para finalizar?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              const updateSampleGood = await this.updateSampleGood(
+                goodNumerary
+              );
+              if (updateSampleGood) {
+                this.createTask();
+              }
             }
-          }
-        });
+          });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'Es requerido adjuntar una fotografia'
+          );
+        }
       } else if (decline.length >= 1) {
-        this.alertQuestion(
-          'question',
-          'Confirmación',
-          'Hay bienes que han sido rechazados en el pago de la ficha de orden de ingreso. ¿Esta de acuerdo que la información es correcta para finalizar?'
-        ).then(async question => {
-          if (question.isConfirmed) {
-            const updateSampleGood = await this.updateSampleGoodDecline(
-              goodNumerary
-            );
-            if (updateSampleGood) {
-              this.createTask();
+        const checkUpdateImage: any = await this.checkExistImages();
+        if (checkUpdateImage) {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            'Hay bienes que han sido rechazados en el pago de la ficha de orden de ingreso. ¿Esta de acuerdo que la información es correcta para finalizar?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              const updateSampleGood = await this.updateSampleGoodDecline(
+                goodNumerary
+              );
+              if (updateSampleGood) {
+                this.createTask();
+              }
             }
-          }
-        });
+          });
+        } else {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'Es requerido adjuntar una fotografia'
+          );
+        }
       }
     } else {
       this.alert(
@@ -242,6 +249,7 @@ export class PaymentValidationsComponent extends BasePage implements OnInit {
       const params = new BehaviorSubject<ListParams>(new ListParams());
       params.getValue()['filter.typeRestitution'] = 'NUMERARIO';
       params.getValue()['filter.sampleId'] = this.idSample;
+      params.getValue()['filter.indVerification'] = 'Y';
       this.samplingGoodService.getSamplingGoods(params.getValue()).subscribe({
         next: response => {
           resolve(response.data);
@@ -267,8 +275,8 @@ export class PaymentValidationsComponent extends BasePage implements OnInit {
     if (taskResult || taskResult == false) {
       this.msgGuardado(
         'success',
-        'Creación de Tarea Correcta',
-        `Tarea de verificación de pago de avaluo correctamente`
+        'Tarea Finalizada',
+        `Tarea de verificación de pago de avalúo finalizada correctamente`
       );
     }
   }
@@ -279,6 +287,37 @@ export class PaymentValidationsComponent extends BasePage implements OnInit {
           resolve(true);
         },
         error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  checkExistImages() {
+    return new Promise(async (resolve, reject) => {
+      const goodNumerary: any = await this.getSampleGoods();
+      let good: string = '';
+      goodNumerary.map(item => {
+        good += item.goodId;
+      });
+      const formDatra: Object = {
+        xidBien: good,
+      };
+      this.wContentService.getDocumentos(formDatra).subscribe({
+        next: response => {
+          const _data = response.data.filter((img: any) => {
+            if (img.dDocType == 'DigitalMedia') {
+              return img;
+            }
+          });
+
+          if (_data.length > 0) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+        error: () => {
           resolve(false);
         },
       });
