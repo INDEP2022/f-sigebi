@@ -92,7 +92,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         case 25: //RESARCIMIENTO NUMERARIO: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
           return {
             title: `RESARCIMIENTO NUMERARIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-economic-compensation',
+            url: 'pages/request/request-comp-doc/tasks/register-request-economic',
             process: 'IBRegistroSolicitudes',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
@@ -260,7 +260,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       break;
 
     /** CASOS RESARCIMEINTO NUMERARIO */
-    case 'register-request-economic-compensation':
+    case 'register-request-economic':
       return {
         title: `Solicitar Recursos Económicos, No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/request-economic-resources',
@@ -285,7 +285,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     case 'review-economic-guidelines':
       return {
         title: `Generar Resultado de Análisis Resarcimiento (NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
-        url: 'pages/request/request-comp-doc/tasks/generate-results-economic-compensation',
+        url: 'pages/request/request-comp-doc/tasks/generate-results-economic',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
         subtype: 'Registro_Solicitud',

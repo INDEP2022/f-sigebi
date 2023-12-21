@@ -790,7 +790,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       /* RESARCIMIENTO NUMERARIO */
 
-      case 'register-request-economic-compensation':
+      case 'register-request-economic':
         this.regDocForm = true;
         this.searchAssociateFile = true;
         this.selectGoods = true;
@@ -833,7 +833,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         break;
 
-      case 'generate-results-economic-compensation':
+      case 'generate-results-economic':
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.guidelines = true;
