@@ -1357,8 +1357,10 @@ export class ExpenseCompositionComponent
           this.file.nativeElement.value = '';
           if (response.data && response.data.length > 0) {
             const inserts = response.data
-              .filter(x =>
-                this.goods.filter(row => row.goodNumber === x.goodNumber)
+              .filter(
+                x =>
+                  this.goods.filter(row => row.goodNumber === x.goodNumber)
+                    .length > 0
               )
               .map(row => {
                 return {
@@ -1518,7 +1520,10 @@ export class ExpenseCompositionComponent
 
   private getComerDetExpenseI(data: IPreviewDatosCSV[]) {
     return data
-      .filter(x => this.goods.filter(row => row.goodNumber === x.goodNumber))
+      .filter(
+        x =>
+          this.goods.filter(row => row.goodNumber === x.goodNumber).length > 0
+      )
       .map(x => {
         let newRow: IComerDetExpense = {
           vat: +(x.iva2 + ''),
@@ -1541,7 +1546,9 @@ export class ExpenseCompositionComponent
 
   private getComerDetExpenseArray(messages: any) {
     return messages
-      .filter(x => this.goods.filter(row => row.goodNumber === x.COL_SIAB))
+      .filter(
+        x => this.goods.filter(row => row.goodNumber === x.COL_SIAB).length > 0
+      )
       .map((row: any) => {
         let total =
           row.COL_IMPORTE + row.COL_IVA
