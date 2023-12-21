@@ -12,6 +12,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-view-detail-goods',
@@ -49,20 +50,28 @@ export class ViewDetailGoodsComponent extends BasePage implements OnInit {
   }
 
   getRegionalDelegation() {
-    this.regDelService.getById(this.data.regionalDelegationId).subscribe({
-      next: info => {
-        this.nameRegDelegation = info?.description;
-      },
-      error: error => {},
-    });
+    if (isNullOrEmpty(this.data.regionalDelegationId)) {
+      this.nameRegDelegation = '';
+    } else {
+      this.regDelService.getById(this.data.regionalDelegationId).subscribe({
+        next: info => {
+          this.nameRegDelegation = info?.description;
+        },
+        error: error => {},
+      });
+    }
   }
 
   getTransferent() {
-    this.transferentService
-      .getById(this.data.transferenceId)
-      .subscribe(info => {
-        this.nameTrans = info.nameTransferent;
-      });
+    if (isNullOrEmpty(this.data.transferenceId)) {
+      this.nameTrans = '';
+    } else {
+      this.transferentService
+        .getById(this.data.transferenceId)
+        .subscribe(info => {
+          this.nameTrans = info.nameTransferent;
+        });
+    }
   }
 
   getState() {
