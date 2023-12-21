@@ -365,5 +365,16 @@ export class ReportConsolidatedEntryOrderComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getOrderEntry());
+
+    this.infoOrderService = new LocalDataSource();
+    this.infoDetailGoodsProgDel = new LocalDataSource();
+    this.infoDetailGoodsOrdEntry = new LocalDataSource();
+    this.infoOrderServices = new LocalDataSource();
+    this.infoOrderAs = new LocalDataSource();
+    this.totalItems = 0;
+    this.totalItemsDetailGoodsProgDel = 0;
+    this.totalItemsDetailGoodsOrdEnt = 0;
+    this.totalItemsService = 0;
+    this.totalItemsOrderAs = 0;
   }
 }
