@@ -130,6 +130,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
         this.requestForm.controls['stationId'].setValue(null);
         this.requestForm.controls['authorityId'].setValue(null);
+
       }
     );
 
@@ -273,7 +274,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
         this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -386,7 +387,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     }
   }
 
-  getState(event: any): void {}
+  getState(event: any): void { }
 
   /*getIssue(event?: any, id?: string): void {
     let params = new ListParams();
@@ -425,7 +426,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   affairChange(e: any) {
-    console.log(e);
     if (
       e.processDetonate == 'ABANDONO' ||
       e.processDetonate == 'EXT_DOMINIO' ||
@@ -482,9 +482,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         form.applicationDate = date.toISOString();
 
         if (isNullOrEmpty(this.currentRequest)) {
-          this.currentRequest = await this.createRequest(
-            this.requestForm.value
-          );
+          this.currentRequest = await this.createRequest(this.requestForm.value);
           console.log('currentRequest', this.currentRequest);
         }
 
@@ -501,7 +499,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
               allowOutsideClick: false,
-            }).then(async result => {});
+            }).then(async result => { });
           }
         }
       }
@@ -692,7 +690,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loadingTurn = false;
-          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          this.onLoadToast('error', 'Error', 'El proceso seleccionado no tiene una tarea configurada');
           reject(false);
         },
       });

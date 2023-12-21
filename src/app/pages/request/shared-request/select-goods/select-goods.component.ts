@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -37,6 +37,7 @@ import {
   GOODS_RES_DEV_INV_COLUMNS,
   SELECT_GOODS_COLUMNS,
 } from './select-goods-columns';
+import { ViewDetailGoodsComponent } from './view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
 
 @Component({
@@ -56,10 +57,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   goodColumns = new LocalDataSource();
   selectedGoodColumns: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<FilterParams>(new FilterParams());
+
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idRequest: number = 0;
   goodSelected: boolean = false;
   jsonBody: any = {};
+
   goodSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -109,6 +113,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           });
         },
       },
+
       viewFile: {
         title: 'Expediente',
         type: 'custom',
@@ -117,6 +122,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
             //component.requesInfo(row.requestId);
+            component.getFormSeach(row.solicitudId);
+            console.log(row);
             //component.viewFile(row);
           });
         },
@@ -132,10 +139,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            //component.requesInfo(row.requestId);
+            component.viewFile(row);
+            console.log(row);
+            component.getFormSeach(row.applicationId);
           });
         },
       },
+
       /*goodGrouper: {
         title: 'Nombre del Bien Agrupador',
         type: 'custom',
@@ -152,13 +162,26 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     //this.selectedGoodColumns = datagood;
   }
 
+  getFormSeach(recordId: any) {
+    this.requestService.getById(recordId).subscribe({
+      next: resp => {
+        console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
+        this.openDetail(resp);
+      },
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'No se encontraron registros', '');
+      },
+    });
+  }
+
   getInfoRequest() {
     this.requestService.getById(this.idRequest).subscribe({
       next: response => {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => {},
+      error: error => { },
     });
 
     const param = new FilterParams();
@@ -170,7 +193,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           this.addGood(item);
         });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -182,7 +205,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -192,7 +215,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         response.recordId;
         this.openModalDocument(idRequest, response.recordId);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -205,7 +228,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => {},
+      callback: (next: boolean) => { },
     };
 
     this.modalService.show(ShowDocumentsGoodComponent, config);
@@ -378,12 +401,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
 
-  viewFile(file: any) {}
+  viewFile(file: any) { }
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -425,7 +448,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   addGood(good: any) {
     delete good.addGood;
-    // good = Object.assign({ viewFile: '' }, good);
+    good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
     this.displayColumns();
@@ -488,6 +511,23 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         console.log(this.selectedGoods, this.selectedGoodColumns);*/
       }
     });
+  }
+
+  openDetail(data: any): void {
+    this.openModalInformation(data, 'detail');
+  }
+
+  private openModalInformation(data: any, typeInfo: string) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        typeInfo,
+        callback: (next: boolean) => { },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ViewDetailGoodsComponent, config);
   }
 
   openSiabSearch() {
@@ -677,6 +717,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     console.log(goodResDev);
     this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
       next: resp => {
+        this.addGood(goodResDev);
         this.onLoadToast('success', 'Se agrego el bien');
       },
       error: error => {

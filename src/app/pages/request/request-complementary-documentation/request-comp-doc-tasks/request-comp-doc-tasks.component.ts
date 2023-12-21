@@ -11,7 +11,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
+import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -23,6 +25,7 @@ import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2';
+import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
 import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
 import { ChangeLegalStatusComponent } from '../../economic-compensation/change-legal-status/change-legal-status.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
@@ -39,8 +42,9 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
+  protected override selectGoodNotForEyeVisit: boolean;
+  protected override selectGoodsNot: boolean;
   protected override editReport: boolean;
   protected override reportTable: string;
   protected override reportId: string;
@@ -98,7 +102,7 @@ export class RequestCompDocTasksComponent
   processDetonate: string = '';
   process: string = '';
   title: string;
-  requestInfo: IRequest;
+  requestInfo: any;
   taskInfo: any;
   screenWidth: number;
   public typeDoc: string = '';
@@ -111,6 +115,14 @@ export class RequestCompDocTasksComponent
   taskId: number = 0;
 
   signedReport: boolean = false;
+
+  //test
+  isDelegationsVisible: boolean = true;
+  settingsTwo: any;
+  dataThree: LocalDataSource = new LocalDataSource();
+  dataCheckDelegation: any[] = [];
+  paramsDelegation = new BehaviorSubject(new ListParams());
+  totalItemsDelegation: number = 0;
 
   /**
    * email del usuairo
@@ -170,6 +182,12 @@ export class RequestCompDocTasksComponent
     private fb: FormBuilder
   ) {
     super();
+    this.settingsTwo = {
+      ...this.settings,
+      selectMode: 'multi',
+      actions: false,
+      columns: { ...DELEGATION_COLUMNS_REPORT },
+    };
     this.screenWidth =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -200,6 +218,7 @@ export class RequestCompDocTasksComponent
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
+
     this.requestService.getAll(filter).subscribe({
       next: resp => {
         this.requestInfo = resp.data[0];
@@ -209,8 +228,20 @@ export class RequestCompDocTasksComponent
         this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
+
+        this.requestService.getById(requestId).subscribe({
+          next: resp => {
+            this.requestInfo.detail = resp;
+          },
+        });
+
       },
     });
+
+
+
+
+
     this.getTaskInfo();
   }
 
@@ -224,6 +255,7 @@ export class RequestCompDocTasksComponent
       next: resp => {
         this.taskInfo = resp.data[0];
         this.title = this.taskInfo.title;
+        this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
       },
     });
   }
@@ -260,9 +292,16 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
+
+    //validar nextTurn
+    if (!this.nextTurn) {
+      this.showWarning('Vista previa no disponible');
+      return;
+    }
+
     const initialState: Partial<CreateReportComponent> = {
       signReport: this.signedReport,
       editReport: this.editReport,
@@ -278,14 +317,18 @@ export class RequestCompDocTasksComponent
       ignoreBackdropClick: true,
     });
 
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-        // Perform actions if necessary, e.g., this.getCities();
+    modalRef.content.refresh.subscribe(response => {
+      if (response.upload) {
+        this.requestInfo.detail.reportSheet = response.upload ? 'Y' : 'N';
+        this.updateRequest(false);
       }
     });
   }
 
-  turnRequest() {
+  async turnRequest() {
+    if (this.process == 'register-taxpayer-date') {
+      await this.openDelegation();
+    }
     this.alertQuestion(
       'question',
       `¿Desea turnar la solicitud con Folio ${this.requestId}?`,
@@ -381,19 +424,23 @@ export class RequestCompDocTasksComponent
       'Confirmación',
       `¿Desea finalizar la solicitud con folio: ${this.requestId}`
     ).then(async question => {
-      if (question) {
+      if (question.isConfirmed) {
         //Cerrar tarea//
-        let response = await this.updateTask(this.taskInfo.id);
-        if (response) {
-          this.msgModal(
-            'Se finalizo la solicitud con el Folio Nº '.concat(
-              `<strong>${this.requestId}</strong>`
-            ),
-            'Solicitud finalizada',
-            'success'
-          );
-          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+
+        if (this.validateTurn()) {
+          let response = await this.updateTask(this.taskInfo.id);
+          if (response) {
+            this.msgModal(
+              'Se finalizo la solicitud con el Folio Nº '.concat(
+                `<strong>${this.requestId}</strong>`
+              ),
+              'Solicitud finalizada',
+              'success'
+            );
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+          }
         }
+
       }
     });
   }
@@ -622,16 +669,28 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  updateRequest() {
+  updateRequest(alert = true) {
     this.updateInfo = true;
+    let request: any = { ...this.requestInfo.detail };
 
-    this.msgModal(
-      'Se guardó la solicitud con el Folio Nº '.concat(
-        `<strong>${this.requestId}</strong>`
-      ),
-      'Solicitud Guardada',
-      'success'
-    );
+    this.requestService.update(this.requestId, request).subscribe({
+      next: resp => {
+        if (alert) {
+          this.alert(
+            'success',
+            'Correcto',
+            'Registro Actualizado',
+          );
+        }
+      },
+      error: error => {
+        if (alert) {
+          this.alert('error', 'Error', 'Error al guardar la solicitud');
+        }
+      },
+    });
+
+
   }
 
   /** VALIDAR */
@@ -784,6 +843,7 @@ export class RequestCompDocTasksComponent
           'success'
         );
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        //VALIDAR NAVEGACION
       },
       error: error => {
         this.onLoadToast('error', 'Error', 'No se pudo rechazar la tarea');
@@ -801,49 +861,50 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
 
   validateTurn() {
+
     switch (this.process) {
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
       case 'register-request-return':
         if (!this.validate.regdoc) {
-          this.showError('Registre la información de la solicitud');
+          this.showWarning('Registre la información de la solicitud');
           return false;
         }
 
         if (!this.validate.goods) {
-          this.showError('Seleccione los bienes de la solicitud');
+          this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asocie el expediente de la solicitud');
+          this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
         break;
       case 'verify-compliance-return':
         if (!this.validate.vercom) {
-          this.showError('Verifique el cumplimiento de los artículos');
+          this.showWarning('Verifique el cumplimiento de los artículos');
           return false;
         }
 
-        if (!this.validate.opinion) {
-          //this.showError('Genere el Dictamen de Devolución');
-          //return false;
+        if (this.requestInfo.detail.reportSheet != 'Y') {
+          this.showWarning('Genere el Dictamen de Devolución');
+          return false;
         }
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
@@ -854,23 +915,23 @@ export class RequestCompDocTasksComponent
         let docNameUcm = '';
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
         if (!this.validate.signedDictum) {
-          //this.showError('Firme el dictamen de resarcimiento');
-          //return false;
+          this.showWarning('Firme el dictamen de resarcimiento');
+          return false;
         }
 
         if (getEstimatedRowCount == 0 || isNullOrEmpty(contenido)) {
-          //this.showError('Es necesario generar el Dictamen de Devolución');
-          //return false;
+          this.showWarning('Es necesario generar el Dictamen de Devolución');
+          return false;
         }
 
         if (isNullOrEmpty(docNameUcm)) {
-          //this.showError('Es necesario firmar el Dictamen de Devolución');
-          //return false;
+          this.showWarning('Es necesario firmar el Dictamen de Devolución');
+          return false;
         }
 
         break;
@@ -878,22 +939,22 @@ export class RequestCompDocTasksComponent
       //GESTIONAR BINES SIMILARES RESARCIMIENTO
       case 'register-request-similar-goods':
         if (!this.validate.regdoc) {
-          this.showError('Registre la información de la solicitud');
+          this.showWarning('Registre la información de la solicitud');
           return false;
         }
 
         if (!this.requestInfo.recordId) {
-          this.showError('Asocie el expediente de la solicitud');
+          this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
 
         if (!this.validate.goods) {
-          this.showError('Seleccione los bienes de la solicitud');
+          this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
@@ -901,12 +962,12 @@ export class RequestCompDocTasksComponent
 
       case 'notify-transfer-similar-goods':
         if (!this.validate.signedNotify) {
-          //this.showError('Firme el reporte de notificación');
-          //return false;
+          this.showWarning('Firme el reporte de notificación');
+          return false;
         }
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
@@ -926,9 +987,10 @@ export class RequestCompDocTasksComponent
 
       case 'validate-opinion-similar-goods':
         if (!this.validate.signedVisit) {
-          //this.showError('Firme el reporte de visita ocular');
-          //return false;
+          this.showWarning('Firme el reporte de visita ocular');
+          return false;
         }
+
         //REGISTRO
         //INTEGRAR EXPEDIENTE
         //REPORTE DE RESULTAOD FIRMAR
@@ -937,22 +999,22 @@ export class RequestCompDocTasksComponent
       //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
       case 'register-request-compensation':
         if (!this.validate.regdoc) {
-          this.showError('Registre la información de la solicitud');
+          this.showWarning('Registre la información de la solicitud');
           return false;
         }
 
         if (!this.requestInfo.recordId) {
-          //this.showError('Asocie solicitud de bienes');
-          //return false;
+          this.showWarning('Asocie solicitud de bienes');
+          return false;
         }
 
         if (!this.validate.goods) {
-          this.showError('Seleccione los bienes de la solicitud');
+          this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
@@ -960,59 +1022,61 @@ export class RequestCompDocTasksComponent
 
       case 'review-guidelines-compensation':
         if (!this.validate.guidelines) {
-          //this.showError('Verifique las observaciones de lineamientos');
-          //return false;
+          this.showWarning('Verifique las observaciones de lineamientos');
+          return false;
         }
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
         if (!this.validate.genDictum) {
-          //this.showError('Genera el dictamen de resarcimiento');
-          //return false;
+          this.showWarning('Genera el dictamen de resarcimiento');
+          return false;
         }
 
         break;
 
       case 'analysis-result-compensation':
         if (!this.validate.guidelines) {
-          this.showError('Verifique las observaciones de lineamientos');
+          this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
 
         if (!this.validate.goods) {
-          this.showError('Seleccione los bienes de la solicitud');
+          this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
         if (!this.validate.signedDictum) {
-          this.showError('Firme el dictamen de resarcimiento');
+          this.showWarning('Firme el dictamen de resarcimiento');
           return false;
         }
         break;
 
       case 'validate-opinion-compensation':
         if (!this.validate.goods) {
-          this.showError('Seleccione los bienes de la solicitud');
+          this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
 
         //DATOS DEL DICTAMEN
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
         if (!this.validate.genValDictum) {
-          this.showError('Genera la validación del dictamen de resarcimiento');
+          this.showWarning(
+            'Genera la validación del dictamen de resarcimiento'
+          );
           return false;
         }
 
@@ -1022,12 +1086,12 @@ export class RequestCompDocTasksComponent
         //DATOS DEL DICTAMEN
 
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
         if (!this.validate.signedNotify) {
-          this.showError('Generar el reporte de notificación');
+          this.showWarning('Generar el reporte de notificación');
           return false;
         }
 
@@ -1036,33 +1100,33 @@ export class RequestCompDocTasksComponent
       //CASOS INFORMACION DE BIENES
       case 'register-request-compensation':
         if (!this.validate.regdoc) {
-          this.showError('Registre la información de la solicitud');
+          this.showWarning('Registre la información de la solicitud');
           return false;
         }
         if (!this.requestInfo.recordId) {
-          this.showError('Asocie el expediente de la solicitud');
+          this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
         if (!this.validate.goods) {
-          this.showError('Seleccione los bienes de la solicitud');
+          this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
         break;
 
       case 'review-guidelines-compensation':
         if (!this.validate.sendEmail) {
-          this.showError('Enviar el correo de notificación al contribuyente');
+          this.showWarning('Enviar el correo de notificación al contribuyente');
           return false;
         }
         if (!this.validate.genOffice) {
-          this.showError('Generar el oficio destino');
+          this.showWarning('Generar el oficio destino');
           return false;
         }
         break;
 
       case 'analysis-result-compensation':
         if (!this.validate.signedOffice) {
-          this.showError('Firmar el oficio destino');
+          this.showWarning('Firmar el oficio destino');
           return false;
         }
         break;
@@ -1071,120 +1135,192 @@ export class RequestCompDocTasksComponent
 
       case 'register-request-economic-compensation':
         if (!this.validate.regdoc) {
-          this.showError('Registre la información de la solicitud');
+          this.showWarning('Registre la información de la solicitud');
           return false;
         }
         if (!this.requestInfo.recordId) {
-          this.showError('Asocie el expediente de la solicitud');
+          this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
         if (!this.validate.goods) {
-          this.showError('Seleccione los bienes de la solicitud');
+          this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
         break;
       case 'request-economic-resources':
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
-        /*if (!this.validate.genEconomicResources) {
-          this.showError('Generar la solicitud de recursos económicos');
+
+        if (this.requestInfo.detail.reportSheet != 'Y') {
+          this.showWarning('Generar la solicitud de recursos económicos');
           return false;
-        }*/
+        }
 
         break;
       case 'review-economic-guidelines':
         if (!this.validate.guidelines) {
-          //this.showError('Verifique las observaciones de lineamientos');
-          //return false;
+          this.showWarning('Verifique las observaciones de lineamientos');
+          return false;
         }
-        if (!this.validate.genDictum) {
-          //this.showError('Generar el dictamen de resarcimiento');
-          //return false;
+        if (this.requestInfo.detail.reportSheet != 'Y') {
+          this.showWarning('Generar el dictamen de resarcimiento');
+          return false;
         }
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
         break;
       case 'generate-results-economic-compensation':
         if (!this.validate.signedDictum) {
-          //this.showError('Firme el dictamen de resarcimiento');
-          //return false;
+          this.showWarning('Firme el dictamen de resarcimiento');
+          return false;
         }
         if (!this.validate.guidelines) {
-          //this.showError('Verifique las observaciones de lineamientos');
-          //return false;
+          this.showWarning('Verifique las observaciones de lineamientos');
+          return false;
         }
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         break;
       case 'validate-dictum-economic':
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         if (!this.validate.dictudData) {
-          //this.showError('Registre datos del dictamen');
-          //return false;
+          this.showWarning('Registre datos del dictamen');
+          return false;
         }
         if (!this.validate.genValDictum) {
-          //this.showError('Genera la validación del dictamen de resarcimiento');
-          //return false;
+          this.showWarning(
+            'Genera la validación del dictamen de resarcimiento'
+          );
+          return false;
         }
         break;
       case 'delivery-notify-request':
         if (!this.validate.dictudData) {
-          //this.showError('Registre datos del dictamen');
-          //return false;
+          this.showWarning('Registre datos del dictamen');
+          return false;
         }
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         if (!this.validate.signedNotify) {
-          //this.showError('Firme el reporte de notificación');
-          //return false;
+          this.showWarning('Firme el reporte de notificación');
+          return false;
         }
         break;
       case 'register-taxpayer-date':
         if (!this.validate.registerAppointment) {
-          //this.showError('Registre datos de la cita');
-          //return false;
+          this.showWarning('Registre datos de la cita');
+          return false;
         }
         //REGISTRO DE CITA
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         break;
       case 'register-pay-orde':
         if (!this.validate.orderEntry) {
-          //this.showError('Registre datos de orden de ingreso');
-          //return false;
+          this.showWarning('Registre datos de orden de ingreso');
+          return false;
         }
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         break;
       case 'generate-compensation-act':
         if (!this.validate.files) {
-          this.showError('Suba la documentación de la solicitud');
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
         if (!this.validate.genDictum) {
-          //this.showError('Genera el dictamen de resarcimiento');
-          //return false;
+          this.showWarning('Genera el dictamen de resarcimiento');
+          return false;
+        }
+        break;
+      case 'register-seizures':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+      case 'register-abandonment-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+      case 'register-protections-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+
+      case 'register-compensation-documentation':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
         }
         break;
     }
@@ -1218,6 +1354,10 @@ export class RequestCompDocTasksComponent
     this.onLoadToast('error', 'Error', text);
   }
 
+  showWarning(text) {
+    this.onLoadToast('warning', 'Warning', text);
+  }
+
   onSaveGuidelines(row) {
     console.log(row);
     this.validate.guidelines = true;
@@ -1228,11 +1368,13 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        this.generateTask();
+        if (this.validateTurn()) {
+          this.generateTask();
+        }
       }
     });
   }
@@ -1242,11 +1384,13 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        this.generateTask();
+        if (this.validateTurn()) {
+          this.generateTask();
+        }
       }
     });
   }
@@ -1259,17 +1403,19 @@ export class RequestCompDocTasksComponent
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        let response = await this.updateTask(this.taskInfo.id);
+        if (this.validateTurn()) {
+          let response = await this.updateTask(this.taskInfo.id);
 
-        if (response) {
-          this.msgModal(
-            'Se aprobo la solicitud con el Folio Nº '.concat(
-              `<strong>${this.requestId}</strong>`
-            ),
-            'Solicitud aprobada',
-            'success'
-          );
-          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+          if (response) {
+            this.msgModal(
+              'Se aprobo la solicitud con el Folio Nº '.concat(
+                `<strong>${this.requestId}</strong>`
+              ),
+              'Solicitud aprobada',
+              'success'
+            );
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+          }
         }
       }
     });
@@ -1278,9 +1424,24 @@ export class RequestCompDocTasksComponent
     //Turnamos la solicitud
   }
 
+  openDelegation(context?: Partial<ChangeLegalStatusComponent>) {
+    return new Promise<void>(resolve => {
+      const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
+        initialState: { ...context, isDelegationsVisible: true },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+
+      // Resuelve la promesa cuando el modal se cierra
+      modalRef.onHidden.subscribe(() => {
+        resolve();
+      });
+    });
+  }
+
   openModal(context?: Partial<ChangeLegalStatusComponent>) {
     const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
-      initialState: { ...context },
+      initialState: { ...context, isDelegationsVisible: false },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -1289,7 +1450,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 }
 
 export function isNullOrEmpty(value: any): boolean {

@@ -187,6 +187,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typedocuments(params: ListParams) {
+    params['filter.ddescription'] = params['text'];
+    console.log(params);
     this.wContentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
         this.typesDocuments = resp.data;
@@ -341,7 +343,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -431,7 +433,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -514,7 +516,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -596,7 +598,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
 
@@ -681,7 +683,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {},
+          error: error => { },
         });
     }
   }
@@ -690,7 +692,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() {}
+  handleSuccess() { }
 
   getStateSelect(params?: ListParams) {
     params['filter.sortBy'] = 'descCondition:ASC';

@@ -19,6 +19,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2/src/sweetalert2.js';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { AssociateFileComponent } from '../../transfer-request/tabs/associate-file/associate-file.component';
+import { NewFileModalComponent } from '../associate-file/new-file-modal/new-file-modal.component';
 
 @Component({
   selector: 'app-search-request-similar-goods',
@@ -225,6 +226,21 @@ export class SearchRequestSimilarGoodsComponent
   async newExpedient() {
     const request = await this.getRequest();
     this.openModal(AssociateFileComponent, 'doc-expedient', request);
+  }
+
+  openFileModal() {
+    const modalRef = this.modalService.show(NewFileModalComponent, {
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onCreate.subscribe((data: boolean) => {
+      if (data) this.confirm(data);
+    });
+  }
+
+  async selectGood() {
+    //const request = await this.getRequest();
+    //this.openModal(AssociateFileComponent, 'doc-expedient', request);
   }
 
   openModal(component: any, typeDoc: string, parameters?: any) {

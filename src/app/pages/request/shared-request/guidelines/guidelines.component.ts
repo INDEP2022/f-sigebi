@@ -5,6 +5,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import Swal from 'sweetalert2';
 import { GUIDELINES_COLUMNS } from './guidelines-columns';
 import { GuidelinesObservationsComponent } from './guidelines-observations/guidelines-observations.component';
 import { GuidelinesRevisionViewComponent } from './guidelines-revision-view/guidelines-revision-view.component';
@@ -28,6 +29,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   guidelinesColumns: any[] = [];
+  loadingTurn = false;
+
   guidelinesSettings = {
     ...TABLE_SETTINGS,
     mode: 'internal',
@@ -170,8 +173,30 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   save() {
+    this.msgModal(
+      'Se guardarón los cambios'.concat(),
+      'Solicitud Guardada',
+      'success'
+    );
     // Llamar servicio para guardar informacion
     console.log(this.guidelinesForm.value, this.guidelinesColumns);
     this.onSave.emit(true);
+  }
+
+  msgModal(message: string, title: string, typeMsg: any) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: typeMsg,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.loadingTurn = false;
+      }
+    });
   }
 }
