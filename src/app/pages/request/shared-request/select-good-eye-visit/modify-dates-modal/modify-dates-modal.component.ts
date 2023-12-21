@@ -36,12 +36,25 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    // Primero, verificar si las fechas están presentes
+    const startDate = this.dateForm.controls['startDate'].value;
+    const endDate = this.dateForm.controls['endDate'].value;
+
+    if (!startDate || !endDate) {
+      this.onLoadToast(
+        'warning',
+        'Warning',
+        'Fechas de inicio y fin son requeridas'
+      );
+      return;
+    }
+
     this.goods.map(async (item, _i) => {
       let index = _i + 1;
-      const body: any = {
+      const body = {
         goodresdevId: item.goodresdevId,
-        startVisitDate: this.dateForm.controls['startDate'].value,
-        endVisitDate: this.dateForm.controls['endDate'].value,
+        startVisitDate: startDate,
+        endVisitDate: endDate,
       };
 
       const result = await this.updateGoodResDev(body);
@@ -52,7 +65,7 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
         this.close();
       }
     });
-    //guardar las fechas y enviar al formulario padre para actualizar
+    // Guardar las fechas y enviar al formulario padre para actualizar
   }
 
   updateGoodResDev(body: any) {
