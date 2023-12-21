@@ -108,7 +108,7 @@ export const ORDER_SERVICE_COLUMNS = {
   },
 
   checkNumber: {
-    title: 'No. cheque',
+    title: 'No. Cheque',
     type: 'string',
     sort: false,
   },
