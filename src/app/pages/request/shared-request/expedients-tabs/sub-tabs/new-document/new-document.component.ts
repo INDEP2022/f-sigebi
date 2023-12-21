@@ -42,6 +42,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   stateName: string = '';
   nameTransferent: string = '';
   idTransferent: number = 0;
+  typeTransfer: string = '';
   regionalDelId: number = 0;
   stateId: number = 0;
   userLogName: string = '';
@@ -272,6 +273,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xidcProfile: 'NSBDB_Gral',
         xidSolicitud: this.idRequest,
         xidTransferente: this.programming.tranferId,
+        xtipoTransferencia: this.programming.typeTransfer,
         xdelegacionRegional: this.programming.regionalDelegationNumber,
         xnivelRegistroNSBDB: 'bien',
         xidBien: this.idGood,
@@ -343,7 +345,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -433,7 +435,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -516,7 +518,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -598,7 +600,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
 
@@ -683,7 +685,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => { },
+          error: error => {},
         });
     }
   }
@@ -692,7 +694,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() { }
+  handleSuccess() {}
 
   getStateSelect(params?: ListParams) {
     params['filter.sortBy'] = 'descCondition:ASC';
@@ -721,6 +723,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.transferentService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
+          this.typeTransfer = data.typeTransferent;
           data.nameAndId = `${data.id} - ${data.nameTransferent}`;
           return data;
         });
@@ -732,3 +735,5 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 }
+
+//NUEVO DOCUMENTO VALIDAR
