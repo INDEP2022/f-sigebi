@@ -44,46 +44,54 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.steap1);
-    console.log(this.steap2);
-    console.log(this.steap3);
-    this.prepareForm();
-
-    this.getAllCompensation();
     this.getRequestInfo();
+    this.getAllCompensation();
+
+    this.prepareForm();
   }
 
   prepareForm() {
-
     if (this.steap3) {
       this.dictumForm = this.fb.group({
-        datetime: [null, [Validators.required]],
-        place: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+        appoitmentDate: [null, [Validators.required]],
+        appoitmentPlace: [
+          null,
+          [Validators.required, Validators.pattern(STRING_PATTERN)],
+        ],
       });
     }
 
-    if (this.steap1) {
+    if (this.steap1 || this.steap2) {
       this.dictumForm = this.fb.group({
-        opinionNumber: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-        veredict: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-        nullityTrial: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+        opinionNumber: [
+          null,
+          [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        ],
+        veredict: [
+          null,
+          [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        ],
+        nullityTrial: [
+          null,
+          [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        ],
       });
     }
 
     if (this.steap2) {
       this.dictumForm = this.fb.group({
-        opinionNumber: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-        veredict: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-        nullityTrial: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-        contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-        paymentAmount: [null],
-        dictumDate: [null],
-        adminiResolutionNo: [null],
-        paymentOrderNo: [null],
-        address1: [null, [Validators.pattern(STRING_PATTERN)]],
-        address2: [null, [Validators.pattern(STRING_PATTERN)]],
+        opinionNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+        veredict: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+        nullityTrial: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+        modificationUser: [null, [Validators.pattern(STRING_PATTERN)]],
+        amountToPay: [null],
+        opinionDate: [null],
+        adminResolutionNo: [null],
+        payOrderNo: [null],
+        taxpayerDomicile: [null, [Validators.pattern(STRING_PATTERN)]],
+        fiscalDomicile: [null, [Validators.pattern(STRING_PATTERN)]],
         legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
-        requiredSatCopy: [null],
+        satCopy: [null],
       });
     }
 
@@ -124,13 +132,11 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         next: resp => {
           if (!isNullOrEmpty(resp)) {
             this.respDoc = resp;
-            if (this.steap1 || this.steap2) {
-              this.dictumForm.patchValue({
-                opinionNumber: resp.opinionNumber,
-                veredict: resp.veredict,
-                nullityTrial: resp.nullityTrial,
-              });
-            }
+            this.dictumForm.patchValue({
+              opinionNumber: resp.opinionNumber,
+              veredict: resp.veredict,
+              nullityTrial: resp.nullityTrial,
+            });
           }
         },
       });
@@ -152,12 +158,9 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
           this.respDoc = resp;
           if (!isNullOrEmpty(resp)) {
             this.respDoc = resp;
-            console.log(resp);
-            if (this.steap1 || this.steap2) {
-              this.dictumForm.patchValue({
-                contributor: resp.indicatedTaxpayer,
-              });
-            }
+            this.dictumForm.patchValue({
+              modificationUser: resp.indicatedTaxpayer,
+            });
           }
         },
       });
@@ -197,6 +200,8 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
     object['requestId'] = this.requestId;
     object['orderDate'] = date.toISOString();
+    object['appoitmentDate'] = date.toISOString();
+
     this.onSave.emit(true);
 
     if (isNullOrEmpty(this.respDoc)) {
