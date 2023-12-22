@@ -406,7 +406,7 @@
           <app-guidelines [requestId]="requestId" (onChange)="onGuidelines($event)"></app-guidelines>
         </tab>
         <tab *ngIf="viewGuidelines" heading="Lineamientos" id="guidelinesTab">
-          <app-guidelines-view></app-guidelines-view>
+          <app-guidelines-view [requestId]="requestId"></app-guidelines-view>
         </tab>
 
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">

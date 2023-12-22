@@ -14,7 +14,7 @@ import { GuidelinesService } from 'src/app/core/services/guidelines/guideline.se
 })
 export class GuidelinesViewComponent extends BasePage implements OnInit {
   @Input() requestId: number;
-  guidelinesInfo: IGuideline;
+  guidelinesInfo: any = {};
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   guidelinesColumns: any[] = [];
@@ -95,7 +95,15 @@ export class GuidelinesViewComponent extends BasePage implements OnInit {
 
           });
 
+          this.guidelinesInfo = this.loadGuidelines[0];
+
+          this.guidelinesInfo.firstRevisionDate = new Date(this.loadGuidelines[0].dateCreation);
+          this.guidelinesInfo.secondRevisionDate = new Date(this.loadGuidelines[0].dateModification);
+          this.guidelinesInfo.observations = this.loadGuidelines[0].missingActionsRev1;
+
         }
+
+
 
         this.getData(this.guidelinesData);
 
