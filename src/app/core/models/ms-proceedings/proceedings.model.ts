@@ -180,3 +180,14 @@ export interface ITmpUpdateOneReg {
   good: number;
   approved: string;
 }
+
+export interface IFactconst {
+  captureDate: string;
+  delegation: number;
+  subdelegation: number;
+  good: number;
+  status: string;
+  screen: string;
+  proceesExtDom: string;
+  expedient: number;
+}

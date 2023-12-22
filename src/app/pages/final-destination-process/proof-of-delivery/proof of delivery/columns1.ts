@@ -1,5 +1,5 @@
 export const COLUMNS1 = {
-  goodNumb: {
+  goodId: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -19,7 +19,7 @@ export const COLUMNS1 = {
     type: 'string',
     sort: false,
   },
-  act: {
+  acta: {
     title: 'Acta',
     type: 'string',
     sort: false,

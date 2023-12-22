@@ -1,28 +1,40 @@
 export const COLUMNS2 = {
-  goodNumb: {
+  numberGood: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  clasificationNumb: {
+  'good.goodClassNumber': {
     title: 'No. Clasificación',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell, row) => {
+      return row.good.goodClassNumber;
+    },
   },
-  description: {
+  'good.description': {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell, row) => {
+      return row.good.description;
+    },
   },
-  quantity: {
+  'good.quantity': {
     title: 'Cantidad',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell, row) => {
+      return row.good.quantity;
+    },
   },
-  unit: {
+  'good.unit': {
     title: 'Unidad',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell, row) => {
+      return row.good.unit;
+    },
   },
 };
 

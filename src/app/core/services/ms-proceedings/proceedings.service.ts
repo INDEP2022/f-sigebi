@@ -11,6 +11,7 @@ import {
   IAvailableFestatus,
   IDetailProceedingsDevollution,
   IDetailProceedingsDevollutionDelete,
+  IFactconst,
   IPbSelPaq,
   IProceedings,
   IPufValidTerm,
@@ -394,5 +395,9 @@ export class ProceedingsService extends HttpService {
 
   pupFillDist(acta: string) {
     return this.get(`aplication/pup-full-dist/${acta}`);
+  }
+
+  postqueryFactConst(body: IFactconst) {
+    return this.post('aplication/blk-bie-post-query', body);
   }
 }

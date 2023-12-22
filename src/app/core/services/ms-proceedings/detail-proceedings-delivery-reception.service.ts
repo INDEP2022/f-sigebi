@@ -10,6 +10,7 @@ import {
   IDetailProceedingsDeliveryReception,
   IDetailWithIndEdo,
 } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -158,6 +159,11 @@ export class DetailProceeDelRecService extends HttpService {
 
   getMconsmassive(user: any, params?: any) {
     const route = `${ProceedingsEndpoints.SearchMcons}?filter.user=$ilike:${user}`;
+    return this.get(route, params);
+  }
+
+  getMconsmassiveFilter(params?: any) {
+    const route = `${ProceedingsEndpoints.SearchMcons}`;
     return this.get(route, params);
   }
 

@@ -1,18 +1,32 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const COLUMN = {
-  fileNumber: {
+  id: {
     title: 'Expediente',
     type: 'string',
     sort: false,
   },
-  Des_transferNumer: {
+  'transferNum.description': {
     title: 'Transferente',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.transferNumer.description;
+    },
   },
   transferValue: {
-    title: 'Estado',
+    title: 'Valido Gen',
     type: 'number',
     sort: false,
+  },
+  fileValue: {
+    title: 'selección',
+    type: 'custom',
+    sort: false,
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.fileValue == 'S' ? true : false;
+    },
   },
 };
 
