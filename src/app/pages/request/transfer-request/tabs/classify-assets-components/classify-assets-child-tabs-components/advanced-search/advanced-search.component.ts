@@ -106,6 +106,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
     const description = this.searchForm.controls['description'].value;
     const typeRelevant = this.searchForm.controls['typeRelevant'].value;
     params['sortBy'] = `id:DESC`;
+    params['filter.level'] = `$not:0`;
 
     if (code != null) {
       params['filter.code'] = `$ilike:${code}`;
