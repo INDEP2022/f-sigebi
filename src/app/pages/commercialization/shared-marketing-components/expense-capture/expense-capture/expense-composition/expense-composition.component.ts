@@ -525,9 +525,17 @@ export class ExpenseCompositionComponent
     }
     if (validation) {
       if (this.LS_ESTATUS) {
-        return true;
-      } else if (this.goodFilter.length === 0) {
-        return true;
+        return (
+          this.expenseCaptureDataService.primeraValidacionEnviaSolicitud() &&
+          this.changeStatusFilter.length > 0
+        );
+      } else if (this.goodFilter.length > 0) {
+        return (
+          this.PVALIDADET === 'S' &&
+          this.changeStatusFilter.length > 0 &&
+          this.lotNumber &&
+          this.lotNumber.value
+        );
       } else {
         if (this.eventNumber) {
           if (
@@ -536,7 +544,7 @@ export class ExpenseCompositionComponent
           ) {
             return this.changeStatusFilter.length > 0;
           } else {
-            return true;
+            return false;
           }
         }
       }
@@ -1294,6 +1302,7 @@ export class ExpenseCompositionComponent
     }
   }
   async modifyEstatus() {
+    // debugger;
     if (this.expenseCaptureDataService.formaModificada()) {
       return;
     }

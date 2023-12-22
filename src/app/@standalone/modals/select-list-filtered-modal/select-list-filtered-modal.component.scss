@@ -1,10 +1,6 @@
-:host ::ng-deep app-modal {
-  .modal-body {
-    padding: 20px 20px 0px;
-  }
-}
 :host
   ::ng-deep
+  .hideFilterPlaceholder
   tr.ng2-smart-filters
   th.ng2-smart-th
   ng2-smart-table-filter

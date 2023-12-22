@@ -25,7 +25,18 @@ import {
 @Component({
   selector: 'app-auction-report',
   templateUrl: './auction-report.component.html',
-  styles: [],
+  styles: [
+    `
+      .ng-clear-wrapper .tooltip {
+        // Estilos personalizados para el tooltip
+        content: 'Mi Tooltip Personalizado'; /* Cambia el texto del tooltip según tus necesidades */
+      }
+      mi-clear {
+        // Estilos personalizados para el botón "clear"
+        content: 'Mi Tooltip Personalizado';
+      }
+    `,
+  ],
 })
 export class auctionReportComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
@@ -42,18 +53,16 @@ export class auctionReportComponent extends BasePage implements OnInit {
   data2: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
-  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  // params2 = new BehaviorSubject<ListParams>(new ListParams());
   params3 = new BehaviorSubject<ListParams>(new ListParams());
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
   columnFilters1: any = [];
-  columnFilters2: any = [];
   columnFilters3: any = [];
   columnFilters4: any = [];
   idEvent: number;
   filter: boolean = false;
   buttonFilter: boolean = true;
-  showFilter: boolean = false;
   settings1 = { ...this.settings };
   settings2 = { ...this.settings };
 
@@ -96,13 +105,6 @@ export class auctionReportComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       columns: { ...AUCTION_REPORT_COLUMNS1 },
     };
-
-    this.settings2 = {
-      ...this.settings,
-      actions: false,
-      hideSubHeader: false,
-      columns: { ...AUCTION_REPORT_COLUMNS1 },
-    };
   }
 
   ngOnInit(): void {
@@ -132,6 +134,9 @@ export class auctionReportComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'vigencia':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'desc_vista':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -198,54 +203,6 @@ export class auctionReportComponent extends BasePage implements OnInit {
           this.getDataWarranty(this.idEvent);
         }
       });
-
-    this.data2
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = '';
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
-            switch (filter.field) {
-              case 'lote_publico':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'importe':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'id_cliente':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'vigencia':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'desc_vista':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
-            if (filter.search !== '') {
-              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters2[field];
-            }
-          });
-          this.params2 = this.pageFilter(this.params2);
-          this.getDataSettlementFilter(
-            this.idEvent,
-            this.publicLotBody,
-            this.customerBody,
-            this.statusBody,
-            this.viewBody
-          );
-        }
-      });
   }
 
   private prepareForm() {
@@ -296,7 +253,6 @@ export class auctionReportComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getDataSettlement());
         this.showLiquidacion = true;
-        this.showFilter = false;
       } else {
         this.data1.load([]);
         this.data1.refresh();
@@ -314,7 +270,6 @@ export class auctionReportComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getDataWarranty(this.idEvent));
         this.showGarantia = true;
-        this.showFilter = false;
       }
     }
   }
@@ -329,30 +284,29 @@ export class auctionReportComponent extends BasePage implements OnInit {
 
   search() {
     this.showGarantia = false;
-    this.showLiquidacion = false;
-    this.showFilter = true;
-    if (this.formFilter.get('lot').value) {
-      this.publicLotBody = this.formFilter.get('lot').value;
-      this.customerBody = this.formFilter.get('customer').value;
-      this.statusBody = this.formFilter.get('status').value;
-      this.viewBody = this.formFilter.get('view').value;
-      console.log(
-        this.idEvent,
-        this.publicLotBody,
-        this.customerBody,
-        this.statusBody,
-        this.viewBody
-      );
-      this.getDataSettlementFilter(
-        this.idEvent,
-        this.publicLotBody,
-        this.customerBody,
-        this.statusBody,
-        this.viewBody
-      );
-    } else {
-      this.alert('warning', 'Debe llenar todos los campos', '');
-    }
+    this.showLiquidacion = true;
+    // if (this.formFilter.get('lot').value) {
+    this.publicLotBody = this.formFilter.get('lot').value;
+    this.customerBody = this.formFilter.get('customer').value;
+    this.statusBody = this.formFilter.get('status').value;
+    this.viewBody = this.formFilter.get('view').value;
+    console.log(
+      this.idEvent,
+      this.publicLotBody,
+      this.customerBody,
+      this.statusBody,
+      this.viewBody
+    );
+    this.getDataSettlementFilter(
+      this.idEvent,
+      this.publicLotBody,
+      this.customerBody,
+      this.statusBody,
+      this.viewBody
+    );
+    // } else {
+    //   this.alert('warning', 'Debe llenar todos los campos', '');
+    // }
 
     /*if (this.validateFilter == 'settlement') {
       this.loading = false;
@@ -419,10 +373,14 @@ export class auctionReportComponent extends BasePage implements OnInit {
     idEvent?: number | string,
     condition?: number
   ) {
+    if (params.text) {
+      params['filter.lote_publico'] = `$ilike:${params.text}`;
+    }
+    delete params.text;
+    delete params['search'];
     let body = {
-      eventIn: idEvent,
-      //conditionIn: 4,
-      conditionIn: condition,
+      eventIn: this.idEvent,
+      conditionIn: 4,
     };
     this.capturelineService.getSettlementReportBody(body, params).subscribe({
       next: resp => {
@@ -439,10 +397,15 @@ export class auctionReportComponent extends BasePage implements OnInit {
   }
 
   getClient(params: ListParams, idEvent?: number | string, condition?: number) {
+    if (params.text) {
+      params['filter.cliente'] = `$ilike:${params.text}`;
+    }
+    delete params.text;
+    delete params['search'];
     let body = {
-      eventIn: idEvent,
+      eventIn: this.idEvent,
       //conditionIn: 6,
-      conditionIn: condition,
+      conditionIn: 6,
     };
     this.capturelineService.getSettlementReportBody(body, params).subscribe({
       next: resp => {
@@ -485,12 +448,10 @@ export class auctionReportComponent extends BasePage implements OnInit {
       this.validateFilter = 'settlement';
       this.showLiquidacion = true;
       this.showGarantia = false;
-      this.showFilter = false;
       this.filter = true;
       this.data2.load([]);
       this.data2.refresh();
       this.totalItems2 = 0;
-      this.showFilter = false;
       this.formReport.get('nameReport').setValue('');
 
       this.formFilter.get('lot').setValue(null);
@@ -522,7 +483,6 @@ export class auctionReportComponent extends BasePage implements OnInit {
       this.validateFilter = 'warranty';
       this.showGarantia = true;
       this.showLiquidacion = false;
-      this.showFilter = false;
       this.filter = true;
       this.formReport.get('nameReport').setValue('');
 
@@ -610,32 +570,30 @@ export class auctionReportComponent extends BasePage implements OnInit {
     status?: string,
     window?: string
   ) {
-    if (idEvent && lotPublic && client && status && window) {
-      //this.params.getValue()['filter.id_evento'] = `$eq:${idEvent}`;
-      this.params2.getValue()['filter.lote_publico'] = `$eq:${lotPublic}`;
-      this.params2.getValue()['filter.cliente'] = `$ilike:${client}`;
-      this.params2.getValue()['filter.estatus'] = `$ilike:${status}`;
-      this.params2.getValue()['filter.desc_vista'] = `$ilike:${window}`;
-    }
+    if (lotPublic)
+      this.params.getValue()['filter.lote_publico'] = `$eq:${lotPublic}`;
+    if (client) this.params.getValue()['filter.cliente'] = `$ilike:${client}`;
+    if (status) this.params.getValue()['filter.estatus'] = `$ilike:${status}`;
+    if (window) this.params.getValue()['filter.desc_vista'] = `$eq:${window}`;
     this.loading = true;
     let param = {
-      ...this.params2.getValue(),
-      ...this.columnFilters2,
+      ...this.params.getValue(),
+      ...this.columnFilters,
     };
     console.log(param);
     this.capturelineService.getSettlementReport(idEvent, param).subscribe({
       next: resp => {
         console.log(resp);
-        this.data2.load(resp.data);
-        this.data2.refresh();
-        this.totalItems2 = resp.count;
+        this.data.load(resp.data);
+        this.data.refresh();
+        this.totalItems = resp.count;
         //console.log(this.totalItems2, resp);
         this.loading = false;
       },
       error: err => {
         this.loading = false;
-        this.data2.load([]);
-        this.data2.refresh();
+        this.data.load([]);
+        this.data.refresh();
         this.totalItems2 = 0;
       },
     });
