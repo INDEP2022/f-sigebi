@@ -1431,7 +1431,11 @@ export class RequestCompDocTasksComponent
 
   openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
     const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
-      initialState: { ...context, isDelegationsVisible: false },
+      initialState: {
+        ...context,
+        isDelegationsVisible: false,
+        requestId: this.requestId,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });

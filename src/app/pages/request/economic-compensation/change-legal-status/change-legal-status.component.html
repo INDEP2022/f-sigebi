@@ -9,14 +9,12 @@
   </div>
   <div body *ngIf="isJuridicVisible">
     <div class="row">
+      <div class="col-md-6"><strong>Transferente: </strong>{{ trans }}</div>
       <div class="col-md-6">
-        <strong>Transferente:</strong>
-      </div>
-      <div class="col-md-6">
-        <strong>Contribuyente y/o Indicado:</strong>
+        <strong>Contribuyente y/o Indicado: </strong>{{ taxPayer }}
       </div>
       <div class="col-md-6 mt-5">
-        <strong>Proceso Detona:</strong>
+        <strong>Proceso Detona: </strong>{{ detona }}
       </div>
     </div>
     <form class="form-material mt-5" [formGroup]="form">
@@ -66,13 +64,17 @@
       </div>
       <div class="row mt-3">
         <div class="col-md-12">
-          <form-field [control]="form.get('affair')" label="Asunto">
-            <select class="form-control" formControlName="affair">
-              <option [value]="null">Seleccione un valor</option>
-              <option [value]="'GASTO 1'">PIEZA</option>
-              <option [value]="'GASTO 2'">GASTO 2</option>
-              <option [value]="'GASTO 3'">GASTO 3</option>
-            </select>
+          <form-field [control]="form.get('affair')">
+            <ngx-select
+              (fetchItems)="getAffair($event)"
+              [data]="affairs"
+              [form]="form"
+              value="id"
+              label="Asunto"
+              bindLabel="legalAffair"
+              control="affair"
+              (change)="onAffairChange($event)">
+            </ngx-select>
           </form-field>
         </div>
       </div>
