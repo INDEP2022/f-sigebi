@@ -184,6 +184,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.form.controls['operationId'].setValue(null);
     this.form.controls['insertDate'].setValue(null);
     this.form.controls['validityDate'].setValue(null);
+    this.form.controls['eventId'].setValue(null);
   }
 
   consultInServer() {

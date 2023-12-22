@@ -1,6 +1,6 @@
 export const REPORT_OI_COLUMNS = {
   orden_de_ingreso: {
-    title: 'Órden de Ingreso',
+    title: 'Orden de Ingreso',
     sort: false,
   },
   mandato: {
