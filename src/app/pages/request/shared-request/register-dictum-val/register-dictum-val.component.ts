@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CompensationService } from 'src/app/core/services/compensation-option/compensation.option';
+import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -34,10 +35,11 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   @Input() steap3: boolean = false;
   @Input() isEdit: boolean = false;
 
-  respDoc: Object;
+  respDoc: Object = null;
 
   private requestService = inject(RequestService);
   private compenstionService = inject(CompensationService);
+  private entryOrderService = inject(orderentryService);
 
   constructor(private fb: FormBuilder, private datePipe: DatePipe) {
     super();
@@ -46,6 +48,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getRequestInfo();
     this.getAllCompensation();
+    this.getAllOrderEntry();
 
     this.prepareForm();
   }
@@ -76,6 +79,10 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
           [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
         ],
       });
+
+      if (!this.isEdit) {
+        this.dictumForm.disable();
+      }
     }
 
     if (this.steap2) {
@@ -93,6 +100,10 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
         satCopy: [null],
       });
+
+      if (!this.isEdit) {
+        this.dictumForm.disable();
+      }
     }
 
     //Configurar cada paso con los campos que se van a mostrar
@@ -117,6 +128,35 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     });*/
   }
 
+  getAllOrderEntry() {
+    // Llamar servicio para obtener informacion de la documentacion de la orden
+    const params = new ListParams();
+    params['filter.identifier'] = `$eq:${this.requestId}`;
+    this.entryOrderService
+      .getAllOrderEntry(params)
+      .pipe(
+        map(x => {
+          return x.data[0];
+        })
+      )
+      .subscribe({
+        next: resp => {
+          if (!isNullOrEmpty(resp)) {
+            this.onSave.emit(true);
+            this.dictumForm.patchValue({
+              administrativeUnit: parseInt(resp.unitadministrative + ''),
+              orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
+              concept: resp.concept,
+              amountToPay: resp.amount,
+              referenceNo: resp.numberreference,
+              bank: resp.accountBank,
+              payOrderNo: resp.id,
+            });
+          }
+        },
+      });
+  }
+
   getAllCompensation() {
     // Llamar servicio para obtener informacion de la documentacion de la orden
     const params = new ListParams();
@@ -130,8 +170,9 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: resp => {
+          let object = this.dictumForm.getRawValue();
+
           if (!isNullOrEmpty(resp)) {
-            this.respDoc = resp;
             this.dictumForm.patchValue({
               opinionNumber: resp.opinionNumber,
               veredict: resp.veredict,
@@ -155,9 +196,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: resp => {
-          this.respDoc = resp;
           if (!isNullOrEmpty(resp)) {
-            this.respDoc = resp;
             this.dictumForm.patchValue({
               modificationUser: resp.indicatedTaxpayer,
             });
@@ -207,6 +246,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     if (isNullOrEmpty(this.respDoc)) {
       this.createCompensation(object);
     } else {
+      this.getAllOrderEntry();
       this.updatedCompensation(object);
     }
   }
