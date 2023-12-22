@@ -11,7 +11,7 @@ import { ICompensation } from '../../models/compensation-options/compensation';
 @Injectable({
   providedIn: 'root',
 })
-export class compensationService extends HttpService {
+export class CompensationService extends HttpService {
   constructor() {
     super();
     this.microservice = CompensationEndpoints.BaseCompensation;

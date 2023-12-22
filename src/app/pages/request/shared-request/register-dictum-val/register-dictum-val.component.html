@@ -10,11 +10,11 @@
     </div>
   </div>
   <br />
-  <div *ngif="steap3" class="row mt-3">
+  <div *ngIf="steap3" class="row mt-3">
     <div class="col-md-4">
       <form-field
         [control]="dictumForm.get('datetime')"
-        label="*Fecha y Hora de Cita">
+        label="Fecha y Hora de Cita">
         <input
           type="text"
           formControlName="datetime"
@@ -28,7 +28,7 @@
       </form-field>
     </div>
     <div class="col-md-6">
-      <form-field [control]="dictumForm.get('place')" label="&#42;Lugar">
+      <form-field [control]="dictumForm.get('place')" label="Lugar">
         <textarea
           rows="2"
           formControlName="place"
