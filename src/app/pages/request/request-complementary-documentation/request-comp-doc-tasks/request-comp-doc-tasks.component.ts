@@ -1464,6 +1464,7 @@ export class RequestCompDocTasksComponent
   //Agregar servicios de validacion de turnado
   //Reportes dinamicos
   //Firma de reportes
+  //Crear un 
 
 }
 
