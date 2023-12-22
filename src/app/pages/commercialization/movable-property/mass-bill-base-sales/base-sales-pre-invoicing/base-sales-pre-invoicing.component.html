@@ -68,13 +68,15 @@
                 </div>
                 <div class="col-12">
                   <button
-                    [ngClass]="{ loading: btnLoading2 }"
-                    [disabled]="btnLoading2"
+                    [ngClass]="{ loading: btnLoading5 }"
+                    [disabled]="btnLoading5"
                     type="button"
-                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
-                    (click)="generateInvoice()">
-                    Genera Folios
-                    <i *ngIf="!btnLoading2" class="bx bxs-file"></i>
+                    class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
+                    (click)="openModal()">
+                    Asig. Manual Folios
+                    <i
+                      *ngIf="!btnLoading5"
+                      class="bx bx-plus bx-sm float-icon"></i>
                   </button>
                 </div>
               </div>
@@ -94,15 +96,13 @@
                 </div>
                 <div class="col-12">
                   <button
-                    [ngClass]="{ loading: btnLoading5 }"
-                    [disabled]="btnLoading5"
+                    [ngClass]="{ loading: btnLoading7 }"
+                    [disabled]="btnLoading7"
                     type="button"
-                    class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
-                    (click)="openModal()">
-                    Asig. Manual Folios
-                    <i
-                      *ngIf="!btnLoading5"
-                      class="bx bx-plus bx-sm float-icon"></i>
+                    (click)="visualInvoice()"
+                    class="btn btn-block btn-primary btn-sm active mr-2 mb-2">
+                    Visualiza Prefactura
+                    <i class="fa fa-eye" aria-hidden="true"></i>
                   </button>
                 </div>
                 <div class="col-12">
@@ -121,13 +121,13 @@
               <div class="row">
                 <div class="col-12">
                   <button
-                    [ngClass]="{ loading: btnLoading7 }"
-                    [disabled]="btnLoading7"
+                    [ngClass]="{ loading: btnLoading2 }"
+                    [disabled]="btnLoading2"
                     type="button"
-                    (click)="visualInvoice()"
-                    class="btn btn-block btn-primary btn-sm active mr-2 mb-2">
-                    Visualiza Prefactura
-                    <i class="fa fa-eye" aria-hidden="true"></i>
+                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
+                    (click)="generateInvoice()">
+                    Genera Folios
+                    <i *ngIf="!btnLoading2" class="bx bxs-file"></i>
                   </button>
                 </div>
                 <div class="col-12">
