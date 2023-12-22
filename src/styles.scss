@@ -401,6 +401,18 @@ ng-scrollbar {
   }
 }
 
+.form-group ng-select {
+  margin-top: 3px;
+}
+
+.ng-select .ng-select-container:hover {
+  box-shadow: none;
+}
+
+.ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+  box-shadow: none;
+}
+
 .dropdown-item.bg-primary {
   background-color: #9d2449 !important;
 }

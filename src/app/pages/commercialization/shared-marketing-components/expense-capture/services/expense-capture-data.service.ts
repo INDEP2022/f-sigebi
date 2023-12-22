@@ -1136,32 +1136,32 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return new Promise<{ result: boolean; message: string }>((res, rej) => {
       this.interfacesirsaeService
         .sendSirsae2({
-          spentId: this.expenseNumber.value,
-          conceptId: this.conceptNumber.value,
+          spentId: +this.expenseNumber.value,
+          conceptId: +this.conceptNumber.value,
           comment: this.comment.value,
           clkpv: this.form.get('clkpv').value,
           paymentWay: this.formPayment.value,
-          user: this.authService.decodeToken().preferred_username, // 'ASALAZAR'
-          spentMonth: this.form.get('monthExpense').value,
-          spentMonth2: this.form.get('monthExpense2').value,
-          spentMonth3: this.form.get('monthExpense3').value,
-          spentMonth4: this.form.get('monthExpense4').value,
-          spentMonth5: this.form.get('monthExpense5').value,
-          spentMonth6: this.form.get('monthExpense6').value,
-          spentMonth7: this.form.get('monthExpense7').value,
-          spentMonth8: this.form.get('monthExpense8').value,
-          spentMonth9: this.form.get('monthExpense9').value,
-          spentMonth10: this.form.get('monthExpense10').value,
-          spentMonth11: this.form.get('monthExpense11').value,
-          spentMonth12: this.form.get('monthExpense12').value,
+          user: 'ASALAZAR', // this.authService.decodeToken().preferred_username, //
+          spentMonth: this.form.get('monthExpense').value ? 1 : null,
+          spentMonth2: this.form.get('monthExpense2').value ? 2 : null,
+          spentMonth3: this.form.get('monthExpense3').value ? 3 : null,
+          spentMonth4: this.form.get('monthExpense4').value ? 4 : null,
+          spentMonth5: this.form.get('monthExpense5').value ? 5 : null,
+          spentMonth6: this.form.get('monthExpense6').value ? 6 : null,
+          spentMonth7: this.form.get('monthExpense7').value ? 7 : null,
+          spentMonth8: this.form.get('monthExpense8').value ? 8 : null,
+          spentMonth9: this.form.get('monthExpense9').value ? 9 : null,
+          spentMonth10: this.form.get('monthExpense10').value ? 10 : null,
+          spentMonth11: this.form.get('monthExpense11').value ? 11 : null,
+          spentMonth12: this.form.get('monthExpense12').value ? 12 : null,
           paymentDate: this.payDay.value,
           paymentRequestId: this.form.get('paymentRequestNumber').value,
-          proofNumber: this.form.get('numReceipts').value,
+          proofNumber: +this.form.get('numReceipts').value,
           attachedDocumentation: this.form.get('attachedDocumentation').value,
           recVoucherNumber: this.form.get('invoiceRecNumber').value,
           recVoucherDate: this.invoiceRecDate.value,
           contract: this.form.get('contractNumber').value,
-          eventId: this.eventNumber.value,
+          eventId: +this.eventNumber.value,
           requestUser: this.form.get('requestedUser').value,
           authorizeUser: this.form.get('authorizedUser').value,
           capturedUser: this.form.get('capturedUser').value,
@@ -1221,7 +1221,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           : { data: [1] };
       if (AUX_INTERCAMBIO.data && AUX_INTERCAMBIO.data.length > 0) {
         let res = await this.ENVIAR_SIRSAE();
-
+        this.finishProcessSolicitud.next(false);
         if (this.formPayment.value !== 'INTERCAMBIO') {
           if (this.PDEVPARCIAL === 'S' || !this.PCANVTA) {
             let response = await this.alertQuestion(
@@ -1297,6 +1297,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       let validaciones = await this.VALIDACIONES_SOLICITUDI();
       if (validaciones) {
         let res = await this.ENVIAR_SIRSAEI();
+        this.finishProcessSolicitud.next(false);
         if (this.PCANVTA) {
           let response = await this.alertQuestion(
             res.result ? 'success' : 'error',
@@ -1327,26 +1328,26 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return new Promise<{ result: boolean; message: string }>((res, rej) => {
       this.interfacesirsaeService
         .sendSirsae4({
-          spentId: this.expenseNumber.value,
-          conceptId: this.conceptNumber.value,
+          spentId: +this.expenseNumber.value,
+          conceptId: +this.conceptNumber.value,
           comment: this.comment.value,
           clkpv: this.form.get('clkpv').value,
           paymentWay: this.formPayment.value,
-          user: this.authService.decodeToken().preferred_username,
-          spentMonth: this.form.get('monthExpense').value,
-          spentMonth2: this.form.get('monthExpense2').value,
-          spentMonth3: this.form.get('monthExpense3').value,
-          spentMonth4: this.form.get('monthExpense4').value,
-          spentMonth5: this.form.get('monthExpense5').value,
-          spentMonth6: this.form.get('monthExpense6').value,
-          spentMonth7: this.form.get('monthExpense7').value,
-          spentMonth8: this.form.get('monthExpense8').value,
-          spentMonth9: this.form.get('monthExpense9').value,
-          spentMonth10: this.form.get('monthExpense10').value,
-          spentMonth11: this.form.get('monthExpense11').value,
-          spentMonth12: this.form.get('monthExpense12').value,
+          user: 'ASALAZAR', // this.authService.decodeToken().preferred_username, //
+          spentMonth: this.form.get('monthExpense').value ? 1 : null,
+          spentMonth2: this.form.get('monthExpense2').value ? 2 : null,
+          spentMonth3: this.form.get('monthExpense3').value ? 3 : null,
+          spentMonth4: this.form.get('monthExpense4').value ? 4 : null,
+          spentMonth5: this.form.get('monthExpense5').value ? 5 : null,
+          spentMonth6: this.form.get('monthExpense6').value ? 6 : null,
+          spentMonth7: this.form.get('monthExpense7').value ? 7 : null,
+          spentMonth8: this.form.get('monthExpense8').value ? 8 : null,
+          spentMonth9: this.form.get('monthExpense9').value ? 9 : null,
+          spentMonth10: this.form.get('monthExpense10').value ? 10 : null,
+          spentMonth11: this.form.get('monthExpense11').value ? 11 : null,
+          spentMonth12: this.form.get('monthExpense12').value ? 12 : null,
           paymentDate: this.payDay.value,
-          proofNumber: this.form.get('numReceipts').value,
+          proofNumber: +this.form.get('numReceipts').value,
           attachedDocumentation: this.form.get('attachedDocumentation').value,
           recVoucherNumber: this.form.get('invoiceRecNumber').value,
           recVoucherDate: this.form.get('invoiceRecDate').value,
@@ -1451,7 +1452,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           this.saveSubject.next(true);
         },
         error: err => {
-          this.alert('error', err.error.message, '');
+          this.alert('error', 'Validación subtotal precio', err.error.message);
           this.finishProcessSolicitud.next(false);
           // this.errorSendSolicitudeMessage();
         },
@@ -1501,18 +1502,18 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
-          // this.alert(
-          //   'success',
-          //   'Se generó la devolución parcial correctamente',
-          //   ''
-          // );
+          this.alert(
+            'success',
+            'Se generó la devolución parcial correctamente',
+            ''
+          );
           // this.sucessSendSolitudeMessage();
           this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           this.updateExpenseComposition.next(true);
         },
         error: err => {
-          // this.alert('error', 'No se pudo generar la cancelación parcial', '');
+          this.alert('error', 'No se pudo generar la devolución parcial', '');
           this.finishProcessSolicitud.next(false);
           // this.errorSendSolicitudeMessage();
         },
@@ -1545,18 +1546,22 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
-          // this.alert(
-          //   'success',
-          //   'Se generó la cancelación parcial correctamente',
-          //   ''
-          // );
+          this.alert(
+            'success',
+            'Se generó la cancelación parcial correctamente',
+            ''
+          );
           this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           // this.sucessSendSolitudeMessage();
           this.updateExpenseComposition.next(true);
         },
         error: err => {
-          // this.alert('error', 'No se pudo generar la cancelación parcial', '');
+          this.alert(
+            'error',
+            'No se pudo generar la cancelación parcial',
+            err.error.message
+          );
           // this.errorSendSolicitudeMessage();
           this.finishProcessSolicitud.next(false);
         },
@@ -1618,7 +1623,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           this.saveSubject.next(true);
         },
         error: err => {
-          this.alert('error', 'Fallo en Cancela Vta Normal', err.error.message);
+          this.alert('error', 'Cancelación de Venta Normal', err.error.message);
           this.finishProcessSolicitud.next(false);
           // this.errorSendSolicitudeMessage();
         },
@@ -1678,7 +1683,14 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
               });
             // update bienes
             // PUP_LLENA_DATOSREV
+          } else {
+            this.alert('error', 'No se pudo regresar el estatus del bien', '');
+            this.finishProcessSolicitud.next(false);
           }
+        },
+        error: err => {
+          this.alert('error', 'No se pudo regresar el estatus del bien', '');
+          this.finishProcessSolicitud.next(false);
         },
       });
   }
