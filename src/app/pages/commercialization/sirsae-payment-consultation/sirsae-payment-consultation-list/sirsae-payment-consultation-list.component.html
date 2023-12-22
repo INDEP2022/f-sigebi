@@ -82,30 +82,19 @@
             </div>
           </div>
           <div class="col-12 col-md-2">
-            <div class="col-12" style="margin-top: 6%">
-              <!-- <button
-                class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16"
-                (click)="search()"
-                [disabled]="!form.valid">
-                Consultar
-              </button> -->
+            <div class="col-12 text-md-end">
               <button
                 type="button"
-                class="btn btn-primary active btn-sm mt-1"
+                class="btn btn-primary active btn-sm mt-2"
                 (click)="validsearch()"
                 [disabled]="!form.valid">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
-            <div class="col-12">
-              <!-- <button
-                class="active btn btn-block btn-info btn-sm mt-4"
-                (click)="resetFilter()">
-                Resetear
-              </button> -->
+            <div class="col-12 mt-4 text-md-end">
               <button
-                class="btn btn-danger btn-sm active mr-3 mt-5"
+                class="btn btn-danger btn-sm active mt-5"
                 (click)="resetFilter()">
                 Limpiar <i class="fas fa-eraser"> </i>
               </button>
@@ -115,9 +104,9 @@
       </form>
     </div>
     <div *ngIf="dataload">
-      <div class="row">
-        <div class="d-flex justify-content-end">
-          <div class="m-3">
+      <div class="row pt-5">
+        <div class="d-flex justify-content-end mr-5">
+          <div class="mr-4">
             <app-columns-select
               [(settings)]="consultSettings"></app-columns-select>
           </div>

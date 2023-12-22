@@ -364,9 +364,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
             ' - ' +
             item.subTypeDesc +
             ' - ' +
-            item.ssubTypeDesc +
-            ' - ' +
-            item.sssubTypeDesc;
+            item.ssubTypeDesc;
+          // ' - ' +
+          // item.sssubTypeDesc;
         });
         Promise.all(this.result).then((resp: any) => {
           this.tiposData = new DefaultSelect(response.data, response.count);
