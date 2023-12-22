@@ -103,7 +103,7 @@
           <h5 class="title">Filtros de B&uacute;squeda</h5>
         </div>
         <div class="row pt-3">
-          <div class="col-md-4">
+          <div class="col-md-12">
             <form-field [control]="form.get('typeGood')">
               <ngx-select
                 [form]="form"
@@ -117,6 +117,8 @@
               </ngx-select>
             </form-field>
           </div>
+        </div>
+        <div class="row pt-3">
           <div class="col-md-4">
             <form-field [control]="form.get('typeStatus')">
               <ngx-select

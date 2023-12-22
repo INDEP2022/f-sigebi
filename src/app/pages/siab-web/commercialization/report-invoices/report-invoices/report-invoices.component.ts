@@ -409,7 +409,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     if (this.dataFormatPercentage) {
       this.data1.load(this.dataFormatPercentage);
       this.data1.refresh();
-      this.totalItems = this.array.count;
+      this.totalItems = this.dataFormatPercentage.length;
       this.loading = false;
     }
     /*this.data = this.dataFormatPercentage;

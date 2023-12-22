@@ -70,6 +70,11 @@ export class NumeraireDispersionComponent
     }
   }
 
+  override extraOperationsGetData() {
+    this.total = 0;
+    this.getTotals();
+  }
+
   private getTotals() {
     let body: any = {
       eventId: +(this.idEvento + ''),
