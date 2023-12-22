@@ -27,7 +27,7 @@ import { isNullOrEmpty } from '../../../request-complementary-documentation/requ
 })
 export class EntryOrderComponent extends BasePage implements OnInit {
   entryOrderForm: FormGroup = new FormGroup({});
-  @Output() onSave = new EventEmitter<boolean>();
+  @Output() onSave = new EventEmitter<any>();
   @Input() requestId: number;
   maxDate: Date = new Date();
 
@@ -78,10 +78,13 @@ export class EntryOrderComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: resp => {
+
+          this.selectChanges()
+
           if (!isNullOrEmpty(resp)) {
             this.respDoc = resp;
             this.id = resp.id;
-            this.onSave.emit(true);
+
             this.entryOrderForm.patchValue({
               administrativeUnit: parseInt(resp.unitadministrative + ''),
               orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
@@ -150,7 +153,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   createOrderEntry(orderGood: Object) {
     this.entryOrderService.createOrderEntry(orderGood).subscribe({
       next: resp => {
-        this.onSave.emit(true);
+        this.selectChanges()
         this.getRequestInfo();
         this.onLoadToast('success', 'Orden de bien creada con éxito');
       },
@@ -163,7 +166,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   updateOrderEntry(orderGood: IOrderEntry) {
     this.entryOrderService.updateOrderEntry(orderGood).subscribe({
       next: resp => {
-        this.onSave.emit(true);
+        this.selectChanges()
         this.onLoadToast('success', 'Orden de bien actualizada con éxito');
       },
       error: error => {
@@ -199,5 +202,12 @@ export class EntryOrderComponent extends BasePage implements OnInit {
         accountBank: this.entryOrderForm.value.bank,
       });
     }
+  }
+
+  selectChanges() {
+    this.onSave.emit({
+      isValid: !isNullOrEmpty(this.respDoc),
+      object: this.respDoc
+    });
   }
 }

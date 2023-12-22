@@ -1,7 +1,7 @@
 export const GUIDELINES_COLUMNS = {
   guideline: {
     title: 'Lineamiento',
-    type: 'string',
+    disabled: true,
     width: '25%',
     sort: false,
   },

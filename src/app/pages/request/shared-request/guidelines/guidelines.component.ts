@@ -24,6 +24,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   edited: boolean = false;
   @Input() requestId: number;
   @Output() onSave = new EventEmitter<boolean>();
+  @Output() onChange = new EventEmitter<any>();
+
   guidelinesForm: FormGroup = new FormGroup({});
   maxDate: Date = new Date();
   saveButton: string =
@@ -189,18 +191,33 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     // Llamar servicio para guardar informacion
     console.log(this.guidelinesForm.value, this.guidelinesColumns);
 
-    this.guidelinesColumns.forEach(async (element: any) => {
-      let obj = this.getObject(element);
-      await this.saveGuidelines(obj);
+    let validate = this.guidelinesColumns.every(objeto => {
+      return Object.values(objeto).every(valor => !isNullOrEmpty(valor));
     });
 
-    this.msgModal(
-      'Se guardarón los cambios'.concat(),
-      'Solicitud Guardada',
-      'success'
-    );
+    if (validate) {
 
-    //this.saveGuidelines();
+      this.guidelinesColumns.forEach(async (element: any) => {
+        let obj = this.getObject(element);
+        await this.saveGuidelines(obj);
+      });
+
+      this.selectChanges();
+
+      this.msgModal(
+        'Se guardarón los cambios'.concat(),
+        'Solicitud Guardada',
+        'success'
+      );
+
+    } else {
+      this.msgModal(
+        'Debe completar todos los campos'.concat(),
+        'Error',
+        'error'
+      );
+    }
+
   }
 
   getObject(obj) {
@@ -268,6 +285,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         }
 
         this.getData(this.guidelinesData);
+        this.selectChanges();
 
       },
       error: err => {
@@ -300,6 +318,14 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         });
       });
     }
+  }
+
+
+  selectChanges() {
+    this.onChange.emit({
+      isValid: this.loadGuidelines.length > 0,
+      object: this.loadGuidelines,
+    });
   }
 
 
