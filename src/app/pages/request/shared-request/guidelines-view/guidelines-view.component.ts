@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GUIDELINES_COLUMNS } from '../guidelines/guidelines-columns';
 import { IGuideline } from './../../../../core/models/requests/guidelines.model';
+import { GuidelinesService } from 'src/app/core/services/guidelines/guideline.service';
 
 @Component({
   selector: 'app-guidelines-view',
@@ -22,54 +23,87 @@ export class GuidelinesViewComponent extends BasePage implements OnInit {
     actions: false,
   };
 
-  guidelinesTestData = [
+  loadGuidelines = [];
+
+  guidelinesData = [
     {
-      guideline: 'ACTA DE TRANSFERENCIA SAE',
-      firstRevision: 'SI',
-      firstRevisionObserv: 'EJEMPLO OBSERVACION 1',
+      id: 1,
+      guideline: 'ACTA DE TRANSFERENCIA INDEP',
+      firstRevision: 'N/A',
+      firstRevisionObserv: '',
       secondRevision: 'N/A',
-      secondRevisionObserv: 'EJEMPLO OBSERVACION 2',
+      secondRevisionObserv: '',
     },
     {
+      id: 2,
       guideline: 'SOLICITUD DE PAGO RESARCIMIENTO (INSTRUCCIÓN DE PAGO ANCEA)',
-      firstRevision: '',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
     {
-      guideline:
-        'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
-      firstRevision: '',
+      id: 3,
+      guideline: 'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
     {
+      id: 4,
       guideline: 'DOCUMENTO EN EL CUAL SE INDICA EL MONTO A PAGAR',
-      firstRevision: '',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
   ];
 
-  constructor() {
+  constructor(private guidelinesService: GuidelinesService) {
     super();
     this.guidelinesSettings.columns = GUIDELINES_COLUMNS;
   }
 
   ngOnInit(): void {
-    this.getData();
+    this.getGuidelines();
   }
 
-  getData() {
-    this.guidelinesColumns = this.guidelinesTestData;
+  getData(data) {
+    this.guidelinesColumns = data;
     this.totalItems = this.guidelinesColumns.length;
-    this.guidelinesInfo = {
-      firstRevisionDate: '14/07/2018',
-      secondRevisionDate: '16/11/2018',
-      observations: 'EJEMPLO OBSERVACIONES',
-    };
   }
+
+  getGuidelines() {
+
+    const params = new ListParams();
+    params['filter.applicationId'] = `$eq:${this.requestId}`;
+    this.guidelinesService.getGuidelines(params).subscribe({
+      next: resp => {
+        this.loadGuidelines = resp.data;
+
+        if (this.loadGuidelines.length > 0) {
+
+          this.guidelinesData.forEach(element => {
+
+            let item = this.loadGuidelines.find(x => x.lineamentId == element.id);
+
+            element.firstRevision = item.meetsRevision1;
+            element.secondRevision = item.meetsRevision2;
+            element.firstRevisionObserv = item.missingActionsRev1;
+            element.secondRevisionObserv = item.missingActionsRev2;
+
+          });
+
+        }
+
+        this.getData(this.guidelinesData);
+
+      },
+      error: err => {
+        this.getData([]);
+      }
+    });
+  }
+
 }

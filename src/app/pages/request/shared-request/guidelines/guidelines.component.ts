@@ -97,7 +97,6 @@ export class GuidelinesComponent extends BasePage implements OnInit {
 
   private authService = inject(AuthService);
 
-
   constructor(private fb: FormBuilder,
     private guidelinesService: GuidelinesService) {
     super();

@@ -623,8 +623,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'analysis-result-compensation':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
         this.expRequest = true;
 
         this.createReport = true;
@@ -646,8 +646,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'validate-opinion-compensation':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
         this.dictumValidate = true; //AGREGAR DATOS DEL DICTAMEN (TAB)
         this.expRequest = true;
 
@@ -660,6 +660,9 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.docRequest = true; //VERIFICAR
 
+        this.steap1 = true;
+        this.isEdit = true;
+
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.DOCUMENTO_VALIDACION_DICTAMEN;
         this.signedReport = false;
@@ -669,8 +672,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'notification-taxpayer-compensation':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
         this.dictumValidate = true;
         this.expRequest = true;
 
