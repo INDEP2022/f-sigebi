@@ -116,10 +116,15 @@ export class NumeraireConversionAuctionsComponent
         error: err => {
           console.log(err);
           this.loader.load = false;
+          let errorMessage = err.error.message.includes(
+            'duplicate key value violates unique constraint'
+          )
+            ? 'Calculo ya realizado'
+            : err.error.message;
           this.alert(
             'error',
             'No se ha podido realizar el cálculo',
-            err.error.message
+            errorMessage
           );
         },
       });
@@ -394,8 +399,8 @@ export class NumeraireConversionAuctionsComponent
     this.loader.load = true;
     this.convNumeraryService
       .SP_CONVERSION_ASEG_PARCIAL({
-        pevent: +(this.selectedEvent.id + ''),
-        pscreen: 'FCOMER087',
+        event: +(this.selectedEvent.id + ''),
+        screen: 'FCOMER087',
         user: this.user.preferred_username,
       })
       .pipe(take(1))

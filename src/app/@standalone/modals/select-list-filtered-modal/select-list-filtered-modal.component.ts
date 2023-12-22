@@ -37,6 +37,7 @@ import { FormLoaderComponent } from '../../form-loader/form-loader.component';
   standalone: true,
   imports: [CommonModule, SharedModule, NgScrollbarModule, FormLoaderComponent],
   templateUrl: './select-list-filtered-modal.component.html',
+  styleUrls: ['./select-list-filtered-modal.component.scss'],
 })
 export class SelectListFilteredModalComponent
   extends BasePage
@@ -69,6 +70,7 @@ export class SelectListFilteredModalComponent
   showError: boolean = false;
   widthButton = false;
   multi = '';
+  hideFilterPlaceholder = false;
   permitSelect = true;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
