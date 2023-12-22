@@ -110,6 +110,7 @@ export class reportOiComponent extends BasePage implements OnInit {
 
   ObtenerRepOI() {
     if (this.form.get('rangeDate').value && this.form.get('idEvent').value) {
+      this.loading = true;
       const rangeDateValue = this.form.get('rangeDate').value;
 
       const fechaInicial = moment(rangeDateValue[0]).format('YYYY-MM-DD');
@@ -147,10 +148,11 @@ export class reportOiComponent extends BasePage implements OnInit {
           this.show = true;
           this.data.load(resp.data);
           this.totalItems = resp.count;
+          this.loading = false;
         },
         error: err => {
           console.log(err);
-          this.alert('warning', 'No se encontraron registros', '');
+          this.loading = false;
         },
       });
     } else {
