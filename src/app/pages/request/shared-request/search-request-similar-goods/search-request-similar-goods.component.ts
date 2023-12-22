@@ -349,11 +349,11 @@ export class SearchRequestSimilarGoodsComponent
         },
         error: error => {
           reject(error);
-          this.onLoadToast(
+          /*this.onLoadToast(
             'error',
             'Error',
             'No se puede actualizar el bien'
-          );
+          );*/
         },
       });
     });

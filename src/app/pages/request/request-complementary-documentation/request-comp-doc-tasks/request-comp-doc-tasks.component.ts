@@ -1052,17 +1052,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'validate-opinion-compensation':
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-
-        //DATOS DEL DICTAMEN
-
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
 
         if (!this.validate.genValDictum) {
           this.showWarning(
