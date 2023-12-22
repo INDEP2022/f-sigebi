@@ -1129,7 +1129,7 @@ export class RegistrationOfRequestsComponent
 
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === true) {
-      this.onLoadToast('warning', '', 'Ya se generó un dictamen');
+      this.onLoadToast('warning', 'Atención', 'Ya se firmó un dictamen');
       return;
     }
 

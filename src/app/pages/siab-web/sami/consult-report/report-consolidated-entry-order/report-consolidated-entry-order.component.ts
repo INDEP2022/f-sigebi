@@ -238,8 +238,10 @@ export class ReportConsolidatedEntryOrderComponent
         const paramsProgDel = new BehaviorSubject<ListParams>(new ListParams());
         this.loadingDetailGoodsProgDel = true;
         filterProgDelivery.map(itemData => {
-          /*paramsProgDel.getValue()['filter.programmingDeliveryId'] = item.programmingDeliveryId; */
           paramsProgDel.getValue()['filter.programmingDeliveryId'] = 16896;
+          paramsProgDel.getValue()['filter.orderEntryId'] = this.orderServiceId;
+          /*paramsProgDel.getValue()['filter.programmingDeliveryId'] = item.programmingDeliveryId; */
+
           this.programmingGoodService
             .getProgrammingDeliveryGood(paramsProgDel.getValue())
             .subscribe({
@@ -258,11 +260,17 @@ export class ReportConsolidatedEntryOrderComponent
               },
               error: () => {
                 this.loadingDetailGoodsProgDel = false;
+                this.infoDetailGoodsProgDel = new LocalDataSource();
+                this.totalItemsDetailGoodsProgDel = 0;
               },
             });
         });
       },
-      error: () => {},
+      error: () => {
+        this.loadingDetailGoodsProgDel = false;
+        this.infoDetailGoodsProgDel = new LocalDataSource();
+        this.totalItemsDetailGoodsProgDel = 0;
+      },
     });
 
     this.paramsOrderAs
@@ -280,6 +288,7 @@ export class ReportConsolidatedEntryOrderComponent
 
   getOrderPayment() {
     this.loadingOrderAs = true;
+    this.paramsOrderAs.getValue()['filter.orderIncomeId'] = this.orderServiceId;
     this.orderServiceService
       .getOrderPayment(this.paramsOrderAs.getValue())
       .subscribe({
@@ -288,7 +297,11 @@ export class ReportConsolidatedEntryOrderComponent
           this.totalItemsOrderAs = response.count;
           this.loadingOrderAs = false;
         },
-        error: () => {},
+        error: () => {
+          this.infoOrderAs = new LocalDataSource();
+          this.loadingOrderAs = false;
+          this.totalItemsOrderAs = 0;
+        },
       });
   }
 
@@ -312,6 +325,8 @@ export class ReportConsolidatedEntryOrderComponent
         },
         error: () => {
           this.loadingServices = false;
+          this.infoOrderServices = new LocalDataSource();
+          this.totalItemsService = 0;
         },
       });
   }
@@ -355,12 +370,15 @@ export class ReportConsolidatedEntryOrderComponent
         },
         error: () => {
           this.loadingDetailGoodsOrdEntry = false;
+          this.infoDetailGoodsOrdEntry = new LocalDataSource();
+          this.totalItemsDetailGoodsOrdEnt = 0;
         },
       });
   }
 
   cleanForm() {
     this.searchForm.reset();
+    this.form.reset();
     this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
