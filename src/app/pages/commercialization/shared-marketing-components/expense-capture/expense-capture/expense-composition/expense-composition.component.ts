@@ -1060,7 +1060,9 @@ export class ExpenseCompositionComponent
                 },
               });
           } else {
-            this.showErrorDisperGasto('No se encontraron datos');
+            this.showErrorDisperGasto(
+              'No se encontraron datos con el evento seleccionado'
+            );
           }
         },
         error: err => {
