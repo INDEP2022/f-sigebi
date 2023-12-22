@@ -22,7 +22,7 @@ export class CompensationService extends HttpService {
     params?: ListParams
   ): Observable<IListResponse<any>> {
     return this.post<IListResponse<any>>(
-      'application/get-EventData',
+      'http://sigebimstest.indep.gob.mx/',
       id,
       params
     );

@@ -13,11 +13,11 @@
   <div *ngIf="steap3" class="row mt-3">
     <div class="col-md-4">
       <form-field
-        [control]="dictumForm.get('datetime')"
+        [control]="dictumForm.get('appoitmentDate')"
         label="Fecha y Hora de Cita">
         <input
           type="text"
-          formControlName="datetime"
+          formControlName="appoitmentDate"
           class="form-control"
           [maxDate]="maxDate"
           [bsConfig]="{
@@ -28,10 +28,10 @@
       </form-field>
     </div>
     <div class="col-md-6">
-      <form-field [control]="dictumForm.get('place')" label="Lugar">
+      <form-field [control]="dictumForm.get('appoitmentPlace')" label="Lugar">
         <textarea
           rows="2"
-          formControlName="place"
+          formControlName="appoitmentPlace"
           class="form-control"></textarea>
       </form-field>
     </div>
@@ -70,28 +70,31 @@
   <div *ngIf="steap2" class="row mt-5">
     <div class="col-md-4">
       <form-field
-        [control]="dictumForm.get('contributor')"
+        [control]="dictumForm.get('modificationUser')"
         label="Contribuyente">
-        <input type="text" formControlName="contributor" class="form-control" />
-      </form-field>
-    </div>
-    <div class="col-md-4">
-      <form-field
-        [control]="dictumForm.get('paymentAmount')"
-        label="Cantidad a Pagar">
         <input
-          type="number"
-          formControlName="paymentAmount"
+          type="text"
+          formControlName="modificationUser"
           class="form-control" />
       </form-field>
     </div>
     <div class="col-md-4">
       <form-field
-        [control]="dictumForm.get('dictumDate')"
+        [control]="dictumForm.get('amountToPay')"
+        label="Cantidad a Pagar">
+        <input
+          type="number"
+          formControlName="amountToPay"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="dictumForm.get('opinionDate')"
         label="Fecha Dictamen">
         <input
           type="text"
-          formControlName="dictumDate"
+          formControlName="opinionDate"
           class="form-control"
           [maxDate]="maxDate"
           bsDatepicker />
@@ -102,22 +105,32 @@
   <div *ngIf="steap2" class="row mt-5">
     <div class="col-md-4">
       <form-field
-        [control]="dictumForm.get('adminiResolutionNo')"
+        [control]="dictumForm.get('adminResolutionNo')"
         label="N&uacute;mero Resoluci&oacute;n Administrativa">
         <input
           type="number"
-          formControlName="adminiResolutionNo"
+          formControlName="adminResolutionNo"
           class="form-control" />
       </form-field>
     </div>
     <div class="col-md-4">
-      <form-field [control]="dictumForm.get('address1')" label="Domicilio 1">
-        <input type="text" formControlName="address1" class="form-control" />
+      <form-field
+        [control]="dictumForm.get('taxpayerDomicile')"
+        label="Domicilio 1">
+        <input
+          type="text"
+          formControlName="taxpayerDomicile"
+          class="form-control" />
       </form-field>
     </div>
     <div class="col-md-4">
-      <form-field [control]="dictumForm.get('address2')" label="Domicilio 2">
-        <input type="text" formControlName="address2" class="form-control" />
+      <form-field
+        [control]="dictumForm.get('fiscalDomicile')"
+        label="Domicilio 2">
+        <input
+          type="text"
+          formControlName="fiscalDomicile"
+          class="form-control" />
       </form-field>
     </div>
   </div>
@@ -125,11 +138,11 @@
   <div *ngIf="steap2" class="row mt-5">
     <div class="col-md-4">
       <form-field
-        [control]="dictumForm.get('paymentOrderNo')"
+        [control]="dictumForm.get('payOrderNo')"
         label="N&uacute;mero Orden de Pago">
         <input
           type="number"
-          formControlName="paymentOrderNo"
+          formControlName="payOrderNo"
           class="form-control" />
       </form-field>
     </div>
@@ -149,12 +162,12 @@
           <label class="label" for="">Juicio Nulidad&#58;</label>
         </div>
         <div class="col-6">
-          <form-check label="" for="requiredSatCopy">
+          <form-check label="" for="satCopy">
             <input
               id="requiredSatCopy"
               type="checkbox"
               class=""
-              formControlName="requiredSatCopy" />
+              formControlName="satCopy" />
           </form-check>
         </div>
       </div>
