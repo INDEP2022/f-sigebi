@@ -11,3 +11,8 @@ export enum CompensationEndpoints {
   BaseCompensation = 'compensationgood',
   opinions = 'compensation-opinions',
 }
+
+export enum GuidelinesEndpoints {
+  BaseGuidelines = 'doccomplementary',
+  guidelines = 'guidelines-res',
+}
