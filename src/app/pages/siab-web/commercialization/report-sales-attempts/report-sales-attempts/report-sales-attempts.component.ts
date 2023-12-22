@@ -137,7 +137,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       this.getStatus(new ListParams());
     }, 1000);
   }
-
+  enableButton() {
+    this.loadingBtn2 = true;
+  }
   chargeFile(event: any) {}
 
   onFileChange(event: Event) {
@@ -187,9 +189,11 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
   consultarBienExcel() {
     this.loadingBtn4 = true;
+    this.loading = true;
     if (!this.commaSeparatedString) {
-      this.alert('warning', 'Debe importar el Archivo Excel', '');
+      this.alert('warning', 'Debe importar el archivo Excel', '');
       this.loadingBtn4 = false;
+      this.loading = false;
       return;
     }
 
@@ -201,7 +205,6 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       pType: 0,
       pSubtypes: '',
       pStatus: '',
-      ...this.params3.getValue(),
     };
     console.log(body);
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
@@ -221,6 +224,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
           }
         });
         this.loadingBtn4 = false;
+        this.loading = false;
         console.log('Conteo de ocurrencias de cada bien:', countMap);
         const newData = Object.keys(countMap).map(bien => ({
           bien,
@@ -243,10 +247,13 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.alert('error', 'No se Encontraron Registros', '');
+        this.loadingBtn4 = false;
+        this.loading = false;
+        this.alert('error', 'No se encontraron registros', '');
         this.source.load([]);
         this.until3 = false;
         this.source.refresh();
+
         this.totalItems3 = 0;
       },
     });
@@ -254,9 +261,11 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
   consultarOnlyOne() {
     this.loadingBtn = true;
+    this.loading = true;
     if (!this.form.get('onlyOne').value) {
-      this.alert('warning', 'Es Necesario Contar con el No. Bien', '');
+      this.alert('warning', 'Es necesario contar con el No. Bien', '');
       this.loadingBtn = false;
+      this.loading = false;
       return;
     }
     let params = {};
@@ -288,6 +297,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
           console.log('Conteo de ocurrencias de cada bien:', countMap);
           this.loadingBtn = false;
+          this.loading = false;
           const newData = Object.keys(countMap).map(bien => ({
             bien,
             conteo_ocurrencias: countMap[bien],
@@ -309,9 +319,11 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         },
         error: err => {
           console.log(err);
-          this.alert('error', 'No se Encontraron Registros', '');
+          this.alert('error', 'No se encontraron registros', '');
           this.source.load([]);
           this.until = false;
+          this.loadingBtn = false;
+          this.loading = false;
           this.source.refresh();
           this.totalItems = 0;
         },
@@ -373,7 +385,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   getStatus(params: ListParams) {
-    this.loading = true;
+    // this.loading = true;
     // Obtener el valor del filtro del formulario
     const val = this.form.get('typeStatus').value;
     console.log(val);
@@ -405,7 +417,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
           console.log(this.status);
           console.log(this.tiposstatus);
 
-          this.loading = false; // Colocar el loading en false después de mostrar los datos.
+          // this.loading = false; // Colocar el loading en false después de mostrar los datos.
         });
 
         console.log(response);
@@ -426,6 +438,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   consultarBien() {
     this.isFirstLoad = true;
     this.loadingBtn3 = true;
+    this.loading = true;
     console.log(this.form.get('typeGood').value);
     console.log(this.tiposData);
     const selectedTypeNumber = this.form.get('typeGood').value;
@@ -439,8 +452,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     console.log(selectedTypeStatus);
 
     if (!selectedTypeStatus) {
-      this.alert('warning', 'Debe Seleccionar los Filtros', '');
+      this.alert('warning', 'Debe seleccionar los filtros', '');
       this.loadingBtn3 = false;
+      this.loading = false;
       return;
     }
 
@@ -460,15 +474,15 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         console.log(resp);
 
         if (this.totalItems2 === 0) {
-          this.alert('error', 'No se encontraron registros', '');
-
           this.loadingBtn3 = false;
+          this.loading = false;
           return;
         }
         // Contar la cantidad de veces que aparece "no_bien" en la respuesta
         // Crear un objeto para almacenar las ocurrencias de cada valor en no_bien
         const countMap: { [key: string]: number } = {}; // Anotación de tipo para countMap
         this.loadingBtn3 = false;
+        this.loading = false;
         // Recorrer los registros y contar las ocurrencias
         resp.data.forEach((item: any) => {
           const noBienValue: string = item.no_bien;
@@ -502,6 +516,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
+        this.isFirstLoad = false;
+        this.loadingBtn3 = false;
+        this.loading = false;
       },
     });
   }
@@ -514,6 +531,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     this.getStatus({});
     this.source.load([]);
     this.until = false;
+    this.loadingBtn2 = false;
   }
 
   cleanOnly() {

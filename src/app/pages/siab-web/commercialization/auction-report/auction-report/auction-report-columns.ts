@@ -64,7 +64,7 @@ export const AUCTION_REPORT_COLUMNS = {
     filter: {
       type: 'list',
       config: {
-        selectText: 'Vista',
+        selectText: 'Seleccionar',
         list: [
           { value: 'VISTA', title: 'VISTA' },
           { value: 'NO VISTA', title: 'NO VISTA' },

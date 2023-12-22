@@ -252,6 +252,19 @@ export abstract class BasePage
     }
     return fechaString;
   }
+  protected returnParseDateFormat(data: any) {
+    let fechaString = '';
+    // Obtener los componentes de la fecha
+    if (data !== '') {
+      const año = data.getFullYear().toString();
+      const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+      const dia = data.getDate().toString().padStart(2, '0');
+
+      // Crear la cadena de texto en formato "año mes día"
+      fechaString = `${dia}/${mes}/${año}`;
+    }
+    return fechaString;
+  }
 
   protected decodeData<T>(data: string): T {
     const value = AES.decrypt(data.trim(), this.key.trim()).toString(enc.Utf8);

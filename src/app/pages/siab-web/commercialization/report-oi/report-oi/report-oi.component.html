@@ -58,8 +58,8 @@
       </div>
     </form>
     <br />
-    <form class="form-material" [formGroup]="formReport">
-      <div class="row mt-4 justify-content-center">
+    <form class="form-material" [formGroup]="formReport" *ngIf="totalItems > 0">
+      <div class="row mt-4">
         <div class="col-md-4">
           <form-field
             [control]="formReport.get('NameReport')"
@@ -71,39 +71,39 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <div class="justify-content-center">
-            <button
-              class="btn btn-sm btn-success active"
-              (click)="exportXlsx()"
-              [disabled]="!formReport.valid">
-              Exportar a Excel
-              <i class="bx bx-download float-icon"></i>
-            </button>
-          </div>
+          <button
+            class="btn btn-sm btn-success active"
+            (click)="exportXlsx()"
+            [disabled]="!formReport.valid">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
+          </button>
         </div>
       </div>
     </form>
-    <div class="row" *ngIf="show">
-      <div class="mb-2 ch-content" header>
-        <h5 class="title"></h5>
-        <div class="justify-content-end">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data">
-            </ng2-smart-table>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="mb-2 ch-content" header>
+          <h5 class="title"></h5>
+          <div class="justify-content-end">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
           </div>
         </div>
       </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
     </div>
   </div>
 </app-card>
