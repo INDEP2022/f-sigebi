@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DOC_EXPEDIENT_COLUMNS } from 'src/app/pages/request/shared-request/expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab-columns';
+import { SeeInformationComponent } from 'src/app/pages/request/shared-request/expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
 
 @Component({
   selector: 'app-report-document',
@@ -14,7 +18,7 @@ import { DOC_EXPEDIENT_COLUMNS } from 'src/app/pages/request/shared-request/expe
 })
 export class ReportDocumentComponent extends BasePage implements OnInit {
   typesDocuments: any[] = [];
-  showSearchForm: boolean = false;
+  showSearchForm: boolean = true;
   formLoading: boolean = false;
   idExpedient: number = 0;
   docRequestForm: FormGroup = new FormGroup({});
@@ -25,7 +29,9 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
     private wContentService: WContentService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
   ) {
     super();
 
@@ -143,16 +149,59 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
   }
 
   openDetail(data: any): void {
-    //this.openModalInformation(data, 'detail');
+    this.openModalInformation(data, 'detail');
+  }
+
+  private openModalInformation(data: any, typeInfo: string) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        typeInfo,
+        callback: (next: boolean) => {
+          if (next) {
+          }
+          this.getData();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(SeeInformationComponent, config);
   }
 
   openDoc(data: any): void {
-    /*this.wContentService.obtainFile(data.dDocName).subscribe(data => {
+    this.wContentService.obtainFile(data.dDocName).subscribe(data => {
       let blob = this.dataURItoBlob(data);
       let file = new Blob([blob], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
       this.openPrevPdf(fileURL);
-    }); */
+    });
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   search() {
@@ -215,7 +264,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.paragraphs = filter;
         this.loading = false;
       } else {
@@ -232,7 +281,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.paragraphs = filter;
         this.loading = false;
       } else {
@@ -249,7 +298,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.loading = false;
         this.paragraphs = filter;
       } else {
@@ -266,7 +315,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.loading = false;
         this.paragraphs = filter;
       } else {
@@ -283,7 +332,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.loading = false;
         this.paragraphs = filter;
       } else {
@@ -300,7 +349,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.loading = false;
         this.paragraphs = filter;
       } else {
@@ -317,7 +366,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.loading = false;
         this.paragraphs = filter;
       } else {
@@ -334,7 +383,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.loading = false;
         this.paragraphs = filter;
       } else {
@@ -351,7 +400,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.loading = false;
         this.paragraphs = filter;
       } else {
@@ -368,7 +417,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.loading = false;
         this.paragraphs = filter;
       } else {
@@ -385,7 +434,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
       });
 
       if (filter.length == 0) {
-        this.onLoadToast('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'Acción Invalida', 'No se encontraron registros');
         this.loading = false;
         this.paragraphs = filter;
       } else {
@@ -423,6 +472,15 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
           this.loading = false;
         });
       },
+      error: () => {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No existen documentos relacionados al expediente'
+        );
+        this.loading = false;
+        this.paragraphs = [];
+      },
     });
   }
 
@@ -453,6 +511,7 @@ export class ReportDocumentComponent extends BasePage implements OnInit {
 
   cleanForm() {
     this.docRequestForm.reset();
-    this.getData();
+
+    this.paragraphs = [];
   }
 }

@@ -29,7 +29,7 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   paragraphs: LocalDataSource = new LocalDataSource();
-  showSearchForm: boolean = false;
+  showSearchForm: boolean = true;
   loadingReport: boolean = false;
   form: FormGroup = new FormGroup({});
   typeRelevant = new DefaultSelect();
@@ -100,6 +100,7 @@ export class ReportGoodComponent extends BasePage implements OnInit {
     this.params.getValue()[
       'filter.regionalDelegationId'
     ] = `$eq:${this.delRegUserLog}`;
+
     this.goodProcessService.goodResDevInv(this.params.getValue()).subscribe({
       next: response => {
         const info = response.data.map(async data => {
@@ -263,53 +264,43 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   }
 
   search() {
-    this.loading = true;
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()[
-      'filter.regionalDelegationId'
-    ] = `$eq:${this.delRegUserLog}`;
+    const goodId = this.form.get('goodId').value;
+    const inventoryNum = this.form.get('inventoryNum').value;
+    const goodDescription = this.form.get('goodDescription').value;
+    const typeRelevantId = this.form.get('typeRelevantId').value;
+    const solicitudId = this.form.get('solicitudId').value;
+    const statusGood = this.form.get('statusGood').value;
+    const uniqueKey = this.form.get('uniqueKey').value;
+    const fileNum = this.form.get('fileNum').value;
+    const unitMeasurement = this.form.get('unitMeasurement').value;
+    const physicalStatus = this.form.get('physicalStatus').value;
+    const conservationStatus = this.form.get('conservationStatus').value;
+    const transferId = this.form.get('transferId').value;
 
-    this.goodProcessService
-      .goodResDevInvFilter(params.getValue(), this.form.value)
-      .subscribe({
-        next: response => {
-          const info = response.data.map(async data => {
-            const typeRelevatName: any = await this.getTypeRelevant(
-              data.typeRelevantId
-            );
+    if (goodId) this.params.getValue()['filter.goodId'] = `$eq:${goodId}`;
+    if (inventoryNum)
+      this.params.getValue()['filter.inventoryNum'] = inventoryNum;
+    if (goodDescription)
+      this.params.getValue()['filter.goodDescription'] = goodDescription;
+    if (typeRelevantId)
+      this.params.getValue()['filter.typeRelevantId'] = typeRelevantId;
+    if (solicitudId) this.params.getValue()['filter.solicitudId'] = solicitudId;
+    if (statusGood) this.params.getValue()['filter.statusGood'] = statusGood;
+    if (uniqueKey) this.params.getValue()['filter.uniqueKey'] = uniqueKey;
+    if (fileNum) this.params.getValue()['filter.fileNum'] = fileNum;
+    if (unitMeasurement)
+      this.params.getValue()['filter.unitMeasurement'] = unitMeasurement;
+    if (physicalStatus)
+      this.params.getValue()['filter.physicalStatus'] = physicalStatus;
+    if (conservationStatus)
+      this.params.getValue()['filter.conservationStatus'] = conservationStatus;
+    if (transferId) {
+      this.params.getValue()['filter.transferId'] = `$eq:${transferId}`;
+    }
 
-            const authorityName: any = await this.getAuthorityName(
-              data.authorityId
-            );
-
-            const regDelegationName: any = await this.getRegionalDelName(
-              data.regionalDelegationId
-            );
-            const stateName: any = await this.getStateName(data.stateKey);
-            const transferentName: any = await this.getTransferentName(
-              data.transferId
-            );
-
-            const stationName: any = await this.getStationName(data.stationId);
-            data.relevantTypeName = typeRelevatName;
-            data.authorityName = authorityName;
-            data.delegationName = regDelegationName;
-            data.stateName = stateName;
-            data.transferentName = transferentName;
-            data.stationName = stationName;
-            return data;
-          });
-
-          Promise.all(info).then(data => {
-            this.paragraphs.load(data);
-            this.totalItems = response.count;
-            this.loading = false;
-          });
-        },
-        error: error => {
-          this.loading = false;
-        },
-      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsResDevInv());
   }
 
   cleanForm() {
@@ -342,6 +333,10 @@ export class ReportGoodComponent extends BasePage implements OnInit {
     downloadLink.target = '_blank';
     downloadLink.download = nameReport;
     downloadLink.click();
-    this.alert('success', 'Acción Correcta', 'Archivo generado');
+    this.alert(
+      'success',
+      'Acción Correcta',
+      'Archivo descargado correctamente'
+    );
   }
 }
