@@ -1451,7 +1451,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           this.saveSubject.next(true);
         },
         error: err => {
-          this.alert('error', err.error.message, '');
+          this.alert('error', 'Validación subtotal precio', err.error.message);
           this.finishProcessSolicitud.next(false);
           // this.errorSendSolicitudeMessage();
         },
@@ -1501,18 +1501,18 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
-          // this.alert(
-          //   'success',
-          //   'Se generó la devolución parcial correctamente',
-          //   ''
-          // );
+          this.alert(
+            'success',
+            'Se generó la devolución parcial correctamente',
+            ''
+          );
           // this.sucessSendSolitudeMessage();
           this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           this.updateExpenseComposition.next(true);
         },
         error: err => {
-          // this.alert('error', 'No se pudo generar la cancelación parcial', '');
+          this.alert('error', 'No se pudo generar la devolución parcial', '');
           this.finishProcessSolicitud.next(false);
           // this.errorSendSolicitudeMessage();
         },
@@ -1545,18 +1545,22 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .pipe(take(1))
       .subscribe({
         next: response => {
-          // this.alert(
-          //   'success',
-          //   'Se generó la cancelación parcial correctamente',
-          //   ''
-          // );
+          this.alert(
+            'success',
+            'Se generó la cancelación parcial correctamente',
+            ''
+          );
           this.P_PRUEBA = response;
           this.finishProcessSolicitud.next(true);
           // this.sucessSendSolitudeMessage();
           this.updateExpenseComposition.next(true);
         },
         error: err => {
-          // this.alert('error', 'No se pudo generar la cancelación parcial', '');
+          this.alert(
+            'error',
+            'No se pudo generar la cancelación parcial',
+            err.error.message
+          );
           // this.errorSendSolicitudeMessage();
           this.finishProcessSolicitud.next(false);
         },
@@ -1618,7 +1622,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           this.saveSubject.next(true);
         },
         error: err => {
-          this.alert('error', 'Fallo en Cancela Vta Normal', err.error.message);
+          this.alert('error', 'Cancelación de Venta Normal', err.error.message);
           this.finishProcessSolicitud.next(false);
           // this.errorSendSolicitudeMessage();
         },
@@ -1678,7 +1682,14 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
               });
             // update bienes
             // PUP_LLENA_DATOSREV
+          } else {
+            this.alert('error', 'No se pudo regresar el estatus del bien', '');
+            this.finishProcessSolicitud.next(false);
           }
+        },
+        error: err => {
+          this.alert('error', 'No se pudo regresar el estatus del bien', '');
+          this.finishProcessSolicitud.next(false);
         },
       });
   }
