@@ -531,6 +531,17 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
+  primeraValidacionEnviaSolicitud() {
+    return (
+      this.PCHATMORSINFLUJOPMSR !== 'S' &&
+      this.PCHATMORSINFLUJOPFSR !== 'S' &&
+      this.PCHATMORSINFLUJOPF !== 'S' &&
+      this.PCHATMORSINFLUJOPM !== 'S' &&
+      this.PDEVPARCIAL !== 'S' &&
+      this.PCANVTA
+    );
+  }
+
   async ENVIA_SOLICITUD(
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
@@ -539,14 +550,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     const resultParams = await this.readParams(this.conceptNumber.value);
     console.log(resultParams);
 
-    if (
-      this.PCHATMORSINFLUJOPMSR !== 'S' &&
-      this.PCHATMORSINFLUJOPFSR !== 'S' &&
-      this.PCHATMORSINFLUJOPF !== 'S' &&
-      this.PCHATMORSINFLUJOPM !== 'S' &&
-      this.PDEVPARCIAL !== 'S' &&
-      this.PCANVTA
-    ) {
+    if (this.primeraValidacionEnviaSolicitud()) {
       console.log('Entro 1');
 
       if (this.VALIDA_DET(V_VALIDA_DET)) {
@@ -615,6 +619,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           'Envio a Sirsae',
           'Debe seleccionar al menos un bien'
         );
+        this.finishProcessSolicitud.next(false);
         return;
       }
     }
@@ -1136,7 +1141,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           comment: this.comment.value,
           clkpv: this.form.get('clkpv').value,
           paymentWay: this.formPayment.value,
-          user: 'ASALAZAR', //this.authService.decodeToken().preferred_username,
+          user: this.authService.decodeToken().preferred_username, // 'ASALAZAR'
           spentMonth: this.form.get('monthExpense').value,
           spentMonth2: this.form.get('monthExpense2').value,
           spentMonth3: this.form.get('monthExpense3').value,

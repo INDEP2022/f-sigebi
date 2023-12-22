@@ -15,6 +15,18 @@
   }
 }
 
+:host
+  ::ng-deep
+  tr.ng2-smart-filters
+  th.ng2-smart-th
+  ng2-smart-table-filter
+  div.ng2-smart-filter
+  default-table-filter
+  input-filter
+  input::placeholder {
+  color: transparent !important;
+}
+
 .cantidad {
   border-radius: 10px;
   border: 1px solid #eaeaeaea;
