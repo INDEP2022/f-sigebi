@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { take } from 'rxjs';
+import { catchError, map, of, take, takeUntil } from 'rxjs';
 import { IComerDetExpense2 } from 'src/app/core/models/ms-spent/comer-detexpense';
+import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePage } from 'src/app/core/shared';
 import {
   NUMBERS_PATTERN,
   NUMBERS_POINT_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { IValidGood } from '../../../models/expense-good-process';
 
 @Component({
   selector: 'app-expense-composition-modal',
@@ -21,9 +23,15 @@ export class ExpenseCompositionModalComponent
 {
   form: FormGroup;
   comerDetExpense: IComerDetExpense2;
-  expenseNumber: number;
+  expense: IComerExpense;
+  transferent = '';
   title = 'Composición de Gastos';
-  manCV: string;
+  goods: IValidGood[] = [];
+  selectedGood: IValidGood;
+  cvmans: { cvman: string; key: string }[] = [
+    { cvman: '007200', key: 'DIRECCION EJECUTIVA ' },
+  ];
+  loadingCvmans = false;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -33,26 +41,66 @@ export class ExpenseCompositionModalComponent
     this.prepareForm();
   }
 
+  private fillCvmans() {
+    this.loadingCvmans = true;
+    this.service
+      .getValidatesCvmans(+this.expense.eventNumber, +this.expense.lotNumber)
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        catchError(x => of({ data: [] })),
+        map(x => (x ? x.data : []))
+      )
+      .subscribe(x => {
+        this.loadingCvmans = false;
+        this.cvmans = x;
+        if (this.comerDetExpense) {
+          this.cvman.setValue(this.comerDetExpense.manCV);
+        }
+      });
+  }
+
+  private fillGoods() {
+    if (this.comerDetExpense) {
+      this.goodNumber.setValue(+this.comerDetExpense.goodNumber);
+    }
+  }
+
   ngOnInit() {
     console.log(this.comerDetExpense);
     // this.prepareForm();
-    setTimeout(() => {
-      if (this.comerDetExpense) {
-        this.expenseDetailNumber.setValue(this.comerDetExpense.detPaymentsId);
-        this.amount.setValue(this.comerDetExpense.amount);
-        this.vat.setValue(this.comerDetExpense.iva);
-        this.isrWithholding.setValue(this.comerDetExpense.retencionIsr);
-        this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
-        this.transferorNumber.setValue(this.comerDetExpense.transferorNumber);
-        this.goodNumber.setValue(this.comerDetExpense.goodNumber);
-        this.budgetItem.setValue(this.comerDetExpense.departure);
-      }
-    }, 500);
+    if (this.comerDetExpense) {
+      this.expenseDetailNumber.setValue(this.comerDetExpense.detPaymentsId);
+      this.amount.setValue(this.comerDetExpense.amount);
+      this.vat.setValue(this.comerDetExpense.iva);
+      this.isrWithholding.setValue(this.comerDetExpense.retencionIsr);
+      this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
+      this.budgetItem.setValue(this.comerDetExpense.departure);
+    }
+    if (this.expense) {
+      this.fillCvmans();
+      this.fillGoods();
+    }
+    this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        if (response) {
+          this.selectedGood =
+            this.goods.filter(x => x.goodNumber === response)[0] ?? null;
+          if (this.selectedGood) {
+            if (this.selectedGood.transferorNumber) {
+              this.transferent = this.selectedGood.transferorNumber;
+            }
+            if (this.selectedGood.mandate2) {
+              this.cvman.setValue(this.selectedGood.mandate2);
+            }
+          }
+        }
+      },
+    });
   }
 
   getTransferent(result: any) {
     console.log(result);
-    this.manCV = result.cvman;
+    this.transferent = result.transferNumberExpedient;
   }
 
   private prepareForm() {
@@ -75,7 +123,7 @@ export class ExpenseCompositionModalComponent
         null,
         [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
       ],
-      transferorNumber: [null, [Validators.required]],
+      cvman: [null],
       goodNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
   }
@@ -110,8 +158,8 @@ export class ExpenseCompositionModalComponent
   get vatWithholding() {
     return this.form.get('vatWithholding');
   }
-  get transferorNumber() {
-    return this.form.get('transferorNumber');
+  get cvman() {
+    return this.form.get('cvman');
   }
   get goodNumber() {
     return this.form.get('goodNumber');
@@ -135,8 +183,8 @@ export class ExpenseCompositionModalComponent
     ).toFixed(2);
     return {
       ...body,
-      expenseNumber: this.expenseNumber,
-      cvman: this.manCV,
+      expenseNumber: this.expense.expenseNumber,
+      transferorNumber: this.transferent,
       total,
     };
   }

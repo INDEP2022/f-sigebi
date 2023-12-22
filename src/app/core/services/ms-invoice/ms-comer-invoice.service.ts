@@ -244,7 +244,7 @@ export class ComerInvoiceService extends HttpService {
     eventId: number;
     process: string;
   }) {
-    return this.put(ENDPOINT_INVOICE.UpdateProcess, data);
+    return this.post(ENDPOINT_INVOICE.UpdateProcess, data);
   }
 
   checkFolSubTotal(data: { eventId: number; batchId: number }) {

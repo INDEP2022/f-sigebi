@@ -1,3 +1,4 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
@@ -91,6 +92,10 @@ export const PRE_INVOICING_COLUMNS = {
     sort: false,
     valuePrepareFunction: (val: string) => {
       return val ? val.split('-').reverse().join('/') : '';
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   price: {

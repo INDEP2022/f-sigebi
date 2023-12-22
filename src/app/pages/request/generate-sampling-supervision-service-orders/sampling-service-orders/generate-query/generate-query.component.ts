@@ -1,11 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
+import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
 import { ISamplingOrderService } from 'src/app/core/models/ms-order-service/sampling-order-service.model';
 import { ISamplingOrder } from 'src/app/core/models/ms-order-service/sampling-order.model';
+import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
@@ -19,7 +25,8 @@ import { ListParams } from '../../../../../common/repository/interfaces/list-par
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
-import { AnnexKComponent } from '../annex-k/annex-k.component';
+import { EditDeductiveComponent } from '../../../generate-sampling-supervision/sampling-assets/edit-deductive/edit-deductive.component';
+import { LIST_DEDUCTIVES_COLUMNS } from '../../../generate-sampling-supervision/sampling-assets/sampling-assets-form/columns/list-deductivas-column';
 import { LIST_ORDERS_COLUMNS } from './columns/list-orders-columns';
 
 @Component({
@@ -41,11 +48,24 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   deductives: any = [];
   allDeductives: any = [];
   showSampleInfo: boolean = false;
+  reloadInfo: boolean = false;
   sampleOrderForm: FormGroup = new FormGroup({});
-
-  SampleOrderId: number = 0;
+  deductivesSel: IDeductive[] = [];
+  sampleOrderId: number = 0;
   sampleOrderInfo: ISamplingOrder;
   sendData: any[] = [];
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
+  settings4 = {
+    ...TABLE_SETTINGS,
+    actions: {
+      edit: true,
+      delete: false,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+  };
+  columns4 = LIST_DEDUCTIVES_COLUMNS;
+  paragraphsDeductivas = new LocalDataSource();
   //Datos Anexo para pasar
   dataAnnex: any;
 
@@ -59,7 +79,9 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private deleRegService: RegionalDelegationService,
     private samplinggoodService: SamplingGoodService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private samplingGoodService: SamplingGoodService,
+    private deductiveService: DeductiveVerificationService
   ) {
     super();
   }
@@ -74,6 +96,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     this.initForm();
     this.initAnexForm();
     this.getgeographicalAreaSelect(new ListParams());
+    this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
 
     //this.newSampleOrder();
   }
@@ -118,6 +141,14 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   async searchOrders() {
     const checkExistSampleOrder: any = await this.checkExistSampleOrder();
     if (checkExistSampleOrder) {
+      const deductivesRelSample: any = await this.checkExistDeductives();
+      if (deductivesRelSample == false) {
+        this.getDeductivesNew();
+      } else {
+        this.params4
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getDeductives(deductivesRelSample));
+      }
       this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
         this.getData();
       });
@@ -197,7 +228,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         this.orderServiceForm.get('contractNumber').value;
       this.orderService.getAllSampleOrder(params.getValue()).subscribe({
         next: response => {
-          this.SampleOrderId = response.data[0].idSamplingOrder;
+          this.sampleOrderId = response.data[0].idSamplingOrder;
           response.data[0].dateCreation = moment(
             response.data[0].dateCreation
           ).format('DD/MM/YYYY');
@@ -224,7 +255,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
           let index = i + 1;
           const data: ISamplingOrderService = {
             orderServiceId: item.orderServiceId,
-            sampleOrderId: this.SampleOrderId,
+            sampleOrderId: this.sampleOrderId,
             creationDate: moment(new Date()).format('YYYY-MM-DD'),
             modificationDate: moment(new Date()).format('YYYY-MM-DD'),
             userCreation: this.authService.decodeToken().username,
@@ -240,6 +271,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
                   'Correcto',
                   'Ordenes se servicio agregadas al muestreo'
                 );
+                this.reloadInfo = true;
               }
             },
             error: () => {
@@ -289,8 +321,27 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     }
   }
 
-  openAnnexK() {
-    this.deductives;
+  async openAnnexK() {
+    const deductivesSelect = await this.checkDeductives();
+    if (deductivesSelect) {
+      const infoOrderSample: any = await this.getSampleOrder();
+      if (infoOrderSample.idStore) {
+        console.log('infoOrderSample', infoOrderSample);
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'Debe seleccionar un almacén para generar el Anexo K'
+        );
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Selecciona una deductiva para firmar el anexo K'
+      );
+    }
+    /*this.deductives;
     const deductivesSelected = this.deductives.filter(
       (x: any) => x.selected == true
     );
@@ -317,7 +368,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       'generate-query',
       this.storeSelected,
       annextForm
-    );
+    ); */
   }
 
   async turnSampling() {
@@ -382,7 +433,6 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   newSampleOrder() {
     return new Promise((resolve, reject) => {
       const body: ISamplingOrder = {
-        idSamplingOrder: 4,
         dateCreation: moment(new Date()).format('YYYY-MM-DD'),
         dateModification: moment(new Date()).format('YYYY-MM-DD'),
         userCreation: this.authService.decodeToken().username,
@@ -396,7 +446,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       };
       this.orderService.createSampleOrder(body).subscribe({
         next: resp => {
-          this.SampleOrderId = resp.data.idSamplingOrder;
+          this.sampleOrderId = resp.data.idSamplingOrder;
           resp.data.dateCreation = moment(resp.data.dateCreation).format(
             'DD/MM/YYYY'
           );
@@ -416,14 +466,29 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     this.storeSelected = event;
   }
 
-  getDeductives(event: any) {
-    this.deductives = event;
+  getDeductives(deductivesRelSample: ISamplingDeductive[]) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.deductiveService.getAll(params.getValue()).subscribe({
+      next: response => {
+        const infoDeductives = response.data.map(item => {
+          deductivesRelSample.map(deductiveEx => {
+            if (deductiveEx.deductiveVerificationId == item.id) {
+              item.observations = deductiveEx.observations;
+              item.selected = true;
+            }
+          });
+          return item;
+        });
+        this.paragraphsDeductivas.load(infoDeductives);
+      },
+      error: error => {},
+    });
   }
 
   getAllDeductives() {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
-      params['filter.orderSampleId'] = `$eq:${this.SampleOrderId}`;
+      params['filter.orderSampleId'] = `$eq:${this.sampleOrderId}`;
       this.samplinggoodService
         .getAllSampleDeductives(params)
         .pipe(
@@ -445,7 +510,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   getSampleOrder() {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
-      params['filter.idSamplingOrder'] = `$eq:${this.SampleOrderId}`;
+      params['filter.idSamplingOrder'] = `$eq:${this.sampleOrderId}`;
       this.orderService.getAllSampleOrder(params).subscribe({
         next: resp => {
           resolve(resp.data[0]);
@@ -480,6 +545,210 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
 
         Swal.fire('Turnado', 'El muestreo fue turnado', 'success');
       }
+    });
+  }
+
+  saveDeductives() {
+    if (this.deductivesSel.length > 0) {
+      const deleteDeductives = this.deductivesSel.filter((data: any) => {
+        if (data.selected) return data;
+      });
+
+      if (deleteDeductives.length > 0) {
+        const deleteVerification = deleteDeductives.map(item => {
+          this.allDeductives.map(data => {
+            if (item.id == data.deductiveVerificationId) {
+              item.sampleDeductiveId = data.sampleDeductiveId;
+            }
+          });
+
+          return item;
+        });
+
+        deleteVerification.map(item => {
+          this.samplingGoodService
+            .deleteSampleDeductive(item.sampleDeductiveId)
+            .subscribe({
+              next: () => {},
+            });
+        });
+      }
+
+      const addDeductives = this.deductivesSel.filter((data: any) => {
+        if (data.selected == null) return data;
+      });
+
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea guardar las deductivas seleccionadas?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          addDeductives.map((item: any, i: number) => {
+            let index = i + 1;
+            const sampleDeductive: ISamplingDeductive = {
+              orderSampleId: this.sampleOrderId,
+              deductiveVerificationId: item.id,
+              indDedictiva: 'N',
+              version: 1,
+              observations: item.observations,
+            };
+
+            this.samplingGoodService
+              .createSampleDeductive(sampleDeductive)
+              .subscribe({
+                next: () => {
+                  if (addDeductives.length == index) {
+                    this.alert(
+                      'success',
+                      'Acción Correcta',
+                      'Deductivas agregadas correctamente'
+                    );
+                  }
+                },
+                error: () => {
+                  if (addDeductives.length == index) {
+                    this.alert(
+                      'error',
+                      'Error',
+                      'Error al guardar la deductiva'
+                    );
+                  }
+                },
+              });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar o deseleccionar una deductiva'
+      );
+    }
+  }
+
+  editDeductive(deductive: IDeductive) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      deductive,
+      callback: (next: boolean, deductive: IDeductiveVerification) => {
+        if (next) {
+          this.getSampleDeductives();
+        }
+      },
+    };
+
+    this.modalService.show(EditDeductiveComponent, config);
+  }
+
+  async deleteDeductive(deductiveDelete: ISamplingDeductive) {
+    const checkExistDeductive: any = await this.checkExistDeductives();
+    const _deductiveDelete = checkExistDeductive.map((deductive: any) => {
+      if (deductive.deductiveVerificationId == deductiveDelete.id) {
+        return deductive;
+      }
+    });
+
+    const filterDeductive = _deductiveDelete.filter((item: any) => {
+      return item;
+    });
+
+    if (filterDeductive.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea eliminar la deductiva?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.samplingGoodService
+            .deleteSampleDeductive(filterDeductive[0].sampleDeductiveId)
+            .subscribe({
+              next: response => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Deductiva eliminada correctamente'
+                );
+                /*this.params2
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getGoods()); */
+              },
+            });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'La deductiva no ha sido seleccionada a el muestreo'
+      );
+    }
+  }
+
+  checkExistDeductives() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.orderSampleId'] = `$eq:${this.sampleOrderId}`;
+      this.samplingGoodService
+        .getAllSampleDeductives(params.getValue())
+        .subscribe({
+          next: response => {
+            resolve(response.data);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+    });
+  }
+
+  deductivesSelect(event: any) {
+    this.deductivesSel.push(event.selected[0]);
+  }
+
+  getSampleDeductives() {
+    this.params.getValue()[
+      'filter.orderSampleId'
+    ] = `$eq:${this.sampleOrderId}`;
+    this.samplingGoodService
+      .getAllSampleDeductives(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.allDeductives = response.data;
+          this.getDeductives(response.data);
+        },
+        error: () => {
+          this.getDeductivesNew();
+        },
+      });
+  }
+
+  getDeductivesNew() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.deductiveService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.paragraphsDeductivas.load(response.data);
+      },
+      error: error => {},
+    });
+  }
+
+  checkDeductives() {
+    return new Promise((resolve, reject) => {
+      this.params.getValue()[
+        'filter.orderSampleId'
+      ] = `$eq:${this.sampleOrderId}`;
+      this.samplingGoodService
+        .getAllSampleDeductives(this.params.getValue())
+        .subscribe({
+          next: response => {
+            resolve(response.data);
+          },
+          error: () => {
+            resolve(false);
+          },
+        });
     });
   }
 }

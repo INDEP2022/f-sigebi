@@ -188,6 +188,7 @@
               Cargar Bienes Excel
             </button> -->
             <button
+              *ngIf="showLote"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!validateModifyEstatus"

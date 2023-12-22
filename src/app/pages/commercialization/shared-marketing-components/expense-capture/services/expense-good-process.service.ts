@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
-import { INotifyDTO } from '../models/expense-good-process';
+import { INotifyDTO, IValidGood } from '../models/expense-good-process';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +46,25 @@ export class ExpenseGoodProcessService extends HttpService {
     return this.httpClient.post<any>(
       `${this._url}massivegood/${this._prefix}application/load-good-excel`,
       formData
+    );
+  }
+
+  getValidGoods(
+    lotId: number,
+    pevent: number,
+    pDevPartialGood: string,
+    conceptId: number,
+    PVALIDADET: string
+  ) {
+    return this.post<{ data: IValidGood[] }>(
+      'application/query-pro-list-good',
+      {
+        lotId,
+        pevent,
+        pDevPartialGood,
+        conceptId,
+        PVALIDADET,
+      }
     );
   }
 }

@@ -263,6 +263,7 @@ export class DocRequestTabComponent
               const filterDoc = res.data.filter((item: any) => {
                 if (
                   item.dDocType == 'Document'
+                  //VALIDAR FILTRO COMMENT
                   //&&
                   //item.xidBien == '         '
                 ) {

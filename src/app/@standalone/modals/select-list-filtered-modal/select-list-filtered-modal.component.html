@@ -49,7 +49,9 @@
       </div>
     </div>
     <form-loader *ngIf="loading"></form-loader>
-    <div class="pt-4">
+    <div
+      class="pt-4"
+      [class]="hideFilterPlaceholder ? 'hideFilterPlaceholder' : ''">
       <ng-scrollbar
         [track]="'all'"
         [ngStyle]="{ height: loading ? '0px' : '300px' }">
