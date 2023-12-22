@@ -10,6 +10,8 @@ import { GUIDELINES_COLUMNS } from './guidelines-columns';
 import { GuidelinesObservationsComponent } from './guidelines-observations/guidelines-observations.component';
 import { GuidelinesRevisionViewComponent } from './guidelines-revision-view/guidelines-revision-view.component';
 import { GuidelinesRevisionComponent } from './guidelines-revision/guidelines-revision.component';
+import { GuidelinesService } from 'src/app/core/services/guidelines/guideline.service';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-guidelines',
@@ -84,7 +86,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     },
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+    private guidelinesService: GuidelinesService) {
     super();
     this.guidelinesSettings.columns = GUIDELINES_COLUMNS;
     this.guidelinesSettings.columns = {
@@ -135,6 +138,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getData();
+    this.getGuidelines();
   }
 
   prepareForm() {
@@ -199,4 +203,38 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  getGuidelines() {
+
+    const params = new ListParams();
+    params['filter.applicationId'] = `$eq:${this.requestId}`;
+    this.guidelinesService.getGuidelines(params).subscribe({
+      next: resp => {
+        console.log(resp);
+
+      },
+    });
+  }
+
+  saveGuidelines() {
+    let object: any = {};
+
+    if (isNullOrEmpty(object.id)) {
+      this.guidelinesService.createGuidelines(object).subscribe({
+        next: resp => {
+          console.log(resp);
+
+        },
+      });
+    } else {
+      this.guidelinesService.updateGuidelines(object).subscribe({
+        next: resp => {
+          console.log(resp);
+
+        },
+      });
+    }
+  }
+
+
 }

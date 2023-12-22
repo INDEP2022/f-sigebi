@@ -403,7 +403,7 @@
             [processDetonate]="processDetonate"></app-goods-list>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
-          <app-guidelines (onSave)="onSaveGuidelines($event)"></app-guidelines>
+          <app-guidelines [requestId]="requestId" (onSave)="onSaveGuidelines($event)"></app-guidelines>
         </tab>
         <tab *ngIf="viewGuidelines" heading="Lineamientos" id="guidelinesTab">
           <app-guidelines-view></app-guidelines-view>
