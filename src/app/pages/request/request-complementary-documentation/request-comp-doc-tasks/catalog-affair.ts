@@ -16,10 +16,10 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     //Se crea solicitud decumentación complementaria
     case 'create':
       switch (affair) {
-        case 15: //DECOMISO
+        case 30: //DECOMISO
           return {
             title: `DECOMISO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/confiscation',
+            url: 'pages/request/request-comp-doc/tasks/register-seizures',
             process: 'confiscation',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
@@ -30,7 +30,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         case 16: //extincion de dominio
           return {
             title: `EXTINCION DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/extinction',
+            url: 'pages/request/request-comp-doc/tasks/register-domain-extinction',
             process: 'ExtinciondeDominio',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
@@ -41,7 +41,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         case 27: //PROCESO DE ABANDONO
           return {
             title: `ABANDONO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/abandon',
+            url: 'pages/request/request-comp-doc/tasks/register-abandonment-goods',
             process: 'ProcesoAbandono',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
@@ -92,7 +92,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         case 25: //RESARCIMIENTO NUMERARIO: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
           return {
             title: `RESARCIMIENTO NUMERARIO: Registro de Documentación Complementaria, No. Solicitud: ${requestId}`,
-            url: 'pages/request/request-comp-doc/tasks/register-request-economic-compensation',
+            url: 'pages/request/request-comp-doc/tasks/register-request-economic',
             process: 'IBRegistroSolicitudes',
             type: 'DOCUMENTACION_COMPLEMENTARIA',
             subtype: 'Registro_Solicitud',
@@ -180,7 +180,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       };
     case 'validate-eye-visit-similar-goods':
       return {
-        title: `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${requestId} ${contributor}`,
+        title: `Bienes Similares: Elaborar Oficio de Respuesta, No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/response-letter-similar-goods',
         process: 'BSValidarResultadoVisitaOcular',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -224,7 +224,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       };
     case 'validate-opinion-compensation':
       return {
-        title: `, No. Solicitud ${requestId} ${contributor}`,
+        title: `Notificación al Contribuyente (Resarcimiento EN ESPECIE), No. Solicitud ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/notification-taxpayer-compensation',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -239,14 +239,14 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     case 'register-request-information-goods':
       return {
         title: `Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud: ${requestId}`,
-        url: 'pages/request/request-comp-doc/tasks/respose-office-information-goods',
+        url: 'pages/request/request-comp-doc/tasks/response-office-information-goods',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
       };
-    case 'respose-office-information-goods':
+    case 'response-office-information-goods':
       return {
         title: `Revisión del Oficio de Respuesta de Información, No. Solicitud: ${requestId}`,
         url: 'pages/request/request-comp-doc/tasks/review-office-information-goods',
@@ -260,7 +260,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       break;
 
     /** CASOS RESARCIMEINTO NUMERARIO */
-    case 'register-request-economic-compensation':
+    case 'register-request-economic':
       return {
         title: `Solicitar Recursos Económicos, No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/request-economic-resources',
@@ -273,7 +273,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'request-economic-resources':
       return {
-        title: `Revisión Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud: ${requestId}${contributor}`,
+        title: `Revisión Lineamientos Resarcimiento (NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/review-economic-guidelines',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -285,7 +285,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     case 'review-economic-guidelines':
       return {
         title: `Generar Resultado de Análisis Resarcimiento (NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
-        url: 'pages/request/request-comp-doc/tasks/generate-results-economic-compensation',
+        url: 'pages/request/request-comp-doc/tasks/generate-results-economic',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
         subtype: 'Registro_Solicitud',
@@ -293,7 +293,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         close: true,
       };
 
-    case 'generate-results-economic-compensation':
+    case 'generate-results-economic':
       return {
         title: `Validar Dictamen Resarcimiento (Numerario), No. Solicitud: ${requestId}${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/validate-dictum-economic',
@@ -378,6 +378,12 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
       break;
 
     case 'register-compensation-documentation':
+      break;
+    case 'register-seizures':
+      break;
+    case 'register-abandonment-goods':
+      break;
+    case 'register-domain-extinction':
       break;
   }
 

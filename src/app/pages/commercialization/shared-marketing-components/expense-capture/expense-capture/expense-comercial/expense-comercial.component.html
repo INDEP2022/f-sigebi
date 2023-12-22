@@ -31,6 +31,7 @@
                 formField="expenseNumber"
                 [service]="spentService"
                 [columnsType]="columns"
+                [hideFilterPlaceholder]="true"
                 id="expenseNumber"
                 title="Gastos del Área Comercial"
                 (selectRow)="fillForm($event)"></app-select-modal-table-shared>
@@ -201,7 +202,8 @@
                   class="form-control"
                   ngModel
                   bsDatepicker
-                  formControlName="dateOfResolution" />
+                  formControlName="dateOfResolution"
+                  onkeydown="return false" />
               </form-field>
             </div>
           </div>

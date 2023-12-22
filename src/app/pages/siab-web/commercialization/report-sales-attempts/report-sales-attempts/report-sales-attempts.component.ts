@@ -249,7 +249,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         console.log(err);
         this.loadingBtn4 = false;
         this.loading = false;
-        this.alert('error', 'No se encontraron registros', '');
+        // this.alert('error', 'No se encontraron registros', '');
         this.source.load([]);
         this.until3 = false;
         this.source.refresh();
@@ -319,7 +319,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         },
         error: err => {
           console.log(err);
-          this.alert('error', 'No se encontraron registros', '');
+          // this.alert('error', 'No se encontraron registros', '');
           this.source.load([]);
           this.until = false;
           this.loadingBtn = false;

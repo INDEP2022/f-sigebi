@@ -11,6 +11,7 @@ export interface IUserProcess {
   chargeLevel4?: string;
   regionalDelegation?: string;
   employeeType?: string;
+  departament?: string;
   position?: string;
   acronymLevel1?: string;
   acronymLevel2?: string;

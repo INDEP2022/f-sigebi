@@ -45,6 +45,22 @@ export class NumeraireConversion extends BasePage {
     }
   }
 
+  private errorUpdateEventoConv(hizoConversiones: boolean) {
+    if (hizoConversiones) {
+      this.alert(
+        'warning',
+        'Conversión realizada',
+        'Pero evento no encontrado'
+      );
+    } else {
+      this.alert(
+        'warning',
+        'Conversión realizada',
+        'Pero gastos no convertidos y evento no encontrado'
+      );
+    }
+  }
+
   protected updateEventoConv(hizoConversiones: boolean, event: IComerEvent) {
     let params = new FilterParams();
     params.addFilter('id', +(event.id + ''));
@@ -64,19 +80,19 @@ export class NumeraireConversion extends BasePage {
             if (hizoConversiones) {
               this.alert('success', 'Conversión realizada correctamente', '');
             } else {
-              this.alert('info', 'Conversión realizada', '');
+              this.alert(
+                'info',
+                'Conversión realizada',
+                'Pero gastos no convertidos'
+              );
             }
           } else {
-            this.alert(
-              'error',
-              'Ocurrio un error al actualizar el evento',
-              'Favor de verificar'
-            );
+            this.errorUpdateEventoConv(hizoConversiones);
           }
         },
         error: err => {
           this.loader.load = false;
-          this.alert('error', 'Evento no encontrado', 'Favor de verificar');
+          this.errorUpdateEventoConv(hizoConversiones);
         },
       });
   }

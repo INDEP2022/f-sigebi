@@ -5,9 +5,9 @@ export interface IComerDetExpense {
   vat: string | number;
   isrWithholding: string | number;
   vatWithholding: string | number;
-  transferorNumber: string;
+  transferorNumber?: string;
   goodNumber: string;
-  total: string | number;
+  total?: string | number;
   cvman: string;
   budgetItem: string;
   comerExpenses?: ComerExpenses;

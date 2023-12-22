@@ -77,7 +77,7 @@ export const ORDER_SERVICE_COLUMNS = {
     sort: false,
   },
 
-  delegationRegionalId: {
+  delegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
@@ -108,7 +108,7 @@ export const ORDER_SERVICE_COLUMNS = {
   },
 
   checkNumber: {
-    title: 'No. cheque',
+    title: 'No. Cheque',
     type: 'string',
     sort: false,
   },

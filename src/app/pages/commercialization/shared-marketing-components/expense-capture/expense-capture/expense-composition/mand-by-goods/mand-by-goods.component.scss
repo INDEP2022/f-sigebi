@@ -17,6 +17,12 @@
   }
 }
 
+:host ::ng-deep app-modal {
+  .modal-body {
+    padding-top: 10px;
+  }
+}
+
 .footer-mand-goods {
   align-items: center;
   justify-content: center;

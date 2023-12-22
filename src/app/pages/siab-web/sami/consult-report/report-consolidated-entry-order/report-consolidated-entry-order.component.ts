@@ -5,6 +5,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOrderEntry } from 'src/app/core/models/ms-order-entry/order-entry.model';
 import { IOrderPayment } from 'src/app/core/models/ms-order-service/order-payment.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -92,7 +93,8 @@ export class ReportConsolidatedEntryOrderComponent
     private orderEntryService: orderentryService,
     private programmingGoodService: ProgrammingGoodService,
     private orderServiceService: OrderServiceService,
-    private samplingGoodService: SamplingGoodService
+    private samplingGoodService: SamplingGoodService,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -107,6 +109,9 @@ export class ReportConsolidatedEntryOrderComponent
   ngOnInit(): void {
     this.prepareForm();
     this.getRegionalDelegationSelect(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getOrderEntry());
   }
 
   prepareForm() {
@@ -167,8 +172,9 @@ export class ReportConsolidatedEntryOrderComponent
       this.params.getValue()[
         'filter.delegationRegionalId'
       ] = `$eq:${regionalDelegationNumber}`;
-    if (noContract)
+    if (noContract) {
       this.params.getValue()['filter.contractNumber'] = `$eq:${noContract}`;
+    }
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -177,15 +183,43 @@ export class ReportConsolidatedEntryOrderComponent
 
   getOrderEntry() {
     this.loading = true;
+    const user: any = this.authService.decodeToken();
+    //this.params.getValue()['filter.delegationRegionalId'] = user.department;
     this.orderEntryService.getAllOrderEntry(this.params.getValue()).subscribe({
       next: response => {
-        this.infoOrderService.load(response.data);
-        this.totalItems = response.count;
-        this.loading = false;
+        const info = response.data.map(async item => {
+          const delegationName: any = await this.getDelegationName(
+            item.delegationRegionalId
+          );
+
+          item.delegationName = delegationName;
+          return item;
+        });
+
+        Promise.all(info).then(data => {
+          this.infoOrderService.load(data);
+          this.totalItems = response.count;
+          this.loading = false;
+        });
       },
       error: () => {
         this.loading = false;
+        this.totalItems = 0;
+        this.infoOrderService = new LocalDataSource();
       },
+    });
+  }
+
+  getDelegationName(id: number) {
+    return new Promise((resolve, reject) => {
+      this.regionalDelegationService.getById(id).subscribe({
+        next: response => {
+          resolve(response.description);
+        },
+        error: () => {
+          resolve('SIN DELEGACIÓN');
+        },
+      });
     });
   }
 
@@ -204,8 +238,10 @@ export class ReportConsolidatedEntryOrderComponent
         const paramsProgDel = new BehaviorSubject<ListParams>(new ListParams());
         this.loadingDetailGoodsProgDel = true;
         filterProgDelivery.map(itemData => {
-          /*paramsProgDel.getValue()['filter.programmingDeliveryId'] = item.programmingDeliveryId; */
           paramsProgDel.getValue()['filter.programmingDeliveryId'] = 16896;
+          paramsProgDel.getValue()['filter.orderEntryId'] = this.orderServiceId;
+          /*paramsProgDel.getValue()['filter.programmingDeliveryId'] = item.programmingDeliveryId; */
+
           this.programmingGoodService
             .getProgrammingDeliveryGood(paramsProgDel.getValue())
             .subscribe({
@@ -224,11 +260,17 @@ export class ReportConsolidatedEntryOrderComponent
               },
               error: () => {
                 this.loadingDetailGoodsProgDel = false;
+                this.infoDetailGoodsProgDel = new LocalDataSource();
+                this.totalItemsDetailGoodsProgDel = 0;
               },
             });
         });
       },
-      error: () => {},
+      error: () => {
+        this.loadingDetailGoodsProgDel = false;
+        this.infoDetailGoodsProgDel = new LocalDataSource();
+        this.totalItemsDetailGoodsProgDel = 0;
+      },
     });
 
     this.paramsOrderAs
@@ -246,6 +288,7 @@ export class ReportConsolidatedEntryOrderComponent
 
   getOrderPayment() {
     this.loadingOrderAs = true;
+    this.paramsOrderAs.getValue()['filter.orderIncomeId'] = this.orderServiceId;
     this.orderServiceService
       .getOrderPayment(this.paramsOrderAs.getValue())
       .subscribe({
@@ -254,7 +297,11 @@ export class ReportConsolidatedEntryOrderComponent
           this.totalItemsOrderAs = response.count;
           this.loadingOrderAs = false;
         },
-        error: () => {},
+        error: () => {
+          this.infoOrderAs = new LocalDataSource();
+          this.loadingOrderAs = false;
+          this.totalItemsOrderAs = 0;
+        },
       });
   }
 
@@ -278,6 +325,8 @@ export class ReportConsolidatedEntryOrderComponent
         },
         error: () => {
           this.loadingServices = false;
+          this.infoOrderServices = new LocalDataSource();
+          this.totalItemsService = 0;
         },
       });
   }
@@ -321,15 +370,29 @@ export class ReportConsolidatedEntryOrderComponent
         },
         error: () => {
           this.loadingDetailGoodsOrdEntry = false;
+          this.infoDetailGoodsOrdEntry = new LocalDataSource();
+          this.totalItemsDetailGoodsOrdEnt = 0;
         },
       });
   }
 
   cleanForm() {
     this.searchForm.reset();
+    this.form.reset();
     this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getOrderEntry());
+
+    this.infoOrderService = new LocalDataSource();
+    this.infoDetailGoodsProgDel = new LocalDataSource();
+    this.infoDetailGoodsOrdEntry = new LocalDataSource();
+    this.infoOrderServices = new LocalDataSource();
+    this.infoOrderAs = new LocalDataSource();
+    this.totalItems = 0;
+    this.totalItemsDetailGoodsProgDel = 0;
+    this.totalItemsDetailGoodsOrdEnt = 0;
+    this.totalItemsService = 0;
+    this.totalItemsOrderAs = 0;
   }
 }

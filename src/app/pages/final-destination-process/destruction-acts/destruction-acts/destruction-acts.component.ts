@@ -857,13 +857,11 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   resetTableDataGoods() {
     this.dataGoods.load([]);
     this.totalItems = 0;
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
   }
 
   resetTableDataGoodsAct() {
     this.dataGoodsAct.load([]);
     this.totalItems2 = 0;
-    this.params2 = new BehaviorSubject<ListParams>(new ListParams());
   }
 
   clearForm() {

@@ -20,6 +20,7 @@ import {
   of,
   takeUntil,
 } from 'rxjs';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
 import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/input-cell.component';
 import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
@@ -56,7 +57,29 @@ import { ReferenceModalComponent } from './reference/reference.component';
 @Component({
   selector: 'app-regular-billing-invoice',
   templateUrl: './regular-billing-invoice.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   show1 = false;
@@ -108,6 +131,25 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     return this.form.get('idAllotment');
   }
 
+  btnLoading: boolean = false;
+  btnLoading2: boolean = false;
+  btnLoading3: boolean = false;
+  btnLoading4: boolean = false;
+  btnLoading5: boolean = false;
+  btnLoading6: boolean = false;
+  btnLoading7: boolean = false;
+  btnLoading8: boolean = false;
+  btnLoading9: boolean = false;
+  btnLoading10: boolean = false;
+  btnLoading11: boolean = false;
+  btnLoading12: boolean = false;
+  btnLoading13: boolean = false;
+
+  invoiceSelected: any = null;
+
+  get xLote() {
+    return this.formFactura.get('xLote');
+  }
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -418,6 +460,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           valuePrepareFunction: (val: string) => {
             return val ? val.split('-').reverse().join('/') : '';
           },
+          filterFunction: () => {
+            return true;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
         },
       },
     };
@@ -632,16 +681,18 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.dataFilter.load(resp.data);
         this.dataFilter.refresh();
         this.rowInvoice = resp.data[0];
-        this.paramsList2.getValue()[
-          'filter.eventId'
-        ] = `${SearchFilter.EQ}:${resp.data[0].eventId}`;
-        this.paramsList2.getValue()[
-          'filter.billId'
-        ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
+        if (resp.data[0]?.eventId)
+          this.paramsList2.getValue()[
+            'filter.eventId'
+          ] = `${SearchFilter.EQ}:${resp.data[0].eventId}`;
+        if (resp.data[0]?.billId)
+          this.paramsList2.getValue()[
+            'filter.billId'
+          ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
         this.getComerDetInovice();
         this.getSum();
         this.comer.emit({
-          val: resp.data[0].eventId,
+          val: resp.data[0]?.eventId,
           count: resp.data.length,
           data: [],
           filter: params,
@@ -980,17 +1031,19 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async generateInvoice() {
     const user = this.authService.decodeToken();
+    this.btnLoading10 = true;
     const userValid = await this.validUser(user.preferred_username);
     let n_cont: number;
     let c_ind: string;
     let n_id_event: number;
     const { event, idAllotment } = this.form.value;
 
-    if (userValid == 0) {
+    if (userValid == 1) {
+      this.btnLoading10 = false;
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con permisos para efectuar esta operación'
+        'No cuenta con permisos para efectuar esta operación',
+        ''
       );
     } else {
       n_cont = 0;
@@ -1005,7 +1058,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         let data: any[] = await this.dataFilter.getAll();
 
         if (data.length == 0) {
-          this.alertInfo('warning', 'Atención', 'Sin factura(s) para trabajar');
+          this.btnLoading10 = false;
+          this.alertInfo('warning', 'Sin factura(s) para trabajar', '');
           return;
         }
 
@@ -1025,11 +1079,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           'Atención',
           'Sin prefacturas para asignar folios'
         );
+        this.btnLoading10 = false;
         return;
       }
 
       this.alertQuestion(
-        'warning',
+        'question',
         `Se asignarán ${n_cont} folio(s)`,
         '¿Desea continuar?'
       ).then(ans => {
@@ -1047,6 +1102,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
     const tp_event = await this.getIdTpEvent(event);
 
+    // VALIDAFOL := VALIDA_FOLIOS_DISPO(n_ID_EVENTO);
     const valid = await this.validaFolAvaliable(
       String(n_id_event),
       this.isSelect[0]?.tpevent ?? tp_event
@@ -1056,7 +1112,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       await this.updateDoc(n_id_event);
 
       await this.newMarkProcess('EL', 'PREF', c_indN);
-
+      console.log(n_id_event);
       //commit guardar cambios
 
       await this.generateInvoiceCtrl(String(event), tp_event);
@@ -1072,7 +1128,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
       //procedimiento verifica prov cance
       this.verifyProv();
+      this.btnLoading10 = false;
     } else {
+      this.btnLoading10 = false;
       this.alert('warning', 'Atención', 'No existen folios disponibles');
     }
   }
@@ -1086,10 +1144,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         invoice.factstatusId != 'CAN'
       ) {
         invoice.factstatusId = 'FOL';
+        delete invoice.delegation;
         await this.updateInvoice(invoice);
         this.getAllComer();
       }
     }
+    this.getAllComer();
+    this.alert('success', 'Proceso terminado correctamente', '');
   }
 
   async generateInvoiceCtrl(pEvent: string, ptpevento: string) {
@@ -1292,7 +1353,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
 
     let aux = 0;
-
+    this.btnLoading11 = true;
     aux = this.validateRemoveInvoice();
 
     if (aux == 1) {
@@ -1300,23 +1361,27 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       //update seleccionados
     }
 
+    // COMER_CTRLFACTURA.ELIMINA_FOLIOS(:COMER_FACTURAS.ID_EVENTO, NULL);
     this.comerInvoice
       .deleteFolio({ eventId: data[0].eventId, invoiceId: null })
       .subscribe({
         next: () => {
+          this.btnLoading11 = false;
           this.alert('success', 'Folios', 'Eliminados Correctamente');
-
-          // this.comerInvoice.update(this.billingForm.value).subscribe({
-          //   next: () => {
-          //     this.getAllComer()
-          //   },
-          //   error: err => {
-          //     this.alert('error', 'Error', err.error.message);
-          //   },
-          // });
+          this.getAllComer();
         },
         error: err => {
-          this.alert('error', 'Error', err.error.message);
+          if (err.status == 400) {
+            this.btnLoading11 = false;
+            this.alert('warning', 'No se encontraron registros', '');
+          } else {
+            this.btnLoading11 = false;
+            this.alert(
+              'error',
+              'Ocurrió un error al intentar eliminar los folios',
+              err.error.message
+            );
+          }
         },
       });
   }
@@ -1324,6 +1389,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   validateRemoveInvoice(): number {
     for (const invoice of this.isSelect) {
       if (invoice.factstatusId != 'FOL') {
+        this.btnLoading11 = false;
         this.alert(
           'warning',
           'Atención',
@@ -1391,6 +1457,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       importI: [null],
       ivaI: [null],
       totalI: [null],
+      order: [null],
+      xLote: [null],
     });
 
     this.formDetalle = this.fb.group({
@@ -1420,20 +1488,38 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   openFolioModal() {
+    if (!this.rowInvoice)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
+
     let config: ModalOptions = {
       initialState: {
         callback: async (next: boolean, data: InvoiceFolioSeparate) => {
           if (next) {
-            const invoice: any[] = await this.dataFilter.getAll();
-            const index = invoice.findIndex(inv => inv == this.isSelect[0]);
-            invoice[index].series = data.series;
-            invoice[index].folioinvoiceId = data.folioinvoiceId;
-            invoice[index].Invoice = data.invoice;
-            invoice[index].factstatusId = 'FOL';
+            // const invoice: any[] = await this.dataFilter.getAll();
+            // const index = invoice.findIndex(inv => inv == this.isSelect[0]);
+            // invoice[index].series = data.series;
+            // invoice[index].folioinvoiceId = data.folioinvoiceId;
+            // invoice[index].Invoice = data.invoice;
+            // invoice[index].factstatusId = 'FOL';
 
-            await this.updateInvoice(invoice[index]);
-            this.getAllComer();
-
+            const invoice = this.rowInvoice;
+            invoice.series = data.series;
+            invoice.folioinvoiceId = data.folioinvoiceId;
+            invoice.Invoice = data.invoice;
+            invoice.factstatusId = 'FOL';
+            delete invoice.delegation;
+            let resp = await this.updateInvoice(invoice);
+            if (!resp) {
+              return this.alert(
+                'warning',
+                'No se pudo actualizar la factura',
+                ''
+              );
+            } else {
+              this.getAllComer();
+              this.rowInvoice = null;
+              this.alert('success', 'Factura actualizada correctamente', '');
+            }
             //this.dataFilter.load(invoice);
             //this.dataFilter.refresh();
           }
@@ -1446,15 +1532,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async track() {
+    if (this.isSelect.length == 0)
+      return this.alert('warning', 'Debe seleccionar al menos una factura', '');
+
     const desc = this.isSelect.length > 0 ? this.isSelect[0].declassify : null;
     if (this.selectInovice() == 1 && desc == 'S') {
+      // -- Vehiculos tractocamion sin placas federales
       this.alert(
         'warning',
-        'Atención',
-        'El Bien ya se encuentra como tractocamión sin placas federales'
+        'El Bien ya se encuentra como tractocamión sin placas federales',
+        ''
       );
       this.removeSelect();
     } else if (this.selectInovice() == 1 && !desc) {
+      // -- Cambio a Vehiculos tractocamion sin placas federales
       const invoice = this.isSelect[0];
       invoice.declassify = 'S';
       delete invoice.invoiceStatusId;
@@ -1465,8 +1556,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       delete invoice.relation;
       delete invoice.delegation;
 
-      await this.updateInvoice(invoice);
-      this.getAllComer();
+      let resp = await this.updateInvoice(invoice);
+      if (resp) {
+        const current: any[] = await this.dataFilter.getAll();
+        const index = current.findIndex(inv => inv == this.isSelect[0]);
+        current[index].factstatusId = 'IMP';
+        this.dataFilter.load(current);
+        this.dataFilter.refresh();
+      }
+      // this.getAllComer();
       this.removeSelect();
       this.alert('success', 'Cambio a vehiculos tractocamión', '');
     }
@@ -1477,6 +1575,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async removeSelect() {
+    // DESELECCIONA
     const data: any[] = await this.dataFilter.getAll();
     const event = data.length > 0 ? data[0].eventId : null;
 
@@ -1579,6 +1678,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     } else if (pTipo == 11 && psubtipo == 1) {
       this.getReport('RCOMERCONSENTVEH', data);
     } else if (pTipo == 11 && psubtipo == 2) {
+      // PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE AERONAVES
       this.getReport('RCOMERCONSENTBDCA', data);
     } else if (pTipo == 11 && psubtipo == 3) {
       this.getReport('RCOMERCONSENTSBD', data);
@@ -1699,7 +1799,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     return firstValueFrom(
       this.comerInvoice.update(data).pipe(
         map(() => true),
-        catchError(() => of(true))
+        catchError(() => of(false))
       )
     );
   }
@@ -1715,7 +1815,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   visualizarCE() {
     if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Favor de seleccionar una factura');
+      this.alert('warning', 'Favor de seleccionar una factura', '');
       return;
     }
 
@@ -1732,7 +1832,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   visualizarCR() {
     if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Favor de seleccionar una factura');
+      this.alert('warning', 'Favor de seleccionar una factura', '');
       return;
     }
 
@@ -1751,13 +1851,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const num = this.selectInovice();
     const { delegation } = this.form.value;
     if (num == 0 && !delegation) {
+      // -- TODOS LAS CARTAS DE RESPONSABILIDAD
+      this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
       this.impresionCardEnt(1);
+      this.removeSelect();
     } else if (num == 1 && !delegation) {
+      // -- SOLO CARTAS DE RESPONSABILIDAD SELECCIONADOS DISCONTINUOS
       this.impresionCardEnt(0);
     } else if (num == 0 && delegation) {
+      // -- CARTAS DE RESPONSABILIDAD SELECCIONADOS DE UNA REGIONAL
+      this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
       this.impresionCardEnt(1);
+      this.removeSelect();
     }
   }
 
@@ -1777,52 +1884,51 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async actMatricula() {
-    if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Favor de seleccionar una factura');
+    if (!this.rowInvoice) {
+      this.alert('warning', 'Favor de seleccionar una factura', '');
       return;
     }
 
-    const data = this.isSelect[0];
+    this.btnLoading9 = true;
+    // const data = this.isSelect[0];
+    const data = this.rowInvoice;
 
     if (data.factstatusId == 'PREF') {
-      const data = await this.dataFilter2.getAll();
+      const data2 = await this.dataFilter2.getAll();
 
-      if (data[0].modmandato ?? false) {
+      if (data2[0].modmandato ?? false) {
         const exist = await this.exist();
 
         if (exist > 0) {
-          const count = await this.countGood(data[0].goodNot);
+          const count = await this.countGood(data2[0].goodNot);
 
           if (count > 0) {
             this.goodProccess
-              .updateVal5({ val5: data[0].modmandato }, data[0].goodNot)
+              .updateVal5({ val5: data2[0].modmandato }, data2[0].goodNot)
               .subscribe({
                 next: () => {
                   this.alert('success', 'Matriícula ha sido actualizada', '');
                   this.getComerDetInovice();
+                  this.btnLoading9 = false;
+                  this.rowInvoice = null;
                 },
                 error: err => {
-                  this.alert('error', 'Error', err.error.message);
+                  this.btnLoading9 = false;
+                  this.alert('error', err.error.message, '');
                 },
               });
           } else {
-            this.alert(
-              'warning',
-              'Atención',
-              'Bien no válido para realizar el cambio'
-            );
+            this.alert('warning', 'Bien no válido para realizar el cambio', '');
           }
         } else {
-          this.alert(
-            'warning',
-            'Atención',
-            'Usuario inválido para realizar el cambio'
-          );
+          this.alert('warning', 'Usuario inválido para realizar el cambio', '');
         }
       } else {
-        this.alert('warning', 'Atención', 'Debe ingresar la Matrícula');
+        this.btnLoading9 = false;
+        this.alert('warning', 'Debe ingresar la Matrícula', '');
       }
     } else {
+      this.btnLoading9 = false;
       this.alert(
         'warning',
         'Atención',
@@ -1872,7 +1978,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (this.selectInovice() == 1) {
       window.open('http://facturacionelec.sae.gob.mx/Log.aspx', '_blank');
     } else {
-      this.alert('warning', 'Atención', 'Debe seleccionar un evento');
+      this.alert('warning', 'Debe seleccionar un evento', '');
     }
   }
 
@@ -1909,16 +2015,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async imprimeInvoice() {
     if (this.selectInovice() == 0) {
-      this.alert('warning', 'Atención', 'Debes seleccionar algún evento');
+      this.alert('warning', 'Debes seleccionar algún evento', '');
       return;
     }
-
-    if (!this.isSelect[0].Invoice) {
-      this.alert(
-        'warning',
-        'Atención',
-        'No ha capturado el folio de la factura'
-      );
+    if (!this.rowInvoice) {
+      this.alert('warning', 'Debe seleccionar una factura', '');
+      return;
+    }
+    if (!this.rowInvoice.Invoice) {
+      this.alert('warning', 'No ha capturado el folio de la factura', '');
       return;
     }
 
@@ -1928,24 +2033,31 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async impresionInvoice() {
-    for (let invoice of this.isSelect) {
-      //revisar con procedimiento pup_rep_facturas_mas
-      this.callReport(
-        Number(invoice.Type),
-        1,
-        null,
-        1,
-        invoice.eventId,
-        invoice.billId,
-        invoice.impressionDate
-      );
+    // for (let invoice of this.isSelect) {
+    let invoice = this.rowInvoice;
+    //revisar con procedimiento pup_rep_facturas_mas
+    this.callReport(
+      Number(invoice.Type),
+      1,
+      null,
+      1,
+      invoice.eventId,
+      invoice.billId,
+      invoice.impressionDate
+    );
+
+    invoice.factstatusId = 'IMP';
+    delete invoice.delegation;
+    let resp = await this.updateInvoice(invoice);
+    if (resp) {
       const current: any[] = await this.dataFilter.getAll();
       const index = current.findIndex(inv => inv == this.isSelect[0]);
       current[index].factstatusId = 'IMP';
       this.dataFilter.load(current);
       this.dataFilter.refresh();
-      break;
     }
+    // break;
+    // }
   }
 
   async readParameter() {
@@ -1992,7 +2104,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   clientSend() {
     this.alertQuestion(
       'question',
-      'Se enviara el nuevo CFDI para Atención a Clientes',
+      'Se enviará el nuevo CFDI para Atención a Clientes',
       '¿Desea continuar?'
     ).then(answer => {
       if (answer.isConfirmed) {
@@ -2218,6 +2330,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.form.get('refactura').patchValue(data.rebill);
   }
 
+  // EXPORTAR A EXCEL --- Falta optimizar -- //
   async exportData() {
     const data: any[] = await this.dataFilter.getAll();
 
@@ -2226,6 +2339,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       return;
     }
 
+    if (this.isSelect.length == 0) {
+      this.alert('warning', 'Debe seleccionar facturas a exportar', '');
+      return;
+    }
+
+    this.btnLoading13 = true;
     await this.markProcess('EX', null);
     //update los seleccionados
 
@@ -2238,8 +2357,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         downloadLink.target = '_blank';
         downloadLink.click();
         downloadLink.remove();
+        this.btnLoading13 = false;
+        this.alert('success', 'Archivo descargado correctamente', '');
       },
       error: () => {
+        this.btnLoading13 = false;
         this.alert(
           'error',
           'Ha ocurrio un fallo en la exportación del archivo',
@@ -2293,32 +2415,32 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (cont == 1 && aux_val_liq == 0) {
       this.alert(
         'warning',
-        'Atención',
-        `No se generara el folio de la factura. El lote ${
+        'No se generara el folio de la factura',
+        `El lote ${
           this.isSelect[this.isSelect.length - 1].batchId
         } no ha sido afectado`
       );
     } else if (cont > 1 && aux_val_liq == 0) {
       this.alert(
         'warning',
-        'Atención',
-        `${cont} facturas no pueden ser foliadas, sus lotes no han sido afectados`
+        `${cont} facturas no pueden ser foliadas`,
+        `Sus lotes no han sido afectados`
       );
     }
 
     if (contg == 1 && aux_valgasto == 1) {
       this.alert(
         'warning',
-        'Atención',
-        `No se generara el folio de la factura. El lote ${
+        'No se generara el folio de la factura',
+        `El lote ${
           this.isSelect[this.isSelect.length - 1].batchId
         } no cumple las validaciones de los montos(chatarra)`
       );
     } else if (cont > 1 && aux_val_liq > 1) {
       this.alert(
         'warning',
-        'Atención',
-        `${contg} facturas no pueden ser foliadas, no cumplen las validaciones de los montos(chatarra)`
+        `${contg} facturas no pueden ser foliadas`,
+        `no cumplen las validaciones de los montos(chatarra)`
       );
     }
 
@@ -2520,5 +2642,30 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   CancelInvoice() {
     this.parameter.autorizo = 0;
     this.isVisibleField(0);
+  }
+
+  optXLote: any;
+  valSortBy: boolean = false;
+  changeOpt(event: any) {
+    if (event == 1) this.paramsList.getValue()['sortBy'] = `batchId:DESC`;
+    if (event == 2)
+      this.paramsList.getValue()['sortBy'] = `delegationNumber:DESC`;
+    if (event == 4) this.paramsList.getValue()['sortBy'] = `Invoice:DESC`;
+
+    this.valSortBy = true;
+    if (!event) this.valSortBy = false;
+
+    this.optXLote = this.paramsList.getValue()['filter.batchId'];
+    console.log('this.xLote.value', this.xLote.value);
+    if (!this.xLote.value) {
+      if (this.paramsList.getValue()['filter.batchId'])
+        delete this.paramsList.getValue()['filter.batchId'];
+    } else {
+      if (this.optXLote)
+        this.paramsList.getValue()['filter.batchId'] = `$eq:${this.optXLote}`;
+    }
+    if (!this.paramsList.getValue()['filter.eventId']) return;
+
+    this.getAllComer();
   }
 }

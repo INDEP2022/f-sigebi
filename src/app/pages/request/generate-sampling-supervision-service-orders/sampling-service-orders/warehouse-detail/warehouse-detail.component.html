@@ -31,7 +31,7 @@
     <div>
       <form [formGroup]="searchForm" class="form-material">
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <form-field
               [control]="searchForm.get('organization')"
               label="No&#46; Almac&eacute;n">
@@ -41,6 +41,7 @@
                 formControlName="organization" />
             </form-field>
           </div>
+
           <div class="col-md-3">
             <form-field
               [control]="searchForm.get('postalCode')"
@@ -51,16 +52,16 @@
                 formControlName="postalCode" />
             </form-field>
           </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-4">
+
+          <div class="col-md-3">
             <form-field
               [control]="searchForm.get('name')"
               label="Nombre Almac&eacute;n">
               <input type="text" class="form-control" formControlName="name" />
             </form-field>
           </div>
-          <div class="col-md-4">
+
+          <div class="col-md-3">
             <form-field
               [control]="searchForm.get('address1')"
               label="Direcci&oacute;n">
@@ -71,51 +72,49 @@
             </form-field>
           </div>
         </div>
+        <!--
+        
+        -->
+        <div class="row">
+          <div class="d-flex justify-content-end">
+            <div class="p-2">
+              <button class="btn btn-primary btn-sm active" (click)="search()">
+                Buscar <i class="bx bx-search-alt-2"></i>
+              </button>
+            </div>
+            <div class="p-2">
+              <button class="btn btn-danger btn-sm active" (click)="clean()">
+                Limpiar <i class="bx bx-reset"></i>
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
-    <div class="row pt-2">
-      <div class="d-flex justify-content-end">
-        <div class="p-2">
-          <button class="btn btn-primary btn-sm active" (click)="search()">
-            Buscar <i class="bx bx-search-alt-2"></i>
-          </button>
-        </div>
-        <div class="p-2">
-          <button class="btn btn-danger btn-sm active" (click)="clean()">
-            Limpiar <i class="bx bx-reset"></i>
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
-  <div class="row">
-    <div class="col-md-12 d-flex">
-      <div class="mr-auto p-2"></div>
-      <div class="p-2">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="save()">
-          Guardar Selección
-          <i aria-hidden="true" class="fa fa-save"></i>
-        </button>
-      </div>
-    </div>
-  </div>
+
   <div id="warehouse">
     <div class="row pt-4">
-      <div class="col-md-12">
-        <ng-scrollbar track="all" style="min-height: 300px; border: none">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              (rowSelect)="rowSelect($event)"
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="paragraphs">
-            </ng2-smart-table>
-          </div>
-        </ng-scrollbar>
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="save()">
+            Guardar Selección
+            <i class="fa fa-save"></i>
+          </button>
+        </div>
       </div>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          (rowSelect)="rowSelect($event)"
+          [attr.class]="'table-responsive'"
+          [settings]="settings"
+          [source]="paragraphs">
+        </ng2-smart-table>
+      </div>
+
       <app-pagination
         [params]="params"
         [totalItems]="totalItems"></app-pagination>

@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ISamplingOrderService } from 'src/app/core/models/ms-order-service/sampling-order-service.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -31,6 +32,7 @@ export class ListServiceOrdersComponent
 {
   @Input() orders: any[];
   @Input() SampleOrderId: number = null;
+  @Input() reloadInfo: boolean;
   //sampleOrderId: number = 3;
   paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -53,12 +55,13 @@ export class ListServiceOrdersComponent
       selectMode: 'multi',
       columns: LIST_ORDERS_SELECTED_COLUMNS,
     };
-
-    this.getSamplingOrder();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.setOrderService();
+    //this.setOrderService();
+    if (this.SampleOrderId > 0) this.getSamplingOrder();
+
+    if (this.reloadInfo) this.getSamplingOrder();
   }
 
   setOrderService() {
@@ -126,16 +129,27 @@ export class ListServiceOrdersComponent
   }
 
   uploadExpedient() {
-    if (this.rowSelected.length == 0 || this.rowSelected.length > 1) {
-      this.onLoadToast('info', 'Seleccione solo un registro');
-      return;
+    let request: string = '';
+    if (this.rowSelected.length > 0) {
+      this.rowSelected.map(item => {
+        request += `${item.requestId} `;
+      });
+      let config = {
+        ...MODAL_CONFIG,
+        class: 'modalSizeXL modal-dialog-centered',
+      };
+      config.initialState = {
+        request: request,
+        callback: () => {},
+      };
+      this.modalService.show(UploadExpedientServiceOrderFormComponent, config);
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Acción Invalida',
+        'Seleccione al menos un registro'
+      );
     }
-
-    this.openModal(
-      UploadExpedientServiceOrderFormComponent,
-      'sample-request',
-      this.rowSelected
-    );
   }
 
   openModal(component: any, typeComponent?: string, data?: any[]) {
@@ -170,7 +184,7 @@ export class ListServiceOrdersComponent
         },
         error: error => {
           reject('error');
-          console.log(error);
+
           this.onLoadToast(
             'error',
             'No se pudo guardar las ordenes de servicio'
@@ -189,9 +203,11 @@ export class ListServiceOrdersComponent
         let body: any = [];
         const result = resp.data.map(async (item: any) => {
           const ordServ: any = await this.getOrderService(item.orderServiceId);
+
           body.push({
             orderServiceId: ordServ.id,
             orderServiceFolio: ordServ.serviceOrderFolio,
+            fileId: ordServ.fileId,
             orderServiceType: ordServ.serviceOrderType,
             contractNumber: ordServ.contractNumber,
             requestId: ordServ.applicationId,
@@ -204,6 +220,11 @@ export class ListServiceOrdersComponent
           this.totalItems = resp.count;
           this.loading = false;
         });
+      },
+      error: () => {
+        this.paragraphs = new LocalDataSource();
+        this.loading = false;
+        this.totalItems = 0;
       },
     });
   }
@@ -230,9 +251,10 @@ export class ListServiceOrdersComponent
           },
           error: error => {
             reject(error);
-            console.log(error);
+
             this.onLoadToast(
-              'error',
+              'warning',
+              'Acción Invalida',
               `No se pudo eliminar la orden de servicio No. ${orderServiceId}`
             );
           },

@@ -244,7 +244,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
     expedientes.forEach(async (x, index) => {
       const DESCR =
         'ID GASTO: ' +
-        this.expenseNumber +
+        this.expenseNumber.value +
         ' CANCELACION DE VENTA POR SOLICITUD DE AUTORIDAD';
       const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${x}&sortBy=wheelNumber:DESC`;
       const notifications = await firstValueFrom(
@@ -267,6 +267,8 @@ export class ScanFilesComponent extends BasePage implements OnInit {
         if (!createDocument) {
           this.alert('error', 'No se pudo generar el folio de escaneo', '');
           return;
+        } else {
+          this.alert('success', 'Folio generado correctamente', '');
         }
         this.folioUniversal.setValue(createDocument.id);
       }

@@ -396,6 +396,9 @@ ng-scrollbar {
   --scrollbar-thumb-color: rgba(94, 175, 255, 0.5);
   --scrollbar-thumb-hover-color: dodgerblue;
   --scrollbar-border-radius: 4px;
+  ng2-smart-table {
+    padding-right: 12px;
+  }
 }
 
 .dropdown-item.bg-primary {
@@ -884,4 +887,8 @@ textarea + .form-bar {
 
 #testBottomMargin {
   margin-bottom: 0px !important;
+}
+
+.label {
+  margin-top: 1px;
 }
