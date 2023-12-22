@@ -17,12 +17,11 @@ export class GuidelinesService extends HttpService {
     this.microservice = GuidelinesEndpoints.BaseGuidelines;
   }
 
-  getGuidelines(id?: any, params?: ListParams): Observable<IListResponse<any>> {
-    return this.post<IListResponse<any>>(
-      'application/get-EventData',
-      id,
-      params
-    );
+  getGuidelines(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGuidelines>> {
+    const route = GuidelinesEndpoints.guidelines;
+    return this.get<IListResponse<IGuidelines>>(route, params);
   }
 
   getAllGuidelines(
