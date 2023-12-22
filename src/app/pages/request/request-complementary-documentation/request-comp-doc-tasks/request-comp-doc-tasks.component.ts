@@ -41,7 +41,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override selectGoodNotForEyeVisit: boolean;
   protected override selectGoodsNot: boolean;
   protected override editReport: boolean;
@@ -160,7 +161,6 @@ export class RequestCompDocTasksComponent
     valvisits: false, //VALIDAR VISITA OCULAR
     vercom: false, //VERIFICAR CUMPLIMIENTO
     dictudData: false, //DATOS DEL DICTAMEN
-    dictudDataReg: false, //DATOS DEL DICTAMENT REGISTRAR
     registerAppointment: false, //REGISTRAR CITA
     orderEntry: false, //ORDEN DE INGRESO
   };
@@ -291,7 +291,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
     //validar nextTurn
@@ -854,7 +854,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1202,10 +1202,6 @@ export class RequestCompDocTasksComponent
         }
         break;
       case 'delivery-notify-request':
-        if (!this.validate.dictudData) {
-          this.showWarning('Registre datos del dictamen');
-          return false;
-        }
         if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
@@ -1216,11 +1212,10 @@ export class RequestCompDocTasksComponent
         }
         break;
       case 'register-taxpayer-date':
-        if (!this.validate.registerAppointment) {
+        if (!this.validate.dictudData) {
           this.showWarning('Registre datos de la cita');
           return false;
         }
-        //REGISTRO DE CITA
         if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
@@ -1363,7 +1358,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1379,7 +1374,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1445,7 +1440,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
   //Agregar servicios de validacion de turnado
   //Reportes dinamicos
