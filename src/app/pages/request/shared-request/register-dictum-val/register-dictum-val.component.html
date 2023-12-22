@@ -4,7 +4,7 @@
       <button
         class="btn btn-primary btn-sm active"
         (click)="save()"
-        [disabled]="!validateForm.touched || validateForm.invalid">
+        [disabled]="validateForm.invalid">
         <i class="bx bx-save mr-1 float-icon"></i>Guardar
       </button>
     </div>
@@ -13,25 +13,28 @@
   <div class="row mt-3">
     <div class="col-md-4">
       <form-field
-        [control]="validateForm.get('dictumNo')"
+        [control]="validateForm.get('opinionNumber')"
         label="N&uacute;mero Dictamen">
-        <input type="number" formControlName="dictumNo" class="form-control" />
+        <input
+          type="number"
+          formControlName="opinionNumber"
+          class="form-control" />
       </form-field>
     </div>
     <div class="col-md-4">
       <form-field
-        [control]="validateForm.get('courtroom')"
+        [control]="validateForm.get('veredict')"
         label="Juzgado &#47; Sala">
-        <input type="number" formControlName="courtroom" class="form-control" />
+        <input type="number" formControlName="veredict" class="form-control" />
       </form-field>
     </div>
     <div class="col-md-4">
       <form-field
-        [control]="validateForm.get('judmentNullity')"
+        [control]="validateForm.get('nullityTrial')"
         label="Juicio Nulidad">
         <input
           type="number"
-          formControlName="judmentNullity"
+          formControlName="nullityTrial"
           class="form-control" />
       </form-field>
     </div>

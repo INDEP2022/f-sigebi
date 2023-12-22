@@ -1,0 +1,32 @@
+export interface ICompensation {
+  requestId?: string | null;
+  opinionNumber?: string | null;
+  veredict?: string | null;
+  nullityTrial?: string | null;
+  adminResolutionNo?: string | null;
+  payOrderNo?: string | null;
+  taxpayerDomicile?: string | null;
+  fiscalDomicile?: string | null;
+  legalRepresentative?: string | null;
+  satCopy?: string | null;
+  opinionDate?: string | null;
+  observations?: string | null;
+  amountToPay?: number | null;
+  revisionDate?: string | null;
+  revisionDate2?: string | null;
+  creationUser?: string | null;
+  modificationUser?: string | null;
+  version?: number | null;
+  appoitmentDate?: string | null;
+  appoitmentPlace?: string | null;
+  orderDate?: Date | null;
+  administrativeUnit?: string | null;
+  thirdEsp?: string | null;
+  paymentWay?: string | null;
+  concept?: string | null;
+  amount?: number | null;
+  refNo?: string | null;
+  bankInstitution?: string | null;
+  proccessName?: string | null;
+  closedLetter?: string | null;
+}

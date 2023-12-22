@@ -17,6 +17,7 @@ import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
@@ -29,6 +30,13 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   @Output() onSave = new EventEmitter<boolean>();
   @Input() requestId: number;
   maxDate: Date = new Date();
+
+  data = [
+    { id: 1, name: 'UNIDAD ADMINISTRATIVA 1' },
+    { id: 2, name: 'UNIDAD ADMINISTRATIVA 2' },
+  ];
+
+  selectAdminUnit = new DefaultSelect();
 
   private entryOrderService = inject(orderentryService);
   private requestService = inject(RequestService);
@@ -50,9 +58,11 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.selectAdminUnit = new DefaultSelect(this.data, 2);
+    this.prepareForm();
+
     this.getAllOrderEntry();
     this.getRequestInfo();
-    this.prepareForm();
   }
 
   getAllOrderEntry() {
@@ -73,7 +83,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
             this.id = resp.id;
             this.onSave.emit(true);
             this.entryOrderForm.patchValue({
-              administrativeUnit: resp.unitadministrative,
+              administrativeUnit: parseInt(resp.unitadministrative + ''),
               orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
               concept: resp.concept,
               paymentMethod: resp.shapePay,
@@ -138,34 +148,27 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   }
 
   createOrderEntry(orderGood: Object) {
-    return new Promise((resolve, reject) => {
-      this.entryOrderService.createOrderEntry(orderGood).subscribe({
-        next: resp => {
-          resolve(resp);
-          this.onSave.emit(true);
-        },
-        error: error => {
-          console.log(error);
-          reject(error);
-          this.onLoadToast('error', 'No se pudo actualizar la order de bien');
-        },
-      });
+    this.entryOrderService.createOrderEntry(orderGood).subscribe({
+      next: resp => {
+        this.onSave.emit(true);
+        this.getRequestInfo();
+        this.onLoadToast('success', 'Orden de bien creada con éxito');
+      },
+      error: error => {
+        this.onLoadToast('error', 'No se pudo actualizar la order ingreso');
+      },
     });
   }
 
   updateOrderEntry(orderGood: IOrderEntry) {
-    return new Promise((resolve, reject) => {
-      this.entryOrderService.updateOrderEntry(orderGood).subscribe({
-        next: resp => {
-          resolve(resp);
-          this.onSave.emit(true);
-        },
-        error: error => {
-          console.log(error);
-          reject(error);
-          this.onLoadToast('error', 'No se pudo actualizar la order de bien');
-        },
-      });
+    this.entryOrderService.updateOrderEntry(orderGood).subscribe({
+      next: resp => {
+        this.onSave.emit(true);
+        this.onLoadToast('success', 'Orden de bien actualizada con éxito');
+      },
+      error: error => {
+        this.onLoadToast('error', 'No se pudo actualizar la order ingreso');
+      },
     });
   }
 

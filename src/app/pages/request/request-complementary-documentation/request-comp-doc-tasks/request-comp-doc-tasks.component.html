@@ -329,7 +329,9 @@
           *ngIf="registAppointment"
           heading="Registro de Cita"
           id="appointmentTab">
-          <app-register-appointment-tab></app-register-appointment-tab>
+          <app-register-appointment-tab
+            (onSave)="onSaveOrder($event)"
+            [requestId]="requestId"></app-register-appointment-tab>
         </tab>
         <tab *ngIf="orderEntry" heading="Orden Ingreso" id="entryOrderTab">
           <app-entry-order
@@ -408,6 +410,7 @@
 
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
           <app-register-dictum-val
+            [requestId]="requestId"
             (onSave)="onSaveDictumData($event)"></app-register-dictum-val>
         </tab>
         <tab *ngIf="dictumRegister" heading="Datos del Dictamen" id="dictumTab">
