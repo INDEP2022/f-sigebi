@@ -60,33 +60,33 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     {
       id: 1,
       guideline: 'ACTA DE TRANSFERENCIA INDEP',
-      firstRevision: 'SI',
-      firstRevisionObserv: 'EJEMPLO OBSERVACION 1',
+      firstRevision: 'N/A',
+      firstRevisionObserv: '',
       secondRevision: 'N/A',
-      secondRevisionObserv: 'EJEMPLO OBSERVACION 2',
+      secondRevisionObserv: '',
     },
     {
       id: 2,
       guideline: 'SOLICITUD DE PAGO RESARCIMIENTO (INSTRUCCIÓN DE PAGO ANCEA)',
-      firstRevision: '',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
     {
       id: 3,
       guideline: 'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
-      firstRevision: '',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
     {
       id: 4,
       guideline: 'DOCUMENTO EN EL CUAL SE INDICA EL MONTO A PAGAR',
-      firstRevision: '',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
   ];
@@ -147,7 +147,6 @@ export class GuidelinesComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getData();
     this.getGuidelines();
   }
 
@@ -159,8 +158,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     });
   }
 
-  getData() {
-    this.guidelinesColumns = this.guidelinesData;
+  getData(data) {
+    this.guidelinesColumns = data;
     this.totalItems = this.guidelinesColumns.length;
   }
 
@@ -189,7 +188,38 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   save() {
     // Llamar servicio para guardar informacion
     console.log(this.guidelinesForm.value, this.guidelinesColumns);
-    this.saveGuidelines();
+
+    this.guidelinesColumns.forEach(async (element: any) => {
+      let obj = this.getObject(element);
+      await this.saveGuidelines(obj);
+    });
+
+    this.msgModal(
+      'Se guardarón los cambios'.concat(),
+      'Solicitud Guardada',
+      'success'
+    );
+
+    //this.saveGuidelines();
+  }
+
+  getObject(obj) {
+
+    const user: any = this.authService.decodeToken();
+
+    return {
+      applicationId: this.requestId,
+      lineamentId: obj.id,
+      meetsRevision1: obj.firstRevision,
+      meetsRevision2: obj.secondRevision,
+      missingActionsRev1: obj.firstRevisionObserv,
+      missingActionsRev2: obj.secondRevisionObserv,
+      version: "1",
+      userCreation: user.username,
+      dateCreation: moment(new Date()).format('YYYY-MM-DD'),
+      userModification: user.username,
+      dateModification: moment(new Date()).format('YYYY-MM-DD'),
+    }
   }
 
   msgModal(message: string, title: string, typeMsg: any) {
@@ -218,62 +248,56 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         this.loadGuidelines = resp.data;
 
         if (this.loadGuidelines.length > 0) {
+
+          this.guidelinesData.forEach(element => {
+
+            let item = this.loadGuidelines.find(x => x.lineamentId == element.id);
+
+            element.firstRevision = item.meetsRevision1;
+            element.secondRevision = item.meetsRevision2;
+            element.firstRevisionObserv = item.missingActionsRev1;
+            element.secondRevisionObserv = item.missingActionsRev2;
+
+          });
+
           this.guidelinesForm.patchValue({
-            firstRevisionDate: new Date(this.loadGuidelines[0].meetsRevision1),
-            secondRevisionDate: new Date(this.loadGuidelines[0].meetsRevision2),
+            firstRevisionDate: new Date(this.loadGuidelines[0].dateCreation),
+            secondRevisionDate: new Date(this.loadGuidelines[0].dateModification),
             observations: this.loadGuidelines[0].missingActionsRev1,
           });
         }
 
-        console.log(resp);
+        this.getData(this.guidelinesData);
+
       },
+      error: err => {
+        this.getData(this.guidelinesData);
+      }
     });
   }
 
-  saveGuidelines() {
 
-    let obj = this.guidelinesForm.getRawValue();
-    const user: any = this.authService.decodeToken();
+  saveGuidelines(object) {
 
-    let object: any = {
-      applicationId: this.requestId,
-      lineamentId: 2,
-      meetsRevision1: moment(obj.firstRevisionDate).format('YYYY-MM-DD'),
-      meetsRevision2: moment(obj.secondRevisionDate).format('YYYY-MM-DD'),
-      missingActionsRev1: obj.observations,
-      missingActionsRev2: obj.observations,
-      version: "1",
-      userCreation: user.username,
-      dateCreation: moment(new Date()).format('YYYY-MM-DD'),
-      userModification: user.username,
-      dateModification: moment(new Date()).format('YYYY-MM-DD'),
-    };
-
-    if (isNullOrEmpty(object.id)) {
-      this.guidelinesService.createGuidelines(object).subscribe({
-        next: resp => {
-          console.log(resp);
-          this.msgModal(
-            'Se guardarón los cambios'.concat(),
-            'Solicitud Guardada',
-            'success'
-          );
-          this.onSave.emit(true);
-        }, error: err => {
-          console.log(err);
-          this.msgModal(
-            err.error.message,
-            'Error',
-            'error'
-          );
-        }
+    if (this.loadGuidelines.length == 0) {
+      return new Promise((resolve, reject) => {
+        this.guidelinesService.createGuidelines(object).subscribe({
+          next: resp => {
+            resolve(resp);
+          }, error: err => {
+            reject(err);
+          }
+        });
       });
     } else {
-      this.guidelinesService.updateGuidelines(object).subscribe({
-        next: resp => {
-          console.log(resp);
-
-        },
+      return new Promise((resolve, reject) => {
+        this.guidelinesService.updateGuidelines(object).subscribe({
+          next: resp => {
+            resolve(resp);
+          }, error: err => {
+            reject(err);
+          }
+        });
       });
     }
   }
