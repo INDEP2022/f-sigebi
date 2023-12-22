@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -12,6 +12,8 @@ import { GuidelinesRevisionViewComponent } from './guidelines-revision-view/guid
 import { GuidelinesRevisionComponent } from './guidelines-revision/guidelines-revision.component';
 import { GuidelinesService } from 'src/app/core/services/guidelines/guideline.service';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-guidelines',
@@ -54,8 +56,9 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     },
   };
 
-  guidelinesTestData = [
+  guidelinesData = [
     {
+      id: 1,
       guideline: 'ACTA DE TRANSFERENCIA INDEP',
       firstRevision: 'SI',
       firstRevisionObserv: 'EJEMPLO OBSERVACION 1',
@@ -63,6 +66,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       secondRevisionObserv: 'EJEMPLO OBSERVACION 2',
     },
     {
+      id: 2,
       guideline: 'SOLICITUD DE PAGO RESARCIMIENTO (INSTRUCCIÓN DE PAGO ANCEA)',
       firstRevision: '',
       firstRevisionObserv: '',
@@ -70,14 +74,15 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       secondRevisionObserv: '',
     },
     {
-      guideline:
-        'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
+      id: 3,
+      guideline: 'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
       firstRevision: '',
       firstRevisionObserv: '',
       secondRevision: '',
       secondRevisionObserv: '',
     },
     {
+      id: 4,
       guideline: 'DOCUMENTO EN EL CUAL SE INDICA EL MONTO A PAGAR',
       firstRevision: '',
       firstRevisionObserv: '',
@@ -85,6 +90,11 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       secondRevisionObserv: '',
     },
   ];
+
+  loadGuidelines = [];
+
+  private authService = inject(AuthService);
+
 
   constructor(private fb: FormBuilder,
     private guidelinesService: GuidelinesService) {
@@ -150,7 +160,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   getData() {
-    this.guidelinesColumns = this.guidelinesTestData;
+    this.guidelinesColumns = this.guidelinesData;
     this.totalItems = this.guidelinesColumns.length;
   }
 
@@ -177,14 +187,9 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   save() {
-    this.msgModal(
-      'Se guardarón los cambios'.concat(),
-      'Solicitud Guardada',
-      'success'
-    );
     // Llamar servicio para guardar informacion
     console.log(this.guidelinesForm.value, this.guidelinesColumns);
-    this.onSave.emit(true);
+    this.saveGuidelines();
   }
 
   msgModal(message: string, title: string, typeMsg: any) {
@@ -210,21 +215,58 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     params['filter.applicationId'] = `$eq:${this.requestId}`;
     this.guidelinesService.getGuidelines(params).subscribe({
       next: resp => {
-        console.log(resp);
+        this.loadGuidelines = resp.data;
 
+        if (this.loadGuidelines.length > 0) {
+          this.guidelinesForm.patchValue({
+            firstRevisionDate: new Date(this.loadGuidelines[0].meetsRevision1),
+            secondRevisionDate: new Date(this.loadGuidelines[0].meetsRevision2),
+            observations: this.loadGuidelines[0].missingActionsRev1,
+          });
+        }
+
+        console.log(resp);
       },
     });
   }
 
   saveGuidelines() {
-    let object: any = {};
+
+    let obj = this.guidelinesForm.getRawValue();
+    const user: any = this.authService.decodeToken();
+
+    let object: any = {
+      applicationId: this.requestId,
+      lineamentId: 2,
+      meetsRevision1: moment(obj.firstRevisionDate).format('YYYY-MM-DD'),
+      meetsRevision2: moment(obj.secondRevisionDate).format('YYYY-MM-DD'),
+      missingActionsRev1: obj.observations,
+      missingActionsRev2: obj.observations,
+      version: "1",
+      userCreation: user.username,
+      dateCreation: moment(new Date()).format('YYYY-MM-DD'),
+      userModification: user.username,
+      dateModification: moment(new Date()).format('YYYY-MM-DD'),
+    };
 
     if (isNullOrEmpty(object.id)) {
       this.guidelinesService.createGuidelines(object).subscribe({
         next: resp => {
           console.log(resp);
-
-        },
+          this.msgModal(
+            'Se guardarón los cambios'.concat(),
+            'Solicitud Guardada',
+            'success'
+          );
+          this.onSave.emit(true);
+        }, error: err => {
+          console.log(err);
+          this.msgModal(
+            err.error.message,
+            'Error',
+            'error'
+          );
+        }
       });
     } else {
       this.guidelinesService.updateGuidelines(object).subscribe({
