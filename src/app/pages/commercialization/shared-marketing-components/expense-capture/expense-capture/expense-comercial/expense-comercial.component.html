@@ -31,6 +31,7 @@
                 formField="expenseNumber"
                 [service]="spentService"
                 [columnsType]="columns"
+                [hideFilterPlaceholder]="true"
                 id="expenseNumber"
                 title="Gastos del Área Comercial"
                 (selectRow)="fillForm($event)"></app-select-modal-table-shared>
