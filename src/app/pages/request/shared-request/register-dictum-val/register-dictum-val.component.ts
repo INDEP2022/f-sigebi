@@ -13,7 +13,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CompensationService } from 'src/app/core/services/compensation-option/compensation.option';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
@@ -54,9 +54,43 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   }
 
   prepareForm() {
-    this.dictumForm = this.fb.group({
-      datetime: [null, [Validators.required]],
-      place: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+
+    if (this.steap3) {
+      this.dictumForm = this.fb.group({
+        datetime: [null, [Validators.required]],
+        place: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      });
+    }
+
+    if (this.steap1) {
+      this.dictumForm = this.fb.group({
+        opinionNumber: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+        veredict: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+        nullityTrial: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      });
+    }
+
+    if (this.steap2) {
+      this.dictumForm = this.fb.group({
+        opinionNumber: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+        veredict: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+        nullityTrial: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+        contributor: [null, [Validators.pattern(STRING_PATTERN)]],
+        paymentAmount: [null],
+        dictumDate: [null],
+        adminiResolutionNo: [null],
+        paymentOrderNo: [null],
+        address1: [null, [Validators.pattern(STRING_PATTERN)]],
+        address2: [null, [Validators.pattern(STRING_PATTERN)]],
+        legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
+        requiredSatCopy: [null],
+      });
+    }
+
+    //Configurar cada paso con los campos que se van a mostrar
+    /*this.dictumForm = this.fb.group({
+      datetime: [null, [this.steap3 ? Validators.required : null]],
+      place: [null, [this.steap3 ? Validators.required : null]],
 
       opinionNumber: [null, [this.steap1 ? Validators.required : null]],
       veredict: [null, [this.steap1 ? Validators.required : null]],
@@ -72,7 +106,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       address2: [null, [Validators.pattern(STRING_PATTERN)]],
       legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
       requiredSatCopy: [null],
-    });
+    });*/
   }
 
   getAllCompensation() {
