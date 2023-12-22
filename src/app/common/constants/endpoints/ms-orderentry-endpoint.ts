@@ -6,3 +6,8 @@ export enum OrderEntryEndpoints {
   ORDER_SERVICE_PROVIDER = 'order-service-provider',
   CREDIT_NOTES = 'credit-notes',
 }
+
+export enum CompensationEndpoints {
+  BaseCompensation = 'compensationgood',
+  opinions = 'compensation-opinions',
+}

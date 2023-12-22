@@ -4,7 +4,7 @@
       <button
         class="btn btn-primary btn-sm active"
         (click)="save()"
-        [disabled]="!entryOrderForm.touched || entryOrderForm.invalid">
+        [disabled]="entryOrderForm.invalid">
         <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>Guardar
       </button>
     </div>
@@ -12,14 +12,14 @@
   <br />
   <div class="row mt-3">
     <div class="col-md-4">
-      <form-field
-        [control]="entryOrderForm.get('administrativeUnit')"
-        label="Unidad Administrativa">
-        <input
-          type="text"
-          formControlName="administrativeUnit"
-          class="form-control" />
-      </form-field>
+      <ngx-select
+        [form]="entryOrderForm"
+        control="administrativeUnit"
+        [data]="selectAdminUnit"
+        bindLabel="name"
+        [searchable]="false"
+        label="Unidad Administrativa"
+        value="id"></ngx-select>
     </div>
     <div class="col-md-4">
       <form-field

@@ -44,6 +44,10 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract orderView: boolean;
   protected abstract selectGoodsNot: boolean;
   protected abstract selectGoodNotForEyeVisit: boolean;
+  protected abstract steap1: boolean;
+  protected abstract steap2: boolean;
+  protected abstract steap3: boolean;
+  protected abstract isEdit: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -869,6 +873,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.signedReport = false;
         this.editReport = true;
 
+        this.steap1 = true;
+        this.steap2 = false;
+        this.steap3 = false;
+        this.isEdit = true;
+
         break;
 
       case 'delivery-notify-request':
@@ -887,6 +896,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.signedReport = true;
         this.editReport = true;
 
+        this.steap1 = true;
+        this.steap2 = true;
+        this.steap3 = false;
+        this.isEdit = false;
+
         break;
 
       case 'register-taxpayer-date':
@@ -900,6 +914,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.turnReq = true;
 
+        this.steap1 = true;
+        this.steap2 = true;
+        this.steap3 = true;
+        this.isEdit = false;
         break;
 
       case 'register-pay-order':
@@ -912,6 +930,11 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.saveRequest = true;
         this.turnReq = true;
+
+        this.steap1 = true;
+        this.steap2 = true;
+        this.steap3 = false;
+        this.isEdit = false;
 
         break;
 
@@ -932,6 +955,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.reportId = REPORT_DOCUMENTS.ACTA_RESARCIMIENTO_ECONOMICO;
         this.signedReport = true;
         this.editReport = true;
+
+        this.steap1 = true;
+        this.steap2 = true;
+        this.steap3 = false;
+        this.isEdit = false;
         break;
 
       /*AMPARO*/

@@ -329,10 +329,15 @@
           *ngIf="registAppointment"
           heading="Registro de Cita"
           id="appointmentTab">
-          <app-register-appointment-tab></app-register-appointment-tab>
+          <app-register-dictum-val
+            [steap3]="steap3"
+            [requestId]="requestId"
+            (onSave)="onSaveDictumData($event)"></app-register-dictum-val>
         </tab>
         <tab *ngIf="orderEntry" heading="Orden Ingreso" id="entryOrderTab">
-          <app-entry-order></app-entry-order>
+          <app-entry-order
+            (onSave)="onSaveOrder($event)"
+            [requestId]="requestId"></app-entry-order>
         </tab>
         <tab *ngIf="orderView" heading="Orden Ingreso" id="entryOrderTab">
           <app-entry-order-view></app-entry-order-view>
@@ -356,7 +361,6 @@
           <div *ngIf="selectGoodsNot">
             <app-goods-not-transferred></app-goods-not-transferred>
           </div>
-
         </tab>
         <tab
           *ngIf="selectGoodForEyeVisit"
@@ -370,8 +374,6 @@
           </div>
         </tab>
 
-      
-        
         <tab
           heading="Verificar Cumplimiento de Bienes"
           *ngIf="verifyCompliance">
@@ -408,10 +410,17 @@
         </tab>
 
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
-          <app-register-dictum-val></app-register-dictum-val>
+          <app-register-dictum-val
+            [steap1]="steap1"
+            [requestId]="requestId"
+            (onSave)="onSaveDictumData($event)"></app-register-dictum-val>
         </tab>
         <tab *ngIf="dictumRegister" heading="Datos del Dictamen" id="dictumTab">
-          <app-register-dictum-inf></app-register-dictum-inf>
+          <app-register-dictum-val
+            [steap1]="steap1"
+            [steap2]="steap2"
+            [requestId]="requestId"
+            (onSave)="onSaveDictumData($event)"></app-register-dictum-val>
         </tab>
 
         <tab

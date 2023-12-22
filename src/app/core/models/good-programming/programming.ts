@@ -47,6 +47,7 @@ export interface Iprogramming {
   typeRelevantId: number;
   typeSignature: string;
   typeUser: string;
+  typeTransfer: string;
   validateGood: string;
   version: number;
 }
