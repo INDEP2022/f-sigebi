@@ -44,6 +44,9 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.steap1);
+    console.log(this.steap2);
+    console.log(this.steap3);
     this.prepareForm();
 
     this.getAllCompensation();
@@ -55,14 +58,11 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       datetime: [null, [Validators.required]],
       place: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
 
-      opinionNumber: [null, [Validators.required]],
-      veredict: [null, [Validators.required]],
-      nullityTrial: [null, [Validators.required]],
+      opinionNumber: [null, [this.steap1 ? Validators.required : null]],
+      veredict: [null, [this.steap1 ? Validators.required : null]],
+      nullityTrial: [null, [this.steap1 ? Validators.required : null]],
 
-      contributor: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       paymentAmount: [null],
       dictumDate: [null],
 
@@ -90,11 +90,13 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         next: resp => {
           if (!isNullOrEmpty(resp)) {
             this.respDoc = resp;
-            this.dictumForm.patchValue({
-              opinionNumber: resp.opinionNumber,
-              veredict: resp.veredict,
-              nullityTrial: resp.nullityTrial,
-            });
+            if (this.steap1 || this.steap2) {
+              this.dictumForm.patchValue({
+                opinionNumber: resp.opinionNumber,
+                veredict: resp.veredict,
+                nullityTrial: resp.nullityTrial,
+              });
+            }
           }
         },
       });
@@ -114,6 +116,15 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.respDoc = resp;
+          if (!isNullOrEmpty(resp)) {
+            this.respDoc = resp;
+            console.log(resp);
+            if (this.steap1 || this.steap2) {
+              this.dictumForm.patchValue({
+                contributor: resp.indicatedTaxpayer,
+              });
+            }
+          }
         },
       });
   }
