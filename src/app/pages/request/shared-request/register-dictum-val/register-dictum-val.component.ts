@@ -46,11 +46,11 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getRequestInfo();
-    this.getAllCompensation();
-    this.getAllOrderEntry();
-
     this.prepareForm();
+
+    this.getRequestInfo();
+    this.getAllOrderEntry();
+    this.getAllCompensation();
   }
 
   prepareForm() {
@@ -142,7 +142,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           if (!isNullOrEmpty(resp)) {
-            this.onSave.emit(true);
             this.dictumForm.patchValue({
               administrativeUnit: parseInt(resp.unitadministrative + ''),
               orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
@@ -170,7 +169,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: resp => {
-          let object = this.dictumForm.getRawValue();
+          this.respDoc = resp;
 
           if (!isNullOrEmpty(resp)) {
             this.dictumForm.patchValue({
@@ -245,9 +244,10 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
     if (isNullOrEmpty(this.respDoc)) {
       this.createCompensation(object);
+      this.getAllCompensation();
     } else {
-      this.getAllOrderEntry();
       this.updatedCompensation(object);
+      this.getAllOrderEntry();
     }
   }
 }
