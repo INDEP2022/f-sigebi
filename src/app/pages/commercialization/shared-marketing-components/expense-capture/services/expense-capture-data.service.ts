@@ -1221,7 +1221,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           : { data: [1] };
       if (AUX_INTERCAMBIO.data && AUX_INTERCAMBIO.data.length > 0) {
         let res = await this.ENVIAR_SIRSAE();
-
+        this.finishProcessSolicitud.next(false);
         if (this.formPayment.value !== 'INTERCAMBIO') {
           if (this.PDEVPARCIAL === 'S' || !this.PCANVTA) {
             let response = await this.alertQuestion(
@@ -1297,6 +1297,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       let validaciones = await this.VALIDACIONES_SOLICITUDI();
       if (validaciones) {
         let res = await this.ENVIAR_SIRSAEI();
+        this.finishProcessSolicitud.next(false);
         if (this.PCANVTA) {
           let response = await this.alertQuestion(
             res.result ? 'success' : 'error',
