@@ -116,10 +116,15 @@ export class NumeraireConversionAuctionsComponent
         error: err => {
           console.log(err);
           this.loader.load = false;
+          let errorMessage = err.error.message.includes(
+            'duplicate key value violates unique constraint'
+          )
+            ? 'Calculo ya realizado'
+            : err.error.message;
           this.alert(
             'error',
             'No se ha podido realizar el cálculo',
-            err.error.message
+            errorMessage
           );
         },
       });
