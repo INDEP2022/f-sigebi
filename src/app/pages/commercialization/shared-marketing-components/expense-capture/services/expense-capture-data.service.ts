@@ -1141,7 +1141,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           comment: this.comment.value,
           clkpv: this.form.get('clkpv').value,
           paymentWay: this.formPayment.value,
-          user: this.authService.decodeToken().preferred_username, // 'ASALAZAR'
+          user: 'ASALAZAR', // this.authService.decodeToken().preferred_username, //
           spentMonth: this.form.get('monthExpense').value ? 1 : null,
           spentMonth2: this.form.get('monthExpense2').value ? 2 : null,
           spentMonth3: this.form.get('monthExpense3').value ? 3 : null,
@@ -1333,7 +1333,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           comment: this.comment.value,
           clkpv: this.form.get('clkpv').value,
           paymentWay: this.formPayment.value,
-          user: this.authService.decodeToken().preferred_username,
+          user: 'ASALAZAR', // this.authService.decodeToken().preferred_username, //
           spentMonth: this.form.get('monthExpense').value ? 1 : null,
           spentMonth2: this.form.get('monthExpense2').value ? 2 : null,
           spentMonth3: this.form.get('monthExpense3').value ? 3 : null,
