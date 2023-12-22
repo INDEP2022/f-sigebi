@@ -13,6 +13,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { compensationService } from 'src/app/core/services/compensation-option/compensation.option';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
@@ -21,10 +22,17 @@ import { isNullOrEmpty } from '../../request-complementary-documentation/request
   styles: [],
 })
 export class RegisterDictumValComponent extends BasePage implements OnInit {
-  validateForm: FormGroup = new FormGroup({});
+  maxDate: Date = new Date();
+
+  dictumForm: FormGroup = new FormGroup({});
   @Output() onSave = new EventEmitter<boolean>();
 
   @Input() requestId = null;
+
+  @Input() steap1: boolean = false;
+  @Input() steap2: boolean = false;
+  @Input() steap3: boolean = false;
+  @Input() isEdit: boolean = false;
 
   respDoc: Object;
 
@@ -43,10 +51,27 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   }
 
   prepareForm() {
-    this.validateForm = this.fb.group({
+    this.dictumForm = this.fb.group({
+      datetime: [null, [Validators.required]],
+      place: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+
       opinionNumber: [null, [Validators.required]],
       veredict: [null, [Validators.required]],
       nullityTrial: [null, [Validators.required]],
+
+      contributor: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paymentAmount: [null],
+      dictumDate: [null],
+
+      adminiResolutionNo: [null],
+      paymentOrderNo: [null],
+      address1: [null, [Validators.pattern(STRING_PATTERN)]],
+      address2: [null, [Validators.pattern(STRING_PATTERN)]],
+      legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
+      requiredSatCopy: [null],
     });
   }
 
@@ -65,7 +90,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         next: resp => {
           if (!isNullOrEmpty(resp)) {
             this.respDoc = resp;
-            this.validateForm.patchValue({
+            this.dictumForm.patchValue({
               opinionNumber: resp.opinionNumber,
               veredict: resp.veredict,
               nullityTrial: resp.nullityTrial,
@@ -123,7 +148,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   }
   save() {
     let date = new Date();
-    let object = this.validateForm.getRawValue();
+    let object = this.dictumForm.getRawValue();
 
     object['requestId'] = this.requestId;
     object['orderDate'] = date.toISOString();

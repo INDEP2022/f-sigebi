@@ -89,6 +89,11 @@ export class RequestCompDocTasksComponent
   dictumRegister: boolean = false;
   orderView: boolean = false;
 
+  steap1: boolean;
+  steap2: boolean;
+  steap3: boolean;
+  isEdit: boolean;
+
   /**
    * SET STATUS ACTIONS
    **/
