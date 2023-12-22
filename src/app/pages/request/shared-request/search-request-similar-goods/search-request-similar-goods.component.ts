@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
@@ -276,10 +276,26 @@ export class SearchRequestSimilarGoodsComponent
             });
           });
 
-          this.alert('success', '', 'Se ha seleccionado la Solicitud de Bienes Similares No. ' + request.id + ' y el Expediente No. ' + request.recordId);
+          let requestAssociated: any = {};
+          requestAssociated.id = this.requestInfo.id;
+          requestAssociated.recordId = request.recordId;
 
-          this.getFiles();
-          //actualizar el expediente de la solicitud request.recordId
+          this.requestService
+            .update(this.requestId, requestAssociated)
+            .subscribe({
+              next: resp => {
+                this.getFiles();
+                this.loading = false;
+                this.alert('success', '', 'Se ha seleccionado la Solicitud de Bienes Similares No. '
+                  + request.id + ' y el Expediente No. ' + request.recordId);
+
+                this.updateStateRequestTab();
+              },
+              error: error => {
+                this.loading = false;
+              },
+            });
+
 
         }
 
@@ -320,11 +336,6 @@ export class SearchRequestSimilarGoodsComponent
         },
         error: error => {
           reject(error);
-          this.onLoadToast(
-            'error',
-            'Error',
-            'No se puede obtener la solicitud'
-          );
         },
       });
     });
@@ -338,6 +349,11 @@ export class SearchRequestSimilarGoodsComponent
         },
         error: error => {
           reject(error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'No se puede actualizar el bien'
+          );
         },
       });
     });

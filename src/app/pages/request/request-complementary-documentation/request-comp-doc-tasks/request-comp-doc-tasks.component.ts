@@ -41,8 +41,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override selectGoodNotForEyeVisit: boolean;
   protected override selectGoodsNot: boolean;
   protected override editReport: boolean;
@@ -292,7 +291,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
     //validar nextTurn
@@ -397,7 +396,6 @@ export class RequestCompDocTasksComponent
     });
     modalRef.content.onReject.subscribe((data: boolean) => {
       if (data) {
-        console.log(data);
         this.taskRechazar(data);
       }
     });
@@ -416,7 +414,6 @@ export class RequestCompDocTasksComponent
   }
 
   closeSearchRequestSimGoodsTab(recordId: number) {
-    console.log(recordId);
     if (recordId) {
       this.searchRequestSimGoods = false;
     }
@@ -452,7 +449,6 @@ export class RequestCompDocTasksComponent
     this.affairService.getByIdAndOrigin(id, 'SAMI').subscribe({
       next: data => {
         this.processDetonate = data.processDetonate;
-        console.log(this.processDetonate);
       },
       error: error => {
         console.log('no se encontraron datos en asuntos ', error);
@@ -858,7 +854,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1335,13 +1331,11 @@ export class RequestCompDocTasksComponent
   }
 
   onSelectFiles(event) {
-    console.log(event);
     this.validate.files = event.isValid;
     //Agreagar validaciones en especifico
   }
 
   onVerifyCom(event) {
-    console.log(event);
     this.validate.vercom = event.isValid;
     //Agreagar validaciones en especifico
   }
@@ -1369,7 +1363,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1385,7 +1379,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1451,7 +1445,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   //Agregar servicios de validacion de turnado
   //Reportes dinamicos
