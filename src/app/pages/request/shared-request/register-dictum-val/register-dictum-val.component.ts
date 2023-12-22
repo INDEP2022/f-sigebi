@@ -10,7 +10,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { compensationService } from 'src/app/core/services/compensation-option/compensation.option';
+import { CompensationService } from 'src/app/core/services/compensation-option/compensation.option';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -37,7 +37,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   respDoc: Object;
 
   private requestService = inject(RequestService);
-  private compenstionService = inject(compensationService);
+  private compenstionService = inject(CompensationService);
 
   constructor(private fb: FormBuilder, private datePipe: DatePipe) {
     super();

@@ -5,22 +5,19 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
-import { CompensationEndpoints } from 'src/app/common/constants/endpoints/ms-orderentry-endpoint';
-import { ICompensation } from '../../models/compensation-options/compensation';
+import { TransfergoodEndpoint } from 'src/app/common/constants/endpoints/transfergood-endpoint';
+import { INoTransfer } from '../../models/no-transfer/no-transfer';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CompensationService extends HttpService {
+export class NoTransferService extends HttpService {
   constructor() {
     super();
-    this.microservice = CompensationEndpoints.BaseCompensation;
+    this.microservice = TransfergoodEndpoint.BasePath;
   }
 
-  getcompensation(
-    id?: any,
-    params?: ListParams
-  ): Observable<IListResponse<any>> {
+  getNoTransfer(id?: any, params?: ListParams): Observable<IListResponse<any>> {
     return this.post<IListResponse<any>>(
       'application/get-EventData',
       id,
@@ -28,25 +25,25 @@ export class CompensationService extends HttpService {
     );
   }
 
-  getAllcompensation(
+  getAllNoTransfer(
     params?: ListParams | string
-  ): Observable<IListResponse<ICompensation>> {
-    const route = CompensationEndpoints.opinions;
-    return this.get<IListResponse<ICompensation>>(route, params);
+  ): Observable<IListResponse<INoTransfer>> {
+    const route = TransfergoodEndpoint.TransferorNo;
+    return this.get<IListResponse<INoTransfer>>(route, params);
   }
 
-  createcompensation(body: Object) {
-    const route = CompensationEndpoints.opinions;
+  createNoTransfer(body: Object) {
+    const route = TransfergoodEndpoint.TransferorNo;
     return this.post(route, body);
   }
 
-  updatecompensation(body: ICompensation) {
-    const route = `${CompensationEndpoints.opinions}/${body.requestId}`;
+  updateNoTransfer(body: INoTransfer) {
+    const route = `${TransfergoodEndpoint.TransferorNo}/${body.applicationId}`;
     return this.put(route, body);
   }
 
-  removecompensation(id: number | string) {
-    const route = `${CompensationEndpoints.opinions}/${id}`;
+  removeNoTransfer(id: number | string) {
+    const route = `${TransfergoodEndpoint.TransferorNo}/${id}`;
     return this.delete(route);
   }
 

@@ -5,22 +5,19 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
-import { CompensationEndpoints } from 'src/app/common/constants/endpoints/ms-orderentry-endpoint';
-import { ICompensation } from '../../models/compensation-options/compensation';
+import { GuidelinesEndpoints } from 'src/app/common/constants/endpoints/ms-orderentry-endpoint';
+import { IGuidelines } from '../../models/guidelines/guidelines';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CompensationService extends HttpService {
+export class GuidelinesService extends HttpService {
   constructor() {
     super();
-    this.microservice = CompensationEndpoints.BaseCompensation;
+    this.microservice = GuidelinesEndpoints.BaseGuidelines;
   }
 
-  getcompensation(
-    id?: any,
-    params?: ListParams
-  ): Observable<IListResponse<any>> {
+  getGuidelines(id?: any, params?: ListParams): Observable<IListResponse<any>> {
     return this.post<IListResponse<any>>(
       'application/get-EventData',
       id,
@@ -28,25 +25,25 @@ export class CompensationService extends HttpService {
     );
   }
 
-  getAllcompensation(
+  getAllGuidelines(
     params?: ListParams | string
-  ): Observable<IListResponse<ICompensation>> {
-    const route = CompensationEndpoints.opinions;
-    return this.get<IListResponse<ICompensation>>(route, params);
+  ): Observable<IListResponse<IGuidelines>> {
+    const route = GuidelinesEndpoints.guidelines;
+    return this.get<IListResponse<IGuidelines>>(route, params);
   }
 
-  createcompensation(body: Object) {
-    const route = CompensationEndpoints.opinions;
+  createGuidelines(body: Object) {
+    const route = GuidelinesEndpoints.guidelines;
     return this.post(route, body);
   }
 
-  updatecompensation(body: ICompensation) {
-    const route = `${CompensationEndpoints.opinions}/${body.requestId}`;
+  updateGuidelines(body: IGuidelines) {
+    const route = `${GuidelinesEndpoints.guidelines}/${body.applicationId}`;
     return this.put(route, body);
   }
 
-  removecompensation(id: number | string) {
-    const route = `${CompensationEndpoints.opinions}/${id}`;
+  removeGuidelines(id: number | string) {
+    const route = `${GuidelinesEndpoints.guidelines}/${id}`;
     return this.delete(route);
   }
 
