@@ -112,6 +112,7 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
   lineaCaptura() {
     if (this.form.get('event').value) {
       this.loading = true;
+      this.selectdata = [];
       this.line = [];
       let params = {
         ...this.params1.getValue(),
@@ -123,11 +124,23 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
           this.data1.load(resp.data);
           this.data1.refresh();
           this.totalItems1 = resp.count;
+          this.line = [];
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
           this.loading = false;
         },
         error: err => {
           console.log(err);
-          this.alert('warning', 'No se encontraron registros', '');
+          this.data1.load([]);
+          this.data1.refresh();
+          this.totalItems1 = 0;
+          this.line = [];
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+          this.loading = false;
+          this.selectdata = [];
         },
       });
     } else {
@@ -174,7 +187,11 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.alert('warning', 'No se Encontraron Registros', '');
+        this.line = [];
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
       },
     });
 
