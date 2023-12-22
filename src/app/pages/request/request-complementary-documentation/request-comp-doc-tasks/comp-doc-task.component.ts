@@ -874,7 +874,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.editReport = true;
 
         this.steap1 = true;
-        this.steap2 = false;
+        this.steap2 = true;
         this.steap3 = false;
         this.isEdit = true;
 
@@ -898,7 +898,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.steap1 = true;
         this.steap2 = true;
-        this.steap3 = false;
+        this.steap3 = true;
         this.isEdit = false;
 
         break;
