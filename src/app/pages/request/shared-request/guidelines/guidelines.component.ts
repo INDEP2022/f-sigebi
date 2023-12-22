@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -12,6 +12,8 @@ import { GuidelinesRevisionViewComponent } from './guidelines-revision-view/guid
 import { GuidelinesRevisionComponent } from './guidelines-revision/guidelines-revision.component';
 import { GuidelinesService } from 'src/app/core/services/guidelines/guideline.service';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-guidelines',
@@ -22,6 +24,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   edited: boolean = false;
   @Input() requestId: number;
   @Output() onSave = new EventEmitter<boolean>();
+  @Output() onChange = new EventEmitter<any>();
+
   guidelinesForm: FormGroup = new FormGroup({});
   maxDate: Date = new Date();
   saveButton: string =
@@ -54,37 +58,44 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     },
   };
 
-  guidelinesTestData = [
+  guidelinesData = [
     {
+      id: 1,
       guideline: 'ACTA DE TRANSFERENCIA INDEP',
-      firstRevision: 'SI',
-      firstRevisionObserv: 'EJEMPLO OBSERVACION 1',
+      firstRevision: 'N/A',
+      firstRevisionObserv: '',
       secondRevision: 'N/A',
-      secondRevisionObserv: 'EJEMPLO OBSERVACION 2',
+      secondRevisionObserv: '',
     },
     {
+      id: 2,
       guideline: 'SOLICITUD DE PAGO RESARCIMIENTO (INSTRUCCIÓN DE PAGO ANCEA)',
-      firstRevision: '',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
     {
-      guideline:
-        'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
-      firstRevision: '',
+      id: 3,
+      guideline: 'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
     {
+      id: 4,
       guideline: 'DOCUMENTO EN EL CUAL SE INDICA EL MONTO A PAGAR',
-      firstRevision: '',
+      firstRevision: 'N/A',
       firstRevisionObserv: '',
-      secondRevision: '',
+      secondRevision: 'N/A',
       secondRevisionObserv: '',
     },
   ];
+
+  loadGuidelines = [];
+
+  private authService = inject(AuthService);
 
   constructor(private fb: FormBuilder,
     private guidelinesService: GuidelinesService) {
@@ -137,7 +148,6 @@ export class GuidelinesComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getData();
     this.getGuidelines();
   }
 
@@ -149,8 +159,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     });
   }
 
-  getData() {
-    this.guidelinesColumns = this.guidelinesTestData;
+  getData(data) {
+    this.guidelinesColumns = data;
     this.totalItems = this.guidelinesColumns.length;
   }
 
@@ -177,14 +187,55 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   save() {
-    this.msgModal(
-      'Se guardarón los cambios'.concat(),
-      'Solicitud Guardada',
-      'success'
-    );
     // Llamar servicio para guardar informacion
     console.log(this.guidelinesForm.value, this.guidelinesColumns);
-    this.onSave.emit(true);
+
+    let validate = this.guidelinesColumns.every(objeto => {
+      return Object.values(objeto).every(valor => !isNullOrEmpty(valor));
+    });
+
+    if (validate) {
+
+      this.guidelinesColumns.forEach(async (element: any) => {
+        let obj = this.getObject(element);
+        await this.saveGuidelines(obj);
+      });
+
+      this.selectChanges();
+
+      this.msgModal(
+        'Se guardarón los cambios'.concat(),
+        'Solicitud Guardada',
+        'success'
+      );
+
+    } else {
+      this.msgModal(
+        'Debe completar todos los campos'.concat(),
+        'Error',
+        'error'
+      );
+    }
+
+  }
+
+  getObject(obj) {
+
+    const user: any = this.authService.decodeToken();
+
+    return {
+      applicationId: this.requestId,
+      lineamentId: obj.id,
+      meetsRevision1: obj.firstRevision,
+      meetsRevision2: obj.secondRevision,
+      missingActionsRev1: obj.firstRevisionObserv,
+      missingActionsRev2: obj.secondRevisionObserv,
+      version: "1",
+      userCreation: user.username,
+      dateCreation: moment(new Date()).format('YYYY-MM-DD'),
+      userModification: user.username,
+      dateModification: moment(new Date()).format('YYYY-MM-DD'),
+    }
   }
 
   msgModal(message: string, title: string, typeMsg: any) {
@@ -210,30 +261,70 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     params['filter.applicationId'] = `$eq:${this.requestId}`;
     this.guidelinesService.getGuidelines(params).subscribe({
       next: resp => {
-        console.log(resp);
+        this.loadGuidelines = resp.data;
+
+        if (this.loadGuidelines.length > 0) {
+
+          this.guidelinesData.forEach(element => {
+
+            let item = this.loadGuidelines.find(x => x.lineamentId == element.id);
+
+            element.firstRevision = item.meetsRevision1;
+            element.secondRevision = item.meetsRevision2;
+            element.firstRevisionObserv = item.missingActionsRev1;
+            element.secondRevisionObserv = item.missingActionsRev2;
+
+          });
+
+          this.guidelinesForm.patchValue({
+            firstRevisionDate: new Date(this.loadGuidelines[0].dateCreation),
+            secondRevisionDate: new Date(this.loadGuidelines[0].dateModification),
+            observations: this.loadGuidelines[0].missingActionsRev1,
+          });
+        }
+
+        this.getData(this.guidelinesData);
+        this.selectChanges();
 
       },
+      error: err => {
+        this.getData(this.guidelinesData);
+      }
     });
   }
 
-  saveGuidelines() {
-    let object: any = {};
 
-    if (isNullOrEmpty(object.id)) {
-      this.guidelinesService.createGuidelines(object).subscribe({
-        next: resp => {
-          console.log(resp);
+  saveGuidelines(object) {
 
-        },
+    if (this.loadGuidelines.length == 0) {
+      return new Promise((resolve, reject) => {
+        this.guidelinesService.createGuidelines(object).subscribe({
+          next: resp => {
+            resolve(resp);
+          }, error: err => {
+            reject(err);
+          }
+        });
       });
     } else {
-      this.guidelinesService.updateGuidelines(object).subscribe({
-        next: resp => {
-          console.log(resp);
-
-        },
+      return new Promise((resolve, reject) => {
+        this.guidelinesService.updateGuidelines(object).subscribe({
+          next: resp => {
+            resolve(resp);
+          }, error: err => {
+            reject(err);
+          }
+        });
       });
     }
+  }
+
+
+  selectChanges() {
+    this.onChange.emit({
+      isValid: this.loadGuidelines.length > 0,
+      object: this.loadGuidelines,
+    });
   }
 
 

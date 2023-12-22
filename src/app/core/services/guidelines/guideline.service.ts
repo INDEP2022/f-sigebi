@@ -37,7 +37,7 @@ export class GuidelinesService extends HttpService {
   }
 
   updateGuidelines(body: IGuidelines) {
-    const route = `${GuidelinesEndpoints.guidelines}/${body.applicationId}`;
+    const route = `${GuidelinesEndpoints.guidelines}`;
     return this.put(route, body);
   }
 

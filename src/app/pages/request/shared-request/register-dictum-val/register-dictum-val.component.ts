@@ -26,7 +26,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   maxDate: Date = new Date();
 
   dictumForm: FormGroup = new FormGroup({});
-  @Output() onSave = new EventEmitter<boolean>();
+  @Output() onSave = new EventEmitter<any>();
 
   @Input() requestId = null;
 
@@ -141,7 +141,11 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: resp => {
+
           if (!isNullOrEmpty(resp)) {
+
+            this.selectChanges()
+
             this.dictumForm.patchValue({
               administrativeUnit: parseInt(resp.unitadministrative + ''),
               orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
@@ -170,6 +174,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.respDoc = resp;
+          this.selectChanges();
 
           if (!isNullOrEmpty(resp)) {
             this.dictumForm.patchValue({
@@ -250,4 +255,12 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       this.getAllOrderEntry();
     }
   }
+
+  selectChanges() {
+    this.onSave.emit({
+      isValid: !isNullOrEmpty(this.respDoc),
+      object: this.respDoc
+    });
+  }
+
 }

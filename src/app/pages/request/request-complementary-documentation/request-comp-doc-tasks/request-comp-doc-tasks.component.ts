@@ -41,8 +41,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override selectGoodNotForEyeVisit: boolean;
   protected override selectGoodsNot: boolean;
   protected override editReport: boolean;
@@ -291,7 +290,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
     //validar nextTurn
@@ -854,7 +853,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1053,17 +1052,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'validate-opinion-compensation':
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-
-        //DATOS DEL DICTAMEN
-
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
 
         if (!this.validate.genValDictum) {
           this.showWarning(
@@ -1343,14 +1331,19 @@ export class RequestCompDocTasksComponent
     this.onLoadToast('warning', 'Warning', text);
   }
 
-  onSaveGuidelines(row) {
-    this.validate.guidelines = true;
+  onGuidelines(event) {
+    this.validate.guidelines = event.isValid;
+    //Agreagar validaciones en especifico
   }
-  onSaveDictumData(row) {
-    this.validate.dictudData = true;
+
+  onDictumData(event) {
+    this.validate.dictudData = event.isValid;
+    //Agreagar validaciones en especifico
   }
-  onSaveOrder(row) {
-    this.validate.orderEntry = true;
+
+  onOrder(event) {
+    this.validate.orderEntry = event.isValid;
+    //Agreagar validaciones en especifico
   }
 
   btnRequestAprobar() {
@@ -1358,7 +1351,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1374,7 +1367,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1444,7 +1437,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   //Agregar servicios de validacion de turnado
   //Reportes dinamicos
