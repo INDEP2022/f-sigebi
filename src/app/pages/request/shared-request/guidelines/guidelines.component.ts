@@ -203,28 +203,30 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       return Object.values(objeto).every(valor => !isNullOrEmpty(valor));
     });
 
-    if (validate) {
-      let promises = this.guidelinesColumns.map(async (element: any) => {
-        let obj = this.getObject(element);
-        return this.saveGuidelines(obj);
-      });
+    let promises = this.guidelinesColumns.map(async (element: any) => {
+      let obj = this.getObject(element);
+      return this.saveGuidelines(obj);
+    });
 
-      Promise.all(promises).then(() => {
-        this.getGuidelines();
+    Promise.all(promises).then(() => {
+      this.getGuidelines();
 
-        this.msgModal(
-          'Se guardarón los cambios'.concat(),
-          'Solicitud Guardada',
-          'success'
-        );
-      });
+      this.msgModal(
+        'Se guardarón los cambios'.concat(),
+        'Solicitud Guardada',
+        'success'
+      );
+    });
+
+    /*if (validate) {
+      
     } else {
       this.msgModal(
         'Debe completar todos los campos'.concat(),
         'Error',
         'error'
       );
-    }
+    }*/
   }
 
   getObject(obj) {
