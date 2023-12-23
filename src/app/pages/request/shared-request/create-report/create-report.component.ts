@@ -189,6 +189,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
       .saveReportDynamic(doc, !isNullOrEmpty(this.loadDoc))
       .subscribe({
         next: resp => {
+          this.loadDoc = resp;
           if (close) {
             this.onLoadToast('success', 'Documento guardado correctamente', '');
             this.close();
