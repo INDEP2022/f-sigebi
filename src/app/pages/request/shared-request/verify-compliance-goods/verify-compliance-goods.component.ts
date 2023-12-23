@@ -101,9 +101,14 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
     this.rejectedGoodService.getAll(filter).subscribe({
       next: response => {
         this.data = response.data;
+        this.data.forEach(element => {
+          element.meetsArticle24 = element.meetsArticle24 == '1';
+          element.meetsArticle28 = element.meetsArticle28 == '1';
+          element.meetsArticle29 = element.meetsArticle29 == '1';
+        });
         this.onChanges();
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -111,14 +116,10 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
     this.onChange.emit({
       isValid:
         this.data.filter(
-          x =>
-            x.meetsArticle24 ||
-            x.meetsArticle24 == '1' ||
-            x.meetsArticle28 ||
-            x.meetsArticle28 == '1' ||
-            x.meetsArticle29 ||
-            x.meetsArticle29 == '1'
-        ).length > 0,
+          x => x.meetsArticle24
+            && x.meetsArticle28
+            && x.meetsArticle29)
+          .length == this.data.length,
       object: this.data,
     });
   }

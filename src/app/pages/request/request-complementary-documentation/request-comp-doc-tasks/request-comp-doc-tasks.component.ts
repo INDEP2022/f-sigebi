@@ -42,6 +42,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
   implements OnInit {
+  protected override formatReport: boolean;
+  protected override signReport: boolean;
   protected override selectGoodNotForEyeVisit: boolean;
   protected override selectGoodsNot: boolean;
   protected override editReport: boolean;
@@ -253,7 +255,8 @@ export class RequestCompDocTasksComponent
       next: resp => {
         this.taskInfo = resp.data[0];
         this.title = this.taskInfo.title;
-        this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
+        this.nextTurn = this.taskInfo.urlNb.includes(this.process);
+        //this.taskInfo.State.toUpperCase() != 'FINALIZADA';
       },
     });
   }
@@ -320,10 +323,8 @@ export class RequestCompDocTasksComponent
     });
 
     modalRef.content.refresh.subscribe(response => {
-      if (response.upload) {
-        this.requestInfo.detail.reportSheet = response.upload ? 'Y' : 'N';
-        this.updateRequest(false);
-      }
+      console.log(response);
+
     });
   }
 
@@ -884,6 +885,7 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'verify-compliance-return':
+
         if (!this.validate.vercom) {
           this.showWarning('Verifique el cumplimiento de los artículos');
           return false;
@@ -898,6 +900,8 @@ export class RequestCompDocTasksComponent
           this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
+
+        return false;
 
         break;
       case 'approve-return':
@@ -1023,8 +1027,8 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.validate.genDictum) {
-          this.showWarning('Genera el dictamen de resarcimiento');
-          return false;
+          //this.showWarning('Genera el dictamen de resarcimiento');
+          //return false;
         }
 
         break;
@@ -1225,8 +1229,8 @@ export class RequestCompDocTasksComponent
           return false;
         }
         if (!this.validate.genDictum) {
-          this.showWarning('Genera el dictamen de resarcimiento');
-          return false;
+          //this.showWarning('Genera el dictamen de resarcimiento');
+          //return false;
         }
         break;
       case 'register-seizures':
@@ -1328,7 +1332,7 @@ export class RequestCompDocTasksComponent
   }
 
   showWarning(text) {
-    this.onLoadToast('warning', 'Warning', text);
+    this.onLoadToast('warning', 'Advertencia', text);
   }
 
   onGuidelines(event) {

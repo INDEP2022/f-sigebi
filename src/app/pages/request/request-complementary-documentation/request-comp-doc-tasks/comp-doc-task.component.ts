@@ -65,6 +65,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   protected abstract reportTable: string;
   protected abstract reportId: string;
+  protected abstract formatReport: boolean;
+  protected abstract signReport: boolean;
 
   docTemplate: IRequestDocument[];
 
