@@ -44,8 +44,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -307,7 +306,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
     if (!this.nextTurn) {
@@ -874,7 +873,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1353,6 +1352,7 @@ export class RequestCompDocTasksComponent
   }
 
   onVerifyCom(event) {
+    console.log(event);
     this.validate.vercom = event.isValid;
     //Agreagar validaciones en especifico
   }
@@ -1393,7 +1393,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1409,7 +1409,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1479,7 +1479,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   showReport() {
     this.wContentService.obtainFile('SAE568245').subscribe({
@@ -1489,7 +1489,7 @@ export class RequestCompDocTasksComponent
         const fileURL = URL.createObjectURL(file);
         this.openPrevPdf(fileURL);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 

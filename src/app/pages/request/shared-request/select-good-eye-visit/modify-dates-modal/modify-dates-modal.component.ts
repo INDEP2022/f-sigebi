@@ -69,7 +69,7 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
       const result = await this.updateGoodResDev(body);
 
       if (index == this.goods.length) {
-        this.onLoadToast('success', 'Visita Ocupar registrada', '');
+        this.onLoadToast('success', 'Visita Ocular registrada', '');
         this.event.emit(this.dateForm.value);
         this.close();
       }
