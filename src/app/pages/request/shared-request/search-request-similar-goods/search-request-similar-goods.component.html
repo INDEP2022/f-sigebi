@@ -9,7 +9,10 @@
   </div> -->
   <div class="d-flex mb-3 mt-3">
     <div class="mr-auto p-2" *ngIf="selected">
-      <button [disabled]="!loadGoods" class="btn btn-primary btn-sm active" (click)="selectGood()">
+      <button
+        [disabled]="!loadGoods"
+        class="btn btn-primary btn-sm active"
+        (click)="selectGood()">
         Seleccionar <i class="fa fa-file"></i>
       </button>
     </div>

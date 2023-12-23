@@ -114,7 +114,6 @@ export abstract class CompDocTasksComponent extends BasePage {
   }
 
   mapTask(process: string, affair?: number, contributor: string = '') {
-
     this.typeVisit = 'viewGoods';
     this.reportTable = 'SOLICITUDES';
 
@@ -679,11 +678,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.viewGuidelines = true;
-        this.dictumValidate = true;
+        this.dictumRegister = true;
         this.expRequest = true;
 
         this.saveRequest = true;
-        this.turnReq = true;
+        this.finish = true;
         this.notifyReport = true; //VERIFICAR FUNCIÓN
 
         this.signedReport = true;
@@ -696,6 +695,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.reportId = REPORT_DOCUMENTS.NOTIFICACION_CONTRIBUYENTE;
         this.signedReport = true;
         this.editReport = true;
+
+        this.steap1 = true;
+        this.steap2 = true;
+        this.isEdit = true;
 
         break;
 
