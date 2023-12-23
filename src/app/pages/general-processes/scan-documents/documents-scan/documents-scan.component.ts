@@ -393,7 +393,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       return;
     }
     if (
-      !validUsers.find(user => user == this.registerUser) ||
+      !validUsers.find(user => user == this.registerUser.toUpperCase()) ||
       this.registerUser == INVALID_USER
     ) {
       this.alert(
