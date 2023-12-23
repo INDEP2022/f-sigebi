@@ -274,7 +274,7 @@ export class RequestCompDocTasksComponent
   }
   requestSelected(type: number) {
     this.typeDocumentMethod(type);
-    this.updateInfo = true;
+    this.updateInfo = !this.updateInfo;
     this.typeModule = 'doc-complementary';
   }
 
