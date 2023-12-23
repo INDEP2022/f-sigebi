@@ -247,9 +247,10 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     object['orderDate'] = date.toISOString();
     object['appoitmentDate'] = date.toISOString();
 
-    const isChecked = this.dictumForm.get('satCopy').value;
-    object['satCopy'] = isChecked ? 1 : 0;
-
+    if (this.steap2) {
+      const isChecked = this.dictumForm.get('satCopy').value;
+      object['satCopy'] = isChecked ? 1 : 0;
+    }
     this.onSave.emit(true);
 
     if (isNullOrEmpty(this.respDoc)) {
@@ -258,6 +259,14 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     } else {
       this.updatedCompensation(object);
       this.getAllOrderEntry();
+    }
+
+    if (isNullOrEmpty(object['orderDate'])) {
+      object['orderDate'] = 0;
+    }
+
+    if (isNullOrEmpty(object['appoitmentDate'])) {
+      object['appoitmentDate'] = 0;
     }
   }
 
