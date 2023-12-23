@@ -10,3 +10,9 @@
   input::placeholder {
   color: transparent !important;
 }
+
+:host ::ng-deep form-loader {
+  .loader {
+    top: -100px;
+  }
+}
