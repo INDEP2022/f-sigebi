@@ -38,7 +38,7 @@ export class NoTransferService extends HttpService {
   }
 
   updateNoTransfer(body: INoTransfer) {
-    const route = `${TransfergoodEndpoint.TransferorNo}/${body.applicationId}`;
+    const route = `${TransfergoodEndpoint.TransferorNo}/${body.goodNumbertransferredId}`;
     return this.put(route, body);
   }
 
