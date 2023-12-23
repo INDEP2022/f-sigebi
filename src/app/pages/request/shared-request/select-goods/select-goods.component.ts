@@ -4,6 +4,7 @@ import {
   Input,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -61,6 +62,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idRequest: number = 0;
+  @Input() updateInfo: boolean = true;
+  @Input() btnGrouper: boolean = true;
+
+
+
+
   goodSelected: boolean = false;
   jsonBody: any = {};
 
@@ -176,6 +183,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoRequest() {
+
     this.requestService.getById(this.idRequest).subscribe({
       next: response => {
         this.requestInfo = response;
@@ -189,6 +197,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     const filter = param.getParams();
     this.rejectedGoodService.getAll(filter).subscribe({
       next: response => {
+
+        this.selectedGoodColumns = [];
+        this.selectedGoodTotalItems = this.selectedGoodColumns.length;
+
         response.data.forEach((item: any) => {
           this.addGood(item);
         });
@@ -196,6 +208,14 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       error: error => { },
     });
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!isNullOrEmpty(changes['updateInfo'])) {
+      this.getInfoRequest();
+    }
+  }
+
+
 
   getProcessDetonate() {
     const params = new BehaviorSubject<ListParams>(new ListParams());

@@ -8,7 +8,7 @@
   </div>
   <div body>
     <div class="">
-      <div class="d-flex flex-row-reverse" *ngIf="screenWidth >= 1200">
+      <div class="d-flex flex-row-reverse" *ngIf="true">
         <ng-template #turnar>
           <div class="mx-1" *ngIf="turnReq && !complementaryDoc">
             <button
@@ -195,7 +195,7 @@
         </div>
       </div>
 
-      <div class="" *ngIf="screenWidth < 1200">
+      <div class="" *ngIf="false">
         <div
           class="btn-group"
           placement="bottom right"
@@ -346,6 +346,8 @@
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
           <app-select-goods
+            [btnGrouper]="btnGrouper"
+            [updateInfo]="updateInfo"
             (onChange)="onSelectGoods($event)"
             [idRequest]="requestId"></app-select-goods>
 
