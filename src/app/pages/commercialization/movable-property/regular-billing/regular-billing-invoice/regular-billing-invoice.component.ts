@@ -1488,7 +1488,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   openFolioModal() {
-    if (!this.rowInvoice)
+    if (this.isSelect.length == 0)
       return this.alert('warning', 'Debe seleccionar una factura', '');
 
     let config: ModalOptions = {
@@ -1502,7 +1502,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             // invoice[index].Invoice = data.invoice;
             // invoice[index].factstatusId = 'FOL';
 
-            const invoice = this.rowInvoice;
+            const invoice = this.isSelect[0];
             invoice.series = data.series;
             invoice.folioinvoiceId = data.folioinvoiceId;
             invoice.Invoice = data.invoice;
@@ -2188,15 +2188,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (count == 1) {
       this.alert(
         'warning',
-        'Atención',
-        'La Factura no tiene un estatus válido para cancelación'
+        'La Factura no tiene un estatus válido para cancelación',
+        ''
       );
       return;
     } else if (count > 1) {
       this.alert(
         'warning',
-        'Atención',
-        `La Selección contiene ${count} Facturas que no tienen un estatus válido para cancelación`
+        `La Selección contiene ${count} Facturas que no tienen un estatus válido para cancelación`,
+        ``
       );
       return;
     }
@@ -2205,48 +2205,46 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async validateCancel() {
+    // -- PRIMERO VALIDAMOS CAUSA Y FOLIO SP
     const { causerebillId, folio, refactura } = this.form.value;
     if (!causerebillId) {
       this.isVisibleField(1);
     } else if (causerebillId) {
       if (this.isSelect[0].factstatusId == 'CAN') {
-        this.alert(
-          'warning',
-          'Atención',
-          'No puede procesar una factura cancelada'
-        );
+        this.alert('warning', 'No puede procesar una factura cancelada', '');
         this.isVisibleField(0);
         return;
       }
       if (!folio && refactura == 'P') {
-        this.alert('warning', 'Atención', 'Introduzca la solicitud de pago');
+        this.alert('warning', 'Introduzca la Solicitud de Pago', '');
         return;
       } else if (folio && refactura == 'P') {
         const puf_valid = await this.validaFolSp(this.isSelect[0].eventId);
         if (puf_valid == 0) {
           this.alert(
             'warning',
-            'Atención',
-            'El Folio de la solicitud de pago no corresponden a la factura, favor de verificar'
+            'El Folio de la solicitud de pago no corresponden a la factura',
+            'Favor de verificar'
           );
           return;
         } else if (puf_valid == 1) {
           this.alert(
             'warning',
-            'Atención',
-            'Los montos de la solicitud de pago no corresponden a la factura, favor de verificar'
+            'Los montos de la solicitud de pago no corresponden a la factura',
+            'Favor de verificar'
           );
           return;
         } else {
           if (this.isSelect[0].factstatusId == 'CAN') {
             this.alert(
               'warning',
-              'Atención',
-              'No puede procesar una factura cancelada'
+              'No puede procesar una factura cancelada',
+              ''
             );
             this.isVisibleField(0);
             return;
           } else {
+            // PUP_FACTURASXIDGASTO
             await this.pup_invoice();
           }
         }
