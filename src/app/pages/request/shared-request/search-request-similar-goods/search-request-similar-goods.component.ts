@@ -30,8 +30,7 @@ import { NewFileModalComponent } from '../associate-file/new-file-modal/new-file
 })
 export class SearchRequestSimilarGoodsComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
@@ -68,19 +67,19 @@ export class SearchRequestSimilarGoodsComponent
       actions: this.selected
         ? null
         : {
-            ...this.settings.actions,
-            add: false,
-            edit: false,
-            delete: false,
-            columnTitle: 'Asociar',
-            custom: [
-              {
-                name: 'associate',
-                title:
-                  '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
-              },
-            ],
-          },
+          ...this.settings.actions,
+          add: false,
+          edit: false,
+          delete: false,
+          columnTitle: 'Asociar',
+          custom: [
+            {
+              name: 'associate',
+              title:
+                '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
+            },
+          ],
+        },
       columns: { ...COLUMNS },
     };
     this.settings2 = {
@@ -107,7 +106,7 @@ export class SearchRequestSimilarGoodsComponent
       next: response => {
         this.requestInfo = response;
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -220,6 +219,9 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   getGoods(id: number) {
+
+    if (!this.selected) return;
+
     this.data2.load([]);
     this.totalItems2 = 0;
 
@@ -268,8 +270,8 @@ export class SearchRequestSimilarGoodsComponent
         'question',
         'Asociar',
         '¿Desea seleccionar la Solicitud de Bienes Similares No. ' +
-          request.id +
-          '?'
+        request.id +
+        '?'
       ).then(question => {
         if (question.isConfirmed) {
           this.data2['data'].forEach(async element => {
@@ -293,9 +295,9 @@ export class SearchRequestSimilarGoodsComponent
                   'success',
                   '',
                   'Se ha seleccionado la Solicitud de Bienes Similares No. ' +
-                    request.id +
-                    ' y el Expediente No. ' +
-                    request.recordId
+                  request.id +
+                  ' y el Expediente No. ' +
+                  request.recordId
                 );
 
                 this.updateStateRequestTab();
@@ -362,5 +364,5 @@ export class SearchRequestSimilarGoodsComponent
     });
   }
 
-  confirm(result: boolean) {}
+  confirm(result: boolean) { }
 }
