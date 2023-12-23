@@ -410,9 +410,7 @@ export class RequestCompDocTasksComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.onReject.subscribe((data: boolean) => {
-      if (data) {
-        this.taskRechazar(data);
-      }
+      this.taskRechazar(data);
     });
   }
 
@@ -839,7 +837,8 @@ export class RequestCompDocTasksComponent
 
     this.updateTask(this.taskInfo.taskDefinitionId, 'PROCESO');
 
-    this.requestInfo.rejectionComment = data.comment;
+    this.requestInfo.detail.rejectionComment = data.comment;
+    this.updateRequest(false);
 
     this.taskService.createTaskWitOrderService(body).subscribe({
       next: async resp => {
@@ -875,6 +874,11 @@ export class RequestCompDocTasksComponent
   }
 
   validateTurn() {
+
+    if (isNullOrEmpty(this.requestInfo.detail.reportSheet)) {
+      this.requestInfo.detail.reportSheet = '';
+    }
+
     switch (this.process) {
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
       case 'register-request-return':
