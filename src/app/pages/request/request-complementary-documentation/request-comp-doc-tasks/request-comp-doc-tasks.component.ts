@@ -1281,6 +1281,25 @@ export class RequestCompDocTasksComponent
           //return false;
         }
         break;
+
+      case 'register-domain-extinction':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
       case 'register-seizures':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
