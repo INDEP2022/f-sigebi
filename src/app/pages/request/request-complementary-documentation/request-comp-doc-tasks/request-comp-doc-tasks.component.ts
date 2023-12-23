@@ -134,6 +134,8 @@ export class RequestCompDocTasksComponent
   paramsDelegation = new BehaviorSubject(new ListParams());
   totalItemsDelegation: number = 0;
 
+  delegation: Object = null;
+
   /**
    * email del usuairo
    */
@@ -349,7 +351,9 @@ export class RequestCompDocTasksComponent
 
   async turnRequest() {
     if (this.process == 'register-taxpayer-date') {
-      await this.openDelegation();
+      let result = await this.openDelegation();
+
+      if (!result) return;
     }
     this.alertQuestion(
       'question',
@@ -751,6 +755,12 @@ export class RequestCompDocTasksComponent
     task['idTransferee'] = this.taskInfo.idTransferee;
     task['idAuthority'] = this.taskInfo.idAuthority;
     task['idDelegationRegional'] = user.department;
+
+    if (!isNullOrEmpty(this.delegation)) {
+      task['satZoneCoordinator'] = this['addressOffice'];
+    } else {
+      task['satZoneCoordinator'] = '';
+    }
 
     body['task'] = task;
 
@@ -1213,9 +1223,9 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'generate-results-economic-compensation':
-        if (!this.validate.signedDictum) {
+        if (!reportSheet.includes('YY')) {
           this.showWarning('Firme el dictamen de resarcimiento');
-          return false;
+          //return false;
         }
         if (!this.validate.guidelines) {
           this.showWarning('Verifique las observaciones de lineamientos');
@@ -1235,21 +1245,26 @@ export class RequestCompDocTasksComponent
           this.showWarning('Registre datos del dictamen');
           return false;
         }
-        if (!this.validate.genValDictum) {
+        if (!reportSheet.includes('Y')) {
           this.showWarning(
             'Genera la validación del dictamen de resarcimiento'
           );
           return false;
         }
+
         break;
       case 'delivery-notify-request':
         if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
-        if (!this.validate.signedNotify) {
-          this.showWarning('Firme el reporte de notificación 2');
+        if (!reportSheet.includes('Y')) {
+          this.showWarning('Genera el reporte de notificación 2');
           return false;
+        }
+        if (!reportSheet.includes('YY')) {
+          this.showWarning('Firme el reporte de notificación');
+          //return false;
         }
         break;
       case 'register-taxpayer-date':
@@ -1415,6 +1430,8 @@ export class RequestCompDocTasksComponent
     //Agreagar validaciones en especifico
   }
 
+  onSetData(event) {}
+
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
     //Agreagar validaciones en especifico
@@ -1488,16 +1505,22 @@ export class RequestCompDocTasksComponent
   }
 
   openDelegation(context?: Partial<ChangeLegalStatusComponent>) {
-    return new Promise<void>(resolve => {
+    return new Promise<boolean>(resolve => {
       const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
-        initialState: { ...context, isDelegationsVisible: true },
+        initialState: {
+          ...context,
+          isDelegationsVisible: true,
+          isJuridicVisible: false,
+        },
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       });
 
-      // Resuelve la promesa cuando el modal se cierra
-      modalRef.onHidden.subscribe(() => {
-        resolve();
+      modalRef.content.refresh.subscribe(res => {
+        resolve(res);
+      });
+      modalRef.content.delegtion.subscribe(result => {
+        this.delegation = result;
       });
     });
   }
@@ -1507,6 +1530,7 @@ export class RequestCompDocTasksComponent
       initialState: {
         ...context,
         isDelegationsVisible: false,
+        isJuridicVisible: true,
         requestId: this.requestId,
       },
       class: 'modal-lg modal-dialog-centered',

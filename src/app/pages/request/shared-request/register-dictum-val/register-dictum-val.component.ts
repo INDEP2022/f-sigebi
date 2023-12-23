@@ -163,6 +163,11 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
           console.log(resp.satCopy);
           if (!isNullOrEmpty(resp)) {
             this.dictumForm.patchValue({
+              appoitmentDate: this.datePipe.transform(
+                resp.appoitmentDate,
+                'dd/MM/yyyy, h:mm:ss a'
+              ),
+              appoitmentPlace: resp.appoitmentPlace,
               opinionNumber: resp.opinionNumber,
               veredict: resp.veredict,
               nullityTrial: resp.nullityTrial,
@@ -251,6 +256,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       const isChecked = this.dictumForm.get('satCopy').value;
       object['satCopy'] = isChecked ? 1 : 0;
     }
+
     this.onSave.emit(true);
 
     if (isNullOrEmpty(this.respDoc)) {
@@ -259,14 +265,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     } else {
       this.updatedCompensation(object);
       this.getAllOrderEntry();
-    }
-
-    if (isNullOrEmpty(object['orderDate'])) {
-      object['orderDate'] = 0;
-    }
-
-    if (isNullOrEmpty(object['appoitmentDate'])) {
-      object['appoitmentDate'] = 0;
     }
   }
 
