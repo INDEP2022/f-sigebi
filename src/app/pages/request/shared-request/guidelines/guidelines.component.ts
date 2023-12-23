@@ -209,7 +209,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         await this.saveGuidelines(obj);
       });
 
-      this.selectChanges();
+      this.getGuidelines();
 
       this.msgModal(
         'Se guardarón los cambios'.concat(),
@@ -293,6 +293,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.getData(this.guidelinesData);
+        this.selectChanges();
       },
     });
   }

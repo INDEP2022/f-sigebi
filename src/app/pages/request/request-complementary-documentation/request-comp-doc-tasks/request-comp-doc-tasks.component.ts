@@ -1366,6 +1366,7 @@ export class RequestCompDocTasksComponent
   }
 
   onGuidelines(event) {
+    console.log(event);
     this.validate.guidelines = event.isValid;
     //Agreagar validaciones en especifico
   }
