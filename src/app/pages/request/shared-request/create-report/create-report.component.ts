@@ -81,6 +81,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   signReportTab: boolean = false;
 
   @Output() refresh = new EventEmitter<any>();
+  @Output() show = new EventEmitter<any>();
 
   constructor(
     private fb: FormBuilder,
@@ -108,7 +109,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
     });
 
     this.form.get('template').valueChanges.subscribe(value => {
-      this.format = this.formats.data.find(x => x.id == value);
+      if (!isNullOrEmpty(this.formats)) {
+        this.format = this.formats.data.find(x => x.id == value);
+      }
     });
   }
 
@@ -209,52 +212,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
     this.loadData();
   }
 
-  async openDoc(): Promise<void> {
-
-    await this.saveVersionsDoc(false);
-
-    if (isNullOrEmpty(this.format)) return;
-
-    let result = await this.generateReport();
-
-    if (result) {
-      let blob = this.dataURItoBlob(result);
-      let file = new Blob([blob], { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      this.openPrevPdf(fileURL);
-    }
-
-  }
-
-  dataURItoBlob(dataURI: any) {
-    const byteString = window.atob(dataURI);
-    const arrayBuffer = new ArrayBuffer(byteString.length);
-    const int8Array = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < byteString.length; i++) {
-      int8Array[i] = byteString.charCodeAt(i);
-    }
-    const blob = new Blob([int8Array], { type: 'application/pdf' });
-    return blob;
-  }
-
-  openPrevPdf(pdfurl: string) {
-    console.log(pdfurl);
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
-  }
-
   loadData() {
     if (isNullOrEmpty(this.format)) return;
 
@@ -314,9 +271,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   close() {
-    this.refresh.emit({
-      upload: !isNullOrEmpty(this.loadDoc)
-    });
+    this.onChange();
     this.modalRef.hide();
   }
 
@@ -332,10 +287,15 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     this.loading = false;
-    this.refresh.emit({
-      upload: !isNullOrEmpty(this.loadDoc)
-    });
+    this.onChange();
     this.modalRef.hide();
+  }
+
+  onChange() {
+    this.refresh.emit({
+      upload: !isNullOrEmpty(this.loadDoc),
+      sign: false
+    });
   }
 
   update() {
@@ -431,15 +391,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   showFile() {
-    this.wContentService.obtainFile("SAE568245").subscribe({
-      next: response => {
-        let blob = this.dataURItoBlob(response);
-        let file = new Blob([blob], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        this.openPrevPdf(fileURL);
-      },
-      error: error => { },
-    });
+    this.show.emit(true);
   }
 
   idSample = "328";

@@ -31,7 +31,7 @@
             </button>
           </div>
 
-          <div class="col-md-3" *ngIf="!editReport && !signReportTab">
+          <div class="col-md-3" *ngIf="signReport">
             <button (click)="openSignature()" class="btn btn-primary active btn-sm">
               Firmar reporte
               <i class="fa fa-file-signature"></i>
