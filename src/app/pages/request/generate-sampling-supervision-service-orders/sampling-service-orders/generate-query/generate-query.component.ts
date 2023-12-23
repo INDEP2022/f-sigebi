@@ -25,6 +25,7 @@ import { ListParams } from '../../../../../common/repository/interfaces/list-par
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
+import { AnnexKFormComponent } from '../../../generate-sampling-supervision/generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
 import { EditDeductiveComponent } from '../../../generate-sampling-supervision/sampling-assets/edit-deductive/edit-deductive.component';
 import { LIST_DEDUCTIVES_COLUMNS } from '../../../generate-sampling-supervision/sampling-assets/sampling-assets-form/columns/list-deductivas-column';
 import { LIST_ORDERS_COLUMNS } from './columns/list-orders-columns';
@@ -326,7 +327,12 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     if (deductivesSelect) {
       const infoOrderSample: any = await this.getSampleOrder();
       if (infoOrderSample.idStore) {
-        console.log('infoOrderSample', infoOrderSample);
+        this.openModal(
+          AnnexKFormComponent,
+          '',
+          'generate-query',
+          this.storeSelected
+        );
       } else {
         this.alert(
           'warning',
@@ -410,6 +416,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         store: store,
         typeAnnex: typeAnnex,
         annexData: annexData,
+        idSampleOrder: this.sampleOrderId,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
