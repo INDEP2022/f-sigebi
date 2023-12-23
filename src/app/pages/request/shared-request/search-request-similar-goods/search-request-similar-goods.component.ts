@@ -277,7 +277,8 @@ export class SearchRequestSimilarGoodsComponent
           this.data2['data'].forEach(async element => {
             await this.updateGood({
               id: element.id,
-              goodId: this.requestInfo.id,
+              goodId: element.id,
+              goodReferenceNumber: this.requestInfo.id,
             });
           });
 
