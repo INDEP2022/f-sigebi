@@ -44,7 +44,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -169,7 +170,6 @@ export class RequestCompDocTasksComponent
     registerAppointment: false, //REGISTRAR CITA
     orderEntry: false, //ORDEN DE INGRESO
     programVisit: false, //ORDEN DE INGRESO
-
   };
 
   /* INJECTIONS
@@ -306,7 +306,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
     if (!this.nextTurn) {
@@ -873,7 +873,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -962,7 +962,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'notify-transfer-similar-goods':
-
         if (!reportSheet.includes('Y')) {
           this.showWarning('Genere el reporte de notificación');
           return false;
@@ -985,7 +984,9 @@ export class RequestCompDocTasksComponent
         //PROGRAMAR FECHAS
 
         if (!this.validate.programVisit) {
-          this.showWarning('Capture el periodo de los bienes para la visita ocular');
+          this.showWarning(
+            'Capture el periodo de los bienes para la visita ocular'
+          );
           return false;
         }
 
@@ -997,14 +998,15 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'validate-eye-visit-similar-goods':
-
         if (!this.validate.programVisit) {
           this.showWarning('Validar Resultado de visitas');
           return false;
         }
 
         if (!reportSheet.includes('Y')) {
-          this.showWarning('Generar el reporte de resultado de la visita ocular');
+          this.showWarning(
+            'Generar el reporte de resultado de la visita ocular'
+          );
           return false;
         }
 
@@ -1079,9 +1081,9 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.signedDictum) {
-          /*this.showWarning('Firme el dictamen de resarcimiento');
-          return false;*/
+        if (!reportSheet.includes('YY')) {
+          this.showWarning('Firme el dictamen de resarcimiento');
+          //return false;
         }
         break;
 
@@ -1103,9 +1105,14 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.signedNotify) {
-          /*this.showWarning('Generar el reporte de notificación');
-          return false;*/
+        if (!reportSheet.includes('Y')) {
+          this.showWarning('Genere el reporte de notificación');
+          return false;
+        }
+
+        if (!reportSheet.includes('YY')) {
+          this.showWarning('Firme el reporte de notificación');
+          //return false;
         }
 
         break;
@@ -1387,14 +1394,12 @@ export class RequestCompDocTasksComponent
     //Agreagar validaciones en especifico
   }
 
-
-
   btnRequestAprobar() {
     this.alertQuestion(
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1410,7 +1415,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1480,7 +1485,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
   showReport() {
     this.wContentService.obtainFile('SAE568245').subscribe({
@@ -1490,7 +1495,7 @@ export class RequestCompDocTasksComponent
         const fileURL = URL.createObjectURL(file);
         this.openPrevPdf(fileURL);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
