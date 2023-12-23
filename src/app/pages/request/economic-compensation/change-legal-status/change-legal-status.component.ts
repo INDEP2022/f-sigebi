@@ -13,6 +13,7 @@ import { BehaviorSubject, map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILegalAffair } from 'src/app/core/models/catalogs/legal-affair-model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { LegalAffairService } from 'src/app/core/services/catalogs/legal-affair.service';
 import { LegalTradesService } from 'src/app/core/services/legal-trades/legal-trades.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -31,6 +32,8 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   allotment: any;
   @Output() refresh = new EventEmitter<true>();
 
+  @Output() delegtion = new EventEmitter<Object>();
+
   affairs = new DefaultSelect<ILegalAffair>();
 
   taxPayer: string = '';
@@ -42,21 +45,23 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   private legalService = inject(LegalAffairService);
   private affairService = inject(AffairService);
   private legalTradeService = inject(LegalTradesService);
+  private serviceDelegations = inject(DelegationService);
 
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
     this.settingsTwo = {
       ...this.settings,
-      selectMode: 'multi',
+      selectMode: 'single',
       actions: false,
       columns: { ...DELEGATION_COLUMNS_REPORT },
     };
   }
 
   @Input() isDelegationsVisible: boolean = true;
+  @Input() isJuridicVisible: boolean = true;
+
   @Input() requestId: number = null;
 
-  isJuridicVisible: boolean = true;
   isSelected: boolean = false;
 
   settingsTwo: any;
@@ -68,9 +73,13 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   private requestService = inject(RequestService);
 
   ngOnInit(): void {
-    this.getAllTrades();
-    this.getRequestInfo();
+    if (this.isJuridicVisible) {
+      this.getAllTrades();
+      this.getRequestInfo();
+    }
+
     if (this.isDelegationsVisible) {
+      this.queryDelegation();
       this.isJuridicVisible = false;
     }
 
@@ -204,22 +213,54 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       });
   }
 
+  //Table
+  queryDelegation() {
+    let params = {
+      ...this.paramsDelegation.getValue(),
+    };
+    this.serviceDelegations.getAllTwo(params).subscribe({
+      next: response => {
+        if (Array.isArray(response.data)) {
+          this.dataThree.load(response.data);
+          this.totalItemsDelegation = response.count || 0;
+          this.dataThree.refresh();
+        }
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
   save() {
-    let object = this.form.getRawValue();
-    if (object['signatureBySubstitution'] == true) {
-      object['signatureBySubstitution'] = '1';
-    } else {
-      object['signatureBySubstitution'] = '0';
-    }
+    if (this.isJuridicVisible) {
+      let object = this.form.getRawValue();
+      if (object['signatureBySubstitution'] == true) {
+        object['signatureBySubstitution'] = '1';
+      } else {
+        object['signatureBySubstitution'] = '0';
+      }
 
-    object['applicationId'] = this.requestId;
+      object['applicationId'] = this.requestId;
 
-    if (isNullOrEmpty(this.recDoc)) {
-      this.createLegalDoc(object);
-      this.getAllTrades();
+      if (isNullOrEmpty(this.recDoc)) {
+        this.createLegalDoc(object);
+        this.getAllTrades();
+      } else {
+        this.updatedLegalDoc(object);
+      }
     } else {
-      this.updatedLegalDoc(object);
+      console.log(this.dataCheckDelegation);
+      if (!isNullOrEmpty(this.dataCheckDelegation)) {
+        this.delegtion.emit(this.dataCheckDelegation[0].data);
+        this.refresh.emit(true);
+        this.modalRef.hide();
+      } else {
+        this.showWarning('Seleccione una delegación');
+      }
     }
+  }
+
+  showWarning(text) {
+    this.onLoadToast('warning', 'Advertencia', text);
   }
 
   onAffairChange(subdelegation: any) {
