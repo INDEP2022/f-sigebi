@@ -350,7 +350,8 @@
             [idRequest]="requestId"></app-select-goods>
 
           <div *ngIf="selectGoodsNot">
-            <app-goods-not-transferred></app-goods-not-transferred>
+            <app-goods-not-transferred
+              [requestId]="requestId"></app-goods-not-transferred>
           </div>
         </tab>
         <tab
@@ -394,7 +395,10 @@
             [processDetonate]="processDetonate"></app-goods-list>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
-          <app-guidelines [requestId]="requestId" (onChange)="onGuidelines($event)"></app-guidelines>
+          <app-guidelines
+            [requestId]="requestId"
+            (onSave)="onGuidelines($event)"
+            (onChange)="onGuidelines($event)"></app-guidelines>
         </tab>
         <tab *ngIf="viewGuidelines" heading="Lineamientos" id="guidelinesTab">
           <app-guidelines-view [requestId]="requestId"></app-guidelines-view>

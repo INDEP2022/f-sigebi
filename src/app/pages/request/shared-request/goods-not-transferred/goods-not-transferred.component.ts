@@ -1,7 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { INoTransfer } from 'src/app/core/models/no-transfer/no-transfer';
+import { NoTransferService } from 'src/app/core/services/no-transfer/no-transfer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 import { ModalNotTransferredComponent } from './modal-not-transferred/modal-not-transferred.component';
@@ -13,25 +25,15 @@ import { ModalNotTransferredComponent } from './modal-not-transferred/modal-not-
 })
 export class GoodsNotTransferredComponent extends BasePage implements OnInit {
   @Input() goodsList: any;
+
+  @Input() requestId: number;
+
+  private tranferService = inject(NoTransferService);
+
   @Output() goods = new EventEmitter<any>();
   columns: any[] = [];
 
-  data: any[] = [
-    {
-      numberGood: '1',
-      typeRelevant: 'TIPO 1',
-      description: 'DESCRIPCION DEL NUMERO 1',
-      unitOfMeasure: 'PIEZA',
-      quantity: '23',
-    },
-    {
-      numberGood: '2',
-      typeRelevant: 'TIPO 2',
-      description: 'DESCRIPCION DEL NUMERO 2',
-      unitOfMeasure: 'PIEZA',
-      quantity: '26',
-    },
-  ];
+  data: INoTransfer[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -42,17 +44,20 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getAllNotTransferred();
     this.getPagination();
   }
 
   openModal(context?: Partial<ModalNotTransferredComponent>) {
     const modalRef = this.modalService.show(ModalNotTransferredComponent, {
-      initialState: { ...context },
+      initialState: { ...context, requestId: this.requestId },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
+      if (next) {
+        this.getAllNotTransferred();
+      }
     });
   }
 
@@ -72,19 +77,27 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
     this.totalItems = this.columns.length;
   }
 
-  getDrawers() {
-    this.loading = true;
-    /*     this.drawerService.getAll(this.params.getValue()).subscribe({
+  getAllNotTransferred() {
+    const param = new FilterParams();
+    param.addFilter('applicationId', this.requestId);
+    const filter = param.getParams();
+    this.tranferService.getAllNoTransfer(filter).subscribe({
       next: response => {
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
+        console.log(response);
+        this.data = response.data;
+        this.getData();
       },
-      error: error => (this.loading = false),
-    }); */
+      error: error => {},
+    });
   }
 
-  delete(drawer: any) {
+  getDrawers() {
+    this.loading = true;
+    this.getAllNotTransferred();
+    this.loading = false;
+  }
+
+  delete(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -93,14 +106,13 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.onLoadToast('success', 'Eliminado correctamente', '');
       }
-      /*let { noDrawer, noBobeda } = drawer;
-          const idBobeda = (noBobeda as ISafe).idSafe;
-          noBobeda = idBobeda;
-          this.drawerService.removeByIds({ noDrawer, noBobeda }).subscribe({
-            next: data => this.getDrawers(),
-            error: error => (this.loading = false),
+
+      this.tranferService
+        .removeNoTransfer(data.goodNumbertransferredId)
+        .subscribe({
+          next: data => this.getDrawers(),
+          error: error => (this.loading = false),
         });
-      } */
     });
   }
 }
