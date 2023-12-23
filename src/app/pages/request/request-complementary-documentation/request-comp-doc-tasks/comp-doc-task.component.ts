@@ -113,7 +113,8 @@ export abstract class CompDocTasksComponent extends BasePage {
   }
 
   mapTask(process: string, affair?: number, contributor: string = '') {
-    console.log('affair', affair);
+
+    this.typeVisit = 'viewGoods';
     this.reportTable = 'SOLICITUDES';
 
     this.disableTabs();

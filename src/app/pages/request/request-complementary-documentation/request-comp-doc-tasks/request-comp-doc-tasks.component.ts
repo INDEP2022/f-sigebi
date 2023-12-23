@@ -33,6 +33,9 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -174,6 +177,8 @@ export class RequestCompDocTasksComponent
   private bsModalRef = inject(BsModalRef);
   private authService = inject(AuthService);
   private taskService = inject(TaskService);
+  private wContentService = inject(WContentService);
+  private sanitizer = inject(DomSanitizer);
 
   //private rejectedService = inject(RejectedGoodService)
 
@@ -255,8 +260,8 @@ export class RequestCompDocTasksComponent
       next: resp => {
         this.taskInfo = resp.data[0];
         this.title = this.taskInfo.title;
-        this.nextTurn = this.taskInfo.urlNb.includes(this.process);
-        //this.taskInfo.State.toUpperCase() != 'FINALIZADA';
+        this.nextTurn = this.taskInfo.urlNb.includes(this.process)
+          && this.taskInfo.State.toUpperCase() != 'FINALIZADA';
       },
     });
   }
@@ -296,20 +301,15 @@ export class RequestCompDocTasksComponent
   requestRegistered(request: any) { }
 
   openReport(): void {
-    //validar nextTurn
+
     if (!this.nextTurn) {
-      this.showWarning('Vista previa no disponible');
+      this.showReport();
       return;
     }
 
-    if (this.signedReport) {
-      //this.openSignature();
-      //return;
-    }
-
     const initialState: Partial<CreateReportComponent> = {
-      signReport: this.signedReport,
-      editReport: this.editReport,
+      signReport: this.signedReport && this.nextTurn,
+      editReport: this.editReport && this.nextTurn,
       tableName: this.reportTable,
       documentTypeId: this.reportId,
       process: this.process,
@@ -322,8 +322,23 @@ export class RequestCompDocTasksComponent
       ignoreBackdropClick: true,
     });
 
+
+    modalRef.content.show.subscribe(response => {
+      if (response) {
+        this.showReport();
+      }
+    });
+
     modalRef.content.refresh.subscribe(response => {
       console.log(response);
+
+      if (response.upload) {
+        this.requestInfo.detail.reportSheet = 'Y';
+        this.updateRequest(false);
+      } else if (response.sign) {
+        this.requestInfo.detail.reportSheet = 'YY';
+        this.updateRequest(false);
+      }
 
     });
   }
@@ -891,7 +906,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (this.requestInfo.detail.reportSheet != 'Y') {
+        if (!this.requestInfo.detail.reportSheet.includes('Y')) {
           this.showWarning('Genere el Dictamen de Devolución');
           return false;
         }
@@ -901,31 +916,16 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        return false;
-
         break;
       case 'approve-return':
-        let getEstimatedRowCount = 0;
-        let contenido = '';
-        let docNameUcm = '';
+
+        if (!this.requestInfo.detail.reportSheet.includes('YY')) {
+          this.showWarning('Firme el dictamen de resarcimiento');
+          //return false;
+        }
 
         if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
-
-        if (!this.validate.signedDictum) {
-          this.showWarning('Firme el dictamen de resarcimiento');
-          return false;
-        }
-
-        if (getEstimatedRowCount == 0 || isNullOrEmpty(contenido)) {
-          this.showWarning('Es necesario generar el Dictamen de Devolución');
-          return false;
-        }
-
-        if (isNullOrEmpty(docNameUcm)) {
-          this.showWarning('Es necesario firmar el Dictamen de Devolución');
           return false;
         }
 
@@ -1142,7 +1142,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (this.requestInfo.detail.reportSheet != 'Y') {
+        if (!this.requestInfo.detail.reportSheet.includes('Y')) {
           this.showWarning('Generar la solicitud de recursos económicos');
           return false;
         }
@@ -1153,7 +1153,7 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        if (this.requestInfo.detail.reportSheet != 'Y') {
+        if (!this.requestInfo.detail.reportSheet.includes('Y')) {
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
@@ -1438,6 +1438,47 @@ export class RequestCompDocTasksComponent
   }
 
   createDictumReturn() { }
+
+  showReport() {
+    this.wContentService.obtainFile("SAE568245").subscribe({
+      next: response => {
+        let blob = this.dataURItoBlob(response);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      },
+      error: error => { },
+    });
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'application/pdf' });
+    return blob;
+  }
+
+  openPrevPdf(pdfurl: string) {
+    console.log(pdfurl);
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
 
   //Agregar servicios de validacion de turnado
   //Reportes dinamicos

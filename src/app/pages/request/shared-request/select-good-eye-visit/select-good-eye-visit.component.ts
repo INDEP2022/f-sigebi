@@ -22,8 +22,11 @@ import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-f
 import { ModifyDatesModalComponent } from './modify-dates-modal/modify-dates-modal.component';
 import {
   SELECTED_GOOD_REVIEW,
+  SELECTED_GOOD_VIEW,
   SELECT_GOODS_EYE_VISIT_COLUMNS,
 } from './select-good-eye-visit-columns';
+import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 
 @Component({
   selector: 'app-select-good-eye-visit',
@@ -33,7 +36,7 @@ import {
 export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @Input() idRequest: number;
-  @Input() typeVisit: string;
+  @Input() typeVisit: string = "viewGoods";
   selectedGoodParams = new BehaviorSubject<ListParams>(new ListParams());
   selectedGoodTotalItems: number = 0;
   selectedGoodColumns = new LocalDataSource();
@@ -43,6 +46,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   };
   selectedList: any = [];
   maneuverReqList: any[] = [];
+  toggleInformation: boolean = true;
 
   /* INJECTION */
   private modalService = inject(BsModalService);
@@ -51,6 +55,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   private goodsQueryService = inject(GoodsQueryService);
   private delegationService = inject(DelegationService);
   private fractionService = inject(FractionService);
+  private requestService = inject(RequestService);
 
   constructor() {
     super();
@@ -60,8 +65,10 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     console.log(this.typeVisit);
     if (this.typeVisit === 'selectGood') {
       this.selectedGoodSettings.columns = SELECT_GOODS_EYE_VISIT_COLUMNS;
-    } else {
+    } else if (this.typeVisit === 'resultGood') {
       this.selectedGoodSettings.columns = SELECTED_GOOD_REVIEW;
+    } else {
+      this.selectedGoodSettings.columns = SELECTED_GOOD_VIEW;
     }
   }
 
@@ -124,7 +131,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
         },
         ...this.selectedGoodSettings.columns,
       };
-    } else if (this.typeVisit == 'resultGood') {
+    } else if (this.typeVisit == 'resultGood' || this.typeVisit == 'viewGoods') {
       this.selectedGoodSettings.columns = {
         viewFile: {
           title: 'Expediente',
@@ -209,7 +216,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   }
 
   viewFile(file: any) {
-    console.log(file);
+    this.getFormSeach(file.applicationId);
   }
 
   checked(data: any) {
@@ -359,4 +366,35 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
       });
     });
   }
+
+  getFormSeach(recordId: any) {
+    this.requestService.getById(recordId).subscribe({
+      next: resp => {
+        console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
+        this.openDetail(resp);
+      },
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'No se encontraron registros', '');
+      },
+    });
+  }
+
+  openDetail(data: any): void {
+    this.openModalInformation(data, 'detail');
+  }
+
+  private openModalInformation(data: any, typeInfo: string) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        typeInfo,
+        callback: (next: boolean) => { },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ViewDetailGoodsComponent, config);
+  }
+
 }

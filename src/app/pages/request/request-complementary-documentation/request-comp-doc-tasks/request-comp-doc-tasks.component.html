@@ -78,15 +78,6 @@
             Guardar <i class="fa fa-save mr-1 float-icon"></i>
           </button>
         </div>
-        <div class="mx-1" *ngIf="rejectReq">
-          <button
-            type="button"
-            class="btn btn-danger btn-sm active"
-            [disabled]="!nextTurn"
-            (click)="rejectRequest()">
-            <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
-          </button>
-        </div>
         <div class="mx-1" *ngIf="resultEyeVisitReport || makeResultPaperReport">
           <button
             type="button"
@@ -175,11 +166,11 @@
             Dictamen Devolución <i class="bx bx-file bx-m float-icon"></i>
           </button>
         </div>
-        <div class="mx-1" *ngIf="btnDecline">
+        <div class="mx-1" *ngIf="btnDecline || rejectReq">
           <button
             type="button"
             class="btn btn-danger btn-sm active mr-3"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="rejectRequest()">
             Rechazar
             <i class="bx bx-x bx-m float-icon"></i>
@@ -364,7 +355,7 @@
         </tab>
         <tab
           *ngIf="selectGoodForEyeVisit"
-          heading="Bienes seleccionados"
+          heading="Bienes Seleccionados"
           id="selectGoodsEyeVisitTab">
           <app-select-good-eye-visit
             [idRequest]="requestId"
