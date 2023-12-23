@@ -181,6 +181,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
 
   fillFoliosTable(params: FilterParams) {
     this.loading = true;
+    if (this.origin.includes('FCOMER084') && this.folio) {
+      params.addFilter('id', this.folio);
+    }
     return this.getDocuments(params).pipe(
       catchError(error => {
         this.loading = false;
