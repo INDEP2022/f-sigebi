@@ -45,6 +45,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
   implements OnInit {
+  protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
   protected override selectGoodNotForEyeVisit: boolean;
@@ -260,8 +261,12 @@ export class RequestCompDocTasksComponent
       next: resp => {
         this.taskInfo = resp.data[0];
         this.title = this.taskInfo.title;
-        this.nextTurn = this.taskInfo.urlNb.includes(this.process)
-          && this.taskInfo.State.toUpperCase() != 'FINALIZADA';
+        this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
+
+        if (this.taskInfo.requestId != this.requestId) {
+          this.router.navigateByUrl(this.taskInfo.urlNb + '/' + this.taskInfo.requestId);
+        }
+
       },
     });
   }
@@ -298,7 +303,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
 
@@ -868,16 +873,15 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
 
   validateTurn() {
 
-    if (isNullOrEmpty(this.requestInfo.detail.reportSheet)) {
-      this.requestInfo.detail.reportSheet = '';
-    }
+    let reportSheet = isNullOrEmpty(this.requestInfo.detail.reportSheet)
+      ? '' : this.requestInfo.detail.reportSheet;
 
     switch (this.process) {
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
@@ -910,7 +914,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.requestInfo.detail.reportSheet.includes('Y')) {
+        if (!reportSheet.includes('Y')) {
           this.showWarning('Genere el Dictamen de Devolución');
           return false;
         }
@@ -923,7 +927,7 @@ export class RequestCompDocTasksComponent
         break;
       case 'approve-return':
 
-        if (!this.requestInfo.detail.reportSheet.includes('YY')) {
+        if (!reportSheet.includes('YY')) {
           this.showWarning('Firme el dictamen de resarcimiento');
           //return false;
         }
@@ -1030,7 +1034,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (this.requestInfo.detail.reportSheet != 'Y') {
+        if (!reportSheet.includes('Y')) {
           this.showWarning('Genera el dictamen de resarcimiento');
           return false;
         }
@@ -1050,7 +1054,7 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'validate-opinion-compensation':
-        if (this.requestInfo.detail.reportSheet != 'Y') {
+        if (!reportSheet.includes('Y')) {
           this.showWarning(
             'Genera la validación del dictamen de resarcimiento'
           );
@@ -1095,7 +1099,7 @@ export class RequestCompDocTasksComponent
           this.showWarning('Enviar el correo de notificación al contribuyente');
           return false;
         }
-        if (this.requestInfo.detail.reportSheet != 'Y') {
+        if (!reportSheet.includes('Y')) {
           this.showWarning('Generar el oficio destino');
           return false;
         }
@@ -1135,7 +1139,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.requestInfo.detail.reportSheet.includes('Y')) {
+        if (!reportSheet.includes('Y')) {
           this.showWarning('Generar la solicitud de recursos económicos');
           return false;
         }
@@ -1146,7 +1150,7 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        if (!this.requestInfo.detail.reportSheet.includes('Y')) {
+        if (!reportSheet.includes('Y')) {
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
@@ -1348,7 +1352,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1364,7 +1368,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1434,7 +1438,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   showReport() {
     this.wContentService.obtainFile("SAE568245").subscribe({

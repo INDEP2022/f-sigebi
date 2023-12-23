@@ -48,6 +48,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract steap2: boolean;
   protected abstract steap3: boolean;
   protected abstract isEdit: boolean;
+  protected abstract btnGrouper: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -466,6 +467,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.selectGoods = true;
         this.searchAssociateFile = true;
         this.expRequest = true;
+        this.btnGrouper = true;
 
         this.saveRequest = true;
         this.turnReq = true;
