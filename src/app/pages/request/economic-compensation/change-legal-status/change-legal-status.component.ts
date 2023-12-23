@@ -19,6 +19,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-change-legal-status',
@@ -67,6 +68,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   private requestService = inject(RequestService);
 
   ngOnInit(): void {
+    this.getAllTrades();
     this.getRequestInfo();
     if (this.isDelegationsVisible) {
       this.isJuridicVisible = false;
@@ -77,22 +79,17 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      corporate: [null, [Validators.required]],
-      executive: [null, [Validators.required]],
-      receiver: [null, [Validators.required]],
-      position: [null, [Validators.required]],
+      dirCorporateLegal: [null, [Validators.required]],
+      dirExecutiveLegal: [null, [Validators.required]],
+      nameAddressee: [null, [Validators.required]],
+      postAddressee: [null, [Validators.required]],
       affair: [null, [Validators.required]],
-      protection: [null, [Validators.required]],
-      justify: [null, [Validators.required]],
-      dateProvide: [null, [Validators.required]],
-      orderProvide: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      signed: [null],
+      paragraphClaim: [null, [Validators.required]],
+      agreementDate: [null, [Validators.required]],
+      inchargeProvided: [null, [Validators.required]],
+      statusSuspension: [null, [Validators.required]],
+      signatureBySubstitution: [null],
     });
-    if (this.allotment != null) {
-      console.log(this.allotment);
-      this.form.patchValue(this.allotment);
-    }
   }
 
   checkAcceptDelegations(event: any) {
@@ -176,9 +173,53 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
     });
   }
 
+  updatedLegalDoc(object: Object) {
+    this.legalTradeService.updateLegalTrades(object).subscribe({
+      next: resp => {
+        this.getRequestInfo();
+        this.onLoadToast('success', 'Oficio generado con éxito');
+      },
+      error: error => {
+        this.onLoadToast('error', 'No se pudo generar el oficio');
+      },
+    });
+  }
+
+  getAllTrades() {
+    // Llamar servicio para obtener informacion de la documentacion de la orden
+    const params = new ListParams();
+    params['filter.applicationId'] = `$eq:${this.requestId}`;
+    this.legalTradeService
+      .getAllLegalTrades(params)
+      .pipe(
+        map(x => {
+          return x.data[0];
+        })
+      )
+      .subscribe({
+        next: resp => {
+          this.recDoc = resp;
+          console.log(resp);
+        },
+      });
+  }
+
   save() {
     let object = this.form.getRawValue();
-    this.createLegalDoc(object);
+    if (object['signatureBySubstitution'] == true) {
+      object['signatureBySubstitution'] = '1';
+    } else {
+      object['signatureBySubstitution'] = '0';
+    }
+
+    object['applicationId'] = this.requestId;
+
+    if (isNullOrEmpty(this.recDoc)) {
+      this.createLegalDoc(object);
+      this.getAllTrades();
+    } else {
+      this.updatedLegalDoc(object);
+    }
   }
 
   onAffairChange(subdelegation: any) {
