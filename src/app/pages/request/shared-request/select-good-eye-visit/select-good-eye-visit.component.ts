@@ -189,7 +189,9 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
                   const maneuverReqColumn = column.find(
                     x => x.id == 'maneuverRequired'
                   );
-                  maneuverReqColumn.hide = true;
+                  if (!isNullOrEmpty(maneuverReqColumn)) {
+                    maneuverReqColumn.hide = true;
+                  }
                 }
               }
 
