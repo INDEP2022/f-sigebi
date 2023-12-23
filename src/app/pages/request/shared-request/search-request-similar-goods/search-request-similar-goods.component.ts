@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
@@ -14,14 +14,14 @@ import { COLUMNS, COLUMNS2 } from './columns';
 //Provisional Data
 import { ActivatedRoute } from '@angular/router';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2/src/sweetalert2.js';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { AssociateFileComponent } from '../../transfer-request/tabs/associate-file/associate-file.component';
 import { NewFileModalComponent } from '../associate-file/new-file-modal/new-file-modal.component';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
-import { GoodService } from 'src/app/core/services/good/good.service';
 
 @Component({
   selector: 'app-search-request-similar-goods',
@@ -30,7 +30,8 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 })
 export class SearchRequestSimilarGoodsComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
@@ -67,19 +68,19 @@ export class SearchRequestSimilarGoodsComponent
       actions: this.selected
         ? null
         : {
-          ...this.settings.actions,
-          add: false,
-          edit: false,
-          delete: false,
-          columnTitle: 'Asociar',
-          custom: [
-            {
-              name: 'associate',
-              title:
-                '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
-            },
-          ],
-        },
+            ...this.settings.actions,
+            add: false,
+            edit: false,
+            delete: false,
+            columnTitle: 'Asociar',
+            custom: [
+              {
+                name: 'associate',
+                title:
+                  '<i class="bx bx-link float-icon text-success mx-2 fa-lg"></i>',
+              },
+            ],
+          },
       columns: { ...COLUMNS },
     };
     this.settings2 = {
@@ -106,7 +107,7 @@ export class SearchRequestSimilarGoodsComponent
       next: response => {
         this.requestInfo = response;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -219,7 +220,6 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   getGoods(id: number) {
-
     this.data2.load([]);
     this.totalItems2 = 0;
 
@@ -252,10 +252,13 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   async selectGood() {
-
     if (!isNullOrEmpty(this.selectedRows) && this.loadGoods) {
       if (this.totalItems2 == 0) {
-        this.alert('warning', 'La solicitud seleccionada no contiene bienes', '');
+        this.alert(
+          'warning',
+          'La solicitud seleccionada no contiene bienes',
+          ''
+        );
         return;
       }
 
@@ -264,15 +267,15 @@ export class SearchRequestSimilarGoodsComponent
       this.alertQuestion(
         'question',
         'Asociar',
-        '¿Desea seleccionar la Solicitud de Bienes Similares No. ' + request.id + '?'
+        '¿Desea seleccionar la Solicitud de Bienes Similares No. ' +
+          request.id +
+          '?'
       ).then(question => {
-
-        if (question) {
-
+        if (question.isConfirmed) {
           this.data2['data'].forEach(async element => {
             await this.updateGood({
               id: element.id,
-              goodId: this.requestInfo.id
+              goodId: this.requestInfo.id,
             });
           });
 
@@ -286,8 +289,14 @@ export class SearchRequestSimilarGoodsComponent
               next: resp => {
                 this.getFiles();
                 this.loading = false;
-                this.alert('success', '', 'Se ha seleccionado la Solicitud de Bienes Similares No. '
-                  + request.id + ' y el Expediente No. ' + request.recordId);
+                this.alert(
+                  'success',
+                  '',
+                  'Se ha seleccionado la Solicitud de Bienes Similares No. ' +
+                    request.id +
+                    ' y el Expediente No. ' +
+                    request.recordId
+                );
 
                 this.updateStateRequestTab();
               },
@@ -295,15 +304,9 @@ export class SearchRequestSimilarGoodsComponent
                 this.loading = false;
               },
             });
-
-
         }
-
       });
-
     }
-
-
 
     //const request = await this.getRequest();
     //this.openModal(AssociateFileComponent, 'doc-expedient', request);
@@ -359,5 +362,5 @@ export class SearchRequestSimilarGoodsComponent
     });
   }
 
-  confirm(result: boolean) { }
+  confirm(result: boolean) {}
 }
