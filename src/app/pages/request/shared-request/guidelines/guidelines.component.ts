@@ -1,19 +1,26 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GuidelinesService } from 'src/app/core/services/guidelines/guideline.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { GUIDELINES_COLUMNS } from './guidelines-columns';
 import { GuidelinesObservationsComponent } from './guidelines-observations/guidelines-observations.component';
 import { GuidelinesRevisionViewComponent } from './guidelines-revision-view/guidelines-revision-view.component';
 import { GuidelinesRevisionComponent } from './guidelines-revision/guidelines-revision.component';
-import { GuidelinesService } from 'src/app/core/services/guidelines/guideline.service';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-guidelines',
@@ -77,7 +84,8 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     },
     {
       id: 3,
-      guideline: 'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
+      guideline:
+        'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
       firstRevision: 'N/A',
       firstRevisionObserv: '',
       secondRevision: 'N/A',
@@ -97,8 +105,10 @@ export class GuidelinesComponent extends BasePage implements OnInit {
 
   private authService = inject(AuthService);
 
-  constructor(private fb: FormBuilder,
-    private guidelinesService: GuidelinesService) {
+  constructor(
+    private fb: FormBuilder,
+    private guidelinesService: GuidelinesService
+  ) {
     super();
     this.guidelinesSettings.columns = GUIDELINES_COLUMNS;
     this.guidelinesSettings.columns = {
@@ -188,16 +198,15 @@ export class GuidelinesComponent extends BasePage implements OnInit {
 
   save() {
     // Llamar servicio para guardar informacion
-    console.log(this.guidelinesForm.value, this.guidelinesColumns);
 
     let validate = this.guidelinesColumns.every(objeto => {
       return Object.values(objeto).every(valor => !isNullOrEmpty(valor));
     });
 
     if (validate) {
-
       this.guidelinesColumns.forEach(async (element: any) => {
         let obj = this.getObject(element);
+        this.onSave.emit(true);
         await this.saveGuidelines(obj);
       });
 
@@ -208,7 +217,6 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         'Solicitud Guardada',
         'success'
       );
-
     } else {
       this.msgModal(
         'Debe completar todos los campos'.concat(),
@@ -216,11 +224,9 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         'error'
       );
     }
-
   }
 
   getObject(obj) {
-
     const user: any = this.authService.decodeToken();
 
     return {
@@ -230,12 +236,12 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       meetsRevision2: obj.secondRevision,
       missingActionsRev1: obj.firstRevisionObserv,
       missingActionsRev2: obj.secondRevisionObserv,
-      version: "1",
+      version: '1',
       userCreation: user.username,
       dateCreation: moment(new Date()).format('YYYY-MM-DD'),
       userModification: user.username,
       dateModification: moment(new Date()).format('YYYY-MM-DD'),
-    }
+    };
   }
 
   msgModal(message: string, title: string, typeMsg: any) {
@@ -256,7 +262,6 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   getGuidelines() {
-
     const params = new ListParams();
     params['filter.applicationId'] = `$eq:${this.requestId}`;
     this.guidelinesService.getGuidelines(params).subscribe({
@@ -264,46 +269,45 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         this.loadGuidelines = resp.data;
 
         if (this.loadGuidelines.length > 0) {
-
           this.guidelinesData.forEach(element => {
-
-            let item = this.loadGuidelines.find(x => x.lineamentId == element.id);
+            let item = this.loadGuidelines.find(
+              x => x.lineamentId == element.id
+            );
 
             element.firstRevision = item.meetsRevision1;
             element.secondRevision = item.meetsRevision2;
             element.firstRevisionObserv = item.missingActionsRev1;
             element.secondRevisionObserv = item.missingActionsRev2;
-
           });
 
           this.guidelinesForm.patchValue({
             firstRevisionDate: new Date(this.loadGuidelines[0].dateCreation),
-            secondRevisionDate: new Date(this.loadGuidelines[0].dateModification),
+            secondRevisionDate: new Date(
+              this.loadGuidelines[0].dateModification
+            ),
             observations: this.loadGuidelines[0].missingActionsRev1,
           });
         }
 
         this.getData(this.guidelinesData);
         this.selectChanges();
-
       },
       error: err => {
         this.getData(this.guidelinesData);
-      }
+      },
     });
   }
 
-
   saveGuidelines(object) {
-
     if (this.loadGuidelines.length == 0) {
       return new Promise((resolve, reject) => {
         this.guidelinesService.createGuidelines(object).subscribe({
           next: resp => {
             resolve(resp);
-          }, error: err => {
+          },
+          error: err => {
             reject(err);
-          }
+          },
         });
       });
     } else {
@@ -311,14 +315,14 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         this.guidelinesService.updateGuidelines(object).subscribe({
           next: resp => {
             resolve(resp);
-          }, error: err => {
+          },
+          error: err => {
             reject(err);
-          }
+          },
         });
       });
     }
   }
-
 
   selectChanges() {
     this.onChange.emit({
@@ -326,6 +330,4 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       object: this.loadGuidelines,
     });
   }
-
-
 }

@@ -41,7 +41,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override selectGoodNotForEyeVisit: boolean;
   protected override selectGoodsNot: boolean;
   protected override editReport: boolean;
@@ -290,7 +291,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
     //validar nextTurn
@@ -853,7 +854,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -953,8 +954,8 @@ export class RequestCompDocTasksComponent
 
       case 'notify-transfer-similar-goods':
         if (!this.validate.signedNotify) {
-          this.showWarning('Firme el reporte de notificación');
-          return false;
+          /*this.showWarning('Firme el reporte de notificación');
+          return false;*/
         }
 
         if (!this.validate.files) {
@@ -1022,7 +1023,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.genDictum) {
+        if (this.requestInfo.detail.reportSheet != 'Y') {
           this.showWarning('Genera el dictamen de resarcimiento');
           return false;
         }
@@ -1030,30 +1031,19 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'analysis-result-compensation':
-        if (!this.validate.guidelines) {
-          this.showWarning('Verifique las observaciones de lineamientos');
-          return false;
-        }
-
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-
         if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
 
         if (!this.validate.signedDictum) {
-          this.showWarning('Firme el dictamen de resarcimiento');
-          return false;
+          /*this.showWarning('Firme el dictamen de resarcimiento');
+          return false;*/
         }
         break;
 
       case 'validate-opinion-compensation':
-
-        if (!this.validate.genValDictum) {
+        if (this.requestInfo.detail.reportSheet != 'Y') {
           this.showWarning(
             'Genera la validación del dictamen de resarcimiento'
           );
@@ -1071,8 +1061,8 @@ export class RequestCompDocTasksComponent
         }
 
         if (!this.validate.signedNotify) {
-          this.showWarning('Generar el reporte de notificación');
-          return false;
+          /*this.showWarning('Generar el reporte de notificación');
+          return false;*/
         }
 
         break;
@@ -1098,7 +1088,7 @@ export class RequestCompDocTasksComponent
           this.showWarning('Enviar el correo de notificación al contribuyente');
           return false;
         }
-        if (!this.validate.genOffice) {
+        if (this.requestInfo.detail.reportSheet != 'Y') {
           this.showWarning('Generar el oficio destino');
           return false;
         }
@@ -1106,8 +1096,8 @@ export class RequestCompDocTasksComponent
 
       case 'analysis-result-compensation':
         if (!this.validate.signedOffice) {
-          this.showWarning('Firmar el oficio destino');
-          return false;
+          /*this.showWarning('Firmar el oficio destino');
+          return false;*/
         }
         break;
 
@@ -1351,7 +1341,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1367,7 +1357,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1437,7 +1427,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
   //Agregar servicios de validacion de turnado
   //Reportes dinamicos
