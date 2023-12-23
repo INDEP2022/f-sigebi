@@ -168,6 +168,8 @@ export class RequestCompDocTasksComponent
     dictudData: false, //DATOS DEL DICTAMEN
     registerAppointment: false, //REGISTRAR CITA
     orderEntry: false, //ORDEN DE INGRESO
+    programVisit: false, //ORDEN DE INGRESO
+
   };
 
   /* INJECTIONS
@@ -261,7 +263,7 @@ export class RequestCompDocTasksComponent
       next: resp => {
         this.taskInfo = resp.data[0];
         this.title = this.taskInfo.title;
-        this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
+        //this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
 
         if (this.taskInfo.requestId != this.requestId) {
           this.router.navigateByUrl(this.taskInfo.urlNb + '/' + this.taskInfo.requestId);
@@ -964,9 +966,15 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'notify-transfer-similar-goods':
-        if (!this.validate.signedNotify) {
-          /*this.showWarning('Firme el reporte de notificación');
-          return false;*/
+
+        if (!reportSheet.includes('Y')) {
+          this.showWarning('Genere el reporte de notificación');
+          return false;
+        }
+
+        if (!reportSheet.includes('YY')) {
+          this.showWarning('Firme el reporte de notificación');
+          //return false;
         }
 
         if (!this.validate.files) {
@@ -979,9 +987,36 @@ export class RequestCompDocTasksComponent
       case 'eye-visit-similar-goods':
         //INTEGRAR EXPEDIENTE
         //PROGRAMAR FECHAS
+
+        if (!this.validate.programVisit) {
+          this.showWarning('Capture el periodo de los bienes para la visita ocular');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+
         break;
 
       case 'validate-eye-visit-similar-goods':
+
+        if (!this.validate.programVisit) {
+          this.showWarning('Validar Resultado de visitas');
+          return false;
+        }
+
+        if (!reportSheet.includes('Y')) {
+          this.showWarning('Generar el reporte de resultado de la visita ocular');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+
         //REGISTRO
         //VALIDAR RESULTADOS
         //INTEGRAR EXPEDIENTE
@@ -1346,6 +1381,14 @@ export class RequestCompDocTasksComponent
     this.validate.orderEntry = event.isValid;
     //Agreagar validaciones en especifico
   }
+
+  onProgramVisit(event) {
+    console.log(event);
+    this.validate.programVisit = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+
 
   btnRequestAprobar() {
     this.alertQuestion(

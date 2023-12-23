@@ -265,18 +265,18 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           });
         } else {
           this.onLoadToast(
-            'info',
+            'warning',
             'El bien ya cuenta con un resultado validado'
           );
         }
       } else {
         this.onLoadToast(
-          'info',
+          'warning',
           'El resultado de la visita ocular para el bien no es editable en este almacen'
         );
       }
     } else {
-      this.onLoadToast('info', 'Se tiene que seleccionar un bien');
+      this.onLoadToast('warning', 'Se tiene que seleccionar un bien');
     }
   }
 
@@ -304,7 +304,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
 
   approveAcceptGood() {
     if (this.selectedList.length == 0 || this.selectedList.length > 1) {
-      this.onLoadToast('info', 'Se tiene que tener un bien seleccionado');
+      this.onLoadToast('warning', 'Se tiene que tener un bien seleccionado');
       return;
     }
 
@@ -324,7 +324,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
       });
     } else {
       this.onLoadToast(
-        'info',
+        'warning',
         'No es posible aprobar el bien seleccionado',
         ''
       );
@@ -352,7 +352,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     });
     /* ACTUALIZA LA TABLA */
     this.selectedGoodColumns.getElements().then(data => {
-      //debugger;
+
       for (let i = 0; i < data.length; i++) {
         const dataColumns = data[i];
         for (let j = 0; j < this.selectedList.length; j++) {

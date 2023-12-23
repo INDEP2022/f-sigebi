@@ -38,8 +38,7 @@ export const resultContribuyente: any = [
 })
 export class ConfirmValidationModalComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   title: string = 'Confirmar Validación';
   confirmForm: FormGroup = new FormGroup({});
   selectResultTaxpayer = new DefaultSelect();
@@ -82,7 +81,6 @@ export class ConfirmValidationModalComponent
   async confirm() {
     const form = this.confirmForm.value;
     let updateItem: any = {};
-    debugger;
     if (form.resultTaxpayer == 'ACEPTADO') {
       const resultadoFinal = 'Y';
       const agrupador = this.goods.goodGrouper;

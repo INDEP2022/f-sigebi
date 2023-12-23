@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   inject,
   Input,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -27,6 +29,8 @@ import {
 } from './select-good-eye-visit-columns';
 import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
 import { RequestService } from 'src/app/core/services/requests/request.service';
+import { SELECT_GOODS_COLUMNS } from '../select-goods/select-goods-columns';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-select-good-eye-visit',
@@ -37,12 +41,16 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @Input() idRequest: number;
   @Input() typeVisit: string = "viewGoods";
+  @Input() viewGrouper: boolean = false;
+  @Output() onChange = new EventEmitter<any>();
+
   selectedGoodParams = new BehaviorSubject<ListParams>(new ListParams());
   selectedGoodTotalItems: number = 0;
   selectedGoodColumns = new LocalDataSource();
   selectedGoodSettings = {
     ...TABLE_SETTINGS,
     actions: false,
+    selectMode: 'multi',
   };
   selectedList: any = [];
   maneuverReqList: any[] = [];
@@ -68,7 +76,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     } else if (this.typeVisit === 'resultGood') {
       this.selectedGoodSettings.columns = SELECTED_GOOD_REVIEW;
     } else {
-      this.selectedGoodSettings.columns = SELECTED_GOOD_VIEW;
+      this.selectedGoodSettings.columns = this.viewGrouper ? SELECT_GOODS_COLUMNS : SELECTED_GOOD_VIEW;
     }
   }
 
@@ -94,7 +102,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     const self = this;
     if (this.typeVisit === 'selectGood') {
       this.selectedGoodSettings.columns = {
-        select: {
+        /*select: {
           title: '',
           type: 'custom',
           sort: false,
@@ -105,7 +113,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
               component.checked(data);
             });
           },
-        },
+        },*/
         maneuverRequired: {
           title: 'Maniobra Requerida',
           type: 'custom',
@@ -205,6 +213,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
             Promise.all(result).then(x => {
               this.selectedGoodColumns.load(resp.data);
               this.selectedGoodTotalItems = resp.count;
+              this.selectChanges();
               this.loading = false;
               setTimeout(() => {
                 this.centerExpedientButton();
@@ -267,17 +276,18 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   modifyDate() {
     if (this.selectedList.length == 0) {
       this.alertInfo(
-        'info',
+        'warning',
         'Se tiene que tener al menos un registro seleccionado',
         ''
       );
       return;
     }
-    const result: boolean = this.existDateAlreadyAsigned();
-    if (result == true) {
-      this.onLoadToast('info', 'Hay bienes que cuentan con visitas');
-      return;
-    }
+
+    //const result: boolean = this.existDateAlreadyAsigned();
+    //if (result == true) {
+    //  this.onLoadToast('warning', 'Hay bienes que cuentan con visitas');
+    //  return;
+    //}
 
     const config: ModalOptions = {
       initialState: {
@@ -290,21 +300,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     this.bsModalRef = this.modalService.show(ModifyDatesModalComponent, config);
 
     this.bsModalRef.content.event.subscribe((res: any) => {
-      console.log(this.selectedList);
-      this.selectedGoodColumns.getElements().then(data => {
-        data.map((item: any) => {
-          const toUpdate = this.selectedList.indexOf(item);
-          if (toUpdate != -1) {
-            item.startVisitDate = moment(res.startDate).format(
-              'DD-MM-YYYY, h:mm:ss a'
-            );
-            item.endVisitDate = moment(res.endDate).format(
-              'DD-MM-YYYY, h:mm:ss a'
-            );
-          }
-        });
-        this.selectedGoodColumns.load(data);
-      });
+      this.getData(new ListParams());
     });
   }
 
@@ -395,6 +391,20 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ViewDetailGoodsComponent, config);
+  }
+
+  selectGoods(goods) {
+    this.selectedList = goods.selected;
+  }
+
+  selectChanges() {
+
+    let items = this.selectedGoodColumns['data'].filter(x => !isNullOrEmpty(x.startVisitDate));
+
+    this.onChange.emit({
+      isValid: items.length > 0,
+      object: items,
+    });
   }
 
 }

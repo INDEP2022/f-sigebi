@@ -63,7 +63,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idRequest: number = 0;
   @Input() updateInfo: boolean = true;
-  @Input() btnGrouper: boolean = true;
+  @Input() btnGrouper: boolean = false;
 
 
 
@@ -103,13 +103,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getInfoRequest();
     const self = this;
     this.goodSettings.columns = {
       addGood: {
         title: 'Agregar Bien',
         type: 'custom',
         sort: false,
+        showAlways: true,
         renderComponent: AddGoodsButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe(async (row: any) => {
@@ -125,6 +125,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         title: 'Expediente',
         type: 'custom',
         sort: false,
+        showAlways: true,
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
@@ -143,6 +144,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         title: 'Expediente',
         type: 'custom',
         sort: false,
+        showAlways: true,
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
@@ -167,6 +169,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       ...this.selectedGoodSettings.columns,
     };
     //this.selectedGoodColumns = datagood;
+
+    this.getInfoRequest();
+
   }
 
   getFormSeach(recordId: any) {
@@ -183,6 +188,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoRequest() {
+
+    this.selectedGoodColumns = [];
+    this.selectedGoodTotalItems = this.selectedGoodColumns.length;
 
     this.requestService.getById(this.idRequest).subscribe({
       next: response => {
@@ -204,8 +212,14 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         response.data.forEach((item: any) => {
           this.addGood(item);
         });
+
+        this.displayColumns();
+
       },
-      error: error => { },
+      error: error => {
+        this.displayColumns();
+
+      },
     });
   }
 
@@ -471,7 +485,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
-    this.displayColumns();
     this.selectChanges();
   }
 
@@ -572,25 +585,22 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   displayColumns() {
+
     const columnas = this.table.grid.getColumns();
+
+    const goodGrouper = columnas.find(
+      (columna: any) => columna.id === 'goodGrouper'
+    );
+
+    if (!isNullOrEmpty(goodGrouper)) {
+      goodGrouper.hide = isNullOrEmpty(this.btnGrouper) ? true : !this.btnGrouper;
+    }
 
     if (this.processDet != 'RES_PAGO_ESPECIE') {
       const columnaSelectRigth = columnas.find(
         (columna: any) => columna.id === 'resultTaxpayer'
       );
       columnaSelectRigth.hide = true;
-
-      const goodGrouper = columnas.find(
-        (columna: any) => columna.id === 'goodGrouper'
-      );
-      goodGrouper.hide = true;
-    }
-
-    if (this.processDet != 'RES_ESPECIE') {
-      const goodGrouper = columnas.find(
-        (columna: any) => columna.id === 'goodGrouper'
-      );
-      goodGrouper.hide = true;
     }
 
     if (this.processDet != 'RES_NUMERARIA') {
@@ -619,12 +629,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     });
     modalRef.content.event.subscribe(next => {
       if (next != undefined) {
-        next.map((item: any) => {
-          const index = this.selectedGoodColumns.indexOf(item);
-          this.selectedGoodColumns[index].goodGrouper = item.goodGrouper;
-        });
+        this.getInfoRequest();
       }
-      this.selectedGoodColumns = [...this.selectedGoodColumns];
     });
   }
 
