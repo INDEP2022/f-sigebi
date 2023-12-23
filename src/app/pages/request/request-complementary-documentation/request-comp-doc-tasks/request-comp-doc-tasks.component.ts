@@ -44,8 +44,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -169,6 +168,8 @@ export class RequestCompDocTasksComponent
     dictudData: false, //DATOS DEL DICTAMEN
     registerAppointment: false, //REGISTRAR CITA
     orderEntry: false, //ORDEN DE INGRESO
+    programVisit: false, //ORDEN DE INGRESO
+
   };
 
   /* INJECTIONS
@@ -262,7 +263,7 @@ export class RequestCompDocTasksComponent
       next: resp => {
         this.taskInfo = resp.data[0];
         this.title = this.taskInfo.title;
-        this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
+        //this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
 
         if (this.taskInfo.requestId != this.requestId) {
           this.router.navigateByUrl(
@@ -305,7 +306,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
     if (!this.nextTurn) {
@@ -872,7 +873,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -961,9 +962,15 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'notify-transfer-similar-goods':
-        if (!this.validate.signedNotify) {
-          /*this.showWarning('Firme el reporte de notificación');
-          return false;*/
+
+        if (!reportSheet.includes('Y')) {
+          this.showWarning('Genere el reporte de notificación');
+          return false;
+        }
+
+        if (!reportSheet.includes('YY')) {
+          this.showWarning('Firme el reporte de notificación');
+          //return false;
         }
 
         if (!this.validate.files) {
@@ -976,9 +983,36 @@ export class RequestCompDocTasksComponent
       case 'eye-visit-similar-goods':
         //INTEGRAR EXPEDIENTE
         //PROGRAMAR FECHAS
+
+        if (!this.validate.programVisit) {
+          this.showWarning('Capture el periodo de los bienes para la visita ocular');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+
         break;
 
       case 'validate-eye-visit-similar-goods':
+
+        if (!this.validate.programVisit) {
+          this.showWarning('Validar Resultado de visitas');
+          return false;
+        }
+
+        if (!reportSheet.includes('Y')) {
+          this.showWarning('Generar el reporte de resultado de la visita ocular');
+          return false;
+        }
+
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+
         //REGISTRO
         //VALIDAR RESULTADOS
         //INTEGRAR EXPEDIENTE
@@ -1318,6 +1352,7 @@ export class RequestCompDocTasksComponent
   }
 
   onVerifyCom(event) {
+    console.log(event);
     this.validate.vercom = event.isValid;
     //Agreagar validaciones en especifico
   }
@@ -1331,6 +1366,7 @@ export class RequestCompDocTasksComponent
   }
 
   onGuidelines(event) {
+    console.log(event);
     this.validate.guidelines = event.isValid;
     //Agreagar validaciones en especifico
   }
@@ -1345,12 +1381,20 @@ export class RequestCompDocTasksComponent
     //Agreagar validaciones en especifico
   }
 
+  onProgramVisit(event) {
+    console.log(event);
+    this.validate.programVisit = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+
+
   btnRequestAprobar() {
     this.alertQuestion(
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1366,7 +1410,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1436,7 +1480,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   showReport() {
     this.wContentService.obtainFile('SAE568245').subscribe({
@@ -1446,7 +1490,7 @@ export class RequestCompDocTasksComponent
         const fileURL = URL.createObjectURL(file);
         this.openPrevPdf(fileURL);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 

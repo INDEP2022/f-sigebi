@@ -42,7 +42,7 @@
 </div>
 
 <div
-  *ngIf="requestInfo?.affair != 13"
+  *ngIf="selected"
   class="ms-n2 mb-2 pointer"
   (click)="showDetails = !showDetails"
   [attr.aria-expanded]="!showDetails"
@@ -53,7 +53,7 @@
   <h6 class="d-inline">Bienes Similares Seleccionados</h6>
 </div>
 <div
-  *ngIf="requestInfo?.affair != 13"
+  *ngIf="selected"
   class="row mt-5"
   id="collapseSearch"
   [isAnimated]="true"

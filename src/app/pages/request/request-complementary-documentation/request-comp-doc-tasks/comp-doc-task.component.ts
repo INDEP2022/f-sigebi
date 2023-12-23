@@ -488,7 +488,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.selectGoodForEyeVisit = true;
         this.expRequest = true;
-
+        this.btnGrouper = true;
         this.notifyReport = true;
         this.saveRequest = true;
         this.turnReq = true;
@@ -515,7 +515,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.selectGoodForEyeVisit = true;
         this.expRequest = true;
         this.typeVisit = 'selectGood';
-
+        this.btnGrouper = true;
         this.saveRequest = true;
         this.turnReq = true;
 
@@ -535,7 +535,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.expRequest = true;
         this.validateGoodForEyeVisit = true;
-
+        this.btnGrouper = true;
         this.resultEyeVisitReport = true;
         this.saveRequest = true;
         this.turnReq = true;
@@ -567,7 +567,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.expRequest = true;
         this.resultVisits = true;
         this.finish = true;
-
+        this.btnGrouper = true;
         this.resultEyeVisitReport = true;
         this.saveRequest = true;
         this.turnReq = false;

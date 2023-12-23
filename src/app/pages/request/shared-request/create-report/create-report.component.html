@@ -31,7 +31,7 @@
             </button>
           </div>
 
-          <div class="col-md-3" *ngIf="signReport">
+          <div class="col-md-3" *ngIf="signReport && this.loadDoc !== null">
             <button (click)="openSignature()" class="btn btn-primary active btn-sm">
               Firmar reporte
               <i class="fa fa-file-signature"></i>
@@ -40,6 +40,7 @@
 
           <div class="col-md-3">
             <button
+              *ngIf="this.loadDoc !== null"
               (click)="showFile()"
               class="btn btn-primary active btn-sm">
               Vista previa <i class="fa fa-eye mr-1"></i>
