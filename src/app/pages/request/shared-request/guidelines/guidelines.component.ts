@@ -206,7 +206,6 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     if (validate) {
       this.guidelinesColumns.forEach(async (element: any) => {
         let obj = this.getObject(element);
-        this.onSave.emit(true);
         await this.saveGuidelines(obj);
       });
 

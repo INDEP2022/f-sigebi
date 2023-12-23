@@ -11,9 +11,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -22,6 +24,7 @@ import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2';
 import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
@@ -33,9 +36,6 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
-import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -44,7 +44,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -264,9 +265,10 @@ export class RequestCompDocTasksComponent
         this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
 
         if (this.taskInfo.requestId != this.requestId) {
-          this.router.navigateByUrl(this.taskInfo.urlNb + '/' + this.taskInfo.requestId);
+          this.router.navigateByUrl(
+            this.taskInfo.urlNb + '/' + this.taskInfo.requestId
+          );
         }
-
       },
     });
   }
@@ -303,10 +305,9 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
-
     if (!this.nextTurn) {
       this.showReport();
       return;
@@ -327,7 +328,6 @@ export class RequestCompDocTasksComponent
       ignoreBackdropClick: true,
     });
 
-
     modalRef.content.show.subscribe(response => {
       if (response) {
         this.showReport();
@@ -344,7 +344,6 @@ export class RequestCompDocTasksComponent
         this.requestInfo.detail.reportSheet = 'YY';
         this.updateRequest(false);
       }
-
     });
   }
 
@@ -873,15 +872,15 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
   validateTurn() {
-
     let reportSheet = isNullOrEmpty(this.requestInfo.detail.reportSheet)
-      ? '' : this.requestInfo.detail.reportSheet;
+      ? ''
+      : this.requestInfo.detail.reportSheet;
 
     switch (this.process) {
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
@@ -908,7 +907,6 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'verify-compliance-return':
-
         if (!this.validate.vercom) {
           this.showWarning('Verifique el cumplimiento de los artículos');
           return false;
@@ -926,7 +924,6 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'approve-return':
-
         if (!reportSheet.includes('YY')) {
           this.showWarning('Firme el dictamen de resarcimiento');
           //return false;
@@ -1025,6 +1022,7 @@ export class RequestCompDocTasksComponent
 
       case 'review-guidelines-compensation':
         if (!this.validate.guidelines) {
+          console.log(this.validate.guidelines);
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
@@ -1352,7 +1350,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1368,7 +1366,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1438,17 +1436,17 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
   showReport() {
-    this.wContentService.obtainFile("SAE568245").subscribe({
+    this.wContentService.obtainFile('SAE568245').subscribe({
       next: response => {
         let blob = this.dataURItoBlob(response);
         let file = new Blob([blob], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         this.openPrevPdf(fileURL);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 

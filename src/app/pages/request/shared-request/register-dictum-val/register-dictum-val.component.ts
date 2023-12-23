@@ -36,6 +36,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   @Input() isEdit: boolean = false;
 
   respDoc: Object = null;
+  respData: Object = null;
 
   private requestService = inject(RequestService);
   private compenstionService = inject(CompensationService);
@@ -64,7 +65,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       });
     }
 
-    if (this.steap1 || this.steap2) {
+    if (this.steap1) {
       this.dictumForm = this.fb.group({
         opinionNumber: [
           null,
@@ -87,14 +88,20 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
     if (this.steap2) {
       this.dictumForm = this.fb.group({
-        opinionNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-        veredict: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-        nullityTrial: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-        modificationUser: [null, [Validators.pattern(STRING_PATTERN)]],
         amountToPay: [null],
+        payOrderNo: [null],
+        opinionNumber: [
+          Validators.required,
+          [Validators.pattern(NUMBERS_PATTERN)],
+        ],
+        veredict: [Validators.required, [Validators.pattern(NUMBERS_PATTERN)]],
+        nullityTrial: [
+          Validators.required,
+          [Validators.pattern(NUMBERS_PATTERN)],
+        ],
+        modificationUser: [null, [Validators.pattern(STRING_PATTERN)]],
         opinionDate: [null],
         adminResolutionNo: [null],
-        payOrderNo: [null],
         taxpayerDomicile: [null, [Validators.pattern(STRING_PATTERN)]],
         fiscalDomicile: [null, [Validators.pattern(STRING_PATTERN)]],
         legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -104,28 +111,10 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       if (!this.isEdit) {
         this.dictumForm.disable();
       }
+
+      this.dictumForm.get('payOrderNo').disable();
+      this.dictumForm.get('amountToPay').disable();
     }
-
-    //Configurar cada paso con los campos que se van a mostrar
-    /*this.dictumForm = this.fb.group({
-      datetime: [null, [this.steap3 ? Validators.required : null]],
-      place: [null, [this.steap3 ? Validators.required : null]],
-
-      opinionNumber: [null, [this.steap1 ? Validators.required : null]],
-      veredict: [null, [this.steap1 ? Validators.required : null]],
-      nullityTrial: [null, [this.steap1 ? Validators.required : null]],
-
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      paymentAmount: [null],
-      dictumDate: [null],
-
-      adminiResolutionNo: [null],
-      paymentOrderNo: [null],
-      address1: [null, [Validators.pattern(STRING_PATTERN)]],
-      address2: [null, [Validators.pattern(STRING_PATTERN)]],
-      legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
-      requiredSatCopy: [null],
-    });*/
   }
 
   getAllOrderEntry() {
@@ -141,11 +130,8 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: resp => {
-
           if (!isNullOrEmpty(resp)) {
-
-            this.selectChanges()
-
+            this.selectChanges();
             this.dictumForm.patchValue({
               administrativeUnit: parseInt(resp.unitadministrative + ''),
               orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
@@ -161,7 +147,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   }
 
   getAllCompensation() {
-    // Llamar servicio para obtener informacion de la documentacion de la orden
     const params = new ListParams();
     params['filter.requestId'] = `$eq:${this.requestId}`;
     this.compenstionService
@@ -175,18 +160,34 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         next: resp => {
           this.respDoc = resp;
           this.selectChanges();
-
+          console.log(resp.satCopy);
           if (!isNullOrEmpty(resp)) {
             this.dictumForm.patchValue({
               opinionNumber: resp.opinionNumber,
               veredict: resp.veredict,
               nullityTrial: resp.nullityTrial,
+              opinionDate: this.datePipe.transform(
+                resp.opinionDate,
+                'dd-MM-yyyy'
+              ),
+              legalRepresentative: resp.legalRepresentative,
+              adminResolutionNo: resp.adminResolutionNo,
+              taxpayerDomicile: resp.taxpayerDomicile,
+              fiscalDomicile: resp.fiscalDomicile,
+              satCopy: this.val(resp.satCopy),
             });
           }
         },
       });
   }
 
+  val(check) {
+    if (check == 1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   getRequestInfo() {
     // Llamar servicio para obtener informacion de la documentacion de la solicitud
     const params = new ListParams();
@@ -225,6 +226,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   updatedCompensation(compens: Object) {
     this.compenstionService.updatecompensation(compens).subscribe({
       next: resp => {
+        this.respData = resp;
         this.onSave.emit(true);
         this.getRequestInfo();
         this.onLoadToast('success', 'Datos de dictamen actualizados con éxito');
@@ -245,6 +247,9 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     object['orderDate'] = date.toISOString();
     object['appoitmentDate'] = date.toISOString();
 
+    const isChecked = this.dictumForm.get('satCopy').value;
+    object['satCopy'] = isChecked ? 1 : 0;
+
     this.onSave.emit(true);
 
     if (isNullOrEmpty(this.respDoc)) {
@@ -259,8 +264,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   selectChanges() {
     this.onSave.emit({
       isValid: !isNullOrEmpty(this.respDoc),
-      object: this.respDoc
+      object: this.respDoc,
     });
   }
-
 }

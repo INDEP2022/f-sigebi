@@ -8,7 +8,7 @@ export interface ICompensation {
   taxpayerDomicile?: string | null;
   fiscalDomicile?: string | null;
   legalRepresentative?: string | null;
-  satCopy?: string | null;
+  satCopy?: number | null;
   opinionDate?: string | null;
   observations?: string | null;
   amountToPay?: number | null;
