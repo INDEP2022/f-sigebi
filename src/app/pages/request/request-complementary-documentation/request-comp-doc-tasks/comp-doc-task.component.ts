@@ -761,45 +761,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.destinyJob = true;
         this.finish = true;
 
-        this.turnReq = false;
-        this.searchAssociateFile = false;
-        this.resultEyeVisitReport = false;
-        this.resultVisits = false;
-        this.validateGoodForEyeVisit = false;
-        this.notifyReport = false;
-        this.docRequest = false;
-        this.searchRequestSimGoods = false;
-        this.guidelines = false;
-        this.dictumValidate = false;
-        this.createReport = false;
-        this.rejectReq = false;
-
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.OFICIO_DESTINO_BIENES;
         this.signedReport = true;
         this.editReport = false;
-
-        break;
-
-      case 'confiscation':
-        this.regDocForm = true;
-        this.searchAssociateFile = true;
-        this.selectGoods = true;
-        this.expRequest = true;
-        break;
-
-      case 'extinction':
-        this.regDocForm = true;
-        this.searchAssociateFile = true;
-        this.selectGoods = true;
-        this.expRequest = true;
-        break;
-
-      case 'abandon':
-        this.regDocForm = true;
-        this.searchAssociateFile = true;
-        this.selectGoods = true;
-        this.expRequest = true;
 
         break;
 

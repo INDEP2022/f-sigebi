@@ -1118,7 +1118,7 @@ export class RequestCompDocTasksComponent
         break;
 
       //CASOS INFORMACION DE BIENES
-      case 'register-request-compensation':
+      case 'register-request-information-goods':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
           return false;
@@ -1131,23 +1131,35 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        break;
-
-      case 'review-guidelines-compensation':
-        if (!this.validate.sendEmail) {
-          this.showWarning('Enviar el correo de notificación al contribuyente');
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
+        break;
+
+      case 'response-office-information-goods':
+        /*if (!this.validate.sendEmail) {
+          this.showWarning('Enviar el correo de notificación al contribuyente');
+          return false;
+        }*/
         if (!reportSheet.includes('Y')) {
           this.showWarning('Generar el oficio destino');
           return false;
         }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
         break;
 
-      case 'analysis-result-compensation':
-        if (!this.validate.signedOffice) {
-          /*this.showWarning('Firmar el oficio destino');
-          return false;*/
+      case 'review-office-information-goods':
+        if (!reportSheet.includes('YY')) {
+          this.showWarning('Firmar el oficio destino');
+          //return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
         }
         break;
 
