@@ -114,12 +114,7 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
 
   onChanges() {
     this.onChange.emit({
-      isValid:
-        this.data.filter(
-          x => x.meetsArticle24
-            && x.meetsArticle28
-            && x.meetsArticle29)
-          .length == this.data.length,
+      isValid: this.data.length > 0,
       object: this.data,
     });
   }

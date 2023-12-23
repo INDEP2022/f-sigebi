@@ -50,7 +50,6 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   selectedGoodSettings = {
     ...TABLE_SETTINGS,
     actions: false,
-    selectMode: 'multi',
   };
   selectedList: any = [];
   maneuverReqList: any[] = [];
@@ -72,11 +71,14 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     console.log(this.typeVisit);
     if (this.typeVisit === 'selectGood') {
+      this.selectedGoodSettings.selectMode = 'multi';
       this.selectedGoodSettings.columns = SELECT_GOODS_EYE_VISIT_COLUMNS;
     } else if (this.typeVisit === 'resultGood') {
+      this.selectedGoodSettings.selectMode = null;
       this.selectedGoodSettings.columns = SELECTED_GOOD_REVIEW;
     } else {
       this.selectedGoodSettings.columns = this.viewGrouper ? SELECT_GOODS_COLUMNS : SELECTED_GOOD_VIEW;
+      //this.selectedGoodSettings.selectMode = this.viewGrouper ? 'multi' : null;
     }
   }
 
