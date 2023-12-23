@@ -55,16 +55,16 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     console.log('validate visita', this.idRequest);
     const self = this;
     this.selectedGoodSettings.columns = {
+      //validar codeStore == null
       select: {
         title: 'Bienes del Almacén',
         type: 'custom',
         sort: false,
-        renderComponent: CheckboxSelectElementComponent,
+        renderComponent: CheckboxElementComponent,
         onComponentInitFunction(instance: any, component: any = self) {
-          self.inst = instance;
           instance.toggle.subscribe((data: any) => {
             data.row.to = data.toggle;
-            component.goodsSelected(data);
+            component.checked(data);
           });
         },
       },
@@ -119,6 +119,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           } */
             //fin
 
+            item['select'] = item.codeStore == null;
             item['validated'] =
               item.resultFinal == 'Y' || item.resultFinal == 'P' ? true : false;
             item['maneuverRequired'] =
@@ -145,7 +146,8 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
             this.selectedGoodTotalItems = resp.count;
             this.selectChanges()
             setTimeout(() => {
-              this.disableValidateColumn();
+              this.disableValidateColumn(0);
+              this.disableValidateColumn(1);
               this.setContributorValidatorRows();
             }, 600);
             this.loading = false;
@@ -203,12 +205,12 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
 
   /* METODO PARA DESHABILITAR EL CAMPO VALIDADO
   ============================================= */
-  disableValidateColumn() {
+  disableValidateColumn(ind) {
     const tabla = document.getElementById('selectedGoodsTable');
     const tbody = tabla.children[0].children[1].children;
     for (let index = 0; index < tbody.length; index++) {
       const element = tbody[index];
-      element.children[1].classList.add('not-press');
+      element.children[ind].classList.add('not-press');
     }
   }
 
@@ -410,4 +412,10 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
       object: this.selectedGoodColumns['data'],
     });
   }
+
+  selectTableColumns(event: any) {
+    this.selectedList = event.selected;
+    console.log('event', event);
+  }
+
 }
