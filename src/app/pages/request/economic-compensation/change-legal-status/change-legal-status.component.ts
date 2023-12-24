@@ -245,7 +245,6 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
         object['signatureBySubstitution'] = '0';
       }
 
-      //object['affair'] = object['affair'].id;
       object['applicationId'] = this.requestId;
 
       let date = new Date();
