@@ -1,5 +1,5 @@
 export interface ILegalTrade {
-  jobLegalId?: number | null;
+  jobLegalId?: any | null;
   applicationId?: number | null;
   situationLegal?: number | null;
   creationUser?: string | null;
