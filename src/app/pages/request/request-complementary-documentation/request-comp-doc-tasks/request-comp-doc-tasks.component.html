@@ -361,10 +361,10 @@
           heading="Bienes Seleccionados"
           id="selectGoodsEyeVisitTab">
           <app-select-good-eye-visit
-            [viewGrouper]="btnGrouper"
             [idRequest]="requestId"
-            (onChange)="onProgramVisit($event)"
-            [typeVisit]="typeVisit"></app-select-good-eye-visit>
+            [viewGrouper]="btnGrouper"
+            [typeVisit]="typeVisit"
+            (onChange)="onProgramVisit($event)" ></app-select-good-eye-visit>
           <div *ngIf="selectGoodNotForEyeVisit">
             <app-goods-not-transferred></app-goods-not-transferred>
           </div>
@@ -380,7 +380,9 @@
           *ngIf="validateGoodForEyeVisit"
           heading="Validar Resultado Visitas"
           id="validateGoodsEyeVisitTab">
-          <app-validate-eye-visit (onChange)="onProgramVisit($event)" [idRequest]="requestId"></app-validate-eye-visit>
+          <app-validate-eye-visit 
+            [idRequest]="requestId"
+            (onChange)="onProgramVisit($event)"></app-validate-eye-visit>
         </tab>
         <tab
           *ngIf="resultVisits"
