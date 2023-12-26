@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { InterfacesirsaeService as InterfaceSirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CONSULT_SIRSAE_COLUMNS } from './sirsae-payment-consultation-columns';
@@ -24,13 +25,7 @@ export class SirsaePaymentConsultationListComponent
   implements OnInit, AfterViewInit
 {
   params = new BehaviorSubject<ListParams>(new ListParams());
-  form: FormGroup = new FormGroup({
-    reference: new FormControl(null),
-    startDate: new FormControl(null),
-    endDate: new FormControl(null),
-    bank: new FormControl(null),
-    status: new FormControl(null),
-  });
+  form: ModelForm<any>;
 
   totalItems: number = 0;
   maxDate: Date = new Date();
@@ -45,17 +40,31 @@ export class SirsaePaymentConsultationListComponent
   tableSource: LocalDataSource = new LocalDataSource();
 
   statusesMov: { id: number; statusDescription: string }[] = [];
-  constructor(private interfaceSirsaeService: InterfaceSirsaeService) {
+  constructor(
+    private interfaceSirsaeService: InterfaceSirsaeService,
+    private fb: FormBuilder
+  ) {
     super();
   }
 
   ngOnInit(): void {
+    this.prepareForm();
     // this.params
     //   .pipe(takeUntil(this.$unSubscribe))
     //   .subscribe(event => this.search(event));
     this.filter();
     this.dataload = false;
     this.resetFilter();
+  }
+
+  prepareForm() {
+    this.form = this.fb.group({
+      reference: [null, []],
+      startDate: [null, []],
+      endDate: [null, []],
+      bank: [null, []],
+      status: [null, []],
+    });
   }
 
   AfterViewInit() {}
@@ -82,14 +91,14 @@ export class SirsaePaymentConsultationListComponent
     }
   }
 
-  validsearch() {
+  /*validsearch() {
     if (!this.formValid()) {
       return;
     } else {
       this.search();
       this.dataload = true;
     }
-  }
+  }*/
 
   search(listParams?: ListParams): void {
     console.log('Lista de Parametros: ', listParams);
@@ -127,7 +136,14 @@ export class SirsaePaymentConsultationListComponent
 
   generateParams(listParams?: ListParams): FilterParams {
     const filters = new FilterParams();
-    const { reference, startDate, endDate, bank, status } = this.form.value;
+    console.log('reference', this.form.value.reference);
+    console.log('this.form.value.status;', this.form.value.status);
+    //const { reference, startDate, endDate, bank, status } = this.form.value;
+    const reference = this.form.value.reference;
+    const startDate = this.form.value.startDate;
+    const endDate = this.form.value.endDate;
+    const bank = this.form.value.bank;
+    const status = this.form.value.status;
 
     if (reference) {
       filters.addFilter('reference', reference, SearchFilter.ILIKE);
@@ -144,7 +160,10 @@ export class SirsaePaymentConsultationListComponent
     if (bank) {
       filters.addFilter('accountbank.name_bank', bank, SearchFilter.ILIKE);
     }
-    if (status) {
+    if (status == null) {
+      console.log('status', status);
+      filters.addFilter('statusMov', 0);
+    } else {
       filters.addFilter('statusMov', status);
     }
 
@@ -157,14 +176,14 @@ export class SirsaePaymentConsultationListComponent
     return filters;
   }
 
-  formValid(): boolean {
+  /*formValid(): boolean {
     const values = this.form.value;
     const isValid = Object.keys(values).some(key => Boolean(values[key]));
     if (!isValid) {
       this.onLoadToast('warning', 'Alerta', 'Llenar un Campo para Continuar');
     }
     return isValid;
-  }
+  }*/
 
   filter() {
     this.tableSource

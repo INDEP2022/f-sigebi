@@ -86,7 +86,7 @@
               <button
                 type="button"
                 class="btn btn-primary active btn-sm mt-2"
-                (click)="validsearch()"
+                (click)="search()"
                 [disabled]="!form.valid">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -103,7 +103,7 @@
         </div>
       </form>
     </div>
-    <div *ngIf="dataload">
+    <div>
       <div class="row pt-5">
         <div class="d-flex justify-content-end mr-5">
           <div class="mr-4">
