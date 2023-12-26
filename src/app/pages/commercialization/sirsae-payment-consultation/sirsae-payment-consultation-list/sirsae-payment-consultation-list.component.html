@@ -55,7 +55,10 @@
                       prefixSearch="$ilike"
                       value="name_bank"
                       [isLoadInOnInit]="true">
-                      <ng-template let-item>{{ item.name_bank }}</ng-template>
+                      <ng-template let-item
+                        >No. Cta: {{ item.id }} -
+                        {{ item.name_bank }}</ng-template
+                      >
                     </ng-custom-select>
                   </form-field>
                 </div>
@@ -71,7 +74,8 @@
                       [isLoadInOnInit]="true"
                       paramSearch="filter.statusDescription"
                       prefixSearch="$ilike"
-                      value="id">
+                      value="id"
+                      (valueChange)="changeValue($event)">
                       <ng-template let-item>{{
                         item.statusDescription
                       }}</ng-template>
@@ -86,7 +90,7 @@
               <button
                 type="button"
                 class="btn btn-primary active btn-sm mt-2"
-                (click)="search()"
+                (click)="searchpre()"
                 [disabled]="!form.valid">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>

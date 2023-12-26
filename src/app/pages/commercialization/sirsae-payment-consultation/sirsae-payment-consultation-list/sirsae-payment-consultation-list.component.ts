@@ -34,12 +34,15 @@ export class SirsaePaymentConsultationListComponent
   consultSettings = {
     ...TABLE_SETTINGS,
     actions: false,
-    hideSubHeader: false,
+    hideSubHeader: true,
     columns: CONSULT_SIRSAE_COLUMNS,
   };
   tableSource: LocalDataSource = new LocalDataSource();
 
   statusesMov: { id: number; statusDescription: string }[] = [];
+
+  buttonSearch: boolean = false;
+
   constructor(
     private interfaceSirsaeService: InterfaceSirsaeService,
     private fb: FormBuilder
@@ -52,7 +55,7 @@ export class SirsaePaymentConsultationListComponent
     // this.params
     //   .pipe(takeUntil(this.$unSubscribe))
     //   .subscribe(event => this.search(event));
-    this.filter();
+    //this.filter();
     this.dataload = false;
     this.resetFilter();
   }
@@ -65,6 +68,15 @@ export class SirsaePaymentConsultationListComponent
       bank: [null, []],
       status: [null, []],
     });
+  }
+
+  searchpre() {
+    this.buttonSearch = true;
+    this.search();
+  }
+
+  changeValue(event: any) {
+    console.log(event);
   }
 
   AfterViewInit() {}
@@ -138,6 +150,7 @@ export class SirsaePaymentConsultationListComponent
     const filters = new FilterParams();
     console.log('reference', this.form.value.reference);
     console.log('this.form.value.status;', this.form.value.status);
+    console.log('Search botón', this.buttonSearch);
     //const { reference, startDate, endDate, bank, status } = this.form.value;
     const reference = this.form.value.reference;
     const startDate = this.form.value.startDate;
@@ -160,11 +173,14 @@ export class SirsaePaymentConsultationListComponent
     if (bank) {
       filters.addFilter('accountbank.name_bank', bank, SearchFilter.ILIKE);
     }
-    if (status == null) {
-      console.log('status', status);
-      filters.addFilter('statusMov', 0);
-    } else {
-      filters.addFilter('statusMov', status);
+
+    if (this.buttonSearch == true) {
+      if (status == null) {
+        console.log('status', status);
+        filters.addFilter('statusMov', 0);
+      } else {
+        filters.addFilter('statusMov', status);
+      }
     }
 
     if (listParams) {
@@ -200,7 +216,7 @@ export class SirsaePaymentConsultationListComponent
             switch (filter.field) {
               case 'accountbank':
                 field = `filter.accountbank.id`;
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'ifdsc':
                 searchFilter = SearchFilter.LIKE2;
@@ -220,7 +236,7 @@ export class SirsaePaymentConsultationListComponent
                 break;
               case 'statusMov':
                 field = `filter.statusMov.statusDescription`;
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'statusMovDescription':
                 searchFilter = SearchFilter.ILIKE;
