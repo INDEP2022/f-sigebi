@@ -327,7 +327,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       };
       this.PupBusqueda(params);
 
-      this.searchID(this.LV_TOTREG);
+      // this.searchID(this.LV_TOTREG);
       if (this.LV_TOTREG == 0) {
         this.alert(
           'warning',

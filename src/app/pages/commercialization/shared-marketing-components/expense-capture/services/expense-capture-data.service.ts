@@ -736,7 +736,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return firstValueFrom(
       this.interfacesirsaeService.sendSirsaeScrapSp(body).pipe(
         catchError(x => {
-          this.alert('error', 'Envio Sirsae Chatarra SP', x);
+          // this.alert('error', 'Envio Sirsae Chatarra SP', x);
           return of(null);
         })
       )
@@ -747,7 +747,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return firstValueFrom(
       this.interfacesirsaeService.sendSirsaeScrapOi(body).pipe(
         catchError(x => {
-          this.alert('error', 'Envio Sirsae Chatarra OI', x);
+          // this.alert('error', 'Envio Sirsae Chatarra OI', x);
           return of(null);
         })
       )
@@ -804,9 +804,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       pAmountTOT: this.total + '',
     });
     if (resultOI === null) {
-      // console.log(resultSP);
-      this.errorSendSolicitudeMessage();
-      return;
+      // this.errorSendSolicitudeMessage();
+      // return;
     } else {
       this.form.get('idOrdinginter').setValue(resultOI.lst_order);
     }
@@ -844,10 +843,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       clkpv: this.form.get('clkpv').value,
     });
     if (resultSP === null) {
-      // console.log(resultSP);
-      // this.alert('error','No se pudo realizar el proceso de pago','Favor de verificar')
-      this.errorSendSolicitudeMessage();
-      return;
+      // this.errorSendSolicitudeMessage();
+      // return;
+    } else {
     }
     this.expenseGoodProcessService
       .PROCESA_EVENTO_CHATARRA(
