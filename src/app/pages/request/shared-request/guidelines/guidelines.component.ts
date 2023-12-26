@@ -46,8 +46,15 @@ export class GuidelinesComponent extends BasePage implements OnInit {
 
   guidelinesSettings = {
     ...TABLE_SETTINGS,
-    mode: 'internal',
-    attr: {
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'left',
+      add: false,
+      edit: false,
+      delete: false,
+    },
+    //mode: 'internal',
+    /*attr: {
       class: 'table-bordered normal-hover',
     },
     edit: {
@@ -62,41 +69,41 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       add: true,
       edit: true,
       delete: false,
-    },
+    },*/
   };
 
   guidelinesData = [
     {
       id: 1,
       guideline: 'ACTA DE TRANSFERENCIA INDEP',
-      firstRevision: 'N/A',
+      firstRevision: '',
       firstRevisionObserv: '',
-      secondRevision: 'N/A',
+      secondRevision: '',
       secondRevisionObserv: '',
     },
     {
       id: 2,
       guideline: 'SOLICITUD DE PAGO RESARCIMIENTO (INSTRUCCIÓN DE PAGO ANCEA)',
-      firstRevision: 'N/A',
+      firstRevision: '',
       firstRevisionObserv: '',
-      secondRevision: 'N/A',
+      secondRevision: '',
       secondRevisionObserv: '',
     },
     {
       id: 3,
       guideline:
         'COPIA CERTIFICADA DE LA RESOLUCIÓN EMITIDA POR LA AUTORIDAD QUE ORDENE EL PAGO DE RESARCMIENTO',
-      firstRevision: 'N/A',
+      firstRevision: '',
       firstRevisionObserv: '',
-      secondRevision: 'N/A',
+      secondRevision: '',
       secondRevisionObserv: '',
     },
     {
       id: 4,
       guideline: 'DOCUMENTO EN EL CUAL SE INDICA EL MONTO A PAGAR',
-      firstRevision: 'N/A',
+      firstRevision: '',
       firstRevisionObserv: '',
-      secondRevision: 'N/A',
+      secondRevision: '',
       secondRevisionObserv: '',
     },
   ];
@@ -117,41 +124,59 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         title: '(Revisión 1) Cumple',
         sort: false,
         type: 'custom',
-        renderComponent: GuidelinesRevisionViewComponent,
-        editor: {
-          type: 'custom',
-          component: GuidelinesRevisionComponent,
-        },
+        renderComponent: GuidelinesRevisionComponent,
+        onComponentInitFunction(instance) {
+          if (!isNullOrEmpty(instance)) {
+            instance.key = 'firstRevision';
+            instance.cellChanged.subscribe(row => {
+              console.log('cellChanged', row);
+            });
+          }
+        }
       },
       firstRevisionObserv: {
         title: 'Observaciones',
         sort: false,
-        type: 'html',
+        type: 'custom',
         width: '25%',
-        editor: {
-          type: 'custom',
-          component: GuidelinesObservationsComponent,
-        },
+        renderComponent: GuidelinesObservationsComponent,
+        onComponentInitFunction(instance) {
+          if (!isNullOrEmpty(instance)) {
+            instance.key = 'firstRevisionObserv';
+            instance.cellChanged.subscribe(row => {
+              console.log('cellChanged', row);
+            });
+          }
+        }
       },
       secondRevision: {
         title: '(Revisión 2) Cumple',
         sort: false,
         type: 'custom',
-        renderComponent: GuidelinesRevisionViewComponent,
-        editor: {
-          type: 'custom',
-          component: GuidelinesRevisionComponent,
-        },
+        renderComponent: GuidelinesRevisionComponent,
+        onComponentInitFunction(instance) {
+          if (!isNullOrEmpty(instance)) {
+            instance.key = 'secondRevision';
+            instance.cellChanged.subscribe(row => {
+              console.log('cellChanged', row);
+            });
+          }
+        }
       },
       secondRevisionObserv: {
         title: 'Observaciones',
         sort: false,
-        type: 'html',
+        type: 'custom',
         width: '25%',
-        editor: {
-          type: 'custom',
-          component: GuidelinesObservationsComponent,
-        },
+        renderComponent: GuidelinesObservationsComponent,
+        onComponentInitFunction(instance) {
+          if (!isNullOrEmpty(instance)) {
+            instance.key = 'secondRevisionObserv';
+            instance.cellChanged.subscribe(row => {
+              console.log('cellChanged', row);
+            });
+          }
+        }
       },
     };
   }
