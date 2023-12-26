@@ -161,6 +161,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   }
 
   exportChangeLot() {
+    this.loader.load = true;
     const filename: string = 'Cambios de Estatus';
 
     if (!this.form.get('typeGood').value) {
@@ -172,27 +173,6 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
       this.alert('warning', 'Es necesario ingresar un Evento', '');
       return;
     }
-    // if (!this.form.get('transferee').value) {
-    //   this.alert(
-    //     'warning',
-    //     'Es necesario ingresar una No. de Transferente',
-    //     ''
-    //   );
-    //   return;
-    // }
-    // if (!this.form.get('allotment').value) {
-    //   this.alert('warning', 'Es necesario ingresar el No. de Lote', '');
-    //   return;
-    // }
-
-    // if (!this.form.get('DescEvent').value) {
-    //   this.alert(
-    //     'warning',
-    //     'Es necesario ingresar la Descripción del Evento',
-    //     ''
-    //   );
-    //   return;
-    // }
 
     let body = {
       pOption: 1, //Cambio de status - 3, historial
@@ -203,20 +183,15 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
       pEvent: 0,
     };
 
-    let params = {
-      ...this.params.getValue(),
-    };
-
-    this.comerEventosService.getLoteExport(body, params).subscribe({
+    this.comerEventosService.getLoteExportExcel(body).subscribe({
       next: resp => {
-        const allData = resp.data;
-        console.log(allData);
-        // Combinar todos los registros en this.line
-        this.excelService.export(allData, { filename });
+        this._downloadExcelFromBase64(resp.base64File, filename);
+        this.loader.load = false;
       },
       error: err => {
         console.log(err);
         this.alert('warning', 'No hay datos disponibles para exportar', '');
+        this.loader.load = false;
       },
     });
   }

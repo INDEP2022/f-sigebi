@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
@@ -17,9 +19,9 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ZonesService } from 'src/app/core/services/zones/zones.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -28,6 +30,7 @@ import { DefaultSelect } from '../../../../../shared/components/select/default-s
 import { AnnexKFormComponent } from '../../../generate-sampling-supervision/generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
 import { EditDeductiveComponent } from '../../../generate-sampling-supervision/sampling-assets/edit-deductive/edit-deductive.component';
 import { LIST_DEDUCTIVES_COLUMNS } from '../../../generate-sampling-supervision/sampling-assets/sampling-assets-form/columns/list-deductivas-column';
+import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { LIST_ORDERS_COLUMNS } from './columns/list-orders-columns';
 
 @Component({
@@ -82,7 +85,9 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     private samplinggoodService: SamplingGoodService,
     private transferentService: TransferenteService,
     private samplingGoodService: SamplingGoodService,
-    private deductiveService: DeductiveVerificationService
+    private deductiveService: DeductiveVerificationService,
+    private sanitizer: DomSanitizer,
+    private wcontentService: WContentService
   ) {
     super();
   }
@@ -378,7 +383,16 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   }
 
   async turnSampling() {
-    this.allDeductives = await this.getAllDeductives();
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea turnar la orden de muestreo?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        console.log('GENERA LA TAREA');
+      }
+    });
+    /*this.allDeductives = await this.getAllDeductives();
     const sampleOrder: any = await this.getSampleOrder();
     const totalDeductives = this.allDeductives.length;
     const noSelectedDeductives: any = this.allDeductives.filter(
@@ -391,14 +405,17 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         'No ha seleccionado alguna deductiva para las ordenes de servicio.';
     } else {
       if (sampleOrder.idcontentk == null) {
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
+          'Acción Invalida',
           'Ha agregado deductivas al muestreo, debe generar el Anexo K'
         );
         return;
+      } else {
+        
       }
-    }
-    this.turnModal(message);
+    } */
+    //this.turnModal(message);
   }
 
   save() {}
@@ -417,14 +434,44 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         typeAnnex: typeAnnex,
         annexData: annexData,
         idSampleOrder: this.sampleOrderId,
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
+        callback: (typeDocument: number, typeSign: string) => {
+          if (typeDocument && typeSign) {
+            this.showReportInfo(typeDocument, typeSign, 'sign-k-order-sample');
+            //this.showReportInfo(
+            //typeDocument,
+            //typeSign,
+            //'sign-annex-assets-classification'
+            //);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(component, config);
+  }
+
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const orderSampleId = this.sampleOrderId;
+    const typeFirm = typeSign;
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        idTypeDoc,
+        orderSampleId,
+        typeFirm,
+        typeAnnex,
+        callback: (next: boolean) => {
+          if (next) {
+            this.checkExistSampleOrder();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
   }
 
   getDelegationRegional(id: number) {
@@ -523,35 +570,6 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
           resolve(resp.data[0]);
         },
       });
-    });
-  }
-
-  turnModal(message: string) {
-    Swal.fire({
-      title: 'Confirmación',
-      html:
-        'Esta seguro de enviar la información a turnar? <br/><br/>' +
-        `<p style="color:red;">${message}<p>`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#B38E5D',
-      confirmButtonText: 'Enviar',
-      cancelButtonText: 'Cancelar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        let lsEstatusMuestreo = '';
-        if (message == null || message == '') {
-          lsEstatusMuestreo = 'MUESTREO_NO_CUMPLE';
-        } else {
-          lsEstatusMuestreo = 'MUESTREO_TERMINA';
-        }
-        const lsDelReg = '';
-        const lsUsuario = '';
-        const lsUsuarioSAE = '';
-
-        Swal.fire('Turnado', 'El muestreo fue turnado', 'success');
-      }
     });
   }
 
@@ -757,5 +775,43 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
           },
         });
     });
+  }
+
+  showAnexK() {
+    this.wcontentService.obtainFile(this.sampleOrderInfo.idcontentk).subscribe({
+      next: response => {
+        let blob = this.dataURItoBlob(response);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      },
+      error: error => {},
+    });
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 }
