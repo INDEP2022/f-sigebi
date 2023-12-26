@@ -120,7 +120,11 @@
         </form>
       </div>
 
-      <div *ngIf="typeAnnex == 'sign-annex-assets-classification'">
+      <div
+        *ngIf="
+          typeAnnex == 'sign-annex-assets-classification' ||
+          typeAnnex == 'generate-query'
+        ">
         <form
           [formGroup]="annexForm"
           class="form-material"
@@ -148,7 +152,7 @@
             </div>
           </div>
 
-          <div class="row pt-4">
+          <div class="row pt-4" *ngIf="typeAnnex != 'generate-query'">
             <div class="col-md-12" style="display: flex">
               <div style="line-height: 3">
                 <label for="electronica">Tipo de firma:</label>
@@ -271,6 +275,16 @@
                 </textarea>
               </form-field>
             </div>
+            <div class="col-md-6" *ngIf="typeAnnex == 'generate-query'">
+              <form-field
+                [control]="annexForm.get('daterepService')"
+                label="Fecha Reposición de Servicios">
+                <input
+                  class="form-control"
+                  formControlName="daterepService"
+                  bsDatepicker />
+              </form-field>
+            </div>
           </div>
         </form>
       </div>
@@ -289,7 +303,12 @@
           (confirm)="signAnnex()"></confirm-button>
       </div>
 
-      <div class="m-3" *ngIf="typeAnnex == 'sign-annex-assets-classification'">
+      <div
+        class="m-3"
+        *ngIf="
+          typeAnnex == 'sign-annex-assets-classification' ||
+          typeAnnex == 'generate-query'
+        ">
         <confirm-button
           [disabled]="!annexForm.valid"
           [loading]="loading"

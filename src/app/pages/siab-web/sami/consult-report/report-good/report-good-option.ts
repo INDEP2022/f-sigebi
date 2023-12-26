@@ -1,17 +1,17 @@
 export const conservationStatusData = [
   {
-    name: 'Bueno',
+    name: 'BUENO',
   },
   {
-    name: 'Malo',
+    name: 'MALO',
   },
 ];
 
 export const phisycalStatusData = [
   {
-    name: 'Bueno',
+    name: 'BUENO',
   },
   {
-    name: 'Malo',
+    name: 'MALO',
   },
 ];
