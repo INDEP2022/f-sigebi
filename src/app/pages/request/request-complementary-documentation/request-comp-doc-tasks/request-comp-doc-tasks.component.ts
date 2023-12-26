@@ -36,6 +36,8 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { ReportService } from 'src/app/core/services/catalogs/reports.service';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -193,6 +195,7 @@ export class RequestCompDocTasksComponent
     private route: ActivatedRoute,
     private router: Router,
     private modalService: BsModalService,
+    private reportgoodService: ReportgoodService,
     private fb: FormBuilder
   ) {
     super();
@@ -451,7 +454,7 @@ export class RequestCompDocTasksComponent
       if (question.isConfirmed) {
         //Cerrar tarea//
 
-        if (this.validateTurn()) {
+        if (await this.validateTurn()) {
           let response = await this.updateTask(this.taskInfo.id);
           if (response) {
             this.msgModal(
@@ -711,7 +714,7 @@ export class RequestCompDocTasksComponent
 
   /** VALIDAR */
   async generateTask() {
-    if (!this.validateTurn()) return;
+    if (! await this.validateTurn()) return;
 
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
     this.loadingTurn = true;
@@ -889,10 +892,12 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  validateTurn() {
-    let reportSheet = isNullOrEmpty(this.requestInfo.detail.reportSheet)
-      ? ''
-      : this.requestInfo.detail.reportSheet;
+  async validateTurn() {
+
+    let reportLoad: any = {
+      isValid: false,
+      isSign: false
+    };
 
     switch (this.process) {
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
@@ -919,12 +924,14 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'verify-compliance-return':
+
         if (!this.validate.vercom) {
           this.showWarning('Verifique el cumplimiento de los artículos');
           return false;
         }
 
-        if (!reportSheet.includes('Y')) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Genere el Dictamen de Devolución');
           return false;
         }
@@ -936,9 +943,12 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'approve-return':
-        if (!reportSheet.includes('YY')) {
+
+        reportLoad = await this.getStatusReport();
+
+        if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
-          //return false;
+          return false;
         }
 
         if (!this.validate.files) {
@@ -973,14 +983,17 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'notify-transfer-similar-goods':
-        if (!reportSheet.includes('Y')) {
+
+        reportLoad = await this.getStatusReport();
+
+        if (!reportLoad.isValid) {
           this.showWarning('Genere el reporte de notificación');
           return false;
         }
 
-        if (!reportSheet.includes('YY')) {
+        if (!reportLoad.isSigned) {
           this.showWarning('Firme el reporte de notificación 3');
-          //return false;
+          return false;
         }
 
         if (!this.validate.files) {
@@ -1014,7 +1027,8 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!reportSheet.includes('Y')) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning(
             'Generar el reporte de resultado de la visita ocular'
           );
@@ -1079,7 +1093,8 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!reportSheet.includes('Y')) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Genera el dictamen de resarcimiento');
           return false;
         }
@@ -1092,14 +1107,16 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!reportSheet.includes('YY')) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
-          //return false;
+          return false;
         }
         break;
 
       case 'validate-opinion-compensation':
-        if (!reportSheet.includes('Y')) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning(
             'Genera la validación del dictamen de resarcimiento'
           );
@@ -1116,14 +1133,15 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!reportSheet.includes('Y')) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Genere el reporte de notificación');
           return false;
         }
 
-        if (!reportSheet.includes('YY')) {
-          this.showWarning('Firme el reporte de notificación 1');
-          //return false;
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el reporte de notificación');
+          return false;
         }
 
         break;
@@ -1149,11 +1167,14 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'response-office-information-goods':
+
         /*if (!this.validate.sendEmail) {
           this.showWarning('Enviar el correo de notificación al contribuyente');
           return false;
         }*/
-        if (!reportSheet.includes('Y')) {
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Generar el oficio destino');
           return false;
         }
@@ -1164,9 +1185,11 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'review-office-information-goods':
-        if (!reportSheet.includes('YY')) {
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isSigned) {
           this.showWarning('Firmar el oficio destino');
-          //return false;
+          return false;
         }
         if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
@@ -1201,7 +1224,8 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!reportSheet.includes('Y')) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Generar la solicitud de recursos económicos');
           return false;
         }
@@ -1212,7 +1236,9 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        if (!reportSheet.includes('Y')) {
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
@@ -1223,9 +1249,11 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'generate-results-economic':
-        if (!reportSheet.includes('YY')) {
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
-          //return false;
+          return false;
         }
         if (!this.validate.guidelines) {
           this.showWarning('Verifique las observaciones de lineamientos');
@@ -1245,7 +1273,9 @@ export class RequestCompDocTasksComponent
           this.showWarning('Registre datos del dictamen');
           return false;
         }
-        if (!reportSheet.includes('Y')) {
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning(
             'Genera la validación del dictamen de resarcimiento'
           );
@@ -1258,13 +1288,16 @@ export class RequestCompDocTasksComponent
           this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
-        if (!reportSheet.includes('Y')) {
-          this.showWarning('Genera el reporte de notificación 2');
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el reporte de notificación');
           return false;
         }
-        if (!reportSheet.includes('YY')) {
+
+        if (!reportLoad.isSigned) {
           this.showWarning('Firme el reporte de notificación');
-          //return false;
+          return false;
         }
         break;
       case 'register-taxpayer-date':
@@ -1292,9 +1325,11 @@ export class RequestCompDocTasksComponent
           this.showWarning('Suba la documentación de la solicitud');
           return false;
         }
-        if (!this.validate.genDictum) {
-          //this.showWarning('Genera el dictamen de resarcimiento');
-          //return false;
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el dictamen de resarcimiento');
+          return false;
         }
         break;
 
@@ -1406,8 +1441,10 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'protection-regulation':
-        if (!reportSheet.includes('Y')) {
-          this.showWarning('Genera el reporte de oficio jurídico');
+
+        //reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          //this.showWarning('Genera el reporte de oficio jurídico');
           //return false;
         }
         if (!this.validate.files) {
@@ -1452,7 +1489,7 @@ export class RequestCompDocTasksComponent
 
   onVerifyCom(event) {
     console.log(event);
-    this.validate.vercom = event.isValid;
+    this.validate.vercom = event.atLeastOne;// event.isValid;
     //Agreagar validaciones en especifico
   }
 
@@ -1494,10 +1531,10 @@ export class RequestCompDocTasksComponent
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
       this.requestId
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        if (this.validateTurn()) {
+        if (await this.validateTurn()) {
           this.generateTask();
         }
       }
@@ -1510,10 +1547,10 @@ export class RequestCompDocTasksComponent
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
       this.requestId
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        if (this.validateTurn()) {
+        if (await this.validateTurn()) {
           this.generateTask();
         }
       }
@@ -1528,7 +1565,7 @@ export class RequestCompDocTasksComponent
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        if (this.validateTurn()) {
+        if (await this.validateTurn()) {
           let response = await this.updateTask(this.taskInfo.id);
 
           if (response) {
@@ -1629,7 +1666,42 @@ export class RequestCompDocTasksComponent
     this.modalService.show(PreviewDocumentsComponent, config);
   }
 
-  //Agregar servicios de validacion de turnado
+  getStatusReport() {
+
+    let params = new ListParams();
+    params['filter.documentTypeId'] = `$eq:${this.reportId}`;
+    params['filter.tableName'] = `$eq:${this.reportTable}`;
+    params['filter.registryId'] = `$eq:${this.requestId}`;
+
+    return new Promise<any>(resolve => {
+      this.reportgoodService.getReportDynamic(params).subscribe({
+        next: async resp => {
+
+          if (resp.data.length > 0) {
+            resolve({
+              data: resp.data,
+              isValid: resp.data.length > 0,
+              isSigned: true //resp.data[0].signedReport == 'Y',
+            });
+          } else {
+            resolve({
+              isValid: false,
+              isSigned: false,
+            });
+          }
+
+
+        },
+        error: err => {
+          resolve({
+            isValid: false,
+            isSigned: false,
+          });
+        },
+      });
+    });
+  }
+
   //Reportes dinamicos
   //Firma de reportes
 }
