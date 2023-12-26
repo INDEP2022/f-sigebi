@@ -719,7 +719,7 @@ export class RequestCompDocTasksComponent
 
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
     this.loadingTurn = true;
-    const { title, url, type, subtype, ssubtype, process, close } =
+    const { title, url, type, subtype, ssubtype, process, close, rollBack } =
       getConfigAffair(
         this.requestId,
         this.affair,
@@ -740,7 +740,12 @@ export class RequestCompDocTasksComponent
 
     if (close) {
       body['idTask'] = this.taskInfo.id;
+    }
+
+    if (rollBack) {
       task['taskDefinitionId'] = this.taskInfo.id;
+    } else {
+      task['taskDefinitionId'] = this.taskInfo.taskDefinitionId;
     }
 
     task['id'] = 0;
