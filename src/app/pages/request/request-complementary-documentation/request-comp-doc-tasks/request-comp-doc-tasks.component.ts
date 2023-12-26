@@ -1176,7 +1176,7 @@ export class RequestCompDocTasksComponent
 
       /*NUMERARIO*/
 
-      case 'register-request-economic-compensation':
+      case 'register-request-economic':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
           return false;
@@ -1222,7 +1222,7 @@ export class RequestCompDocTasksComponent
         }
 
         break;
-      case 'generate-results-economic-compensation':
+      case 'generate-results-economic':
         if (!reportSheet.includes('YY')) {
           this.showWarning('Firme el dictamen de resarcimiento');
           //return false;
@@ -1430,7 +1430,7 @@ export class RequestCompDocTasksComponent
     //Agreagar validaciones en especifico
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
