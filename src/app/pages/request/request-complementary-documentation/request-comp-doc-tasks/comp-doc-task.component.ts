@@ -628,7 +628,7 @@ export abstract class CompDocTasksComponent extends BasePage {
       case 'analysis-result-compensation':
         this.regDocView = true;
         this.viewSelectedGoods = true;
-        this.viewGuidelines = true;
+        this.guidelines = true;
         this.expRequest = true;
 
         this.createReport = true;
