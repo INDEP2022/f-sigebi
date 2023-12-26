@@ -37,7 +37,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   @Input() isEdit: boolean = false;
 
   respDoc: Object = null;
-  respData: Object = null;
+  respDate: Object = null;
 
   private requestService = inject(RequestService);
   private compenstionService = inject(CompensationService);
@@ -133,7 +133,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         next: resp => {
           if (!isNullOrEmpty(resp)) {
             this.dictumForm.patchValue({
-              administrativeUnit: parseInt(resp.unitadministrative + ''),
+              adminResolutionNo: parseInt(resp.unitadministrative + ''),
               orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
               concept: resp.concept,
               amountToPay: resp.amount,
@@ -143,6 +143,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
             });
           }
         },
+        error: error => {},
       });
   }
 
@@ -159,6 +160,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.respDoc = resp;
+
           this.selectChanges();
           if (!isNullOrEmpty(resp)) {
             this.dictumForm.patchValue({
@@ -182,6 +184,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
             });
           }
         },
+        error: error => {},
       });
   }
 
@@ -211,12 +214,19 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
             });
           }
         },
+        error: error => {},
       });
   }
 
   createCompensation(compens: Object) {
     this.compenstionService.createcompensation(compens).subscribe({
       next: resp => {
+        if (this.steap3) {
+          this.respDate = resp;
+        }
+
+        this.respDoc = resp;
+
         this.selectChanges();
         this.getRequestInfo();
         this.onLoadToast('success', 'Datos de dictamen guardados con éxito');
@@ -230,7 +240,11 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   updatedCompensation(compens: Object) {
     this.compenstionService.updatecompensation(compens).subscribe({
       next: resp => {
-        this.respData = resp;
+        if (this.steap3) {
+          this.respDate = resp;
+        }
+        this.respDoc = resp;
+
         this.selectChanges();
         this.getRequestInfo();
         this.onLoadToast('success', 'Datos de dictamen actualizados con éxito');
@@ -249,7 +263,9 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
     object['requestId'] = this.requestId;
     object['orderDate'] = date.toISOString();
-    object['appoitmentDate'] = null;
+    if (this.steap1) {
+      object['appoitmentDate'] = null;
+    }
 
     if (this.steap2) {
       const isChecked = this.dictumForm.get('satCopy').value;
@@ -258,7 +274,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
     this.onSave.emit(true);
 
-    if (isNullOrEmpty(this.respDoc)) {
+    if (isNullOrEmpty(this.respDoc || this.respDate)) {
       this.createCompensation(object);
       this.getAllCompensation();
     } else {
@@ -269,15 +285,17 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   selectChanges() {
     if (this.steap1) {
+      console.log('steap1');
       this.onSave.emit({
         isValid: !isNullOrEmpty(this.respDoc),
         object: this.respDoc,
       });
     }
     if (this.steap3) {
+      console.log('steap3');
       this.onAppoiment.emit({
-        isValid: !isNullOrEmpty(this.respDoc),
-        object: this.respDoc,
+        isValid: !isNullOrEmpty(this.respDate),
+        object: this.respDate,
       });
     }
   }
