@@ -53,19 +53,19 @@
               [btnSmall]="true"
               class="mr-2"
               (confirm)="searchOrders()"></confirm-button>
-            <!--
-              <button
-                class="btn btn-primary btn-sm active"
-                (click)="searchOrders()">
-                Buscar Ordenes <i class="bx bxs-component"></i>
-              </button>
-            -->
           </div>
-          <div class="p-2">
+          <div class="p-2" *ngIf="!sampleOrderInfo?.idcontentk">
             <button
               class="btn btn-secondary btn-sm active"
               (click)="openAnnexK()">
               Anexo K <i class="bx bxs-file"></i>
+            </button>
+          </div>
+          <div class="p-2" *ngIf="sampleOrderInfo?.idcontentk">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="showAnexK()">
+              Ver anexo K <i class="bx bxs-file"></i>
             </button>
           </div>
         </div>

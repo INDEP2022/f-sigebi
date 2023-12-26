@@ -306,6 +306,7 @@ export class ReportGoodComponent extends BasePage implements OnInit {
   cleanForm() {
     this.loading = true;
     this.form.reset();
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsResDevInv());

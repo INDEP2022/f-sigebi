@@ -20,7 +20,7 @@ import { AnnexKFormComponent } from '../../../generate-sampling-supervision/gene
   styleUrls: ['./review-results.component.scss'],
 })
 export class ReviewResultsComponent extends BasePage implements OnInit {
-  title: string = 'Recisión Resultados 758';
+  title: string = 'Captura de resultados';
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
   //pasar datos a los detalle de muestreo

@@ -48,6 +48,7 @@ export class ReportConsolidatedPaymentOrderComponent
   regionalsDelegations = new DefaultSelect();
   transferences = new DefaultSelect();
   orderPaySelect: IOrderPayment[] = [];
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   settingsOrderService = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -279,7 +280,11 @@ export class ReportConsolidatedPaymentOrderComponent
         });
       },
       error: () => {
+        this.paymentsOrder = new LocalDataSource();
+        this.totalItems = 0;
         this.loading = false;
+        this.alert('warning', 'Advertencia', 'No se encontraron registros');
+        this.pageSizeOptions = [10];
       },
     });
   }
@@ -387,7 +392,7 @@ export class ReportConsolidatedPaymentOrderComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getOrderPayment());
-
+    this.pageSizeOptions = [10];
     this.paymentsOrder = new LocalDataSource();
     this.orderService = new LocalDataSource();
     this.creditNots = new LocalDataSource();

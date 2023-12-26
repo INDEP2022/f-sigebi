@@ -112,8 +112,8 @@ export class ExpenseLotService extends HttpService {
   }
 
   update(body: any) {
-    const id = body.idLot;
-    delete body.idLot;
+    const id = body.idLote;
+    delete body.idLote;
     return this.put(this.endpoint + '/' + id, body);
   }
 
