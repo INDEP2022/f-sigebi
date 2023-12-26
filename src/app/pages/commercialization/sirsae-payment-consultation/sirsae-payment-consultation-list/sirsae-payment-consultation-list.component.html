@@ -3,7 +3,11 @@
     <h5 class="title">consulta de pagos sirsae</h5>
   </div>
   <div body>
-    <div class="row">
+    <div class="ch-content ml-3" header>
+      <h5 class="title">Filtros</h5>
+    </div>
+
+    <div class="row pt-4">
       <form class="form-material mb-0" [formGroup]="form">
         <div class="row">
           <div class="col-md-10">
@@ -55,7 +59,10 @@
                       prefixSearch="$ilike"
                       value="name_bank"
                       [isLoadInOnInit]="true">
-                      <ng-template let-item>{{ item.name_bank }}</ng-template>
+                      <ng-template let-item
+                        >No. Cta: {{ item.id }} -
+                        {{ item.name_bank }}</ng-template
+                      >
                     </ng-custom-select>
                   </form-field>
                 </div>
@@ -71,7 +78,8 @@
                       [isLoadInOnInit]="true"
                       paramSearch="filter.statusDescription"
                       prefixSearch="$ilike"
-                      value="id">
+                      value="id"
+                      (valueChange)="changeValue($event)">
                       <ng-template let-item>{{
                         item.statusDescription
                       }}</ng-template>
@@ -86,9 +94,9 @@
               <button
                 type="button"
                 class="btn btn-primary active btn-sm mt-2"
-                (click)="validsearch()"
+                (click)="searchpre()"
                 [disabled]="!form.valid">
-                Buscar
+                Consultar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
@@ -103,7 +111,7 @@
         </div>
       </form>
     </div>
-    <div *ngIf="dataload">
+    <div>
       <div class="row pt-5">
         <div class="d-flex justify-content-end mr-5">
           <div class="mr-4">

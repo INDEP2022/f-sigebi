@@ -10,7 +10,7 @@ const routes: Routes = [
     data: { title: 'Generar Consulta' },
   },
   {
-    path: 'review-results',
+    path: 'results-capture/:id',
     loadChildren: async () =>
       (
         await import(

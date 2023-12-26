@@ -288,6 +288,11 @@ export class AnnexKFormComponent extends BasePage implements OnInit {
 
         if (checkSignature) {
           const typeSign = 'electronica';
+          this.alert(
+            'success',
+            'Acción Correcta',
+            'Firmante agregado correctamente'
+          );
           this.bsModalRef.content.callback(typeDocumentOrder, typeSign);
           this.close();
         }
