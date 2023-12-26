@@ -28,8 +28,11 @@ import { isNullOrEmpty } from '../../../request-complementary-documentation/requ
 export class EntryOrderComponent extends BasePage implements OnInit {
   entryOrderForm: FormGroup = new FormGroup({});
   @Output() onSave = new EventEmitter<any>();
+
   @Input() requestId: number;
   maxDate: Date = new Date();
+
+  respDoc: Object = null;
 
   data = [
     { id: 1, name: 'UNIDAD ADMINISTRATIVA 1' },
@@ -43,7 +46,6 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   private genericsService = inject(GenericService);
   private affairService = inject(AffairService);
 
-  respDoc: Object;
   transference: number = null;
   processDetonate: string = '';
   delegationId: string = '';
@@ -78,8 +80,9 @@ export class EntryOrderComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: resp => {
+          this.respDoc = resp;
 
-          this.selectChanges()
+          this.selectChanges();
 
           if (!isNullOrEmpty(resp)) {
             this.respDoc = resp;
@@ -153,7 +156,8 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   createOrderEntry(orderGood: Object) {
     this.entryOrderService.createOrderEntry(orderGood).subscribe({
       next: resp => {
-        this.selectChanges()
+        this.respDoc = resp;
+        this.selectChanges();
         this.getRequestInfo();
         this.onLoadToast('success', 'Orden de bien creada con éxito');
       },
@@ -166,7 +170,8 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   updateOrderEntry(orderGood: IOrderEntry) {
     this.entryOrderService.updateOrderEntry(orderGood).subscribe({
       next: resp => {
-        this.selectChanges()
+        this.respDoc = resp;
+        this.selectChanges();
         this.onLoadToast('success', 'Orden de bien actualizada con éxito');
       },
       error: error => {
@@ -207,7 +212,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   selectChanges() {
     this.onSave.emit({
       isValid: !isNullOrEmpty(this.respDoc),
-      object: this.respDoc
+      object: this.respDoc,
     });
   }
 }

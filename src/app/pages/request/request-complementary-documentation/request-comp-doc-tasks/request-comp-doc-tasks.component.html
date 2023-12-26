@@ -331,9 +331,8 @@
             [requestId]="requestId"></app-entry-order>
         </tab>
         <tab *ngIf="orderView" heading="Orden Ingreso" id="entryOrderTab">
-          <app-entry-order-view></app-entry-order-view>
+          <app-entry-order-view [requestId]="requestId"></app-entry-order-view>
         </tab>
-
         <tab
           *ngIf="searchAssociateFile"
           heading="Buscar y Asociar al Expediente"
