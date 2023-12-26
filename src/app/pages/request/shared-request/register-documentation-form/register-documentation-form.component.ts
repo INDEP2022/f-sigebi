@@ -31,7 +31,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   fileTypes: any[] = [];
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
@@ -254,7 +255,7 @@ export class RegisterDocumentationFormComponent
       'register-request-return': ['trialType', 'authorityOrdering'],
       'register-request-similar-goods': ['trialType'],
       'register-request-compensation': ['trialType'],
-      'register-request-economic-compensation': ['trialType'],
+      'register-request-economic': ['trialType'],
       'register-request-information-goods': ['trialType'],
       'register-request-protection': ['trialType', 'protectNumber'],
       'register-seizures': ['trialType'],
@@ -410,7 +411,7 @@ export class RegisterDocumentationFormComponent
       case 'register-request-compensation':
         input = ['trialType'];
         break;
-      case 'register-request-economic-compensation':
+      case 'register-request-economic':
         input = ['trialType'];
         break;
       case 'register-request-information-goods':
