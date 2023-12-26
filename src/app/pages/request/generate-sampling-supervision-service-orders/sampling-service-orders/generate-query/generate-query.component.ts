@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -19,9 +20,11 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ZonesService } from 'src/app/core/services/zones/zones.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -87,7 +90,9 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     private samplingGoodService: SamplingGoodService,
     private deductiveService: DeductiveVerificationService,
     private sanitizer: DomSanitizer,
-    private wcontentService: WContentService
+    private wcontentService: WContentService,
+    private taskService: TaskService,
+    private router: Router
   ) {
     super();
   }
@@ -352,73 +357,133 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         'Selecciona una deductiva para firmar el anexo K'
       );
     }
-    /*this.deductives;
-    const deductivesSelected = this.deductives.filter(
-      (x: any) => x.selected == true
-    );
-
-    if (deductivesSelected.length == 0) {
-      this.onLoadToast(
-        'info',
-        'Para generar el Anexo K es necesario seleccionar alguna deductiva'
-      );
-      return;
-    }
-    if (this.storeSelected == null) {
-      this.onLoadToast(
-        'info',
-        'Debe seleccionar un almacén para generar el Anexo K'
-      );
-      return;
-    }
-
-    const annextForm = this.sampleOrderForm.getRawValue();
-    this.openModal(
-      AnnexKComponent,
-      '',
-      'generate-query',
-      this.storeSelected,
-      annextForm
-    ); */
   }
 
   async turnSampling() {
-    this.alertQuestion(
-      'question',
-      'Confirmación',
-      '¿Desea turnar la orden de muestreo?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        console.log('GENERA LA TAREA');
-      }
-    });
-    /*this.allDeductives = await this.getAllDeductives();
-    const sampleOrder: any = await this.getSampleOrder();
-    const totalDeductives = this.allDeductives.length;
-    const noSelectedDeductives: any = this.allDeductives.filter(
-      (x: any) => x.indDedictiva == 'N'
-    ).length;
-    let message = '';
-
-    if (noSelectedDeductives == totalDeductives) {
-      message =
-        'No ha seleccionado alguna deductiva para las ordenes de servicio.';
-    } else {
-      if (sampleOrder.idcontentk == null) {
+    if (this.sampleOrderId > 0) {
+      const checkExistOrderInSample = await this.getSamplingOrder();
+      if (checkExistOrderInSample) {
+        const checkExistDeductives = await this.checkExistDeductives();
+        if (checkExistDeductives) {
+          if (this.sampleOrderInfo.idcontentk) {
+            this.alertQuestion(
+              'question',
+              'Confirmación',
+              '¿Esta seguro que la información es correcta para turnar?'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.generateTask();
+              }
+            });
+          } else {
+            this.alert(
+              'warning',
+              'Advertencia',
+              'Ha agregado deductivas al muestreo, debe generar el Anexo K'
+            );
+          }
+        } else {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            'No ha seleccionado alguna deductiva para las ordenes de servicio. ¿Esta de acuerdo que la información es correcta para Finalizar el muestreo?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              /*const updateSampleOrder = await this.updateSampleOrder(
+                'MUESTREO_TERMINA'
+              ); */
+            }
+          });
+        }
+      } else {
         this.alert(
           'warning',
-          'Acción Invalida',
-          'Ha agregado deductivas al muestreo, debe generar el Anexo K'
+          'Advertencia',
+          'Se requiere agregar una orden de servicio al muestreo'
         );
-        return;
-      } else {
-        
       }
-    } */
-    //this.turnModal(message);
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se requiere generar un muestreo de orden de servicio para continuar'
+      );
+    }
   }
 
-  save() {}
+  getSamplingOrder() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.sampleOrderId'] = `$eq:${this.sampleOrderId}`;
+      this.orderService.getAllSamplingOrderService(params).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  updateSampleOrder(statusSample: string) {
+    return new Promise((resolve, reject) => {
+      const sampleOrder: ISamplingOrder = {
+        idSamplingOrder: this.sampleOrderId,
+      };
+    });
+  }
+
+  async generateTask() {
+    const user: any = this.authService.decodeToken();
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    let body: any = {};
+
+    body['userProcess'] = user.username;
+    body['type'] = 'MUESTREO_ORDENES';
+    body['subtype'] = 'verificar_almacen';
+    body['ssubtype'] = 'TURNAR';
+
+    let task: any = {};
+    task['assignees'] = user.username;
+    task['assigneesDisplayname'] = user.username;
+    task['creator'] = user.username;
+    task['reviewers'] = user.username;
+
+    task['idSamplingOrder'] = this.sampleOrderId;
+    task[
+      'title'
+    ] = `Muestreo Ordenes de Servicio: Revisión Resultados ${this.sampleOrderId}`;
+    task['idDelegationRegional'] = this.sampleOrderInfo.idDelegationRegional;
+    task['idStore'] = this.sampleOrderInfo.idStore;
+    task['processName'] = 'captura_resultados';
+    task['urlNb'] =
+      'pages/request/generate-sampling-service-orders/results-capture';
+    body['task'] = task;
+
+    const taskResult: any = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult || taskResult == false) {
+      this.msgGuardado(
+        'success',
+        'Creación de Tarea Correcta',
+        `Muestreo Ordenes de Servicio: Revisión Resultados ${this.sampleOrderId}`
+      );
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
 
   openModal(
     component: any,
@@ -813,5 +878,22 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    });
   }
 }

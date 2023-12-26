@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -193,6 +194,9 @@ export class ReportConsolidatedEntryOrderComponent
           );
 
           item.delegationName = delegationName;
+          item.orderDate = moment(item.orderDate).format('DD/MM/YYYY');
+          item.startDate = moment(item.startDate).format('DD/MM/YYYY');
+          item.endDate = moment(item.endDate).format('DD/MM/YYYY');
           return item;
         });
 
@@ -293,7 +297,11 @@ export class ReportConsolidatedEntryOrderComponent
       .getOrderPayment(this.paramsOrderAs.getValue())
       .subscribe({
         next: response => {
-          this.infoOrderAs.load(response.data);
+          const info = response.data.map(item => {
+            item.orderPayDate = moment(item.orderPayDate).format('DD/MM/YYYY');
+            return item;
+          });
+          this.infoOrderAs.load(info);
           this.totalItemsOrderAs = response.count;
           this.loadingOrderAs = false;
         },
