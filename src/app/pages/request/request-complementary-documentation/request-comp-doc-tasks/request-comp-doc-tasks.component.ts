@@ -46,8 +46,7 @@ import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgoo
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -311,7 +310,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   openReport(): void {
     if (!this.nextTurn) {
@@ -745,6 +744,11 @@ export class RequestCompDocTasksComponent
 
     if (rollBack) {
       task['taskDefinitionId'] = this.taskInfo.id;
+
+      if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
+        task['taskDefinitionName'] = this.taskInfo.taskDefinitionId;
+      }
+
     } else {
       task['taskDefinitionId'] = this.taskInfo.taskDefinitionId;
     }
@@ -861,7 +865,11 @@ export class RequestCompDocTasksComponent
     body['subtype'] = 'Registro_documentacion';
     body['ssubtype'] = 'REJECT';
 
-    this.updateTask(this.taskInfo.taskDefinitionId, 'PROCESO');
+    if (!isNullOrEmpty(this.taskInfo.taskDefinitionName)) {
+      this.updateTask(this.taskInfo.taskDefinitionName, 'PROCESO');
+    } else if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
+      this.updateTask(this.taskInfo.taskDefinitionId, 'PROCESO');
+    }
 
     this.requestInfo.detail.rejectionComment = data.comment;
     this.updateRequest(false);
@@ -894,7 +902,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1523,7 +1531,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1634,7 +1642,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   showReport() {
     this.wContentService.obtainFile('SAE568245').subscribe({
@@ -1644,7 +1652,7 @@ export class RequestCompDocTasksComponent
         const fileURL = URL.createObjectURL(file);
         this.openPrevPdf(fileURL);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -1692,7 +1700,7 @@ export class RequestCompDocTasksComponent
             resolve({
               data: resp.data,
               isValid: resp.data.length > 0,
-              isSigned: false //resp.data[0].signedReport == 'Y',
+              isSigned: true //resp.data[0].signedReport == 'Y',
             });
           } else {
             resolve({
