@@ -46,7 +46,8 @@ import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgoo
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -310,7 +311,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   openReport(): void {
     if (!this.nextTurn) {
@@ -355,7 +356,8 @@ export class RequestCompDocTasksComponent
   async turnRequest() {
     if (this.process == 'register-taxpayer-date') {
       let result = await this.openDelegation();
-
+      this.validateTurn();
+      console.log('valide');
       if (!result) return;
     }
     this.alertQuestion(
@@ -892,7 +894,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -1306,7 +1308,7 @@ export class RequestCompDocTasksComponent
         }
         break;
       case 'register-taxpayer-date':
-        if (!this.validate.dictudData) {
+        if (!this.validate.registerAppointment) {
           this.showWarning('Registre datos de la cita');
           return false;
         }
@@ -1315,7 +1317,7 @@ export class RequestCompDocTasksComponent
           return false;
         }
         break;
-      case 'register-pay-orde':
+      case 'register-pay-order':
         if (!this.validate.orderEntry) {
           this.showWarning('Registre datos de orden de ingreso');
           return false;
@@ -1517,7 +1519,11 @@ export class RequestCompDocTasksComponent
     //Agreagar validaciones en especifico
   }
 
-  onSetData(event) { }
+  onAppoiment(event) {
+    this.validate.registerAppointment = event.isValid;
+  }
+
+  onSetData(event) {}
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1628,7 +1634,7 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
   showReport() {
     this.wContentService.obtainFile('SAE568245').subscribe({
@@ -1638,7 +1644,7 @@ export class RequestCompDocTasksComponent
         const fileURL = URL.createObjectURL(file);
         this.openPrevPdf(fileURL);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
