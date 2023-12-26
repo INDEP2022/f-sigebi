@@ -86,15 +86,16 @@ export class ModalNotTransferredComponent extends BasePage implements OnInit {
     });
     if (this.allotment != null) {
       this.edit = true;
-      console.log(this.allotment);
       this.form.patchValue(this.allotment);
     }
   }
 
   async save() {
     let object = this.form.getRawValue();
-    object['goodNumbertransferredId'] = this.allotment.goodNumbertransferredId;
-    console.log(this.allotment.goodNumbertransferredId);
+    if (this.allotment != null) {
+      object['goodNumbertransferredId'] =
+        this.allotment.goodNumbertransferredId;
+    }
 
     let fechaActual = new Date();
     let fechaEntero = fechaActual.getTime();

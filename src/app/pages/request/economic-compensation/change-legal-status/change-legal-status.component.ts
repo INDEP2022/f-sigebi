@@ -36,9 +36,9 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
   affairs = new DefaultSelect<ILegalAffair>();
 
-  taxPayer: string = '';
-  trans: string = '';
-  detona: string = '';
+  taxPayer: string = 'a';
+  trans: string = 'a';
+  detona: string = 'a';
 
   recDoc: Object = null;
 
@@ -74,6 +74,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     if (this.isJuridicVisible) {
+      console.log('entra a juridico');
       this.getAllTrades();
       this.getRequestInfo();
     }
@@ -93,8 +94,8 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       nameAddressee: [null, [Validators.required]],
       postAddressee: [null, [Validators.required]],
       affair: [null, [Validators.required]],
-      paragraphClaim: [null, [Validators.required]],
-      agreementDate: [null, [Validators.required]],
+      fundamentals: [null, [Validators.required]],
+      providedDate: [null, [Validators.required]],
       inchargeProvided: [null, [Validators.required]],
       statusSuspension: [null, [Validators.required]],
       signatureBySubstitution: [null],
@@ -128,7 +129,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
         this.affairs = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
+        let error = 'a';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
@@ -153,8 +154,9 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: resp => {
-          this.recDoc = resp;
-          console.log(resp.indicatedTaxpayer);
+          if (this.isDelegationsVisible) {
+            this.recDoc = resp;
+          }
           this.taxPayer = resp.indicatedTaxpayer;
           this.trans = resp.transferent.name;
           this.getDetona(resp.affair);
@@ -173,7 +175,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   createLegalDoc(object: Object) {
     this.legalTradeService.createLegalTrades(object).subscribe({
       next: resp => {
-        this.getRequestInfo();
+        this.getAllTrades();
         this.onLoadToast('success', 'Oficio generado con éxito');
       },
       error: error => {
@@ -182,10 +184,10 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
     });
   }
 
-  updatedLegalDoc(object: Object) {
+  updatedLegalDoc(object: ILegalAffair) {
     this.legalTradeService.updateLegalTrades(object).subscribe({
       next: resp => {
-        this.getRequestInfo();
+        this.getAllTrades();
         this.onLoadToast('success', 'Oficio generado con éxito');
       },
       error: error => {
@@ -195,7 +197,6 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   }
 
   getAllTrades() {
-    // Llamar servicio para obtener informacion de la documentacion de la orden
     const params = new ListParams();
     params['filter.applicationId'] = `$eq:${this.requestId}`;
     this.legalTradeService
@@ -208,7 +209,11 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.recDoc = resp;
-          console.log(resp);
+          console.log('valida si existe' + resp);
+          this.form.patchValue(resp);
+        },
+        error: error => {
+          this.recDoc = null;
         },
       });
   }
@@ -233,6 +238,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   save() {
     if (this.isJuridicVisible) {
       let object = this.form.getRawValue();
+
       if (object['signatureBySubstitution'] == true) {
         object['signatureBySubstitution'] = '1';
       } else {
@@ -241,14 +247,25 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
       object['applicationId'] = this.requestId;
 
+      let date = new Date();
+
+      let dateString = date.toISOString();
+      let splitId = parseInt(dateString.split('-')[2].substring(3));
+
+      console.log(object);
+
       if (isNullOrEmpty(this.recDoc)) {
+        console.log('entra a crear');
+        object['jobLegalId'] = splitId;
+
         this.createLegalDoc(object);
-        this.getAllTrades();
       } else {
+        object['jobLegalId'] = this.recDoc['jobLegalId'];
+
+        console.log('entra a actualizar');
         this.updatedLegalDoc(object);
       }
     } else {
-      console.log(this.dataCheckDelegation);
       if (!isNullOrEmpty(this.dataCheckDelegation)) {
         this.delegtion.emit(this.dataCheckDelegation[0].data);
         this.refresh.emit(true);

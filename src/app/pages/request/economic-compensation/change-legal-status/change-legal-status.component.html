@@ -86,23 +86,24 @@
       <div class="row mt-5">
         <div class="col-md-12">
           <form-field
-            [control]="form.get('paragraphClaim')"
+            [control]="form.get('fundamentals')"
             label="Justificación">
             <textarea
               class="form-control"
-              formControlName="paragraphClaim"></textarea>
+              formControlName="fundamentals"></textarea>
           </form-field>
         </div>
       </div>
       <div class="row mt-3">
         <div class="col-md-6">
           <form-field
-            [control]="form.get('agreementDate')"
+            [control]="form.get('providedDate')"
             label="Fecha Proveido">
             <input
-              type="date"
               class="form-control"
-              formControlName="agreementDate" />
+              type="text"
+              formControlName="providedDate"
+              bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -128,7 +129,7 @@
             label="Estatus Suspensión">
             <select class="form-control" formControlName="statusSuspension">
               <option [value]="null">Seleccione un valor</option>
-              <option [value]="1">PIEZA</option>
+              <option [value]="'PIEZA'">PIEZA</option>
             </select>
           </form-field>
         </div>
@@ -172,7 +173,7 @@
         <confirm-button
           *ngIf="isJuridicVisible"
           [type]="'button'"
-          [disabled]="form.invalid"
+          disbled="!form.valid"
           (click)="save()"></confirm-button>
         <confirm-button
           *ngIf="isDelegationsVisible"
