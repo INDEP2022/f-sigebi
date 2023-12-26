@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DefaultEditor } from 'ng2-smart-table';
 
@@ -9,24 +9,31 @@ import { DefaultEditor } from 'ng2-smart-table';
 })
 export class GuidelinesObservationsComponent
   extends DefaultEditor
-  implements OnInit
-{
+  implements OnInit {
+
+  @Input() value: string | number;
+  @Input() rowData: any;
+  @Input() key: any;
   selectForm: FormGroup = new FormGroup({});
+  @Output() cellChanged = new EventEmitter<any>();
 
   constructor(private fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
+
     this.selectForm = this.fb.group({
       observations: [null],
     });
-    if (this.cell.newValue !== '') {
-      this.selectForm.controls['observations'].setValue(this.cell.newValue);
-    }
+
+    this.selectForm.controls['observations'].setValue(this.value)
+
+    this.selectForm.valueChanges.subscribe((object) => {
+      this.rowData[this.key] = object.observations;
+      this.cellChanged.emit(this.rowData);
+    });
+
   }
 
-  updateData() {
-    this.cell.newValue = this.selectForm.controls['observations'].value;
-  }
 }
