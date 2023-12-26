@@ -1640,14 +1640,20 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   private async CANCELA_VTA_NORMALI() {
     if (this.lotNumber.value) {
-      await firstValueFrom(
-        this.lotService.update({
-          idLote: this.lotNumber.value,
-          idStatusVta: 'CDEV',
-        })
+      let res = await firstValueFrom(
+        this.lotService
+          .update({
+            idLote: this.lotNumber.value,
+            idStatusVta: 'CDEV',
+          })
+          .pipe(catchError(x => of(null)))
       );
-
-      this.REGRESA_ESTATUS_BIEN();
+      if (res) {
+        this.REGRESA_ESTATUS_BIEN();
+      } else {
+        this.finishProcessSolicitud.next(false);
+        this.alert('warning', 'No se pudo actualizar los lotes', '');
+      }
     } else {
       this.alert('warning', 'Necesita seleccionar un lote para continuar', '');
       this.finishProcessSolicitud.next(false);
@@ -1664,7 +1670,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       .subscribe({
         next: response => {
           if (response && response.data && response.data.length > 0) {
-            V_VALIDA = response.data[0].statusFinal;
+            V_VALIDA = response.data[0].statusFinal.status;
             this.expenseGoodProcessService
               .updateStatus(this.lotNumber.value, V_VALIDA)
               .pipe(take(1))
@@ -1741,7 +1747,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           this.LIBERA_BIENES_REMESA();
         },
         error: err => {
-          this.alert('error', 'No se pudo regresar el estatus del bien', '');
+          this.alert('error', 'Llena datos rev', err.error.message);
           this.finishProcessSolicitud.next(false);
         },
       });
@@ -1760,7 +1766,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           this.alert(
             'error',
             'No se pudieron liberar las remesas',
-            'Favor de verificar'
+            err.error.message
           );
         },
       });
@@ -1782,11 +1788,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         },
         error: err => {
           this.finishProcessSolicitud.next(false);
-          this.alert(
-            'error',
-            'No se pudieron liberar las remesas',
-            'Favor de verificar'
-          );
+          this.alert('error', 'Actualiza histórico', err.error.message);
         },
       });
   }
