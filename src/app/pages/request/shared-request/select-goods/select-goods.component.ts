@@ -520,7 +520,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             //elimina inventario
             this.deleteGoodDated(item);
           } else {
-            // this.deleteGoodResDev(item);
+            this.deleteGoodResDev(item);
           }
 
           if (goodSelected == i) {
