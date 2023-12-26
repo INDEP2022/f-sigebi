@@ -3,7 +3,11 @@
     <h5 class="title">consulta de pagos sirsae</h5>
   </div>
   <div body>
-    <div class="row">
+    <div class="ch-content ml-3" header>
+      <h5 class="title">Filtros</h5>
+    </div>
+
+    <div class="row pt-4">
       <form class="form-material mb-0" [formGroup]="form">
         <div class="row">
           <div class="col-md-10">
@@ -92,7 +96,7 @@
                 class="btn btn-primary active btn-sm mt-2"
                 (click)="searchpre()"
                 [disabled]="!form.valid">
-                Buscar
+                Consultar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
