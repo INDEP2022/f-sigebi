@@ -133,6 +133,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true
       };
     case 'verify-compliance-return':
       return {
@@ -201,6 +202,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true
       };
     case 'review-guidelines-compensation':
       return {
@@ -211,6 +213,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true
       };
     case 'analysis-result-compensation':
       return {
@@ -269,6 +272,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true
       };
 
     case 'request-economic-resources':
@@ -291,6 +295,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true
       };
 
     case 'generate-results-economic':
@@ -361,6 +366,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true
       };
 
     case 'protection-regulation':
@@ -395,11 +401,4 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     close: true,
   };
 
-  return {
-    title: '',
-    url: '',
-    process: '',
-    ssubtype: '',
-    close: true,
-  };
 }

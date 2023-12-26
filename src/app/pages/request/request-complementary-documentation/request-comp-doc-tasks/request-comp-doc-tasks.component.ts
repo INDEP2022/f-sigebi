@@ -718,7 +718,7 @@ export class RequestCompDocTasksComponent
 
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
     this.loadingTurn = true;
-    const { title, url, type, subtype, ssubtype, process, close } =
+    const { title, url, type, subtype, ssubtype, process, close, rollBack } =
       getConfigAffair(
         this.requestId,
         this.affair,
@@ -739,7 +739,12 @@ export class RequestCompDocTasksComponent
 
     if (close) {
       body['idTask'] = this.taskInfo.id;
+    }
+
+    if (rollBack) {
       task['taskDefinitionId'] = this.taskInfo.id;
+    } else {
+      task['taskDefinitionId'] = this.taskInfo.taskDefinitionId;
     }
 
     task['id'] = 0;
@@ -1681,7 +1686,7 @@ export class RequestCompDocTasksComponent
             resolve({
               data: resp.data,
               isValid: resp.data.length > 0,
-              isSigned: true //resp.data[0].signedReport == 'Y',
+              isSigned: false //resp.data[0].signedReport == 'Y',
             });
           } else {
             resolve({
