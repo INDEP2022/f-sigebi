@@ -27,6 +27,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
   dictumForm: FormGroup = new FormGroup({});
   @Output() onSave = new EventEmitter<any>();
+  @Output() onAppoiment = new EventEmitter<any>();
 
   @Input() requestId = null;
 
@@ -131,7 +132,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           if (!isNullOrEmpty(resp)) {
-            this.selectChanges();
             this.dictumForm.patchValue({
               administrativeUnit: parseInt(resp.unitadministrative + ''),
               orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
@@ -160,7 +160,6 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         next: resp => {
           this.respDoc = resp;
           this.selectChanges();
-          console.log(resp.satCopy);
           if (!isNullOrEmpty(resp)) {
             this.dictumForm.patchValue({
               appoitmentDate: this.datePipe.transform(
@@ -218,7 +217,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   createCompensation(compens: Object) {
     this.compenstionService.createcompensation(compens).subscribe({
       next: resp => {
-        this.onSave.emit(true);
+        this.selectChanges();
         this.getRequestInfo();
         this.onLoadToast('success', 'Datos de dictamen guardados con éxito');
       },
@@ -232,7 +231,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
     this.compenstionService.updatecompensation(compens).subscribe({
       next: resp => {
         this.respData = resp;
-        this.onSave.emit(true);
+        this.selectChanges();
         this.getRequestInfo();
         this.onLoadToast('success', 'Datos de dictamen actualizados con éxito');
       },
@@ -250,7 +249,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
 
     object['requestId'] = this.requestId;
     object['orderDate'] = date.toISOString();
-    object['appoitmentDate'] = date.toISOString();
+    object['appoitmentDate'] = null;
 
     if (this.steap2) {
       const isChecked = this.dictumForm.get('satCopy').value;
@@ -269,9 +268,17 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   }
 
   selectChanges() {
-    this.onSave.emit({
-      isValid: !isNullOrEmpty(this.respDoc),
-      object: this.respDoc,
-    });
+    if (this.steap1) {
+      this.onSave.emit({
+        isValid: !isNullOrEmpty(this.respDoc),
+        object: this.respDoc,
+      });
+    }
+    if (this.steap3) {
+      this.onAppoiment.emit({
+        isValid: !isNullOrEmpty(this.respDoc),
+        object: this.respDoc,
+      });
+    }
   }
 }

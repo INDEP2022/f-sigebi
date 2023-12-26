@@ -323,7 +323,7 @@
           <app-register-dictum-val
             [steap3]="steap3"
             [requestId]="requestId"
-            (onSave)="onDictumData($event)"></app-register-dictum-val>
+            (onAppoiment)="onAppoiment($event)"></app-register-dictum-val>
         </tab>
         <tab *ngIf="orderEntry" heading="Orden Ingreso" id="entryOrderTab">
           <app-entry-order
@@ -364,7 +364,7 @@
             [idRequest]="requestId"
             [viewGrouper]="btnGrouper"
             [typeVisit]="typeVisit"
-            (onChange)="onProgramVisit($event)" ></app-select-good-eye-visit>
+            (onChange)="onProgramVisit($event)"></app-select-good-eye-visit>
           <div *ngIf="selectGoodNotForEyeVisit">
             <app-goods-not-transferred></app-goods-not-transferred>
           </div>
@@ -380,7 +380,7 @@
           *ngIf="validateGoodForEyeVisit"
           heading="Validar Resultado Visitas"
           id="validateGoodsEyeVisitTab">
-          <app-validate-eye-visit 
+          <app-validate-eye-visit
             [idRequest]="requestId"
             (onChange)="onProgramVisit($event)"></app-validate-eye-visit>
         </tab>
@@ -421,8 +421,7 @@
             [steap1]="steap1"
             [steap2]="steap2"
             [requestId]="requestId"
-            [isEdit]="isEdit"
-            (onSave)="onDictumData($event)"></app-register-dictum-val>
+            [isEdit]="isEdit"></app-register-dictum-val>
         </tab>
 
         <tab
