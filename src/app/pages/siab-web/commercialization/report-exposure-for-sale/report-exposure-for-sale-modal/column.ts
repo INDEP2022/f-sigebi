@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const DETAIL_COLUMNS = {
   descripcion: {
@@ -21,6 +22,10 @@ export const DETAIL_COLUMNS = {
       var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
       return formatted;
     },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   usuario_cambio: {
     title: 'Usuario Cambio',
@@ -34,10 +39,10 @@ export const DETAIL_COLUMNS = {
     title: 'Motivo del Cambio',
     sort: false,
   },
-  no_registro: {
-    title: 'No. Registro',
-    sort: false,
-  },
+  // no_registro: {
+  //   title: 'No. Registro',
+  //   sort: false,
+  // },
   proceso_ext_dom: {
     title: 'Proceso Ext_Dom',
     sort: false,

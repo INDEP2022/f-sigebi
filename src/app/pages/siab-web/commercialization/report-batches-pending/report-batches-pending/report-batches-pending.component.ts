@@ -205,7 +205,7 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
     const payload = {
       eventId: selectedData.id_evento,
       lotId: selectedData.id_lote,
-      lotsId: null,
+      lotsId: '',
     };
     this.customerService.getGuaranteeExcel(payload).subscribe({
       next: resp => {
