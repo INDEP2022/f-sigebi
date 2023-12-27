@@ -7,10 +7,12 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { takeUntil } from 'rxjs';
 import {
   FilterParams,
@@ -189,6 +191,8 @@ export class DetailAssetsTabComponentComponent
   unit: string = null;
 
   dataToSend: any = {};
+
+  @ViewChild('tabset') tabset: TabsetComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -1564,38 +1568,101 @@ export class DetailAssetsTabComponentComponent
   good: IGoodTable = {};
 
   updateGood() {
-    console.log('Información del Bien: ', this.detailAssetsInfo);
-    let required: boolean = false;
-    this.dataAtribute.forEach((item: any) => {
-      if (item.required && (item.value === null || item.value === '')) {
-        required = true;
-      }
-    });
-    if (required) {
-      this.alert('warning', 'Debe Registrar los Atributos Requeridos.', '');
-      return;
-    }
+    if (this.detailAssets.value.id == null) {
+      //Crear objeto del formulario con solo datos llenos
+      const dataGood: Object = this.detailAssets.value;
 
-    let body: any = {};
-    this.dataAtribute.forEach((row: any) => {
-      body[row.column] = row.value;
-    });
-    body['id'] = Number(this.detailAssetsInfo.id);
-    body['goodId'] = Number(this.detailAssetsInfo.id);
-    this.goodService.updateGoodTable(body).subscribe({
-      next: resp => {
-        this.viewAct = !this.viewAct;
-        this.disableUpdate = !this.disableUpdate;
-        this.good = resp;
-        this.alert('success', 'El Bien se ha Actualizado', '');
-        setTimeout(() => {
-          this.goodChange++;
-        }, 100);
-      },
-      error: err => {
-        this.alert('error', 'Error al Actualizar el Bien', '');
-      },
-    });
+      console.log('Bien, sin id');
+      let body: any = {};
+
+      //Recorre el objeto del formulario y setea al body aquellos que tienen información
+      for (const clave in dataGood) {
+        if (dataGood.hasOwnProperty(clave)) {
+          const valor = dataGood[clave];
+          body[clave] = valor;
+        }
+      }
+
+      this.goodService.create(body).subscribe({
+        next: resp => {
+          this.viewAct = !this.viewAct;
+          this.disableUpdate = !this.disableUpdate;
+          this.good = resp[0];
+          console.log('Bien creado,', resp);
+          this.alert('success', 'El Bien se ha creado', '');
+        },
+        error: error => {
+          console.log('Bien no creado,', error);
+          this.alert('error', 'Error al crear el Bien', '');
+        },
+      });
+    } else {
+      console.log('Información del Bien: ', this.detailAssetsInfo);
+      console.log(
+        'Información del Bien del formulario',
+        this.detailAssets.value
+      );
+
+      //Del objeto del formulario, quita los que estan en nulos
+      for (const clave in this.detailAssets.value) {
+        if (
+          this.detailAssets.value.hasOwnProperty(clave) &&
+          this.detailAssets.value[clave] === null
+        ) {
+          delete this.detailAssets.value[clave];
+        }
+      }
+      //Crear objeto del formulario con solo datos llenos
+      const dataGood: Object = this.detailAssets.value;
+
+      let required: boolean = false;
+      this.dataAtribute.forEach((item: any) => {
+        if (item.required && (item.value === null || item.value === '')) {
+          required = true;
+        }
+      });
+      if (required) {
+        this.alert('warning', 'Debe Registrar los Atributos Requeridos.', '');
+        return;
+      }
+
+      let body: any = {};
+
+      //Recorre tabla con atributos y los setea a body
+      this.dataAtribute.forEach((row: any) => {
+        body[row.column] = row.value;
+      });
+
+      console.log(
+        'Información del Bien del formulario LIMPIO',
+        this.detailAssets.value
+      );
+
+      body['id'] = Number(this.detailAssetsInfo.id);
+      body['goodId'] = Number(this.detailAssetsInfo.id);
+
+      //Recorre el objeto del formulario y setea al body aquellos que tienen información
+      for (const clave in dataGood) {
+        if (dataGood.hasOwnProperty(clave)) {
+          const valor = dataGood[clave];
+          body[clave] = valor;
+        }
+      }
+      this.goodService.updateGoodTable(body).subscribe({
+        next: resp => {
+          this.viewAct = !this.viewAct;
+          this.disableUpdate = !this.disableUpdate;
+          this.good = resp;
+          this.alert('success', 'El Bien se ha Actualizado', '');
+          setTimeout(() => {
+            this.goodChange++;
+          }, 100);
+        },
+        error: err => {
+          this.alert('error', 'Error al Actualizar el Bien', '');
+        },
+      });
+    }
   }
 
   /*convertirFecha(fechaOriginal: any): string {
@@ -2065,5 +2132,39 @@ export class DetailAssetsTabComponentComponent
     }
 
     return realState;
+  }
+
+  indiceActivo = 0;
+  async onTabSelected(event: any) {
+    console.log('Pestañas:', event);
+    console.log('Pestaña seleccionada:', event.id);
+    console.log('información del bien seleccionado:', this.detailAssetsInfo);
+
+    switch (event.id) {
+      case 'boatGood':
+      case 'vehicleGood':
+      case 'jewelGood':
+      case 'aircraftGood':
+      case 'estateGood':
+        if (this.detailAssetsInfo.id == null) {
+          const result = await this.alertInfo(
+            'warning',
+            'Atención',
+            'Primero debe guardar la información básica del Bien, posteriormente podrá modificar los atributos especiales'
+          );
+          if (result.isConfirmed) {
+            console.log('Confirmado, dirigir a otra pestaña');
+            console.log(' this.tabset.tabs.length', this.tabset.tabs.length);
+            this.tabset.tabs.forEach((tab, i) => {
+              tab.active = i === 0;
+            });
+          }
+        }
+
+        break;
+
+      default:
+        break;
+    }
   }
 }

@@ -315,6 +315,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   newAsset(): void {
+    // const grid: Grid = this.table.grid;
+    // grid.dataSet.deselectAll();
+
     if (this.createNewAsset === false) {
       this.createNewAsset = true;
       this.btnCreate = 'Cerrar Bien';
