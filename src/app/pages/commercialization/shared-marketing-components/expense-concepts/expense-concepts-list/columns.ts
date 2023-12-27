@@ -70,6 +70,9 @@ export const COLUMNS = {
         ],
       },
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   routineCalculation: {
     title: 'Rut. Cálculo',
@@ -96,6 +99,9 @@ export const COLUMNS = {
           { value: 'S', title: 'Afecta' },
         ],
       },
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   // numerary: {
