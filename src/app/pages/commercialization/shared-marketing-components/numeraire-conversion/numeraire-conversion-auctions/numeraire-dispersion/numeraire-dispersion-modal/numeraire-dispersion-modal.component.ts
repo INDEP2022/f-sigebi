@@ -21,6 +21,7 @@ export class NumeraireDispersionModalComponent
   row: INumeraryxGoods;
   title = 'Dispersión de Gastos';
   eventId: number;
+  spentId: number;
   constructor(
     private service: NumeraryXGoodsService,
     private modalRef: BsModalRef,
@@ -67,8 +68,16 @@ export class NumeraireDispersionModalComponent
     delete body.date;
     if (body) {
       let serviceAction = this.row
-        ? this.service.edit({ ...body, eventId: this.row.eventId })
-        : this.service.add({ ...body, eventId: this.eventId });
+        ? this.service.updateAmount({
+            ...body,
+            eventId: this.row.eventId,
+            spentId: this.spentId,
+          })
+        : this.service.add({
+            ...body,
+            eventId: this.eventId,
+            spentId: this.spentId,
+          });
       serviceAction.pipe(take(1)).subscribe({
         next: response => {
           this.modalRef.content.callback(this.row ? true : false);

@@ -65,7 +65,7 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
   costManual: number = 0;
   costReub: number = 0;
   total: number = 0;
-
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   form: FormGroup = new FormGroup({});
   settingsValReq = {
     ...this.settings,
@@ -155,6 +155,9 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getTypeRelevantSelect(new ListParams());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getInfoGoods());
   }
 
   prepareForm() {
@@ -192,11 +195,12 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.delegationNumber'] = user.department;
 
     this.params.getValue()['filter.fractionId'] = '$not:$null';
+    this.params.getValue()['filter.fraction'] = '$not:$null';
 
     this.goodService.getAll(this.params.getValue()).subscribe({
       next: response => {
         const info = response.data.map(item => {
-          item.relevantTypeId = item.fraccion.relevantTypeId;
+          if (item.fraccion) item.relevantTypeId = item.fraccion.relevantTypeId;
           return item;
         });
 
@@ -229,6 +233,9 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
       this.typeRelevantService.getById(id).subscribe({
         next: response => {
           resolve(response.description);
+        },
+        error: () => {
+          resolve('SIN TIPO RELEVANTE');
         },
       });
     });
@@ -424,6 +431,7 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loadingProg = false;
+          this.getSumTotal();
         },
       });
   }
@@ -652,10 +660,35 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
 
   cleanSearch() {
     this.form.reset();
+    this.pageSizeOptions = [10];
     this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsRecDoc = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsValReq = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsProg = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsProgEnt = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsMan = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsReubGood = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getInfoGoods());
+
+    this.infoValReq = new LocalDataSource();
+    this.infoRecDoc = new LocalDataSource();
+    this.infoProg = new LocalDataSource();
+    this.infoProgEnt = new LocalDataSource();
+    this.infoWarehouse = new LocalDataSource();
+    this.infoManual = new LocalDataSource();
+    this.infoReubGood = new LocalDataSource();
+    this.infoGoods = new LocalDataSource();
+
+    this.totalItemsValReq = 0;
+    this.totalItemsRecDoc = 0;
+    this.totalItemsProg = 0;
+    this.totalItemsProgEnt = 0;
+    this.totalItemsMan = 0;
+    this.totalItemsWarehouse = 0;
+    this.totalItemsReubGood = 0;
   }
 
   close() {
