@@ -415,6 +415,7 @@
             [isEdit]="isEdit"
             (onSave)="onDictumData($event)"></app-register-dictum-val>
         </tab>
+
         <tab *ngIf="dictumRegister" heading="Datos del Dictamen" id="dictumTab">
           <app-register-dictum-val
             [steap1]="steap1"
@@ -422,6 +423,10 @@
             [visible]="visible"
             [requestId]="requestId"
             [isEdit]="isEdit"></app-register-dictum-val>
+        </tab>
+        <tab *ngIf="dictumInfo" heading="Datos del Dictamen" id="dictumTab">
+          <app-dictum-information [requestId]="requestId">
+          </app-dictum-information>
         </tab>
 
         <tab

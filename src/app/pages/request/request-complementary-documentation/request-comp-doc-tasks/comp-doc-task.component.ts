@@ -50,6 +50,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract isEdit: boolean;
   protected abstract btnGrouper: boolean;
   protected abstract visible: boolean;
+  protected abstract dictumInfo: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -888,7 +889,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.viewGuidelines = true;
-        this.dictumRegister = true;
+        this.dictumInfo = true;
         this.registAppointment = true;
         this.expRequest = true;
 

@@ -84,6 +84,7 @@ export class GoodsListComponent extends BasePage implements OnInit {
   }
 
   getData(params: ListParams) {
+    this.loading = true;
     //const good: any = Object.assign({ viewFile: '' }, this.goodTestData[0]);
     /*const good: any = Object.assign(this.goodTestData[0]);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
@@ -92,6 +93,8 @@ export class GoodsListComponent extends BasePage implements OnInit {
     this.rejectedGoodService.getAll(params).subscribe({
       next: resp => {
         const result = resp.data.map(async (item: any) => {
+          this.loading = false;
+
           item['typeRelevantDescrip'] = await this.getTypeRelevant(
             item.relevantTypeId
           );
@@ -106,6 +109,7 @@ export class GoodsListComponent extends BasePage implements OnInit {
         });
       },
     });
+    this.loading = false;
   }
 
   getTypeRelevant(id: number) {
