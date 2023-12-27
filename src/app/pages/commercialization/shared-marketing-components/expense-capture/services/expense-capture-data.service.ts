@@ -848,6 +848,22 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       // this.errorSendSolicitudeMessage();
       // return;
     } else {
+      if (resultSP.COMER_GASTOS_ID_SOLICITUDPAGO) {
+        this.form
+          .get('paymentRequestNumber')
+          .setValue(resultSP.COMER_GASTOS_ID_SOLICITUDPAGO);
+      }
+      if (resultSP.COMER_GASTOS_ID_SOLICITUDPAGO) {
+        this.form
+          .get('paymentRequestNumber')
+          .setValue(resultSP.COMER_GASTOS_ID_SOLICITUDPAGO);
+      }
+      if (resultSP.COMER_GASTOS_FECHA_SP) {
+        const array = resultSP.COMER_GASTOS_FECHA_SP.split('/');
+        this.form
+          .get('payDay')
+          .setValue(new Date(+array[0], +array[1] - 1, +array[2]));
+      }
     }
     this.expenseGoodProcessService
       .PROCESA_EVENTO_CHATARRA(
