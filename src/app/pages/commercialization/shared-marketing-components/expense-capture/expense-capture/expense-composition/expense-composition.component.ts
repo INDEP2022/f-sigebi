@@ -60,6 +60,7 @@ export class ExpenseCompositionComponent
   rr: boolean = false;
   v_tip_gast: string = '';
   errorsClasification: any[] = [];
+  lotData: IComerDetExpense2[] = [];
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
@@ -103,9 +104,14 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: async response => {
           console.log(response);
-          let lotData = await this.newGoodsByLot(response);
-          let newData = this.data ? [...this.data, ...lotData] : lotData;
-          this.setData(newData);
+          this.lotData = await this.newGoodsByLot(response);
+          // let newData = this.data ? [...this.data, ...lotData] : lotData;
+          this.setData(
+            this.data,
+            this.data.length === 0,
+            false,
+            this.lotData.length > 0
+          );
         },
       });
 
@@ -192,6 +198,11 @@ export class ExpenseCompositionComponent
 
   private async newGoodsByLot(response: ILoadLotResponse[]) {
     if (this.lotNumber.value && this.conceptNumber.value && this.eventNumber) {
+      this.total = 0;
+      this.amount = 0;
+      this.vat = 0;
+      this.isrWithholding = 0;
+      this.vatWithholding = 0;
       let goods = await firstValueFrom(
         this.goodProcessService
           .getValidGoods(
@@ -224,6 +235,9 @@ export class ExpenseCompositionComponent
               ? rowLotGood.valGoodSteal.SELECT_CAMBIA_CLASIF_ENABLED
               : null;
           }
+          this.amount += x.amount2 ? +x.amount2 : 0;
+          this.vat += x.iva2 ? +x.iva2 : 0;
+          this.total += x.total2 ? +x.total2 : 0;
           newResponse.push({
             detPaymentsId: null,
             paymentsId: null,
@@ -820,29 +834,6 @@ export class ExpenseCompositionComponent
     );
     if (response.isConfirmed) {
       this.loading = true;
-      // this.fileI.nativeElement.click();
-      // this.expenseNumeraryService
-      //   .PUP_CARGA_BIENES_VIG(
-      //     this.expenseCaptureDataService.REGRESA_MES_GASTO(),
-      //     this.expense.contractNumber
-      //   )
-      //   .subscribe({
-      //     next: response => {
-      //       if (response.data && response.data.length > 0) {
-      //         let newData = [...this.data, this.newGoodsByVig(response.data)];
-      //         this.setData(newData);
-      //         this.loading = false;
-      //       } else {
-      //         this.loading = false;
-      //         // this.alert('error','')
-      //       }
-      //     },
-      //     error: err => {
-      //       this.loading = false;
-      //       this.alert('error', 'No se pudo realizar la carga de bienes', '');
-      //     },
-      //   });
-      // return;
       if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
         this.fileI.nativeElement.click();
       } else if (this.v_tip_gast === 'GASTOVIG') {
@@ -903,6 +894,7 @@ export class ExpenseCompositionComponent
       goods: this.goods,
       CHCONIVA: this.expenseCaptureDataService.CHCONIVA,
       IVA: this.expenseCaptureDataService.IVA,
+      address: this.address,
       callback: (next: boolean) => {
         if (next) {
           this.getData2(this.data.length === 0);
@@ -923,6 +915,7 @@ export class ExpenseCompositionComponent
       goods: this.goods,
       CHCONIVA: this.expenseCaptureDataService.CHCONIVA,
       IVA: this.expenseCaptureDataService.IVA,
+      address: this.address,
       callback: (next: boolean) => {
         if (next) {
           this.getData2();
@@ -969,13 +962,23 @@ export class ExpenseCompositionComponent
     }
   }
 
-  private setData(data, loadContMands = false, loadGoodsLote = false) {
+  private setData(
+    data,
+    loadContMands = false,
+    loadGoodsLote = false,
+    initializeds = false
+  ) {
     this.expenseCaptureDataService.V_BIEN_REP_ROBO = 0;
-    this.total = 0;
-    this.amount = 0;
-    this.isrWithholding = 0;
-    this.vatWithholding = 0;
+    if (!initializeds) {
+      this.total = 0;
+      this.amount = 0;
+      this.vat = 0;
+      this.isrWithholding = 0;
+      this.vatWithholding = 0;
+    }
+    debugger;
     this.data = data.map(row => {
+      debugger;
       this.amount += row.amount ? +row.amount : 0;
       this.vat += row.iva ? +row.iva : 0;
       this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
@@ -1008,12 +1011,16 @@ export class ExpenseCompositionComponent
         goodDescription: row.description,
       };
     });
-    this.expenseCaptureDataService.dataCompositionExpenses = [...this.data];
-    this.totalItems = this.data.length;
-    this.dataTemp = [...this.data];
+    this.expenseCaptureDataService.dataCompositionExpenses = [
+      ...this.data,
+      ...this.lotData,
+    ];
+    this.totalItems = this.data.length + this.lotData.length;
+    this.dataTemp = [...this.data, ...this.lotData];
     this.getPaginated(this.params.value);
     if (loadGoodsLote && this.expenseCaptureDataService.callNextItemLote) {
       this.expenseCaptureDataService.callNextItemLoteSubject.next(true);
+      return;
     }
     if (loadContMands) {
       this.contabilityMandBody(false);
@@ -1052,6 +1059,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response && response.data && response.data.length > 0) {
+            this.lotData = [];
             this.setData(response.data, loadContMands, true);
           } else {
             this.notGetData();

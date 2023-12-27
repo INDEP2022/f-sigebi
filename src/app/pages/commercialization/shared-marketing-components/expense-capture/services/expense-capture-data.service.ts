@@ -511,16 +511,20 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       return of(null);
     } else {
       let arrayToDelete = this.dataCompositionExpenses
-        .filter(row => !row.changeStatus)
+        .filter(row => !row.changeStatus && row.detPaymentsId)
         .map(row => {
           return {
             expenseDetailNumber: row.detPaymentsId,
             expenseNumber: row.paymentsId,
           };
         });
-      return this.comerDetService
-        .removeMassive(arrayToDelete)
-        .pipe(catchError(x => of(null)));
+      if (arrayToDelete && arrayToDelete.length > 0) {
+        return this.comerDetService
+          .removeMassive(arrayToDelete)
+          .pipe(catchError(x => of(null)));
+      } else {
+        return of(null);
+      }
     }
     // this.comerDetService.remove()
   }
@@ -570,9 +574,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           this.updateExpenseCompositionAndValidateProcess.next(true);
           return;
         }
-        if (this.VALIDA_DET(V_VALIDA_DET)) {
-          this.PROCESA_SOLICITUD();
-        }
+        // if (this.VALIDA_DET(V_VALIDA_DET)) {
+        this.PROCESA_SOLICITUD();
+        // }
       } else {
         this.alert('error', 'Debe indicar el lote para enviar solicitud', '');
         this.errorSendSolicitudeMessage();
@@ -682,13 +686,12 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.accountingService.getLotFinalTotal(this.eventNumber.value)
     );
     if (+(lotFinalPrice + '')) {
-      if (
-        lotFinalPrice !==
-        this.amount + this.vat - this.isrWithholding - this.vatWithholding
-      ) {
+      let total =
+        this.amount + this.vat - this.isrWithholding - this.vatWithholding;
+      if (lotFinalPrice !== total) {
         this.alert(
           'error',
-          'El monto de la factura no es igual al del evento',
+          'El monto ' + total + ' no es igual al del evento ' + lotFinalPrice,
           ''
         );
         return false;
@@ -894,8 +897,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     if (aux2) {
       this.processPay();
     } else {
-      this.alert('error', 'No se puede procesar la solicitud', '');
-      this.errorSendSolicitudeMessage();
+      this.finishProcessSolicitud.next(false);
+      // this.alert('error', 'No se puede procesar la solicitud', '');
+      // this.errorSendSolicitudeMessage();
     }
   }
 
@@ -905,8 +909,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     if (aux2) {
       this.processPay();
     } else {
-      this.alert('error', 'No se puede procesar la solicitud', '');
-      this.errorSendSolicitudeMessage();
+      this.finishProcessSolicitud.next(false);
+      // this.alert('error', 'No se puede procesar la solicitud', '');
+      // this.errorSendSolicitudeMessage();
     }
   }
 
@@ -1261,12 +1266,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             '¿Desea continuar con el proceso?',
             res.message
           );
-          if (response.isConfirmed)
+          if (response.isConfirmed) {
             this.VALIDA_SUBTOTAL_PRECIO(
               this.expenseNumber.value,
               this.eventNumber.value,
               this.lotNumber.value
             );
+          }
         }
       } else {
         this.alert(
@@ -1274,13 +1280,21 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           'El Lote ' + this.lotNumber.value ?? '',
           'Debe tener un pago registrado para la forma de pago seleccionada'
         );
-        this.errorSendSolicitudeMessage();
+        this.finishProcessSolicitud.next(false);
+        // this.errorSendSolicitudeMessage();
         return;
       }
     } else {
       if (this.formPayment.value !== 'INTERCAMBIO') {
         if (this.PDEVPARCIAL === 'S' || !this.PCANVTA) {
           this.VERIFICA_ACTUALIZACION_EST();
+        } else {
+          this.finishProcessSolicitud.next(false);
+          this.alert(
+            'error',
+            'Concepto debe tener parámetro parcial o CANVTA',
+            ''
+          );
         }
       } else {
         this.VALIDA_SUBTOTAL_PRECIO(
