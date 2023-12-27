@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, take, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -19,6 +19,7 @@ import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depo
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
+import { UserService } from 'src/app/core/services/ms-user/user.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -122,6 +123,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     private indUserService: IndUserService,
     private interfacesirsaeService: InterfacesirsaeService,
     private lotService: LotService,
+    private userAutxCancService: UserService,
     private http: HttpClient
   ) {
     super();
@@ -1093,23 +1095,40 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   confirm() {
     const { preferred_username } = this.authService.decodeToken();
     let username = preferred_username;
-    this.getSegAccessAreas(username);
-    if (this.LV_VALUSER == 0) {
-      this.alert(
-        'error',
-        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        'Usuario no Autorizado'
-      );
-    }
-    if (this.LV_USR_CON != 1) {
-      this.alert(
-        'error',
-        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        'El Usuario no Puede Autorizar Procesar Pagos.'
-      );
-    } else {
-      this.pupProcesa();
-    }
+    this.userAutxCancService
+      .getCantUsusAutxCanc(username)
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response > 0) {
+            this.pupProcesa();
+          } else {
+            this.alert(
+              'error',
+              'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+              'Usuario no Autorizado'
+            );
+          }
+        },
+      });
+
+    // this.getSegAccessAreas(username);
+    // if (this.LV_VALUSER == 0) {
+    //   this.alert(
+    //     'error',
+    //     'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+    //     'Usuario no Autorizado'
+    //   );
+    // }
+    // if (this.LV_USR_CON != 1) {
+    //   this.alert(
+    //     'error',
+    //     'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+    //     'El Usuario no Puede Autorizar Procesar Pagos.'
+    //   );
+    // } else {
+    //   this.pupProcesa();
+    // }
   }
 
   getValidSystem() {

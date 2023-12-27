@@ -559,7 +559,7 @@ export class ExpenseCompositionComponent
               if (errors.length === 0) {
                 this.alert(
                   'success',
-                  'Se realizado el cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'Se realizó el cambio de Clasificación a Vehiculo con Reporte de Robo',
                   ''
                 );
                 this.getData2();
@@ -969,7 +969,7 @@ export class ExpenseCompositionComponent
     }
   }
 
-  private setData(data, loadContMands = false) {
+  private setData(data, loadContMands = false, loadGoodsLote = false) {
     this.expenseCaptureDataService.V_BIEN_REP_ROBO = 0;
     this.total = 0;
     this.amount = 0;
@@ -1012,6 +1012,9 @@ export class ExpenseCompositionComponent
     this.totalItems = this.data.length;
     this.dataTemp = [...this.data];
     this.getPaginated(this.params.value);
+    if (loadGoodsLote && this.expenseCaptureDataService.callNextItemLote) {
+      this.expenseCaptureDataService.callNextItemLoteSubject.next(true);
+    }
     if (loadContMands) {
       this.contabilityMandBody(false);
     }
@@ -1049,7 +1052,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response && response.data && response.data.length > 0) {
-            this.setData(response.data, loadContMands);
+            this.setData(response.data, loadContMands, true);
           } else {
             this.notGetData();
           }

@@ -68,7 +68,9 @@ export class DataReceiptComponent implements OnInit {
                 this.form
                   .get('descontract')
                   .setValue(response.data[0].desContract);
-                this.form.get('clkpv').setValue(response.data[0].clkpv);
+                if (this.form.get('clkpv').value) {
+                  this.form.get('clkpv').setValue(response.data[0].clkpv);
+                }
                 this.form.get('padj').setValue(response.data[0].padj);
                 this.form.get('psadj').setValue(response.data[0].psadj);
                 this.form.get('pssadj').setValue(response.data[0].pssadj);

@@ -50,6 +50,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   addErrors = new Subject<{ description: string }[]>();
   updateExpenseCompositionAndValidateProcess = new Subject();
   finishProcessSolicitud = new Subject();
+  callNextItemLoteSubject = new Subject();
   saveSubject = new Subject();
   updateOI = new Subject();
   updateFolio = new Subject();
@@ -85,6 +86,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   total = 0;
   totalMandatos = 0;
   V_BIEN_REP_ROBO = 0;
+  callNextItemLote = false;
   SELECT_CAMBIA_ESTATUS_ENABLED = true;
   PB_VEHICULO_REP_ROBO_DISPLAYED = true;
   PB_VEHICULO_REP_ROBO_ENABLED = false;
@@ -197,7 +199,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     if (JSON.stringify(this.copiaForma) != JSON.stringify(this.form.value)) {
       this.alert(
         'warning',
-        'Data modificada',
+        'Datos modificados',
         'Favor de guardar antes de proceder'
       );
       return true;

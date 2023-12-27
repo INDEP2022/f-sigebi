@@ -34,6 +34,7 @@ export class ExpenseCompositionModalComponent
   loadingCvmans = false;
   CHCONIVA: string;
   IVA: number;
+  address: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -70,7 +71,7 @@ export class ExpenseCompositionModalComponent
   onChange(goodNumber: number) {
     console.log(goodNumber);
     let goodData = this.goods.find(x => x.goodNumber === goodNumber);
-    if (goodData) {
+    if (goodData && this.address === 'M') {
       this.amount.setValue(goodData.amount2);
       this.vat.setValue(goodData.iva2);
       if (
