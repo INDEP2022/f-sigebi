@@ -32,6 +32,9 @@ export class ExpenseCompositionModalComponent
     { cvman: '007200', key: 'DIRECCION EJECUTIVA ' },
   ];
   loadingCvmans = false;
+  CHCONIVA: string;
+  IVA: number;
+  address: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -62,6 +65,22 @@ export class ExpenseCompositionModalComponent
   private fillGoods() {
     if (this.comerDetExpense) {
       this.goodNumber.setValue(+this.comerDetExpense.goodNumber);
+    }
+  }
+
+  onChange(goodNumber: number) {
+    console.log(goodNumber);
+    let goodData = this.goods.find(x => x.goodNumber === goodNumber);
+    if (goodData && this.address === 'M') {
+      this.amount.setValue(goodData.amount2);
+      this.vat.setValue(goodData.iva2);
+      if (
+        this.expense.conceptNumber + '' === '643' &&
+        goodData.iva2 === 0 &&
+        this.CHCONIVA
+      ) {
+        this.vat.setValue(goodData.amount2 * this.IVA);
+      }
     }
   }
 

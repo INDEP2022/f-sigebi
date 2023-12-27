@@ -168,6 +168,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           }
         },
       });
+    this.dataService.callNextItemLoteSubject
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (this.address === 'M') {
+            this.nextItemLote();
+          }
+        },
+      });
     // console.log(user);
     this.prepareForm();
   }
@@ -751,14 +760,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.lotNumber.setValue(null, { emitEvent: false });
       },
     });
-    // this.lotNumber.valueChanges.subscribe({
-    //   next: response => {
-    //     console.log(response);
-    //     if (response) {
-    //       this.nextItemLote();
-    //     }
-    //   },
-    // });
     if (localStorage.getItem('eventExpense')) {
       this.fillForm(JSON.parse(localStorage.getItem('eventExpense')));
       setTimeout(() => {
@@ -1363,6 +1364,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (this.address !== 'M') {
       this.dataService.address = 'I';
     }
+    let entro = false;
     this.dataService.validPayment = false;
     this.expenseNumber.setValue(expense.expenseNumber);
     this.data = expense;
@@ -1390,6 +1392,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       expense.conceptNumber != this.conceptNumber.value ||
       expense.eventNumber != this.eventNumber.value
     ) {
+      entro = true;
       this.expenseGoodProcessService
         .getValidGoods(
           +expense.lotNumber,
@@ -1407,6 +1410,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           this.dataService.goods = x;
         });
     }
+    this.dataService.callNextItemLote = entro;
     this.conceptNumber.setValue(expense.conceptNumber);
     this.eventNumber.setValue(expense.eventNumber);
     this.lotNumber.setValue(expense.lotNumber);
@@ -1435,6 +1439,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         expense.conceptNumber,
         false
       );
+      // if (this.address === 'M' && entro) {
+      //   this.nextItemLote();
+      // }
       this.dataService.copiaForma = this.form.value;
       if (!responseParams) {
         return;

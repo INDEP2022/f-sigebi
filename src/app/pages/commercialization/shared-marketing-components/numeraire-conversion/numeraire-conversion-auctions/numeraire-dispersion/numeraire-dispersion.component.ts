@@ -8,6 +8,7 @@ import { ComerEventosService } from 'src/app/core/services/ms-event/comer-evento
 import { NumeraryXGoodsService } from 'src/app/core/services/ms-numerary/numerary-x-goods.service';
 import { TABLE_SETTINGS } from 'src/app/core/shared/base-page';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
+import { NumerarieService } from '../../services/numerarie.service';
 import { COLUMNS } from './columns';
 import { NumeraireDispersionModalComponent } from './numeraire-dispersion-modal/numeraire-dispersion-modal.component';
 
@@ -29,7 +30,8 @@ export class NumeraireDispersionComponent
   constructor(
     private modalService: BsModalService,
     private dataService: NumeraryXGoodsService,
-    private eventService: ComerEventosService
+    private eventService: ComerEventosService,
+    private numerarieService: NumerarieService
   ) {
     super();
     this.haveInitialCharge = false;
@@ -113,17 +115,21 @@ export class NumeraireDispersionComponent
   }
 
   edit(row: INumeraryxGoods) {
+    console.log(row);
+
     const config = {
       ...MODAL_CONFIG,
       initialState: {
         row,
         eventId: this.idEvento,
+        spentId: +(this.selectedExpenseData.id_gasto + ''),
         callback: (next: boolean) => {
           if (next) {
             this.alert('success', 'Se realizó la edición del bien', '');
           } else {
             this.alert('success', 'Se realizó el registro del bien', '');
           }
+          this.numerarieService.reloadExpenses++;
           this.getData();
         },
       },
