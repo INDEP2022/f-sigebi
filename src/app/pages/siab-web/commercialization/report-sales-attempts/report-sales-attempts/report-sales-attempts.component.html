@@ -41,12 +41,20 @@
         <div class="row">
           <div class="col-md-2">
             <form-radio label="Por Filtrado">
-              <input type="radio" formControlName="radio" value="true" />
+              <input
+                type="radio"
+                formControlName="radio"
+                value="true"
+                (change)="cleanTable()" />
             </form-radio>
           </div>
           <div class="col-md-4">
             <form-radio label="Con Archivo de Excel">
-              <input type="radio" formControlName="radio" value="false" />
+              <input
+                type="radio"
+                formControlName="radio"
+                value="false"
+                (change)="cleanTable()" />
             </form-radio>
           </div>
           <div class="row" *ngIf="form.controls['radio'].value === 'false'">
@@ -119,12 +127,12 @@
           </div>
         </div>
         <div class="row pt-3">
-          <div class="col-md-4">
+          <div class="col-md-7">
             <form-field [control]="form.get('typeStatus')">
               <ngx-select
                 [form]="form"
                 [data]="tiposstatus"
-                label="Status Bien"
+                label="Estatus Bien"
                 value="status"
                 bindLabel="tipoSupbtipoDescription"
                 (fetchItems)="getStatus($event)"
@@ -154,18 +162,19 @@
         </div>
       </div>
     </form>
-    <div class="row mt-4" *ngIf="!until && !until2 && !until3">
+    <div class="row" *ngIf="!until && !until2 && !until3">
       <div class="col-md-12">
-        <ng-scrollbar
-          [track]="'all'"
-          [ngStyle]="{ height: loading ? '0px' : '300px' }">
-          <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '300px' }">
             <ng2-smart-table
+              style="padding-right: 0px !important"
               [attr.class]="'table-bordered table-responsive'"
               [settings]="settings"
               [source]="source"></ng2-smart-table>
-          </div>
-        </ng-scrollbar>
+          </ng-scrollbar>
+        </div>
       </div>
     </div>
     <div class="row mt-4" *ngIf="until">
