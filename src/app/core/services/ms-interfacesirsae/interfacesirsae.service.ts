@@ -79,7 +79,10 @@ export class InterfacesirsaeService extends HttpService {
   }
 
   sendSirsaeScrapSp(body: ISirsaeScrapDTO) {
-    return this.post(`sirsae/sendSirsaeScrapSp`, body);
+    return this.post<{
+      COMER_GASTOS_ID_SOLICITUDPAGO: number;
+      COMER_GASTOS_FECHA_SP: string;
+    }>(`sirsae/sendSirsaeScrapSp`, body);
   }
 
   sendSirsaeScrapOi(body: ISendSirsaeOIScrapDTO) {

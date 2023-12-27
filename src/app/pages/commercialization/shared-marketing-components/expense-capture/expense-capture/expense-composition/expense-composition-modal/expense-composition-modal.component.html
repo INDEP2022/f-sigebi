@@ -24,7 +24,8 @@
               loadingText="Cargando mandatos"
               [clearable]="true"
               [hideSelected]="true"
-              [virtualScroll]="true">
+              [virtualScroll]="true"
+              (change)="onChange($event)">
               <ng-option *ngFor="let row of goods" [value]="row.goodNumber">
                 {{ row.goodNumber }}-{{ row.description }}
               </ng-option>

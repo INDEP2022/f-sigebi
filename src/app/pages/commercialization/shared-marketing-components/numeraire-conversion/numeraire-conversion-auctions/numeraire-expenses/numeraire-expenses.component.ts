@@ -75,6 +75,7 @@ export class NumeraireExpensesComponent
             this.loading = false;
           } else {
             this.notGetData();
+            this.selectedRow.emit(null);
             this.numerarieService.expenses = [];
           }
 
@@ -83,6 +84,7 @@ export class NumeraireExpensesComponent
         error: err => {
           this.notGetData();
           this.numerarieService.expenses = [];
+          this.selectedRow.emit(null);
         },
       });
   }
