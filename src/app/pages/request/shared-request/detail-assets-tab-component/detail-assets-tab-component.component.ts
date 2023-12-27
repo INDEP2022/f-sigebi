@@ -1585,6 +1585,7 @@ export class DetailAssetsTabComponentComponent
 
       this.goodService.create(body).subscribe({
         next: resp => {
+          this.childSaveAction = true;
           this.viewAct = !this.viewAct;
           this.disableUpdate = !this.disableUpdate;
           this.good = resp[0];
@@ -1616,6 +1617,8 @@ export class DetailAssetsTabComponentComponent
       const dataGood: Object = this.detailAssets.value;
 
       let required: boolean = false;
+
+      //Verifica que la información de la tabla este con datos.
       this.dataAtribute.forEach((item: any) => {
         if (item.required && (item.value === null || item.value === '')) {
           required = true;
@@ -1627,11 +1630,6 @@ export class DetailAssetsTabComponentComponent
       }
 
       let body: any = {};
-
-      //Recorre tabla con atributos y los setea a body
-      this.dataAtribute.forEach((row: any) => {
-        body[row.column] = row.value;
-      });
 
       console.log(
         'Información del Bien del formulario LIMPIO',
@@ -1648,8 +1646,16 @@ export class DetailAssetsTabComponentComponent
           body[clave] = valor;
         }
       }
+
+      //Recorre tabla con atributos y los setea a body
+      this.dataAtribute.forEach((row: any) => {
+        body[row.column] = row.value;
+      });
+
       this.goodService.updateGoodTable(body).subscribe({
         next: resp => {
+          this.childSaveAction = true;
+          this.refreshTable(true);
           this.viewAct = !this.viewAct;
           this.disableUpdate = !this.disableUpdate;
           this.good = resp;
@@ -1663,6 +1669,10 @@ export class DetailAssetsTabComponentComponent
         },
       });
     }
+  }
+
+  refreshTable(refresh: boolean) {
+    this.requestHelperService.isComponentSaving(refresh);
   }
 
   /*convertirFecha(fechaOriginal: any): string {

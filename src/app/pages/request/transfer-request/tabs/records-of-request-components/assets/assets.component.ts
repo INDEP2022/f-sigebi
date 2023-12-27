@@ -574,12 +574,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     if (this.listgoodObjects.length > 0) {
       Swal.fire({
         title: 'Eliminar',
-        text: '¿Está seguro de querer eliminar el bien seleccionado?',
+        text: '¿Está seguro de eliminar los Bienes seleccionados?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#9D2449',
         cancelButtonColor: '#B38E5D',
         confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar',
         allowOutsideClick: false,
       }).then(result => {
         if (result.isConfirmed) {
@@ -599,11 +600,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
       if (deleteResult === true) {
         if (this.listgoodObjects.length === index) {
-          this.message(
-            'success',
-            'Bienes Eliminados',
-            `Los Bienes se eliminaron correctamente`
-          );
+          this.message('success', 'Bienes Eliminados', ``);
           this.loader.load = false;
           this.closeCreateGoodWIndows();
         }
