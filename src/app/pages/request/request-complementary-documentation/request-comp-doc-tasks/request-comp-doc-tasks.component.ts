@@ -315,9 +315,11 @@ export class RequestCompDocTasksComponent
 
   requestRegistered(request: any) {}
 
-  openReport(): void {
+  async openReport(): Promise<void> {
+
     if (!this.nextTurn) {
-      this.showReport();
+      let report = await this.getStatusReport();
+      this.showReport(report);
       return;
     }
 
@@ -338,12 +340,11 @@ export class RequestCompDocTasksComponent
 
     modalRef.content.show.subscribe(response => {
       if (response) {
-        this.showReport();
+        this.showReport(response);
       }
     });
 
     modalRef.content.refresh.subscribe(response => {
-      console.log(response);
 
       if (response.upload) {
         this.requestInfo.detail.reportSheet = 'Y';
@@ -1094,7 +1095,6 @@ export class RequestCompDocTasksComponent
 
       case 'review-guidelines-compensation':
         if (!this.validate.guidelines) {
-          console.log(this.validate.guidelines);
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
@@ -1495,7 +1495,6 @@ export class RequestCompDocTasksComponent
   }
 
   onVerifyCom(event) {
-    console.log(event);
     this.validate.vercom = event.atLeastOne; // event.isValid;
     //Agreagar validaciones en especifico
   }
@@ -1509,7 +1508,6 @@ export class RequestCompDocTasksComponent
   }
 
   onGuidelines(event) {
-    console.log(event);
     this.validate.guidelines = event.isValid;
     //Agreagar validaciones en especifico
   }
@@ -1530,7 +1528,6 @@ export class RequestCompDocTasksComponent
   }
 
   onProgramVisit(event) {
-    console.log(event);
     this.validate.programVisit = event.isValid;
     //Agreagar validaciones en especifico
   }
@@ -1544,7 +1541,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1560,7 +1557,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1639,16 +1636,34 @@ export class RequestCompDocTasksComponent
 
   createDictumReturn() {}
 
-  showReport() {
-    this.wContentService.obtainFile('SAE568245').subscribe({
-      next: response => {
-        let blob = this.dataURItoBlob(response);
-        let file = new Blob([blob], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        this.openPrevPdf(fileURL);
-      },
-      error: error => {},
-    });
+  showReport(data) {
+
+    console.log(data);
+
+    if (isNullOrEmpty(data.contentId)) {
+      this.wContentService.downloadDinamycReport(
+        'sae.rptdesign',
+        this.reportTable,
+        this.requestId.toString(),
+        data.documentTypeId
+      ).subscribe({
+        next: response => {
+          console.log(response);
+        },
+        error: error => { },
+      })
+    } else {
+      this.wContentService.obtainFile('SAE568245').subscribe({
+        next: response => {
+          let blob = this.dataURItoBlob(response);
+          let file = new Blob([blob], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          this.openPrevPdf(fileURL);
+        },
+        error: error => { },
+      });
+    }
+
   }
 
   dataURItoBlob(dataURI: any) {
@@ -1663,7 +1678,6 @@ export class RequestCompDocTasksComponent
   }
 
   openPrevPdf(pdfurl: string) {
-    console.log(pdfurl);
     let config: ModalOptions = {
       initialState: {
         documento: {
