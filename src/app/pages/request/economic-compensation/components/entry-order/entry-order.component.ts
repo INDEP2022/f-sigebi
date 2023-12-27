@@ -84,19 +84,20 @@ export class EntryOrderComponent extends BasePage implements OnInit {
 
           this.selectChanges();
 
+          let object = this.entryOrderForm.getRawValue();
+
           if (!isNullOrEmpty(resp)) {
             this.respDoc = resp;
             this.id = resp.id;
+            console.log(resp.id);
 
-            this.entryOrderForm.patchValue({
-              administrativeUnit: parseInt(resp.unitadministrative + ''),
-              orderDate: this.datePipe.transform(resp.orderDate, 'dd/MM/yyyy'),
-              concept: resp.concept,
-              paymentMethod: resp.shapePay,
-              amount: resp.amount,
-              referenceNo: resp.numberreference,
-              bank: resp.accountBank,
-            });
+            resp.unitadministrative = parseInt(resp.unitadministrative + '');
+            resp.orderDate = this.datePipe.transform(
+              resp.orderDate,
+              'dd/MM/yyyy'
+            );
+
+            this.entryOrderForm.patchValue(resp);
           }
         },
       });
@@ -134,7 +135,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.entryOrderForm = this.fb.group({
-      administrativeUnit: [
+      unitadministrative: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -143,13 +144,13 @@ export class EntryOrderComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      paymentMethod: [
+      shapePay: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       amount: [null, [Validators.required]],
-      referenceNo: [null, [Validators.required]],
-      bank: [null, [Validators.required]],
+      numberreference: [null, [Validators.required]],
+      accountBank: [null, [Validators.required]],
     });
   }
 
@@ -159,6 +160,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
         this.respDoc = resp;
         this.selectChanges();
         this.getRequestInfo();
+        this.getAllOrderEntry();
         this.onLoadToast('success', 'Orden de bien creada con éxito');
       },
       error: error => {
@@ -171,6 +173,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
     this.entryOrderService.updateOrderEntry(orderGood).subscribe({
       next: resp => {
         this.respDoc = resp;
+        this.getAllOrderEntry();
         this.selectChanges();
         this.onLoadToast('success', 'Orden de bien actualizada con éxito');
       },
@@ -181,31 +184,17 @@ export class EntryOrderComponent extends BasePage implements OnInit {
   }
 
   save() {
+    let object = this.entryOrderForm.getRawValue();
     if (isNullOrEmpty(this.respDoc)) {
-      this.createOrderEntry({
-        unitadministrative: this.entryOrderForm.value.administrativeUnit,
-        shapePay: this.entryOrderForm.value.paymentMethod,
-        concept: this.entryOrderForm.value.concept,
-        amount: this.entryOrderForm.value.amount,
-        numberreference: this.entryOrderForm.value.referenceNo,
-        origin: this.originInfo,
-        identifier: this.requestId,
-        orderDate: this.entryOrderForm.value.orderDate,
-        delegationRegionalId: this.delegationId,
-        accountBank: this.entryOrderForm.value.bank,
-        transfereeId: this.transference,
-      });
+      object['identifier'] = this.requestId;
+      object['origin'] = this.originInfo;
+      object['delegationRegionalId'] = this.delegationId;
+      object['transfereeId'] = this.transference;
+
+      this.createOrderEntry(object);
     } else {
-      this.updateOrderEntry({
-        id: this.id,
-        unitadministrative: this.entryOrderForm.value.administrativeUnit,
-        shapePay: this.entryOrderForm.value.paymentMethod,
-        concept: this.entryOrderForm.value.concept,
-        amount: this.entryOrderForm.value.amount,
-        numberreference: this.entryOrderForm.value.referenceNo,
-        orderDate: this.entryOrderForm.value.orderDate,
-        accountBank: this.entryOrderForm.value.bank,
-      });
+      object['id'] = this.id;
+      this.updateOrderEntry(object);
     }
   }
 

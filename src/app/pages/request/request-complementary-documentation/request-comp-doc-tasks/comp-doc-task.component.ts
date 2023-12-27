@@ -906,7 +906,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.viewGuidelines = true;
-        this.dictumRegister = true;
+        this.dictumInfo = true;
         this.orderEntry = true;
         this.expRequest = true;
 
@@ -926,7 +926,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.viewGuidelines = true;
-        this.dictumRegister = true;
+        this.dictumInfo = true;
         this.orderView = true;
         this.expRequest = true;
 
