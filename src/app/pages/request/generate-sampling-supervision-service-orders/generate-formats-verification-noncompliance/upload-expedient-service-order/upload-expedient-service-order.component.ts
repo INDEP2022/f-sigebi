@@ -49,7 +49,7 @@ export class UploadExpedientServiceOrderComponent
       columns: SERVICE_ORDERS_COLUMNS,
     };
 
-    this.columns.button = {
+    /*this.columns.button = {
       ...this.columns.button,
       onComponentInitFunction: (instance?: any) => {
         instance.btnclick1.subscribe((data: any) => {
@@ -60,7 +60,7 @@ export class UploadExpedientServiceOrderComponent
             this.openDoc(data);
           });
       },
-    };
+    }; */
     this.initForm();
   }
 
