@@ -36,6 +36,8 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
   @Input() steap3: boolean = false;
   @Input() isEdit: boolean = false;
 
+  @Input() visible: boolean = false;
+
   respDoc: Object = null;
   respDate: Object = null;
 
@@ -113,8 +115,8 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
         this.dictumForm.disable();
       }
 
-      this.dictumForm.get('payOrderNo').disable();
-      this.dictumForm.get('amountToPay').disable();
+      //this.dictumForm.get('payOrderNo').disable();
+      //this.dictumForm.get('amountToPay').disable();
     }
   }
 
@@ -134,7 +136,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
           if (!isNullOrEmpty(resp)) {
             this.dictumForm.patchValue({
               adminResolutionNo: parseInt(resp.unitadministrative + ''),
-              orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
+              orderDate: this.datePipe.transform(resp.orderDate, 'dd/MM/yyyy'),
               concept: resp.concept,
               amountToPay: resp.amount,
               referenceNo: resp.numberreference,
@@ -174,7 +176,7 @@ export class RegisterDictumValComponent extends BasePage implements OnInit {
               nullityTrial: resp.nullityTrial,
               opinionDate: this.datePipe.transform(
                 resp.opinionDate,
-                'dd-MM-yyyy'
+                'dd/MM/yyyy'
               ),
               legalRepresentative: resp.legalRepresentative,
               adminResolutionNo: resp.adminResolutionNo,

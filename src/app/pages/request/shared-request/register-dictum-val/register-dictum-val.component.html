@@ -78,7 +78,7 @@
           class="form-control" />
       </form-field>
     </div>
-    <div class="col-md-4">
+    <div *ngIf="visible" class="col-md-4">
       <form-field
         [control]="dictumForm.get('amountToPay')"
         label="Cantidad a Pagar">
@@ -101,9 +101,7 @@
           bsDatepicker />
       </form-field>
     </div>
-  </div>
-
-  <div *ngIf="steap2" class="row mt-5">
+    <div *ngIf="visible" class="mt-5"></div>
     <div class="col-md-4">
       <form-field
         [control]="dictumForm.get('adminResolutionNo')"
@@ -114,6 +112,7 @@
           class="form-control" />
       </form-field>
     </div>
+    <div *ngIf="!visible" class="mt-5"></div>
     <div class="col-md-4">
       <form-field
         [control]="dictumForm.get('taxpayerDomicile')"
@@ -134,10 +133,8 @@
           class="form-control" />
       </form-field>
     </div>
-  </div>
-
-  <div *ngIf="steap2" class="row mt-5">
-    <div class="col-md-4">
+    <div *ngIf="visible" class="mt-5"></div>
+    <div *ngIf="visible" class="col-md-4">
       <form-field
         [control]="dictumForm.get('payOrderNo')"
         label="N&uacute;mero Orden de Pago">
@@ -157,6 +154,7 @@
           class="form-control" />
       </form-field>
     </div>
+    <div *ngIf="!visible" class="mt-5"></div>
     <div class="col-md-4">
       <div class="form-group align-items-bottom">
         <label for="satCopy" class="font-size-13 mr-3"
