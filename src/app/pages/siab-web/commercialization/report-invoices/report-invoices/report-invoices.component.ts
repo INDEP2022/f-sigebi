@@ -358,6 +358,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     let getGrafica = await this.getInvoices();
     console.log(getGrafica);
     this.array = getGrafica;
+    this.totalItems = this.array.count;
     this.arrayData = this.array.data;
     console.log(this.arrayData);
     for (let i = 0; i < this.arrayData.length; i++) {
@@ -409,7 +410,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     if (this.dataFormatPercentage) {
       this.data1.load(this.dataFormatPercentage);
       this.data1.refresh();
-      this.totalItems = this.dataFormatPercentage.length;
+
       this.loading = false;
     }
     /*this.data = this.dataFormatPercentage;
