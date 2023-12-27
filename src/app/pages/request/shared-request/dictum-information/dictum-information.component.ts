@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -79,7 +80,10 @@ export class DictumInformationComponent implements OnInit {
           console.log(resp);
           this.dictumInfo = {
             dictumNo: resp.opinionNumber,
-            dictumDate: resp.opinionDate,
+            dictumDate: new DatePipe('').transform(
+              resp.opinionDate,
+              'dd/MM/yyyy'
+            ),
             courtroom: resp.veredict,
             judgementNullity: resp.nullityTrial,
             adminiResolutionNo: resp.adminResolutionNo,
