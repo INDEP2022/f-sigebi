@@ -82,6 +82,7 @@ export class DetailAssetsTabComponentComponent
   @Input() typeDoc: any;
   @Input() process: string = '';
   @Input() childSaveAction: boolean = false;
+  @Input() noFracction: number;
   @Output() sendDetailInfoEvent?: EventEmitter<any> = new EventEmitter();
   @Output() sendDomicileSelectedEvent?: EventEmitter<any> = new EventEmitter();
 
@@ -1585,6 +1586,8 @@ export class DetailAssetsTabComponentComponent
 
       this.goodService.create(body).subscribe({
         next: resp => {
+          //método para recargar la tabla
+          this.refreshTable(true);
           this.childSaveAction = true;
           this.viewAct = !this.viewAct;
           this.disableUpdate = !this.disableUpdate;
@@ -2150,6 +2153,11 @@ export class DetailAssetsTabComponentComponent
     console.log('Pestaña seleccionada:', event.id);
     console.log('información del bien seleccionado:', this.detailAssetsInfo);
 
+    const fractionOrigin = this.detailAssetsInfo?.fractionId;
+
+    console.log('Fracción del Bien original ', fractionOrigin);
+    console.log('Fracción seleccionada de la búsuqeda', this.noFracction);
+
     switch (event.id) {
       case 'boatGood':
       case 'vehicleGood':
@@ -2157,6 +2165,7 @@ export class DetailAssetsTabComponentComponent
       case 'aircraftGood':
       case 'estateGood':
         if (this.detailAssetsInfo.id == null) {
+          //Obliga a primero crear el Bien para que se pueda mostrar la tabla de atributos
           const result = await this.alertInfo(
             'warning',
             'Atención',
@@ -2168,6 +2177,26 @@ export class DetailAssetsTabComponentComponent
             this.tabset.tabs.forEach((tab, i) => {
               tab.active = i === 0;
             });
+          }
+        }
+
+        if (this.noFracction != undefined) {
+          //Verifica si la fracción cambio, para obligar al usuario primero guardar y se muestre correctamente la tabla de atributos
+          const fraccionDestiny = this.noFracction;
+
+          if (fractionOrigin != fraccionDestiny) {
+            const result = await this.alertInfo(
+              'warning',
+              'Atención',
+              'Al cambiar de clasificación, es necesario primero guardar esta información para continuar'
+            );
+            if (result.isConfirmed) {
+              console.log('Confirmado, dirigir a otra pestaña');
+              console.log(' this.tabset.tabs.length', this.tabset.tabs.length);
+              this.tabset.tabs.forEach((tab, i) => {
+                tab.active = i === 0;
+              });
+            }
           }
         }
 

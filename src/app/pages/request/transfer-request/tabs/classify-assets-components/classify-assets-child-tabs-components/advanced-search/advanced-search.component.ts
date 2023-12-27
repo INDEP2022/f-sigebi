@@ -148,8 +148,13 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
   complianceSelected(): void {
     if (this.complaince != undefined) {
       this.event.emit(this.complaince);
-      this.close();
+      this.selectionFraccion();
     }
+  }
+
+  selectionFraccion(): void {
+    this.modelRef.content.callback(true);
+    this.modelRef.hide();
   }
 
   close(): void {

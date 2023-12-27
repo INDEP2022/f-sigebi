@@ -87,6 +87,7 @@ export class ClassifyAssetsTabComponent
   domicileSelected: any = null;
 
   service = inject(ChangeOfGoodCharacteristicService);
+  noFracction: number;
 
   constructor(
     private fb: FormBuilder,
@@ -962,7 +963,7 @@ export class ClassifyAssetsTabComponent
       initialState: {
         parameter: '',
         callback: (next: boolean) => {
-          //if(next) this.getExample();
+          if (next) console.log('Se cerró el modal de búsqueda avanzada');
         },
       },
       class: 'modalSizeXL modal-dialog-centered',
@@ -972,6 +973,8 @@ export class ClassifyAssetsTabComponent
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.matchLevelFraction(res);
+      console.log('this.matchLevelFraction(res)', res);
+      this.noFracction = res.id;
     });
   }
 
