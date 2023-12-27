@@ -99,6 +99,7 @@ export class RequestCompDocTasksComponent
   steap2: boolean = false;
   steap3: boolean = false;
   isEdit: boolean = false;
+  dictumInfo: boolean = false;
 
   /**
    * SET STATUS ACTIONS

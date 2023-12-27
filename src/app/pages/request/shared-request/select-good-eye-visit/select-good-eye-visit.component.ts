@@ -18,8 +18,12 @@ import { DelegationService } from 'src/app/core/services/catalogs/delegation.ser
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
+import { SELECT_GOODS_COLUMNS } from '../select-goods/select-goods-columns';
+import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
 import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
 import { ModifyDatesModalComponent } from './modify-dates-modal/modify-dates-modal.component';
 import {
@@ -27,10 +31,6 @@ import {
   SELECTED_GOOD_VIEW,
   SELECT_GOODS_EYE_VISIT_COLUMNS,
 } from './select-good-eye-visit-columns';
-import { ViewDetailGoodsComponent } from '../select-goods/view-detail-goods/view-detail-goods.component';
-import { RequestService } from 'src/app/core/services/requests/request.service';
-import { SELECT_GOODS_COLUMNS } from '../select-goods/select-goods-columns';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-select-good-eye-visit',
@@ -40,7 +40,7 @@ import { isNullOrEmpty } from '../../request-complementary-documentation/request
 export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @Input() idRequest: number;
-  @Input() typeVisit: string = "viewGoods";
+  @Input() typeVisit: string = 'viewGoods';
   @Input() viewGrouper: boolean = false;
   @Output() onChange = new EventEmitter<any>();
 
@@ -77,7 +77,9 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
       this.selectedGoodSettings.selectMode = null;
       this.selectedGoodSettings.columns = SELECTED_GOOD_REVIEW;
     } else {
-      this.selectedGoodSettings.columns = this.viewGrouper ? SELECT_GOODS_COLUMNS : SELECTED_GOOD_VIEW;
+      this.selectedGoodSettings.columns = this.viewGrouper
+        ? SELECT_GOODS_COLUMNS
+        : SELECTED_GOOD_VIEW;
       //this.selectedGoodSettings.selectMode = this.viewGrouper ? 'multi' : null;
     }
   }
@@ -141,7 +143,10 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
         },
         ...this.selectedGoodSettings.columns,
       };
-    } else if (this.typeVisit == 'resultGood' || this.typeVisit == 'viewGoods') {
+    } else if (
+      this.typeVisit == 'resultGood' ||
+      this.typeVisit == 'viewGoods'
+    ) {
       this.selectedGoodSettings.columns = {
         viewFile: {
           title: 'Expediente',
@@ -389,7 +394,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -402,13 +407,13 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   }
 
   selectChanges() {
-
-    let items = this.selectedGoodColumns['data'].filter(x => !isNullOrEmpty(x.startVisitDate));
+    let items = this.selectedGoodColumns['data'].filter(
+      x => !isNullOrEmpty(x.startVisitDate)
+    );
 
     this.onChange.emit({
       isValid: items.length > 0,
       object: items,
     });
   }
-
 }
