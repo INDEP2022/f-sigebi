@@ -136,7 +136,7 @@ export class ReportGoodComponent extends BasePage implements OnInit {
           this.loading = false;
         });
       },
-      error: error => {},
+      error: () => {},
     });
   }
 
@@ -312,19 +312,30 @@ export class ReportGoodComponent extends BasePage implements OnInit {
       .subscribe(() => this.getGoodsResDevInv());
   }
 
-  reportGoods() {
+  async reportGoods() {
     this.loadingReport = true;
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()[
-      'filter.regionalDelegationId'
-    ] = `$eq:${this.delRegUserLog}`;
-    this.goodProcessService.goodResDevInvReport(params.getValue()).subscribe({
-      next: response => {
-        this.downloadExcel(response.base64File, 'Reporte_Bienes.xlsx');
-        this.loadingReport = false;
-      },
-      error: error => {},
-    });
+
+    if (this.totalItems > 0) {
+      params.getValue()[
+        'filter.regionalDelegationId'
+      ] = `$eq:${this.delRegUserLog}`;
+      params.getValue().limit = this.totalItems;
+      this.goodProcessService.goodResDevInvReport(params.getValue()).subscribe({
+        next: response => {
+          this.downloadExcel(response.base64File, 'Reporte_Bienes.xlsx');
+          this.loadingReport = false;
+        },
+        error: () => {},
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'La delegación regional no cuenta con bienes'
+      );
+      this.loadingReport = false;
+    }
   }
 
   downloadExcel(excel: any, nameReport: string) {

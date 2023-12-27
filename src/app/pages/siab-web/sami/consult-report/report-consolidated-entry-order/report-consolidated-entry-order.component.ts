@@ -47,6 +47,7 @@ export class ReportConsolidatedEntryOrderComponent
   totalItemsService: number = 0;
   totalItemsOrderAs: number = 0;
   orderServiceId: number = 0;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   loadingServices: boolean = false;
   loadingDetailGoodsProgDel: boolean = false;
   loadingDetailGoodsOrdEntry: boolean = false;
@@ -167,14 +168,17 @@ export class ReportConsolidatedEntryOrderComponent
     if (idOrderEntry)
       this.params.getValue()['filter.id'] = `$eq:${idOrderEntry}`;
     if (startDate)
-      this.params.getValue()['filter.startDate'] = `$eq:${startDate}`;
-    if (endDate) this.params.getValue()['filter.endDate'] = `$eq:${endDate}`;
+      this.params.getValue()['filter.startDate'] =
+        moment(startDate).format('YYYY-MM-DD');
+    if (endDate)
+      this.params.getValue()['filter.endDate'] =
+        moment(endDate).format('YYYY-MM-DD');
     if (regionalDelegationNumber)
       this.params.getValue()[
         'filter.delegationRegionalId'
       ] = `$eq:${regionalDelegationNumber}`;
     if (noContract) {
-      this.params.getValue()['filter.contractNumber'] = `$eq:${noContract}`;
+      this.params.getValue()['filter.contractNumber'] = noContract;
     }
 
     this.params
@@ -195,8 +199,10 @@ export class ReportConsolidatedEntryOrderComponent
 
           item.delegationName = delegationName;
           item.orderDate = moment(item.orderDate).format('DD/MM/YYYY');
-          item.startDate = moment(item.startDate).format('DD/MM/YYYY');
-          item.endDate = moment(item.endDate).format('DD/MM/YYYY');
+          if (item.startDate)
+            item.startDate = moment(item.startDate).format('DD/MM/YYYY');
+          if (item.endDate)
+            item.endDate = moment(item.endDate).format('DD/MM/YYYY');
           return item;
         });
 
@@ -391,7 +397,7 @@ export class ReportConsolidatedEntryOrderComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getOrderEntry());
-
+    this.pageSizeOptions = [10];
     this.infoOrderService = new LocalDataSource();
     this.infoDetailGoodsProgDel = new LocalDataSource();
     this.infoDetailGoodsOrdEntry = new LocalDataSource();

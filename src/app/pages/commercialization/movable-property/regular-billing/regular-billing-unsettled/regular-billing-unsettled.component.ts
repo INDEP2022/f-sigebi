@@ -34,7 +34,17 @@ export class RegularBillingUnsettledComponent
 
   search() {
     this.loading = true;
+    if (!this.form)
+      return (
+        (this.loading = false),
+        this.alert('warning', 'Debe especificar un evento', '')
+      );
     const { event, idAllotment } = this.form.value;
+    if (!event && !idAllotment)
+      return (
+        (this.loading = false),
+        this.alert('warning', 'Debe especificar un evento', '')
+      );
     this.prepareEventService.getNotification(event, idAllotment).subscribe({
       next: resp => {
         this.loading = false;
@@ -47,7 +57,7 @@ export class RegularBillingUnsettledComponent
         this.dataFilter.load([]);
         this.dataFilter.refresh();
         this.totalItems = 0;
-        this.alert('warning', 'Atención', error.error.message);
+        this.alert('warning', error.error.message, '');
       },
     });
   }

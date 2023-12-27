@@ -58,6 +58,10 @@ export class ReportExposureForSaleModalComponent
               case 'clasifGoodNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'fec_cambio':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -114,6 +118,7 @@ export class ReportExposureForSaleModalComponent
     /*if (this.goodNumber) {
       this.params3.getValue()['filter.no_tipo'] = `$eq:${this.idTypeGood}`;
     }*/
+    this.loader.load = true;
     let body = {
       pOption: 8,
       pEvent: this.goodNumber,
@@ -136,9 +141,11 @@ export class ReportExposureForSaleModalComponent
           'excel',
           resp.base64File
         );
+        this.loader.load = false;
       },
       error: err => {
         console.log(err);
+        this.loader.load = false;
       },
     });
   }
