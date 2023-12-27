@@ -552,7 +552,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
-    debugger;
+    // debugger;
     const resultParams = await this.readParams(this.conceptNumber.value);
     console.log(resultParams);
 

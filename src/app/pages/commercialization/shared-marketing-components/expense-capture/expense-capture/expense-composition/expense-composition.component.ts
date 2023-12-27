@@ -976,9 +976,9 @@ export class ExpenseCompositionComponent
       this.isrWithholding = 0;
       this.vatWithholding = 0;
     }
-    debugger;
+    // debugger;
     this.data = data.map(row => {
-      debugger;
+      // debugger;
       this.amount += row.amount ? +row.amount : 0;
       this.vat += row.iva ? +row.iva : 0;
       this.isrWithholding += row.retencionIsr ? +row.retencionIsr : 0;
@@ -1020,6 +1020,7 @@ export class ExpenseCompositionComponent
     this.getPaginated(this.params.value);
     if (loadGoodsLote && this.expenseCaptureDataService.callNextItemLote) {
       this.expenseCaptureDataService.callNextItemLoteSubject.next(true);
+      this.loading = false;
       return;
     }
     if (loadContMands) {
@@ -1060,7 +1061,7 @@ export class ExpenseCompositionComponent
         next: response => {
           if (response && response.data && response.data.length > 0) {
             this.lotData = [];
-            this.setData(response.data, loadContMands, true);
+            this.setData(response.data, loadContMands, false, true);
           } else {
             this.notGetData();
           }
@@ -1112,7 +1113,7 @@ export class ExpenseCompositionComponent
           if (response.data && response.data.length > 0) {
             this.loader.load = false;
             console.log(response.data, row);
-            debugger;
+            // debugger;
             let result = response.data.filter(
               x => x.id_detgasto + '' == row.detPaymentsId + ''
             );
@@ -1248,10 +1249,7 @@ export class ExpenseCompositionComponent
   }
 
   private async modifyEstatusM() {
-    // let dataContent = await this.dataPaginated.getAll();
-    // console.log(dataContent);
-    // let ls_status = await this.expenseCaptureDataService.getLS_ESTATUS();
-    debugger;
+    // debugger;
     if (this.LS_ESTATUS) {
       const response = await this.alertQuestion(
         'question',
