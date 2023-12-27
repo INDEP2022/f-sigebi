@@ -124,25 +124,12 @@ export class GuidelinesViewComponent extends BasePage implements OnInit {
     let date = new Date(dateTime);
 
     let day: string = date.getDate().toString().padStart(2, '0');
-    const months: string[] = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    let month: string = months[date.getMonth()]; // Usa el array de meses para obtener la representación de texto
+    let month: string = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript empiezan en 0
     let year: string = date.getFullYear().toString();
     let hour: string = date.getHours().toString().padStart(2, '0');
     let minute: string = date.getMinutes().toString().padStart(2, '0');
 
-    return `${day}/${month}/${year} ${hour}:${minute}`;
+    return `${day}/${month}/${year} `;
+    //${hour}:${minute}
   }
 }
