@@ -1619,6 +1619,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       );
       break;
     }
+    this.removeSelect();
   }
 
   async callReport(
@@ -1884,14 +1885,14 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   async actMatricula() {
-    if (!this.rowInvoice) {
+    if (this.isSelect.length == 0) {
       this.alert('warning', 'Favor de seleccionar una factura', '');
       return;
     }
 
     this.btnLoading9 = true;
-    // const data = this.isSelect[0];
-    const data = this.rowInvoice;
+    const data = this.isSelect[0];
+    // const data = this.rowInvoice;
 
     if (data.factstatusId == 'PREF') {
       const data2 = await this.dataFilter2.getAll();
@@ -2018,11 +2019,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debes seleccionar algún evento', '');
       return;
     }
-    if (!this.rowInvoice) {
+
+    if (this.isSelect.length == 0) {
       this.alert('warning', 'Debe seleccionar una factura', '');
       return;
     }
-    if (!this.rowInvoice.Invoice) {
+    if (!this.isSelect[0].Invoice) {
       this.alert('warning', 'No ha capturado el folio de la factura', '');
       return;
     }
@@ -2034,7 +2036,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async impresionInvoice() {
     // for (let invoice of this.isSelect) {
-    let invoice = this.rowInvoice;
+    let invoice = this.isSelect[0];
     //revisar con procedimiento pup_rep_facturas_mas
     this.callReport(
       Number(invoice.Type),

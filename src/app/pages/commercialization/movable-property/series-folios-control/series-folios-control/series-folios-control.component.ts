@@ -173,7 +173,8 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
             const search: any = {
               invoice: () => (searchFilter = SearchFilter.EQ),
               pulledapart: () => (searchFilter = SearchFilter.ILIKE),
-              comerF: () => (searchFilter = SearchFilter.ILIKE),
+              recordNumber: () => (searchFilter = SearchFilter.ILIKE),
+              // comerF: () => (searchFilter = SearchFilter.ILIKE),
               recordDate: () => (searchFilter = SearchFilter.EQ),
             };
 
