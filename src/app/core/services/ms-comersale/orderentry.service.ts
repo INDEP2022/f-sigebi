@@ -26,6 +26,9 @@ export class orderentryService extends HttpService {
       params
     );
   }
+  getorderentryExcel(data?: any) {
+    return this.post('application/get-EventDataExcel', data);
+  }
 
   /* ORDEN DE INGRESO */
   getAllOrderEntry(
