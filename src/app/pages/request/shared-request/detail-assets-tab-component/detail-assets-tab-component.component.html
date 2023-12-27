@@ -2,7 +2,10 @@
   <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
   <div class="col-md-12">
     <div style="float: right">
-      <button (click)="updateGood()" class="btn btn-primary btn-sm active">
+      <button
+        *ngIf="detailAssets.value.id"
+        (click)="updateGood()"
+        class="btn btn-primary btn-sm active">
         Guardar
         <i class="bx bx-save"></i>
       </button>

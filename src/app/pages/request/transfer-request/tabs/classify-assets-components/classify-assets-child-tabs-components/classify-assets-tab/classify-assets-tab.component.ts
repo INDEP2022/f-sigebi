@@ -108,6 +108,7 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnInit(): void {
+    console.log('Bien, ', this.good);
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.typeTransfer = this.typeOfTransfer;
     // DISABLED BUTTON - FINALIZED //
@@ -739,7 +740,9 @@ export class ClassifyAssetsTabComponent
           this.showHideErrorInterceptorService.showHideError(false);
           this.selectSection = data.data;
         },
-        error: error => {},
+        error: error => {
+          console.log('Error al obtener la sección 1');
+        },
       });
   }
 
@@ -770,7 +773,9 @@ export class ClassifyAssetsTabComponent
           }
           this.advSearch = false;
         },
-        error: error => {},
+        error: error => {
+          console.log('Error al obtener la sección');
+        },
       });
   }
 
@@ -810,6 +815,7 @@ export class ClassifyAssetsTabComponent
         },
         error: error => {
           this.formLoading = false;
+          console.log('Error al obtener el capítulo');
         },
       });
   }
@@ -852,6 +858,7 @@ export class ClassifyAssetsTabComponent
         },
         error: error => {
           this.formLoading = false;
+          console.log('Error al obtener el nivel 1');
         },
       });
   }
@@ -884,6 +891,7 @@ export class ClassifyAssetsTabComponent
         },
         error: error => {
           this.formLoading = false;
+          console.log('Error al obtener el nivel 2');
         },
       });
   }
@@ -916,6 +924,7 @@ export class ClassifyAssetsTabComponent
         },
         error: error => {
           this.formLoading = false;
+          console.log('Error al obtener el nivel 3');
         },
       });
   }
@@ -954,6 +963,7 @@ export class ClassifyAssetsTabComponent
         error: error => {
           this.loading = false;
           this.formLoading = false;
+          console.log('Error al obtener el nivel 4');
         },
       });
   }
@@ -1040,19 +1050,28 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
-    if (this.fractionCode.length < 8) {
+    if (this.fractionCode == null) {
       this.message(
         'warning',
-        'Código de Fracción:',
-        'Todos los Bienes deben tener una fracción de 8 números'
+        'Sin código de fracción',
+        'Todos los Bienes deben tener una fracción'
       );
       return;
+    } else {
+      if (this.fractionCode.length < 8) {
+        this.message(
+          'warning',
+          'Código de fracción inválida',
+          'Todos los Bienes deben tener una fracción de 8 números'
+        );
+        return;
+      }
     }
 
     /**
      * descomentar en caso de usar la tabla
      */
-    /* if (goods.goodId) {
+    if (goods.goodId) {
       let noCumply: boolean = false;
       if (this.dataAtribute.length > 0) {
         for (let index = 0; index < this.dataAtribute.length; index++) {
@@ -1076,12 +1095,12 @@ export class ClassifyAssetsTabComponent
           return;
         }
       }
-    } */
+    }
 
-    // if (!goods.idGoodProperty) {
-    //   goods.idGoodProperty =
-    //     Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    // }
+    if (!goods.idGoodProperty) {
+      goods.idGoodProperty =
+        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
+    }
 
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
@@ -1188,8 +1207,14 @@ export class ClassifyAssetsTabComponent
           this.domicileSelected.colonia != null
             ? this.domicileSelected.colonia
             : ' ';
-        goods.val3 = this.domicileSelected.regionalDelegationId.description;
-        goods.val4 = this.domicileSelected.stateOfRepublicName;
+        goods.val3 =
+          this.domicileSelected.regionalDelegationId.description != null
+            ? this.domicileSelected.regionalDelegationId.description
+            : ' ';
+        goods.val4 =
+          this.domicileSelected.stateOfRepublicName != null
+            ? this.domicileSelected.stateOfRepublicName
+            : ' ';
       }
 
       goodResult = await this.createGood(goods);

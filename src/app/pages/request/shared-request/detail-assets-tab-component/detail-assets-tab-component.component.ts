@@ -1568,11 +1568,17 @@ export class DetailAssetsTabComponentComponent
   disableUpdate: boolean = false;
   good: IGoodTable = {};
 
+  validGoodB: boolean = false;
+
   updateGood() {
+    //console.log('validGood, ', validGood);
+    //this.validGoodB = validGood;
+    console.log('validGood, ', this.validGoodB);
+
+    //Verifica si es un bien a modificar o a crear
     if (this.detailAssets.value.id == null) {
       //Crear objeto del formulario con solo datos llenos
       const dataGood: Object = this.detailAssets.value;
-
       console.log('Bien, sin id');
       let body: any = {};
 
@@ -1597,7 +1603,11 @@ export class DetailAssetsTabComponentComponent
         },
         error: error => {
           console.log('Bien no creado,', error);
-          this.alert('error', 'Error al crear el Bien', '');
+          this.alert(
+            'error',
+            'Error al crear el Bien',
+            'Revise que la información del Bien este correcta '
+          );
         },
       });
     } else {
@@ -1627,50 +1637,62 @@ export class DetailAssetsTabComponentComponent
           required = true;
         }
       });
-      if (required) {
-        this.alert('warning', 'Debe Registrar los Atributos Requeridos.', '');
-        return;
-      }
 
-      let body: any = {};
+      if (this.validGoodB == false) {
+        if (required) {
+          this.alert('warning', 'Debe Registrar los Atributos Requeridos.', '');
+          return;
+        }
+      }
 
       console.log(
         'Información del Bien del formulario LIMPIO',
         this.detailAssets.value
       );
 
-      body['id'] = Number(this.detailAssetsInfo.id);
-      body['goodId'] = Number(this.detailAssetsInfo.id);
+      //Verifica que tengra fracción o clasificación el Bien para guardar o crear
+      if (this.detailAssets.value.ligieChapter == null) {
+        this.alert(
+          'warning',
+          'Sin fracción',
+          'Debe seleccionar una fracción para continuar'
+        );
+        return;
+      } else {
+        let body: any = {};
+        body['id'] = Number(this.detailAssetsInfo.id);
+        body['goodId'] = Number(this.detailAssetsInfo.id);
 
-      //Recorre el objeto del formulario y setea al body aquellos que tienen información
-      for (const clave in dataGood) {
-        if (dataGood.hasOwnProperty(clave)) {
-          const valor = dataGood[clave];
-          body[clave] = valor;
+        //Recorre el objeto del formulario y setea al body aquellos que tienen información
+        for (const clave in dataGood) {
+          if (dataGood.hasOwnProperty(clave)) {
+            const valor = dataGood[clave];
+            body[clave] = valor;
+          }
         }
+
+        //Recorre tabla con atributos y los setea a body
+        this.dataAtribute.forEach((row: any) => {
+          body[row.column] = row.value;
+        });
+
+        this.goodService.updateGoodTable(body).subscribe({
+          next: resp => {
+            this.childSaveAction = true;
+            this.refreshTable(true);
+            this.viewAct = !this.viewAct;
+            this.disableUpdate = !this.disableUpdate;
+            this.good = resp;
+            this.alert('success', 'El Bien se ha Actualizado', '');
+            setTimeout(() => {
+              this.goodChange++;
+            }, 100);
+          },
+          error: err => {
+            this.alert('error', 'Error al Actualizar el Bien', '');
+          },
+        });
       }
-
-      //Recorre tabla con atributos y los setea a body
-      this.dataAtribute.forEach((row: any) => {
-        body[row.column] = row.value;
-      });
-
-      this.goodService.updateGoodTable(body).subscribe({
-        next: resp => {
-          this.childSaveAction = true;
-          this.refreshTable(true);
-          this.viewAct = !this.viewAct;
-          this.disableUpdate = !this.disableUpdate;
-          this.good = resp;
-          this.alert('success', 'El Bien se ha Actualizado', '');
-          setTimeout(() => {
-            this.goodChange++;
-          }, 100);
-        },
-        error: err => {
-          this.alert('error', 'Error al Actualizar el Bien', '');
-        },
-      });
     }
   }
 
@@ -2178,6 +2200,7 @@ export class DetailAssetsTabComponentComponent
               tab.active = i === 0;
             });
           }
+          return;
         }
 
         if (this.noFracction != undefined) {
@@ -2185,19 +2208,24 @@ export class DetailAssetsTabComponentComponent
           const fraccionDestiny = this.noFracction;
 
           if (fractionOrigin != fraccionDestiny) {
-            const result = await this.alertInfo(
+            const result = await this.alertQuestion(
               'warning',
               'Atención',
-              'Al cambiar de clasificación, es necesario primero guardar esta información para continuar'
+              'Al cambiar de clasificación, es necesario primero guardar esta información para continuar',
+              'Guardar'
             );
             if (result.isConfirmed) {
-              console.log('Confirmado, dirigir a otra pestaña');
+              this.validGoodB = true;
+              this.updateGood();
+              console.log('Confirmado, guardar');
+            } else {
               console.log(' this.tabset.tabs.length', this.tabset.tabs.length);
               this.tabset.tabs.forEach((tab, i) => {
                 tab.active = i === 0;
               });
             }
           }
+          return;
         }
 
         break;

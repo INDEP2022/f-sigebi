@@ -17,6 +17,7 @@
       </div>
       <div class="p-2 buttons">
         <button
+          *ngIf="good?.id == null"
           [disabled]="statusTask == 'FINALIZADA' || isClassifyAsset"
           class="btn btn-primary btn-sm active"
           (click)="saveRequest()">
