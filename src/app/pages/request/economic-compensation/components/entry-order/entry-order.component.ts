@@ -90,7 +90,7 @@ export class EntryOrderComponent extends BasePage implements OnInit {
 
             this.entryOrderForm.patchValue({
               administrativeUnit: parseInt(resp.unitadministrative + ''),
-              orderDate: this.datePipe.transform(resp.orderDate, 'dd-MM-yyyy'),
+              orderDate: this.datePipe.transform(resp.orderDate, 'dd/MM/yyyy'),
               concept: resp.concept,
               paymentMethod: resp.shapePay,
               amount: resp.amount,

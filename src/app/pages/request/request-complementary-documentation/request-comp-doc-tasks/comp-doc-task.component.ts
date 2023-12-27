@@ -49,6 +49,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract steap3: boolean;
   protected abstract isEdit: boolean;
   protected abstract btnGrouper: boolean;
+  protected abstract visible: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -700,6 +701,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.steap2 = true;
         this.isEdit = true;
 
+        this.visible = false;
+
         break;
 
       /** CASOS DE INFORMACION DE BIENES */
@@ -877,6 +880,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.steap3 = true;
         this.isEdit = true;
 
+        this.visible = true;
+
         break;
 
       case 'register-taxpayer-date':
@@ -911,6 +916,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.steap2 = true;
         this.steap3 = false;
         this.isEdit = false;
+
+        this.visible = true;
 
         break;
 
