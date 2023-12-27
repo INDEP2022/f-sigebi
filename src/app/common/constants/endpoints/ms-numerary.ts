@@ -22,4 +22,5 @@ export enum NumeraryEndpoints {
   seqBitacora = 'application/seq-bitacora',
   loadGoodsVig = 'application/load-goods-vig',
   loadGoodsSeg = 'application/load-goods-seg',
+  UpdateAmountNumeraryGoods = 'application/update-comer-numeraryxbienes',
 }

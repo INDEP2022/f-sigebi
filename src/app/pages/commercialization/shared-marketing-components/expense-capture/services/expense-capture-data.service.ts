@@ -50,6 +50,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   addErrors = new Subject<{ description: string }[]>();
   updateExpenseCompositionAndValidateProcess = new Subject();
   finishProcessSolicitud = new Subject();
+  callNextItemLoteSubject = new Subject();
   saveSubject = new Subject();
   updateOI = new Subject();
   updateFolio = new Subject();
@@ -85,6 +86,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   total = 0;
   totalMandatos = 0;
   V_BIEN_REP_ROBO = 0;
+  callNextItemLote = false;
   SELECT_CAMBIA_ESTATUS_ENABLED = true;
   PB_VEHICULO_REP_ROBO_DISPLAYED = true;
   PB_VEHICULO_REP_ROBO_ENABLED = false;
@@ -197,7 +199,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     if (JSON.stringify(this.copiaForma) != JSON.stringify(this.form.value)) {
       this.alert(
         'warning',
-        'Data modificada',
+        'Datos modificados',
         'Favor de guardar antes de proceder'
       );
       return true;
@@ -736,7 +738,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return firstValueFrom(
       this.interfacesirsaeService.sendSirsaeScrapSp(body).pipe(
         catchError(x => {
-          this.alert('error', 'Envio Sirsae Chatarra SP', x);
+          // this.alert('error', 'Envio Sirsae Chatarra SP', x);
           return of(null);
         })
       )
@@ -747,7 +749,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return firstValueFrom(
       this.interfacesirsaeService.sendSirsaeScrapOi(body).pipe(
         catchError(x => {
-          this.alert('error', 'Envio Sirsae Chatarra OI', x);
+          // this.alert('error', 'Envio Sirsae Chatarra OI', x);
           return of(null);
         })
       )
@@ -804,9 +806,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       pAmountTOT: this.total + '',
     });
     if (resultOI === null) {
-      // console.log(resultSP);
-      this.errorSendSolicitudeMessage();
-      return;
+      // this.errorSendSolicitudeMessage();
+      // return;
     } else {
       this.form.get('idOrdinginter').setValue(resultOI.lst_order);
     }
@@ -844,10 +845,25 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       clkpv: this.form.get('clkpv').value,
     });
     if (resultSP === null) {
-      // console.log(resultSP);
-      // this.alert('error','No se pudo realizar el proceso de pago','Favor de verificar')
-      this.errorSendSolicitudeMessage();
-      return;
+      // this.errorSendSolicitudeMessage();
+      // return;
+    } else {
+      if (resultSP.COMER_GASTOS_ID_SOLICITUDPAGO) {
+        this.form
+          .get('paymentRequestNumber')
+          .setValue(resultSP.COMER_GASTOS_ID_SOLICITUDPAGO);
+      }
+      if (resultSP.COMER_GASTOS_ID_SOLICITUDPAGO) {
+        this.form
+          .get('paymentRequestNumber')
+          .setValue(resultSP.COMER_GASTOS_ID_SOLICITUDPAGO);
+      }
+      if (resultSP.COMER_GASTOS_FECHA_SP) {
+        const array = resultSP.COMER_GASTOS_FECHA_SP.split('/');
+        this.form
+          .get('payDay')
+          .setValue(new Date(+array[0], +array[1] - 1, +array[2]));
+      }
     }
     this.expenseGoodProcessService
       .PROCESA_EVENTO_CHATARRA(
