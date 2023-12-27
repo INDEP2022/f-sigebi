@@ -44,6 +44,16 @@ interface IExcelToJson {
           transform: rotate(360deg);
         }
       }
+      input[type='file']::file-selector-button {
+        margin-right: 20px;
+        border: none;
+        background: #9d2449;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        /* transition: background.2s ease-in-out; */
+      }
     `,
   ],
 })
@@ -159,7 +169,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
           this.readExcel(loadEvent.target.result);
 
           // Limpia el input de archivo para permitir cargar el mismo archivo nuevamente
-          (event.target as HTMLInputElement).value = '';
+          // (event.target as HTMLInputElement).value = '';
         }
         console.log(this.fileReader.onload);
       };
