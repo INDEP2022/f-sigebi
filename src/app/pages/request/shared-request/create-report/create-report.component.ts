@@ -42,13 +42,7 @@ class Document {
 @Component({
   selector: 'app-create-report',
   templateUrl: './create-report.component.html',
-  styles: [
-    `
-      .ngx-spinner-icon {
-        display: none !important;
-      }
-    `,
-  ],
+  styles: [`.ngx-spinner-icon { display: none !important;}`],
 })
 export class CreateReportComponent extends BasePage implements OnInit {
   @ViewChild('tabsReport', { static: false }) tabsReport?: TabsetComponent;
@@ -61,12 +55,13 @@ export class CreateReportComponent extends BasePage implements OnInit {
   formats: any = [];
   version: any = new Document();
   format: any = new Document();
-  loadDoc: any = null;
 
   // we use this property to store the quill instance
   quillInstance: any;
 
   status: string = 'Nuevo';
+  content: string = '';
+  template: boolean = false;
 
   form: FormGroup = new FormGroup({});
   model: any;
@@ -82,6 +77,8 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<any>();
   @Output() show = new EventEmitter<any>();
+
+  isSigned: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -125,8 +122,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
         let ids = this.documentTypeId.split(',');
         let list = resp.data.filter(x => ids.includes(x.doctoTypeId.id));
 
-        console.log(list);
-
         if (list.length > 0) {
           this.format = list[0];
           this.form.get('template').setValue(list[0].id);
@@ -151,14 +146,15 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
     this.reportgoodService.getReportDynamic(params).subscribe({
       next: async resp => {
-        if (resp.data.length > 0) {
-          this.loadDoc = resp.data[0];
-          this.version = this.loadDoc;
+        this.template = resp.data.length > 0;
+        if (this.template) {
+          this.version = resp.data[0];
+          this.isSigned = this.version.signedReport == 'Y';
         }
-
-        this.loadData();
       },
-      error: err => { },
+      error: err => {
+
+      },
     });
   }
 
@@ -189,13 +185,12 @@ export class CreateReportComponent extends BasePage implements OnInit {
     };
 
     this.reportgoodService
-      .saveReportDynamic(doc, !isNullOrEmpty(this.loadDoc))
+      .saveReportDynamic(doc, !isNullOrEmpty(this.version.content))
       .subscribe({
         next: resp => {
-          this.loadDoc = resp;
+          this.template = true;
           if (close) {
             this.onLoadToast('success', 'Documento guardado correctamente', '');
-            this.close();
           }
         },
         error: err => { },
@@ -203,57 +198,19 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   onContentChanged = (event: any) => {
-    this.format.content = event.html;
+    this.version.content = event.html;
     this.form.get('content').setValue(event.html);
   };
 
   applyFormat() {
-    this.version = this.format;
-    this.loadData();
-  }
-
-  loadData() {
-    if (isNullOrEmpty(this.format)) return;
-
-    switch (this.process) {
-      case 'verify-compliance-return':
-        //Genera una tabla html en una cadena de texto
-        let table = `<table style="width:100%">
-  <tr>
-    <th>Company</th>
-    <th>Contact</th>
-    <th>Country</th>
-  </tr>
-  <tr>
-    <td>Alfreds Futterkiste</td>
-    <td>Maria Anders</td>
-    <td>Germany</td>
-  </tr>
-  <tr>
-    <td>Centro comercial Moctezuma</td>
-    <td>Francisco Chang</td>
-    <td>Mexico</td>
-  </tr>
-</table><br />`;
-
-        /*datos.forEach(dato => {
-          tabla += `
-        <tr>
-          <td>${dato.nombre}</td>
-          <td>${dato.edad}</td>
-        </tr>`;
-        });*/
-
-        let content = this.version.content;
-        //content = content.replace('{TABLA_BIENES}', table);
-        //content = content.replace('{FOLIO}', '');
-        //content = content.replace('{FECHA}', '');
-
-        this.version.content = content;
-        this.format.content = content;
-
-        break;
+    let form = { ...this.format };
+    if (!isNullOrEmpty(this.version.registryId)) {
+      this.version.content = form.content;
+    } else {
+      this.version = form;
     }
+
+    this.saveVersionsDoc(false);
   }
 
   isView() {
@@ -293,7 +250,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   onChange() {
     this.refresh.emit({
-      upload: !isNullOrEmpty(this.loadDoc),
+      upload: !isNullOrEmpty(this.version.content),
       sign: false
     });
   }
@@ -391,7 +348,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   showFile() {
-    this.show.emit(true);
+    this.version.documentTypeId = this.documentTypeId;
+    this.version.isSigned = this.isSigned;
+    this.show.emit(this.version);
   }
 
   idSample = "328";

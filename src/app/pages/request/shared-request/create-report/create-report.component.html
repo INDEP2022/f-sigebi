@@ -23,7 +23,7 @@
           <div
             class="col-md-3"
             style="align-items: horizontal"
-            *ngIf="editReport">
+            *ngIf="editReport && !isSigned">
             <button
               class="btn btn-primary btn-sm active"
               (click)="applyFormat()">
@@ -31,7 +31,7 @@
             </button>
           </div>
 
-          <div class="col-md-3" *ngIf="signReport && this.loadDoc !== null">
+          <div class="col-md-3" *ngIf="signReport && template && !isSigned">
             <button (click)="openSignature()" class="btn btn-primary active btn-sm">
               Firmar reporte
               <i class="fa fa-file-signature"></i>
@@ -40,7 +40,7 @@
 
           <div class="col-md-3">
             <button
-              *ngIf="this.loadDoc !== null"
+              *ngIf="template"
               (click)="showFile()"
               class="btn btn-primary active btn-sm">
               Vista previa <i class="fa fa-eye mr-1"></i>
@@ -89,7 +89,7 @@
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+          Cerrar
         </button>
       </div>
     </div>
