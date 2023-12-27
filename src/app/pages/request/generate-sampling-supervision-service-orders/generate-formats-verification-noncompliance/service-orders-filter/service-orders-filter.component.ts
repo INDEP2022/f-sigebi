@@ -32,5 +32,6 @@ export class ServiceOrdersFilterComponent implements OnInit {
 
   reset(): void {
     this.filterForm.reset();
+    this.searchEvent.emit(false);
   }
 }

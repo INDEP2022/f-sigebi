@@ -39,4 +39,5 @@ export interface ISamplingOrder {
   datebreaches?: string;
   daterepService?: string;
   observationRejection?: string;
+  orderServiceId?: number;
 }

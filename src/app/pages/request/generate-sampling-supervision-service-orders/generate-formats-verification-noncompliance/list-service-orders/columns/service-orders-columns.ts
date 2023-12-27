@@ -1,37 +1,41 @@
-import { BtnRequestComponent } from '../../../../shared-request/expedients-tabs/sub-tabs/btn-request/btn-request.component';
-
 export const SERVICE_ORDERS_COLUMNS = {
   orderServiceId: {
-    title: 'No. Ordern Servicio',
-    type: 'text',
+    title: 'No. Orden Servicio',
+    type: 'string',
     sort: false,
   },
-  orderServiceFolio: {
-    title: 'Folio orden de servicio',
-    type: 'text',
-    sort: false,
-  },
-  orderServiceType: {
-    title: 'Tipo orden de servicio',
-    type: 'text',
+  recordId: {
+    title: 'Expediente',
+    type: 'number',
     sort: false,
   },
   requestId: {
     title: 'No. Solicitud',
-    type: 'text',
+    type: 'string',
     sort: false,
   },
+  orderServiceFolio: {
+    title: 'Folio orden de servicio',
+    type: 'string',
+    sort: false,
+  },
+  orderServiceType: {
+    title: 'Tipo orden de servicio',
+    type: 'string',
+    sort: false,
+  },
+
   contractNumber: {
     title: 'No. Contrato',
-    type: 'text',
+    type: 'string',
     sort: false,
   },
   costService: {
     title: 'Costo Servicio',
-    type: 'text',
+    type: 'string',
     sort: false,
   },
-  button: {
+  /*button: {
     title: '',
     type: 'custom',
     class: 'custom-field',
@@ -39,5 +43,5 @@ export const SERVICE_ORDERS_COLUMNS = {
     renderComponent: BtnRequestComponent,
     onComponentInitFunction(instance?: any) {},
     sort: false,
-  },
+  }, */
 };

@@ -163,6 +163,7 @@ export class reportOiComponent extends BasePage implements OnInit {
 
   exportXlsx() {
     if (this.formReport.get('NameReport').value) {
+      this.loader.load = true;
       const filename = this.formReport.get('NameReport').value;
       console.log(filename);
 
@@ -191,6 +192,7 @@ export class reportOiComponent extends BasePage implements OnInit {
       });
     } else {
       this.alert('error', 'No se epecifico el nombre de la descarga', '');
+      this.loader.load = false;
       return;
     }
   }
