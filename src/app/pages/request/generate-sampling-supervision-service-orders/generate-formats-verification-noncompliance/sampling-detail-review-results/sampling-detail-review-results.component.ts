@@ -22,7 +22,6 @@ export class SamplingDetailReviewResultsComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    console.log(this.sampleOrderId);
     //this.initForm();
 
     this.getSampleOrder();

@@ -89,114 +89,114 @@
     </div>
     <form class="form-material" [formGroup]="form2">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-radio label="Numero de Bien">
             <input type="radio" formControlName="radio" value="1" />
           </form-radio>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-radio label="Archivo Excel">
             <input type="radio" formControlName="radio" value="2" />
           </form-radio>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-radio label="Exportar Cambios de Estatus">
             <input type="radio" formControlName="radio" value="3" />
           </form-radio>
         </div>
-        <div class="row" *ngIf="form2.controls['radio'].value === '2'">
+      </div>
+      <div class="row" *ngIf="form2.controls['radio'].value === '2'">
+        <div class="ch-content">
+          <h5 class="title">B&uacute;squeda por Excel</h5>
+        </div>
+        <div class="row pt-3">
+          <div class="col-md-12">
+            <div class="justify-content-center">
+              <button
+                class="btn btn-success btn-sm ml-2"
+                type="button"
+                (click)="file.click()">
+                Abrir archivo Excel / CSV
+              </button>
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                (change)="onFileChange($event)"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+              <button
+                tooltip="Formato de Ejemplo"
+                containerClass="tooltip-style"
+                type="button"
+                (click)="exportCsv()"
+                class="btn btn-info btn-sm active m-2 pointer">
+                <i class="bi bi-question-circle"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm m-2"
+                (click)="searchGoodExcel()">
+                Buscar Bienes
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active m-2"
+                (click)="cleanExcel()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="row" *ngIf="form2.controls['radio'].value === '1'">
           <div class="ch-content">
-            <h5 class="title">B&uacute;squeda por Excel</h5>
+            <h5 class="title">B&uacute;squeda por bien&#58;</h5>
           </div>
-          <div class="row pt-3">
-            <div class="col-md-12">
-              <div class="justify-content-center">
-                <button
-                  class="btn btn-success btn-sm ml-2"
-                  type="button"
-                  (click)="file.click()">
-                  Abrir archivo Excel / CSV
-                </button>
+          <div class="row pt-4">
+            <div class="col-md-2">
+              <form-field [control]="form2.get('onlyOne')" label="No. Bien">
                 <input
-                  type="file"
-                  name="file"
-                  #file
-                  class="d-none"
-                  (change)="onFileChange($event)"
-                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-                <button
-                  tooltip="Formato de Ejemplo"
-                  containerClass="tooltip-style"
-                  type="button"
-                  (click)="exportCsv()"
-                  class="btn btn-info btn-sm active m-2 pointer">
-                  <i class="bi bi-question-circle"></i>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary active btn-sm m-2"
-                  (click)="searchGoodExcel()">
-                  Buscar Bienes
-                  <i class="bx bx-search-alt bx-sm float-icon"></i>
-                </button>
-                <button
-                  class="btn btn-danger btn-sm active m-2"
-                  (click)="cleanExcel()">
-                  Limpiar <i class="fas fa-eraser"> </i>
-                </button>
-              </div>
+                  type="text"
+                  class="form-control"
+                  formControlName="onlyOne" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                [disabled]="!form2.valid"
+                (click)="sourceOnly()">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active m-2"
+                [disabled]="!form2.valid"
+                (click)="cleanOnlyGodd()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
             </div>
           </div>
         </div>
-        <div>
-          <div class="row" *ngIf="form2.controls['radio'].value === '1'">
-            <div class="ch-content">
-              <h5 class="title">B&uacute;squeda por bien&#58;</h5>
-            </div>
-            <div class="row pt-4">
-              <div class="col-md-2">
-                <form-field [control]="form2.get('onlyOne')" label="No. Bien">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="onlyOne" />
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <button
-                  type="button"
-                  class="btn btn-primary active btn-sm"
-                  [disabled]="!form2.valid"
-                  (click)="sourceOnly()">
-                  Buscar
-                  <i class="bx bx-search-alt bx-sm float-icon"></i>
-                </button>
-                <button
-                  class="btn btn-danger btn-sm active m-2"
-                  [disabled]="!form2.valid"
-                  (click)="cleanOnlyGodd()">
-                  Limpiar <i class="fas fa-eraser"> </i>
-                </button>
-              </div>
-            </div>
+      </div>
+      <div>
+        <div class="row" *ngIf="form2.controls['radio'].value === '3'">
+          <div class="ch-content">
+            <h5 class="title">
+              Total de cambios de estatus por tipo de evento:
+            </h5>
           </div>
-        </div>
-        <div>
-          <div class="row" *ngIf="form2.controls['radio'].value === '3'">
-            <div class="ch-content">
-              <h5 class="title">
-                Total de cambios de estatus por tipo de evento:
-              </h5>
-            </div>
-            <div class="row pt-4">
-              <div class="col-md-4">
-                <button
-                  class="btn btn-sm btn-success active"
-                  (click)="exportChangeLot()">
-                  Exportar a Excel
-                  <i class="bx bx-download float-icon"></i>
-                </button>
-              </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <button
+                class="btn btn-sm btn-success active"
+                (click)="exportChangeLot()">
+                Exportar a Excel
+                <i class="bx bx-download float-icon"></i>
+              </button>
             </div>
           </div>
         </div>
