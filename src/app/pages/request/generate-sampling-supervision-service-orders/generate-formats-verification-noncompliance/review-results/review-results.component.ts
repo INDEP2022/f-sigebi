@@ -2,18 +2,23 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISamplingOrder } from 'src/app/core/models/ms-order-service/sampling-order.model';
+import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
-import { BasePage } from '../../../../../core/shared/base-page';
+import { BasePage, TABLE_SETTINGS } from '../../../../../core/shared/base-page';
 import { AnnexKFormComponent } from '../../../generate-sampling-supervision/generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
+import { LIST_DEDUCTIVES_VIEW_COLUMNS } from '../../../generate-sampling-supervision/sampling-assets/sampling-assets-form/columns/list-deductivas-column';
 
 @Component({
   selector: 'app-review-results',
@@ -21,7 +26,6 @@ import { AnnexKFormComponent } from '../../../generate-sampling-supervision/gene
   styleUrls: ['./review-results.component.scss'],
 })
 export class ReviewResultsComponent extends BasePage implements OnInit {
-  title: string = 'Captura de resultados';
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
 
@@ -33,10 +37,13 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   dataAnnex: any;
 
   sampleOrderId: number = 0;
-
+  params = new BehaviorSubject<ListParams>(new ListParams());
   isApprovalResult: boolean = false;
   lsEstatusMuestreo: string = '';
-
+  title: string = '';
+  loadingDeductives: boolean = true;
+  paragraphsDeductivas = new LocalDataSource();
+  allDeductives: any = [];
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -44,17 +51,61 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private authServeice: AuthService,
     private sanitizer: DomSanitizer,
-    private wContentService: WContentService
+    private wContentService: WContentService,
+    private samplingGoodService: SamplingGoodService,
+    private deductiveService: DeductiveVerificationService
   ) {
     super();
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+
+      columns: LIST_DEDUCTIVES_VIEW_COLUMNS,
+    };
   }
 
   ngOnInit(): void {
     this.sampleOrderId = Number(
       this.activatedRoute.snapshot.paramMap.get('id')
     );
-
+    this.title = `Captura de resultados ${this.sampleOrderId}`;
     this.initAnexForm();
+    this.getSampleDeductives();
+  }
+
+  getSampleDeductives() {
+    this.params.getValue()[
+      'filter.orderSampleId'
+    ] = `$eq:${this.sampleOrderId}`;
+    this.samplingGoodService
+      .getAllSampleDeductives(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.allDeductives = response.data;
+          this.getDeductives(response.data);
+        },
+        error: () => {},
+      });
+  }
+
+  getDeductives(deductivesRelSample: ISamplingDeductive[]) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.deductiveService.getAll(params.getValue()).subscribe({
+      next: response => {
+        const infoDeductives = response.data.map(item => {
+          deductivesRelSample.map(deductiveEx => {
+            if (deductiveEx.deductiveVerificationId == item.id) {
+              item.observations = deductiveEx.observations;
+              item.selected = true;
+            }
+          });
+          return item;
+        });
+        this.paragraphsDeductivas.load(infoDeductives);
+        this.loadingDeductives = false;
+      },
+      error: () => {},
+    });
   }
 
   initAnexForm() {
