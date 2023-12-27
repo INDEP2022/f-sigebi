@@ -160,7 +160,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   async saveVersionsDoc(close = true) {
 
-    if (isNullOrEmpty(this.format)) return;
+    if (isNullOrEmpty(this.version.content)) return;
 
     const user: any = this.authService.decodeToken();
     let format = this.formats.data.find(
@@ -185,7 +185,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     };
 
     this.reportgoodService
-      .saveReportDynamic(doc, !isNullOrEmpty(this.version.content))
+      .saveReportDynamic(doc, !this.template)
       .subscribe({
         next: resp => {
           this.template = true;
