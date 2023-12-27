@@ -390,9 +390,11 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
       if (data.length > 1) {
         data.map(item => {
           this.costRecDoc += item.prorrateo;
+          this.getSumTotal();
         });
       } else if (data.length == 1) {
         this.costRecDoc = data[0].prorrateo;
+        this.getSumTotal();
       }
     });
   }
@@ -625,8 +627,6 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
             this.totalItemsReubGood = response.count;
             this.loadingReubGood = false;
             this.sumAllReub();
-
-            this.getSumTotal();
           });
         },
         error: () => {
