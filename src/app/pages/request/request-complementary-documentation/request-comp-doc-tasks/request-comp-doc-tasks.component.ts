@@ -45,7 +45,8 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -312,10 +313,9 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
   async openReport(): Promise<void> {
-
     if (!this.nextTurn) {
       let report = await this.getStatusReport();
       this.showReport(report);
@@ -344,7 +344,6 @@ export class RequestCompDocTasksComponent
     });
 
     modalRef.content.refresh.subscribe(response => {
-
       if (response.upload) {
         this.requestInfo.detail.reportSheet = 'Y';
         this.updateRequest(false);
@@ -902,7 +901,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
@@ -931,10 +930,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
       case 'verify-compliance-return':
@@ -949,10 +948,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
       case 'approve-return':
@@ -963,10 +962,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
 
@@ -987,10 +986,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
 
@@ -1007,10 +1006,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
 
@@ -1025,10 +1024,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
 
@@ -1046,10 +1045,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         //REGISTRO
         //VALIDAR RESULTADOS
@@ -1085,10 +1084,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
 
@@ -1098,10 +1097,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1112,10 +1111,10 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'analysis-result-compensation':
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isSigned) {
@@ -1138,10 +1137,10 @@ export class RequestCompDocTasksComponent
       case 'notification-taxpayer-compensation':
         //DATOS DEL DICTAMEN
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1170,10 +1169,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
 
       case 'response-office-information-goods':
@@ -1187,10 +1186,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el oficio destino');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
 
       case 'review-office-information-goods':
@@ -1199,10 +1198,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Firmar el oficio destino');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
 
       /*NUMERARIO*/
@@ -1220,17 +1219,17 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
       case 'request-economic-resources':
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1250,10 +1249,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
       case 'generate-results-economic':
@@ -1266,16 +1265,16 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
       case 'validate-dictum-economic':
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         if (!this.validate.dictudData) {
           this.showWarning('Registre datos del dictamen');
           return false;
@@ -1291,10 +1290,10 @@ export class RequestCompDocTasksComponent
 
         break;
       case 'delivery-notify-request':
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1312,26 +1311,26 @@ export class RequestCompDocTasksComponent
           this.showWarning('Registre datos de la cita');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
       case 'register-pay-order':
         if (!this.validate.orderEntry) {
           this.showWarning('Registre datos de orden de ingreso');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
       case 'generate-compensation-act':
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
@@ -1353,10 +1352,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
       case 'register-seizures':
         if (!this.validate.regdoc) {
@@ -1371,10 +1370,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
       case 'register-abandonment-goods':
         if (!this.validate.regdoc) {
@@ -1389,10 +1388,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
       case 'register-protections-goods':
         if (!this.validate.regdoc) {
@@ -1407,10 +1406,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
 
       case 'register-compensation-documentation':
@@ -1422,10 +1421,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
 
       case 'register-request-protection':
@@ -1441,10 +1440,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
 
       case 'protection-regulation':
@@ -1453,10 +1452,10 @@ export class RequestCompDocTasksComponent
           //this.showWarning('Genera el reporte de oficio jurídico');
           //return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
 
       case 'register-compensation-documentation':
@@ -1468,10 +1467,10 @@ export class RequestCompDocTasksComponent
           this.showWarning('Asocie el expediente de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
     }
 
@@ -1520,7 +1519,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) { }
+  onSetData(event) {}
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1540,7 +1539,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1556,7 +1555,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-      this.requestId
+        this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1633,26 +1632,27 @@ export class RequestCompDocTasksComponent
     });*/
   }
 
-  createDictumReturn() { }
+  createDictumReturn() {}
 
   showReport(data) {
-
     console.log(data);
 
     if (isNullOrEmpty(data.contentId)) {
-      this.wContentService.downloadDinamycReport(
-        'sae.rptdesign',
-        this.reportTable,
-        this.requestId.toString(),
-        data.documentTypeId
-      ).subscribe({
-        next: response => {
-          console.log(response);
-        },
-        error: error => {
-          this.showError('Vista previa no dipoonible');
-        },
-      })
+      this.wContentService
+        .downloadDinamycReport(
+          'sae.rptdesign',
+          this.reportTable,
+          this.requestId.toString(),
+          data.documentTypeId
+        )
+        .subscribe({
+          next: response => {
+            console.log(response);
+          },
+          error: error => {
+            this.showError('Vista previa no dipoonible');
+          },
+        });
     } else {
       this.wContentService.obtainFile('SAE568245').subscribe({
         next: response => {
@@ -1661,10 +1661,9 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => { },
+        error: error => {},
       });
     }
-
   }
 
   dataURItoBlob(dataURI: any) {
