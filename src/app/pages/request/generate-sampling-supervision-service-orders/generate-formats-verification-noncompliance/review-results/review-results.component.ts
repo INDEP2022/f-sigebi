@@ -1,6 +1,7 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -23,34 +24,36 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   title: string = 'Captura de resultados';
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
-  //pasar datos a los detalle de muestreo
+
   samplingDetailData: any;
   sampleOrderForm: FormGroup = new FormGroup({});
   //
   @Input() searchForm: any;
-  //datos anexo para pasar
+
   dataAnnex: any;
-  //Id del Muestreo del orden obtener de taras el id
-  sampleOrderId: number = null;
-  //en el caso de que sera una aprovacion de resultados se pone true
+
+  sampleOrderId: number = 0;
+
   isApprovalResult: boolean = false;
-  input = '<input type="text" (keyup)="keyFunc($event)">';
-  lsEstatusMuestreo: string = 'MUESTREO_PENDIENTE_APROBACION';
+  lsEstatusMuestreo: string = '';
 
-  private orderService = inject(OrderServiceService);
-  private fb = inject(FormBuilder);
-  private authServeice = inject(AuthService);
-  private wContentService = inject(WContentService);
-  private sanitizer = inject(DomSanitizer);
-
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private activatedRoute: ActivatedRoute,
+    private orderService: OrderServiceService,
+    private fb: FormBuilder,
+    private authServeice: AuthService,
+    private sanitizer: DomSanitizer,
+    private wContentService: WContentService
+  ) {
     super();
   }
 
   ngOnInit(): void {
-    //setTimeout(() => {
-    this.sampleOrderId = 3;
-    //}, 2000);
+    this.sampleOrderId = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
+
     this.initAnexForm();
   }
 
@@ -79,13 +82,12 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   }
 
   async turnSampling() {
-    const sampleOrder = await this.getSampleOrder();
+    /*const sampleOrder = await this.getSampleOrder();
     if (this.lsEstatusMuestreo == 'MUESTREO_NO_CUMPLE') {
       this.validateTurn(sampleOrder);
     } else if (this.lsEstatusMuestreo == 'MUESTREO_PENDIENTE_APROBACION') {
       this.sentRevision();
-    }
-
+    } */
     //verificar anexo k desde donde se llama si es aprobacion de resultados o generacion de formato
     /* if (this.isApprovalResult === false) {
       let title = 'Confirmación turnado';
@@ -183,7 +185,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     this.alertQuestion('question', title, message, 'Aceptar').then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.lsEstatusMuestreo = 'MUESTREO_PENDIENTE_APROBACION';
+        //this.lsEstatusMuestreo = 'MUESTREO_PENDIENTE_APROBACION';
         const userTE = this.authServeice.decodeToken().username;
 
         window.alert('turnar registro');
@@ -217,7 +219,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
           this.onLoadToast('info', 'Debe indicar el motivo del rechazo');
           return;
         }
-        this.lsEstatusMuestreo = 'MUESTREO_NO_CUMPLE';
+        //this.lsEstatusMuestreo = 'MUESTREO_NO_CUMPLE';
         window.alert('Turnar registro');
       }
     });
@@ -230,7 +232,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     this.alertQuestion('question', title, message, 'Aceptar').then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.lsEstatusMuestreo = 'MUESTREO_TERMINA';
+        //this.lsEstatusMuestreo = 'MUESTREO_TERMINA';
         const userTE = this.authServeice.decodeToken().username;
 
         window.alert('turnar registro');

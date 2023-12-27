@@ -186,10 +186,16 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
-
+  cleanTable() {
+    this.source.load([]);
+    this.source.refresh();
+  }
   consultarBienExcel() {
     this.loadingBtn4 = true;
     this.loading = true;
+    this.until = false;
+    this.until2 = false;
+
     if (!this.commaSeparatedString) {
       this.alert('warning', 'Debe importar el archivo Excel', '');
       this.loadingBtn4 = false;
@@ -262,6 +268,8 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   consultarOnlyOne() {
     this.loadingBtn = true;
     this.loading = true;
+    this.until3 = false;
+    this.until2 = false;
     if (!this.form.get('onlyOne').value) {
       this.alert('warning', 'Es necesario contar con el No. Bien', '');
       this.loadingBtn = false;
@@ -439,8 +447,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     this.isFirstLoad = true;
     this.loadingBtn3 = true;
     this.loading = true;
-    console.log(this.form.get('typeGood').value);
-    console.log(this.tiposData);
+    this.until = false;
+    this.until3 = false;
+
     const selectedTypeNumber = this.form.get('typeGood').value;
     const selectedTypeStatus = this.form.get('typeStatus').value;
     const resultArray = this.tiposData.data['filter'](
