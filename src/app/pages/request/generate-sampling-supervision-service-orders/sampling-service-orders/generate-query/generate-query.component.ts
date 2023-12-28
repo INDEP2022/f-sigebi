@@ -878,4 +878,6 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  saveSample() {}
 }
