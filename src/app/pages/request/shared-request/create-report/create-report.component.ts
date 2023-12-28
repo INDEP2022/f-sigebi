@@ -366,32 +366,39 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   openModal(component: any, idSample?: any, typeAnnex?: string): void {
-    let config: ModalOptions = {
-      initialState: {
-        idSample: idSample,
-        typeAnnex: typeAnnex,
-        callback: async (typeDocument: number, typeSign: string) => {
 
-          console.log(typeDocument);
-          console.log(typeSign);
-
-          if (typeAnnex == 'sign-annexJ-assets-classification') {
-            if (typeDocument && typeSign) {
-              this.showReportInfo(typeDocument, typeSign, typeAnnex);
+    if (!this.isSigned) {
+      let config: ModalOptions = {
+        initialState: {
+          idSample: idSample,
+          typeAnnex: typeAnnex,
+          callback: async (typeDocument: number, typeSign: string) => {
+            if (typeAnnex == 'sign-annexJ-assets-classification') {
+              if (typeDocument && typeSign) {
+                this.showReportInfo(typeDocument, typeSign, typeAnnex);
+              }
             }
-          }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(component, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(component, config);
+    } else {
+      this.showReportInfo(0, '', '');
+    }
+
   }
 
   showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
     const idTypeDoc = typeDocument;
-    const idSample = this.idSample;
+    const idSample = this.requestId;
     const typeFirm = typeSign;
+    const tableName = this.tableName;
+    const reportName = this.tableName;
+    const dynamic = true;
+    const signed = !this.isSigned;
+
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -399,8 +406,12 @@ export class CreateReportComponent extends BasePage implements OnInit {
         idSample,
         typeFirm,
         typeAnnex,
-        callback: (next: boolean) => {
-          if (next) {
+        dynamic,
+        tableName,
+        reportName,
+        signed,
+        callback: (data) => {
+          if (data) {
             if (typeFirm != 'electronica') {
               this.uploadDocument(typeDocument);
             } else {
@@ -420,7 +431,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     config.initialState = {
       typeDoc: typeDocument,
       idSample: this.idSample,
-      callback: (data: boolean) => {
+      callback: (data) => {
         if (data) {
           //this.getInfoSample();
         }

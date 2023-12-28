@@ -37,6 +37,9 @@ import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify
 export class ShowReportComponentComponent extends BasePage implements OnInit {
   private pdf: PDFDocumentProxy;
   idTypeDoc: number = 0;
+  reportName: string = '';
+  tableName: string = '';
+
   idProg: number = 0;
   idSampleOrder: number = 0;
   idprogDel: number = 0;
@@ -84,6 +87,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   process: string = '';
   orderServiceTask: number = null;
   typeAnnex: string = '';
+  dynamic: boolean = false;
+  signed: boolean = true;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -250,6 +255,13 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.src = linkDoc;
       this.formLoading = false;
     }
+
+    if (this.dynamic) {
+      let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.idSample},${this.idTypeDoc}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
   }
 
   getReceipt() {
@@ -259,7 +271,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       next: response => {
         //this.createPersonsSing(response.data[0]);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -316,7 +328,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
             type: 'pdf',
           },
-          callback: (response: any) => {},
+          callback: (response: any) => { },
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
         keyboard: false,
@@ -428,7 +440,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 );
                 if (createSignatore) this.getSignatories();
               },
-              error: error => {},
+              error: error => { },
             });
         },
         error: async error => {
@@ -467,7 +479,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -836,7 +848,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 this.close();
               }
             },
-            error: error => {},
+            error: error => { },
           });
       });
     } else {
@@ -909,7 +921,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   }
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
@@ -965,7 +977,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
@@ -1021,7 +1033,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
@@ -1077,7 +1089,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 197 && this.typeFirm == 'electronica') {
@@ -1128,7 +1140,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idOrderService && this.typeFirm == 'electronica') {
@@ -1182,7 +1194,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 218 && this.typeFirm == 'electronica') {
@@ -1230,7 +1242,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       } else if (this.idTypeDoc == 219 && this.typeFirm == 'electronica') {
@@ -1279,7 +1291,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   });
                 }
               },
-              error: error => {},
+              error: error => { },
             });
         });
       }
@@ -1299,7 +1311,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1317,7 +1329,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
@@ -1354,7 +1366,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => { },
         });
       });
     });
