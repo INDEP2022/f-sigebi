@@ -1486,11 +1486,6 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'review-result-protection':
-        if (!this.validate.guidelines) {
-          this.showWarning('Verifique las observaciones de lineamientos');
-          return false;
-        }
-
         if (!reportLoad.isSigned) {
           //this.showWarning('Firme el reporte de oficio jurídico');
           //return false;
