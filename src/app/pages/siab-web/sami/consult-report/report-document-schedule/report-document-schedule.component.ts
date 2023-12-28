@@ -53,7 +53,8 @@ export class ReportDocumentScheduleComponent
       },
 
       edit: {
-        editButtonContent: '<i class="fa fa-file text-primary mx-2" > </i>',
+        editButtonContent:
+          '<i class="fa fa-file text-primary mx-2 ml-4" > </i>',
       },
       delete: {
         deleteButtonContent: '<i  class="fa fa-eye text-info mx-2"> </i>',
@@ -559,12 +560,13 @@ export class ReportDocumentScheduleComponent
   }
 
   cleanForm() {
+    this.loading = true;
     this.docRequestForm.reset();
-    //this.docRequestForm.get('noRequest').patchValue(this.idRequest);
+
     this.allDataDocReq = [];
     this.paragraphs.load([]);
+    this.docRequest = [];
     this.totalItems = 0;
-    // this.loading = false;
-    // this.getData(new ListParams());
+    this.loading = false;
   }
 }

@@ -57,12 +57,10 @@ export class ListServiceOrdersComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('this.searchForm', this.searchForm);
     if (this.sampleOrderId > 0 && !this.searchForm) {
       this.getSamplingOrder();
     }
     if (this.allOrderService.length > 0) {
-      console.log('this.allOrderService', this.allOrderService);
       this.loading = true;
 
       if (this.searchForm.id) {
