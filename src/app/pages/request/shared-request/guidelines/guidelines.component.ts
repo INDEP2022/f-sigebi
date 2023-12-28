@@ -43,6 +43,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   guidelinesColumns: any[] = [];
   loadingTurn = false;
+  configuration: any = null;
 
   guidelinesSettings = {
     ...TABLE_SETTINGS,
@@ -129,7 +130,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'firstRevision';
             instance.cellChanged.subscribe(row => {
-              console.log('cellChanged', row);
+
             });
           }
         }
@@ -144,7 +145,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'firstRevisionObserv';
             instance.cellChanged.subscribe(row => {
-              console.log('cellChanged', row);
+
             });
           }
         }
@@ -158,7 +159,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'secondRevision';
             instance.cellChanged.subscribe(row => {
-              console.log('cellChanged', row);
+
             });
           }
         }
@@ -173,7 +174,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'secondRevisionObserv';
             instance.cellChanged.subscribe(row => {
-              console.log('cellChanged', row);
+
             });
           }
         }
@@ -200,7 +201,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   editGuideline(event: any) {
-    console.log(event);
+
     let { newData, confirm, data } = event;
     // Llamar servicio para editar
     // console.log(newData);
@@ -221,16 +222,51 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     clg: event;
   }
 
-  save() {
+  async save() {
     // Llamar servicio para guardar informacion
 
     let validate = this.guidelinesColumns.every(objeto => {
       return Object.values(objeto).every(valor => !isNullOrEmpty(valor));
     });
 
+    if (!validate) {
+      this.msgModal(
+        'Debe llenar todos los campos'.concat(),
+        'Campos requeridos',
+        'warning'
+      );
+      return;
+    }
+
+    let config = this.guidelinesForm.getRawValue();
+    let isNew = true;
+
+    let deault = this.loadGuidelines.find(x => x.lineamentId == 5);
+    isNew = isNullOrEmpty(deault);
+    if (isNew) {
+      deault = this.getObject({
+        id: 5,
+        firstRevision: 'N/A',
+        secondRevision: 'NA',
+        firstRevisionObserv: '',
+        secondRevisionObserv: ' ',
+      });
+    }
+
+    deault.missingActionsRev1 = isNullOrEmpty(config.observations) ? " " : config.observations;
+
+    deault.dateCreation = moment(new Date(config.firstRevisionDate));
+    deault.dateModification = isNullOrEmpty(config.secondRevisionDate) ? null :
+      moment(new Date(config.secondRevisionDate));
+
+    deault.version = !isNullOrEmpty(config.secondRevisionDate) ? "2" : "1";
+
+    await this.saveGuidelines(isNew, deault);
+
     let promises = this.guidelinesColumns.map(async (element: any) => {
+      let deault = this.loadGuidelines.find(x => x.lineamentId == element.id);
       let obj = this.getObject(element);
-      return this.saveGuidelines(obj);
+      return this.saveGuidelines(isNullOrEmpty(deault), obj);
     });
 
     Promise.all(promises).then(() => {
@@ -243,23 +279,14 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       );
     });
 
-    /*if (validate) {
-      
-    } else {
-      this.msgModal(
-        'Debe completar todos los campos'.concat(),
-        'Error',
-        'error'
-      );
-    }*/
   }
 
   getObject(obj) {
     const user: any = this.authService.decodeToken();
 
     return {
-      applicationId: this.requestId,
-      lineamentId: obj.id,
+      applicationId: this.requestId.toString(),
+      lineamentId: obj.id.toString(),
       meetsRevision1: obj.firstRevision,
       meetsRevision2: obj.secondRevision,
       missingActionsRev1: obj.firstRevisionObserv,
@@ -301,20 +328,23 @@ export class GuidelinesComponent extends BasePage implements OnInit {
             let item = this.loadGuidelines.find(
               x => x.lineamentId == element.id
             );
-
-            element.firstRevision = item.meetsRevision1;
-            element.secondRevision = item.meetsRevision2;
-            element.firstRevisionObserv = item.missingActionsRev1;
-            element.secondRevisionObserv = item.missingActionsRev2;
+            if (!isNullOrEmpty(item)) {
+              element.firstRevision = item.meetsRevision1;
+              element.secondRevision = item.meetsRevision2;
+              element.firstRevisionObserv = (item.missingActionsRev1 + "").trim();
+              element.secondRevisionObserv = (item.missingActionsRev2 + "").trim();
+            }
           });
 
-          this.guidelinesForm.patchValue({
-            firstRevisionDate: new Date(this.loadGuidelines[0].dateCreation),
-            secondRevisionDate: new Date(
-              this.loadGuidelines[0].dateModification
-            ),
-            observations: this.loadGuidelines[0].missingActionsRev1,
-          });
+          let deault = this.loadGuidelines.find(x => x.lineamentId == 5);
+          if (!isNullOrEmpty(deault)) {
+            this.guidelinesForm.patchValue({
+              firstRevisionDate: new Date(deault.dateCreation),
+              secondRevisionDate: deault.version == "1" ? null : new Date(deault.dateModification),
+              observations: (deault.missingActionsRev1 + "").trim(),
+            });
+          }
+
         }
 
         this.getData(this.guidelinesData);
@@ -327,15 +357,15 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     });
   }
 
-  saveGuidelines(object) {
-    if (this.loadGuidelines.length == 0) {
+  saveGuidelines(create, object) {
+    if (create) {
       return new Promise((resolve, reject) => {
         this.guidelinesService.createGuidelines(object).subscribe({
           next: resp => {
             resolve(resp);
           },
           error: err => {
-            reject(err);
+            resolve(err);
           },
         });
       });
@@ -346,7 +376,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
             resolve(resp);
           },
           error: err => {
-            reject(err);
+            resolve(err);
           },
         });
       });

@@ -17,17 +17,16 @@
           <div class="p-2">
             <button
               (click)="signDocument()"
-              *ngIf="typeFirm == 'electronica' && !showTDR"
+              *ngIf="signed && (typeFirm == 'electronica' && !showTDR)"
               class="btn btn-primary btn-sm active">
               {{ btnTitle }} <i class="bx bx-edit-alt"></i>
             </button>
             <button
               (click)="signDocument()"
-              *ngIf="
+              *ngIf="signed && (
                 (typeFirm == 'autografa' && !showTDR) ||
                 (typeFirm == 'autograf' && !showTDR) ||
-                idOrderService
-              "
+                idOrderService)"
               class="btn btn-primary btn-sm active">
               {{ btnTitle }} <i class="fa fa-file"></i>
             </button>
