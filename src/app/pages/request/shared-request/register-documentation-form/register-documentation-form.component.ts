@@ -317,6 +317,12 @@ export class RegisterDocumentationFormComponent
         request.receptionDate = this.bsReceptionValue.toISOString();
         request.transferEntNotes =
           request.transferEntNotes == '' ? null : request.transferEntNotes;
+
+        for (const key in request) {
+          if (request.hasOwnProperty(key) && request[key] === '') {
+            request[key] = null;
+          }
+        }
         console.log(request);
         this.requestService.update(request.id, request).subscribe({
           next: resp => {
