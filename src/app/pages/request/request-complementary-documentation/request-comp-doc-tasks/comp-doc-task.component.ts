@@ -936,7 +936,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.finish = true;
 
         //Configuracion de reporte
-        this.reportId = REPORT_DOCUMENTS.ACTA_RESARCIMIENTO_ECONOMICO;
+        this.reportId =
+          REPORT_DOCUMENTS.ACTA_RESARCIMIENTO_ECONOMICO +
+          ',' +
+          REPORT_DOCUMENTS.NOTIFICACION_CONTRIBUYENTE;
         this.signedReport = true;
         this.editReport = true;
 
