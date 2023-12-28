@@ -45,8 +45,7 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -176,6 +175,7 @@ export class RequestCompDocTasksComponent
     registerAppointment: false, //REGISTRAR CITA
     orderEntry: false, //ORDEN DE INGRESO
     programVisit: false, //ORDEN DE INGRESO
+    legalStatus: false, //CAMBIO DE ESTATUS LEGAL
   };
 
   /* INJECTIONS
@@ -313,7 +313,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   async openReport(): Promise<void> {
     if (!this.nextTurn) {
@@ -345,11 +345,11 @@ export class RequestCompDocTasksComponent
 
     modalRef.content.refresh.subscribe(response => {
       if (response.upload) {
-        this.requestInfo.detail.reportSheet = 'Y';
-        this.updateRequest(false);
+        //this.requestInfo.detail.reportSheet = 'Y';
+        //this.updateRequest(false);
       } else if (response.sign) {
-        this.requestInfo.detail.reportSheet = 'YY';
-        this.updateRequest(false);
+        //this.requestInfo.detail.reportSheet = 'YY';
+        //this.updateRequest(false);
       }
     });
   }
@@ -901,7 +901,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1460,9 +1460,9 @@ export class RequestCompDocTasksComponent
 
       case 'protection-regulation':
         //reportLoad = await this.getStatusReport();
-        if (!reportLoad.isValid) {
-          //this.showWarning('Genera el reporte de oficio jurídico');
-          //return false;
+        if (this.requestInfo.detail.reportSheet != 'OCSJ') {
+          this.showWarning('Genera el reporte de oficio jurídico');
+          return false;
         }
         /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
@@ -1543,7 +1543,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1563,7 +1563,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1579,7 +1579,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1652,12 +1652,15 @@ export class RequestCompDocTasksComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    /*modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
-    });*/
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+        this.requestInfo.detail.reportSheet = 'OCSJ';
+        this.updateRequest(false);
+      }
+    });
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   showReport(data) {
     console.log(data);
@@ -1686,7 +1689,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => {},
+        error: error => { },
       });
     }
   }
