@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -7,11 +8,13 @@ import {
   Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILegalAffair } from 'src/app/core/models/catalogs/legal-affair-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { LegalAffairService } from 'src/app/core/services/catalogs/legal-affair.service';
@@ -47,7 +50,11 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   private legalTradeService = inject(LegalTradesService);
   private serviceDelegations = inject(DelegationService);
 
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private readonly authService: AuthService
+  ) {
     super();
     this.settingsTwo = {
       ...this.settings,
@@ -188,10 +195,10 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
     this.legalTradeService.updateLegalTrades(object).subscribe({
       next: resp => {
         this.getAllTrades();
-        this.onLoadToast('success', 'Oficio generado con éxito');
+        this.onLoadToast('success', 'Oficio actualizado con éxito');
       },
       error: error => {
-        this.onLoadToast('error', 'No se pudo generar el oficio');
+        this.onLoadToast('error', 'No se pudo actualizar el oficio');
       },
     });
   }
@@ -209,7 +216,10 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.recDoc = resp;
-          console.log('valida si existe' + resp);
+          resp['providedDate'] = new DatePipe('en-EN').transform(
+            resp['providedDate'],
+            'dd/MM/yyyy'
+          );
           this.form.patchValue(resp);
         },
         error: error => {
@@ -252,17 +262,21 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       let dateString = date.toISOString();
       let splitId = parseInt(dateString.split('-')[2].substring(3));
 
+      const user: any = this.authService.decodeToken();
+
+      (object['creationUser'] = user.username),
+        (object['modificationDate'] = moment(new Date()).format('YYYY-MM-DD')),
+        (object['modificationUser'] = user.username),
+        (object['creationDate'] = moment(new Date()).format('YYYY-MM-DD')),
+        (object['version'] = 1);
+      object['documentTypeId'] = 1;
       console.log(object);
 
       if (isNullOrEmpty(this.recDoc)) {
-        console.log('entra a crear');
         object['jobLegalId'] = splitId;
-
         this.createLegalDoc(object);
       } else {
         object['jobLegalId'] = this.recDoc['jobLegalId'];
-
-        console.log('entra a actualizar');
         this.updatedLegalDoc(object);
       }
     } else {
