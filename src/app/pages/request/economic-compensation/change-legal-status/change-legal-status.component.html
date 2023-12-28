@@ -173,7 +173,7 @@
         <confirm-button
           *ngIf="isJuridicVisible"
           [type]="'button'"
-          disbled="!form.valid"
+          [disabled]="!form.valid"
           (click)="save()"></confirm-button>
         <confirm-button
           *ngIf="isDelegationsVisible"
