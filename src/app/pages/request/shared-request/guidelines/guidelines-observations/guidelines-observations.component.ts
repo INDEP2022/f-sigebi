@@ -36,4 +36,9 @@ export class GuidelinesObservationsComponent
 
   }
 
+  change(event) {
+    this.rowData[this.key] = this.value;
+    this.cellChanged.emit(this.rowData);
+  }
+
 }
