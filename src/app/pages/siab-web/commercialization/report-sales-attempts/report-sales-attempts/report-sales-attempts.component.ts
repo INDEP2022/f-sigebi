@@ -84,6 +84,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   totalItems2: number = 0;
   totalItems3: number = 0;
+  selecctTipoData: any;
   private isFirstLoad = true;
   private isSecondLoad = true;
 
@@ -149,6 +150,11 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
   enableButton() {
     this.loadingBtn2 = true;
+  }
+  enableButton1(event: any) {
+    this.loadingBtn2 = true;
+    console.log(event);
+    this.selecctTipoData = event;
   }
   chargeFile(event: any) {}
 
@@ -462,12 +468,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
     const selectedTypeNumber = this.form.get('typeGood').value;
     const selectedTypeStatus = this.form.get('typeStatus').value;
-    const resultArray = this.tiposData.data['filter'](
-      (item: any) => item.clasifGoodNumber === selectedTypeNumber
-    );
-    const resultStatus = this.tiposstatus.data['filter'](
-      (item: any) => item.status === selectedTypeStatus
-    );
+
     console.log(selectedTypeStatus);
 
     if (!selectedTypeStatus) {
@@ -477,14 +478,12 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       return;
     }
 
-    console.log(selectedTypeNumber);
-
     let params = {
       ...this.params2.getValue(),
     };
     let body = {
-      pType: resultArray[0].typeNumber,
-      pSubtypes: resultArray[0].subTypeNumber,
+      pType: this.selecctTipoData.typeNumber,
+      pSubtypes: this.selecctTipoData.subTypeNumber,
       pStatus: this.form.get('typeStatus').value,
     };
     console.log(params);
