@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-get-cfdi',
@@ -16,11 +17,13 @@ export class GetCfdiComponent extends BasePage implements OnInit {
   currentYear: number = new Date().getFullYear();
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
+  valSearch: boolean = false;
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
+      columns: COLUMNS,
     };
   }
 
@@ -43,5 +46,7 @@ export class GetCfdiComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  search() {}
+  search() {
+    this.valSearch = !this.valSearch;
+  }
 }
