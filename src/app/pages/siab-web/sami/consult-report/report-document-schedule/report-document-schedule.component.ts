@@ -54,10 +54,10 @@ export class ReportDocumentScheduleComponent
 
       edit: {
         editButtonContent:
-          '<i class="fa fa-file text-primary mx-3 ml-5" > </i>',
+          '<i class="fa fa-file text-primary mx-2 ml-4" > </i>',
       },
       delete: {
-        deleteButtonContent: '<i  class="fa fa-eye text-info mx-2 ml-2"> </i>',
+        deleteButtonContent: '<i  class="fa fa-eye text-info mx-2"> </i>',
       },
       columns: DOC_REQUEST_TAB_COLUMNS,
     };

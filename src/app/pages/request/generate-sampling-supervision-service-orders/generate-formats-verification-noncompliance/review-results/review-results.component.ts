@@ -6,6 +6,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISamplingOrder } from 'src/app/core/models/ms-order-service/sampling-order.model';
 import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
@@ -19,6 +20,8 @@ import Swal from 'sweetalert2';
 import { BasePage, TABLE_SETTINGS } from '../../../../../core/shared/base-page';
 import { AnnexKFormComponent } from '../../../generate-sampling-supervision/generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
 import { LIST_DEDUCTIVES_VIEW_COLUMNS } from '../../../generate-sampling-supervision/sampling-assets/sampling-assets-form/columns/list-deductivas-column';
+import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 
 @Component({
   selector: 'app-review-results',
@@ -44,6 +47,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   loadingDeductives: boolean = true;
   paragraphsDeductivas = new LocalDataSource();
   allDeductives: any = [];
+  sampleOrderInfo: ISamplingOrder;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -158,40 +162,66 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   }
 
   async openAnnexK() {
-    //verificar anexo k desde donde se llama si es aprobacion de resultados o generacion de formato
-    const annextForm: ISamplingOrder = await this.getSampleOrder();
-    if (annextForm.idcontentksae == null) {
-      this.openModal(AnnexKFormComponent, annextForm, 'revition-results');
-      //this.openModal(AnnexKComponent, annextForm, 'revition-results');
-    } else {
-      this.openReport(annextForm);
-    }
+    let config: ModalOptions = {
+      initialState: {
+        idSampleOrder: this.sampleOrderId,
+        typeAnnex: 'revition-results',
+        callback: async (typeDocument: number, typeSign: string) => {
+          if (typeDocument && typeSign) {
+            this.showReportInfo(typeDocument, typeSign, 'revition-results');
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AnnexKFormComponent, config);
   }
 
   searchEvent(event: any) {
     this.searchForm = event;
   }
 
-  openModal(component: any, data?: any, typeAnnex?: String): void {
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const orderSampleId = this.sampleOrderId;
+    const typeFirm = typeSign;
+    //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
-        annexData: data,
-        typeAnnex: typeAnnex,
+        idTypeDoc,
+        orderSampleId,
+        typeFirm,
+        typeAnnex,
         callback: (next: boolean) => {
-          //if (next){ this.getData();}
+          if (next) {
+            if (typeFirm != 'electronica') {
+              this.uploadDocument(typeDocument);
+            } else {
+              this.getSampleOrder();
+            }
+          }
         },
       },
-      class: 'modalSizeXL modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(component, config);
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
 
-    //this.bsModalRef.content.event.subscribe((res: any) => {
-    //cargarlos en el formulario
-    //console.log(res);
-    //this.assetsForm.controls['address'].get('longitud').enable();
-    //this.requestForm.get('receiUser').patchValue(res.user);
-    //});
+  uploadDocument(typeDocument: number) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      typeDoc: typeDocument,
+      idSampleOrder: this.sampleOrderId,
+      callback: (data: boolean) => {
+        if (data) {
+          this.getSampleOrder();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
   }
 
   keyFunc(event: any) {
@@ -218,6 +248,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
       params['filter.idSamplingOrder'] = `$eq:${id}`;
       this.orderService.getAllSampleOrder(params).subscribe({
         next: resp => {
+          this.sampleOrderInfo = resp.data[0];
           resolve(resp.data[0]);
         },
       });
@@ -291,9 +322,9 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     });
   }
 
-  openReport(annextForm: ISamplingOrder) {
+  openReport() {
     this.wContentService
-      .obtainFile(annextForm.idcontentksae)
+      .obtainFile(this.sampleOrderInfo.idcontentk)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {

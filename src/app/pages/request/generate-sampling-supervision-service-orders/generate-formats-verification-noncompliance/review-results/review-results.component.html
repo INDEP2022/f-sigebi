@@ -37,9 +37,16 @@
             <div class="d-flex justify-content-end">
               <div class="p-2">
                 <button
+                  *ngIf="!sampleOrderInfo?.idcontentksae"
                   class="btn btn-secondary btn-sm active"
                   (click)="openAnnexK()">
                   Anexo K <i class="bx bxs-file"></i>
+                </button>
+                <button
+                  *ngIf="sampleOrderInfo?.idcontentksae"
+                  class="btn btn-secondary btn-sm active"
+                  (click)="openReport()">
+                  Ver anexo K <i class="bx bxs-file"></i>
                 </button>
               </div>
             </div>
