@@ -20,29 +20,29 @@ export class DictumInformationComponent implements OnInit {
 
   recDoc: Object = null;
 
+  dictunNo: string = '';
+  dictumDate: string = '';
+  courtroom: string = '';
+  judgementNullity: string = '';
+  adminiResolutionNo: string = '';
+  paymentOrderNo: string = '';
+  paymentAmount: number = 0;
+  contributor: string = '';
+  address1: string = '';
+  address2: string = '';
+  legalRepresentative: string = '';
+  requiredSatCopy: string = '';
+
   constructor() {}
 
   ngOnInit(): void {
-    this.getDictumInfo();
     this.getRequestInfo();
+    //this.getDictumInfo();
   }
 
   getDictumInfo() {
     // Llamar servicio para obtener informacion del dictamen
-    this.dictumInfo = {
-      dictumNo: '3234234',
-      dictumDate: '14/09/2011',
-      courtroom: '13',
-      judgementNullity: '1231231',
-      adminiResolutionNo: '14752',
-      paymentOrderNo: '654821',
-      paymentAmount: 15423,
-      contributor: 'Carlos G. Palma',
-      address1: 'Dirección 1 Ejemplo',
-      address2: 'Dirección 2 Ejemplo',
-      legalRepresentative: 'Ejemplo Representante Legal',
-      requiredSatCopy: 'NO',
-    };
+    this.dictumInfo = {};
   }
 
   getRequestInfo() {
@@ -78,8 +78,23 @@ export class DictumInformationComponent implements OnInit {
       .subscribe({
         next: resp => {
           console.log(resp);
-          this.dictumInfo = {
-            dictumNo: resp.opinionNumber,
+
+          this.dictunNo = resp.opinionNumber;
+          this.dictumDate = new DatePipe('en-US').transform(
+            resp.opinionDate,
+            'dd/MM/yyyy'
+          );
+          this.courtroom = resp.veredict;
+          this.judgementNullity = resp.nullityTrial;
+          this.adminiResolutionNo = resp.adminResolutionNo;
+          this.paymentOrderNo = resp.payOrderNo;
+          this.paymentAmount = resp.amountToPay;
+          this.contributor = this.recDoc['indicatedTaxpayer'];
+          this.address1 = resp.taxpayerDomicile;
+          this.address2 = resp.fiscalDomicile;
+          this.legalRepresentative = resp.legalRepresentative;
+          this.requiredSatCopy = this.val(resp.satCopy);
+          /*this.dictumInfo = {
             dictumDate: new DatePipe('').transform(
               resp.opinionDate,
               'dd/MM/yyyy'
@@ -94,7 +109,7 @@ export class DictumInformationComponent implements OnInit {
             address2: resp.fiscalDomicile,
             legalRepresentative: resp.legalRepresentative,
             requiredSatCopy: this.val(resp.satCopy),
-          };
+          };*/
         },
         error: error => {},
       });

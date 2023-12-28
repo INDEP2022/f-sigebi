@@ -1,5 +1,4 @@
 export interface IDictumInformation {
-  dictumNo: string; // Numero del Dictamen
   dictumDate?: string; // Fecha del Dictamen
   courtroom?: string; // Juzgado / Sala
   judgementNullity?: string; // Juicio Nulidad
