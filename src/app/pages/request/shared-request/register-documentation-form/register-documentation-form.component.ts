@@ -21,6 +21,7 @@ import {
   NUM_POSITIVE,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
+  STRING_PATTERN_LETTER,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -91,7 +92,7 @@ export class RegisterDocumentationFormComponent
       priorityDate: [null],
       indicatedTaxpayer: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN_LETTER)],
       ],
       typeRecord: [null],
       originInfo: [null],

@@ -1472,6 +1472,23 @@ export class RequestCompDocTasksComponent
           return false;
         }*/
         break;
+
+      case 'review-result-protection':
+        if (!this.validate.guidelines) {
+          this.showWarning('Verifique las observaciones de lineamientos');
+          return false;
+        }
+
+        if (!reportLoad.isSigned) {
+          //this.showWarning('Firme el reporte de oficio jurídico');
+          //return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
     }
 
     return true;
@@ -1637,7 +1654,7 @@ export class RequestCompDocTasksComponent
   showReport(data) {
     console.log(data);
 
-    if (isNullOrEmpty(data.contentId)) {
+    if (false) {
       this.wContentService
         .downloadDinamycReport(
           'sae.rptdesign',
