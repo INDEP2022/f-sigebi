@@ -1683,13 +1683,13 @@ export class DetailAssetsTabComponentComponent
             this.viewAct = !this.viewAct;
             this.disableUpdate = !this.disableUpdate;
             this.good = resp;
-            this.alert('success', 'El Bien se ha Actualizado', '');
+            this.alert('success', 'El Bien se ha actualizado', '');
             setTimeout(() => {
               this.goodChange++;
             }, 100);
           },
           error: err => {
-            this.alert('error', 'Error al Actualizar el Bien', '');
+            this.alert('error', 'Error al actualizar el Bien', '');
           },
         });
       }
