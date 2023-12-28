@@ -65,9 +65,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() updateInfo: boolean = true;
   @Input() btnGrouper: boolean = false;
 
-
-
-
   goodSelected: boolean = false;
   jsonBody: any = {};
 
@@ -171,10 +168,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     //this.selectedGoodColumns = datagood;
 
     this.getInfoRequest();
-
   }
 
   getFormSeach(recordId: any) {
+    this.loading = true;
     this.requestService.getById(recordId).subscribe({
       next: resp => {
         console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
@@ -185,10 +182,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.alert('warning', 'No se encontraron registros', '');
       },
     });
+    this.loading = false;
   }
 
   getInfoRequest() {
-
     this.selectedGoodColumns = [];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
 
@@ -197,7 +194,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => { },
+      error: error => {},
     });
 
     const param = new FilterParams();
@@ -205,7 +202,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     const filter = param.getParams();
     this.rejectedGoodService.getAll(filter).subscribe({
       next: response => {
-
         this.selectedGoodColumns = [];
         this.selectedGoodTotalItems = this.selectedGoodColumns.length;
 
@@ -214,11 +210,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         });
 
         this.displayColumns();
-
       },
       error: error => {
         this.displayColumns();
-
       },
     });
   }
@@ -229,8 +223,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     }
   }
 
-
-
   getProcessDetonate() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.nbOrigen'] = 'SAMI';
@@ -239,7 +231,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -249,7 +241,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         response.recordId;
         this.openModalDocument(idRequest, response.recordId);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -262,7 +254,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => { },
+      callback: (next: boolean) => {},
     };
 
     this.modalService.show(ShowDocumentsGoodComponent, config);
@@ -435,12 +427,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
-  viewFile(file: any) { }
+  viewFile(file: any) {}
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -555,7 +547,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -585,7 +577,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   displayColumns() {
-
     const columnas = this.table.grid.getColumns();
 
     const goodGrouper = columnas.find(
@@ -593,7 +584,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     );
 
     if (!isNullOrEmpty(goodGrouper)) {
-      goodGrouper.hide = isNullOrEmpty(this.btnGrouper) ? true : !this.btnGrouper;
+      goodGrouper.hide = isNullOrEmpty(this.btnGrouper)
+        ? true
+        : !this.btnGrouper;
     }
 
     if (this.processDet != 'RES_PAGO_ESPECIE') {

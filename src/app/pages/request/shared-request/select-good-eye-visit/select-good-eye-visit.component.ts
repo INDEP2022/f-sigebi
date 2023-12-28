@@ -373,6 +373,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   }
 
   getFormSeach(recordId: any) {
+    this.loading = true;
     this.requestService.getById(recordId).subscribe({
       next: resp => {
         console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
@@ -383,6 +384,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
         this.alert('warning', 'No se encontraron registros', '');
       },
     });
+    this.loading = false;
   }
 
   openDetail(data: any): void {
