@@ -15,20 +15,18 @@ import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import * as moment from 'moment';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ReportService } from 'src/app/core/services/catalogs/reports.service';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
-import { takeUntil } from 'rxjs';
-import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
-import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
-import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 const font = Quill.import('formats/font');
 font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
@@ -42,7 +40,13 @@ class Document {
 @Component({
   selector: 'app-create-report',
   templateUrl: './create-report.component.html',
-  styles: [`.ngx-spinner-icon { display: none !important;}`],
+  styles: [
+    `
+      .ngx-spinner-icon {
+        display: none !important;
+      }
+    `,
+  ],
 })
 export class CreateReportComponent extends BasePage implements OnInit {
   @ViewChild('tabsReport', { static: false }) tabsReport?: TabsetComponent;
@@ -95,7 +99,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getCatFormats(new ListParams());
-    this.getVersionsDoc();
     this.prepareForm();
   }
 
@@ -118,7 +121,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
     this.reportService.getAll(params).subscribe({
       next: resp => {
-
         let ids = this.documentTypeId.split(',');
         let list = resp.data.filter(x => ids.includes(x.doctoTypeId.id));
 
@@ -126,11 +128,10 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.format = list[0];
           this.form.get('template').setValue(list[0].id);
           this.formats = new DefaultSelect(list, list.length);
+          this.getVersionsDoc();
         } else {
           this.formats = new DefaultSelect(resp.data, resp.count);
         }
-
-
       },
       error: err => {
         this.formats = new DefaultSelect();
@@ -140,7 +141,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   async getVersionsDoc() {
     let params = new ListParams();
-    params['filter.documentTypeId'] = `$eq:${this.documentTypeId}`;
+    params['filter.documentTypeId'] = `$eq:${this.format.doctoTypeId.id}`;
     params['filter.tableName'] = `$eq:${this.tableName}`;
     params['filter.registryId'] = `$eq:${this.requestId}`;
 
@@ -152,14 +153,11 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.isSigned = this.version.signedReport == 'Y';
         }
       },
-      error: err => {
-
-      },
+      error: err => {},
     });
   }
 
   async saveVersionsDoc(close = true) {
-
     if (isNullOrEmpty(this.version.content)) return;
 
     const user: any = this.authService.decodeToken();
@@ -170,7 +168,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     let doc: any = {
       tableName: this.tableName,
       registryId: this.requestId,
-      documentTypeId: this.documentTypeId,
+      documentTypeId: this.format.doctoTypeId.id,
       content: this.format.content,
       signedReport: 'N',
       version: '1',
@@ -184,17 +182,15 @@ export class CreateReportComponent extends BasePage implements OnInit {
       modificationDate: moment(new Date()).format('YYYY-MM-DD'),
     };
 
-    this.reportgoodService
-      .saveReportDynamic(doc, !this.template)
-      .subscribe({
-        next: resp => {
-          this.template = true;
-          if (close) {
-            this.onLoadToast('success', 'Documento guardado correctamente', '');
-          }
-        },
-        error: err => { },
-      });
+    this.reportgoodService.saveReportDynamic(doc, !this.template).subscribe({
+      next: resp => {
+        this.template = true;
+        if (close) {
+          this.onLoadToast('success', 'Documento guardado correctamente', '');
+        }
+      },
+      error: err => {},
+    });
   }
 
   onContentChanged = (event: any) => {
@@ -251,7 +247,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   onChange() {
     this.refresh.emit({
       upload: !isNullOrEmpty(this.version.content),
-      sign: false
+      sign: false,
     });
   }
 
@@ -353,7 +349,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     this.show.emit(this.version);
   }
 
-  idSample = "328";
+  idSample = '328';
 
   openSignature() {
     this.openModal(
@@ -362,11 +358,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
       'sign-annexJ-assets-classification'
     );
     this.close();
-
   }
 
   openModal(component: any, idSample?: any, typeAnnex?: string): void {
-
     if (!this.isSigned) {
       let config: ModalOptions = {
         initialState: {
@@ -387,7 +381,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
     } else {
       this.showReportInfo(0, '', '');
     }
-
   }
 
   showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
@@ -410,7 +403,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
         tableName,
         reportName,
         signed,
-        callback: (data) => {
+        callback: data => {
           if (data) {
             if (typeFirm != 'electronica') {
               this.uploadDocument(typeDocument);
@@ -431,7 +424,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     config.initialState = {
       typeDoc: typeDocument,
       idSample: this.idSample,
-      callback: (data) => {
+      callback: data => {
         if (data) {
           //this.getInfoSample();
         }
@@ -440,5 +433,4 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
     this.modalService.show(UploadReportReceiptComponent, config);
   }
-
 }
