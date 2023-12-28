@@ -1334,9 +1334,21 @@ export class RequestCompDocTasksComponent
 
         reportLoad = await this.getStatusReport();
         if (!reportLoad.isValid) {
-          this.showWarning('Genera el dictamen de resarcimiento');
+          this.showWarning('Genera el acta de resarcimiento');
           return false;
         }
+
+        reportLoad = await this.getStatusReport(1);
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el reporte de notificación');
+          return false;
+        }
+
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el reporte de notificación');
+          return false;
+        }
+
         break;
 
       case 'register-domain-extinction':
@@ -1711,9 +1723,11 @@ export class RequestCompDocTasksComponent
     this.modalService.show(PreviewDocumentsComponent, config);
   }
 
-  getStatusReport() {
+  getStatusReport(position = 0) {
     let params = new ListParams();
-    params['filter.documentTypeId'] = `$eq:${this.reportId}`;
+
+    let ids = this.reportId.split(',');
+    params['filter.documentTypeId'] = `$eq:${ids[position]}`;
     params['filter.tableName'] = `$eq:${this.reportTable}`;
     params['filter.registryId'] = `$eq:${this.requestId}`;
 
