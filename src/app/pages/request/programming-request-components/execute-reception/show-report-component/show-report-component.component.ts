@@ -1442,22 +1442,41 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   updateSampleOrder(dDocName: string) {
     return new Promise((resolve, reject) => {
-      const body = {
-        idSamplingOrder: this.orderSampleId,
-        idcontentk: dDocName,
-      };
-      this.orderService.updateSampleOrder(body).subscribe({
-        next: () => {
-          resolve(true);
-        },
-        error: error => {
-          this.onLoadToast(
-            'error',
-            'error al actualizar el muestreo de ordenes'
-          );
-          reject(error);
-        },
-      });
+      if (this.typeAnnex == 'sign-k-order-sample') {
+        const body = {
+          idSamplingOrder: this.orderSampleId,
+          idcontentk: dDocName,
+        };
+        this.orderService.updateSampleOrder(body).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'error al actualizar el muestreo de ordenes'
+            );
+            reject(error);
+          },
+        });
+      } else {
+        const body = {
+          idSamplingOrder: this.orderSampleId,
+          idcontentksae: dDocName,
+        };
+        this.orderService.updateSampleOrder(body).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'error al actualizar el muestreo de ordenes'
+            );
+            reject(error);
+          },
+        });
+      }
     });
   }
 

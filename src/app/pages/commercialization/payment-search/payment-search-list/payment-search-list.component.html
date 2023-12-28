@@ -6,7 +6,7 @@
     <div class="row">
       <form class="form-material mb-0" [formGroup]="searchForm">
         <div class="row">
-          <div class="col-sm-6 col-md-3">
+          <div class="col-sm-6 col-md-2">
             <form-field [control]="searchForm.get('event')" label="Evento">
               <input
                 type="number"
@@ -15,7 +15,7 @@
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-sm-6 col-md-3">
+          <div class="col-sm-6 col-md-2">
             <form-field [control]="searchForm.get('batch')" label="Lote">
               <input
                 type="number"
@@ -24,8 +24,18 @@
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-sm-6 col-md-3">
-            <form-field [control]="searchForm.get('bank')" label="Banco">
+          <div class="col-sm-12 col-md-6">
+            <ng-custom-select-loading
+              [form]="searchForm"
+              formControlName="bank"
+              label="Banco"
+              path="catalog/api/v1/bank"
+              value="bankCode"
+              paramSearch="filter.bankCode"
+              prefixSearch="$ilike"
+              [labelTemplate]="bankLabel"
+              [optionTemplate]="bankOption"></ng-custom-select-loading>
+            <!-- <form-field [control]="searchForm.get('bank')" label="Banco">
               <ng-custom-select
                 formControlName="bank"
                 class="form-control"
@@ -38,9 +48,17 @@
                   >{{ item.bankCode }} - {{ item.name }}</ng-template
                 >
               </ng-custom-select>
-            </form-field>
+            </form-field> -->
+            <ng-template #bankLabel let-item
+              >{{ item.bankCode }} - {{ item.name }}</ng-template
+            >
+            <ng-template #bankOption let-item="item">
+              <div [title]="item.bankCode + '-' + item.name">
+                {{ item.bankCode }} - {{ item.name }}
+              </div>
+            </ng-template>
           </div>
-          <div class="col-sm-6 col-md-3">
+          <div class="col-sm-6 col-md-2">
             <form-field [control]="searchForm.get('amount')" label="Monto">
               <input
                 currencyMask

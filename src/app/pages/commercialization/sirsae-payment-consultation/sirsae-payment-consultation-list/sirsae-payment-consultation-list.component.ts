@@ -18,7 +18,7 @@ import { CONSULT_SIRSAE_COLUMNS } from './sirsae-payment-consultation-columns';
 @Component({
   selector: 'app-sirsae-payment-consultation-list',
   templateUrl: './sirsae-payment-consultation-list.component.html',
-  styles: [],
+  styleUrls: ['./sirsae-payment-consultation.css'],
 })
 export class SirsaePaymentConsultationListComponent
   extends BasePage

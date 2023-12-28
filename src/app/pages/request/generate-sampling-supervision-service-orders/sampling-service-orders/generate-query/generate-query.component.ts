@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
@@ -86,7 +86,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     private orderService: OrderServiceService,
     private authService: AuthService,
     private deleRegService: RegionalDelegationService,
-    private samplinggoodService: SamplingGoodService,
+
     private transferentService: TransferenteService,
     private samplingGoodService: SamplingGoodService,
     private deductiveService: DeductiveVerificationService,
@@ -229,9 +229,9 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   checkExistSampleOrder() {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.dateCreation'] = moment(new Date()).format(
+      /*params.getValue()['filter.dateCreation'] = moment(new Date()).format(
         'YYYY-MM-DD'
-      );
+      ); */
       params.getValue()['filter.periodSampling'] = moment(
         this.orderServiceForm.get('samplingPeriod').value
       ).format('YYYY-MM-DD');
@@ -437,7 +437,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
 
   async generateTask() {
     const user: any = this.authService.decodeToken();
-    const _task = JSON.parse(localStorage.getItem('Task'));
+
     let body: any = {};
 
     body['userProcess'] = user.username;
@@ -446,6 +446,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     body['ssubtype'] = 'TURNAR';
 
     let task: any = {};
+    task['id'] = 0;
     task['assignees'] = user.username;
     task['assigneesDisplayname'] = user.username;
     task['creator'] = user.username;
@@ -476,10 +477,12 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   createTaskOrderService(body: any) {
     return new Promise((resolve, reject) => {
       this.taskService.createTaskWitOrderService(body).subscribe({
-        next: () => {
+        next: response => {
+          console.log('response', response);
           resolve(true);
         },
-        error: () => {
+        error: error => {
+          console.log('error', error);
           resolve(false);
         },
       });
@@ -602,28 +605,6 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         this.paragraphsDeductivas.load(infoDeductives);
       },
       error: error => {},
-    });
-  }
-
-  getAllDeductives() {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.orderSampleId'] = `$eq:${this.sampleOrderId}`;
-      this.samplinggoodService
-        .getAllSampleDeductives(params)
-        .pipe(
-          catchError((e: any) => {
-            if (e.status == 400) {
-              return of({ data: [], count: 0 });
-            }
-            throw e;
-          })
-        )
-        .subscribe({
-          next: resp => {
-            resolve(resp.data);
-          },
-        });
     });
   }
 
@@ -897,4 +878,6 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  saveSample() {}
 }

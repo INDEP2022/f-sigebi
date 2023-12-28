@@ -1,18 +1,27 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISamplingOrder } from 'src/app/core/models/ms-order-service/sampling-order.model';
+import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
-import { BasePage } from '../../../../../core/shared/base-page';
+import { BasePage, TABLE_SETTINGS } from '../../../../../core/shared/base-page';
 import { AnnexKFormComponent } from '../../../generate-sampling-supervision/generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
+import { LIST_DEDUCTIVES_VIEW_COLUMNS } from '../../../generate-sampling-supervision/sampling-assets/sampling-assets-form/columns/list-deductivas-column';
+import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 
 @Component({
   selector: 'app-review-results',
@@ -20,38 +29,87 @@ import { AnnexKFormComponent } from '../../../generate-sampling-supervision/gene
   styleUrls: ['./review-results.component.scss'],
 })
 export class ReviewResultsComponent extends BasePage implements OnInit {
-  title: string = 'Captura de resultados';
   showSamplingDetail: boolean = true;
   showFilterAssets: boolean = true;
-  //pasar datos a los detalle de muestreo
+
   samplingDetailData: any;
   sampleOrderForm: FormGroup = new FormGroup({});
   //
   @Input() searchForm: any;
-  //datos anexo para pasar
+
   dataAnnex: any;
-  //Id del Muestreo del orden obtener de taras el id
-  sampleOrderId: number = null;
-  //en el caso de que sera una aprovacion de resultados se pone true
+
+  sampleOrderId: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   isApprovalResult: boolean = false;
-  input = '<input type="text" (keyup)="keyFunc($event)">';
-  lsEstatusMuestreo: string = 'MUESTREO_PENDIENTE_APROBACION';
-
-  private orderService = inject(OrderServiceService);
-  private fb = inject(FormBuilder);
-  private authServeice = inject(AuthService);
-  private wContentService = inject(WContentService);
-  private sanitizer = inject(DomSanitizer);
-
-  constructor(private modalService: BsModalService) {
+  lsEstatusMuestreo: string = '';
+  title: string = '';
+  loadingDeductives: boolean = true;
+  paragraphsDeductivas = new LocalDataSource();
+  allDeductives: any = [];
+  sampleOrderInfo: ISamplingOrder;
+  constructor(
+    private modalService: BsModalService,
+    private activatedRoute: ActivatedRoute,
+    private orderService: OrderServiceService,
+    private fb: FormBuilder,
+    private authServeice: AuthService,
+    private sanitizer: DomSanitizer,
+    private wContentService: WContentService,
+    private samplingGoodService: SamplingGoodService,
+    private deductiveService: DeductiveVerificationService
+  ) {
     super();
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+
+      columns: LIST_DEDUCTIVES_VIEW_COLUMNS,
+    };
   }
 
   ngOnInit(): void {
-    //setTimeout(() => {
-    this.sampleOrderId = 3;
-    //}, 2000);
+    this.sampleOrderId = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
+    this.title = `Captura de resultados ${this.sampleOrderId}`;
     this.initAnexForm();
+    this.getSampleDeductives();
+  }
+
+  getSampleDeductives() {
+    this.params.getValue()[
+      'filter.orderSampleId'
+    ] = `$eq:${this.sampleOrderId}`;
+    this.samplingGoodService
+      .getAllSampleDeductives(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.allDeductives = response.data;
+          this.getDeductives(response.data);
+        },
+        error: () => {},
+      });
+  }
+
+  getDeductives(deductivesRelSample: ISamplingDeductive[]) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.deductiveService.getAll(params.getValue()).subscribe({
+      next: response => {
+        const infoDeductives = response.data.map(item => {
+          deductivesRelSample.map(deductiveEx => {
+            if (deductiveEx.deductiveVerificationId == item.id) {
+              item.observations = deductiveEx.observations;
+              item.selected = true;
+            }
+          });
+          return item;
+        });
+        this.paragraphsDeductivas.load(infoDeductives);
+        this.loadingDeductives = false;
+      },
+      error: () => {},
+    });
   }
 
   initAnexForm() {
@@ -79,13 +137,12 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   }
 
   async turnSampling() {
-    const sampleOrder = await this.getSampleOrder();
+    /*const sampleOrder = await this.getSampleOrder();
     if (this.lsEstatusMuestreo == 'MUESTREO_NO_CUMPLE') {
       this.validateTurn(sampleOrder);
     } else if (this.lsEstatusMuestreo == 'MUESTREO_PENDIENTE_APROBACION') {
       this.sentRevision();
-    }
-
+    } */
     //verificar anexo k desde donde se llama si es aprobacion de resultados o generacion de formato
     /* if (this.isApprovalResult === false) {
       let title = 'Confirmación turnado';
@@ -105,40 +162,66 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   }
 
   async openAnnexK() {
-    //verificar anexo k desde donde se llama si es aprobacion de resultados o generacion de formato
-    const annextForm: ISamplingOrder = await this.getSampleOrder();
-    if (annextForm.idcontentksae == null) {
-      this.openModal(AnnexKFormComponent, annextForm, 'revition-results');
-      //this.openModal(AnnexKComponent, annextForm, 'revition-results');
-    } else {
-      this.openReport(annextForm);
-    }
+    let config: ModalOptions = {
+      initialState: {
+        idSampleOrder: this.sampleOrderId,
+        typeAnnex: 'revition-results',
+        callback: async (typeDocument: number, typeSign: string) => {
+          if (typeDocument && typeSign) {
+            this.showReportInfo(typeDocument, typeSign, 'revition-results');
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AnnexKFormComponent, config);
   }
 
   searchEvent(event: any) {
     this.searchForm = event;
   }
 
-  openModal(component: any, data?: any, typeAnnex?: String): void {
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const orderSampleId = this.sampleOrderId;
+    const typeFirm = typeSign;
+    //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
-        annexData: data,
-        typeAnnex: typeAnnex,
+        idTypeDoc,
+        orderSampleId,
+        typeFirm,
+        typeAnnex,
         callback: (next: boolean) => {
-          //if (next){ this.getData();}
+          if (next) {
+            if (typeFirm != 'electronica') {
+              this.uploadDocument(typeDocument);
+            } else {
+              this.getSampleOrder();
+            }
+          }
         },
       },
-      class: 'modalSizeXL modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(component, config);
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
 
-    //this.bsModalRef.content.event.subscribe((res: any) => {
-    //cargarlos en el formulario
-    //console.log(res);
-    //this.assetsForm.controls['address'].get('longitud').enable();
-    //this.requestForm.get('receiUser').patchValue(res.user);
-    //});
+  uploadDocument(typeDocument: number) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      typeDoc: typeDocument,
+      idSampleOrder: this.sampleOrderId,
+      callback: (data: boolean) => {
+        if (data) {
+          this.getSampleOrder();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
   }
 
   keyFunc(event: any) {
@@ -165,6 +248,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
       params['filter.idSamplingOrder'] = `$eq:${id}`;
       this.orderService.getAllSampleOrder(params).subscribe({
         next: resp => {
+          this.sampleOrderInfo = resp.data[0];
           resolve(resp.data[0]);
         },
       });
@@ -183,7 +267,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     this.alertQuestion('question', title, message, 'Aceptar').then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.lsEstatusMuestreo = 'MUESTREO_PENDIENTE_APROBACION';
+        //this.lsEstatusMuestreo = 'MUESTREO_PENDIENTE_APROBACION';
         const userTE = this.authServeice.decodeToken().username;
 
         window.alert('turnar registro');
@@ -217,7 +301,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
           this.onLoadToast('info', 'Debe indicar el motivo del rechazo');
           return;
         }
-        this.lsEstatusMuestreo = 'MUESTREO_NO_CUMPLE';
+        //this.lsEstatusMuestreo = 'MUESTREO_NO_CUMPLE';
         window.alert('Turnar registro');
       }
     });
@@ -230,7 +314,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     this.alertQuestion('question', title, message, 'Aceptar').then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.lsEstatusMuestreo = 'MUESTREO_TERMINA';
+        //this.lsEstatusMuestreo = 'MUESTREO_TERMINA';
         const userTE = this.authServeice.decodeToken().username;
 
         window.alert('turnar registro');
@@ -238,9 +322,9 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     });
   }
 
-  openReport(annextForm: ISamplingOrder) {
+  openReport() {
     this.wContentService
-      .obtainFile(annextForm.idcontentksae)
+      .obtainFile(this.sampleOrderInfo.idcontentk)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {

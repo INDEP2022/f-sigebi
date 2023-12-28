@@ -44,6 +44,16 @@ interface IExcelToJson {
           transform: rotate(360deg);
         }
       }
+      input[type='file']::file-selector-button {
+        margin-right: 20px;
+        border: none;
+        background: #9d2449;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        /* transition: background.2s ease-in-out; */
+      }
     `,
   ],
 })
@@ -74,6 +84,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   totalItems2: number = 0;
   totalItems3: number = 0;
+  selecctTipoData: any;
   private isFirstLoad = true;
   private isSecondLoad = true;
 
@@ -140,6 +151,11 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   enableButton() {
     this.loadingBtn2 = true;
   }
+  enableButton1(event: any) {
+    this.loadingBtn2 = true;
+    console.log(event);
+    this.selecctTipoData = event;
+  }
   chargeFile(event: any) {}
 
   onFileChange(event: Event) {
@@ -159,7 +175,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
           this.readExcel(loadEvent.target.result);
 
           // Limpia el input de archivo para permitir cargar el mismo archivo nuevamente
-          (event.target as HTMLInputElement).value = '';
+          // (event.target as HTMLInputElement).value = '';
         }
         console.log(this.fileReader.onload);
       };
@@ -186,10 +202,16 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
-
+  cleanTable() {
+    this.source.load([]);
+    this.source.refresh();
+  }
   consultarBienExcel() {
     this.loadingBtn4 = true;
     this.loading = true;
+    this.until = false;
+    this.until2 = false;
+
     if (!this.commaSeparatedString) {
       this.alert('warning', 'Debe importar el archivo Excel', '');
       this.loadingBtn4 = false;
@@ -262,6 +284,8 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   consultarOnlyOne() {
     this.loadingBtn = true;
     this.loading = true;
+    this.until3 = false;
+    this.until2 = false;
     if (!this.form.get('onlyOne').value) {
       this.alert('warning', 'Es necesario contar con el No. Bien', '');
       this.loadingBtn = false;
@@ -439,16 +463,12 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     this.isFirstLoad = true;
     this.loadingBtn3 = true;
     this.loading = true;
-    console.log(this.form.get('typeGood').value);
-    console.log(this.tiposData);
+    this.until = false;
+    this.until3 = false;
+
     const selectedTypeNumber = this.form.get('typeGood').value;
     const selectedTypeStatus = this.form.get('typeStatus').value;
-    const resultArray = this.tiposData.data['filter'](
-      (item: any) => item.clasifGoodNumber === selectedTypeNumber
-    );
-    const resultStatus = this.tiposstatus.data['filter'](
-      (item: any) => item.status === selectedTypeStatus
-    );
+
     console.log(selectedTypeStatus);
 
     if (!selectedTypeStatus) {
@@ -458,14 +478,12 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       return;
     }
 
-    console.log(selectedTypeNumber);
-
     let params = {
       ...this.params2.getValue(),
     };
     let body = {
-      pType: resultArray[0].typeNumber,
-      pSubtypes: resultArray[0].subTypeNumber,
+      pType: this.selecctTipoData.typeNumber,
+      pSubtypes: this.selecctTipoData.subTypeNumber,
       pStatus: this.form.get('typeStatus').value,
     };
     console.log(params);

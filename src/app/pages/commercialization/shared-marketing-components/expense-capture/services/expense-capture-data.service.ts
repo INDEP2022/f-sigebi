@@ -50,6 +50,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   addErrors = new Subject<{ description: string }[]>();
   updateExpenseCompositionAndValidateProcess = new Subject();
   finishProcessSolicitud = new Subject();
+  callNextItemLoteSubject = new Subject();
   saveSubject = new Subject();
   updateOI = new Subject();
   updateFolio = new Subject();
@@ -85,6 +86,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   total = 0;
   totalMandatos = 0;
   V_BIEN_REP_ROBO = 0;
+  callNextItemLote = false;
   SELECT_CAMBIA_ESTATUS_ENABLED = true;
   PB_VEHICULO_REP_ROBO_DISPLAYED = true;
   PB_VEHICULO_REP_ROBO_ENABLED = false;
@@ -197,7 +199,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     if (JSON.stringify(this.copiaForma) != JSON.stringify(this.form.value)) {
       this.alert(
         'warning',
-        'Data modificada',
+        'Datos modificados',
         'Favor de guardar antes de proceder'
       );
       return true;
@@ -509,16 +511,20 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       return of(null);
     } else {
       let arrayToDelete = this.dataCompositionExpenses
-        .filter(row => !row.changeStatus)
+        .filter(row => !row.changeStatus && row.detPaymentsId)
         .map(row => {
           return {
             expenseDetailNumber: row.detPaymentsId,
             expenseNumber: row.paymentsId,
           };
         });
-      return this.comerDetService
-        .removeMassive(arrayToDelete)
-        .pipe(catchError(x => of(null)));
+      if (arrayToDelete && arrayToDelete.length > 0) {
+        return this.comerDetService
+          .removeMassive(arrayToDelete)
+          .pipe(catchError(x => of(null)));
+      } else {
+        return of(null);
+      }
     }
     // this.comerDetService.remove()
   }
@@ -546,7 +552,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     V_VALIDA_DET: boolean = null,
     showExtramessage: boolean = null
   ) {
-    debugger;
+    // debugger;
     const resultParams = await this.readParams(this.conceptNumber.value);
     console.log(resultParams);
 
@@ -568,9 +574,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           this.updateExpenseCompositionAndValidateProcess.next(true);
           return;
         }
-        if (this.VALIDA_DET(V_VALIDA_DET)) {
-          this.PROCESA_SOLICITUD();
-        }
+        // if (this.VALIDA_DET(V_VALIDA_DET)) {
+        this.PROCESA_SOLICITUD();
+        // }
       } else {
         this.alert('error', 'Debe indicar el lote para enviar solicitud', '');
         this.errorSendSolicitudeMessage();
@@ -680,13 +686,12 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.accountingService.getLotFinalTotal(this.eventNumber.value)
     );
     if (+(lotFinalPrice + '')) {
-      if (
-        lotFinalPrice !==
-        this.amount + this.vat - this.isrWithholding - this.vatWithholding
-      ) {
+      let total =
+        this.amount + this.vat - this.isrWithholding - this.vatWithholding;
+      if (lotFinalPrice !== total) {
         this.alert(
           'error',
-          'El monto de la factura no es igual al del evento',
+          'El monto ' + total + ' no es igual al del evento ' + lotFinalPrice,
           ''
         );
         return false;
@@ -736,7 +741,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return firstValueFrom(
       this.interfacesirsaeService.sendSirsaeScrapSp(body).pipe(
         catchError(x => {
-          this.alert('error', 'Envio Sirsae Chatarra SP', x);
+          // this.alert('error', 'Envio Sirsae Chatarra SP', x);
           return of(null);
         })
       )
@@ -747,7 +752,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return firstValueFrom(
       this.interfacesirsaeService.sendSirsaeScrapOi(body).pipe(
         catchError(x => {
-          this.alert('error', 'Envio Sirsae Chatarra OI', x);
+          // this.alert('error', 'Envio Sirsae Chatarra OI', x);
           return of(null);
         })
       )
@@ -804,9 +809,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       pAmountTOT: this.total + '',
     });
     if (resultOI === null) {
-      // console.log(resultSP);
-      this.errorSendSolicitudeMessage();
-      return;
+      // this.errorSendSolicitudeMessage();
+      // return;
     } else {
       this.form.get('idOrdinginter').setValue(resultOI.lst_order);
     }
@@ -844,10 +848,25 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       clkpv: this.form.get('clkpv').value,
     });
     if (resultSP === null) {
-      // console.log(resultSP);
-      // this.alert('error','No se pudo realizar el proceso de pago','Favor de verificar')
-      this.errorSendSolicitudeMessage();
-      return;
+      // this.errorSendSolicitudeMessage();
+      // return;
+    } else {
+      if (resultSP.COMER_GASTOS_ID_SOLICITUDPAGO) {
+        this.form
+          .get('paymentRequestNumber')
+          .setValue(resultSP.COMER_GASTOS_ID_SOLICITUDPAGO);
+      }
+      if (resultSP.COMER_GASTOS_ID_SOLICITUDPAGO) {
+        this.form
+          .get('paymentRequestNumber')
+          .setValue(resultSP.COMER_GASTOS_ID_SOLICITUDPAGO);
+      }
+      if (resultSP.COMER_GASTOS_FECHA_SP) {
+        const array = resultSP.COMER_GASTOS_FECHA_SP.split('/');
+        this.form
+          .get('payDay')
+          .setValue(new Date(+array[0], +array[1] - 1, +array[2]));
+      }
     }
     this.expenseGoodProcessService
       .PROCESA_EVENTO_CHATARRA(
@@ -878,8 +897,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     if (aux2) {
       this.processPay();
     } else {
-      this.alert('error', 'No se puede procesar la solicitud', '');
-      this.errorSendSolicitudeMessage();
+      this.finishProcessSolicitud.next(false);
+      // this.alert('error', 'No se puede procesar la solicitud', '');
+      // this.errorSendSolicitudeMessage();
     }
   }
 
@@ -889,8 +909,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     if (aux2) {
       this.processPay();
     } else {
-      this.alert('error', 'No se puede procesar la solicitud', '');
-      this.errorSendSolicitudeMessage();
+      this.finishProcessSolicitud.next(false);
+      // this.alert('error', 'No se puede procesar la solicitud', '');
+      // this.errorSendSolicitudeMessage();
     }
   }
 
@@ -1245,12 +1266,13 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             '¿Desea continuar con el proceso?',
             res.message
           );
-          if (response.isConfirmed)
+          if (response.isConfirmed) {
             this.VALIDA_SUBTOTAL_PRECIO(
               this.expenseNumber.value,
               this.eventNumber.value,
               this.lotNumber.value
             );
+          }
         }
       } else {
         this.alert(
@@ -1258,13 +1280,21 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           'El Lote ' + this.lotNumber.value ?? '',
           'Debe tener un pago registrado para la forma de pago seleccionada'
         );
-        this.errorSendSolicitudeMessage();
+        this.finishProcessSolicitud.next(false);
+        // this.errorSendSolicitudeMessage();
         return;
       }
     } else {
       if (this.formPayment.value !== 'INTERCAMBIO') {
         if (this.PDEVPARCIAL === 'S' || !this.PCANVTA) {
           this.VERIFICA_ACTUALIZACION_EST();
+        } else {
+          this.finishProcessSolicitud.next(false);
+          this.alert(
+            'error',
+            'Concepto debe tener parámetro parcial o CANVTA',
+            ''
+          );
         }
       } else {
         this.VALIDA_SUBTOTAL_PRECIO(

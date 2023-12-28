@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6" *ngIf="data.xidSolicitud > 0">
             <label for="">
               <strong>No&#46; Solicitud&#58;</strong>
               <span>{{ data?.xidSolicitud }}</span>
