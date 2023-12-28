@@ -39,4 +39,7 @@ export enum NotificationEndpoints {
 
   NotificationDestruction = `notificaciones_destruccion`,
   GetStatusClasifGood = 'application/get-status-and-classif-good',
+
+  BaseMail = `email`,
+  mail = `notification-mail`,
 }
