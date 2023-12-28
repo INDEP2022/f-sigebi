@@ -23,9 +23,7 @@ export const STRING_PATTERN =
 // '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]
 // export const RFCCURP_PATTERN = '[a-zA-Z]{3}[a-zA-Z0-9]*';
 
-export const STRING_PATTERN_LETTER =
-  '^[a-zA-Z0-9áèéíóúÁÈÉÍÓÚñÑ\\/.,_\\-\\\\()$°\\Üü“”"";:%][a-zA-Z0-9áèéíóúÁÈÉÍÓÚñÑ\\/\\s.,_\\-\\\\()$°\\Üü“”"";:%]*';
-
+export const STRING_PATTERN_LETTER = '^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$';
 export const RFC_PATTERN = '^[A-Za-z]{3,4}[0-9]{6}[a-zA-Z0-9]{3}$';
 export const CURP_PATTERN =
   '[a-zA-Z]{4}[0-9]{6}[h-mH-M]{1}[a-zA-Z]{5}[a-zA-Z0-9]{1}[0-9]{1}';
