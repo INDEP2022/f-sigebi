@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6" *ngIf="data.xidSolicitud > 0">
             <label for="">
               <strong>No&#46; Solicitud&#58;</strong>
               <span>{{ data?.xidSolicitud }}</span>
@@ -84,7 +84,7 @@
           <div class="col-md-6">
             <label for="">
               <strong>Fecha Creaci&oacute;n&#58;</strong>
-              <span>{{ data?.dInDate | date : 'dd/MM/yyyy' }}</span>
+              <span>{{ data?.dInDate | date: 'dd/MM/yyyy' }}</span>
             </label>
           </div>
         </div>
