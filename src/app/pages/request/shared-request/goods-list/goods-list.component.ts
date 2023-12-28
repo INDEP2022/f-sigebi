@@ -84,7 +84,6 @@ export class GoodsListComponent extends BasePage implements OnInit {
   }
 
   getData(params: ListParams) {
-    this.loading = true;
     //const good: any = Object.assign({ viewFile: '' }, this.goodTestData[0]);
     /*const good: any = Object.assign(this.goodTestData[0]);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
@@ -99,17 +98,18 @@ export class GoodsListComponent extends BasePage implements OnInit {
             item.relevantTypeId
           );
         });
+        this.loading = true;
 
         Promise.all(result).then(data => {
           this.selectedGoodColumns = resp.data;
           this.selectedGoodTotalItems = resp.count;
           setTimeout(() => {
             this.displayGrouperName();
+            this.loading = false;
           }, 300);
         });
       },
     });
-    this.loading = false;
   }
 
   getTypeRelevant(id: number) {
