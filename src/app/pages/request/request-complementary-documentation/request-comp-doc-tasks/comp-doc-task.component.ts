@@ -981,10 +981,12 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.expRequest = true;
+        this.legalStatus = true;
 
         this.rejectReq = true;
         this.saveRequest = true;
         this.btnAprove = true;
+
         //Configuracion de reporte VALIDAR FUNCIONAMIENTO
         this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
         this.signedReport = false;
