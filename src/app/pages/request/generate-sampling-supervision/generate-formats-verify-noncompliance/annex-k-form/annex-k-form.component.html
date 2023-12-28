@@ -123,7 +123,8 @@
       <div
         *ngIf="
           typeAnnex == 'sign-annex-assets-classification' ||
-          typeAnnex == 'generate-query'
+          typeAnnex == 'generate-query' ||
+          typeAnnex == 'revition-results'
         ">
         <form
           [formGroup]="annexForm"
@@ -251,15 +252,20 @@
                   formControlName="managerNameAlm" />
               </form-field>
             </div>
-            <div class="col-md-6">
+
+            <div
+              class="col-md-6"
+              *ngIf="
+                typeAnnex == 'generate-query' || typeAnnex == 'revition-results'
+              ">
               <form-field
-                [control]="annexForm.get('relevantFacts')"
-                label="Hechos Relevantes">
-                <textarea
-                  type="text"
+                [control]="annexForm.get('daterepService')"
+                label="Fecha Reposición de Servicios">
+                <input
                   class="form-control"
-                  formControlName="relevantFacts">
-                </textarea>
+                  formControlName="daterepService"
+                  [minDate]="date"
+                  bsDatepicker />
               </form-field>
             </div>
           </div>
@@ -275,14 +281,15 @@
                 </textarea>
               </form-field>
             </div>
-            <div class="col-md-6" *ngIf="typeAnnex == 'generate-query'">
+            <div class="col-md-6">
               <form-field
-                [control]="annexForm.get('daterepService')"
-                label="Fecha Reposición de Servicios">
-                <input
+                [control]="annexForm.get('relevantFacts')"
+                label="Hechos Relevantes">
+                <textarea
+                  type="text"
                   class="form-control"
-                  formControlName="daterepService"
-                  bsDatepicker />
+                  formControlName="relevantFacts">
+                </textarea>
               </form-field>
             </div>
           </div>
@@ -307,7 +314,8 @@
         class="m-3"
         *ngIf="
           typeAnnex == 'sign-annex-assets-classification' ||
-          typeAnnex == 'generate-query'
+          typeAnnex == 'generate-query' ||
+          typeAnnex == 'revition-results'
         ">
         <confirm-button
           [disabled]="!annexForm.valid"

@@ -82,7 +82,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       },
 
       edit: {
-        editButtonContent: '<i class="fa fa-file text-primary mx-2 ml-5" ></i>',
+        editButtonContent: '<i class="fa fa-file text-primary mx-2 ml-4" ></i>',
       },
       delete: {
         deleteButtonContent: '<i  class="fa fa-eye text-info mx-2" ></i>',
