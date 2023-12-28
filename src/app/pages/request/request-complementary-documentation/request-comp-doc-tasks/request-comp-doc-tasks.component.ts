@@ -1647,6 +1647,7 @@ export class RequestCompDocTasksComponent
         isDelegationsVisible: false,
         isJuridicVisible: true,
         requestId: this.requestId,
+        docTypeId: this.reportId,
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

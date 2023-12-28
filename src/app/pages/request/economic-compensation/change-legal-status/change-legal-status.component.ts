@@ -68,6 +68,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   @Input() isJuridicVisible: boolean = true;
 
   @Input() requestId: number = null;
+  @Input() docTypeId: string = null;
 
   isSelected: boolean = false;
 
@@ -91,6 +92,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       this.isJuridicVisible = false;
     }
 
+    this.getAffair(new ListParams());
     this.prepareForm();
   }
 
@@ -220,13 +222,41 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
             resp['providedDate'],
             'dd/MM/yyyy'
           );
-          this.form.patchValue(resp);
+
+          console.log(resp.affair);
+          console.log(resp['affair']['affairId']);
+
+          this.form.patchValue({
+            dirCorporateLegal: resp['dirCorporateLegal'],
+            dirExecutiveLegal: resp['dirExecutiveLegal'],
+            nameAddressee: resp['nameAddressee'],
+            postAddressee: resp['postAddressee'],
+            affair: resp['affair']['affair'],
+            fundamentals: resp['fundamentals'],
+            providedDate: resp['providedDate'],
+            inchargeProvided: resp['inchargeProvided'],
+            statusSuspension: resp['statusSuspension'],
+            signatureBySubstitution: resp['signatureBySubstitution'],
+          });
+
+          this.form.get('affair').setValue(['affair']['affairId']);
         },
         error: error => {
           this.recDoc = null;
         },
       });
   }
+
+  /* dirCorporateLegal: [null, [Validators.required]],
+      dirExecutiveLegal: [null, [Validators.required]],
+      nameAddressee: [null, [Validators.required]],
+      postAddressee: [null, [Validators.required]],
+      affair: [null, [Validators.required]],
+      fundamentals: [null, [Validators.required]],
+      providedDate: [null, [Validators.required]],
+      inchargeProvided: [null, [Validators.required]],
+      statusSuspension: [null, [Validators.required]],
+      signatureBySubstitution: [null], */
 
   //Table
   queryDelegation() {
@@ -264,13 +294,12 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
       const user: any = this.authService.decodeToken();
 
-      (object['creationUser'] = user.username),
-        (object['modificationDate'] = moment(new Date()).format('YYYY-MM-DD')),
-        (object['modificationUser'] = user.username),
-        (object['creationDate'] = moment(new Date()).format('YYYY-MM-DD')),
-        (object['version'] = 1);
-      object['documentTypeId'] = 1;
-      console.log(object);
+      object['creationUser'] = user.username;
+      object['modificationDate'] = moment(new Date()).format('YYYY-MM-DD');
+      object['modificationUser'] = user.username;
+      object['creationDate'] = moment(new Date()).format('YYYY-MM-DD');
+      object['version'] = 1;
+      object['documentTypeId'] = this.docTypeId;
 
       if (isNullOrEmpty(this.recDoc)) {
         object['jobLegalId'] = splitId;
