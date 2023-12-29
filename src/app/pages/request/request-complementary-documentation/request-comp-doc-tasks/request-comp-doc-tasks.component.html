@@ -400,6 +400,11 @@
           <app-goods-list
             [requestId]="requestId"
             [processDetonate]="processDetonate"></app-goods-list>
+          <div *ngIf="selectGoodNotForEyeVisit">
+            <app-goods-not-transferred
+              [requestId]="requestId"
+              [readonly]="readonly"></app-goods-not-transferred>
+          </div>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
           <app-guidelines
