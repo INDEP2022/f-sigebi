@@ -144,9 +144,11 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.affairs = new DefaultSelect();
+
+        //this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -184,7 +186,8 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   createLegalDoc(object: Object) {
     this.legalTradeService.createLegalTrades(object).subscribe({
       next: resp => {
-        this.getAllTrades();
+        this.refresh.emit(true);
+        this.modalRef.hide();
         this.onLoadToast('success', 'Oficio generado con éxito');
       },
       error: error => {
@@ -196,7 +199,8 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   updatedLegalDoc(object: ILegalAffair) {
     this.legalTradeService.updateLegalTrades(object).subscribe({
       next: resp => {
-        this.getAllTrades();
+        this.refresh.emit(true);
+        this.modalRef.hide();
         this.onLoadToast('success', 'Oficio actualizado con éxito');
       },
       error: error => {
@@ -223,23 +227,9 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
             'dd/MM/yyyy'
           );
 
-          console.log(resp.affair);
-          console.log(resp['affair']['affairId']);
+          this.recDoc['affair'] = resp['affair']['affairId'].toString();
+          this.form.patchValue(this.recDoc);
 
-          this.form.patchValue({
-            dirCorporateLegal: resp['dirCorporateLegal'],
-            dirExecutiveLegal: resp['dirExecutiveLegal'],
-            nameAddressee: resp['nameAddressee'],
-            postAddressee: resp['postAddressee'],
-            affair: resp['affair']['affair'],
-            fundamentals: resp['fundamentals'],
-            providedDate: resp['providedDate'],
-            inchargeProvided: resp['inchargeProvided'],
-            statusSuspension: resp['statusSuspension'],
-            signatureBySubstitution: resp['signatureBySubstitution'],
-          });
-
-          this.form.get('affair').setValue(['affair']['affairId']);
         },
         error: error => {
           this.recDoc = null;
@@ -324,6 +314,6 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   }
 
   onAffairChange(subdelegation: any) {
-    this.affairs = new DefaultSelect();
+    //this.affairs = new DefaultSelect();
   }
 }
