@@ -213,4 +213,5 @@ export enum ENDPOINT_LINKS {
   documentHist = 'application/setHistBien',
   guarantee = 'application/get-guarantee',
   guaranteeExcel = 'application/get-guaranteeExcel',
+  compensation_option = 'compensation-opinions',
 }

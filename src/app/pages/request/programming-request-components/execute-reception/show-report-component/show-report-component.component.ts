@@ -37,6 +37,9 @@ import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify
 export class ShowReportComponentComponent extends BasePage implements OnInit {
   private pdf: PDFDocumentProxy;
   idTypeDoc: number = 0;
+  reportName: string = '';
+  tableName: string = '';
+
   idProg: number = 0;
   idSampleOrder: number = 0;
   idprogDel: number = 0;
@@ -85,6 +88,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   process: string = '';
   orderServiceTask: number = null;
   typeAnnex: string = '';
+  dynamic: boolean = false;
+  signed: boolean = true;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -248,6 +253,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
     if (this.idTypeDoc == 219) {
       let linkDoc: string = `${this.urlBaseReport}AnexoKBienes.jasper&ID_MUESTREO=${this.idSample}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.dynamic) {
+      let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.idSample},${this.idTypeDoc}`;
       this.src = linkDoc;
       this.formLoading = false;
     }
@@ -1442,22 +1453,41 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   updateSampleOrder(dDocName: string) {
     return new Promise((resolve, reject) => {
-      const body = {
-        idSamplingOrder: this.orderSampleId,
-        idcontentk: dDocName,
-      };
-      this.orderService.updateSampleOrder(body).subscribe({
-        next: () => {
-          resolve(true);
-        },
-        error: error => {
-          this.onLoadToast(
-            'error',
-            'error al actualizar el muestreo de ordenes'
-          );
-          reject(error);
-        },
-      });
+      if (this.typeAnnex == 'sign-k-order-sample') {
+        const body = {
+          idSamplingOrder: this.orderSampleId,
+          idcontentk: dDocName,
+        };
+        this.orderService.updateSampleOrder(body).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'error al actualizar el muestreo de ordenes'
+            );
+            reject(error);
+          },
+        });
+      } else {
+        const body = {
+          idSamplingOrder: this.orderSampleId,
+          idcontentksae: dDocName,
+        };
+        this.orderService.updateSampleOrder(body).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'error al actualizar el muestreo de ordenes'
+            );
+            reject(error);
+          },
+        });
+      }
     });
   }
 

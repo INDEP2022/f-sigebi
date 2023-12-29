@@ -52,8 +52,8 @@
         </div>
       </div>
     </form>
-    <div class="row justify-content-end text-end">
-      <div>
+    <div *ngIf="valSearch" class="row justify-content-end text-end">
+      <div class="col-4">
         <button
           type="button"
           (click)="search()"
@@ -63,7 +63,7 @@
         </button>
       </div>
     </div>
-    <div class="row mt-4">
+    <div *ngIf="valSearch" class="row mt-4">
       <ng2-smart-table
         [ngStyle]="{
           height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'

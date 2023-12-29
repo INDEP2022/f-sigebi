@@ -21,6 +21,7 @@ import {
   NUM_POSITIVE,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
+  STRING_PATTERN_LETTER,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -91,7 +92,7 @@ export class RegisterDocumentationFormComponent
       priorityDate: [null],
       indicatedTaxpayer: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN_LETTER)],
       ],
       typeRecord: [null],
       originInfo: [null],
@@ -255,7 +256,7 @@ export class RegisterDocumentationFormComponent
       'register-request-return': ['trialType', 'authorityOrdering'],
       'register-request-similar-goods': ['trialType'],
       'register-request-compensation': ['trialType'],
-      'register-request-economic-compensation': ['trialType'],
+      'register-request-economic': ['trialType'],
       'register-request-information-goods': ['trialType'],
       'register-request-protection': ['trialType', 'protectNumber'],
       'register-seizures': ['trialType'],
@@ -316,6 +317,12 @@ export class RegisterDocumentationFormComponent
         request.receptionDate = this.bsReceptionValue.toISOString();
         request.transferEntNotes =
           request.transferEntNotes == '' ? null : request.transferEntNotes;
+
+        for (const key in request) {
+          if (request.hasOwnProperty(key) && request[key] === '') {
+            request[key] = null;
+          }
+        }
         console.log(request);
         this.requestService.update(request.id, request).subscribe({
           next: resp => {
@@ -411,7 +418,7 @@ export class RegisterDocumentationFormComponent
       case 'register-request-compensation':
         input = ['trialType'];
         break;
-      case 'register-request-economic-compensation':
+      case 'register-request-economic':
         input = ['trialType'];
         break;
       case 'register-request-information-goods':

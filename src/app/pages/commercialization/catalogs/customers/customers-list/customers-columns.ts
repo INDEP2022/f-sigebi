@@ -117,7 +117,25 @@ export const CUSTOMERS_COLUMNS = {
   },
   personType: {
     title: 'Tipo de Persona',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'M')
+        return '<strong><span class="badge badge-pill badge-soft-info">Masculino</span></strong>';
+      if (value == 'F')
+        return '<strong><span class="badge badge-pill badge-soft-pink" >Femenino</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'M', title: 'Masculino' },
+          { value: 'F', title: 'Femenino' },
+        ],
+      },
+    },
   },
   approvedRfc: {
     title: 'RFC Aprobado',
@@ -142,10 +160,10 @@ export const CUSTOMERS_COLUMNS = {
       component: CustomDateDayFilterComponent,
     },
   },
-  registryNumber: {
-    title: 'No. Registro',
-    sort: false,
-  },
+  // registryNumber: {
+  //   title: 'No. Registro',
+  //   sort: false,
+  // },
   economicAgreementKey: {
     title: 'Cve. de Actividad Económica',
     sort: false,
@@ -173,10 +191,10 @@ export const CUSTOMERS_COLUMNS = {
     title: 'No. Interior',
     sort: false,
   },
-  password: {
-    title: 'Contraseña',
-    sort: false,
-  },
+  // password: {
+  //   title: 'Contraseña',
+  //   sort: false,
+  // },
   user: {
     title: 'Usuario',
     sort: false,

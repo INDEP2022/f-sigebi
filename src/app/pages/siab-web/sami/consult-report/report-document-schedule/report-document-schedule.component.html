@@ -28,21 +28,20 @@
       </p>
     </div>
 
-    <div *ngIf="showSearchForm">
+    <div *ngIf="showSearchForm" class="pt-5">
       <form [formGroup]="docRequestForm" class="form-material">
         <div class="row pt-2">
-          <div class="col-md-6">
-            <form-field [control]="docRequestForm.get('text')" label="Texto">
-              <textarea
-                class="form-control"
+          <div class="col-md-4">
+            <form-field
+              [control]="docRequestForm.get('noSchedule')"
+              label="No&#46; Programación">
+              <input
                 type="text"
-                row
-                pt-5s="2"
-                maxlength="30"
-                formControlName="text"></textarea>
+                class="form-control"
+                formControlName="noSchedule" />
             </form-field>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div
               [formGroup]="docRequestForm"
               class="form-group form-secondary form-static-label">
@@ -73,6 +72,18 @@
                 bindLabel="ddescription"
                 value="ddescription">
               </ngx-select> -->
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="docRequestForm.get('responsible')"
+              label="Responsable">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="40"
+                formControlName="responsible" />
+            </form-field>
           </div>
         </div>
         <div class="row pt-4">
@@ -168,13 +179,14 @@
         </div>
         <div class="row pt-4">
           <div class="col-md-3">
-            <form-field
-              [control]="docRequestForm.get('noSchedule')"
-              label="No&#46; Programación">
-              <input
-                type="text"
+            <form-field [control]="docRequestForm.get('text')" label="Texto">
+              <textarea
                 class="form-control"
-                formControlName="noSchedule" />
+                type="text"
+                row
+                pt-5s="2"
+                maxlength="30"
+                formControlName="text"></textarea>
             </form-field>
           </div>
           <div class="col-md-3">
@@ -188,17 +200,6 @@
                 pt-5s="2"
                 maxlength="100"
                 formControlName="comment"></textarea>
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="docRequestForm.get('responsible')"
-              label="Responsable">
-              <input
-                type="text"
-                class="form-control"
-                maxlength="40"
-                formControlName="responsible" />
             </form-field>
           </div>
         </div>
@@ -272,6 +273,7 @@
 
           <app-pagination
             [params]="params"
+            [pageSizeOptions]="pageSizeOptions"
             [totalItems]="totalItems"></app-pagination>
         </div>
       </div>

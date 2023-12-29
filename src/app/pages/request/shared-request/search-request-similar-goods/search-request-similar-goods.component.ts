@@ -14,9 +14,11 @@ import { COLUMNS, COLUMNS2 } from './columns';
 //Provisional Data
 import { ActivatedRoute } from '@angular/router';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2/src/sweetalert2.js';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { AssociateFileComponent } from '../../transfer-request/tabs/associate-file/associate-file.component';
 import { NewFileModalComponent } from '../associate-file/new-file-modal/new-file-modal.component';
@@ -40,6 +42,7 @@ export class SearchRequestSimilarGoodsComponent
   totalItems2: number = 0;
   data2: LocalDataSource = new LocalDataSource();
   settings2;
+  loadGoods = false;
 
   showDetails: boolean = false;
   requestId: string | number = null;
@@ -48,6 +51,7 @@ export class SearchRequestSimilarGoodsComponent
 
   /* injections */
   private requestService = inject(RequestService);
+  private goodService = inject(GoodService);
   private goodFinderSerice = inject(GoodFinderService);
   private route = inject(ActivatedRoute);
   private requestHelperService = inject(RequestHelperService);
@@ -121,6 +125,10 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   getFiles() {
+    this.loadGoods = false;
+    this.data2.load([]);
+    this.totalItems2 = 0;
+
     this.loading = true;
     const filter = this.params.getValue().getParams();
     this.requestService.getAll(filter).subscribe({
@@ -205,17 +213,24 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   onUserRowSelect($event: any) {
+    this.loadGoods = false;
     this.selectedRows = $event.selected;
     this.showDetails = $event.isSelected ? true : false;
     this.getGoods($event.data.id);
   }
 
   getGoods(id: number) {
+    if (!this.selected) return;
+
+    this.data2.load([]);
+    this.totalItems2 = 0;
+
     const params = new ListParams();
     params['filter.id'] = `$eq:${id}`;
     this.data2.empty();
     this.goodFinderSerice.goodFinder(params).subscribe({
       next: resp => {
+        this.loadGoods = true;
         console.log(resp.data);
         this.data2.load(resp.data);
         this.totalItems2 = resp.count;
@@ -239,6 +254,63 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   async selectGood() {
+    if (!isNullOrEmpty(this.selectedRows) && this.loadGoods) {
+      if (this.totalItems2 == 0) {
+        this.alert(
+          'warning',
+          'La solicitud seleccionada no contiene bienes',
+          ''
+        );
+        return;
+      }
+
+      let request = this.selectedRows[0];
+
+      this.alertQuestion(
+        'question',
+        'Asociar',
+        '¿Desea seleccionar la Solicitud de Bienes Similares No. ' +
+          request.id +
+          '?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.data2['data'].forEach(async element => {
+            await this.updateGood({
+              id: element.id,
+              goodId: element.id,
+              goodReferenceNumber: this.requestInfo.id,
+            });
+          });
+
+          let requestAssociated: any = {};
+          requestAssociated.id = this.requestInfo.id;
+          requestAssociated.recordId = request.recordId;
+
+          this.requestService
+            .update(this.requestId, requestAssociated)
+            .subscribe({
+              next: resp => {
+                this.getFiles();
+                this.loading = false;
+                this.alert(
+                  'success',
+                  '',
+                  'Se ha seleccionado la Solicitud de Bienes Similares No. ' +
+                    request.id +
+                    ' y el Expediente No. ' +
+                    request.recordId
+                );
+
+                this.updateStateRequestTab();
+              },
+              error: error => {
+                this.loading = false;
+              },
+            });
+        }
+      });
+    }
+
     //const request = await this.getRequest();
     //this.openModal(AssociateFileComponent, 'doc-expedient', request);
   }
@@ -270,11 +342,24 @@ export class SearchRequestSimilarGoodsComponent
         },
         error: error => {
           reject(error);
-          this.onLoadToast(
+        },
+      });
+    });
+  }
+
+  updateGood(good) {
+    return new Promise((resolve, reject) => {
+      this.goodService.updateByBody(good).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          /*this.onLoadToast(
             'error',
             'Error',
-            'No se puede obtener la solicitud'
-          );
+            'No se puede actualizar el bien'
+          );*/
         },
       });
     });

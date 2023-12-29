@@ -8,7 +8,7 @@
   </div>
   <div body>
     <div class="">
-      <div class="d-flex flex-row-reverse" *ngIf="screenWidth >= 1200">
+      <div class="d-flex flex-row-reverse" *ngIf="true">
         <ng-template #turnar>
           <div class="mx-1" *ngIf="turnReq && !complementaryDoc">
             <button
@@ -78,15 +78,6 @@
             Guardar <i class="fa fa-save mr-1 float-icon"></i>
           </button>
         </div>
-        <div class="mx-1" *ngIf="rejectReq">
-          <button
-            type="button"
-            class="btn btn-danger btn-sm active"
-            [disabled]="!nextTurn"
-            (click)="rejectRequest()">
-            <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
-          </button>
-        </div>
         <div class="mx-1" *ngIf="resultEyeVisitReport || makeResultPaperReport">
           <button
             type="button"
@@ -151,7 +142,7 @@
             type="button"
             class="btn btn-info active btn-sm"
             [disabled]=""
-            (click)="openModal()">
+            (click)="openModalLegal()">
             Oficio de Cambio de Situación Jurídica
             <i class="bx bx-notepad mr-1 float-icon"></i>
           </button>
@@ -175,11 +166,11 @@
             Dictamen Devolución <i class="bx bx-file bx-m float-icon"></i>
           </button>
         </div>
-        <div class="mx-1" *ngIf="btnDecline">
+        <div class="mx-1" *ngIf="btnDecline || rejectReq">
           <button
             type="button"
             class="btn btn-danger btn-sm active mr-3"
-            [disabled]=""
+            [disabled]="!nextTurn"
             (click)="rejectRequest()">
             Rechazar
             <i class="bx bx-x bx-m float-icon"></i>
@@ -204,7 +195,7 @@
         </div>
       </div>
 
-      <div class="" *ngIf="screenWidth < 1200">
+      <div class="" *ngIf="false">
         <div
           class="btn-group"
           placement="bottom right"
@@ -329,15 +320,19 @@
           *ngIf="registAppointment"
           heading="Registro de Cita"
           id="appointmentTab">
-          <app-register-appointment-tab></app-register-appointment-tab>
+          <app-register-dictum-val
+            [steap3]="steap3"
+            [requestId]="requestId"
+            (onAppoiment)="onAppoiment($event)"></app-register-dictum-val>
         </tab>
         <tab *ngIf="orderEntry" heading="Orden Ingreso" id="entryOrderTab">
-          <app-entry-order></app-entry-order>
+          <app-entry-order
+            (onSave)="onOrder($event)"
+            [requestId]="requestId"></app-entry-order>
         </tab>
         <tab *ngIf="orderView" heading="Orden Ingreso" id="entryOrderTab">
-          <app-entry-order-view></app-entry-order-view>
+          <app-entry-order-view [requestId]="requestId"></app-entry-order-view>
         </tab>
-
         <tab
           *ngIf="searchAssociateFile"
           heading="Buscar y Asociar al Expediente"
@@ -350,20 +345,25 @@
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
           <app-select-goods
+            [btnGrouper]="btnGrouper"
+            [updateInfo]="updateInfo"
             (onChange)="onSelectGoods($event)"
             [idRequest]="requestId"></app-select-goods>
 
           <div *ngIf="selectGoodsNot">
-            <app-goods-not-transferred></app-goods-not-transferred>
+            <app-goods-not-transferred
+              [requestId]="requestId"></app-goods-not-transferred>
           </div>
         </tab>
         <tab
           *ngIf="selectGoodForEyeVisit"
-          heading="Bienes seleccionados"
+          heading="Bienes Seleccionados"
           id="selectGoodsEyeVisitTab">
           <app-select-good-eye-visit
             [idRequest]="requestId"
-            [typeVisit]="typeVisit"></app-select-good-eye-visit>
+            [viewGrouper]="btnGrouper"
+            [typeVisit]="typeVisit"
+            (onChange)="onProgramVisit($event)"></app-select-good-eye-visit>
           <div *ngIf="selectGoodNotForEyeVisit">
             <app-goods-not-transferred></app-goods-not-transferred>
           </div>
@@ -379,7 +379,9 @@
           *ngIf="validateGoodForEyeVisit"
           heading="Validar Resultado Visitas"
           id="validateGoodsEyeVisitTab">
-          <app-validate-eye-visit></app-validate-eye-visit>
+          <app-validate-eye-visit
+            [idRequest]="requestId"
+            (onChange)="onProgramVisit($event)"></app-validate-eye-visit>
         </tab>
         <tab
           *ngIf="resultVisits"
@@ -398,17 +400,33 @@
             [processDetonate]="processDetonate"></app-goods-list>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
-          <app-guidelines (onSave)="onSaveGuidelines($event)"></app-guidelines>
+          <app-guidelines
+            [requestId]="requestId"
+            (onChange)="onGuidelines($event)"></app-guidelines>
         </tab>
         <tab *ngIf="viewGuidelines" heading="Lineamientos" id="guidelinesTab">
-          <app-guidelines-view></app-guidelines-view>
+          <app-guidelines-view [requestId]="requestId"></app-guidelines-view>
         </tab>
 
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
-          <app-register-dictum-val></app-register-dictum-val>
+          <app-register-dictum-val
+            [steap1]="steap1"
+            [requestId]="requestId"
+            [isEdit]="isEdit"
+            (onSave)="onDictumData($event)"></app-register-dictum-val>
         </tab>
+
         <tab *ngIf="dictumRegister" heading="Datos del Dictamen" id="dictumTab">
-          <app-register-dictum-inf></app-register-dictum-inf>
+          <app-register-dictum-val
+            [steap1]="steap1"
+            [steap2]="steap2"
+            [visible]="visible"
+            [requestId]="requestId"
+            [isEdit]="isEdit"></app-register-dictum-val>
+        </tab>
+        <tab *ngIf="dictumInfo" heading="Datos del Dictamen" id="dictumTab">
+          <app-dictum-information [requestId]="requestId">
+          </app-dictum-information>
         </tab>
 
         <tab

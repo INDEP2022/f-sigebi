@@ -181,7 +181,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
     return new Promise(async (resolve, reject) => {
       this.loadingTurn = true;
       const form = this.requestForm.getRawValue();
-      const requestResult: any = await this.createRequest(form);
+
+      let requestResult = this.currentRequest;
+
       if (requestResult) {
         this.requestId = requestResult.id;
         const user: any = this.authService.decodeToken();
@@ -694,7 +696,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            'El proceso seleccionado no tiene una tarea configurada'
+            'No aplica para documentación complementaria'
           );
           reject(false);
         },

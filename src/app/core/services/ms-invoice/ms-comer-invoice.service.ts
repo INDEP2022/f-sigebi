@@ -61,7 +61,7 @@ export class ComerInvoiceService extends HttpService {
   }
 
   updateByEvent(eventId: number) {
-    return this.get(`${ENDPOINT_INVOICE.UpdateByEvemt}/${eventId}`);
+    return this.put(`${ENDPOINT_INVOICE.UpdateByEvemt}/${eventId}`);
   }
 
   copyInvoice(data: {
@@ -369,5 +369,20 @@ export class ComerInvoiceService extends HttpService {
 
   getApplicationGeneratePreInvoices(data: any) {
     return this.post(ENDPOINT_INVOICE.ApplicationGeneratePreInvoices, data);
+  }
+
+  getEats_(event: number, expend: number, params: _Params) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationEats}?eventId=${event}&expenseId=${expend}`,
+      params
+    );
+  }
+
+  getApplicationPufVerifyAmounts(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationPufVerifyAmounts, data);
+  }
+
+  getApplicationPupStatusCan(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationPupStatusCan, data);
   }
 }

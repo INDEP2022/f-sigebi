@@ -125,7 +125,7 @@ export class SeriesFoliosSeparateModalComponent
       );
 
       if (!aux_folio) {
-        this.alert('error', 'Error', 'No se pudo obtener el maximo folio');
+        this.alert('error', 'No se pudo obtener el maximo folio', '');
         this.loading = false;
         return;
       }
@@ -133,8 +133,8 @@ export class SeriesFoliosSeparateModalComponent
       if (invoice <= Number(aux_folio.max_folio)) {
         this.alert(
           'error',
-          'Error',
-          'El folio ya esta reportado en uso en el sistema, ya no puede ser reutilizado'
+          'El folio ya esta reportado en uso en el sistema',
+          'Ya no puede ser reutilizado'
         );
         this.form.get('invoice').patchValue(null);
         this.loading = false;

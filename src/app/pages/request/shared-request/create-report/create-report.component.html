@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} REPORTE</h5>
+    <h5 class="modal-title">{{ template ? 'EDITAR' : 'NUEVO' }} REPORTE</h5>
   </div>
   <div body>
     <div class="md-tabs">
@@ -23,7 +23,7 @@
           <div
             class="col-md-3"
             style="align-items: horizontal"
-            *ngIf="editReport">
+            *ngIf="editReport && !isSigned">
             <button
               class="btn btn-primary btn-sm active"
               (click)="applyFormat()">
@@ -31,16 +31,21 @@
             </button>
           </div>
 
-          <div class="col-md-3" *ngIf="!editReport && !signReportTab">
-            <button (click)="sign()" class="btn btn-primary active btn-sm">
-              Firmar
+          <div class="col-md-3" *ngIf="signReport && template && !isSigned">
+            <button
+              (click)="openSignature()"
+              class="btn btn-primary active btn-sm">
+              Firmar reporte
               <i class="fa fa-file-signature"></i>
             </button>
           </div>
 
           <div class="col-md-3">
-            <button (click)="openDoc()" class="btn btn-primary active btn-sm">
-              Visualizar <i class="fa fa-eye mr-1"></i>
+            <button
+              *ngIf="template"
+              (click)="showFile()"
+              class="btn btn-primary active btn-sm">
+              Vista previa <i class="fa fa-eye mr-1"></i>
             </button>
           </div>
         </div>
@@ -60,7 +65,7 @@
           </quill-editor>
         </tab>
 
-        <tab heading="Vista Previa" id="previewTab" *ngIf="isView()">
+        <tab heading="Vista Previa" id="previewTab" *ngIf="!editReport">
           <div style="height: 40vh !important; overflow: auto !important">
             <quill-view
               [content]="version.content"
@@ -78,7 +83,7 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
+      <div class="m-3" *ngIf="editReport">
         <confirm-button
           [disabled]="!form.valid"
           [loading]="loading"
@@ -86,7 +91,7 @@
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+          Cerrar
         </button>
       </div>
     </div>

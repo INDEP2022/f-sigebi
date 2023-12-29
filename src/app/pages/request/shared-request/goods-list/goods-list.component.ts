@@ -92,16 +92,20 @@ export class GoodsListComponent extends BasePage implements OnInit {
     this.rejectedGoodService.getAll(params).subscribe({
       next: resp => {
         const result = resp.data.map(async (item: any) => {
+          this.loading = false;
+
           item['typeRelevantDescrip'] = await this.getTypeRelevant(
             item.relevantTypeId
           );
         });
+        this.loading = true;
 
         Promise.all(result).then(data => {
           this.selectedGoodColumns = resp.data;
           this.selectedGoodTotalItems = resp.count;
           setTimeout(() => {
             this.displayGrouperName();
+            this.loading = false;
           }, 300);
         });
       },

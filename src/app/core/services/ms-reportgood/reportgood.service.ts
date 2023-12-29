@@ -23,9 +23,9 @@ export class ReportgoodService extends HttpService {
 
   saveReportDynamic(object: any, update = false) {
     if (!update) {
-      return this.post(ReportGoodEndpoints.ReportDynamic, object);
-    } else {
       return this.put(ReportGoodEndpoints.ReportDynamic, object);
+    } else {
+      return this.post(ReportGoodEndpoints.ReportDynamic, object);
     }
   }
 }
