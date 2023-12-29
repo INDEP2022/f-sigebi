@@ -2312,6 +2312,22 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
                   idpayment,
                   val: true,
                   form: this.form,
+                  callback: async (
+                    data: { eventId: any; factstatusId: any },
+                    val: number,
+                    GO_BLOCK: boolean
+                  ) => {
+                    if (data) {
+                      if (data.factstatusId)
+                        this.paramsList.getValue()[
+                          'filter.factstatusId'
+                        ] = `${SearchFilter.NOT}:${data.factstatusId}`;
+                      this.paramsList.getValue()[
+                        'filter.eventId'
+                      ] = `${SearchFilter.EQ}:${data.eventId}`;
+                      this.getAllComer();
+                    }
+                  },
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
