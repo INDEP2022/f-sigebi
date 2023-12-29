@@ -790,17 +790,17 @@ export class ExpenseCompositionComponent
     return this.expenseCaptureDataService.havePolicie;
   }
 
-  // get validChargeGoods() {
-  //   if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
-  //     return true;
-  //   } else if (this.v_tip_gast === 'GASTOVIG') {
-  //     return this.form ? this.form.get('contractNumber').value : false;
-  //   } else if (this.v_tip_gast === 'GASTOSEG') {
-  //     return this.form ? this.form.get('policie').value : false;
-  //   } else {
-  //     return true;
-  //   }
-  // }
+  get validChargeGoods() {
+    if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
+      return true;
+    } else if (this.v_tip_gast === 'GASTOVIG') {
+      return true;
+    } else if (this.v_tip_gast === 'GASTOSEG') {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   async loadGoodsI() {
     // if (this.expenseCaptureDataService.formaModificada()) {
@@ -824,6 +824,7 @@ export class ExpenseCompositionComponent
     );
     if (response.isConfirmed) {
       this.loading = true;
+      console.log(this.v_tip_gast);
       if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
         this.fileI.nativeElement.click();
       } else if (this.v_tip_gast === 'GASTOVIG') {
@@ -876,7 +877,7 @@ export class ExpenseCompositionComponent
             },
           });
       } else {
-        this.alert('warning', 'Opción no válida para este concepto', '');
+        this.alert('warning', 'Opción no válida para este usuario', '');
         this.loading = false;
       }
     }

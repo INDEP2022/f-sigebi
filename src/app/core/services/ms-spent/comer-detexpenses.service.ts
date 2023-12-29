@@ -117,7 +117,7 @@ export class ComerDetexpensesService extends HttpService {
   }
 
   removeMassive2(expenseNumber: number) {
-    return this.delete(
+    return this.get(
       SpentEndpoints.MassiveDeleteDetExpenses2 + '/' + expenseNumber
     );
   }
