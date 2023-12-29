@@ -68,6 +68,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   @Input() isJuridicVisible: boolean = true;
 
   @Input() requestId: number = null;
+  @Input() docTypeId: string = null;
 
   isSelected: boolean = false;
 
@@ -91,6 +92,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       this.isJuridicVisible = false;
     }
 
+    this.getAffair(new ListParams());
     this.prepareForm();
   }
 
@@ -142,9 +144,11 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.affairs = new DefaultSelect();
+
+        //this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -182,7 +186,8 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   createLegalDoc(object: Object) {
     this.legalTradeService.createLegalTrades(object).subscribe({
       next: resp => {
-        this.getAllTrades();
+        this.refresh.emit(true);
+        this.modalRef.hide();
         this.onLoadToast('success', 'Oficio generado con éxito');
       },
       error: error => {
@@ -194,7 +199,8 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   updatedLegalDoc(object: ILegalAffair) {
     this.legalTradeService.updateLegalTrades(object).subscribe({
       next: resp => {
-        this.getAllTrades();
+        this.refresh.emit(true);
+        this.modalRef.hide();
         this.onLoadToast('success', 'Oficio actualizado con éxito');
       },
       error: error => {
@@ -220,13 +226,27 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
             resp['providedDate'],
             'dd/MM/yyyy'
           );
-          this.form.patchValue(resp);
+
+          this.recDoc['affair'] = resp['affair']['affairId'].toString();
+          this.form.patchValue(this.recDoc);
+
         },
         error: error => {
           this.recDoc = null;
         },
       });
   }
+
+  /* dirCorporateLegal: [null, [Validators.required]],
+      dirExecutiveLegal: [null, [Validators.required]],
+      nameAddressee: [null, [Validators.required]],
+      postAddressee: [null, [Validators.required]],
+      affair: [null, [Validators.required]],
+      fundamentals: [null, [Validators.required]],
+      providedDate: [null, [Validators.required]],
+      inchargeProvided: [null, [Validators.required]],
+      statusSuspension: [null, [Validators.required]],
+      signatureBySubstitution: [null], */
 
   //Table
   queryDelegation() {
@@ -264,13 +284,12 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
       const user: any = this.authService.decodeToken();
 
-      (object['creationUser'] = user.username),
-        (object['modificationDate'] = moment(new Date()).format('YYYY-MM-DD')),
-        (object['modificationUser'] = user.username),
-        (object['creationDate'] = moment(new Date()).format('YYYY-MM-DD')),
-        (object['version'] = 1);
-      object['documentTypeId'] = 1;
-      console.log(object);
+      object['creationUser'] = user.username;
+      object['modificationDate'] = moment(new Date()).format('YYYY-MM-DD');
+      object['modificationUser'] = user.username;
+      object['creationDate'] = moment(new Date()).format('YYYY-MM-DD');
+      object['version'] = 1;
+      object['documentTypeId'] = this.docTypeId;
 
       if (isNullOrEmpty(this.recDoc)) {
         object['jobLegalId'] = splitId;
@@ -295,6 +314,6 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   }
 
   onAffairChange(subdelegation: any) {
-    this.affairs = new DefaultSelect();
+    //this.affairs = new DefaultSelect();
   }
 }
