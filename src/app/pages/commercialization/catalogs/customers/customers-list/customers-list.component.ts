@@ -113,10 +113,10 @@ export class CustomersListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'municipalityId':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'stateId':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'blackListDate':
                 if (filter.search != null) {
@@ -135,7 +135,7 @@ export class CustomersListComponent extends BasePage implements OnInit {
                 }
                 break;
               case 'penaltyId':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'personType':
                 searchFilter = SearchFilter.ILIKE;
@@ -158,22 +158,22 @@ export class CustomersListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'economicAgreementKey':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'identificationType':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'identificationNumber':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'agentId':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'outsideNumber':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'insideNumber':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'password':
                 searchFilter = SearchFilter.ILIKE;
@@ -182,7 +182,7 @@ export class CustomersListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'interbankKey':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'bank':
                 searchFilter = SearchFilter.ILIKE;
@@ -232,7 +232,7 @@ export class CustomersListComponent extends BasePage implements OnInit {
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear().toString();
-    return `${year}-${month}-${day}` + 'T00:00:00.000Z';
+    return `${year}-${month}-${day}`;
   }
 
   //Fila seleccionada de la tabla de clientes
