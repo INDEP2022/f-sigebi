@@ -1,6 +1,6 @@
 export const PENDING_DEDUCTIVES_COLUMNS = {
   id: {
-    title: 'No. Nota Credito',
+    title: 'No. Nota Crédito',
     type: 'string',
     sort: false,
   },

@@ -185,6 +185,19 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     this.loading = false;
   }
 
+  getFormSeach(recordId: any) {
+    this.requestService.getById(recordId).subscribe({
+      next: resp => {
+        console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
+        this.openDetail(resp);
+      },
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'No se encontraron registros', '');
+      },
+    });
+  }
+
   getInfoRequest() {
     this.selectedGoodColumns = [];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;

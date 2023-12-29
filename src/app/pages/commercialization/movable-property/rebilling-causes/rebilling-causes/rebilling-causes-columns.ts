@@ -1,6 +1,6 @@
 export const REBILLING_CAUSES_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Id. Causa',
     width: '100px',
     type: 'string',
     sort: false,

@@ -120,7 +120,12 @@
         </form>
       </div>
 
-      <div *ngIf="typeAnnex == 'sign-annex-assets-classification'">
+      <div
+        *ngIf="
+          typeAnnex == 'sign-annex-assets-classification' ||
+          typeAnnex == 'generate-query' ||
+          typeAnnex == 'revition-results'
+        ">
         <form
           [formGroup]="annexForm"
           class="form-material"
@@ -148,7 +153,7 @@
             </div>
           </div>
 
-          <div class="row pt-4">
+          <div class="row pt-4" *ngIf="typeAnnex != 'generate-query'">
             <div class="col-md-12" style="display: flex">
               <div style="line-height: 3">
                 <label for="electronica">Tipo de firma:</label>
@@ -247,15 +252,20 @@
                   formControlName="managerNameAlm" />
               </form-field>
             </div>
-            <div class="col-md-6">
+
+            <div
+              class="col-md-6"
+              *ngIf="
+                typeAnnex == 'generate-query' || typeAnnex == 'revition-results'
+              ">
               <form-field
-                [control]="annexForm.get('relevantFacts')"
-                label="Hechos Relevantes">
-                <textarea
-                  type="text"
+                [control]="annexForm.get('daterepService')"
+                label="Fecha Reposición de Servicios">
+                <input
                   class="form-control"
-                  formControlName="relevantFacts">
-                </textarea>
+                  formControlName="daterepService"
+                  [minDate]="date"
+                  bsDatepicker />
               </form-field>
             </div>
           </div>
@@ -268,6 +278,17 @@
                   type="text"
                   class="form-control"
                   formControlName="agreements">
+                </textarea>
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="annexForm.get('relevantFacts')"
+                label="Hechos Relevantes">
+                <textarea
+                  type="text"
+                  class="form-control"
+                  formControlName="relevantFacts">
                 </textarea>
               </form-field>
             </div>
@@ -289,7 +310,13 @@
           (confirm)="signAnnex()"></confirm-button>
       </div>
 
-      <div class="m-3" *ngIf="typeAnnex == 'sign-annex-assets-classification'">
+      <div
+        class="m-3"
+        *ngIf="
+          typeAnnex == 'sign-annex-assets-classification' ||
+          typeAnnex == 'generate-query' ||
+          typeAnnex == 'revition-results'
+        ">
         <confirm-button
           [disabled]="!annexForm.valid"
           [loading]="loading"

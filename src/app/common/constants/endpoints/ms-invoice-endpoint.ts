@@ -104,4 +104,5 @@ export enum ENDPOINT_INVOICE {
   CtrlInvoiceCopyBillVtaBases = 'ctrl-invoice/copy-bill-vta-bases',
   ApplicationGetComerPagorefExists = 'application/get-comer-pagoref-exists',
   ApplicationGeneratePreInvoices = 'application/generate-pre-invoices',
+  ApplicationPufVerifyAmounts = 'application/puf-verify-amounts',
 }

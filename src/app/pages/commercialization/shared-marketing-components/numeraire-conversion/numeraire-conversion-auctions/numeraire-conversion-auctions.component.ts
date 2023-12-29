@@ -116,10 +116,15 @@ export class NumeraireConversionAuctionsComponent
         error: err => {
           console.log(err);
           this.loader.load = false;
+          let errorMessage = err.error.message.includes(
+            'duplicate key value violates unique constraint'
+          )
+            ? 'Calculo ya realizado'
+            : err.error.message;
           this.alert(
             'error',
             'No se ha podido realizar el cálculo',
-            err.error.message
+            errorMessage
           );
         },
       });
@@ -151,12 +156,17 @@ export class NumeraireConversionAuctionsComponent
 
   private async calculaParcBody() {
     this.loader.load = true;
+    // debugger;
     let resultBorra = await firstValueFrom(
       this.convNumeraryService
         .SPBorraNumera(+(this.selectedEvent.id + ''))
         .pipe(catchError(x => of(x.error)))
     );
-    if (resultBorra.statusCode !== 200) {
+    if (
+      resultBorra &&
+      resultBorra.statusCode &&
+      resultBorra.statusCode !== 200
+    ) {
       this.alert(
         'error',
         'No se ha podido calcular parcialmente',
@@ -188,6 +198,15 @@ export class NumeraireConversionAuctionsComponent
   }
 
   async calculaParc() {
+    // this.alertQuestion(
+    //   'question',
+    //   '¿Desea calcular parcialmente este evento?',
+    //   ''
+    // ).then(x => {
+    //   if (x.isConfirmed) {
+    //     this.calculaParcBody();
+    //   }
+    // });
     if (this.validParcialButton) {
       this.alertQuestion(
         'question',
@@ -394,8 +413,8 @@ export class NumeraireConversionAuctionsComponent
     this.loader.load = true;
     this.convNumeraryService
       .SP_CONVERSION_ASEG_PARCIAL({
-        pevent: +(this.selectedEvent.id + ''),
-        pscreen: 'FCOMER087',
+        event: +(this.selectedEvent.id + ''),
+        screen: 'FCOMER087',
         user: this.user.preferred_username,
       })
       .pipe(take(1))

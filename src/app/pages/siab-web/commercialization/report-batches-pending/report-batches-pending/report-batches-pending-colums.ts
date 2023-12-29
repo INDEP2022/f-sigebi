@@ -38,8 +38,8 @@ export const CAPTURE_LINES = {
     title: 'Monto',
     sort: false,
   },
-  penalty: {
-    title: 'Personalización',
+  monto_pena: {
+    title: 'Penalización',
     sort: false,
   },
   monto_pagar: {

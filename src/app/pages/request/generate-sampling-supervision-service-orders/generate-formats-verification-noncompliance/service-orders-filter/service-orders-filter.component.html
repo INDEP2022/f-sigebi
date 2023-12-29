@@ -1,15 +1,14 @@
 <div>
   <form [formGroup]="filterForm" class="form-material">
+    <div class="row pt-4"></div>
     <div class="row pt-4">
-      <div class="col-md-2">
+      <div class="col-md-4">
         <form-field
           [control]="filterForm.get('id')"
           label="No&#46; Orden de Servicio">
           <input type="text" class="form-control" formControlName="id" />
         </form-field>
       </div>
-    </div>
-    <div class="row pt-4">
       <div class="col-md-4">
         <form-field
           [control]="filterForm.get('serviceOrderFolio')"
@@ -20,9 +19,8 @@
             formControlName="serviceOrderFolio" />
         </form-field>
       </div>
-    </div>
-    <div class="row pt-4">
-      <div class="col-md-2">
+
+      <div class="col-md-4">
         <form-field
           [control]="filterForm.get('applicationId')"
           label="No&#46; Solicitud">
@@ -38,12 +36,12 @@
     <div class="d-flex justify-content-end">
       <div class="m-3">
         <button class="btn btn-primary btn-sm active" (click)="search()">
-          <i class="bx bx-search-alt-2"></i> Buscar
+          Buscar <i class="fa fa-search"></i>
         </button>
       </div>
       <div class="m-3">
         <button class="btn btn-danger btn-sm active" (click)="reset()">
-          <i class="bx bx-trash"></i> Limpiar
+          Limpiar <i class="fas fa-eraser"></i>
         </button>
       </div>
     </div>

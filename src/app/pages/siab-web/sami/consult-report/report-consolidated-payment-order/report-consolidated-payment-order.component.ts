@@ -35,7 +35,7 @@ export class ReportConsolidatedPaymentOrderComponent
   loadingOrderService: boolean = false;
   loadingCreditNots: boolean = false;
   paymentsOrder = new LocalDataSource();
-  OrderService = new LocalDataSource();
+  orderService = new LocalDataSource();
   creditNots = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsOrderService = new BehaviorSubject<ListParams>(new ListParams());
@@ -48,16 +48,15 @@ export class ReportConsolidatedPaymentOrderComponent
   regionalsDelegations = new DefaultSelect();
   transferences = new DefaultSelect();
   orderPaySelect: IOrderPayment[] = [];
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   settingsOrderService = {
     ...TABLE_SETTINGS,
-    selectMode: 'multi',
     actions: false,
     columns: ORDER_SERVICE_ORDER_COLUMNS,
   };
 
   settingsCreditsNots = {
     ...TABLE_SETTINGS,
-    selectMode: 'multi',
     actions: false,
     columns: CREDIT_NOTS_COLUMNS,
   };
@@ -268,6 +267,9 @@ export class ReportConsolidatedPaymentOrderComponent
           item.transferentName = transferentName;
           item.delegationName = delegationName;
           item.orderPayDate = moment(item.orderPayDate).format('DD/MM/YYYY');
+          item.billSupplierDate = moment(item.billSupplierDate).format(
+            'DD/MM/YYYY'
+          );
           return item;
         });
 
@@ -278,7 +280,11 @@ export class ReportConsolidatedPaymentOrderComponent
         });
       },
       error: () => {
+        this.paymentsOrder = new LocalDataSource();
+        this.totalItems = 0;
         this.loading = false;
+        this.alert('warning', 'Advertencia', 'No se encontraron registros');
+        this.pageSizeOptions = [10];
       },
     });
   }
@@ -302,11 +308,14 @@ export class ReportConsolidatedPaymentOrderComponent
           });
 
           Promise.all(info).then(info => {
-            this.OrderService.load(info);
+            this.orderService.load(info);
             this.totalItemsOrderService = response.count;
           });
         },
-        error: () => {},
+        error: () => {
+          this.orderService = new LocalDataSource();
+          this.totalItemsOrderService = 0;
+        },
       });
   }
 
@@ -338,7 +347,10 @@ export class ReportConsolidatedPaymentOrderComponent
 
   orderPaymentSelect(orderPayment: IOrderPayment[]) {
     this.orderPaySelect = orderPayment;
-
+    console.log('orderPayment', orderPayment[0]);
+    /*orderPayment[0].orderPayDate = moment(orderPayment[0].orderPayDate).format(
+      'DD/MM/YYYY'
+    ); */
     this.form.patchValue(orderPayment[0]);
 
     this.paramsOrderService
@@ -366,15 +378,26 @@ export class ReportConsolidatedPaymentOrderComponent
         },
         error: () => {
           this.loadingCreditNots = false;
+          this.creditNots = new LocalDataSource();
+          this.totalItemsCreditsNots = 0;
         },
       });
   }
 
   cleanForm() {
     this.searchForm.reset();
+    this.form.reset();
+
     this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getOrderPayment());
+    this.pageSizeOptions = [10];
+    this.paymentsOrder = new LocalDataSource();
+    this.orderService = new LocalDataSource();
+    this.creditNots = new LocalDataSource();
+    this.totalItemsCreditsNots = 0;
+    this.totalItemsOrderService = 0;
+    this.totalItems = 0;
   }
 }

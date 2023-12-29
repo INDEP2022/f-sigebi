@@ -25,10 +25,13 @@
 .img-container button {
   z-index: 99;
   position: absolute;
-  right: 15px;
+  right: 20px;
 
   &:not(:disabled) {
     cursor: pointer;
+  }
+  @media screen and (max-width: 576px) {
+    right: 5px;
   }
 }
 
@@ -43,7 +46,10 @@
 }
 
 #ngx-close-btn {
-  top: 15px;
+  top: 60px;
+  @media screen and (max-width: 576px) {
+    top: 35px;
+  }
 }
 
 button.default {

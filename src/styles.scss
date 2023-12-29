@@ -396,6 +396,21 @@ ng-scrollbar {
   --scrollbar-thumb-color: rgba(94, 175, 255, 0.5);
   --scrollbar-thumb-hover-color: dodgerblue;
   --scrollbar-border-radius: 4px;
+  ng2-smart-table {
+    padding-right: 12px;
+  }
+}
+
+.form-group ng-select {
+  margin-top: 3px;
+}
+
+.ng-select .ng-select-container:hover {
+  box-shadow: none;
+}
+
+.ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+  box-shadow: none;
 }
 
 .dropdown-item.bg-primary {
@@ -890,3 +905,13 @@ textarea + .form-bar {
   margin-top: -3px !important;
 }
 
+
+.label {
+  margin-top: 1px;
+}
+
+div:where(.swal2-container).swal2-top,
+div:where(.swal2-container).swal2-center,
+div:where(.swal2-container).swal2-bottom {
+  z-index: 10000 !important;
+}
