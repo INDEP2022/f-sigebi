@@ -57,14 +57,14 @@ export class FolioModalComponent extends BasePage implements OnInit {
               series: () => (searchFilter = SearchFilter.EQ),
               invoice: () => (searchFilter = SearchFilter.EQ),
               pulledapart: () => (searchFilter = SearchFilter.EQ),
-              comerF: () => (searchFilter = SearchFilter.ILIKE),
+              recordNumber: () => (searchFilter = SearchFilter.ILIKE),
               recordDate: () => (searchFilter = SearchFilter.EQ),
             };
 
             search[filter.field]();
 
             if (filter.search !== '') {
-              if (filter.field == 'eventDate') {
+              if (filter.field == 'recordDate') {
                 filter.search = this.datePipe.transform(
                   filter.search,
                   'yyyy-MM-dd'
@@ -84,15 +84,15 @@ export class FolioModalComponent extends BasePage implements OnInit {
     //   if (this.totalItems > 0) this.getInvoiceFolioSeparate();
     // });
 
-    this.filter.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: () => this.getInvoiceFolioSeparate(),
+    this.filter.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getInvoiceFolioSeparate();
     });
   }
 
   getInvoiceFolioSeparate() {
     this.loading = true;
     let params = {
-      ...this.filter,
+      ...this.filter.getValue(),
       ...this.columnFilters,
     };
     this.invoiceService.getAllFolioSepate(params).subscribe({
