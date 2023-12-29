@@ -54,7 +54,10 @@
               <button
                 type="button"
                 class="btn btn-sm btn-primary mt-2 active"
-                [disabled]="form.invalid"
+                [disabled]="
+                  form.invalid ||
+                  (paymentRequestNumber && paymentRequestNumber.value)
+                "
                 (click)="save()">
                 Guardar <i aria-hidden="true" class="fa fa-save"></i>
               </button>
@@ -99,6 +102,7 @@
               <ng-custom-select-loading
                 [form]="form"
                 [updateValues]="true"
+                [readonly]="true"
                 formControlName="paymentRequestNumber"
                 label="Solicitud Pago"
                 path="payment/api/v1/comer-payment-ref/getAllV2"
@@ -260,7 +264,8 @@
                 <textarea
                   class="form-control"
                   formControlName="comment"
-                  rows="2"></textarea>
+                  rows="2"
+                  maxlength="255"></textarea>
               </form-field>
             </div>
           </div>

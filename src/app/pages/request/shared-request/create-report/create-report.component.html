@@ -32,7 +32,9 @@
           </div>
 
           <div class="col-md-3" *ngIf="signReport && template && !isSigned">
-            <button (click)="openSignature()" class="btn btn-primary active btn-sm">
+            <button
+              (click)="openSignature()"
+              class="btn btn-primary active btn-sm">
               Firmar reporte
               <i class="fa fa-file-signature"></i>
             </button>
@@ -81,7 +83,7 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3"  *ngIf="editReport">
+      <div class="m-3" *ngIf="editReport">
         <confirm-button
           [disabled]="!form.valid"
           [loading]="loading"

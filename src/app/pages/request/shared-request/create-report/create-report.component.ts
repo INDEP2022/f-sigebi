@@ -16,7 +16,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import * as moment from 'moment';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ReportService } from 'src/app/core/services/catalogs/reports.service';
