@@ -28,6 +28,7 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
 
   @Input() requestId: number;
 
+  @Input() readonly: boolean = false;
   private tranferService = inject(NoTransferService);
 
   @Output() goods = new EventEmitter<any>();
@@ -40,12 +41,19 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
   constructor(private modalService: BsModalService) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = true;
   }
 
   ngOnInit(): void {
     this.getAllNotTransferred();
     this.getPagination();
+
+    if (this.readonly) {
+      this.settings.actions = null;
+      this.settings.edit = null;
+      this.settings.delete = null;
+    } else {
+      this.settings.actions.delete = true;
+    }
   }
 
   openModal(context?: Partial<ModalNotTransferredComponent>) {
@@ -78,8 +86,11 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
   }
 
   getAllNotTransferred() {
+    console.log(this.requestId);
     const param = new FilterParams();
     param.addFilter('applicationId', this.requestId);
+    console.log(param['applicationId']);
+
     const filter = param.getParams();
     this.tranferService.getAllNoTransfer(filter).subscribe({
       next: response => {

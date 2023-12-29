@@ -365,7 +365,9 @@
             [typeVisit]="typeVisit"
             (onChange)="onProgramVisit($event)"></app-select-good-eye-visit>
           <div *ngIf="selectGoodNotForEyeVisit">
-            <app-goods-not-transferred></app-goods-not-transferred>
+            <app-goods-not-transferred
+              [requestId]="requestId"
+              [readonly]="readonly"></app-goods-not-transferred>
           </div>
         </tab>
 
