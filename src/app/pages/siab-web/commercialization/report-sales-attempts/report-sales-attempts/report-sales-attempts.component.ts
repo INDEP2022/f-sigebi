@@ -44,6 +44,16 @@ interface IExcelToJson {
           transform: rotate(360deg);
         }
       }
+      input[type='file']::file-selector-button {
+        margin-right: 20px;
+        border: none;
+        background: #9d2449;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        /* transition: background.2s ease-in-out; */
+      }
     `,
   ],
 })
@@ -74,6 +84,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   totalItems2: number = 0;
   totalItems3: number = 0;
+  selecctTipoData: any;
   private isFirstLoad = true;
   private isSecondLoad = true;
 
@@ -137,7 +148,14 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       this.getStatus(new ListParams());
     }, 1000);
   }
-
+  enableButton() {
+    this.loadingBtn2 = true;
+  }
+  enableButton1(event: any) {
+    this.loadingBtn2 = true;
+    console.log(event);
+    this.selecctTipoData = event;
+  }
   chargeFile(event: any) {}
 
   onFileChange(event: Event) {
@@ -157,7 +175,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
           this.readExcel(loadEvent.target.result);
 
           // Limpia el input de archivo para permitir cargar el mismo archivo nuevamente
-          (event.target as HTMLInputElement).value = '';
+          // (event.target as HTMLInputElement).value = '';
         }
         console.log(this.fileReader.onload);
       };
@@ -184,12 +202,20 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
-
+  cleanTable() {
+    this.source.load([]);
+    this.source.refresh();
+  }
   consultarBienExcel() {
     this.loadingBtn4 = true;
+    this.loading = true;
+    this.until = false;
+    this.until2 = false;
+
     if (!this.commaSeparatedString) {
-      this.alert('warning', 'Debe importar el Archivo Excel', '');
+      this.alert('warning', 'Debe importar el archivo Excel', '');
       this.loadingBtn4 = false;
+      this.loading = false;
       return;
     }
 
@@ -201,7 +227,6 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       pType: 0,
       pSubtypes: '',
       pStatus: '',
-      ...this.params3.getValue(),
     };
     console.log(body);
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
@@ -221,6 +246,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
           }
         });
         this.loadingBtn4 = false;
+        this.loading = false;
         console.log('Conteo de ocurrencias de cada bien:', countMap);
         const newData = Object.keys(countMap).map(bien => ({
           bien,
@@ -243,10 +269,13 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.alert('error', 'No se Encontraron Registros', '');
+        this.loadingBtn4 = false;
+        this.loading = false;
+        // this.alert('error', 'No se encontraron registros', '');
         this.source.load([]);
         this.until3 = false;
         this.source.refresh();
+
         this.totalItems3 = 0;
       },
     });
@@ -254,9 +283,13 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
   consultarOnlyOne() {
     this.loadingBtn = true;
+    this.loading = true;
+    this.until3 = false;
+    this.until2 = false;
     if (!this.form.get('onlyOne').value) {
-      this.alert('warning', 'Es Necesario Contar con el No. Bien', '');
+      this.alert('warning', 'Es necesario contar con el No. Bien', '');
       this.loadingBtn = false;
+      this.loading = false;
       return;
     }
     let params = {};
@@ -288,6 +321,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
           console.log('Conteo de ocurrencias de cada bien:', countMap);
           this.loadingBtn = false;
+          this.loading = false;
           const newData = Object.keys(countMap).map(bien => ({
             bien,
             conteo_ocurrencias: countMap[bien],
@@ -309,9 +343,11 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         },
         error: err => {
           console.log(err);
-          this.alert('error', 'No se Encontraron Registros', '');
+          // this.alert('error', 'No se encontraron registros', '');
           this.source.load([]);
           this.until = false;
+          this.loadingBtn = false;
+          this.loading = false;
           this.source.refresh();
           this.totalItems = 0;
         },
@@ -352,9 +388,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
             ' - ' +
             item.subTypeDesc +
             ' - ' +
-            item.ssubTypeDesc +
-            ' - ' +
-            item.sssubTypeDesc;
+            item.ssubTypeDesc;
+          // ' - ' +
+          // item.sssubTypeDesc;
         });
         Promise.all(this.result).then((resp: any) => {
           this.tiposData = new DefaultSelect(response.data, response.count);
@@ -373,7 +409,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   getStatus(params: ListParams) {
-    this.loading = true;
+    // this.loading = true;
     // Obtener el valor del filtro del formulario
     const val = this.form.get('typeStatus').value;
     console.log(val);
@@ -405,7 +441,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
           console.log(this.status);
           console.log(this.tiposstatus);
 
-          this.loading = false; // Colocar el loading en false después de mostrar los datos.
+          // this.loading = false; // Colocar el loading en false después de mostrar los datos.
         });
 
         console.log(response);
@@ -426,32 +462,28 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   consultarBien() {
     this.isFirstLoad = true;
     this.loadingBtn3 = true;
-    console.log(this.form.get('typeGood').value);
-    console.log(this.tiposData);
+    this.loading = true;
+    this.until = false;
+    this.until3 = false;
+
     const selectedTypeNumber = this.form.get('typeGood').value;
     const selectedTypeStatus = this.form.get('typeStatus').value;
-    const resultArray = this.tiposData.data['filter'](
-      (item: any) => item.clasifGoodNumber === selectedTypeNumber
-    );
-    const resultStatus = this.tiposstatus.data['filter'](
-      (item: any) => item.status === selectedTypeStatus
-    );
+
     console.log(selectedTypeStatus);
 
     if (!selectedTypeStatus) {
-      this.alert('warning', 'Debe Seleccionar los Filtros', '');
+      this.alert('warning', 'Debe seleccionar los filtros', '');
       this.loadingBtn3 = false;
+      this.loading = false;
       return;
     }
-
-    console.log(selectedTypeNumber);
 
     let params = {
       ...this.params2.getValue(),
     };
     let body = {
-      pType: resultArray[0].typeNumber,
-      pSubtypes: resultArray[0].subTypeNumber,
+      pType: this.selecctTipoData.typeNumber,
+      pSubtypes: this.selecctTipoData.subTypeNumber,
       pStatus: this.form.get('typeStatus').value,
     };
     console.log(params);
@@ -460,15 +492,15 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         console.log(resp);
 
         if (this.totalItems2 === 0) {
-          this.alert('error', 'No se encontraron registros', '');
-
           this.loadingBtn3 = false;
+          this.loading = false;
           return;
         }
         // Contar la cantidad de veces que aparece "no_bien" en la respuesta
         // Crear un objeto para almacenar las ocurrencias de cada valor en no_bien
         const countMap: { [key: string]: number } = {}; // Anotación de tipo para countMap
         this.loadingBtn3 = false;
+        this.loading = false;
         // Recorrer los registros y contar las ocurrencias
         resp.data.forEach((item: any) => {
           const noBienValue: string = item.no_bien;
@@ -502,6 +534,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
+        this.isFirstLoad = false;
+        this.loadingBtn3 = false;
+        this.loading = false;
       },
     });
   }
@@ -514,6 +549,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     this.getStatus({});
     this.source.load([]);
     this.until = false;
+    this.loadingBtn2 = false;
   }
 
   cleanOnly() {

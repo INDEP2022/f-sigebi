@@ -237,17 +237,6 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
       });
   }
 
-  /* dirCorporateLegal: [null, [Validators.required]],
-      dirExecutiveLegal: [null, [Validators.required]],
-      nameAddressee: [null, [Validators.required]],
-      postAddressee: [null, [Validators.required]],
-      affair: [null, [Validators.required]],
-      fundamentals: [null, [Validators.required]],
-      providedDate: [null, [Validators.required]],
-      inchargeProvided: [null, [Validators.required]],
-      statusSuspension: [null, [Validators.required]],
-      signatureBySubstitution: [null], */
-
   //Table
   queryDelegation() {
     let params = {
@@ -295,6 +284,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
         object['jobLegalId'] = splitId;
         this.createLegalDoc(object);
       } else {
+        object['providedDate'] = new DatePipe('en-EN').transform(object['providedDate'], 'dd/MM/yyyy');
         object['jobLegalId'] = this.recDoc['jobLegalId'];
         this.updatedLegalDoc(object);
       }

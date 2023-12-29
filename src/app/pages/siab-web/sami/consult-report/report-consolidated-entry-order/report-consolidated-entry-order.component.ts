@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -46,6 +47,7 @@ export class ReportConsolidatedEntryOrderComponent
   totalItemsService: number = 0;
   totalItemsOrderAs: number = 0;
   orderServiceId: number = 0;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   loadingServices: boolean = false;
   loadingDetailGoodsProgDel: boolean = false;
   loadingDetailGoodsOrdEntry: boolean = false;
@@ -166,14 +168,17 @@ export class ReportConsolidatedEntryOrderComponent
     if (idOrderEntry)
       this.params.getValue()['filter.id'] = `$eq:${idOrderEntry}`;
     if (startDate)
-      this.params.getValue()['filter.startDate'] = `$eq:${startDate}`;
-    if (endDate) this.params.getValue()['filter.endDate'] = `$eq:${endDate}`;
+      this.params.getValue()['filter.startDate'] =
+        moment(startDate).format('YYYY-MM-DD');
+    if (endDate)
+      this.params.getValue()['filter.endDate'] =
+        moment(endDate).format('YYYY-MM-DD');
     if (regionalDelegationNumber)
       this.params.getValue()[
         'filter.delegationRegionalId'
       ] = `$eq:${regionalDelegationNumber}`;
     if (noContract) {
-      this.params.getValue()['filter.contractNumber'] = `$eq:${noContract}`;
+      this.params.getValue()['filter.contractNumber'] = noContract;
     }
 
     this.params
@@ -193,6 +198,11 @@ export class ReportConsolidatedEntryOrderComponent
           );
 
           item.delegationName = delegationName;
+          item.orderDate = moment(item.orderDate).format('DD/MM/YYYY');
+          if (item.startDate)
+            item.startDate = moment(item.startDate).format('DD/MM/YYYY');
+          if (item.endDate)
+            item.endDate = moment(item.endDate).format('DD/MM/YYYY');
           return item;
         });
 
@@ -238,8 +248,10 @@ export class ReportConsolidatedEntryOrderComponent
         const paramsProgDel = new BehaviorSubject<ListParams>(new ListParams());
         this.loadingDetailGoodsProgDel = true;
         filterProgDelivery.map(itemData => {
-          /*paramsProgDel.getValue()['filter.programmingDeliveryId'] = item.programmingDeliveryId; */
           paramsProgDel.getValue()['filter.programmingDeliveryId'] = 16896;
+          paramsProgDel.getValue()['filter.orderEntryId'] = this.orderServiceId;
+          /*paramsProgDel.getValue()['filter.programmingDeliveryId'] = item.programmingDeliveryId; */
+
           this.programmingGoodService
             .getProgrammingDeliveryGood(paramsProgDel.getValue())
             .subscribe({
@@ -258,11 +270,17 @@ export class ReportConsolidatedEntryOrderComponent
               },
               error: () => {
                 this.loadingDetailGoodsProgDel = false;
+                this.infoDetailGoodsProgDel = new LocalDataSource();
+                this.totalItemsDetailGoodsProgDel = 0;
               },
             });
         });
       },
-      error: () => {},
+      error: () => {
+        this.loadingDetailGoodsProgDel = false;
+        this.infoDetailGoodsProgDel = new LocalDataSource();
+        this.totalItemsDetailGoodsProgDel = 0;
+      },
     });
 
     this.paramsOrderAs
@@ -280,15 +298,24 @@ export class ReportConsolidatedEntryOrderComponent
 
   getOrderPayment() {
     this.loadingOrderAs = true;
+    this.paramsOrderAs.getValue()['filter.orderIncomeId'] = this.orderServiceId;
     this.orderServiceService
       .getOrderPayment(this.paramsOrderAs.getValue())
       .subscribe({
         next: response => {
-          this.infoOrderAs.load(response.data);
+          const info = response.data.map(item => {
+            item.orderPayDate = moment(item.orderPayDate).format('DD/MM/YYYY');
+            return item;
+          });
+          this.infoOrderAs.load(info);
           this.totalItemsOrderAs = response.count;
           this.loadingOrderAs = false;
         },
-        error: () => {},
+        error: () => {
+          this.infoOrderAs = new LocalDataSource();
+          this.loadingOrderAs = false;
+          this.totalItemsOrderAs = 0;
+        },
       });
   }
 
@@ -312,6 +339,8 @@ export class ReportConsolidatedEntryOrderComponent
         },
         error: () => {
           this.loadingServices = false;
+          this.infoOrderServices = new LocalDataSource();
+          this.totalItemsService = 0;
         },
       });
   }
@@ -355,15 +384,29 @@ export class ReportConsolidatedEntryOrderComponent
         },
         error: () => {
           this.loadingDetailGoodsOrdEntry = false;
+          this.infoDetailGoodsOrdEntry = new LocalDataSource();
+          this.totalItemsDetailGoodsOrdEnt = 0;
         },
       });
   }
 
   cleanForm() {
     this.searchForm.reset();
+    this.form.reset();
     this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getOrderEntry());
+    this.pageSizeOptions = [10];
+    this.infoOrderService = new LocalDataSource();
+    this.infoDetailGoodsProgDel = new LocalDataSource();
+    this.infoDetailGoodsOrdEntry = new LocalDataSource();
+    this.infoOrderServices = new LocalDataSource();
+    this.infoOrderAs = new LocalDataSource();
+    this.totalItems = 0;
+    this.totalItemsDetailGoodsProgDel = 0;
+    this.totalItemsDetailGoodsOrdEnt = 0;
+    this.totalItemsService = 0;
+    this.totalItemsOrderAs = 0;
   }
 }

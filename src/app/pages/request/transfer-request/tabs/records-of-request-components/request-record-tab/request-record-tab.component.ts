@@ -12,6 +12,7 @@ import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -44,7 +45,7 @@ export class RequestRecordTabComponent
   bsligDate: any;
   bsverifiyDate: any;
   selectTypeExpedient = new DefaultSelect<any>();
-  selectOriginInfo = new DefaultSelect<any>();
+  selectOriginInfo;
   selectMinPub = new DefaultSelect<any>();
   affairName: string = '';
   datePaper: any;
@@ -60,6 +61,8 @@ export class RequestRecordTabComponent
   maxDate = new Date();
   minDate = new Date();
   today = new Date();
+  regionalsDelegations = new DefaultSelect<any>();
+
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
@@ -67,7 +70,8 @@ export class RequestRecordTabComponent
     private requestService: RequestService,
     private minPub: MinPubService,
     private transferenteService: TransferenteService,
-    private authService: AuthService
+    private authService: AuthService,
+    private regionalDelegationService: RegionalDelegationService
   ) {
     super();
     this.minDate = addDays(new Date(), 1);
@@ -86,6 +90,7 @@ export class RequestRecordTabComponent
     //const min = addDays(new Date(), 1);
     console.log('Activando tab: request-record-tab');
     this.getOriginInfo(new ListParams());
+    this.getRegionalDelegation(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
     //estable el campo para preguntar en la vista si es del tipo 1 o 3
@@ -469,5 +474,13 @@ export class RequestRecordTabComponent
     return new Date(
       dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
     );
+  }
+
+  getRegionalDelegation(params?: ListParams) {
+    params['filter.description'] = `$ilike:${params.text}`;
+    this.regionalDelegationService.getAll(params).subscribe((data: any) => {
+      this.regionalsDelegations = new DefaultSelect(data.data, data.count);
+      console.log('this.regionalsDelegations', this.regionalsDelegations);
+    });
   }
 }

@@ -250,7 +250,7 @@ export const DOC_EXPEDIENT_COLUMNS = {
   },
 
   xtipoTransferencia: {
-    title: 'Tipo de Transferenciaa',
+    title: 'Tipo de Transferencia',
     type: 'string',
     sort: false,
   },

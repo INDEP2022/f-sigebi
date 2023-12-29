@@ -618,7 +618,14 @@ export class InvoiceRectificationProcessComponent
           );
         },
         error: err => {
-          this.alert('error', 'Error', err.error.message);
+          if (
+            err.error.message ==
+            'El maximo valor de anio debe ser 9999,year debe ser un número'
+          ) {
+            this.alert('warning', 'El máximo valor de año debe ser 9999', '');
+          } else {
+            this.alert('error', 'Error', err.error.message);
+          }
         },
       });
     } else {
@@ -659,7 +666,14 @@ export class InvoiceRectificationProcessComponent
               'Existe un registro con el No. Oficio en el Año de Expedición, verifique'
             );
           } else {
-            this.alert('error', 'Error', err.error.message);
+            if (
+              err.error.message ==
+              'El maximo valor de anio debe ser 9999,year debe ser un número'
+            ) {
+              this.alert('warning', 'El máximo valor de año debe ser 9999', '');
+            } else {
+              this.alert('error', 'Error', err.error.message);
+            }
           }
         },
       });
@@ -715,12 +729,14 @@ export class InvoiceRectificationProcessComponent
   setYear(date?: string) {
     // if (this.isSearch) return;
     const { expDate } = this.form.value;
+    console.log('expDate', expDate);
     let year =
       typeof expDate == 'string'
         ? Number(expDate.split('/')[2])
         : expDate
         ? Number(this.datePipe.transform(expDate, 'yyyy'))
         : null;
+    console.log('SI', year);
     this.form.get('year').patchValue(year);
   }
 
@@ -792,7 +808,6 @@ export class InvoiceRectificationProcessComponent
       expDate: [null, Validators.required],
       hourAttention: [
         `${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00`,
-        Validators.required,
       ],
       inrepresentation: [null, Validators.pattern(STRING_PATTERN)],
       issues: [null],
@@ -1092,7 +1107,7 @@ export class InvoiceRectificationProcessComponent
     // }
 
     // this.saveDataSilent();
-
+    console.log(jobNot, 'jobNot, year', year);
     let config: ModalOptions = {
       initialState: {
         allotment: context,
@@ -1200,6 +1215,7 @@ export class InvoiceRectificationProcessComponent
     ] = `${SearchFilter.EQ}:${rectInvoice.year}`;
 
     this.getComerDirectInvoice();
+    this.setYear();
     this.modal.hide();
   }
   openModalSearch() {

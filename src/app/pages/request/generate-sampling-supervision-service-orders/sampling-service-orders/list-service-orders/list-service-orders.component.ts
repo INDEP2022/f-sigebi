@@ -32,6 +32,7 @@ export class ListServiceOrdersComponent
 {
   @Input() orders: any[];
   @Input() SampleOrderId: number = null;
+  @Input() reloadInfo: boolean;
   //sampleOrderId: number = 3;
   paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -59,6 +60,8 @@ export class ListServiceOrdersComponent
   ngOnChanges(changes: SimpleChanges): void {
     //this.setOrderService();
     if (this.SampleOrderId > 0) this.getSamplingOrder();
+
+    if (this.reloadInfo) this.getSamplingOrder();
   }
 
   setOrderService() {

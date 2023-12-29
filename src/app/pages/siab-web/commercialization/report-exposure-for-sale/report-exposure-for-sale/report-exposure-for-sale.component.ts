@@ -228,7 +228,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
     this.settings7 = {
       ...this.settings,
       actions: false,
-      hideSubHeader: false,
+      hideSubHeader: true,
       columns: {
         office: {
           title: 'Detalle',
@@ -425,6 +425,10 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
       if (this.form.valid) {
         this.form.reset();
       }
+      this.data5.load([]);
+      this.data5.refresh();
+      this.totalItems5 = 0;
+      // this.showGood = false;
     } else if (filtertxt == 0) {
       this.txtSearch = false;
       this.goodSearch = true;
@@ -678,7 +682,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         this.data7.refresh();
         this.totalItems7 = resp.count;
         this.loading = false;
-        this.validate3 = true;
+        if (resp.count > 0) this.validate3 = true;
         this.typeProccess = 'Good';
       },
       error: err => {
@@ -737,7 +741,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
-        this.validate = true;
+        if (resp.count > 0) this.validate = true;
         this.typeProccess = 'NoAttempt';
       },
       error: err => {
@@ -801,7 +805,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         this.data1.refresh();
         this.totalItems1 = resp.count;
         this.loading = false;
-        this.validate1 = true;
+        if (resp.count > 0) this.validate1 = true;
         this.typeProccess = 'TwoMonths';
       },
       error: err => {
@@ -885,7 +889,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
         this.data5.refresh();
         this.totalItems5 = resp.count;
         this.loading = false;
-        this.validate2 = true;
+        if (resp.count > 0) this.validate2 = true;
         this.typeProccess = 'ConsultGood';
       },
       error: err => {

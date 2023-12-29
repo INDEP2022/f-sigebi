@@ -18,16 +18,6 @@ import { ListParams } from '../../../../../common/repository/interfaces/list-par
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { LIST_WAREHOUSE_COLUMNS } from './columns/list-warehouses-columns';
-
-var data = [
-  {
-    noWarehouse: 'P44',
-    name: 'ALMACEN DE PRUEBA LAR',
-    state: 'Ciudad de Mexico',
-    direction:
-      'PRIVADA DE LOS REYES, LOS REYES 27, AZACAPOTZALCO, CIUDAD DE MEXICO',
-  },
-];
 @Component({
   selector: 'app-warehouse-detail',
   templateUrl: './warehouse-detail.component.html',
@@ -102,28 +92,44 @@ export class WarehouseDetailComponent extends BasePage implements OnInit {
   }
 
   getStoreView(params: ListParams) {
-    console.log(params);
+    this.loading = true;
     this.goodsQueryService.getCatStoresView2(params).subscribe({
       next: resp => {
         this.paragraphs.load(resp.data);
         this.totalItems = resp.count;
+        this.loading = false;
       },
     });
   }
 
   save() {
-    console.log(this.warehoseSelected);
-    const body = {
-      idStore: this.warehoseSelected.organization,
-      idSamplingOrder: this.SampleOrderId,
-    };
-    this.orderService.updateSampleOrder(body).subscribe({
-      next: resp => {
-        this.onLoadToast('success', 'Se guardaron los cambios');
-      },
-      error: error => {
-        this.onLoadToast('error', 'No se pudo guardar el formulario');
-      },
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea relacionar el almacén a la orden de muestreo?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        const body = {
+          idStore: this.warehoseSelected.organization,
+          idSamplingOrder: this.SampleOrderId,
+        };
+        this.orderService.updateSampleOrder(body).subscribe({
+          next: () => {
+            this.alert(
+              'success',
+              'Acción Correcta',
+              'Se guardaron los cambios'
+            );
+          },
+          error: () => {
+            this.alert(
+              'warning',
+              'Acción Invalida',
+              'No se pudo relacionar el almacén a la orden de muestreo'
+            );
+          },
+        });
+      }
     });
   }
 }

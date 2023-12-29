@@ -10,9 +10,9 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DOC_GOODS_COLUMNS } from '../../../shared-request/expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab-columns';
+import { DOC_REQUEST_TAB_COLUMNS } from '../../../shared-request/expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab-columns';
 import { SeeInformationComponent } from '../../../shared-request/expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
-import { NewDocumentComponent } from '../../../shared-request/expedients-tabs/sub-tabs/new-document/new-document.component';
+import { NewDocumentServiceOrderFormComponent } from '../new-document-service-order-form/new-document-service-order-form.component';
 
 @Component({
   selector: 'app-upload-expedient-service-order-form',
@@ -59,7 +59,7 @@ export class UploadExpedientServiceOrderFormComponent
       delete: {
         deleteButtonContent: '<i  class="fa fa-eye text-info mx-2" ></i>',
       },
-      columns: DOC_GOODS_COLUMNS,
+      columns: DOC_REQUEST_TAB_COLUMNS,
     };
   }
 
@@ -602,11 +602,11 @@ export class UploadExpedientServiceOrderFormComponent
           setTimeout(() => {
             this.getDocuemntByGood();
             this.formLoading = false;
-          }, 8000);
+          }, 7000);
         }
       },
     };
-    this.modalService.show(NewDocumentComponent, config);
+    this.modalService.show(NewDocumentServiceOrderFormComponent, config);
   }
   close() {
     this.modalRef.hide();

@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const PRE_INVOICING_COLUMNS = {
   event: {
     title: 'Evento',
@@ -38,5 +40,15 @@ export const PRE_INVOICING_COLUMNS = {
   date: {
     title: 'Fecha',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      return val ? val.split('-').reverse().join('/') : '';
+    },
+    filterFunction: () => {
+      return true;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
 };
