@@ -1,7 +1,7 @@
 export const GUIDELINES_COLUMNS = {
   guideline: {
     title: 'Lineamiento',
-    type: 'string',
+    disabled: true,
     width: '25%',
     sort: false,
   },
@@ -9,24 +9,24 @@ export const GUIDELINES_COLUMNS = {
     title: '(Revisión 1) Cumple',
     type: 'string',
     sort: false,
-    editable: false,
+    editable: true,
   },
   firstRevisionObserv: {
     title: 'Observaciones',
     type: 'string',
     sort: false,
-    editable: false,
+    editable: true,
   },
   secondRevision: {
     title: '(Revisión 2) Cumple',
     type: 'string',
     sort: false,
-    editable: false,
+    editable: true,
   },
   secondRevisionObserv: {
     title: 'Observaciones',
     type: 'string',
     sort: false,
-    editable: false,
+    editable: true,
   },
 };

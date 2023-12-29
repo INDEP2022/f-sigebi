@@ -901,6 +901,17 @@ textarea + .form-bar {
   margin-bottom: 0px !important;
 }
 
+.label-form-exp{
+  margin-top: -3px !important;
+}
+
+
 .label {
   margin-top: 1px;
+}
+
+div:where(.swal2-container).swal2-top,
+div:where(.swal2-container).swal2-center,
+div:where(.swal2-container).swal2-bottom {
+  z-index: 10000 !important;
 }

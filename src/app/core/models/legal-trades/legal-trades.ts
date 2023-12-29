@@ -1,0 +1,36 @@
+export interface ILegalTrade {
+  jobLegalId?: any | null;
+  applicationId?: number | null;
+  situationLegal?: number | null;
+  creationUser?: string | null;
+  creationDate?: string | null;
+  modificationUser?: string | null;
+  modificationDate?: string | null;
+  dirCorporateLegal?: string | null;
+  dirExecutiveLegal?: string | null;
+  affair?: number | null;
+  statementDate?: string | null;
+  paragraphClaim?: string | null;
+  agreementDate?: string | null;
+  judgmentDate?: string | null;
+  resolution?: string | null;
+  resolutionNumber?: number | null;
+  statusSuspension?: string | null;
+  providedDate?: string | null;
+  inchargeProvided?: string | null;
+  label?: string | null;
+  version?: number | null;
+  touchPenalDate?: string | null;
+  fundamentals?: string | null;
+  exhibitExtDomain?: string | null;
+  paragraphExtDomain?: string | null;
+  paragraphProtection?: string | null;
+  documentTypeId?: string | null;
+  nameAddressee?: string | null;
+  postAddressee?: string | null;
+  nameSender?: string | null;
+  postSender?: string | null;
+  resultDate?: string | null;
+  contentId?: string | null;
+  signatureBySubstitution?: string | null;
+}
