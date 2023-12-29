@@ -181,7 +181,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
     return new Promise(async (resolve, reject) => {
       this.loadingTurn = true;
       const form = this.requestForm.getRawValue();
-      const requestResult: any = await this.createRequest(form);
+
+      let requestResult = this.currentRequest;
+
       if (requestResult) {
         this.requestId = requestResult.id;
         const user: any = this.authService.decodeToken();
@@ -273,7 +275,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
         this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -386,7 +388,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     }
   }
 
-  getState(event: any): void {}
+  getState(event: any): void { }
 
   /*getIssue(event?: any, id?: string): void {
     let params = new ListParams();
@@ -500,7 +502,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
               allowOutsideClick: false,
-            }).then(async result => {});
+            }).then(async result => { });
           }
         }
       }
@@ -694,7 +696,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            'El proceso seleccionado no tiene una tarea configurada'
+            'No aplica para documentación complementaria'
           );
           reject(false);
         },

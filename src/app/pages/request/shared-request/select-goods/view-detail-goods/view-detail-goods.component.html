@@ -30,7 +30,7 @@
             <label for="">
               <strong>Fecha Creaci&oacute;n&#58; </strong>
               <span style="font-weight: normal">
-                {{ data?.applicationDate | date: 'dd/MM/yyyy' }}</span
+                {{ data?.applicationDate | date : 'dd/MM/yyyy' }}</span
               >
             </label>
           </div>
@@ -72,7 +72,7 @@
               <span style="font-weight: normal">{{ data?.typeRecord }}</span>
             </label>
           </div>
-          <div class="col-md-6" *ngIf="false">
+          <div class="col-md-6" *ngIf="false" >
             <label for="">
               <strong>Observaciones&#58;</strong>
               <span style="font-weight: normal"> {{ data?.observations }}</span>

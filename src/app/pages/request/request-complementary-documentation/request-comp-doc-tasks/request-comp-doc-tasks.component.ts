@@ -11,9 +11,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -21,7 +23,9 @@ import {
 import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2';
 import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
@@ -41,8 +45,10 @@ import { CompDocTasksComponent } from './comp-doc-task.component';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
+  protected override btnGrouper: boolean;
+  protected override formatReport: boolean;
+  protected override signReport: boolean;
   protected override selectGoodNotForEyeVisit: boolean;
   protected override selectGoodsNot: boolean;
   protected override editReport: boolean;
@@ -88,6 +94,12 @@ export class RequestCompDocTasksComponent
   viewGuidelines: boolean = false;
   dictumRegister: boolean = false;
   orderView: boolean = false;
+  visible: boolean = false;
+  steap1: boolean = false;
+  steap2: boolean = false;
+  steap3: boolean = false;
+  isEdit: boolean = false;
+  dictumInfo: boolean = false;
 
   /**
    * SET STATUS ACTIONS
@@ -124,6 +136,10 @@ export class RequestCompDocTasksComponent
   paramsDelegation = new BehaviorSubject(new ListParams());
   totalItemsDelegation: number = 0;
 
+  delegation: Object = null;
+
+  dataPay: Object = null;
+
   /**
    * email del usuairo
    */
@@ -156,9 +172,10 @@ export class RequestCompDocTasksComponent
     valvisits: false, //VALIDAR VISITA OCULAR
     vercom: false, //VERIFICAR CUMPLIMIENTO
     dictudData: false, //DATOS DEL DICTAMEN
-    dictudDataReg: false, //DATOS DEL DICTAMENT REGISTRAR
     registerAppointment: false, //REGISTRAR CITA
     orderEntry: false, //ORDEN DE INGRESO
+    programVisit: false, //ORDEN DE INGRESO
+    legalStatus: false, //CAMBIO DE ESTATUS LEGAL
   };
 
   /* INJECTIONS
@@ -169,6 +186,8 @@ export class RequestCompDocTasksComponent
   private bsModalRef = inject(BsModalRef);
   private authService = inject(AuthService);
   private taskService = inject(TaskService);
+  private wContentService = inject(WContentService);
+  private sanitizer = inject(DomSanitizer);
 
   //private rejectedService = inject(RejectedGoodService)
 
@@ -179,6 +198,7 @@ export class RequestCompDocTasksComponent
     private route: ActivatedRoute,
     private router: Router,
     private modalService: BsModalService,
+    private reportgoodService: ReportgoodService,
     private fb: FormBuilder
   ) {
     super();
@@ -250,7 +270,13 @@ export class RequestCompDocTasksComponent
       next: resp => {
         this.taskInfo = resp.data[0];
         this.title = this.taskInfo.title;
-        this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
+        //this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
+
+        if (this.taskInfo.requestId != this.requestId) {
+          this.router.navigateByUrl(
+            this.taskInfo.urlNb + '/' + this.taskInfo.requestId
+          );
+        }
       },
     });
   }
@@ -263,7 +289,7 @@ export class RequestCompDocTasksComponent
   }
   requestSelected(type: number) {
     this.typeDocumentMethod(type);
-    this.updateInfo = true;
+    this.updateInfo = !this.updateInfo;
     this.typeModule = 'doc-complementary';
   }
 
@@ -287,18 +313,18 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
-  openReport(): void {
-    //validar nextTurn
+  async openReport(): Promise<void> {
     if (!this.nextTurn) {
-      this.showWarning('Vista previa no disponible');
+      let report = await this.getStatusReport();
+      this.showReport(report);
       return;
     }
 
     const initialState: Partial<CreateReportComponent> = {
-      signReport: this.signedReport,
-      editReport: this.editReport,
+      signReport: this.signedReport && this.nextTurn,
+      editReport: this.editReport && this.nextTurn,
       tableName: this.reportTable,
       documentTypeId: this.reportId,
       process: this.process,
@@ -311,17 +337,27 @@ export class RequestCompDocTasksComponent
       ignoreBackdropClick: true,
     });
 
+    modalRef.content.show.subscribe(response => {
+      if (response) {
+        this.showReport(response);
+      }
+    });
+
     modalRef.content.refresh.subscribe(response => {
       if (response.upload) {
-        this.requestInfo.detail.reportSheet = response.upload ? 'Y' : 'N';
-        this.updateRequest(false);
+        //this.requestInfo.detail.reportSheet = 'Y';
+        //this.updateRequest(false);
+      } else if (response.sign) {
+        //this.requestInfo.detail.reportSheet = 'YY';
+        //this.updateRequest(false);
       }
     });
   }
 
   async turnRequest() {
     if (this.process == 'register-taxpayer-date') {
-      await this.openDelegation();
+      let result = await this.openDelegation();
+      if (!result) return;
     }
     this.alertQuestion(
       'question',
@@ -386,10 +422,7 @@ export class RequestCompDocTasksComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.onReject.subscribe((data: boolean) => {
-      if (data) {
-        console.log(data);
-        this.taskRechazar(data);
-      }
+      this.taskRechazar(data);
     });
   }
 
@@ -398,7 +431,9 @@ export class RequestCompDocTasksComponent
       next: resp => {
         if (resp == true) {
           const requestId = Number(this.route.snapshot.paramMap.get('request'));
-          this.staticTabs.tabs[0].active = true;
+          if (!isNullOrEmpty(this.staticTabs.tabs)) {
+            this.staticTabs.tabs[0].active = true;
+          }
           this.getRequestInfo(requestId);
         }
       },
@@ -406,7 +441,6 @@ export class RequestCompDocTasksComponent
   }
 
   closeSearchRequestSimGoodsTab(recordId: number) {
-    console.log(recordId);
     if (recordId) {
       this.searchRequestSimGoods = false;
     }
@@ -421,7 +455,7 @@ export class RequestCompDocTasksComponent
       if (question.isConfirmed) {
         //Cerrar tarea//
 
-        if (this.validateTurn()) {
+        if (await this.validateTurn()) {
           let response = await this.updateTask(this.taskInfo.id);
           if (response) {
             this.msgModal(
@@ -442,7 +476,6 @@ export class RequestCompDocTasksComponent
     this.affairService.getByIdAndOrigin(id, 'SAMI').subscribe({
       next: data => {
         this.processDetonate = data.processDetonate;
-        console.log(this.processDetonate);
       },
       error: error => {
         console.log('no se encontraron datos en asuntos ', error);
@@ -682,11 +715,11 @@ export class RequestCompDocTasksComponent
 
   /** VALIDAR */
   async generateTask() {
-    if (!this.validateTurn()) return;
+    if (!(await this.validateTurn())) return;
 
     /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
     this.loadingTurn = true;
-    const { title, url, type, subtype, ssubtype, process, close } =
+    const { title, url, type, subtype, ssubtype, process, close, rollBack } =
       getConfigAffair(
         this.requestId,
         this.affair,
@@ -707,7 +740,16 @@ export class RequestCompDocTasksComponent
 
     if (close) {
       body['idTask'] = this.taskInfo.id;
+    }
+
+    if (rollBack) {
       task['taskDefinitionId'] = this.taskInfo.id;
+
+      if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
+        task['taskDefinitionName'] = this.taskInfo.taskDefinitionId;
+      }
+    } else {
+      task['taskDefinitionId'] = this.taskInfo.taskDefinitionId;
     }
 
     task['id'] = 0;
@@ -726,6 +768,12 @@ export class RequestCompDocTasksComponent
     task['idTransferee'] = this.taskInfo.idTransferee;
     task['idAuthority'] = this.taskInfo.idAuthority;
     task['idDelegationRegional'] = user.department;
+
+    if (!isNullOrEmpty(this.delegation)) {
+      task['satZoneCoordinator'] = this['addressOffice'];
+    } else {
+      task['satZoneCoordinator'] = '';
+    }
 
     body['task'] = task;
 
@@ -816,9 +864,14 @@ export class RequestCompDocTasksComponent
     body['subtype'] = 'Registro_documentacion';
     body['ssubtype'] = 'REJECT';
 
-    this.updateTask(this.taskInfo.taskDefinitionId, 'PROCESO');
+    if (!isNullOrEmpty(this.taskInfo.taskDefinitionName)) {
+      this.updateTask(this.taskInfo.taskDefinitionName, 'PROCESO');
+    } else if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
+      this.updateTask(this.taskInfo.taskDefinitionId, 'PROCESO');
+    }
 
-    this.requestInfo.rejectionComment = data.comment;
+    this.requestInfo.detail.rejectionComment = data.comment;
+    this.updateRequest(false);
 
     this.taskService.createTaskWitOrderService(body).subscribe({
       next: async resp => {
@@ -848,12 +901,17 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
 
-  validateTurn() {
+  async validateTurn() {
+    let reportLoad: any = {
+      isValid: false,
+      isSign: false,
+    };
+
     switch (this.process) {
       //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
       case 'register-request-return':
@@ -872,10 +930,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
       case 'verify-compliance-return':
@@ -884,41 +942,30 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (this.requestInfo.detail.reportSheet != 'Y') {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Genere el Dictamen de Devolución');
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
       case 'approve-return':
-        let getEstimatedRowCount = 0;
-        let contenido = '';
-        let docNameUcm = '';
+        reportLoad = await this.getStatusReport();
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
-
-        if (!this.validate.signedDictum) {
+        if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
           return false;
         }
 
-        if (getEstimatedRowCount == 0 || isNullOrEmpty(contenido)) {
-          this.showWarning('Es necesario generar el Dictamen de Devolución');
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
-
-        if (isNullOrEmpty(docNameUcm)) {
-          this.showWarning('Es necesario firmar el Dictamen de Devolución');
-          return false;
-        }
+        }*/
 
         break;
 
@@ -939,32 +986,70 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
 
       case 'notify-transfer-similar-goods':
-        if (!this.validate.signedNotify) {
-          this.showWarning('Firme el reporte de notificación');
+        reportLoad = await this.getStatusReport();
+
+        if (!reportLoad.isValid) {
+          this.showWarning('Genere el reporte de notificación');
           return false;
         }
 
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el reporte de notificación 3');
           return false;
         }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
 
         break;
 
       case 'eye-visit-similar-goods':
         //INTEGRAR EXPEDIENTE
         //PROGRAMAR FECHAS
+
+        if (!this.validate.programVisit) {
+          this.showWarning(
+            'Capture el periodo de los bienes para la visita ocular'
+          );
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
         break;
 
       case 'validate-eye-visit-similar-goods':
+        if (!this.validate.programVisit) {
+          this.showWarning('Validar Resultado de visitas');
+          return false;
+        }
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning(
+            'Generar el reporte de resultado de la visita ocular'
+          );
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
         //REGISTRO
         //VALIDAR RESULTADOS
         //INTEGRAR EXPEDIENTE
@@ -999,10 +1084,10 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
 
@@ -1012,12 +1097,13 @@ export class RequestCompDocTasksComponent
           return false;
         }
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
-        if (!this.validate.genDictum) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Genera el dictamen de resarcimiento');
           return false;
         }
@@ -1025,41 +1111,21 @@ export class RequestCompDocTasksComponent
         break;
 
       case 'analysis-result-compensation':
-        if (!this.validate.guidelines) {
-          this.showWarning('Verifique las observaciones de lineamientos');
-          return false;
-        }
-
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
-        if (!this.validate.signedDictum) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
           return false;
         }
         break;
 
       case 'validate-opinion-compensation':
-        if (!this.validate.goods) {
-          this.showWarning('Seleccione los bienes de la solicitud');
-          return false;
-        }
-
-        //DATOS DEL DICTAMEN
-
-        if (!this.validate.files) {
-          this.showWarning('Suba la documentación de la solicitud');
-          return false;
-        }
-
-        if (!this.validate.genValDictum) {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning(
             'Genera la validación del dictamen de resarcimiento'
           );
@@ -1071,20 +1137,26 @@ export class RequestCompDocTasksComponent
       case 'notification-taxpayer-compensation':
         //DATOS DEL DICTAMEN
 
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genere el reporte de notificación');
           return false;
         }
 
-        if (!this.validate.signedNotify) {
-          this.showWarning('Generar el reporte de notificación');
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el reporte de notificación');
           return false;
         }
 
         break;
 
       //CASOS INFORMACION DE BIENES
-      case 'register-request-compensation':
+      case 'register-request-information-goods':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
           return false;
@@ -1097,29 +1169,44 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
         break;
 
-      case 'review-guidelines-compensation':
-        if (!this.validate.sendEmail) {
+      case 'response-office-information-goods':
+        /*if (!this.validate.sendEmail) {
           this.showWarning('Enviar el correo de notificación al contribuyente');
           return false;
-        }
-        if (!this.validate.genOffice) {
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Generar el oficio destino');
           return false;
         }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
         break;
 
-      case 'analysis-result-compensation':
-        if (!this.validate.signedOffice) {
+      case 'review-office-information-goods':
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isSigned) {
           this.showWarning('Firmar el oficio destino');
           return false;
         }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
         break;
 
       /*NUMERARIO*/
 
-      case 'register-request-economic-compensation':
+      case 'register-request-economic':
         if (!this.validate.regdoc) {
           this.showWarning('Registre la información de la solicitud');
           return false;
@@ -1132,19 +1219,20 @@ export class RequestCompDocTasksComponent
           this.showWarning('Seleccione los bienes de la solicitud');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
       case 'request-economic-resources':
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
-        if (this.requestInfo.detail.reportSheet != 'Y') {
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Generar la solicitud de recursos económicos');
           return false;
         }
@@ -1155,18 +1243,21 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        if (this.requestInfo.detail.reportSheet != 'Y') {
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning('Generar el dictamen de resarcimiento');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
 
         break;
-      case 'generate-results-economic-compensation':
-        if (!this.validate.signedDictum) {
+      case 'generate-results-economic':
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isSigned) {
           this.showWarning('Firme el dictamen de resarcimiento');
           return false;
         }
@@ -1174,37 +1265,43 @@ export class RequestCompDocTasksComponent
           this.showWarning('Verifique las observaciones de lineamientos');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
       case 'validate-dictum-economic':
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         if (!this.validate.dictudData) {
           this.showWarning('Registre datos del dictamen');
           return false;
         }
-        if (!this.validate.genValDictum) {
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
           this.showWarning(
             'Genera la validación del dictamen de resarcimiento'
           );
           return false;
         }
+
         break;
       case 'delivery-notify-request':
-        if (!this.validate.dictudData) {
-          this.showWarning('Registre datos del dictamen');
-          return false;
-        }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el reporte de notificación');
+          return false;
         }
-        if (!this.validate.signedNotify) {
+
+        if (!reportLoad.isSigned) {
           this.showWarning('Firme el reporte de notificación');
           return false;
         }
@@ -1214,31 +1311,190 @@ export class RequestCompDocTasksComponent
           this.showWarning('Registre datos de la cita');
           return false;
         }
-        //REGISTRO DE CITA
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
-      case 'register-pay-orde':
+      case 'register-pay-order':
         if (!this.validate.orderEntry) {
           this.showWarning('Registre datos de orden de ingreso');
           return false;
         }
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
+        }*/
         break;
       case 'generate-compensation-act':
-        if (!this.validate.files) {
+        /* if (!this.validate.files) {
           this.showWarning('Suba la documentación de la solicitud');
           return false;
-        }
-        if (!this.validate.genDictum) {
-          this.showWarning('Genera el dictamen de resarcimiento');
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el acta de resarcimiento');
           return false;
         }
+
+        reportLoad = await this.getStatusReport(1);
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el reporte de notificación');
+          return false;
+        }
+
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el reporte de notificación');
+          return false;
+        }
+
+        break;
+
+      case 'register-domain-extinction':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+      case 'register-seizures':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+      case 'register-abandonment-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+      case 'register-protections-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'register-compensation-documentation':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'register-request-protection':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'protection-regulation':
+        //reportLoad = await this.getStatusReport();
+        if (this.requestInfo.detail.reportSheet != 'OCSJ') {
+          this.showWarning('Genera el reporte de oficio jurídico');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'register-compensation-documentation':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'review-result-protection':
+        if (!reportLoad.isSigned) {
+          //this.showWarning('Firme el reporte de oficio jurídico');
+          //return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
         break;
       case 'register-seizures':
         if (!this.validate.regdoc) {
@@ -1325,14 +1581,12 @@ export class RequestCompDocTasksComponent
   }
 
   onSelectFiles(event) {
-    console.log(event);
     this.validate.files = event.isValid;
     //Agreagar validaciones en especifico
   }
 
   onVerifyCom(event) {
-    console.log(event);
-    this.validate.vercom = event.isValid;
+    this.validate.vercom = event.atLeastOne; // event.isValid;
     //Agreagar validaciones en especifico
   }
 
@@ -1341,12 +1595,36 @@ export class RequestCompDocTasksComponent
   }
 
   showWarning(text) {
-    this.onLoadToast('warning', 'Warning', text);
+    this.onLoadToast('warning', 'Advertencia', text);
   }
 
-  onSaveGuidelines(row) {
-    console.log(row);
-    this.validate.guidelines = true;
+  onGuidelines(event) {
+    this.validate.guidelines = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  onDictumData(event) {
+    this.validate.dictudData = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  onAppoiment(event) {
+    this.validate.registerAppointment = event.isValid;
+  }
+
+  onSetData(event) { }
+
+  onOrder(event) {
+    this.validate.orderEntry = event.isValid;
+  }
+
+  onProgramVisit(event) {
+    this.validate.programVisit = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  handleDataPay(data: Object) {
+    this.dataPay = data;
   }
 
   btnRequestAprobar() {
@@ -1354,11 +1632,11 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
-    ).then(question => {
+      this.requestId
+    ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        if (this.validateTurn()) {
+        if (await this.validateTurn()) {
           this.generateTask();
         }
       }
@@ -1370,11 +1648,11 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
-    ).then(question => {
+      this.requestId
+    ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        if (this.validateTurn()) {
+        if (await this.validateTurn()) {
           this.generateTask();
         }
       }
@@ -1389,7 +1667,7 @@ export class RequestCompDocTasksComponent
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
-        if (this.validateTurn()) {
+        if (await this.validateTurn()) {
           let response = await this.updateTask(this.taskInfo.id);
 
           if (response) {
@@ -1411,32 +1689,144 @@ export class RequestCompDocTasksComponent
   }
 
   openDelegation(context?: Partial<ChangeLegalStatusComponent>) {
-    return new Promise<void>(resolve => {
+    return new Promise<boolean>(resolve => {
       const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
-        initialState: { ...context, isDelegationsVisible: true },
+        initialState: {
+          ...context,
+          isDelegationsVisible: true,
+          isJuridicVisible: false,
+        },
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       });
 
-      // Resuelve la promesa cuando el modal se cierra
-      modalRef.onHidden.subscribe(() => {
-        resolve();
+      modalRef.content.refresh.subscribe(res => {
+        resolve(res);
+      });
+      modalRef.content.delegtion.subscribe(result => {
+        this.delegation = result;
       });
     });
   }
 
-  openModal(context?: Partial<ChangeLegalStatusComponent>) {
+  openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
     const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
-      initialState: { ...context, isDelegationsVisible: false },
+      initialState: {
+        ...context,
+        isDelegationsVisible: false,
+        isJuridicVisible: true,
+        requestId: this.requestId,
+        docTypeId: this.reportId,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    /*modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
-    });*/
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+        this.requestInfo.detail.reportSheet = 'OCSJ';
+        this.updateRequest(false);
+      }
+    });
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
+
+  showReport(data) {
+    console.log(data);
+
+    if (false) {
+      this.wContentService
+        .downloadDinamycReport(
+          'sae.rptdesign',
+          this.reportTable,
+          this.requestId.toString(),
+          data.documentTypeId
+        )
+        .subscribe({
+          next: response => {
+            console.log(response);
+          },
+          error: error => {
+            this.showError('Vista previa no dipoonible');
+          },
+        });
+    } else {
+      this.wContentService.obtainFile('SAE568245').subscribe({
+        next: response => {
+          let blob = this.dataURItoBlob(response);
+          let file = new Blob([blob], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          this.openPrevPdf(fileURL);
+        },
+        error: error => { },
+      });
+    }
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'application/pdf' });
+    return blob;
+  }
+
+  openPrevPdf(pdfurl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  getStatusReport(position = 0) {
+    let params = new ListParams();
+
+    let ids = this.reportId.split(',');
+    params['filter.documentTypeId'] = `$eq:${ids[position]}`;
+    params['filter.tableName'] = `$eq:${this.reportTable}`;
+    params['filter.registryId'] = `$eq:${this.requestId}`;
+
+    return new Promise<any>(resolve => {
+      this.reportgoodService.getReportDynamic(params).subscribe({
+        next: async resp => {
+          if (resp.data.length > 0) {
+            resolve({
+              data: resp.data,
+              isValid: resp.data.length > 0,
+              isSigned: true, //resp.data[0].signedReport == 'Y',
+            });
+          } else {
+            resolve({
+              isValid: false,
+              isSigned: false,
+            });
+          }
+        },
+        error: err => {
+          resolve({
+            isValid: false,
+            isSigned: false,
+          });
+        },
+      });
+    });
+  }
+
+  //Reportes dinamicos
+  //Firma de reportes
 }
 
 export function isNullOrEmpty(value: any): boolean {

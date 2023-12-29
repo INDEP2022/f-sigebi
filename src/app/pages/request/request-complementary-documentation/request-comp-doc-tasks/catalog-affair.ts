@@ -133,6 +133,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true,
       };
     case 'verify-compliance-return':
       return {
@@ -201,6 +202,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true,
       };
     case 'review-guidelines-compensation':
       return {
@@ -211,6 +213,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true,
       };
     case 'analysis-result-compensation':
       return {
@@ -262,18 +265,19 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     /** CASOS RESARCIMEINTO NUMERARIO */
     case 'register-request-economic':
       return {
-        title: `Solicitar Recursos Económicos, No. Solicitud: ${requestId}${contributor}`,
+        title: `Solicitar Recursos Económicos, No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/request-economic-resources',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true,
       };
 
     case 'request-economic-resources':
       return {
-        title: `Revisión Lineamientos Resarcimiento (NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
+        title: `Revisión Lineamientos Resarcimiento (NUMERARIO), No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/review-economic-guidelines',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -284,18 +288,19 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'review-economic-guidelines':
       return {
-        title: `Generar Resultado de Análisis Resarcimiento (NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
+        title: `Generar Resultado de Análisis Resarcimiento (NUMERARIO), No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/generate-results-economic',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true,
       };
 
     case 'generate-results-economic':
       return {
-        title: `Validar Dictamen Resarcimiento (Numerario), No. Solicitud: ${requestId}${contributor}`,
+        title: `Validar Dictamen Resarcimiento (Numerario), No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/validate-dictum-economic',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -306,7 +311,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'validate-dictum-economic':
       return {
-        title: `Notificación al Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
+        title: `Notificación al Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/delivery-notify-request',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -317,7 +322,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'delivery-notify-request':
       return {
-        title: `Registrar Cita Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId}${contributor}`,
+        title: `Registrar Cita Contribuyente (RESARCIMIENTO NUMERARIO), No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/register-taxpayer-date',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -328,7 +333,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
 
     case 'register-taxpayer-date':
       return {
-        title: `Registrar Orden de Pago, No. Solicitud: ${requestId}${contributor}`,
+        title: `Registrar Orden de Pago, No. Solicitud: ${requestId} ${contributor}`,
         url: 'pages/request/request-comp-doc/tasks/register-pay-order',
         process: '',
         type: 'DOCUMENTACION_COMPLEMENTARIA',
@@ -361,6 +366,7 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
         subtype: 'Registro_Solicitud',
         ssubtype: 'TURNAR',
         close: true,
+        rollBack: true,
       };
 
     case 'protection-regulation':
@@ -386,14 +392,6 @@ export function getConfigAffair(requestId, affair, path, request: any = {}) {
     case 'register-domain-extinction':
       break;
   }
-
-  return {
-    title: '',
-    url: '',
-    process: '',
-    ssubtype: '',
-    close: true,
-  };
 
   return {
     title: '',

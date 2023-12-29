@@ -34,6 +34,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
 import { SeeInformationComponent } from './see-information/see-information.component';
+import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 interface searchTable {
   noDoc: string;
@@ -51,8 +52,7 @@ interface searchTable {
 })
 export class DocRequestTabComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
@@ -165,7 +165,7 @@ export class DocRequestTabComponent
           this.getData(data);
         });
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -180,11 +180,18 @@ export class DocRequestTabComponent
         'request'
       ) as unknown as number;
     }
-    let onChangeCurrentValue = changes['typeDoc'].currentValue;
-    let updateInfo = changes['updateInfo']?.currentValue;
-    this.typeDoc = onChangeCurrentValue;
-    this.setTitle(onChangeCurrentValue);
+
     this.getInfoRequest();
+
+    if (!isNullOrEmpty(changes['typeDoc'])) {
+      let onChangeCurrentValue = changes['typeDoc'].currentValue;
+      this.typeDoc = onChangeCurrentValue;
+      this.setTitle(onChangeCurrentValue);
+    }
+
+
+    //let updateInfo = changes['updateInfo']?.currentValue;
+
   }
 
   prepareForm(): void {
@@ -474,10 +481,14 @@ export class DocRequestTabComponent
       });
   }
   private selectPage() {
-    this.docRequest = [...this.data[this.params.value.page - 1]];
+    if (this.data.length > 0) {
+      this.docRequest = [...this.data[this.params.value.page - 1]];
+    }
   }
   private selectPageEx() {
-    this.docExpedient = [...this.data[this.params.value.page - 1]];
+    if (this.data.length > 0) {
+      this.docExpedient = [...this.data[this.params.value.page - 1]];
+    }
   }
   private setPaginate(value: any[]): any[] {
     let data: any[] = [];
@@ -530,7 +541,7 @@ export class DocRequestTabComponent
           next: data => {
             resolve(data?.description);
           },
-          error: error => {},
+          error: error => { },
         });
     });
   }
@@ -877,7 +888,7 @@ export class DocRequestTabComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
           type: 'pdf',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -940,7 +951,7 @@ export class DocRequestTabComponent
         next: data => {
           this.selectRegDelegation = new DefaultSelect(data.data, data.count);
         },
-        error: error => {},
+        error: error => { },
       });
   }
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -13,6 +13,7 @@ export class RegisterAppointmentTabComponent
   implements OnInit
 {
   @Output() onRegister = new EventEmitter<boolean>();
+  @Input() requestId: number = null;
   appointmentForm: FormGroup = new FormGroup({});
   maxDate: Date = new Date();
 
