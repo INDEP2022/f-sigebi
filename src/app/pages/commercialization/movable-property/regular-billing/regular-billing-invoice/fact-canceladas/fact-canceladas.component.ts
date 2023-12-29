@@ -174,7 +174,7 @@ export class FactCanceladasComponent extends BasePage implements OnInit {
           // PRECIO = V_PRECIOVTA, IVA = V_IVA, TOTAL=V_TOTAL,
           // CVE_SUBTOTAL_BSAT = V_PRECIOVTA, CVE_TOTAL_BSAT = V_TOTAL
           // UPDATE COMER_FACTURAS
-          this.billingsService.updateBillings(body);
+          await this.billingsService.updateBillings(body);
           // MONTO_VALIDADO:= PUF_verificamontos(:FACT_CANCELADAS.ID_EVENTO_FACT,:FACT_CANCELADAS.ID_LOTE_FACT,:FACT_CANCELADAS.ID_FACTURA_FACT);
           let bodyAmount = {
             pEvent: invoice.id_evento,
@@ -228,210 +228,65 @@ export class FactCanceladasComponent extends BasePage implements OnInit {
               //update invoice service invoice
             }
           }
+
+          // SELECT SUM(PRECIOVTA),SUM(IVA),SUM(TOTAL)
+          const params = new ListParams();
+          params['filter.eventId'] = `$eq:${invoice.id_evento}`;
+          params['filter.billId'] = `$eq:${cf_nuevafact}`;
+          let dataSum: any = await this.getSumaDetFacturas(params);
+          const body_ = {
+            eventId: invoice.id_evento,
+            billId: cf_nuevafact,
+            price: dataSum.importe,
+            vat: dataSum.iva,
+            total: dataSum.total,
+            totalBsatKey: dataSum.total,
+            SubtotalBsatKey: dataSum.importe,
+            vouchertype: 'FAC',
+          };
+          // PRECIO = V_PRECIOVTA, IVA = V_IVA, TOTAL=V_TOTAL,
+          // CVE_SUBTOTAL_BSAT = V_PRECIOVTA, CVE_TOTAL_BSAT = V_TOTAL
+          // UPDATE COMER_FACTURAS
+          await this.billingsService.updateBillings(body_);
         } else if (yyyy <= 2009) {
           this.alert('warning', '2009 proceso por definir', '');
           break;
         }
-        // if ([2010, 2011].includes(yyyy)) {
-        //   if (yyyy == 2010) { // -- SE CANCELA EL PAPEL Y SE CREA UN CFDI INGRESO (FAC)
-        //     const body: any = {
-        //       pEventO: Number(invoice.eventId),
-        //       pInvoiceO: Number(invoice.billId),
-        //       pLegend: cf_leyenda,
-        //       pAuthorized: userV,
-        //       pStatus: 'PREF',
-        //       pImagen: 1,
-        //       pCfdi: 1,
-        //       pLot: Number(invoice.batchId),
-        //       pCause: Number(causerebillId),
-        //       pDeletedEmits: Number(this.user.department),
-        //     };
-        //     // COMER_CTRLFACTURA.COPIA_FACTURA
-        //     cf_nuevafact = await this.copyInovice(body);
+        if (cf_nuevafact > 0) {
+          const body_ = {
+            eventId: invoice.id_evento,
+            billId: cf_nuevafact,
+            requestpaymentId: folio,
+            document: 'NCR',
+            vouchertype: 'NCR',
+            causerebillId: 141,
+          };
+          // UPDATE COMER_FACTURAS
+          // SET ID_SOLICITUDPAGO=:BLK_CTRL.FOLIO_SP,DOCUMENTO='NCR',ID_CAUSAREFACTURA=141,TIPOCOMPROBANTE='NCR'
+          let resp = await this.billingsService.updateBillings(body_);
+          if (!resp)
+            this.alert(
+              'error',
+              'Ha ocurrido un error al actualizar la factura',
+              ''
+            );
 
-        //     if (cf_nuevafact) {
-        //       const success = await this.cancelInvoiceComer(body);
-        //       if (success) {
-        //         invoice.factstatusId = 'CAN';
-        //         invoice.causerebillId = causerebillId;
-        //         invoice.userIauthorize = this.user.preferred_username;
-        //         invoice.IauthorizeDate = this.datePipe.transform(
-        //           new Date(),
-        //           'yyyy-MM-dd'
-        //         );
-        //         delete invoice.delegation;
-        //         await this.billingsService.updateBillings(invoice)
-        //         //update invoice service invoice
-        //       }
-        //     }
-        //   } else if (yyyy > 2010) {
-        //     if (String(invoice.series ?? '').length > 1) { // - SI ES MAYOR A 1 QUIERE DECIR QUE ES NUEVO
-        //       const body: any = {
-        //         pEventO: Number(invoice.eventId),
-        //         pInvoiceO: Number(invoice.billId),
-        //         pLegend: cf_leyenda,
-        //         pAuthorized: userV,
-        //         pStatus: 'PREF',
-        //         pImagen: 1,
-        //         pCfdi: 0,
-        //         pLot: Number(invoice.batchId),
-        //         pCause: Number(causerebillId),
-        //         pDeletedEmits: Number(this.user.department),
-        //       };
-
-        //       cf_nuevafact = await this.copyInovice(body);
-
-        //       if (cf_nuevafact) {
-        //         //procedimiento cancelar factura
-        //         const success = await this.cancelInvoiceComer(body);
-        //         if (success) {
-        //           invoice.factstatusId = 'CAN';
-        //           invoice.causerebillId = causerebillId;
-        //           invoice.userIauthorize = this.user.preferred_username;
-        //           invoice.IauthorizeDate = this.datePipe.transform(
-        //             new Date(),
-        //             'yyyy-MM-dd'
-        //           );
-        //           delete invoice.delegation;
-        //           await this.billingsService.updateBillings(invoice)
-        //           //update invoice service invoice
-        //         }
-        //       }
-        //     } else { // -- SE CANCELA EL PAPEL Y SE CREA UN CFDI INGRESO (FAC)
-        //       const body: any = {
-        //         pEventO: Number(invoice.eventId),
-        //         pInvoiceO: Number(invoice.billId),
-        //         pLegend: cf_leyenda,
-        //         pAuthorized: userV,
-        //         pStatus: 'PREF',
-        //         pImagen: 1,
-        //         pCfdi: 1,
-        //         pLot: Number(invoice.batchId),
-        //         pCause: Number(causerebillId),
-        //         pDeletedEmits: Number(this.user.department),
-        //       };
-
-        //       cf_nuevafact = await this.copyInovice(body);
-
-        //       if (cf_nuevafact) {
-        //         const body = {
-        //           invoiceId: invoice.billId,
-        //           eventId: invoice.eventId,
-        //           batchId: invoice.batchId,
-        //         };
-        //         const success = await this.cancelInvoiceComer(body);
-        //         if (success) {
-        //           invoice.factstatusId = 'CAN';
-        //           invoice.causerebillId = causerebillId;
-        //           invoice.userIauthorize = this.user.preferred_username;
-        //           invoice.IauthorizeDate = this.datePipe.transform(
-        //             new Date(),
-        //             'yyyy-MM-dd'
-        //           );
-        //           delete invoice.delegation;
-        //           await this.billingsService.updateBillings(invoice)
-        //           //update invoice service invoice
-        //         }
-        //       }
-        //     }
-        //   }
-        // } else if (yyyy > 2011) {
-        //   const body = {
-        //     invoiceId: invoice.billId,
-        //     eventId: invoice.eventId,
-        //     batchId: invoice.batchId,
-        //   };
-        //   const success = await this.cancelInvoiceComer(body);
-        //   if (success) {
-        //     invoice.factstatusId = 'CAN';
-        //     invoice.causerebillId = causerebillId;
-        //     invoice.userIauthorize = this.user.preferred_username;
-        //     invoice.IauthorizeDate = this.datePipe.transform(
-        //       new Date(),
-        //       'yyyy-MM-dd'
-        //     );
-        //     delete invoice.delegation;
-        //     await this.billingsService.updateBillings(invoice)
-        //     //update invoice service invoice
-        //   }
-
-        //   const body2: any = {
-        //     pEventO: Number(invoice.eventId),
-        //     pInvoiceO: Number(invoice.billId),
-        //     pLegend: cf_leyenda,
-        //     pAuthorized: userV,
-        //     pStatus: 'PREF',
-        //     pImagen: 1,
-        //     pCfdi: 0,
-        //     pLot: Number(invoice.batchId),
-        //     pCause: Number(causerebillId),
-        //     pDeletedEmits: Number(this.user.department),
-        //   };
-        //   // COMER_CTRLFACTURA.COPIA_FACTURA
-        //   cf_nuevafact = await this.copyInovice(body2);
-        // } else if (yyyy <= 2009) {
-        //   this.alert(
-        //     'warning',
-        //     'Atención',
-        //     'Año 2009 proceso por definir'
-        //   );
-        //   this.loading = false;
-        // }
-
-        // if (cf_nuevafact > 0) {
-        //   //lipcommit silent
-        // } else {
-        //   this.alert(
-        //     'warning',
-        //     'Fallo de operación de cancelación',
-        //     ''
-        //   );
-        //   this.loading = false;
-        //   break
-
-        // }
-
-        // if ([2010, 2011].includes(yyyy)) {
-        //   const body: any = {
-        //     pEventO: Number(invoice.eventId),
-        //     pInvoiceO: Number(invoice.billId),
-        //     pLegend: cf_leyenda,
-        //     pAuthorized: userV,
-        //     pStatus: 'PREF',
-        //     pImagen: 1,
-        //     pCfdi: 2,
-        //     pLot: Number(invoice.batchId),
-        //     pCause: Number(causerebillId),
-        //     pDeletedEmits: Number(this.user.department),
-        //   };
-        //   // COMER_CTRLFACTURA.COPIA_FACTURA
-        //   cf_nuevafact = await this.copyInovice(body);
-
-        //   if (cf_nuevafact) {
-        //     const success = await this.cancelInvoiceComer(body);
-        //     if (success) {
-        //       invoice.factstatusId = 'CAN';
-        //       invoice.causerebillId = causerebillId;
-        //       invoice.userIauthorize = this.user.preferred_username;
-        //       invoice.IauthorizeDate = this.datePipe.transform(
-        //         new Date(),
-        //         'yyyy-MM-dd'
-        //       );
-        //       delete invoice.delegation;
-        //       await this.billingsService.updateBillings(invoice)
-        //       //update invoice service invoice
-        //     }
-        //   }
-        // } else if (yyyy <= 2009) {
-        //   this.alert(
-        //     'warning',
-        //     'Atención',
-        //     'Año 2009 proceso por definir'
-        //   );
-        //   this.loading = false;
-        // }
+          // PUP_ESTATUS_CAN
+          let body1 = {
+            pEvent: invoice.id_evento,
+            pBatch: invoice.id_lote,
+            pInvoice: invoice.id_factura,
+          };
+          await this.pupStatusCan(body1);
+        }
       }
     }
+    this.modalRef.hide();
+    this.modalRef.content.callback(
+      { eventId: this.eventId, factstatusId: 'CAN' },
+      0,
+      false
+    );
   }
 
   async copyFactDev() {
@@ -495,5 +350,18 @@ export class FactCanceladasComponent extends BasePage implements OnInit {
         catchError(() => of(false))
       )
     );
+  }
+
+  async pupStatusCan(invoice: any) {
+    return new Promise((resolve, reject) => {
+      this.comerInvoiceService.getApplicationPupStatusCan(invoice).subscribe({
+        next(value) {
+          resolve(true);
+        },
+        error(err) {
+          resolve(false);
+        },
+      });
+    });
   }
 }

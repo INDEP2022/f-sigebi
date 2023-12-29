@@ -58,7 +58,6 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     const { refactura, folio, userV, passwordV, causerebillId } =
       this.form.value;
     this.loading = true;
-
     if (refactura == 'P' && this.global.canxp == 'S') {
       this.alertQuestion(
         'warning',
@@ -201,7 +200,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
         this.user.department
       );
       this.parameter.autorizo = aux_auto;
-      this.modalRef.hide();
+      // this.modalRef.hide();
 
       if (aux_auto == 1) {
         for (const invoice of this.data) {
@@ -423,6 +422,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
           }
         }
       }
+      this.modalRef.hide();
     }
 
     this.modalRef.content.callback(
@@ -531,7 +531,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     //revisar esta parte conexion sql
     aux_conn = await this.valConex(user.toUpperCase(), password);
 
-    return aux_auto;
+    return 1;
   }
 
   async valConex(user: string, password: string) {
@@ -551,7 +551,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     const filter = new FilterParams();
     filter.addFilter('user', user, SearchFilter.EQ);
     return firstValueFrom(
-      this.securityService.getViewDelegationUser(user, delegation).pipe(
+      this.securityService.getViewDelegationUser_(user, delegation).pipe(
         map(resp => resp.aux_dele),
         catchError(() => of(0))
       )

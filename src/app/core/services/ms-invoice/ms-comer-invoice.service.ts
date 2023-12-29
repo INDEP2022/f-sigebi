@@ -381,4 +381,8 @@ export class ComerInvoiceService extends HttpService {
   getApplicationPufVerifyAmounts(data: any) {
     return this.post(ENDPOINT_INVOICE.ApplicationPufVerifyAmounts, data);
   }
+
+  getApplicationPupStatusCan(data: any) {
+    return this.post(ENDPOINT_INVOICE.ApplicationPupStatusCan, data);
+  }
 }
