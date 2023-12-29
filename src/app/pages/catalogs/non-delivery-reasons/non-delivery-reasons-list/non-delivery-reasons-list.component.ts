@@ -21,8 +21,7 @@ import { NON_DELIVERY_REASONS_COLUMNS } from './non-delivery-reasons-columns';
 })
 export class NonDeliveryReasonsListComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   columns: INonDeliveryReason[] = [];
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -118,7 +117,7 @@ export class NonDeliveryReasonsListComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

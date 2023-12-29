@@ -30,8 +30,7 @@ import { ETypeGabinetProcess } from './typeProcess';
 })
 export class GoodsManagementSocialCabinetComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   selectedGoodstxt: number[] = [];
   notLoadedGoods: { good: number }[] = [];
@@ -439,7 +438,7 @@ export class GoodsManagementSocialCabinetComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

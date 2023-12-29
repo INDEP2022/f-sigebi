@@ -12,8 +12,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class CatalogOfInventoryTypesComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   edit: boolean = false;
   title: string = 'Tipo de Inventario';
@@ -119,7 +118,7 @@ export class CatalogOfInventoryTypesComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.inventoryServ.remove(event).subscribe({

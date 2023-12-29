@@ -1419,8 +1419,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       expense.publicLot
         ? expense.publicLot
         : expense.comerLot
-        ? expense.comerLot.publicLot
-        : null
+          ? expense.comerLot.publicLot
+          : null
     );
     this.clkpv.setValue(expense.clkpv);
 
@@ -1516,10 +1516,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       'comerconcepts/api/v1/application/query-eat-concepts?sortBy=conceptId:ASC' +
       (this.address
         ? '?filter.address=$in:' +
-          this.address +
-          (this.address === 'M'
-            ? ',C'
-            : this.PDIRECCION_A
+        this.address +
+        (this.address === 'M'
+          ? ',C'
+          : this.PDIRECCION_A
             ? ',' + this.PDIRECCION_A
             : '')
         : '')
@@ -1704,7 +1704,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
     if (result.isConfirmed) {
       if (this.validImprimeDetalle()) {
-        // this.alertQuestion('question','Desea imprimir ')
+        // this.alertQuestion('question','¿Desea imprimir ')
         this.loader.load = true;
         this.PUP_LANZA_REPORTE(3);
       } else {
@@ -1750,7 +1750,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,

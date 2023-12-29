@@ -142,7 +142,7 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
 
     this.onLoadToast(
       'success',
-      'Se guardo la verificación de cumplimiento de los bienes'
+      'Se guardó la verificación de cumplimiento de los bienes'
     );
     this.onChanges();
   }

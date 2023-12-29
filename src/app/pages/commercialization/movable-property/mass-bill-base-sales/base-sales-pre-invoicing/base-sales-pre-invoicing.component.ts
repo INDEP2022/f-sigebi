@@ -490,7 +490,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -702,9 +702,8 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         this.btnLoading = false;
         this.alert('success', 'Prefacturas Generadas', '');
         this.resetParams();
-        this.columnFilters['filter.eventId'] = `$eq:${
-          event ?? data[0].eventId
-        }`;
+        this.columnFilters['filter.eventId'] = `$eq:${event ?? data[0].eventId
+          }`;
         this.getAllComer();
       }
     } else {
@@ -1492,7 +1491,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1507,7 +1506,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal

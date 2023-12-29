@@ -49,8 +49,7 @@ import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-sup
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit
-{
+  implements OnInit {
   protected override btnGrouper: boolean;
   protected override formatReport: boolean;
   protected override signReport: boolean;
@@ -320,7 +319,7 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) {}
+  requestRegistered(request: any) { }
 
   async openReport(): Promise<void> {
     if (!this.nextTurn) {
@@ -472,7 +471,7 @@ export class RequestCompDocTasksComponent
           let response = await this.updateTask(this.taskInfo.id);
           if (response) {
             this.msgModal(
-              'Se finalizo la solicitud con el Folio Nº '.concat(
+              'se finalizó la solicitud con el Folio Nº '.concat(
                 `<strong>${this.requestId}</strong>`
               ),
               'Solicitud finalizada',
@@ -803,7 +802,7 @@ export class RequestCompDocTasksComponent
 
     if (closeTask && !isNullOrEmpty(closeTask.task)) {
       this.msgModal(
-        'Se turno la solicitud con el Folio Nº '.concat(
+        'Se turnó la solicitud con el Folio Nº '.concat(
           `<strong>${this.requestId}</strong>`
         ),
         'Solicitud turnada',
@@ -914,7 +913,7 @@ export class RequestCompDocTasksComponent
         next: response => {
           resolve(true);
         },
-        error: error => {},
+        error: error => { },
       });
     });
   }
@@ -1625,7 +1624,7 @@ export class RequestCompDocTasksComponent
     this.validate.registerAppointment = event.isValid;
   }
 
-  onSetData(event) {}
+  onSetData(event) { }
 
   onOrder(event) {
     this.validate.orderEntry = event.isValid;
@@ -1645,7 +1644,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la aprobación de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1661,7 +1660,7 @@ export class RequestCompDocTasksComponent
       'question',
       'Confirmación',
       '¿Desea solicitar la revisión de la solicitud con folio: ' +
-        this.requestId
+      this.requestId
     ).then(async question => {
       if (question.isConfirmed) {
         //Cerrar tarea//
@@ -1748,7 +1747,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  createDictumReturn() {}
+  createDictumReturn() { }
 
   showReport(data) {
     console.log(data);
@@ -1777,7 +1776,7 @@ export class RequestCompDocTasksComponent
           const fileURL = URL.createObjectURL(file);
           this.openPrevPdf(fileURL);
         },
-        error: error => {},
+        error: error => { },
       });
     }
   }

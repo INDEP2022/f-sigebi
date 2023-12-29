@@ -69,8 +69,7 @@ import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-r
 })
 export class DetailAssetsTabComponentComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   // private _detailAssets: ModelForm<any>;
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
@@ -370,7 +369,7 @@ export class DetailAssetsTabComponentComponent
         next: response => {
           this.nameGoodType = response.description;
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -382,7 +381,7 @@ export class DetailAssetsTabComponentComponent
         next: data => {
           this.nameTypeRelevant = data.description;
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -918,11 +917,11 @@ export class DetailAssetsTabComponentComponent
         },
       });
   }
-  getTansferUnitMeasure(event: any) {}
+  getTansferUnitMeasure(event: any) { }
 
-  getDestintSae(event: any) {}
+  getDestintSae(event: any) { }
 
-  getState(event: any) {}
+  getState(event: any) { }
 
   getMunicipaly(params: ListParams, municipalyId?: number | string) {
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
@@ -974,7 +973,7 @@ export class DetailAssetsTabComponentComponent
             this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
           }
         },
-        error: error => {},
+        error: error => { },
       });
     /* this.municipeSeraService.getAll(params).subscribe({
       next: data => {
@@ -1039,7 +1038,7 @@ export class DetailAssetsTabComponentComponent
             this.selectLocality = new DefaultSelect(resp.data);
           }
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -1743,7 +1742,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se guardo\n. ${error.error.message}`
+            `El registro del inmueble no se guardó\n. ${error.error.message}`
           );
         },
       });

@@ -111,13 +111,13 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     goodResDev.naturalness =
       this.good.inventoryNum != null ? 'INVENTARIOS' : 'GESTION';
 
-    /*this.onLoadToast('success','Se agrego el bien');
+    /*this.onLoadToast('success','Se agregó el bien');
     this.onReserve.emit(goodResDev);
     this.modalRef.hide();*/
     console.log(goodResDev);
     this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
       next: resp => {
-        this.onLoadToast('success', 'Se agrego el bien');
+        this.onLoadToast('success', 'Se agregó el bien');
         this.onReserve.emit(resp);
         this.modalRef.hide();
       },

@@ -18,8 +18,7 @@ import { SirsaePaymentsComponent } from '../../dispersion-payment-details/sirsae
 })
 export class CompositionBatchPaymentsComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
 
   lastDate: string = '29/08/2022';
@@ -75,7 +74,7 @@ export class CompositionBatchPaymentsComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
