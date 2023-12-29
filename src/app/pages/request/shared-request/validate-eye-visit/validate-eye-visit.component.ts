@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -15,6 +15,7 @@ import { CheckboxSelectElementComponent } from './checkbox-selected/checkbox-sel
 import { ConfirmValidationModalComponent } from './confirm-validation-modal/confirm-validation-modal.component';
 import { SeeExpedientComponent } from './see-expedient/see-expedient.component';
 import { GOODS_EYE_VISIT_COLUMNS } from './validate-eye-visit-columns';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-validate-eye-visit',
@@ -24,6 +25,7 @@ import { GOODS_EYE_VISIT_COLUMNS } from './validate-eye-visit-columns';
 export class ValidateEyeVisitComponent extends BasePage implements OnInit {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @Input() idRequest: number;
+  @Output() onChange = new EventEmitter<any>();
   params = new BehaviorSubject<ListParams>(new ListParams());
   selectedGoodTotalItems: number = 0;
   selectedGoodColumns = new LocalDataSource();
@@ -53,16 +55,16 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     console.log('validate visita', this.idRequest);
     const self = this;
     this.selectedGoodSettings.columns = {
+      //validar codeStore == null
       select: {
         title: 'Bienes del Almacén',
         type: 'custom',
         sort: false,
-        renderComponent: CheckboxSelectElementComponent,
+        renderComponent: CheckboxElementComponent,
         onComponentInitFunction(instance: any, component: any = self) {
-          self.inst = instance;
           instance.toggle.subscribe((data: any) => {
             data.row.to = data.toggle;
-            component.goodsSelected(data);
+            component.checked(data);
           });
         },
       },
@@ -105,6 +107,9 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: (resp: any) => {
+
+          console.log('resp', resp);
+
           const result = resp.data.map(async (item: any, _i: number) => {
             item.select = false;
             //borrar solo de prueba
@@ -114,6 +119,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           } */
             //fin
 
+            item['select'] = item.codeStore == null;
             item['validated'] =
               item.resultFinal == 'Y' || item.resultFinal == 'P' ? true : false;
             item['maneuverRequired'] =
@@ -136,11 +142,12 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result).then(x => {
-            console.log(resp.data);
             this.selectedGoodColumns.load(resp.data);
             this.selectedGoodTotalItems = resp.count;
+            this.selectChanges()
             setTimeout(() => {
-              this.disableValidateColumn();
+              this.disableValidateColumn(0);
+              this.disableValidateColumn(1);
               this.setContributorValidatorRows();
             }, 600);
             this.loading = false;
@@ -198,12 +205,12 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
 
   /* METODO PARA DESHABILITAR EL CAMPO VALIDADO
   ============================================= */
-  disableValidateColumn() {
+  disableValidateColumn(ind) {
     const tabla = document.getElementById('selectedGoodsTable');
     const tbody = tabla.children[0].children[1].children;
     for (let index = 0; index < tbody.length; index++) {
       const element = tbody[index];
-      element.children[1].classList.add('not-press');
+      element.children[ind].classList.add('not-press');
     }
   }
 
@@ -265,18 +272,20 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           });
         } else {
           this.onLoadToast(
-            'info',
+            'warning',
+            'Advertencia',
             'El bien ya cuenta con un resultado validado'
           );
         }
       } else {
         this.onLoadToast(
-          'info',
+          'warning',
+          'Advertencia',
           'El resultado de la visita ocular para el bien no es editable en este almacen'
         );
       }
     } else {
-      this.onLoadToast('info', 'Se tiene que seleccionar un bien');
+      this.onLoadToast('warning', 'Advertencia', 'Se tiene que seleccionar un bien');
     }
   }
 
@@ -304,7 +313,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
 
   approveAcceptGood() {
     if (this.selectedList.length == 0 || this.selectedList.length > 1) {
-      this.onLoadToast('info', 'Se tiene que tener un bien seleccionado');
+      this.onLoadToast('warning', 'Advertencia', 'Se tiene que tener un bien seleccionado');
       return;
     }
 
@@ -324,9 +333,9 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
       });
     } else {
       this.onLoadToast(
-        'info',
+        'warning',
+        'Advertencia',
         'No es posible aprobar el bien seleccionado',
-        ''
       );
       return;
     }
@@ -352,7 +361,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     });
     /* ACTUALIZA LA TABLA */
     this.selectedGoodColumns.getElements().then(data => {
-      //debugger;
+
       for (let i = 0; i < data.length; i++) {
         const dataColumns = data[i];
         for (let j = 0; j < this.selectedList.length; j++) {
@@ -391,4 +400,22 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
       });
     });
   }
+
+  selectChanges() {
+    //resultTaxpayer: 'RECHAZADO' | 'ACEPTADO';
+    //resultFinal: 'Y';
+
+    let items = this.selectedGoodColumns['data'].filter(x => !isNullOrEmpty(x.resultFinal));
+
+    this.onChange.emit({
+      isValid: items.length == this.selectedGoodColumns['data'].length,
+      object: this.selectedGoodColumns['data'],
+    });
+  }
+
+  selectTableColumns(event: any) {
+    this.selectedList = event.selected;
+    console.log('event', event);
+  }
+
 }

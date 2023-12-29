@@ -4,7 +4,7 @@
       <button
         class="btn btn-primary btn-sm active"
         (click)="save()"
-        [disabled]="!entryOrderForm.touched || entryOrderForm.invalid">
+        [disabled]="entryOrderForm.invalid">
         <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>Guardar
       </button>
     </div>
@@ -12,14 +12,14 @@
   <br />
   <div class="row mt-3">
     <div class="col-md-4">
-      <form-field
-        [control]="entryOrderForm.get('administrativeUnit')"
-        label="Unidad Administrativa">
-        <input
-          type="text"
-          formControlName="administrativeUnit"
-          class="form-control" />
-      </form-field>
+      <ngx-select
+        [form]="entryOrderForm"
+        control="unitadministrative"
+        [data]="selectAdminUnit"
+        bindLabel="name"
+        [searchable]="false"
+        label="Unidad Administrativa"
+        value="id"></ngx-select>
     </div>
     <div class="col-md-4">
       <form-field
@@ -42,12 +42,9 @@
   <div class="row mt-5">
     <div class="col-md-4">
       <form-field
-        [control]="entryOrderForm.get('paymentMethod')"
+        [control]="entryOrderForm.get('shapePay')"
         label="Forma de Pago">
-        <input
-          type="text"
-          formControlName="paymentMethod"
-          class="form-control" />
+        <input type="text" formControlName="shapePay" class="form-control" />
       </form-field>
     </div>
     <div class="col-md-4">
@@ -57,11 +54,11 @@
     </div>
     <div class="col-md-4">
       <form-field
-        [control]="entryOrderForm.get('referenceNo')"
+        [control]="entryOrderForm.get('numberreference')"
         label="N&uacute;mero de Referencia">
         <input
           type="number"
-          formControlName="referenceNo"
+          formControlName="numberreference"
           class="form-control" />
       </form-field>
     </div>
@@ -69,9 +66,9 @@
   <div class="row mt-5">
     <div class="col-md-4">
       <form-field
-        [control]="entryOrderForm.get('bank')"
+        [control]="entryOrderForm.get('accountBank')"
         label="Instituci&oacute;n Bancaria">
-        <input type="text" formControlName="bank" class="form-control" />
+        <input type="text" formControlName="accountBank" class="form-control" />
       </form-field>
     </div>
   </div>

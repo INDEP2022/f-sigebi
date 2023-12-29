@@ -265,4 +265,4 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ValidateEyeVisitComponent,
   ],
 })
-export class SharedRequestModule {}
+export class SharedRequestModule { }

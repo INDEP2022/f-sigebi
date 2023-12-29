@@ -10,8 +10,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class CheckVerifyComplianceComponent
   extends BasePage
-  implements OnInit, AfterViewInit
-{
+  implements OnInit, AfterViewInit {
   checkForm: FormGroup = new FormGroup({});
   checkState: boolean = false;
   checkbox: any;
@@ -58,10 +57,8 @@ export class CheckVerifyComplianceComponent
     this.checkbox = document.querySelector(
       '#' + this.checkId
     ) as HTMLInputElement;
-
+    this.rowData[this.field] = this.checkbox.checked;
     this.rowData.change = true;
-    this.rowData[this.field] = !this.rowData[this.field];
-    this.checkbox.checked = this.rowData[this.field];
   }
 
   getCheck() {
