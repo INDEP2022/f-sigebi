@@ -450,26 +450,41 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
+
+    let exitGood: any = this.selectedGoodColumns.find(x => x.goodId == good.goodId);
+
     if (this.processDet == 'DEVOLUCION' || this.processDet == 'RES_NUMERARIO') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-        initialState: { good: good, requestId: this.requestInfo.id },
+        initialState: {
+          good: good,
+          requestId: this.requestInfo.id,
+          exitGood: exitGood
+        },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
       });
       modalRef.content.onReserve.subscribe((data: boolean) => {
-        if (data) this.addGood(data);
+        if (data) this.getInfoRequest();
       });
     } else if (this.processDet != 'INFORMACION') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-        initialState: { good: good, requestId: this.requestInfo.id },
+        initialState: {
+          good: good, requestId: this.requestInfo.id, exitGood: exitGood
+        },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
       });
       modalRef.content.onReserve.subscribe((data: boolean) => {
-        if (data) this.addGood(data);
+        if (data) this.getInfoRequest();
       });
     } else {
-      this.addGoodForInformation(good);
+
+      if (isNullOrEmpty(exitGood)) {
+        this.addGoodForInformation(good);
+      } else {
+        this.onLoadToast('warning', 'El bien ya ha sido agregado');
+      }
+
     }
   }
 

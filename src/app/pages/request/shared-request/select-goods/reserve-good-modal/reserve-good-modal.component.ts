@@ -5,6 +5,7 @@ import { IGoodResDevInvView } from 'src/app/core/models/ms-goodsinv/goodsinv.mod
 import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-reserve-good-modal',
@@ -14,6 +15,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class ReserveGoodModalComponent extends BasePage implements OnInit {
   title: string = 'Seleccione la Cantidad a Reservar';
   good: IGoodResDevInvView;
+  exitGood: any;
+
   requestId: number;
   reserveForm: FormGroup = new FormGroup({});
   @Output() onReserve = new EventEmitter<any>();
@@ -27,8 +30,12 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('good', this.good);
     this.prepareForm();
+
+    if (!isNullOrEmpty(this.exitGood)) {
+      this.reserveForm.controls['reserve'].setValue(this.exitGood.amount);
+    }
+
   }
 
   private prepareForm(): void {
@@ -59,6 +66,8 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     //const ableQuantity = this.good.quantity
     //const reservedQuantity = this.reserveForm.controls['reserve'].value;
 
+    let reserve = parseInt(this.reserveForm.controls['reserve'].value);
+
     let availableAmount: number =
       parseInt(String(this.good.quantity)) -
       parseInt(this.reserveForm.controls['reserve'].value);
@@ -77,6 +86,43 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
       );
       return;
     }
+
+    if (!isNullOrEmpty(this.exitGood)) {
+      //Validar la cantidad ingresada con la cantidad que ya se agrego
+
+      if (this.good.quantity < reserve) {
+        this.onLoadToast(
+          'warning',
+          'El bien ya fue agregado',
+          'La cantidad a reservar no puede ser mayor a la cantidad disponible'
+        );
+        return;
+      }
+
+      this.exitGood.amount = reserve;
+      this.exitGood.viewFile = null;
+
+      const id = this.exitGood.goodresdevId;
+      const body: any = {
+        goodresdevId: id,
+        amount: reserve,
+      };
+
+      this.rejectedGoodService.updateGoodsResDev(id, body).subscribe({
+        next: resp => {
+          this.onLoadToast('success', 'Se actualizo el bien');
+          this.onReserve.emit(false);
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.onLoadToast('error', 'No se pudo actualizar el bien');
+          console.log(error);
+        },
+      });
+
+      return;
+    }
+
 
     let goodResDev: IGoodsResDev = {};
     goodResDev.applicationId = this.requestId; //this.good.solicitudId;
