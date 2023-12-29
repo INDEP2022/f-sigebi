@@ -107,7 +107,6 @@ import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
 import { WarehouseShowComponent } from './warehouse-show/warehouse-show.component';
 import { WitnessFormComponent } from './witness-form/witness-form.component';
-import { ViewDetailGoodsComponent } from './select-goods/view-detail-goods/view-detail-goods.component';
 
 @NgModule({
   declarations: [
@@ -266,4 +265,4 @@ import { ViewDetailGoodsComponent } from './select-goods/view-detail-goods/view-
     ValidateEyeVisitComponent,
   ],
 })
-export class SharedRequestModule {}
+export class SharedRequestModule { }
