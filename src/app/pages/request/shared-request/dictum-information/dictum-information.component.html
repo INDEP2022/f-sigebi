@@ -1,36 +1,35 @@
 <div class="row mt-5">
   <div class="col-md-4">
     <label class="label" for=""
-      >N&uacute;mero Dictamen&#58; <span>{{ dictumInfo.dictumNo }}</span></label
+      >N&uacute;mero Dictamen&#58; <span>{{ this.dictunNo }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
-      >Fecha Dictamen&#58; <span>{{ dictumInfo.dictumDate }}</span></label
+      >Fecha Dictamen&#58; <span>{{ this.dictumDate }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
-      >Juzgado &#47; Sala&#58; <span>{{ dictumInfo.courtroom }}</span></label
+      >Juzgado &#47; Sala&#58; <span>{{ this.courtroom }}</span></label
     >
   </div>
 </div>
 <div class="row mt-5">
   <div class="col-md-4">
     <label class="label" for=""
-      >Juicio Nulidad&#58; <span>{{ dictumInfo.judgementNullity }}</span></label
+      >Juicio Nulidad&#58; <span>{{ this.judgementNullity }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
       >No&#46; Resoluci&oacute;n Administrativa&#58;
-      <span>{{ dictumInfo.adminiResolutionNo }}</span></label
+      <span>{{ this.adminiResolutionNo }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
-      >No&#46; Orden Pago&#58;
-      <span>{{ dictumInfo.paymentOrderNo }}</span></label
+      >No&#46; Orden Pago&#58; <span>{{ this.paymentOrderNo }}</span></label
     >
   </div>
 </div>
@@ -38,19 +37,19 @@
   <div class="col-md-4">
     <label class="label" for=""
       >Cantidad a Pagar&#58;
-      <span>{{ dictumInfo.paymentAmount | number }}</span></label
+      <span>{{ this.paymentAmount | number }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
       >Contribuyente y&#47;o Indicado&#58;
-      <span>{{ dictumInfo.contributor }}</span>
+      <span>{{ this.contributor }}</span>
     </label>
   </div>
   <div class="col-md-4">
     <label class="label">
       Domicilio 1&#58;
-      <span>{{ dictumInfo.address1 }}</span>
+      <span>{{ this.address1 }}</span>
     </label>
   </div>
 </div>
@@ -58,19 +57,19 @@
   <div class="col-md-4">
     <label class="label" for=""
       >Representante Legal&#58;
-      <span>{{ dictumInfo.legalRepresentative }}</span></label
+      <span>{{ this.legalRepresentative }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
       >Requiere Copia SAT&#58;
-      <span>{{ dictumInfo.requiredSatCopy }}</span>
+      <span>{{ this.requiredSatCopy }}</span>
     </label>
   </div>
   <div class="col-md-4">
     <label class="label">
       Domicilio 2&#58;
-      <span>{{ dictumInfo.address2 }}</span>
+      <span>{{ this.address2 }}</span>
     </label>
   </div>
 </div>

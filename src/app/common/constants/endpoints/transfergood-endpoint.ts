@@ -6,4 +6,5 @@ export enum TransfergoodEndpoint {
   EmailMessage = 'transf-num-detail/generate-body-email',
   SendEmail = 'transf-num-detail/send-email',
   SendEmailCheque = 'transf-num-detail/generate-body-email-cheque',
+  TransferorNo = 'assets-no-transferred',
 }

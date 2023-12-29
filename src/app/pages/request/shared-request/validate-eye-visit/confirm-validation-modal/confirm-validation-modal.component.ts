@@ -38,8 +38,7 @@ export const resultContribuyente: any = [
 })
 export class ConfirmValidationModalComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   title: string = 'Confirmar Validación';
   confirmForm: FormGroup = new FormGroup({});
   selectResultTaxpayer = new DefaultSelect();
@@ -80,9 +79,42 @@ export class ConfirmValidationModalComponent
   }
 
   async confirm() {
+
     const form = this.confirmForm.value;
+    let result = 'Y';
+
+    if (form.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE') result = 'P';
+
+    this.goods.forEach(async (item: any) => {
+
+      let good = {
+        goodresdevId: item.goodresdevId,
+        resultFinal: result,
+        resultTaxpayer: form.resultTaxpayer,
+        observationsResult: form.observationsResult,
+      };
+
+      await this.updateGoodResDev(good);
+
+    });
+
+    this.alertInfo('success', 'Los bienes fueron especificados', '').then(
+      data => {
+        this.event.emit(true);
+        this.close();
+      }
+    );
+
+
+
+
+
+
+    if (true) return;
+
+
+
     let updateItem: any = {};
-    debugger;
     if (form.resultTaxpayer == 'ACEPTADO') {
       const resultadoFinal = 'Y';
       const agrupador = this.goods.goodGrouper;
@@ -103,7 +135,7 @@ export class ConfirmValidationModalComponent
             item.resultTaxpayer = 'RECHAZADO';
             item.resultFinal = 'Y';
 
-            this.deleteGoodDated(item);
+            //this.deleteGoodDated(item);
           } else {
             item.resultFinal = 'Y';
             item.resultTaxpayer = form.resultTaxpayer;
@@ -139,7 +171,7 @@ export class ConfirmValidationModalComponent
           resultTaxpayer: form.resultTaxpayer,
           observationsResult: form.observationsResult,
         };
-        await this.deleteGoodDated(item);
+        //await this.deleteGoodDated(item);
 
         this.updateGoodResDev(updateItem);
       });
@@ -152,7 +184,7 @@ export class ConfirmValidationModalComponent
           resultTaxpayer: form.resultTaxpayer,
           observationsResult: form.observationsResult,
         };
-        await this.deleteGoodDated(item);
+        //await this.deleteGoodDated(item);
 
         this.updateGoodResDev(updateItem);
       });
@@ -173,12 +205,7 @@ export class ConfirmValidationModalComponent
       });
     }
 
-    this.alertInfo('success', 'Los bienes fueron especificados', '').then(
-      data => {
-        this.event.emit(true);
-        this.close();
-      }
-    );
+
   }
 
   async deleteGoodDated(goodDevRes: any) {
@@ -254,12 +281,15 @@ export class ConfirmValidationModalComponent
     });
   }
 
+
   updateGoodResDev(goodResDev: any) {
-    const id = goodResDev.goodresdevId;
-    this.rejectedGoodService.updateGoodsResDev(id, goodResDev).subscribe({
-      next: resp => {
-        console.log('good res dev actualizado');
-      },
+    return new Promise((resolve, reject) => {
+      const id = goodResDev.goodresdevId;
+      this.rejectedGoodService.updateGoodsResDev(id, goodResDev).subscribe({
+        next: resp => {
+          console.log('good res dev actualizado');
+        },
+      });
     });
   }
 

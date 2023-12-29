@@ -14,8 +14,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class RegisterDocumentationViewComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   @Input() requestId: number;
   requestDoc: IRequest;
   transference: number = null;
@@ -25,7 +24,7 @@ export class RegisterDocumentationViewComponent
   affair: string = '';
   originInfo: string = '';
   @Input() process?: string = '';
-
+  toggleInformation = true;
   //INJECTIONS
   private requestService = inject(RequestService);
   private genericsService = inject(GenericService);
