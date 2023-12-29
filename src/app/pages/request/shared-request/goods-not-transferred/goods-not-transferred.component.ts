@@ -86,15 +86,11 @@ export class GoodsNotTransferredComponent extends BasePage implements OnInit {
   }
 
   getAllNotTransferred() {
-    console.log(this.requestId);
     const param = new FilterParams();
     param.addFilter('applicationId', this.requestId);
-    console.log(param['applicationId']);
-
     const filter = param.getParams();
     this.tranferService.getAllNoTransfer(filter).subscribe({
       next: response => {
-        console.log(response);
         this.data = response.data;
         this.getData();
       },
