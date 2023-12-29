@@ -49,7 +49,7 @@ export class RejectRequestModalComponent extends BasePage implements OnInit {
     // Llamar servicio para rechazar solicitud
     //this.onLoadToast('success', 'Proceso de solicitud rechazado con éxito', '');
     this.loading = false;
-    this.onReject.emit(true);
+    this.onReject.emit(this.rejectForm.getRawValue());
     this.modalRef.hide();
   }
 }

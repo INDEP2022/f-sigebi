@@ -156,7 +156,7 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
 
   updateByBody(formData: Object) {
     const route = `good/api/v1/good`;
-    return this.http.put(`${environment.API_URL}/${route}`, formData);
+    return this.http.put(`${environment.API_URL}${route}`, formData);
   }
 
   getByExpedientAndStatus(

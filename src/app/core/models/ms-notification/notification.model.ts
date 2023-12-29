@@ -372,3 +372,19 @@ export interface ITransfActaEntrec {
   no_expediente: number;
   id_tipo_acta: string;
 }
+
+export interface INotificationEmail {
+  id: number;
+  recipients: string;
+  message: string;
+  userCreation: string;
+  dateCreation: string;
+  userModification: string;
+  dateModification: string;
+  version: string | string;
+  subject: string;
+  nameAtt: string | string;
+  urlAtt: string;
+  process: string;
+  answerTo: string;
+}

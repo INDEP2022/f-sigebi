@@ -226,8 +226,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       return;
     }
     this.onSearch.emit(this.searchForm.value);
-
-    //this.toggleSearch = false;
+    this.toggleSearch = false;
   }
 
   getAuthoritySelect(params?: ListParams) {

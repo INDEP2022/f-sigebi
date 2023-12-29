@@ -40,6 +40,7 @@
         [attr.class]="'table-bordered table-responsive'"
         id="selectedGoodsTable"
         [settings]="selectedGoodSettings"
+        (userRowSelect)="selectTableColumns($event)"
         [source]="selectedGoodColumns">
       </ng2-smart-table>
       <div class="table-padding"></div>
