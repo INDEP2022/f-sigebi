@@ -58,7 +58,7 @@ export class ColumnsSelectComponent implements OnInit {
   leftList: boolean = false;
   searchControl = new FormControl<string>(null);
   selectAllControl = new FormControl(false);
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     this.initColumns();

@@ -258,7 +258,6 @@ export const SELECTED_GOOD_VIEW = {
     sort: false,
   },
 
-
   numberGoodsiab: {
     title: 'No. Sae',
     type: 'string',

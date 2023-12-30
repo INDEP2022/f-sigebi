@@ -1,5 +1,5 @@
 export const PAYMENT_COLUMNS = {
-  movement: {
+  numbermovement: {
     title: 'N° Movto.',
     type: 'number',
     sort: false,
@@ -24,7 +24,7 @@ export const PAYMENT_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  cve: {
+  cveBank: {
     title: 'Cve Banco',
     type: 'string',
     sort: false,
@@ -34,12 +34,12 @@ export const PAYMENT_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  publicBatch: {
+  batchPublic: {
     title: 'Lote Público',
     type: 'number',
     sort: false,
   },
-  event: {
+  idEvent: {
     title: 'Evento',
     type: 'number',
     sort: false,
@@ -54,7 +54,7 @@ export const PAYMENT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  paymentId: {
+  payId: {
     title: 'Id Pago',
     type: 'number',
     sort: false,
@@ -64,7 +64,7 @@ export const PAYMENT_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  entryOrderId: {
+  incomeid: {
     title: 'Id Orden Ingreso',
     type: 'number',
     sort: false,
@@ -74,12 +74,12 @@ export const PAYMENT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  type: {
+  guy: {
     title: 'Tipo',
     type: 'string',
     sort: false,
   },
-  inconsistencies: {
+  downloadinconsis: {
     title: 'Inconsistencias',
     type: 'string',
     sort: false,
