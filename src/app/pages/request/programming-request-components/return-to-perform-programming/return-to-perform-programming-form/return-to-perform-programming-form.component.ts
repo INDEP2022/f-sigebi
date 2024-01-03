@@ -473,7 +473,7 @@ export class ReturnToPerformProgrammingFormComponent
               return items;
             }
           });
-          console.log(goodsFilter);
+
           this.filterGoodsProgramming(goodsFilter);
           this.loadingGoods = false;
         },
@@ -682,8 +682,6 @@ export class ReturnToPerformProgrammingFormComponent
 
   sendTransportable() {
     if (this.goodSelect.length) {
-      console.log('Estos son los que se mandan', this.goodSelect);
-
       /*if (this.goodsTranportables.count() == 0) {
         this.goodsTranportables.load(this.goodSelect);
         this.headingTransportable = `Transportables(${this.goodSelect.length})`;

@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -18,6 +19,7 @@ import { ListParams } from '../../../../../common/repository/interfaces/list-par
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { LIST_WAREHOUSE_COLUMNS } from './columns/list-warehouses-columns';
+
 @Component({
   selector: 'app-warehouse-detail',
   templateUrl: './warehouse-detail.component.html',
@@ -25,7 +27,8 @@ import { LIST_WAREHOUSE_COLUMNS } from './columns/list-warehouses-columns';
 })
 export class WarehouseDetailComponent extends BasePage implements OnInit {
   @Output() storeSelected: EventEmitter<any> = new EventEmitter();
-  @Input() SampleOrderId: number = null;
+  @Input() SampleOrderId: number = 0;
+  @Input() idStoreSample: number = 0;
   showSamplingDetail: boolean = true;
   searchForm: ModelForm<any>;
   warehoseSelected: any;
@@ -49,6 +52,12 @@ export class WarehouseDetailComponent extends BasePage implements OnInit {
       columns: LIST_WAREHOUSE_COLUMNS,
     };
     this.initForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.idStoreSample > 0) {
+      this.getStoreViewById();
+    }
   }
 
   initForm(): void {
@@ -82,8 +91,9 @@ export class WarehouseDetailComponent extends BasePage implements OnInit {
 
   clean() {
     this.searchForm.reset();
-    this.paragraphs = new LocalDataSource();
     this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.totalItems = 0;
+    if (this.idStoreSample) this.getStoreViewById();
   }
 
   rowSelect(event: any) {
@@ -102,34 +112,55 @@ export class WarehouseDetailComponent extends BasePage implements OnInit {
     });
   }
 
-  save() {
-    this.alertQuestion(
-      'question',
-      'Confirmación',
-      '¿Desea relacionar el almacén a la orden de muestreo?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        const body = {
-          idStore: this.warehoseSelected.organization,
-          idSamplingOrder: this.SampleOrderId,
-        };
-        this.orderService.updateSampleOrder(body).subscribe({
-          next: () => {
-            this.alert(
-              'success',
-              'Acción Correcta',
-              'Se guardaron los cambios'
-            );
-          },
-          error: () => {
-            this.alert(
-              'warning',
-              'Acción Invalida',
-              'No se pudo relacionar el almacén a la orden de muestreo'
-            );
-          },
-        });
-      }
+  getStoreViewById() {
+    this.loading = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.organization'] = this.idStoreSample;
+    this.goodsQueryService.getCatStoresView2(params.getValue()).subscribe({
+      next: resp => {
+        this.paragraphs.load(resp.data);
+        this.totalItems = resp.count;
+        this.loading = false;
+      },
     });
+  }
+
+  save() {
+    if (this.SampleOrderId > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea relacionar el almacén a la orden de muestreo?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          const body = {
+            idStore: this.warehoseSelected.organization,
+            idSamplingOrder: this.SampleOrderId,
+          };
+          this.orderService.updateSampleOrder(body).subscribe({
+            next: () => {
+              this.alert(
+                'success',
+                'Acción Correcta',
+                'Se guardaron los cambios'
+              );
+            },
+            error: () => {
+              this.alert(
+                'warning',
+                'Acción Invalida',
+                'No se pudo relacionar el almacén a la orden de muestreo'
+              );
+            },
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se requiere generar una orden de muestreo para continuar con el proceso'
+      );
+    }
   }
 }

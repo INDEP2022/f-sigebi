@@ -52,7 +52,7 @@ export class GrouperGoodFieldComponent extends BasePage implements OnInit {
       /*item.goodGrouper = 415;
       list.push(item);
       this.event.emit(list);
-      this.onLoadToast('success', 'Se agrego el valor agrupador');
+      this.onLoadToast('success', 'Se agregó el valor agrupador');
       this.close();*/
 
       const result = await this.updateGoodResDev(body);
@@ -60,7 +60,7 @@ export class GrouperGoodFieldComponent extends BasePage implements OnInit {
         list.push(item);
       if (this.goodResDevs.length == index) {
         this.event.emit(list);
-        this.onLoadToast('success', 'Se agrego el valor agrupador');
+        this.onLoadToast('success', 'Se agregó el valor agrupador');
         this.close();
       }
     });

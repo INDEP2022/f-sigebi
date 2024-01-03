@@ -39,8 +39,7 @@ import { NOTIFICATION_COLUMNS } from './notification-file-update-columns';
 })
 export class NotificationFileUpdateComponent
   extends BasePage
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   @Output() formSubmitted = new EventEmitter<any>();
   formData: any;
   override loading: boolean = true;
@@ -214,7 +213,7 @@ export class NotificationFileUpdateComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         // ...

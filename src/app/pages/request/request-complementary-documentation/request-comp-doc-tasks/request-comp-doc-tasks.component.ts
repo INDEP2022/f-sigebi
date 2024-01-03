@@ -37,6 +37,10 @@ import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/m
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -101,6 +105,8 @@ export class RequestCompDocTasksComponent
   steap3: boolean = false;
   isEdit: boolean = false;
   dictumInfo: boolean = false;
+
+  readonly: boolean = true;
 
   /**
    * SET STATUS ACTIONS
@@ -344,6 +350,12 @@ export class RequestCompDocTasksComponent
       }
     });
 
+    modalRef.content.sign.subscribe(response => {
+      if (response) {
+        this.openSignature();
+      }
+    });
+
     modalRef.content.refresh.subscribe(response => {
       if (response.upload) {
         //this.requestInfo.detail.reportSheet = 'Y';
@@ -460,7 +472,7 @@ export class RequestCompDocTasksComponent
           let response = await this.updateTask(this.taskInfo.id);
           if (response) {
             this.msgModal(
-              'Se finalizo la solicitud con el Folio Nº '.concat(
+              'se finalizó la solicitud con el Folio Nº '.concat(
                 `<strong>${this.requestId}</strong>`
               ),
               'Solicitud finalizada',
@@ -791,7 +803,7 @@ export class RequestCompDocTasksComponent
 
     if (closeTask && !isNullOrEmpty(closeTask.task)) {
       this.msgModal(
-        'Se turno la solicitud con el Folio Nº '.concat(
+        'Se turnó la solicitud con el Folio Nº '.concat(
           `<strong>${this.requestId}</strong>`
         ),
         'Solicitud turnada',
@@ -1711,6 +1723,12 @@ export class RequestCompDocTasksComponent
   }
 
   openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
+
+    if (this.requestInfo.detail.reportSheet == 'OCSJ') {
+      this.openSignature();
+      return;
+    }
+
     const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
       initialState: {
         ...context,
@@ -1824,6 +1842,88 @@ export class RequestCompDocTasksComponent
         },
       });
     });
+  }
+
+  openSignature() {
+    this.openModal(
+      AnnexJAssetsClassificationComponent,
+      "328",
+      'sign-annexJ-assets-classification'
+    );
+  }
+
+  openModal(component: any, idSample?: any, typeAnnex?: string): void {
+    if (!this.signReport) {
+      let config: ModalOptions = {
+        initialState: {
+          idSample: idSample,
+          typeAnnex: typeAnnex,
+          callback: async (typeDocument: number, typeSign: string) => {
+            if (typeAnnex == 'sign-annexJ-assets-classification') {
+              if (typeDocument && typeSign) {
+                this.showReportInfo(typeDocument, typeSign, typeAnnex);
+              }
+            }
+          },
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(component, config);
+    } else {
+      this.showReportInfo(0, '', '');
+    }
+  }
+
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const idSample = this.requestId;
+    const typeFirm = typeSign;
+    const tableName = "";//this.tableName;
+    const reportName = ""//this.tableName;
+    const dynamic = true;
+    const signed = !this.signReport;//!this.isSigned;
+
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        idTypeDoc,
+        idSample,
+        typeFirm,
+        typeAnnex,
+        dynamic,
+        tableName,
+        reportName,
+        signed,
+        callback: data => {
+          if (data) {
+            if (typeFirm != 'electronica') {
+              this.uploadDocument(this.requestId, typeDocument);
+            } else {
+              //this.getInfoSample();
+            }
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  uploadDocument(id, typeDocument) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      typeDoc: typeDocument,
+      idSample: id,
+      callback: data => {
+        if (data) {
+          //this.getInfoSample();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
   }
 
   //Reportes dinamicos

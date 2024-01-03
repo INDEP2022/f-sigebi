@@ -171,7 +171,7 @@ export class SearchRequestSimilarGoodsComponent
       this.alertQuestion(
         'question',
         'Asociar',
-        'Desea asociar esta solicitud?'
+        '¿Desea asociar esta solicitud?'
       ).then(question => {
         if (question.isConfirmed) {
           this.loading = true;

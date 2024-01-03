@@ -94,7 +94,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   getFiles(requestInfo: any) {
-    console.log(requestInfo);
     // Llamar servicio para buscar expedientes
     let columns = this.fileTestData;
     columns.forEach(c => {
@@ -102,11 +101,9 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     });
     this.fileColumns = columns;
     this.totalItems = this.fileColumns.length;
-    console.log(this.fileColumns);
   }
 
   associateFile(row: any) {
-    console.log(row);
     // Llamar servicio para asociar expediente
     this.alert(
       'success',

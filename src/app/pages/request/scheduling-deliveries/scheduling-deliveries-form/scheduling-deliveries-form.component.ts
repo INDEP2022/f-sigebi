@@ -173,7 +173,6 @@ export class SchedulingDeliveriesFormComponent
   getInfoUserLog() {
     this.programmingRequestService.getUserInfo().subscribe({
       next: async (response: any) => {
-        console.log('response', response);
         this.regionalDelegationNum = response.department;
         this.typeUser = response.employeetype;
         this.nameUser = response.username;
@@ -214,7 +213,6 @@ export class SchedulingDeliveriesFormComponent
       .getProgrammingDelivery(params.getValue())
       .subscribe({
         next: async response => {
-          console.log('Programación entrega', response);
           this.programmingDelId = response.data[0].id;
           this.programmingDeliveryInfo = response.data[0];
 
@@ -253,14 +251,12 @@ export class SchedulingDeliveriesFormComponent
             this.programmingDeliveryInfo.storeName = showStoreName;
           }
 
-          console.log('info', this.programmingDeliveryInfo);
           this.schedulingDeliverieForm.patchValue(this.programmingDeliveryInfo);
           this.params
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe(() => this.showInfoProgrammingDelivery());
         },
         error: error => {
-          console.log('no hay programación', error);
           const formData = {
             id: 16902,
             delRegId: this.regionalDelegationNum,
@@ -274,7 +270,6 @@ export class SchedulingDeliveriesFormComponent
             .createProgrammingDelivery(formData)
             .subscribe({
               next: (data: any) => {
-                console.log('programación entrega creada', data);
                 this.programmingDelId = data.id;
               },
               error: error => {},
@@ -290,14 +285,13 @@ export class SchedulingDeliveriesFormComponent
       params.getValue()['filter.id'] = transportable;
       this.transferentService.getAll(params.getValue()).subscribe({
         next: response => {
-          console.log('response', response);
           resolve(response.data[0].nameTransferent);
         },
         error: error => {},
       });
       /*this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
         next: response => {
-          console.log('alk', response);
+       
           resolve(response.data[0].name);
         },
         error: error => {},
@@ -311,7 +305,6 @@ export class SchedulingDeliveriesFormComponent
       params.getValue()['filter.organizationCode'] = warehouse;
       this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
         next: response => {
-          console.log('alk', response);
           resolve(response.data[0].name);
         },
         error: error => {},
@@ -508,7 +501,6 @@ export class SchedulingDeliveriesFormComponent
     //params['filter.managedBy'] = 'SAE';
     this.goodsQueryService.getCatStoresView(params).subscribe({
       next: data => {
-        console.log('data', data);
         this.warehouse = new DefaultSelect(data.data, data.count);
       },
       error: error => {
@@ -614,9 +606,6 @@ export class SchedulingDeliveriesFormComponent
           'DD/MM/YYYY HH:mm:ssZ'
         ).toDate();
 
-        console.log('startDate', startDate);
-        console.log('endDate', endDate);
-
         const infoSave: IprogrammingDelivery = {
           id: this.schedulingDeliverieForm.get('id').value,
           typeEvent: typeEvent,
@@ -654,12 +643,10 @@ export class SchedulingDeliveriesFormComponent
           typeUser: this.typeUser,
         };
 
-        console.log('infoSave', infoSave);
         this.programmingRequestService
           .updateProgrammingDelivery(this.programmingDelId, infoSave)
           .subscribe({
             next: async response => {
-              console.log('prog Del', response);
               const generateFolio = await this.generateFolioProgrammingDelivery(
                 response
               );
@@ -676,9 +663,7 @@ export class SchedulingDeliveriesFormComponent
                 );
               }
             },
-            error: error => {
-              console.log('Error ap actualizar', error);
-            },
+            error: () => {},
           });
       }
     });
@@ -701,7 +686,6 @@ export class SchedulingDeliveriesFormComponent
           .updateProgrammingDelivery(this.programmingDelId, infoProgramming)
           .subscribe({
             next: response => {
-              console.log('response Actualizado', response);
               resolve(true);
             },
             error: error => {},
@@ -726,8 +710,6 @@ export class SchedulingDeliveriesFormComponent
   }
 
   endDateSelect(_endDate: any) {
-    console.log('this.startDate1', this.startDate);
-    console.log('this.startDate2', this.programmingDeliveryInfo.startDate);
     if (this.startDate < _endDate) {
       this.schedulingDeliverieForm
         .get('endDate')
@@ -1978,7 +1960,7 @@ export class SchedulingDeliveriesFormComponent
       .getAllGoodInv(this.paramsSearchDest.getValue(), formData)
       .subscribe({
         next: response => {
-          console.log('response', response);
+         
           this.infoGoodDestruction.load(response.data);
           this.totalItemsSearchDest = response.count;
         },
@@ -2044,7 +2026,6 @@ export class SchedulingDeliveriesFormComponent
 
   goodsSelectDest(goodInvSelect: IGoodInvAvailableView[]) {
     this.goodDesSelect = goodInvSelect;
-    console.log('bienes seleccionados', this.goodDesSelect);
   }
 
   async addGoodsProgrammingDelivery() {
@@ -2079,15 +2060,13 @@ export class SchedulingDeliveriesFormComponent
           foundInd: 'N',
         };
 
-        console.log(
-          'Guardar en programación entrega bienes con id de reservación'
-        );
+       
 
         this.programmingRequestService
           .createGoodProgrammingDevilery(goodForm)
           .subscribe({
             next: async response => {
-              console.log('response', response);
+           
 
               this.checkProgrammingDelivery();
               this.params
@@ -2095,18 +2074,10 @@ export class SchedulingDeliveriesFormComponent
                 .subscribe(() => this.showInfoProgrammingDelivery());
             },
             error: error => {
-              console.log('error', error);
+             
             },
           });
-        console.log('datos a mandar a reservar en inventario');
-        console.log('inventoryNum', good.inventoryNum);
-        console.log('uomCode', good?.uomCode);
-        console.log('organizationId', good?.organizationId);
-        console.log('inventoryItemId', good?.inventoryItemId);
-        console.log('origen referencia', 'ProgramacionEntrega/');
-        console.log('cantidadReserva', good?.quantity);
-        console.log('subInventoryCode', good?.eventType);
-        console.log('locatorID', good?.locatorId);
+      
       }); */
     } else {
       this.alert(
@@ -2161,16 +2132,13 @@ export class SchedulingDeliveriesFormComponent
       typeUser: this.schedulingDeliverieForm.get('typeUser').value,
     };
 
-    console.log('this.schedulingDeliverieForm', infoProg);
     this.programmingRequestService
       .updateProgrammingDelivery(this.programmingDelId, infoProg)
       .subscribe({
-        next: response => {
-          console.log('response', response);
+        next: () => {
           //resolve(true);
         },
-        error: error => {
-          console.log('error de actualización', error);
+        error: () => {
           //resolve(false);
         },
       });
@@ -2186,7 +2154,6 @@ export class SchedulingDeliveriesFormComponent
       .getGoodsProgrammingDelivery(this.params.getValue())
       .subscribe({
         next: response => {
-          console.log('programming goodDelivery', response);
           this.goodsToProgramData.load(response.data);
           this.totalItems = response.count;
         },
@@ -2214,7 +2181,6 @@ export class SchedulingDeliveriesFormComponent
               .updateProgrammingDelivery(this.programmingDelId, formData)
               .subscribe({
                 next: response => {
-                  console.log('se actualizo la notificación de entrega');
                   this.alert(
                     'success',
                     'Correcto',
@@ -2222,9 +2188,7 @@ export class SchedulingDeliveriesFormComponent
                   );
                   this.checkProgrammingDelivery();
                 },
-                error: error => {
-                  console.log('No fue posible actualizar la notificación');
-                },
+                error: error => {},
               });
           }
         });
@@ -2303,11 +2267,9 @@ export class SchedulingDeliveriesFormComponent
         .getNotificationDestruction(params.getValue())
         .subscribe({
           next: response => {
-            console.log('response', response);
             resolve(true);
           },
           error: error => {
-            console.log('error', error);
             resolve(false);
           },
         });
@@ -2416,7 +2378,6 @@ export class SchedulingDeliveriesFormComponent
         `¿Desea enviar la programación de entrega con folio ${this.programmingDeliveryInfo.folio}?`
       ).then(question => {
         if (question.isConfirmed) {
-          console.log('enviar correo electronico');
           const formData = {
             idprogramming: this.programmingDelId,
             eventType: typeEvent,
@@ -2424,12 +2385,8 @@ export class SchedulingDeliveriesFormComponent
           this.programmingRequestService
             .sendEmailProgrammingDelivery(formData)
             .subscribe({
-              next: response => {
-                console.log('Correo enviado', response);
-              },
-              error: error => {
-                console.log('Correo no enviado', error);
-              },
+              next: () => {},
+              error: () => {},
             });
         }
       });

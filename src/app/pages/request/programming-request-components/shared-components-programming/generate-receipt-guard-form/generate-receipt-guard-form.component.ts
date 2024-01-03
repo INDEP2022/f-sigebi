@@ -99,9 +99,7 @@ export class GenerateReceiptGuardFormComponent
           this.modalRef.hide();
           //this.openReport(response);
         },
-        error: error => {
-          console.log();
-        },
+        error: error => {},
       });
   }
 

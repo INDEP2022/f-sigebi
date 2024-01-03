@@ -462,9 +462,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
               }
             });
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: error => {},
         });
       }
     });

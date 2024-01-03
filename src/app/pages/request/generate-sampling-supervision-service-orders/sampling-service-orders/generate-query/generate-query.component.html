@@ -30,13 +30,13 @@
       <div class="col-md-4 pt-4">
         <div class="form-group">
           <label class="text-right mr-2">No. Muestreo Orden&#58;</label>
-          <span class="fs-4"> {{ sampleOrderInfo.idSamplingOrder }}</span>
+          <span class="fs-4"> {{ sampleOrderInfo?.idSamplingOrder }}</span>
         </div>
       </div>
       <div class="col-md-4 pt-4">
         <div class="form-group">
           <label class="text-right mr-2">Fecha Creación Muestreo&#58;</label>
-          <span class="fs-4"> {{ sampleOrderInfo.dateCreation }}</span>
+          <span class="fs-4"> {{ sampleOrderInfo?.dateCreation }}</span>
         </div>
       </div>
     </div>
@@ -204,6 +204,7 @@
           <tab heading="Detalles Almacén">
             <app-warehouse-detail
               [SampleOrderId]="sampleOrderId"
+              [idStoreSample]="idStoreSample"
               (storeSelected)="getStoreSelected($event)"></app-warehouse-detail>
           </tab>
         </tabset>

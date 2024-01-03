@@ -43,7 +43,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
   trans: string = 'a';
   detona: string = 'a';
 
-  recDoc: Object = null;
+  recDoc: any = null;
 
   private legalService = inject(LegalAffairService);
   private affairService = inject(AffairService);
@@ -228,6 +228,8 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
           );
 
           this.recDoc['affair'] = resp['affair']['affairId'].toString();
+
+          this.recDoc.signatureBySubstitution = resp.signatureBySubstitution === '1';
           this.form.patchValue(this.recDoc);
         },
         error: error => {
@@ -257,18 +259,13 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
     if (this.isJuridicVisible) {
       let object = this.form.getRawValue();
 
-      if (object['signatureBySubstitution'] == true) {
-        object['signatureBySubstitution'] = '1';
-      } else {
-        object['signatureBySubstitution'] = '0';
-      }
+      object.signatureBySubstitution = object.signatureBySubstitution ? '1' : '0';
+
+      console.log('object: ', object);
 
       object['applicationId'] = this.requestId;
 
-      let date = new Date();
-
-      let dateString = date.toISOString();
-      let splitId = parseInt(dateString.split('-')[2].substring(3));
+      let splitId = this.getTime();
 
       const user: any = this.authService.decodeToken();
 
@@ -307,5 +304,11 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
   onAffairChange(subdelegation: any) {
     //this.affairs = new DefaultSelect();
+  }
+
+  getTime(): string {
+    const time: number = Date.now();
+    const result: string = time.toString();
+    return result.slice(-5);
   }
 }
