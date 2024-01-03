@@ -35,6 +35,10 @@ export class ExpenseCompositionModalComponent
   CHCONIVA: string;
   IVA: number;
   address: string;
+  chargeGoodsByLote: boolean;
+  data: IComerDetExpense2[];
+  V_VALCON_ROBO: number;
+  private goodDescription: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -74,12 +78,25 @@ export class ExpenseCompositionModalComponent
     if (goodData && this.address === 'M') {
       this.amount.setValue(goodData.amount2);
       this.vat.setValue(goodData.iva2);
+      this.goodDescription = goodData.description;
       if (
         this.expense.conceptNumber + '' === '643' &&
         goodData.iva2 === 0 &&
         this.CHCONIVA
       ) {
         this.vat.setValue(goodData.amount2 * this.IVA);
+      }
+    }
+  }
+
+  setCvmanI(row: any) {
+    console.log(row);
+    if (row) {
+      if (row.transferenteId) {
+        this.transferent = row.transferenteId;
+      }
+      if (row.cvman) {
+        this.cvman.setValue(row.cvman);
       }
     }
   }
@@ -102,14 +119,16 @@ export class ExpenseCompositionModalComponent
     this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         if (response) {
-          this.selectedGood =
-            this.goods.filter(x => x.goodNumber === response)[0] ?? null;
-          if (this.selectedGood) {
-            if (this.selectedGood.transferorNumber) {
-              this.transferent = this.selectedGood.transferorNumber;
-            }
-            if (this.selectedGood.mandate2) {
-              this.cvman.setValue(this.selectedGood.mandate2);
+          if (this.address === 'M') {
+            this.selectedGood =
+              this.goods.filter(x => x.goodNumber === response)[0] ?? null;
+            if (this.selectedGood) {
+              if (this.selectedGood.transferorNumber) {
+                this.transferent = this.selectedGood.transferorNumber;
+              }
+              if (this.selectedGood.mandate2) {
+                this.cvman.setValue(this.selectedGood.mandate2);
+              }
             }
           }
         }
@@ -210,50 +229,129 @@ export class ExpenseCompositionModalComponent
   private onEditConfirm(body: any) {
     // return;
     if (body) {
-      this.service
-        .edit(this.getBody(body))
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.alert(
-              'success',
-              'Se ha actualizado la composición del gasto ' +
-                body.expenseDetailNumber,
-              ''
-            );
-            this.modalRef.content.callback(true);
-            this.modalRef.hide();
-          },
-          error: err => {
-            this.alert(
-              'error',
-              'No se pudo actualizar la composición del gasto ' +
-                body.expenseDetailNumber,
-              ''
-            );
-          },
-        });
+      if (this.chargeGoodsByLote) {
+        this.modalRef.content.callback(
+          this.data.map(x => {
+            if (x.goodNumber + '' === body.goodNumber + '') {
+              const total = (
+                +body.amount +
+                +body.vat -
+                +body.isrWithholding -
+                +body.vatWithholding
+              ).toFixed(2);
+              return {
+                ...x,
+                amount: body.amount,
+                iva: body.iva,
+                retencionIsr: body.isrWithholding,
+                retencionIva: body.vatWithholding,
+                transferorNumber: this.transferent,
+                amount2: body.amount,
+                iva2: body.iva,
+                total: +total,
+                total2: +total,
+                departure: body.budgetItem,
+              };
+            } else {
+              return x;
+            }
+          })
+        );
+        this.modalRef.hide();
+      } else {
+        this.service
+          .edit(this.getBody(body))
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.alert(
+                'success',
+                'Se ha actualizado la composición del gasto ' +
+                  body.expenseDetailNumber,
+                ''
+              );
+              this.modalRef.content.callback(true);
+              this.modalRef.hide();
+            },
+            error: err => {
+              this.alert(
+                'error',
+                'No se pudo actualizar la composición del gasto ' +
+                  body.expenseDetailNumber,
+                ''
+              );
+            },
+          });
+      }
     }
   }
 
   private onAddConfirm(body: any) {
     // return;
     if (body) {
-      this.service
-        .create(this.getBody(body))
-        .pipe(take(1))
-        .subscribe({
-          next: response => {
-            this.alert('success', 'Se ha creado la composición de gasto', '');
-            this.modalRef.content.callback(true);
-            this.modalRef.hide();
-            // this.getData();
-          },
-          error: err => {
-            console.log(err);
-            this.alert('error', 'No se pudo crear la composición de gasto', '');
-          },
+      if (this.chargeGoodsByLote) {
+        const total = (
+          +body.amount +
+          +body.vat -
+          +body.isrWithholding -
+          +body.vatWithholding
+        ).toFixed(2);
+
+        this.data.push({
+          detPaymentsId: null,
+          paymentsId: null,
+          amount: body.amount,
+          iva: body.iva,
+          retencionIsr: body.isrWithholding,
+          retencionIva: body.vatWithholding,
+          transferorNumber: this.transferent,
+          goodNumber: body.goodNumber,
+          total: +total,
+          manCV: body.cvman,
+          departure: body.budgetItem,
+          origenNB: null,
+          partialGoodNumber: null,
+          priceRiAtp: null,
+          transNumberAtp: null,
+          expendientNumber: null,
+          clasifGoodNumber: null,
+          value: null,
+          description: this.goodDescription,
+          eventId: null,
+          amount2: body.amount,
+          iva2: body.iva,
+          total2: +total,
+          parameter: null,
+          mandato: body.cvman,
+          vehiculoCount: null,
+          changeStatus: false,
+          reportDelit: false,
+          V_VALCON_ROBO: this.V_VALCON_ROBO,
+          SELECT_CAMBIA_CLASIF_ENABLED: null,
         });
+        this.modalRef.content.callback(this.data);
+        this.modalRef.hide();
+      } else {
+        this.service
+          .create(this.getBody(body))
+          .pipe(take(1))
+          .subscribe({
+            next: response => {
+              this.alert('success', 'Se ha creado la composición de gasto', '');
+              this.modalRef.content.callback(true);
+              this.modalRef.hide();
+              // this.getData();
+            },
+            error: err => {
+              console.log(err);
+              this.alert(
+                'error',
+                'No se pudo crear la composición de gasto',
+                ''
+              );
+            },
+          });
+      }
     }
   }
 

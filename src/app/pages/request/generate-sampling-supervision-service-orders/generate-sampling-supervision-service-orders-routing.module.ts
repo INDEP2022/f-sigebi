@@ -10,6 +10,13 @@ const routes: Routes = [
     data: { title: 'Generar Consulta' },
   },
   {
+    path: 'generate-query/:id',
+    loadChildren: async () =>
+      (await import('./sampling-service-orders/sampling-service-orders.module'))
+        .SamplingServiceOrdersModule,
+    data: { title: 'Generar Consulta' },
+  },
+  {
     path: 'results-capture/:id',
     loadChildren: async () =>
       (

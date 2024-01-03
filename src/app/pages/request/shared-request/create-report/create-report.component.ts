@@ -16,7 +16,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import * as moment from 'moment';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ReportService } from 'src/app/core/services/catalogs/reports.service';
@@ -82,6 +81,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<any>();
   @Output() show = new EventEmitter<any>();
+  @Output() sign = new EventEmitter<any>();
 
   isSigned: boolean = false;
 
@@ -154,7 +154,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.isSigned = this.version.signedReport == 'Y';
         }
       },
-      error: err => {},
+      error: err => { },
     });
   }
 
@@ -190,7 +190,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
           this.onLoadToast('success', 'Documento guardado correctamente', '');
         }
       },
-      error: err => {},
+      error: err => { },
     });
   }
 
@@ -219,8 +219,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    console.log(this.form.value);
-    console.log(this.document);
     //this.editable ? this.update() : this.create(); //VALIDAR
   }
 
@@ -280,7 +278,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     modalRef.content.signatureType.subscribe(next => {
       if (next) {
         this.signReportTab = true;
-        console.log(this.tabsReport.tabs.length);
+
         this.tabsReport.tabs[1].active = true;
       } /*else {
         this.isSignedReady = false;
@@ -350,88 +348,11 @@ export class CreateReportComponent extends BasePage implements OnInit {
     this.show.emit(this.version);
   }
 
-  idSample = '328';
-
   openSignature() {
-    this.openModal(
-      AnnexJAssetsClassificationComponent,
-      this.idSample,
-      'sign-annexJ-assets-classification'
-    );
+    this.sign.emit({
+
+    });
     this.close();
   }
 
-  openModal(component: any, idSample?: any, typeAnnex?: string): void {
-    if (!this.isSigned) {
-      let config: ModalOptions = {
-        initialState: {
-          idSample: idSample,
-          typeAnnex: typeAnnex,
-          callback: async (typeDocument: number, typeSign: string) => {
-            if (typeAnnex == 'sign-annexJ-assets-classification') {
-              if (typeDocument && typeSign) {
-                this.showReportInfo(typeDocument, typeSign, typeAnnex);
-              }
-            }
-          },
-        },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(component, config);
-    } else {
-      this.showReportInfo(0, '', '');
-    }
-  }
-
-  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
-    const idTypeDoc = typeDocument;
-    const idSample = this.requestId;
-    const typeFirm = typeSign;
-    const tableName = this.tableName;
-    const reportName = this.tableName;
-    const dynamic = true;
-    const signed = !this.isSigned;
-
-    //Modal que genera el reporte
-    let config: ModalOptions = {
-      initialState: {
-        idTypeDoc,
-        idSample,
-        typeFirm,
-        typeAnnex,
-        dynamic,
-        tableName,
-        reportName,
-        signed,
-        callback: data => {
-          if (data) {
-            if (typeFirm != 'electronica') {
-              this.uploadDocument(typeDocument);
-            } else {
-              //this.getInfoSample();
-            }
-          }
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ShowReportComponentComponent, config);
-  }
-
-  uploadDocument(typeDocument: number) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      typeDoc: typeDocument,
-      idSample: this.idSample,
-      callback: data => {
-        if (data) {
-          //this.getInfoSample();
-        }
-      },
-    };
-
-    this.modalService.show(UploadReportReceiptComponent, config);
-  }
 }

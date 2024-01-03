@@ -1273,13 +1273,11 @@ carga la  información de la parte media de la página
       if (vNO_DELDEST == 0) {
         vDELAGACION = 'CRB';
         if (vTRANSF == 'SAT') {
-          vCLAVE_ARMADA = `${vT_ACTA}/${
-            vEMISORA == undefined ? ' ' : vEMISORA
-          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA == undefined ? ' ' : vEMISORA
+            }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         } else {
-          vCLAVE_ARMADA = `${vT_ACTA}/${
-            vTRANSF == undefined ? ' ' : vTRANSF
-          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${vTRANSF == undefined ? ' ' : vTRANSF
+            }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         }
       } else {
         console.log('SI ENTRA3', vDELEGADEST);
@@ -1292,14 +1290,12 @@ carga la  información de la parte media de la página
         }
 
         if (vTRANSF == 'SAT') {
-          vCLAVE_ARMADA = `${vT_ACTA}/${
-            vEMISORA == undefined ? ' ' : vEMISORA
-          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${vEMISORA == undefined ? ' ' : vEMISORA
+            }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         } else {
           // vCLAVE_ARMADA = `${vT_ACTA}/${(vTRANSF == undefined) ? ' ' : vTRANSF}/ADM/${vDELAGACION}/${vDELAGACION}/?/${year}/${month}`;
-          vCLAVE_ARMADA = `${vT_ACTA}/${
-            vTRANSF == undefined ? ' ' : vTRANSF
-          }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
+          vCLAVE_ARMADA = `${vT_ACTA}/${vTRANSF == undefined ? ' ' : vTRANSF
+            }/ADM/${vDELAGACION}/${vDELAGACION}/${ln_oficio_trimmed}/${year}/${month}`;
         }
       }
       console.log('vCLAVE_ARMADA', vCLAVE_ARMADA);
@@ -1623,7 +1619,7 @@ carga la  información de la parte media de la página
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.deleteExterno(legend.id);

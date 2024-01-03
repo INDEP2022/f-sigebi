@@ -79,15 +79,11 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
                     this.totalItems = goodsGuard.length;
                     this.loading = false;
                   },
-                  error: error => {
-                    console.log(error);
-                  },
+                  error: () => {},
                 });
             });
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: () => {},
         });
     }
 
@@ -98,7 +94,6 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
         .getReceptionGoods(this.params.getValue())
         .subscribe({
           next: response => {
-            console.log('response warehouse', response);
             const goodsGuard: IGood[] = [];
             response.data.map((item: IRecepitGuard) => {
               this.paramsGuardGood.getValue()['filter.id'] = item.idGood;
@@ -124,15 +119,11 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
                     this.totalItems = goodsGuard.length;
                     this.loading = false;
                   },
-                  error: error => {
-                    console.log(error);
-                  },
+                  error: () => {},
                 });
             });
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: () => {},
         });
     }
   }

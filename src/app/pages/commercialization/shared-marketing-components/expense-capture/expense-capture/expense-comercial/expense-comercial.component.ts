@@ -528,7 +528,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (rtDicta.length > 0) {
       this.fillAddressNotM(rtDicta[0].typeNumber);
     }
-    debugger;
+    // debugger;
     this.dataService.address = 'I';
     let usuarioCapturaData = await this.usuarioCapturaDataI(user);
     if (usuarioCapturaData) {
@@ -1387,30 +1387,36 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       await this.dataService.getLS_ESTATUS(+expense.conceptNumber);
       this.controlsInDet();
     }
-    if (
-      expense.lotNumber !== this.lotNumber.value ||
-      expense.conceptNumber != this.conceptNumber.value ||
-      expense.eventNumber != this.eventNumber.value
-    ) {
-      entro = true;
-      this.expenseGoodProcessService
-        .getValidGoods(
-          +expense.lotNumber,
-          +expense.eventNumber,
-          this.address !== 'M' ? 'N' : this.dataService.PDEVPARCIALBIEN,
-          +expense.conceptNumber,
-          this.address !== 'M' ? 'N' : this.PVALIDADET
-        )
-        .pipe(
-          takeUntil(this.$unSubscribe),
-          catchError(x => of({ data: [] })),
-          map(x => (x ? x.data : []))
-        )
-        .subscribe(x => {
-          this.dataService.goods = x;
-        });
+    if (this.address === 'M') {
+      if (
+        expense.lotNumber !== this.lotNumber.value ||
+        expense.conceptNumber != this.conceptNumber.value ||
+        expense.eventNumber != this.eventNumber.value
+      ) {
+        entro = true;
+        if (+expense.lotNumber > 0 && +expense.eventNumber > 0)
+          this.expenseGoodProcessService
+            .getValidGoods(
+              +expense.lotNumber,
+              +expense.eventNumber,
+              this.address !== 'M' ? 'N' : this.dataService.PDEVPARCIALBIEN,
+              +expense.conceptNumber,
+              this.address !== 'M' ? 'N' : this.PVALIDADET
+            )
+            .pipe(
+              takeUntil(this.$unSubscribe),
+              catchError(x => of({ data: [] })),
+              map(x => (x ? x.data : []))
+            )
+            .subscribe(x => {
+              this.dataService.goods = x;
+            });
+      }
+    } else {
+      // ss;
     }
-    this.dataService.callNextItemLote = entro;
+
+    // this.dataService.callNextItemLote = entro;
     this.conceptNumber.setValue(expense.conceptNumber);
     this.eventNumber.setValue(expense.eventNumber);
     this.lotNumber.setValue(expense.lotNumber);
@@ -1419,8 +1425,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       expense.publicLot
         ? expense.publicLot
         : expense.comerLot
-        ? expense.comerLot.publicLot
-        : null
+          ? expense.comerLot.publicLot
+          : null
     );
     this.clkpv.setValue(expense.clkpv);
 
@@ -1516,10 +1522,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       'comerconcepts/api/v1/application/query-eat-concepts?sortBy=conceptId:ASC' +
       (this.address
         ? '?filter.address=$in:' +
-          this.address +
-          (this.address === 'M'
-            ? ',C'
-            : this.PDIRECCION_A
+        this.address +
+        (this.address === 'M'
+          ? ',C'
+          : this.PDIRECCION_A
             ? ',' + this.PDIRECCION_A
             : '')
         : '')
@@ -1704,7 +1710,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
     if (result.isConfirmed) {
       if (this.validImprimeDetalle()) {
-        // this.alertQuestion('question','Desea imprimir ')
+        // this.alertQuestion('question','¿Desea imprimir ')
         this.loader.load = true;
         this.PUP_LANZA_REPORTE(3);
       } else {
@@ -1750,7 +1756,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,

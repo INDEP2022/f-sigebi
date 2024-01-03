@@ -48,13 +48,13 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'code' ||
-            filter.field == 'dictum' ||
-            filter.field == 'flyerType' ||
-            filter.field == 'doc' ||
-            filter.field == 'property' ||
-            filter.field == 'g_of' ||
-            filter.field == 'i' ||
-            filter.field == 'e'
+              filter.field == 'dictum' ||
+              filter.field == 'flyerType' ||
+              filter.field == 'doc' ||
+              filter.field == 'property' ||
+              filter.field == 'g_of' ||
+              filter.field == 'i' ||
+              filter.field == 'e'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -105,7 +105,7 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       console.log('question', question);
       alert(question);

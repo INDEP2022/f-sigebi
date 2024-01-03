@@ -9,8 +9,8 @@ import { DefaultEditor } from 'ng2-smart-table';
 })
 export class GuidelinesObservationsComponent
   extends DefaultEditor
-  implements OnInit {
-
+  implements OnInit
+{
   @Input() value: string | number;
   @Input() rowData: any;
   @Input() key: any;
@@ -22,23 +22,20 @@ export class GuidelinesObservationsComponent
   }
 
   ngOnInit(): void {
-
     this.selectForm = this.fb.group({
       observations: [null],
     });
 
-    this.selectForm.controls['observations'].setValue(this.value)
+    this.selectForm.controls['observations'].setValue(this.value);
 
-    this.selectForm.valueChanges.subscribe((object) => {
+    this.selectForm.valueChanges.subscribe(object => {
       this.rowData[this.key] = object.observations;
       this.cellChanged.emit(this.rowData);
     });
-
   }
 
   change(event) {
     this.rowData[this.key] = this.value;
     this.cellChanged.emit(this.rowData);
   }
-
 }

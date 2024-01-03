@@ -22,6 +22,7 @@ import { AnnexKFormComponent } from '../../../generate-sampling-supervision/gene
 import { LIST_DEDUCTIVES_VIEW_COLUMNS } from '../../../generate-sampling-supervision/sampling-assets/sampling-assets-form/columns/list-deductivas-column';
 import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { UploadReportReceiptComponent } from '../../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
+import { ObservationRejectComponent } from './observation-reject/observation-reject.component';
 
 @Component({
   selector: 'app-review-results',
@@ -137,6 +138,32 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   }
 
   async turnSampling() {
+    if (this.sampleOrderInfo.idcontentksae) {
+      /*if(this.sampleOrderInfo.statusSample == 'MUESTREO_NO_CUMPLE'){
+
+      } */
+
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Esta de acuerdo que la información es correcta para turnar?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          //const updateStatusSample = await this.updateStatusSample();
+          this.alert(
+            'success',
+            'Correcto',
+            'Muestreo actualizado correctamente'
+          );
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Debe firmar el Anexo K para Turnar.'
+      );
+    }
     /*const sampleOrder = await this.getSampleOrder();
     if (this.lsEstatusMuestreo == 'MUESTREO_NO_CUMPLE') {
       this.validateTurn(sampleOrder);
@@ -159,6 +186,21 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     } else {
       this.confirmTurnModal();
     } */
+  }
+
+  updateStatusSample() {
+    return new Promise((resolve, reject) => {
+      const sampleOrder: ISamplingOrder = {
+        statusSample: 'MUESTREO_PENDIENTE_APROBACION',
+      };
+
+      this.orderService.updateSampleOrder(sampleOrder).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {},
+      });
+    });
   }
 
   async openAnnexK() {
@@ -255,28 +297,35 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     });
   }
 
-  validateTurn(sampleOrder: ISamplingOrder) {
-    if (sampleOrder.idcontentksae == null) {
-      this.onLoadToast('info', 'Debe firmar el Anexo K para Turnar.');
-      return;
-    }
-
-    let title = 'Confirmación turnado';
-    let message =
-      '¿Esta de acuerdo que la información es correcta para turnar?';
-    this.alertQuestion('question', title, message, 'Aceptar').then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-        //this.lsEstatusMuestreo = 'MUESTREO_PENDIENTE_APROBACION';
-        const userTE = this.authServeice.decodeToken().username;
-
-        window.alert('turnar registro');
-      }
-    });
-  }
-
   sentRevision() {
-    Swal.fire({
+    /*if(this.sampleOrderInfo.statusSample == 'MUESTREO_PENDIENTE_APROBACION'){
+      
+    }else{
+      this.alert('warning', 'Advertencia', 'El muestreo aun se encuentra con el estatus no cumple')
+    } */
+
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
+
+    config.initialState = {
+      idSamplingOrder: this.sampleOrderId,
+      sampleOrderInfo: this.sampleOrderInfo,
+      callback: (next: boolean) => {
+        if (next) {
+          this.alert(
+            'success',
+            'Correcto',
+            'Observación agregada correctamente'
+          );
+          this.getSampleOrder();
+        }
+      },
+    };
+
+    this.modalService.show(ObservationRejectComponent, config);
+    /*Swal.fire({
       title: 'Confirmación Turnado',
       html: '<br/><label style="display:flex;">Observaciones: </label>',
       input: 'textarea',
@@ -295,16 +344,27 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
       allowOutsideClick: () => !Swal.isLoading(),
     }).then(result => {
       if (result.isConfirmed) {
-        console.log(result.value);
-        const observation = result.value;
-        if (observation == null || observation == '') {
-          this.onLoadToast('info', 'Debe indicar el motivo del rechazo');
-          return;
+        if (result.value == null || result.value == '') {
+          this.onLoadToast(
+            'warning',
+            'Advertencia',
+            'Debe de escribir la observación de rechazo'
+          );
+        } else {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            '¿Desea guardar las observaciones de rechazo de el muestreo?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              const updateObservation = await this.updateObservation(
+                result.value
+              );
+            }
+          });
         }
-        //this.lsEstatusMuestreo = 'MUESTREO_NO_CUMPLE';
-        window.alert('Turnar registro');
       }
-    });
+    }); */
   }
 
   finish() {

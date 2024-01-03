@@ -141,7 +141,6 @@ export class GoodsListComponent extends BasePage implements OnInit {
   }
 
   viewFile(data: any) {
-    console.log(data);
     this.openModalInformation(data, 'detail');
   }
 
@@ -159,10 +158,8 @@ export class GoodsListComponent extends BasePage implements OnInit {
   }
 
   displayGrouperName() {
-    console.log(this.processDetonate);
     if (this.processDetonate == 'RES_NUMERARIO') {
       const columns = this.table.grid.getColumns();
-      console.log(columns);
       const grouperName = columns.find((x: any) => x.id == 'goodGrouper');
       grouperName.hide = true;
     }

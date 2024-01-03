@@ -185,7 +185,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     this.loading = false;
   }
 
-
   getInfoRequest() {
     this.selectedGoodColumns = [];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
@@ -195,7 +194,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.requestInfo = response;
         this.getProcessDetonate();
       },
-      error: error => { },
+      error: error => {},
     });
 
     const param = new FilterParams();
@@ -232,7 +231,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       next: response => {
         this.processDet = response.data[0].processDetonate;
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -242,7 +241,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         response.recordId;
         this.openModalDocument(idRequest, response.recordId);
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -255,7 +254,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     config.initialState = {
       idRequest,
       recordId,
-      callback: (next: boolean) => { },
+      callback: (next: boolean) => {},
     };
 
     this.modalService.show(ShowDocumentsGoodComponent, config);
@@ -428,12 +427,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         next: response => {
           resolve(response.data[0].description);
         },
-        error: error => { },
+        error: error => {},
       });
     });
   }
 
-  viewFile(file: any) { }
+  viewFile(file: any) {}
 
   /*checkInfoProcess(goodsResDev: IGoodsResDev) {
     return new Promise((resolve, reject) => {
@@ -450,26 +449,41 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
+
+    let exitGood: any = this.selectedGoodColumns.find(x => x.goodId == good.goodId);
+
     if (this.processDet == 'DEVOLUCION' || this.processDet == 'RES_NUMERARIO') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-        initialState: { good: good, requestId: this.requestInfo.id },
+        initialState: {
+          good: good,
+          requestId: this.requestInfo.id,
+          exitGood: exitGood
+        },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
       });
       modalRef.content.onReserve.subscribe((data: boolean) => {
-        if (data) this.addGood(data);
+        if (data) this.getInfoRequest();
       });
     } else if (this.processDet != 'INFORMACION') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-        initialState: { good: good, requestId: this.requestInfo.id },
+        initialState: {
+          good: good, requestId: this.requestInfo.id, exitGood: exitGood
+        },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
       });
       modalRef.content.onReserve.subscribe((data: boolean) => {
-        if (data) this.addGood(data);
+        if (data) this.getInfoRequest();
       });
     } else {
-      this.addGoodForInformation(good);
+
+      if (isNullOrEmpty(exitGood)) {
+        this.addGoodForInformation(good);
+      } else {
+        this.onLoadToast('warning', 'El bien ya ha sido agregado');
+      }
+
     }
   }
 
@@ -548,7 +562,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       initialState: {
         data,
         typeInfo,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -738,7 +752,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
       next: resp => {
         this.addGood(goodResDev);
-        this.onLoadToast('success', 'Se agrego el bien');
+        this.onLoadToast('success', 'Se agregó el bien');
       },
       error: error => {
         this.onLoadToast('error', 'No se pudo crear el bien');
