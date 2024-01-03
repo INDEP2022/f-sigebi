@@ -10,6 +10,7 @@ import { SharedComponentGsssoModule } from '../shared-component-gssso/shared-com
 import { GenerateFormatsVerificationNoncomplianceRoutingComponent } from './generate-formats-verification-noncompliance-routing.component';
 import { ListServiceOrdersComponent } from './list-service-orders/list-service-orders.component';
 import { NewDocumentServiceOrdersFormComponent } from './new-document-service-orders-form/new-document-service-orders-form.component';
+import { ObservationRejectComponent } from './review-results/observation-reject/observation-reject.component';
 import { ReviewResultsComponent } from './review-results/review-results.component';
 import { SamplingDetailReviewResultsComponent } from './sampling-detail-review-results/sampling-detail-review-results.component';
 import { ServiceOrdersFilterComponent } from './service-orders-filter/service-orders-filter.component';
@@ -23,6 +24,7 @@ import { UploadExpedientServiceOrderComponent } from './upload-expedient-service
     ListServiceOrdersComponent,
     UploadExpedientServiceOrderComponent,
     NewDocumentServiceOrdersFormComponent,
+    ObservationRejectComponent,
   ],
   imports: [
     CommonModule,

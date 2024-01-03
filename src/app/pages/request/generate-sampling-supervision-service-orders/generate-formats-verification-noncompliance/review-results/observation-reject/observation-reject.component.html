@@ -1,0 +1,39 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">confirmación Turnado</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field
+          [control]="form.get('observationRejection')"
+          label="Observaciones">
+          <input
+            type="text"
+            class="form-control"
+            maxlength="30"
+            formControlName="observationRejection" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [text]="'Guardar'"
+          [loadingText]="'Guardando'"
+          [loading]="loading"
+          [icon]="'fa fa-save'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
