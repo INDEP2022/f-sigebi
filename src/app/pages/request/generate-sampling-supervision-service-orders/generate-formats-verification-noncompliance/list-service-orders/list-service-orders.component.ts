@@ -34,6 +34,7 @@ export class ListServiceOrdersComponent
   paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  loadingReport: boolean = false;
   rowSelected: any = [];
   allOrderService: ISamplingOrder[] = [];
   private orderService = inject(OrderServiceService);
@@ -283,10 +284,43 @@ export class ListServiceOrdersComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  downloadFiles() {
-    const filename: string = 'MuestreoOrdenes';
-    const file = this.paragraphs['data'];
-    //type: 'csv'
-    this.excelService.export(file, { filename });
+  reportOrderService() {
+    this.paragraphs.getElements().then(data => {
+      if (data.length > 0) {
+        this.loadingReport = true;
+        const params = new BehaviorSubject<ListParams>(new ListParams());
+        params.getValue()['filter.sampleOrderId'] = `$eq:${this.sampleOrderId}`;
+        this.orderService.generateReportOrder(params.getValue()).subscribe({
+          next: response => {
+            this.downloadExcel(response.base64File, 'Ordenes_de_servicio.xlsx');
+            this.loadingReport = false;
+          },
+          error: () => {
+            this.loadingReport = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No fue posible generar el reporte'
+            );
+          },
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Se requiere tener ordenes de servcio realacionadas al muestreo'
+        );
+      }
+    });
+  }
+
+  downloadExcel(excel: any, nameReport: string) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = nameReport;
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 }
