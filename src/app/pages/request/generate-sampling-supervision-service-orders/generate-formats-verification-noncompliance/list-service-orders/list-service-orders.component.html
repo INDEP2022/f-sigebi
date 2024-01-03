@@ -9,9 +9,15 @@
         </button>
       </div>
       <div class="p-2">
-        <button class="btn btn-success btn-sm active" (click)="downloadFiles()">
-          Descargar Archivo <i class="bx bx-download"></i>
-        </button>
+        <confirm-button
+          [loading]="loadingReport"
+          [btnSmall]="true"
+          [text]="'Reporte de ordenes de servicio'"
+          [loadingText]="'Generando Reporte'"
+          [className]="'btn-success'"
+          [icon]="'bx bx-download float-icon'"
+          class="mr-2"
+          (confirm)="reportOrderService()"></confirm-button>
       </div>
     </div>
   </div>
