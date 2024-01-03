@@ -196,7 +196,6 @@ export class ReportDocumentScheduleComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async res => {
-          console.log('programminf', res);
           this.data = [];
           this.loading = false;
           const filterDoc = res.data.filter((item: any) => {

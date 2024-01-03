@@ -218,8 +218,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    console.log(this.form.value);
-    console.log(this.document);
     //this.editable ? this.update() : this.create(); //VALIDAR
   }
 
@@ -279,7 +277,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     modalRef.content.signatureType.subscribe(next => {
       if (next) {
         this.signReportTab = true;
-        console.log(this.tabsReport.tabs.length);
+
         this.tabsReport.tabs[1].active = true;
       } /*else {
         this.isSignedReady = false;

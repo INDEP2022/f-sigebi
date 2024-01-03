@@ -670,6 +670,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
                 item.requestId != null ? item.requestId : item.programmingId;
 
             if (item.idSampling) item.requestId = item.idSampling;
+            if (item.idSamplingOrder) item.requestId = item.idSamplingOrder;
           });
 
           resolve(response);

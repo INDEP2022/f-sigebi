@@ -40,4 +40,5 @@ export interface ISamplingOrder {
   daterepService?: Date;
   observationRejection?: string;
   orderServiceId?: number;
+  statusSample?: string;
 }

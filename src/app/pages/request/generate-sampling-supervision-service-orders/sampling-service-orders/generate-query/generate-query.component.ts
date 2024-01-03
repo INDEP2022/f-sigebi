@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -62,6 +62,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   sampleOrderId: number = 0;
   sampleOrderInfo: ISamplingOrder;
   sendData: any[] = [];
+  idStoreSample: number = 0;
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   settings4 = {
     ...TABLE_SETTINGS,
@@ -93,24 +94,30 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private wcontentService: WContentService,
     private taskService: TaskService,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
-  }
-
-  ngOnInit(): void {
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
       selectMode: 'multi',
       columns: LIST_ORDERS_COLUMNS,
     };
+    this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
+  }
+
+  ngOnInit(): void {
+    const id = Number(this.activatedRoute.snapshot.paramMap.get('id'));
+    if (id) {
+      this.sampleOrderId = id;
+      this.getSampleDeductives();
+      this.getSampleOrder();
+      this.showSampleInfo = true;
+    }
     this.initForm();
     this.initAnexForm();
     this.getgeographicalAreaSelect(new ListParams());
-    this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
-
-    //this.newSampleOrder();
   }
 
   initForm() {
@@ -245,6 +252,15 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
             response.data[0].dateCreation
           ).format('DD/MM/YYYY');
           this.sampleOrderInfo = response.data[0];
+          if (this.sampleOrderInfo.idStore) {
+            this.idStoreSample = this.sampleOrderInfo.idStore;
+          }
+
+          if (this.sampleOrderInfo.cveZone) {
+            this.orderServiceForm
+              .get('geographicalArea')
+              .setValue(this.sampleOrderInfo.cveZone);
+          }
           this.showSampleInfo = true;
           resolve(true);
         },
@@ -477,12 +493,10 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   createTaskOrderService(body: any) {
     return new Promise((resolve, reject) => {
       this.taskService.createTaskWitOrderService(body).subscribe({
-        next: response => {
-          console.log('response', response);
+        next: () => {
           resolve(true);
         },
         error: error => {
-          console.log('error', error);
           resolve(false);
         },
       });
@@ -563,6 +577,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         idDelegationRegional: +this.authService.decodeToken().department,
         dateturned: moment(new Date()).format('YYYY-MM-DD'),
         numberContract: this.orderServiceForm.get('contractNumber').value,
+        cveZone: this.orderServiceForm.get('geographicalArea').value,
         periodSampling: moment(
           this.orderServiceForm.get('samplingPeriod').value
         ).format('YYYY-MM-DD'),
@@ -574,6 +589,9 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
             'DD/MM/YYYY'
           );
           this.sampleOrderInfo = resp.data;
+          if (this.sampleOrderInfo.idStore) {
+            this.idStoreSample = this.sampleOrderInfo.idStore;
+          }
           this.showSampleInfo = true;
           resolve(true);
         },
@@ -614,6 +632,33 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       params['filter.idSamplingOrder'] = `$eq:${this.sampleOrderId}`;
       this.orderService.getAllSampleOrder(params).subscribe({
         next: resp => {
+          resp.data[0].dateCreation = moment(resp.data[0].dateCreation).format(
+            'DD/MM/YYYY'
+          );
+          this.sampleOrderInfo = resp.data[0];
+          if (this.sampleOrderInfo.periodSampling) {
+            this.orderServiceForm
+              .get('samplingPeriod')
+              .setValue(
+                moment(this.sampleOrderInfo.periodSampling).format('DD/MM/YYYY')
+              );
+          }
+
+          if (this.sampleOrderInfo.numberContract) {
+            this.orderServiceForm
+              .get('contractNumber')
+              .setValue(this.sampleOrderInfo.numberContract);
+          }
+
+          if (this.sampleOrderInfo.idStore) {
+            this.idStoreSample = this.sampleOrderInfo.idStore;
+          }
+
+          if (this.sampleOrderInfo.cveZone) {
+            this.orderServiceForm
+              .get('geographicalArea')
+              .setValue(this.sampleOrderInfo.cveZone);
+          }
           resolve(resp.data[0]);
         },
       });
@@ -879,5 +924,100 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     });
   }
 
-  saveSample() {}
+  saveSample() {
+    if (this.sampleOrderId > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea guardar la tarea verificación de órdenes de servicio?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const saveInfoSample = await this.saveInfoSample();
+          const _task = JSON.parse(localStorage.getItem('Task'));
+          if (saveInfoSample && _task?.id)
+            this.alert(
+              'success',
+              'Correcto',
+              'Orden de servicio actualizada correctamente'
+            );
+          if (saveInfoSample && !_task?.id) {
+            this.generateTaskVerification();
+          }
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se requiere generar un muestreo de orden de servicio para continuar'
+      );
+    }
+  }
+
+  async generateTaskVerification() {
+    const user: any = this.authService.decodeToken();
+
+    let body: any = {};
+
+    body['userProcess'] = user.username;
+    body['type'] = 'MUESTREO_ORDENES';
+    body['subtype'] = 'verificar_almacen';
+    body['ssubtype'] = 'TURNAR';
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = user.username;
+    task['assigneesDisplayname'] = user.username;
+    task['creator'] = user.username;
+    task['reviewers'] = user.username;
+
+    task['idSamplingOrder'] = this.sampleOrderId;
+    task[
+      'title'
+    ] = `Muestreo Ordenes de Servicio: Verificación de almacén ${this.sampleOrderId}`;
+    task['idDelegationRegional'] = this.sampleOrderInfo.idDelegationRegional;
+    task['idStore'] = this.sampleOrderInfo.idStore;
+    task['processName'] = 'captura_resultados';
+    task['urlNb'] =
+      'pages/request/generate-sampling-service-orders/generate-query';
+    body['task'] = task;
+
+    const taskResult: any = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult || taskResult == false) {
+      this.msgGuardado(
+        'success',
+        'Creación de Tarea Correcta',
+        `Muestreo Ordenes de Servicio: Verificación de almacén ${this.sampleOrderId}`
+      );
+    }
+  }
+
+  saveInfoSample() {
+    return new Promise((resolve, reject) => {
+      const body: ISamplingOrder = {
+        idSamplingOrder: this.sampleOrderId,
+        dateCreation: moment(new Date()).format('YYYY-MM-DD'),
+        dateModification: moment(new Date()).format('YYYY-MM-DD'),
+        userCreation: this.authService.decodeToken().username,
+        userModification: this.authService.decodeToken().username,
+        idDelegationRegional: Number(this.authService.decodeToken().department),
+        dateturned: moment(new Date()).format('YYYY-MM-DD'),
+        numberContract: this.orderServiceForm.get('contractNumber').value,
+        cveZone: this.orderServiceForm.get('geographicalArea').value,
+        periodSampling: moment(
+          this.orderServiceForm.get('samplingPeriod').value
+        ).format('YYYY-MM-DD'),
+      };
+      this.orderService.updateSampleOrder(body).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          this.alert('error', 'Error', 'Error al crear la orden de muestreo');
+          resolve(false);
+        },
+      });
+    });
+  }
 }
