@@ -155,4 +155,9 @@ export class SecurityService extends HttpService {
       `${SecurityEndpoints.ApplicationAux}?puser=${user}&pdelega=${delegation}`
     );
   }
+  getViewDelegationUser_(user: string, delegation: string) {
+    return this.get(
+      `${SecurityEndpoints.ApplicationAux}?p_user=${user}&pdelega=${delegation}`
+    );
+  }
 }

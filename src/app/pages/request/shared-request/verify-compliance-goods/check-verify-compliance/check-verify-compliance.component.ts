@@ -10,7 +10,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class CheckVerifyComplianceComponent
   extends BasePage
-  implements OnInit, AfterViewInit {
+  implements OnInit, AfterViewInit
+{
   checkForm: FormGroup = new FormGroup({});
   checkState: boolean = false;
   checkbox: any;

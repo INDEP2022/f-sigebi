@@ -105,4 +105,5 @@ export enum ENDPOINT_INVOICE {
   ApplicationGetComerPagorefExists = 'application/get-comer-pagoref-exists',
   ApplicationGeneratePreInvoices = 'application/generate-pre-invoices',
   ApplicationPufVerifyAmounts = 'application/puf-verify-amounts',
+  ApplicationPupStatusCan = 'application/pup-status-can',
 }

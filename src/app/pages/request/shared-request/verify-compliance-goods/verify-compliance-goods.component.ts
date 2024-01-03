@@ -108,7 +108,7 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
         });
         this.onChanges();
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -116,12 +116,10 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
     this.onChange.emit({
       isValid: this.data.length > 0,
       object: this.data,
-      atLeastOne: this.data.filter(x =>
-        x.meetsArticle24 ||
-        x.meetsArticle28 ||
-        x.meetsArticle29
-      ).length > 0
-
+      atLeastOne:
+        this.data.filter(
+          x => x.meetsArticle24 || x.meetsArticle28 || x.meetsArticle29
+        ).length > 0,
     });
   }
 

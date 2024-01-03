@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -265,5 +265,11 @@ export class UsersService extends HttpService {
   getOffice(proceso: number, folio: number) {
     const route = `${UserEndpoints.getOffice}/${proceso}/${folio}`;
     return this.get<IListResponse>(route);
+  }
+
+  getCantUsusAutxCanc(user: string) {
+    return this.get<number>(
+      'application/value-user/' + user.toUpperCase()
+    ).pipe(catchError(x => of(0)));
   }
 }

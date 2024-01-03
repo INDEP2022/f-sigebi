@@ -30,11 +30,11 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
 import { SeeInformationComponent } from './see-information/see-information.component';
-import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 interface searchTable {
   noDoc: string;
@@ -52,7 +52,8 @@ interface searchTable {
 })
 export class DocRequestTabComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
@@ -165,7 +166,7 @@ export class DocRequestTabComponent
           this.getData(data);
         });
       },
-      error: error => { },
+      error: error => {},
     });
   }
 
@@ -189,9 +190,7 @@ export class DocRequestTabComponent
       this.setTitle(onChangeCurrentValue);
     }
 
-
     //let updateInfo = changes['updateInfo']?.currentValue;
-
   }
 
   prepareForm(): void {
@@ -541,7 +540,7 @@ export class DocRequestTabComponent
           next: data => {
             resolve(data?.description);
           },
-          error: error => { },
+          error: error => {},
         });
     });
   }
@@ -888,7 +887,7 @@ export class DocRequestTabComponent
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
           type: 'pdf',
         },
-        callback: (data: any) => { },
+        callback: (data: any) => {},
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -951,7 +950,7 @@ export class DocRequestTabComponent
         next: data => {
           this.selectRegDelegation = new DefaultSelect(data.data, data.count);
         },
-        error: error => { },
+        error: error => {},
       });
   }
 

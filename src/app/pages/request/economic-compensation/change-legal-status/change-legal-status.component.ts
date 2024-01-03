@@ -148,7 +148,7 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
         //this.onLoadToast('error', 'Error', error);
       },
-      () => { }
+      () => {}
     );
   }
 
@@ -231,7 +231,6 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
 
           this.recDoc.signatureBySubstitution = resp.signatureBySubstitution === '1';
           this.form.patchValue(this.recDoc);
-
         },
         error: error => {
           this.recDoc = null;
@@ -281,7 +280,10 @@ export class ChangeLegalStatusComponent extends BasePage implements OnInit {
         object['jobLegalId'] = splitId;
         this.createLegalDoc(object);
       } else {
-        object['providedDate'] = new DatePipe('en-EN').transform(object['providedDate'], 'dd/MM/yyyy');
+        object['providedDate'] = new DatePipe('en-EN').transform(
+          object['providedDate'],
+          'dd/MM/yyyy'
+        );
         object['jobLegalId'] = this.recDoc['jobLegalId'];
         this.updatedLegalDoc(object);
       }
