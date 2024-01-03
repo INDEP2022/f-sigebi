@@ -77,9 +77,8 @@
           </div>
         </div>
 
-        <div
-          class="row pt-2">
-          <div class="col-md-4"  *ngIf="false">
+        <div class="row pt-2">
+          <div class="col-md-4" *ngIf="false">
             <label class="label">
               No&#46; Solicitud Bienes Similares&#58;
               <span class="fs-4">{{ requestInfo?.stateRequestId }}</span>
@@ -88,15 +87,13 @@
 
           <div class="col-md-12" *ngIf="requestInfo?.rejectionComment != null">
             <p class="font-size-13">
-              <strong class="font-size-13 text-danger">Motivo de rechazo&#58;</strong> {{ requestInfo?.rejectionComment }}
+              <strong class="font-size-13 text-danger"
+                >Motivo de rechazo&#58;</strong
+              >
+              {{ requestInfo?.rejectionComment }}
             </p>
           </div>
-
         </div>
-
-        
-
-
       </div>
     </div>
   </app-card>

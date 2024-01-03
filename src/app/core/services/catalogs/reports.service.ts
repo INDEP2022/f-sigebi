@@ -8,11 +8,12 @@ import { Repository } from '../../../common/repository/repository';
   providedIn: 'root',
 })
 export class ReportService implements ICrudMethods<any> {
-
-  constructor(private responseRepository: Repository<any>) { }
+  constructor(private responseRepository: Repository<any>) {}
 
   getAll(params?: ListParams): Observable<any> {
-    return this.responseRepository.getAllPaginated(ENDPOINT_LINKS.Reports, params);
+    return this.responseRepository.getAllPaginated(
+      ENDPOINT_LINKS.Reports,
+      params
+    );
   }
-
 }

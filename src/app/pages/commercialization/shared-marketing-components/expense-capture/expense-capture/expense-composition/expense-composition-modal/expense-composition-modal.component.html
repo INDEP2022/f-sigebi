@@ -17,11 +17,15 @@
 
       <div class="row">
         <div class="pb-2 col-md-12">
-          <form-field label="No. Bien" [control]="goodNumber">
+          <form-field
+            label="No. Bien"
+            [control]="goodNumber"
+            *ngIf="address === 'M'">
             <ng-select
               formControlName="goodNumber"
               class="form-control"
               loadingText="Cargando mandatos"
+              [readonly]="comerDetExpense && chargeGoodsByLote"
               [clearable]="true"
               [hideSelected]="true"
               [virtualScroll]="true"
@@ -32,33 +36,30 @@
             </ng-select>
           </form-field>
 
-          <!-- <ng-custom-select-loading
+          <ng-custom-select-loading
+            *ngIf="address !== 'M'"
             [form]="form"
             [updateValues]="true"
-            path="catalog/api/v1/transferent"
-            formControlName="transferorNumber"
-            label="Transferente"
-            value="id"
-            bindLabel="nameTransferent"
-            paramSearch="filter.nameTransferent"
+            path="goodprocess/api/v1/application/get-good-expedients-trans"
+            formControlName="goodNumber"
+            label="No. Bien"
+            value="goodNumber"
+            bindLabel="description"
+            paramSearch="filter.description"
             prefixSearch="$ilike"
-            secondParamSearch="filter.id"
-            [labelTemplate]="transferentLabel"
-            [optionTemplate]="transferentOption"
-            (valueChange)="getTransferent($event)">
+            secondParamSearch="filter.goodNumber"
+            (getObject)="setCvmanI($event)"
+            [labelTemplate]="goodLabel"
+            [optionTemplate]="goodOption">
           </ng-custom-select-loading>
-          <ng-template #transferentLabel let-item="item">
-            {{ item.id }} - {{ item.nameTransferent }}
+          <ng-template #goodLabel let-item="item">
+            {{ item.goodNumber }} - {{ item.description }}
           </ng-template>
-          <ng-template #transferentOption let-item="item">
-            <div [title]="item.id + '-' + item.nameTransferent">
-              {{ item.id }} - {{ item.nameTransferent }}
+          <ng-template #goodOption let-item="item">
+            <div [title]="item.goodNumber + '-' + item.description">
+              {{ item.goodNumber }} - {{ item.description }}
             </div>
-          </ng-template> -->
-
-          <!-- <form-field [control]="transferorNumber" label="Transferente">
-            <input class="form-control" formControlName="transferorNumber" />
-          </form-field> -->
+          </ng-template>
         </div>
       </div>
       <div class="row">
