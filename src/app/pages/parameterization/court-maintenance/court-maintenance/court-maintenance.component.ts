@@ -180,7 +180,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.courtCityServ.deleteCity(this.idCourt, city.idCity).subscribe({

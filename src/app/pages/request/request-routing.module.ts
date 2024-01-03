@@ -205,7 +205,7 @@ const routes: Routes = [
           './request-complementary-documentation/request-complementary-documentation.module'
         )
       ).RequestComplementaryDocumentationModule,
-    data: { title: 'Registro de Solicitud Dcoumentación Complementaria' },
+    data: { title: 'Registro de Solicitud Documentación Complementaria' },
   },
   // Registrar Documentación Complementaria
   {
@@ -216,7 +216,7 @@ const routes: Routes = [
           './shared-request/register-request/register-request.module'
         )
       ).RegisterRequestModule,
-    data: { title: 'Registro de Dcoumentación Complementaria' },
+    data: { title: 'Registro de Documentación Complementaria' },
   },
   // Solicitud de Informacion de Destino
   {

@@ -386,10 +386,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           this.alertQuestion(
             'info',
             'Este bien tiene un oficio de: ' +
-              VAL_TIPOF +
-              ' generar el oficio de: ' +
-              VAL_TIPOF2 +
-              '. ¿Deseas continuar?',
+            VAL_TIPOF +
+            ' generar el oficio de: ' +
+            VAL_TIPOF2 +
+            '. ¿Deseas continuar?',
             '',
             'Aceptar',
             'Cancelar'
@@ -629,7 +629,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       err => {
         this.senders = new DefaultSelect();
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -705,7 +705,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       err => {
         this.receivers = new DefaultSelect();
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -845,7 +845,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este documento?'
+      '¿Desea eliminar este documento?'
     ).then(question => {
       if (question.isConfirmed) {
       }
@@ -860,7 +860,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     // this.alertQuestion(
     //   'warning',
     //   'Borrar',
-    //   'Desea borrar los datos ingresados?'
+    //   '¿Desea borrar los datos ingresados?'
     // ).then(question => {
     //   if (question.isConfirmed) {
     //   }
@@ -979,7 +979,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               },
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,
@@ -994,7 +994,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               },
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,
@@ -1045,7 +1045,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               },
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,
@@ -1060,7 +1060,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               },
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,
@@ -1101,7 +1101,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               },
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,
@@ -1116,7 +1116,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               },
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,
@@ -1392,7 +1392,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               this.goodsJobManagementService
                 .postJobManagement(params)
                 .subscribe({
-                  next: response => {},
+                  next: response => { },
                 });
             }
           }
@@ -1408,7 +1408,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               this.goodsJobManagementService
                 .postDocumentJobManagement(paramsdocument)
                 .subscribe({
-                  next: response => {},
+                  next: response => { },
                 });
 
               this.numeraryService.nexSeqBitacora().subscribe({
@@ -1424,7 +1424,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                   this.documentsService
                     .postDocumentHAttached(params)
                     .subscribe({
-                      next: response => {},
+                      next: response => { },
                     });
                 },
               });
@@ -1442,7 +1442,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               this.goodsJobManagementService
                 .postOficeJobManagement(params)
                 .subscribe({
-                  next: response => {},
+                  next: response => { },
                 });
             }
           }
@@ -1757,7 +1757,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                 this.goodsJobManagementService
                   .postJobManagement(params)
                   .subscribe({
-                    next: response => {},
+                    next: response => { },
                     error: err => {
                       console.log('error 1');
                     },
@@ -1776,7 +1776,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                 this.goodsJobManagementService
                   .postDocumentJobManagement(paramsdocument)
                   .subscribe({
-                    next: response => {},
+                    next: response => { },
                   });
 
                 this.numeraryService.nexSeqBitacora().subscribe({
@@ -1792,7 +1792,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                     this.documentsService
                       .postDocumentHAttached(params)
                       .subscribe({
-                        next: response => {},
+                        next: response => { },
                       });
                   },
                 });
@@ -1810,7 +1810,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                 this.goodsJobManagementService
                   .postOficeJobManagement(params)
                   .subscribe({
-                    next: response => {},
+                    next: response => { },
                   });
               }
             }
@@ -1847,7 +1847,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           return;
         }
         this.documentsService.getDocumentsScan(this.folioScan).subscribe({
-          next: response => {},
+          next: response => { },
           error: err => {
             this.alert(
               'error',
@@ -1930,7 +1930,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           this.goodsJobManagementService
             .updateMJobManagement(params)
             .subscribe({
-              next: response => {},
+              next: response => { },
             });
           this.form.get('statusOf').patchValue('ENVIADO');
           this.activeSol = true;
@@ -2160,7 +2160,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         this.goodsJobManagementService
           .postDocumentJobManagement(paramsdocument)
           .subscribe({
-            next: response => {},
+            next: response => { },
           });
 
         this.numeraryService.nexSeqBitacora().subscribe({
@@ -2174,7 +2174,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               opinionType: 'COMER',
             };
             this.documentsService.postDocumentHAttached(params).subscribe({
-              next: response => {},
+              next: response => { },
             });
           },
         });
@@ -2748,10 +2748,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           this.alertQuestion(
             'info',
             'Este Lote-Evento tiene un oficio de: ' +
-              VAL_TIPOF +
-              ' ¿Generar el oficio de : ' +
-              VAL_TIPOF2 +
-              ' ?. ¿Deseas continuar?',
+            VAL_TIPOF +
+            ' ¿Generar el oficio de : ' +
+            VAL_TIPOF2 +
+            ' ?. ¿Deseas continuar?',
             '',
             'Aceptar',
             'Cancelar'
@@ -2842,7 +2842,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         pDelegationNumber: Number(this.delegation),
       };
       this.goodsJobManagementService.pupSearchNumber(params).subscribe({
-        next: response => {},
+        next: response => { },
       });
     }
   }
@@ -2896,7 +2896,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       statusOf: this.form.get('statusOf').value,
     };
     this.goodsJobManagementService.postMJob(params).subscribe({
-      next: response => {},
+      next: response => { },
     });
   }
 
@@ -2934,7 +2934,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -2949,7 +2949,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
