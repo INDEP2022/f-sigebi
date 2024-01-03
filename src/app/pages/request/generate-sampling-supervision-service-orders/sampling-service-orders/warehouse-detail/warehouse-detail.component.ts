@@ -126,33 +126,41 @@ export class WarehouseDetailComponent extends BasePage implements OnInit {
   }
 
   save() {
-    this.alertQuestion(
-      'question',
-      'Confirmación',
-      '¿Desea relacionar el almacén a la orden de muestreo?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        const body = {
-          idStore: this.warehoseSelected.organization,
-          idSamplingOrder: this.SampleOrderId,
-        };
-        this.orderService.updateSampleOrder(body).subscribe({
-          next: () => {
-            this.alert(
-              'success',
-              'Acción Correcta',
-              'Se guardaron los cambios'
-            );
-          },
-          error: () => {
-            this.alert(
-              'warning',
-              'Acción Invalida',
-              'No se pudo relacionar el almacén a la orden de muestreo'
-            );
-          },
-        });
-      }
-    });
+    if (this.SampleOrderId > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea relacionar el almacén a la orden de muestreo?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          const body = {
+            idStore: this.warehoseSelected.organization,
+            idSamplingOrder: this.SampleOrderId,
+          };
+          this.orderService.updateSampleOrder(body).subscribe({
+            next: () => {
+              this.alert(
+                'success',
+                'Acción Correcta',
+                'Se guardaron los cambios'
+              );
+            },
+            error: () => {
+              this.alert(
+                'warning',
+                'Acción Invalida',
+                'No se pudo relacionar el almacén a la orden de muestreo'
+              );
+            },
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se requiere generar una orden de muestreo para continuar con el proceso'
+      );
+    }
   }
 }
