@@ -18,8 +18,7 @@ import { COLUMNS } from './columns';
 })
 export class EntryOrdersComponent
   extends BasePageTableNotServerPagination
-  implements OnInit
-{
+  implements OnInit {
   toggleInformation = true;
   constructor(
     private dataService: PaymentService,
@@ -57,12 +56,24 @@ export class EntryOrdersComponent
     return this.expenseCaptureDataService.eventNumber;
   }
 
+  get eventNumberValue() {
+    return this.form
+      ? this.expenseCaptureDataService.eventNumber
+        ? this.expenseCaptureDataService.eventNumber.value
+        : null
+      : null;
+  }
+
   get lotNumber() {
     return this.expenseCaptureDataService.lotNumber;
   }
 
   get conceptNumber() {
     return this.expenseCaptureDataService.conceptNumber;
+  }
+
+  get conceptNumberValue() {
+    return this.conceptNumber ? this.conceptNumber.value : null;
   }
 
   get clkpv() {
@@ -77,15 +88,17 @@ export class EntryOrdersComponent
     );
   }
 
+  get dataCompositionExpenses() {
+    return this.expenseCaptureDataService.dataCompositionExpenses;
+  }
+
   async replyFolio() {
-    this.loader.load = true;
     if (!this.expenseNumber) {
       this.alert(
         'warning',
         'No puede mandar correo si no a guardado el gasto',
         ''
       );
-      this.loader.load = false;
       return;
     }
     // const firstValidation =
@@ -94,31 +107,31 @@ export class EntryOrdersComponent
     //   !this.clkpv.value &&
     //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
     //   !this.dataService.data.providerName;
+    let bienes = this.dataCompositionExpenses.filter(x => x.goodNumber);
     if (
       !this.conceptNumber.value &&
       !this.eventNumber.value &&
       !this.clkpv.value &&
-      !this.expenseCaptureDataService.dataCompositionExpenses[0].goodNumber &&
+      bienes.length === 0 &&
       !this.expenseCaptureDataService.data.providerName
     ) {
-      this.loader.load = false;
       this.alert('warning', 'Tiene que llenar alguno de los campos', '');
       return;
     }
-    if (!this.expenseCaptureDataService.FOLIO_UNIVERSAL) {
-      this.loader.load = false;
+    if (!this.expenseCaptureDataService.formScan.get('folioUniversal').value) {
       this.alert('warning', 'No se han escaneado los documentos', '');
       return;
     }
+    this.loader.load = true;
     let filterParams = new FilterParams();
     filterParams.addFilter(
       'id',
-      this.expenseCaptureDataService.FOLIO_UNIVERSAL,
+      this.expenseCaptureDataService.formScan.get('folioUniversal').value,
       SearchFilter.EQ
     );
     filterParams.addFilter(
       'associateUniversalFolio',
-      this.expenseCaptureDataService.FOLIO_UNIVERSAL,
+      this.expenseCaptureDataService.formScan.get('folioUniversal').value,
       SearchFilter.OR
     );
     filterParams.addFilter('sheets', 0, SearchFilter.GT);
@@ -140,8 +153,8 @@ export class EntryOrdersComponent
       return;
     }
     this.expenseGoodProcessService
-      .NOTIFICAR({
-        goodArray: this.expenseCaptureDataService.dataCompositionExpenses
+      .replyFolio({
+        goodArray: this.dataCompositionExpenses
           .filter(x => x.goodNumber)
           .map(x => {
             return { goodNumber: +x.goodNumber };
@@ -149,7 +162,8 @@ export class EntryOrdersComponent
         delegationNumber: this.delegation,
         subdelegationNumber: this.subDelegation,
         departamentNumber: this.noDepartamento,
-        universalFolio: this.expenseCaptureDataService.FOLIO_UNIVERSAL,
+        universalFolio:
+          this.expenseCaptureDataService.formScan.get('folioUniversal').value,
       })
       .pipe(take(1))
       .subscribe({
@@ -157,7 +171,7 @@ export class EntryOrdersComponent
           this.loader.load = false;
           this.alert(
             'success',
-            'Se replico el folio y se guardo correctamente',
+            'Se replico el folio y se guardó correctamente',
             ''
           );
         },
@@ -201,7 +215,12 @@ export class EntryOrdersComponent
   }
 
   override getData() {
-    if (!this.dataService || !this.eventNumber || !this.lotNumber) {
+    if (
+      !this.dataService ||
+      !this.eventNumber ||
+      !this.lotNumber ||
+      !this.clkpv.value
+    ) {
       return;
     }
     this.loading = true;
@@ -226,10 +245,24 @@ export class EntryOrdersComponent
             this.loading = false;
           } else {
             this.notGetData();
+            if (this.expenseCaptureDataService.PDEVCLIENTE) {
+              this.alert(
+                'warning',
+                'Ordenes de Ingreso',
+                'Este lote no tiene reportado, pagos en exceso, verifique'
+              );
+            }
           }
         },
         error: err => {
           this.notGetData();
+          if (this.expenseCaptureDataService.PDEVCLIENTE) {
+            this.alert(
+              'warning',
+              'Ordenes de Ingreso',
+              'Este lote no tiene reportado, pagos en exceso, verifique'
+            );
+          }
         },
       });
   }

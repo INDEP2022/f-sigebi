@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -28,6 +30,7 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
@@ -87,6 +90,9 @@ export class DocRequestTabComponent
   idState: string = '';
   statusTask: any = '';
   task: any;
+
+  @Output() onChange = new EventEmitter<any>();
+
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -175,11 +181,16 @@ export class DocRequestTabComponent
         'request'
       ) as unknown as number;
     }
-    let onChangeCurrentValue = changes['typeDoc'].currentValue;
-    let updateInfo = changes['updateInfo']?.currentValue;
-    this.typeDoc = onChangeCurrentValue;
-    this.setTitle(onChangeCurrentValue);
+
     this.getInfoRequest();
+
+    if (!isNullOrEmpty(changes['typeDoc'])) {
+      let onChangeCurrentValue = changes['typeDoc'].currentValue;
+      this.typeDoc = onChangeCurrentValue;
+      this.setTitle(onChangeCurrentValue);
+    }
+
+    //let updateInfo = changes['updateInfo']?.currentValue;
   }
 
   prepareForm(): void {
@@ -252,11 +263,13 @@ export class DocRequestTabComponent
       .subscribe({
         next: async res => {
           this.data = [];
+
           if (this.typeDoc == 'doc-request') {
             if (this.requestInfo.transferenceId == 1) {
               const filterDoc = res.data.filter((item: any) => {
                 if (
                   item.dDocType == 'Document'
+                  //VALIDAR FILTRO COMMENT
                   //&&
                   //item.xidBien == '         '
                 ) {
@@ -293,6 +306,7 @@ export class DocRequestTabComponent
                   this.totalItems = data.length;
 
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -341,6 +355,7 @@ export class DocRequestTabComponent
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -393,8 +408,8 @@ export class DocRequestTabComponent
                   this.docExpedient =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
-
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x;
                   //this.paragraphs.load(x);
                 });
@@ -445,8 +460,8 @@ export class DocRequestTabComponent
                   this.docExpedient =
                     res.data.length > 10 ? this.setPaginate([...data]) : data;
                   this.totalItems = data.length;
-
                   this.loading = false;
+                  this.onChanges();
                   //this.allDataDocReq = x
                   //this.paragraphs.load(x)
                 });
@@ -457,7 +472,7 @@ export class DocRequestTabComponent
             }
           }
 
-          // this.loading = false;
+          this.loading = false;
         },
         error: error => {
           this.loading = false;
@@ -465,10 +480,14 @@ export class DocRequestTabComponent
       });
   }
   private selectPage() {
-    this.docRequest = [...this.data[this.params.value.page - 1]];
+    if (this.data.length > 0) {
+      this.docRequest = [...this.data[this.params.value.page - 1]];
+    }
   }
   private selectPageEx() {
-    this.docExpedient = [...this.data[this.params.value.page - 1]];
+    if (this.data.length > 0) {
+      this.docExpedient = [...this.data[this.params.value.page - 1]];
+    }
   }
   private setPaginate(value: any[]): any[] {
     let data: any[] = [];
@@ -617,6 +636,7 @@ export class DocRequestTabComponent
         this.paragraphs.load(filter);
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -631,6 +651,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -645,6 +666,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -659,6 +681,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -673,6 +696,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -687,6 +711,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -701,6 +726,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -715,6 +741,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -729,6 +756,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -743,6 +771,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -757,6 +786,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -771,6 +801,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -786,6 +817,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
 
@@ -806,6 +838,7 @@ export class DocRequestTabComponent
       } else {
         this.paragraphs.load(filter);
         this.onLoadToast('warning', 'Documentos no encontrados', '');
+        return;
       }
     }
   }
@@ -867,7 +900,12 @@ export class DocRequestTabComponent
   }
 
   openNewDocument() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
     const idRequest = this.idRequest;
     let typeDoc = 'doc-request';
     config.initialState = {
@@ -948,5 +986,16 @@ export class DocRequestTabComponent
       default:
         break;
     }
+  }
+
+  onChanges() {
+    let list =
+      this.docExpedient.length > 0 ? this.docExpedient : this.docRequest;
+
+    this.onChange.emit({
+      isValid: list.length > 0,
+      object: list,
+      type: this.typeDoc,
+    });
   }
 }

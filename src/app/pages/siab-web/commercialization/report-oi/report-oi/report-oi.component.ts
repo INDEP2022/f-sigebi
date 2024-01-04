@@ -4,7 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
@@ -63,8 +63,8 @@ export class reportOiComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      rangeDate: [null, [maxDate(new Date())]],
-      typeAuction: [null, []],
+      rangeDate: [null, [maxDate(new Date()), Validators.required]],
+      typeAuction: [null, [Validators.required]],
       idEvent: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     this.formReport = this.fb.group({
@@ -106,7 +106,8 @@ export class reportOiComponent extends BasePage implements OnInit {
   }
 
   ObtenerRepOI() {
-    if (this.form.get('rangeDate').value && this.form.get('idEvent').value) {
+    if (this.form.get('rangeDate').value) {
+      this.loading = true;
       const rangeDateValue = this.form.get('rangeDate').value;
 
       const fechaInicial = moment(rangeDateValue[0]).format('YYYY-MM-DD');
@@ -144,10 +145,11 @@ export class reportOiComponent extends BasePage implements OnInit {
           this.show = true;
           this.data.load(resp.data);
           this.totalItems = resp.count;
+          this.loading = false;
         },
         error: err => {
           console.log(err);
-          this.alert('warning', 'No se encontraron registros', '');
+          this.loading = false;
         },
       });
     } else {
@@ -161,6 +163,7 @@ export class reportOiComponent extends BasePage implements OnInit {
 
   exportXlsx() {
     if (this.formReport.get('NameReport').value) {
+      this.loader.load = true;
       const filename = this.formReport.get('NameReport').value;
       console.log(filename);
 
@@ -169,55 +172,27 @@ export class reportOiComponent extends BasePage implements OnInit {
       const fechaInicial = moment(rangeDateValue[0]).format('YYYY-MM-DD');
       const fechaFinal = moment(rangeDateValue[1]).format('YYYY-MM-DD');
 
-      if (!this.form.get('idEvent').value) {
-        this.alert('warning', 'No existen datos para exportar', '');
-        return;
-      }
-      // Hacer una copia de this.params1 si es necesario
-      let params = { ...this.params.getValue() };
-
       let body = {
         fInicio: fechaInicial,
         fFin: fechaFinal,
         direc: this.form.get('typeAuction').value,
-        eventId: this.form.get('idEvent').value,
+        eventId: this.form.get('idEvent').value
+          ? this.form.get('idEvent').value
+          : null,
       };
-
-      this.orderentry.getorderentry(body, params).subscribe({
+      this.orderentry.getorderentryExcel(body).subscribe({
         next: resp => {
-          const allData = resp.data;
-
-          // Si hay más páginas de datos, recuperarlas
-          const totalPages = Math.ceil(resp.count / params.pageSize);
-          const additionalRequests = [];
-
-          for (let page = 2; page <= totalPages; page++) {
-            params.page = page;
-            additionalRequests.push(
-              this.orderentry.getorderentry(body, params)
-            );
-          }
-
-          // Combinar todos los registros en this.line
-          forkJoin(additionalRequests).subscribe({
-            next: additionalResponses => {
-              for (const additionalResp of additionalResponses) {
-                allData.push(...additionalResp.data);
-              }
-              this.alert('success', filename, 'Exportado Correctamente');
-              this.excelService.export(allData, { type: 'csv', filename });
-            },
-            error: err => {
-              console.log(err);
-            },
-          });
+          this._downloadExcelFromBase64(resp.base64File, filename);
+          this.loader.load = false;
         },
         error: err => {
           console.log(err);
+          this.loader.load = false;
         },
       });
     } else {
       this.alert('error', 'No se epecifico el nombre de la descarga', '');
+      this.loader.load = false;
       return;
     }
   }

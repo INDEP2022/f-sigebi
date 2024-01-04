@@ -57,7 +57,7 @@ export class SignReportComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea mandar el documento a firmar?'
+      '¿Está seguro que desea mandar el documento a firmar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -107,7 +107,7 @@ export class SignReportComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

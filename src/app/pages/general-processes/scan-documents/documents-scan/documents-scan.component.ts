@@ -90,7 +90,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   P_GEST_OK: number = null;
   P_VOLANTE: number = null;
   P_EXPEDIENTE: number = null;
-
+  readonly = false;
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -119,6 +119,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.cveActa = params['cveActa'] ?? null;
         //fin
         console.log(this.expedientNumber);
+        if (this.origin.includes('FCOMER084')) {
+          this.readonly = true;
+        }
         if (this.origin == 'FACTJURDICTAMOFICIO') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(params, key)) {
@@ -178,6 +181,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
 
   fillFoliosTable(params: FilterParams) {
     this.loading = true;
+    if (this.origin.includes('FCOMER084') && this.folio) {
+      params.addFilter('id', this.folio);
+    }
     return this.getDocuments(params).pipe(
       catchError(error => {
         this.loading = false;
@@ -390,7 +396,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       return;
     }
     if (
-      !validUsers.find(user => user == this.registerUser) ||
+      !validUsers.find(user => user == this.registerUser.toUpperCase()) ||
       this.registerUser == INVALID_USER
     ) {
       this.alert(
@@ -403,7 +409,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que desea eliminar los archivos seleccionados?'
+      '¿Está seguro que desea eliminar los archivos seleccionados?'
     );
 
     if (result.isConfirmed) {

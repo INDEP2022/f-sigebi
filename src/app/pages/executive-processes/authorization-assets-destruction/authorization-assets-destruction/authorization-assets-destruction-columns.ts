@@ -1,3 +1,5 @@
+export let goodCheck: any[] = [];
+
 export const ASSETS_DESTRUCTION_COLUMLNS = {
   numberGood: {
     title: 'No. Bien',
@@ -8,16 +10,13 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     title: 'Descripción',
     type: 'string',
     sort: false,
-    /*     valuePrepareFunction: (value: any) => {
-      return value.description;
-    }, */
   },
-  di_cve_ubicacion: {
+  location: {
     title: 'Ubicación',
     type: 'string',
     sort: false,
   },
-  di_ubicacion1: {
+  address: {
     title: 'Ubicación Exacta',
     type: 'string',
     sort: false,
@@ -27,18 +26,25 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     type: 'string',
     sort: false,
   },
-  fecha: {
-    title: 'No. Oficio y Fecha',
+  cve_proceeding: {
+    title: 'No. Oficio de Autorización y Fecha',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any, row: any) => {
+      if (
+        row.observationsDestruction != null &&
+        row.observationsDestruction != 'null'
+      ) {
+        return row.observationsDestruction;
+      } else if (value && value != null) {
+        return `${value}  ${row.date_proceeding}`;
+      } else {
+        return null;
+      }
+    },
   },
-  process: {
+  processExtDom: {
     title: 'Ext. Dom',
-    type: 'string',
-    sort: false,
-  },
-  aprobado: {
-    title: 'Aprobado',
     type: 'string',
     sort: false,
   },

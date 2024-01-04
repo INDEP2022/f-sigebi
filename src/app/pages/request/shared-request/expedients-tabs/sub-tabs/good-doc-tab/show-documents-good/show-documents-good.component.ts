@@ -82,7 +82,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       },
 
       edit: {
-        editButtonContent: '<i class="fa fa-file text-primary mx-2 ml-2" ></i>',
+        editButtonContent: '<i class="fa fa-file text-primary mx-2 ml-4" ></i>',
       },
       delete: {
         deleteButtonContent: '<i  class="fa fa-eye text-info mx-2" ></i>',
@@ -106,9 +106,11 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
 
-    if (this.idGood && this.idRequest) {
+    if (this.idGood || this.idRequest) {
       this.getDocType(new ListParams());
-      this.getDocuemntByGood();
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getDocuemntByGood());
     } else if (this.sampleGood.length > 0) {
       this.goodData();
       this.getDocType(new ListParams());
@@ -757,7 +759,12 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     const idRequest = this.idRequest;
     const idGood = this.idGood;
 
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
+      ignoreBackdropClick: true,
+    };
 
     config.initialState = {
       programming: this.programming,

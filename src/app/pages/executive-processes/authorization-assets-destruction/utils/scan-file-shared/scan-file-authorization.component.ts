@@ -28,6 +28,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 export class ScanFileAuthorizationComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() formControlName: string = 'folioEscaneo';
+  @Input() formControlNameKey: string = 'acta2';
   @Input() cveDocument: string;
   @Input() noExpedient: string | number;
   @Input() statusProceeding: string;
@@ -73,7 +74,7 @@ export class ScanFileAuthorizationComponent extends BasePage implements OnInit {
       if (this.form.get(this.formControlName).value) {
         this.alertQuestion(
           'question',
-          'El Oficio ya Tiene Folio de Escaneo, ¿Se Reimprime la Solicitud de Digitalización?',
+          'El Oficio ya tiene folio de escaneo, ¿Se reimprime la solicitud de digitalización?',
           '¿Quiere continuar con el proceso?'
         ).then(q => {
           if (q.isConfirmed) {
@@ -160,7 +161,7 @@ export class ScanFileAuthorizationComponent extends BasePage implements OnInit {
                       } else {
                         paramsF.addFilter(
                           'keysProceedings',
-                          this.form.get(this.formControlName).value
+                          this.form.get(this.formControlNameKey).value
                         );
                       }
                       this.serviceProcVal
@@ -194,6 +195,7 @@ export class ScanFileAuthorizationComponent extends BasePage implements OnInit {
                               );
                           },
                           err => {
+                            console.log(err);
                             this.loading = false;
                             this.alert(
                               'error',
@@ -204,6 +206,7 @@ export class ScanFileAuthorizationComponent extends BasePage implements OnInit {
                         );
                     },
                     err => {
+                      console.log(err);
                       this.alert(
                         'error',
                         'Se presentó un error inesperado',
@@ -264,7 +267,7 @@ export class ScanFileAuthorizationComponent extends BasePage implements OnInit {
         if (this.form.get(this.formControlName).value != null) {
           this.alertQuestion(
             'question',
-            'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta',
+            'Se abrirá la pantalla de escaneo para el folio del acta abierta',
             '¿Deseas continuar?',
             'Continuar'
           ).then(q => {
@@ -285,7 +288,7 @@ export class ScanFileAuthorizationComponent extends BasePage implements OnInit {
   }
 
   goToScan() {
-    localStorage.setItem('numberExpedient', this.noExpedient.toString());
+    localStorage.setItem('noAuth_scan', this.form.get('noAuth').value);
 
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: {

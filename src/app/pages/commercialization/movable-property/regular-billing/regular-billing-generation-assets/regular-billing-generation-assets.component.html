@@ -5,23 +5,23 @@
     </h5>
   </div>
 </div>
-<div class="row">
-  <div class="col-md-2">
+<div class="row mt-5">
+  <div class="col-md-3">
     <form [formGroup]="form" class="form-material">
-      <div class="row">
-        <form-field [control]="form.get('status')">
-          <ngx-select
-            [form]="form"
-            control="status"
-            [data]="status"
-            value="id"
-            bindLabel="description"
-            label="Estatus"></ngx-select>
-        </form-field>
-      </div>
+      <!-- <div class="row"> -->
+      <form-field [control]="form.get('status')">
+        <ngx-select
+          [form]="form"
+          control="status"
+          [data]="status"
+          value="id"
+          bindLabel="description"
+          label="Estatus"></ngx-select>
+      </form-field>
+      <!-- </div> -->
     </form>
   </div>
-  <div class="col-md-10 d-flex justify-content-end">
+  <div class="col-md-9 d-flex justify-content-end">
     <div>
       <button
         type="button"

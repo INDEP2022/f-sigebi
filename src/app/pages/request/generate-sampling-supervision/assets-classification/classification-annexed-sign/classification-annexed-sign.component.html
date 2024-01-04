@@ -1,0 +1,164 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="mr-auto p-2">
+      <h5 class="title">Muestreo Bienes&#58; {{ title }}</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4"></div>
+    <div id="detail">
+      <app-card [header]="false">
+        <div body>
+          <div class="d-flex justify-content-end">
+            <div class="p-2" *ngIf="!disabledButton">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="turnSampling()">
+                Turnar muestreo <i class="fa fa-share-square"></i>
+              </button>
+            </div>
+            <div class="p-2" *ngIf="disabledButton">
+              <button
+                class="btn btn-primary disabled btn-sm active"
+                (click)="turnSampling()">
+                Turnar muestreo <i class="fa fa-share-square"></i>
+              </button>
+            </div>
+            <!--<div class="p-2">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="saveDeductives()">
+                Guardar <i class="fa fa-save"></i>
+              </button>
+            </div> -->
+            <div class="p-2" *ngIf="!this.sampleInfo?.contentTeId">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="openAnnexJ()">
+                Anexo J <i class="bx bxs-file"></i>
+              </button>
+            </div>
+
+            <div class="p-2" *ngIf="this.sampleInfo?.contentTeId">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="showAnnexJ()">
+                Ver Anexo J <i class="bx bxs-file"></i>
+              </button>
+            </div>
+
+            <div class="p-2" *ngIf="!this.sampleInfo?.contentKSaeId">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="openAnnexK()">
+                Anexo K <i class="bx bxs-file"></i>
+              </button>
+            </div>
+
+            <div class="p-2" *ngIf="this.sampleInfo?.contentKSaeId">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="showAnnexK()">
+                Ver Anexo K <i class="bx bxs-file"></i>
+              </button>
+            </div>
+
+            <!--<div class="p-2">
+              <button class="btn btn-primary btn-sm active" (click)="goBack()">
+                Regresar <i class="fas fa-arrow-circle-left"></i>
+              </button>
+            </div> -->
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <h5 class="title">
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showSamplingDetail = true"
+                    *ngIf="!showSamplingDetail">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    Detalles del Muestreo</a
+                  >
+                </p>
+
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showSamplingDetail = false"
+                    *ngIf="showSamplingDetail">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+                    del Muestreo</a
+                  >
+                </p>
+              </h5>
+            </div>
+          </div>
+          <div class="row pt-4" *ngIf="showSamplingDetail">
+            <app-sampling-detail
+              [sampleInfo]="sampleInfo"></app-sampling-detail>
+          </div>
+        </div>
+      </app-card>
+    </div>
+    <div id="assets">
+      <div class="row pt-6">
+        <h5>Filtro de Bienes</h5>
+      </div>
+      <div class="row pt-2">
+        <div class="col-md-12">
+          <h6 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showFilterAssets = true"
+                *ngIf="!showFilterAssets">
+                <i class="fa fa-angle-right" aria-hidden="true"></i> Captura de
+                Datos</a
+              >
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showFilterAssets = false"
+                *ngIf="showFilterAssets">
+                <i class="fa fa-angle-down" aria-hidden="true"></i> Captura de
+                Datos</a
+              >
+            </p>
+          </h6>
+        </div>
+      </div>
+      <div class="row" *ngIf="showFilterAssets">
+        <app-assets-filter
+          (searchEvent)="getSearchForm($event)"></app-assets-filter>
+      </div>
+    </div>
+    <div class="tabs">
+      <tabset class="md-tabs">
+        <tab heading="Bienes" id="tab1">
+          <app-assets-tab
+            [willSave]="willSave"
+            [idSample]="idSample"
+            [filterObject]="filterObject"
+            [typeTask]="'assets-classification-annexed'"></app-assets-tab>
+        </tab>
+        <tab heading="Deductivas">
+          <div class="row pt-2">
+            <div class="col-md-12">
+              <div [class]="loadingDeductives ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings"
+                  [source]="paragraphsDeductivas">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

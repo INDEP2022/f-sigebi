@@ -1,59 +1,129 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Muestreo Bienes&#58; Genera Consulta</h5>
+    <h5 class="title">
+      Muestreo Bienes&#58; Muestreo de Verificación de Bienes
+    </h5>
   </div>
   <div body>
     <div class="row pt-4">
       <div class="d-flex justify-content-end">
         <div class="p-2">
-          <button class="btn btn-primary btn-sm active">
+          <button
+            (click)="turnSampling()"
+            class="btn btn-primary btn-sm active">
             Turnar Muestreo <i class="fa fa-share-square"></i>
           </button>
         </div>
       </div>
     </div>
-    <div class="row pt-4">
-      <form [formGroup]="dateForm" class="form-material">
-        <div class="row pt-4">
-          <div class="col-md-3">
-            <form-field
-              [control]="dateForm.get('initialDate')"
-              label="Periodo Inicial">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="initialDate"
-                bsDatepicker />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="dateForm.get('finalDate')"
-              label="Periodo Final">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="finalDate"
-                bsDatepicker />
-            </form-field>
-          </div>
-          <!--
-            <div class="col-md-3">
-              <ngx-select
-                [form]="dateForm"
-                control="transferent"
-                (fetchItems)="getTransferent($event)"
-                [data]="selectTransferent"
-                bindLabel="nameTransferent"
-                [searchable]="false"
-                label="Transferente"
-                value="id"></ngx-select>
-            </div>
-          -->
+    <form [formGroup]="dateForm" class="form-material">
+      <h5 class="title">Detalle Muestreo</h5>
+      <div class="row pt-4">
+        <div class="col-md-3">
+          <form-field
+            [control]="dateForm.get('delegationName')"
+            label="Delegación regional">
+            <input
+              type="text"
+              class="form-control"
+              [readOnly]="true"
+              formControlName="delegationName" />
+          </form-field>
         </div>
-      </form>
-    </div>
-    <div class="row pt-6">
+
+        <div class="col-md-3">
+          <ngx-select
+            [form]="dateForm"
+            control="transferent"
+            (fetchItems)="getTransferent($event)"
+            [data]="selectTransferent"
+            bindLabel="nameTransferent"
+            label="Transferente"
+            value="id"></ngx-select>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="dateForm.get('initialDate')"
+            label="Periodo Inicial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="initialDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="dateForm.get('finalDate')"
+            label="Periodo Final">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="finalDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <!--<div style="padding-left: 2rem">
+          <div class="row">
+            <div class="col-md-4">
+              <label for=""
+                >No. Muestreo&#58;
+                <span>{{ sampleInfo?.sampleId }}</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label for=""
+                >Nombre Almac&eacute;n&#58;
+                <span>{{ nameWarehouse }}</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label for=""
+                >Direcci&oacute;n Almac&eacute;n&#58;
+                <span>{{ addressWarehouse }}</span>
+              </label>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <label for=""
+                >Delegaci&oacute;n Regional&#58;
+                <span>{{ nameDelegation }}</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label for=""
+                >Periodo Inicial&#58;
+                <span>{{ sampleInfo?.startDate }}</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label for=""
+                >Periodo Final &#58;
+                <span>{{ sampleInfo?.endDate }}</span>
+              </label>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <label for=""
+                >Fecha de Elaboraci&oacute;n Muestreo&#58;
+                <span>{{ sampleInfo?.creationDate }}</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label for=""
+                >Transferente&#58;
+                <span>{{ nameTransferente }}</span>
+              </label>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </form>
+
+    <div class="row pt-5">
       <h5 class="title">
         <p>
           <a
@@ -133,12 +203,20 @@
       <div class="d-flex justify-content-end">
         <div class="mr-auto p-2"></div>
         <div class="p-2">
-          <button
-            (click)="search()"
+          <confirm-button
+            [disabled]="!searchForm.valid"
+            [loading]="loading"
+            [text]="'Buscar'"
+            [loadingText]="'Buscando'"
+            [icon]="'bx bx-search-alt-2'"
+            [btnSmall]="true"
+            (click)="search()"></confirm-button>
+          <!--<button
+          
             class="btn btn-primary active btn-sm"
             style="height: 36px">
             Buscar <i class="bx bx-search-alt-2"></i>
-          </button>
+          </button> -->
         </div>
         <div class="p-2">
           <button (click)="clean()" class="btn btn-danger active btn-sm">
@@ -150,8 +228,8 @@
     <div class="row pt-4" style="margin-top: 2%" *ngIf="displaySearchAssetsBtn">
       <div class="d-flex justify-content-end">
         <div class="m-3">
-          <button class="btn btn-primary btn-sm active" (click)="goodSearch()">
-            B&uacute;squeda Bienes <i class="bx bx-search-alt-2"></i>
+          <button (click)="goodSearch()" class="btn btn-primary btn-sm active">
+            Búsqueda bienes <i class="bx bx-search-alt-2"></i>
           </button>
         </div>
       </div>
@@ -186,7 +264,7 @@
         <ng2-smart-table
           #table2
           id="table2"
-          [attr.class]="'table-bordered'"
+          [attr.class]="'table-responsive'"
           [settings]="settings2"
           [source]="paragraphs2"
           (userRowSelect)="selectAssts($event)">
@@ -275,15 +353,13 @@
           </div>
           <div class="row pt-1">
             <div [class]="loadingGoods ? 'table-loading' : ''">
-              <ng-scrollbar track="all" style="min-height: 200px; border: none">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settings3"
-                  [source]="paragraphs3"
-                  (edit)="editResultEvaluation($event.data)"
-                  (userRowSelect)="selectAsstsCopy($event)">
-                </ng2-smart-table>
-              </ng-scrollbar>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings3"
+                [source]="paragraphs3"
+                (edit)="editResultEvaluation($event.data)"
+                (userRowSelect)="selectAsstsCopy($event)">
+              </ng2-smart-table>
             </div>
             <app-pagination
               [params]="params3"

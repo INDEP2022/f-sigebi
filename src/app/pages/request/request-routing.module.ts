@@ -39,18 +39,19 @@ const routes: Routes = [
     },
   },
   {
-    path: 'ssampling-assets',
+    path: 'assets-clasification/:id',
     loadChildren: async () =>
       (
         await import(
-          './generate-sampling-supervision/generate-formats-verify-noncompliance/generate-formats-verify-noncompliance.module'
+          './generate-sampling-supervision/assets-classification/assets-classification.module'
         )
-      ).GenerateFormatsVerifyNoncomplianceModule,
+      ).AssetsClassificationModule,
     data: {
       title: 'Muestreo Bienes Generar Consulta',
       screen: 'MUESTREOBIENES',
     },
   },
+
   {
     path: 'assets-clasification',
     loadChildren: async () =>
@@ -64,8 +65,9 @@ const routes: Routes = [
       screen: 'MUESTREOBIENES',
     },
   },
+
   {
-    path: 'warehouse-verification',
+    path: 'warehouse-verification/:id',
     loadChildren: async () =>
       (
         await import(
@@ -78,7 +80,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'restitution-assets-numeric',
+    path: 'restitution-assets-numeric/:id',
     loadChildren: async () =>
       (
         await import(
@@ -92,7 +94,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'deposit-payment-validations',
+    path: 'deposit-payment-validations/:id',
     loadChildren: async () =>
       (
         await import(
@@ -105,7 +107,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'assets-approval',
+    path: 'assets-approval/:id',
     loadChildren: async () =>
       (
         await import(
@@ -125,6 +127,7 @@ const routes: Routes = [
         .TransferRequestModule,
     data: { title: 'Solicitudes de transferencia' },
   },
+
   //Generacion de muestreo para supervicon (bienes)
   {
     path: 'generate-monitoring-sampling',
@@ -202,7 +205,7 @@ const routes: Routes = [
           './request-complementary-documentation/request-complementary-documentation.module'
         )
       ).RequestComplementaryDocumentationModule,
-    data: { title: 'Registro de Solicitud Dcoumentación Complementaria' },
+    data: { title: 'Registro de Solicitud Documentación Complementaria' },
   },
   // Registrar Documentación Complementaria
   {
@@ -213,7 +216,7 @@ const routes: Routes = [
           './shared-request/register-request/register-request.module'
         )
       ).RegisterRequestModule,
-    data: { title: 'Registro de Dcoumentación Complementaria' },
+    data: { title: 'Registro de Documentación Complementaria' },
   },
   // Solicitud de Informacion de Destino
   {

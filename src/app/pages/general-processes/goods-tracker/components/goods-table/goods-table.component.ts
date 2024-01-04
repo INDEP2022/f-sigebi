@@ -476,6 +476,15 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       ]);
       return;
     }
+
+    if (this.origin == GOOD_TRACKER_ORIGINS.AuthorizationAssetsDestruction) {
+      this.saveState = true;
+      this.router.navigate([
+        '/pages/executive-processes/authorization-assets-destruction',
+      ]);
+      return;
+    }
+
     if (this.origin == GOOD_TRACKER_ORIGINS.ProofDelivery) {
       this.saveState = true;
       this.router.navigate([

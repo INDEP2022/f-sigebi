@@ -396,6 +396,21 @@ ng-scrollbar {
   --scrollbar-thumb-color: rgba(94, 175, 255, 0.5);
   --scrollbar-thumb-hover-color: dodgerblue;
   --scrollbar-border-radius: 4px;
+  ng2-smart-table {
+    padding-right: 12px;
+  }
+}
+
+.form-group ng-select {
+  margin-top: 3px;
+}
+
+.ng-select .ng-select-container:hover {
+  box-shadow: none;
+}
+
+.ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+  box-shadow: none;
 }
 
 .dropdown-item.bg-primary {
@@ -793,6 +808,11 @@ custom-view-component {
   margin-bottom: 0px !important;
 }
 
+#testAcc2 .card .card-block {
+  padding: 0px 0px !important;
+  margin-bottom: 0px !important;
+}
+
 #checkbox_fcomer div div {
   margin-top: -21px;
   margin-left: 15px;
@@ -817,12 +837,80 @@ footer {
 .bg-donacion-1 {
   background-color: #c8c8c8;
 }
+
 .bg-donacion-2 {
   background-color: #008080;
 }
+
 .bg-donacion-3 {
   background-color: #ffc000;
 }
+
 .bg-donacion-4 {
   background-color: #80c000;
+}
+
+.VA_VALDA1 {
+  background-color: #008080; //#003232;
+  width: 100% !important;
+  height: 100% !important;
+  text-align: center;
+}
+
+.VA_VALDA2 {
+  background-color: #ffc000; // #644b00;
+}
+
+.VA_VALDA3 {
+  background-color: #80c000; // #324b00;
+}
+
+//AJUSTES REPORTADOS COMO BUGS
+.ng-dropdown-panel {
+  z-index: 100 !important;
+  margin-top: 2px !important;
+}
+
+textarea + .form-bar {
+  margin-top: -3px !important;
+}
+
+@-moz-document url-prefix() {
+  textarea + .form-bar {
+    margin-top: 0px !important;
+  }
+}
+
+.table-bordered {
+  border: 1px solid #ddd !important;
+}
+
+.ng-select .ng-select-container .ng-value-container {
+  padding-left: 0px !important;
+}
+
+.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+  padding-left: 0px !important;
+}
+
+.gicon {
+  width: 10px !important;
+}
+
+#testBottomMargin {
+  margin-bottom: 0px !important;
+}
+
+.label-form-exp {
+  margin-top: -3px !important;
+}
+
+.label {
+  margin-top: 1px;
+}
+
+div:where(.swal2-container).swal2-top,
+div:where(.swal2-container).swal2-center,
+div:where(.swal2-container).swal2-bottom {
+  z-index: 10000 !important;
 }

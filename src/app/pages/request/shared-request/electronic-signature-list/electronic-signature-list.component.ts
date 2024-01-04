@@ -32,7 +32,7 @@ export class ElectronicSignatureListComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que desea mandar el documento a firmar?'
+      '¿Está seguro que desea mandar el documento a firmar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -44,6 +44,7 @@ export class ElectronicSignatureListComponent
   upload() {
     const uploadFile = this.modalService.show(UploadFilesFormComponent, {
       class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
       ignoreBackdropClick: true,
     });
   }

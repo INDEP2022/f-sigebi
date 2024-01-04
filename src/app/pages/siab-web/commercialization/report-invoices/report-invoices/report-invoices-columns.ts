@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const REPORT_INVOICE_COLUMNS = {
   id_delegacion: {
     title: 'No. Delegación',
@@ -44,29 +46,84 @@ export const DETAIL_REPORT_COLUMNS = {
     sort: false,
   },
   fecha: {
-    title: 'Fecha',
-    type: 'string',
+    title: 'Fecha Vigencia',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   tpfactura: {
     title: 'Tipo de CFDI',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'Ingreso')
+        return '<strong><span class="badge badge-pill badge-success">Ingreso</span></strong>';
+      if (value == 'Egreso')
+        return '<strong><span class="badge badge-pill badge-success">Egreso</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          {
+            value: 'Ingreso',
+            title: 'Ingreso',
+          },
+          {
+            value: 'Egreso',
+            title: 'Egreso',
+          },
+        ],
+      },
+    },
   },
   tpbien: {
     title: 'Tipo Bien',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'Mueble')
+        return '<strong><span class="badge badge-pill badge-success">Mueble</span></strong>';
+      if (value == 'Inmueble')
+        return '<strong><span class="badge badge-pill badge-success">Inmueble</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          {
+            value: 'Mueble',
+            title: 'Mueble',
+          },
+          {
+            value: 'Inmueble',
+            title: 'Inmueble',
+          },
+        ],
+      },
+    },
   },
   rutapdf: {
     title: 'Ruta PDF',
     type: 'string',
     sort: false,
+    filter: false,
   },
   ferutaxml: {
     title: 'Ruta XML',
     type: 'string',
     sort: false,
+    filter: false,
   },
 };
 

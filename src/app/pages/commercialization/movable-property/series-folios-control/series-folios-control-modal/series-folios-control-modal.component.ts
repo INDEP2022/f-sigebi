@@ -15,7 +15,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-series-folios-control-modal',
   templateUrl: './series-folios-control-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class SeriesFoliosControlModalComponent
   extends BasePage
@@ -90,7 +96,7 @@ export class SeriesFoliosControlModalComponent
       availableFolios: [null],
       usedFolios: [null],
       recordUser: [null],
-      recordDate: [null],
+      recordDate: [new Date()],
     });
     if (this.allotment != null) {
       this.edit = true;
@@ -213,9 +219,9 @@ export class SeriesFoliosControlModalComponent
       } else {
         this.loading = false;
         this.alert(
-          'error',
-          'Error',
-          'La serie ya esta en uso, no se puede modificar el folio'
+          'warning',
+          'La serie ya esta en uso, no se puede modificar el folio',
+          ''
         );
       }
     } else {

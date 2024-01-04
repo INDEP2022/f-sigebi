@@ -9,7 +9,6 @@
           <form-field [control]="form.get('invoice')" label="Folio">
             <input
               type="text"
-              [readOnly]="edit"
               class="form-control"
               formControlName="invoice"
               oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6)" />
@@ -18,7 +17,8 @@
         <div class="col-md-3">
           <form-field [control]="form.get('pulledapart')" label="Apartado">
             <input
-              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+              readonly
+              oninput="if(this.value.length > 1) this.value = this.value.slice(0, 1)"
               type="text"
               class="form-control"
               formControlName="pulledapart" />
@@ -38,6 +38,7 @@
         <div class="col-md-3">
           <form-field [control]="form.get('recordDate')" label="Fecha Registro">
             <input
+              [ngClass]="{ 'not-press bg-gray': edit }"
               formControlName="recordDate"
               class="form-control"
               bsDatepicker

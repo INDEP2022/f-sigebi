@@ -107,7 +107,7 @@ export class ComerDetexpensesService extends HttpService {
   }
 
   getExpenses(body: ListParams) {
-    return this.post(SpentEndpoints.GetAllExpensesByFilter, body);
+    return this.post(SpentEndpoints.GetAllExpensesByFilter, {}, body);
   }
 
   removeMassive(
@@ -116,7 +116,20 @@ export class ComerDetexpensesService extends HttpService {
     return this.delete(SpentEndpoints.MassiveDeleteDetExpenses, body);
   }
 
+  removeMassive2(expenseNumber: number) {
+    return this.get(
+      SpentEndpoints.MassiveDeleteDetExpenses2 + '/' + expenseNumber
+    );
+  }
+
   updateMassive(body: IComerDetExpense2[]) {
     return this.put(SpentEndpoints.MassiveUpdateComerDetexpenses, body);
+  }
+
+  getValidatesCvmans(eventId: number, lotId: number) {
+    return this.post<IListResponseMessage<{ cvman: string; key: string }>>(
+      'aplication/query-validate-transfer',
+      { eventId, lotId }
+    );
   }
 }

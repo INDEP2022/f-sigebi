@@ -1,6 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Captura de Eventos para Donaci&oacute;n</h5>
+    <div class="p-2">
+      <button class="btn btn-primary active btn-sm" (click)="return()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>
   </div>
 
   <div body>
@@ -12,7 +18,7 @@
         <div class="col-md-6 border-right border-secondary" id="column">
           <div class="row">
             <div class="col-12">
-              <h5>Registro</h5>
+              <h5>Evento</h5>
             </div>
           </div>
           <div class="row mt-5">
@@ -24,32 +30,42 @@
             </div>
           </div>
           <div class="row mt-5">
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('type')" label="Tipo">
-                  <input
-                    #inputValue
-                    type="text"
-                    class="form-control"
+                  <ng-select
                     formControlName="type"
-                    readonly />
+                    [searchable]="false"
+                    class="form-control"
+                    [clearable]="false"
+                    (change)="getRowSelec($event)"
+                    [readonly]="true">
+                    <ng-option value="CPD">CPD</ng-option>
+                  </ng-select>
                 </form-field>
               </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
-                <form-field
-                  [control]="regisForm.get('area')"
-                  label="&Aacute;rea">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="area"
-                    readonly />
+                <form-field [control]="regisForm.get('area')">
+                  <ngx-select
+                    [data]="areas$"
+                    (change)="selectedArea($event)"
+                    (fetchByParamsItems)="readArea($event)"
+                    [fetchByList]="false"
+                    [searchOnInit]="true"
+                    [form]="regisForm"
+                    value="delegation"
+                    bindLabel="delegation"
+                    label="&Aacute;rea"
+                    control="area"
+                    [readonly]="true">
+                  </ngx-select>
                 </form-field>
               </div>
             </div>
+            <div class="col-md-2"></div>
           </div>
 
           <div class="row mt-3">
@@ -57,14 +73,19 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('year')" label="Año">
                   <input
-                    #inputValue
                     type="text"
                     class="form-control"
                     formControlName="year"
-                    class="form-control"
-                    readonly />
+                    [bsConfig]="bsConfigToYear"
+                    #dp="bsDatepicker"
+                    bsDatepicker />
                 </form-field>
-              </div>
+                <!--
+              <form-field [control]="regisForm.get('anio')" label="Año">
+                <ng-select class="form-control pt-1" formControlName="year" [items]="years" [ngModel]="currentYear"
+                  (change)="onSelectChangeYear($event)"></ng-select>
+              </form-field>
+              --></div>
             </div>
             <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
@@ -84,7 +105,8 @@
                   [control]="regisForm.get('captureDate')"
                   label="Fecha Captura">
                   <input
-                    type="text"
+                    [maxDate]="maxDate"
+                    bsDatepicker
                     class="form-control"
                     formControlName="captureDate"
                     readonly />
@@ -99,7 +121,6 @@
                   [control]="regisForm.get('keyEvent')"
                   label="CVE. Acta">
                   <input
-                    #inputValue
                     type="text"
                     class="form-control"
                     readonly
@@ -108,27 +129,36 @@
               </div>
             </div>
             <div class="row m-3">
-              <div class="col-4"></div>
+              <!--<div class="col-4"></div>-->
               <div class="col-md-12 text-center">
                 <button
-                  (click)="agregarCaptura()"
+                  (click)="agregarCaptura(false)"
                   type="button"
                   class="btn btn-info active btn-sm mr-3 mt-2">
-                  Nuevo Evento
+                  Nuevo
                   <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <button
+                  (click)="agregarCaptura(true)"
+                  [disabled]="idAct == 0"
+                  type="button"
+                  class="btn btn-info active btn-sm mr-3 mt-2">
+                  Editar
+                  <i class="bx bx-edit bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
                   class="btn btn-primary active btn-sm mr-3 mt-2"
                   (click)="searchActas()">
-                  Buscar Evento
+                  Buscar
                   <i class="bx bx-search bx-sm float-icon"></i>
                 </button>
                 <button
                   type="button"
+                  [disabled]="idAct == 0"
                   class="btn btn-primary active btn-sm mr-3 mt-2"
                   (click)="cerrarActa()">
-                  Cerrar Evento
+                  Cerrar
                   <i class="fas fa-close bx-sm float-icon"></i>
                 </button>
                 <button
@@ -208,6 +238,7 @@
             <div class="col-4"></div>
             <div class="col-md-12 text-center">
               <button
+                [ngClass]="{ loading: loadingVal }"
                 class="btn btn-secondary btn-sm active me-2 mt-2"
                 (click)="validaGood()">
                 Valida Bienes <i class="bx bx-check float-icon"></i>
@@ -229,6 +260,7 @@
               </button>
               <button
                 class="btn btn-info active btn-sm active mt-2"
+                [disabled]="!showPbTracker"
                 (click)="findRast()">
                 Rastreador de Bienes&nbsp;
                 <i class="fas fa-map-marker bx-sm float-icon"></i>
@@ -243,16 +275,16 @@
         <div class="col-md-12 d-flex justify-content-between">
           <span class="text-success">
             <i class="fa fa-check" aria-hidden="true"></i> Cantidad de
-            Bienes&#58; <b>{{ TOTAL_REPORTE }}</b>
+            Bienes&#58; <b>{{ total_report }}</b>
           </span>
           <span class="text-danger"
             ><i class="fa fa-ban" aria-hidden="true"></i> Cantidad de Bienes con
             Error&#58;
-            <b>{{ BIEN_ERROR }}</b>
+            <b>{{ total_bien_error }}</b>
           </span>
           <span class="text-info">
             Suma de Cantidades
-            <b>{{ SUM_BIEN | currency }}</b>
+            <b>{{ total_sum_bien | currency }}</b>
           </span>
         </div>
       </div>
@@ -275,6 +307,7 @@
                   [track]="'all'"
                   [ngStyle]="{ height: loading3 ? '0px' : '600px' }">
                   <ng2-smart-table
+                    #grdDetail
                     class="table-responsive"
                     [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings2"
@@ -283,21 +316,23 @@
                   </ng2-smart-table>
                 </ng-scrollbar>
                 <app-pagination
-                  [params]="paramsList2"
+                  [params]="params"
                   [totalItems]="totalItems2"></app-pagination>
               </div>
               <div class="row">
                 <div class="d-flex justify-content-center">
-                  <div class="col-3">
+                  <div class="col-4"></div>
+                  <div class="col-2">
                     <span class="text-success mr-5"
                       ><i class="fa fa-square"></i> Disponibles</span
                     >
                   </div>
-                  <div class="col-3">
+                  <div class="col-2">
                     <span class="text-black"
                       ><i class="fa fa-square"></i> No disponibles</span
                     >
                   </div>
+                  <div class="col-4"></div>
                 </div>
               </div>
             </div>
@@ -354,7 +389,7 @@
           </div>
           <div class="m-3">
             <button
-              [disabled]="TOTAL_REPORTE < 500"
+              [disabled]="total_report < 500"
               (click)="searchRopaId()"
               type="button"
               class="btn btn-primary active btn-sm mr-3">
@@ -365,6 +400,7 @@
           <div class="m-3">
             <button
               class="btn btn-danger btn-sm active"
+              [disabled]="!showPbDelete"
               (click)="removeSelect()">
               Elimina Bienes <i class="fa fa-trash-alt"></i>
             </button>

@@ -14,22 +14,38 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import {
-  ProceedingsDeliveryReceptionService,
-  ProceedingsService,
-} from 'src/app/core/services/ms-proceedings';
-import * as XLSX from 'xlsx';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 //Models
+import { Router } from '@angular/router';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
+import {
+  IGoodsExpedient,
+  IGoodTracker,
+} from 'src/app/core/models/catalogs/package.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
-import { IDetailProceedingsDevollutionDelete } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import {
+  IDetailProceedingsDevollutionDelete,
+  ITmpCreateAuthoDestroy,
+  ITmpUpdateMassive,
+  ITmpUpdateOneReg,
+} from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
+import { ListKeyProceedingsComponent } from '../list-key-proceedings/list-key-proceedings.component';
 import { ModalCorreoComponent } from '../utils/modal-correo/modal-correo.component';
 
 interface Blk {
@@ -64,7 +80,7 @@ export class AuthorizationAssetsDestructionComponent
   selectExpedient = new DefaultSelect<IExpedient>();
   rowSelected: boolean = false;
   selectedRow: any = null;
-  title: string = 'Oficios de Autorización de Destrucción';
+  title: string = 'Oficio de autorización de destrucción';
   textButton: string = 'Cerrar';
   expediente: number;
   textDisabled: boolean = true;
@@ -79,43 +95,167 @@ export class AuthorizationAssetsDestructionComponent
 
   numberAct = new DefaultSelect();
 
+  //AGREGADO POR GRIGORK
+  idProceeding: number = null;
+  numFile: number = null;
+  addGoodFlag: boolean = false;
+  canSearch: boolean = true;
+  cve_proceeding: string = null;
+  date_proceeding: string = null;
+  statusProceeding: string = null;
+  canNewProceeding: boolean = false;
+  returnTracker: boolean = true;
+  user: string = null;
+
   get controls() {
     return this.form.controls;
   }
   constructor(
     private fb: FormBuilder,
-    private modalService: BsModalService,
-    private sanitizer: DomSanitizer,
-    private expedientService: ExpedientService,
-    private goodService: GoodService,
+    private authService: AuthService,
     private datePipe: DatePipe,
+    private expedientService: ExpedientService,
+    private globalVarService: GlobalVarsService,
+    private goodService: GoodService,
+    private modalService: BsModalService,
     private proceedingsDetailDel: ProceedingsDeliveryReceptionService,
     private proceedingService: ProceedingsService,
-    private serviceDocuments: DocumentsService
+    private router: Router,
+    private sanitizer: DomSanitizer,
+    private serviceDetailProc: DetailProceeDelRecService,
+    private serviceDocuments: DocumentsService,
+    private serviceMassiveGoods: MassiveGoodService,
+    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private documentService: DocumentsService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: { ...ASSETS_DESTRUCTION_COLUMLNS },
-      mode: '',
-      rowClassFunction: (row: any) => {
-        if (row.data.di_disponible === 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
+      columns: {
+        ...ASSETS_DESTRUCTION_COLUMLNS,
+        approved: {
+          title: 'Aprobado',
+          type: 'custom',
+          showAlways: true,
+          filter: false,
+          sort: false,
+          renderComponent: CheckboxElementComponent,
+          valuePrepareFunction: (isSelected: any, row: any) => {
+            return row.approved == 'SI' ? true : false;
+          },
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectRow(instance),
+        },
       },
+      mode: '',
+      rowClassFunction: (row: { data: { available: any } }) =>
+        row.data.available == 'S'
+          ? 'bg-success text-white'
+          : 'bg-dark text-white',
     };
   }
 
   ngOnInit(): void {
     this.prepareForm();
+
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          const ngGlobal = global;
+          if (ngGlobal.REL_BIENES) {
+            console.log(ngGlobal.REL_BIENES);
+            if (this.returnTracker) {
+              this.form
+                .get('noAuth')
+                .setValue(
+                  localStorage.getItem('noActa_FACTDIRAPROBDESTR') != 'null'
+                    ? localStorage.getItem('noActa_FACTDIRAPROBDESTR')
+                    : null
+                );
+              this.form
+                .get('authNotice')
+                .setValue(
+                  localStorage.getItem('authNotice_FACTDIRAPROBDESTR') != 'null'
+                    ? localStorage.getItem('authNotice_FACTDIRAPROBDESTR')
+                    : null
+                );
+
+              this.cve_proceeding =
+                localStorage.getItem('authNotice_FACTDIRAPROBDESTR') != 'null'
+                  ? localStorage.getItem('authNotice_FACTDIRAPROBDESTR')
+                  : null;
+              this.form
+                .get('universalFolio')
+                .setValue(
+                  localStorage.getItem('universalFolio_FACTDIRAPROBDESTR') !=
+                    'null'
+                    ? localStorage.getItem('universalFolio_FACTDIRAPROBDESTR')
+                    : null
+                );
+              this.form
+                .get('statusAct')
+                .setValue(
+                  localStorage.getItem('statusAct_FACTDIRAPROBDESTR') != 'null'
+                    ? localStorage.getItem('statusAct_FACTDIRAPROBDESTR')
+                    : null
+                );
+              this.form
+                .get('fromDate')
+                .setValue(
+                  localStorage.getItem('fromDate_FACTDIRAPROBDESTR') != 'null'
+                    ? this.correctDate(
+                        localStorage.getItem('fromDate_FACTDIRAPROBDESTR')
+                      )
+                    : null
+                );
+
+              this.date_proceeding =
+                localStorage.getItem('fromDate_FACTDIRAPROBDESTR') != 'null'
+                  ? this.correctDate(
+                      localStorage.getItem('fromDate_FACTDIRAPROBDESTR')
+                    ).toString()
+                  : null;
+              this.expediente =
+                localStorage.getItem('numFile_FACTDIRAPROBDESTR') != 'nul'
+                  ? Number(localStorage.getItem('numFile_FACTDIRAPROBDESTR'))
+                  : null;
+
+              localStorage.removeItem('noActa_FACTDIRAPROBDESTR');
+              localStorage.removeItem('authNotice_FACTDIRAPROBDESTR');
+              localStorage.removeItem('universalFolio_FACTDIRAPROBDESTR');
+              localStorage.removeItem('fromDate_FACTDIRAPROBDESTR');
+              localStorage.removeItem('numFile_FACTDIRAPROBDESTR');
+              localStorage.removeItem('statusAct_FACTDIRAPROBDESTR');
+
+              this.returnTracker = false;
+              this.pupGoodTrackerFn(ngGlobal.REL_BIENES);
+            }
+          }
+        },
+      });
+
+    //AGREGADO POR GRIGORK
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(result => {
+      console.log(result);
+      if (this.consult) {
+        this.fillTableGoodsByUser();
+      }
+    });
+
+    if (localStorage.getItem('noAuth_scan')) {
+      this.form.get('noAuth').setValue(localStorage.getItem('noAuth_scan'));
+      this.getProceeding();
+      localStorage.removeItem('noAuth_scan');
+    }
+    this.user = this.authService.decodeToken().preferred_username;
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      idExpedient: [null, [Validators.required]],
+      idExpedient: [null, []],
       preliminaryInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
       criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       circumstantialRecord: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -133,9 +273,9 @@ export class AuthorizationAssetsDestructionComponent
     this.form.get('criminalCase').disable();
     this.form.get('circumstantialRecord').disable();
     this.form.get('keyPenalty').disable();
-    this.form.get('noAuth').disable();
-    this.form.get('fromDate').disable();
-    this.form.get('authNotice').disable();
+    /* this.form.get('noAuth').disable(); */
+    // this.form.get('authNotice').disable();
+    // this.form.get('fromDate').disable();
 
     const localExpdeient = localStorage.getItem('expediente');
     console.log(localExpdeient);
@@ -145,46 +285,52 @@ export class AuthorizationAssetsDestructionComponent
       if (folio) {
         this.form.controls['universalFolio'].setValue(folio);
       }
-      this.form.get('idExpedient').setValue(Number(localExpdeient));
-      this.expedientChange();
+      // this.form.get('idExpedient').setValue(Number(localExpdeient));
+      // this.expedientChange();
       localStorage.removeItem('expediente');
     }
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.consult) {
-        this.getDetailProceedingsDevolution(this.form.get('noAuth').value);
-      }
+  }
+
+  //FUNCION PARA ACTUALIZAR EL APROBADO DEL TMP
+  onSelectRow(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => {
+        console.log(data.row);
+        if (
+          !['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)
+        ) {
+          const modelEdit: ITmpUpdateOneReg = {
+            user: this.user,
+            good: data.row.numberGood,
+            approved: data.toggle ? 'SI' : 'NO',
+          };
+          this.proceedingService.tmpUpdateOneReg(modelEdit).subscribe(
+            res => {
+              data.row = data.toggle ? 'SI' : 'NO';
+            },
+            err => {
+              console.log(err);
+            }
+          );
+        } else {
+          this.data.load(this.data['data']);
+        }
+      },
     });
   }
 
   async openModal() {
     let config: ModalOptions = {
       initialState: {
-        acta: this.acta,
+        proceeding: this.form.get('noAuth').value,
+        expedient: this.expediente,
+        universalFolio: this.form.get('universalFolio').value,
+        proceedingKey: this.form.get('authNotice').value,
+        elaborationDate: this.form.get('fromDate').value,
         detalleActa: await this.data.getAll(),
-        callback: async (acta: any) => {
-          if (acta.statusProceedings === 'CERRADA') {
-            this.acta = acta;
-            const detail: any[] = await this.data.getAll();
-            this.proceedingsDetailDel.update2(this.acta).subscribe({
-              next: resp => {
-                console.log(resp);
-                detail.forEach(async (element: any) => {
-                  const model: IDetailProceedingsDevollutionDelete = {
-                    numberGood: element.numberGood,
-                    numberProceedings: element.numberProceedings,
-                  };
-                  await this.pupDepuraDetalle(model);
-                });
-                //this.relationsExpedient();
-              },
-              error: err => {
-                this.alert(
-                  'error',
-                  this.title,
-                  'No Se Ha Podido Cerrar el Acta'
-                );
-              },
-            });
+        callback: async result => {
+          if (result) {
+            this.getProceeding();
           }
         },
       },
@@ -195,21 +341,19 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   getDocuments() {
-    return new Promise<number>((res, _rej) => {
-      const params: ListParams = {};
-      params[
-        'filter.associateUniversalFolio'
-      ] = `$eq:${this.acta.universalFolio}`;
-      this.serviceDocuments.getAll(params).subscribe({
-        next: resp => {
-          console.error(resp);
-          res(Number(resp.count));
-        },
-        error: err => {
-          console.log(err);
-          res(0);
-        },
-      });
+    return new Promise((resolve, _rej) => {
+      this.documentService
+        .getByFolio(this.form.get('universalFolio').value)
+        .subscribe(res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
+          console.log(scanStatus);
+          if (scanStatus == 'ESCANEADO') {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        });
     });
   }
 
@@ -225,6 +369,7 @@ export class AuthorizationAssetsDestructionComponent
       next: async response => {
         console.log(response);
         const data = await this.postQuery(response.data);
+
         this.data.load(data);
         this.data.refresh();
         this.totalItems = response.count;
@@ -239,121 +384,29 @@ export class AuthorizationAssetsDestructionComponent
     });
   }
 
-  expedientChange() {
-    this.consult = true;
-    this.expediente = Number(this.form.get('idExpedient').value);
-    const params: ListParams = {};
-    params['filter.id'] = `$eq:${this.expediente}`;
-    this.expedientService.getAll(params).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.form.patchValue(resp.data[0]);
-        //this.relationsExpedient();
-      },
-      error: err => {
-        this.alert(
-          'warning',
-          this.title,
-          'No se encontrarón registros para este expediente',
-          ''
-        );
-      },
-    });
-    //// buscar en el
-  }
-
-  relationsExpedient(params: ListParams) {
-    //this.getGoods();
-    this.loading = false;
-    this.proceedingsDetailDel.getProceeding3(params).subscribe({
-      next: resp => {
-        this.numberAct = new DefaultSelect(resp.data, resp.count);
-      },
-      error: err => {
-        this.numberAct = new DefaultSelect();
-      },
-    });
-    /*response => {
-        console.log(response);
-        if (response.data === null) {
-          this.alert('info', this.title, 'No se encontrarón registros', '');
-          return;
-        }
-        this.acta = response.data[0];
-        console.log(this.acta);
-        this.form.get('noAuth').setValue(this.acta.id);
-        this.form.get('authNotice').setValue(this.acta.keysProceedings);
-        this.form.get('fromDate').setValue(
-          this.datePipe.transform(this.acta.elaborationDate, 'dd/MM/yyyy')
-        );
-        this.form.get('universalFolio').setValue(this.acta.universalFolio);
-        this.form.get('act').setValue(this.acta.keysProceedings);
-        this.form.get('statusAct').setValue(this.acta.statusProceedings);
-        console.log(this.form.get('fromDate').value);
-
-        //receive
-        // receiptKey clave del que recibe
-        const statusAct = this.acta.statusProceedings; //this.form.get('statusAct').value;
-        console.error('ESATUS ACTA ' + statusAct);
-
-        if (['CERRADO', 'CERRADA'].includes(statusAct)) {
-          this.textDisabled = true;
-        } else if (['ABIERTO', 'ABIERTA'].includes(statusAct)) {
-          this.textDisabled = false;
-        } else if (statusAct === null) {
-          this.textDisabled = true;
-        }
-        this.getDetailProceedingsDevolution(this.form.get('noAuth').value);
-      },
-      error => {
-        this.alert(
-          'error',
-          this.title,
-          'No se encontraron actas con este numero de expediente'
-        );
-      }
-    );*/
-  }
-
-  async masive() {
-    this.loading = true;
-    const data: any[] = await this.data.getAll();
-    data.forEach(item => {
-      if (
-        item.di_disponible === 'S' &&
-        this.acta.keysProceedings !== null &&
-        this.acta.elaborationDate !== null
-      ) {
-        item.fecha = `${this.acta.keysProceedings} ${this.datePipe.transform(
-          this.acta.elaborationDate,
-          'dd-MM-yyyy'
-        )}`;
-        item.aprobado = 'SI';
-      } else {
-        item.fecha = null;
-        item.aprobado = 'NO';
-      }
-    });
-    this.data.load(data);
-    this.data.refresh();
-    this.loading = false;
+  async closeButton() {
+    if (!['CERRADA', 'CERRADO'].includes(this.form.get('statusAct').value)) {
+      this.closed();
+    } else {
+      this.openProceeding();
+    }
   }
 
   async closed() {
-    if (this.form.get('fromDate') === null) {
+    if (this.form.get('fromDate').value === null) {
       this.alert(
         'warning',
         this.title,
-        'Debe Ingresar la fecha de Autorización.',
+        'Debe ingresar la fecha de autorización.',
         ''
       );
       return;
     }
-    if (this.form.get('authNotice') === null) {
+    if (this.form.get('authNotice').value === null) {
       this.alert(
         'warning',
         this.title,
-        'Debe Ingresar el Oficio de Autorización.',
+        'Debe ingresar el oficio de autorización.',
         ''
       );
       return;
@@ -363,44 +416,62 @@ export class AuthorizationAssetsDestructionComponent
       this.alert(
         'warning',
         this.title,
-        'El Oficio No Tiene Folio de Escaneo, No Se Puede Cerrar.',
+        'El oficio no tiene folio de escaneo, no se puede cerrar.',
         ''
       );
       return;
     }
-    const hojas: number = await this.getDocuments();
-    if (hojas <= 0) {
+    const isScan = await this.getDocuments();
+    console.log(isScan);
+    if (!isScan) {
       this.alert(
         'warning',
         this.title,
-        'El Oficio No Tiene Documentos Escaneados, No Se Puede Cerrar.',
+        'El oficio no tiene documentos escaneados, no se puede cerrar.',
         ''
       );
       return;
     }
 
-    const detail: any[] = await this.data.getAll();
-    if (detail.length === 0) {
+    if (this.data.count() == 0) {
       this.alert(
         'warning',
         this.title,
-        'El Oficio No Tiene Ningun Bien Asignado, No Se Puede Cerrar.',
+        'El oficio no tiene ningun bien asignado, no se puede cerrar.',
         ''
       );
       return;
     }
-    /*     detail.forEach(async (element: any) => {
-      const model: IDetailProceedingsDevollutionDelete = {
-        numberGood: element.numberGood,
-        numberProceedings: element.numberProceedings,
-      };
-      await this.pupDepuraDetalle(model);
-    }); */
+
+    this.dataPurge();
     this.openModal();
-    this.getDetailProceedingsDevolution(this.form.get('noAuth').value);
   }
 
-  pupLlenaDist() {}
+  openProceeding() {
+    //!ENVIAR CORREO
+  }
+
+  cleanTmp() {
+    const proceeding = '-1';
+    const paramsF = new FilterParams();
+    this.proceedingService
+      .tmpAuthorizationsDestruction(this.user, proceeding, paramsF.getParams())
+      .subscribe(
+        res => {
+          this.canNewProceeding = true;
+          this.data.load([]);
+        },
+        err => {
+          if (err.status != 400) {
+            this.alert(
+              'warning',
+              'Hubo un problema limpiando la tabla temporal',
+              ''
+            );
+          }
+        }
+      );
+  }
 
   pupDepuraDetalle(model: IDetailProceedingsDevollutionDelete) {
     return new Promise((resolve, _reject) => {
@@ -435,6 +506,21 @@ export class AuthorizationAssetsDestructionComponent
     this.form.reset();
     this.data.load([]);
     this.data.refresh();
+    this.totalItems = 0;
+    this.canSearch = true;
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.consult = false;
+    this.form.get('noAuth').enable();
+    this.form.get('authNotice').enable();
+    this.form.get('fromDate').enable();
+    this.canNewProceeding = false;
+
+    localStorage.removeItem('noActa_FACTDIRAPROBDESTR');
+    localStorage.removeItem('authNotice_FACTDIRAPROBDESTR');
+    localStorage.removeItem('universalFolio_FACTDIRAPROBDESTR');
+    localStorage.removeItem('fromDate_FACTDIRAPROBDESTR');
+    localStorage.removeItem('numFile_FACTDIRAPROBDESTR');
+    localStorage.removeItem('statusAct_FACTDIRAPROBDESTR');
   }
 
   async postQuery(det: any[]) {
@@ -569,8 +655,7 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   async ReadExcel(event: any) {
-    console.log(this.acta.statusProceedings);
-    if (!this.acta) {
+    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)) {
       this.alert(
         'warning',
         this.title,
@@ -578,19 +663,552 @@ export class AuthorizationAssetsDestructionComponent
       );
       return;
     }
+
     this.loading = true;
-    let file = event.target.files[0];
-    let fileReader = new FileReader();
-    fileReader.readAsBinaryString(file);
-    const dataTable: any[] = await this.data.getAll();
-    fileReader.onload = e => {
-      let workbook = XLSX.read(fileReader.result, { type: 'binary' });
-      let sheetNames = workbook.SheetNames;
-      this.dataFile = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
-      const data = dataTable.concat(this.dataFile);
-      this.data.load(data);
-      this.data.refresh();
-      this.loading = false;
+    const files = (event.target as HTMLInputElement).files[0];
+    let formData = new FormData();
+    formData.append('file', files);
+    formData.append('user', this.user);
+    this.getDataFile(formData);
+  }
+
+  getDataFile(data: any) {
+    if (this.data.count() == 0) {
+      this.cleanTmp();
+    }
+
+    this.serviceMassiveGoods.pupFlatGoodsDestr(data).subscribe({
+      next: resp => {
+        this.loading = false;
+        this.fillTableGoodsByUser();
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+        this.loading = true;
+        this.alert('error', 'Ocurrió un error al leer el archivo', '');
+      },
+    });
+  }
+
+  //AGREGADO POR GRIGORK
+  //BUSCAR ACTAS SEGÚN EXPEDIENTE
+  getProceeding() {
+    if (
+      this.form.get('authNotice').value == null &&
+      this.form.get('noAuth').value == null
+    ) {
+      this.alert(
+        'warning',
+        'Debe ingresar datos de búsqueda',
+        'Debe registrar el número de acta u oficio de autorización'
+      );
+      return;
+    }
+
+    const paramsF = new FilterParams();
+    // paramsF.page = params.page;
+    paramsF.limit = 1;
+    paramsF.addFilter('typeProceedings', 'AXD');
+    this.form.get('noAuth').value != null
+      ? paramsF.addFilter('id', this.form.get('noAuth').value)
+      : paramsF.addFilter('keysProceedings', this.form.get('authNotice').value);
+    this.proceedingsDetailDel.getByFilter(paramsF.getParams()).subscribe(
+      res => {
+        const jsonResp = JSON.parse(JSON.stringify(res['data'][0]));
+        this.idProceeding = jsonResp.id;
+        this.cve_proceeding = jsonResp.keysProceedings;
+        this.date_proceeding = this.correctDate(
+          jsonResp.elaborationDate
+        ).toString();
+        this.form.get('noAuth').setValue(this.idProceeding);
+        this.form.get('authNotice').setValue(jsonResp.keysProceedings);
+        this.form.get('universalFolio').setValue(jsonResp.universalFolio);
+        this.form.get('statusAct').setValue(jsonResp.statusProceedings);
+        this.expediente = jsonResp.numFile;
+        this.consult = true;
+        this.form
+          .get('fromDate')
+          .setValue(this.correctDate(jsonResp.elaborationDate));
+        this.searchGoodsInDetailProceeding();
+      },
+      err => {
+        this.consult = false;
+        console.log(err);
+        this.alert(
+          'warning',
+          'No se encontró el acta',
+          'No existe un acta con el dato ingresado'
+        );
+      }
+    );
+  }
+
+  newProceeding() {
+    this.canNewProceeding = true;
+    console.log(this.data.count());
+    console.log(this.form.get('noAuth').value);
+    console.log(this.form.get('statusAct').value);
+    if (
+      (this.data.count() != 0 && this.form.get('noAuth').value != null) ||
+      this.form.get('statusAct').value != null
+    ) {
+      this.cleanTmp();
+      this.data.load([]);
+    }
+
+    this.form.get('noAuth').reset();
+    this.form.get('authNotice').reset();
+    this.form.get('fromDate').reset();
+    this.form.get('statusAct').reset();
+  }
+
+  async saveNewProceeding() {
+    if (this.form.get('authNotice').value == null) {
+      this.alert(
+        'warning',
+        'Debe ingresar un oficio de autorización',
+        'Debe registrar un oficio de autorización para crear un nuevo acta'
+      );
+      return;
+    }
+
+    const proceeding = await this.existProceeding();
+    if (proceeding) {
+      this.alert(
+        'warning',
+        'Ya existe un acta con el oficio de autorización',
+        ''
+      );
+      return;
+    }
+
+    if (this.form.get('fromDate').value == null) {
+      this.alert('warning', 'Debe especificar la fecha', '');
+      return;
+    }
+
+    if (this.numFile == null) {
+      this.alert(
+        'warning',
+        'No existe un número de expediente',
+        'Debe insertar un número de expediente'
+      );
+      return;
+    }
+
+    const body: IProccedingsDeliveryReception = {
+      keysProceedings: this.form.get('authNotice').value,
+      elaborationDate: this.form.get('fromDate').value,
+      statusProceedings: 'ABIERTA',
+      elaborate: this.user,
+      typeProceedings: 'AXD',
+      numFile: this.numFile,
+      numDelegation1: this.authService.decodeToken().department,
+      numDelegation2: this.authService.decodeToken().department,
+      captureDate: new Date().getTime(),
     };
+
+    this.serviceProcVal.postProceeding(body).subscribe(
+      res => {
+        this.alert('success', 'Acta creada', '');
+        console.log(res);
+        const resJson = JSON.parse(JSON.stringify(res));
+        this.form.get('noAuth').setValue(resJson.id);
+        this.form.get('noAuth').disable();
+        this.form.get('authNotice').disable();
+        this.form.get('fromDate').disable();
+        this.canNewProceeding = false;
+
+        const body: ITmpCreateAuthoDestroy = {
+          user: this.user,
+          proceeding: resJson.id,
+        };
+
+        this.proceedingService.tmpCreateAuthorization(body).subscribe(
+          res => {
+            console.log(res);
+            this.getProceeding();
+          },
+          err => {
+            this.alert('error', 'Error al crear acta', '');
+            console.log(err);
+          }
+        );
+      },
+      err => {
+        this.alert('error', 'Error al crear acta', '');
+        console.log(err);
+      }
+    );
+  }
+
+  async existProceeding() {
+    return new Promise((resolve, _reject) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('typeProceedings', 'AXD');
+      paramsF.addFilter('keysProceedings', this.form.get('authNotice').value);
+      this.proceedingsDetailDel.getByFilter(paramsF.getParams()).subscribe(
+        res => {
+          resolve(true);
+        },
+        err => {
+          resolve(false);
+        }
+      );
+    });
+  }
+
+  //FUNCIÓN PARA OBTENER LA FECHA CORRECTA
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
+  //BUSCAR BIENES EN DETALLE_ACTA_ENT_RECEP
+  searchGoodsInDetailProceeding() {
+    this.canSearch = false;
+    this.loading = true;
+    const paramsF = new FilterParams();
+    const proceeding = this.idProceeding.toString();
+    paramsF.page = this.params.getValue().page;
+    paramsF.limit = this.params.getValue().limit;
+    this.proceedingService
+      .tmpAuthorizationsDestruction(this.user, proceeding, paramsF.getParams())
+      .subscribe(
+        res => {
+          const newData = res.data.map((item: any) => {
+            return {
+              ...item,
+              cve_proceeding:
+                item.available == 'N' ? this.cve_proceeding : null,
+              date_proceeding:
+                item.available == 'N'
+                  ? format(this.correctDate(this.date_proceeding), 'dd/MM/yyyy')
+                  : null,
+            };
+          });
+
+          if (this.numFile == null) {
+            this.numFile = res.data[0].expedient;
+          }
+
+          this.data.load(newData);
+          this.totalItems = res.count;
+          this.loading = false;
+          this.consult = true;
+        },
+        err => {
+          this.data.load([]);
+          console.log(err);
+          this.canSearch = true;
+          this.loading = false;
+        }
+      );
+  }
+
+  //BOTON AGREGAR BIENES
+  buttonAddGoods() {
+    this.addGoodFlag = true;
+    if (['CERRADO', 'CERRADA'].includes(this.form.get('statusAct').value)) {
+      this.alert('warning', 'El acta se encuentra cerrada', '');
+      this.addGoodFlag = false;
+      return;
+    }
+
+    if (this.form.get('idExpedient').value != null) {
+      this.expedientChange();
+    } else {
+      this.pupGoodTracker();
+    }
+  }
+
+  //LLENAR LA TABLA DE BIENES POR USUARIO
+  fillTableGoodsByUser() {
+    this.form.get('noAuth').value != null ? (this.canSearch = false) : null;
+    this.loading = true;
+    const paramsF = new FilterParams();
+    paramsF.page = this.params.getValue().page;
+    paramsF.limit = this.params.getValue().limit;
+    this.proceedingService
+      .tmpAuthorizationsDestruction(this.user, null, paramsF.getParams())
+      .subscribe(
+        res => {
+          const newData = res.data.map((item: any) => {
+            return {
+              ...item,
+              cve_proceeding:
+                item.available == 'N' ? this.cve_proceeding : null,
+              date_proceeding:
+                item.available == 'N'
+                  ? format(this.correctDate(this.date_proceeding), 'dd/MM/yyyy')
+                  : null,
+            };
+          });
+
+          if (this.numFile == null) {
+            this.numFile = res.data[0].expedient;
+          }
+
+          console.log(newData);
+          this.data.load(newData);
+          this.totalItems = res.count;
+          this.loading = false;
+          this.consult = true;
+        },
+        err => {
+          this.data.load([]);
+          console.log(err);
+          this.alert('warning', 'No se encontrarón registros', '');
+          this.canSearch = true;
+          this.loading = false;
+        }
+      );
+  }
+
+  //BUSCAR EXPEDIENTE
+  expedientChange() {
+    if (this.data.count() == 0) {
+      this.cleanTmp();
+    }
+
+    this.consult = true;
+    this.expediente = Number(this.form.get('idExpedient').value);
+    const params: ListParams = {};
+    params['filter.id'] = `$eq:${this.expediente}`;
+    this.expedientService.getAll(params).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.form.patchValue(resp.data[0]);
+        this.pupGoodsExp();
+      },
+      error: err => {
+        this.alert('warning', this.title, 'No se encontró el expediente');
+        this.addGoodFlag = false;
+      },
+    });
+  }
+
+  pupGoodsExp() {
+    const body: IGoodsExpedient = {
+      proceedingsNumber: this.form.get('idExpedient').value,
+      minutesNumber: this.idProceeding,
+      user: this.authService.decodeToken().preferred_username,
+    };
+
+    this.serviceMassiveGoods.goodsExpedient(body).subscribe(
+      async res => {
+        console.log(res);
+        console.log(res.file);
+        this.addGoodFlag = false;
+
+        if (res.rechazados > 0) {
+          console.log('rechazados', res.rechazados);
+          await this.downloadExcel(res.file, 'Bienes_con_errores.csv');
+        }
+
+        if (res.blk_det.length == 0) {
+          this.alert('warning', 'No se cargo ninguno bien', '');
+        } else {
+          this.alert('success', `Se cargaron ${res.blk_det.length} bienes`, '');
+          this.fillTableGoodsByUser();
+        }
+      },
+      err => {
+        console.log(err);
+        this.addGoodFlag = false;
+        this.alert('error', 'No se agregaron los bienes del expediente', '');
+      }
+    );
+  }
+
+  async downloadExcel(base64String: any, nameFile: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = nameFile;
+    link.click();
+    link.remove();
+  }
+
+  pupGoodTracker() {
+    console.log(this.data);
+    console.log(this.data.count());
+    if (this.data.count() == 0) {
+      this.cleanTmp();
+    }
+
+    localStorage.setItem(
+      'noActa_FACTDIRAPROBDESTR',
+      this.form.get('noAuth').value
+    );
+    localStorage.setItem(
+      'authNotice_FACTDIRAPROBDESTR',
+      this.form.get('authNotice').value
+    );
+    localStorage.setItem(
+      'universalFolio_FACTDIRAPROBDESTR',
+      this.form.get('universalFolio').value
+    );
+    localStorage.setItem(
+      'statusAct_FACTDIRAPROBDESTR',
+      this.form.get('statusAct').value
+    );
+    localStorage.setItem(
+      'fromDate_FACTDIRAPROBDESTR',
+      this.form.get('fromDate').value
+    );
+    localStorage.setItem(
+      'numFile_FACTDIRAPROBDESTR',
+      this.expediente != null ? this.expediente.toString() : null
+    );
+
+    this.router.navigate([GOODS_TACKER_ROUTE], {
+      queryParams: {
+        origin: 'FACTDIRAPROBDESTR',
+      },
+    });
+  }
+
+  pupGoodTrackerFn(globalRelGood: number) {
+    let body: IGoodTracker;
+    console.log(localStorage.getItem('noActa_FACTDIRAPROBDESTR'));
+    !['null', null].includes(localStorage.getItem('noActa_FACTDIRAPROBDESTR'))
+      ? (body = {
+          minutesNumber: localStorage.getItem('noActa_FACTDIRAPROBDESTR'),
+          globalRelGood: globalRelGood,
+          user: this.authService.decodeToken().preferred_username,
+        })
+      : (body = {
+          minutesNumber: null,
+          globalRelGood: globalRelGood,
+          user: this.authService.decodeToken().preferred_username,
+        });
+
+    this.serviceMassiveGoods.pupGoodTracker(body).subscribe(
+      res => {
+        console.log(res);
+        if (res.rechazados > 0) {
+          console.log('rechazados aquí: ', res.rechazados);
+          this.downloadExcel(res.file, 'Bienes_con_errores.csv');
+        }
+        localStorage.removeItem('noActa_FACTDIRAPROBDESTR');
+        this.fillTableGoodsByUser();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  //MASIVO
+  masiveChange() {
+    if (this.data.count() == 0) {
+      this.alert('warning', 'No existen bienes para realizar el cambio', '');
+      return;
+    }
+
+    const body: ITmpUpdateMassive = {
+      user: this.authService.decodeToken().preferred_username,
+      proceedingKey: this.form.get('noAuth').value,
+      date: this.form.get('fromDate').value,
+    };
+
+    this.proceedingService.tmpUpdateMassive(body).subscribe(
+      res => {
+        console.log(res);
+        this.fillTableGoodsByUser();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  //DEPURAR
+  dataPurge() {
+    this.loading = true;
+    this.serviceMassiveGoods.tmpDeleteAuthorization(this.user).subscribe(
+      res => {
+        console.log(res);
+        this.alert(
+          'success',
+          `Se depuró el acta ${this.form.get('noAuth').value}`,
+          ''
+        );
+        this.fillTableGoodsByUser();
+      },
+      err => {
+        console.log(err);
+        this.alert(
+          'warning',
+          'Se presentó un error depurando el acta',
+          'Por favor vuelva a intentarlo'
+        );
+        this.loading = false;
+      }
+    );
+  }
+
+  dataPurgeButton() {
+    if (['CERRADA', 'CERRADO'].includes(this.form.get('statusAct').value)) {
+      this.alert(
+        'warning',
+        'El acta está cerrada',
+        'No puede realizar modificaciones por el estatus del acta'
+      );
+      return;
+    }
+
+    this.alertQuestion(
+      'question',
+      `¿Desea depurar el acta ${this.form.get('noAuth').value}?`,
+      'Se eliminarán todos los bienes que no estén aprobados'
+    ).then(q => {
+      if (q.isConfirmed) {
+        this.dataPurge();
+      }
+    });
+  }
+
+  //GUARDADO DE SAVE
+  massiveSave() {
+    const body: ITmpCreateAuthoDestroy = {
+      user: this.user,
+      proceeding: this.form.get('noAuth').value,
+    };
+
+    this.proceedingService.tmpCreateAuthorization(body).subscribe(
+      res => {
+        console.log(res);
+        this.getProceeding();
+      },
+      err => {
+        this.alert('error', 'Error al crear acta', '');
+        console.log(err);
+      }
+    );
+  }
+
+  selectRowTry(e: any) {
+    console.log(e.data);
+  }
+
+  openListProceedings() {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (result: any) => {
+          console.log(result);
+          this.consult = true;
+          this.form.get('noAuth').setValue(result.id);
+          this.getProceeding();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+
+    this.modalService.show(ListKeyProceedingsComponent, config);
   }
 }

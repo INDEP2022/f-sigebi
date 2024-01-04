@@ -16,22 +16,15 @@
       <div body>
         <!--CAN WORK1 TABLE-->
         <div class="row">
-          <!-- <div class="col-6">
-            <button
-              (click)="add()"
-              [disabled]="!showFilters"
-              type="button"
-              tooltip="Nuevo"
-              containerClass="tooltip-style"
-              class="btn btn-info btn-sm active ml-2 mr-2">
-              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
-          </div> -->
           <div class="col-md-6 d-flex mb-3">
             <span title="Selecionar Todo" containerClass="tooltip-style">
               <button
-                *ngIf="data && data.length > 0"
+                *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active"
+                [disabled]="
+                  !SELECT_CAMBIA_ESTATUS_ENABLED ||
+                  (paymentRequestNumber && paymentRequestNumber.value)
+                "
                 style="
                   width: 100px;
                   display: flex;
@@ -44,8 +37,12 @@
             >
             <span title="Selecionar Todo" containerClass="tooltip-style">
               <button
-                *ngIf="data && data.length > 0"
+                *ngIf="data && data.length > 0 && address === 'M'"
                 class="btn btn-secondary btn-sm active ml-3"
+                [disabled]="
+                  !SELECT_CAMBIA_CLASIF_ENABLED ||
+                  (paymentRequestNumber && paymentRequestNumber.value)
+                "
                 style="
                   width: 100px;
                   display: flex;
@@ -59,8 +56,23 @@
           </div>
           <div class="col-md-6 mb-3 d-flex justify-content-end">
             <button
+              *ngIf="chargeGoodsByLote && expense"
+              type="button"
+              class="btn btn-sm btn-primary ml-2 active"
+              style="min-width: 100px"
+              [disabled]="
+                form.invalid ||
+                (paymentRequestNumber && paymentRequestNumber.value) ||
+                this.data.length === 0
+              "
+              (click)="save()">
+              Guardar <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
               (click)="add()"
-              [disabled]="!showAdd"
+              [disabled]="
+                !showAdd || (paymentRequestNumber && paymentRequestNumber.value)
+              "
               type="button"
               tooltip="Nuevo"
               containerClass="tooltip-style"
@@ -74,25 +86,25 @@
               class="row justify-content-end"></app-columns-select>
           </div>
         </div>
-        <div class="row pt-4 pl-0 pr-0 m-0">
-          <div class="col-md-12 p-0">
-            <div class="" [class]="showFilters ? '' : 'hideFilters'">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  #table
-                  [attr.class]="'table-responsive table-bordered'"
-                  [settings]="settings"
-                  [source]="dataPaginated"
-                  (userRowSelect)="selectRow($event.data)"
-                  (delete)="delete($event.data)"
-                  (edit)="edit($event.data)">
-                </ng2-smart-table>
-              </div>
-            </div>
-          </div>
+
+        <div class="pt-4 pb-4">
+          <form-loader *ngIf="loading"></form-loader>
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '300px' }">
+            <ng2-smart-table
+              #table
+              [attr.class]="'table-responsive table-bordered'"
+              [settings]="settings"
+              [source]="dataPaginated"
+              (userRowSelect)="selectRow($event.data)"
+              (delete)="delete($event.data)"
+              (edit)="edit($event.data)">
+            </ng2-smart-table>
+          </ng-scrollbar>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
         <div class="row">
           <div class="col-md-3 mt-4">
             <div class="cantidad">
@@ -129,19 +141,59 @@
           </div>
         </div>
 
+        <form class="form-material" [formGroup]="form" *ngIf="showCvePoliza">
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              [updateValues]="true"
+              formControlName="policie"
+              label="Cve Poliza"
+              [path]="pathPolicy"
+              value="policyKeyId"
+              bindLabel="description"
+              [readonly]="havePolicie"
+              [labelTemplate]="policieLabel"
+              [optionTemplate]="policieOption">
+            </ng-custom-select-loading>
+          </div>
+          <ng-template #policieLabel let-item="item">
+            {{ item.policyKeyId }} - {{ item.description }}
+          </ng-template>
+          <ng-template #policieOption let-item="item">
+            <div [title]="item.policyKeyId + '-' + item.description">
+              {{ item.policyKeyId }} - {{ item.description }}
+            </div>
+          </ng-template>
+        </form>
+
         <tr>
           <td colspan="5" align="center">
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters || !selectedRow"
+              [disabled]="
+                !conceptNumberValue ||
+                (address === 'M' && changeStatusFilter.length === 0) ||
+                (paymentRequestNumber && paymentRequestNumber.value)
+              "
+              (click)="sendToSIRSAE()">
+              Envíar Solicitud de pago a SIRSAE
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-primary mr-2 mt-2 active"
+              [disabled]="
+                !showAdd || !selectedRow || !selectedRow.detPaymentsId
+              "
               (click)="disperGasto()">
               Dispersa Gasto/Mandato {{ selectedRow?.detPaymentsId }}
             </button>
             <button
               type="button"
               class="btn btn-success btn-sm active mr-2 mt-2"
-              [disabled]="!showFilters"
+              [disabled]="
+                !showAdd || (paymentRequestNumber && paymentRequestNumber.value)
+              "
               (click)="file.click()">
               Cargar Excel/CSV
               <i aria-hidden="true" class="fa fa-upload"></i>
@@ -162,39 +214,89 @@
               Cargar Bienes Excel
             </button> -->
             <button
+              *ngIf="showLote"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="
+                !validateModifyEstatus ||
+                (paymentRequestNumber && paymentRequestNumber.value)
+              "
               (click)="modifyEstatus()">
               Modificar Estatus
             </button>
             <button
+              *ngIf="address === 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="
+                !showAdd || (paymentRequestNumber && paymentRequestNumber.value)
+              "
               (click)="applyTC()">
               Aplicar TC
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="!showAdd"
               (click)="contabilityMand()">
-              Contabilidad Mandatorio
+              Contabilidad Mandatos
             </button>
             <button
+              *ngIf="address === 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="
+                !showAdd || (paymentRequestNumber && paymentRequestNumber.value)
+              "
               (click)="reload()">
               Recargar
             </button>
             <button
+              *ngIf="address === 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="!showAdd"
               (click)="validates()">
               Validados
+            </button>
+            <button
+              *ngIf="address !== 'M'"
+              type="button"
+              class="btn btn-sm btn-primary mr-2 mt-2 active"
+              [disabled]="
+                (paymentRequestNumber && paymentRequestNumber.value) ||
+                !validChargeGoods
+              "
+              (click)="loadGoodsI()">
+              Carga de Bienes
+            </button>
+            <input
+              #fileI
+              type="file"
+              name="fileI"
+              class="d-none"
+              accept=".csv"
+              (change)="ABRE_ARCHIVO_CSVI($event)" />
+            <button
+              *ngIf="address === 'M'"
+              type="button"
+              class="btn btn-sm btn-primary mr-2 mt-2 active"
+              [disabled]="
+                !conceptNumberValue ||
+                dataCompositionExpensesToUpdateClasif.length === 0 ||
+                (paymentRequestNumber && paymentRequestNumber.value)
+              "
+              (click)="updateClasif()">
+              Actualizar Clasificación
+            </button>
+            <button
+              *ngIf="address === 'M'"
+              class="btn btn-sm btn-primary mr-2 mt-2 active"
+              type="button"
+              [disabled]="errorsClasification.length === 0"
+              (click)="showNotLoads()">
+              No Cambiados a Vehículo Robo
+              <i class="fa fa-info-circle"></i>
             </button>
           </td>
         </tr>

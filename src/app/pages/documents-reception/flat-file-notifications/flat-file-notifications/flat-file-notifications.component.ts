@@ -104,7 +104,7 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               'Advertencia',
-              'No se Encontró Datos para Generar el Archivo'
+              'No se encontraron datos para generar el archivo'
             );
           }
           return;

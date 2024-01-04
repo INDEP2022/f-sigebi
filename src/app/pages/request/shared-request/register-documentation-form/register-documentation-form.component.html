@@ -1,16 +1,10 @@
 <form [formGroup]="registerForm" class="form-material pb-0 mb-0">
   <div class="row mt-3">
     <div class="col-md-6">
-      <h6
-        *ngIf="
-          process != 'similar-good-register-documentation';
-          else titleMail
-        ">
-        Datos de la Solicitud
+      <h6 *ngIf="!displayNotifyMails">Datos de la Solicitud</h6>
+      <h6 *ngIf="displayNotifyMails">
+        Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n
       </h6>
-      <ng-template #titleMail>
-        <h6>Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n</h6>
-      </ng-template>
     </div>
     <div class="col-md-6">
       <div class="d-flex flex-row-reverse">
@@ -32,8 +26,8 @@
       </div>
     </div>
   </div>
-  <br />
-  <div class="row pt-5" *ngIf="displayNotifyMails == true">
+
+  <div class="row pt-5" *ngIf="displayNotifyMails">
     <div class="col-md-6">
       <form-field
         [control]="registerForm.get('emailNotification')"
@@ -79,7 +73,7 @@
             <input
               id="priority"
               type="checkbox"
-              class=""
+              class="gcheckbox"
               [ngModelOptions]="{ standalone: true }"
               [(ngModel)]="priorityCheck"
               (change)="changePriority($event)" />
@@ -255,7 +249,7 @@
           class="form-control" />
       </form-field>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" *ngIf="showInput('publicMinistry')">
       <ngx-select
         [form]="registerForm"
         control="publicMinistry"
@@ -267,7 +261,7 @@
         value="description">
       </ngx-select>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" *ngIf="showInput('court')">
       <form-field [control]="registerForm.get('court')" label="Juzgado">
         <input
           type="text"
@@ -276,10 +270,9 @@
           formControlName="court" />
       </form-field>
     </div>
-  </div>
-  <!-- Datos Agregados de oracle -->
-  <div class="row pt-5">
-    <div class="col-md-4">
+
+    <!-- Datos Agregados de oracle -->
+    <div class="col-md-4" *ngIf="showInput('destinationManagement')">
       <form-field
         [control]="registerForm.get('destinationManagement')"
         label="Gesti&oacute;n de Destino">
@@ -290,7 +283,7 @@
           formControlName="destinationManagement" />
       </form-field>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" *ngIf="showInput('transferEntNotes')">
       <form-field
         [control]="registerForm.get('transferEntNotes')"
         label="Notas Ent&#46; Transferente">
@@ -302,10 +295,12 @@
       </form-field>
     </div>
   </div>
+  <!-- Datos Agregados de oracle -->
+  <div class="row pt-5"></div>
   <!-- Fin -->
   <!-- Se aumento datos del codigo oracle transferente-->
   <div class="row">
-    <div class="col-md-4 pt-5" *ngIf="processDetonate == 'DEVOLUCION'">
+    <div class="col-md-4 pt-5" *ngIf="showInput('authorityOrdering')">
       <form-field
         [control]="registerForm.get('authorityOrdering')"
         label="Autoridad Ordenante">
@@ -316,7 +311,9 @@
           class="form-control" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 120">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="transference == 120 || showInput('trialType')">
       <form-field [control]="registerForm.get('trialType')" label="Tipo Juicio">
         <input
           type="text"
@@ -327,7 +324,11 @@
     </div>
     <div
       class="col-md-4 pt-5"
-      *ngIf="processDetonate == 'AMPARO' || transference == 3">
+      *ngIf="
+        processDetonate == 'AMPARO' ||
+        transference == 3 ||
+        showInput('protectNumber')
+      ">
       <form-field
         [control]="registerForm.get('protectNumber')"
         label="N&uacute;mero Amparo">
@@ -339,7 +340,13 @@
           min="0" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="
+        transference == 1 ||
+        transference == 3 ||
+        showInput('circumstantialRecord')
+      ">
       <form-field
         [control]="registerForm.get('circumstantialRecord')"
         label="Acta Circunstanciada">
@@ -350,7 +357,11 @@
           maxlength="100" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="
+        transference == 1 || transference == 3 || showInput('previousInquiry')
+      ">
       <form-field
         [control]="registerForm.get('previousInquiry')"
         label="Averiguacion Previa">
@@ -361,7 +372,9 @@
           maxlength="100" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="transference == 1 || transference == 3 || showInput('lawsuit')">
       <form-field [control]="registerForm.get('lawsuit')" label="Causa Penal">
         <input
           type="text"
@@ -372,7 +385,9 @@
     </div>
     <!-- </div>
   <div class="row pt-5"> -->
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="transference == 1 || transference == 3 || showInput('tocaPenal')">
       <form-field [control]="registerForm.get('tocaPenal')" label="Toca Penal">
         <input
           type="text"
@@ -381,7 +396,9 @@
           formControlName="tocaPenal" />
       </form-field>
     </div>
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="transference == 1 || transference == 3 || showInput('crime')">
       <form-field [control]="registerForm.get('crime')" label="Delito">
         <input
           type="text"
@@ -392,7 +409,11 @@
     </div>
     <!-- </div>
   <div class="row pt-5" > -->
-    <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <div
+      class="col-md-4 pt-5"
+      *ngIf="
+        transference == 1 || transference == 3 || showInput('domainExtinction')
+      ">
       <form-field
         [control]="registerForm.get('domainExtinction')"
         label="Extinci&oacute;n de Dominio">

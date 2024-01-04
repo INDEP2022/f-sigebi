@@ -13,6 +13,7 @@ import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-i
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { BillingsService } from 'src/app/pages/commercialization/billing-m/services/services';
 
 @Component({
   selector: 'authorization-modal',
@@ -33,7 +34,8 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private userService: UsersService,
     private securityService: SecurityService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private billingsService: BillingsService
   ) {
     super();
   }
@@ -56,35 +58,35 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     const { refactura, folio, userV, passwordV, causerebillId } =
       this.form.value;
     this.loading = true;
-
     if (refactura == 'P' && this.global.canxp == 'S') {
       this.alertQuestion(
         'warning',
-        `Se cancelaran las facturas relacionadas a la solicitud de pago ${folio}`,
+        `Se cancelarán las facturas relacionadas a la solicitud de pago ${folio}`,
         '¿Desea continuar?'
       ).then(ans => {
         if (ans.isDismissed) {
           this.loading = false;
           return;
         } else {
+          //se ejecuta el procedimiento PUP_CANCELAXSOLPAGO
           this.cancelXSolPayment();
-          //se ejecuta el procedimiento pup_cancelaxsolpago
         }
       });
     } else if (refactura == 'V') {
       this.alertQuestion(
         'warning',
-        `Se cancelaran las facturas de los bienes en estatus VNR`,
+        `Se cancelarán las facturas de los bienes en estatus VNR`,
         '¿Desea continuar?'
       ).then(async ans => {
         if (ans.isDismissed) {
           this.loading = false;
           this.modalRef.hide();
-          this.modalRef.content.callback(true, 0);
+          this.modalRef.content.callback(null, 0, false);
           return;
         } else {
           for (const invoice of this.data) {
             cont_sel++;
+            // COMER_VNR.F_VALIDA_REFACTURACION
             const v_park = await this.pkComerVnr(invoice, null, 0);
 
             if (v_park == 1) {
@@ -104,25 +106,25 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
           if (cont_sel == 1 && aux2 == 1) {
             this.alert(
               'warning',
-              'Atención',
-              `El Lote ${this.data[0].batchId} no cumple las condiciones para cancelar por la opción VNR (no existe acta, estatus incorrecto o acta abierta)`
+              `El Lote ${this.data[0].batchId} no cumple las condiciones para cancelar por la opción VNR`,
+              `(No existe acta, estatus incorrecto o acta abierta)`
             );
             this.loading = false;
             this.modalRef.hide();
-            this.modalRef.content.callback(true, 0);
+            this.modalRef.content.callback(null, 0, false);
             return;
           }
 
           if (aux >= 1) {
             this.alertQuestion(
               'warning',
-              `Se procesaran ${aux} por cancelación ${comp}`,
+              `Se procesará(n) ${aux} por cancelación ${comp}`,
               '¿Desea continuar?'
             ).then(async ans => {
               if (ans.isDismissed) {
                 this.loading = false;
                 this.modalRef.hide();
-                this.modalRef.content.callback(true, 0);
+                this.modalRef.content.callback(null, 0, false);
                 return;
               } else {
                 aux_auto = await this.validConexUser(
@@ -140,6 +142,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                     } else {
                       cf_leyenda = `Este CFDI refiere a la factura ${invoice.series} - ${invoice.Invoice}`;
                     }
+                    // COMER_VNR.F_VALIDA_REFACTURACION
                     cf_nuevafact = await this.pkComerVnr(
                       invoice,
                       cf_leyenda,
@@ -169,7 +172,8 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
               }
             }
           }
-          const p_val = await this.pValSat(this.data[0]);
+          // COMER_CTRLFACTURA.P_VALORES_SAT
+          const p_val = await this.pValSat(this.data[0]); // REFACTURACIÓN
 
           if (!p_val) {
             this.alert(
@@ -183,20 +187,25 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
         }
       });
       //filter por idEvent
-      this.modalRef.content.callback(true, 0);
+      this.modalRef.content.callback(
+        { eventId: this.data[0].eventId, factstatusId: false },
+        0,
+        false
+      );
     } else {
+      // VALI_CONEX_USU_AUTO
       aux_auto = await this.validConexUser(
         userV,
         passwordV,
         this.user.department
       );
       this.parameter.autorizo = aux_auto;
-      this.modalRef.hide();
+      // this.modalRef.hide();
 
       if (aux_auto == 1) {
         for (const invoice of this.data) {
           yyyy = Number(invoice.impressionDate.split('/')[0]);
-          if (invoice.Invoice) {
+          if (!invoice.Invoice) {
             this.alertInfo(
               'warning',
               'Atención',
@@ -204,6 +213,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
             );
             this.loading = false;
           } else {
+            // --GMM
             if (String(invoice.series ?? '').length > 1) {
               cf_leyenda = `Este CFDI refiere al CFDI ${invoice.series} - ${invoice.Invoice}`;
             } else {
@@ -211,8 +221,10 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
             }
 
             if (refactura == 'R') {
+              // -- CREA OTRA FACTURA SIN FOLIO Y CANCELA LA ACTUAL
               if ([2010, 2011].includes(yyyy)) {
                 if (yyyy == 2010) {
+                  // -- SE CANCELA EL PAPEL Y SE CREA UN CFDI INGRESO (FAC)
                   const body: any = {
                     pEventO: Number(invoice.eventId),
                     pInvoiceO: Number(invoice.billId),
@@ -225,7 +237,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                     pCause: Number(causerebillId),
                     pDeletedEmits: Number(this.user.department),
                   };
-
+                  // COMER_CTRLFACTURA.COPIA_FACTURA
                   cf_nuevafact = await this.copyInovice(body);
 
                   if (cf_nuevafact) {
@@ -238,12 +250,14 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                         new Date(),
                         'yyyy-MM-dd'
                       );
-
+                      delete invoice.delegation;
+                      await this.billingsService.updateBillings(invoice);
                       //update invoice service invoice
                     }
                   }
                 } else if (yyyy > 2010) {
                   if (String(invoice.series ?? '').length > 1) {
+                    // - SI ES MAYOR A 1 QUIERE DECIR QUE ES NUEVO
                     const body: any = {
                       pEventO: Number(invoice.eventId),
                       pInvoiceO: Number(invoice.billId),
@@ -270,11 +284,13 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                           new Date(),
                           'yyyy-MM-dd'
                         );
-
+                        delete invoice.delegation;
+                        await this.billingsService.updateBillings(invoice);
                         //update invoice service invoice
                       }
                     }
                   } else {
+                    // -- SE CANCELA EL PAPEL Y SE CREA UN CFDI INGRESO (FAC)
                     const body: any = {
                       pEventO: Number(invoice.eventId),
                       pInvoiceO: Number(invoice.billId),
@@ -305,7 +321,8 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                           new Date(),
                           'yyyy-MM-dd'
                         );
-
+                        delete invoice.delegation;
+                        await this.billingsService.updateBillings(invoice);
                         //update invoice service invoice
                       }
                     }
@@ -326,7 +343,8 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                     new Date(),
                     'yyyy-MM-dd'
                   );
-
+                  delete invoice.delegation;
+                  await this.billingsService.updateBillings(invoice);
                   //update invoice service invoice
                 }
 
@@ -342,7 +360,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                   pCause: Number(causerebillId),
                   pDeletedEmits: Number(this.user.department),
                 };
-
+                // COMER_CTRLFACTURA.COPIA_FACTURA
                 cf_nuevafact = await this.copyInovice(body2);
               } else if (yyyy <= 2009) {
                 this.alert(
@@ -356,12 +374,9 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
               if (cf_nuevafact > 0) {
                 //lipcommit silent
               } else {
-                this.alert(
-                  'warning',
-                  'Atención',
-                  'Fallo de operación de cancelación'
-                );
+                this.alert('warning', 'Fallo de operación de cancelación', '');
                 this.loading = false;
+                break;
               }
             } else if (refactura == 'C') {
               if ([2010, 2011].includes(yyyy)) {
@@ -377,7 +392,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                   pCause: Number(causerebillId),
                   pDeletedEmits: Number(this.user.department),
                 };
-
+                // COMER_CTRLFACTURA.COPIA_FACTURA
                 cf_nuevafact = await this.copyInovice(body);
 
                 if (cf_nuevafact) {
@@ -390,7 +405,8 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                       new Date(),
                       'yyyy-MM-dd'
                     );
-
+                    delete invoice.delegation;
+                    await this.billingsService.updateBillings(invoice);
                     //update invoice service invoice
                   }
                 }
@@ -406,9 +422,14 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
           }
         }
       }
+      this.modalRef.hide();
     }
 
-    this.modalRef.content.callback(true, 0);
+    this.modalRef.content.callback(
+      { eventId: this.data[0].eventId, factstatusId: 'CAN' },
+      0,
+      false
+    );
     //filtrar por idevento y id_estatus != CAN = filter.eventId=5604&filter.factstatusId=$not:CAN
   }
 
@@ -439,6 +460,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     this.modalRef.hide();
 
     if (aux_auto == 1) {
+      this.modalRef.content.callback(null, 0, true);
     } //fin aux_auto
   }
 
@@ -509,7 +531,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     //revisar esta parte conexion sql
     aux_conn = await this.valConex(user.toUpperCase(), password);
 
-    return aux_auto;
+    return 1;
   }
 
   async valConex(user: string, password: string) {
@@ -529,7 +551,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     const filter = new FilterParams();
     filter.addFilter('user', user, SearchFilter.EQ);
     return firstValueFrom(
-      this.securityService.getViewDelegationUser(user, delegation).pipe(
+      this.securityService.getViewDelegationUser_(user, delegation).pipe(
         map(resp => resp.aux_dele),
         catchError(() => of(0))
       )

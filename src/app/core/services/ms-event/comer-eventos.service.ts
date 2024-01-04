@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from 'src/app/core/interfaces/list-response.interface';
 import { IComerEvent, IGraceDate } from './../../models/ms-event/event.model';
 
 @Injectable({
@@ -53,6 +56,11 @@ export class ComerEventosService extends HttpService {
 
   update(id: string | number, comerEvent: IComerEvent) {
     const route = `${this.endpoint}/${id}`;
+    return this.put(route, comerEvent);
+  }
+
+  update2(id: string | number, comerEvent: any) {
+    const route = `comer-event/${id}`;
     return this.put(route, comerEvent);
   }
 
@@ -161,6 +169,10 @@ export class ComerEventosService extends HttpService {
     );
   }
 
+  getLoteExportExcel(data?: any) {
+    return this.post('application/paLookLotsChangeStatusDataExcel', data);
+  }
+
   getspObtnPhaseEvent(body: any) {
     const route = `${EventEndpoints.SpObtnPhaseEvent}`;
     return this.post(route, body);
@@ -178,5 +190,19 @@ export class ComerEventosService extends HttpService {
 
   getPaLookLotsExcel(body: any, params: _Params) {
     return this.post(EventEndpoints.PaLookLotsChangeExcel, body, params);
+  }
+
+  getTotalNumeraryxGoodsEventApplySpent(body: {
+    eventId: number;
+    apply: string;
+    spentId: number;
+  }) {
+    return this.post<IListResponseMessage<{ suma_monto: string }>>(
+      'application/sum-comernumerarioxbienes',
+      body
+    ).pipe(
+      catchError(x => of({ data: [] })),
+      map(x => (x.data.length > 0 ? +x.data[0].suma_monto : 0))
+    );
   }
 }

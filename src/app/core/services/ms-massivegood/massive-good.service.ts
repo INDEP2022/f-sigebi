@@ -3,11 +3,18 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { _Params } from 'src/app/common/services/http-wcontet.service';
 import { NumDetGood } from 'src/app/pages/administrative-processes/numerary/numerary-request/models/goods-det';
+import { environment } from 'src/environments/environment';
 import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-massivegood-endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IPackageInfo } from '../../models/catalogs/package.model';
+import {
+  IGoodsExpedient,
+  IGoodTracker,
+  IPackageInfo,
+  IPupCompFolioUniv,
+  IPupGoodTrackerRga,
+} from '../../models/catalogs/package.model';
 import {
   IIdentifierCount,
   IMassiveGoodTracker,
@@ -20,7 +27,8 @@ import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 })
 export class MassiveGoodService extends HttpService {
   private readonly route = MassiveGoodEndpoints;
-
+  private readonly _url = environment.API_URL;
+  private readonly _prefix = environment.URL_PREFIX;
   constructor() {
     super();
     this.microservice = this.route.MassiveGood;
@@ -60,6 +68,14 @@ export class MassiveGoodService extends HttpService {
 
   getById(id: string | number): Observable<IMassiveGood> {
     const route = `${this.route.MassiveChargeGoods}/${id}`;
+    return this.get(route);
+  }
+  getLosersReport(id: string | number) {
+    const route = `${this.route.losersReport}/${id}`;
+    return this.get(route);
+  }
+  getWinnersReport(id: string | number) {
+    const route = `${this.route.winnersReport}/${id}`;
     return this.get(route);
   }
 
@@ -239,5 +255,52 @@ export class MassiveGoodService extends HttpService {
 
   getCSVStatus(status: number) {
     return this.get(`${MassiveGoodEndpoints.ApplicationCSV}?status=${status}`);
+  }
+
+  detailDonationEventExcel(params: any) {
+    return this.post(this.route.detailDonationEventExcel, params);
+  }
+
+  goodsExpedient(body: IGoodsExpedient) {
+    return this.post('application/pup-good-proceedings', body);
+  }
+
+  pupGoodTracker(body: IGoodTracker) {
+    return this.post('application/pup-good-tracker', body);
+  }
+
+  getApplicationRegisterCountCsv(params: _Params) {
+    return this.get(MassiveGoodEndpoints.ApplicationRegisterCountCsv, params);
+  }
+
+  tmpDeleteAuthorization(user: string) {
+    return this.delete(`application/pup-depura-detail/${user}`);
+  }
+
+  pupCompFolioUniv(body: IPupCompFolioUniv) {
+    return this.post('application/pup-comp-folio-univ', body);
+  }
+
+  pupFlatGoodsDestr(body: FormData) {
+    return this.post('application/pup-plain-goods-destr', body);
+  }
+
+  newPupFlatGoods(body: FormData) {
+    return this.post('application/pup-flat-goods', body);
+  }
+
+  pupGoodTrackerRga(body: IPupGoodTrackerRga) {
+    return this.post('application/pup-good-tracker-rga', body);
+  }
+
+  pupLoadCsvPaymentSearchList(file: File, cveBank: string) {
+    const filename = file.name;
+    const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.httpClient.post<any>(
+      `${this._url}${this.microservice}/${this._prefix}${MassiveGoodEndpoints.pupProcesaCsvPaymentSearch}/${cveBank}`,
+      formData
+    );
   }
 }

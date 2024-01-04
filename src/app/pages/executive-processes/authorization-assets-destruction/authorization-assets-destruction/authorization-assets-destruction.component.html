@@ -10,7 +10,7 @@
 
     <div body>
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('idExpedient')"
             label="No. Expediente">
@@ -20,25 +20,6 @@
               formControlName="idExpedient" />
           </form-field>
         </div>
-        <div class="col">
-          <div class="justify-content-start">
-            <button
-              [disabled]="!form.valid"
-              (click)="expedientChange()"
-              type="button"
-              class="btn btn-primary active btn-sm mr-3">
-              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-            </button>
-            <button
-              [disabled]="!form.valid"
-              (click)="clean()"
-              class="btn btn-danger btn-sm active mr-3">
-              Limpiar <i class="fas fa-eraser"> </i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
             [control]="form.get('preliminaryInquiry')"
@@ -57,6 +38,8 @@
               formControlName="criminalCase" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
             [control]="form.get('circumstantialRecord')"
@@ -67,9 +50,6 @@
               formControlName="circumstantialRecord" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row pt-4">
         <div class="col-md-4">
           <form-field [control]="form.get('keyPenalty')" label="Toca Penal">
             <input
@@ -78,16 +58,20 @@
               formControlName="keyPenalty" />
           </form-field>
         </div>
+      </div>
 
+      <div class="row pt-4 text-center">
         <div class="col">
           <button
-            [disabled]="!form.valid || textDisabled"
-            (click)="addGood()"
+            (click)="buttonAddGoods()"
             type="button"
-            tooltip="Agregar"
+            tooltip="Agregar bienes"
+            [disabled]="addGoodFlag"
             containerClass="tooltip-style"
             class="btn btn-info btn-sm active ml-2 mr-2">
-            Agregar <i class="bx bx-plus bx-sm float-icon"></i>
+            Agregar bienes
+            <i *ngIf="!addGoodFlag" class="bx bx-plus bx-sm float-icon"></i>
+            <i *ngIf="addGoodFlag" class="spinner-border spinner-border-sm"></i>
           </button>
         </div>
       </div>
@@ -102,6 +86,7 @@
             <input
               type="text"
               class="form-control"
+              [readOnly]="!canSearch"
               formControlName="noAuth"
               minlength="1"
               maxlength="10" />
@@ -113,33 +98,91 @@
             label="Oficio de Autorizaci&oacute;n">
             <input
               type="text"
+              [readOnly]="!canSearch && !canNewProceeding"
               class="form-control"
               formControlName="authNotice" />
           </form-field>
+        </div>
+        <div class="col-sm-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="openListProceedings()">
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+          </button>
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('fromDate')" label="Fecha">
             <input
               type="text"
               class="form-control"
+              [readOnly]="!canSearch && !canNewProceeding"
               bsDatepicker
               formControlName="fromDate"
               [bsConfig]="bsConfig" />
           </form-field>
         </div>
+        <div class="col-md-2">
+          <span>{{ form.get('statusAct').value }}</span>
+        </div>
+      </div>
+      <div class="row pt-5 text-center">
         <div class="col">
-          <div class="justify-content-start">
-            <button (click)="masive()" class="btn btn-sm btn-info mr-3">
-              <i class="fa fa-arrow-down"></i>
-            </button>
-            <button
-              (click)="closed()"
-              type="button"
-              class="btn btn-sm btn-danger active"
-              [disabled]="textDisabled">
-              {{ textButton }}
-            </button>
-          </div>
+          <button
+            *ngIf="canSearch"
+            (click)="getProceeding()"
+            type="button"
+            class="btn btn-primary active btn-sm mr-3">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            *ngIf="!canSearch"
+            type="button"
+            (click)="massiveSave()"
+            class="btn btn-primary active btn-sm mr-3">
+            Guardar cambios <i class="fa fa-save"></i>
+          </button>
+          <button
+            *ngIf="!canNewProceeding"
+            type="button"
+            tooltip="Nuevo"
+            (click)="newProceeding()"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active mr-3">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            *ngIf="canNewProceeding"
+            (click)="saveNewProceeding()"
+            type="button"
+            class="btn btn-primary btn-sm active mr-3">
+            Guardar nueva acta
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+          <button
+            type="button"
+            data-toggle="tooltip"
+            title="Cambio masivo de estatus"
+            (click)="masiveChange()"
+            class="btn btn-sm btn-primary active mr-3">
+            <i class="fa fa-arrow-down float-icon"></i>
+          </button>
+          <button
+            (click)="closeButton()"
+            type="button"
+            class="btn btn-sm btn-danger active mr-3"
+            [disabled]="form.get('statusAct').value == null">
+            {{ textButton }}
+          </button>
+          <button
+            *ngIf="form.get('statusAct').value == 'ABIERTA'"
+            (click)="dataPurge()"
+            class="btn btn-danger btn-sm active mr-3">
+            Depurar
+          </button>
+          <button (click)="clean()" class="btn btn-danger btn-sm active mr-3">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
       </div>
 
@@ -160,6 +203,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered table-responsive'"
               [settings]="settings"
+              (userSelectRow)="selectRowTry($event)"
               [source]="data"
               (userRowSelect)="selectRow($event.data)">
             </ng2-smart-table>
@@ -184,7 +228,6 @@
             <div class="row">
               <div class="col-md-12 text-right">
                 <button
-                  [disabled]="textDisabled"
                   type="button"
                   class="btn btn-success btn-sm active"
                   (click)="fileExcel.click()">
@@ -200,12 +243,6 @@
                   accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
               </div>
             </div>
-            <!-- <div class="row">
-              <small>
-                Seleccionar archivo de la ruta:
-                src\app\pages\executive-processes\filesTest
-              </small>
-            </div> -->
           </div>
         </div>
       </div>
@@ -214,7 +251,8 @@
         <app-scan-file-authorization
           [form]="form"
           [formControlName]="'universalFolio'"
-          [cveDocument]="form.get('act').value"
+          [formControlNameKey]="'authNotice'"
+          [cveDocument]="form.get('authNotice').value"
           [noExpedient]="expediente"
           [actaSC]="false"
           [statusProceeding]="form.get('statusAct').value"

@@ -9,6 +9,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { ISample } from 'src/app/core/models/ms-goodsinv/sample.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -20,6 +21,7 @@ import { OrderServiceService } from 'src/app/core/services/ms-order-service/orde
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared';
@@ -35,11 +37,16 @@ import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify
 export class ShowReportComponentComponent extends BasePage implements OnInit {
   private pdf: PDFDocumentProxy;
   idTypeDoc: number = 0;
+  reportName: string = '';
+  tableName: string = '';
+
   idProg: number = 0;
   idSampleOrder: number = 0;
   idprogDel: number = 0;
   typeNotification: number = 0;
+  orderSampleId: number = 0;
   receiptId: number = 0;
+  idSample: number = 0;
   idReportAclara: any; //ID de los reportes
   isPdfLoaded = false;
   title: string = '';
@@ -80,6 +87,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   idRegionalDelegation: number = 0; //parametro pasado desde el padre
   process: string = '';
   orderServiceTask: number = null;
+  typeAnnex: string = '';
+  dynamic: boolean = false;
+  signed: boolean = true;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -95,7 +105,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     private goodService: GoodService,
     private proceedingService: ProceedingsService,
     private historyGoodService: HistoryGoodService,
-    private orderService: OrderServiceService
+    private orderService: OrderServiceService,
+    private samplingGoodService: SamplingGoodService
   ) {
     super();
     this.settings = {
@@ -128,11 +139,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     this.formLoading = true;
     this.showReportByTypeDoc();
 
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getSignatories());
+
     if (this.idProg || this.idSampleOrder) {
       this.getReceipt();
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getSignatories());
     }
 
     if (this.signatore) {
@@ -227,8 +239,26 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.formLoading = false;
     }
 
-    if (this.idTypeDoc == 197 && this.annexk == true) {
-      let linkDoc: string = `${this.urlBaseReport}AnexoKOrdenes.jasper&ID_MUESTREO_ORDEN=3&ID_TIPO_DOCTO=197`;
+    if (this.idTypeDoc == 197 && this.orderSampleId) {
+      let linkDoc: string = `${this.urlBaseReport}AnexoKOrdenes.jasper&ID_MUESTREO_ORDEN=${this.orderSampleId}&ID_TIPO_DOCTO=197`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.idTypeDoc == 218) {
+      let linkDoc: string = `${this.urlBaseReport}FormatoReclamacionMuestreo.jasper&ID_MUESTREO=${this.idSample}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.idTypeDoc == 219) {
+      let linkDoc: string = `${this.urlBaseReport}AnexoKBienes.jasper&ID_MUESTREO=${this.idSample}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.dynamic) {
+      let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.idSample},${this.idTypeDoc}`;
       this.src = linkDoc;
       this.formLoading = false;
     }
@@ -254,10 +284,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   getSignatories() {
     const learnedType = this.idTypeDoc;
     let learnedId = null;
-    if (this.idTypeDoc == 197) {
-      learnedId = this.idSampleOrder;
+    if (this.idTypeDoc == 218 || this.idTypeDoc == 219) {
+      learnedId = this.idSample;
     } else {
       learnedId = this.programming?.id;
+    }
+
+    if (this.idTypeDoc == 197) {
+      learnedId = this.orderSampleId;
     }
     this.loading = true;
     this.signatoriesService
@@ -301,7 +335,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           callback: (response: any) => {},
         }, //pasar datos por aca
         class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-        ignoreBackdropClick: true, //ignora el click fuera del modal
+        keyboard: false,
+        ignoreBackdropClick: true,
       };
       this.modalService.show(PreviewDocumentsComponent, config);
     });
@@ -311,6 +346,16 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     if (this.idTypeDoc == 107 && this.typeFirm == 'autografa') {
       this.modalRef.content.callback(true, this.typeFirm);
       this.modalRef.hide();
+    }
+
+    if (this.idTypeDoc == 218 && this.typeFirm == 'autografa') {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.close();
+    }
+
+    if (this.idTypeDoc == 219 && this.typeFirm == 'autografa') {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.close();
     }
 
     if (this.idTypeDoc == 103 && this.typeFirm == 'autograf') {
@@ -349,6 +394,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 197 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 218 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 219 && this.typeFirm == 'electronica') ||
       (this.idOrderService && this.typeFirm == 'electronica')
     ) {
       if (!this.listSigns && this.printReport && !this.isAttachDoc) {
@@ -456,7 +503,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(this.programming?.id, 'ProgramacionRecibo', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.loadingButton = false;
                   this.msjCheck = true;
 
@@ -466,7 +513,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   this.alert(
                     'error',
                     'Acción Invalida',
@@ -488,7 +535,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 {}
               )
               .subscribe({
-                next: response => {
+                next: () => {
                   this.msjCheck = true;
                   this.loadingButton = false;
                   this.alert(
@@ -497,7 +544,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   this.alert(
                     'error',
                     'Acción Invalida',
@@ -514,7 +561,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'actaSat', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.loadingButton = false;
                   this.msjCheck = true;
                   this.alert(
@@ -523,7 +570,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   this.alertInfo(
                     'error',
                     'Acción Inválida',
@@ -542,7 +589,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'actaAsegurados', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.msjCheck = true;
                   this.loadingButton = false;
                   this.alert(
@@ -551,7 +598,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   //this.msjCheck = true;
                   this.loadingButton = false;
                   this.alertInfo(
@@ -569,7 +616,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'actasVoluntarias', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.msjCheck = true;
                   this.loadingButton = false;
                   this.alert(
@@ -578,7 +625,61 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
+                  //this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alertInfo(
+                    'error',
+                    'Acción Inválida',
+                    'No fue posible firmar el documento'
+                  ).then();
+                },
+              });
+          }
+
+          if (this.idTypeDoc == 218) {
+            const idKeyDoc = this.idSample;
+
+            this.gelectronicFirmService
+              .firmDocument(idKeyDoc, 'AnexoJ', {})
+              .subscribe({
+                next: () => {
+                  this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Documento firmado correctamente'
+                  );
+                },
+                error: () => {
+                  //this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alertInfo(
+                    'error',
+                    'Acción Inválida',
+                    'No fue posible firmar el documento'
+                  ).then();
+                },
+              });
+          }
+
+          if (this.idTypeDoc == 219) {
+            const idKeyDoc = this.idSample + '-K';
+
+            this.gelectronicFirmService
+              .firmDocument(idKeyDoc, 'AnexoKMuestreoBien', {})
+              .subscribe({
+                next: () => {
+                  this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Documento firmado correctamente'
+                  );
+                },
+                error: () => {
                   //this.msjCheck = true;
                   this.loadingButton = false;
                   this.alertInfo(
@@ -591,14 +692,39 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           }
 
           if (this.idTypeDoc == 197) {
-            const idKeyDoc = this.idSampleOrder + '-K';
-            this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio');
+            const idKeyDoc = this.orderSampleId + '-K';
+
+            this.gelectronicFirmService
+              .firmDocument(idKeyDoc, 'AnexoKMuestreoOrdenServicio', {})
+              .subscribe({
+                next: () => {
+                  this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Documento firmado correctamente'
+                  );
+                },
+                error: () => {
+                  //this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alertInfo(
+                    'error',
+                    'Acción Inválida',
+                    'No fue posible firmar el documento'
+                  ).then();
+                },
+              });
+
+            /* const idKeyDoc = this.orderSampleId + '-K';
+            this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio'); */
           }
 
-          if (this.idOrderService) {
+          /*if (this.idOrderService) {
             const idKeyDoc = this.programming.id + ' - ' + this.idOrderService;
             this.saveElectronicSign(idKeyDoc, 'order_service');
-          }
+          } */
         }
       }
     );
@@ -648,6 +774,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         },
       },
       class: 'modal-lg modal-dialog-centered',
+      keyboard: false,
       ignoreBackdropClick: true,
     };
     this.modalService.show(UploadFielsModalComponent, config);
@@ -680,7 +807,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
           (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
           (this.idTypeDoc == 221 && this.typeFirm == 'electronica') ||
-          (this.idTypeDoc == 197 && this.typeFirm == 'electronica')
+          (this.idTypeDoc == 197 && this.typeFirm == 'electronica') ||
+          (this.idTypeDoc == 218 && this.typeFirm == 'electronica') ||
+          (this.idTypeDoc == 219 && this.typeFirm == 'electronica')
         ) {
           this.validAttachDoc();
         }
@@ -1023,7 +1152,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: async response => {
-                //const updateReceipt = await this.procedding(response.dDocName);
                 const updateSampleOrder = await this.updateSampleOrder(
                   response.dDocName
                 );
@@ -1097,57 +1225,104 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               error: error => {},
             });
         });
-      }
+      } else if (this.idTypeDoc == 218 && this.typeFirm == 'electronica') {
+        const token = this.authService.decodeToken();
+        const formData = {
+          keyDoc: this.idSample,
+          dDocTitle: 'Solicitud de Restitución de Bienes Faltantes y/o Dañados',
+          xDelegacionRegional: token.department,
+          xNombreProceso: 'Muestreo Bienes',
+          xTipoDocumento: 218,
+          xNivelRegistroNSBDB: 'Bien',
+          dSecurityGroup: 'Public',
+        };
 
-      /*let token = this.authService.decodeToken();
-      const extension = '.pdf';
-      const nombreDoc = `Recibo Entrega${extension}`;
-      const contentType: string = '.pdf';
+        const extension = '.pdf';
+        const docName =
+          'Solicitud de Restitución de Bienes Faltantes y/o Dañados';
+        const contentType: string = '.pdf';
 
-      const formData = {
-        keyDoc: this.programming.id,
-        xDelegacionRegional: this.programming.regionalDelegationNumber,
-        dDocTitle: nombreDoc,
-        xNombreProceso: 'Ejecutar Recepcion',
-        xTipoDocumento: 221,
-        xNivelRegistroNSBDB: 'Recibo',
-        dDocType: contentType,
-        dDocAuthor: token.name,
-        dInDate: new Date(),
-        xidProgramacion: this.programming.id,
-      };
-
-      this.pdf.getData().then(u8 => {
-        let blob = new Blob([u8.buffer], {
-          type: 'application/pdf',
-        });
-        this.wContentService
-          .addDocumentToContent(
-            nombreDoc,
-            contentType,
-            JSON.stringify(formData),
-            blob,
-            extension
-          )
-          .subscribe({
-            next: async resp => {
-              const updateProgramming = await this.updateProgramming(
-                resp.dDocName
-              );
-
-              if (updateProgramming) {
-                this.alert(
-                  'success',
-                  'Documento Guardado',
-                  'El documento se guardó correctamente'
-                );
-                this.modalRef.content.callback(true);
-                this.close();
-              }
-            },
-            error: error => {},
+        this.pdf.getData().then(u8 => {
+          let blob = new Blob([u8.buffer], {
+            type: 'application/pdf',
           });
-      }); */
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                const updateSample = await this.updateSample(response.dDocName);
+                if (updateSample) {
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true, this.typeFirm);
+                    }
+                  });
+                }
+              },
+              error: error => {},
+            });
+        });
+      } else if (this.idTypeDoc == 219 && this.typeFirm == 'electronica') {
+        const token = this.authService.decodeToken();
+        const formData = {
+          keyDoc: `${this.idSample} -K`,
+          dDocTitle: 'Anexo K',
+          xDelegacionRegional: token.department,
+          xNombreProceso: 'Muestreo Bienes',
+          xTipoDocumento: 219,
+          xNivelRegistroNSBDB: 'Bien',
+          dSecurityGroup: 'Public',
+        };
+
+        const extension = '.pdf';
+        const docName = 'Anexo K';
+        const contentType: string = '.pdf';
+
+        this.pdf.getData().then(u8 => {
+          let blob = new Blob([u8.buffer], {
+            type: 'application/pdf',
+          });
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                const updateSample = await this.updateSampleK(
+                  response.dDocName
+                );
+                if (updateSample) {
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true, this.typeFirm);
+                    }
+                  });
+                }
+              },
+              error: error => {},
+            });
+        });
+      }
     }
   }
 
@@ -1278,23 +1453,97 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   updateSampleOrder(dDocName: string) {
     return new Promise((resolve, reject) => {
-      const body = {
-        idSamplingOrder: this.idSampleOrder,
-        idcontentk: dDocName,
-      };
-      this.orderService.updateSampleOrder(body).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          console.log(error);
-          this.onLoadToast(
-            'error',
-            'error al actualizar el muestreo de ordenes'
-          );
-          reject(error);
-        },
-      });
+      if (this.typeAnnex == 'sign-k-order-sample') {
+        const body = {
+          idSamplingOrder: this.orderSampleId,
+          idcontentk: dDocName,
+        };
+        this.orderService.updateSampleOrder(body).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'error al actualizar el muestreo de ordenes'
+            );
+            reject(error);
+          },
+        });
+      } else {
+        const body = {
+          idSamplingOrder: this.orderSampleId,
+          idcontentksae: dDocName,
+        };
+        this.orderService.updateSampleOrder(body).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'error al actualizar el muestreo de ordenes'
+            );
+            reject(error);
+          },
+        });
+      }
+    });
+  }
+
+  updateSample(dDocName: string) {
+    return new Promise((resolve, reject) => {
+      if (this.typeAnnex == 'annexJ-assets-classification') {
+        const sampleData: ISample = {
+          sampleId: this.idSample,
+          contentId: dDocName,
+        };
+
+        this.samplingGoodService.updateSample(sampleData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+        });
+      } else if (this.typeAnnex == 'sign-annexJ-assets-classification') {
+        const sampleData: ISample = {
+          sampleId: this.idSample,
+          contentTeId: dDocName,
+        };
+
+        this.samplingGoodService.updateSample(sampleData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+        });
+      }
+    });
+  }
+
+  updateSampleK(dDocName: string) {
+    return new Promise((resolve, reject) => {
+      if (this.typeAnnex == 'annex-assets-classification') {
+        const sampleData: ISample = {
+          sampleId: this.idSample,
+          contentIdK: dDocName,
+        };
+
+        this.samplingGoodService.updateSample(sampleData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+        });
+      } else if (this.typeAnnex == 'sign-annex-assets-classification') {
+        const sampleData: ISample = {
+          sampleId: this.idSample,
+          contentKSaeId: dDocName,
+        };
+
+        this.samplingGoodService.updateSample(sampleData).subscribe({
+          next: () => {
+            resolve(true);
+          },
+        });
+      }
     });
   }
 }

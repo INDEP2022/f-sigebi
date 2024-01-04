@@ -495,7 +495,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.deleteDocOficioGestion(event.managementNumber, event.cveDocument);
@@ -659,7 +659,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       desSenderpa: f.value.descriptionSender,
     };
     this.serviceOficces.updateOficio(obj).subscribe({
-      next: response => {},
+      next: response => { },
       error: responseError => {
         // if (responseError.message.indexOf('registros') == -1) {
         // this.onLoadToast('warning', responseError.message, '');
@@ -1007,7 +1007,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(legend.id);

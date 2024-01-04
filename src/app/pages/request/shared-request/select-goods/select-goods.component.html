@@ -2,13 +2,13 @@
   <h5 class="title">Bienes Inventario</h5>
   <app-search-inventory-goods
     (onSearch)="getInfoGoods($event)"></app-search-inventory-goods>
-  <div class="row mt-3">
-    <div class="col-sm-12 col-md-12 col-lg-6">
+  <div class="row pb-3">
+    <div class="col-sm-12 col-md-12 col-lg-12" *ngIf="false">
       <div class="form-material">
         <search-bar [params]="goodParams"></search-bar>
       </div>
     </div>
-    <div class="col-sm-12 col-md-12 col-lg-6">
+    <div class="col-sm-12 col-md-12 col-lg-12">
       <div class="d-flex flex-row-reverse">
         <div class="">
           <app-columns-select
@@ -35,20 +35,20 @@
 </ng-container>
 
 <h5>Bienes Seleccionados</h5>
-<div class="row mt-3">
-  <div class="col-sm-12 col-md-12 col-lg-6">
+<div class="row pb-3">
+  <div class="col-sm-12 col-md-12 col-lg-6" *ngIf="false">
     <div class="form-material">
       <search-bar [params]="selectedGoodParams"></search-bar>
     </div>
   </div>
-  <div class="col-sm-12 col-md-12 col-lg-6">
+  <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="d-flex flex-row-reverse">
       <div class="">
         <app-columns-select
           [leftList]="true"
           [(settings)]="selectedGoodSettings"></app-columns-select>
       </div>
-      <div *ngIf="requestInfo?.affair != 10 && requestInfo?.affair != 25">
+      <div *ngIf="btnGrouper">
         <button
           class="btn btn-sm btn-success active me-2 font-size-13"
           (click)="assignGoodGrouper()">

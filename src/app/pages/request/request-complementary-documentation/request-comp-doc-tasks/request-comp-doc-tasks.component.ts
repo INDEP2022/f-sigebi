@@ -11,24 +11,36 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { LocalDataSource } from 'ng2-smart-table';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
+import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IRequest } from 'src/app/core/models/requests/request.model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
+import Swal from 'sweetalert2';
+import { DELEGATION_COLUMNS_REPORT } from '../../../../../app/pages/siab-web/commercialization/report-unsold-goods/report-unsold-goods/columns';
+import { SendRequestEmailComponent } from '../../destination-information-request/send-request-email/send-request-email.component';
+import { ChangeLegalStatusComponent } from '../../economic-compensation/change-legal-status/change-legal-status.component';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
+import { getConfigAffair } from './catalog-affair';
 import { CompDocTasksComponent } from './comp-doc-task.component';
-import { de } from 'date-fns/locale';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { TaskService } from 'src/app/core/services/ms-task/task.service';
-import Swal from 'sweetalert2';
-import { ITask } from 'src/app/core/models/ms-task/task-model';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -37,7 +49,24 @@ import { ITask } from 'src/app/core/models/ms-task/task-model';
 })
 export class RequestCompDocTasksComponent
   extends CompDocTasksComponent
-  implements OnInit {
+  implements OnInit
+{
+  protected override btnGrouper: boolean;
+  protected override formatReport: boolean;
+  protected override signReport: boolean;
+  protected override selectGoodNotForEyeVisit: boolean;
+  protected override selectGoodsNot: boolean;
+  protected override editReport: boolean;
+  protected override reportTable: string;
+  protected override reportId: string;
+  protected override finish: boolean;
+  protected override btnRequestAprove: boolean;
+  protected override sendEmail: boolean;
+  protected override destinyJob: boolean;
+  protected override verifyCompliance: boolean;
+  protected override btnAprove: boolean;
+  protected override btnDecline: boolean;
+  protected override dictumReturn: boolean;
   protected override searchAssociateFile: boolean;
   /* CALL TABS DINAMICALY */
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
@@ -61,6 +90,24 @@ export class RequestCompDocTasksComponent
   resultVisits: boolean = false;
   RequestEconomicResourcesReport: boolean = false;
   listGoodSelectedTitle: string = 'Listado de Bienes';
+  reportValidateDictum: boolean = false;
+  registAppointment: boolean = false;
+  orderEntry: boolean = false;
+  compensationAct: boolean = false;
+  legalStatus: boolean = false;
+  requestReview: boolean = false;
+  viewGuidelines: boolean = false;
+  dictumRegister: boolean = false;
+  orderView: boolean = false;
+  visible: boolean = false;
+  steap1: boolean = false;
+  steap2: boolean = false;
+  steap3: boolean = false;
+  isEdit: boolean = false;
+  dictumInfo: boolean = false;
+
+  readonly: boolean = true;
+
   /**
    * SET STATUS ACTIONS
    **/
@@ -74,7 +121,8 @@ export class RequestCompDocTasksComponent
   processDetonate: string = '';
   process: string = '';
   title: string;
-  requestInfo: IRequest;
+  requestInfo: any;
+  taskInfo: any;
   screenWidth: number;
   public typeDoc: string = '';
   public updateInfo: boolean = false;
@@ -85,12 +133,57 @@ export class RequestCompDocTasksComponent
   affair: number = null;
   taskId: number = 0;
 
+  signedReport: boolean = false;
+
+  //test
+  isDelegationsVisible: boolean = true;
+  settingsTwo: any;
+  dataThree: LocalDataSource = new LocalDataSource();
+  dataCheckDelegation: any[] = [];
+  paramsDelegation = new BehaviorSubject(new ListParams());
+  totalItemsDelegation: number = 0;
+
+  delegation: Object = null;
+
+  dataPay: Object = null;
+
   /**
    * email del usuairo
    */
   emailForm: FormGroup = new FormGroup({});
 
-  loadingTurn = false
+  loadingTurn = false;
+  nextTurn = true;
+  validate = {
+    //reportes firmar
+    signedNotify: false, //FIRMA DE REPORTE DE NOTIFICACION
+    signedVisit: false, //FIRMA DE REPORTE DE VISITA OCULAR
+    signedDictum: false, //FIRMA DE DICTAMEN RESARCIMIENTO
+    signedValDictum: false, //FIRMA DE VALIDACION DICTAMEN RESARCIMIENTO
+    signedOffice: false, //FIRMA DE OFICIO DESTINO
+    //reportes generar
+    genDictum: false, //GENERAR DICTAMEN RESARCIMIENTO
+    genOffice: false, //GENERAR OFFICIO DESTINO
+    genEconomicResources: false, //GENERAR RECURSOS ECONOMICOS
+    genValDictum: false, //GENERAR VALIDACION DICTAMEN
+    opinion: false, //DICTAMEN DE DEVOLUCION
+
+    //button
+    sendEmail: false, //NOTIFICACION AL CONTRIBUYENTE
+
+    //tabs
+    regdoc: false, //REGISTRAR DOCUMENTACIÓN
+    goods: false, //SELECCIONAR BIENES
+    files: false, //EXPEDIENTE
+    guidelines: false, //LINEAMINEOTS
+    valvisits: false, //VALIDAR VISITA OCULAR
+    vercom: false, //VERIFICAR CUMPLIMIENTO
+    dictudData: false, //DATOS DEL DICTAMEN
+    registerAppointment: false, //REGISTRAR CITA
+    orderEntry: false, //ORDEN DE INGRESO
+    programVisit: false, //ORDEN DE INGRESO
+    legalStatus: false, //CAMBIO DE ESTATUS LEGAL
+  };
 
   /* INJECTIONS
   ============== */
@@ -100,6 +193,8 @@ export class RequestCompDocTasksComponent
   private bsModalRef = inject(BsModalRef);
   private authService = inject(AuthService);
   private taskService = inject(TaskService);
+  private wContentService = inject(WContentService);
+  private sanitizer = inject(DomSanitizer);
 
   //private rejectedService = inject(RejectedGoodService)
 
@@ -110,9 +205,16 @@ export class RequestCompDocTasksComponent
     private route: ActivatedRoute,
     private router: Router,
     private modalService: BsModalService,
+    private reportgoodService: ReportgoodService,
     private fb: FormBuilder
   ) {
     super();
+    this.settingsTwo = {
+      ...this.settings,
+      selectMode: 'multi',
+      actions: false,
+      columns: { ...DELEGATION_COLUMNS_REPORT },
+    };
     this.screenWidth =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -129,6 +231,8 @@ export class RequestCompDocTasksComponent
     this.emailForm = this.fb.group({
       emailUser: [null],
     });
+
+    this.expedientSelected(true);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -141,19 +245,47 @@ export class RequestCompDocTasksComponent
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
+
     this.requestService.getAll(filter).subscribe({
       next: resp => {
         this.requestInfo = resp.data[0];
         this.affair = resp.data[0].affair;
         //this.requestId = resp.data[0].id;
-        console.log(this.process, this.affair);
         this.mapTask(this.process, resp.data[0].affair);
         this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
+
+        this.requestService.getById(requestId).subscribe({
+          next: resp => {
+            this.requestInfo.detail = resp;
+          },
+        });
       },
     });
-    this.contributor = 'CARLOS G. PALMA';
+
+    this.getTaskInfo();
+  }
+
+  getTaskInfo() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+
+    const param = new FilterParams();
+    param.addFilter('id', _task.id);
+    const filter = param.getParams();
+    this.taskService.getAll(filter).subscribe({
+      next: resp => {
+        this.taskInfo = resp.data[0];
+        this.title = this.taskInfo.title;
+        //this.nextTurn = this.taskInfo.State.toUpperCase() != 'FINALIZADA';
+
+        if (this.taskInfo.requestId != this.requestId) {
+          this.router.navigateByUrl(
+            this.taskInfo.urlNb + '/' + this.taskInfo.requestId
+          );
+        }
+      },
+    });
   }
 
   expedientSelected(event: any) {
@@ -164,7 +296,7 @@ export class RequestCompDocTasksComponent
   }
   requestSelected(type: number) {
     this.typeDocumentMethod(type);
-    this.updateInfo = true;
+    this.updateInfo = !this.updateInfo;
     this.typeModule = 'doc-complementary';
   }
 
@@ -188,21 +320,58 @@ export class RequestCompDocTasksComponent
     this.location.back();
   }
 
-  requestRegistered(request: any) { }
+  requestRegistered(request: any) {}
 
-  openReport(context?: Partial<CreateReportComponent>): void {
+  async openReport(): Promise<void> {
+    if (!this.nextTurn) {
+      let report = await this.getStatusReport();
+      this.showReport(report);
+      return;
+    }
+
+    const initialState: Partial<CreateReportComponent> = {
+      signReport: this.signedReport && this.nextTurn,
+      editReport: this.editReport && this.nextTurn,
+      tableName: this.reportTable,
+      documentTypeId: this.reportId,
+      process: this.process,
+      requestId: this.requestId.toString(),
+    };
+
     const modalRef = this.modalService.show(CreateReportComponent, {
-      initialState: context,
+      initialState: initialState,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-      } //this.getCities();
+
+    modalRef.content.show.subscribe(response => {
+      if (response) {
+        this.showReport(response);
+      }
+    });
+
+    modalRef.content.sign.subscribe(response => {
+      if (response) {
+        this.openSignature();
+      }
+    });
+
+    modalRef.content.refresh.subscribe(response => {
+      if (response.upload) {
+        //this.requestInfo.detail.reportSheet = 'Y';
+        //this.updateRequest(false);
+      } else if (response.sign) {
+        //this.requestInfo.detail.reportSheet = 'YY';
+        //this.updateRequest(false);
+      }
     });
   }
 
-  turnRequest() {
+  async turnRequest() {
+    if (this.process == 'register-taxpayer-date') {
+      let result = await this.openDelegation();
+      if (!result) return;
+    }
     this.alertQuestion(
       'question',
       `¿Desea turnar la solicitud con Folio ${this.requestId}?`,
@@ -210,23 +379,29 @@ export class RequestCompDocTasksComponent
       'Turnar'
     ).then(async question => {
       if (question.isConfirmed) {
+        this.generateTask();
 
-        console.log(this.affair, this.process);
+        if (true) return;
+
+        switch (this.process) {
+          case 'register-request-return':
+          case 'verify-compliance-return':
+          case 'approve-return':
+            return;
+        }
 
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else if (this.process == 'register-request') {
-
           let val = this.affair.toString();
           switch (val) {
-            case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
-              this.generateTask(this.affair);
+            case '10': //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+              this.generateTask();
               break;
             default:
               this.setEmailNotificationTask();
               break;
           }
-
         } else if (this.process == 'BSNotificarTransferente') {
           this.setEmailNotificationTask();
         } else if (this.process == 'BSVisitaOcular') {
@@ -244,24 +419,23 @@ export class RequestCompDocTasksComponent
         } else {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         }
-
       }
     });
   }
 
-  rejectRequest(): void {
+  rejectRequest() {
     const modalRef = this.modalService.show(RejectRequestModalComponent, {
       initialState: {
         title: 'Confirmar Rechazo',
-        message: '¿Está seguro que desea rechazar el análisis?',
+        message:
+          'El resultado de la verificación y análisis documental será rechazado.',
         requestId: this.requestId,
       },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onReject.subscribe((data: boolean) => {
-      if (data) {
-      }
+      this.taskRechazar(data);
     });
   }
 
@@ -270,7 +444,9 @@ export class RequestCompDocTasksComponent
       next: resp => {
         if (resp == true) {
           const requestId = Number(this.route.snapshot.paramMap.get('request'));
-          this.staticTabs.tabs[0].active = true;
+          if (!isNullOrEmpty(this.staticTabs.tabs)) {
+            this.staticTabs.tabs[0].active = true;
+          }
           this.getRequestInfo(requestId);
         }
       },
@@ -278,7 +454,6 @@ export class RequestCompDocTasksComponent
   }
 
   closeSearchRequestSimGoodsTab(recordId: number) {
-    console.log(recordId);
     if (recordId) {
       this.searchRequestSimGoods = false;
     }
@@ -288,10 +463,24 @@ export class RequestCompDocTasksComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Desea finalizar la tarea registro de documentación complementaria?'
-    ).then(question => {
-      if (question) {
+      `¿Desea finalizar la solicitud con folio: ${this.requestId}`
+    ).then(async question => {
+      if (question.isConfirmed) {
         //Cerrar tarea//
+
+        if (await this.validateTurn()) {
+          let response = await this.updateTask(this.taskInfo.id);
+          if (response) {
+            this.msgModal(
+              'se finalizó la solicitud con el Folio Nº '.concat(
+                `<strong>${this.requestId}</strong>`
+              ),
+              'Solicitud finalizada',
+              'success'
+            );
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+          }
+        }
       }
     });
   }
@@ -300,7 +489,6 @@ export class RequestCompDocTasksComponent
     this.affairService.getByIdAndOrigin(id, 'SAMI').subscribe({
       next: data => {
         this.processDetonate = data.processDetonate;
-        console.log(this.processDetonate);
       },
       error: error => {
         console.log('no se encontraron datos en asuntos ', error);
@@ -520,222 +708,119 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  getValuesForTurn(affair): any {
-
-    let title = '';
-    let url = '';
-    let process = '';
-    switch (affair) {
-
-      case "10": //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
-        title =
-          'DEVOLUCIÓN: Verificar Cumplimiento, No. Solicitud ' + this.requestId + ', Contribuyente, PAMA';
-        url = 'pages/request/request-comp-doc/tasks/register-request';
-        process = 'DVerificarCumplimiento';
-        return { title: title, urlNb: url, processName: process };
-
-      case "33": //GESTIONAR BINES SIMILARES RESARCIMIENTO
-        title =
-          'BIENES SIMILARES Notificacion a transferente,No. Solicitud:';
-        url = 'pages/request/request-comp-doc/tasks/register-request';
-        process = 'BSRegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      case "40": //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
-        title =
-          'Revisión de Lineamientos Resarcimiento (EN ESPECIE), No. Solicitud ' + this.requestId + ', Contribuyente, PAMA:';
-        url = 'pages/request/request-comp-doc/tasks/register-request';
-        process = 'RERegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      case "41": //INFORMACIÓN DE BIENES: REGISTRO DE DOCUMENTACIÓN COMPLEMENTARIA
-        title =
-          'Generar Solicitud de Información y Oficio de Respuesta, No. Solicitud' + this.requestId;
-        url = 'pages/request/request-comp-doc/tasks/register-request';
-        process = 'IBRegistroSolicitudes';
-        return { title: title, urlNb: url, processName: process };
-
-      default:
-        break;
-    }
-  }
-
-  updateRequest() {
+  updateRequest(alert = true) {
     this.updateInfo = true;
-    this.msgModal(
-      'Se guardó la solicitud con el Folio Nº '.concat(
-        `<strong>${this.requestId}</strong>`
-      ),
-      'Solicitud Guardada',
-      'success'
-    );
+    let request: any = { ...this.requestInfo.detail };
+
+    this.requestService.update(this.requestId, request).subscribe({
+      next: resp => {
+        if (alert) {
+          this.alert('success', 'Correcto', 'Registro Actualizado');
+        }
+      },
+      error: error => {
+        if (alert) {
+          this.alert('error', 'Error', 'Error al guardar la solicitud');
+        }
+      },
+    });
   }
 
   /** VALIDAR */
-  async generateTask(affair) {
+  async generateTask() {
+    if (!(await this.validateTurn())) return;
 
-    const { title, urlNb, processName, finish, type, subtype, ssubtype
-    } = this.nextProcess(affair, this.process);
-
+    /** VERIFICAR VALIDACIONES PARA REALIZAR LA TAREA*/
     this.loadingTurn = true;
-    const _task = JSON.parse(localStorage.getItem('Task'));
-    await this.closeTask();
+    const { title, url, type, subtype, ssubtype, process, close, rollBack } =
+      getConfigAffair(
+        this.requestId,
+        this.affair,
+        this.process,
+        this.requestInfo
+      );
 
-    const createTask = await this.generateFirstTask(processName);
-    if (createTask) {
+    const user: any = this.authService.decodeToken();
 
-      //Estableciendo valores a transferente, emisora y autoridad
-      let idTransferente = this.requestInfo.transferenceId;
-      let idEmisora = this.requestInfo.stationId;
-      let idAuthoridad = this.requestInfo.authorityId;
-      let nickName = '';
-      let userName = '';
+    let body: any = {};
 
-      /** VALIDAR DATOS */
-      //const requestResult: any = await this.updateTurnedRequest(this.requestInfo);
-      if (true) {
-        const actualUser: any = this.authService.decodeToken();
-        let body: any = {};
-        body['idTask'] = this.taskId;
-        body['userProcess'] = actualUser.username;
+    body['userProcess'] = user.username;
+    body['type'] = type;
+    body['subtype'] = subtype;
+    body['ssubtype'] = ssubtype;
 
-        /** VALIDAR DATOS */
-        body['type'] = type;
-        body['subtype'] = subtype;
-        body['ssubtype'] = ssubtype;
+    let task: any = {};
 
-        let task: any = {};
-        task['id'] = _task.id;
-        task['assignees'] = nickName;
-        task['assigneesDisplayname'] = userName;
-        task['reviewers'] = actualUser.username;
-        task['creator'] = actualUser.username;
-        task['taskNumber'] = Number(this.requestId);
-        task['title'] = title;
-        task['programmingId'] = 0;
-        task['requestId'] = this.requestId;
-        task['expedientId'] = 0;
-        task['urlNb'] = urlNb;
-        task['processName'] = processName;
-        task['idstation'] = idEmisora;
-        task['idTransferee'] = idTransferente;
-        task['idAuthority'] = idAuthoridad;
-        task['idDelegationRegional'] = actualUser.department;
-        body['task'] = task;
+    if (close) {
+      body['idTask'] = this.taskInfo.id;
+    }
 
-        let orderservice: any = {};
-        orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
-        orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
-        orderservice['pIdApplication'] = this.requestId;
-        orderservice['pCurrentDate'] = new Date().toISOString();
-        orderservice['pOrderServiceIn'] = '';
+    if (rollBack) {
+      task['taskDefinitionId'] = this.taskInfo.id;
 
-        body['orderservice'] = orderservice;
-
-        const taskResult = await this.createTaskOrderService(body);
-        if (taskResult) {
-          this.loadingTurn = false;
-          this.msgModal(
-            'Se turnó la solicitud con el Folio Nº'
-              .concat(`<strong>${this.requestId}</strong>`),
-            'Solicitud Creada',
-            'success'
-          );
-          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-        }
+      if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
+        task['taskDefinitionName'] = this.taskInfo.taskDefinitionId;
       }
+    } else {
+      task['taskDefinitionId'] = this.taskInfo.taskDefinitionId;
+    }
+
+    task['id'] = 0;
+    task['assignees'] = this.taskInfo.assignees;
+    task['assigneesDisplayname'] = this.taskInfo.assigneesDisplayname;
+    task['reviewers'] = user.username;
+    task['creator'] = user.username;
+    task['taskNumber'] = Number(this.requestId);
+    task['title'] = title;
+    task['programmingId'] = 0;
+    task['requestId'] = this.requestId;
+    task['expedientId'] = 0;
+    task['urlNb'] = url;
+    task['processName'] = process;
+    task['idstation'] = this.taskInfo.idstation;
+    task['idTransferee'] = this.taskInfo.idTransferee;
+    task['idAuthority'] = this.taskInfo.idAuthority;
+    task['idDelegationRegional'] = user.department;
+
+    if (!isNullOrEmpty(this.delegation)) {
+      task['satZoneCoordinator'] = this['addressOffice'];
+    } else {
+      task['satZoneCoordinator'] = '';
+    }
+
+    body['task'] = task;
+
+    let orderservice: any = {};
+    orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+    orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+    orderservice['pIdApplication'] = this.requestId;
+    orderservice['pCurrentDate'] = new Date().toISOString();
+    orderservice['pOrderServiceIn'] = '';
+
+    body['orderservice'] = orderservice;
+
+    const closeTask: any = await this.createTaskOrderService(body);
+
+    if (closeTask && !isNullOrEmpty(closeTask.task)) {
+      this.msgModal(
+        'Se turnó la solicitud con el Folio Nº '.concat(
+          `<strong>${this.requestId}</strong>`
+        ),
+        'Solicitud turnada',
+        'success'
+      );
+      this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+    } else {
+      this.msgModal(
+        'No se pudo turnar la solicitud con el Folio Nº '.concat(
+          `<strong>${this.requestId}</strong>`
+        ),
+        'Error',
+        'error'
+      );
     }
   }
 
-  /** VALIDAR */
-  async generateFirstTask(processName) {
-
-    //POR_TURNAR
-
-    return new Promise(async (resolve, reject) => {
-      this.loadingTurn = true;
-
-      this.requestId = this.requestId;
-      const user: any = this.authService.decodeToken();
-      let task: any = {};
-      task['id'] = 0;
-      task['assignees'] = user.username;
-      task['assigneesDisplayname'] = user.username;
-      task['creator'] = user.username;
-      task['taskNumber'] = Number(this.requestId);
-      task['title'] = 'Verificar Cumplimiento con folio: ' + this.requestId;
-      task['programmingId'] = 0;
-      task['requestId'] = this.requestId;
-      task['expedientId'] = 0;
-      task['processName'] = processName;
-      task['idDelegationRegional'] = user.department;
-      task['urlNb'] = 'pages/request/request-comp-doc/create';
-      const taskResult: any = await this.createOnlyTask(task);
-      if (taskResult) {
-
-        this.taskId = Number(taskResult.data[0].id);
-
-        this.loadingTurn = false;
-      }
-      resolve(true);
-
-    });
-  }
-
-  /** VALIDAR */
-  createOnlyTask(task: any) {
-    return new Promise((resolve, reject) => {
-      this.taskService.createTask(task).subscribe({
-        next: resp => {
-          if (resp.length == 0) {
-            this.onLoadToast(
-              'error',
-              'Error al crear tarea',
-              'El servicio de crear tareas no esta funcionando por el momento'
-            );
-            reject(false);
-          } else {
-            resolve(resp);
-          }
-        },
-        error: error => {
-          this.onLoadToast(
-            'error',
-            'Error al crear tarea',
-            'El servicio de crear tareas no esta funcionando por el momento'
-          );
-          reject(false);
-        },
-      });
-    });
-  }
-
-  /** VALIDAR */
-  updateTurnedRequest(form: any) {
-    return new Promise((resolve, reject) => {
-      form.requestStatus = 'A_TURNAR';
-      form.receiptRoute = 'FISICA';
-      form.affair = form.affair;
-      form.typeOfTransfer = 'MANUAL';
-      //form.regionalDelegationId = this.delegationId;
-      //form.originInfo = 'SOL_TRANSFERENCIA'
-      //let date = this.requestForm.controls['applicationDate'].value;
-      //form.applicationDate = date.toISOString();
-
-      this.requestService.update(form.id, form).subscribe({
-        next: resp => {
-          resolve(resp);
-        },
-        error: error => {
-          this.loadingTurn = false;
-          this.msgModal('error', 'Error', 'Error al guardar la solicitud');
-          reject(error.error);
-        },
-      });
-    });
-  }
-
-  /** VALIDAR */
   createTaskOrderService(body: any) {
     return new Promise((resolve, reject) => {
       this.taskService.createTaskWitOrderService(body).subscribe({
@@ -747,21 +832,6 @@ export class RequestCompDocTasksComponent
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
-      });
-    });
-  }
-
-  closeTask() {
-    return new Promise((resolve, reject) => {
-      const task = JSON.parse(localStorage.getItem('Task'));
-      const taskForm: ITask = {
-        State: 'FINALIZADA',
-      };
-      this.taskService.update(task.id, taskForm).subscribe({
-        next: response => {
-          resolve(true);
-        },
-        error: error => { },
       });
     });
   }
@@ -784,4 +854,1082 @@ export class RequestCompDocTasksComponent
     });
   }
 
+  openSendEmail(): void {
+    const modalRef = this.modalService.show(SendRequestEmailComponent, {
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSend.subscribe(next => {
+      if (next) {
+        console.log(next);
+      }
+    });
+  }
+
+  taskRechazar(data) {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = 'DOCUMENTACION_COMPLEMENTARIA';
+    body['subtype'] = 'Registro_documentacion';
+    body['ssubtype'] = 'REJECT';
+
+    if (!isNullOrEmpty(this.taskInfo.taskDefinitionName)) {
+      this.updateTask(this.taskInfo.taskDefinitionName, 'PROCESO');
+    } else if (!isNullOrEmpty(this.taskInfo.taskDefinitionId)) {
+      this.updateTask(this.taskInfo.taskDefinitionId, 'PROCESO');
+    }
+
+    this.requestInfo.detail.rejectionComment = data.comment;
+    this.updateRequest(false);
+
+    this.taskService.createTaskWitOrderService(body).subscribe({
+      next: async resp => {
+        this.msgModal(
+          'Se rechazo la solicitud con el Folio Nº '.concat(
+            `<strong>${this.requestId}</strong>`
+          ),
+          'Solicitud rechazada',
+          'success'
+        );
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        //VALIDAR NAVEGACION
+      },
+      error: error => {
+        this.onLoadToast('error', 'Error', 'No se pudo rechazar la tarea');
+      },
+    });
+  }
+
+  updateTask(id, state = 'FINALIZADA') {
+    return new Promise((resolve, reject) => {
+      const taskForm: ITask = {
+        State: state,
+        taskDefinitionId: null,
+      };
+      this.taskService.update(id, taskForm).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  async validateTurn() {
+    let reportLoad: any = {
+      isValid: false,
+      isSign: false,
+    };
+
+    switch (this.process) {
+      //GESTIONAR DEVOLUCIÓN RESARCIMIENTO
+      case 'register-request-return':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+      case 'verify-compliance-return':
+        if (!this.validate.vercom) {
+          this.showWarning('Verifique el cumplimiento de los artículos');
+          return false;
+        }
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genere el Dictamen de Devolución');
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+      case 'approve-return':
+        reportLoad = await this.getStatusReport();
+
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el dictamen de resarcimiento');
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+
+      //GESTIONAR BINES SIMILARES RESARCIMIENTO
+      case 'register-request-similar-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+
+      case 'notify-transfer-similar-goods':
+        reportLoad = await this.getStatusReport();
+
+        if (!reportLoad.isValid) {
+          this.showWarning('Genere el reporte de notificación');
+          return false;
+        }
+
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el reporte de notificación 3');
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+
+      case 'eye-visit-similar-goods':
+        //INTEGRAR EXPEDIENTE
+        //PROGRAMAR FECHAS
+
+        if (!this.validate.programVisit) {
+          this.showWarning(
+            'Capture el periodo de los bienes para la visita ocular'
+          );
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+
+      case 'validate-eye-visit-similar-goods':
+        if (!this.validate.programVisit) {
+          this.showWarning('Validar Resultado de visitas');
+          return false;
+        }
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning(
+            'Generar el reporte de resultado de la visita ocular'
+          );
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        //REGISTRO
+        //VALIDAR RESULTADOS
+        //INTEGRAR EXPEDIENTE
+        //REPORTE RESULTADO VISITA OCULAR FIRMAR
+        break;
+
+      case 'validate-opinion-similar-goods':
+        if (!this.validate.signedVisit) {
+          this.showWarning('Firme el reporte de visita ocular');
+          return false;
+        }
+
+        //REGISTRO
+        //INTEGRAR EXPEDIENTE
+        //REPORTE DE RESULTAOD FIRMAR
+        break;
+
+      //RESARCIMIENTO EN ESPECIE: REGISTRO DE DOCUMENTACIÓN
+      case 'register-request-compensation':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie solicitud de bienes');
+          return false;
+        }
+
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+
+      case 'review-guidelines-compensation':
+        if (!this.validate.guidelines) {
+          this.showWarning('Verifique las observaciones de lineamientos');
+          return false;
+        }
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el dictamen de resarcimiento');
+          return false;
+        }
+
+        break;
+
+      case 'analysis-result-compensation':
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el dictamen de resarcimiento');
+          return false;
+        }
+        break;
+
+      case 'validate-opinion-compensation':
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning(
+            'Genera la validación del dictamen de resarcimiento'
+          );
+          return false;
+        }
+
+        break;
+
+      case 'notification-taxpayer-compensation':
+        //DATOS DEL DICTAMEN
+
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genere el reporte de notificación');
+          return false;
+        }
+
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el reporte de notificación');
+          return false;
+        }
+
+        break;
+
+      //CASOS INFORMACION DE BIENES
+      case 'register-request-information-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'response-office-information-goods':
+        /*if (!this.validate.sendEmail) {
+          this.showWarning('Enviar el correo de notificación al contribuyente');
+          return false;
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Generar el oficio destino');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'review-office-information-goods':
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firmar el oficio destino');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      /*NUMERARIO*/
+
+      case 'register-request-economic':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+      case 'request-economic-resources':
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Generar la solicitud de recursos económicos');
+          return false;
+        }
+
+        break;
+      case 'review-economic-guidelines':
+        if (!this.validate.guidelines) {
+          this.showWarning('Verifique las observaciones de lineamientos');
+          return false;
+        }
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Generar el dictamen de resarcimiento');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+      case 'generate-results-economic':
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el dictamen de resarcimiento');
+          return false;
+        }
+        if (!this.validate.guidelines) {
+          this.showWarning('Verifique las observaciones de lineamientos');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+      case 'validate-dictum-economic':
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        if (!this.validate.dictudData) {
+          this.showWarning('Registre datos del dictamen');
+          return false;
+        }
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning(
+            'Genera la validación del dictamen de resarcimiento'
+          );
+          return false;
+        }
+
+        break;
+      case 'delivery-notify-request':
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el reporte de notificación');
+          return false;
+        }
+
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el reporte de notificación');
+          return false;
+        }
+        break;
+      case 'register-taxpayer-date':
+        if (!this.validate.registerAppointment) {
+          this.showWarning('Registre datos de la cita');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+      case 'register-pay-order':
+        if (!this.validate.orderEntry) {
+          this.showWarning('Registre datos de orden de ingreso');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+      case 'generate-compensation-act':
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        reportLoad = await this.getStatusReport();
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el acta de resarcimiento');
+          return false;
+        }
+
+        reportLoad = await this.getStatusReport(1);
+        if (!reportLoad.isValid) {
+          this.showWarning('Genera el reporte de notificación');
+          return false;
+        }
+
+        if (!reportLoad.isSigned) {
+          this.showWarning('Firme el reporte de notificación');
+          return false;
+        }
+
+        break;
+
+      case 'register-domain-extinction':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+      case 'register-seizures':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+      case 'register-abandonment-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+      case 'register-protections-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'register-compensation-documentation':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'register-request-protection':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'protection-regulation':
+        //reportLoad = await this.getStatusReport();
+        if (this.requestInfo.detail.reportSheet != 'OCSJ') {
+          this.showWarning('Genera el reporte de oficio jurídico');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'register-compensation-documentation':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+        break;
+
+      case 'review-result-protection':
+        if (!reportLoad.isSigned) {
+          //this.showWarning('Firme el reporte de oficio jurídico');
+          //return false;
+        }
+        /* if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }*/
+
+        break;
+      case 'register-seizures':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+      case 'register-abandonment-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+      case 'register-protections-goods':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.goods) {
+          this.showWarning('Seleccione los bienes de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+
+      case 'register-compensation-documentation':
+        if (!this.validate.regdoc) {
+          this.showWarning('Registre la información de la solicitud');
+          return false;
+        }
+        if (!this.requestInfo.recordId) {
+          this.showWarning('Asocie el expediente de la solicitud');
+          return false;
+        }
+        if (!this.validate.files) {
+          this.showWarning('Suba la documentación de la solicitud');
+          return false;
+        }
+        break;
+    }
+
+    return true;
+  }
+
+  onChangeRegDoc(event) {
+    this.validate.regdoc = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  onSelectGoods(event) {
+    this.validate.goods = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  onSelectFiles(event) {
+    this.validate.files = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  onVerifyCom(event) {
+    this.validate.vercom = event.atLeastOne; // event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  showError(text) {
+    this.onLoadToast('error', 'Error', text);
+  }
+
+  showWarning(text) {
+    this.onLoadToast('warning', 'Advertencia', text);
+  }
+
+  onGuidelines(event) {
+    this.validate.guidelines = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  onDictumData(event) {
+    this.validate.dictudData = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  onAppoiment(event) {
+    this.validate.registerAppointment = event.isValid;
+  }
+
+  onSetData(event) {}
+
+  onOrder(event) {
+    this.validate.orderEntry = event.isValid;
+  }
+
+  onProgramVisit(event) {
+    this.validate.programVisit = event.isValid;
+    //Agreagar validaciones en especifico
+  }
+
+  handleDataPay(data: Object) {
+    this.dataPay = data;
+  }
+
+  btnRequestAprobar() {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea solicitar la aprobación de la solicitud con folio: ' +
+        this.requestId
+    ).then(async question => {
+      if (question.isConfirmed) {
+        //Cerrar tarea//
+        if (await this.validateTurn()) {
+          this.generateTask();
+        }
+      }
+    });
+  }
+
+  btnRequestReview() {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea solicitar la revisión de la solicitud con folio: ' +
+        this.requestId
+    ).then(async question => {
+      if (question.isConfirmed) {
+        //Cerrar tarea//
+        if (await this.validateTurn()) {
+          this.generateTask();
+        }
+      }
+    });
+  }
+
+  btnAprobar() {
+    this.alertQuestion(
+      'question',
+      'Confirmar Aprobación',
+      `¿Desea APROBAR la solicitud con folio: ${this.requestId}?`
+    ).then(async question => {
+      if (question.isConfirmed) {
+        //Cerrar tarea//
+        if (await this.validateTurn()) {
+          let response = await this.updateTask(this.taskInfo.id);
+
+          if (response) {
+            this.msgModal(
+              'Se aprobo la solicitud con el Folio Nº '.concat(
+                `<strong>${this.requestId}</strong>`
+              ),
+              'Solicitud aprobada',
+              'success'
+            );
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+          }
+        }
+      }
+    });
+
+    //Finalizar la orden de servicio
+    //Turnamos la solicitud
+  }
+
+  openDelegation(context?: Partial<ChangeLegalStatusComponent>) {
+    return new Promise<boolean>(resolve => {
+      const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
+        initialState: {
+          ...context,
+          isDelegationsVisible: true,
+          isJuridicVisible: false,
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+
+      modalRef.content.refresh.subscribe(res => {
+        resolve(res);
+      });
+      modalRef.content.delegtion.subscribe(result => {
+        this.delegation = result;
+      });
+    });
+  }
+
+  openModalLegal(context?: Partial<ChangeLegalStatusComponent>) {
+
+    if (this.requestInfo.detail.reportSheet == 'OCSJ') {
+      this.openSignature();
+      return;
+    }
+
+    const modalRef = this.modalService.show(ChangeLegalStatusComponent, {
+      initialState: {
+        ...context,
+        isDelegationsVisible: false,
+        isJuridicVisible: true,
+        requestId: this.requestId,
+        docTypeId: this.reportId,
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+        this.requestInfo.detail.reportSheet = 'OCSJ';
+        this.updateRequest(false);
+      }
+    });
+  }
+
+  createDictumReturn() {}
+
+  showReport(data) {
+    console.log(data);
+
+    if (false) {
+      this.wContentService
+        .downloadDinamycReport(
+          'sae.rptdesign',
+          this.reportTable,
+          this.requestId.toString(),
+          data.documentTypeId
+        )
+        .subscribe({
+          next: response => {
+            console.log(response);
+          },
+          error: error => {
+            this.showError('Vista previa no dipoonible');
+          },
+        });
+    } else {
+      this.wContentService.obtainFile('SAE568245').subscribe({
+        next: response => {
+          let blob = this.dataURItoBlob(response);
+          let file = new Blob([blob], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          this.openPrevPdf(fileURL);
+        },
+        error: error => {},
+      });
+    }
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'application/pdf' });
+    return blob;
+  }
+
+  openPrevPdf(pdfurl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  getStatusReport(position = 0) {
+    let params = new ListParams();
+
+    let ids = this.reportId.split(',');
+    params['filter.documentTypeId'] = `$eq:${ids[position]}`;
+    params['filter.tableName'] = `$eq:${this.reportTable}`;
+    params['filter.registryId'] = `$eq:${this.requestId}`;
+
+    return new Promise<any>(resolve => {
+      this.reportgoodService.getReportDynamic(params).subscribe({
+        next: async resp => {
+          if (resp.data.length > 0) {
+            resolve({
+              data: resp.data,
+              isValid: resp.data.length > 0,
+              isSigned: true, //resp.data[0].signedReport == 'Y',
+            });
+          } else {
+            resolve({
+              isValid: false,
+              isSigned: false,
+            });
+          }
+        },
+        error: err => {
+          resolve({
+            isValid: false,
+            isSigned: false,
+          });
+        },
+      });
+    });
+  }
+
+  openSignature() {
+    this.openModal(
+      AnnexJAssetsClassificationComponent,
+      "328",
+      'sign-annexJ-assets-classification'
+    );
+  }
+
+  openModal(component: any, idSample?: any, typeAnnex?: string): void {
+    if (!this.signReport) {
+      let config: ModalOptions = {
+        initialState: {
+          idSample: idSample,
+          typeAnnex: typeAnnex,
+          callback: async (typeDocument: number, typeSign: string) => {
+            if (typeAnnex == 'sign-annexJ-assets-classification') {
+              if (typeDocument && typeSign) {
+                this.showReportInfo(typeDocument, typeSign, typeAnnex);
+              }
+            }
+          },
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(component, config);
+    } else {
+      this.showReportInfo(0, '', '');
+    }
+  }
+
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const idSample = this.requestId;
+    const typeFirm = typeSign;
+    const tableName = "";//this.tableName;
+    const reportName = ""//this.tableName;
+    const dynamic = true;
+    const signed = !this.signReport;//!this.isSigned;
+
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        idTypeDoc,
+        idSample,
+        typeFirm,
+        typeAnnex,
+        dynamic,
+        tableName,
+        reportName,
+        signed,
+        callback: data => {
+          if (data) {
+            if (typeFirm != 'electronica') {
+              this.uploadDocument(this.requestId, typeDocument);
+            } else {
+              //this.getInfoSample();
+            }
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  uploadDocument(id, typeDocument) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      typeDoc: typeDocument,
+      idSample: id,
+      callback: data => {
+        if (data) {
+          //this.getInfoSample();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
+  }
+
+  //Reportes dinamicos
+  //Firma de reportes
+}
+
+export function isNullOrEmpty(value: any): boolean {
+  return value === null || value === undefined || (value + '').trim() === '';
 }

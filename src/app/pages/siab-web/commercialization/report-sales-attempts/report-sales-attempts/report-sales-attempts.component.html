@@ -41,12 +41,20 @@
         <div class="row">
           <div class="col-md-2">
             <form-radio label="Por Filtrado">
-              <input type="radio" formControlName="radio" value="true" />
+              <input
+                type="radio"
+                formControlName="radio"
+                value="true"
+                (change)="cleanTable()" />
             </form-radio>
           </div>
           <div class="col-md-4">
             <form-radio label="Con Archivo de Excel">
-              <input type="radio" formControlName="radio" value="false" />
+              <input
+                type="radio"
+                formControlName="radio"
+                value="false"
+                (change)="cleanTable()" />
             </form-radio>
           </div>
           <div class="row" *ngIf="form.controls['radio'].value === 'false'">
@@ -54,45 +62,44 @@
               <h5 class="title">B&uacute;squeda por Excel</h5>
             </div>
             <div class="row pt-3">
-              <div class="col-md-6">
-                <div class="justify-content-center">
-                  <button
-                    class="btn btn-success btn-sm ml-2"
-                    type="button"
-                    (click)="file.click()">
-                    Abrir archivo Excel / CSV
-                  </button>
+              <div class="col-md-4">
+                <label
+                  for=""
+                  style="font-size: 10px; font-weight: 600; color: #74788d"
+                  >Abrir archivo Excel / CSV</label
+                >
+                <form-field [control]="form.get('filterText')">
                   <input
                     type="file"
-                    name="file"
-                    #file
-                    class="d-none"
+                    formControlName="filterText"
                     accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                     (change)="onFileChange($event)" />
-                  <button
-                    tooltip="Formato de Ejemplo"
-                    containerClass="tooltip-style"
-                    type="button"
-                    class="btn btn-info btn-sm active m-2 pointer"
-                    (click)="exportCsv()">
-                    <i class="bi bi-question-circle"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-primary active btn-sm m-2"
-                    [ngClass]="{ loading: loadingBtn4 }"
-                    [disabled]="loading || loadingBtn2"
-                    (click)="consultarBienExcel()">
-                    Buscar Bienes
-                    <i class="bx bx-search-alt bx-sm float-icon"></i>
-                  </button>
-                  <button
-                    class="btn btn-danger btn-sm active m-2"
-                    [disabled]="!form.valid"
-                    (click)="cleanExcel()">
-                    Limpiar <i class="fas fa-eraser"> </i>
-                  </button>
-                </div>
+                </form-field>
+              </div>
+              <div class="col-md-8" style="padding-top: 20px">
+                <button
+                  tooltip="Formato de Ejemplo"
+                  containerClass="tooltip-style"
+                  type="button"
+                  class="btn btn-info btn-sm active m-2 pointer"
+                  (click)="exportCsv()">
+                  <i class="bi bi-question-circle"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm m-2"
+                  [ngClass]="{ loading: loadingBtn4 }"
+                  [disabled]="loading || loadingBtn2"
+                  (click)="consultarBienExcel()">
+                  Buscar Bienes
+                  <i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button>
+                <button
+                  class="btn btn-danger btn-sm active m-2"
+                  [disabled]="!form.valid"
+                  (click)="cleanExcel()">
+                  Limpiar <i class="fas fa-eraser"> </i>
+                </button>
               </div>
             </div>
           </div>
@@ -103,7 +110,7 @@
           <h5 class="title">Filtros de B&uacute;squeda</h5>
         </div>
         <div class="row pt-3">
-          <div class="col-md-4">
+          <div class="col-md-12">
             <form-field [control]="form.get('typeGood')">
               <ngx-select
                 [form]="form"
@@ -112,20 +119,24 @@
                 value="clasifGoodNumber"
                 bindLabel="tipoSupbtipoDescription"
                 (fetchItems)="getTodos($event)"
-                control="typeGood">
+                control="typeGood"
+                (change)="enableButton1($event)">
               </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-4">
+        </div>
+        <div class="row pt-3">
+          <div class="col-md-7">
             <form-field [control]="form.get('typeStatus')">
               <ngx-select
                 [form]="form"
                 [data]="tiposstatus"
-                label="Status Bien"
+                label="Estatus Bien"
                 value="status"
                 bindLabel="tipoSupbtipoDescription"
                 (fetchItems)="getStatus($event)"
-                control="typeStatus">
+                control="typeStatus"
+                (change)="enableButton()">
               </ngx-select>
             </form-field>
           </div>
@@ -133,10 +144,9 @@
             <div class="justify-content-center">
               <button
                 [ngClass]="{ loading: loadingBtn3 }"
-                [disabled]="loading || loadingBtn2"
+                [disabled]="!loadingBtn2"
                 type="button"
                 class="btn btn-primary active btn-sm"
-                [disabled]="!form.valid"
                 (click)="consultarBien()">
                 Consultar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -151,50 +161,53 @@
         </div>
       </div>
     </form>
-    <div class="row mt-4" *ngIf="until">
+    <div class="row" *ngIf="!until && !until2 && !until3">
       <div class="col-md-12">
-        <ng-scrollbar
-          [track]="'all'"
-          [ngStyle]="{ height: loading ? '0px' : '300px' }">
-          <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '300px' }">
             <ng2-smart-table
+              style="padding-right: 0px !important"
               [attr.class]="'table-bordered table-responsive'"
               [settings]="settings"
               [source]="source"></ng2-smart-table>
-          </div>
-        </ng-scrollbar>
+          </ng-scrollbar>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4" *ngIf="until">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="source"></ng2-smart-table>
+        </div>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
     </div>
     <div class="row mt-4" *ngIf="until2">
       <div class="col-md-12">
-        <ng-scrollbar
-          [track]="'all'"
-          [ngStyle]="{ height: loading ? '0px' : '300px' }">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings"
-              [source]="source"></ng2-smart-table>
-          </div>
-        </ng-scrollbar>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="source"></ng2-smart-table>
+        </div>
       </div>
       <app-pagination [params]="params2" [totalItems]="totalItems2">
       </app-pagination>
     </div>
     <div class="row mt-4" *ngIf="until3">
       <div class="col-md-12">
-        <ng-scrollbar
-          [track]="'all'"
-          [ngStyle]="{ height: loading ? '0px' : '300px' }">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings"
-              [source]="source"></ng2-smart-table>
-          </div>
-        </ng-scrollbar>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="source"></ng2-smart-table>
+        </div>
       </div>
       <app-pagination [params]="params3" [totalItems]="totalItems3">
       </app-pagination>

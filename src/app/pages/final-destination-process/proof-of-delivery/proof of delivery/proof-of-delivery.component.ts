@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
@@ -23,6 +24,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { IDepositaryAppointments_custom } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IComerLot } from 'src/app/core/models/ms-parametercomer/parameter';
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
@@ -32,11 +34,14 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingSusPcancelService } from 'src/app/core/services/ms-proceedings/proceeding-suspcancel.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
+import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -44,6 +49,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { ComerEventForm } from 'src/app/pages/commercialization/shared-marketing-components/event-preparation/utils/forms/comer-event-form';
 import { ModalScanningFoilTableComponent } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/modal-scanning-foil/modal-scanning-foil.component';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
@@ -128,6 +134,16 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   actDate: any;
   dataProceeding: any;
   clear: boolean = false;
+
+  //AGREGADO POR GRIGORK
+  labelSaveProceeding: string = 'Guardar nueva acta';
+  weaponKeyFlag: boolean = false;
+  isDon = false;
+
+  dataAutority = new DefaultSelect();
+  dataDelegation = new DefaultSelect();
+  //----------------------------------------------
+
   constructor(
     private fb: FormBuilder,
     private expedientService: ExpedientService,
@@ -148,7 +164,12 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     private goodprocessService: GoodprocessService,
     private globalVarsService: GlobalVarsService,
     private activatedRoute: ActivatedRoute,
-    private goodTrackerService: GoodTrackerService
+    private goodTrackerService: GoodTrackerService,
+
+    //AGREGADO POR GRIGORK
+    private transferGoodService: TranfergoodService,
+    private parameterGoodService: ParametersService,
+    private serviceProcVal: ProceedingsDeliveryReceptionService
   ) {
     super();
     // this.activatedRoute.queryParams
@@ -281,36 +302,21 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     this.getuser();
     this.formExp = this.fb.group({
       expedient: [null],
-      statusAct: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      preliminaryAscertainment: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      noExpedientTransfer: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      causePenal: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      statusAct: [null],
+      preliminaryAscertainment: [null],
+      noExpedientTransfer: [null],
+      causePenal: [null],
       capture: [null],
-      programmingType: [null, []],
+      programmingType: [null, [Validators.required]],
     });
     this.formAct = this.fb.group({
       status: [null],
       elabDate: [null, [Validators.required]],
-      actDate: [null, []],
+      actDate: [null, [Validators.required]],
       captureDate: [null, [Validators.required]],
       actSelect: [null, [Validators.required]],
       trans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      authority: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      authority: [null, [Validators.required]],
       del: [null, [Validators.required]],
       folio: [
         null,
@@ -323,19 +329,16 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      receive: [null, [Validators.pattern(STRING_PATTERN)]],
-      observations: [
+      receive: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
       delivery: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      witnessContr: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      witnessContr: [null, [Validators.pattern(STRING_PATTERN)]],
       folioScan: [null],
     });
 
@@ -690,7 +693,11 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   }
 
   openModal(newOrEdit: boolean, data: any) {
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-dialog-centered modal-lg',
+      ignoreBackdropClick: true,
+    };
     modalConfig.initialState = {
       newOrEdit,
       data,
@@ -1159,23 +1166,32 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   }
 
   selectNew() {
-    if (this.ActaNew == 'Nueva Acta') {
-      const elaborationDate = new Date();
-      const day = elaborationDate.getDate().toString().padStart(2, '0');
-      const month = (elaborationDate.getMonth() + 1)
-        .toString()
-        .padStart(2, '0');
-      const year = elaborationDate.getFullYear();
-      const formattedDate = `${day}/${month}/${year}`;
-      this.ActaNew = 'Guardar';
-      this.formAct.reset();
-      this.formAct.get('elabDate').setValue(formattedDate);
-      this.newA = true;
-      this.boton = false;
-      this.campos = true;
-      this.select = true;
-    } else if (this.ActaNew == 'Guardar') {
-      this.validaConsec();
+    const elaborationDate = new Date();
+    const day = elaborationDate.getDate().toString().padStart(2, '0');
+    const month = (elaborationDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = elaborationDate.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`;
+    this.ActaNew = 'Guardar';
+    this.formAct.reset();
+    this.formAct.get('elabDate').setValue(formattedDate);
+    this.newA = true;
+    this.boton = false;
+    this.campos = true;
+    this.select = true;
+    this.labelSaveProceeding = 'Guardar nueva acta';
+    this.weaponKeyFlag = true;
+
+    this.getAutority();
+    this.getDelegation();
+    this.fillDate();
+    this.weaponKey();
+  }
+
+  saveProceeding() {
+    if (this.labelSaveProceeding == 'Guardar nueva acta') {
+      this.saveNewProceeding();
+    } else {
+      console.log('this.formAct ', this.formAct.value);
     }
   }
 
@@ -2010,5 +2026,302 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     this.boton = false;
     this.campos = true;
     this.select = true;
+  }
+
+  //AGREGADO POR GRIGORK
+  get actSelect() {
+    return this.formAct.get('actSelect');
+  }
+
+  get trans() {
+    return this.formAct.get('trans');
+  }
+
+  get authority() {
+    return this.formAct.get('authority');
+  }
+
+  get del() {
+    return this.formAct.get('del');
+  }
+
+  get folio() {
+    return this.formAct.get('folio');
+  }
+
+  get year() {
+    return this.formAct.get('year');
+  }
+
+  get month() {
+    return this.formAct.get('month');
+  }
+
+  get act() {
+    return this.formAct.get('act');
+  }
+
+  getAutority() {
+    this.transferGoodService.queryTransfer(this.expedient).subscribe(
+      res => {
+        this.dataAutority = new DefaultSelect(res.data, res.count);
+      },
+      err => {
+        console.log(err);
+        this.alert(
+          'warning',
+          'No se encontró lista de autoridades',
+          'No se puede generar una nueva acta para este expediente'
+        );
+        this.dataAutority = new DefaultSelect();
+      }
+    );
+  }
+
+  getDelegation(params?: ListParams) {
+    const body = {
+      gstAll: 'NADA',
+      gnuDelegation: this.authService.decodeToken().department,
+    };
+
+    this.parameterGoodService.queryDelegation(body, params).subscribe(
+      res => {
+        console.log(res);
+        this.dataDelegation = new DefaultSelect(res.data, res.count);
+      },
+      err => {
+        console.log(err);
+        this.dataDelegation = new DefaultSelect();
+      }
+    );
+  }
+
+  fillDate() {
+    const currentDate = new Date();
+    this.formAct.get('year').setValue(format(currentDate, 'yy'));
+    this.formAct.get('month').setValue(format(currentDate, 'MM'));
+  }
+
+  activeSubscribe() {}
+
+  //FUNCION DE AGREGAR CEROS AL FOLIO
+  zeroAdd(number: number, lengthS: number) {
+    if (number != null) {
+      const stringNum = number.toString();
+      let newString = '';
+      if (stringNum.length < lengthS) {
+        lengthS = lengthS - stringNum.length;
+        for (let i = 0; i < lengthS; i++) {
+          newString = newString + '0';
+        }
+        newString = newString + stringNum;
+        return newString;
+      } else {
+        return stringNum;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  weaponKey() {
+    this.formAct.get('actSelect').valueChanges.subscribe((value: any) => {
+      this.weaponNewKey();
+    });
+
+    this.formAct.get('trans').valueChanges.subscribe((value: any) => {
+      this.weaponNewKey();
+    });
+
+    this.formAct.get('authority').valueChanges.subscribe((value: any) => {
+      console.log(value);
+      this.weaponNewKey();
+    });
+
+    this.formAct.get('del').valueChanges.subscribe((value: any) => {
+      console.log(value);
+      this.weaponNewKey();
+    });
+
+    this.formAct.get('folio').valueChanges.subscribe((value: any) => {
+      this.weaponNewKey();
+    });
+
+    this.formAct.get('year').valueChanges.subscribe((value: any) => {
+      this.weaponNewKey();
+    });
+
+    this.formAct.get('month').valueChanges.subscribe((value: any) => {
+      this.weaponNewKey();
+    });
+  }
+
+  clearAll() {
+    this.share = false;
+    this.form.reset();
+    this.formStatus.reset();
+    this.formAct.reset();
+    this.formExp.reset();
+    this.idProceeding = null;
+    this.ActaNew = null;
+    this.LocalData2 = [];
+    this.data2.load(this.LocalData2);
+    this.data2.refresh();
+    this.LocalData1 = [];
+    this.data1.load(this.LocalData1);
+    this.data1.refresh();
+    this.newA = false;
+  }
+
+  weaponNewKey() {
+    if (this.weaponKeyFlag) {
+      const nameAct =
+        (this.actSelect.value != null ? this.actSelect.value : '') +
+        '/' +
+        (this.trans.value != null ? this.trans.value : '') +
+        '/' +
+        (this.authority.value != null ? this.authority.value.transferKey : '') +
+        '/' +
+        (this.del.value != null ? this.del.value.delegation : '') +
+        '/' +
+        (this.folio.value != null
+          ? this.zeroAdd(parseInt(this.folio.value), 5)
+          : '') +
+        '/' +
+        (this.year.value != null
+          ? this.zeroAdd(parseInt(this.year.value), 2)
+          : '') +
+        '/' +
+        (this.month.value != null
+          ? this.zeroAdd(parseInt(this.month.value), 2)
+          : '');
+
+      console.log(nameAct);
+
+      this.formAct.get('act').setValue(nameAct);
+    }
+  }
+
+  async saveNewProceeding() {
+    console.log(new Date(this.formAct.get('elabDate').value));
+    console.log(this.formAct.get('elabDate').value);
+
+    if (this.formExp.get('programmingType').value == null) {
+      this.alert('warning', 'Es Necesario Seleccionar un Tipo de Acta', '');
+      this.formExp.get('programmingType').markAsTouched();
+      return;
+    }
+
+    if (!this.formAct.valid) {
+      this.alert('warning', 'Es Necesario Llenar Todos los Campos', '');
+      this.formAct.markAllAsTouched();
+      return;
+    }
+
+    const isUnique = await this.searchKeyProceeding();
+
+    if (!isUnique) {
+      this.alert('warning', 'La Clave de Acta ya Existe', '');
+      return;
+    }
+
+    const isEventAndType = await this.validEventAndType();
+
+    if (!isEventAndType) {
+      this.alert(
+        'warning',
+        'El tipo de constancia no corresponde con el tipo programación de bienes',
+        ''
+      );
+      return;
+    }
+
+    const newProceedingBody: IProccedingsDeliveryReception = {
+      keysProceedings: this.act.value,
+      elaborationDate: this.formAct.get('elabDate').value,
+      datePhysicalReception: this.formAct.get('actDate').value,
+      address: this.formAct.get('address').value,
+      statusProceedings: 'ABIERTA',
+      elaborate: this.authService.decodeToken().preferred_username,
+      typeProceedings: 'CONSENTR',
+      numFile: this.formExp.get('expedient').value,
+      witness1: this.formAct.get('receive').value,
+      witness2: this.formAct.get('delivery').value,
+      numDelegation1: this.formAct.get('del').value.delegationNumber2,
+      numDelegation2:
+        this.formAct.get('del').value.delegationNumber2 == 11 ? '11' : null,
+      observations: this.formAct.get('observations').value,
+      captureDate: new Date().getTime(),
+      comptrollerWitness: this.formAct.get('witnessContr').value,
+      idTypeProceedings: this.formAct.get('actSelect').value,
+    };
+
+    this.serviceProcVal.postProceeding(newProceedingBody).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', 'Se creó una nueva acta', '');
+        this.weaponKeyFlag = false;
+        this.actSelect.reset();
+        this.trans.reset();
+        this.authority.reset();
+        this.del.reset();
+        this.folio.reset();
+        this.year.reset();
+        this.month.reset();
+
+        const jsonResp = JSON.parse(JSON.stringify(res));
+        this.idProceeding = jsonResp.id;
+        this.act.setValue(jsonResp.keysProceedings);
+        this.newA = false;
+      },
+      err => {
+        this.alert('error', 'Error al crear acta', '');
+        console.log(err);
+      }
+    );
+  }
+
+  //BUSQUEDA DE CLAVE DE ACTA
+  searchKeyProceeding() {
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('keysProceedings', this.formAct.get('act').value);
+      this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+        res => {
+          resolve(false);
+        },
+        err => {
+          resolve(true);
+        }
+      );
+    });
+  }
+
+  //VALIDAR ACTA Y CONSTANCIA
+  validEventAndType() {
+    return new Promise((resolve, _rej) => {
+      const lis_event = this.formExp.get('programmingType').value;
+      const tipe_event = this.formAct.get('actSelect').value;
+      if (lis_event != null) {
+        if (tipe_event != null) {
+          if (lis_event == 'EVENCOMER' && tipe_event == 'E/VEN') {
+            resolve(true);
+          } else if (lis_event == 'EVENDON' && tipe_event == 'E/DON') {
+            this.isDon = true;
+            resolve(true);
+          } else if (lis_event == 'EVENDEST' && tipe_event == 'E/DES') {
+            resolve(true);
+          } else if (lis_event == 'EVENDEV' && tipe_event == 'E/DEV') {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        } else {
+          resolve(false);
+        }
+      } else {
+        resolve(false);
+      }
+    });
   }
 }

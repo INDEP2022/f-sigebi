@@ -183,7 +183,7 @@ export const INCONSINTENCIES_SIRSAE_COLUMNS_MONITORING = {
     type: 'string',
   },
   selectid: {
-    title: 'ID_SELEC',
+    title: 'Id. Selección',
     sort: false,
     type: 'string',
   },

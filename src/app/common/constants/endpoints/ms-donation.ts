@@ -6,6 +6,10 @@ export enum DonationEndPoint {
   requestUpdate = 'donac-request-good/update-request-donation-good/',
   eventComDonation = 'event-com-donation',
   DetailEventComDon = 'detail-event-com-don',
+  //chm
+  DetailProceddingEventComDon = 'detail-event-com-don/proceeding',
+  ErrorProceddingEventComDon = 'detail-event-com-don/proceedingerr',
+  QuantityProceddingEventComDon = 'detail-event-com-don/eventdonaquantity',
   eventComDonationExcel = 'detail-event-com-don/find-all-detail-event-com-don-excel-export',
   TempDonationGood = 'donate-invent-rel',
   ApproveDonation = 'r-approve-donation',
@@ -18,4 +22,7 @@ export enum DonationEndPoint {
   Inventary = 'donate-invent-rel/invent-rel',
   CreateInventary = 'donate-invent-rel',
   DetailEventComByID = 'detail-event-com-don/find-one',
+  DeleteDetailTmpEvent = 'deleteDatailTmp',
+  EventComDonationExcelExport = 'event-com-donation/excel-export',
+  ConecutivoActaDnation = 'application/query-number-invoice',
 }

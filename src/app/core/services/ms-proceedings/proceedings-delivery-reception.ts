@@ -4,7 +4,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import {
+  IBlkBie,
   IListResponse,
+  IQueryRegAdmin,
   IResponse,
 } from '../../interfaces/list-response.interface';
 import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
@@ -24,6 +26,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
+  }
+
+  update2(item: IProceedingDeliveryReception) {
+    return this.put(this.endpoint + '/' + item.id, item);
   }
 
   postProceeding(data: IProccedingsDeliveryReception) {
@@ -119,5 +125,13 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   getStatusDeliveryCveExpendienteAll(params?: ListParams) {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
     return this.get(route, params);
+  }
+
+  blkBie(body: IBlkBie) {
+    return this.post('aplication/blk-bie', body);
+  }
+
+  regDelAdmin(body: IQueryRegAdmin) {
+    return this.post('aplication/query-reg-del-admin-delegation', body);
   }
 }

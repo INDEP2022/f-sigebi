@@ -101,4 +101,9 @@ export enum ENDPOINT_INVOICE {
   ApplicationUpdateTotalIvaMonto = 'application/update-total-iva-monto',
   ProcedureSera = 'procedure-sera/generate-preinvoice-soi',
   PDelInvoice = 'pk-comer-real-state-invoice/p-del-invoice',
+  CtrlInvoiceCopyBillVtaBases = 'ctrl-invoice/copy-bill-vta-bases',
+  ApplicationGetComerPagorefExists = 'application/get-comer-pagoref-exists',
+  ApplicationGeneratePreInvoices = 'application/generate-pre-invoices',
+  ApplicationPufVerifyAmounts = 'application/puf-verify-amounts',
+  ApplicationPupStatusCan = 'application/pup-status-can',
 }

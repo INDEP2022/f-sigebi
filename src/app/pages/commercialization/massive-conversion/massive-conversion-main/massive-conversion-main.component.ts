@@ -37,6 +37,7 @@ import {
 @Component({
   selector: 'app-massive-conversion-main',
   templateUrl: './massive-conversion-main.component.html',
+  styleUrls: ['./massive-conversion.css'],
   styles: [
     `
       .btn-event-search {
@@ -178,11 +179,13 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   resetFilter() {
+    this.enableInputEvent();
     this.form.controls['batchId'].setValue(null);
     this.form.controls['status'].setValue(null);
     this.form.controls['operationId'].setValue(null);
     this.form.controls['insertDate'].setValue(null);
     this.form.controls['validityDate'].setValue(null);
+    this.form.controls['eventId'].setValue(null);
   }
 
   consultInServer() {
@@ -364,11 +367,11 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   insertTmpLcComer(tmpLcComer: ITmpLcComer) {
     this.capturelineService.postTmpLcComer(tmpLcComer).subscribe({
       next: () => {
-        this.alert('success', this.title, 'Se insertón correctamente');
+        this.alert('success', this.title, 'Se insertó correctamente');
         this.searchData();
       },
       error: () => {
-        this.alert('error', this.title, 'Ocurrión un error al insertar');
+        this.alert('error', this.title, 'Ocurrió un error al insertar');
       },
     });
   }
@@ -423,18 +426,18 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
               this.alert(
                 'success',
                 this.title,
-                'Se cargaron los checks correctamente'
+                'Se cargaron los cheques correctamente'
               );
               cbOpenCheckPortal({ list: res.data });
             } else {
-              this.alert('warning', this.title, 'No se encontraron checks');
+              this.alert('warning', this.title, 'No se encontraron cheques');
             }
           },
           error: () => {
             this.alert(
               'error',
               this.title,
-              'Ocurrión un error al cargar los checks'
+              'Ocurrió un error al intentar cargar cheques'
             );
           },
         });

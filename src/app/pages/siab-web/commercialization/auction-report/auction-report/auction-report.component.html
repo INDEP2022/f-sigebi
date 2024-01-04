@@ -42,7 +42,7 @@
         </div>
       </div>
     </form>
-    <div class="row pt-5" *ngIf="filter">
+    <!-- <div class="row pt-5" *ngIf="filter">
       <form
         class="form-material"
         [formGroup]="formFilter"
@@ -73,6 +73,7 @@
                 bindLabel="cliente"
                 value="cliente"
                 (change)="changeClient($event)">
+
               </ngx-select>
             </form-field>
           </div>
@@ -101,6 +102,7 @@
                 [clearable]="false">
                 <ng-option value="VISTA">VISTAS</ng-option>
                 <ng-option value="NO VISTA">NO VISTAS</ng-option>
+                
               </ng-select>
             </form-field>
           </div>
@@ -134,9 +136,9 @@
           </div>
         </div>
       </form>
-    </div>
+    </div> -->
 
-    <div *ngIf="showFilter">
+    <!-- <div *ngIf="showFilter">
       <div class="row pt-4">
         <div class="ch-content">
           <h5 class="title">Liquidaci&oacute;n</h5>
@@ -162,7 +164,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div *ngIf="showLiquidacion">
       <div class="row pt-4">
@@ -218,7 +220,7 @@
       </div>
     </div>
 
-    <div class="row pt-5" *ngIf="showGarantia || showLiquidacion">
+    <div class="row pt-5" *ngIf="totalItems > 0 || totalItems1 > 0">
       <form class="form-material" [formGroup]="formReport">
         <div class="col-md-3">
           <form-field
@@ -233,11 +235,10 @@
         <div class="col-md-2">
           <div class="justify-content-center">
             <button
-              type="button"
-              class="btn btn-primary btn-sm active"
+              class="btn btn-success active btn-sm ml-3"
               [disabled]="!formReport.valid"
               (click)="openPrevPdf()">
-              Descargar reporte
+              Descargar reporte <i class="bx bx-download float-icon"></i>
             </button>
           </div>
         </div>

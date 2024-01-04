@@ -19,15 +19,14 @@ export class ExpenseConceptsListModalComponent
 {
   form: FormGroup;
   concept: IConcept;
+  address: string;
   title: string = 'Concepto de Pago';
   directions: { id: string; description: string }[] = [
-    { id: 'M', description: 'MUEBLES' },
-    { id: 'I', description: 'INMUEBLES' },
     { id: 'C', description: 'GENERAL' },
-    { id: 'V', description: 'VIGILANCIA' },
-    { id: 'S', description: 'SEGUROS' },
-    { id: 'J', description: 'JURÍDICO' },
-    { id: 'A', description: 'ADMINISTRACIÓN' },
+    // { id: 'V', description: 'VIGILANCIA' },
+    // { id: 'S', description: 'SEGUROS' },
+    // { id: 'J', description: 'JURÍDICO' },
+    // { id: 'A', description: 'ADMINISTRACIÓN' },
   ];
   constructor(
     private fb: FormBuilder,
@@ -42,7 +41,18 @@ export class ExpenseConceptsListModalComponent
   ngOnInit() {
     if (this.concept) {
       console.log(this.concept);
+      this.directions.push({ id: 'M', description: 'MUEBLES' });
+      this.directions.push({ id: 'I', description: 'INMUEBLES' });
       this.form.setValue(this.concept);
+    } else {
+      if (this.address) {
+        if (this.address === 'M') {
+          this.directions.push({ id: 'M', description: 'MUEBLES' });
+        }
+        if (this.address === 'I') {
+          this.directions.push({ id: 'I', description: 'INMUEBLES' });
+        }
+      }
     }
   }
 

@@ -13,6 +13,7 @@ import {
 import { IRequestEventRelated } from 'src/app/core/models/requests/request-event-related.model';
 import { EventRelatedService } from 'src/app/core/services/ms-event-rel/event-rel.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ComerClientService } from 'src/app/core/services/ms-prepareevent/comer-clients.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -60,73 +61,21 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     actions: false,
     columns: { ...RELATED_EVENTS_COLUMNS },
   };
-  // createButton: string =
-  //   '<span class="btn btn-success active font-size-12 me-2 mb-2 py-2 px-2">Agregar</span>';
-  // saveButton: string =
-  //   '<span class="btn btn-info active font-size-12 me-2 mb-2 py-2 px-2">Actualizar</span>';
-  // cancelButton: string =
-  //   '<span class="btn btn-warning active font-size-12 text-black me-2 mb-2 py-2 px-2 cancel">Cancelar</span>';
+
   closeTable: boolean = false;
-  // relatedEventsSettings = {
-  //   ...TABLE_SETTINGS,
-  //   mode: 'internal',
-  //   hideSubHeader: false,
-
-  //};
-
-  /*eventsData = [
-    {
-      id: 11122,
-      process: 'DECBMI0107',
-      status: 'CONCILIADO A SIRSAE',
-      type: 'LICITACIÓN',
-      direction: 'INMUEBLES',
-    },
-    {
-      id: 2321,
-      process: 'DECBMI0107',
-      status: 'CONCILIADO A SIRSAE',
-      type: 'LICITACIÓN',
-      direction: 'INMUEBLES',
-    },
-    {
-      id: 3123,
-      process: 'DECBMI0107',
-      status: 'CONCILIADO A SIRSAE',
-      type: 'LICITACIÓN',
-      direction: 'INMUEBLES',
-    },
-  ];*/
 
   relatedEventsData: IRequestEventRelated[] = [];
+
+  events = new DefaultSelect<Partial<any>>();
 
   constructor(
     private fb: FormBuilder,
     private comerEventosService: ComerEventosService,
     private eventRelatedService: EventRelatedService,
-    private comerClientService: ComerClientService
+    private comerClientService: ComerClientService,
+    private comerTpEventosService: ComerTpEventosService
   ) {
     super();
-
-    //this.relatedEventsSettings.columns = RELATED_EVENTS_COLUMNS;
-    // this.relatedEventsSettings.actions.delete = false;
-    // this.relatedEventsSettings.actions.edit = false;
-    // this.relatedEventsSettings.actions.add = false;
-    // this.relatedEventsSettings.
-    // this.relatedEventsSettings.columns = {
-    // ...this.relatedEventsSettings.columns
-    // ,
-    // id: {
-    //   title: 'Evento',
-    //   sort: false,
-    //   type: 'html',
-    //   width: '25%',
-    //   editor: {
-    //     type: 'custom',
-    //     component: SelectRelatedEventComponent,
-    //   },
-    // },
-    // };
   }
 
   ngOnInit(): void {
@@ -141,9 +90,25 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     this.filter();
   }
 
-  getEvents() {
-    this.relatedEventsDataLocal.reset();
+  descriptionTypeEvent: string = '';
 
+  getEventsParent(params?: ListParams) {
+    //params['filter.nmtable'] = `$eq:348`;
+    if (params.text) params['filter.eventDadId'] = `$eq:${params.text}`;
+
+    this.eventRelatedService.getAll(params).subscribe({
+      next: (data: any) => {
+        console.log('data', data);
+        this.events = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.events = new DefaultSelect();
+      },
+    });
+  }
+
+  getEvents() {
+    this.loading = true;
     // if (params.text == '') {
     //   this.eventItems = new DefaultSelect(this.eventsData, 5);
     // } else {
@@ -167,27 +132,58 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           console.log('Response DEL SERVICIO: ', response.data);
-          let arrEvents: any[] = [];
-          if (response.data) {
-            response.data.forEach((item: any) => {
-              // console.log("item: ", item);
-              let event: any = {
-                id: item.id,
-                process: item.processKey,
-                status: item.statusVtaId,
-                type: item.tpsolavalId,
-                direction: item.address,
-              };
-              // console.log('event: ', event);
-              arrEvents.push(event);
-            });
-          }
+          this.loading = true;
 
-          this.loading = false;
-          // this.eventsData = arrEvents; //response.data;
-          this.eventItems = new DefaultSelect(arrEvents, response.count);
-          this.selectEvent();
-          //this.totalItems = response.count;
+          //Traer la descripción del tipo de Evento
+          this.comerTpEventosService
+            .getByIdComerTEvents(response.data[0].eventTpId)
+            .subscribe({
+              next: resp => {
+                console.log(
+                  'Descripción del Tipo de Evento: ',
+                  resp.descReceipt
+                );
+                this.descriptionTypeEvent = resp.descReceipt;
+              },
+              error: error => {
+                console.log(
+                  'Error al obtener la Descripción del Tipo de Evento: ',
+                  error
+                );
+                this.descriptionTypeEvent = 'Sin descripción';
+                console.log(
+                  'Descripción del Tipo de Evento: ',
+                  this.descriptionTypeEvent
+                );
+              },
+            });
+
+          setTimeout(() => {
+            let arrEvents: any[] = [];
+            if (response.data) {
+              response.data.forEach((item: any) => {
+                // console.log("item: ", item);
+                console.log('Id Tipo Evento: ', item.eventTpId);
+
+                let event: any = {
+                  id: item.id,
+                  process: item.processKey,
+                  status: item.statusVtaId,
+                  type: this.descriptionTypeEvent,
+                  direction: item.address,
+                };
+
+                console.log('event let Evento: ', event);
+                arrEvents.push(event);
+              });
+            }
+
+            this.loading = false;
+            // this.eventsData = arrEvents; //response.data;
+            this.eventItems = new DefaultSelect(arrEvents, response.count);
+            this.selectEvent();
+            //this.totalItems = response.count;
+          }, 1500);
         },
         error: () => (
           (this.loading = false),

@@ -958,24 +958,27 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         i++;
       } else {
         let obj = {
-          goodId: item_.goodNumber,
+          goodId: item_.goodId,
           id: item_.goodNumber,
           status: statusFinal.status,
           observations: descripcion + ' ',
         };
 
-        item_.status = statusFinal.status;
-        await this.updateGood(obj);
-
-        let params2 = {
-          propertyNum: item_.goodNumber,
-          status: statusFinal.status,
-          changeDate: new Date(),
-          userChange: this.user,
-          statusChangeProgram: 'FDONACIONES',
-          reasonForChange: descripcion,
-        };
-        await this.insertHistoric(params2);
+        let result_ = await this.updateGood(obj);
+        if (!result_) {
+          i++;
+        } else {
+          item_.status = statusFinal.status;
+          let params2 = {
+            propertyNum: item_.goodNumber,
+            status: statusFinal.status,
+            changeDate: new Date(),
+            userChange: this.user,
+            statusChangeProgram: 'FDONACIONES',
+            reasonForChange: descripcion,
+          };
+          await this.insertHistoric(params2);
+        }
       }
     });
     Promise.all(result).then(item => {
@@ -1102,6 +1105,41 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         this.alert('success', 'Archivo descargado correctamente', '');
       }, 1000);
     });
+  }
+
+  // EXPORTAR EXCEL ENDPOINT //
+  exportarExcelEndpoint() {
+    this.loadingExport = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    params.limit = this.totalItems;
+    params.page = 1;
+
+    this.massiveGoodService.getApplicationRegisterCountCsv(params).subscribe({
+      next: async response => {
+        const base64 = response.base64File;
+        const nameFile = response.nameFile;
+        await this.downloadExcel(base64, nameFile);
+      },
+      error: error => {
+        this.loadingExport = false;
+        this.alert('warning', 'No se pudo descargar el excel', '');
+      },
+    });
+  }
+
+  async downloadExcel(base64String: any, nameFile: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = nameFile;
+    link.click();
+    link.remove();
+    this.loadingExport = false;
+    this.alert('success', 'El archivo se ha descargado', '');
   }
 
   // CONVERTIR BASE64 a XLSX

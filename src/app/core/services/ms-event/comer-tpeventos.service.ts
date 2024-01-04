@@ -43,6 +43,11 @@ export class ComerTpEventosService extends HttpService {
     return this.get(route);
   }
 
+  getByIdComerTEvents(id: string | number) {
+    const route = `${this.endpointTevents}/${id}`;
+    return this.get(route);
+  }
+
   createTevents(tvent: IComerTpEvent) {
     return this.post(this.endpointTevents, tvent);
   }

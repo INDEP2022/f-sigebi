@@ -5,6 +5,7 @@ import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.i
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
+import { IPayment } from '../../models/ms-payment/payment';
 import { AuthService } from '../authentication/auth.service';
 import {
   ICabms,
@@ -138,12 +139,20 @@ export class PaymentService extends HttpService {
   PUP_PROC_NUEVO(evento: string) {
     return this.get(`application/fcomer111-pup-proc-new/${evento}`);
   }
-  getBusquedaPag(params?: any) {
+  getBusquedaPag5(params?: any) {
     return this.get(
       `${PaymentEndPoints.BusquedaPagosDet}?filter.tsearchId=$eq:${5}`,
       params
     );
   }
+
+  getBusquedaPag(params?: _Params) {
+    return this.get<IListResponseMessage<IPayment>>(
+      `${PaymentEndPoints.BusquedaPagosDet}`,
+      params
+    );
+  }
+
   // postComerPagoRefVirt(body: IComerPaymentsRefVir) {
   //   return this.post('comer-payments-ref-virt', body);
   // }
@@ -163,6 +172,10 @@ export class PaymentService extends HttpService {
 
   deleteId(id: number | string) {
     return this.delete(`${PaymentEndPoints.Delete}/${id}`);
+  }
+
+  deleteMassive(id: number | string) {
+    return this.delete('delete-busqueda-pagos-det-busqueda/' + id);
   }
 
   UpdateRecord(params: any) {
@@ -192,8 +205,8 @@ export class PaymentService extends HttpService {
   postCreateRecord(params: any) {
     return this.post(PaymentEndPoints.BusquedaPagosDet, params);
   }
-  postIdentifiesPaymentsInconsistency(params: any) {
-    return this.post(PaymentEndPoints.postIndentifiesPayments, params);
+  postIdentifiesPaymentsInconsistency(body: any, params?: _Params) {
+    return this.post(PaymentEndPoints.postIndentifiesPayments, body, params);
   }
 
   getCtlDevPagB(params: _Params) {

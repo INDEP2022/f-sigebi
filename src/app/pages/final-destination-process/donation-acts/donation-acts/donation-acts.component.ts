@@ -1429,6 +1429,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
         this.form.controls['ti_expediente'].setValue(next.expedientType);
         this.consultREG_TRANSFERENTES(new ListParams());
         this.getGoodsByStatus(this.dataExpediente.id);
+        this.paramsOne.getValue().page = 1;
       }
     });
   }
@@ -1449,6 +1450,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
     let modalRef = this.modalService.show(SearchActasComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
       if (next) {
+        console.log('next', next);
         this.actaDefault = next;
 
         if (this.actaDefault.statusProceedings == 'CERRADA')
@@ -1466,14 +1468,14 @@ export class DonationActsComponent extends BasePage implements OnInit {
           testigoTwo: this.actaDefault.witness1,
           testigoTree: this.actaDefault.witness2,
           respConv: this.actaDefault.responsible,
-          datePhysicalReception: new Date(
+          datePhysicalReception: await this.correctDate(
             this.actaDefault.datePhysicalReception
           ),
-          elaboradate: new Date(this.actaDefault.elaborationDate),
+          elaboradate: await this.correctDate(this.actaDefault.elaborationDate),
           statusActa: this.actaDefault.statusProceedings,
           folio: this.actaDefault.universalFolio,
         });
-
+        console.log('this.actaRecepttionForm ', this.actaRecepttionForm);
         this.valClave = false;
         this.btnSave = true;
         let clave = await this.obtenerValores(this.actaDefault.keysProceedings);
@@ -1518,7 +1520,11 @@ export class DonationActsComponent extends BasePage implements OnInit {
     // this.claveActaForm.get('mes').setValue(11);
   }
 
-  actualizarActa() {
+  async actualizarActa() {
+    console.log(
+      'this.actaRecepttionForm.value.elaboradate',
+      this.actaRecepttionForm.value.elaboradate
+    );
     if (!this.actaDefault) {
       this.alertInfo('warning', 'Debe seleccionar un Acta', '');
       return;
@@ -1539,6 +1545,9 @@ export class DonationActsComponent extends BasePage implements OnInit {
       elaborationDate: this.actaRecepttionForm.value.elaboradate,
       datePhysicalReception:
         this.actaRecepttionForm.value.datePhysicalReception,
+      // elaborationDate: this.actaRecepttionForm.value.elaboradate,
+      // datePhysicalReception:
+      //   this.actaRecepttionForm.value.datePhysicalReception,
       address: this.actaRecepttionForm.value.direccion,
       statusProceedings: 'ABIERTA',
       elaborate: this.authService.decodeToken().preferred_username,
@@ -1791,8 +1800,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
         next: (data: any) => {
           console.log('Transferentes', data);
           let result = data.data.map(async (item: any) => {
-            item['transfer'] =
-              item.password + ' - ' + item.number + ' - ' + item.name;
+            item['transfer'] = item.password + ' - ' + item.number;
           });
 
           Promise.all(result).then(resp => {
@@ -1885,7 +1893,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
     }
   }
 
-  guardarRegistro(cveActa: any) {
+  async guardarRegistro(cveActa: any) {
     let obj: any = {
       keysProceedings: cveActa,
       elaborationDate: this.actaRecepttionForm.value.elaboradate,
@@ -1914,7 +1922,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
       numDelegation2: null,
       identifier: null,
       label: null,
-      universalFolio: null,
+      universalFolio: this.actaRecepttionForm.value.folio,
       numeraryFolio: null,
       numTransfer: null,
       idTypeProceedings: 'DON',
@@ -1945,10 +1953,10 @@ export class DonationActsComponent extends BasePage implements OnInit {
           });
           this.claveActaForm.reset();
           this.valClave = false;
-          this.actaRecepttionForm.patchValue({
-            elaboradate: await this.getDate(),
-            datePhysicalReception: await this.getDate(),
-          });
+          // this.actaRecepttionForm.patchValue({
+          //   elaboradate: await this.getDate(),
+          //   datePhysicalReception: await this.getDate(),
+          // });
           this.claveActaForm.get('anio').setValue(this.currentYear);
 
           this.actualizarData();
@@ -2084,6 +2092,9 @@ export class DonationActsComponent extends BasePage implements OnInit {
               elaborationDate: this.actaRecepttionForm.value.elaboradate,
               datePhysicalReception:
                 this.actaRecepttionForm.value.datePhysicalReception,
+              // elaborationDate: this.actaRecepttionForm.value.elaboradate,
+              // datePhysicalReception:
+              //   this.actaRecepttionForm.value.datePhysicalReception,
               address: this.actaRecepttionForm.value.direccion,
               statusProceedings: 'CERRADA',
               elaborate: this.authService.decodeToken().preferred_username,
@@ -2105,7 +2116,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
               numDelegation2: null,
               identifier: null,
               label: null,
-              universalFolio: null,
+              universalFolio: this.actaRecepttionForm.value.folio,
               numeraryFolio: null,
               numTransfer: null,
               idTypeProceedings: 'DON',
@@ -2376,5 +2387,10 @@ export class DonationActsComponent extends BasePage implements OnInit {
   async obtenerValores(cadena: any) {
     var valores = cadena.split('/');
     return valores;
+  }
+
+  async correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
   }
 }
