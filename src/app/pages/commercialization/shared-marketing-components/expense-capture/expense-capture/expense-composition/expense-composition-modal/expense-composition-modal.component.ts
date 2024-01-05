@@ -102,7 +102,7 @@ export class ExpenseCompositionModalComponent
 
   get pathGood() {
     return (
-      'goodprocess/api/v1/application/get-good-expedients-trans' +
+      'goodprocess/api/v1/application/query-pro-list-good' +
       (this.comerDetExpense
         ? this.comerDetExpense.goodNumber
           ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
