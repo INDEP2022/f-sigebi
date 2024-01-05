@@ -100,6 +100,17 @@ export class ExpenseCompositionModalComponent
   //   }
   // }
 
+  get pathGood() {
+    return (
+      'goodprocess/api/v1/application/get-good-expedients-trans' +
+      (this.comerDetExpense
+        ? this.comerDetExpense.goodNumber
+          ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
+          : ''
+        : '')
+    );
+  }
+
   fillGoodM(row: any) {
     console.log(row);
     if (row) {

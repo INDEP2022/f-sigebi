@@ -21,7 +21,7 @@
             *ngIf="address === 'M'"
             [form]="form"
             [updateValues]="true"
-            path="goodprocess/api/v1/application/query-pro-list-good"
+            [path]="pathGood"
             formControlName="goodNumber"
             [readonly]="comerDetExpense && chargeGoodsByLote"
             label="No. Bien"
