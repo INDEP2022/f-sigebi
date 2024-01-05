@@ -23,7 +23,6 @@ import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-de
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
 import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
-import { IValidGood } from '../models/expense-good-process';
 import { ILoadLotResponse } from '../models/lot';
 import { ExpenseGoodProcessService } from './expense-good-process.service';
 import { ExpenseLotService } from './expense-lot.service';
@@ -118,7 +117,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   userData: any;
   P_TIPO_CAN: number;
   copiaForma: any;
-  goods: IValidGood[] = [];
   constructor(
     private fb: FormBuilder,
     private accountingService: AccountingService,

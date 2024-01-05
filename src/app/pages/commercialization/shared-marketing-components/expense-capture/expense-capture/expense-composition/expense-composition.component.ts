@@ -14,7 +14,10 @@ import {
   tap,
 } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerDetExpense,
   IComerDetExpense2,
@@ -198,6 +201,13 @@ export class ExpenseCompositionComponent
       this.vat = 0;
       this.isrWithholding = 0;
       this.vatWithholding = 0;
+      let filterParams = new FilterParams();
+      filterParams.limit = 100000;
+      filterParams.addFilter(
+        'goodNumber',
+        response.map(x => x.no_bien).toString(),
+        SearchFilter.IN
+      );
       let goods = await firstValueFrom(
         this.goodProcessService
           .getValidGoods(
@@ -207,7 +217,8 @@ export class ExpenseCompositionComponent
               ? 'N'
               : this.expenseCaptureDataService.PDEVPARCIALBIEN,
             +this.conceptNumber.value,
-            this.address !== 'M' ? 'N' : this.PVALIDADET
+            this.address !== 'M' ? 'N' : this.PVALIDADET,
+            filterParams.getParams()
           )
           .pipe(
             takeUntil(this.$unSubscribe),
@@ -710,7 +721,11 @@ export class ExpenseCompositionComponent
     if (this.expenseCaptureDataService.formaModificada()) {
       return;
     }
-    if (this.address !== 'M' && !this.form.get('contractNumber').value) {
+    if (
+      this.address !== 'M' &&
+      !this.form.get('contractNumber').value &&
+      this.expenseCaptureDataService.showContract
+    ) {
       this.alert(
         'warning',
         'Tiene que seleccionar un contrato para continuar',
@@ -892,13 +907,14 @@ export class ExpenseCompositionComponent
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       expense: this.expense,
-      goods: this.goods,
       CHCONIVA: this.expenseCaptureDataService.CHCONIVA,
       IVA: this.expenseCaptureDataService.IVA,
       address: this.address,
       V_VALCON_ROBO: this.expenseCaptureDataService.V_VALCON_ROBO,
       chargeGoodsByLote: this.chargeGoodsByLote,
       data: this.data,
+      PDEVPARCIALBIEN: this.expenseCaptureDataService.PDEVPARCIALBIEN,
+      PVALIDADET: this.expenseCaptureDataService.PVALIDADET,
       callback: (next: any) => {
         if (next === true) {
           this.getData2(this.data.length === 0);
@@ -922,12 +938,13 @@ export class ExpenseCompositionComponent
     modalConfig.initialState = {
       expense: this.expense,
       comerDetExpense: row,
-      goods: this.goods,
       CHCONIVA: this.expenseCaptureDataService.CHCONIVA,
       IVA: this.expenseCaptureDataService.IVA,
       address: this.address,
       chargeGoodsByLote: this.chargeGoodsByLote,
       data: this.data,
+      PDEVPARCIALBIEN: this.expenseCaptureDataService.PDEVPARCIALBIEN,
+      PVALIDADET: this.expenseCaptureDataService.PVALIDADET,
       V_VALCON_ROBO: this.expenseCaptureDataService.V_VALCON_ROBO,
       callback: (next: any) => {
         if (next === true) {
@@ -1440,29 +1457,23 @@ export class ExpenseCompositionComponent
         next: response => {
           this.file.nativeElement.value = '';
           if (response.data && response.data.length > 0) {
-            const inserts = response.data
-              .filter(
-                x =>
-                  this.goods.filter(row => row.goodNumber === x.goodNumber)
-                    .length > 0
-              )
-              .map(row => {
-                return {
-                  vat: row.vat2,
-                  amount: row.amount2,
-                  goodNumber: row.goodNumber,
-                  transferorNumber: row.transferorNumber,
-                  cvman: row.mandate2,
-                  isrWithholding: 0,
-                  vatWithholding: 0,
-                  // goodDescription: row.DESCRIPCION,
-                  budgetItem: null,
-                  changeStatus: false,
-                  reportDelit: false,
-                  total: row.total,
-                  expenseNumber: this.expenseNumber.value,
-                };
-              });
+            const inserts = response.data.map(row => {
+              return {
+                vat: row.vat2,
+                amount: row.amount2,
+                goodNumber: row.goodNumber,
+                transferorNumber: row.transferorNumber,
+                cvman: row.mandate2,
+                isrWithholding: 0,
+                vatWithholding: 0,
+                // goodDescription: row.DESCRIPCION,
+                budgetItem: null,
+                changeStatus: false,
+                reportDelit: false,
+                total: row.total,
+                expenseNumber: this.expenseNumber.value,
+              };
+            });
             if (inserts.length > 0) {
               this.insertMassive(inserts);
             } else {
@@ -1619,34 +1630,25 @@ export class ExpenseCompositionComponent
       );
   }
 
-  get goods() {
-    return this.expenseCaptureDataService.goods;
-  }
-
   private getComerDetExpenseI(data: IPreviewDatosCSV[]) {
-    return data
-      .filter(
-        x =>
-          this.goods.filter(row => row.goodNumber === x.goodNumber).length > 0
-      )
-      .map(x => {
-        let newRow: IComerDetExpense = {
-          vat: +(x.iva2 + ''),
-          amount: +(x.amount2 + ''),
-          goodNumber: x.goodNumber + '',
-          transferorNumber: x.transferorNumber + '',
-          cvman: x.mandate2,
-          isrWithholding: +(x.retentionIsr2 + ''),
-          vatWithholding: +(x.retentionIva2 + ''),
-          // goodDescription: row.DESCRIPCION,
-          budgetItem: null,
-          changeStatus: false,
-          reportDelit: false,
-          total: +(x.total2 + ''),
-          expenseNumber: this.expenseNumber.value,
-        };
-        return newRow;
-      });
+    return data.map(x => {
+      let newRow: IComerDetExpense = {
+        vat: +(x.iva2 + ''),
+        amount: +(x.amount2 + ''),
+        goodNumber: x.goodNumber + '',
+        transferorNumber: x.transferorNumber + '',
+        cvman: x.mandate2,
+        isrWithholding: +(x.retentionIsr2 + ''),
+        vatWithholding: +(x.retentionIva2 + ''),
+        // goodDescription: row.DESCRIPCION,
+        budgetItem: null,
+        changeStatus: false,
+        reportDelit: false,
+        total: +(x.total2 + ''),
+        expenseNumber: this.expenseNumber.value,
+      };
+      return newRow;
+    });
   }
 
   private getComerDetExpenseOfGoodsByLot(
@@ -1671,36 +1673,32 @@ export class ExpenseCompositionComponent
   }
 
   private getComerDetExpenseArray(messages: any) {
-    return messages
-      .filter(
-        x => this.goods.filter(row => row.goodNumber === x.COL_SIAB).length > 0
-      )
-      .map((row: any) => {
-        let total =
-          row.COL_IMPORTE + row.COL_IVA
-            ? row.COL_IVA
-            : 0 - row.COL_RETISR
-            ? row.COL_RETISR
-            : 0 - row.COL_RETIVA
-            ? row.COL_RETIVA
-            : 0;
-        let newRow: IComerDetExpense = {
-          vat: row.COL_IVA,
-          amount: row.COL_IMPORTE,
-          goodNumber: row.COL_SIAB,
-          transferorNumber: row.LNU_MANDATO,
-          cvman: row.LST_CVMAN,
-          isrWithholding: row.COL_RETISR,
-          vatWithholding: row.COL_RETIVA,
-          // goodDescription: row.DESCRIPCION,
-          budgetItem: null,
-          changeStatus: false,
-          reportDelit: false,
-          total,
-          expenseNumber: this.expenseNumber.value,
-        };
-        return newRow;
-      });
+    return messages.map((row: any) => {
+      let total =
+        row.COL_IMPORTE + row.COL_IVA
+          ? row.COL_IVA
+          : 0 - row.COL_RETISR
+          ? row.COL_RETISR
+          : 0 - row.COL_RETIVA
+          ? row.COL_RETIVA
+          : 0;
+      let newRow: IComerDetExpense = {
+        vat: row.COL_IVA,
+        amount: row.COL_IMPORTE,
+        goodNumber: row.COL_SIAB,
+        transferorNumber: row.LNU_MANDATO,
+        cvman: row.LST_CVMAN,
+        isrWithholding: row.COL_RETISR,
+        vatWithholding: row.COL_RETIVA,
+        // goodDescription: row.DESCRIPCION,
+        budgetItem: null,
+        changeStatus: false,
+        reportDelit: false,
+        total,
+        expenseNumber: this.expenseNumber.value,
+      };
+      return newRow;
+    });
   }
 
   private GRABA_TOTALES() {

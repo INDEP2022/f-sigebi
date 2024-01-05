@@ -26,7 +26,6 @@ export class ExpenseCompositionModalComponent
   expense: IComerExpense;
   transferent = '';
   title = 'Composición de Gastos';
-  goods: IValidGood[] = [];
   selectedGood: IValidGood;
   cvmans: { cvman: string; key: string }[] = [
     { cvman: '007200', key: 'DIRECCION EJECUTIVA ' },
@@ -38,6 +37,8 @@ export class ExpenseCompositionModalComponent
   chargeGoodsByLote: boolean;
   data: IComerDetExpense2[];
   V_VALCON_ROBO: number;
+  PDEVPARCIALBIEN: string;
+  PVALIDADET: string;
   private goodDescription: string;
   constructor(
     private modalRef: BsModalRef,
@@ -72,19 +73,47 @@ export class ExpenseCompositionModalComponent
     }
   }
 
-  onChange(goodNumber: number) {
-    console.log(goodNumber);
-    let goodData = this.goods.find(x => x.goodNumber === goodNumber);
-    if (goodData && this.address === 'M') {
-      this.amount.setValue(goodData.amount2);
-      this.vat.setValue(goodData.iva2);
-      this.goodDescription = goodData.description;
-      if (
-        this.expense.conceptNumber + '' === '643' &&
-        goodData.iva2 === 0 &&
-        this.CHCONIVA
-      ) {
-        this.vat.setValue(goodData.amount2 * this.IVA);
+  get bodyPost() {
+    return {
+      lotId: +this.expense.lotNumber,
+      pevent: +this.expense.eventNumber,
+      pDevPartialGood: this.address !== 'M' ? 'N' : this.PDEVPARCIALBIEN,
+      conceptId: +this.expense.conceptNumber,
+      PVALIDADET: this.address !== 'M' ? 'N' : this.PVALIDADET,
+    };
+  }
+
+  // onChange(goodNumber: number) {
+  //   console.log(goodNumber);
+  //   let goodData = this.goods.find(x => x.goodNumber === goodNumber);
+  //   if (goodData && this.address === 'M') {
+  //     this.amount.setValue(goodData.amount2);
+  //     this.vat.setValue(goodData.iva2);
+  //     this.goodDescription = goodData.description;
+  //     if (
+  //       this.expense.conceptNumber + '' === '643' &&
+  //       goodData.iva2 === 0 &&
+  //       this.CHCONIVA
+  //     ) {
+  //       this.vat.setValue(goodData.amount2 * this.IVA);
+  //     }
+  //   }
+  // }
+
+  fillGoodM(row: any) {
+    console.log(row);
+    if (row) {
+      if (row.transferorNumber) {
+        this.transferent = row.transferorNumber;
+      }
+      if (row.mandate2) {
+        this.cvman.setValue(row.mandate2);
+      }
+      if (row.iva2) {
+        this.vat.setValue(row.iva2);
+      }
+      if (row.amount2) {
+        this.amount.setValue(row.amount2);
       }
     }
   }
@@ -116,24 +145,24 @@ export class ExpenseCompositionModalComponent
       this.fillCvmans();
       this.fillGoods();
     }
-    this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        if (response) {
-          if (this.address === 'M') {
-            this.selectedGood =
-              this.goods.filter(x => x.goodNumber === response)[0] ?? null;
-            if (this.selectedGood) {
-              if (this.selectedGood.transferorNumber) {
-                this.transferent = this.selectedGood.transferorNumber;
-              }
-              if (this.selectedGood.mandate2) {
-                this.cvman.setValue(this.selectedGood.mandate2);
-              }
-            }
-          }
-        }
-      },
-    });
+    // this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    //   next: response => {
+    //     if (response) {
+    //       if (this.address === 'M') {
+    //         this.selectedGood =
+    //           this.goods.filter(x => x.goodNumber === response)[0] ?? null;
+    //         if (this.selectedGood) {
+    //           if (this.selectedGood.transferorNumber) {
+    //             this.transferent = this.selectedGood.transferorNumber;
+    //           }
+    //           if (this.selectedGood.mandate2) {
+    //             this.cvman.setValue(this.selectedGood.mandate2);
+    //           }
+    //         }
+    //       }
+    //     }
+    //   },
+    // });
   }
 
   getTransferent(result: any) {

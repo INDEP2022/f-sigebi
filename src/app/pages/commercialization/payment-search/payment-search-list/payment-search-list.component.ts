@@ -66,7 +66,18 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   LV_TOTREG: number;
   LV_WHERE: number;
   n_CONT: number = 0;
-
+  processTypes = [
+    { value: 0, description: 'Normales' },
+    { value: 1, description: 'Duplicados' },
+    { value: 2, description: 'No Referenciados' },
+    { value: 3, description: 'Efectivo' },
+    { value: 4, description: 'Inconsistencia' },
+  ];
+  actions = [
+    { value: 1, description: 'Cancelar' },
+    { value: 2, description: 'Actualizar' },
+    { value: 3, description: 'Registrar' },
+  ];
   APLICADO_MSG: string;
   APLICADO_EST: number;
 
@@ -367,6 +378,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       if (this.searchType.value == 5) {
         // this.bank;
       } else {
+        this.loader.load = true;
         let param = {
           typeSearch: this.searchType.value,
           event: this.event.value,
@@ -379,13 +391,18 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         let resultSearch = await this.searchPayment(param);
         if (this.LV_EST_PROCESO == 1) {
           console.log('Tipo búsqueda', this.searchType.value);
-          this.getBusquedaPagMae(this.searchType.value);
+          this.searchForm.patchValue({
+            type: this.searchType.value,
+          });
+          this.getTableData();
         } else {
+          this.loader.load = false;
           this.alert('warning', 'Información', this.LV_MSG_PROCESO);
           // this.getTableData();
         }
       }
     } else {
+      this.loader.load = true;
       //Servicio PUP_BUSQUEDA
       if (!this.bank.value && !this.amount.value && !this.reference.value) {
         this.alert(
@@ -401,23 +418,10 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         ref: this.searchForm.get('reference').value,
       };
       await this.PupBusqueda(params);
-      this.getBusquedaPagMae(5);
-      // this.LV_TOTREG = await firstValueFrom(
-      //   this.paymentService.getBusquedaPag5().pipe(
-      //     take(1),
-      //     catchError(x => of(null)),
-      //     map(x => (x ? x.data.length : 0))
-      //   )
-      // );
-      // if (this.LV_TOTREG == 0) {
-      //   this.alert(
-      //     'warning',
-      //     'Información',
-      //     'No se Generaron Registros de la Consulta'
-      //   );
-      // } else {
-      //   this.getBusquedaPagMae(5);
-      // }
+      this.searchForm.patchValue({
+        type: 5,
+      });
+      this.getTableData();
     }
   }
 
@@ -430,6 +434,18 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.totalItems = 0;
   }
 
+  async validateLoadLoteCSV() {
+    if (this.n_CONT == 0) {
+      this.alert(
+        'error',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'Usuario Inválido para Ejecutar Este Procedimiento.'
+      );
+      return;
+    }
+    this.loadCSV2.nativeElement.click();
+  }
+
   cleanSearch() {
     if (this.totalItems == 0) {
       this.alert(
@@ -439,7 +455,15 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       );
       return;
     }
-    const elemC = document.getElementById('typeId') as HTMLInputElement;
+    if (!this.searchForm.get('type').value) {
+      this.alert(
+        'warning',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'No Hay tipo de búsqueda mae seleccionada'
+      );
+      return;
+    }
+    // const elemC = document.getElementById('typeId') as HTMLInputElement;
 
     //elemC.value = '';
 
@@ -454,7 +478,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         this.paymentColumns = [];
         this.totalItems = 0;*/
 
-        this.deleteMassive(elemC.value);
+        this.deleteMassive(this.searchForm.get('type').value);
       }
     });
   }
@@ -478,11 +502,11 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           idEvent: data.event,
           // idCustomer: Number(this.idCustomer),
           idGuySat: Number(2),
-          // idselect: Number(this.idselect),
+          idselect: data.idselect ? 1 : 0,
           // incomeid: Number(this.incomeid),
           // idinconsis: Number(data.newData.inconsistencies),
-          tsearchId: Number(5),
-          numbermovement: Number(0),
+          tsearchId: data.tsearchId,
+          numbermovement: data.numbermovement,
           date: data.date != null ? new Date(data.date) : null,
           reference: data.reference,
           referenceori: data.referenceori,
@@ -501,7 +525,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       }
     });
     modalRef.content.onEdit.subscribe(data => {
-      const elemC = document.getElementById('typeId') as HTMLInputElement;
+      // const elemC = document.getElementById('typeId') as HTMLInputElement;
       if (data) {
         this.loading = true;
         //this.editRow(data);
@@ -554,7 +578,10 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         data,
         callback: (next: number) => {
           if (next) {
-            this.getBusquedaPagMae(next);
+            this.searchForm.patchValue({
+              type: next,
+            });
+            this.getTableData();
           }
         },
       },
@@ -565,8 +592,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   async changeProcess2() {
-    const elemC = document.getElementById('typeId') as HTMLInputElement;
-    console.log('Data elemC-> ', elemC.value);
     if (this.dataRows.filter(x => x.idselect == '1').length === 0) {
       this.alert(
         'warning',
@@ -575,7 +600,15 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.openModal2(elemC.value);
+    if (!this.searchForm.get('type').value) {
+      this.alert(
+        'warning',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'No hay tipo seleccionado'
+      );
+      return;
+    }
+    this.openModal2(this.searchForm.get('type').value);
   }
 
   addRow(rows: any[]) {
@@ -604,7 +637,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     console.log('row ', rows);
     if (rows.length > 0) {
       this.selectedRows = rows;
-      console.log('SelectRows', this.selectedRows[0].id_select);
+      console.log('SelectRows', this.selectedRows[0].idselect);
       this.flag = true;
     } else {
       this.flag = false;
@@ -614,17 +647,21 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   changeCheckBox() {
     console.log('this.selectedRows-> ', this.selectedRows);
-    const elemC = document.getElementById('typeId') as HTMLInputElement;
-    console.log('SearchId-> ', elemC.value);
 
-    if (elemC.value == null || elemC.value == '') {
+    if (
+      this.searchForm.get('type').value == null ||
+      this.searchForm.get('type').value == ''
+    ) {
       this.alert(
         'warning',
         '',
         'No se Ha Seleccionado el Campo Tipo de Búsqueda'
       );
     } else {
-      this.SelectPago(this.selectedRows[0].id_select, elemC.value);
+      this.SelectPago(
+        this.selectedRows[0].idselect,
+        this.searchForm.get('type').value
+      );
     }
   }
 
@@ -732,25 +769,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     }
   }
 
-  actions(action: string) {
-    switch (action) {
-      case 'CANCELAR':
-        console.log(action, this.selectedRows);
-        break;
-      case 'ACTUALIZAR':
-        console.log(action, this.selectedRows);
-        break;
-      case 'REGISTRAR':
-        console.log(action, this.selectedRows);
-        break;
-      default:
-        console.log('Error: No se recibieron argumentos');
-        break;
-    }
-  }
-
   getFilterParams(byPage = false) {
-    if (this.searchForm.invalid) {
+    if (this.searchForm.invalid && this.searchType.value !== 6) {
       return null;
     }
     debugger;
@@ -803,6 +823,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     console.log('PARAMS', params);
     if (!params) {
       this.loading = false;
+      this.loader.load = false;
       return;
     }
     //Provisional data
@@ -820,6 +841,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       next: res => {
         console.log('getBusquedaPag -> ', res);
         const params = new ListParams();
+        this.loader.load = false;
         if (res.count === 0) {
           this.loading = false;
           return;
@@ -935,41 +957,43 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     });
   }
 
-  getBusquedaPagMae(params: number | string) {
-    const elemC = document.getElementById('typeId') as HTMLInputElement;
-    elemC.value = '';
-    this.searchForm.get('type').setValue('');
-    this.loading = true;
-    this.paymentService.getBusquedaMae(params).subscribe(
-      resp => {
-        if (resp != null && resp != undefined) {
-          this.LV_WHERE = resp.data[0].desTsearch;
-          //this.searchForm.get('type').setValue(resp.data[0].desTsearch);
-          this.searchForm.patchValue({
-            type: resp.data[0].desTsearch,
-          });
-          elemC.value = resp.data[0].tsearchId;
-          console.log('Resp PagosMae-> ', resp);
-          this.getTableData();
-        } else {
-          this.loading = false;
-          this.alert(
-            'error',
-            'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-            'No se encontraron datos'
-          );
-        }
-      },
-      err => {
-        this.loading = false;
-        this.alert(
-          'error',
-          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-          err.error.message
-        );
-      }
-    );
-  }
+  // getBusquedaPagMae(params: number | string) {
+  //   const elemC = document.getElementById('typeId') as HTMLInputElement;
+  //   elemC.value = '';
+  //   this.searchForm.get('type').setValue('');
+  //   this.loading = true;
+  //   this.paymentService.getBusquedaMae(params).subscribe(
+  //     resp => {
+  //       if (resp != null && resp != undefined) {
+  //         this.LV_WHERE = resp.data[0].desTsearch;
+  //         //this.searchForm.get('type').setValue(resp.data[0].desTsearch);
+  //         this.searchForm.patchValue({
+  //           type: resp.data[0].desTsearch,
+  //         });
+  //         elemC.value = resp.data[0].tsearchId;
+  //         console.log('Resp PagosMae-> ', resp);
+  //         this.getTableData();
+  //       } else {
+  //         this.loader.load = false;
+  //         this.loading = false;
+  //         this.alert(
+  //           'error',
+  //           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+  //           'No se encontraron datos'
+  //         );
+  //       }
+  //     },
+  //     err => {
+  //       this.loader.load = false;
+  //       this.loading = false;
+  //       this.alert(
+  //         'error',
+  //         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+  //         err.error.message
+  //       );
+  //     }
+  //   );
+  // }
 
   // getBusquedaPagDet(params?: number) {
   //   this.paymentService.getBusquedaPag(params).subscribe(resp => {
@@ -1062,19 +1086,29 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       );
   }
 
-  async pupProcesa() {
-    let LV_TIPO_PROC: string;
-    let LV_ACCION: string;
-    let LV_PROCESA: number;
+  private async pupProcesa() {
+    const processType = this.processTypes.find(
+      x => x.value == this.searchForm.get('processType').value
+    );
+    console.log(processType, this.searchForm.get('processType').value);
+    const action = this.actions.find(
+      x => x.value == this.searchForm.get('action').value
+    );
+    console.log(action, this.searchForm.get('action').value);
 
-    LV_PROCESA == 0;
-    const elemC = document.getElementById('typeId') as HTMLInputElement;
+    let LV_TIPO_PROC: string = processType.description;
+
+    let LV_ACCION: string = action.description;
+    let LV_PROCESA: number;
+    debugger;
+    LV_PROCESA = 0;
+    const elemC = this.searchForm.get('type');
 
     if (
       this.searchForm.get('processType').value == 0 &&
       this.searchForm.get('action').value == 2
     ) {
-      if (this.searchForm.get('typeId').value == 0) {
+      if (elemC.value == '0') {
         //integrar PA_PAGOS_CAMBIOS}
         await this.pagosCambio(
           this.searchForm.get('processType').value,
@@ -1089,9 +1123,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       ) &&
       ['1', '2', '3'].includes(this.searchForm.get('action').value + '')
     ) {
-      if (
-        ['1', '2', '3', '4'].includes(this.searchForm.get('typeId').value + '')
-      ) {
+      if (['1', '2', '3', '4'].includes(elemC.value)) {
         //servicio PA_PAGOS_EFE_DUP_NREF
         await this.paPagosEfeDup(
           this.searchForm.get('processType').value &&
@@ -1101,10 +1133,10 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         LV_PROCESA = 1;
       }
     } else if (
-      this.searchForm.get('typeId').value == 5 &&
+      this.searchForm.get('processType').value + '' == '5' &&
       this.searchForm.get('action').value == 3
     ) {
-      if (this.searchForm.get('typeId').value == 6) {
+      if (elemC.value == '6') {
         //Servicio PA_PAGOS_ARCHIVOS
         await this.pagosArchivos(
           elemC.value,
@@ -1121,19 +1153,30 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         ' , para la Acción ' +
         LV_ACCION +
         ' no Existe ...';
+      this.alert(
+        'warning',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        this.msgPaymentChange
+      );
+      this.loader.load = false;
     } else {
       if (this.statusPaymentChange == 1) {
         this.alert(
           'warning',
           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-          this.msgPaymentChange
+          this.msgPaymentChange && this.msgPaymentChange.length > 0
+            ? this.msgPaymentChange
+            : 'No se encontraron datos'
         );
         this.getTableData();
       } else {
+        this.loader.load = false;
         this.alert(
           'warning',
           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-          this.msgPaymentChange
+          this.msgPaymentChange && this.msgPaymentChange.length > 0
+            ? this.msgPaymentChange
+            : 'No se encontraron datos'
         );
       }
     }
@@ -1173,7 +1216,11 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
               console.log(event);
               this.loadCSV.nativeElement.value = '';
               if (typeof event === 'object') {
+                this.searchForm.patchValue({
+                  type: 6,
+                });
                 this.getTableData();
+                // this.getTableData();
                 // if (event.CONT > 0) {
                 //   let dataCSV: IComerDetExpense[] =
                 //     this.getComerDetExpenseArray(event.messages);
@@ -1204,7 +1251,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     }
   }
 
-  deleteMassive(id: number | string) {
+  private deleteMassive(id: number | string) {
     this.loader.load = true;
     this.paymentService.deleteMassive(id).subscribe(
       resp => {
@@ -1214,7 +1261,10 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
             'Registro Eliminado Correctamente.'
           );
-          this.getBusquedaPagMae(id);
+          this.searchForm.patchValue({
+            type: id,
+          });
+          this.getTableData();
         }
         this.loader.load = false;
       },
@@ -1231,7 +1281,15 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   systemAplicado() {
     //this.pagosMasivosVps('A', 0);
-    const elemC = document.getElementById('typeId') as HTMLInputElement;
+    const elemC = this.searchForm.get('type');
+    if (!elemC.value) {
+      this.alert(
+        'warning',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'Debe seleccionar un tipo de búsqueda mae'
+      );
+      return;
+    }
     this.alertQuestion(
       'question',
       'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
@@ -1256,8 +1314,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         map(resp => {
           if (resp != null && resp != undefined) {
             console.log('Resp pagosCambios-> ', resp);
-            this.statusPaymentChange = resp.data.P_EST_PROCESO;
-            this.msgPaymentChange = resp.data.P_MSG_PROCESO;
+            this.statusPaymentChange = resp.P_EST_PROCESO;
+            this.msgPaymentChange = resp.P_MSG_PROCESO;
           }
           return true;
         })
@@ -1328,8 +1386,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         map(resp => {
           if (resp != null && resp != undefined) {
             console.log('Resp pagosArchivos-> ', resp);
-            this.statusPaymentChange = resp.data.P_EST_PROCESO;
-            this.msgPaymentChange = resp.data.P_MSG_PROCESO;
+            this.statusPaymentChange = resp.P_EST_PROCESO;
+            this.msgPaymentChange = resp.P_MSG_PROCESO;
           }
           return true;
         })
@@ -1391,7 +1449,16 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {
+  private confirm() {
+    if (!this.searchForm.get('type').value) {
+      this.alert(
+        'warning',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'Requiere tipo de búsqueda de pagos mae'
+      );
+      return;
+    }
+    this.loader.load = true;
     const { preferred_username } = this.authService.decodeToken();
     let username = preferred_username;
     this.userAutxCancService
@@ -1402,6 +1469,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           if (response > 0) {
             this.pupProcesa();
           } else {
+            this.loader.load = false;
             this.alert(
               'error',
               'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',

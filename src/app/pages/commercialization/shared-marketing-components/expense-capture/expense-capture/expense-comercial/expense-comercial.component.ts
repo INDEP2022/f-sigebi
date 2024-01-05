@@ -64,8 +64,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'M', title: 'MUEBLES' });
       this.form.get('formPayment').setValidators(Validators.required);
-      this.form.get('eventNumber').setValidators(Validators.required);
-      this.form.get('publicLot').setValidators(Validators.required);
+      // this.form.get('eventNumber').setValidators(Validators.required);
+      // this.form.get('publicLot').setValidators(Validators.required);
     } else if (value === 'I') {
       this.initScreenI();
     }
@@ -346,7 +346,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             },
             error: err => {
               this.loader.load = false;
-              this.alert('error', 'No se pudo eliminar el gasto', '');
+              this.alert(
+                'error',
+                'No se pudo eliminar el gasto',
+                err.error.message.includes('comer_detgastos')
+                  ? 'Necesita eliminar antes su composición de gastos'
+                  : ''
+              );
             },
           });
       }
@@ -1387,34 +1393,34 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       await this.dataService.getLS_ESTATUS(+expense.conceptNumber);
       this.controlsInDet();
     }
-    if (this.address === 'M') {
-      if (
-        expense.lotNumber !== this.lotNumber.value ||
-        expense.conceptNumber != this.conceptNumber.value ||
-        expense.eventNumber != this.eventNumber.value
-      ) {
-        entro = true;
-        if (+expense.lotNumber > 0 && +expense.eventNumber > 0)
-          this.expenseGoodProcessService
-            .getValidGoods(
-              +expense.lotNumber,
-              +expense.eventNumber,
-              this.address !== 'M' ? 'N' : this.dataService.PDEVPARCIALBIEN,
-              +expense.conceptNumber,
-              this.address !== 'M' ? 'N' : this.PVALIDADET
-            )
-            .pipe(
-              takeUntil(this.$unSubscribe),
-              catchError(x => of({ data: [] })),
-              map(x => (x ? x.data : []))
-            )
-            .subscribe(x => {
-              this.dataService.goods = x;
-            });
-      }
-    } else {
-      // ss;
-    }
+    // if (this.address === 'M') {
+    //   if (
+    //     expense.lotNumber !== this.lotNumber.value ||
+    //     expense.conceptNumber != this.conceptNumber.value ||
+    //     expense.eventNumber != this.eventNumber.value
+    //   ) {
+    //     entro = true;
+    //     if (+expense.lotNumber > 0 && +expense.eventNumber > 0)
+    //       this.expenseGoodProcessService
+    //         .getValidGoods(
+    //           +expense.lotNumber,
+    //           +expense.eventNumber,
+    //           this.address !== 'M' ? 'N' : this.dataService.PDEVPARCIALBIEN,
+    //           +expense.conceptNumber,
+    //           this.address !== 'M' ? 'N' : this.PVALIDADET
+    //         )
+    //         .pipe(
+    //           takeUntil(this.$unSubscribe),
+    //           catchError(x => of({ data: [] })),
+    //           map(x => (x ? x.data : []))
+    //         )
+    //         .subscribe(x => {
+    //           this.dataService.goods = x;
+    //         });
+    //   }
+    // } else {
+    //   // ss;
+    // }
 
     // this.dataService.callNextItemLote = entro;
     this.conceptNumber.setValue(expense.conceptNumber);

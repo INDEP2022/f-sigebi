@@ -17,10 +17,33 @@
 
       <div class="row">
         <div class="pb-2 col-md-12">
-          <form-field
+          <ng-custom-select-loading
+            *ngIf="address === 'M'"
+            [form]="form"
+            [updateValues]="true"
+            path="goodprocess/api/v1/application/query-pro-list-good"
+            formControlName="goodNumber"
+            [readonly]="comerDetExpense && chargeGoodsByLote"
+            label="No. Bien"
+            value="goodNumber"
+            bindLabel="description"
+            paramSearch="filter.description"
+            prefixSearch="$ilike"
+            secondParamSearch="filter.goodNumber"
+            typeInput="post"
+            (getObject)="fillGoodM($event)"
+            [bodyPost]="bodyPost"
+            [labelTemplate]="goodLabel"
+            [optionTemplate]="goodOption">
+          </ng-custom-select-loading>
+
+          <!-- <form-field
             label="No. Bien"
             [control]="goodNumber"
             *ngIf="address === 'M'">
+            <ng-custom-select-loading>
+
+            </ng-custom-select-loading>
             <ng-select
               formControlName="goodNumber"
               class="form-control"
@@ -34,7 +57,7 @@
                 {{ row.goodNumber }}-{{ row.description }}
               </ng-option>
             </ng-select>
-          </form-field>
+          </form-field> -->
 
           <ng-custom-select-loading
             *ngIf="address !== 'M'"
