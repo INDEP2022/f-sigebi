@@ -63,7 +63,7 @@ export class RelatedDocumentDesahogo extends BasePage {
         this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
         this.paramsGestionDictamen.sale = params['sale'] ?? null;
         this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
-        this.paramsGestionDictamen.pllamo = params['pllamo'] ?? null; // Se agrego
+        this.paramsGestionDictamen.pllamo = params['pllamo'] ?? null; // Se agregó
       });
     this.pantallaActual = this.route.snapshot.paramMap.get('id');
   }

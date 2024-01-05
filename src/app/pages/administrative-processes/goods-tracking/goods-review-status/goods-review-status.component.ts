@@ -339,13 +339,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     });
   }
 
-  showInfo() {}
-  shot() {}
+  showInfo() { }
+  shot() { }
   delete(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -1357,7 +1357,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       data,
-      callback: (next: boolean) => {},
+      callback: (next: boolean) => { },
     };
     this.modalService.show(ListNoAttendedComponent, modalConfig);
   }

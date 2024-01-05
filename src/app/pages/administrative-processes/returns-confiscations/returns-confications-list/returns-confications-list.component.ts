@@ -30,8 +30,7 @@ import { EditModalConfComponent } from '../edit-modal-conf/edit-modal-conf.compo
 })
 export class ReturnsConficationsListComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   formMA: FormGroup = new FormGroup({});
 
@@ -325,7 +324,7 @@ export class ReturnsConficationsListComponent
     this.alertQuestion(
       'warning',
       'Actualización Masiva',
-      'Desea Actualizar Todos los Bienes?'
+      '¿Desea Actualizar Todos los Bienes?'
     ).then(question => {
       if (question.isConfirmed) {
         this.putGoodUpMasive();
@@ -421,7 +420,7 @@ export class ReturnsConficationsListComponent
             this.loading = false;
           }
         },
-        err => {}
+        err => { }
       );
     }
     setTimeout(() => {

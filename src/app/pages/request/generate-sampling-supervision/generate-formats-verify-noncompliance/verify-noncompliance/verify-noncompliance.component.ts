@@ -83,7 +83,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
         next: response => {
           this.getDeductives(response.data);
         },
-        error: error => {},
+        error: error => { },
       });
   }
 
@@ -104,7 +104,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
         this.paragraphsDeductivas.load(infoDeductives);
         this.allDeductives = response.data;
       },
-      error: error => {},
+      error: error => { },
     });
   }
 
@@ -115,7 +115,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
       next: response => {
         this.sampleInfo = response.data[0];
       },
-      error: () => {},
+      error: () => { },
     });
   }
 
@@ -131,7 +131,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Confirmación',
-      'Desea generar el reporte J?'
+      '¿Desea generar el reporte J?'
     ).then(async question => {
       if (question.isConfirmed) {
         const getAllGoodNoCum: any = await this.getSampleGoods();
@@ -164,7 +164,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
     this.listItems$ = this.store.select(selectListItems);
 
-    this.listItems$.subscribe(data => {});
+    this.listItems$.subscribe(data => { });
   }
 
   async turnSampling() {

@@ -4,7 +4,10 @@
 <div class="row">
   <div class="form-material col-md-10"></div>
   <div class="col-md-2">
-    <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+    <button
+      *ngIf="!readonly"
+      (click)="openForm()"
+      class="btn btn-primary active btn-sm ml-3">
       Nuevo
     </button>
   </div>

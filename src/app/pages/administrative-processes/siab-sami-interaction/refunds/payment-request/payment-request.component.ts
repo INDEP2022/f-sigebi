@@ -119,7 +119,7 @@ export class PaymentRequestComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar esta partida?'
+      '¿Desea eliminar esta partida?'
     ).then(question => {
       if (question.isConfirmed) {
         const index = this.dataPartidas.indexOf((dp: any) => dp.cabms == cabms);
@@ -150,7 +150,7 @@ export class PaymentRequestComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este cheque?'
+      '¿Desea eliminar este cheque?'
     ).then(question => {
       if (question.isConfirmed) {
         this.check = null;
