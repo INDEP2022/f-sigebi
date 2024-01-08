@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -268,8 +268,13 @@ export class UsersService extends HttpService {
   }
 
   getCantUsusAutxCanc(user: string) {
-    return this.get<number>(
+    return this.get<{ data: { count: number }[] }>(
       'application/value-user/' + user.toUpperCase()
-    ).pipe(catchError(x => of(0)));
+    ).pipe(
+      catchError(x => of({ data: [{ count: 0 }] })),
+      map(x => {
+        return x.data[0].count;
+      })
+    );
   }
 }

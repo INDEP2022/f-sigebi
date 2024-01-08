@@ -298,8 +298,9 @@ export class MassiveGoodService extends HttpService {
     const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('keyBank', cveBank);
     return this.httpClient.post<any>(
-      `${this._url}${this.microservice}/${this._prefix}${MassiveGoodEndpoints.pupProcesaCsvPaymentSearch}/${cveBank}`,
+      `${this._url}${this.microservice}/${this._prefix}${MassiveGoodEndpoints.pupProcesaCsvPaymentSearch}`,
       formData
     );
   }
