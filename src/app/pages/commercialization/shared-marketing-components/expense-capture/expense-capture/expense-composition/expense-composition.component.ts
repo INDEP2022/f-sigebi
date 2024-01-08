@@ -906,7 +906,10 @@ export class ExpenseCompositionComponent
     }
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      expense: this.expense,
+      expenseNumber: this.expense ? this.expense.expenseNumber : null,
+      eventNumber: this.eventNumber,
+      conceptNumber: this.conceptNumber.value,
+      lotNumber: this.lotNumber.value,
       CHCONIVA: this.expenseCaptureDataService.CHCONIVA,
       IVA: this.expenseCaptureDataService.IVA,
       address: this.address,
@@ -936,7 +939,10 @@ export class ExpenseCompositionComponent
     }
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      expense: this.expense,
+      expenseNumber: this.expense ? this.expense.expenseNumber : null,
+      eventNumber: this.eventNumber,
+      conceptNumber: this.conceptNumber.value,
+      lotNumber: this.lotNumber.value,
       comerDetExpense: row,
       CHCONIVA: this.expenseCaptureDataService.CHCONIVA,
       IVA: this.expenseCaptureDataService.IVA,

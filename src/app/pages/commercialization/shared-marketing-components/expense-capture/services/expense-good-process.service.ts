@@ -54,7 +54,7 @@ export class ExpenseGoodProcessService extends HttpService {
     pevent: number,
     pDevPartialGood: string,
     conceptId: number,
-    PVALIDADET: string,
+    pValidDet: string,
     _params: _Params
   ) {
     return this.post<{ data: IValidGood[] }>(
@@ -64,7 +64,7 @@ export class ExpenseGoodProcessService extends HttpService {
         pevent,
         pDevPartialGood,
         conceptId,
-        PVALIDADET,
+        pValidDet,
       },
       _params
     );

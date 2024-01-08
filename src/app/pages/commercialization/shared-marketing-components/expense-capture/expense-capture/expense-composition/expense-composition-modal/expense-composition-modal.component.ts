@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, map, of, take, takeUntil } from 'rxjs';
 import { IComerDetExpense2 } from 'src/app/core/models/ms-spent/comer-detexpense';
-import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePage } from 'src/app/core/shared';
 import {
@@ -23,7 +22,6 @@ export class ExpenseCompositionModalComponent
 {
   form: FormGroup;
   comerDetExpense: IComerDetExpense2;
-  expense: IComerExpense;
   transferent = '';
   title = 'Composición de Gastos';
   selectedGood: IValidGood;
@@ -31,6 +29,10 @@ export class ExpenseCompositionModalComponent
     { cvman: '007200', key: 'DIRECCION EJECUTIVA ' },
   ];
   loadingCvmans = false;
+  eventNumber: number;
+  conceptNumber: number;
+  lotNumber: number;
+  expenseNumber: number;
   CHCONIVA: string;
   IVA: number;
   address: string;
@@ -39,6 +41,7 @@ export class ExpenseCompositionModalComponent
   V_VALCON_ROBO: number;
   PDEVPARCIALBIEN: string;
   PVALIDADET: string;
+  clickedButton = false;
   private goodDescription: string;
   constructor(
     private modalRef: BsModalRef,
@@ -52,7 +55,7 @@ export class ExpenseCompositionModalComponent
   private fillCvmans() {
     this.loadingCvmans = true;
     this.service
-      .getValidatesCvmans(+this.expense.eventNumber, +this.expense.lotNumber)
+      .getValidatesCvmans(+this.eventNumber, +this.lotNumber)
       .pipe(
         takeUntil(this.$unSubscribe),
         catchError(x => of({ data: [] })),
@@ -75,11 +78,16 @@ export class ExpenseCompositionModalComponent
 
   get bodyPost() {
     return {
-      lotId: +this.expense.lotNumber,
-      pevent: +this.expense.eventNumber,
+      lotId: +this.lotNumber,
+      pevent: +this.eventNumber,
       pDevPartialGood: this.address !== 'M' ? 'N' : this.PDEVPARCIALBIEN,
-      conceptId: +this.expense.conceptNumber,
-      PVALIDADET: this.address !== 'M' ? 'N' : this.PVALIDADET,
+      conceptId: +this.conceptNumber,
+      pValidDet: this.address !== 'M' ? 'N' : this.PVALIDADET,
+    };
+  }
+  get bodyPostI() {
+    return {
+      pevent: +this.eventNumber,
     };
   }
 
@@ -99,6 +107,17 @@ export class ExpenseCompositionModalComponent
   //     }
   //   }
   // }
+
+  get pathCvmans() {
+    return 'spent/api/v1/aplication/query-validate-transfer';
+  }
+
+  get bodyPostCVman() {
+    return {
+      eventId: this.eventNumber,
+      lotId: this.lotNumber,
+    };
+  }
 
   get pathGood() {
     return (
@@ -152,7 +171,7 @@ export class ExpenseCompositionModalComponent
       this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
       this.budgetItem.setValue(this.comerDetExpense.departure);
     }
-    if (this.expense) {
+    if (this.eventNumber) {
       this.fillCvmans();
       this.fillGoods();
     }
@@ -245,6 +264,7 @@ export class ExpenseCompositionModalComponent
 
   confirm() {
     console.log(this.form.value);
+    this.clickedButton = true;
     if (this.comerDetExpense) {
       this.onEditConfirm(this.form.value);
     } else {
@@ -261,7 +281,7 @@ export class ExpenseCompositionModalComponent
     ).toFixed(2);
     return {
       ...body,
-      expenseNumber: this.expense.expenseNumber,
+      expenseNumber: this.expenseNumber,
       transferorNumber: this.transferent,
       total,
     };
@@ -282,7 +302,7 @@ export class ExpenseCompositionModalComponent
               return {
                 ...x,
                 amount: body.amount,
-                iva: body.iva,
+                iva: body.vat,
                 retencionIsr: body.isrWithholding,
                 retencionIva: body.vatWithholding,
                 transferorNumber: this.transferent,
@@ -314,6 +334,7 @@ export class ExpenseCompositionModalComponent
               this.modalRef.hide();
             },
             error: err => {
+              this.clickedButton = false;
               this.alert(
                 'error',
                 'No se pudo actualizar la composición del gasto ' +
@@ -341,7 +362,7 @@ export class ExpenseCompositionModalComponent
           detPaymentsId: null,
           paymentsId: null,
           amount: body.amount,
-          iva: body.iva,
+          iva: body.vat,
           retencionIsr: body.isrWithholding,
           retencionIva: body.vatWithholding,
           transferorNumber: this.transferent,
@@ -384,6 +405,7 @@ export class ExpenseCompositionModalComponent
             },
             error: err => {
               console.log(err);
+              this.clickedButton = false;
               this.alert(
                 'error',
                 'No se pudo crear la composición de gasto',
