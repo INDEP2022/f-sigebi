@@ -696,6 +696,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get conceptNumber() {
     return this.form.get('conceptNumber');
   }
+
+  get paymentRequestExpense() {
+    return this.data.paymentRequestNumber;
+  }
+
   get paymentRequestNumber() {
     return this.form.get('paymentRequestNumber');
   }
@@ -1431,8 +1436,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       expense.publicLot
         ? expense.publicLot
         : expense.comerLot
-          ? expense.comerLot.publicLot
-          : null
+        ? expense.comerLot.publicLot
+        : null
     );
     this.clkpv.setValue(expense.clkpv);
 
@@ -1528,10 +1533,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       'comerconcepts/api/v1/application/query-eat-concepts?sortBy=conceptId:ASC' +
       (this.address
         ? '?filter.address=$in:' +
-        this.address +
-        (this.address === 'M'
-          ? ',C'
-          : this.PDIRECCION_A
+          this.address +
+          (this.address === 'M'
+            ? ',C'
+            : this.PDIRECCION_A
             ? ',' + this.PDIRECCION_A
             : '')
         : '')
@@ -1762,7 +1767,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,
