@@ -23,7 +23,6 @@ import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-de
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
 import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
-import { IValidGood } from '../models/expense-good-process';
 import { ILoadLotResponse } from '../models/lot';
 import { ExpenseGoodProcessService } from './expense-good-process.service';
 import { ExpenseLotService } from './expense-lot.service';
@@ -118,7 +117,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   userData: any;
   P_TIPO_CAN: number;
   copiaForma: any;
-  goods: IValidGood[] = [];
   constructor(
     private fb: FormBuilder,
     private accountingService: AccountingService,
@@ -1080,7 +1078,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     // }
     debugger;
     if (!this.expenseNumber.value) {
-      this.alert('warning', 'Debe tener un gasto capturado y guardado', '');
+      this.alert(
+        'warning',
+        'Validación Solicitud',
+        'Debe tener un gasto capturado y guardado para enviar a sirsae'
+      );
       return false;
     }
     if (!this.validateMonths()) return false;
@@ -1094,18 +1096,18 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.alert(
         'warning',
         'Validación Solicitud',
-        'Los montos no cuadran actualize el gasto'
+        'Los montos no cuadran actualize el gasto para enviar a sirsae'
       );
       return false;
     }
-    if (TOT_DETALLES !== TOT_MANDATOS) {
-      this.alert(
-        'warning',
-        'Validación Solicitud',
-        'Los montos no cuadran verifique la contabilidad de mandatos'
-      );
-      return false;
-    }
+    // if (TOT_DETALLES !== TOT_MANDATOS) {
+    //   this.alert(
+    //     'warning',
+    //     'Validación Solicitud',
+    //     'Los montos no cuadran verifique la contabilidad de mandatos'
+    //   );
+    //   return false;
+    // }
     let partida = await this.getPartida();
     if (partida.data.length === 0) {
       return true;
@@ -1113,7 +1115,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.alert(
         'warning',
         'Validación Solicitud',
-        'Los datos de la contabilidad de mandatos, no fueron seleccionados de SIRSAE verifique'
+        'Los datos de la contabilidad de mandatos, no fueron seleccionados de SIRSAE verifique para enviar a sirsae'
       );
       return false;
     }

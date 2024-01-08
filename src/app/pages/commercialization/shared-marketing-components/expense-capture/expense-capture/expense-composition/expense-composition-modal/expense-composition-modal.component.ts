@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, map, of, take, takeUntil } from 'rxjs';
 import { IComerDetExpense2 } from 'src/app/core/models/ms-spent/comer-detexpense';
-import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePage } from 'src/app/core/shared';
 import {
@@ -23,21 +22,26 @@ export class ExpenseCompositionModalComponent
 {
   form: FormGroup;
   comerDetExpense: IComerDetExpense2;
-  expense: IComerExpense;
   transferent = '';
   title = 'Composición de Gastos';
-  goods: IValidGood[] = [];
   selectedGood: IValidGood;
   cvmans: { cvman: string; key: string }[] = [
     { cvman: '007200', key: 'DIRECCION EJECUTIVA ' },
   ];
   loadingCvmans = false;
+  eventNumber: number;
+  conceptNumber: number;
+  lotNumber: number;
+  expenseNumber: number;
   CHCONIVA: string;
   IVA: number;
   address: string;
   chargeGoodsByLote: boolean;
   data: IComerDetExpense2[];
   V_VALCON_ROBO: number;
+  PDEVPARCIALBIEN: string;
+  PVALIDADET: string;
+  clickedButton = false;
   private goodDescription: string;
   constructor(
     private modalRef: BsModalRef,
@@ -51,7 +55,7 @@ export class ExpenseCompositionModalComponent
   private fillCvmans() {
     this.loadingCvmans = true;
     this.service
-      .getValidatesCvmans(+this.expense.eventNumber, +this.expense.lotNumber)
+      .getValidatesCvmans(+this.eventNumber, +this.lotNumber)
       .pipe(
         takeUntil(this.$unSubscribe),
         catchError(x => of({ data: [] })),
@@ -72,19 +76,74 @@ export class ExpenseCompositionModalComponent
     }
   }
 
-  onChange(goodNumber: number) {
-    console.log(goodNumber);
-    let goodData = this.goods.find(x => x.goodNumber === goodNumber);
-    if (goodData && this.address === 'M') {
-      this.amount.setValue(goodData.amount2);
-      this.vat.setValue(goodData.iva2);
-      this.goodDescription = goodData.description;
-      if (
-        this.expense.conceptNumber + '' === '643' &&
-        goodData.iva2 === 0 &&
-        this.CHCONIVA
-      ) {
-        this.vat.setValue(goodData.amount2 * this.IVA);
+  get bodyPost() {
+    return {
+      lotId: +this.lotNumber,
+      pevent: +this.eventNumber,
+      pDevPartialGood: this.address !== 'M' ? 'N' : this.PDEVPARCIALBIEN,
+      conceptId: +this.conceptNumber,
+      pValidDet: this.address !== 'M' ? 'N' : this.PVALIDADET,
+    };
+  }
+  get bodyPostI() {
+    return {
+      pevent: +this.eventNumber,
+    };
+  }
+
+  // onChange(goodNumber: number) {
+  //   console.log(goodNumber);
+  //   let goodData = this.goods.find(x => x.goodNumber === goodNumber);
+  //   if (goodData && this.address === 'M') {
+  //     this.amount.setValue(goodData.amount2);
+  //     this.vat.setValue(goodData.iva2);
+  //     this.goodDescription = goodData.description;
+  //     if (
+  //       this.expense.conceptNumber + '' === '643' &&
+  //       goodData.iva2 === 0 &&
+  //       this.CHCONIVA
+  //     ) {
+  //       this.vat.setValue(goodData.amount2 * this.IVA);
+  //     }
+  //   }
+  // }
+
+  get pathCvmans() {
+    return 'spent/api/v1/aplication/query-validate-transfer';
+  }
+
+  get bodyPostCVman() {
+    return {
+      eventId: this.eventNumber,
+      lotId: this.lotNumber,
+    };
+  }
+
+  get pathGood() {
+    return (
+      'goodprocess/api/v1/application/query-pro-list-good' +
+      (this.comerDetExpense
+        ? this.comerDetExpense.goodNumber
+          ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
+          : ''
+        : '')
+    );
+  }
+
+  fillGoodM(row: any) {
+    console.log(row);
+    if (row) {
+      if (row.transferorNumber) {
+        this.transferent = row.transferorNumber;
+      }
+      if (row.mandate2) {
+        this.cvman.setValue(row.mandate2);
+      }
+      if (row.iva2) {
+        this.vat.setValue(row.iva2);
+      }
+      if (row.amount2) {
+        this.amount.setValue(row.amount2);
       }
     }
   }
@@ -112,28 +171,28 @@ export class ExpenseCompositionModalComponent
       this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
       this.budgetItem.setValue(this.comerDetExpense.departure);
     }
-    if (this.expense) {
+    if (this.eventNumber) {
       this.fillCvmans();
       this.fillGoods();
     }
-    this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        if (response) {
-          if (this.address === 'M') {
-            this.selectedGood =
-              this.goods.filter(x => x.goodNumber === response)[0] ?? null;
-            if (this.selectedGood) {
-              if (this.selectedGood.transferorNumber) {
-                this.transferent = this.selectedGood.transferorNumber;
-              }
-              if (this.selectedGood.mandate2) {
-                this.cvman.setValue(this.selectedGood.mandate2);
-              }
-            }
-          }
-        }
-      },
-    });
+    // this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    //   next: response => {
+    //     if (response) {
+    //       if (this.address === 'M') {
+    //         this.selectedGood =
+    //           this.goods.filter(x => x.goodNumber === response)[0] ?? null;
+    //         if (this.selectedGood) {
+    //           if (this.selectedGood.transferorNumber) {
+    //             this.transferent = this.selectedGood.transferorNumber;
+    //           }
+    //           if (this.selectedGood.mandate2) {
+    //             this.cvman.setValue(this.selectedGood.mandate2);
+    //           }
+    //         }
+    //       }
+    //     }
+    //   },
+    // });
   }
 
   getTransferent(result: any) {
@@ -205,6 +264,7 @@ export class ExpenseCompositionModalComponent
 
   confirm() {
     console.log(this.form.value);
+    this.clickedButton = true;
     if (this.comerDetExpense) {
       this.onEditConfirm(this.form.value);
     } else {
@@ -221,7 +281,7 @@ export class ExpenseCompositionModalComponent
     ).toFixed(2);
     return {
       ...body,
-      expenseNumber: this.expense.expenseNumber,
+      expenseNumber: this.expenseNumber,
       transferorNumber: this.transferent,
       total,
     };
@@ -242,7 +302,7 @@ export class ExpenseCompositionModalComponent
               return {
                 ...x,
                 amount: body.amount,
-                iva: body.iva,
+                iva: body.vat,
                 retencionIsr: body.isrWithholding,
                 retencionIva: body.vatWithholding,
                 transferorNumber: this.transferent,
@@ -274,6 +334,7 @@ export class ExpenseCompositionModalComponent
               this.modalRef.hide();
             },
             error: err => {
+              this.clickedButton = false;
               this.alert(
                 'error',
                 'No se pudo actualizar la composición del gasto ' +
@@ -301,7 +362,7 @@ export class ExpenseCompositionModalComponent
           detPaymentsId: null,
           paymentsId: null,
           amount: body.amount,
-          iva: body.iva,
+          iva: body.vat,
           retencionIsr: body.isrWithholding,
           retencionIva: body.vatWithholding,
           transferorNumber: this.transferent,
@@ -344,6 +405,7 @@ export class ExpenseCompositionModalComponent
             },
             error: err => {
               console.log(err);
+              this.clickedButton = false;
               this.alert(
                 'error',
                 'No se pudo crear la composición de gasto',
