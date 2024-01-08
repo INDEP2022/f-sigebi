@@ -671,8 +671,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   private VAL_CHATARRA_MOR_SIN_FLUJOPF() {
     if (this.vatWithholding <= 0) {
       this.alert(
-        'error',
-        '',
+        'warning',
+        'Validación Chatarra',
         'En este concepto se requiere capturar el importe de IVA retenido, no se puede tramitar el pago'
       );
       return false;
@@ -708,8 +708,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     debugger;
     if (this.isrWithholding <= 0) {
       this.alert(
-        'error',
-        '',
+        'warning',
+        'Validación chatarra',
         'En este concepto se requiere capturar el importe de ISR retenido, no se puede tramitar el pago'
       );
       return false;

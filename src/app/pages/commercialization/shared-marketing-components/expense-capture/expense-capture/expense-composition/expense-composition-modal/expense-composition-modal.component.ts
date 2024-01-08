@@ -78,7 +78,7 @@ export class ExpenseCompositionModalComponent
 
   get bodyPost() {
     return {
-      lotId: +this.lotNumber,
+      lotId: this.lotNumber ? this.lotNumber : null,
       pevent: +this.eventNumber,
       pDevPartialGood: this.address !== 'M' ? 'N' : this.PDEVPARCIALBIEN,
       conceptId: +this.conceptNumber,
