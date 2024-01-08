@@ -139,10 +139,10 @@ export class ExpenseCompositionModalComponent
       if (row.mandate2) {
         this.cvman.setValue(row.mandate2);
       }
-      if (row.iva2) {
+      if (row.iva2 && !this.vat.value) {
         this.vat.setValue(row.iva2);
       }
-      if (row.amount2) {
+      if (row.amount2 && !this.amount.value) {
         this.amount.setValue(row.amount2);
       }
     }
