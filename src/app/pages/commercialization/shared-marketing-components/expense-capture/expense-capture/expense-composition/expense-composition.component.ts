@@ -253,7 +253,7 @@ export class ExpenseCompositionComponent
             retencionIva: 0,
             transferorNumber: x.transferorNumber,
             goodNumber: rowLotGood.no_bien,
-            total: 0,
+            total: x.total2,
             manCV: x.mandate2,
             departure: null,
             origenNB: null,
