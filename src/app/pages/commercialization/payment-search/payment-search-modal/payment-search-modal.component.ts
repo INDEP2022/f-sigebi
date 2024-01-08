@@ -12,7 +12,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-payment-search-modal',
   templateUrl: './payment-search-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      :host::ng-deep app-modal .modal-body {
+        padding: 0px 40px 20px !important;
+      }
+    `,
+  ],
 })
 export class PaymentSearchModalComponent extends BasePage implements OnInit {
   paymentForm: FormGroup = new FormGroup({});
