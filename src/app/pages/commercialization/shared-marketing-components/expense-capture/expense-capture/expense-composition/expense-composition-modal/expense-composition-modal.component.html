@@ -31,7 +31,7 @@
             prefixSearch="$ilike"
             secondParamSearch="filter.goodNumber"
             typeInput="post"
-            (getObject)="fillGoodM($event)"
+            (valueChange)="fillGoodM($event)"
             [bodyPost]="bodyPost"
             [labelTemplate]="goodLabel"
             [optionTemplate]="goodOption">
@@ -109,7 +109,6 @@
             prefixSearch="$ilike"
             secondParamSearch="filter.cvman"
             typeInput="post"
-            (getObject)="fillGoodM($event)"
             [bodyPost]="bodyPostCVman"
             [labelTemplate]="cvmanLabel"
             [optionTemplate]="cvmanOption">
