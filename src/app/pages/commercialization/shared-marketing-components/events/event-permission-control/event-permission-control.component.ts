@@ -61,7 +61,7 @@ export class EventPermissionControlComponent
       hideSubHeader: false,
       delete: {
         deleteButtonContent:
-          '<i id="tessst" class="fa fa-trash text-danger mx-2"></i>',
+          '<i id="tessst" class="fa fa-trash text-danger ml-5 mx-2"></i>',
         confirmDelete: true,
       },
       actions: {
