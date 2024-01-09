@@ -78,7 +78,7 @@ export class ExpenseCompositionModalComponent
 
   get bodyPost() {
     return {
-      lotId: +this.lotNumber,
+      lotId: this.lotNumber ? this.lotNumber : null,
       pevent: +this.eventNumber,
       pDevPartialGood: this.address !== 'M' ? 'N' : this.PDEVPARCIALBIEN,
       conceptId: +this.conceptNumber,
@@ -115,7 +115,7 @@ export class ExpenseCompositionModalComponent
   get bodyPostCVman() {
     return {
       eventId: this.eventNumber,
-      lotId: this.lotNumber,
+      lotId: this.address === 'M' ? this.lotNumber : null,
     };
   }
 
@@ -141,9 +141,17 @@ export class ExpenseCompositionModalComponent
       }
       if (row.iva2) {
         this.vat.setValue(row.iva2);
+        this.vat.disable();
+      } else {
+        this.vat.setValue(0);
+        this.vat.enable();
       }
       if (row.amount2) {
         this.amount.setValue(row.amount2);
+        this.amount.disable();
+      } else {
+        this.amount.setValue(0);
+        this.amount.enable();
       }
     }
   }
@@ -175,6 +183,18 @@ export class ExpenseCompositionModalComponent
       this.fillCvmans();
       this.fillGoods();
     }
+    this.vat.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        console.log(response);
+        this.vatWithholding.setValidators(Validators.max(response));
+      },
+    });
+    this.amount.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        console.log(response);
+        this.isrWithholding.setValidators(Validators.max(response));
+      },
+    });
     // this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
     //   next: response => {
     //     if (response) {
@@ -214,11 +234,19 @@ export class ExpenseCompositionModalComponent
       ],
       isrWithholding: [
         null,
-        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
+        [
+          Validators.pattern(NUMBERS_POINT_PATTERN),
+          Validators.required,
+          Validators.max(this.amountValue),
+        ],
       ],
       vatWithholding: [
         null,
-        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.required],
+        [
+          Validators.pattern(NUMBERS_POINT_PATTERN),
+          Validators.required,
+          Validators.max(this.vatValue),
+        ],
       ],
       cvman: [null],
       goodNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
@@ -230,7 +258,7 @@ export class ExpenseCompositionModalComponent
   }
 
   get amount() {
-    return this.form.get('amount');
+    return this.form ? this.form.get('amount') : null;
   }
 
   get budgetItem() {
@@ -242,7 +270,7 @@ export class ExpenseCompositionModalComponent
   }
 
   get vat() {
-    return this.form.get('vat');
+    return this.form ? this.form.get('vat') : null;
   }
 
   get vatValue() {

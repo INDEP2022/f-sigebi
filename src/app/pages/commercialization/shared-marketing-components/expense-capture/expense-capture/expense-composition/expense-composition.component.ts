@@ -1541,6 +1541,9 @@ export class ExpenseCompositionComponent
         this.loading = false;
         if (afterRemove) {
           this.removeMassive();
+        } else {
+          this.chargeGoodsByLote = false;
+          this.getData2();
         }
       },
       error: err => {
