@@ -284,10 +284,19 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
-  getComerPaymentSelect(multiple: number, idSearch: any) {
-    return this.get(
-      `${DepositaryEndPoints.ComerPaymentSelect}/${multiple}/type/${idSearch}`
-    );
+  getComerPaymentSelect(
+    selection: number,
+    data: {
+      processId: number;
+      movtoNumber: number;
+      monto: number;
+      referenceori: number;
+    }[]
+  ) {
+    return this.post(`${DepositaryEndPoints.ComerPaymentSelectUpdate}`, {
+      selection,
+      data,
+    });
   }
 
   getComerDetLcGrief(reference: number | string) {

@@ -119,7 +119,7 @@
                 <ng-option value="2">No Referenciados</ng-option>
                 <ng-option value="3">Efectivo</ng-option>
                 <ng-option value="4">Inconsistencia</ng-option>
-                <!-- <ng-option value="5">Carga de Archivo CSV</ng-option> -->
+                <ng-option value="6">Carga de Archivo CSV</ng-option>
               </ng-select>
             </form-field>
           </div>
@@ -316,7 +316,7 @@
           [track]="'all'"
           [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
-            id="consultation-table"
+            #table
             [attr.class]="'table-responsive table-bordered'"
             [settings]="paymentSettings"
             [source]="localdata"
