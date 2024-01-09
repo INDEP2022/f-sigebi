@@ -115,7 +115,7 @@ export class ExpenseCompositionModalComponent
   get bodyPostCVman() {
     return {
       eventId: this.eventNumber,
-      lotId: this.lotNumber,
+      lotId: this.address === 'M' ? this.lotNumber : null,
     };
   }
 
