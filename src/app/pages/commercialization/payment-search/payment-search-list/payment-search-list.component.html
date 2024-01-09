@@ -158,17 +158,28 @@
     </div>
 
     <div class="row">
-      <form class="form-material mb-0" [formGroup]="searchForm">
-        <div class="row col-md-12">
-          <div class="col-md-3 col-sm-4 col-12">
-            <input id="typeId" name="typeId" type="hidden" value="" />
+      <form class="form-material m-0 p-0" [formGroup]="searchForm">
+        <div class="">
+          <div class="col-md-7 col-sm-5 col-12">
+            <ng-custom-select-loading
+              [form]="searchForm"
+              formControlName="type"
+              label="Tipo de Búsqueda MAE"
+              path="payment/api/v1/search-payments-mae?sortBy=tsearchId:ASC"
+              value="tsearchId"
+              bindLabel="desTsearch"
+              paramSearch="filter.desTsearch"
+              prefixSearch="$ilike"
+              secondParamSearch="filter.tsearchId"></ng-custom-select-loading>
+
+            <!-- <input id="typeId" name="typeId" type="hidden" value="" />
             <form-field [control]="searchForm.get('type')" label="Tipo">
               <input
                 type="text"
                 formControlName="type"
                 readonly="true"
                 class="form-control" />
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-3 col-sm-4 col-12">
             <form-field
@@ -179,12 +190,11 @@
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false">
-                <ng-option value="0">Normales</ng-option>
-                <ng-option value="1">Duplicados</ng-option>
-                <ng-option value="2">No Referenciados</ng-option>
-                <ng-option value="3">Efectivo</ng-option>
-                <ng-option value="4">Inconsistencia</ng-option>
-                <!-- <ng-option value="5">Carga de Archivo CSV</ng-option> -->
+                <ng-option
+                  *ngFor="let item of processTypes"
+                  [value]="item.value"
+                  >{{ item.description }}</ng-option
+                >
               </ng-select>
             </form-field>
           </div>
@@ -195,9 +205,9 @@
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false">
-                <ng-option value="1">Cancelar</ng-option>
-                <ng-option value="2">Actualizar</ng-option>
-                <ng-option value="3">Registrar</ng-option>
+                <ng-option *ngFor="let item of actions" [value]="item.value">{{
+                  item.description
+                }}</ng-option>
               </ng-select>
             </form-field>
           </div>
@@ -246,7 +256,7 @@
 
         <button
           class="btn btn-primary btn-sm active mr-3"
-          (click)="loadCSV2.click()">
+          (click)="validateLoadLoteCSV()">
           <i class="fas fa-sync-alt"></i>
           Cambiar Lotes<input
             #loadCSV2

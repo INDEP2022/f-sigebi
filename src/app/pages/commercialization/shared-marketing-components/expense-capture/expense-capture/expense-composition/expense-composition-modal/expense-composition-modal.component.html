@@ -17,10 +17,33 @@
 
       <div class="row">
         <div class="pb-2 col-md-12">
-          <form-field
+          <ng-custom-select-loading
+            *ngIf="address === 'M'"
+            [form]="form"
+            [updateValues]="true"
+            [path]="pathGood"
+            formControlName="goodNumber"
+            [readonly]="comerDetExpense && chargeGoodsByLote"
+            label="No. Bien"
+            value="goodNumber"
+            bindLabel="description"
+            paramSearch="filter.description"
+            prefixSearch="$ilike"
+            secondParamSearch="filter.goodNumber"
+            typeInput="post"
+            (valueChange)="fillGoodM($event)"
+            [bodyPost]="bodyPost"
+            [labelTemplate]="goodLabel"
+            [optionTemplate]="goodOption">
+          </ng-custom-select-loading>
+
+          <!-- <form-field
             label="No. Bien"
             [control]="goodNumber"
             *ngIf="address === 'M'">
+            <ng-custom-select-loading>
+
+            </ng-custom-select-loading>
             <ng-select
               formControlName="goodNumber"
               class="form-control"
@@ -34,7 +57,7 @@
                 {{ row.goodNumber }}-{{ row.description }}
               </ng-option>
             </ng-select>
-          </form-field>
+          </form-field> -->
 
           <ng-custom-select-loading
             *ngIf="address !== 'M'"
@@ -46,8 +69,10 @@
             value="goodNumber"
             bindLabel="description"
             paramSearch="filter.description"
+            typeInput="post"
             prefixSearch="$ilike"
             secondParamSearch="filter.goodNumber"
+            [bodyPost]="bodyPostI"
             (getObject)="setCvmanI($event)"
             [labelTemplate]="goodLabel"
             [optionTemplate]="goodOption">
@@ -64,7 +89,32 @@
       </div>
       <div class="row">
         <div class="pb-2 col-md-12">
-          <form-field label="Mandato" [control]="cvman">
+          <ng-template #cvmanLabel let-item="item">
+            {{ item.cvman }} - {{ item.key }}
+          </ng-template>
+          <ng-template #cvmanOption let-item="item">
+            <div [title]="item.cvman + '-' + item.key">
+              {{ item.cvman }} - {{ item.key }}
+            </div>
+          </ng-template>
+          <ng-custom-select-loading
+            [form]="form"
+            [updateValues]="true"
+            [path]="pathCvmans"
+            formControlName="cvman"
+            label="Mandato"
+            value="cvman"
+            bindLabel="key"
+            paramSearch="filter.key"
+            prefixSearch="$ilike"
+            secondParamSearch="filter.cvman"
+            typeInput="post"
+            [bodyPost]="bodyPostCVman"
+            [labelTemplate]="cvmanLabel"
+            [optionTemplate]="cvmanOption">
+          </ng-custom-select-loading>
+
+          <!-- <form-field label="Mandato" [control]="cvman">
             <ng-select
               formControlName="cvman"
               class="form-control"
@@ -77,36 +127,38 @@
                 {{ row.cvman }}-{{ row.key }}
               </ng-option>
             </ng-select>
-          </form-field>
+          </form-field> -->
         </div>
       </div>
       <div class="row">
         <div class="pb-2 col-md-4">
           <form-field [control]="amount" label="Monto">
             <input
-              type="number"
               class="form-control"
               formControlName="amount"
-              [min]="0" />
+              currencyMask
+              type="text"
+              maxlength="17" />
           </form-field>
         </div>
         <div class="pb-2 col-md-4">
           <form-field [control]="vat" label="IVA">
             <input
-              type="number"
+              currencyMask
+              type="text"
+              maxlength="15"
               class="form-control"
-              formControlName="vat"
-              [min]="0" />
+              formControlName="vat" />
           </form-field>
         </div>
         <div class="pb-2 col-md-4">
           <form-field [control]="vatWithholding" label="Retención IVA">
             <input
-              type="number"
+              currencyMask
+              type="text"
+              maxlength="13"
               class="form-control"
-              formControlName="vatWithholding"
-              [min]="0"
-              [max]="vatValue" />
+              formControlName="vatWithholding" />
           </form-field>
         </div>
       </div>
@@ -114,11 +166,11 @@
         <div class="pb-2 col-md-4">
           <form-field [control]="isrWithholding" label="Retención ISR">
             <input
-              type="number"
+              currencyMask
+              type="text"
+              maxlength="13"
               class="form-control"
-              formControlName="isrWithholding"
-              [min]="0"
-              [max]="amountValue" />
+              formControlName="isrWithholding" />
           </form-field>
         </div>
         <div class="pb-2 col-md-4">
@@ -161,7 +213,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="form.invalid"
+          [disabled]="form.invalid || clickedButton"
           text="Aceptar"
           (confirm)="confirm()">
         </confirm-button>

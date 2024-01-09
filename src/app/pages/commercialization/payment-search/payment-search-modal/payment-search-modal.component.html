@@ -5,6 +5,41 @@
   <div body>
     <form class="form-material" [formGroup]="paymentForm">
       <div class="row">
+        <div class="col-12 mb-5">
+          <form-check for="idselect" label="Selección">
+            <input
+              type="checkbox"
+              id="idselect"
+              formControlName="idselect"
+              class="form-control" />
+          </form-check>
+        </div>
+
+        <div class="col-sm-10 col-md-5">
+          <form-field
+            [control]="paymentForm.get('numbermovement')"
+            label="No. Movimiento">
+            <input
+              type="text"
+              formControlName="numbermovement"
+              class="form-control"
+              maxlength="11" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-5">
+          <ng-custom-select-loading
+            [form]="paymentForm"
+            formControlName="tsearchId"
+            label="Tipo de Búsqueda MAE"
+            path="payment/api/v1/search-payments-mae?sortBy=tsearchId:ASC"
+            value="tsearchId"
+            bindLabel="desTsearch"
+            paramSearch="filter.desTsearch"
+            prefixSearch="$ilike"
+            secondParamSearch="filter.tsearchId"></ng-custom-select-loading>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-sm-12 col-md-6">
           <form-field [control]="paymentForm.get('date')" label="Fecha">
             <input
@@ -18,7 +53,9 @@
         <div class="col-sm-12 col-md-6">
           <form-field [control]="paymentForm.get('amount')" label="Monto">
             <input
-              type="number"
+              currencyMask
+              type="text"
+              maxlength="17"
               formControlName="amount"
               class="form-control" />
           </form-field>
@@ -29,32 +66,63 @@
           <form-field
             [control]="paymentForm.get('referenceori')"
             label="Referencia Original">
-            <input
-              type="text"
+            <textarea
+              class="form-control"
               formControlName="referenceori"
-              class="form-control" />
+              rows="2"
+              maxlength="255"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field
             [control]="paymentForm.get('reference')"
             label="Referencia">
-            <input
-              type="text"
+            <textarea
+              class="form-control"
               formControlName="reference"
-              class="form-control" />
+              rows="2"
+              maxlength="255"></textarea>
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('cve')" label="Cve Banco">
-            <input type="text" formControlName="cve" class="form-control" />
-          </form-field>
+          <ng-template #bankLabel let-item="item"
+            >{{ item.bankCode }} - {{ item.name }}</ng-template
+          >
+          <ng-template #bankOption let-item="item">
+            <div [title]="item.bankCode + '-' + item.name">
+              {{ item.bankCode }} - {{ item.name }}
+            </div>
+          </ng-template>
+          <ng-custom-select-loading
+            [form]="paymentForm"
+            formControlName="cve"
+            label="Banco"
+            path="catalog/api/v1/bank"
+            value="bankCode"
+            bindLabel="name"
+            paramSearch="filter.name"
+            prefixSearch="$ilike"
+            secondParamSearch="filter.bankCode"
+            [labelTemplate]="bankLabel"
+            [optionTemplate]="bankOption"></ng-custom-select-loading>
+
+          <!-- <form-field [control]="paymentForm.get('cve')" label="Cve Banco">
+            <input
+              type="text"
+              formControlName="cve"
+              class="form-control"
+              maxlength="10" />
+          </form-field> -->
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field [control]="paymentForm.get('code')" label="Código">
-            <input type="number" formControlName="code" class="form-control" />
+            <input
+              type="text"
+              formControlName="code"
+              class="form-control"
+              maxlength="5" />
           </form-field>
         </div>
       </div>
@@ -64,13 +132,21 @@
             [control]="paymentForm.get('publicBatch')"
             label="Lote Público">
             <input
-              type="number"
+              type="text"
               formControlName="publicBatch"
-              class="form-control" />
+              class="form-control"
+              maxlength="11" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('event')">
+          <form-field [control]="paymentForm.get('event')" label="Evento">
+            <input
+              type="text"
+              maxlength="10"
+              formControlName="event"
+              class="form-control" />
+          </form-field>
+          <!-- <form-field [control]="paymentForm.get('event')">
             <ngx-select
               [form]="paymentForm"
               [data]="eventItems"
@@ -80,7 +156,7 @@
               (fetchItems)="getEvents($event)"
               control="event">
             </ngx-select>
-          </form-field>
+          </form-field> -->
         </div>
       </div>
       <div class="row mt-5">
@@ -112,7 +188,12 @@
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field [control]="paymentForm.get('result')" label="Resultado">
-            <input type="text" formControlName="result" class="form-control" />
+            <textarea
+              class="form-control"
+              formControlName="reference"
+              rows="2"
+              maxlength="200"></textarea>
+            <!-- <input type="text" formControlName="result" class="form-control" /> -->
           </form-field>
         </div>
       </div>
@@ -120,13 +201,21 @@
         <div class="col-sm-12 col-md-6">
           <form-field [control]="paymentForm.get('paymentId')" label="Id Pago">
             <input
-              type="number"
+              type="text"
               formControlName="paymentId"
-              class="form-control" />
+              class="form-control"
+              maxlength="11" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('batchId')">
+          <form-field [control]="paymentForm.get('batchId')" label="Lote">
+            <input
+              type="text"
+              maxlength="10"
+              formControlName="batchId"
+              class="form-control" />
+          </form-field>
+          <!-- <form-field [control]="paymentForm.get('batchId')">
             <ngx-select
               [form]="paymentForm"
               [data]="batchItems"
@@ -136,7 +225,7 @@
               (fetchItems)="getBatches($event)"
               control="batchId">
             </ngx-select>
-          </form-field>
+          </form-field> -->
         </div>
       </div>
       <div class="row mt-5">
@@ -145,9 +234,10 @@
             [control]="paymentForm.get('entryOrderId')"
             label="Id Orden Ingreso">
             <input
-              type="number"
+              type="text"
               formControlName="entryOrderId"
-              class="form-control" />
+              class="form-control"
+              maxlength="11" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -184,10 +274,11 @@
           <form-field
             [control]="paymentForm.get('inconsistencies')"
             label="Inconsistencias">
-            <input
-              type="text"
+            <textarea
+              class="form-control"
               formControlName="inconsistencies"
-              class="form-control" />
+              rows="2"
+              maxlength="1000"></textarea>
           </form-field>
         </div>
       </div>

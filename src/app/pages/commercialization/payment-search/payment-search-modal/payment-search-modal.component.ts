@@ -6,13 +6,19 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-payment-search-modal',
   templateUrl: './payment-search-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      :host::ng-deep app-modal .modal-body {
+        padding: 0px 40px 20px !important;
+      }
+    `,
+  ],
 })
 export class PaymentSearchModalComponent extends BasePage implements OnInit {
   paymentForm: FormGroup = new FormGroup({});
@@ -102,21 +108,37 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      amount: [null, [Validators.required]],
-      cve: [null, [Validators.required]],
-      code: [null, [Validators.required]],
-      publicBatch: [null, [Validators.required]],
-      event: [null, [Validators.required]],
+      idselect: [null],
+      amount: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
+      cve: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
+      code: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
+      numbermovement: [
+        null,
+        [Validators.required, Validators.pattern(NUM_POSITIVE)],
+      ],
+
+      publicBatch: [
+        null,
+        [Validators.required, Validators.pattern(NUM_POSITIVE)],
+      ],
+      event: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
       systemValidity: [null, [Validators.required]],
       result: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      paymentId: [null, [Validators.required]],
-      batchId: [null, [Validators.required]],
-      entryOrderId: [null, [Validators.required]],
+      paymentId: [
+        null,
+        [Validators.required, Validators.pattern(NUM_POSITIVE)],
+      ],
+      batchId: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
+      entryOrderId: [
+        null,
+        [Validators.required, Validators.pattern(NUM_POSITIVE)],
+      ],
       satDescription: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       type: [null, [Validators.required]],
+      tsearchId: [null, [Validators.required]],
       inconsistencies: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

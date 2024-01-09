@@ -12,10 +12,21 @@
       </button>
     </div>
     <div class="p-2">
-      <button class="btn btn-sm btn-success active" (click)="downloadExcel()">
-        Descargar Archivo
-        <i class="bx bx-download float-icon"></i>
-      </button>
+      <confirm-button
+        [loading]="loadingReport"
+        [btnSmall]="true"
+        [text]="'Reporte de ordenes de servicio'"
+        [loadingText]="'Generando Reporte'"
+        [className]="'btn-success'"
+        [icon]="'bx bx-download float-icon'"
+        class="mr-2"
+        (confirm)="reportOrderService()"></confirm-button>
+      <!--
+        <button class="btn btn-sm btn-success active" (click)="downloadExcel()">
+          Descargar Archivo
+          <i class="bx bx-download float-icon"></i>
+        </button>
+      -->
     </div>
   </div>
 

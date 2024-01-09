@@ -31,13 +31,13 @@ export class ListServiceOrdersComponent
   implements OnInit, OnChanges
 {
   @Input() orders: any[];
-  @Input() SampleOrderId: number = null;
+  @Input() sampleOrderId: number = 0;
   @Input() reloadInfo: boolean;
   //sampleOrderId: number = 3;
   paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-
+  loadingReport: boolean = false;
   rowSelected: any[] = [];
 
   private orderService = inject(OrderServiceService);
@@ -59,7 +59,7 @@ export class ListServiceOrdersComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     //this.setOrderService();
-    if (this.SampleOrderId > 0) this.getSamplingOrder();
+    if (this.sampleOrderId > 0) this.getSamplingOrder();
 
     if (this.reloadInfo) this.getSamplingOrder();
   }
@@ -118,7 +118,7 @@ export class ListServiceOrdersComponent
       this.paragraphs['data'].splice(index, 1);
 
       const del = await this.deleteSamplingOrderService(
-        this.SampleOrderId,
+        this.sampleOrderId,
         item.orderServiceId
       );
       if (this.rowSelected.length == i) {
@@ -171,7 +171,7 @@ export class ListServiceOrdersComponent
     return new Promise((resolve, reject) => {
       const user = this.authService.decodeToken();
       const body: ISamplingOrderService = {
-        sampleOrderId: this.SampleOrderId,
+        sampleOrderId: this.sampleOrderId,
         orderServiceId: order.orderServiceId,
         userCreation: user.username,
         creationDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -197,7 +197,7 @@ export class ListServiceOrdersComponent
   getSamplingOrder() {
     this.loading = true;
     const params = new ListParams();
-    params['filter.sampleOrderId'] = `$eq:${this.SampleOrderId}`;
+    params['filter.sampleOrderId'] = `$eq:${this.sampleOrderId}`;
     this.orderService.getAllSamplingOrderService(params).subscribe({
       next: async (resp: any) => {
         let body: any = [];
@@ -262,10 +262,43 @@ export class ListServiceOrdersComponent
     });
   }
 
-  downloadExcel() {
-    const filename: string = 'MuestreoOrdenes';
-    const file = this.paragraphs['data'];
-    //type: 'csv'
-    this.excelService.export(file, { filename });
+  reportOrderService() {
+    this.paragraphs.getElements().then(data => {
+      if (data.length > 0) {
+        this.loadingReport = true;
+        const params = new BehaviorSubject<ListParams>(new ListParams());
+        params.getValue()['filter.sampleOrderId'] = `$eq:${this.sampleOrderId}`;
+        this.orderService.generateReportOrder(params.getValue()).subscribe({
+          next: response => {
+            this.downloadExcel(response.base64File, 'Ordenes_de_servicio.xlsx');
+            this.loadingReport = false;
+          },
+          error: () => {
+            this.loadingReport = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No fue posible generar el reporte'
+            );
+          },
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Se requiere tener ordenes de servcio realacionadas al muestreo'
+        );
+      }
+    });
+  }
+
+  downloadExcel(excel: any, nameReport: string) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = nameReport;
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 }
