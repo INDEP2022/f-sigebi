@@ -109,7 +109,7 @@ export class ExpenseCompositionModalComponent
   // }
 
   get pathCvmans() {
-    return 'spent/api/v1/aplication/query-validate-transfer';
+    return 'spent/api/v1/aplication/query-validate-transfer?limit=100';
   }
 
   get bodyPostCVman() {
