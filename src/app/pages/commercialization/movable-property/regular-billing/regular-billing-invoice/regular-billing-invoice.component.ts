@@ -152,6 +152,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   get xLote() {
     return this.formFactura.get('xLote');
   }
+  path: string = '';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -266,11 +267,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           instance.validateValue = false;
           instance.onNavigate.subscribe(async invoice => {
             if (this.rowInvoice.factstatusId != 'PREF') {
-              this.alert(
-                'warning',
-                'Atención',
-                'Verifique el estatus de la factura'
-              );
+              this.alert('warning', 'Verifique el estatus de la factura', '');
             } else {
               let config = {
                 initialState: {
@@ -299,11 +296,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           instance.validateValue = false;
           instance.onNavigate.subscribe(async invoice => {
             if (this.rowInvoice.factstatusId != 'PREF') {
-              this.alert(
-                'warning',
-                'Atención',
-                'Verifique el estatus de la factura'
-              );
+              this.alert('warning', 'Verifique el estatus de la factura', '');
             } else {
               let config = {
                 initialState: {
@@ -395,11 +388,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
                 invoice.batchId
               );
               if (count == 0) {
-                this.alert(
-                  'warning',
-                  'Atención',
-                  'El Lote aún no está liberado'
-                );
+                this.alert('warning', 'El Lote aún no está liberado', '');
               } else {
                 let config = {
                   initialState: {
@@ -669,7 +658,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   getAllComer(val?: string) {
-    console.log('aaa', val);
     const params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
@@ -739,11 +727,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const { event, idAllotment } = this.form.value;
 
     if (!event) {
-      this.alert(
-        'warning',
-        'Atención',
-        'Ingrese un evento para generar prefacturas'
-      );
+      this.alert('warning', 'Ingrese un evento para generar prefacturas', '');
       return;
     }
 
@@ -753,8 +737,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (count == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No se encontraron Lotes con estatus válidos para facturar'
+        'No se encontraron Lotes con estatus válidos para facturar',
+        ''
       );
       this.btnLoading = false;
       return;
@@ -873,7 +857,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     let n_conf: number = 0;
     const data = await this.dataFilter.getAll();
     if (data.length == 0) {
-      this.alert('warning', 'Atención', 'Sin Factura(s) a trabajar');
+      this.alert('warning', 'Sin Factura(s) a trabajar', '');
       return;
     }
 
@@ -905,11 +889,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
 
     if (n_cont == 0) {
-      this.alert(
-        'warning',
-        'Atención',
-        'No se realizo selección de Factura(s)'
-      );
+      this.alert('warning', 'No se realizo selección de Factura(s)', '');
       return;
     }
 
@@ -1096,11 +1076,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       }
 
       if (n_cont == 0) {
-        this.alert(
-          'warning',
-          'Atención',
-          'Sin prefacturas para asignar folios'
-        );
+        this.alert('warning', 'Sin prefacturas para asignar folios', '');
         this.btnLoading10 = false;
         return;
       }
@@ -1152,7 +1128,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.btnLoading10 = false;
     } else {
       this.btnLoading10 = false;
-      this.alert('warning', 'Atención', 'No existen folios disponibles');
+      this.alert('warning', 'No existen folios disponibles', '');
     }
   }
 
@@ -1248,15 +1224,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Atención',
-          `No se generara el folio de la factura. El lote ${
+          `No se generará el folio de la factura. El lote ${
             this.isSelect[this.isSelect.length - 1].batchId
           } no ha sido afectado`
         );
       } else if (cont > 1 && aux_val_liq == 0) {
         this.alert(
           'warning',
-          'Atención',
-          `${cont} facturas no pueden ser foliadas, sus lotes no han sido afectados`
+          `${cont} facturas no pueden ser foliadas, sus lotes no han sido afectados`,
+          ''
         );
       }
 
@@ -1373,7 +1349,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const data: any[] = await this.dataFilter.getAll();
 
     if (data.length == 0) {
-      this.alert('warning', 'Atención', 'Debe seleccionar un evento');
+      this.alert('warning', 'Debe seleccionar un evento', '');
       return;
     }
 
@@ -1417,8 +1393,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.btnLoading11 = false;
         this.alert(
           'warning',
-          'Atención',
-          'Soló se puede eliminar folios de facturas con estatus FOL, si lo desea puede cancelarla'
+          'Soló se puede eliminar folios de facturas con estatus FOL',
+          'Si lo desea puede cancelarla'
         );
         return 0;
       }
@@ -1605,7 +1581,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const event = data.length > 0 ? data[0].eventId : null;
 
     if (!event) {
-      this.alert('warning', 'Atención', 'Debe consultar un evento');
+      this.alert('warning', 'Debe consultar un evento', '');
       return;
     }
 
@@ -1767,14 +1743,14 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (valid == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con los permisos para efectuar esta operación'
+        'No cuenta con los permisos para efectuar esta operación',
+        ''
       );
     } else {
       const event = data.length > 0 ? data[0].eventId : null;
 
       if (!event) {
-        this.alert('warning', 'Atención', 'Debe consultar un evento');
+        this.alert('warning', 'Debe consultar un evento', '');
         return;
       }
 
@@ -1957,8 +1933,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.btnLoading9 = false;
       this.alert(
         'warning',
-        'Atención',
-        'Estatus de la Factura inválida para realizar el cambio'
+        'Estatus de la Factura inválida para realizar el cambio',
+        ''
       );
     }
   }
@@ -2012,13 +1988,17 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const num = this.selectInovice();
     const { delegation } = this.form.value;
     if (num == 0 && !delegation) {
+      this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
-      this.impresionAnexReport(1);
+      this.impresionAnexReport(1); // IMPRIMIR_ANEXOS
+      this.removeSelect();
     } else if (num == 1 && !delegation) {
-      this.impresionAnexReport(0);
+      this.impresionAnexReport(0); // IMPRIMIR_ANEXOS
     } else if (num == 0 && delegation) {
+      this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
-      this.impresionAnexReport(1);
+      this.impresionAnexReport(1); // IMPRIMIR_ANEXOS
+      this.removeSelect();
     }
   }
 
@@ -2165,9 +2145,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            'Atención',
-            `
-            El lote ${invoice.batchId} no tiene estatus IMP o CFDI no se podrá imprimir el paquete`
+            `El lote ${invoice.batchId} no tiene estatus IMP o CFDI no se podrá imprimir el paquete`,
+            ''
           );
         }
       } else {
@@ -2416,7 +2395,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const data: any[] = await this.dataFilter.getAll();
 
     if (data.length == 0) {
-      this.alert('warning', 'Atención', 'Debe consultar un evento');
+      this.alert('warning', 'Debe consultar un evento', '');
       return;
     }
 
@@ -2530,7 +2509,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async viewInvoice() {
     if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Debe seleccionar algun evento');
+      this.alert('warning', 'Debe seleccionar algún evento', '');
       return;
     }
     this.callReport(
@@ -2548,7 +2527,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async viewAnexo() {
     if (this.isSelect.length == 0) {
-      this.alert('warning', 'Atención', 'Debe seleccionar algun evento');
+      this.alert('warning', 'Debe seleccionar algún evento', '');
       return;
     }
 
@@ -2569,7 +2548,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             this.isSelect[0].impressionDate
           );
         } else {
-          this.alert('warning', 'Atención', 'La factura no tiene anexo');
+          this.alert('warning', 'La factura no tiene anexo', '');
         }
         break;
       }
@@ -2606,8 +2585,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (userValid == 0) {
       this.alert(
         'warning',
-        'Atención',
-        'No cuenta con los permisos para realizar esta operación'
+        'No cuenta con los permisos para realizar esta operación',
+        ''
       );
       this.btnLoading8 = false;
     } else {
@@ -2649,8 +2628,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           this.btnLoading8 = false;
           this.alert(
             'warning',
-            'Atención',
-            'No hay fechas de impresión para actualizar'
+            'No hay fechas de impresión para actualizar',
+            ''
           );
         }
 
@@ -2755,5 +2734,169 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (!this.paramsList.getValue()['filter.eventId']) return;
 
     this.getAllComer();
+  }
+
+  printerMasivePDF() {
+    this.alert('warning', 'Debe seleccionar una factura', '');
+    this.path = '';
+    let L_PATH = '';
+    let L_FILE: any;
+    let VC_FILTRO = 'Todos (*.*) |*.*|';
+    // L_FILE = this.GET_FILE_NAME(FILE_FILTER => VC_FILTRO, DIRECTORY_NAME=> L_PATH);
+    // L_PATH = this.GET_PATH_NAME(L_FILE);
+    if (!this.path) {
+      return this.alert(
+        'warning',
+        'Debe especificar el directorio para almacenar los archivos',
+        ''
+      );
+    }
+
+    this.path = L_PATH;
+    // IMPRIMIR_FACTURA_2
+    this.printerBill2();
+  }
+
+  GET_PATH_NAME(L_FILE): string {
+    return '';
+  }
+
+  printerBill2() {
+    if (this.isSelect.length == 0)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
+
+    let NUM_REG: number;
+    let NUM_DAT: number;
+    let POS_REG: number;
+    let aux: number;
+    let J: number;
+    if (NUM_REG < 6 && NUM_DAT > 6) {
+      // -- SI LA POSICION ES MENOR A 6 Y A MAS DE 6 REGISTROS
+      POS_REG = 1;
+    } else {
+      POS_REG = NUM_REG - 6;
+      if (POS_REG < 0) {
+        POS_REG = 1;
+      }
+    }
+    aux = 1;
+    if (aux == 1) {
+      for (const invoice of this.isSelect) {
+        J = J + 1;
+        this.pupRepBillMore(0, invoice.Type, invoice);
+        break;
+      }
+    }
+  }
+
+  pupRepBillMore(P_TIPOA: number, psubtipo: number, invoice: any) {
+    // PUP_REP_FACTURA_MAS
+    let pTipo: number;
+    let V_PATH_TIPO: string;
+    let V_PATH_TIPO1: string;
+    let V_ARCHOSAL: string;
+    let V_RUTA: string;
+    let V_RUTA1: string;
+    let V_RUTA2: string;
+    let LEYENDA1: string;
+    let V_ARCHOSAL1: string;
+    pTipo = psubtipo;
+    if (P_TIPOA == 10) {
+      pTipo = P_TIPOA;
+    } else if (P_TIPOA == 11) {
+      pTipo = P_TIPOA;
+    }
+
+    // --AGREGA LA RUTA DE ACUERDO AL TIPO  --  LIRH-1 -- //
+    let dateYear = this.datePipe.transform(invoice.impressionDate, 'yyyy');
+    let dateMonth = this.datePipe.transform(invoice.impressionDate, 'MM');
+    V_PATH_TIPO = `ANEXOS\\${dateYear}\\${dateMonth}\\`;
+    V_PATH_TIPO1 = `XML\\${dateYear}\\${dateMonth}\\`;
+
+    if (invoice.vouchertype == 'FAC' && invoice.series.startsWith('INGR')) {
+      V_PATH_TIPO = `INGR\\${V_PATH_TIPO}`;
+      V_PATH_TIPO1 = `INGR\\${V_PATH_TIPO1}`;
+    } else if (
+      invoice.vouchertype == 'FAC' &&
+      invoice.series.startsWith('EGR')
+    ) {
+      V_PATH_TIPO1 = `EGR\\${V_PATH_TIPO1}`;
+    } else if (
+      invoice.vouchertype == 'NCR' &&
+      invoice.series.startsWith('EGR')
+    ) {
+      V_PATH_TIPO = `EGR\\${V_PATH_TIPO}`;
+    }
+
+    // -- EXTRAE EL NOMBRE DEL CFDI
+    // REALIZAR CONSULTA
+    /***********************EXTRAE EL NOMBRE DEL CFDI PARA VENTAS DIRECTAS**********************************/
+    // REALIZAR CONSULTA
+    /***********************EXTRAE EL NOMBRE DEL CFDI PARA ATENCION A CLIENTES******************************/
+    // REALIZAR CONSULTA
+    /***********************EXTRAE EL NOMBRE DEL XML PARA ATENCION A CLIENTES******************************/
+    // REALIZAR CONSULTA
+    const data = {
+      PEVENTO: invoice.eventId,
+      PFACTURA: invoice.factura,
+    };
+    if (pTipo == 10) {
+      // -- PARA IMPRIMIR EL ANEXO
+      this.getReport('RCOMERFACTURAS_ANEXOS2', data);
+    } else if (pTipo == 11 && psubtipo == 1) {
+      //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE VEHICULOS
+      this.getReport('RCOMERCONSENTVEH', data);
+    } else if (pTipo == 11 && psubtipo == 2) {
+      //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE AERONAVES
+      this.getReport('RCOMERCONSENTBDCA', data);
+    } else if (pTipo == 11 && psubtipo == 3) {
+      //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE DIVERSOS Y CHATARRA
+      this.getReport('RCOMERCONSENTSBD', data);
+    } else if (pTipo == 11 && psubtipo == 4) {
+      //-- PARA IMPRIMIR CARTAS DE ENTREGA DE VEHICULOS Y AERONAVES
+      this.getReport('RCOMERCONSENTAERO', data);
+    } else if (pTipo == 11 && psubtipo == 5) {
+      //-- PARA IMPRIMIR CARTAS DE ENTREGA DE VEHICULOS Y AERONAVES
+      this.getReport('RCOMERCONSENTCHCA', data);
+    } else if (pTipo == 11 && psubtipo == 6) {
+      //-- PARA IMPRIMIR CARTAS DE ENTREGA DE AERONAVES
+      this.getReport('RCOMERCONSENTCHSA', data);
+    }
+
+    if (pTipo == 10) {
+      this.pupSaveFile(V_ARCHOSAL, invoice.eventId, invoice.batchId);
+      if (invoice.tpevent == 3) {
+        this.pupSendVD(V_RUTA1, invoice.eventId, invoice.batchId);
+        this.pupSendVD(V_ARCHOSAL, invoice.eventId, invoice.batchId);
+      }
+      if (LEYENDA1) {
+        this.pupSendATC(V_RUTA2, invoice.eventId, invoice.batchId);
+        this.pupSendATC(V_ARCHOSAL1, invoice.eventId, invoice.batchId);
+      }
+    } else {
+      this.pupSaveFile(V_RUTA, invoice.eventId, invoice.batchId);
+      this.pupSaveFile(V_ARCHOSAL, invoice.eventId, invoice.batchId);
+
+      if (invoice.tpevent == 3) {
+        this.pupSendVD(V_RUTA1, invoice.eventId, invoice.batchId);
+      }
+
+      if (invoice.vouchertype == 'FAC' && invoice.factstatusId == 'CFDI') {
+        this.pupSendATC(V_RUTA2, invoice.eventId, invoice.batchId);
+        this.pupSendATC(V_ARCHOSAL1, invoice.eventId, invoice.batchId);
+      }
+    }
+  }
+
+  pupSaveFile(P_RUTA: string, P_EVENTO: any, P_LOTE: any) {
+    // PUP_GUARDA_ARCHIVO
+  }
+
+  pupSendVD(P_RUTA: string, P_EVENTO: any, P_LOTE: any) {
+    // PUP_ENVIAR_VD
+  }
+
+  pupSendATC(P_RUTA: string, P_EVENTO: any, P_LOTE: any) {
+    // PUP_ENVIAR_ATC
   }
 }

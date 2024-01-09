@@ -66,7 +66,8 @@
             (click)="carga()"
             class="btn btn-sm btn-block btn-success active">
             Carga Pagos
-            <i *ngIf="!loadingBtn" class="bx bx-download float-icon"></i>
+            <i *ngIf="!loadingBtn" class="fa fa-upload"></i>
+            <!-- <i  class="bx bx-download float-icon"></i> -->
           </button>
           <input
             type="file"
@@ -250,13 +251,15 @@
     </div>
 
     <form-loader *ngIf="loading"></form-loader>
+    <!-- [attr.class]="'table-bordered table-responsive'"
+    class="table-responsive" -->
     <ng-scrollbar
       [track]="'all'"
       [ngStyle]="{ height: loading ? '0px' : '400px' }">
       <ng2-smart-table
         #myTable
-        [attr.class]="'table-bordered table-responsive'"
-        class="table-responsive"
+        [attr.class]="''"
+        class=""
         [settings]="settings"
         [source]="data"
         (edit)="edit($event.data)"
