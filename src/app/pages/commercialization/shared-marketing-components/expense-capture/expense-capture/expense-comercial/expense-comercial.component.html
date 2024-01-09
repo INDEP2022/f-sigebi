@@ -54,10 +54,7 @@
               <button
                 type="button"
                 class="btn btn-sm btn-primary mt-2 active"
-                [disabled]="
-                  form.invalid ||
-                  (paymentRequestNumber && paymentRequestNumber.value)
-                "
+                [disabled]="form.invalid || paymentRequestExpense"
                 (click)="save()">
                 Guardar <i aria-hidden="true" class="fa fa-save"></i>
               </button>
