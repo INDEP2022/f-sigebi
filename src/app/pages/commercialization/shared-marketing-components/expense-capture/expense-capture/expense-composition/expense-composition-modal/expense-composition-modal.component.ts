@@ -72,7 +72,11 @@ export class ExpenseCompositionModalComponent
 
   private fillGoods() {
     if (this.comerDetExpense) {
-      this.goodNumber.setValue(+this.comerDetExpense.goodNumber);
+      this.goodNumber.setValue(
+        this.address === 'M'
+          ? +this.comerDetExpense.goodNumber
+          : this.comerDetExpense.goodNumber
+      );
     }
   }
 
@@ -122,6 +126,17 @@ export class ExpenseCompositionModalComponent
   get pathGood() {
     return (
       'goodprocess/api/v1/application/query-pro-list-good' +
+      (this.comerDetExpense
+        ? this.comerDetExpense.goodNumber
+          ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
+          : ''
+        : '')
+    );
+  }
+
+  get pathGoodI() {
+    return (
+      'goodprocess/api/v1/application/get-good-expedients-trans' +
       (this.comerDetExpense
         ? this.comerDetExpense.goodNumber
           ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
