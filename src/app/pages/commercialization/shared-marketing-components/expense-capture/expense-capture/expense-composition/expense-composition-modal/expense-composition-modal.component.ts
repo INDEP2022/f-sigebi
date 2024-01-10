@@ -71,19 +71,15 @@ export class ExpenseCompositionModalComponent
       }
       this.loadingCvmans = false;
       console.log(this.goodNumber.value);
-    }, 500);
+    }, 300);
   }
 
   private fillGoods() {
     if (this.comerDetExpense) {
       setTimeout(() => {
-        this.goodNumber.setValue(
-          this.address === 'M'
-            ? +this.comerDetExpense.goodNumber
-            : this.comerDetExpense.goodNumber
-        );
+        this.goodNumber.setValue(this.comerDetExpense.goodNumber);
         console.log(this.goodNumber.value);
-      }, 500);
+      }, 300);
     }
   }
 
