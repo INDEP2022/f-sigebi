@@ -285,16 +285,15 @@ export class MsDepositaryService extends HttpService {
   }
 
   getComerPaymentSelect(
-    selection: number,
     data: {
       processId: number;
       movtoNumber: number;
       monto: number;
       referenceori: string;
+      selection: number;
     }[]
   ) {
     return this.post(`${DepositaryEndPoints.ComerPaymentSelectUpdate}`, {
-      selection,
       data,
     });
   }
