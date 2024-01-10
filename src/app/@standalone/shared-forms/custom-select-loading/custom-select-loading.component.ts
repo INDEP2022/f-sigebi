@@ -115,9 +115,7 @@ export class CustomSelectWidthLoading
     }
     if (this.form) {
       this.form.get(this.formControlName).valueChanges.subscribe(x => {
-        console.log(x);
-        // console.log(this.labelTemplate);
-        // console.log(this.ngSelect.labelTemplate);
+        // console.log(x);
         if (this.updateValues) {
           if (x) {
             this.input$.next(x);
@@ -125,9 +123,6 @@ export class CustomSelectWidthLoading
             this.input$.next('');
           }
         }
-      });
-      this.form.get('goodNumber').valueChanges.subscribe(x => {
-        console.log(x);
       });
     }
   }
@@ -161,15 +156,22 @@ export class CustomSelectWidthLoading
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['path'] && changes['path'].currentValue) {
+    // console.log(changes);
+    if (
+      changes['path'] &&
+      changes['path'].currentValue &&
+      !changes['path'].firstChange
+    ) {
       this.page = 1;
       this.isLoading = true;
+      console.log('Load Data');
       this.loadData('');
       // this.input$.next('');
     }
   }
 
   writeValue(obj: any): void {
+    // console.log(obj);
     this.selectedItem = obj;
   }
 
@@ -186,7 +188,6 @@ export class CustomSelectWidthLoading
   }
 
   onSelectChange(event: any) {
-    console.log(event);
     if (!event) {
       this.input$.next('');
       this.valueChange.emit(null);
@@ -205,7 +206,7 @@ export class CustomSelectWidthLoading
   }
 
   clear(event: any) {
-    console.log(event);
+    // console.log(event);
     if (!this.updateValues) {
       this.input$.next('');
     }
@@ -275,7 +276,7 @@ export class CustomSelectWidthLoading
   }
 
   getItemsObservable(text: string = '') {
-    console.log(text);
+    // console.log(text);
     let params: any = this.fillParams(text);
     const mParams =
       this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
@@ -394,10 +395,6 @@ export class CustomSelectWidthLoading
         debounceTime(this.delay),
         distinctUntilChanged(),
         switchMap((text: string) => {
-          // console.log(this.items);
-          console.log(text);
-
-          // debugger;
           if (
             text === null ||
             (!this.firstLoad &&
@@ -423,6 +420,7 @@ export class CustomSelectWidthLoading
         next: (resp: any[]) => {
           this.isLoading = false;
           if (resp) {
+            // console.log(resp);
             this.items = resp.map(x => {
               let item = x;
               if (x[this.value]) {
@@ -430,9 +428,11 @@ export class CustomSelectWidthLoading
               }
               return item;
             });
+            // console.log(this.items);
             if (resp.length === 1) {
               // this.onSelectChange(resp[0]);
               this.getObject.emit(resp[0]);
+              this.form.updateValueAndValidity();
             }
           } else {
             this.isLoading = false;
