@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DefaultEditor, ViewCell } from 'ng2-smart-table';
+import { ViewCell } from 'ng2-smart-table';
 import { isNullOrEmpty } from '../../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
@@ -8,9 +8,7 @@ import { isNullOrEmpty } from '../../../request-complementary-documentation/requ
   templateUrl: './guidelines-revision.component.html',
   styles: [],
 })
-export class GuidelinesRevisionComponent
-  implements ViewCell, OnInit {
-
+export class GuidelinesRevisionComponent implements ViewCell, OnInit {
   @Input() value: string | number;
   @Input() rowData: any;
   @Input() key: any;
@@ -18,25 +16,20 @@ export class GuidelinesRevisionComponent
 
   selectForm: FormGroup = new FormGroup({});
 
-  constructor(private fb: FormBuilder) {
-
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-
     this.selectForm = this.fb.group({
       revision: [null],
     });
 
-    this.selectForm.controls['revision'].setValue(this.value)
+    this.selectForm.controls['revision'].setValue(this.value);
 
-    this.selectForm.valueChanges.subscribe((object) => {
+    this.selectForm.valueChanges.subscribe(object => {
       if (!isNullOrEmpty(object.revision)) {
         this.rowData[this.key] = object.revision;
         this.cellChanged.emit(this.rowData);
       }
     });
-
   }
-
 }

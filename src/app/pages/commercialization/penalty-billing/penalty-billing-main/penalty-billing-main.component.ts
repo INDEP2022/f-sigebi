@@ -698,7 +698,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     this.btnLoading = true;
     validUser = await this.getUser(user.username.toUpperCase());
 
-    if (validUser == 0) {
+    if (validUser == 1) {
       this.alert(
         'warning',
         'No cuenta con los permisos para efectuar esta operación',
@@ -892,8 +892,8 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     }
 
     if (factstatusId == aux_status) {
-      await this.update(this.billingForm.value, process);
       this.billingForm.get('process').patchValue(process);
+      await this.update(this.billingForm.value, process);
     }
     return true;
   }

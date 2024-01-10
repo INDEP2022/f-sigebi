@@ -50,8 +50,8 @@ export class StateRepuvesListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'key' ||
-            filter.field == 'description' ||
-            filter.field == 'procedure'
+              filter.field == 'description' ||
+              filter.field == 'procedure'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -104,7 +104,7 @@ export class StateRepuvesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(stateRepuve.key);

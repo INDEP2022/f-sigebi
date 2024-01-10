@@ -240,7 +240,7 @@
               oninput="if(this.value.length > 600) this.value = this.value.slice(0, 600)"></textarea>
           </form-field>
         </div>
-        <div class="col-md-4 mt-3" style="z-index: 9999">
+        <div class="col-md-4 mt-3">
           <form-field [control]="form.get('elaborates')">
             <ngx-select
               [data]="dataElabora"
@@ -263,7 +263,7 @@
             </ng-template> -->
           </form-field>
         </div>
-        <div class="col-md-4 mt-3" style="z-index: 9999">
+        <div class="col-md-4 mt-3">
           <form-field [control]="form.get('check')">
             <ngx-select
               [data]="dataVerifica"
@@ -286,7 +286,7 @@
             </ng-template> -->
           </form-field>
         </div>
-        <div class="col-md-4 mt-3" style="z-index: 9999">
+        <div class="col-md-4 mt-3">
           <form-field [control]="form.get('issues')">
             <ngx-select
               [data]="dataExpide"
@@ -368,9 +368,7 @@
           </ng2-smart-table>
         </div>
         <div class="overflow-auto card-header-span-fix mt-5">
-          <app-pagination
-            [filterParams]="filterParams"
-            [totalItems]="totalItems2">
+          <app-pagination [params]="filterParams" [totalItems]="totalItems2">
           </app-pagination>
         </div>
       </div>

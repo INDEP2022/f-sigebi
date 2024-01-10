@@ -38,7 +38,8 @@ export const resultContribuyente: any = [
 })
 export class ConfirmValidationModalComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   title: string = 'Confirmar Validación';
   confirmForm: FormGroup = new FormGroup({});
   selectResultTaxpayer = new DefaultSelect();
@@ -79,14 +80,12 @@ export class ConfirmValidationModalComponent
   }
 
   async confirm() {
-
     const form = this.confirmForm.value;
     let result = 'Y';
 
     if (form.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE') result = 'P';
 
     this.goods.forEach(async (item: any) => {
-
       let good = {
         goodresdevId: item.goodresdevId,
         resultFinal: result,
@@ -95,7 +94,6 @@ export class ConfirmValidationModalComponent
       };
 
       await this.updateGoodResDev(good);
-
     });
 
     this.alertInfo('success', 'Los bienes fueron especificados', '').then(
@@ -105,14 +103,7 @@ export class ConfirmValidationModalComponent
       }
     );
 
-
-
-
-
-
     if (true) return;
-
-
 
     let updateItem: any = {};
     if (form.resultTaxpayer == 'ACEPTADO') {
@@ -204,8 +195,6 @@ export class ConfirmValidationModalComponent
         this.updateGoodResDev(updateItem);
       });
     }
-
-
   }
 
   async deleteGoodDated(goodDevRes: any) {
@@ -280,7 +269,6 @@ export class ConfirmValidationModalComponent
       });
     });
   }
-
 
   updateGoodResDev(goodResDev: any) {
     return new Promise((resolve, reject) => {

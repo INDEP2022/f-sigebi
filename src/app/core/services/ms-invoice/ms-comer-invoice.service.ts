@@ -61,7 +61,7 @@ export class ComerInvoiceService extends HttpService {
   }
 
   updateByEvent(eventId: number) {
-    return this.get(`${ENDPOINT_INVOICE.UpdateByEvemt}/${eventId}`);
+    return this.put(`${ENDPOINT_INVOICE.UpdateByEvemt}/${eventId}`);
   }
 
   copyInvoice(data: {

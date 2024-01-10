@@ -19,8 +19,7 @@ import { SEPARATORS_DOCUMENTS_COLUMNS } from './cat-of-separators-documents-colu
 })
 export class CatOfSeparatorsDocumentsComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   separatorsDocuments: SeparatorsDocuments[] = [];
@@ -102,7 +101,7 @@ export class CatOfSeparatorsDocumentsComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         // this.documentsServ.delete(id).subscribe({

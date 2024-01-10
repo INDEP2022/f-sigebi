@@ -70,7 +70,7 @@ export class InvoiceRectificationProcessComponent
   loadingSearch: boolean = false;
   isSearch: boolean = false;
   @ViewChild('modal', { static: false }) modal?: ModalDirective;
-  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  filterParams = new BehaviorSubject<ListParams>(new ListParams());
   dataFilter2: LocalDataSource = new LocalDataSource();
   _settings = {
     ...this.settings,
@@ -120,6 +120,10 @@ export class InvoiceRectificationProcessComponent
         edit: true,
         delete: true,
         add: false,
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa ml-4 fa-pencil-alt text-warning mx-2"></i>',
       },
       columns: { ...REDICET_FACTURAS },
     };
@@ -212,7 +216,10 @@ export class InvoiceRectificationProcessComponent
             search[filter.field]();
 
             if (filter.search !== '') {
-              if (filter.field == 'expDate') {
+              if (
+                filter.field == 'expDate' ||
+                filter.field == 'attentionDate'
+              ) {
                 filter.search = this.datePipe.transform(
                   filter.search,
                   'yyyy-MM-dd'
@@ -220,12 +227,14 @@ export class InvoiceRectificationProcessComponent
               }
 
               if (filter.field == 'hourAttention') {
+                console.log(filter.search);
                 let data = this.datePipe.transform(
                   filter.search,
                   'yyyy-MM-dd HH:mm:ss'
                 );
                 let arry = data.split(' ');
-                filter.search = `$eq:${arry[0]}T${arry[1]}.000Z`;
+                let array2 = arry[1].split(':');
+                filter.search = `${arry[0]}T${array2[0]}:${array2[1]}:00.000Z`;
               }
 
               this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
@@ -233,7 +242,7 @@ export class InvoiceRectificationProcessComponent
               delete this.columnFilters2[field];
             }
           });
-          // this.filterParams = this.pageFilter(this.filterParams);
+          this.filterParams = this.pageFilter(this.filterParams);
           this.getComerRectInoviceTable();
         }
       });
@@ -480,6 +489,26 @@ export class InvoiceRectificationProcessComponent
 
     this.loadingSearch = true;
     this.getComerRectInovice(params);
+  }
+
+  cleanFilters() {
+    delete this.filterParams.getValue()['filter.jobNot'];
+    delete this.filterParams.getValue()['filter.hourAttention'];
+    delete this.filterParams.getValue()['filter.paragraph3'];
+    delete this.filterParams.getValue()['filter.paragraph4'];
+    delete this.filterParams.getValue()['filter.paragraph1'];
+    delete this.filterParams.getValue()['filter.issues'];
+    delete this.filterParams.getValue()['filter.check'];
+    delete this.filterParams.getValue()['filter.elaborates'];
+    delete this.filterParams.getValue()['filter.documentspresented'];
+    delete this.filterParams.getValue()['filter.attentionDate'];
+    delete this.filterParams.getValue()['filter.inrepresentation'];
+    delete this.filterParams.getValue()['filter.lastnamePat'];
+    delete this.filterParams.getValue()['filter.lastnameMat'];
+    delete this.filterParams.getValue()['filter.name'];
+    delete this.filterParams.getValue()['filter.Invoice'];
+    delete this.filterParams.getValue()['filter.series'];
+    delete this.filterParams.getValue()['filter.expDate'];
   }
 
   getFilterHour(hourAttention: any) {
@@ -854,8 +883,8 @@ export class InvoiceRectificationProcessComponent
     this.isSearch = false;
 
     this.dataJob = null;
-    this.filterParams.getValue().removeAllFilters();
-    // this.filterParams.getValue() = {}
+    // this.filterParams.getValue().removeAllFilters();
+    this.cleanFilters();
     this.form
       .get('hourAttention')
       .patchValue(`${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00`);
@@ -1302,5 +1331,9 @@ export class InvoiceRectificationProcessComponent
         });
       }
     });
+  }
+
+  a($event: any) {
+    console.log($event);
   }
 }

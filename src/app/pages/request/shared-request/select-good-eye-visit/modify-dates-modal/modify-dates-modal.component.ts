@@ -58,12 +58,8 @@ export class ModifyDatesModalComponent extends BasePage implements OnInit {
       let index = _i + 1;
       const body = {
         goodresdevId: item.goodresdevId,
-        startVisitDate: moment(startDate).format(
-          'YYYY-MM-DD h:mm:ss'
-        ),
-        endVisitDate: moment(endDate).format(
-          'YYYY-MM-DD h:mm:ss'
-        ),
+        startVisitDate: moment(startDate).format('YYYY-MM-DD h:mm:ss'),
+        endVisitDate: moment(endDate).format('YYYY-MM-DD h:mm:ss'),
       };
 
       const result = await this.updateGoodResDev(body);

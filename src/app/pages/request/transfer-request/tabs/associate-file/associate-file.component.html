@@ -23,7 +23,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control label"
+              class="form-control"
               formControlName="inaiUser"
               [clearable]="false"
               [items]="users"
@@ -40,7 +40,8 @@
             </ng-select>
             <span class="form-bar"></span>
             <label class="float-label pb-4 label-form-exp"
-              >Usuario <span style="color: #ad4766">*</span></label>
+              >Usuario <span style="color: #ad4766">*</span></label
+            >
           </div>
         </div>
 
@@ -58,7 +59,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control label"
+              class="form-control"
               formControlName="inaiUnit"
               [clearable]="false"
               [items]="units"
@@ -105,7 +106,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control label"
+              class="form-control"
               formControlName="inaiFile"
               [clearable]="false"
               [items]="files"
@@ -151,7 +152,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control label"
+              class="form-control"
               formControlName="provisionInai"
               [clearable]="false"
               [items]="dispositions"
@@ -199,7 +200,7 @@
             [formGroup]="associateFileForm"
             class="form-group form-secondary form-static-label">
             <ng-select
-              class="form-control label"
+              class="form-control"
               formControlName="inaiOfficial"
               [clearable]="false"
               [items]="users"
@@ -333,7 +334,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-6 text-right"
-              >DELEGACI&Oacute;N REGIONAL&#58;</label
+              >Delegación Regional:</label
             >
             <span> {{ regionalDelegacionName }} </span>
           </div>

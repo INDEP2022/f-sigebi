@@ -19,7 +19,6 @@ import Swal from 'sweetalert2';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { GUIDELINES_COLUMNS } from './guidelines-columns';
 import { GuidelinesObservationsComponent } from './guidelines-observations/guidelines-observations.component';
-import { GuidelinesRevisionViewComponent } from './guidelines-revision-view/guidelines-revision-view.component';
 import { GuidelinesRevisionComponent } from './guidelines-revision/guidelines-revision.component';
 
 @Component({
@@ -129,11 +128,9 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'firstRevision';
-            instance.cellChanged.subscribe(row => {
-
-            });
+            instance.cellChanged.subscribe(row => {});
           }
-        }
+        },
       },
       firstRevisionObserv: {
         title: 'Observaciones',
@@ -144,11 +141,9 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'firstRevisionObserv';
-            instance.cellChanged.subscribe(row => {
-
-            });
+            instance.cellChanged.subscribe(row => {});
           }
-        }
+        },
       },
       secondRevision: {
         title: '(Revisión 2) Cumple',
@@ -158,11 +153,9 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'secondRevision';
-            instance.cellChanged.subscribe(row => {
-
-            });
+            instance.cellChanged.subscribe(row => {});
           }
-        }
+        },
       },
       secondRevisionObserv: {
         title: 'Observaciones',
@@ -173,11 +166,9 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         onComponentInitFunction(instance) {
           if (!isNullOrEmpty(instance)) {
             instance.key = 'secondRevisionObserv';
-            instance.cellChanged.subscribe(row => {
-
-            });
+            instance.cellChanged.subscribe(row => {});
           }
-        }
+        },
       },
     };
   }
@@ -201,7 +192,6 @@ export class GuidelinesComponent extends BasePage implements OnInit {
   }
 
   editGuideline(event: any) {
-
     let { newData, confirm, data } = event;
     // Llamar servicio para editar
     // console.log(newData);
@@ -253,13 +243,16 @@ export class GuidelinesComponent extends BasePage implements OnInit {
       });
     }
 
-    deault.missingActionsRev1 = isNullOrEmpty(config.observations) ? " " : config.observations;
+    deault.missingActionsRev1 = isNullOrEmpty(config.observations)
+      ? ' '
+      : config.observations;
 
     deault.dateCreation = moment(new Date(config.firstRevisionDate));
-    deault.dateModification = isNullOrEmpty(config.secondRevisionDate) ? null :
-      moment(new Date(config.secondRevisionDate));
+    deault.dateModification = isNullOrEmpty(config.secondRevisionDate)
+      ? null
+      : moment(new Date(config.secondRevisionDate));
 
-    deault.version = !isNullOrEmpty(config.secondRevisionDate) ? "2" : "1";
+    deault.version = !isNullOrEmpty(config.secondRevisionDate) ? '2' : '1';
 
     await this.saveGuidelines(isNew, deault);
 
@@ -278,7 +271,6 @@ export class GuidelinesComponent extends BasePage implements OnInit {
         'success'
       );
     });
-
   }
 
   getObject(obj) {
@@ -331,8 +323,12 @@ export class GuidelinesComponent extends BasePage implements OnInit {
             if (!isNullOrEmpty(item)) {
               element.firstRevision = item.meetsRevision1;
               element.secondRevision = item.meetsRevision2;
-              element.firstRevisionObserv = (item.missingActionsRev1 + "").trim();
-              element.secondRevisionObserv = (item.missingActionsRev2 + "").trim();
+              element.firstRevisionObserv = (
+                item.missingActionsRev1 + ''
+              ).trim();
+              element.secondRevisionObserv = (
+                item.missingActionsRev2 + ''
+              ).trim();
             }
           });
 
@@ -340,11 +336,13 @@ export class GuidelinesComponent extends BasePage implements OnInit {
           if (!isNullOrEmpty(deault)) {
             this.guidelinesForm.patchValue({
               firstRevisionDate: new Date(deault.dateCreation),
-              secondRevisionDate: deault.version == "1" ? null : new Date(deault.dateModification),
-              observations: (deault.missingActionsRev1 + "").trim(),
+              secondRevisionDate:
+                deault.version == '1'
+                  ? null
+                  : new Date(deault.dateModification),
+              observations: (deault.missingActionsRev1 + '').trim(),
             });
           }
-
         }
 
         this.getData(this.guidelinesData);

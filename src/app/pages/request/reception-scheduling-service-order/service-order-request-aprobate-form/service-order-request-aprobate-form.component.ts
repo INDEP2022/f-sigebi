@@ -31,7 +31,6 @@ export class ServiceOrderRequestAprobateFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.ShowReport();
         }
       },
@@ -49,7 +48,6 @@ export class ServiceOrderRequestAprobateFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.electronicSignture();
         }
       },
@@ -64,7 +62,6 @@ export class ServiceOrderRequestAprobateFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.showSignProg();
         }
       },
@@ -82,7 +79,6 @@ export class ServiceOrderRequestAprobateFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.aprobateService = true;
         }
       },

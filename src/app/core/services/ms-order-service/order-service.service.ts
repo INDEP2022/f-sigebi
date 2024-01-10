@@ -210,6 +210,13 @@ export class OrderServiceService extends HttpService {
     );
   }
 
+  generateReportOrder(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.get(
+      `${OrderServiceEndpoint.OrderServiceSampleReport}?${params}`
+    );
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

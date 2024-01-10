@@ -9,7 +9,7 @@
           <div class="col-sm-6 col-md-2">
             <form-field [control]="searchForm.get('event')" label="Evento">
               <input
-                type="number"
+                type="text"
                 maxlength="10"
                 formControlName="event"
                 class="form-control" />
@@ -18,21 +18,31 @@
           <div class="col-sm-6 col-md-2">
             <form-field [control]="searchForm.get('batch')" label="Lote">
               <input
-                type="number"
+                type="text"
                 maxlength="10"
                 formControlName="batch"
                 class="form-control" />
             </form-field>
           </div>
           <div class="col-sm-12 col-md-6">
+            <ng-template #bankLabel let-item="item"
+              >{{ item.bankCode }} - {{ item.name }}</ng-template
+            >
+            <ng-template #bankOption let-item="item">
+              <div [title]="item.bankCode + '-' + item.name">
+                {{ item.bankCode }} - {{ item.name }}
+              </div>
+            </ng-template>
             <ng-custom-select-loading
               [form]="searchForm"
               formControlName="bank"
               label="Banco"
               path="catalog/api/v1/bank"
               value="bankCode"
-              paramSearch="filter.bankCode"
+              bindLabel="name"
+              paramSearch="filter.name"
               prefixSearch="$ilike"
+              secondParamSearch="filter.bankCode"
               [labelTemplate]="bankLabel"
               [optionTemplate]="bankOption"></ng-custom-select-loading>
             <!-- <form-field [control]="searchForm.get('bank')" label="Banco">
@@ -49,14 +59,6 @@
                 >
               </ng-custom-select>
             </form-field> -->
-            <ng-template #bankLabel let-item
-              >{{ item.bankCode }} - {{ item.name }}</ng-template
-            >
-            <ng-template #bankOption let-item="item">
-              <div [title]="item.bankCode + '-' + item.name">
-                {{ item.bankCode }} - {{ item.name }}
-              </div>
-            </ng-template>
           </div>
           <div class="col-sm-6 col-md-2">
             <form-field [control]="searchForm.get('amount')" label="Monto">
@@ -74,11 +76,11 @@
             <form-field
               [control]="searchForm.get('reference')"
               label="Referencia">
-              <input
-                type="text"
-                maxlength="255"
+              <textarea
+                class="form-control"
                 formControlName="reference"
-                class="form-control" />
+                rows="2"
+                maxlength="255"></textarea>
             </form-field>
           </div>
           <div class="col-sm-6 col-md-3">
@@ -117,7 +119,7 @@
                 <ng-option value="2">No Referenciados</ng-option>
                 <ng-option value="3">Efectivo</ng-option>
                 <ng-option value="4">Inconsistencia</ng-option>
-                <ng-option value="5">Carga de Archivo CSV</ng-option>
+                <ng-option value="6">Carga de Archivo CSV</ng-option>
               </ng-select>
             </form-field>
           </div>
@@ -127,7 +129,8 @@
                 formControlName="system"
                 [searchable]="false"
                 class="form-control"
-                [clearable]="false">
+                [clearable]="false"
+                (change)="onChange($event)">
                 <ng-option value="1">SIAB</ng-option>
                 <ng-option value="2">SIRSAE</ng-option>
               </ng-select>
@@ -138,7 +141,7 @@
           <div class="col-md-12-col-sm12 col-xs-12 text-center">
             <button
               class="btn btn-primary active btn-sm"
-              (click)="search()"
+              (click)="searchDet()"
               [disabled]="!searchForm.valid">
               Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
@@ -155,19 +158,30 @@
     </div>
 
     <div class="row">
-      <form class="form-material mb-0" [formGroup]="searchForm">
-        <div class="col-md-12 col-sm-12 text-center">
-          <div class="col-md-3">
-            <input id="typeId" name="typeId" type="hidden" value="" />
+      <form class="form-material m-0 p-0" [formGroup]="searchForm">
+        <div class="">
+          <div class="col-md-7 col-sm-5 col-12">
+            <ng-custom-select-loading
+              [form]="searchForm"
+              formControlName="type"
+              label="Tipo de Búsqueda MAE"
+              path="payment/api/v1/search-payments-mae?sortBy=tsearchId:ASC"
+              value="tsearchId"
+              bindLabel="desTsearch"
+              paramSearch="filter.desTsearch"
+              prefixSearch="$ilike"
+              secondParamSearch="filter.tsearchId"></ng-custom-select-loading>
+
+            <!-- <input id="typeId" name="typeId" type="hidden" value="" />
             <form-field [control]="searchForm.get('type')" label="Tipo">
               <input
                 type="text"
                 formControlName="type"
                 readonly="true"
                 class="form-control" />
-            </form-field>
+            </form-field> -->
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 col-sm-4 col-12">
             <form-field
               [control]="searchForm.get('processType')"
               label="Tipo de Proceso">
@@ -176,25 +190,24 @@
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false">
-                <ng-option value="0">Normales</ng-option>
-                <ng-option value="1">Duplicados</ng-option>
-                <ng-option value="2">No Referenciados</ng-option>
-                <ng-option value="3">Efectivo</ng-option>
-                <ng-option value="4">Inconsistencia</ng-option>
-                <ng-option value="5">Carga de Archivo CSV</ng-option>
+                <ng-option
+                  *ngFor="let item of processTypes"
+                  [value]="item.value"
+                  >{{ item.description }}</ng-option
+                >
               </ng-select>
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-2 col-sm-3 col-12">
             <form-field [control]="searchForm.get('action')" label="Acción">
               <ng-select
                 formControlName="action"
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false">
-                <ng-option value="1">Cancelar</ng-option>
-                <ng-option value="2">Actualizar</ng-option>
-                <ng-option value="3">Registrar</ng-option>
+                <ng-option *ngFor="let item of actions" [value]="item.value">{{
+                  item.description
+                }}</ng-option>
               </ng-select>
             </form-field>
           </div>
@@ -214,25 +227,28 @@
         </button>
         <button
           class="btn btn-sm btn-success active m-3"
-          (click)="loadCSV.click()">
+          (click)="validateLoadCSV()">
           <i class="bi bi-file-earmark-excel-fill"></i>
-          Carga de CSV<input
-            #loadCSV
-            hidden
-            type="file"
-            accept=".csv"
-            (change)="procesa()" />
+          Carga de CSV
         </button>
+        <input
+          #loadCSV
+          type="file"
+          name="file"
+          class="d-none"
+          accept=".csv"
+          (change)="procesa($event)" />
         <button
           class="btn btn-red btn-sm active m-3"
           (click)="cleanSearch()"
-          [disabled]="!searchForm.valid">
+          [disabled]="!searchForm.valid || totalItems === 0">
           Eliminar B&uacute;squeda
           <i class="fa fa-trash" aria-hidden="true"></i>
         </button>
         <button
           type="button"
           class="btn btn-sm btn-info active m-3"
+          [disabled]="dataRows.length === 0"
           (click)="changeProcess2()">
           <i class="bx bx-file text-light float-icon"></i>
           Cambio de Proceso
@@ -240,7 +256,7 @@
 
         <button
           class="btn btn-primary btn-sm active mr-3"
-          (click)="loadCSV2.click()">
+          (click)="validateLoadLoteCSV()">
           <i class="fas fa-sync-alt"></i>
           Cambiar Lotes<input
             #loadCSV2
@@ -295,20 +311,18 @@
     </div>
     <div class="row mt-3">
       <div class="col-md-12">
+        <form-loader *ngIf="loading"></form-loader>
         <ng-scrollbar
-          [track]="'horizontal'"
-          [autoHeightDisabled]="false"
-          class="table-scrollbar">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              id="consultation-table"
-              [attr.class]="'table-bordered'"
-              [settings]="paymentSettings"
-              [source]="localdata"
-              (edit)="openForm($event.data)"
-              (userRowSelect)="selectRows($event.selected)">
-            </ng2-smart-table>
-          </div>
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            #table
+            [attr.class]="'table-responsive table-bordered'"
+            [settings]="paymentSettings"
+            [source]="localdata"
+            (edit)="openForm($event.data)"
+            (userRowSelect)="selectRows($event.selected)">
+          </ng2-smart-table>
           <div class="table-padding"></div>
         </ng-scrollbar>
       </div>

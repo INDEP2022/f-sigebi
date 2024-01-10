@@ -15,4 +15,5 @@ export enum OrderServiceEndpoint {
   SampleOrders = 'sampling-orders',
   OrderPayment = 'order-payment',
   OrderIncomingService = 'order-incoming-services',
+  OrderServiceSampleReport = 'sample-order-service/order-incoming-services-excel',
 }

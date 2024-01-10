@@ -36,13 +36,13 @@ export class MissingDamagedGoodsComponent extends BasePage implements OnInit {
     });
   }
 
-  showInfo() {}
+  showInfo() { }
 
   delete(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
