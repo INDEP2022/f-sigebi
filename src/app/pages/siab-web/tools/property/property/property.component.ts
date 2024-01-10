@@ -160,6 +160,7 @@ export class PropertyComponent extends BasePage implements OnInit {
   onSelectDelegation(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => {
+        console.log(data.row);
         let index;
         let validate = false;
         const existe = this.array.some(
@@ -236,17 +237,20 @@ export class PropertyComponent extends BasePage implements OnInit {
               case 'numClasifGoods':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'bien':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilters[field];
+              delete this.columnFilters1[field];
             }
           });
-          this.params = this.pageFilter(this.params);
+          this.params1 = this.pageFilter(this.params1);
           this.getDataGood();
         }
       });
@@ -297,7 +301,7 @@ export class PropertyComponent extends BasePage implements OnInit {
         this.data1.load([]);
         this.data1.refresh();
         // En caso de error, restaura this.array a su estado anterior
-        this.array = [];
+        // this.array = [];
         this.loading = false;
       },
     });

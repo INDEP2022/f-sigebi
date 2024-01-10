@@ -102,7 +102,7 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
 
   copy() {
     this.clipboard.copy(this.form.value['encrip']);
-    this.onLoadToast('success', 'La Clave de Autorización ha sido copiada', '');
+    this.onLoadToast('success', 'La clave de autorización ha sido copiada', '');
   }
 
   clean() {
