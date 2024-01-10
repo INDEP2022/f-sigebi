@@ -126,6 +126,9 @@ export class CustomSelectWidthLoading
           }
         }
       });
+      this.form.get('goodNumber').valueChanges.subscribe(x => {
+        console.log(x);
+      });
     }
   }
 
@@ -202,7 +205,10 @@ export class CustomSelectWidthLoading
   }
 
   clear(event: any) {
-    this.input$.next('');
+    console.log(event);
+    if (!this.updateValues) {
+      this.input$.next('');
+    }
   }
 
   private fillParams2(
@@ -269,6 +275,7 @@ export class CustomSelectWidthLoading
   }
 
   getItemsObservable(text: string = '') {
+    console.log(text);
     let params: any = this.fillParams(text);
     const mParams =
       this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
@@ -388,9 +395,15 @@ export class CustomSelectWidthLoading
         distinctUntilChanged(),
         switchMap((text: string) => {
           // console.log(this.items);
+          console.log(text);
+
+          // debugger;
           if (
             text === null ||
-            (!this.firstLoad && isNaN(+text) && text.length < this.minText)
+            (!this.firstLoad &&
+              isNaN(+text) &&
+              text.length < this.minText &&
+              text.length > 0)
           ) {
             return of(null);
           }
