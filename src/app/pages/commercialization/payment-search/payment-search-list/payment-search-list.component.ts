@@ -1697,9 +1697,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         1,
         this.selectedRows.map(x => {
           return {
-            processId: x.processId,
-            movtoNumber: x.numbermovement,
-            monto: x.monto,
+            processId: +x.processId,
+            movtoNumber: +x.numbermovement,
+            monto: +x.amount,
             referenceori: x.referenceori,
           };
         })

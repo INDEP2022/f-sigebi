@@ -290,7 +290,7 @@ export class MsDepositaryService extends HttpService {
       processId: number;
       movtoNumber: number;
       monto: number;
-      referenceori: number;
+      referenceori: string;
     }[]
   ) {
     return this.post(`${DepositaryEndPoints.ComerPaymentSelectUpdate}`, {

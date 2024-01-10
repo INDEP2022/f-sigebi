@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { catchError, map, of, take, takeUntil } from 'rxjs';
+import { take, takeUntil } from 'rxjs';
 import { IComerDetExpense2 } from 'src/app/core/models/ms-spent/comer-detexpense';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePage } from 'src/app/core/shared';
-import {
-  NUMBERS_PATTERN,
-  NUMBERS_POINT_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_POINT_PATTERN } from 'src/app/core/shared/patterns';
 import { IValidGood } from '../../../models/expense-good-process';
 
 @Component({
@@ -54,29 +51,39 @@ export class ExpenseCompositionModalComponent
 
   private fillCvmans() {
     this.loadingCvmans = true;
-    this.service
-      .getValidatesCvmans(+this.eventNumber, +this.lotNumber)
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        catchError(x => of({ data: [] })),
-        map(x => (x ? x.data : []))
-      )
-      .subscribe(x => {
-        this.loadingCvmans = false;
-        this.cvmans = x;
-        if (this.comerDetExpense) {
-          this.cvman.setValue(this.comerDetExpense.manCV);
-        }
-      });
+    // this.service
+    //   .getValidatesCvmans(+this.eventNumber, +this.lotNumber)
+    //   .pipe(
+    //     takeUntil(this.$unSubscribe),
+    //     catchError(x => of({ data: [] })),
+    //     map(x => (x ? x.data : []))
+    //   )
+    //   .subscribe(x => {
+    //     this.loadingCvmans = false;
+    //     this.cvmans = x;
+    //     if (this.comerDetExpense) {
+    //       this.cvman.setValue(this.comerDetExpense.manCV);
+    //     }
+    //   });
+    setTimeout(() => {
+      if (this.comerDetExpense) {
+        this.cvman.setValue(this.comerDetExpense.manCV);
+      }
+      this.loadingCvmans = false;
+      console.log(this.goodNumber.value);
+    }, 500);
   }
 
   private fillGoods() {
     if (this.comerDetExpense) {
-      this.goodNumber.setValue(
-        this.address === 'M'
-          ? +this.comerDetExpense.goodNumber
-          : this.comerDetExpense.goodNumber
-      );
+      setTimeout(() => {
+        this.goodNumber.setValue(
+          this.address === 'M'
+            ? +this.comerDetExpense.goodNumber
+            : this.comerDetExpense.goodNumber
+        );
+        console.log(this.goodNumber.value);
+      }, 500);
     }
   }
 
@@ -91,7 +98,7 @@ export class ExpenseCompositionModalComponent
   }
   get bodyPostI() {
     return {
-      pevent: +this.eventNumber,
+      event: +this.eventNumber,
     };
   }
 
@@ -124,25 +131,27 @@ export class ExpenseCompositionModalComponent
   }
 
   get pathGood() {
-    return (
-      'goodprocess/api/v1/application/query-pro-list-good' +
-      (this.comerDetExpense
-        ? this.comerDetExpense.goodNumber
-          ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
-          : ''
-        : '')
-    );
+    return 'goodprocess/api/v1/application/query-pro-list-good';
+    // return (
+    //   'goodprocess/api/v1/application/query-pro-list-good' +
+    //   (this.comerDetExpense
+    //     ? this.comerDetExpense.goodNumber
+    //       ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
+    //       : ''
+    //     : '')
+    // );
   }
 
   get pathGoodI() {
-    return (
-      'goodprocess/api/v1/application/get-good-expedients-trans' +
-      (this.comerDetExpense
-        ? this.comerDetExpense.goodNumber
-          ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
-          : ''
-        : '')
-    );
+    return 'goodprocess/api/v1/application/get-good-expedients-trans';
+    // return (
+    //   'goodprocess/api/v1/application/get-good-expedients-trans' +
+    //   (this.comerDetExpense
+    //     ? this.comerDetExpense.goodNumber
+    //       ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
+    //       : ''
+    //     : '')
+    // );
   }
 
   fillGoodM(row: any) {
@@ -196,8 +205,8 @@ export class ExpenseCompositionModalComponent
     }
     if (this.eventNumber) {
       this.fillCvmans();
-      this.fillGoods();
     }
+    this.fillGoods();
     this.vat.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         console.log(response);
@@ -264,7 +273,7 @@ export class ExpenseCompositionModalComponent
         ],
       ],
       cvman: [null],
-      goodNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      goodNumber: [null],
     });
   }
 
