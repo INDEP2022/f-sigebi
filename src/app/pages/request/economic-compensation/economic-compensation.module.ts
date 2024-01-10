@@ -40,4 +40,4 @@ import { EconomicCompensationRoutingModule } from './economic-compensation-routi
     RegisterDictumInformationComponent,
   ],
 })
-export class EconomicCompensationModule { }
+export class EconomicCompensationModule {}

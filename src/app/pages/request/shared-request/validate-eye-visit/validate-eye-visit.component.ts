@@ -1,4 +1,12 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import * as moment from 'moment';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -11,11 +19,10 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { CheckboxSelectElementComponent } from './checkbox-selected/checkbox-select-element';
+import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { ConfirmValidationModalComponent } from './confirm-validation-modal/confirm-validation-modal.component';
 import { SeeExpedientComponent } from './see-expedient/see-expedient.component';
 import { GOODS_EYE_VISIT_COLUMNS } from './validate-eye-visit-columns';
-import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 
 @Component({
   selector: 'app-validate-eye-visit',
@@ -107,7 +114,6 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: (resp: any) => {
-
           console.log('resp', resp);
 
           const result = resp.data.map(async (item: any, _i: number) => {
@@ -144,7 +150,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           Promise.all(result).then(x => {
             this.selectedGoodColumns.load(resp.data);
             this.selectedGoodTotalItems = resp.count;
-            this.selectChanges()
+            this.selectChanges();
             setTimeout(() => {
               this.disableValidateColumn(0);
               this.disableValidateColumn(1);
@@ -285,7 +291,11 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
         );
       }
     } else {
-      this.onLoadToast('warning', 'Advertencia', 'Se tiene que seleccionar un bien');
+      this.onLoadToast(
+        'warning',
+        'Advertencia',
+        'Se tiene que seleccionar un bien'
+      );
     }
   }
 
@@ -313,7 +323,11 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
 
   approveAcceptGood() {
     if (this.selectedList.length == 0 || this.selectedList.length > 1) {
-      this.onLoadToast('warning', 'Advertencia', 'Se tiene que tener un bien seleccionado');
+      this.onLoadToast(
+        'warning',
+        'Advertencia',
+        'Se tiene que tener un bien seleccionado'
+      );
       return;
     }
 
@@ -335,7 +349,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'No es posible aprobar el bien seleccionado',
+        'No es posible aprobar el bien seleccionado'
       );
       return;
     }
@@ -361,7 +375,6 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     });
     /* ACTUALIZA LA TABLA */
     this.selectedGoodColumns.getElements().then(data => {
-
       for (let i = 0; i < data.length; i++) {
         const dataColumns = data[i];
         for (let j = 0; j < this.selectedList.length; j++) {
@@ -405,7 +418,9 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     //resultTaxpayer: 'RECHAZADO' | 'ACEPTADO';
     //resultFinal: 'Y';
 
-    let items = this.selectedGoodColumns['data'].filter(x => !isNullOrEmpty(x.resultFinal));
+    let items = this.selectedGoodColumns['data'].filter(
+      x => !isNullOrEmpty(x.resultFinal)
+    );
 
     this.onChange.emit({
       isValid: items.length == this.selectedGoodColumns['data'].length,
@@ -417,5 +432,4 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     this.selectedList = event.selected;
     console.log('event', event);
   }
-
 }

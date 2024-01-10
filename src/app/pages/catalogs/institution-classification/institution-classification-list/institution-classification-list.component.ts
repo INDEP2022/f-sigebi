@@ -21,8 +21,7 @@ import { INSTITUTION_CLASIFICATION_COLUMNS } from './institution-columns';
 })
 export class InstitutionClassificationListComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   institutions: IInstitutionClassification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -51,8 +50,8 @@ export class InstitutionClassificationListComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'numRegister'
+              filter.field == 'description' ||
+              filter.field == 'numRegister'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -105,7 +104,7 @@ export class InstitutionClassificationListComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este Registro?'
+      '¿Desea eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(institution.id);

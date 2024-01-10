@@ -16,8 +16,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class PublicationPhotographsModalComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   title: string = 'Fotografías';
   provider: any;
   imageSrc: any;
@@ -92,7 +91,7 @@ export class PublicationPhotographsModalComponent
   //   this.alertQuestion(
   //     'warning',
   //     'Actualizar',
-  //     'Desea actualizar este layout?'
+  //     '¿Desea actualizar este layout?'
   //   ).then(question => {
   //     if (question.isConfirmed) {
   //       this.publicationPhotographsService

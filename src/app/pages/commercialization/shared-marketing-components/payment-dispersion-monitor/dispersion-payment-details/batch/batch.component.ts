@@ -66,7 +66,7 @@ export class BatchComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -82,7 +82,7 @@ export class BatchComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Ejecutar',
-      'Desea ejecutar el proceso de dispersión?'
+      '¿Desea ejecutar el proceso de dispersión?'
     )
       .then(question => {
         if (question.isConfirmed) {

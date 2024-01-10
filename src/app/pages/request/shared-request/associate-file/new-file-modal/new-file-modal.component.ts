@@ -187,9 +187,7 @@ export class NewFileModalComponent extends BasePage implements OnInit {
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
           type: 'pdf',
         },
-        callback: (data: any) => {
-          console.log(data);
-        },
+        callback: (data: any) => {},
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal

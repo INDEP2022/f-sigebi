@@ -62,7 +62,6 @@ export class TranportableGoodsFormComponent extends BasePage implements OnInit {
     params['filter.programmingId'] = `$eq:${id}`;
     this.programmingGood.getGoodsProgramming(params).subscribe({
       next: resp => {
-        console.log(resp);
         resp.data.map((item: any) => {
           item.uniqueKey = item.view.uniqueKey;
           item.goodDescription = item.view.goodDescription;

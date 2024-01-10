@@ -980,6 +980,7 @@ export abstract class CompDocTasksComponent extends BasePage {
       case 'review-result-protection':
         this.regDocView = true;
         this.viewSelectedGoods = true;
+        this.selectGoodNotForEyeVisit = true;
         this.expRequest = true;
         this.legalStatus = true;
 

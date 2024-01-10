@@ -31,4 +31,5 @@ export enum MassiveGoodEndpoints {
   ApplicationRegisterCountCsv = 'application/register-count-csv',
   losersReport = 'application/export-query-losers-report',
   winnersReport = 'application/export-query-winners-report',
+  pupProcesaCsvPaymentSearch = 'application/pup-procesa-csv',
 }

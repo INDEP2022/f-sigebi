@@ -2,17 +2,30 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  DOUBLE_PATTERN,
+  NUM_POSITIVE,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-payment-search-modal',
   templateUrl: './payment-search-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      :host::ng-deep app-modal .modal-body {
+        padding: 0px 40px 20px !important;
+      }
+    `,
+  ],
 })
 export class PaymentSearchModalComponent extends BasePage implements OnInit {
   paymentForm: FormGroup = new FormGroup({});
@@ -93,45 +106,57 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.paymentForm = this.fb.group({
-      date: [null, [Validators.required]],
+      date: [null],
       referenceori: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      reference: [
+      reference: [null, [Validators.pattern(STRING_PATTERN)]],
+      idselect: [null],
+      amount: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
+      cve: [null],
+      code: [null, [Validators.pattern(NUM_POSITIVE)]],
+      numbermovement: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required, Validators.pattern(NUM_POSITIVE)],
       ],
-      amount: [null, [Validators.required]],
-      cve: [null, [Validators.required]],
-      code: [null, [Validators.required]],
-      publicBatch: [null, [Validators.required]],
-      event: [null, [Validators.required]],
-      systemValidity: [null, [Validators.required]],
-      result: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      paymentId: [null, [Validators.required]],
-      batchId: [null, [Validators.required]],
-      entryOrderId: [null, [Validators.required]],
-      satDescription: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      type: [null, [Validators.required]],
-      inconsistencies: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+
+      publicBatch: [null, [Validators.pattern(NUM_POSITIVE)]],
+      event: [null, [Validators.pattern(NUM_POSITIVE)]],
+      systemValidity: [null],
+      result: [null, [Validators.pattern(STRING_PATTERN)]],
+      paymentId: [null, [Validators.pattern(NUM_POSITIVE)]],
+      batchId: [null, [Validators.pattern(NUM_POSITIVE)]],
+      entryOrderId: [null, [Validators.pattern(NUM_POSITIVE)]],
+      satDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+      type: [null],
+      tsearchId: [null],
+      inconsistencies: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     if (this.payment != null) {
       this.edit = true;
       console.log('Resp Payment-> ', this.payment);
-      this.getValidSystem2(this.payment.systemValidity);
+      // this.getValidSystem2(this.payment.validSystem);
       this.paymentForm.patchValue(this.payment);
       if (this.payment.date != null) {
         this.paymentForm
           .get('date')
           .setValue(this.formatDate(new Date(this.payment.date)));
       }
+      this.paymentForm
+        .get('inconsistencies')
+        .setValue(this.payment.downloadinconsis);
+      this.paymentForm.get('tsearchId').setValue(this.payment.tsearchId);
+      this.paymentForm.get('event').setValue(this.payment.idEvent);
+      this.paymentForm.get('idselect').setValue(this.payment.idselect === '1');
+      this.paymentForm.get('paymentId').setValue(this.payment.payId);
+      this.paymentForm.get('publicBatch').setValue(this.payment.batchPublic);
+      this.paymentForm.get('cve').setValue(this.payment.cveBank);
+      this.paymentForm.get('systemValidity').setValue(this.payment.validSystem);
+      this.paymentForm.get('result').setValue(this.payment.result);
+      this.paymentForm.get('entryOrderId').setValue(this.payment.incomeid);
+      this.paymentForm.get('type').setValue(this.payment.guy);
+      this.paymentForm.get('satDescription').setValue(this.payment.idGuySat);
     }
   }
 
@@ -140,6 +165,10 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    // console.log(this.paymentForm.invalid);
+    // console.log(this.paymentForm.getRawValue());
+    // this.paymentForm.markAllAsTouched();
+    // return;
     this.edit ? this.update() : this.create();
   }
 
@@ -221,7 +250,7 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   }
 
   getValidSystem2(desc?: string) {
-    this.paymentService.getValidSystemDesc(desc).subscribe(
+    this.paymentService.getValidSystem(desc).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
           console.log('resp 2 -> ', resp.data[0]);
@@ -264,15 +293,11 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   }
 
   getSatDec() {
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-
-    const _params: any = params;
+    let params = new FilterParams();
+    params.limit = 100;
     //_params['filter.idType'] = `$eq:${res.data[i].idGuySat}`;
-    console.log('getSatDec-> ', _params);
-    this.accountMovementService.getPaymentTypeSat(_params).subscribe(
+    console.log('getSatDec-> ', params);
+    this.accountMovementService.getPaymentTypeSat(params.getParams()).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
           this.dataSat = resp.data;
