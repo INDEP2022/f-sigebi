@@ -23,8 +23,4 @@ export const COLUMNS = {
     title: 'Cve. del Banco',
     sort: false,
   },
-  registryNumber: {
-    title: 'No. de Registro',
-    sort: false,
-  },
 };

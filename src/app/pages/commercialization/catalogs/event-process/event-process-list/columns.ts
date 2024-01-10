@@ -108,8 +108,8 @@ export const COLUMNS = {
       config: {
         selectText: 'Seleccionar',
         list: [
-          { value: 'M', title: 'MUEBLES' },
-          { value: 'I', title: 'INMUEBLES' },
+          { value: 'M', title: 'Muebles' },
+          { value: 'I', title: 'Inmuebles' },
         ],
       },
     },

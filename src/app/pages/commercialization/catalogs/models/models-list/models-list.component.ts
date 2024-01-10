@@ -116,7 +116,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar este Modelo?'
+      '¿Desea eliminar este modelo?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(parameterComer.id);
