@@ -126,9 +126,6 @@ export class CustomSelectWidthLoading
           }
         }
       });
-      this.form.get('goodNumber').valueChanges.subscribe(x => {
-        console.log(x);
-      });
     }
   }
 
