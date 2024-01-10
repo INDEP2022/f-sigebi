@@ -21,6 +21,7 @@
             *ngIf="address === 'M'"
             [form]="form"
             [updateValues]="true"
+            [isLoadInOnInit]="!comerDetExpense"
             [path]="pathGood"
             formControlName="goodNumber"
             [readonly]="comerDetExpense && chargeGoodsByLote"
@@ -64,6 +65,7 @@
             [form]="form"
             [updateValues]="true"
             [path]="pathGoodI"
+            [isLoadInOnInit]="!comerDetExpense"
             formControlName="goodNumber"
             label="No. Bien"
             value="goodNumber"
@@ -99,7 +101,9 @@
           </ng-template>
           <ng-custom-select-loading
             [form]="form"
+            [updateValues]="true"
             [path]="pathCvmans"
+            [isLoadInOnInit]="!comerDetExpense"
             formControlName="cvman"
             label="Mandato"
             value="cvman"

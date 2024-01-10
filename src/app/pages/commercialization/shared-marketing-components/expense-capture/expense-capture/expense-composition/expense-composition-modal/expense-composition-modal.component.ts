@@ -71,19 +71,15 @@ export class ExpenseCompositionModalComponent
       }
       this.loadingCvmans = false;
       console.log(this.goodNumber.value);
-    }, 500);
+    }, 300);
   }
 
   private fillGoods() {
     if (this.comerDetExpense) {
       setTimeout(() => {
-        this.goodNumber.setValue(
-          this.address === 'M'
-            ? +this.comerDetExpense.goodNumber
-            : this.comerDetExpense.goodNumber
-        );
+        this.goodNumber.setValue(this.comerDetExpense.goodNumber);
         console.log(this.goodNumber.value);
-      }, 500);
+      }, 300);
     }
   }
 
@@ -202,6 +198,12 @@ export class ExpenseCompositionModalComponent
       this.isrWithholding.setValue(this.comerDetExpense.retencionIsr);
       this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
       this.budgetItem.setValue(this.comerDetExpense.departure);
+      this.vatWithholding.setValidators(
+        Validators.max(this.comerDetExpense.iva)
+      );
+      this.isrWithholding.setValidators(
+        Validators.max(this.comerDetExpense.amount)
+      );
     }
     if (this.eventNumber) {
       this.fillCvmans();
