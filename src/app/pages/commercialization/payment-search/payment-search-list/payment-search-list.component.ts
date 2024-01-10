@@ -1694,13 +1694,13 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.loader.load = true;
     this.msDepositaryService
       .getComerPaymentSelect(
-        1,
         this.selectedRows.map(x => {
           return {
             processId: +x.processId,
             movtoNumber: +x.numbermovement,
             monto: +x.amount,
             referenceori: x.referenceori,
+            selection: 1,
           };
         })
       )
