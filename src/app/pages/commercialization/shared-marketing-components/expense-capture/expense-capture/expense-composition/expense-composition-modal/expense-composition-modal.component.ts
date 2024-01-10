@@ -198,6 +198,12 @@ export class ExpenseCompositionModalComponent
       this.isrWithholding.setValue(this.comerDetExpense.retencionIsr);
       this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
       this.budgetItem.setValue(this.comerDetExpense.departure);
+      this.vatWithholding.setValidators(
+        Validators.max(this.comerDetExpense.iva)
+      );
+      this.isrWithholding.setValidators(
+        Validators.max(this.comerDetExpense.amount)
+      );
     }
     if (this.eventNumber) {
       this.fillCvmans();
