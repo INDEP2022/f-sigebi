@@ -150,6 +150,12 @@ export class ExpenseCompositionModalComponent
     // );
   }
 
+  fillCvman(row: any) {
+    if (row && row.goodNumber + '' == this.goodNumber.value + '') {
+      this.cvman.disable();
+    }
+  }
+
   fillGoodM(row: any) {
     console.log(row);
     if (row) {
@@ -158,6 +164,9 @@ export class ExpenseCompositionModalComponent
       }
       if (row.mandate2) {
         this.cvman.setValue(row.mandate2);
+        this.cvman.disable();
+      } else {
+        this.cvman.enable();
       }
       if (row.iva2) {
         this.vat.setValue(row.iva2);
@@ -173,6 +182,8 @@ export class ExpenseCompositionModalComponent
         this.amount.setValue(0);
         this.amount.enable();
       }
+    } else {
+      this.cvman.enable();
     }
   }
 
@@ -184,7 +195,12 @@ export class ExpenseCompositionModalComponent
       }
       if (row.cvman) {
         this.cvman.setValue(row.cvman);
+        this.cvman.disable();
+      } else {
+        this.cvman.enable();
       }
+    } else {
+      this.cvman.enable();
     }
   }
 
