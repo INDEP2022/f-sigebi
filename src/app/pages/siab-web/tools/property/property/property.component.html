@@ -27,7 +27,7 @@
           <div [class]="loading ? 'table-loading' : ''">
             <div class="table-responsive">
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings"
                 [source]="data"
                 (userRowSelect)="rowsSelected($event)">
@@ -50,10 +50,9 @@
             [leftList]="true"></app-columns-select>
           <div>
             <button
-              class="btn btn-sm btn-primary active mr-3"
+              class="btn btn-danger btn-sm active mr-2"
               (click)="goBack()">
-              Resetear
-              <!--<i class="fas fa-arrow-circle-left"></i>-->
+              Resetear <i class="fas fa-eraser"></i>
             </button>
             <button
               class="btn btn-sm btn-success active mr-3"
@@ -70,7 +69,7 @@
           <div [class]="loading ? 'table-loading' : ''">
             <div class="table-responsive">
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings1"
                 [source]="data1">
               </ng2-smart-table>
