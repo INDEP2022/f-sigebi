@@ -9,9 +9,11 @@ import {
 } from '../../interfaces/list-response.interface';
 import {
   IAvailableFestatus,
+  IBtnAddGood,
   IDetailProceedingsDevollution,
   IDetailProceedingsDevollutionDelete,
   IFactconst,
+  IPaConstDelivery,
   IPbSelPaq,
   IProceedings,
   IPufValidTerm,
@@ -334,9 +336,9 @@ export class ProceedingsService extends HttpService {
     return this.delete(route, params);
   }
 
-  consultPaValMasive() {
+  consultPaValMasive(screen: string) {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}/FACTCONST_0001`;
-    return this.get(route);
+    return this.get(`aplication/pa-val-const-masive/${screen}`);
   }
 
   pufValidTerm(body: IPufValidTerm) {
@@ -399,5 +401,13 @@ export class ProceedingsService extends HttpService {
 
   postqueryFactConst(body: IFactconst) {
     return this.post('aplication/blk-bie-post-query', body);
+  }
+
+  btnAddGood(body: IBtnAddGood) {
+    return this.post('aplication/btn-add-good', body);
+  }
+
+  paConstDelivery(body: IPaConstDelivery) {
+    return this.post('aplication/pa-const-delivery', body);
   }
 }

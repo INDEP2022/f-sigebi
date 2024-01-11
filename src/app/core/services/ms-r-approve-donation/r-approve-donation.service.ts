@@ -28,9 +28,21 @@ export class RapproveDonationService extends HttpService {
     return this.get(route);
   }
 
+  getDonationRequestFilter(params?: string) {
+    return this.get(RapproveDonationEndpoint.donac, params);
+  }
+
   getGoodDonation(params: any) {
     const route = `${RapproveDonationEndpoint.goodDonation}`;
     return this.post(route, params);
+  }
+
+  getGoodProgDonationFilter(params?: string) {
+    return this.get('application/vIndProgDonation', params);
+  }
+
+  getTmpGoodProgDonationFilter(params?: string) {
+    return this.get('tmp-good-prog-donation', params);
   }
 
   getGoodProgDonation(good?: any) {
@@ -51,6 +63,10 @@ export class RapproveDonationService extends HttpService {
   getGoodSinPackage(good: any) {
     const route = `${RapproveDonationEndpoint.goodSinPackage}/${good}`;
     return this.get(route);
+  }
+
+  getTmpGoodAutDonation(params?: string) {
+    return this.get('tmp-good-aut-donation', params);
   }
 
   getC_DATCTA(user: any) {

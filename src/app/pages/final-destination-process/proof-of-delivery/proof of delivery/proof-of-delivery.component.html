@@ -125,7 +125,12 @@
                 {{ statusProceeding }}
               </div>
             </div>
-            <div class="col-md-6 text-center align-items-center">
+            <div
+              [class]="
+                newA
+                  ? 'col-md-6 text-center align-items-center'
+                  : 'col-md-6 text-center align-items-center disabled'
+              ">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="formExp.get('programmingType')"
@@ -133,7 +138,7 @@
                   <select
                     class="form-control"
                     formControlName="programmingType"
-                    [disabled]="!campos">
+                    [disabled]="true">
                     <option [value]="null">Seleccione un valor</option>
                     <option value="EVENCOMER">EVENCOMER</option>
                     <option value="EVENDON">EVENDON</option>
@@ -162,7 +167,7 @@
                   <option value="E/DON">E/DON</option>
                   <option value="E/DES">E/DES</option>
                   <option value="E/DEV">E/DEV</option>
-                  <option value="E/DEV">E/RES</option>
+                  <option value="E/RES">E/RES</option>
                 </select>
               </form-field>
               <form-field
@@ -238,7 +243,7 @@
                 type="text"
                 class="form-control"
                 formControlName="act"
-                [readOnly]="!campos || !camposNew" />
+                readOnly />
             </form-field>
             <form-field
               [control]="formAct.get('elabDate')"
@@ -262,7 +267,9 @@
                 class="form-control"
                 bsDatepicker
                 formControlName="actDate"
-                [readOnly]="!campos" />
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
             </form-field>
             <form-field
               [control]="formAct.get('captureDate')"
@@ -274,7 +281,9 @@
                 class="form-control"
                 bsDatepicker
                 formControlName="captureDate"
-                [readOnly]="!campos" />
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
             </form-field>
           </div>
           <div class="row">
@@ -287,7 +296,9 @@
                 type="text"
                 class="form-control"
                 formControlName="address"
-                [readOnly]="!campos" />
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
             </form-field>
             <form-field
               [control]="formAct.get('observations')"
@@ -296,7 +307,9 @@
               <textarea
                 class="form-control"
                 formControlName="observations"
-                [readOnly]="!campos"></textarea>
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                "></textarea>
             </form-field>
           </div>
           <div class="row">
@@ -309,7 +322,9 @@
                 type="text"
                 class="form-control"
                 formControlName="receive"
-                [readOnly]="!campos" />
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
             </form-field>
             <form-field
               [control]="formAct.get('delivery')"
@@ -320,7 +335,9 @@
                 type="text"
                 class="form-control"
                 formControlName="delivery"
-                [readOnly]="!campos" />
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
             </form-field>
             <form-field
               [control]="formAct.get('witnessContr')"
@@ -331,47 +348,70 @@
                 type="text"
                 class="form-control"
                 formControlName="witnessContr"
-                [readOnly]="!campos" />
+                [readOnly]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                " />
             </form-field>
           </div>
-
           <div *ngIf="select" class="row text-center mb-5 mt-5">
             <div class="col">
               <button
-                type="button"
                 class="btn btn-primary btn-sm active mr-3"
-                (click)="saveProceeding()">
-                {{ labelSaveProceeding }}
-                <i aria-hidden="true" class="fa fa-save"></i>
-              </button>
-              <button
-                class="btn btn-primary btn-sm active mr-3"
-                [disabled]="isDon || !boton"
+                [disabled]="!buttonActive.tracker"
                 (click)="goTrackerGood()">
                 Rastreador
               </button>
               <button
                 class="btn btn-primary btn-sm active mr-3"
+                [disabled]="!buttonActive.generateConst"
                 (click)="openGenerateConstans()">
                 Generar Constancia
               </button>
               <button
                 class="btn btn-primary btn-sm active mr-3"
-                [disabled]="!isDon || !boton"
-                (click)="goodDonations()">
+                [disabled]="!buttonActive.goodDon"
+                (click)="donationGoods()">
                 Bienes Donaci&oacute;n
               </button>
               <button
                 containerClass="tooltip-style"
                 class="btn btn-info btn-sm active mr-3"
-                [disabled]="!boton"
+                [disabled]="
+                  ['CERRADO', 'CERRADA', null].includes(statusProceeding)
+                "
                 (click)="RastreadorGood()">
                 Agregar Bienes <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
+            </div>
+          </div>
 
+          <div *ngIf="select" class="row text-center mb-5">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                [disabled]="['CERRADO', 'CERRADA'].includes(statusProceeding)"
+                (click)="saveProceeding()">
+                {{ labelSaveProceeding }}
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+              <button
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active mr-3"
+                [disabled]="!buttonActive.closeProceeding"
+                (click)="closeProceeding()">
+                {{
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                    ? 'Abrir acta'
+                    : 'Cerrar acta'
+                }}
+              </button>
               <button
                 class="btn btn-red btn-sm active"
-                [disabled]="!boton || idProceeding == null"
+                [disabled]="
+                  ['CERRADO', 'CERRADA'].includes(statusProceeding) ||
+                  idProceeding == null
+                "
                 (click)="deleteProceeding()">
                 Eliminar Acta <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
@@ -405,6 +445,7 @@
               [control]="form.get('scanningFoli')"
               label="Folio de Escaneo">
               <input
+                [disabled]="['CERRADO', 'CERRADA'].includes(statusProceeding)"
                 type="number"
                 class="form-control"
                 min="1"
@@ -507,8 +548,11 @@
             [source]="data2"
             (userRowSelect)="selectRowGoodActa($event)">
           </ng2-smart-table>
+          <span class="mt-3">
+            <strong>{{ diStatusGood }}</strong>
+          </span>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems2">
+        <app-pagination [params]="params2" [totalItems]="totalItems2">
         </app-pagination>
         <div class="row">
           <form
@@ -516,22 +560,12 @@
             [formGroup]="formTable2"
             (ngSubmit)="onSubmit()">
             <div class="row mt-5">
-              <div class="col-6">
-                <div class="mb-3 pl-4 pr-4">
-                  <form-field [control]="formTable2.get('detail')">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="detail"
-                      readonly />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-6">
+              <div class="col-md-3">
                 <div class="mb-3 pl-4 pr-4">
                   <form-field [control]="formTable2.get('status')">
                     <select class="form-control" formControlName="status">
-                      <option [value]="null">En tiempo</option>
+                      <option value="En tiempo">En tiempo</option>
+                      <option value="Destiempo">Destiempo</option>
                     </select>
                   </form-field>
                 </div>
@@ -540,11 +574,11 @@
           </form>
         </div>
       </div>
-      <div class="row mt-5">
+      <!-- <div class="row mt-5">
         <div class="col-12 text-right">
           <button class="btn btn-success btn-sm active">Exportar Datos</button>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </app-card>

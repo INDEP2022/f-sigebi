@@ -1,10 +1,13 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMN = {
-  id: {
+  'fileNumber.filesId': {
     title: 'Expediente',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.fileNumber.filesId;
+    },
   },
   'transferNum.description': {
     title: 'Transferente',
@@ -31,19 +34,34 @@ export const COLUMN = {
 };
 
 export const COLUMNGOOD = {
-  noGood: {
+  'goodNumber.id': {
     title: 'No. Bien',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.goodNumber.id;
+    },
   },
-  description: {
+  'goodNumber.description': {
     title: 'Descripción',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.goodNumber.description;
+    },
   },
-  Cantity: {
+  amount: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
+  },
+  proceedingsValue: {
+    title: 'Valor',
+    type: 'custom',
+    sort: false,
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.proceedingsValue == 'S' ? true : false;
+    },
   },
 };

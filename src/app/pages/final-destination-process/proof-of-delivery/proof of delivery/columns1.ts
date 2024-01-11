@@ -14,6 +14,11 @@ export const COLUMNS1 = {
     type: 'number',
     sort: false,
   },
+  status: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
   unit: {
     title: 'Unidad',
     type: 'string',

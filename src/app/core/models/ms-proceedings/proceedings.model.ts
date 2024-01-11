@@ -191,3 +191,20 @@ export interface IFactconst {
   proceesExtDom: string;
   expedient: number;
 }
+
+export interface IBtnAddGood {
+  good: number;
+  processExtDom: string;
+  screen: string;
+  identifier: string;
+  proceeding: number;
+  quantity: number;
+}
+
+export interface IPaConstDelivery {
+  pCreationDate: Date;
+  pScreen: string;
+  pActNum: number;
+  pProc: number;
+  pAction: string;
+}
