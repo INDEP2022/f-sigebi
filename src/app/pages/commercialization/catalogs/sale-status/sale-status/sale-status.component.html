@@ -15,17 +15,6 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-12" *ngIf="selectedRow">
-        <label for="">Estatus</label>
-        <div class="mt-4">
-          <h5 class="font-size-14 text-muted">
-            <i class="bx bxs-circle me-1 text-muted"></i>
-            {{ selectedRow?.id }}
-          </h5>
-        </div>
-      </div>
-    </div>
     <!--SALE STATUS TABLE-->
     <div class="row pt-4">
       <div class="col-md-12">
@@ -44,27 +33,5 @@
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
     <!--STATUS-->
-    <div class="row">
-      <div class="col-12" *ngIf="selectedRow">
-        <label for="">Estatus</label>
-        <div class="mt-4">
-          <h5 class="font-size-14 text-muted">
-            <i class="bx bxs-circle me-1 text-muted"></i>
-            {{ selectedRow?.id }}
-          </h5>
-        </div>
-      </div>
-    </div>
-    <!-- <div class="row mb-3 mt-3 justify-content-start" *ngIf="rowSelected">
-      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-        <label for="">Estatus</label>
-        <div class="mt-4">
-          <h5 class="font-size-14 text-muted">
-            <i class="bx bxs-circle me-1 text-muted"></i>
-            {{ selectedRow?.id }}
-          </h5>
-        </div>
-      </div>
-    </div> -->
   </div>
 </app-card>
