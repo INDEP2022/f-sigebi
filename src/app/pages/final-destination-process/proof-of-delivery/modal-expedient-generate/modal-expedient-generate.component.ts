@@ -114,7 +114,7 @@ export class ModalExpedientGenerateComponent
           this.alert(
             'warning',
             'No se encontraron registros',
-            `No existen registros para ${user}`
+            `No existen registros para ${user}.\nPuede agregarlo por el botón "Rastreador"`
           );
           this.close();
         }

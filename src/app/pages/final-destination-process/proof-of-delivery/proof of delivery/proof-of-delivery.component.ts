@@ -1063,7 +1063,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
       let params = {
         pParameter: global,
         pNumberParameter: 1,
-        pUser: this.user,
+        pUser: this.authService.decodeToken().preferred_username,
       };
       this.goodTrackerService.PaInsGoodParameters(params).subscribe(
         res => {
@@ -1074,6 +1074,11 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
               res => {
                 console.log(res);
                 this.buttonActive.generateConst = true;
+                this.alert(
+                  'success',
+                  'Se agregaron bienes para generar constancia',
+                  ''
+                );
               },
               err => {
                 console.log(err);
@@ -1108,16 +1113,6 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
             localStorage.removeItem('lv_identif_FACTCONST');
           }
         );
-
-      this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
-        next: response => {
-          console.log('respuesta TMPTRAKER', response);
-          for (let i = 0; i < response.count; i++) {
-            console.log('entra ---> For');
-          }
-          console.log('sale del For');
-        },
-      });
     }
   }
 
@@ -1659,6 +1654,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   buttonNoGoodDonation() {
     this.buttonActive.goodDon = false;
     this.buttonActive.tracker = true;
+    this.buttonActive.generateConst = true;
   }
 
   //VALIDAR ACTA Y CONSTANCIA
