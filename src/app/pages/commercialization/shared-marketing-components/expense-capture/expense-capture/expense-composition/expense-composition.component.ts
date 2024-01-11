@@ -832,6 +832,10 @@ export class ExpenseCompositionComponent
       this.alert('warning', 'Requiere cve poliza para cargar bienes', '');
       return;
     }
+    if (!['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
+      this.alert('warning', 'No tiene permisos para cargar bienes', '');
+      return;
+    }
     const response = await this.alertQuestion(
       'question',
       '¿Desea cargar bienes?',
