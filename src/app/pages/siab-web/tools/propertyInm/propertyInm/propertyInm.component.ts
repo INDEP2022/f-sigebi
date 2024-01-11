@@ -1,7 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -12,7 +14,11 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ButtonColumnDocComponent } from 'src/app/shared/components/button-column-doc/button-column-doc.component';
+import { ButtonColumnScanComponent } from 'src/app/shared/components/button-column-scan/button-column-scan/button-column-scan.component';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { OutsideTradesComponent } from '../../outside-trades/outside-trades/outside-trades.component';
+import { ScannedDocumentsComponent } from '../../scanned-documents/scanned-documents/scanned-documents.component';
 import { REAL_STATE_COLUMNS, REPORT_COLUMNS } from './propertyInm-columns';
 
 //import { Component, OnInit } from '@angular/core';
@@ -42,7 +48,8 @@ export class PropertyInmComponent extends BasePage implements OnInit {
     private goodServices: GoodService,
     private goodprocessService: GoodprocessService,
     private affairService: AffairService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
@@ -63,10 +70,38 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       },
     };
     this.settings1 = {
-      ...this.settings1,
+      ...this.settings,
       actions: false,
       hideSubHeader: false,
       columns: {
+        scan: {
+          title: 'Doc. Escaneados',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnScanComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              //console.log(row);
+              this.onSelectScanner(row);
+            });
+          },
+        },
+        office: {
+          title: 'Oficio',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnDocComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              //console.log(row);
+              this.onSelectOffice(row);
+            });
+          },
+        },
         ...REPORT_COLUMNS,
       },
     };
@@ -95,7 +130,9 @@ export class PropertyInmComponent extends BasePage implements OnInit {
         console.log(this.array);
 
         // Ahora puedes realizar la consulta, teniendo en cuenta los cambios en this.array
-        this.performQuery();
+        this.params1
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.performQuery());
       },
     });
   }
@@ -134,7 +171,48 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       },
     });
   }
-
+  onSelectScanner(event: any) {
+    console.log(event.expediente);
+    const proceedings = event.expediente;
+    const valid: boolean = true;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      proceedings,
+      valid,
+      callback: (next: boolean) => {
+        if (next)
+          this.params1
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.performQuery());
+      },
+    };
+    this.modalService.show(ScannedDocumentsComponent, modalConfig);
+  }
+  onSelectOffice(event: any) {
+    console.log(event);
+    if (event.no_of_gestion != null) {
+      const noGes = event.no_of_gestion;
+      const valid1: boolean = true;
+      const modalConfig = MODAL_CONFIG;
+      modalConfig.initialState = {
+        noGes,
+        valid1,
+        callback: (next: boolean) => {
+          if (next)
+            this.params1
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.performQuery());
+        },
+      };
+      this.modalService.show(OutsideTradesComponent, modalConfig);
+    } else {
+      this.alert(
+        'warning',
+        'advertencia',
+        'Lo sentimos el Bien no tiene No. Gestión'
+      );
+    }
+  }
   ngOnInit(): void {
     this.data
       .onChanged()
@@ -169,6 +247,38 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDataAll());
 
+    this.good
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'numClasifGoods':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'bien':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.params1 = this.pageFilter(this.params1);
+          this.performQuery();
+        }
+      });
     this.params1
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.performQuery());
