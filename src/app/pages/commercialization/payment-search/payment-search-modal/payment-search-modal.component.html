@@ -128,6 +128,15 @@
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('batchId')" label="Lote">
+            <input
+              type="text"
+              maxlength="10"
+              formControlName="batchId"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
           <form-field
             [control]="paymentForm.get('publicBatch')"
             label="Lote Público">
@@ -137,26 +146,6 @@
               class="form-control"
               maxlength="11" />
           </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('event')" label="Evento">
-            <input
-              type="text"
-              maxlength="10"
-              formControlName="event"
-              class="form-control" />
-          </form-field>
-          <!-- <form-field [control]="paymentForm.get('event')">
-            <ngx-select
-              [form]="paymentForm"
-              [data]="eventItems"
-              value="id"
-              bindLabel="id"
-              label="Evento"
-              (fetchItems)="getEvents($event)"
-              control="event">
-            </ngx-select>
-          </form-field> -->
         </div>
       </div>
       <div class="row mt-5">
@@ -207,25 +196,15 @@
               maxlength="11" />
           </form-field>
         </div>
+
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('batchId')" label="Lote">
+          <form-field [control]="paymentForm.get('event')" label="Evento">
             <input
               type="text"
               maxlength="10"
-              formControlName="batchId"
+              formControlName="event"
               class="form-control" />
           </form-field>
-          <!-- <form-field [control]="paymentForm.get('batchId')">
-            <ngx-select
-              [form]="paymentForm"
-              [data]="batchItems"
-              value="id"
-              bindLabel="id"
-              label="Id Lote"
-              (fetchItems)="getBatches($event)"
-              control="batchId">
-            </ngx-select>
-          </form-field> -->
         </div>
       </div>
       <div class="row mt-5">

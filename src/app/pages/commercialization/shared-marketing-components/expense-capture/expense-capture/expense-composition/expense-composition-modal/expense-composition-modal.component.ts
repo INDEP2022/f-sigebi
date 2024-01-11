@@ -151,7 +151,11 @@ export class ExpenseCompositionModalComponent
   }
 
   fillCvman(row: any) {
+    console.log(row);
     if (row && row.goodNumber + '' == this.goodNumber.value + '') {
+      this.cvman.setValue(
+        row.cvman ? row.cvman : row.mandate2 ? row.mandate2 : null
+      );
       this.cvman.disable();
     }
   }

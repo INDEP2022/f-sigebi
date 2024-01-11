@@ -270,14 +270,14 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
       console.log(event);
 
       // Buscar el elemento seleccionado en los datos
-      const selectedElement = this.paymentForm
-        .get('systemValidity')
-        .value.data.find((element: any) => element.valsisKey === event);
+      // const selectedElement = this.paymentForm
+      //   .get('systemValidity')
+      //   .value.data.find((element: any) => element.valsisKey === event);
 
-      if (selectedElement) {
-        const selectedKey = selectedElement.valsisKey;
-        console.log('extractKey -> ', selectedKey); // valsisKey seleccionado
-      }
+      // if (selectedElement) {
+      //   const selectedKey = selectedElement.valsisKey;
+      //   console.log('extractKey -> ', selectedKey); // valsisKey seleccionado
+      // }
     }
   }
 
