@@ -283,7 +283,14 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field === 'date') {
+                if (filter.search.length === 10)
+                  this.columnFilters[
+                    field
+                  ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -1709,6 +1716,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           this.loader.load = false;
           if (resp != null && resp != undefined) {
             this.alert('success', '', 'Se Procesaron los Registros');
+            this.getTableData();
           } else {
             this.alert('error', '', 'No Se Procesaron los Registros');
           }
