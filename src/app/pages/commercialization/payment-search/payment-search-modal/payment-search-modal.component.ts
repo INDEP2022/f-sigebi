@@ -1,12 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -80,7 +81,8 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private paymentService: PaymentService,
-    private accountMovementService: AccountMovementService
+    private accountMovementService: AccountMovementService,
+    private depositaryService: MsDepositaryService
   ) {
     super();
   }
@@ -198,18 +200,50 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
       let LV_VALACT = 0;
       if (this.paymentForm.get('referencealt').value === 'NREF') {
       } else {
+        if (!this.paymentForm.get('geneReference')) {
+          LV_VALACT = 1;
+          this.alert(
+            'warning',
+            'Debe elegir un tipo de cambio de referencia',
+            ''
+          );
+          this.loading = false;
+        } else {
+          let LV_VALREFER = await firstValueFrom(
+            this.depositaryService.getCountReference(this.payment.reference)
+          );
+          if (LV_VALREFER > 0) {
+            LV_VALACT = 1;
+            this.alert(
+              'warning',
+              'La referencia no puede generar manualmente',
+              ''
+            );
+          }
+          // select count(0)
+          // 	into LV_VALREFER
+          // 	from V_COMER_PAGOS
+          //   where REFERENCIA = :BLK_DATOSREF.REFERENCIA;
+          // if LV_VALREFER = 0 then
+          // 		null;
+          // else
+          // 		LV_VALACT := 1;
+          // 		LIP_MENSAJE('La referencia no puede generar manualmente... ','S');
+          // end if;
+        }
+      }
+      if (LV_VALACT === 0) {
+        this.edit
+          ? this.onEdit.emit({
+              newData: this.paymentForm.value,
+              oldData: this.payment,
+            })
+          : this.onAdd.emit(this.paymentForm.value);
+        this.modalRef.hide();
       }
     }
 
     console.log('paymentForm ->', this.paymentForm.value);
-
-    this.edit
-      ? this.onEdit.emit({
-          newData: this.paymentForm.value,
-          oldData: this.payment,
-        })
-      : this.onAdd.emit(this.paymentForm.value);
-    this.modalRef.hide();
   }
 
   getEvents(params: ListParams) {
