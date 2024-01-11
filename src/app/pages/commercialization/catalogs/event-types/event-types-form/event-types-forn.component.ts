@@ -119,7 +119,7 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
         this.modalRef.hide();
       },
       error: error => {
-        this.alert('warning', `El No. Tipo Evento ya ha sido creado`, '');
+        this.alert('warning', `El No. tipo evento ya ha sido creado`, '');
         this.loading = false;
       },
     });

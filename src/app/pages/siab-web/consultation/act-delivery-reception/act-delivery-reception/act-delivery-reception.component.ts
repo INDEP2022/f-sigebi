@@ -227,15 +227,32 @@ export class ActDeliveryReceptionComponent extends BasePage implements OnInit {
     if (this.form.get('recordsSearchCriteria').value) {
       this.criterio = this.form.get('recordsSearchCriteria').value;
       console.log(this.criterio);
-
+      this.clear();
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getData(this.criterio));
     } else {
+      this.clear();
       this.alert('warning', 'Error se debe ingresar un No. de Acta', ``);
     }
   }
-
+  clear() {
+    this.show = false;
+    this.proceedings = '';
+    this.status = '';
+    this.minutes = '';
+    this.elaborationDate = '';
+    this.receptionDate = '';
+    this.captureDate = '';
+    this.address = '';
+    this.observations = '';
+    this.delivery = '';
+    this.receives = '';
+    this.receiptElaborationDate = '';
+    this.witness = '';
+    this.deliveryDateOfGoods = '';
+    this.scanFolio = '';
+  }
   getData(noActa?: number) {
     if (noActa) {
       this.params.getValue()['filter.typeProceedings'] = `$eq:ENTREGA`;
