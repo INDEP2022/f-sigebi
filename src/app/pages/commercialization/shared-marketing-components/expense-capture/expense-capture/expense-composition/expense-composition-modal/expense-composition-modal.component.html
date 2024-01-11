@@ -33,6 +33,7 @@
             secondParamSearch="filter.goodNumber"
             typeInput="post"
             (valueChange)="fillGoodM($event)"
+            (getObject)="fillCvman($event)"
             [bodyPost]="bodyPost"
             [labelTemplate]="goodLabel"
             [optionTemplate]="goodOption">
@@ -75,7 +76,8 @@
             secondParamSearch="filter.goodNumber"
             typeInput="post"
             [bodyPost]="bodyPostI"
-            (getObject)="setCvmanI($event)"
+            (valueChange)="setCvmanI($event)"
+            (getObject)="fillCvman($event)"
             [labelTemplate]="goodLabel"
             [optionTemplate]="goodOption">
           </ng-custom-select-loading>

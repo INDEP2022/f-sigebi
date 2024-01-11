@@ -283,7 +283,14 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field === 'date') {
+                if (filter.search.length === 10)
+                  this.columnFilters[
+                    field
+                  ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -493,7 +500,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onAdd.subscribe(({ newData }) => {
+    modalRef.content.onAdd.subscribe(newData => {
+      console.log(newData);
       if (newData) {
         console.log('Data Recibida ADD', newData);
         this.loading = true;
@@ -796,7 +804,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     if (this.searchForm.invalid && this.searchType.value !== 6) {
       return null;
     }
-    debugger;
     let filterParams = new FilterParams();
     filterParams.limit = this.params.getValue().limit;
     if (byPage) {
@@ -873,6 +880,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   getTableData(byPage = false) {
+    // debugger;
     let params = this.getFilterParams(byPage);
     this.dataRows = [];
     this.localdata.load(this.dataRows);
@@ -1158,7 +1166,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
     let LV_ACCION: string = action.description;
     let LV_PROCESA: number;
-    debugger;
     LV_PROCESA = 0;
     const elemC = this.searchForm.get('type');
 
@@ -1260,7 +1267,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         'Debe Elegir un Banco'
       );
     } else {
-      debugger;
       const files = (event.target as HTMLInputElement).files;
       if (files.length != 1) throw 'No files selected, or more than of allowed';
       const file = files[0];
@@ -1709,6 +1715,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           this.loader.load = false;
           if (resp != null && resp != undefined) {
             this.alert('success', '', 'Se Procesaron los Registros');
+            this.getTableData();
           } else {
             this.alert('error', '', 'No Se Procesaron los Registros');
           }
