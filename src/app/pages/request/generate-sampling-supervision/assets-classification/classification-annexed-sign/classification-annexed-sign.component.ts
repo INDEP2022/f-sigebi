@@ -333,11 +333,6 @@ export class ClassificationAnnexedSignComponent
               typeSign,
               'sign-annex-assets-classification'
             );
-            //this.showReportInfo(
-            //typeDocument,
-            //typeSign,
-            //'sign-annex-assets-classification'
-            //);
           }
         },
       },

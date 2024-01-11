@@ -95,6 +95,9 @@ export const PEN_INVOICING_COLUMNS = {
       type: 'custom',
       component: CustomDateFilterComponent,
     },
+    filterFunction: () => {
+      return true;
+    },
   },
   price: {
     title: 'Precio',

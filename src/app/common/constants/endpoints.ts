@@ -212,4 +212,6 @@ export enum ENDPOINT_LINKS {
   setStatus = 'application/setbienVstatus',
   documentHist = 'application/setHistBien',
   guarantee = 'application/get-guarantee',
+  guaranteeExcel = 'application/get-guaranteeExcel',
+  compensation_option = 'compensation-opinions',
 }

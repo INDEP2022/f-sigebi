@@ -37,10 +37,14 @@ import { UploadFielsModalComponent } from '../../../transfer-request/tabs/notify
 export class ShowReportComponentComponent extends BasePage implements OnInit {
   private pdf: PDFDocumentProxy;
   idTypeDoc: number = 0;
+  reportName: string = '';
+  tableName: string = '';
+
   idProg: number = 0;
   idSampleOrder: number = 0;
   idprogDel: number = 0;
   typeNotification: number = 0;
+  orderSampleId: number = 0;
   receiptId: number = 0;
   idSample: number = 0;
   idReportAclara: any; //ID de los reportes
@@ -84,6 +88,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   process: string = '';
   orderServiceTask: number = null;
   typeAnnex: string = '';
+  dynamic: boolean = false;
+  signed: boolean = true;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -233,8 +239,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.formLoading = false;
     }
 
-    if (this.idTypeDoc == 197 && this.annexk == true) {
-      let linkDoc: string = `${this.urlBaseReport}AnexoKOrdenes.jasper&ID_MUESTREO_ORDEN=3&ID_TIPO_DOCTO=197`;
+    if (this.idTypeDoc == 197 && this.orderSampleId) {
+      let linkDoc: string = `${this.urlBaseReport}AnexoKOrdenes.jasper&ID_MUESTREO_ORDEN=${this.orderSampleId}&ID_TIPO_DOCTO=197`;
       this.src = linkDoc;
       this.formLoading = false;
     }
@@ -247,6 +253,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
     if (this.idTypeDoc == 219) {
       let linkDoc: string = `${this.urlBaseReport}AnexoKBienes.jasper&ID_MUESTREO=${this.idSample}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.dynamic) {
+      let linkDoc: string = `${this.urlBaseReport}${this.reportName}&ID_TABLA=NOMBRE_TABLA,ID_REGISTRO,ID_TIPO_DOCTO&NOM_TABLA=REPORTES_DINAMICOS&NOM_CAMPO=CONTENIDO&ID_REGISTRO=${this.tableName},${this.idSample},${this.idTypeDoc}`;
       this.src = linkDoc;
       this.formLoading = false;
     }
@@ -276,6 +288,10 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       learnedId = this.idSample;
     } else {
       learnedId = this.programming?.id;
+    }
+
+    if (this.idTypeDoc == 197) {
+      learnedId = this.orderSampleId;
     }
     this.loading = true;
     this.signatoriesService
@@ -487,7 +503,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(this.programming?.id, 'ProgramacionRecibo', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.loadingButton = false;
                   this.msjCheck = true;
 
@@ -497,7 +513,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   this.alert(
                     'error',
                     'Acción Invalida',
@@ -519,7 +535,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 {}
               )
               .subscribe({
-                next: response => {
+                next: () => {
                   this.msjCheck = true;
                   this.loadingButton = false;
                   this.alert(
@@ -528,7 +544,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   this.alert(
                     'error',
                     'Acción Invalida',
@@ -545,7 +561,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'actaSat', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.loadingButton = false;
                   this.msjCheck = true;
                   this.alert(
@@ -554,7 +570,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   this.alertInfo(
                     'error',
                     'Acción Inválida',
@@ -573,7 +589,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'actaAsegurados', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.msjCheck = true;
                   this.loadingButton = false;
                   this.alert(
@@ -582,7 +598,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   //this.msjCheck = true;
                   this.loadingButton = false;
                   this.alertInfo(
@@ -600,7 +616,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'actasVoluntarias', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.msjCheck = true;
                   this.loadingButton = false;
                   this.alert(
@@ -609,7 +625,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   //this.msjCheck = true;
                   this.loadingButton = false;
                   this.alertInfo(
@@ -627,7 +643,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'AnexoJ', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.msjCheck = true;
                   this.loadingButton = false;
                   this.alert(
@@ -636,7 +652,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   //this.msjCheck = true;
                   this.loadingButton = false;
                   this.alertInfo(
@@ -654,7 +670,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'AnexoKMuestreoBien', {})
               .subscribe({
-                next: response => {
+                next: () => {
                   this.msjCheck = true;
                   this.loadingButton = false;
                   this.alert(
@@ -663,7 +679,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     'Documento firmado correctamente'
                   );
                 },
-                error: error => {
+                error: () => {
                   //this.msjCheck = true;
                   this.loadingButton = false;
                   this.alertInfo(
@@ -676,14 +692,39 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           }
 
           if (this.idTypeDoc == 197) {
-            const idKeyDoc = this.idSampleOrder + '-K';
-            this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio');
+            const idKeyDoc = this.orderSampleId + '-K';
+
+            this.gelectronicFirmService
+              .firmDocument(idKeyDoc, 'AnexoKMuestreoOrdenServicio', {})
+              .subscribe({
+                next: () => {
+                  this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alert(
+                    'success',
+                    'Correcto',
+                    'Documento firmado correctamente'
+                  );
+                },
+                error: () => {
+                  //this.msjCheck = true;
+                  this.loadingButton = false;
+                  this.alertInfo(
+                    'error',
+                    'Acción Inválida',
+                    'No fue posible firmar el documento'
+                  ).then();
+                },
+              });
+
+            /* const idKeyDoc = this.orderSampleId + '-K';
+            this.saveElectronicSign(idKeyDoc, 'AnexoKMuestreoOrdenServicio'); */
           }
 
-          if (this.idOrderService) {
+          /*if (this.idOrderService) {
             const idKeyDoc = this.programming.id + ' - ' + this.idOrderService;
             this.saveElectronicSign(idKeyDoc, 'order_service');
-          }
+          } */
         }
       }
     );
@@ -1111,7 +1152,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: async response => {
-                //const updateReceipt = await this.procedding(response.dDocName);
                 const updateSampleOrder = await this.updateSampleOrder(
                   response.dDocName
                 );
@@ -1413,23 +1453,41 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   updateSampleOrder(dDocName: string) {
     return new Promise((resolve, reject) => {
-      const body = {
-        idSamplingOrder: this.idSampleOrder,
-        idcontentk: dDocName,
-      };
-      this.orderService.updateSampleOrder(body).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          console.log(error);
-          this.onLoadToast(
-            'error',
-            'error al actualizar el muestreo de ordenes'
-          );
-          reject(error);
-        },
-      });
+      if (this.typeAnnex == 'sign-k-order-sample') {
+        const body = {
+          idSamplingOrder: this.orderSampleId,
+          idcontentk: dDocName,
+        };
+        this.orderService.updateSampleOrder(body).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'error al actualizar el muestreo de ordenes'
+            );
+            reject(error);
+          },
+        });
+      } else {
+        const body = {
+          idSamplingOrder: this.orderSampleId,
+          idcontentksae: dDocName,
+        };
+        this.orderService.updateSampleOrder(body).subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'error al actualizar el muestreo de ordenes'
+            );
+            reject(error);
+          },
+        });
+      }
     });
   }
 

@@ -1,6 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { NotificationEmailService } from 'src/app/core/services/ms-notification/notification-emai.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN } from '../../../../core/shared/patterns';
 
@@ -16,6 +17,10 @@ export class SendRequestEmailComponent extends BasePage implements OnInit {
 
   saleEmails: string[] = [];
   donationEmails: string[] = [];
+
+  private emailService = inject(NotificationEmailService);
+
+  recipients: string = '';
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
@@ -40,10 +45,39 @@ export class SendRequestEmailComponent extends BasePage implements OnInit {
     this.handleSuccess();
   }
 
-  handleSuccess() {
+  async handleSuccess() {
     this.loading = true;
-    // Llamar servicio para enviar correos
-    console.log(this.saleEmails, this.donationEmails);
+
+    let fechaActual = new Date();
+    let fechaEntero = fechaActual.getTime();
+    let fechaCadena = fechaEntero.toString();
+    let fechaCortada = fechaCadena.substring(3);
+    let idSal = parseInt(fechaCortada);
+
+    await this.sendMail({
+      id: idSal,
+      subject: 'venta de Información',
+      body: 'Se solicita la siguiente información: ',
+      recipients: this.saleEmails.join(','),
+      message: 'Se solicita la siguiente información: ',
+      answerTo: 'Solicitud de Información',
+    });
+
+    let dat1 = new Date();
+    let dat2 = dat1.getTime();
+    let dat3 = dat2.toString();
+    let dat4 = dat3.substring(3);
+    let idDon = parseInt(dat4);
+
+    await this.sendMail({
+      id: idDon,
+      subject: 'Donación de Información',
+      body: 'Se solicita la siguiente información: ',
+      recipients: this.donationEmails.join(','),
+      message: 'Se solicita la siguiente información: ',
+      answerTo: 'Solicitud de Información',
+    });
+
     this.onLoadToast(
       'success',
       'Correos enviados con éxito',
@@ -117,5 +151,25 @@ export class SendRequestEmailComponent extends BasePage implements OnInit {
       default:
         break;
     }
+  }
+
+  sendMail(object: any) {
+    return new Promise((resolve, reject) => {
+      this.emailService.createNotificationEmail(object).subscribe({
+        next: resp => {
+          console.log(resp);
+          resolve(resp);
+        },
+        error: e => {
+          this.onLoadToast(
+            'error',
+            'Ocurrio un error al enviar los mensaje',
+            `${e.error?.message}`
+          );
+          console.log(e);
+          reject('error');
+        },
+      });
+    });
   }
 }

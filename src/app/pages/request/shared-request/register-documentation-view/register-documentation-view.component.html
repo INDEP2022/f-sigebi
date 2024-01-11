@@ -1,213 +1,232 @@
-<h6>Datos de la Solicitud</h6>
-<div class="row pt-5">
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Fecha Prioridad&#58; </strong
-      >{{ requestDoc?.priorityDate | date : 'dd/MM/yyyy' }}
-    </p>
-  </div>
+<div
+  class="ms-n2 mb-2 pointer"
+  (click)="toggleInformation = !toggleInformation"
+  [attr.aria-expanded]="!toggleInformation"
+  aria-controls="collapseSearch">
+  <i
+    class="bx bx-chevron-down bx-md float-icon-md"
+    [ngClass]="{
+      'rotate-down': toggleInformation,
+      'rotate-up': !toggleInformation
+    }"></i>
+  <h6 class="d-inline">Datos de la Solicitud</h6>
 </div>
-<div class="row mt-5">
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Prioridad&#58;</strong>
-      <input
-        type="checkbox"
-        name="priority"
-        id="priority"
-        [ngModelOptions]="{ standalone: true }"
-        [(ngModel)]="isPriority"
-        disabled="true" />
-    </p>
+<div id="collapseSearch" [isAnimated]="false" [collapse]="!toggleInformation">
+  <div class="row pt-5">
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Fecha Prioridad&#58; </strong
+        >{{ requestDoc?.priorityDate | date : 'dd/MM/yyyy' }}
+      </p>
+    </div>
   </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Procedencia Informaci&oacute;n&#58; </strong
-      >{{ originInfo }}
-    </p>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <p class="font-size-13 mb-2">
+        <strong class="font-size-13">Prioridad&#58;</strong>
+        <input
+          type="checkbox"
+          name="priority"
+          id="priority"
+          [ngModelOptions]="{ standalone: true }"
+          [(ngModel)]="isPriority"
+          disabled="true" />
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13"
+          >Procedencia Informaci&oacute;n&#58; </strong
+        >{{ originInfo }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Tipo Expediente&#58; </strong
+        >{{ typeExpedient }}
+      </p>
+    </div>
   </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Tipo Expediente&#58; </strong
-      >{{ typeExpedient }}
-    </p>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">No&#46; Oficio&#58; </strong
+        >{{ requestDoc?.paperNumber }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Fecha de Oficio&#58; </strong
+        >{{ requestDoc?.paperDate | date : 'dd/MM/yyyy' }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Asunto&#58; </strong>{{ affair }}
+      </p>
+    </div>
   </div>
-</div>
-<div class="row mt-5">
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">No&#46; Oficio&#58; </strong
-      >{{ requestDoc?.paperNumber }}
-    </p>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13"
+          >Expediente Transferente &#47; PAMA&#58; </strong
+        >{{ requestDoc?.transferenceFile }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13"
+          >V&iacute;a de Recepci&oacute;n&#58; </strong
+        >{{ requestDoc?.receiptRoute }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Nombre del Remitente&#58; </strong
+        >{{ requestDoc?.nameOfOwner }}
+      </p>
+    </div>
   </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Fecha de Oficio&#58; </strong
-      >{{ requestDoc?.paperDate | date : 'dd/MM/yyyy' }}
-    </p>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Cargo del Remitente&#58; </strong
+        >{{ requestDoc?.holderCharge }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Tel&eacute;fono del Remitente&#58; </strong
+        >{{ requestDoc?.phoneOfOwner }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Email del Remitente&#58; </strong
+        >{{ requestDoc?.emailOfOwner }}
+      </p>
+    </div>
   </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Asunto&#58; </strong>{{ affair }}
-    </p>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13"
+          >Contribuyente y&#47;o Indiciado&#58; </strong
+        >{{ requestDoc?.indicatedTaxpayer }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Tipo Transferencia&#58; </strong
+        >{{ requestDoc?.typeOfTransfer }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Juicio&#58; </strong
+        >{{ requestDoc?.trial }}
+      </p>
+    </div>
   </div>
-</div>
-<div class="row mt-5">
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13"
-        >Expediente Transferente &#47; PAMA&#58; </strong
-      >{{ requestDoc?.transferenceFile }}
-    </p>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Gesti&oacute;n de Destino&#58; </strong
+        >{{ requestDoc?.destinationManagement }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Notas Ent&#46; Transferente&#58; </strong
+        >{{ requestDoc?.transferEntNotes }}
+      </p>
+    </div>
   </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">V&iacute;a de Recepci&oacute;n&#58; </strong
-      >{{ requestDoc?.receiptRoute }}
-    </p>
-  </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Nombre del Remitente&#58; </strong
-      >{{ requestDoc?.nameOfOwner }}
-    </p>
-  </div>
-</div>
-<div class="row mt-5">
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Cargo del Remitente&#58; </strong
-      >{{ requestDoc?.holderCharge }}
-    </p>
-  </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Tel&eacute;fono del Remitente&#58; </strong
-      >{{ requestDoc?.phoneOfOwner }}
-    </p>
-  </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Email del Remitente&#58; </strong
-      >{{ requestDoc?.emailOfOwner }}
-    </p>
-  </div>
-</div>
-<div class="row mt-5">
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Contribuyente y&#47;o Indiciado&#58; </strong
-      >{{ requestDoc?.indicatedTaxpayer }}
-    </p>
-  </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Tipo Transferencia&#58; </strong
-      >{{ requestDoc?.typeOfTransfer }}
-    </p>
-  </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Juicio&#58; </strong>{{ requestDoc?.trial }}
-    </p>
-  </div>
-</div>
-<div class="row mt-5">
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Gesti&oacute;n de Destino&#58; </strong
-      >{{ requestDoc?.destinationManagement }}
-    </p>
-  </div>
-  <div class="col-md-4">
-    <p class="font-size-13">
-      <strong class="font-size-13">Notas Ent&#46; Transferente&#58; </strong
-      >{{ requestDoc?.transferEntNotes }}
-    </p>
-  </div>
-</div>
-<!-- EMPIEZA LOS INPUTS CON CONDICIONAMIENTO -->
-<div class="row mt-5">
-  <div
-    class="col-md-4"
-    *ngIf="processDetonate == 'DEVOLUCION' || showInput('authorityOrdering')">
-    <p class="font-size-13">
-      <strong class="font-size-13">Autoridad Ordenante&#58; </strong
-      >{{ requestDoc?.authorityOrdering }}
-    </p>
-  </div>
-  <div class="col-md-4" *ngIf="transference == 120 || showInput('trialType')">
-    <p class="font-size-13">
-      <strong class="font-size-13">Tipo Juicio&#58; </strong
-      >{{ requestDoc?.trialType }}
-    </p>
-  </div>
-  <div
-    class="col-md-4"
-    *ngIf="
-      processDetonate == 'AMPARO' ||
-      transference == 3 ||
-      showInput('protectNumber')
-    ">
-    <p class="font-size-13">
-      <strong class="font-size-13">N&uacute;mero Amparo&#58; </strong
-      >{{ requestDoc?.protectNumber }}
-    </p>
-  </div>
-  <div
-    class="col-md-4"
-    *ngIf="
-      transference == 1 ||
-      transference == 3 ||
-      showInput('circumstantialRecord')
-    ">
-    <p class="font-size-13">
-      <strong class="font-size-13">Acta Circunstanciada&#58; </strong
-      >{{ requestDoc?.circumstantialRecord }}
-    </p>
-  </div>
-  <div
-    class="col-md-4"
-    *ngIf="
-      transference == 1 || transference == 3 || showInput('previousInquiry')
-    ">
-    <p class="font-size-13">
-      <strong class="font-size-13">Averiguacion Previa&#58; </strong
-      >{{ requestDoc?.previousInquiry }}
-    </p>
-  </div>
-  <div
-    class="col-md-4"
-    *ngIf="transference == 1 || transference == 3 || showInput('lawsuit')">
-    <p class="font-size-13">
-      <strong class="font-size-13">Causa Penal&#58; </strong
-      >{{ requestDoc?.lawsuit }}
-    </p>
-  </div>
-  <div
-    class="col-md-4"
-    *ngIf="transference == 1 || transference == 3 || showInput('tocaPenal')">
-    <p class="font-size-13">
-      <strong class="font-size-13">Toca Penal&#58; </strong
-      >{{ requestDoc?.tocaPenal }}
-    </p>
-  </div>
-  <div
-    class="col-md-4"
-    *ngIf="transference == 1 || transference == 3 || showInput('crime')">
-    <p class="font-size-13">
-      <strong class="font-size-13">Delito&#58; </strong>{{ requestDoc?.crime }}
-    </p>
-  </div>
-  <div
-    class="col-md-4"
-    *ngIf="
-      requestDoc?.emailNotification != null || showInput('emailNotification')
-    ">
-    <p class="font-size-13">
-      <strong class="font-size-13"
-        >Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n&#58; </strong
-      >{{ requestDoc?.emailNotification }}
-    </p>
+  <!-- EMPIEZA LOS INPUTS CON CONDICIONAMIENTO -->
+  <div class="row mt-5">
+    <div
+      class="col-md-4"
+      *ngIf="processDetonate == 'DEVOLUCION' || showInput('authorityOrdering')">
+      <p class="font-size-13">
+        <strong class="font-size-13">Autoridad Ordenante&#58; </strong
+        >{{ requestDoc?.authorityOrdering }}
+      </p>
+    </div>
+    <div class="col-md-4" *ngIf="transference == 120 || showInput('trialType')">
+      <p class="font-size-13">
+        <strong class="font-size-13">Tipo Juicio&#58; </strong
+        >{{ requestDoc?.trialType }}
+      </p>
+    </div>
+    <div
+      class="col-md-4"
+      *ngIf="
+        processDetonate == 'AMPARO' ||
+        transference == 3 ||
+        showInput('protectNumber')
+      ">
+      <p class="font-size-13">
+        <strong class="font-size-13">N&uacute;mero Amparo&#58; </strong
+        >{{ requestDoc?.protectNumber }}
+      </p>
+    </div>
+    <div
+      class="col-md-4"
+      *ngIf="
+        transference == 1 ||
+        transference == 3 ||
+        showInput('circumstantialRecord')
+      ">
+      <p class="font-size-13">
+        <strong class="font-size-13">Acta Circunstanciada&#58; </strong
+        >{{ requestDoc?.circumstantialRecord }}
+      </p>
+    </div>
+    <div
+      class="col-md-4"
+      *ngIf="
+        transference == 1 || transference == 3 || showInput('previousInquiry')
+      ">
+      <p class="font-size-13">
+        <strong class="font-size-13">Averiguacion Previa&#58; </strong
+        >{{ requestDoc?.previousInquiry }}
+      </p>
+    </div>
+    <div
+      class="col-md-4"
+      *ngIf="transference == 1 || transference == 3 || showInput('lawsuit')">
+      <p class="font-size-13">
+        <strong class="font-size-13">Causa Penal&#58; </strong
+        >{{ requestDoc?.lawsuit }}
+      </p>
+    </div>
+    <div
+      class="col-md-4"
+      *ngIf="transference == 1 || transference == 3 || showInput('tocaPenal')">
+      <p class="font-size-13">
+        <strong class="font-size-13">Toca Penal&#58; </strong
+        >{{ requestDoc?.tocaPenal }}
+      </p>
+    </div>
+    <div
+      class="col-md-4"
+      *ngIf="transference == 1 || transference == 3 || showInput('crime')">
+      <p class="font-size-13">
+        <strong class="font-size-13">Delito&#58; </strong
+        >{{ requestDoc?.crime }}
+      </p>
+    </div>
+    <div
+      class="col-md-4"
+      *ngIf="
+        requestDoc?.emailNotification != null || showInput('emailNotification')
+      ">
+      <p class="font-size-13">
+        <strong class="font-size-13"
+          >Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n&#58; </strong
+        >{{ requestDoc?.emailNotification }}
+      </p>
+    </div>
   </div>
 </div>

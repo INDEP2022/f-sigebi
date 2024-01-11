@@ -3,5 +3,6 @@
     rowa="4"
     formControlName="observations"
     class="form-control textarea"
-    (input)="updateData()"></textarea>
+    [(ngModel)]="value"
+    (change)="change($event)"></textarea>
 </form>

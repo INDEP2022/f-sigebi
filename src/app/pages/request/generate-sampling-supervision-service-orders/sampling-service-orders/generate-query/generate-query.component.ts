@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
@@ -17,6 +20,9 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
+
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ZonesService } from 'src/app/core/services/zones/zones.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
@@ -25,8 +31,10 @@ import { ListParams } from '../../../../../common/repository/interfaces/list-par
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
+import { AnnexKFormComponent } from '../../../generate-sampling-supervision/generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
 import { EditDeductiveComponent } from '../../../generate-sampling-supervision/sampling-assets/edit-deductive/edit-deductive.component';
 import { LIST_DEDUCTIVES_COLUMNS } from '../../../generate-sampling-supervision/sampling-assets/sampling-assets-form/columns/list-deductivas-column';
+import { ShowReportComponentComponent } from '../../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { LIST_ORDERS_COLUMNS } from './columns/list-orders-columns';
 
 @Component({
@@ -54,6 +62,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   sampleOrderId: number = 0;
   sampleOrderInfo: ISamplingOrder;
   sendData: any[] = [];
+  idStoreSample: number = 0;
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   settings4 = {
     ...TABLE_SETTINGS,
@@ -78,27 +87,37 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     private orderService: OrderServiceService,
     private authService: AuthService,
     private deleRegService: RegionalDelegationService,
-    private samplinggoodService: SamplingGoodService,
+
     private transferentService: TransferenteService,
     private samplingGoodService: SamplingGoodService,
-    private deductiveService: DeductiveVerificationService
+    private deductiveService: DeductiveVerificationService,
+    private sanitizer: DomSanitizer,
+    private wcontentService: WContentService,
+    private taskService: TaskService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
-  }
-
-  ngOnInit(): void {
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
       selectMode: 'multi',
       columns: LIST_ORDERS_COLUMNS,
     };
+    this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
+  }
+
+  ngOnInit(): void {
+    const id = Number(this.activatedRoute.snapshot.paramMap.get('id'));
+    if (id) {
+      this.sampleOrderId = id;
+      this.getSampleDeductives();
+      this.getSampleOrder();
+      this.showSampleInfo = true;
+    }
     this.initForm();
     this.initAnexForm();
     this.getgeographicalAreaSelect(new ListParams());
-    this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
-
-    //this.newSampleOrder();
   }
 
   initForm() {
@@ -217,9 +236,9 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   checkExistSampleOrder() {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.dateCreation'] = moment(new Date()).format(
+      /*params.getValue()['filter.dateCreation'] = moment(new Date()).format(
         'YYYY-MM-DD'
-      );
+      ); */
       params.getValue()['filter.periodSampling'] = moment(
         this.orderServiceForm.get('samplingPeriod').value
       ).format('YYYY-MM-DD');
@@ -233,6 +252,15 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
             response.data[0].dateCreation
           ).format('DD/MM/YYYY');
           this.sampleOrderInfo = response.data[0];
+          if (this.sampleOrderInfo.idStore) {
+            this.idStoreSample = this.sampleOrderInfo.idStore;
+          }
+
+          if (this.sampleOrderInfo.cveZone) {
+            this.orderServiceForm
+              .get('geographicalArea')
+              .setValue(this.sampleOrderInfo.cveZone);
+          }
           this.showSampleInfo = true;
           resolve(true);
         },
@@ -326,7 +354,12 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     if (deductivesSelect) {
       const infoOrderSample: any = await this.getSampleOrder();
       if (infoOrderSample.idStore) {
-        console.log('infoOrderSample', infoOrderSample);
+        this.openModal(
+          AnnexKFormComponent,
+          '',
+          'generate-query',
+          this.storeSelected
+        );
       } else {
         this.alert(
           'warning',
@@ -341,61 +374,134 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         'Selecciona una deductiva para firmar el anexo K'
       );
     }
-    /*this.deductives;
-    const deductivesSelected = this.deductives.filter(
-      (x: any) => x.selected == true
-    );
-
-    if (deductivesSelected.length == 0) {
-      this.onLoadToast(
-        'info',
-        'Para generar el Anexo K es necesario seleccionar alguna deductiva'
-      );
-      return;
-    }
-    if (this.storeSelected == null) {
-      this.onLoadToast(
-        'info',
-        'Debe seleccionar un almacén para generar el Anexo K'
-      );
-      return;
-    }
-
-    const annextForm = this.sampleOrderForm.getRawValue();
-    this.openModal(
-      AnnexKComponent,
-      '',
-      'generate-query',
-      this.storeSelected,
-      annextForm
-    ); */
   }
 
   async turnSampling() {
-    this.allDeductives = await this.getAllDeductives();
-    const sampleOrder: any = await this.getSampleOrder();
-    const totalDeductives = this.allDeductives.length;
-    const noSelectedDeductives: any = this.allDeductives.filter(
-      (x: any) => x.indDedictiva == 'N'
-    ).length;
-    let message = '';
-
-    if (noSelectedDeductives == totalDeductives) {
-      message =
-        'No ha seleccionado alguna deductiva para las ordenes de servicio.';
-    } else {
-      if (sampleOrder.idcontentk == null) {
-        this.onLoadToast(
-          'info',
-          'Ha agregado deductivas al muestreo, debe generar el Anexo K'
+    if (this.sampleOrderId > 0) {
+      const checkExistOrderInSample = await this.getSamplingOrder();
+      if (checkExistOrderInSample) {
+        const checkExistDeductives = await this.checkExistDeductives();
+        if (checkExistDeductives) {
+          if (this.sampleOrderInfo.idcontentk) {
+            this.alertQuestion(
+              'question',
+              'Confirmación',
+              '¿Esta seguro que la información es correcta para turnar?'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.generateTask();
+              }
+            });
+          } else {
+            this.alert(
+              'warning',
+              'Advertencia',
+              'Ha agregado deductivas al muestreo, debe generar el Anexo K'
+            );
+          }
+        } else {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            'No ha seleccionado alguna deductiva para las ordenes de servicio. ¿Esta de acuerdo que la información es correcta para Finalizar el muestreo?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              /*const updateSampleOrder = await this.updateSampleOrder(
+                'MUESTREO_TERMINA'
+              ); */
+            }
+          });
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Se requiere agregar una orden de servicio al muestreo'
         );
-        return;
       }
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se requiere generar un muestreo de orden de servicio para continuar'
+      );
     }
-    this.turnModal(message);
   }
 
-  save() {}
+  getSamplingOrder() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.sampleOrderId'] = `$eq:${this.sampleOrderId}`;
+      this.orderService.getAllSamplingOrderService(params).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  updateSampleOrder(statusSample: string) {
+    return new Promise((resolve, reject) => {
+      const sampleOrder: ISamplingOrder = {
+        idSamplingOrder: this.sampleOrderId,
+      };
+    });
+  }
+
+  async generateTask() {
+    const user: any = this.authService.decodeToken();
+
+    let body: any = {};
+
+    body['userProcess'] = user.username;
+    body['type'] = 'MUESTREO_ORDENES';
+    body['subtype'] = 'verificar_almacen';
+    body['ssubtype'] = 'TURNAR';
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = user.username;
+    task['assigneesDisplayname'] = user.username;
+    task['creator'] = user.username;
+    task['reviewers'] = user.username;
+
+    task['idSamplingOrder'] = this.sampleOrderId;
+    task[
+      'title'
+    ] = `Muestreo Ordenes de Servicio: Revisión Resultados ${this.sampleOrderId}`;
+    task['idDelegationRegional'] = this.sampleOrderInfo.idDelegationRegional;
+    task['idStore'] = this.sampleOrderInfo.idStore;
+    task['processName'] = 'captura_resultados';
+    task['urlNb'] =
+      'pages/request/generate-sampling-service-orders/results-capture';
+    body['task'] = task;
+
+    const taskResult: any = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult || taskResult == false) {
+      this.msgGuardado(
+        'success',
+        'Creación de Tarea Correcta',
+        `Muestreo Ordenes de Servicio: Revisión Resultados ${this.sampleOrderId}`
+      );
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
 
   openModal(
     component: any,
@@ -410,14 +516,45 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         store: store,
         typeAnnex: typeAnnex,
         annexData: annexData,
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
+        idSampleOrder: this.sampleOrderId,
+        callback: (typeDocument: number, typeSign: string) => {
+          if (typeDocument && typeSign) {
+            this.showReportInfo(typeDocument, typeSign, 'sign-k-order-sample');
+            //this.showReportInfo(
+            //typeDocument,
+            //typeSign,
+            //'sign-annex-assets-classification'
+            //);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(component, config);
+  }
+
+  showReportInfo(typeDocument: number, typeSign: string, typeAnnex: string) {
+    const idTypeDoc = typeDocument;
+    const orderSampleId = this.sampleOrderId;
+    const typeFirm = typeSign;
+    //Modal que genera el reporte
+    let config: ModalOptions = {
+      initialState: {
+        idTypeDoc,
+        orderSampleId,
+        typeFirm,
+        typeAnnex,
+        callback: (next: boolean) => {
+          if (next) {
+            this.checkExistSampleOrder();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
   }
 
   getDelegationRegional(id: number) {
@@ -440,6 +577,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         idDelegationRegional: +this.authService.decodeToken().department,
         dateturned: moment(new Date()).format('YYYY-MM-DD'),
         numberContract: this.orderServiceForm.get('contractNumber').value,
+        cveZone: this.orderServiceForm.get('geographicalArea').value,
         periodSampling: moment(
           this.orderServiceForm.get('samplingPeriod').value
         ).format('YYYY-MM-DD'),
@@ -451,6 +589,9 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
             'DD/MM/YYYY'
           );
           this.sampleOrderInfo = resp.data;
+          if (this.sampleOrderInfo.idStore) {
+            this.idStoreSample = this.sampleOrderInfo.idStore;
+          }
           this.showSampleInfo = true;
           resolve(true);
         },
@@ -485,66 +626,42 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
     });
   }
 
-  getAllDeductives() {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.orderSampleId'] = `$eq:${this.sampleOrderId}`;
-      this.samplinggoodService
-        .getAllSampleDeductives(params)
-        .pipe(
-          catchError((e: any) => {
-            if (e.status == 400) {
-              return of({ data: [], count: 0 });
-            }
-            throw e;
-          })
-        )
-        .subscribe({
-          next: resp => {
-            resolve(resp.data);
-          },
-        });
-    });
-  }
-
   getSampleOrder() {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
       params['filter.idSamplingOrder'] = `$eq:${this.sampleOrderId}`;
       this.orderService.getAllSampleOrder(params).subscribe({
         next: resp => {
+          resp.data[0].dateCreation = moment(resp.data[0].dateCreation).format(
+            'DD/MM/YYYY'
+          );
+          this.sampleOrderInfo = resp.data[0];
+          if (this.sampleOrderInfo.periodSampling) {
+            this.orderServiceForm
+              .get('samplingPeriod')
+              .setValue(
+                moment(this.sampleOrderInfo.periodSampling).format('DD/MM/YYYY')
+              );
+          }
+
+          if (this.sampleOrderInfo.numberContract) {
+            this.orderServiceForm
+              .get('contractNumber')
+              .setValue(this.sampleOrderInfo.numberContract);
+          }
+
+          if (this.sampleOrderInfo.idStore) {
+            this.idStoreSample = this.sampleOrderInfo.idStore;
+          }
+
+          if (this.sampleOrderInfo.cveZone) {
+            this.orderServiceForm
+              .get('geographicalArea')
+              .setValue(this.sampleOrderInfo.cveZone);
+          }
           resolve(resp.data[0]);
         },
       });
-    });
-  }
-
-  turnModal(message: string) {
-    Swal.fire({
-      title: 'Confirmación',
-      html:
-        'Esta seguro de enviar la información a turnar? <br/><br/>' +
-        `<p style="color:red;">${message}<p>`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#B38E5D',
-      confirmButtonText: 'Enviar',
-      cancelButtonText: 'Cancelar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        let lsEstatusMuestreo = '';
-        if (message == null || message == '') {
-          lsEstatusMuestreo = 'MUESTREO_NO_CUMPLE';
-        } else {
-          lsEstatusMuestreo = 'MUESTREO_TERMINA';
-        }
-        const lsDelReg = '';
-        const lsUsuario = '';
-        const lsUsuarioSAE = '';
-
-        Swal.fire('Turnado', 'El muestreo fue turnado', 'success');
-      }
     });
   }
 
@@ -749,6 +866,158 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
             resolve(false);
           },
         });
+    });
+  }
+
+  showAnexK() {
+    this.wcontentService.obtainFile(this.sampleOrderInfo.idcontentk).subscribe({
+      next: response => {
+        let blob = this.dataURItoBlob(response);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      },
+      error: error => {},
+    });
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    });
+  }
+
+  saveSample() {
+    if (this.sampleOrderId > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea guardar la tarea verificación de órdenes de servicio?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const saveInfoSample = await this.saveInfoSample();
+          const _task = JSON.parse(localStorage.getItem('Task'));
+          if (saveInfoSample && _task?.id)
+            this.alert(
+              'success',
+              'Correcto',
+              'Orden de servicio actualizada correctamente'
+            );
+          if (saveInfoSample && !_task?.id) {
+            this.generateTaskVerification();
+          }
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se requiere generar un muestreo de orden de servicio para continuar'
+      );
+    }
+  }
+
+  async generateTaskVerification() {
+    const user: any = this.authService.decodeToken();
+
+    let body: any = {};
+
+    body['userProcess'] = user.username;
+    body['type'] = 'MUESTREO_ORDENES';
+    body['subtype'] = 'verificar_almacen';
+    body['ssubtype'] = 'TURNAR';
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = user.username;
+    task['assigneesDisplayname'] = user.username;
+    task['creator'] = user.username;
+    task['reviewers'] = user.username;
+
+    task['idSamplingOrder'] = this.sampleOrderId;
+    task[
+      'title'
+    ] = `Muestreo Ordenes de Servicio: Verificación de almacén ${this.sampleOrderId}`;
+    task['idDelegationRegional'] = this.sampleOrderInfo.idDelegationRegional;
+    task['idStore'] = this.sampleOrderInfo.idStore;
+    task['processName'] = 'captura_resultados';
+    task['urlNb'] =
+      'pages/request/generate-sampling-service-orders/generate-query';
+    body['task'] = task;
+
+    const taskResult: any = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult || taskResult == false) {
+      this.msgGuardado(
+        'success',
+        'Creación de Tarea Correcta',
+        `Muestreo Ordenes de Servicio: Verificación de almacén ${this.sampleOrderId}`
+      );
+    }
+  }
+
+  saveInfoSample() {
+    return new Promise((resolve, reject) => {
+      const body: ISamplingOrder = {
+        idSamplingOrder: this.sampleOrderId,
+        dateCreation: moment(new Date()).format('YYYY-MM-DD'),
+        dateModification: moment(new Date()).format('YYYY-MM-DD'),
+        userCreation: this.authService.decodeToken().username,
+        userModification: this.authService.decodeToken().username,
+        idDelegationRegional: Number(this.authService.decodeToken().department),
+        dateturned: moment(new Date()).format('YYYY-MM-DD'),
+        numberContract: this.orderServiceForm.get('contractNumber').value,
+        cveZone: this.orderServiceForm.get('geographicalArea').value,
+        periodSampling: moment(
+          this.orderServiceForm.get('samplingPeriod').value
+        ).format('YYYY-MM-DD'),
+      };
+      this.orderService.updateSampleOrder(body).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          this.alert('error', 'Error', 'Error al crear la orden de muestreo');
+          resolve(false);
+        },
+      });
     });
   }
 }

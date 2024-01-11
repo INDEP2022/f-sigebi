@@ -42,7 +42,6 @@ export class DetailServiceOrderComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('claimRequest', this.claimRequest);
     this.idProg = +this.router.snapshot.params['id'];
     if (this.idProg) {
       this.getProgramming(this.idProg);

@@ -44,6 +44,13 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract orderView: boolean;
   protected abstract selectGoodsNot: boolean;
   protected abstract selectGoodNotForEyeVisit: boolean;
+  protected abstract steap1: boolean;
+  protected abstract steap2: boolean;
+  protected abstract steap3: boolean;
+  protected abstract isEdit: boolean;
+  protected abstract btnGrouper: boolean;
+  protected abstract visible: boolean;
+  protected abstract dictumInfo: boolean;
 
   protected abstract sendEmail: boolean;
   protected abstract destinyJob: boolean;
@@ -61,6 +68,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   protected abstract reportTable: string;
   protected abstract reportId: string;
+  protected abstract formatReport: boolean;
+  protected abstract signReport: boolean;
 
   docTemplate: IRequestDocument[];
 
@@ -107,7 +116,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   }
 
   mapTask(process: string, affair?: number, contributor: string = '') {
-    console.log('affair', affair);
+    this.typeVisit = 'viewGoods';
     this.reportTable = 'SOLICITUDES';
 
     this.disableTabs();
@@ -459,6 +468,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.selectGoods = true;
         this.searchAssociateFile = true;
         this.expRequest = true;
+        this.btnGrouper = true;
 
         this.saveRequest = true;
         this.turnReq = true;
@@ -480,7 +490,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.selectGoodForEyeVisit = true;
         this.expRequest = true;
-
+        this.btnGrouper = true;
         this.notifyReport = true;
         this.saveRequest = true;
         this.turnReq = true;
@@ -507,7 +517,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.selectGoodForEyeVisit = true;
         this.expRequest = true;
         this.typeVisit = 'selectGood';
-
+        this.btnGrouper = true;
         this.saveRequest = true;
         this.turnReq = true;
 
@@ -527,7 +537,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.expRequest = true;
         this.validateGoodForEyeVisit = true;
-
+        this.btnGrouper = true;
         this.resultEyeVisitReport = true;
         this.saveRequest = true;
         this.turnReq = true;
@@ -559,7 +569,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.expRequest = true;
         this.resultVisits = true;
         this.finish = true;
-
+        this.btnGrouper = true;
         this.resultEyeVisitReport = true;
         this.saveRequest = true;
         this.turnReq = false;
@@ -619,7 +629,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'analysis-result-compensation':
         this.regDocView = true;
-        this.selectGoods = true;
+        this.viewSelectedGoods = true;
         this.guidelines = true;
         this.expRequest = true;
 
@@ -642,8 +652,8 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'validate-opinion-compensation':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
         this.dictumValidate = true; //AGREGAR DATOS DEL DICTAMEN (TAB)
         this.expRequest = true;
 
@@ -656,6 +666,9 @@ export abstract class CompDocTasksComponent extends BasePage {
 
         this.docRequest = true; //VERIFICAR
 
+        this.steap1 = true;
+        this.isEdit = true;
+
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.DOCUMENTO_VALIDACION_DICTAMEN;
         this.signedReport = false;
@@ -665,13 +678,13 @@ export abstract class CompDocTasksComponent extends BasePage {
 
       case 'notification-taxpayer-compensation':
         this.regDocView = true;
-        this.selectGoods = true;
-        this.guidelines = true;
-        this.dictumValidate = true;
+        this.viewSelectedGoods = true;
+        this.viewGuidelines = true;
+        this.dictumRegister = true;
         this.expRequest = true;
 
         this.saveRequest = true;
-        this.turnReq = true;
+        this.finish = true;
         this.notifyReport = true; //VERIFICAR FUNCIÓN
 
         this.signedReport = true;
@@ -684,6 +697,12 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.reportId = REPORT_DOCUMENTS.NOTIFICACION_CONTRIBUYENTE;
         this.signedReport = true;
         this.editReport = true;
+
+        this.steap1 = true;
+        this.steap2 = true;
+        this.isEdit = true;
+
+        this.visible = false;
 
         break;
 
@@ -746,45 +765,10 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.destinyJob = true;
         this.finish = true;
 
-        this.turnReq = false;
-        this.searchAssociateFile = false;
-        this.resultEyeVisitReport = false;
-        this.resultVisits = false;
-        this.validateGoodForEyeVisit = false;
-        this.notifyReport = false;
-        this.docRequest = false;
-        this.searchRequestSimGoods = false;
-        this.guidelines = false;
-        this.dictumValidate = false;
-        this.createReport = false;
-        this.rejectReq = false;
-
         //Configuracion de reporte
         this.reportId = REPORT_DOCUMENTS.OFICIO_DESTINO_BIENES;
         this.signedReport = true;
         this.editReport = false;
-
-        break;
-
-      case 'confiscation':
-        this.regDocForm = true;
-        this.searchAssociateFile = true;
-        this.selectGoods = true;
-        this.expRequest = true;
-        break;
-
-      case 'extinction':
-        this.regDocForm = true;
-        this.searchAssociateFile = true;
-        this.selectGoods = true;
-        this.expRequest = true;
-        break;
-
-      case 'abandon':
-        this.regDocForm = true;
-        this.searchAssociateFile = true;
-        this.selectGoods = true;
-        this.expRequest = true;
 
         break;
 
@@ -869,6 +853,11 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.signedReport = false;
         this.editReport = true;
 
+        this.steap1 = true;
+        this.steap2 = true;
+        this.steap3 = false;
+        this.isEdit = true;
+
         break;
 
       case 'delivery-notify-request':
@@ -887,31 +876,49 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.signedReport = true;
         this.editReport = true;
 
+        this.steap1 = true;
+        this.steap2 = true;
+        this.steap3 = true;
+        this.isEdit = true;
+
+        this.visible = true;
+
         break;
 
       case 'register-taxpayer-date':
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.viewGuidelines = true;
-        this.dictumRegister = true;
+        this.dictumInfo = true;
         this.registAppointment = true;
         this.expRequest = true;
 
         this.saveRequest = true;
         this.turnReq = true;
 
+        this.steap1 = true;
+        this.steap2 = true;
+        this.steap3 = true;
+        this.isEdit = false;
         break;
 
       case 'register-pay-order':
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.viewGuidelines = true;
-        this.dictumRegister = true;
+        this.dictumInfo = true;
         this.orderEntry = true;
         this.expRequest = true;
 
         this.saveRequest = true;
         this.turnReq = true;
+
+        this.steap1 = true;
+        this.steap2 = true;
+        this.steap3 = false;
+        this.isEdit = false;
+
+        this.visible = true;
 
         break;
 
@@ -919,7 +926,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.regDocView = true;
         this.viewSelectedGoods = true;
         this.viewGuidelines = true;
-        this.dictumRegister = true;
+        this.dictumInfo = true;
         this.orderView = true;
         this.expRequest = true;
 
@@ -929,9 +936,17 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.finish = true;
 
         //Configuracion de reporte
-        this.reportId = REPORT_DOCUMENTS.ACTA_RESARCIMIENTO_ECONOMICO;
+        this.reportId =
+          REPORT_DOCUMENTS.ACTA_RESARCIMIENTO_ECONOMICO +
+          ',' +
+          REPORT_DOCUMENTS.NOTIFICACION_CONTRIBUYENTE;
         this.signedReport = true;
         this.editReport = true;
+
+        this.steap1 = true;
+        this.steap2 = true;
+        this.steap3 = false;
+        this.isEdit = false;
         break;
 
       /*AMPARO*/
@@ -957,23 +972,26 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.requestReview = true;
         //Configuracion de reporte VALIDAR FUNCIONAMIENTO
-        //this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
-        //this.signedReport = false;
-        //this.editReport = true;
+        this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
+        this.signedReport = false;
+        this.editReport = true;
 
         break;
       case 'review-result-protection':
         this.regDocView = true;
         this.viewSelectedGoods = true;
+        this.selectGoodNotForEyeVisit = true;
         this.expRequest = true;
+        this.legalStatus = true;
 
         this.rejectReq = true;
         this.saveRequest = true;
         this.btnAprove = true;
+
         //Configuracion de reporte VALIDAR FUNCIONAMIENTO
-        //this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
-        //this.signedReport = false;
-        //this.editReport = true;
+        this.reportId = REPORT_DOCUMENTS.SITUACION_JURIDICA_AMPARO;
+        this.signedReport = false;
+        this.editReport = true;
 
         break;
 

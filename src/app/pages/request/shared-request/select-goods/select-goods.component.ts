@@ -4,6 +4,7 @@ import {
   Input,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -61,6 +62,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idRequest: number = 0;
+  @Input() updateInfo: boolean = true;
+  @Input() btnGrouper: boolean = false;
+
   goodSelected: boolean = false;
   jsonBody: any = {};
 
@@ -96,13 +100,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getInfoRequest();
     const self = this;
     this.goodSettings.columns = {
       addGood: {
         title: 'Agregar Bien',
         type: 'custom',
         sort: false,
+        showAlways: true,
         renderComponent: AddGoodsButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe(async (row: any) => {
@@ -118,6 +122,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         title: 'Expediente',
         type: 'custom',
         sort: false,
+        showAlways: true,
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
@@ -136,6 +141,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         title: 'Expediente',
         type: 'custom',
         sort: false,
+        showAlways: true,
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
@@ -160,9 +166,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       ...this.selectedGoodSettings.columns,
     };
     //this.selectedGoodColumns = datagood;
+
+    this.getInfoRequest();
   }
 
   getFormSeach(recordId: any) {
+    this.loading = true;
     this.requestService.getById(recordId).subscribe({
       next: resp => {
         console.log('Respuesta del servidor:', resp); // Imprime la respuesta completa
@@ -173,9 +182,13 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.alert('warning', 'No se encontraron registros', '');
       },
     });
+    this.loading = false;
   }
 
   getInfoRequest() {
+    this.selectedGoodColumns = [];
+    this.selectedGoodTotalItems = this.selectedGoodColumns.length;
+
     this.requestService.getById(this.idRequest).subscribe({
       next: response => {
         this.requestInfo = response;
@@ -189,12 +202,25 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     const filter = param.getParams();
     this.rejectedGoodService.getAll(filter).subscribe({
       next: response => {
+        this.selectedGoodColumns = [];
+        this.selectedGoodTotalItems = this.selectedGoodColumns.length;
+
         response.data.forEach((item: any) => {
           this.addGood(item);
         });
+
+        this.displayColumns();
       },
-      error: error => {},
+      error: error => {
+        this.displayColumns();
+      },
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!isNullOrEmpty(changes['updateInfo'])) {
+      this.getInfoRequest();
+    }
   }
 
   getProcessDetonate() {
@@ -423,26 +449,41 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
+
+    let exitGood: any = this.selectedGoodColumns.find(x => x.goodId == good.goodId);
+
     if (this.processDet == 'DEVOLUCION' || this.processDet == 'RES_NUMERARIO') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-        initialState: { good: good, requestId: this.requestInfo.id },
+        initialState: {
+          good: good,
+          requestId: this.requestInfo.id,
+          exitGood: exitGood
+        },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
       });
       modalRef.content.onReserve.subscribe((data: boolean) => {
-        if (data) this.addGood(data);
+        if (data) this.getInfoRequest();
       });
     } else if (this.processDet != 'INFORMACION') {
       const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-        initialState: { good: good, requestId: this.requestInfo.id },
+        initialState: {
+          good: good, requestId: this.requestInfo.id, exitGood: exitGood
+        },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
       });
       modalRef.content.onReserve.subscribe((data: boolean) => {
-        if (data) this.addGood(data);
+        if (data) this.getInfoRequest();
       });
     } else {
-      this.addGoodForInformation(good);
+
+      if (isNullOrEmpty(exitGood)) {
+        this.addGoodForInformation(good);
+      } else {
+        this.onLoadToast('warning', 'El bien ya ha sido agregado');
+      }
+
     }
   }
 
@@ -451,7 +492,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
-    this.displayColumns();
     this.selectChanges();
   }
 
@@ -487,7 +527,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             //elimina inventario
             this.deleteGoodDated(item);
           } else {
-            // this.deleteGoodResDev(item);
+            this.deleteGoodResDev(item);
           }
 
           if (goodSelected == i) {
@@ -554,23 +594,21 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   displayColumns() {
     const columnas = this.table.grid.getColumns();
 
+    const goodGrouper = columnas.find(
+      (columna: any) => columna.id === 'goodGrouper'
+    );
+
+    if (!isNullOrEmpty(goodGrouper)) {
+      goodGrouper.hide = isNullOrEmpty(this.btnGrouper)
+        ? true
+        : !this.btnGrouper;
+    }
+
     if (this.processDet != 'RES_PAGO_ESPECIE') {
       const columnaSelectRigth = columnas.find(
         (columna: any) => columna.id === 'resultTaxpayer'
       );
       columnaSelectRigth.hide = true;
-
-      const goodGrouper = columnas.find(
-        (columna: any) => columna.id === 'goodGrouper'
-      );
-      goodGrouper.hide = true;
-    }
-
-    if (this.processDet != 'RES_ESPECIE') {
-      const goodGrouper = columnas.find(
-        (columna: any) => columna.id === 'goodGrouper'
-      );
-      goodGrouper.hide = true;
     }
 
     if (this.processDet != 'RES_NUMERARIA') {
@@ -599,12 +637,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     });
     modalRef.content.event.subscribe(next => {
       if (next != undefined) {
-        next.map((item: any) => {
-          const index = this.selectedGoodColumns.indexOf(item);
-          this.selectedGoodColumns[index].goodGrouper = item.goodGrouper;
-        });
+        this.getInfoRequest();
       }
-      this.selectedGoodColumns = [...this.selectedGoodColumns];
     });
   }
 
@@ -718,7 +752,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
       next: resp => {
         this.addGood(goodResDev);
-        this.onLoadToast('success', 'Se agrego el bien');
+        this.onLoadToast('success', 'Se agregó el bien');
       },
       error: error => {
         this.onLoadToast('error', 'No se pudo crear el bien');

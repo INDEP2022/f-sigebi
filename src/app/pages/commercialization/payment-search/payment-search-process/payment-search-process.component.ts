@@ -13,7 +13,6 @@ export class PaymentSearchProcessComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
 
   LV_DESC_BUSQUEDA: string;
-  LV_TOTREG: number;
   LV_MSG_PROCESO: string;
   LV_EST_PROCESO: number;
   LV_WHERE: string;
@@ -47,14 +46,30 @@ export class PaymentSearchProcessComponent extends BasePage implements OnInit {
   paymentProcess(idSearch: number, newSearch: any) {
     this.msDepositaryService
       .getSearchPaymentProcess(idSearch, newSearch)
-      .subscribe(resp => {
-        if (resp != null && resp != undefined) {
-          console.log('Resp PaymentProcess-> ', resp);
-          this.LV_MSG_PROCESO = resp.msgProcess;
-          this.LV_EST_PROCESO = resp.estProcess;
-          console.log('LV_MSG_PROCESO->', resp.msgProcess);
-          console.log('LV_EST_PROCESO->', resp.estProcess);
-        }
+      .subscribe({
+        next: resp => {
+          if (resp != null && resp != undefined) {
+            console.log('Resp PaymentProcess-> ', resp);
+            this.LV_MSG_PROCESO = resp.msgProcess;
+            this.LV_EST_PROCESO = resp.estProcess;
+            console.log('LV_MSG_PROCESO->', resp.msgProcess);
+            console.log('LV_EST_PROCESO->', resp.estProcess);
+            this.alert('success', 'Cambiar Proceso', this.LV_MSG_PROCESO);
+            this.modalRef.content.callback(newSearch);
+            this.modalRef.hide();
+          } else {
+            this.alert(
+              'warning',
+              'Cambiar Proceso',
+              'No se encontro data válida para realizar el cambio'
+            );
+          }
+        },
+        error: err => {
+          this.LV_MSG_PROCESO = err.error.message;
+          this.LV_EST_PROCESO = 0;
+          this.alert('warning', 'Cambiar Proceso', this.LV_MSG_PROCESO);
+        },
       });
   }
 
@@ -85,23 +100,7 @@ export class PaymentSearchProcessComponent extends BasePage implements OnInit {
           ' ?'
       ).then(async question => {
         if (question.isConfirmed) {
-          this.data;
-          if (this.LV_TOTREG == 0) {
-            this.alert(
-              'warning',
-              'Cambiar Proceso',
-              'No hay Registros Seleccionados para Procesar.'
-            );
-          } else {
-            this.paymentProcess(this.data, this.form.get('process').value);
-
-            this.LV_WHERE = this.form.get('process').value;
-
-            if (this.LV_EST_PROCESO == 1) {
-              this.alert('warning', 'Cambiar Proceso', this.LV_MSG_PROCESO);
-              this.form.get('process').value;
-            }
-          }
+          this.paymentProcess(this.data, this.form.get('process').value);
         }
       });
     }

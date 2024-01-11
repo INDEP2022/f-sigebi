@@ -3,7 +3,11 @@
     <h5 class="title">consulta de pagos sirsae</h5>
   </div>
   <div body>
-    <div class="row">
+    <div class="ch-content ml-3" header>
+      <h5 class="title">Filtros</h5>
+    </div>
+
+    <div class="row pt-4">
       <form class="form-material mb-0" [formGroup]="form">
         <div class="row">
           <div class="col-md-10">
@@ -55,7 +59,10 @@
                       prefixSearch="$ilike"
                       value="name_bank"
                       [isLoadInOnInit]="true">
-                      <ng-template let-item>{{ item.name_bank }}</ng-template>
+                      <ng-template let-item
+                        >No. Cta: {{ item.id }} -
+                        {{ item.name_bank }}</ng-template
+                      >
                     </ng-custom-select>
                   </form-field>
                 </div>
@@ -71,7 +78,8 @@
                       [isLoadInOnInit]="true"
                       paramSearch="filter.statusDescription"
                       prefixSearch="$ilike"
-                      value="id">
+                      value="id"
+                      (valueChange)="changeValue($event)">
                       <ng-template let-item>{{
                         item.statusDescription
                       }}</ng-template>
@@ -82,30 +90,19 @@
             </div>
           </div>
           <div class="col-12 col-md-2">
-            <div class="col-12" style="margin-top: 6%">
-              <!-- <button
-                class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16"
-                (click)="search()"
-                [disabled]="!form.valid">
-                Consultar
-              </button> -->
+            <div class="col-12 text-md-end">
               <button
                 type="button"
-                class="btn btn-primary active btn-sm mt-1"
-                (click)="validsearch()"
+                class="btn btn-primary active btn-sm mt-2 custom-btn1"
+                (click)="searchpre()"
                 [disabled]="!form.valid">
-                Buscar
+                Consultar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
-            <div class="col-12">
-              <!-- <button
-                class="active btn btn-block btn-info btn-sm mt-4"
-                (click)="resetFilter()">
-                Resetear
-              </button> -->
+            <div class="col-12 mt-4 text-md-end">
               <button
-                class="btn btn-danger btn-sm active mr-3 mt-5"
+                class="btn btn-danger btn-sm active mt-5 custom-btn2"
                 (click)="resetFilter()">
                 Limpiar <i class="fas fa-eraser"> </i>
               </button>
@@ -114,10 +111,10 @@
         </div>
       </form>
     </div>
-    <div *ngIf="dataload">
-      <div class="row">
-        <div class="d-flex justify-content-end">
-          <div class="m-3">
+    <div>
+      <div class="row pt-5">
+        <div class="d-flex justify-content-end mr-5">
+          <div class="mr-4">
             <app-columns-select
               [(settings)]="consultSettings"></app-columns-select>
           </div>

@@ -15,13 +15,16 @@ import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import * as moment from 'moment';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ReportService } from 'src/app/core/services/catalogs/reports.service';
 import { ReportgoodService } from 'src/app/core/services/ms-reportgood/reportgood.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AnnexJAssetsClassificationComponent } from '../../generate-sampling-supervision/assets-classification/annex-j-assets-classification/annex-j-assets-classification.component';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { isNullOrEmpty } from '../../request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { SignatureTypeComponent } from '../signature-type/signature-type.component';
 
@@ -56,12 +59,13 @@ export class CreateReportComponent extends BasePage implements OnInit {
   formats: any = [];
   version: any = new Document();
   format: any = new Document();
-  loadDoc: any = null;
 
   // we use this property to store the quill instance
   quillInstance: any;
 
   status: string = 'Nuevo';
+  content: string = '';
+  template: boolean = false;
 
   form: FormGroup = new FormGroup({});
   model: any;
@@ -76,6 +80,10 @@ export class CreateReportComponent extends BasePage implements OnInit {
   signReportTab: boolean = false;
 
   @Output() refresh = new EventEmitter<any>();
+  @Output() show = new EventEmitter<any>();
+  @Output() sign = new EventEmitter<any>();
+
+  isSigned: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -91,11 +99,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    //this.tableName = 'SOLICITUDES';
-    //this.documentTypeId = '26';
-
     this.getCatFormats(new ListParams());
-    this.getVersionsDoc();
     this.prepareForm();
   }
 
@@ -106,7 +110,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
     });
 
     this.form.get('template').valueChanges.subscribe(value => {
-      this.format = this.formats.data.find(x => x.id == value);
+      if (!isNullOrEmpty(this.formats)) {
+        this.format = this.formats.data.find(x => x.id == value);
+      }
     });
   }
 
@@ -116,13 +122,17 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
     this.reportService.getAll(params).subscribe({
       next: resp => {
-        this.formats = new DefaultSelect(resp.data, resp.count);
-        let select = this.formats.data.find(
-          x => x.doctoTypeId.id == this.documentTypeId
-        );
-        this.format = select;
-        this.form.get('template').setValue(select.id);
-        this.form.get('template').disable();
+        let ids = this.documentTypeId.split(',');
+        let list = resp.data.filter(x => ids.includes(x.doctoTypeId.id));
+
+        if (list.length > 0) {
+          this.format = list[0];
+          this.form.get('template').setValue(list[0].id);
+          this.formats = new DefaultSelect(list, list.length);
+          this.getVersionsDoc();
+        } else {
+          this.formats = new DefaultSelect(resp.data, resp.count);
+        }
       },
       error: err => {
         this.formats = new DefaultSelect();
@@ -132,25 +142,24 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   async getVersionsDoc() {
     let params = new ListParams();
-    params['filter.documentTypeId'] = `$eq:${this.documentTypeId}`;
+    params['filter.documentTypeId'] = `$eq:${this.format.doctoTypeId.id}`;
     params['filter.tableName'] = `$eq:${this.tableName}`;
     params['filter.registryId'] = `$eq:${this.requestId}`;
 
     this.reportgoodService.getReportDynamic(params).subscribe({
       next: async resp => {
-        if (resp.data.length > 0) {
-          this.loadDoc = resp.data[0];
-          this.version = this.loadDoc;
+        this.template = resp.data.length > 0;
+        if (this.template) {
+          this.version = resp.data[0];
+          this.isSigned = this.version.signedReport == 'Y';
         }
-
-        this.loadData();
       },
-      error: err => {},
+      error: err => { },
     });
   }
 
   async saveVersionsDoc(close = true) {
-    if (isNullOrEmpty(this.format)) return;
+    if (isNullOrEmpty(this.version.content)) return;
 
     const user: any = this.authService.decodeToken();
     let format = this.formats.data.find(
@@ -160,7 +169,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     let doc: any = {
       tableName: this.tableName,
       registryId: this.requestId,
-      documentTypeId: this.documentTypeId,
+      documentTypeId: this.format.doctoTypeId.id,
       content: this.format.content,
       signedReport: 'N',
       version: '1',
@@ -174,115 +183,31 @@ export class CreateReportComponent extends BasePage implements OnInit {
       modificationDate: moment(new Date()).format('YYYY-MM-DD'),
     };
 
-    this.reportgoodService
-      .saveReportDynamic(doc, !isNullOrEmpty(this.loadDoc))
-      .subscribe({
-        next: resp => {
-          if (close) {
-            this.onLoadToast('success', 'Documento guardado correctamente', '');
-            this.close();
-          }
-        },
-        error: err => {},
-      });
+    this.reportgoodService.saveReportDynamic(doc, !this.template).subscribe({
+      next: resp => {
+        this.template = true;
+        if (close) {
+          this.onLoadToast('success', 'Documento guardado correctamente', '');
+        }
+      },
+      error: err => { },
+    });
   }
 
   onContentChanged = (event: any) => {
-    this.format.content = event.html;
+    this.version.content = event.html;
     this.form.get('content').setValue(event.html);
   };
 
   applyFormat() {
-    this.version = this.format;
-    this.loadData();
-  }
-
-  async openDoc(): Promise<void> {
-    await this.saveVersionsDoc(false);
-
-    if (isNullOrEmpty(this.format)) return;
-
-    let result = await this.generateReport();
-
-    if (result) {
-      let blob = this.dataURItoBlob(result);
-      let file = new Blob([blob], { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      this.openPrevPdf(fileURL);
+    let form = { ...this.format };
+    if (!isNullOrEmpty(this.version.registryId)) {
+      this.version.content = form.content;
+    } else {
+      this.version = form;
     }
-  }
 
-  dataURItoBlob(dataURI: any) {
-    const byteString = window.atob(dataURI);
-    const arrayBuffer = new ArrayBuffer(byteString.length);
-    const int8Array = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < byteString.length; i++) {
-      int8Array[i] = byteString.charCodeAt(i);
-    }
-    const blob = new Blob([int8Array], { type: 'application/pdf' });
-    return blob;
-  }
-
-  openPrevPdf(pdfurl: string) {
-    console.log(pdfurl);
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
-  }
-
-  loadData() {
-    if (isNullOrEmpty(this.format)) return;
-
-    switch (this.process) {
-      case 'verify-compliance-return':
-        //Genera una tabla html en una cadena de texto
-        let table = `<table style="width:100%">
-  <tr>
-    <th>Company</th>
-    <th>Contact</th>
-    <th>Country</th>
-  </tr>
-  <tr>
-    <td>Alfreds Futterkiste</td>
-    <td>Maria Anders</td>
-    <td>Germany</td>
-  </tr>
-  <tr>
-    <td>Centro comercial Moctezuma</td>
-    <td>Francisco Chang</td>
-    <td>Mexico</td>
-  </tr>
-</table><br />`;
-
-        /*datos.forEach(dato => {
-          tabla += `
-        <tr>
-          <td>${dato.nombre}</td>
-          <td>${dato.edad}</td>
-        </tr>`;
-        });*/
-
-        let content = this.version.content;
-        //content = content.replace('{TABLA_BIENES}', table);
-        //content = content.replace('{FOLIO}', '');
-        //content = content.replace('{FECHA}', '');
-
-        this.version.content = content;
-        this.format.content = content;
-
-        break;
-    }
+    this.saveVersionsDoc(false);
   }
 
   isView() {
@@ -294,15 +219,11 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    console.log(this.form.value);
-    console.log(this.document);
     //this.editable ? this.update() : this.create(); //VALIDAR
   }
 
   close() {
-    this.refresh.emit({
-      upload: !isNullOrEmpty(this.loadDoc),
-    });
+    this.onChange();
     this.modalRef.hide();
   }
 
@@ -318,10 +239,15 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     this.loading = false;
-    this.refresh.emit({
-      upload: !isNullOrEmpty(this.loadDoc),
-    });
+    this.onChange();
     this.modalRef.hide();
+  }
+
+  onChange() {
+    this.refresh.emit({
+      upload: !isNullOrEmpty(this.version.content),
+      sign: false,
+    });
   }
 
   update() {
@@ -343,7 +269,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     //quillDelta = this.quillInstance.getContents();
   }
 
-  sign(context?: Partial<SignatureTypeComponent>): void {
+  sign00(context?: Partial<SignatureTypeComponent>): void {
     const modalRef = this.modalService.show(SignatureTypeComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
@@ -352,7 +278,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
     modalRef.content.signatureType.subscribe(next => {
       if (next) {
         this.signReportTab = true;
-        console.log(this.tabsReport.tabs.length);
+
         this.tabsReport.tabs[1].active = true;
       } /*else {
         this.isSignedReady = false;
@@ -416,17 +342,17 @@ export class CreateReportComponent extends BasePage implements OnInit {
     });
   }
 
-  /*pdfCreate(): void {
-    const quillDelta = this.quillInstance
-    console.log(quillDelta)
-    pdfExporter.generatePdf(quillDelta,).then((blob:any)=>{
-          console.log(blob)
-          let pdfurl = window.URL.createObjectURL(blob);
-          this.openPrevPdf(pdfurl)
-          // open the window
-          //let newWin = window.open(downloadURL,"newpdf.pdf");
-    }).catch(err=>{
-      console.log(err)
+  showFile() {
+    this.version.documentTypeId = this.documentTypeId;
+    this.version.isSigned = this.isSigned;
+    this.show.emit(this.version);
+  }
+
+  openSignature() {
+    this.sign.emit({
+
     });
-  }*/
+    this.close();
+  }
+
 }

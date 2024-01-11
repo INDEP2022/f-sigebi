@@ -132,8 +132,9 @@ export class RegularBillingGenerationAssetsComponent
             );
             return;
           }
-
+          //   COMER_VNR.P_INSERTA_LOTE(VAUDSID);
           await this.pkComerVNR(7545034);
+          //   COMER_VNR.P_CANCELAPAPEL_VNR('FCOMER086','C_VNR',VAUDSID );
           await this.pkComerVNRCancel(7545034, 'FCOMER086', 'C_VNR');
 
           this.paramsList = new BehaviorSubject(new ListParams());

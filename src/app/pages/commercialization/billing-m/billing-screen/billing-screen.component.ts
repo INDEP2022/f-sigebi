@@ -781,7 +781,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
               batchId: () => (searchFilter = SearchFilter.EQ),
               vouchertype: () => (searchFilter = SearchFilter.ILIKE),
               series: () => (searchFilter = SearchFilter.EQ),
-              Invoice: () => (searchFilter = SearchFilter.ILIKE),
+              Invoice: () => (searchFilter = SearchFilter.EQ),
               factstatusId: () => (searchFilter = SearchFilter.ILIKE),
               customer: () => (searchFilter = SearchFilter.EQ),
               delegationNumber: () => (searchFilter = SearchFilter.EQ),
@@ -3181,7 +3181,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     if (!event) this.valSortBy = false;
 
     this.optXLote = this.params.getValue()['filter.batchId'];
-    console.log('this.xLote.value', this.xLote.value);
+    // console.log('this.xLote.value', this.xLote.value);
     if (!this.xLote.value) {
       if (this.params.getValue()['filter.batchId'])
         delete this.params.getValue()['filter.batchId'];

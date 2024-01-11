@@ -50,10 +50,13 @@
                 <div class="col-12">
                   <!-- LISTO -->
                   <button
+                    [ngClass]="{ loading: btnLoading }"
+                    [disabled]="btnLoading"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="generatePreFacture()">
-                    Genera Prefacturas <i class="bx bxs-file"></i>
+                    Genera Prefacturas
+                    <i *ngIf="!btnLoading" class="bx bxs-file"></i>
                   </button>
                   <!-- LISTO -->
                   <button
@@ -79,6 +82,7 @@
                     (click)="visualizarCR()">
                     Visualiza CR <i class="bx bx-printer bx-sm float-icon"></i>
                   </button>
+                  <!-- LISTO -->
                   <button
                     [disabled]="buttons"
                     type="button"
@@ -86,6 +90,7 @@
                     (click)="impresionCR()">
                     Imprime CR <i class="bx bx-printer bx-sm float-icon"></i>
                   </button>
+                  <!-- LISTO -->
                   <form-check label="Solo Fact." for="label">
                     <input
                       id="label"
@@ -212,10 +217,15 @@
                 <div class="col-12">
                   <!-- LISTO -->
                   <button
+                    [ngClass]="{ loading: btnLoading8 }"
+                    [disabled]="btnLoading8"
                     type="button"
                     class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
                     (click)="allSelect()">
-                    Selec. Todos <i class="fas fa-edit bx-sm float-icon"></i>
+                    Selec. Todos
+                    <i
+                      *nfIg="!btnLoading8"
+                      class="fas fa-edit bx-sm float-icon"></i>
                   </button>
                   <!-- LISTO -->
                   <button
@@ -246,6 +256,7 @@
                   </button>
                   <!--Revisar con Carlos-->
                   <button
+                    (click)="printerMasivePDF()"
                     type="button"
                     class="btn btn-primary btn-block active btn-sm mr-2 mb-2">
                     Imprime Masivo .pdf
@@ -259,6 +270,7 @@
             class="row justify-content-center text-center mt-4"
             *ngIf="isCancel">
             <div class="col-1 col-md-1">
+              <!-- LISTO -->
               <button
                 type="button"
                 class="btn btn-block btn-primary btn-sm active mr-2"
@@ -267,6 +279,7 @@
               </button>
             </div>
             <div class="col-12 col-md-2">
+              <!-- LISTO -->
               <form-field [control]="form.get('folio')" label="Folio SP">
                 <input
                   type="number"
@@ -277,6 +290,7 @@
               </form-field>
             </div>
             <div class="col-12 col-md-6">
+              <!-- LISTO -->
               <form-field [control]="form.get('causerebillId')">
                 <ngx-select
                   (fetchItems)="getRebillData($event)"
@@ -353,7 +367,7 @@
 
   <form class="form-material" [formGroup]="formFactura">
     <div class="row pt-5">
-      <div class="col-md-1">
+      <div class="col-md-2">
         <form-field [control]="formFactura.get('xLote')">
           <form-check id="checkbox_fcomer" label="X Lote" for="Xlote">
             <input

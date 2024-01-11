@@ -10,6 +10,7 @@ import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { ITypeDocument } from 'src/app/core/models/ms-wcontent/type-document';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -42,6 +43,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   stateName: string = '';
   nameTransferent: string = '';
   idTransferent: number = 0;
+  typeTransfer: string = '';
   regionalDelId: number = 0;
   stateId: number = 0;
   userLogName: string = '';
@@ -64,7 +66,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     private programmingService: ProgrammingRequestService,
     private datePipe: DatePipe,
     private modalService: BsModalService,
-    private stateService: DelegationStateService
+    private stateService: DelegationStateService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -218,7 +221,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   typeDocumentSelect(item: ITypeDocument) {
-    console.log(item);
     this.typeDocument = item.ddocType;
   }
 
@@ -272,6 +274,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xidcProfile: 'NSBDB_Gral',
         xidSolicitud: this.idRequest,
         xidTransferente: this.programming.tranferId,
+        xtipoTransferencia: this.programming.typeTransfer,
         xdelegacionRegional: this.programming.regionalDelegationNumber,
         xnivelRegistroNSBDB: 'bien',
         xidBien: this.idGood,
@@ -353,6 +356,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       this.process != 'sampling-assets'
     ) {
       this.loading = true;
+      const user: any = this.authService.decodeToken();
       const formData = {
         dInDate: new Date(),
         dDocAuthor: this.userLogName,
@@ -362,7 +366,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xidcProfile: 'NSBDB_Gral',
         xidSolicitud: this.idRequest,
         xidTransferente: this.idTransferent,
-        xdelegacionRegional: this.regionalDelId,
+        xdelegacionRegional: user.department,
         xnivelRegistroNSBDB: 'bien',
         xidBien: this.idGood,
         xestado: this.stateId,
@@ -721,6 +725,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.transferentService.getAll(params).subscribe({
       next: data => {
         data.data.map(data => {
+          this.typeTransfer = data.typeTransferent;
           data.nameAndId = `${data.id} - ${data.nameTransferent}`;
           return data;
         });
@@ -732,3 +737,5 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 }
+
+//NUEVO DOCUMENTO VALIDAR

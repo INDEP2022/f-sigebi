@@ -228,7 +228,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
     this.settings7 = {
       ...this.settings,
       actions: false,
-      hideSubHeader: false,
+      hideSubHeader: true,
       columns: {
         office: {
           title: 'Detalle',

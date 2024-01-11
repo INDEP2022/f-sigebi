@@ -37,6 +37,7 @@ import {
 @Component({
   selector: 'app-massive-conversion-main',
   templateUrl: './massive-conversion-main.component.html',
+  styleUrls: ['./massive-conversion.css'],
   styles: [
     `
       .btn-event-search {
@@ -184,6 +185,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.form.controls['operationId'].setValue(null);
     this.form.controls['insertDate'].setValue(null);
     this.form.controls['validityDate'].setValue(null);
+    this.form.controls['eventId'].setValue(null);
   }
 
   consultInServer() {

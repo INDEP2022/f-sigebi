@@ -120,8 +120,7 @@ export interface IGoodJobManagement {
 })
 export class RelatedDocumentsRelationComponent
   extends RelateDocumentsResponseRelation
-  implements OnInit
-{
+  implements OnInit {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @ViewChild('tableDocs') tableDocs: Ng2SmartTableComponent;
 
@@ -624,7 +623,7 @@ export class RelatedDocumentsRelationComponent
                   this.copyOficio = arr;
                   this.onLoadToast('success', 'Se eliminó correctamente', '');
                 },
-                error: err => {},
+                error: err => { },
               });
           }
         }
@@ -660,7 +659,7 @@ export class RelatedDocumentsRelationComponent
     // this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
     // this.paramsGestionDictamen.sale = params['sale'] ?? null;
     // this.paramsGestionDictamen.pGestOk = params['P_GEST_OK'] ?? null;
-    // this.paramsGestionDictamen.pllamo = params['PLLAMO'] ?? null; // Se agrego
+    // this.paramsGestionDictamen.pllamo = params['PLLAMO'] ?? null; // Se agregó
     // });
     const pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!pantallaActual) {
@@ -940,10 +939,10 @@ export class RelatedDocumentsRelationComponent
           addressee:
             mJobManagement.jobType == 'INTERNO' || mJobManagement?.addressee
               ? ({
-                  usuario: mJobManagement.addressee,
-                  nombre: null,
-                  userAndName: mJobManagement.addressee as any,
-                } as any)
+                usuario: mJobManagement.addressee,
+                nombre: null,
+                userAndName: mJobManagement.addressee as any,
+              } as any)
               : null,
         });
         if (this.formJobManagement.value.statusOf === 'ENVIADO') {
@@ -993,7 +992,7 @@ export class RelatedDocumentsRelationComponent
                 userAndName: res.usuario + ' - ' + res.nombre,
               } as any);
             },
-            () => {}
+            () => { }
           );
         }
 
@@ -3316,7 +3315,7 @@ export class RelatedDocumentsRelationComponent
     }
   }
 
-  _PUP_ENVIA_PGR() {}
+  _PUP_ENVIA_PGR() { }
 
   // changeSender(sender) {
   //   console.log({sender});

@@ -25,7 +25,7 @@ export class RegisterDocumentationViewComponent
   affair: string = '';
   originInfo: string = '';
   @Input() process?: string = '';
-
+  toggleInformation = true;
   //INJECTIONS
   private requestService = inject(RequestService);
   private genericsService = inject(GenericService);

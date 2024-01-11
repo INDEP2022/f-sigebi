@@ -30,6 +30,7 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { isNullOrEmpty } from 'src/app/pages/request/request-complementary-documentation/request-comp-doc-tasks/request-comp-doc-tasks.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
@@ -180,11 +181,16 @@ export class DocRequestTabComponent
         'request'
       ) as unknown as number;
     }
-    let onChangeCurrentValue = changes['typeDoc'].currentValue;
-    let updateInfo = changes['updateInfo']?.currentValue;
-    this.typeDoc = onChangeCurrentValue;
-    this.setTitle(onChangeCurrentValue);
+
     this.getInfoRequest();
+
+    if (!isNullOrEmpty(changes['typeDoc'])) {
+      let onChangeCurrentValue = changes['typeDoc'].currentValue;
+      this.typeDoc = onChangeCurrentValue;
+      this.setTitle(onChangeCurrentValue);
+    }
+
+    //let updateInfo = changes['updateInfo']?.currentValue;
   }
 
   prepareForm(): void {
@@ -474,10 +480,14 @@ export class DocRequestTabComponent
       });
   }
   private selectPage() {
-    this.docRequest = [...this.data[this.params.value.page - 1]];
+    if (this.data.length > 0) {
+      this.docRequest = [...this.data[this.params.value.page - 1]];
+    }
   }
   private selectPageEx() {
-    this.docExpedient = [...this.data[this.params.value.page - 1]];
+    if (this.data.length > 0) {
+      this.docExpedient = [...this.data[this.params.value.page - 1]];
+    }
   }
   private setPaginate(value: any[]): any[] {
     let data: any[] = [];

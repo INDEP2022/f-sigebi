@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
@@ -112,6 +112,7 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
   lineaCaptura() {
     if (this.form.get('event').value) {
       this.loading = true;
+      this.selectdata = [];
       this.line = [];
       let params = {
         ...this.params1.getValue(),
@@ -123,11 +124,23 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
           this.data1.load(resp.data);
           this.data1.refresh();
           this.totalItems1 = resp.count;
+          this.line = [];
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
           this.loading = false;
         },
         error: err => {
           console.log(err);
-          this.alert('warning', 'No se encontraron registros', '');
+          this.data1.load([]);
+          this.data1.refresh();
+          this.totalItems1 = 0;
+          this.line = [];
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+          this.loading = false;
+          this.selectdata = [];
         },
       });
     } else {
@@ -174,7 +187,11 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.alert('warning', 'No se Encontraron Registros', '');
+        this.line = [];
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
       },
     });
 
@@ -182,59 +199,22 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
   }
 
   exportXlsx() {
+    this.loader.load = true;
     const filename: string = 'Lotes Pendientes de Pagos';
-
-    // Hacer una copia de this.params1 si es necesario
-    let params = { ...this.params1.getValue() };
-
-    const selectedData = this.selectdata[0]; // Acceder al primer elemento del arreglo
-
-    if (!selectedData) {
-      this.alert(
-        'warning',
-        'No existen datos en la tabla de LÍNEAS DE CAPTURA DEL CLIENTE PARA EL LOTE PÚBLICO',
-        ''
-      );
-      return;
-    }
-
+    const selectedData = this.selectdata[0];
     const payload = {
       eventId: selectedData.id_evento,
       lotId: selectedData.id_lote,
       lotsId: '',
     };
-
-    this.customerService.getguarantee(payload, params).subscribe({
+    this.customerService.getGuaranteeExcel(payload).subscribe({
       next: resp => {
-        const allData = resp.data;
-
-        // Si hay más páginas de datos, recuperarlas
-        const totalPages = Math.ceil(resp.count / params.pageSize);
-        const additionalRequests = [];
-
-        for (let page = 2; page <= totalPages; page++) {
-          params.page = page;
-          additionalRequests.push(
-            this.customerService.getguarantee(payload, params)
-          );
-        }
-
-        // Combinar todos los registros en this.line
-        forkJoin(additionalRequests).subscribe({
-          next: additionalResponses => {
-            for (const additionalResp of additionalResponses) {
-              allData.push(...additionalResp.data);
-            }
-
-            this.excelService.export(allData, { filename });
-          },
-          error: err => {
-            console.log(err);
-          },
-        });
+        this._downloadExcelFromBase64(resp.base64File, filename);
+        this.loader.load = false;
       },
       error: err => {
         console.log(err);
+        this.loader.load = false;
       },
     });
   }

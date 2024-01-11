@@ -10,7 +10,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DOC_GOODS_COLUMNS } from '../../../shared-request/expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab-columns';
+import { DOC_REQUEST_TAB_COLUMNS } from '../../../shared-request/expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab-columns';
 import { SeeInformationComponent } from '../../../shared-request/expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
 import { NewDocumentServiceOrderFormComponent } from '../new-document-service-order-form/new-document-service-order-form.component';
 
@@ -59,7 +59,7 @@ export class UploadExpedientServiceOrderFormComponent
       delete: {
         deleteButtonContent: '<i  class="fa fa-eye text-info mx-2" ></i>',
       },
-      columns: DOC_GOODS_COLUMNS,
+      columns: DOC_REQUEST_TAB_COLUMNS,
     };
   }
 
