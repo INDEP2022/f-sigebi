@@ -151,7 +151,11 @@ export class ExpenseCompositionModalComponent
   }
 
   fillCvman(row: any) {
+    console.log(row);
     if (row && row.goodNumber + '' == this.goodNumber.value + '') {
+      this.cvman.setValue(
+        row.cvman ? row.cvman : row.mandate2 ? row.mandate2 : null
+      );
       this.cvman.disable();
     }
   }
@@ -237,24 +241,6 @@ export class ExpenseCompositionModalComponent
         this.isrWithholding.setValidators(Validators.max(response));
       },
     });
-    // this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
-    //   next: response => {
-    //     if (response) {
-    //       if (this.address === 'M') {
-    //         this.selectedGood =
-    //           this.goods.filter(x => x.goodNumber === response)[0] ?? null;
-    //         if (this.selectedGood) {
-    //           if (this.selectedGood.transferorNumber) {
-    //             this.transferent = this.selectedGood.transferorNumber;
-    //           }
-    //           if (this.selectedGood.mandate2) {
-    //             this.cvman.setValue(this.selectedGood.mandate2);
-    //           }
-    //         }
-    //       }
-    //     }
-    //   },
-    // });
   }
 
   getTransferent(result: any) {
