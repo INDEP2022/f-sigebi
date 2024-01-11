@@ -320,11 +320,12 @@ export class ExpenseCompositionModalComponent
 
   confirm() {
     console.log(this.form.value);
+    console.log(this.cvman.value);
     this.clickedButton = true;
     if (this.comerDetExpense) {
-      this.onEditConfirm(this.form.value);
+      this.onEditConfirm({ ...this.form.value, cvman: this.cvman.value });
     } else {
-      this.onAddConfirm(this.form.value);
+      this.onAddConfirm({ ...this.form.value, cvman: this.cvman.value });
     }
   }
 
@@ -335,6 +336,7 @@ export class ExpenseCompositionModalComponent
       +body.isrWithholding -
       +body.vatWithholding
     ).toFixed(2);
+    console.log(body);
     return {
       ...body,
       expenseNumber: this.expenseNumber,

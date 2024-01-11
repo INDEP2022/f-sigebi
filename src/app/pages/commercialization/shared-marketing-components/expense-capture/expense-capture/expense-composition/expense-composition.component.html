@@ -263,10 +263,7 @@
               *ngIf="address !== 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="
-                (paymentRequestNumber && paymentRequestNumber.value) ||
-                !validChargeGoods
-              "
+              [disabled]="paymentRequestNumber && paymentRequestNumber.value"
               (click)="loadGoodsI()">
               Carga de Bienes
             </button>
