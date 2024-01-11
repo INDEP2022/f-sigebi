@@ -863,13 +863,21 @@ export class ExpenseCompositionComponent
                 // this.getData2();
               } else {
                 this.loading = false;
-                this.alert('error', 'No se encontraron datos', '');
+                this.alert(
+                  'error',
+                  'Carga de bienes',
+                  'No se encontraron datos'
+                );
                 // this.alert('error','')
               }
             },
             error: err => {
               this.loading = false;
-              this.alert('error', 'No se pudo realizar la carga de bienes', '');
+              this.alert(
+                'error',
+                'Carga de bienes',
+                'No se pudo realizar la carga de bienes'
+              );
             },
           });
       } else if (this.v_tip_gast === 'GASTOSEG') {
@@ -887,12 +895,16 @@ export class ExpenseCompositionComponent
               } else {
                 // this.alert('error','')
                 this.loading = false;
-                this.alert('error', 'No se encontraron datos', '');
+                this.alert(
+                  'error',
+                  'Carga de bienes',
+                  'No se encontraron datos'
+                );
               }
             },
             error: err => {
               this.loading = false;
-              this.alert('error', 'No se encontraron datos', '');
+              this.alert('error', 'Carga de bienes', 'No se encontraron datos');
             },
           });
       } else {
