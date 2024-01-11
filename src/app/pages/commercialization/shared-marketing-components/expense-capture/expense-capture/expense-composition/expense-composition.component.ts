@@ -821,6 +821,10 @@ export class ExpenseCompositionComponent
     // if (this.expenseCaptureDataService.formaModificada()) {
     //   return;
     // }
+    if (!this.validChargeGoods) {
+      this.alert('warning', 'No tiene permisos para cargar bienes', '');
+      return;
+    }
     if (
       this.v_tip_gast === 'GASTOVIG' &&
       !this.form.get('contractNumber').value
