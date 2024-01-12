@@ -1,9 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -12,13 +16,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-payment-search-modal',
   templateUrl: './payment-search-modal.component.html',
-  styles: [
-    `
-      :host::ng-deep app-modal .modal-body {
-        padding: 0px 40px 20px !important;
-      }
-    `,
-  ],
+  styles: [``],
 })
 export class PaymentSearchModalComponent extends BasePage implements OnInit {
   paymentForm: FormGroup = new FormGroup({});
@@ -83,7 +81,8 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private paymentService: PaymentService,
-    private accountMovementService: AccountMovementService
+    private accountMovementService: AccountMovementService,
+    private depositaryService: MsDepositaryService
   ) {
     super();
   }
@@ -99,61 +98,67 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.paymentForm = this.fb.group({
-      date: [null, [Validators.required]],
-      referenceori: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      reference: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      idselect: [null],
-      amount: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
-      cve: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
-      code: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
-      numbermovement: [
-        null,
-        [Validators.required, Validators.pattern(NUM_POSITIVE)],
-      ],
+      date: [null],
+      // referenceori: [
+      //   null,
+      //   [Validators.required, Validators.pattern(STRING_PATTERN)],
+      // ],
+      referencealt: [null, [Validators.pattern(STRING_PATTERN)]],
+      idselect: [1],
+      // amount: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
+      // cve: [null],
+      // code: [null, [Validators.pattern(NUM_POSITIVE)]],
+      // numbermovement: [
+      //   null,
+      //   [Validators.required, Validators.pattern(NUM_POSITIVE)],
+      // ],
 
-      publicBatch: [
-        null,
-        [Validators.required, Validators.pattern(NUM_POSITIVE)],
-      ],
-      event: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
-      systemValidity: [null, [Validators.required]],
-      result: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      paymentId: [
-        null,
-        [Validators.required, Validators.pattern(NUM_POSITIVE)],
-      ],
-      batchId: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
-      entryOrderId: [
-        null,
-        [Validators.required, Validators.pattern(NUM_POSITIVE)],
-      ],
-      satDescription: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      type: [null, [Validators.required]],
-      tsearchId: [null, [Validators.required]],
-      inconsistencies: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      // publicBatch: [null, [Validators.pattern(NUM_POSITIVE)]],
+      event: [null, [Validators.pattern(NUM_POSITIVE)]],
+      systemValidity: [null],
+      result: [null, [Validators.pattern(STRING_PATTERN)]],
+      // paymentId: [null, [Validators.pattern(NUM_POSITIVE)]],
+      publicBatch: [null, [Validators.pattern(NUM_POSITIVE)]],
+      // entryOrderId: [null, [Validators.pattern(NUM_POSITIVE)]],
+      satDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+      type: [null],
+      tipo_referencia: [null],
+      geneReference: [null],
+      // tsearchId: [null],
+      // inconsistencies: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     if (this.payment != null) {
       this.edit = true;
       console.log('Resp Payment-> ', this.payment);
-      this.getValidSystem2(this.payment.systemValidity);
-      this.paymentForm.patchValue(this.payment);
+      // this.getValidSystem2(this.payment.validSystem);
+      // this.paymentForm.patchValue(this.payment);
       if (this.payment.date != null) {
         this.paymentForm
           .get('date')
           .setValue(this.formatDate(new Date(this.payment.date)));
       }
+      this.paymentForm
+        .get('tipo_referencia')
+        .setValue(this.payment.typereference ?? '0');
+      // this.paymentForm
+      //   .get('inconsistencies')
+      //   .setValue(this.payment.downloadinconsis);
+      // this.paymentForm.get('tsearchId').setValue(this.payment.tsearchId);
+      this.paymentForm
+        .get('geneReference')
+        .setValue(this.payment.geneReference);
+      this.paymentForm.get('referencealt').setValue(this.payment.referencealt);
+      this.paymentForm.get('event').setValue(this.payment.idEvent);
+      this.paymentForm.get('idselect').setValue(this.payment.idselect === '1');
+      // this.paymentForm.get('paymentId').setValue(this.payment.payId);
+      // this.paymentForm.get('batchId').setValue(this.payment.batchId);
+      this.paymentForm.get('publicBatch').setValue(this.payment.batchPublic);
+      // this.paymentForm.get('cve').setValue(this.payment.cveBank);
+      this.paymentForm.get('systemValidity').setValue(this.payment.validSystem);
+      this.paymentForm.get('result').setValue(this.payment.result);
+      // this.paymentForm.get('entryOrderId').setValue(this.payment.incomeid);
+      this.paymentForm.get('type').setValue(this.payment.guy);
+      this.paymentForm.get('satDescription').setValue(this.payment.idGuySat);
     }
   }
 
@@ -162,6 +167,10 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    // console.log(this.paymentForm.invalid);
+    // console.log(this.paymentForm.getRawValue());
+    // this.paymentForm.markAllAsTouched();
+    // return;
     this.edit ? this.update() : this.create();
   }
 
@@ -176,21 +185,65 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
     this.handleSuccess();
   }
 
-  handleSuccess() {
+  async handleSuccess() {
     console.log('ValsisKey', this.paymentForm.get('systemValidity').value);
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.loading = false;
+    let resp = await this.alertQuestion(
+      'question',
+      '¿Esta seguro de actualizar la información?',
+      ''
+    );
+    if (!resp.isConfirmed) {
+      this.loading = false;
+    } else {
+      let LV_VALACT = 0;
+      if (this.paymentForm.get('referencealt').value === 'NREF') {
+      } else {
+        if (!this.paymentForm.get('geneReference')) {
+          LV_VALACT = 1;
+          this.alert(
+            'warning',
+            'Debe elegir un tipo de cambio de referencia',
+            ''
+          );
+          this.loading = false;
+        } else {
+          let LV_VALREFER = await firstValueFrom(
+            this.depositaryService.getCountReference(this.payment.reference)
+          );
+          if (LV_VALREFER > 0) {
+            LV_VALACT = 1;
+            this.alert(
+              'warning',
+              'La referencia no puede generar manualmente',
+              ''
+            );
+          }
+          // select count(0)
+          // 	into LV_VALREFER
+          // 	from V_COMER_PAGOS
+          //   where REFERENCIA = :BLK_DATOSREF.REFERENCIA;
+          // if LV_VALREFER = 0 then
+          // 		null;
+          // else
+          // 		LV_VALACT := 1;
+          // 		LIP_MENSAJE('La referencia no puede generar manualmente... ','S');
+          // end if;
+        }
+      }
+      if (LV_VALACT === 0) {
+        this.edit
+          ? this.onEdit.emit({
+              newData: this.paymentForm.value,
+              oldData: this.payment,
+            })
+          : this.onAdd.emit(this.paymentForm.value);
+        this.modalRef.hide();
+      }
+    }
 
     console.log('paymentForm ->', this.paymentForm.value);
-
-    this.edit
-      ? this.onEdit.emit({
-          newData: this.paymentForm.value,
-          oldData: this.payment,
-        })
-      : this.onAdd.emit(this.paymentForm.value);
-    this.modalRef.hide();
   }
 
   getEvents(params: ListParams) {
@@ -243,7 +296,7 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   }
 
   getValidSystem2(desc?: string) {
-    this.paymentService.getValidSystemDesc(desc).subscribe(
+    this.paymentService.getValidSystem(desc).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
           console.log('resp 2 -> ', resp.data[0]);
@@ -263,14 +316,14 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
       console.log(event);
 
       // Buscar el elemento seleccionado en los datos
-      const selectedElement = this.paymentForm
-        .get('systemValidity')
-        .value.data.find((element: any) => element.valsisKey === event);
+      // const selectedElement = this.paymentForm
+      //   .get('systemValidity')
+      //   .value.data.find((element: any) => element.valsisKey === event);
 
-      if (selectedElement) {
-        const selectedKey = selectedElement.valsisKey;
-        console.log('extractKey -> ', selectedKey); // valsisKey seleccionado
-      }
+      // if (selectedElement) {
+      //   const selectedKey = selectedElement.valsisKey;
+      //   console.log('extractKey -> ', selectedKey); // valsisKey seleccionado
+      // }
     }
   }
 
@@ -286,15 +339,12 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   }
 
   getSatDec() {
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-
-    const _params: any = params;
+    let params = new FilterParams();
+    params.limit = 100;
+    params.sortBy = 'idType:ASC';
     //_params['filter.idType'] = `$eq:${res.data[i].idGuySat}`;
-    console.log('getSatDec-> ', _params);
-    this.accountMovementService.getPaymentTypeSat(_params).subscribe(
+    console.log('getSatDec-> ', params);
+    this.accountMovementService.getPaymentTypeSat(params.getParams()).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
           this.dataSat = resp.data;

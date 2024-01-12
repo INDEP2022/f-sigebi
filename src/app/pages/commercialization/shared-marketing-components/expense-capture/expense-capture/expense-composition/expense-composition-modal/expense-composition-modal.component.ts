@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { catchError, map, of, take, takeUntil } from 'rxjs';
+import { take, takeUntil } from 'rxjs';
 import { IComerDetExpense2 } from 'src/app/core/models/ms-spent/comer-detexpense';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePage } from 'src/app/core/shared';
-import {
-  NUMBERS_PATTERN,
-  NUMBERS_POINT_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_POINT_PATTERN } from 'src/app/core/shared/patterns';
 import { IValidGood } from '../../../models/expense-good-process';
 
 @Component({
@@ -54,25 +51,35 @@ export class ExpenseCompositionModalComponent
 
   private fillCvmans() {
     this.loadingCvmans = true;
-    this.service
-      .getValidatesCvmans(+this.eventNumber, +this.lotNumber)
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        catchError(x => of({ data: [] })),
-        map(x => (x ? x.data : []))
-      )
-      .subscribe(x => {
-        this.loadingCvmans = false;
-        this.cvmans = x;
-        if (this.comerDetExpense) {
-          this.cvman.setValue(this.comerDetExpense.manCV);
-        }
-      });
+    // this.service
+    //   .getValidatesCvmans(+this.eventNumber, +this.lotNumber)
+    //   .pipe(
+    //     takeUntil(this.$unSubscribe),
+    //     catchError(x => of({ data: [] })),
+    //     map(x => (x ? x.data : []))
+    //   )
+    //   .subscribe(x => {
+    //     this.loadingCvmans = false;
+    //     this.cvmans = x;
+    //     if (this.comerDetExpense) {
+    //       this.cvman.setValue(this.comerDetExpense.manCV);
+    //     }
+    //   });
+    setTimeout(() => {
+      if (this.comerDetExpense) {
+        this.cvman.setValue(this.comerDetExpense.manCV);
+      }
+      this.loadingCvmans = false;
+      console.log(this.goodNumber.value);
+    }, 300);
   }
 
   private fillGoods() {
     if (this.comerDetExpense) {
-      this.goodNumber.setValue(+this.comerDetExpense.goodNumber);
+      setTimeout(() => {
+        this.goodNumber.setValue(this.comerDetExpense.goodNumber);
+        console.log(this.goodNumber.value);
+      }, 300);
     }
   }
 
@@ -87,7 +94,7 @@ export class ExpenseCompositionModalComponent
   }
   get bodyPostI() {
     return {
-      pevent: +this.eventNumber,
+      event: +this.eventNumber,
     };
   }
 
@@ -109,7 +116,7 @@ export class ExpenseCompositionModalComponent
   // }
 
   get pathCvmans() {
-    return 'spent/api/v1/aplication/query-validate-transfer';
+    return 'spent/api/v1/aplication/query-validate-transfer?limit=100';
   }
 
   get bodyPostCVman() {
@@ -120,14 +127,37 @@ export class ExpenseCompositionModalComponent
   }
 
   get pathGood() {
-    return (
-      'goodprocess/api/v1/application/query-pro-list-good' +
-      (this.comerDetExpense
-        ? this.comerDetExpense.goodNumber
-          ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
-          : ''
-        : '')
-    );
+    return 'goodprocess/api/v1/application/query-pro-list-good';
+    // return (
+    //   'goodprocess/api/v1/application/query-pro-list-good' +
+    //   (this.comerDetExpense
+    //     ? this.comerDetExpense.goodNumber
+    //       ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
+    //       : ''
+    //     : '')
+    // );
+  }
+
+  get pathGoodI() {
+    return 'goodprocess/api/v1/application/get-good-expedients-trans';
+    // return (
+    //   'goodprocess/api/v1/application/get-good-expedients-trans' +
+    //   (this.comerDetExpense
+    //     ? this.comerDetExpense.goodNumber
+    //       ? '?filter.goodNumber=$eq:' + this.comerDetExpense.goodNumber
+    //       : ''
+    //     : '')
+    // );
+  }
+
+  fillCvman(row: any) {
+    console.log(row);
+    if (row && row.goodNumber + '' == this.goodNumber.value + '') {
+      this.cvman.setValue(
+        row.cvman ? row.cvman : row.mandate2 ? row.mandate2 : null
+      );
+      this.cvman.disable();
+    }
   }
 
   fillGoodM(row: any) {
@@ -138,6 +168,9 @@ export class ExpenseCompositionModalComponent
       }
       if (row.mandate2) {
         this.cvman.setValue(row.mandate2);
+        this.cvman.disable();
+      } else {
+        this.cvman.enable();
       }
       if (row.iva2) {
         this.vat.setValue(row.iva2);
@@ -153,6 +186,8 @@ export class ExpenseCompositionModalComponent
         this.amount.setValue(0);
         this.amount.enable();
       }
+    } else {
+      this.cvman.enable();
     }
   }
 
@@ -164,7 +199,12 @@ export class ExpenseCompositionModalComponent
       }
       if (row.cvman) {
         this.cvman.setValue(row.cvman);
+        this.cvman.disable();
+      } else {
+        this.cvman.enable();
       }
+    } else {
+      this.cvman.enable();
     }
   }
 
@@ -178,11 +218,17 @@ export class ExpenseCompositionModalComponent
       this.isrWithholding.setValue(this.comerDetExpense.retencionIsr);
       this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
       this.budgetItem.setValue(this.comerDetExpense.departure);
+      this.vatWithholding.setValidators(
+        Validators.max(this.comerDetExpense.iva)
+      );
+      this.isrWithholding.setValidators(
+        Validators.max(this.comerDetExpense.amount)
+      );
     }
     if (this.eventNumber) {
       this.fillCvmans();
-      this.fillGoods();
     }
+    this.fillGoods();
     this.vat.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         console.log(response);
@@ -195,24 +241,6 @@ export class ExpenseCompositionModalComponent
         this.isrWithholding.setValidators(Validators.max(response));
       },
     });
-    // this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
-    //   next: response => {
-    //     if (response) {
-    //       if (this.address === 'M') {
-    //         this.selectedGood =
-    //           this.goods.filter(x => x.goodNumber === response)[0] ?? null;
-    //         if (this.selectedGood) {
-    //           if (this.selectedGood.transferorNumber) {
-    //             this.transferent = this.selectedGood.transferorNumber;
-    //           }
-    //           if (this.selectedGood.mandate2) {
-    //             this.cvman.setValue(this.selectedGood.mandate2);
-    //           }
-    //         }
-    //       }
-    //     }
-    //   },
-    // });
   }
 
   getTransferent(result: any) {
@@ -249,7 +277,7 @@ export class ExpenseCompositionModalComponent
         ],
       ],
       cvman: [null],
-      goodNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      goodNumber: [null],
     });
   }
 
@@ -292,11 +320,12 @@ export class ExpenseCompositionModalComponent
 
   confirm() {
     console.log(this.form.value);
+    console.log(this.cvman.value);
     this.clickedButton = true;
     if (this.comerDetExpense) {
-      this.onEditConfirm(this.form.value);
+      this.onEditConfirm({ ...this.form.value, cvman: this.cvman.value });
     } else {
-      this.onAddConfirm(this.form.value);
+      this.onAddConfirm({ ...this.form.value, cvman: this.cvman.value });
     }
   }
 
@@ -307,6 +336,7 @@ export class ExpenseCompositionModalComponent
       +body.isrWithholding -
       +body.vatWithholding
     ).toFixed(2);
+    console.log(body);
     return {
       ...body,
       expenseNumber: this.expenseNumber,

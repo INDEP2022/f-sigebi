@@ -137,17 +137,17 @@ export const REPORT_COLUMNS = {
     },
   },
   no_almacen: {
-    title: 'No. Almacen',
+    title: 'No. Almacén',
     type: 'string',
     sort: false,
   },
   descripcion_almacen: {
-    title: 'Descripción Almacen',
+    title: 'Descripción Almacén',
     type: 'string',
     sort: false,
   },
   ubicacion_almacen: {
-    title: 'Ubicación Almacen',
+    title: 'Ubicación Almacén',
     type: 'string',
     sort: false,
   },
@@ -302,7 +302,7 @@ export const REPORT_COLUMNS = {
     sort: false,
   },
   no_of_gestion: {
-    title: 'No. Oficio Gestion',
+    title: 'No. Oficio Gestión',
     type: 'string',
     sort: false,
   },

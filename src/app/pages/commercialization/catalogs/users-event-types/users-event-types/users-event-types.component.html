@@ -23,7 +23,7 @@
       <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
         <div>
           <button
-            *ngIf="teventsForm.valid"
+            [disabled]="!teventsForm.valid"
             type="button"
             tooltip="Nuevo"
             containerclass="tooltip-style"

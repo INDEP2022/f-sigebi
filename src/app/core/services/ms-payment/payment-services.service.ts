@@ -185,10 +185,20 @@ export class PaymentService extends HttpService {
   getValidSystem(filter?: string) {
     if (filter != null) {
       return this.get(
-        `${PaymentEndPoints.validSystem}?filter.valsisKey=$eq:${filter}`
+        `${PaymentEndPoints.validSystem}?filter.valsisKey=$eq:${filter}&sortBy=valsisKey:ASC`
       );
     } else {
       return this.get(`${PaymentEndPoints.validSystem}`);
+    }
+  }
+
+  getValidSystemAll(filter?: string) {
+    if (filter != null) {
+      return this.get(
+        `${PaymentEndPoints.validSystem}?limit=100&filter.valsisKey=$eq:${filter}`
+      );
+    } else {
+      return this.get(`${PaymentEndPoints.validSystem}?limit=100`);
     }
   }
 

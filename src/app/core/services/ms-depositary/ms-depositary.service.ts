@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { DepositaryEndPoints } from 'src/app/common/constants/endpoints/ms-depositary-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -284,10 +284,18 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
-  getComerPaymentSelect(multiple: number, idSearch: any) {
-    return this.get(
-      `${DepositaryEndPoints.ComerPaymentSelect}/${multiple}/type/${idSearch}`
-    );
+  getComerPaymentSelect(
+    data: {
+      processId: number;
+      movtoNumber: number;
+      monto: number;
+      referenceori: string;
+      selection: number;
+    }[]
+  ) {
+    return this.post(`${DepositaryEndPoints.ComerPaymentSelectUpdate}`, {
+      data,
+    });
   }
 
   getComerDetLcGrief(reference: number | string) {
@@ -351,5 +359,11 @@ export class MsDepositaryService extends HttpService {
   postActEstGrali(body: any) {
     // VALIDA_PAGOSREF.ACT_EST_GRALI
     return this.post<IListResponse<any>>(DepositaryEndPoints.ActEstGrali, body);
+  }
+
+  getCountReference(reference: string) {
+    return this.get<number>('count-comerPayment/' + reference).pipe(
+      catchError(x => of(0))
+    );
   }
 }

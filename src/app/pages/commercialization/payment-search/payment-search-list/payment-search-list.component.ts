@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
@@ -66,6 +66,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   LV_TOTREG: number;
   LV_WHERE: number;
   n_CONT: number = 0;
+  @ViewChild('table') table: Ng2SmartTableComponent;
+
   processTypes = [
     { value: 0, description: 'Normales' },
     { value: 1, description: 'Duplicados' },
@@ -281,7 +283,14 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field === 'date') {
+                if (filter.search.length === 10)
+                  this.columnFilters[
+                    field
+                  ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -491,73 +500,98 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onAdd.subscribe(data => {
-      if (data) {
-        console.log('Data Recibida ADD', data);
+    modalRef.content.onAdd.subscribe(newData => {
+      console.log(newData);
+      if (newData) {
+        console.log('Data Recibida ADD', newData);
         this.loading = true;
         let param = {
-          payId: data.paymentId,
+          payId: newData.paymentId,
           processId: Number(this.processId),
-          batchId: data.batchId,
-          idEvent: data.event,
+          batchId: newData.batchId,
+          idEvent: newData.event,
           // idCustomer: Number(this.idCustomer),
-          idGuySat: Number(2),
-          idselect: data.idselect ? 1 : 0,
-          // incomeid: Number(this.incomeid),
-          // idinconsis: Number(data.newData.inconsistencies),
-          tsearchId: data.tsearchId,
-          numbermovement: data.numbermovement,
-          date: data.date != null ? new Date(data.date) : null,
-          reference: data.reference,
-          referenceori: data.referenceori,
-          amount: data.amount,
-          cveBank: data.cve,
-          code: data.code,
-          batchPublic: data.publicBatch,
-          validSystem: data.systemValidity,
-          result: data.result,
+          idGuySat: newData.satDescription,
+          idselect: newData.idselect ? 1 : 0,
+          incomeid: Number(newData.entryOrderId),
+          // idinconsis: Number(newData.newData.inconsistencies),
+          tsearchId: newData.tsearchId,
+          numbermovement: newData.numbermovement,
+          date: newData.date != null ? new Date(newData.date) : null,
+          reference: newData.reference,
+          referenceori: newData.referenceori,
+          amount: newData.amount,
+          cveBank: newData.cve,
+          code: newData.code,
+          batchPublic: newData.publicBatch,
+          validSystem: newData.systemValidity,
+          result: newData.result,
           account: this.account,
-          guy: data.type,
+          guy: newData.type,
         };
-        this.getCreateValidSys(data.systemValidity, param);
-        //this.CreateAddRow(param);
+        // this.getCreateValidSys(data.systemValidity, param);
+        this.CreateAddRow(param);
         //this.getTableData();
       }
     });
-    modalRef.content.onEdit.subscribe(data => {
+    modalRef.content.onEdit.subscribe(({ newData, oldData }) => {
       // const elemC = document.getElementById('typeId') as HTMLInputElement;
-      if (data) {
+      if (newData) {
         this.loading = true;
         //this.editRow(data);
-        console.log('Data Editar', data);
-        console.log('fecha a editar -> ', data.newData.date);
+        console.log('Data Editar', newData);
+        console.log('fecha a editar -> ', newData.date);
+        // let param = {
+        //   tsearchId: Number(5),
+        //   payId: data.newData.paymentId,
+        //   processId: Number(this.processId),
+        //   batchId: Number(data.newData.batchId),
+        //   idEvent: Number(data.newData.event),
+        //   idCustomer: Number(this.idCustomer),
+        //   idGuySat: Number(this.idGuySat),
+        //   idselect: Number(this.idselect),
+        //   incomeid: Number(this.incomeid),
+        //   idinconsis: Number(data.newData.inconsistencies),
+        //   numbermovement: Number(data.newData.entryOrderId),
+        //   date: data.newData.date != null ? new Date(data.newData.date) : null,
+        //   reference: data.newData.reference,
+        //   referenceori: data.newData.referenceori,
+        //   amount: data.newData.amount,
+        //   cveBank: data.newData.cve,
+        //   code: Number(data.newData.code),
+        //   batchPublic: Number(data.newData.publicBatch),
+        //   validSystem: this.keyValidEdit,
+        //   result: data.newData.result,
+        //   account: this.account,
+        //   guy: data.newData.type,
+        // };
         let param = {
-          tsearchId: Number(5),
-          payId: data.newData.paymentId,
-          processId: Number(this.processId),
-          batchId: Number(data.newData.batchId),
-          idEvent: Number(data.newData.event),
-          idCustomer: Number(this.idCustomer),
-          idGuySat: Number(this.idGuySat),
-          idselect: Number(this.idselect),
-          incomeid: Number(this.incomeid),
-          idinconsis: Number(data.newData.inconsistencies),
-          numbermovement: Number(data.newData.entryOrderId),
-          date: data.newData.date != null ? new Date(data.newData.date) : null,
-          reference: data.newData.reference,
-          referenceori: data.newData.referenceori,
-          amount: data.newData.amount,
-          cveBank: data.newData.cve,
-          code: Number(data.newData.code),
-          batchPublic: Number(data.newData.publicBatch),
-          validSystem: this.keyValidEdit,
-          result: data.newData.result,
+          payId: newData.paymentId,
+          processId: oldData.processId,
+          batchId: newData.batchId,
+          idEvent: newData.event,
+          // idCustomer: Number(this.idCustomer),
+          idGuySat: newData.satDescription,
+          idselect: newData.idselect ? 1 : 0,
+          incomeid: Number(newData.entryOrderId),
+          // idinconsis: Number(newData.newData.inconsistencies),
+          tsearchId: newData.tsearchId,
+          numbermovement: newData.numbermovement,
+          date: newData.date != null ? new Date(newData.date) : null,
+          reference: newData.reference,
+          referenceori: newData.referenceori,
+          amount: newData.amount,
+          cveBank: newData.cve,
+          code: newData.code,
+          batchPublic: newData.publicBatch,
+          validSystem: newData.systemValidity,
+          result: newData.result,
           account: this.account,
-          guy: data.newData.type,
+          guy: newData.type,
         };
-        this.getValidSystemKey(data.newData.systemValidity, param);
+        // this.getValidSystemKey(newData.newData.systemValidity, param);
         console.log('ParamsUpdate->', param);
-        // this.updateRecord(param);
+        this.updateRecord(param);
         //this.getTableData();
       }
     });
@@ -658,10 +692,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         'No se Ha Seleccionado el Campo Tipo de Búsqueda'
       );
     } else {
-      this.SelectPago(
-        this.selectedRows[0].idselect,
-        this.searchForm.get('type').value
-      );
+      this.SelectPago();
     }
   }
 
@@ -773,7 +804,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     if (this.searchForm.invalid && this.searchType.value !== 6) {
       return null;
     }
-    debugger;
     let filterParams = new FilterParams();
     filterParams.limit = this.params.getValue().limit;
     if (byPage) {
@@ -815,7 +845,42 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     return filterParams;
   }
 
+  private fillSelectedRows() {
+    setTimeout(() => {
+      this.table.isAllSelected = false;
+      let allSelected = true;
+      if (
+        (this.selectedRows && this.selectedRows.length > 0) ||
+        (this.dataRows && this.dataRows.length > 0)
+      ) {
+        this.table.grid.getRows().forEach(row => {
+          // console.log(row);
+
+          if (
+            this.selectedRows &&
+            this.selectedRows.length > 0 &&
+            this.selectedRows.find(
+              item => row.getData().toString() === item.toString()
+            )
+          ) {
+            this.table.grid.multipleSelectRow(row);
+            allSelected = allSelected && true;
+          } else if (row.getData()['idselect'] === '1') {
+            this.table.grid.multipleSelectRow(row);
+            allSelected = allSelected && true;
+          } else {
+            allSelected = allSelected && false;
+          }
+          // if(row.getData())
+          // this.table.grid.multipleSelectRow(row)
+        });
+        this.table.isAllSelected = allSelected;
+      }
+    }, 300);
+  }
+
   getTableData(byPage = false) {
+    // debugger;
     let params = this.getFilterParams(byPage);
     this.dataRows = [];
     this.localdata.load(this.dataRows);
@@ -851,6 +916,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         this.localdata.load(this.dataRows);
         console.log('this dataRows: ', this.dataRows);
         console.log('this localData: ', this.localdata);
+        this.fillSelectedRows();
         this.totalItems = res.count;
         // for (let i = 0; i < res.count; i++) {
         //   console.log('Entra al FOR', res.data);
@@ -1058,7 +1124,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             console.log('LV_EST_PROCESO-> ', resp.statusProcess);
             return true;
           } else {
-            this.LV_EST_PROCESO = 1;
+            this.LV_EST_PROCESO = 0;
             return false;
           }
         })
@@ -1100,7 +1166,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
     let LV_ACCION: string = action.description;
     let LV_PROCESA: number;
-    debugger;
     LV_PROCESA = 0;
     const elemC = this.searchForm.get('type');
 
@@ -1202,7 +1267,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         'Debe Elegir un Banco'
       );
     } else {
-      debugger;
       const files = (event.target as HTMLInputElement).files;
       if (files.length != 1) throw 'No files selected, or more than of allowed';
       const file = files[0];
@@ -1216,9 +1280,10 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
               console.log(event);
               this.loadCSV.nativeElement.value = '';
               if (typeof event === 'object') {
-                this.searchForm.patchValue({
-                  type: 6,
-                });
+                this.searchForm.get('type').setValue('6');
+                this.system.setValue('1');
+                this.searchType.setValue('6');
+                this.searchForm.updateValueAndValidity();
                 this.getTableData();
                 // this.getTableData();
                 // if (event.CONT > 0) {
@@ -1631,15 +1696,26 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     );
   }
 
-  SelectPago(multiple: number, idSearch: any) {
+  SelectPago() {
     this.loader.load = true;
     this.msDepositaryService
-      .getComerPaymentSelect(multiple, idSearch)
+      .getComerPaymentSelect(
+        this.selectedRows.map(x => {
+          return {
+            processId: +x.processId,
+            movtoNumber: +x.numbermovement,
+            monto: +x.amount,
+            referenceori: x.referenceori,
+            selection: 1,
+          };
+        })
+      )
       .subscribe(
         resp => {
           this.loader.load = false;
           if (resp != null && resp != undefined) {
             this.alert('success', '', 'Se Procesaron los Registros');
+            this.getTableData();
           } else {
             this.alert('error', '', 'No Se Procesaron los Registros');
           }
