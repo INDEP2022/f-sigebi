@@ -88,4 +88,8 @@ export class ParametersService extends HttpService {
   ) {
     return this.post('application/query-delegation', body, params);
   }
+
+  massiveConstany(user: string) {
+    return this.get(`application/massive-constancy/${user}`);
+  }
 }
