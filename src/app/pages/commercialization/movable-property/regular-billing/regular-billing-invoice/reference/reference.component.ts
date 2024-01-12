@@ -6,12 +6,19 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'reference-modal',
   templateUrl: './reference.component.html',
-  styles: [],
+  styles: [
+    `
+      .stl {
+        margin-top: -30px !important;
+      }
+    `,
+  ],
 })
 export class ReferenceModalComponent extends BasePage implements OnInit {
   title: string = 'Referencia';
   data: any;
   info: any;
+  referencia1: any;
   constructor(
     private modalRef: BsModalRef,
     private comerInvoiceService: ComerInvoiceService
@@ -20,11 +27,14 @@ export class ReferenceModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true;
     this.comerInvoiceService
       .getVeatInvoice(this.data.eventId, this.data.billId)
       .subscribe({
         next: resp => {
           this.info = resp;
+          this.referencia1 = this.info.referencia1;
+          this.loading = false;
         },
       });
   }
