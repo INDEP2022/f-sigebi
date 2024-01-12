@@ -55,6 +55,10 @@ export class NumeraireDispersionModalComponent
     return this.form.get('goodNumber');
   }
 
+  get numeraryxGoodId() {
+    return this.form.get('numeraryxGoodId');
+  }
+
   get amount() {
     return this.form.get('amount');
   }
