@@ -698,7 +698,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   get paymentRequestExpense() {
-    return this.data.paymentRequestNumber;
+    return this.data ? this.data.paymentRequestNumber : null;
   }
 
   get paymentRequestNumber() {
