@@ -81,7 +81,7 @@ import { COLUMNS2, RELATED_FOLIO_COLUMNS } from './columns2';
 @Component({
   selector: 'app-proof-of-delivery',
   templateUrl: './proof-of-delivery.component.html',
-  styles: [],
+  styleUrls: ['./proof-of-delivery.component.css'],
 })
 export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -248,6 +248,8 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     columns: {
       ...COLUMNS2,
     },
+    rowClassFunction: (row: { data: { status_color: string } }) =>
+      row.data.status_color == 'yellow' ? 'yellow-background' : '',
     noDataMessage: 'No se Encontraron Registros',
   };
 
@@ -1068,51 +1070,29 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
       this.goodTrackerService.PaInsGoodParameters(params).subscribe(
         res => {
           console.log(res);
-          this.proceedingsService
-            .consultPaValMasive('FACTCONST_0001')
-            .subscribe(
-              res => {
-                console.log(res);
-                this.buttonActive.generateConst = true;
-                this.alert(
-                  'success',
-                  'Se agregaron bienes para generar constancia',
-                  ''
-                );
-              },
-              err => {
-                console.log(err);
-              }
-            );
+          const body = {
+            screen: 'FACTCONST_0001',
+            user: this.authService.decodeToken().preferred_username,
+          };
+          this.proceedingsService.consultPaValMasive(body).subscribe(
+            res => {
+              console.log(res);
+              this.buttonActive.generateConst = true;
+              this.alert(
+                'success',
+                'Se agregaron bienes para generar constancia',
+                ''
+              );
+            },
+            err => {
+              console.log(err);
+            }
+          );
         },
         err => {
           console.log(err);
         }
       );
-    }
-    if (rastreador == '2') {
-      //!
-
-      const bodyQueryGoodTracker: IQueryGoodTracker = {
-        vcsScreen: 'FACTCONST_0001',
-        typeMinutes: lv_identif,
-        relGood: global,
-      };
-      console.log(bodyQueryGoodTracker);
-      this.deliveryConstancyService
-        .queryGoodTracker(bodyQueryGoodTracker)
-        .subscribe(
-          res => {
-            console.log(res);
-            localStorage.removeItem('lv_identif_FACTCONST');
-            localStorage.removeItem('rastreador');
-          },
-          err => {
-            console.log(err);
-            localStorage.removeItem('rastreador');
-            localStorage.removeItem('lv_identif_FACTCONST');
-          }
-        );
     }
   }
 
@@ -1795,18 +1775,6 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   //BUSCAR BIENES EN DETALLE_ACTA_ENT_RECEP
   searchGoodsInDetailProceeding() {
     const paramsF = new FilterParams();
-    // paramsF.page = this.params2.value.page;
-    // paramsF.limit = this.params2.value.limit;
-
-    /* for (let data of this.completeFiltersAct) {
-      if (data.search != null && data.search != '') {
-        paramsF.addFilter(
-          data.field,
-          data.search,
-          data.field != 'numberGood' ? SearchFilter.ILIKE : SearchFilter.EQ
-        );
-      }
-    } */
 
     this.serviceDetailProc
       .getGoodsByProceedings(this.idProceeding, paramsF.getParams())
@@ -1830,10 +1798,49 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
             })
           );
 
-          console.log(newData);
+          console.log('cargó', newData);
           this.data2.load(newData);
           this.totalItems2 = res.count;
           this.loadingTable = false;
+
+          if (localStorage.getItem('rastreador') == '2') {
+            //!
+            const bodyQueryGoodTracker: IQueryGoodTracker = {
+              vcsScreen: 'FACTCONST_0001',
+              typeMinutes: localStorage.getItem('lv_identif_FACTCONST'),
+              relGood: this.ngGlobal.REL_BIENES.toString(),
+            };
+            console.log(bodyQueryGoodTracker);
+            this.deliveryConstancyService
+              .queryGoodTracker(bodyQueryGoodTracker)
+              .subscribe(
+                res => {
+                  console.log(res);
+                  res.data.forEach((element: any) => {
+                    console.log(element);
+                    this.data2.append({
+                      ...element,
+                      status_color: 'yellow',
+                    });
+                  });
+
+                  this.alert(
+                    'success',
+                    `Se agregaron ${res.data.length} bienes`,
+                    ''
+                  );
+
+                  localStorage.removeItem('lv_identif_FACTCONST');
+                  localStorage.removeItem('rastreador');
+                },
+                err => {
+                  console.log(err);
+                  this.alert('warning', 'No se agregaron bienes', '');
+                  localStorage.removeItem('rastreador');
+                  localStorage.removeItem('lv_identif_FACTCONST');
+                }
+              );
+          }
         },
         err => {
           this.data2.load([]);
@@ -2513,6 +2520,9 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
             console.log(res);
             this.alert('success', 'Se abrió el acta', '');
             this.getExpedient();
+            this.buttonActive.tracker = false;
+            this.buttonActive.generateConst = false;
+            this.buttonActive.goodDon = false;
           },
           err => {
             console.log(err);

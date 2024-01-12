@@ -210,7 +210,9 @@
                   [maxLength]="5"
                   class="form-control"
                   formControlName="folio"
-                  [readOnly]="!campos" />
+                  [readOnly]="
+                    ['CERRADO', 'CERRADA'].includes(statusProceeding)
+                  " />
               </form-field>
               <form-field
                 [control]="formAct.get('year')"

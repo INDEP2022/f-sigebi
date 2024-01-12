@@ -10,7 +10,6 @@ import {
   IDetailProceedingsDeliveryReception,
   IDetailWithIndEdo,
   IPaGenConstMassive,
-  IPupGenerateUniversalFolio,
 } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
 
 @Injectable({
@@ -223,10 +222,6 @@ export class DetailProceeDelRecService extends HttpService {
     const receive = 'S';
     const route = `${ProceedingsEndpoints.ActasRecptionImp}?filter.received=${receive}`;
     return this.get(route, params);
-  }
-
-  pupGenerateUniversalFolio(body: IPupGenerateUniversalFolio) {
-    return this.post('application/pupGenerateUniversalFolio', body);
   }
 
   paGenConstMassive(body: IPaGenConstMassive) {

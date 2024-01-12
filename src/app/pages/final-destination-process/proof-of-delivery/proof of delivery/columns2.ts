@@ -3,13 +3,22 @@ export const COLUMNS2 = {
     title: 'No. Bien',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell, row) => {
+      if (row.numberGood) {
+        return row.numberGood;
+      }
+      return row.goodNumber;
+    },
   },
   'good.goodClassNumber': {
     title: 'No. Clasificación',
     type: 'number',
     sort: false,
     valuePrepareFunction: (cell, row) => {
-      return row.good.goodClassNumber;
+      if (row.good) {
+        return row.good.goodClassNumber;
+      }
+      return row.classificationNumber;
     },
   },
   'good.description': {
@@ -17,7 +26,11 @@ export const COLUMNS2 = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell, row) => {
-      return row.good.description;
+      if (row.good) {
+        return row.good.description;
+      }
+
+      return row.diDescGood;
     },
   },
   'good.quantity': {
@@ -25,7 +38,11 @@ export const COLUMNS2 = {
     type: 'number',
     sort: false,
     valuePrepareFunction: (cell, row) => {
-      return row.good.quantity;
+      if (row.good) {
+        return row.good.quantity;
+      }
+
+      return row.amount;
     },
   },
   'good.unit': {
@@ -33,7 +50,9 @@ export const COLUMNS2 = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell, row) => {
-      return row.good.unit;
+      if (row.good) {
+        return row.good.unit;
+      }
     },
   },
 };

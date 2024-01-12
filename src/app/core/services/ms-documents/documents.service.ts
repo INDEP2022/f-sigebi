@@ -15,6 +15,7 @@ import {
   IGenerateFolioMassConv,
 } from '../../models/ms-documents/documents';
 import { TypesDocuments } from '../../models/ms-documents/documents-type';
+import { IPupGenerateUniversalFolio } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IReceipyGuardDocument } from '../../models/receipt/receipt.model';
 
 @Injectable({
@@ -414,5 +415,9 @@ export class DocumentsService extends HttpService {
   updateClarDocImp(id: number, model: IClarificationDocumentsImpro) {
     const route = `${DocumentsEndpoints.ClarificationDocumentsImpro}/${id}`;
     return this.put<IClarificationDocumentsImpro>(route, model);
+  }
+
+  pupGenerateUniversalFolio(body: IPupGenerateUniversalFolio) {
+    return this.post('application/pupGenerateUniversalFolio', body);
   }
 }

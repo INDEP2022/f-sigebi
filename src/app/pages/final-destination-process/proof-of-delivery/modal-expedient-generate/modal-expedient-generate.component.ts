@@ -203,26 +203,45 @@ export class ModalExpedientGenerateComponent
             user: this.authService.decodeToken().preferred_username,
           };
 
-          this.detailProceeDelRecService
-            .pupGenerateUniversalFolio(body)
-            .subscribe(
-              res => {
-                const bodyPa: IPaGenConstMassive = {
-                  user: this.authService.decodeToken().preferred_username,
-                  proceeding: this.proceeding,
-                  expedient: this.expedient,
-                  screen: 'FACTCONST_0001',
-                };
-              },
-              err => {
-                console.log(err);
-                this.alert(
-                  'error',
-                  'Se presentó un error al generar las constancias',
-                  ''
+          this.documentsService.pupGenerateUniversalFolio(body).subscribe(
+            res => {
+              const bodyPa: IPaGenConstMassive = {
+                user: this.authService.decodeToken().preferred_username,
+                proceeding: this.proceeding,
+                expedient: this.expedient,
+                screen: 'FACTCONST_0001',
+              };
+
+              this.detailProceeDelRecService
+                .paGenConstMassive(bodyPa)
+                .subscribe(
+                  res => {
+                    console.log(res);
+                    this.alert(
+                      'success',
+                      'Se generaron las constancias de entrega',
+                      ''
+                    );
+                  },
+                  err => {
+                    console.log(err);
+                    this.alert(
+                      'error',
+                      'Se presentó un error al generar las constancias',
+                      ''
+                    );
+                  }
                 );
-              }
-            );
+            },
+            err => {
+              console.log(err);
+              this.alert(
+                'error',
+                'Se presentó un error al generar las constancias',
+                ''
+              );
+            }
+          );
         }
       });
     }

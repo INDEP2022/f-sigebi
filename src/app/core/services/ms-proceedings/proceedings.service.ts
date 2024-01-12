@@ -336,9 +336,9 @@ export class ProceedingsService extends HttpService {
     return this.delete(route, params);
   }
 
-  consultPaValMasive(screen: string) {
+  consultPaValMasive(body: { screen: string; user: string }) {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}/FACTCONST_0001`;
-    return this.get(`aplication/pa-val-const-masive/${screen}`);
+    return this.post(`aplication/pa-val-const-masive`, body);
   }
 
   pufValidTerm(body: IPufValidTerm) {
