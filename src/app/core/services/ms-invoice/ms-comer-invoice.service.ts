@@ -385,4 +385,8 @@ export class ComerInvoiceService extends HttpService {
   getApplicationPupStatusCan(data: any) {
     return this.post(ENDPOINT_INVOICE.ApplicationPupStatusCan, data);
   }
+
+  putApplicationPutProcess(data: any) {
+    return this.put(ENDPOINT_INVOICE.ApplicationPutProcess, data);
+  }
 }

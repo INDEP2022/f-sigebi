@@ -110,4 +110,8 @@ export class ProgrammingGoodReceiptService extends HttpService {
     const route = `${ProgrammingGoodEndpoints.paEstProgTransBie}`;
     return this.post(route, params);
   }
+
+  getTmpProgValidation(params: any) {
+    return this.get('tmp-prog-validation', params);
+  }
 }

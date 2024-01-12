@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { REGULAR_BILLING_GENERATION_ASSETS_COLUMNS } from './regular-billing-generation-assets-columns';
 //XLSX
+import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
@@ -49,7 +50,8 @@ export class RegularBillingGenerationAssetsComponent
     private massiveGoodService: MassiveGoodService,
     private comerInvoiceFacPapel: ComerInvoiceFacPapelService,
     private fb: FormBuilder,
-    private comerInvoiceService: ComerInvoiceService
+    private comerInvoiceService: ComerInvoiceService,
+    private datePipe: DatePipe
   ) {
     super();
     this.settings = {
@@ -101,6 +103,12 @@ export class RegularBillingGenerationAssetsComponent
             search[filter.field]();
 
             if (filter.search !== '') {
+              if (filter.field == 'insertDate') {
+                filter.search = this.datePipe.transform(
+                  filter.search,
+                  'yyyy-MM-dd'
+                );
+              }
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -112,7 +120,8 @@ export class RegularBillingGenerationAssetsComponent
       });
 
     this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.totalItems > 0) this.getAllComerPapel();
+      // if (this.totalItems > 0)
+      this.getAllComerPapel();
     });
   }
 
@@ -125,11 +134,7 @@ export class RegularBillingGenerationAssetsComponent
           const response = await this.importCSV(file);
           this.file.nativeElement.value = '';
           if (!response) {
-            this.alert(
-              'warning',
-              'Atención',
-              'No se puede copiar el archivo de excel'
-            );
+            this.alert('warning', 'No se puede copiar el archivo de excel', '');
             return;
           }
           //   COMER_VNR.P_INSERTA_LOTE(VAUDSID);

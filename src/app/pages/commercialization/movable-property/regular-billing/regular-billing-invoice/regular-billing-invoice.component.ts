@@ -122,7 +122,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   @Output() comer: EventEmitter<any> = new EventEmitter(null);
   @Output() formG: EventEmitter<FormGroup> = new EventEmitter();
   @Input() set sum(values: any) {}
-
+  @Output() numb: EventEmitter<any> = new EventEmitter(null);
   val: any;
 
   get sum() {
@@ -146,6 +146,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   btnLoading11: boolean = false;
   btnLoading12: boolean = false;
   btnLoading13: boolean = false;
+  btnLoading14: boolean = false;
 
   invoiceSelected: any = null;
 
@@ -725,13 +726,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   async generatePreFacture() {
     const { event, idAllotment } = this.form.value;
-
     if (!event) {
       this.alert('warning', 'Ingrese un evento para generar prefacturas', '');
       return;
     }
 
     this.btnLoading = true;
+    // -- VALIDA QUE EXISTAN LOTES VALIDOS PARA FACTURAR --
     const count = await this.getCountBatch(event, idAllotment);
 
     if (count == 0) {
@@ -744,12 +745,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       return;
     }
 
+    // -- VALIDA QUE HAYA LOTES PARA FACTURAR --
     const valid = await this.getValidBatch(event, idAllotment);
-
+    /* Se determinan las facturas que no se generan por mandatos no facturables */
     if (valid.cont_nofact > 0) {
       this.alert(
         'warning',
-        'No se generan ${valid.cont_nofact} factura(s) por Mandatos no facturables.',
+        `No se generan ${valid.cont_nofact} factura(s) por Mandatos no facturables.`,
         ``
       );
       this.btnLoading = false;
@@ -769,6 +771,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     ).then(async ans => {
       if (ans.isConfirmed) {
         //en espera de revision de creacion facturas e inconsitencias
+        // PK_COMER_FACTINM.PA_AJU_FACTURA_PAG
         const pk_comer: any = await this.packageInvoice({
           eventId: event,
           option: 0,
@@ -796,20 +799,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             'filter.eventId'
           ] = `${SearchFilter.EQ}:${event}`;
           this.getAllComer();
-
-          // SELECT COUNT(0)
-          //   INTO CONTADOR
-          //   FROM COMER_INCONSISTENCIAS
-          //   WHERE ID_EVENTO = :BLK_CTRL.EVENTO;
-          // IF CONTADOR > 0 THEN
-          //     GO_BLOCK('COMER_INCONSISTENCIAS');
-          // END IF;
           const params = new ListParams();
           params['filter.eventId'] = `$eq:${event}`; // COMER_INCONSISTENCIAS
           const countInconsistencias: any =
             await this.billingsService.getEatInconsistences(params);
           this.btnLoading = false;
           if (countInconsistencias.count > 0) {
+            this.numb.emit({ numberTab: 4, event: event });
             // this.cambiarTab(1);
             // this.params3.getValue()['filter.eventId'] = `$eq:${event}`;
             // this.valDefaultWhereInconsistencias = true;
@@ -985,9 +981,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       initialState: {
         data: this.blk_actdat,
         totalItems: this.blk_actdat.length,
-        callback: async (next: boolean) => {
-          if (next) {
-            //llamar los datos de nuevo
+        callback: async (event: number) => {
+          if (event) {
+            this.paramsList.getValue()[
+              'filter.eventId'
+            ] = `${SearchFilter.EQ}:${event}`;
+            this.paramsList.getValue()[
+              'filter.address'
+            ] = `${SearchFilter.EQ}:M`;
+            this.getAllComer();
           }
         },
       },
@@ -1041,6 +1043,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const { event, idAllotment } = this.form.value;
 
     if (userValid == 1) {
+      // Cambiar a 0 //
       this.btnLoading10 = false;
       this.alert(
         'warning',
@@ -1064,15 +1067,18 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           this.alertInfo('warning', 'Sin factura(s) para trabajar', '');
           return;
         }
-
+        let arr = [];
         for (const invoice of this.isSelect) {
           if (!n_id_event) {
             n_id_event = invoice.eventId;
           }
           if (invoice.factstatusId == 'PREF') {
             n_cont++;
+            arr.push(invoice);
           }
         }
+        this.isSelect = arr;
+        this.dataFilter.refresh();
       }
 
       if (n_cont == 0) {
@@ -1087,7 +1093,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         '¿Desea continuar?'
       ).then(ans => {
         if (ans.isConfirmed) {
+          // PUP_NVO_GENERA_FOLIOS
           this.newGenerateInvoice(c_ind, n_id_event);
+        } else {
+          this.btnLoading10 = false;
         }
       });
     }
@@ -1110,7 +1119,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       await this.updateDoc(n_id_event);
 
       await this.newMarkProcess('FL', 'PREF', c_indN);
-      //commit guardar cambios
 
       await this.generateInvoiceCtrl(String(event), tp_event);
 
@@ -1120,11 +1128,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           'filter.eventId'
         ] = `${SearchFilter.EQ}:${event}`;
         this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
-        this.getAllComer();
+        // this.getAllComer();
       }
 
       //procedimiento verifica prov cance
-      this.verifyProv();
+      this.verifyProv(event);
       this.btnLoading10 = false;
     } else {
       this.btnLoading10 = false;
@@ -1132,7 +1140,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
   }
 
-  async verifyProv() {
+  async verifyProv(event: any) {
     const data = await this.dataFilter.getAll();
     for (const invoice of data) {
       if (
@@ -1143,9 +1151,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         invoice.factstatusId = 'FOL';
         delete invoice.delegation;
         await this.updateInvoice(invoice);
-        this.getAllComer();
       }
     }
+    this.paramsList.getValue()[
+      'filter.eventId'
+    ] = `${SearchFilter.EQ}:${event}`;
+    this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
     this.getAllComer();
     this.alert('success', 'Proceso terminado correctamente', '');
   }
@@ -1254,6 +1265,16 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
 
     return true;
+  }
+  async putApplicationPutProcess(data: any) {
+    return firstValueFrom(
+      this.comerInvoice.putApplicationPutProcess(data).pipe(
+        map(resp => {
+          return true;
+        }),
+        catchError(() => of(false))
+      )
+    );
   }
 
   async updateProcess(eventId: number, billId: number, process: string) {
@@ -1559,15 +1580,18 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
       let resp = await this.updateInvoice(invoice);
       if (resp) {
-        const current: any[] = await this.dataFilter.getAll();
-        const index = current.findIndex(inv => inv == this.isSelect[0]);
-        current[index].factstatusId = 'IMP';
-        this.dataFilter.load(current);
-        this.dataFilter.refresh();
+        // const current: any[] = await this.dataFilter.getAll();
+        // const index = current.findIndex(inv => inv == this.isSelect[0]);
+        // current[index].factstatusId = 'IMP';
+        // this.dataFilter.load(current);
+        // this.dataFilter.refresh();
+        this.getAllComer();
+        this.removeSelect();
+        this.alert('success', 'Cambio a vehiculos tractocamión', '');
+      } else {
+        this.getAllComer();
+        this.alert('warning', 'No se pudo realizar el cambio', '');
       }
-      // this.getAllComer();
-      this.removeSelect();
-      this.alert('success', 'Cambio a vehiculos tractocamión', '');
     }
   }
 
@@ -1820,7 +1844,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert('warning', 'Favor de seleccionar una factura', '');
       return;
     }
-
+    // LLAMA_REPORTE (12, 2, :COMER_FACTURAS.TIPO, 1);
     this.callReport(
       12,
       2,
@@ -1856,17 +1880,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       // -- TODOS LAS CARTAS DE RESPONSABILIDAD
       this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
-      this.impresionCardEnt(1);
-      this.removeSelect();
+      this.impresionCardResp(1);
     } else if (num == 1 && !delegation) {
       // -- SOLO CARTAS DE RESPONSABILIDAD SELECCIONADOS DISCONTINUOS
-      this.impresionCardEnt(0);
+      this.impresionCardResp(0);
     } else if (num == 0 && delegation) {
       // -- CARTAS DE RESPONSABILIDAD SELECCIONADOS DE UNA REGIONAL
       this.changeOpt(3); // ORDENA_DATOS (3);
       await this.markAll();
-      this.impresionCardEnt(1);
-      this.removeSelect();
+      this.impresionCardResp(1);
     }
   }
 
@@ -1883,6 +1905,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       );
       break;
     }
+    this.removeSelect();
   }
 
   async actMatricula() {
@@ -1909,7 +1932,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               .updateVal5({ val5: data2[0].modmandato }, data2[0].goodNot)
               .subscribe({
                 next: () => {
-                  this.alert('success', 'Matriícula ha sido actualizada', '');
+                  this.alert('success', 'Matrícula ha sido actualizada', '');
                   this.getComerDetInovice();
                   this.btnLoading9 = false;
                   this.rowInvoice = null;
@@ -1920,9 +1943,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
                 },
               });
           } else {
+            this.btnLoading9 = false;
             this.alert('warning', 'Bien no válido para realizar el cambio', '');
           }
         } else {
+          this.btnLoading9 = false;
           this.alert('warning', 'Usuario inválido para realizar el cambio', '');
         }
       } else {
@@ -1974,7 +1999,30 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     );
   }
 
-  sendPackage() {}
+  sendPackage() {
+    this.alertQuestion(
+      'question',
+      'Se enviara el paquete de los documentos a las regionales',
+      '¿Desea Continuar?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        // PUP_GENERA_RUTA;
+        await this.pupGeneraRuta();
+        // PUP_GENERA_RUTA2;
+        await this.pupGeneraRuta2();
+        // PUP_INICIALIZA_BATS;
+        await this.pupInicializaBats();
+        // IMPRIME_PAQUETE;
+        await this.impresioPackage();
+
+        this.alert('success', 'Se envió el paquete a la regional', '');
+      }
+    });
+  }
+
+  async pupInicializaBats() {}
+  async pupGeneraRuta2() {}
+  async pupGeneraRuta() {}
 
   openURL() {
     if (this.selectInovice() == 1) {
@@ -2005,7 +2053,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   impresionAnexReport(option: number) {
     for (let invoice of this.isSelect) {
       //revisar con procedimiento pup_rep_facturas_mas
-
+      // this.pupRepBillMore(10, invoice.Type, invoice)
       this.callReport(
         10,
         1,
@@ -2025,10 +2073,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       return;
     }
 
-    if (this.isSelect.length == 0) {
-      this.alert('warning', 'Debe seleccionar una factura', '');
-      return;
-    }
     if (!this.isSelect[0].Invoice) {
       this.alert('warning', 'No ha capturado el folio de la factura', '');
       return;
@@ -2047,26 +2091,44 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         Number(invoice.Type),
         1,
         null,
-        1,
+        this.parameter.copias,
         invoice.eventId,
         invoice.billId,
         invoice.impressionDate
       );
 
+      let factstatusId = invoice.factstatusId;
+      let delegation = invoice.delegation;
+
       invoice.factstatusId = 'IMP';
       delete invoice.delegation;
+
       let resp = await this.updateInvoice(invoice);
       if (resp) {
         const current: any[] = await this.dataFilter.getAll();
         const index = current.findIndex(inv => inv == this.isSelect[0]);
         current[index].factstatusId = 'IMP';
+        current[index]['delegation'] = delegation;
+        // Realizar DesSelección
+        this.desSelectOne(current[index]);
         this.dataFilter.load(current);
         this.dataFilter.refresh();
+      } else {
+        invoice.delegation = delegation;
+        invoice.factstatusId = factstatusId;
       }
       break;
     }
   }
-
+  async desSelectOne(bill: any) {
+    let arr = [];
+    for (const invoice of this.isSelect) {
+      if (invoice != bill) {
+        arr.push(invoice);
+      }
+    }
+    this.isSelect = arr;
+  }
   async readParameter() {
     this.parameter.numfactimp = await this.numFac();
     this.parameter.numfactele = await this.numFacTele();
@@ -2123,13 +2185,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           ignoreBackdropClick: true,
         };
         this.modalService.show(GetCfdiComponent, config);
+        // PUP_GENERA_RUTA3;
+        // PUP_INICIALIZA_BATS;
         // this.impresioPackage();
       }
     });
   }
 
   async impresioPackage() {
-    let v_uuid;
+    let v_uuid: number;
     for (const invoice of this.isSelect) {
       if (
         [2, 5].includes(Number(invoice.Type)) &&
@@ -2140,8 +2204,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         v_uuid = await this.getBill(invoice);
 
         if (['CFDI', 'IMP'].includes(invoice.factstatusId) && v_uuid == 1) {
-          //llama pub_rep_factura_mas
-          //llama pub_rep_factura_mas
+          //'PUP_REP_FACTURA_MAS 10','A'
+          this.pupRepBillMore(10, invoice.Type, invoice);
+          //'PUP_REP_FACTURA_MAS 11','A'
+          this.pupRepBillMore(11, invoice.Type, invoice); // CONSTANCIA DE ENTREGA Y CFDI
         } else {
           this.alert(
             'warning',
@@ -2150,14 +2216,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        // llama pup_rep_factura_mas
+        // pup_rep_factura_mas
+        this.pupRepBillMore(11, invoice.Type, invoice);
       }
     }
-    //llama pub_ejecuta_bats
-
+    //llama PUP_EJECUTA_BATS
+    this.pupEjecutaBats();
     this.alert('success', 'El CFDI nuevo fue enviado', '');
   }
-
+  pupEjecutaBats() {}
   async getBill(invoice: any) {
     const filter = new FilterParams();
 
@@ -2424,7 +2491,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.btnLoading13 = false;
         this.alert(
           'error',
-          'Ha ocurrio un fallo en la exportación del archivo',
+          'Ha ocurrido un fallo en la exportación del archivo',
           ''
         );
       },
@@ -2442,7 +2509,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     } else {
       aux_status = statusValid;
     }
-
+    let arr = [];
     for (const invoice of this.isSelect) {
       if (invoice.factstatusId == (aux_status ?? invoice.factstatusId)) {
         if (!invoice.billRelimagId && !invoice.eventRelimagId) {
@@ -2454,6 +2521,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             aux_val_liq = await this.batchLiq(invoice.eventId, invoice.batchId);
             if (aux_val_liq == 1) {
               invoice.process = process;
+              // let obj = {
+              //   process: process,
+              //   eventId: invoice.eventId,
+              //   billId: invoice.billId
+              // }
+              // arr.push(obj);
               await this.updateProcess(
                 invoice.eventId,
                 invoice.billId,
@@ -2467,6 +2540,12 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           }
         } else {
           invoice.process = process;
+          // let obj = {
+          //   process: process,
+          //   eventId: invoice.eventId,
+          //   billId: invoice.billId
+          // }
+          // arr.push(obj);
           await this.updateProcess(invoice.eventId, invoice.billId, process);
         }
       }
@@ -2487,11 +2566,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         `Sus lotes no han sido afectados`
       );
     }
+    // else{
+    //   // let resp = await this.putApplicationPutProcess(arr);
+    //   // console.log("NICE", resp)
+    // }
 
     if (contg == 1 && aux_valgasto == 1) {
       this.alert(
         'warning',
-        'No se generara el folio de la factura',
+        'No se generará el folio de la factura',
         `El lote ${
           this.isSelect[this.isSelect.length - 1].batchId
         } no cumple las validaciones de los montos(chatarra)`
@@ -2500,7 +2583,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         `${contg} facturas no pueden ser foliadas`,
-        `no cumplen las validaciones de los montos(chatarra)`
+        `No cumplen las validaciones de los montos(chatarra)`
       );
     }
 
@@ -2512,6 +2595,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe seleccionar algún evento', '');
       return;
     }
+    // LLAMA_REPORTE (:COMER_FACTURAS.TIPO, 2, NULL, 1);
     this.callReport(
       Number(this.isSelect[0].Type),
       2,
@@ -2523,6 +2607,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     );
 
     this.isSelect = [];
+    this.dataFilter.refresh();
   }
 
   async viewAnexo() {
@@ -2530,7 +2615,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe seleccionar algún evento', '');
       return;
     }
-
+    this.btnLoading14 = true;
     const date = await this.getDateParameter();
 
     const val = await this.etapaNexo(this.isSelect[0].impressionDate);
@@ -2547,12 +2632,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             this.isSelect[0].billId,
             this.isSelect[0].impressionDate
           );
+          this.btnLoading14 = false;
         } else {
+          this.btnLoading14 = false;
           this.alert('warning', 'La factura no tiene anexo', '');
         }
         break;
       }
     } else {
+      this.btnLoading14 = false;
       this.alert(
         'warning',
         'Atención',
@@ -2762,6 +2850,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   printerBill2() {
+    // IMPRIMIR_FACTURA_2
     if (this.isSelect.length == 0)
       return this.alert('warning', 'Debe seleccionar una factura', '');
 
@@ -2783,6 +2872,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     if (aux == 1) {
       for (const invoice of this.isSelect) {
         J = J + 1;
+        // PUP_REP_FACTURA_MAS
         this.pupRepBillMore(0, invoice.Type, invoice);
         break;
       }

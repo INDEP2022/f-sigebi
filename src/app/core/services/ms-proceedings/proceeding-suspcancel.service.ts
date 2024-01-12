@@ -16,4 +16,8 @@ export class ProceedingSusPcancelService extends HttpService {
     const route = `${ProceedingsEndpoints.suspCancel}?filter.status=$ilike:XXX&filter.regusr=$ilike:${user}`;
     return this.get(route);
   }
+
+  tmpValGoodConst(params: any) {
+    return this.get('tmp-val-goodconst', params);
+  }
 }
