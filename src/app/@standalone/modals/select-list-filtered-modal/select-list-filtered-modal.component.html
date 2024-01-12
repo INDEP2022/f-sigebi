@@ -50,6 +50,7 @@
     </div>
     <form-loader *ngIf="loading"></form-loader>
     <div
+      [id]="idScss"
       class="pt-4"
       [class]="hideFilterPlaceholder ? 'hideFilterPlaceholder' : ''">
       <ng-scrollbar
