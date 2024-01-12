@@ -39,6 +39,7 @@ export class NumeraryXGoodsService extends HttpService {
       eventId,
       amount,
       goodNumber,
+      numeraryxGoodId,
     });
   }
 }
