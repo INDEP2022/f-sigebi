@@ -58,6 +58,7 @@ export class SelectModalTableSharedComponent
   @Input() formField: string;
   @Input() formFieldName: string;
   @Input() id: string;
+  @Input() idScss: string;
   @Input() description: string;
   @Input() service: any;
   @Input() title: string;
@@ -84,6 +85,7 @@ export class SelectModalTableSharedComponent
       title: this.title,
       columnsType: this.columnsType,
       service: this.service,
+      idScss: this.idScss,
       hideFilterPlaceholder: this.hideFilterPlaceholder,
       settings: { ...TABLE_SETTINGS },
       dataObservableListParamsFn: this.service[this.functionFilterName],

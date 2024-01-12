@@ -50,6 +50,7 @@ export class SelectListFilteredModalComponent
   selectedRow: any = null;
   columns: any[] = [];
   totalItems: number = 0;
+  idScss: string = '';
   selecteds: { column: string; data: any[] }; // Input para marcar seleccionados en el modal
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());

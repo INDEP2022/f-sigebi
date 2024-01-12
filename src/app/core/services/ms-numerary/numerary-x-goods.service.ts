@@ -27,7 +27,13 @@ export class NumeraryXGoodsService extends HttpService {
     return this.put(this.route, body);
   }
 
-  updateAmount({ spentId, eventId, amount, goodNumber }: INumeraryxGoods) {
+  updateAmount({
+    spentId,
+    eventId,
+    amount,
+    goodNumber,
+    numeraryxGoodId,
+  }: INumeraryxGoods) {
     return this.post(NumeraryEndpoints.UpdateAmountNumeraryGoods, {
       spentId: +spentId,
       eventId,
