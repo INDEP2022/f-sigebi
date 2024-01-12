@@ -1124,7 +1124,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             console.log('LV_EST_PROCESO-> ', resp.statusProcess);
             return true;
           } else {
-            this.LV_EST_PROCESO = 1;
+            this.LV_EST_PROCESO = 0;
             return false;
           }
         })
