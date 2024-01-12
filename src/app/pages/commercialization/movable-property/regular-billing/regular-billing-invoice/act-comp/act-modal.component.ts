@@ -8,13 +8,35 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 @Component({
   selector: 'act-modal',
   templateUrl: './act-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ActModalComponent extends BasePage implements OnInit {
   title: string = 'Actualizar Datos';
   totalItems: number = 0;
   data: any[] = [];
-
+  tloading: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private comerInvoice: ComerInvoiceService,
@@ -60,25 +82,31 @@ export class ActModalComponent extends BasePage implements OnInit {
 
   async updateData() {
     let n_id_event: number;
+    let valids: number = 0;
+    let novalids: number = 0;
     if (this.data.length == 0) {
-      this.alert('warning', 'Atención', 'Sin Lotes a procesar');
+      this.alert('warning', 'Sin Lotes a procesar', '');
     } else {
-      for (const act of this.data) {
+      this.tloading = true;
+      let result = this.data.map(async act => {
         if (act.select) {
           n_id_event = act.eventId;
           if (act.n_fac_fol > 0) {
             const user = this.authService.decodeToken().preferred_username;
+            // PUP_NVO_GUARDA_FOLIOS
             await this.saveInvoice({
               eventId: Number(act.eventId),
               batchId: Number(act.batchId),
               user,
             });
           }
+          // PUP_NVO_ELIMINA_FACT
           await this.deleteInvoice({
             eventId: Number(act.eventId),
             batchId: Number(act.batchId),
           });
 
+          // PK_COMER_FACTINM.PA_AJU_FACTURA_PAG
           const pk_comer: any = await this.packageInvoice({
             eventId: act.eventId,
             option: 0,
@@ -96,17 +124,24 @@ export class ActModalComponent extends BasePage implements OnInit {
           });
 
           if (!pk_comer) {
-            this.alert(
-              'warning',
-              'Atención',
-              'Ha ocurrido un fallo en la operación'
-            );
+            novalids = novalids + 1;
+            this.alert('warning', 'Ha ocurrido un fallo en la operación', '');
           } else if (pk_comer.p_RESUL == 'Correcto.') {
-            this.alert('success', 'Proceso terminado', '');
+            valids = valids + 1;
           }
         }
-      }
-      this.modalRef.hide();
+      });
+
+      Promise.all(result).then(resp => {
+        if (n_id_event) {
+          this.modalRef.content.callback(n_id_event);
+          this.modalRef.hide();
+          this.alert('success', 'Proceso terminado', '');
+        } else {
+          this.alert('warning', 'Sin Lotes a procesar', '');
+        }
+        this.tloading = false;
+      });
     }
   }
 

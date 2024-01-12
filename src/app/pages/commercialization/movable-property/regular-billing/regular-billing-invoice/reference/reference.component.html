@@ -2,16 +2,19 @@
   <div header>
     <h5 class="modal-title">{{ title }}</h5>
   </div>
-  <div body>
-    <div><strong>Factura:</strong> {{ info?.id_factura }}</div>
-    <div><strong>Evento:</strong> {{ info?.id_evento }}</div>
-    <div><strong>Referencia:</strong> {{ info?.referencia1 ?? '' }}</div>
+  <div body class="stl">
+    <form-loader *ngIf="loading"></form-loader>
+    <div *ngIf="!loading"><strong>Factura:</strong> {{ info?.id_factura }}</div>
+    <div *ngIf="!loading"><strong>Evento:</strong> {{ info?.id_evento }}</div>
+    <div *ngIf="!loading">
+      <strong>Referencia:</strong> {{ info?.referencia1 ?? '' }}
+    </div>
   </div>
   <div footer>
     <div class="text-center mb-3">
       <div class="d-inline">
         <button class="btn btn-primary btn-sm active mr-3" (click)="close()">
-          Cerrar
+          Regresar
         </button>
       </div>
     </div>

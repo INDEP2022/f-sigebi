@@ -106,4 +106,5 @@ export enum ENDPOINT_INVOICE {
   ApplicationGeneratePreInvoices = 'application/generate-pre-invoices',
   ApplicationPufVerifyAmounts = 'application/puf-verify-amounts',
   ApplicationPupStatusCan = 'application/pup-status-can',
+  ApplicationPutProcess = 'application/putProcess',
 }

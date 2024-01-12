@@ -11,6 +11,7 @@
           <app-regular-billing-invoice
             [sum]="values"
             (comer)="getEvent($event)"
+            (numb)="cambiarTab($event)"
             (formG)="form = $event"></app-regular-billing-invoice>
         </tab>
         <tab heading="Catálogos SAT">

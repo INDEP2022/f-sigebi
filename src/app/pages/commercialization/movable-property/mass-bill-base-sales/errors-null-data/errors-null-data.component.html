@@ -10,7 +10,7 @@
   <form-loader *ngIf="loading"></form-loader>
   <ng2-smart-table
     [ngStyle]="{ height: loading ? '0px' : 'auto' }"
-    [attr.class]="'table-bordered table-responsive mb-4'"
+    [attr.class]="'mb-4'"
     [source]="dataFilter"
     [settings]="settings"></ng2-smart-table>
   <app-pagination [params]="paramsList" [totalItems]="totalItems">

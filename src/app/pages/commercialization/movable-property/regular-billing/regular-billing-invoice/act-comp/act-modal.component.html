@@ -20,6 +20,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [ngClass]="{ loading: tloading }"
+          [disabled]="tloading"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="updateData()">
