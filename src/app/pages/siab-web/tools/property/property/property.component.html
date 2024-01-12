@@ -6,7 +6,7 @@
   </div>
   <div body>
     <div *ngIf="showInm">
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-md-8 mb-3"></div>
         <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
           <app-columns-select
@@ -21,7 +21,7 @@
             </button>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="row">
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
@@ -49,16 +49,16 @@
             [(settings)]="settings1"
             [leftList]="true"></app-columns-select>
           <div>
-            <button
+            <!-- <button
               class="btn btn-danger btn-sm active mr-2"
               (click)="goBack()">
               Resetear <i class="fas fa-eraser"></i>
-            </button>
+            </button> -->
             <button
               class="btn btn-sm btn-success active mr-3"
               (click)="onExportExcel()"
               [class]="loadingReport">
-              Exportar
+              Generar Reporte
               <i class="bx bx-download float-icon"></i>
             </button>
           </div>

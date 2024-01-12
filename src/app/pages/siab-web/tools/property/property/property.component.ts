@@ -157,33 +157,60 @@ export class PropertyComponent extends BasePage implements OnInit {
     }
   }
 
+  // onSelectDelegation(instance: CheckboxElementComponent) {
+  //   instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+  //     next: data => {
+  //       console.log(data.row);
+  //       let index;
+  //       let validate = false;
+  //       const existe = this.array.some(
+  //         (numero: number) => numero === data.row.clasifGoodNumber
+  //       );
+  //       console.log(existe);
+  //       if (existe) {
+  //         index = this.array.findIndex(
+  //           (numero: number) => numero === data.row.clasifGoodNumber
+  //         );
+  //         validate = true;
+  //         console.log(index);
+  //         this.array.splice(index, 1);
+  //       } else {
+  //         this.array.push(data.row.clasifGoodNumber);
+  //       }
+  //       console.log(this.array);
+  //       if (this.array.length > 0) {
+  //         this.validator = false;
+  //         console.log(this.array.length);
+  //       } else {
+  //         this.validator = true;
+  //       }
+  //     },
+  //   });
+  // }
   onSelectDelegation(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => {
-        console.log(data.row);
-        let index;
-        let validate = false;
-        const existe = this.array.some(
-          (numero: number) => numero === data.row.clasifGoodNumber
-        );
-        console.log(existe);
-        if (existe) {
-          index = this.array.findIndex(
-            (numero: number) => numero === data.row.clasifGoodNumber
-          );
-          validate = true;
-          console.log(index);
-          this.array.splice(index, 1);
+        // Haz una copia del array antes de la acción de selección o deselección
+        this.array = [...this.array];
+        console.log(data.toggle, data.row.clasifGoodNumber);
+        if (data.toggle) {
+          // Si el checkbox se selecciona, agregar el elemento al array
+          if (!this.array.includes(data.row.clasifGoodNumber)) {
+            this.array.push(data.row.clasifGoodNumber);
+          }
         } else {
-          this.array.push(data.row.clasifGoodNumber);
+          // Si el checkbox se deselecciona, eliminar el elemento del array
+          const index = this.array.indexOf(data.row.clasifGoodNumber);
+          if (index !== -1) {
+            this.array.splice(index, 1);
+          }
         }
         console.log(this.array);
-        if (this.array.length > 0) {
-          this.validator = false;
-          console.log(this.array.length);
-        } else {
-          this.validator = true;
-        }
+
+        // Ahora puedes realizar la consulta, teniendo en cuenta los cambios en this.array
+        this.params1
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.generateReport());
       },
     });
   }
