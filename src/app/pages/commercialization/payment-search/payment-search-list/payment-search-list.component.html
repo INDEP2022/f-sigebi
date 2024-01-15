@@ -145,10 +145,7 @@
               [disabled]="!searchForm.valid">
               Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
-            <button
-              class="btn btn-red btn-sm active m-3"
-              (click)="formClean()"
-              [disabled]="!searchForm.valid">
+            <button class="btn btn-red btn-sm active m-3" (click)="formClean()">
               Limpiar
               <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
@@ -268,44 +265,20 @@
       </div>
     </div>
     <div class="row mt-2">
-      <!-- <div class="col-sm-3 col-md-3">
-        <div class="form-material">
-          <form-field [control]="searchForm.get('type')" label="Tipo">
-            <input type="text" formControlName="type" class="form-control" />
-          </form-field>
-        </div>
-      </div>
-      <br /> -->
-      <div class="row mb-4">
-        <div class="col-md-12-col-sm12 col-xs-12 text-center">
-          <!-- <button
-            class="btn btn-primary btn-sm active mr-3"
-            (click)="loadBatch.click()">
-            <i class="fas fa-sync-alt"></i>
-            Cambiar Lotes<input
-              #loadBatch
-              hidden
-              type="file"
-              accept=".csv"
-              (change)="getCsv($event)" />
-          </button> -->
-        </div>
-      </div>
       <div class="col-sm-12 col-md-12">
         <div class="d-flex flex-row-reverse my-3">
           <div class="">
             <app-columns-select
               [(settings)]="paymentSettings"></app-columns-select>
           </div>
-          <div>
+          <!-- <div>
             <button
               class="btn btn-sm btn-success active me-2 font-size-14"
               (click)="openForm()">
-              <!-- [disabled]="!searchForm.valid" -->
               <i class="bx bx-plus text-light float-icon"></i>
               Agregar Registro
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

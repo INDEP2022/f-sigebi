@@ -12,6 +12,7 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -35,6 +36,7 @@ import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PaymentSearchModalComponent } from '../payment-search-modal/payment-search-modal.component';
 import { PaymentSearchProcessComponent } from '../payment-search-process/payment-search-process.component';
+import { PaymentAuthComponent } from './payment-auth/payment-auth.component';
 import { PAYMENT_COLUMNS } from './payment-search-columns';
 
 @Component({
@@ -74,6 +76,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     { value: 2, description: 'No Referenciados' },
     { value: 3, description: 'Efectivo' },
     { value: 4, description: 'Inconsistencia' },
+    { value: 5, description: 'Carga de Archivo CSV' },
   ];
   actions = [
     { value: 1, description: 'Cancelar' },
@@ -283,7 +286,14 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field === 'date') {
+                if (filter.search.length === 10)
+                  this.columnFilters[
+                    field
+                  ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -493,7 +503,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onAdd.subscribe(({ newData }) => {
+    modalRef.content.onAdd.subscribe(newData => {
+      console.log(newData);
       if (newData) {
         console.log('Data Recibida ADD', newData);
         this.loading = true;
@@ -796,7 +807,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     if (this.searchForm.invalid && this.searchType.value !== 6) {
       return null;
     }
-    debugger;
     let filterParams = new FilterParams();
     filterParams.limit = this.params.getValue().limit;
     if (byPage) {
@@ -873,6 +883,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   getTableData(byPage = false) {
+    // debugger;
     let params = this.getFilterParams(byPage);
     this.dataRows = [];
     this.localdata.load(this.dataRows);
@@ -1116,7 +1127,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             console.log('LV_EST_PROCESO-> ', resp.statusProcess);
             return true;
           } else {
-            this.LV_EST_PROCESO = 1;
+            this.LV_EST_PROCESO = 0;
             return false;
           }
         })
@@ -1145,6 +1156,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   private async pupProcesa() {
+    debugger;
     const processType = this.processTypes.find(
       x => x.value == this.searchForm.get('processType').value
     );
@@ -1158,7 +1170,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
     let LV_ACCION: string = action.description;
     let LV_PROCESA: number;
-    debugger;
     LV_PROCESA = 0;
     const elemC = this.searchForm.get('type');
 
@@ -1168,10 +1179,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     ) {
       if (elemC.value == '0') {
         //integrar PA_PAGOS_CAMBIOS}
-        await this.pagosCambio(
-          this.searchForm.get('processType').value,
-          this.searchForm.get('action').value
-        );
+        await this.pagosCambio(this.searchForm.get('processType').value);
       } else {
         LV_PROCESA = 1;
       }
@@ -1260,7 +1268,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         'Debe Elegir un Banco'
       );
     } else {
-      debugger;
       const files = (event.target as HTMLInputElement).files;
       if (files.length != 1) throw 'No files selected, or more than of allowed';
       const file = files[0];
@@ -1361,9 +1368,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     });
   }
 
-  pagosCambio(process: number, action: number) {
+  pagosCambio(process: number) {
     return firstValueFrom(
-      this.msDepositaryService.getPaymentChange(process, action).pipe(
+      this.msDepositaryService.getPaymentChange(process).pipe(
         catchError(x =>
           of({
             P_EST_PROCESO: 0,
@@ -1529,11 +1536,21 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             this.pupProcesa();
           } else {
             this.loader.load = false;
-            this.alert(
-              'error',
-              'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-              'Usuario no Autorizado'
-            );
+            const modalConfig = MODAL_CONFIG;
+            modalConfig.initialState = {
+              callback: (next: any) => {
+                if (next === true) {
+                  this.loader.load = true;
+                  this.pupProcesa();
+                }
+              },
+            };
+            this.modalService.show(PaymentAuthComponent, modalConfig);
+            // this.alert(
+            //   'error',
+            //   'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+            //   'Usuario no Autorizado'
+            // );
           }
         },
       });
@@ -1694,13 +1711,13 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.loader.load = true;
     this.msDepositaryService
       .getComerPaymentSelect(
-        1,
         this.selectedRows.map(x => {
           return {
             processId: +x.processId,
             movtoNumber: +x.numbermovement,
             monto: +x.amount,
             referenceori: x.referenceori,
+            selection: 1,
           };
         })
       )
@@ -1709,6 +1726,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           this.loader.load = false;
           if (resp != null && resp != undefined) {
             this.alert('success', '', 'Se Procesaron los Registros');
+            this.getTableData();
           } else {
             this.alert('error', '', 'No Se Procesaron los Registros');
           }

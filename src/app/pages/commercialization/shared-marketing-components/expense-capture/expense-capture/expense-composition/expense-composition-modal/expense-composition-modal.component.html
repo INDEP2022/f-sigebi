@@ -21,6 +21,7 @@
             *ngIf="address === 'M'"
             [form]="form"
             [updateValues]="true"
+            [isLoadInOnInit]="!comerDetExpense"
             [path]="pathGood"
             formControlName="goodNumber"
             [readonly]="comerDetExpense && chargeGoodsByLote"
@@ -32,6 +33,7 @@
             secondParamSearch="filter.goodNumber"
             typeInput="post"
             (valueChange)="fillGoodM($event)"
+            (getObject)="fillCvman($event)"
             [bodyPost]="bodyPost"
             [labelTemplate]="goodLabel"
             [optionTemplate]="goodOption">
@@ -64,6 +66,7 @@
             [form]="form"
             [updateValues]="true"
             [path]="pathGoodI"
+            [isLoadInOnInit]="!comerDetExpense"
             formControlName="goodNumber"
             label="No. Bien"
             value="goodNumber"
@@ -73,7 +76,8 @@
             secondParamSearch="filter.goodNumber"
             typeInput="post"
             [bodyPost]="bodyPostI"
-            (getObject)="setCvmanI($event)"
+            (valueChange)="setCvmanI($event)"
+            (getObject)="fillCvman($event)"
             [labelTemplate]="goodLabel"
             [optionTemplate]="goodOption">
           </ng-custom-select-loading>

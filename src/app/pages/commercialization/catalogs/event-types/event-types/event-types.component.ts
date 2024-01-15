@@ -110,11 +110,9 @@ export class EventTypesComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.loading = false;
-        this.alert(
-          'error',
-          'Se Presenta un Error en el Servidor para Mostrar los Tipos de Evenos',
-          ''
-        );
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
       },
     });
   }

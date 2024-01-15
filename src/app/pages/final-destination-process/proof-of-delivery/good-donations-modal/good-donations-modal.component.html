@@ -1,0 +1,109 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <h5 class="modal-title">Bienes Donación</h5>
+  </div>
+  <div body>
+    <div class="row mb-5">
+      <span><strong>Programaciones de entrega</strong></span>
+      <div [class]="loadingTableProceedings ? 'table-loading' : 'row pt-5'">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-responsive'"
+          [settings]="settingsProceedings"
+          [source]="dataProceedings">
+        </ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="paramsProceedings"
+        [totalItems]="totalItemsProceedings">
+      </app-pagination>
+    </div>
+    <div class="row mb-5">
+      <span><strong>Solicitudes de donación</strong></span>
+      <div [class]="loadingTableRequest ? 'table-loading' : 'row pt-5'">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-responsive'"
+          [settings]="settingsRequest"
+          (userRowSelect)="selectRequest($event)"
+          [source]="dataRequest">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="paramsRequest" [totalItems]="totalItemsRequest">
+      </app-pagination>
+    </div>
+    <div class="row mb-5">
+      <span><strong>Bienes para donar por solicitud</strong></span>
+      <div [class]="loadingTableGoods ? 'table-loading' : 'row pt-5'">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-responsive'"
+          [settings]="settingsGoods"
+          (userRowSelect)="selectRow($event)"
+          [source]="dataGoods">
+        </ng2-smart-table>
+        <span class="mt-3"
+          ><strong>Total a donar {{ totalAmount }}</strong></span
+        >
+      </div>
+      <app-pagination [params]="paramsGoods" [totalItems]="totalItemsGoods">
+      </app-pagination>
+    </div>
+    <div class="row pt-2 pb-4">
+      <div class="col-md-12 d-flex justify-content-center">
+        <div class="d-flex justify-content-center align-items-sm-center">
+          <div class="col-md-3">
+            <label for="">Agregar</label>
+            <button
+              tooltip="Agregar Bien"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="insertGood()">
+              <i class="bx bx-chevron-down bx-md"></i>
+            </button>
+          </div>
+          <div class="col-md-3">
+            <label for="">Eliminar</label>
+            <button
+              tooltip="Quitar Bien"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="deleteGood()">
+              <i class="bx bx-chevron-up bx-md"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-5">
+      <span><strong>Bienes agregados</strong></span>
+      <div [class]="loadingTableSGoods ? 'table-loading' : 'row pt-5'">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-responsive'"
+          [settings]="settingsSGoods"
+          [source]="dataSGoods">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="paramsSGoods" [totalItems]="totalItemsSGoods">
+      </app-pagination>
+    </div>
+    <div class="row text-center">
+      <div class="col">
+        <button class="btn btn-red btn-sm active mr-3">Eliminar Cambios</button>
+        <button type="button" class="btn btn-primary active btn-sm mr-3">
+          Genera Constancia
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          style="width: 100px"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

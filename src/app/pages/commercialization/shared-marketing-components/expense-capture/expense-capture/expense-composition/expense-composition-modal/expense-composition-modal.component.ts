@@ -71,19 +71,15 @@ export class ExpenseCompositionModalComponent
       }
       this.loadingCvmans = false;
       console.log(this.goodNumber.value);
-    }, 500);
+    }, 300);
   }
 
   private fillGoods() {
     if (this.comerDetExpense) {
       setTimeout(() => {
-        this.goodNumber.setValue(
-          this.address === 'M'
-            ? +this.comerDetExpense.goodNumber
-            : this.comerDetExpense.goodNumber
-        );
+        this.goodNumber.setValue(this.comerDetExpense.goodNumber);
         console.log(this.goodNumber.value);
-      }, 500);
+      }, 300);
     }
   }
 
@@ -154,6 +150,16 @@ export class ExpenseCompositionModalComponent
     // );
   }
 
+  fillCvman(row: any) {
+    console.log(row);
+    if (row && row.goodNumber + '' == this.goodNumber.value + '') {
+      this.cvman.setValue(
+        row.cvman ? row.cvman : row.mandate2 ? row.mandate2 : null
+      );
+      this.cvman.disable();
+    }
+  }
+
   fillGoodM(row: any) {
     console.log(row);
     if (row) {
@@ -162,6 +168,9 @@ export class ExpenseCompositionModalComponent
       }
       if (row.mandate2) {
         this.cvman.setValue(row.mandate2);
+        this.cvman.disable();
+      } else {
+        this.cvman.enable();
       }
       if (row.iva2) {
         this.vat.setValue(row.iva2);
@@ -177,6 +186,8 @@ export class ExpenseCompositionModalComponent
         this.amount.setValue(0);
         this.amount.enable();
       }
+    } else {
+      this.cvman.enable();
     }
   }
 
@@ -188,7 +199,12 @@ export class ExpenseCompositionModalComponent
       }
       if (row.cvman) {
         this.cvman.setValue(row.cvman);
+        this.cvman.disable();
+      } else {
+        this.cvman.enable();
       }
+    } else {
+      this.cvman.enable();
     }
   }
 
@@ -202,6 +218,12 @@ export class ExpenseCompositionModalComponent
       this.isrWithholding.setValue(this.comerDetExpense.retencionIsr);
       this.vatWithholding.setValue(this.comerDetExpense.retencionIva);
       this.budgetItem.setValue(this.comerDetExpense.departure);
+      this.vatWithholding.setValidators(
+        Validators.max(this.comerDetExpense.iva)
+      );
+      this.isrWithholding.setValidators(
+        Validators.max(this.comerDetExpense.amount)
+      );
     }
     if (this.eventNumber) {
       this.fillCvmans();
@@ -219,24 +241,6 @@ export class ExpenseCompositionModalComponent
         this.isrWithholding.setValidators(Validators.max(response));
       },
     });
-    // this.goodNumber.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
-    //   next: response => {
-    //     if (response) {
-    //       if (this.address === 'M') {
-    //         this.selectedGood =
-    //           this.goods.filter(x => x.goodNumber === response)[0] ?? null;
-    //         if (this.selectedGood) {
-    //           if (this.selectedGood.transferorNumber) {
-    //             this.transferent = this.selectedGood.transferorNumber;
-    //           }
-    //           if (this.selectedGood.mandate2) {
-    //             this.cvman.setValue(this.selectedGood.mandate2);
-    //           }
-    //         }
-    //       }
-    //     }
-    //   },
-    // });
   }
 
   getTransferent(result: any) {
@@ -316,11 +320,12 @@ export class ExpenseCompositionModalComponent
 
   confirm() {
     console.log(this.form.value);
+    console.log(this.cvman.value);
     this.clickedButton = true;
     if (this.comerDetExpense) {
-      this.onEditConfirm(this.form.value);
+      this.onEditConfirm({ ...this.form.value, cvman: this.cvman.value });
     } else {
-      this.onAddConfirm(this.form.value);
+      this.onAddConfirm({ ...this.form.value, cvman: this.cvman.value });
     }
   }
 
@@ -331,6 +336,7 @@ export class ExpenseCompositionModalComponent
       +body.isrWithholding -
       +body.vatWithholding
     ).toFixed(2);
+    console.log(body);
     return {
       ...body,
       expenseNumber: this.expenseNumber,

@@ -508,7 +508,7 @@ export class AuthorizationAssetsDestructionComponent
     this.data.refresh();
     this.totalItems = 0;
     this.canSearch = true;
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    // this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.consult = false;
     this.form.get('noAuth').enable();
     this.form.get('authNotice').enable();

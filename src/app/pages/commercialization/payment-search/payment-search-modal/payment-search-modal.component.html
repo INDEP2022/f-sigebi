@@ -5,41 +5,6 @@
   <div body>
     <form class="form-material" [formGroup]="paymentForm">
       <div class="row">
-        <div class="col-12 mb-4">
-          <form-check for="idselect" label="Selección">
-            <input
-              type="checkbox"
-              id="idselect"
-              formControlName="idselect"
-              class="form-control" />
-          </form-check>
-        </div>
-
-        <div class="col-sm-12 col-md-6 mt-2 mb-4">
-          <form-field
-            [control]="paymentForm.get('numbermovement')"
-            label="No. Movimiento">
-            <input
-              type="text"
-              formControlName="numbermovement"
-              class="form-control"
-              maxlength="11" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6 mb-4">
-          <ng-custom-select-loading
-            [form]="paymentForm"
-            formControlName="tsearchId"
-            label="Tipo de Búsqueda MAE"
-            path="payment/api/v1/search-payments-mae?sortBy=tsearchId:ASC"
-            value="tsearchId"
-            bindLabel="desTsearch"
-            paramSearch="filter.desTsearch"
-            prefixSearch="$ilike"
-            secondParamSearch="filter.tsearchId"></ng-custom-select-loading>
-        </div>
-      </div>
-      <div class="row">
         <div class="col-sm-12 col-md-6">
           <form-field [control]="paymentForm.get('date')" label="Fecha">
             <input
@@ -50,214 +15,6 @@
               [maxDate]="maxDate" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('amount')" label="Monto">
-            <input
-              currencyMask
-              type="text"
-              maxlength="17"
-              formControlName="amount"
-              class="form-control" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="paymentForm.get('referenceori')"
-            label="Referencia Original">
-            <textarea
-              class="form-control"
-              formControlName="referenceori"
-              rows="2"
-              maxlength="255"></textarea>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="paymentForm.get('reference')"
-            label="Referencia">
-            <textarea
-              class="form-control"
-              formControlName="reference"
-              rows="2"
-              maxlength="255"></textarea>
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-sm-12 col-md-6">
-          <ng-template #bankLabel let-item="item"
-            >{{ item.bankCode }} - {{ item.name }}</ng-template
-          >
-          <ng-template #bankOption let-item="item">
-            <div [title]="item.bankCode + '-' + item.name">
-              {{ item.bankCode }} - {{ item.name }}
-            </div>
-          </ng-template>
-          <ng-custom-select-loading
-            [form]="paymentForm"
-            formControlName="cve"
-            label="Banco"
-            path="catalog/api/v1/bank"
-            value="bankCode"
-            bindLabel="name"
-            paramSearch="filter.name"
-            prefixSearch="$ilike"
-            secondParamSearch="filter.bankCode"
-            [labelTemplate]="bankLabel"
-            [optionTemplate]="bankOption"></ng-custom-select-loading>
-
-          <!-- <form-field [control]="paymentForm.get('cve')" label="Cve Banco">
-            <input
-              type="text"
-              formControlName="cve"
-              class="form-control"
-              maxlength="10" />
-          </form-field> -->
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('code')" label="Código">
-            <input
-              type="text"
-              formControlName="code"
-              class="form-control"
-              maxlength="5" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="paymentForm.get('publicBatch')"
-            label="Lote Público">
-            <input
-              type="text"
-              formControlName="publicBatch"
-              class="form-control"
-              maxlength="11" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('event')" label="Evento">
-            <input
-              type="text"
-              maxlength="10"
-              formControlName="event"
-              class="form-control" />
-          </form-field>
-          <!-- <form-field [control]="paymentForm.get('event')">
-            <ngx-select
-              [form]="paymentForm"
-              [data]="eventItems"
-              value="id"
-              bindLabel="id"
-              label="Evento"
-              (fetchItems)="getEvents($event)"
-              control="event">
-            </ngx-select>
-          </form-field> -->
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="paymentForm.get('systemValidity')"
-            label="Válido Sistema">
-            <!-- <ng-select
-              formControlName="systemValidity"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="1">NULO</ng-option>
-              <ng-option value="2">B</ng-option>
-            </ng-select> -->
-
-            <ng-select
-              class="form-control"
-              formControlName="systemValidity"
-              (change)="extractKey($event)">
-              <ng-option
-                *ngFor="let row of validSystem"
-                [value]="row.valsisKey">
-                <!-- valsisKey -->
-                {{ row.valsisDescription }}
-              </ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('result')" label="Resultado">
-            <textarea
-              class="form-control"
-              formControlName="result"
-              rows="2"
-              maxlength="200"></textarea>
-            <!-- <input type="text" formControlName="result" class="form-control" /> -->
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('paymentId')" label="Id Pago">
-            <input
-              type="text"
-              formControlName="paymentId"
-              class="form-control"
-              maxlength="11" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="paymentForm.get('batchId')" label="Lote">
-            <input
-              type="text"
-              maxlength="10"
-              formControlName="batchId"
-              class="form-control" />
-          </form-field>
-          <!-- <form-field [control]="paymentForm.get('batchId')">
-            <ngx-select
-              [form]="paymentForm"
-              [data]="batchItems"
-              value="id"
-              bindLabel="id"
-              label="Id Lote"
-              (fetchItems)="getBatches($event)"
-              control="batchId">
-            </ngx-select>
-          </form-field> -->
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="paymentForm.get('entryOrderId')"
-            label="Id Orden Ingreso">
-            <input
-              type="text"
-              formControlName="entryOrderId"
-              class="form-control"
-              maxlength="11" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="paymentForm.get('satDescription')"
-            label="Descripción Pago SAT">
-            <!-- <input
-              type="text"
-              formControlName="satDescription"
-              class="form-control" /> -->
-            <ng-select class="form-control" formControlName="satDescription">
-              <!-- <ng-option [value]="null">Seleccione un valor</ng-option> -->
-              <ng-option *ngFor="let row of dataSat" [value]="row.idType">
-                {{ row.description }}
-              </ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field [control]="paymentForm.get('type')" label="Tipo">
             <ng-select
@@ -271,7 +28,104 @@
             </ng-select>
           </form-field>
         </div>
+      </div>
+      <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('event')" label="Evento">
+            <input
+              type="text"
+              maxlength="10"
+              formControlName="event"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('publicBatch')" label="Lote">
+            <input
+              type="text"
+              maxlength="10"
+              formControlName="publicBatch"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <!-- <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('entryOrderId')"
+            label="Id Orden Ingreso">
+            <input
+              type="text"
+              formControlName="entryOrderId"
+              class="form-control"
+              maxlength="11" />
+          </form-field>
+        </div> -->
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('systemValidity')"
+            label="Válido Sistema">
+            <ng-select
+              class="form-control"
+              formControlName="systemValidity"
+              (change)="extractKey($event)">
+              <ng-option
+                *ngFor="let row of validSystem"
+                [value]="row.valsisKey">
+                {{ row.valsisDescription }}
+              </ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('satDescription')"
+            label="Descripción Pago SAT">
+            <ng-select class="form-control" formControlName="satDescription">
+              <ng-option *ngFor="let row of dataSat" [value]="row.idType">
+                {{ row.description }}
+              </ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('tipo_referencia')"
+            label="Tipo Referencia">
+            <ng-select
+              formControlName="tipo_referencia"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">GS</ng-option>
+              <ng-option value="2">GC</ng-option>
+              <ng-option value="3">LQ</ng-option>
+              <ng-option value="4">LE</ng-option>
+              <ng-option value="5">VB</ng-option>
+              <ng-option value="6">PP</ng-option>
+              <ng-option value="7">GE</ng-option>
+              <ng-option value="0">No Valida</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('geneReference')"
+            label="Tipo Cambio de Referencia">
+            <ng-select
+              formControlName="geneReference"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Existe</ng-option>
+              <ng-option value="2">Nueva</ng-option>
+              <ng-option value="3">Cambio</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <!-- <div class="col-sm-12 col-md-6">
           <form-field
             [control]="paymentForm.get('inconsistencies')"
             label="Inconsistencias">
@@ -280,6 +134,28 @@
               formControlName="inconsistencies"
               rows="2"
               maxlength="1000"></textarea>
+          </form-field>
+        </div> -->
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('referencealt')"
+            label="Nueva Referencia">
+            <textarea
+              class="form-control"
+              formControlName="referencealt"
+              rows="2"
+              maxlength="255"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('result')" label="Resultado">
+            <textarea
+              class="form-control"
+              formControlName="result"
+              rows="2"
+              maxlength="200"></textarea>
           </form-field>
         </div>
       </div>

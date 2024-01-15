@@ -28,7 +28,7 @@ export enum DepositaryEndPoints {
   UpdateStatusBase = 'validate-payments-ref/updateStatusBase', // MODIFICA_ESTATUS_BASES_ANT
   UpdateGeneralStatus = 'validate-payments-ref/updateGeneralStatus',
   SearchPayment = 'comer-payment/search-payment',
-  GetPaymentChange = 'comer-payment/change-payment/type-action',
+  GetPaymentChange = 'comer-payment/change-payment',
   PaymentEfeDup = 'comer-payment/pa-payment-efe-dup-nref',
   PaymentFiles = 'comer-payment/files-payment/type-action',
   PaymentBulk = 'comer-payment/massive-payment/system',

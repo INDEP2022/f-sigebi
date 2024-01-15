@@ -9,7 +9,9 @@ import {
   IDetailProceedings,
   IDetailProceedingsDeliveryReception,
   IDetailWithIndEdo,
+  IPaGenConstMassive,
 } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -161,6 +163,11 @@ export class DetailProceeDelRecService extends HttpService {
     return this.get(route, params);
   }
 
+  getMconsmassiveFilter(params?: any) {
+    const route = `${ProceedingsEndpoints.SearchMcons}`;
+    return this.get(route, params);
+  }
+
   getDconsmassive(expedient: any, user: any) {
     const route = `${ProceedingsEndpoints.SearchDcons}?filter.user=$ilike:${user}&filter.fileNumber.filesId=$eq:${expedient}`;
     return this.get(route);
@@ -215,5 +222,9 @@ export class DetailProceeDelRecService extends HttpService {
     const receive = 'S';
     const route = `${ProceedingsEndpoints.ActasRecptionImp}?filter.received=${receive}`;
     return this.get(route, params);
+  }
+
+  paGenConstMassive(body: IPaGenConstMassive) {
+    return this.post('aplication/pa-gen-const-massive', body);
   }
 }

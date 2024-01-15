@@ -821,6 +821,10 @@ export class ExpenseCompositionComponent
     // if (this.expenseCaptureDataService.formaModificada()) {
     //   return;
     // }
+    if (!this.validChargeGoods) {
+      this.alert('warning', 'No tiene permisos para cargar bienes', '');
+      return;
+    }
     if (
       this.v_tip_gast === 'GASTOVIG' &&
       !this.form.get('contractNumber').value
@@ -859,13 +863,21 @@ export class ExpenseCompositionComponent
                 // this.getData2();
               } else {
                 this.loading = false;
-                this.alert('error', 'No se encontraron datos', '');
+                this.alert(
+                  'error',
+                  'Carga de bienes',
+                  'No se encontraron datos'
+                );
                 // this.alert('error','')
               }
             },
             error: err => {
               this.loading = false;
-              this.alert('error', 'No se pudo realizar la carga de bienes', '');
+              this.alert(
+                'error',
+                'Carga de bienes',
+                'No se pudo realizar la carga de bienes'
+              );
             },
           });
       } else if (this.v_tip_gast === 'GASTOSEG') {
@@ -883,12 +895,16 @@ export class ExpenseCompositionComponent
               } else {
                 // this.alert('error','')
                 this.loading = false;
-                this.alert('error', 'No se encontraron datos', '');
+                this.alert(
+                  'error',
+                  'Carga de bienes',
+                  'No se encontraron datos'
+                );
               }
             },
             error: err => {
               this.loading = false;
-              this.alert('error', 'No se encontraron datos', '');
+              this.alert('error', 'Carga de bienes', 'No se encontraron datos');
             },
           });
       } else {
@@ -1451,11 +1467,13 @@ export class ExpenseCompositionComponent
           },
         });
     } else {
+      this.loading = true;
       this.CARGA_BIENES_EXCEL(file);
     }
   }
 
   private CARGA_BIENES_EXCEL(file) {
+    this.hideError(false);
     this.goodProcessService
       .CARGA_BIENES_EXCEL(file)
       .pipe(take(1))
@@ -1483,6 +1501,7 @@ export class ExpenseCompositionComponent
             if (inserts.length > 0) {
               this.insertMassive(inserts);
             } else {
+              this.loading = false;
               this.alert('error', 'Bienes no válidos', '');
             }
           } else {
@@ -1491,9 +1510,22 @@ export class ExpenseCompositionComponent
           }
         },
         error: err => {
+          console.log(err);
           this.file.nativeElement.value = '';
           this.loading = false;
-          this.alert('error', 'No se pudo realizar la carga de datos', '');
+          if (err.status === 0) {
+            this.alert(
+              'error',
+              'No se pudo realizar la carga de datos',
+              'Favor de verificar formato'
+            );
+          } else {
+            this.alert(
+              'error',
+              'No se pudo realizar la carga de datos',
+              err.error.message
+            );
+          }
         },
       });
   }
