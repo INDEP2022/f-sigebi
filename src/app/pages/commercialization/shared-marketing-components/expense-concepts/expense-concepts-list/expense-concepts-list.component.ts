@@ -213,7 +213,7 @@ export class ExpenseConceptsListComponent
     modalConfig.initialState = {
       conceptId: this.conceptId,
       address: this.address,
-      callback: (body: { id: string }) => {
+      callback: (body: { id: string; address: string }) => {
         if (body) {
           let listParams = new ListParams();
           listParams.limit = 10000;

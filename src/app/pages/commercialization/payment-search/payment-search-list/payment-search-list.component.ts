@@ -1532,6 +1532,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: response => {
+          console.log(response);
+          // return;
           if (response > 0) {
             this.pupProcesa();
           } else {
@@ -1540,6 +1542,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             modalConfig.initialState = {
               callback: (next: any) => {
                 if (next === true) {
+                  console.log('Usuario válido');
                   this.loader.load = true;
                   this.pupProcesa();
                 }
