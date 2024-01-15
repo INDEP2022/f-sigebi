@@ -116,7 +116,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       //this.onLoadToast('warning', 'Advertencia', message);
       return;
     }
-    if (status === 401 && error.url.indexOf('firebase') < 0) {
+    if (status === 401 && error.url.indexOf('firebase') < 0 && this.showError) {
       localStorage.clear();
       sessionStorage.clear();
       message = 'La sesión expiró';

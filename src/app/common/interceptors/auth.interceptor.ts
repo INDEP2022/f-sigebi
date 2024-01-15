@@ -15,6 +15,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../../core/services/authentication/auth.service';
+import { ShowHideAuthErrorInterceptorService } from '../services/show-hide-auth-error-interceptor.service';
 
 @Injectable()
 export class AuthInterceptor extends BasePage implements HttpInterceptor {
@@ -23,7 +24,6 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
    *
    * @param {AuthService} _authService
    */
-
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
     null
@@ -31,7 +31,8 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
   private timeOut: number = 10;
   constructor(
     private router: Router,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private showHideErrorInterceptorService: ShowHideAuthErrorInterceptorService
   ) {
     super();
   }
@@ -94,10 +95,24 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     );
   }
 
+  get showError() {
+    return this.showHideErrorInterceptorService.showError;
+  }
+
+  // resetValue() {
+  //   this.showHideErrorInterceptorService.showHideError(true);
+  // }
+
   async handleError(error: HttpErrorResponse) {
     const status = error.status;
     //console.log(error);
+    debugger;
+    console.log(this.showError);
+
     const message = 'Error en el servidor'; // error?.error?.message ?? 'Error en el servidor';
+    if (this.showError === false) {
+      return;
+    }
     if (status === 0) {
       /*this.onLoadToast(
         'error',
