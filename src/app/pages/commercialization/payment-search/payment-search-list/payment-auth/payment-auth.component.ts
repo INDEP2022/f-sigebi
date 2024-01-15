@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ShowHideAuthErrorInterceptorService } from 'src/app/common/services/show-hide-auth-error-interceptor.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BasePage } from 'src/app/core/shared';
 
@@ -12,6 +13,7 @@ import { BasePage } from 'src/app/core/shared';
 export class PaymentAuthComponent extends BasePage implements OnInit {
   authForm: FormGroup;
   hide: boolean = true;
+  private _showHideAuth = inject(ShowHideAuthErrorInterceptorService);
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -27,6 +29,8 @@ export class PaymentAuthComponent extends BasePage implements OnInit {
   ngOnInit() {}
 
   confirm() {
+    this._showHideAuth.showError = false;
+    this.hideError();
     let { username, password } = this.authForm.value;
     this.authService
       .getToken2(username, encodeURIComponent(password))
