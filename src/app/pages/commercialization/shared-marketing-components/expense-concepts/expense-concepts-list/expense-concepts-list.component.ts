@@ -175,7 +175,7 @@ export class ExpenseConceptsListComponent
     if (filter.search !== '') {
       if (
         filter.search === 'N' &&
-        ['automatic', 'routineCalculation'].includes(filter.field)
+        ['automatic', 'numerary'].includes(filter.field)
       ) {
         this.columnFilters[field] = `${searchFilter}:S`;
       } else {
