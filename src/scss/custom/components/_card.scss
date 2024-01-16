@@ -21,3 +21,19 @@
   color: $card-title-desc;
   margin-bottom: 24px;
 }
+
+app-modal {
+  .modal-body {
+    #eventFormNumeraryConversion {
+      ng2-smart-table {
+        .id {
+          min-width: 100px;
+        }
+        .eventDate,
+        .failureDate {
+          min-width: 150px;
+        }
+      }
+    }
+  }
+}

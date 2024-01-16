@@ -16,11 +16,13 @@ export class CopyParametersConceptsModalComponent extends BasePage {
     super();
     this.form = this.fb.group({
       id: [null, [Validators.required]],
+      address: [null],
     });
   }
 
   changeValue(event: any) {
     console.log(event, this.form.value);
+    this.form.get('address').setValue(event.direccion);
   }
 
   get path() {
@@ -37,6 +39,7 @@ export class CopyParametersConceptsModalComponent extends BasePage {
 
   confirm() {
     console.log(this.form.value);
+    // return;
     // if (!this.edit) {
     //   this.form.get('creationDate').setValue(secondFormatDate(new Date()));
     //   this.form.get('creationUser').setValue(secondFormatDate(new Date()));

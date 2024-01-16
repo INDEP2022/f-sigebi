@@ -231,6 +231,7 @@ export class PropertyComponent extends BasePage implements OnInit {
               case 'clasifGoodNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
+
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -265,6 +266,33 @@ export class PropertyComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'bien':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'expediente':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'cantidad':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'unidad_medida':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'clasif':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'no_trasferente':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'volante':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'no_almacen':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'num_fotos':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'no_of_gestion':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:

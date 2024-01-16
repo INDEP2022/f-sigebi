@@ -12,6 +12,7 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -35,6 +36,7 @@ import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PaymentSearchModalComponent } from '../payment-search-modal/payment-search-modal.component';
 import { PaymentSearchProcessComponent } from '../payment-search-process/payment-search-process.component';
+import { PaymentAuthComponent } from './payment-auth/payment-auth.component';
 import { PAYMENT_COLUMNS } from './payment-search-columns';
 
 @Component({
@@ -74,6 +76,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     { value: 2, description: 'No Referenciados' },
     { value: 3, description: 'Efectivo' },
     { value: 4, description: 'Inconsistencia' },
+    { value: 5, description: 'Carga de Archivo CSV' },
   ];
   actions = [
     { value: 1, description: 'Cancelar' },
@@ -1153,6 +1156,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   private async pupProcesa() {
+    debugger;
     const processType = this.processTypes.find(
       x => x.value == this.searchForm.get('processType').value
     );
@@ -1175,10 +1179,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     ) {
       if (elemC.value == '0') {
         //integrar PA_PAGOS_CAMBIOS}
-        await this.pagosCambio(
-          this.searchForm.get('processType').value,
-          this.searchForm.get('action').value
-        );
+        await this.pagosCambio(this.searchForm.get('processType').value);
       } else {
         LV_PROCESA = 1;
       }
@@ -1367,9 +1368,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     });
   }
 
-  pagosCambio(process: number, action: number) {
+  pagosCambio(process: number) {
     return firstValueFrom(
-      this.msDepositaryService.getPaymentChange(process, action).pipe(
+      this.msDepositaryService.getPaymentChange(process).pipe(
         catchError(x =>
           of({
             P_EST_PROCESO: 0,
@@ -1531,15 +1532,28 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: response => {
+          console.log(response);
+          // return;
           if (response > 0) {
             this.pupProcesa();
           } else {
             this.loader.load = false;
-            this.alert(
-              'error',
-              'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-              'Usuario no Autorizado'
-            );
+            const modalConfig = MODAL_CONFIG;
+            modalConfig.initialState = {
+              callback: (next: any) => {
+                if (next === true) {
+                  console.log('Usuario válido');
+                  this.loader.load = true;
+                  this.pupProcesa();
+                }
+              },
+            };
+            this.modalService.show(PaymentAuthComponent, modalConfig);
+            // this.alert(
+            //   'error',
+            //   'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+            //   'Usuario no Autorizado'
+            // );
           }
         },
       });

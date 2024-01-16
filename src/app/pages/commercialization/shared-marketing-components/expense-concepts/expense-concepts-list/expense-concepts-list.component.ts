@@ -175,7 +175,7 @@ export class ExpenseConceptsListComponent
     if (filter.search !== '') {
       if (
         filter.search === 'N' &&
-        ['automatic', 'routineCalculation'].includes(filter.field)
+        ['automatic', 'numerary'].includes(filter.field)
       ) {
         this.columnFilters[field] = `${searchFilter}:S`;
       } else {
@@ -213,7 +213,7 @@ export class ExpenseConceptsListComponent
     modalConfig.initialState = {
       conceptId: this.conceptId,
       address: this.address,
-      callback: (body: { id: string }) => {
+      callback: (body: { id: string; address: string }) => {
         if (body) {
           let listParams = new ListParams();
           listParams.limit = 10000;
@@ -222,7 +222,7 @@ export class ExpenseConceptsListComponent
               {
                 ...body,
                 concept: this.conceptId,
-                address: this.selectedConcept.address,
+                address: this.address,
               },
               listParams
             )
