@@ -23,7 +23,7 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { IPayment } from 'src/app/core/models/ms-payment/payment';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
-import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
+import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
@@ -145,7 +145,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     private paymentService: PaymentService,
     private accountMovementService: AccountMovementService,
     private msDepositaryService: MsDepositaryService,
-    private bankMovementType: BankMovementType,
+    private parametersModService: ParametersModService,
     private authService: AuthService,
     private indUserService: IndUserService,
     private interfacesirsaeService: InterfacesirsaeService,
@@ -214,7 +214,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getValidSystem();
 
-    this.getParametercomer('SUPUSUCOMER');
+    this.getParametercomer();
     // this.getBusquedaPagDet(5);
     // this.searchID(5);
     this.localdata
@@ -1135,24 +1135,28 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     );
   }
 
-  getParametercomer(params?: any) {
+  getParametercomer() {
     this.n_CONT = 0;
     const { preferred_username } = this.authService.decodeToken();
     let username = preferred_username;
+    let filterParams = new FilterParams();
+    filterParams.addFilter('value', username.toUpperCase());
+    filterParams.addFilter('parameter', 'SUPUSUCOMER');
     //username = 'NMORENO';
-    this.bankMovementType
-      .getParameterMod(params, username.toUpperCase())
-      .subscribe(
-        resp => {
-          if (resp != null && resp != undefined) {
-            this.n_CONT = resp.count;
-            console.log('RespCount-> ', this.n_CONT);
-          }
-        },
-        err => {
-          //num = err.count;
+    this.parametersModService.getAll(filterParams.getParams()).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          this.n_CONT = resp.count;
+          console.log('RespCount-> ', this.n_CONT);
+        } else {
+          this.n_CONT = 0;
         }
-      );
+      },
+      err => {
+        this.n_CONT = 0;
+        //num = err.count;
+      }
+    );
   }
 
   private async pupProcesa() {
