@@ -71,7 +71,8 @@ import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-r
 })
 export class DetailAssetsTabComponentComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   // private _detailAssets: ModelForm<any>;
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
@@ -374,7 +375,7 @@ export class DetailAssetsTabComponentComponent
         next: response => {
           this.nameGoodType = response.description;
         },
-        error: error => { },
+        error: error => {},
       });
   }
 
@@ -386,7 +387,7 @@ export class DetailAssetsTabComponentComponent
         next: data => {
           this.nameTypeRelevant = data.description;
         },
-        error: error => { },
+        error: error => {},
       });
   }
 
@@ -916,11 +917,11 @@ export class DetailAssetsTabComponentComponent
         },
       });
   }
-  getTansferUnitMeasure(event: any) { }
+  getTansferUnitMeasure(event: any) {}
 
-  getDestintSae(event: any) { }
+  getDestintSae(event: any) {}
 
-  getState(event: any) { }
+  getState(event: any) {}
 
   getMunicipaly(params: ListParams, municipalyId?: number | string) {
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
@@ -972,7 +973,7 @@ export class DetailAssetsTabComponentComponent
             this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
           }
         },
-        error: error => { },
+        error: error => {},
       });
     /* this.municipeSeraService.getAll(params).subscribe({
       next: data => {
@@ -1037,7 +1038,7 @@ export class DetailAssetsTabComponentComponent
             this.selectLocality = new DefaultSelect(resp.data);
           }
         },
-        error: error => { },
+        error: error => {},
       });
   }
 
@@ -1563,16 +1564,13 @@ export class DetailAssetsTabComponentComponent
 
   validGoodB: boolean = false;
 
-  updateGood() {
-    //console.log('validGood, ', validGood);
-    //this.validGoodB = validGood;
-    console.log('validGood, ', this.validGoodB);
-
+  async updateGood() {
     //Verifica si es un bien a modificar o a crear
     if (this.detailAssets.value.id == null) {
       //Crear objeto del formulario con solo datos llenos
       const dataGood: Object = this.detailAssets.value;
-      console.log('Bien, sin id');
+      console.log('Bien, sin id', this.detailAssets.value);
+
       let body: any = {};
 
       //Recorre el objeto del formulario y setea al body aquellos que tienen información
@@ -1582,6 +1580,8 @@ export class DetailAssetsTabComponentComponent
           body[clave] = valor;
         }
       }
+
+      console.log('Información del objeto dataGood ->', dataGood);
 
       this.goodService.create(body).subscribe({
         next: resp => {
@@ -1604,87 +1604,104 @@ export class DetailAssetsTabComponentComponent
         },
       });
     } else {
-      console.log('Información del Bien: ', this.detailAssetsInfo);
-      console.log(
-        'Información del Bien del formulario',
-        this.detailAssets.value
-      );
+      //Métodos para bien a modificar
+      const resetDone = await this.reseteValsGoods();
+      console.log('resetDone =>', resetDone);
 
-      //Del objeto del formulario, quita los que estan en nulos
-      for (const clave in this.detailAssets.value) {
-        if (
-          this.detailAssets.value.hasOwnProperty(clave) &&
-          this.detailAssets.value[clave] === null
-        ) {
-          delete this.detailAssets.value[clave];
-        }
-      }
-      //Crear objeto del formulario con solo datos llenos
-      const dataGood: Object = this.detailAssets.value;
-
-      let required: boolean = false;
-
-      //Verifica que la información de la tabla este con datos.
-      this.dataAtribute.forEach((item: any) => {
-        if (item.required && (item.value === null || item.value === '')) {
-          required = true;
-        }
-      });
-
-      if (this.validGoodB == false) {
-        if (required) {
-          this.alert('warning', 'Debe Registrar los Atributos Requeridos.', '');
-          return;
-        }
-      }
-
-      console.log(
-        'Información del Bien del formulario LIMPIO',
-        this.detailAssets.value
-      );
-
-      //Verifica que tengra fracción o clasificación el Bien para guardar o crear
-      if (this.detailAssets.value.ligieChapter == null) {
-        this.alert(
-          'warning',
-          'Sin fracción',
-          'Debe seleccionar una fracción para continuar'
+      if (resetDone == true) {
+        console.log(
+          'Información del Bien del formulario',
+          this.detailAssets.value
         );
-        return;
-      } else {
-        let body: any = {};
-        body['id'] = Number(this.detailAssetsInfo.id);
-        body['goodId'] = Number(this.detailAssetsInfo.id);
 
-        //Recorre el objeto del formulario y setea al body aquellos que tienen información
-        for (const clave in dataGood) {
-          if (dataGood.hasOwnProperty(clave)) {
-            const valor = dataGood[clave];
-            body[clave] = valor;
+        //Del objeto del formulario, quita los que estan en nulos
+        for (const clave in this.detailAssets.value) {
+          if (
+            this.detailAssets.value.hasOwnProperty(clave) &&
+            this.detailAssets.value[clave] === null
+          ) {
+            delete this.detailAssets.value[clave];
+          }
+        }
+        //Crear objeto del formulario con solo datos llenos
+        const dataGood: Object = this.detailAssets.value;
+
+        let required: boolean = false;
+
+        //Verifica que la información de la tabla este con datos.
+        this.dataAtribute.forEach((item: any) => {
+          if (item.required && (item.value === null || item.value === '')) {
+            required = true;
+          }
+        });
+
+        if (this.validGoodB == false) {
+          if (required) {
+            this.alert(
+              'warning',
+              'Debe Registrar los Atributos Requeridos.',
+              ''
+            );
+            return;
           }
         }
 
-        //Recorre tabla con atributos y los setea a body
-        this.dataAtribute.forEach((row: any) => {
-          body[row.column] = row.value;
-        });
+        console.log(
+          'Información del Bien del formulario LIMPIO',
+          this.detailAssets.value
+        );
 
-        this.goodService.updateGoodTable(body).subscribe({
-          next: resp => {
-            this.childSaveAction = true;
-            this.refreshTable(true);
-            this.viewAct = !this.viewAct;
-            this.disableUpdate = !this.disableUpdate;
-            this.good = resp;
-            this.alert('success', 'El Bien se ha actualizado', '');
-            setTimeout(() => {
-              this.goodChange++;
-            }, 100);
-          },
-          error: err => {
-            this.alert('error', 'Error al actualizar el Bien', '');
-          },
-        });
+        //Verifica que tengra fracción o clasificación el Bien para guardar o crear
+        if (this.detailAssets.value.ligieChapter == null) {
+          this.alert(
+            'warning',
+            'Sin fracción',
+            'Debe seleccionar una fracción para continuar'
+          );
+          return;
+        } else {
+          let body: any = {};
+          body['id'] = Number(this.detailAssetsInfo.id);
+          body['goodId'] = Number(this.detailAssetsInfo.id);
+
+          //Recorre el objeto del formulario y setea al body aquellos que tienen información
+          for (const clave in dataGood) {
+            if (dataGood.hasOwnProperty(clave)) {
+              const valor = dataGood[clave];
+              body[clave] = valor;
+            }
+          }
+
+          //Recorre tabla con atributos y los setea a body
+          this.dataAtribute.forEach((row: any) => {
+            body[row.column] = row.value;
+          });
+
+          console.log('Información del objeto dataGood ->', dataGood);
+
+          this.goodService.updateGoodTable(body).subscribe({
+            next: resp => {
+              this.childSaveAction = true;
+              this.refreshTable(true);
+              this.viewAct = !this.viewAct;
+              this.disableUpdate = !this.disableUpdate;
+              this.good = resp;
+              this.alert('success', 'El Bien se ha actualizado', '');
+              setTimeout(() => {
+                this.goodChange++;
+              }, 100);
+            },
+            error: err => {
+              this.alert('error', 'Error al actualizar el Bien', '');
+            },
+          });
+        }
+      } else {
+        this.alert(
+          'error',
+          'Hubo un problema',
+          'No se reiniciaron los valores especiales del Bien'
+        );
       }
     }
   }
@@ -2181,14 +2198,21 @@ export class DetailAssetsTabComponentComponent
       case 'estateGood':
         if (this.detailAssetsInfo.id == null) {
           //Obliga a primero crear el Bien para que se pueda mostrar la tabla de atributos
-          const result = await this.alertInfo(
+          const result = await this.alertQuestion(
             'warning',
             'Atención',
-            'Primero debe guardar la información básica del Bien, posteriormente podrá modificar los atributos especiales'
+            'Primero debe guardar la información básica del Bien, posteriormente podrá modificar los atributos especiales.',
+            'Guardar'
           );
           if (result.isConfirmed) {
+            //this.reseteValsGoods();
+            this.updateGood();
             console.log('Confirmado, dirigir a otra pestaña');
             console.log(' this.tabset.tabs.length', this.tabset.tabs.length);
+            this.tabset.tabs.forEach((tab, i) => {
+              tab.active = i === 0;
+            });
+          } else {
             this.tabset.tabs.forEach((tab, i) => {
               tab.active = i === 0;
             });
@@ -2204,10 +2228,11 @@ export class DetailAssetsTabComponentComponent
             const result = await this.alertQuestion(
               'warning',
               'Atención',
-              'Al cambiar de clasificación, es necesario primero guardar esta información para continuar',
+              'Al cambiar de clasificación, es necesario primero guardar esta información para continuar.',
               'Guardar'
             );
             if (result.isConfirmed) {
+              //this.reseteValsGoods();
               this.validGoodB = true;
               this.updateGood();
               console.log('Confirmado, guardar');
@@ -2226,5 +2251,26 @@ export class DetailAssetsTabComponentComponent
       default:
         break;
     }
+  }
+
+  async reseteValsGoods() {
+    return new Promise(resolve => {
+      console.log('reset vals activado');
+
+      for (let i = 1; i < 121; i++) {
+        this.detailAssets.value['val' + i] = null;
+      }
+
+      this.goodService.updateGoodTable(this.detailAssets.value).subscribe({
+        next: resp => {
+          console.log('Vals borrados');
+          resolve(true);
+        },
+        error: err => {
+          console.log('Vals NO borrados');
+          resolve(false);
+        },
+      });
+    });
   }
 }

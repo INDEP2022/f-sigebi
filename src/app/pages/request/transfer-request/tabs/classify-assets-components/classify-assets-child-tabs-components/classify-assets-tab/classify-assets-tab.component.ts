@@ -1217,6 +1217,16 @@ export class ClassifyAssetsTabComponent
             : ' ';
       }
 
+      if (goods.goodTypeId == 8) {
+        if (goods?.physicalStatus == 1) {
+          goods.val1 = 'BUENO';
+        } else if (goods?.physicalStatus == 2) {
+          goods.val1 = 'MALO';
+        }
+
+        goods.val2 = goods?.origin;
+      }
+
       goodResult = await this.createGood(goods);
 
       this.updateGoodFindRecord(goodResult.result);
