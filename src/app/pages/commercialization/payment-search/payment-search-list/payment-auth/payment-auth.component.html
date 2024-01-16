@@ -1,7 +1,7 @@
 <app-modal>
-  <!-- <div header>
-    <h5 class="modal-title"></h5>
-  </div> -->
+  <div header>
+    <h5 class="modal-title">Validación de Usuario</h5>
+  </div>
   <div body>
     <form class="form-material" [formGroup]="authForm">
       <div class="row">
@@ -23,12 +23,16 @@
               maxlength="30"
               formControlName="password"
               class="form-control" />
-            <button
+            <span
+              style="position: absolute; top: 19px; right: 0px"
+              (click)="hide = !hide"
+              [class]="hide ? 'fa fa-eye' : 'fa fa-eye-slash'"></span>
+            <!-- <button
               class="btn btn-secondary btn-sm active"
               (click)="hide = !hide"
               style="margin-top: 7px">
-              <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
-            </button>
+              <span [class]="hide? 'fa fa-eye':'fa fa-eye-slash'"></span>
+            </button> -->
           </form-field>
         </div>
       </div>
@@ -38,6 +42,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          text="Aceptar"
           [disabled]="authForm.invalid"
           [loading]="loading"
           (confirm)="confirm()">
