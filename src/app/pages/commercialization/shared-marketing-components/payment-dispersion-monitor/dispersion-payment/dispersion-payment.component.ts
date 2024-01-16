@@ -210,6 +210,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
+        console.log(change);
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -238,7 +239,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 field
               ] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.ColumnFilterCustomer[field];
+              delete this.ColumnFilterCustomerBank[field];
             }
           });
           this.paramsCustomer = this.pageFilter(this.paramsCustomer);
@@ -516,6 +517,15 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.loadingDesertLots = true;
     /* this.loadingLotBanks = true; */
     /* this.loadingPaymentLots = true; */
+
+    if (this.event.value == null) {
+      this.alert('warning', 'Debe seleccionar un evento', '');
+      this.loadingCustomer = false;
+      this.loadingLotEvent = false;
+      this.loadingDesertLots = false;
+      return;
+    }
+
     const paramsF = new FilterParams();
     paramsF.addFilter('id', this.event.value);
     console.log(this.event.value);
@@ -791,9 +801,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.addFilter('EventId', this.event.value);
 
+    console.log(this.ColumnFilterCustomerBank);
+
     let params = {
       ...this.paramsCustomer.getValue(),
-      ...this.ColumnFilterCustomer,
+      ...this.ColumnFilterCustomerBank,
     };
 
     params['filter.EventId'] = `$eq:${this.event.value}`;
@@ -831,16 +843,16 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           this.formCustomerEvent.get('inProcess').value
             ? this.alert(
                 'warning',
-                'No se encontrarón Clientes Participantes para el Evento con Proceso S',
+                'No se encontrarón clientes participantes para el evento con proceso S',
                 ''
               )
             : this.alert(
                 'warning',
-                'No se encontrarón Clientes Participantes para el Evento',
+                'No se encontrarón clientes participantes para el Evento',
                 ''
               );
         } else {
-          this.alert('error', 'Se presentó un Error Inesperado', '');
+          this.alert('error', 'Se presentó un error inesperado', '');
         }
       }
     );
@@ -1457,6 +1469,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: this.event.value,
     };
 
+    if (this.event.value == null) {
+      this.alert('warning', 'Debe seleccionar un evento', '');
+      this.loadingExcel = false;
+      return;
+    }
+
     this.comerEventosService.pupExpxcVenvspag(body).subscribe(
       res => {
         console.log(res);
@@ -1467,7 +1485,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingExcel = false;
         this.alert(
           'error',
-          'Se Presentó un Error Inesperado al Generar Excel',
+          'Se presentó un error inesperado al generar excel',
           'Por favor inténtelo nuevamente'
         );
       }
@@ -1481,6 +1499,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: this.event.value,
     };
 
+    if (this.event.value == null) {
+      this.alert('warning', 'Debe seleccionar un evento', '');
+      this.loadingExcel = false;
+      return;
+    }
+
     this.comerEventosService.pupExpExcel(body).subscribe(
       res => {
         console.log(res);
@@ -1491,7 +1515,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingExcel = false;
         this.alert(
           'error',
-          'Se Presentó un Error Inesperado al Generar Excel',
+          'Se presentó un error inesperado al generar excel',
           'Por favor inténtelo nuevamente'
         );
       }
@@ -1505,6 +1529,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: this.event.value,
     };
 
+    if (this.event.value == null) {
+      this.alert('warning', 'Debe seleccionar un evento', '');
+      this.loadingExcel = false;
+      return;
+    }
+
     this.comerEventosService.pupExpPayModest(body).subscribe(
       res => {
         console.log(res);
@@ -1515,7 +1545,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingExcel = false;
         this.alert(
           'error',
-          'Se Presentó un Error Inesperado al Generar Excel',
+          'Se presentó un error inesperado al generar excel',
           'Por favor inténtelo nuevamente'
         );
       }
@@ -1530,6 +1560,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pType: 1,
     };
 
+    if (this.event.value == null) {
+      this.alert('warning', 'Debe seleccionar un evento', '');
+      this.loadingExcel = false;
+      return;
+    }
+
     this.comerEventosService.pupExportDetpayments(body).subscribe(
       res => {
         console.log(res);
@@ -1540,7 +1576,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingExcel = false;
         this.alert(
           'error',
-          'Se Presentó un Error Inesperado al Generar Excel',
+          'Se presentó un error inesperado al generar excel',
           'Por favor inténtelo nuevamente'
         );
       }
@@ -1664,7 +1700,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Debe Seleccionar un Pago Recibido en el Banco por Cliente',
+        'Debe seleccionar un pago recibido en el banco por cliente',
         ''
       );
     }
