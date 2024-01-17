@@ -322,7 +322,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           });
           // this.paramsLotEvent = this.pageFilter(this.paramsLotEvent);
           console.log('Se está llamadno 323');
-          this.getDataLotes(this.idEventToSearch);
+          this.getDataLotes(this.idEventToSearch, true);
         }
       });
   }
@@ -903,7 +903,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   }
 
   //LOTES
-  getDataLotes(eventId: string | number) {
+  getDataLotes(eventId: string | number, filter?: boolean) {
     // this.loadingLotEvent = true;
     //&filter.clientId=$not:null
     console.log('Se está llamando');
@@ -944,6 +944,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         const newData = await Promise.all(
           res.data.map(async (e: any) => {
             let disponible: boolean;
+            if (!filter) {
+              await this.restructureDataLotes(e);
+            }
             const validate = await this.postQueryLots(e);
             disponible = JSON.parse(JSON.stringify(validate)).available;
             return {
@@ -975,26 +978,30 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           let n_cont: number = 0;
           let n_coni: number = 0;
           let n_sum_pag: number = 0;
-          //TODO
-          // BEGIN
-          //       SELECT SUM(IVA+MONTO_APP_IVA+MONTO_NOAPP_IVA)
-          //         INTO n_SUM_PAG
-          //         FROM COMER_PAGOSREFGENS
-          //        WHERE ID_LOTE = :COMER_LOTES.ID_LOTE
-          //          AND TIPO = 'N';
-          //    EXCEPTION
-          //       WHEN OTHERS THEN
-          //          n_SUM_PAG := 0;
-          //    END;
-          //TODO
-          // SELECT COUNT(0), COUNT(IDORDENINGRESO)
-          //      INTO n_CONT, n_CONI
-          //      FROM COMER_PAGOREF CP
-          //     WHERE EXISTS (SELECT 1
-          //                     FROM COMER_PAGOREF_VIRT VI
-          //                    WHERE VI.ID_PAGO = CP.ID_PAGO
-          //                      AND ID_LOTE = :COMER_LOTES.ID_LOTE)
-          //       AND VALIDO_SISTEMA = 'S';
+          if (
+            (n_cont > 0 && n_cont == n_coni && n_sum_pag >= e.finalPrice) ||
+            (e.vtaStatusId == 'CAN' && n_cont == n_coni)
+          ) {
+            resolve({ available: false });
+          } else {
+            resolve({ available: true });
+          }
+        } else {
+          resolve({ available: true });
+        }
+      } else {
+        resolve({ available: true });
+      }
+    });
+  }
+
+  restructureDataLotes(e: any) {
+    return new Promise((resolve, reject) => {
+      if (this.id_tipo_disp == 2) {
+        if (['PAG', 'PAGE', 'CAN', 'GARA', 'DES'].includes(e.vtaStatusId)) {
+          let n_cont: number = 0;
+          let n_coni: number = 0;
+          let n_sum_pag: number = 0;
           if (
             (n_cont > 0 && n_cont == n_coni && n_sum_pag >= e.finalPrice) ||
             (e.vtaStatusId == 'CAN' && n_cont == n_coni)
