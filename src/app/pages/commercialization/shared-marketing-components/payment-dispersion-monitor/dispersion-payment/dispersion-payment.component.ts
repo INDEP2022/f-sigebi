@@ -161,6 +161,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   private txt_usu_valido: string = null;
   private id_tipo_disp: number = null;
 
+  idEventToSearch: any = null;
+
   //Arrays
   batchEventSelect: any[];
 
@@ -191,8 +193,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     //Formas
     this.prepareForm();
     this.initialize();
-    //Navegador
-    this.navigateCustomerXClient();
+
     //Settings
     this.prepareSettings();
     //Verificar si hay idEvento
@@ -202,6 +203,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       this.selectEvent();
       localStorage.removeItem('eventId_dispersion');
     }
+    //Navegador
+    this.navigateCustomerXClient();
+    this.filterDataLotEvent();
   }
 
   //Navegar en la tabla de clientes
@@ -231,13 +235,20 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}`;
                 break;
               default:
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
             }
             if (filter.search !== '') {
-              this.ColumnFilterCustomerBank[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              filter.field == 'ExecutionDate'
+                ? (this.ColumnFilterCustomerBank[
+                    field
+                  ] = `${searchFilter}:${format(
+                    new Date(filter.search),
+                    'yyyy-MM-dd'
+                  )}`)
+                : (this.ColumnFilterCustomerBank[
+                    field
+                  ] = `${searchFilter}:${filter.search}`);
             } else {
               delete this.ColumnFilterCustomerBank[field];
             }
@@ -255,6 +266,65 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.getDataComerCustomer();
       }
     });
+  }
+
+  //FILTRO DE COLUMNA
+  filterDataLotEvent() {
+    this.dataLotEvent
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log(change);
+        if (change.action === 'filter') {
+          console.log('FILTRO DE COLUMNA');
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'publicLot':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'vtaStatusId':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'guaranteePrice':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'advancePayment':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFiltersLotsEvent[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersLotsEvent[field];
+            }
+            console.log(this.columnFiltersLotsEvent);
+          });
+          // this.paramsLotEvent = this.pageFilter(this.paramsLotEvent);
+          console.log('Se está llamadno 323');
+          this.getDataLotes(this.idEventToSearch);
+        }
+      });
   }
 
   //Preparar Settings
@@ -531,8 +601,10 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     console.log(this.event.value);
     this.comerEventService.getAllFilter(paramsF.getParams()).subscribe(
       res => {
+        console.log('Se está llamando 602');
         console.log(res);
         const resp = res['data'][0];
+        this.idEventToSearch = resp.id;
         this.cveProcess.setValue(resp.processKey);
         this.dateEvent.setValue(resp.eventDate);
         this.dateClose.setValue(resp.eventClosingDate);
@@ -552,63 +624,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.eventTpId = resp.eventTpId;
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
+        this.getDataLotes(resp.id);
 
-        this.dataLotEvent
-          .onChanged()
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(change => {
-            if (change.action === 'filter') {
-              let filters = change.filter.filters;
-              filters.map((filter: any) => {
-                let field = ``;
-                let searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                switch (filter.field) {
-                  case 'publicLot':
-                    searchFilter = SearchFilter.EQ;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'rfc':
-                    searchFilter = SearchFilter.EQ;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'vtaStatusId':
-                    searchFilter = SearchFilter.ILIKE;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'guaranteePrice':
-                    searchFilter = SearchFilter.EQ;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'advancePayment':
-                    searchFilter = SearchFilter.EQ;
-                    field = `filter.${filter.field}`;
-                    break;
-                  case 'description':
-                    searchFilter = SearchFilter.ILIKE;
-                    field = `filter.${filter.field}`;
-                    break;
-                  default:
-                    searchFilter = SearchFilter.ILIKE;
-                    break;
-                }
-                if (filter.search !== '') {
-                  this.columnFiltersLotsEvent[
-                    field
-                  ] = `${searchFilter}:${filter.search}`;
-                } else {
-                  delete this.columnFiltersLotsEvent[field];
-                }
-              });
-              this.paramsLotEvent = this.pageFilter(this.paramsLotEvent);
-              this.getDataLotes(resp.id);
-            }
-          });
-        this.paramsLotEvent
+        /* this.paramsLotEvent
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(params => {
             this.getDataLotes(resp.id);
-          });
+          }); */
         //Filtrosthis.
         this.dataDesertedLots
           .onChanged()
@@ -882,7 +904,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //LOTES
   getDataLotes(eventId: string | number) {
+    // this.loadingLotEvent = true;
     //&filter.clientId=$not:null
+    console.log('Se está llamando');
     let params = {
       ...this.paramsLotEvent.getValue(),
       ...this.columnFiltersLotsEvent,
