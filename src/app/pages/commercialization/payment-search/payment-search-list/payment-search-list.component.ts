@@ -448,6 +448,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   async validateLoadLoteCSV() {
     if (this.n_CONT == 0) {
+      this.loadCSV2.nativeElement.value = '';
       this.alert(
         'error',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
@@ -1696,6 +1697,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       resp => {
         if (resp != null && resp != undefined) {
           console.log('PupCambioMasivo->', resp);
+          this.loadCSV2.nativeElement.value = '';
           this.alert(
             'success',
             'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
@@ -1710,6 +1712,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
           error.error.message
         );
+        this.loadCSV2.nativeElement.value = '';
       }
     );
   }
