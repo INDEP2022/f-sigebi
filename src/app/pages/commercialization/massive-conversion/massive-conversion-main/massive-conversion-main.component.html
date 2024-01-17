@@ -74,7 +74,7 @@
                             #rfc
                             hidden
                             type="file"
-                            accept=".csv, .xlsx, .xls"
+                            accept=".csv"
                             (change)="onClickLoadFile($event, 'rfc')"
                         /></a>
                       </li>
@@ -86,7 +86,7 @@
                             #clientId
                             hidden
                             type="file"
-                            accept=".csv, .xlsx, .xls"
+                            accept=".csv"
                             (change)="onClickLoadFile($event, 'client_id')"
                         /></a>
                       </li>
@@ -106,9 +106,16 @@
                   <button
                     class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
                     (click)="generateLcs()"
-                    [disabled]="dataColumns.count() === 0">
+                    [disabled]="!validGenerateLCs">
                     <i class="bx bx-send text-light float-icon"></i>
                     Generar LCs
+                  </button>
+                </div>
+                <div class="col-12">
+                  <button
+                    class="btn btn-sm btn-danger btn-block active me-2 font-size-14"
+                    (click)="resetFilter()">
+                    Limpiar <i class="fas fa-eraser"></i>
                   </button>
                 </div>
               </div>
@@ -233,7 +240,31 @@
             id="collapseFilter"
             [isAnimated]="true"
             [collapse]="!toggleFilter">
-            <div class="col-sm-4 col-md-2">
+            <div class="col-sm-6 col-md-4">
+              <ng-custom-select-loading
+                [form]="form"
+                [updateValues]="true"
+                formControlName="batchId"
+                label="Lote"
+                path="lot/api/v1/eat-lots"
+                value="idLot"
+                bindLabel="description"
+                paramSearch="filter.description"
+                prefixSearch="$ilike"
+                secondParamSearch="filter.idLot"
+                [labelTemplate]="lotLabel"
+                [optionTemplate]="lotOption">
+              </ng-custom-select-loading>
+              <ng-template #lotLabel let-item="item">
+                {{ item.idLot }} - {{ item.description }}
+              </ng-template>
+              <ng-template #lotOption let-item="item">
+                <div [title]="item.idLot + '-' + item.description">
+                  {{ item.idLot }} - {{ item.description }}
+                </div>
+              </ng-template>
+            </div>
+            <!-- <div class="col-sm-4 col-md-2">
               <form-field
                 label="Lote"
                 class="form-group"
@@ -241,7 +272,7 @@
                 <ng-custom-select
                   class="form-control"
                   formControlName="batchId"
-                  paramSearch="search"
+                  paramSearch="filter.id"
                   value="id"
                   [path]="pathGetBath"
                   control="batchId">
@@ -250,7 +281,7 @@
                   </ng-template>
                 </ng-custom-select>
               </form-field>
-            </div>
+            </div> -->
             <div class="col-sm-4 col-md-2">
               <form-field [control]="form.get('status')" label="Estatus">
                 <ng-select
@@ -286,7 +317,7 @@
                   bsDatepicker />
               </form-field>
             </div>
-            <div class="col-sm-4 col-md-4 d-flex">
+            <!-- <div class="col-sm-4 col-md-2 d-flex">
               <div class="ml-auto">
                 <button
                   class="btn btn-danger btn-sm active custom-btn"
@@ -294,7 +325,7 @@
                   Limpiar <i class="fas fa-eraser"></i>
                 </button>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -307,6 +338,7 @@
               <div class="d-flex justify-content-end my-3">
                 <div>
                   <app-columns-select
+                    [leftList]="true"
                     [(settings)]="dataSettings"></app-columns-select>
                 </div>
               </div>

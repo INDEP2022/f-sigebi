@@ -279,7 +279,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         },
         impressionDate_: {
           title: 'Fecha',
-          // type: 'string',
           width: '20%',
           sort: false,
           valuePrepareFunction: (text: string) => {
@@ -290,11 +289,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           filter: {
             type: 'custom',
             component: CustomDateFilterComponent_,
-            // component: CustomDateFilterComponent,
           },
-          filterFunction(cell?: any, search?: string): boolean {
-            let column = cell;
-            // console.log(column, '==', search);
+          filterFunction(): boolean {
             return true;
           },
         },
@@ -3292,6 +3288,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     Promise.all(result).then(resp => {
       this.btnLoading17 = false;
       this.getDetailsFacturas();
+      this.getBillings('no');
       this.alert('success', 'Proceso terminado correctamente', '');
     });
   }
