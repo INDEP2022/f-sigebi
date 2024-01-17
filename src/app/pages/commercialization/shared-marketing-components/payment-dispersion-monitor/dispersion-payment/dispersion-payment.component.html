@@ -5,22 +5,6 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-5 mt-3">
-        <div class="col">
-          <button
-            class="btn btn-danger btn-sm active mr-3"
-            (click)="clearAll()">
-            Limpiar <i class="fas fa-eraser"> </i>
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary active btn-sm"
-            (click)="selectEvent()">
-            Buscar
-            <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-        </div>
-      </div>
       <div class="row mb-3 mt-3">
         <form-field
           [control]="form.get('event')"
@@ -42,6 +26,20 @@
             readOnly
             class="form-control" />
         </form-field>
+        <div class="col">
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="clearAll()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="selectEvent()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
       <div class="row mb-3 mt-3">
         <div class="col-md-6">
@@ -243,7 +241,6 @@
               ">
               <div class="table-responsive">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
                   [settings]="settingsCustomer"
                   (userRowSelect)="selectRowClientEvent($event)"
                   [source]="dataCustomer">
@@ -299,7 +296,6 @@
               ">
               <div class="table-responsive">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
                   [settings]="settingsCustomerBanks"
                   (userRowSelect)="selectRowCustomerBanks($event)"
                   [source]="dataCustomerBanks">
@@ -399,7 +395,6 @@
               ">
               <div class="table-responsive">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
                   [settings]="settingsLotEvent"
                   (userRowSelect)="selectRowLotsEvent($event)"
                   [source]="dataLotEvent">
@@ -533,7 +528,6 @@
             <div [class]="loadingLotBanks ? 'table-loading' : ''">
               <div class="table-responsive">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
                   [settings]="settingsLotsBanks"
                   [source]="dataLotsBanks">
                 </ng2-smart-table>
@@ -571,7 +565,6 @@
             <div [class]="loadingPaymentLots ? 'table-loading' : ''">
               <div class="table-responsive">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
                   [settings]="settingsPaymentLots"
                   [source]="dataPaymentLots">
                 </ng2-smart-table>
@@ -801,7 +794,6 @@
         loadingDesertLots ? 'table-loading row mb-3 mt-3' : 'row mb-3 mt-3'
       ">
       <ng2-smart-table
-        [attr.class]="'table-bordered'"
         [settings]="settingsDesertedLots"
         [source]="dataDesertedLots">
       </ng2-smart-table>
