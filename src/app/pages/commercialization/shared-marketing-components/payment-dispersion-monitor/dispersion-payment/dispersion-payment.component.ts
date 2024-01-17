@@ -904,7 +904,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //LOTES
   getDataLotes(eventId: string | number, filter?: boolean) {
-    // this.loadingLotEvent = true;
+    this.loadingLotEvent = true;
     //&filter.clientId=$not:null
     console.log('Se está llamando');
     let params = {
@@ -1107,7 +1107,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}`;
                 break;
               case 'date':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 field = `filter.${filter.field}`;
                 break;
               case 'bankCode':
@@ -1135,9 +1135,16 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.ColumnFilterCustomerBank[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              filter.field == 'date'
+                ? (this.ColumnFilterCustomerBank[
+                    field
+                  ] = `${searchFilter}:${format(
+                    new Date(filter.search),
+                    'yyyy-MM-dd'
+                  )}`)
+                : (this.ColumnFilterCustomerBank[
+                    field
+                  ] = `${searchFilter}:${filter.search}`);
             } else {
               delete this.ColumnFilterCustomerBank[field];
             }
@@ -1230,9 +1237,16 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFiltersLotsBank[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              filter.field == 'date'
+                ? (this.columnFiltersLotsBank[
+                    field
+                  ] = `${searchFilter}:${format(
+                    new Date(filter.search),
+                    'yyyy-MM-dd'
+                  )}`)
+                : (this.columnFiltersLotsBank[
+                    field
+                  ] = `${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFiltersLotsBank[field];
             }

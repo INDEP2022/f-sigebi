@@ -173,7 +173,14 @@ export const COLUMNS_CUSTOMER_BANKS = {
     type: 'text',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return format(correctDate(cell), 'dd/MM/yyyy');
+      return format(correctDate(row.date), 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   bankCode: {
@@ -213,8 +220,15 @@ export const COLUMNS_LOTS_BANKS = {
     title: 'Fecha',
     type: 'text',
     sort: false,
-    valuePrepareFunction: (isSelected: any, row: any) => {
-      return format(new Date(row.date), 'dd/MM/yyyy');
+    valuePrepareFunction: (cell: any, row: any) => {
+      return format(correctDate(row.date), 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   bankKey: {
