@@ -5,7 +5,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { BehaviorSubject, skip } from 'rxjs';
+import { BehaviorSubject, skip, takeUntil } from 'rxjs';
 import {
   convertFormatDate,
   generateUrlOrPath,
@@ -37,7 +37,7 @@ import {
 @Component({
   selector: 'app-massive-conversion-main',
   templateUrl: './massive-conversion-main.component.html',
-  styleUrls: ['./massive-conversion.css'],
+  styleUrls: ['./massive-conversion.scss'],
   styles: [
     `
       .btn-event-search {
@@ -72,6 +72,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   generatedLcs: number = 0;
   dataTotalItems: number = 0;
   dataColumns = new LocalDataSource();
+  validGenerateLCs = false;
   layout: string = 'RFC'; // 'RFC' || 'clientId'
   reworkType: string = 'CLIENT'; // 'BATCH' || 'CLIENT'
   // lcSource: LocalDataSource;
@@ -199,7 +200,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       return;
     }
     this.searchData();
-    this.searchLcs();
+    // this.searchLcs();
     this.guarantyData();
   }
 
@@ -207,20 +208,40 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     console.error('Este es Search');
     this.loading = true;
     const params = this.makeFiltersParams(list).getParams();
-    this.capturelineService.getTmpLcComer(params).subscribe({
-      next: res => {
-        console.error(res);
-        this.loading = false;
-        this.dataSource.load(res.data);
-        this.dataTotalItems = res.count;
-        this.loading = false;
-      },
-      error: error => {
-        console.error(error);
-        this.dataSource.load([]);
-        this.loading = false;
-      },
-    });
+    this.capturelineService
+      .getTmpLcComer(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: res => {
+          console.error(res);
+          this.dataSource.load(res.data);
+          this.dataTotalItems = res.count;
+          this.loading = false;
+        },
+        error: error => {
+          console.error(error);
+          this.dataSource.load([]);
+          this.loading = false;
+        },
+      });
+    const params2 =
+      params + '&filter.amount=$not:$null&filter.batchId=$not:$null';
+    this.capturelineService
+      .getTmpLcComer(params2)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: res => {
+          console.error(res);
+          if (res.count > 0) {
+            this.validGenerateLCs = true;
+          } else {
+            this.validGenerateLCs = false;
+          }
+        },
+        error: error => {
+          this.validGenerateLCs = false;
+        },
+      });
   }
 
   searchLcs(listParams?: ListParams) {
@@ -232,6 +253,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     };
     this.capturelineService
       .postComerRefGuaranteesSearch({ ...this.form.value, ...paramsPaginate })
+      .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: res => {
           this.isLoadingLcs = false;
@@ -304,24 +326,31 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         url = `${environment.API_URL}massivecaptureline/api/v1/application/pupInsertRecordMassively`;
       }
 
-      this.httpClient.post(url, formData).subscribe({
-        next: res => {
-          this.alert('success', this.title, 'Se insertó correctamente a datos');
-          this.isLoadingLoadFile = false;
-          event.target.value = null;
-        },
-        error: err => {
-          console.log({ err });
-          this.alert(
-            'error',
-            this.title,
-            err?.error?.message ||
-              'Ocurrió un error al insertar los datos vuelve a intentarlo'
-          );
-          this.isLoadingLoadFile = false;
-          event.target.value = null;
-        },
-      });
+      this.httpClient
+        .post(url, formData)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: res => {
+            this.alert(
+              'success',
+              this.title,
+              'Se insertó correctamente a datos'
+            );
+            this.isLoadingLoadFile = false;
+            event.target.value = null;
+          },
+          error: err => {
+            console.log({ err });
+            this.alert(
+              'error',
+              this.title,
+              err?.error?.message ||
+                'Ocurrió un error al insertar los datos vuelve a intentarlo'
+            );
+            this.isLoadingLoadFile = false;
+            event.target.value = null;
+          },
+        });
     }
   }
 
@@ -336,44 +365,53 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.isLoadingExportFile = true;
     const params = this.makeFiltersParams().getParams();
 
-    this.guarantyService.getComerRefGuarantees(params).subscribe({
-      next: res => {
-        this.isLoadingExportFile = false;
-        this.excelService.export(res.data, { filename: 'LCS' });
-        this.searchLcs();
-      },
-      error: err => {
-        this.isLoadingExportFile = false;
-      },
-    });
+    this.guarantyService
+      .getComerRefGuarantees(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: res => {
+          this.isLoadingExportFile = false;
+          this.excelService.export(res.data, { filename: 'LCS' });
+          this.searchLcs();
+        },
+        error: err => {
+          this.isLoadingExportFile = false;
+        },
+      });
   }
 
   guarantyData() {
     this.isLoadingLcs = true;
     const params = this.makeFiltersParams().getParams();
-    this.guarantyService.getComerRefGuarantees(params).subscribe({
-      next: res => {
-        this.lcsSource.load(res.data);
-        this.lcsTotalItems = res.count;
-        this.isLoadingLcs = false;
-      },
-      error: () => {
-        this.lcsSource.load([]);
-        this.isLoadingLcs = false;
-      },
-    });
+    this.guarantyService
+      .getComerRefGuarantees(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: res => {
+          this.lcsSource.load(res.data);
+          this.lcsTotalItems = res.count;
+          this.isLoadingLcs = false;
+        },
+        error: () => {
+          this.lcsSource.load([]);
+          this.isLoadingLcs = false;
+        },
+      });
   }
 
   insertTmpLcComer(tmpLcComer: ITmpLcComer) {
-    this.capturelineService.postTmpLcComer(tmpLcComer).subscribe({
-      next: () => {
-        this.alert('success', this.title, 'Se insertó correctamente');
-        this.searchData();
-      },
-      error: () => {
-        this.alert('error', this.title, 'Ocurrió un error al insertar');
-      },
-    });
+    this.capturelineService
+      .postTmpLcComer(tmpLcComer)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: () => {
+          this.alert('success', this.title, 'Se insertó correctamente');
+          this.searchData();
+        },
+        error: () => {
+          this.alert('error', this.title, 'Ocurrió un error al insertar');
+        },
+      });
   }
 
   loadChecks() {
@@ -419,6 +457,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           validation: validityDate ? convertFormatDate(validityDate) : '',
           p_FLAG,
         })
+        .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: res => {
             console.log(res);

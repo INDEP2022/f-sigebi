@@ -702,8 +702,9 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         this.btnLoading = false;
         this.alert('success', 'Prefacturas Generadas', '');
         this.resetParams();
-        this.columnFilters['filter.eventId'] = `$eq:${event ?? data[0].eventId
-          }`;
+        this.columnFilters['filter.eventId'] = `$eq:${
+          event ?? data[0].eventId
+        }`;
         this.getAllComer();
       }
     } else {
@@ -783,7 +784,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
     const { event, idAllotment } = this.form.value;
     const next = await this.validatePreFactura();
 
-    if (next == 0) {
+    if (next == 1) {
       this.alert(
         'warning',
         'No cuenta con los permisos para realizar esta operación',
@@ -1355,14 +1356,19 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
 
     this.btnLoading13 = true;
     let arr = this.isSelect;
+    let arr_ = [];
     let result = arr.map(async item => {
       let obj = {
         billId: item.billId,
         eventId: item.eventId,
         process: 'EX',
       };
-      await this.billingsService.updateBillings(obj);
+      arr_.push(obj);
+      // await this.billingsService.updateBillings(obj);
     });
+
+    let resp = await this.putApplicationPutProcess(arr_);
+    // console.log(resp)
 
     Promise.all(result).then(resp => {
       let body = {
@@ -1370,19 +1376,26 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
       };
       this.eatLotService.getAppsExportExcelComerFacturas(body).subscribe({
         next: async response => {
+          const base64 = response.base64File;
+          const nameFile = response.nameFile;
+          await this.downloadExcel(base64, nameFile);
+
+          arr_ = [];
           let result_ = arr.map(async item => {
             let obj = {
               billId: item.billId,
               eventId: item.eventId,
               process: null,
             };
-            await this.billingsService.updateBillings(obj);
+            arr_.push(obj);
+            // await this.billingsService.updateBillings(obj);
           });
 
           Promise.all(result_).then(async resp => {
-            const base64 = response.base64File;
-            const nameFile = response.nameFile;
-            await this.downloadExcel(base64, nameFile);
+            let resp_ = await this.putApplicationPutProcess(arr_);
+            // const base64 = response.base64File;
+            // const nameFile = response.nameFile;
+            // await this.downloadExcel(base64, nameFile);
           });
         },
         error: err => {
@@ -1391,6 +1404,17 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  async putApplicationPutProcess(data: any) {
+    return firstValueFrom(
+      this.comerInvoice.putApplicationPutProcess(data).pipe(
+        map(resp => {
+          return true;
+        }),
+        catchError(() => of(false))
+      )
+    );
   }
 
   async downloadExcel(base64String: any, nameFile: string) {
@@ -1491,7 +1515,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1506,7 +1530,7 @@ export class BaseSalesPreInvoicingComponent extends BasePage implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal

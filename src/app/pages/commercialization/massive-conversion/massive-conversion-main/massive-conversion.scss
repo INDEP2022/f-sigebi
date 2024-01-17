@@ -1,0 +1,17 @@
+.custom-btn {
+  padding-right: 3px;
+  padding-left: 10px;
+  margin-right: -2px;
+}
+
+:host
+  ::ng-deep
+  tr.ng2-smart-filters
+  th.ng2-smart-th
+  ng2-smart-table-filter
+  div.ng2-smart-filter
+  default-table-filter
+  input-filter
+  input::placeholder {
+  color: transparent !important;
+}

@@ -103,7 +103,7 @@ export class ElectronicSignaturesMainComponent
     } else {
       this.alertInfo(
         'warning',
-        'Error al Obtener los Datos del Usuario de la Sesión Actual',
+        'Error al obtener los datos del usuario de la sesión actual',
         ''
       );
     }
