@@ -132,6 +132,7 @@ export class DetailAssetsTabComponentComponent
   especialMachineryAssets: boolean = false;
   mineralsAssets: boolean = false;
   immovablesAssets: boolean = false;
+  diverseAssets: boolean = false;
   manejeAssets: boolean = false; //diverso
   foodAndDrink: boolean = false; //diverso
 
@@ -194,6 +195,8 @@ export class DetailAssetsTabComponentComponent
   dataToSend: any = {};
 
   @ViewChild('tabset') tabset: TabsetComponent;
+
+  showFormGoods: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -1498,12 +1501,21 @@ export class DetailAssetsTabComponentComponent
         this.closeTabs();
         this.jewelerAssets = true;
         break;
+
+      case 6:
+        this.closeTabs();
+        this.especialMachineryAssets = true;
+        break;
+      case 7:
+        this.closeTabs();
+        this.mineralsAssets = true;
+        break;
       case 8:
         this.closeTabs();
-        this.detailAssetsInfo = [];
-        this.classificationNumber = null;
-        this.service.data = [];
         this.otherAssets = true;
+        //this.detailAssetsInfo = [];
+        //this.classificationNumber = null;
+        //this.service.data = [];
         break;
       default:
         this.closeTabs();
@@ -1517,6 +1529,9 @@ export class DetailAssetsTabComponentComponent
     this.boatAssets = false;
     this.aircraftAssets = false;
     this.jewelerAssets = false;
+    this.diverseAssets = false;
+    this.especialMachineryAssets = false;
+    this.mineralsAssets = false;
     this.otherAssets = false;
   }
 
@@ -1673,9 +1688,13 @@ export class DetailAssetsTabComponentComponent
           }
 
           //Recorre tabla con atributos y los setea a body
-          this.dataAtribute.forEach((row: any) => {
-            body[row.column] = row.value;
-          });
+          if (this.dataAtribute) {
+            this.dataAtribute.forEach((row: any) => {
+              body[row.column] = row.value;
+            });
+          } else {
+            console.error('this.dataAtribute es undefined o null.');
+          }
 
           console.log('Información del objeto dataGood ->', dataGood);
 
@@ -2196,6 +2215,9 @@ export class DetailAssetsTabComponentComponent
       case 'jewelGood':
       case 'aircraftGood':
       case 'estateGood':
+      case 'diverseGood':
+      case 'especialMachineryGood':
+      case 'mineralsGood':
         if (this.detailAssetsInfo.id == null) {
           //Obliga a primero crear el Bien para que se pueda mostrar la tabla de atributos
           const result = await this.alertQuestion(
@@ -2257,9 +2279,159 @@ export class DetailAssetsTabComponentComponent
     return new Promise(resolve => {
       console.log('reset vals activado');
 
-      for (let i = 1; i < 121; i++) {
-        this.detailAssets.value['val' + i] = null;
-      }
+      this.detailAssets.value.val1 = null;
+      this.detailAssets.value.val2 = null;
+      this.detailAssets.value.val3 = null;
+      this.detailAssets.value.val4 = null;
+      this.detailAssets.value.val5 = null;
+      this.detailAssets.value.val6 = null;
+      this.detailAssets.value.val7 = null;
+      this.detailAssets.value.val8 = null;
+      this.detailAssets.value.val9 = null;
+      this.detailAssets.value.val10 = null;
+      this.detailAssets.value.val11 = null;
+      this.detailAssets.value.val12 = null;
+      this.detailAssets.value.val13 = null;
+      this.detailAssets.value.val14 = null;
+      this.detailAssets.value.val15 = null;
+      this.detailAssets.value.val16 = null;
+      this.detailAssets.value.val17 = null;
+      this.detailAssets.value.val18 = null;
+      this.detailAssets.value.val19 = null;
+      this.detailAssets.value.val20 = null;
+      this.detailAssets.value.val21 = null;
+      this.detailAssets.value.val22 = null;
+      this.detailAssets.value.val23 = null;
+      this.detailAssets.value.val24 = null;
+      this.detailAssets.value.val25 = null;
+      this.detailAssets.value.val26 = null;
+      this.detailAssets.value.val27 = null;
+      this.detailAssets.value.val28 = null;
+      this.detailAssets.value.val29 = null;
+      this.detailAssets.value.val30 = null;
+      this.detailAssets.value.val31 = null;
+      this.detailAssets.value.val32 = null;
+      this.detailAssets.value.val33 = null;
+      this.detailAssets.value.val34 = null;
+      this.detailAssets.value.val35 = null;
+      this.detailAssets.value.val36 = null;
+      this.detailAssets.value.val37 = null;
+      this.detailAssets.value.val38 = null;
+      this.detailAssets.value.val39 = null;
+      this.detailAssets.value.val40 = null;
+      this.detailAssets.value.val41 = null;
+      this.detailAssets.value.val42 = null;
+      this.detailAssets.value.val43 = null;
+      this.detailAssets.value.val44 = null;
+      this.detailAssets.value.val45 = null;
+      this.detailAssets.value.val46 = null;
+      this.detailAssets.value.val47 = null;
+      this.detailAssets.value.val48 = null;
+      this.detailAssets.value.val49 = null;
+      this.detailAssets.value.val50 = null;
+      this.detailAssets.value.val51 = null;
+      this.detailAssets.value.val52 = null;
+      this.detailAssets.value.val53 = null;
+      this.detailAssets.value.val54 = null;
+      this.detailAssets.value.val55 = null;
+      this.detailAssets.value.val56 = null;
+      this.detailAssets.value.val57 = null;
+      this.detailAssets.value.val58 = null;
+      this.detailAssets.value.val59 = null;
+      this.detailAssets.value.val60 = null;
+      this.detailAssets.value.val61 = null;
+      this.detailAssets.value.val62 = null;
+      this.detailAssets.value.val63 = null;
+      this.detailAssets.value.val64 = null;
+      this.detailAssets.value.val65 = null;
+      this.detailAssets.value.val66 = null;
+      this.detailAssets.value.val67 = null;
+      this.detailAssets.value.val68 = null;
+      this.detailAssets.value.val69 = null;
+      this.detailAssets.value.val70 = null;
+      this.detailAssets.value.val71 = null;
+      this.detailAssets.value.val72 = null;
+      this.detailAssets.value.val73 = null;
+      this.detailAssets.value.val74 = null;
+      this.detailAssets.value.val75 = null;
+      this.detailAssets.value.val76 = null;
+      this.detailAssets.value.val77 = null;
+      this.detailAssets.value.val78 = null;
+      this.detailAssets.value.val79 = null;
+      this.detailAssets.value.val80 = null;
+      this.detailAssets.value.val81 = null;
+      this.detailAssets.value.val82 = null;
+      this.detailAssets.value.val83 = null;
+      this.detailAssets.value.val84 = null;
+      this.detailAssets.value.val85 = null;
+      this.detailAssets.value.val86 = null;
+      this.detailAssets.value.val87 = null;
+      this.detailAssets.value.val88 = null;
+      this.detailAssets.value.val89 = null;
+      this.detailAssets.value.val90 = null;
+      this.detailAssets.value.val91 = null;
+      this.detailAssets.value.val92 = null;
+      this.detailAssets.value.val93 = null;
+      this.detailAssets.value.val94 = null;
+      this.detailAssets.value.val95 = null;
+      this.detailAssets.value.val96 = null;
+      this.detailAssets.value.val97 = null;
+      this.detailAssets.value.val98 = null;
+      this.detailAssets.value.val99 = null;
+      this.detailAssets.value.val100 = null;
+      this.detailAssets.value.val101 = null;
+      this.detailAssets.value.val102 = null;
+      this.detailAssets.value.val103 = null;
+      this.detailAssets.value.val104 = null;
+      this.detailAssets.value.val105 = null;
+      this.detailAssets.value.val106 = null;
+      this.detailAssets.value.val107 = null;
+      this.detailAssets.value.val108 = null;
+      this.detailAssets.value.val109 = null;
+      this.detailAssets.value.val110 = null;
+      this.detailAssets.value.val111 = null;
+      this.detailAssets.value.val112 = null;
+      this.detailAssets.value.val113 = null;
+      this.detailAssets.value.val114 = null;
+      this.detailAssets.value.val115 = null;
+      this.detailAssets.value.val116 = null;
+      this.detailAssets.value.val117 = null;
+      this.detailAssets.value.val118 = null;
+      this.detailAssets.value.val119 = null;
+      this.detailAssets.value.val120 = null;
+      this.detailAssets.value.manufacturingYear = null;
+      this.detailAssets.value.operationalState = null;
+      this.detailAssets.value.tuition = null;
+      this.detailAssets.value.model = null;
+      this.detailAssets.value.enginesNumber = null;
+      this.detailAssets.value.serie = null;
+      this.detailAssets.value.origin = null;
+      this.detailAssets.value.airplaneType = null;
+      this.detailAssets.value.dgacRegistry = null;
+      this.detailAssets.value.armor = null;
+      this.detailAssets.value.engineNumber = null;
+      this.detailAssets.value.flag = null;
+      this.detailAssets.value.useType = null;
+      this.detailAssets.value.brand = null;
+      this.detailAssets.value.shipName = null;
+      this.detailAssets.value.publicRegistry = null;
+      this.detailAssets.value.cabin = null;
+      this.detailAssets.value.openwork = null;
+      this.detailAssets.value.volume = null;
+      this.detailAssets.value.length = null;
+      this.detailAssets.value.sleeve = null;
+      this.detailAssets.value.capacity = null;
+      this.detailAssets.value.ships = null;
+      //this.detailAssets.value.physicalStatus = null;
+      this.detailAssets.value.caratage = null;
+      this.detailAssets.value.material = null;
+      this.detailAssets.value.weight = null;
+      this.detailAssets.value.axesNumber = null;
+      this.detailAssets.value.subBrand = null;
+      this.detailAssets.value.fitCircular = null;
+      this.detailAssets.value.theftReport = null;
+      this.detailAssets.value.chassis = null;
+      this.detailAssets.value.doorsNumber = null;
 
       this.goodService.updateGoodTable(this.detailAssets.value).subscribe({
         next: resp => {

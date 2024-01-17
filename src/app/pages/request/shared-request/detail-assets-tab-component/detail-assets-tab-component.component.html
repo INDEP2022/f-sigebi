@@ -22,7 +22,7 @@
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets?.get('goodId')"
                 label="No&#46; Gesti&oacute;n">
@@ -32,6 +32,18 @@
                   formControlName="goodId"
                   [readOnly]="true" />
               </form-field>
+            </div>
+            <div class="col-md-5">
+              <ngx-select
+                [form]="detailAssets"
+                control="physicalStatus"
+                (fetchItems)="getPhysicalState($event)"
+                [data]="selectPhysicalState"
+                label="Estado F&iacute;sico"
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"
+                [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
           </div>
           <div class="row pt-4">
@@ -85,7 +97,7 @@
             </div>
           </div>
 
-          <div class="row pt-4">
+          <!-- <div class="row pt-4">
             <div class="col-md-5">
               <form-check label="Duplicidad" for="duplicity">
                 <input
@@ -97,7 +109,7 @@
                   [disabled]="disableDuplicity" />
               </form-check>
             </div>
-            <div class="col-md-5">
+             <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('capacity')"
                 label="Capacidad &#40;lts&#46;&#41;">
@@ -109,8 +121,8 @@
                   formControlName="capacity"
                   [readOnly]="isGoodInfReadOnly" />
               </form-field>
-            </div>
-          </div>
+            </div> 
+          </div> -->
           <div class="row pt-4">
             <div class="col-md-5">
               <form-field
@@ -125,6 +137,18 @@
               </form-field>
             </div>
             <div class="col-md-5">
+              <ngx-select
+                [form]="detailAssets"
+                control="stateConservation"
+                (fetchItems)="getConcervationState($event)"
+                [data]="selectConcervationState"
+                label="Estado de Conservaci&oacute;n"
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"
+                [readonly]="isGoodInfReadOnly"></ngx-select>
+            </div>
+            <!-- <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('volume')"
                 label="Volumen &#40;m&#179;&#41;">
@@ -135,9 +159,9 @@
                   [readOnly]="isGoodInfReadOnly"
                   maxlength="5" />
               </form-field>
-            </div>
+            </div> -->
           </div>
-          <div class="row pt-4">
+          <!-- <div class="row pt-4">
             <div class="col-md-5">
               <ngx-select
                 [form]="detailAssets"
@@ -149,8 +173,8 @@
                 bindLabel="description"
                 value="keyId"
                 [readonly]="isGoodInfReadOnly"></ngx-select>
-            </div>
-            <div class="col-md-5">
+            </div> 
+             <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('useType')"
                 label="Tipo de Uso">
@@ -161,7 +185,7 @@
                   formControlName="useType"
                   [readOnly]="isGoodInfReadOnly" />
               </form-field>
-            </div>
+            </div> 
           </div>
           <div class="row pt-4">
             <div class="col-md-5">
@@ -175,8 +199,8 @@
                 bindLabel="description"
                 value="keyId"
                 [readonly]="isGoodInfReadOnly"></ngx-select>
-            </div>
-            <div class="col-md-5">
+            </div> 
+             <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('origin')"
                 label="Procedencia">
@@ -187,8 +211,8 @@
                   [readOnly]="isGoodInfReadOnly"
                   maxlength="40" />
               </form-field>
-            </div>
-          </div>
+            </div> 
+          </div> -->
           <div class="row pt-4">
             <div class="col-md-5">
               <form-field
@@ -284,15 +308,29 @@
               </form-check>
             </div>
             <div class="col-md-5">
-              <form-check label="Aval&uacute;o" for="appraisal">
-                <input
-                  id="appraisal"
-                  type="checkbox"
-                  [ngModelOptions]="{ standalone: true }"
-                  [(ngModel)]="appraisal"
-                  (change)="handleAppraisalEvent($event)"
-                  [disabled]="disableDuplicity" />
-              </form-check>
+              <div class="col-md-5">
+                <form-check label="Aval&uacute;o" for="appraisal">
+                  <input
+                    id="appraisal"
+                    type="checkbox"
+                    [ngModelOptions]="{ standalone: true }"
+                    [(ngModel)]="appraisal"
+                    (change)="handleAppraisalEvent($event)"
+                    [disabled]="disableDuplicity" />
+                </form-check>
+              </div>
+
+              <div class="col-md-5">
+                <form-check label="Duplicidad" for="duplicity">
+                  <input
+                    id="duplicity"
+                    type="checkbox"
+                    [ngModelOptions]="{ standalone: true }"
+                    [(ngModel)]="duplicity"
+                    (change)="modifyResponse($event)"
+                    [disabled]="disableDuplicity" />
+                </form-check>
+              </div>
             </div>
           </div>
           <div class="row pt-4">
@@ -1474,7 +1512,29 @@
         </p>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-check
+            <form-field
+              [control]="detailAssets.get('armor')"
+              label="Blindaje"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="armor"
+                [readOnly]="isGoodTypeReadOnly"
+                min="0" />
+            </form-field>
+            <form-field
+              [control]="detailAssets.get('armor')"
+              label="Blindaje"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="armor"
+                [readOnly]="isGoodTypeReadOnly"
+                min="0" />
+            </form-field>
+            <!-- <form-check
               label="Blindaje"
               for="armor"
               *ngIf="process != 'classify-assets'">
@@ -1497,7 +1557,7 @@
                 [(ngModel)]="armor"
                 [disabled]="isGoodTypeReadOnly"
                 (change)="handleArmor($event)" />
-            </form-check>
+            </form-check> -->
           </div>
           <div class="col-md-4">
             <form-field
@@ -1531,7 +1591,7 @@
               label="Modelo"
               *ngIf="process != 'classify-assets'">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="model"
                 [readOnly]="isGoodTypeReadOnly"
@@ -1542,7 +1602,7 @@
               label="Modelo"
               *ngIf="process == 'classify-assets'">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 [readOnly]="isGoodTypeReadOnly"
                 formControlName="model" />
@@ -1603,7 +1663,7 @@
               label="No. Motores"
               *ngIf="process != 'classify-assets'">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="enginesNumber"
                 [readOnly]="isGoodTypeReadOnly"
@@ -1614,7 +1674,7 @@
               label="No. Motores"
               *ngIf="process == 'classify-assets'">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 [readOnly]="isGoodTypeReadOnly"
                 formControlName="enginesNumber" />
@@ -2971,5 +3031,146 @@
         </div>
       </div>
     </form>
+  </tab>
+
+  <!-- Información de Maquinaria Pesada-->
+
+  <tab
+    (selectTab)="onTabSelected($event)"
+    id="especialMachineryGood"
+    *ngIf="especialMachineryAssets">
+    <ng-template tabHeading *ngIf="process != 'classify-assets'">
+      <i class="bx bx-disc"></i> Informaci&oacute;n de Maquinaria Pesada
+    </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
+      <i class="bx bx-disc"></i> Informaci&oacute;n de Maquinaria Pesada
+    </ng-template>
+    <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-7 col-sm-12 col-xs-12">
+        <div
+          *ngIf="
+            process == 'classify-assets' || process == 'registration-request';
+            else disabledApp
+          ">
+          <app-characteristics-legend></app-characteristics-legend>
+          <app-good-characteristics-table
+            [goodChange]="goodChange2"
+            [initValue]="initValue"
+            [clasification]="classificationNumber"
+            [settings]="atributNewSettings"
+            [avaluo]="false"
+            [disabled]="false"
+            [good]="detailAssetsInfo"
+            [service]="service"></app-good-characteristics-table>
+        </div>
+        <ng-template #disabledApp>
+          <div>
+            <app-good-characteristics-table
+              [goodChange]="goodChange2"
+              [clasification]="classificationNumber"
+              [settings]="atributActSettings"
+              [avaluo]="false"
+              [good]="detailAssetsInfo"
+              [disabled]="true"
+              [service]="service"></app-good-characteristics-table>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </tab>
+
+  <!-- Información de Minerales -->
+
+  <tab
+    (selectTab)="onTabSelected($event)"
+    id="mineralsGood"
+    *ngIf="mineralsAssets">
+    <ng-template tabHeading *ngIf="process != 'classify-assets'">
+      <i class="bx bx-disc"></i> Informaci&oacute;n de Minerales
+    </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
+      <i class="bx bx-disc"></i> Informaci&oacute;n de Minerales
+    </ng-template>
+    <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-7 col-sm-12 col-xs-12">
+        <div
+          *ngIf="
+            process == 'classify-assets' || process == 'registration-request';
+            else disabledApp
+          ">
+          <app-characteristics-legend></app-characteristics-legend>
+          <app-good-characteristics-table
+            [goodChange]="goodChange2"
+            [initValue]="initValue"
+            [clasification]="classificationNumber"
+            [settings]="atributNewSettings"
+            [avaluo]="false"
+            [disabled]="false"
+            [good]="detailAssetsInfo"
+            [service]="service"></app-good-characteristics-table>
+        </div>
+        <ng-template #disabledApp>
+          <div>
+            <app-good-characteristics-table
+              [goodChange]="goodChange2"
+              [clasification]="classificationNumber"
+              [settings]="atributActSettings"
+              [avaluo]="false"
+              [good]="detailAssetsInfo"
+              [disabled]="true"
+              [service]="service"></app-good-characteristics-table>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </tab>
+
+  <!-- Información de Diverso-->
+
+  <tab
+    (selectTab)="onTabSelected($event)"
+    id="diverseGood"
+    *ngIf="diverseAssets">
+    <ng-template tabHeading *ngIf="process != 'classify-assets'">
+      <i class="bx bx-disc"></i> Informaci&oacute;n de Diverso
+    </ng-template>
+    <ng-template tabHeading *ngIf="process == 'classify-assets'">
+      <i class="bx bx-disc"></i> Informaci&oacute;n de Diverso
+    </ng-template>
+    <!-- HOMOLOGACIÓN DE ATRIBUTOS TABLA -->
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-7 col-sm-12 col-xs-12">
+        <div
+          *ngIf="
+            process == 'classify-assets' || process == 'registration-request';
+            else disabledApp
+          ">
+          <app-characteristics-legend></app-characteristics-legend>
+          <app-good-characteristics-table
+            [goodChange]="goodChange2"
+            [initValue]="initValue"
+            [clasification]="classificationNumber"
+            [settings]="atributNewSettings"
+            [avaluo]="false"
+            [disabled]="false"
+            [good]="detailAssetsInfo"
+            [service]="service"></app-good-characteristics-table>
+        </div>
+        <ng-template #disabledApp>
+          <div>
+            <app-good-characteristics-table
+              [goodChange]="goodChange2"
+              [clasification]="classificationNumber"
+              [settings]="atributActSettings"
+              [avaluo]="false"
+              [good]="detailAssetsInfo"
+              [disabled]="true"
+              [service]="service"></app-good-characteristics-table>
+          </div>
+        </ng-template>
+      </div>
+    </div>
   </tab>
 </tabset>
