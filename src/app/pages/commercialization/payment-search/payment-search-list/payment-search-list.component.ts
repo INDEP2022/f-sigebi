@@ -535,7 +535,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         };
         // this.getCreateValidSys(data.systemValidity, param);
         this.CreateAddRow(param);
-        //this.getTableData();
       }
     });
     modalRef.content.onEdit.subscribe(({ newData, oldData }) => {
@@ -1703,6 +1702,11 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
             resp.message
           );
+          this.searchForm.get('type').setValue('0');
+          this.system.setValue('1');
+          this.searchType.setValue('0');
+          this.searchForm.updateValueAndValidity();
+          this.getTableData();
         }
       },
       error => {
