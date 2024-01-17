@@ -5,11 +5,13 @@ export const PENDING_COLUMNS = {
   reference: {
     title: 'Referencia',
     type: 'string',
+    filter: false,
     sort: false,
   },
   document: {
     title: 'Reporte',
     type: 'string',
+    filter: false,
     sort: false,
   },
   creationdate: {

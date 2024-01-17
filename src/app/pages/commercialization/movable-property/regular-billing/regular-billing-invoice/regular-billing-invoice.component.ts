@@ -2521,17 +2521,17 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             aux_val_liq = await this.batchLiq(invoice.eventId, invoice.batchId);
             if (aux_val_liq == 1) {
               invoice.process = process;
-              // let obj = {
-              //   process: process,
-              //   eventId: invoice.eventId,
-              //   billId: invoice.billId
-              // }
-              // arr.push(obj);
-              await this.updateProcess(
-                invoice.eventId,
-                invoice.billId,
-                process
-              );
+              let obj = {
+                process: process,
+                eventId: invoice.eventId,
+                billId: invoice.billId,
+              };
+              arr.push(obj);
+              // await this.updateProcess(
+              //   invoice.eventId,
+              //   invoice.billId,
+              //   process
+              // );
             } else {
               cont++;
             }
@@ -2540,13 +2540,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           }
         } else {
           invoice.process = process;
-          // let obj = {
-          //   process: process,
-          //   eventId: invoice.eventId,
-          //   billId: invoice.billId
-          // }
-          // arr.push(obj);
-          await this.updateProcess(invoice.eventId, invoice.billId, process);
+          let obj = {
+            process: process,
+            eventId: invoice.eventId,
+            billId: invoice.billId,
+          };
+          arr.push(obj);
+          // await this.updateProcess(invoice.eventId, invoice.billId, process);
         }
       }
     }
@@ -2565,11 +2565,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         `${cont} facturas no pueden ser foliadas`,
         `Sus lotes no han sido afectados`
       );
+    } else {
+      let resp = await this.putApplicationPutProcess(arr);
+      // console.log("NICE", resp)
     }
-    // else{
-    //   // let resp = await this.putApplicationPutProcess(arr);
-    //   // console.log("NICE", resp)
-    // }
 
     if (contg == 1 && aux_valgasto == 1) {
       this.alert(
