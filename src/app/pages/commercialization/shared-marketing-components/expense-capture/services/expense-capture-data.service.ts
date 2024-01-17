@@ -714,10 +714,14 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       );
       return false;
     }
-    // if (!this.coordRegional.value) {
-    //   this.alert('error', 'Debe tener coordinación regional', '');
-    //   return false;
-    // }
+    if (!this.coordRegional.value) {
+      this.alert('error', 'Debe tener coordinación regional', '');
+      return false;
+    }
+    if (!this.invoiceRecDate.value) {
+      this.alert('error', 'Debe tener fecha doc.', '');
+      return false;
+    }
     // if (!this.eventoChatarra()) {
     //   return false;
     // }
