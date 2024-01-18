@@ -319,6 +319,9 @@ export class ExpenseCompositionModalComponent
   }
 
   confirm() {
+    if (this.clickedButton) {
+      return;
+    }
     console.log(this.form.value);
     console.log(this.cvman.value);
     this.clickedButton = true;
@@ -331,12 +334,15 @@ export class ExpenseCompositionModalComponent
 
   private getBody(body: any) {
     const total = (
-      +body.amount +
-      +body.vat -
+      +this.amountValue +
+      +this.vatValue -
       +body.isrWithholding -
       +body.vatWithholding
     ).toFixed(2);
     console.log(body);
+    if (!body.amount) {
+      body = { ...body, amount: +this.amountValue };
+    }
     return {
       ...body,
       expenseNumber: this.expenseNumber,

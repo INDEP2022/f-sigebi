@@ -12,6 +12,7 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -22,7 +23,7 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { IPayment } from 'src/app/core/models/ms-payment/payment';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
-import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
+import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
@@ -35,6 +36,7 @@ import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PaymentSearchModalComponent } from '../payment-search-modal/payment-search-modal.component';
 import { PaymentSearchProcessComponent } from '../payment-search-process/payment-search-process.component';
+import { PaymentAuthComponent } from './payment-auth/payment-auth.component';
 import { PAYMENT_COLUMNS } from './payment-search-columns';
 
 @Component({
@@ -74,6 +76,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     { value: 2, description: 'No Referenciados' },
     { value: 3, description: 'Efectivo' },
     { value: 4, description: 'Inconsistencia' },
+    { value: 5, description: 'Carga de Archivo CSV' },
   ];
   actions = [
     { value: 1, description: 'Cancelar' },
@@ -142,7 +145,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     private paymentService: PaymentService,
     private accountMovementService: AccountMovementService,
     private msDepositaryService: MsDepositaryService,
-    private bankMovementType: BankMovementType,
+    private parametersModService: ParametersModService,
     private authService: AuthService,
     private indUserService: IndUserService,
     private interfacesirsaeService: InterfacesirsaeService,
@@ -211,7 +214,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getValidSystem();
 
-    this.getParametercomer('SUPUSUCOMER');
+    this.getParametercomer();
     // this.getBusquedaPagDet(5);
     // this.searchID(5);
     this.localdata
@@ -445,6 +448,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   async validateLoadLoteCSV() {
     if (this.n_CONT == 0) {
+      this.loadCSV2.nativeElement.value = '';
       this.alert(
         'error',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
@@ -531,7 +535,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         };
         // this.getCreateValidSys(data.systemValidity, param);
         this.CreateAddRow(param);
-        //this.getTableData();
       }
     });
     modalRef.content.onEdit.subscribe(({ newData, oldData }) => {
@@ -1132,27 +1135,32 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     );
   }
 
-  getParametercomer(params?: any) {
+  getParametercomer() {
     this.n_CONT = 0;
     const { preferred_username } = this.authService.decodeToken();
     let username = preferred_username;
+    let filterParams = new FilterParams();
+    filterParams.addFilter('value', username.toUpperCase());
+    filterParams.addFilter('parameter', 'SUPUSUCOMER');
     //username = 'NMORENO';
-    this.bankMovementType
-      .getParameterMod(params, username.toUpperCase())
-      .subscribe(
-        resp => {
-          if (resp != null && resp != undefined) {
-            this.n_CONT = resp.count;
-            console.log('RespCount-> ', this.n_CONT);
-          }
-        },
-        err => {
-          //num = err.count;
+    this.parametersModService.getAll(filterParams.getParams()).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          this.n_CONT = resp.count;
+          console.log('RespCount-> ', this.n_CONT);
+        } else {
+          this.n_CONT = 0;
         }
-      );
+      },
+      err => {
+        this.n_CONT = 0;
+        //num = err.count;
+      }
+    );
   }
 
   private async pupProcesa() {
+    debugger;
     const processType = this.processTypes.find(
       x => x.value == this.searchForm.get('processType').value
     );
@@ -1175,10 +1183,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     ) {
       if (elemC.value == '0') {
         //integrar PA_PAGOS_CAMBIOS}
-        await this.pagosCambio(
-          this.searchForm.get('processType').value,
-          this.searchForm.get('action').value
-        );
+        await this.pagosCambio(this.searchForm.get('processType').value);
       } else {
         LV_PROCESA = 1;
       }
@@ -1367,9 +1372,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     });
   }
 
-  pagosCambio(process: number, action: number) {
+  pagosCambio(process: number) {
     return firstValueFrom(
-      this.msDepositaryService.getPaymentChange(process, action).pipe(
+      this.msDepositaryService.getPaymentChange(process).pipe(
         catchError(x =>
           of({
             P_EST_PROCESO: 0,
@@ -1531,15 +1536,28 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: response => {
+          console.log(response);
+          // return;
           if (response > 0) {
             this.pupProcesa();
           } else {
             this.loader.load = false;
-            this.alert(
-              'error',
-              'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-              'Usuario no Autorizado'
-            );
+            const modalConfig = MODAL_CONFIG;
+            modalConfig.initialState = {
+              callback: (next: any) => {
+                if (next === true) {
+                  console.log('Usuario válido');
+                  this.loader.load = true;
+                  this.pupProcesa();
+                }
+              },
+            };
+            this.modalService.show(PaymentAuthComponent, modalConfig);
+            // this.alert(
+            //   'error',
+            //   'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+            //   'Usuario no Autorizado'
+            // );
           }
         },
       });
@@ -1678,11 +1696,17 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       resp => {
         if (resp != null && resp != undefined) {
           console.log('PupCambioMasivo->', resp);
+          this.loadCSV2.nativeElement.value = '';
           this.alert(
             'success',
             'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
             resp.message
           );
+          this.searchForm.get('type').setValue('0');
+          this.system.setValue('1');
+          this.searchType.setValue('0');
+          this.searchForm.updateValueAndValidity();
+          this.getTableData();
         }
       },
       error => {
@@ -1692,6 +1716,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
           error.error.message
         );
+        this.loadCSV2.nativeElement.value = '';
       }
     );
   }

@@ -115,7 +115,7 @@ export class CustomSelectWidthLoading
     }
     if (this.form) {
       this.form.get(this.formControlName).valueChanges.subscribe(x => {
-        // console.log(x);
+        console.log(x);
         if (this.updateValues) {
           if (x) {
             this.input$.next(x);
@@ -207,9 +207,9 @@ export class CustomSelectWidthLoading
 
   clear(event: any) {
     // console.log(event);
-    if (!this.updateValues) {
-      this.input$.next('');
-    }
+    // if (!this.updateValues) {
+    this.input$.next('');
+    // }
   }
 
   private fillParams2(
