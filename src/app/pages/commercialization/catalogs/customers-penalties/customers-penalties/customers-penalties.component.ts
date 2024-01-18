@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -14,7 +14,6 @@ import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/cli
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { RFC_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CustomersPenaltiesExportAllComponent } from '../customer-penalties-export-all/customer-penalties-export-all.component';
 import { CustomerPenaltiesModalComponent } from '../customer-penalties-modal/customer-penalties-modal.component';
@@ -177,26 +176,13 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
               case 'batchPublic':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              /*case 'initialDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
+              case 'customerId':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'initialDate':
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
-              /*case 'finalDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
               case 'finalDate':
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
@@ -213,26 +199,10 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
               case 'usrfree':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              /*case 'penalizesDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
               case 'penalizesDate':
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
-              /*case 'releasesDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
               case 'releasesDate':
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
@@ -256,19 +226,9 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.user = user.username;
     console.log(this.user);
     this.validateUser();
-    this.prepareForm();
-    this.getClient(new ListParams());
-  }
-  private prepareForm() {
-    this.form = this.fb.group({
-      clientId: [null, [Validators.required]],
-      penaltiDate: [null],
-      reasonName: [null],
-      rfc: [null, [Validators.maxLength(20), Validators.pattern(RFC_PATTERN)]],
-      penaliti: [null],
-      startDate: [null],
-      endDate: [null],
-    });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDeductives());
   }
   validateDate(date: Date) {
     if (date) {
@@ -352,9 +312,13 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
 
   rowsSelected(event: any) {
     if (event) {
+      console.log(event);
       this.selectRow = true;
       this.eventPenalities = event.data;
       this.penalties = event.data;
+      this.params2
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData(this.penalties.clientId.id));
       console.log(this.penalties);
     } else {
       this.eventPenalities = null;
@@ -445,46 +409,62 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   }
 
   openFormUpdate(customersPenalties?: any) {
-    this.alertQuestion('warning', 'Liberar', '¿Desea Liberar al Cliente?').then(
-      question => {
-        if (question.isConfirmed) {
-          if (this.user) {
-            this.params1.getValue()['filter.user'] = `$eq:${this.user}`;
-            let params = {
-              ...this.params1.getValue(),
-            };
-            this.securityService.getFilterAllUsersTrackerV2(params).subscribe({
-              next: resp => {
-                const modalConfig = MODAL_CONFIG;
-                const userLog = this.user;
-                modalConfig.initialState = {
-                  customersPenalties,
-                  userLog,
-                  callback: (next: boolean) => {
-                    if (next) {
-                      this.getDeductives();
-                      this.getData();
-                      //this.penalties;
-                    }
-                  },
-                };
-                this.modalService.show(
-                  CustomersPenalitiesFormComponent,
-                  modalConfig
-                );
-              },
-              error: err => {
-                this.alert(
-                  'warning',
-                  'Usuario no Autorizado',
-                  'No tiene los permisos'
-                );
-              },
-            });
-          }
+    console.log(customersPenalties);
+    if (customersPenalties.penaltiDate == null) {
+      this.alert(
+        'warning',
+        'Penalización',
+        'No tiene fecha penaliza, penalización erronea.'
+      );
+      return;
+    }
+
+    this.alertQuestion(
+      'warning',
+      'Liberar',
+      '¿Desea Liberar al Cliente ' +
+        (this.penalties.clientId.user == null
+          ? this.penalties.clientId.id
+          : this.penalties.clientId.user) +
+        '?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (this.user) {
+          this.params1.getValue()['filter.user'] = `$eq:${this.user}`;
+          let params = {
+            ...this.params1.getValue(),
+          };
+          this.securityService.getFilterAllUsersTrackerV2(params).subscribe({
+            next: resp => {
+              const modalConfig = MODAL_CONFIG;
+              const userLog = this.user;
+              modalConfig.initialState = {
+                customersPenalties,
+                userLog,
+                callback: (next: boolean) => {
+                  if (next) {
+                    this.getDeductives();
+                    this.getData();
+                    //this.penalties;
+                  }
+                },
+              };
+              this.modalService.show(
+                CustomersPenalitiesFormComponent,
+                modalConfig
+              );
+            },
+            error: err => {
+              this.alert(
+                'warning',
+                'Usuario no Autorizado',
+                'No tiene los permisos'
+              );
+            },
+          });
         }
       }
-    );
+    });
   }
 
   //Abrir modal de todos los penalizados
@@ -515,31 +495,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
       next: () => {
         this.getDeductives();
         this.alert('success', 'Penalizacion', 'Borrado Correctamente');
-      },
-    });
-  }
-  getClient(params: ListParams) {
-    if (params.text) {
-      if (!isNaN(parseInt(params.text))) {
-        params['filter.id'] = `$eq:${params.text}`;
-        params['search'] = '';
-      } else if (typeof params.text === 'string') {
-        params['filter.reasonName'] = `$ilike:${params.text}`;
-      }
-    }
-    this.comerClientsService.getAllV2(params).subscribe({
-      next: resp => {
-        /*id
-        reasonName*/
-        this.result = resp.data.map(async (item: any) => {
-          item['idReasonName'] = item.id + ' - ' + item.reasonName;
-        });
-        console.log(resp.data);
-        this.selectClient = new DefaultSelect(resp.data, resp.count);
-      },
-      error: err => {
-        this.selectClient = new DefaultSelect();
-        this.loading = false;
       },
     });
   }
