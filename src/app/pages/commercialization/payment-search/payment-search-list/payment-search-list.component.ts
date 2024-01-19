@@ -485,7 +485,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-      '¿Está Seguro de Eliminar los Registros de la Búsqueda o Cargados por Archivo Tipo CSV ?'
+      '¿Está seguro de eliminar los registros de la búsqueda o cargados por archivo tipo csv ?'
     ).then(async question => {
       if (question.isConfirmed) {
         /*this.searchForm.reset();
