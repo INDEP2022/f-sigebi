@@ -64,6 +64,7 @@ export class ExpenseCompositionComponent
   v_tip_gast: string = '';
   errorsClasification: any[] = [];
   chargeGoodsByLote = false;
+  chargeGoodsI = false;
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
@@ -488,7 +489,29 @@ export class ExpenseCompositionComponent
       let dataCSV: IComerDetExpense[] = this.getComerDetExpenseOfGoodsByLot(
         this.data
       );
-      this.saveGoodsMassive(dataCSV);
+      if (this.chargeGoodsI && this.v_tip_gast === 'GASTOSEG') {
+        this.expenseNumeraryService
+          .PUP_GUARDA_BIENES_SEG(
+            this.form.get('policie').value,
+            +this.expense.expenseNumber
+          )
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: response => {
+              this.alert('success', 'Bienes guardados correctamente', '');
+              this.getData2();
+            },
+            error: err => {
+              this.alert(
+                'error',
+                'No se pudieron guardar los bienes',
+                err.error.message
+              );
+            },
+          });
+      } else {
+        this.saveGoodsMassive(dataCSV);
+      }
     } else {
     }
   }
@@ -832,7 +855,7 @@ export class ExpenseCompositionComponent
       this.alert('warning', 'Requiere contrato para cargar bienes', '');
       return;
     }
-    if (this.v_tip_gast === 'GASTOVIG' && !this.form.get('policie').value) {
+    if (this.v_tip_gast === 'GASTOSEG' && !this.form.get('policie').value) {
       this.alert('warning', 'Requiere cve poliza para cargar bienes', '');
       return;
     }
@@ -844,6 +867,7 @@ export class ExpenseCompositionComponent
     if (response.isConfirmed) {
       this.loading = true;
       console.log(this.v_tip_gast);
+      this.chargeGoodsI = false;
       if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
         this.fileI.nativeElement.click();
       } else if (this.v_tip_gast === 'GASTOVIG') {
@@ -859,10 +883,12 @@ export class ExpenseCompositionComponent
                 console.log(response.data);
                 let newGoodsData = await this.newGoodsByVig(response.data);
                 this.chargeGoodsByLote = true;
+                this.chargeGoodsI = true;
                 this.setData(newGoodsData, newGoodsData.length === 0, false);
                 // this.getData2();
               } else {
                 this.loading = false;
+                this.chargeGoodsI = false;
                 this.alert(
                   'error',
                   'Carga de bienes',
@@ -873,6 +899,7 @@ export class ExpenseCompositionComponent
             },
             error: err => {
               this.loading = false;
+              this.chargeGoodsI = false;
               this.alert(
                 'error',
                 'Carga de bienes',
@@ -890,10 +917,12 @@ export class ExpenseCompositionComponent
                 console.log(response.data);
                 let newGoodsData = await this.newGoodsBySeg(response.data);
                 this.chargeGoodsByLote = true;
+                this.chargeGoodsI = true;
                 this.setData(newGoodsData, newGoodsData.length === 0, false);
                 // this.getData2();
               } else {
                 // this.alert('error','')
+                this.chargeGoodsI = false;
                 this.loading = false;
                 this.alert(
                   'error',
@@ -903,6 +932,7 @@ export class ExpenseCompositionComponent
               }
             },
             error: err => {
+              this.chargeGoodsI = false;
               this.loading = false;
               this.alert('error', 'Carga de bienes', 'No se encontraron datos');
             },
