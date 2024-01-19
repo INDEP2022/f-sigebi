@@ -417,6 +417,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.loader.load = true;
       //Servicio PUP_BUSQUEDA
       if (!this.bank.value && !this.amount.value && !this.reference.value) {
+        this.loader.load = false;
         this.alert(
           'warning',
           'Se requiere banco, referencia o monto para continuar',
@@ -452,7 +453,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.alert(
         'error',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        'Usuario Inválido para Ejecutar Este Procedimiento.'
+        'Usuario inválido para ejecutar este procedimiento.'
       );
       return;
     }
@@ -573,19 +574,20 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           processId: oldData.processId,
           batchId: newData.batchId,
           idEvent: newData.event,
+          amount: oldData.amount,
+          referenceori: oldData.referenceori,
           // idCustomer: Number(this.idCustomer),
           idGuySat: newData.satDescription,
           idselect: newData.idselect ? 1 : 0,
           incomeid: Number(newData.entryOrderId),
           // idinconsis: Number(newData.newData.inconsistencies),
           tsearchId: newData.tsearchId,
-          numbermovement: newData.numbermovement,
+          numbermovement: oldData.numbermovement,
           date: newData.date != null ? new Date(newData.date) : null,
-          reference: newData.reference,
-          referenceori: newData.referenceori,
-          amount: newData.amount,
-          cveBank: newData.cve,
-          code: newData.code,
+          referencealt: newData.referencealt,
+          geneReference: newData.geneReference,
+          // cveBank: newData.cve,
+          // code: newData.code,
           batchPublic: newData.publicBatch,
           validSystem: newData.systemValidity,
           result: newData.result,
@@ -1016,6 +1018,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         // }
       },
       error: err => {
+        this.loader.load = false;
         this.loading = false;
         // this.alert(
         //   'warning',
@@ -1410,7 +1413,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         }
       },
       error => {
-        this.alert('error', 'Error', error);
+        this.alert('error', 'Error', error.error.message);
         this.loading = false;
       }
     );
