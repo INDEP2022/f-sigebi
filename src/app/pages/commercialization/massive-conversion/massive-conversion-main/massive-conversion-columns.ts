@@ -360,3 +360,121 @@ export const SETTING_RFC_REWORK = {
     },
   },
 };
+
+export const SETTING_REPROCESS = {
+  ...TABLE_SETTINGS,
+  actions: {
+    columnTitle: 'Acciones',
+    position: 'right',
+    add: true,
+    edit: true,
+    delete: true,
+  },
+  columns: {
+    idlcg: {
+      title: 'Id Lcg',
+      type: 'number',
+      sort: false,
+    },
+    idEvent: {
+      title: 'Id Evento',
+      type: 'number',
+      sort: false,
+    },
+    FOLIO_APROBACION: {
+      title: 'Folio Aprobación',
+      type: 'number',
+      sort: false,
+    },
+    BANCO_EMISOR: {
+      title: 'Banco Emisor',
+      type: 'string',
+      sort: false,
+    },
+    USER_GENERA: {
+      title: 'User Genera',
+      type: 'string',
+      sort: false,
+    },
+    INDICADOR: {
+      title: 'Indicador',
+      type: 'string',
+      sort: false,
+    },
+    FEC_APRO_PAGO: {
+      title: 'Fecha Aprobación Pago',
+      type: 'string',
+      sort: false,
+    },
+    NO_PALETA: {
+      title: 'No. Paleta',
+      type: 'string',
+      sort: false,
+    },
+    idBatch: {
+      title: 'Id Lote',
+      type: 'number',
+      sort: false,
+    },
+    idCustomer: {
+      title: 'Id Cliente',
+      type: 'number',
+      sort: false,
+    },
+    idPublicBatch: {
+      title: 'Id Lote Público',
+      type: 'number',
+      sort: false,
+    },
+    amount: {
+      title: 'Monto',
+      type: 'number',
+      sort: false,
+    },
+    PALETA: {
+      title: 'Paleta',
+      type: 'string',
+      sort: false,
+    },
+    numberCheck: {
+      title: 'N° Cheque',
+      type: 'number',
+      sort: false,
+    },
+    bankExpCheck: {
+      title: 'Banco Exp. Cheque',
+      type: 'string',
+      sort: false,
+    },
+    dateValidity: {
+      title: 'Fecha Videncia',
+      type: 'string',
+      sort: false,
+    },
+    refGsae: {
+      title: 'Ref. Gsae',
+      type: 'string',
+      sort: false,
+    },
+    refGbank: {
+      title: 'Ref. Gbanco',
+      type: 'number',
+      sort: false,
+    },
+    description: {
+      title: 'Descripción',
+      type: 'string',
+      sort: false,
+    },
+    status: {
+      title: 'Estatus',
+      type: 'string',
+      sort: false,
+    },
+    dateRecord: {
+      title: 'Fecha Registro',
+      type: 'string',
+      sort: false,
+    },
+  },
+};
