@@ -490,6 +490,7 @@ export class ExpenseCompositionComponent
         this.data
       );
       if (this.chargeGoodsI && this.v_tip_gast === 'GASTOSEG') {
+        this.loading = true;
         this.expenseNumeraryService
           .PUP_GUARDA_BIENES_SEG(
             this.form.get('policie').value,
@@ -507,6 +508,7 @@ export class ExpenseCompositionComponent
                 'No se pudieron guardar los bienes',
                 err.error.message
               );
+              this.loading = false;
             },
           });
       } else {
