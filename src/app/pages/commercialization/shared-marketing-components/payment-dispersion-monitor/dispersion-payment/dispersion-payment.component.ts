@@ -161,8 +161,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   private txt_usu_valido: string = null;
   private id_tipo_disp: number = null;
 
-  idEventToSearch: any = null;
-
   //Arrays
   batchEventSelect: any[];
 
@@ -193,7 +191,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     //Formas
     this.prepareForm();
     this.initialize();
-
+    //Navegador
+    this.navigateCustomerXClient();
     //Settings
     this.prepareSettings();
     //Verificar si hay idEvento
@@ -203,9 +202,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       this.selectEvent();
       localStorage.removeItem('eventId_dispersion');
     }
-    //Navegador
-    this.navigateCustomerXClient();
-    this.filterDataLotEvent();
   }
 
   //Navegar en la tabla de clientes
@@ -214,7 +210,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
-        console.log(change);
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -235,22 +230,15 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}`;
                 break;
               default:
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
             }
             if (filter.search !== '') {
-              filter.field == 'ExecutionDate'
-                ? (this.ColumnFilterCustomerBank[
-                    field
-                  ] = `${searchFilter}:${format(
-                    new Date(filter.search),
-                    'yyyy-MM-dd'
-                  )}`)
-                : (this.ColumnFilterCustomerBank[
-                    field
-                  ] = `${searchFilter}:${filter.search}`);
+              this.ColumnFilterCustomerBank[
+                field
+              ] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.ColumnFilterCustomerBank[field];
+              delete this.ColumnFilterCustomer[field];
             }
           });
           this.paramsCustomer = this.pageFilter(this.paramsCustomer);
@@ -266,65 +254,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.getDataComerCustomer();
       }
     });
-  }
-
-  //FILTRO DE COLUMNA
-  filterDataLotEvent() {
-    this.dataLotEvent
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        console.log(change);
-        if (change.action === 'filter') {
-          console.log('FILTRO DE COLUMNA');
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'publicLot':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'rfc':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'vtaStatusId':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              case 'guaranteePrice':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'advancePayment':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
-                break;
-              case 'description':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
-            if (filter.search !== '') {
-              this.columnFiltersLotsEvent[
-                field
-              ] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFiltersLotsEvent[field];
-            }
-            console.log(this.columnFiltersLotsEvent);
-          });
-          // this.paramsLotEvent = this.pageFilter(this.paramsLotEvent);
-          console.log('Se está llamadno 323');
-          this.getDataLotes(this.idEventToSearch);
-        }
-      });
   }
 
   //Preparar Settings
@@ -587,24 +516,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.loadingDesertLots = true;
     /* this.loadingLotBanks = true; */
     /* this.loadingPaymentLots = true; */
-
-    if (this.event.value == null) {
-      this.alert('warning', 'Debe seleccionar un evento', '');
-      this.loadingCustomer = false;
-      this.loadingLotEvent = false;
-      this.loadingDesertLots = false;
-      return;
-    }
-
     const paramsF = new FilterParams();
     paramsF.addFilter('id', this.event.value);
     console.log(this.event.value);
     this.comerEventService.getAllFilter(paramsF.getParams()).subscribe(
       res => {
-        console.log('Se está llamando 602');
         console.log(res);
         const resp = res['data'][0];
-        this.idEventToSearch = resp.id;
         this.cveProcess.setValue(resp.processKey);
         this.dateEvent.setValue(resp.eventDate);
         this.dateClose.setValue(resp.eventClosingDate);
@@ -624,13 +542,63 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.eventTpId = resp.eventTpId;
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
-        this.getDataLotes(resp.id);
 
-        /* this.paramsLotEvent
+        this.dataLotEvent
+          .onChanged()
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(change => {
+            if (change.action === 'filter') {
+              let filters = change.filter.filters;
+              filters.map((filter: any) => {
+                let field = ``;
+                let searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                switch (filter.field) {
+                  case 'publicLot':
+                    searchFilter = SearchFilter.EQ;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'rfc':
+                    searchFilter = SearchFilter.EQ;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'vtaStatusId':
+                    searchFilter = SearchFilter.ILIKE;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'guaranteePrice':
+                    searchFilter = SearchFilter.EQ;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'advancePayment':
+                    searchFilter = SearchFilter.EQ;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'description':
+                    searchFilter = SearchFilter.ILIKE;
+                    field = `filter.${filter.field}`;
+                    break;
+                  default:
+                    searchFilter = SearchFilter.ILIKE;
+                    break;
+                }
+                if (filter.search !== '') {
+                  this.columnFiltersLotsEvent[
+                    field
+                  ] = `${searchFilter}:${filter.search}`;
+                } else {
+                  delete this.columnFiltersLotsEvent[field];
+                }
+              });
+              this.paramsLotEvent = this.pageFilter(this.paramsLotEvent);
+              this.getDataLotes(resp.id);
+            }
+          });
+        this.paramsLotEvent
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(params => {
             this.getDataLotes(resp.id);
-          }); */
+          });
         //Filtrosthis.
         this.dataDesertedLots
           .onChanged()
@@ -823,11 +791,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams();
     paramsF.addFilter('EventId', this.event.value);
 
-    console.log(this.ColumnFilterCustomerBank);
-
     let params = {
       ...this.paramsCustomer.getValue(),
-      ...this.ColumnFilterCustomerBank,
+      ...this.ColumnFilterCustomer,
     };
 
     params['filter.EventId'] = `$eq:${this.event.value}`;
@@ -865,16 +831,16 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           this.formCustomerEvent.get('inProcess').value
             ? this.alert(
                 'warning',
-                'No se encontrarón clientes participantes para el evento con proceso S',
+                'No se encontrarón Clientes Participantes para el Evento con Proceso S',
                 ''
               )
             : this.alert(
                 'warning',
-                'No se encontrarón clientes participantes para el Evento',
+                'No se encontrarón Clientes Participantes para el Evento',
                 ''
               );
         } else {
-          this.alert('error', 'Se presentó un error inesperado', '');
+          this.alert('error', 'Se presentó un Error Inesperado', '');
         }
       }
     );
@@ -904,9 +870,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //LOTES
   getDataLotes(eventId: string | number) {
-    // this.loadingLotEvent = true;
     //&filter.clientId=$not:null
-    console.log('Se está llamando');
     let params = {
       ...this.paramsLotEvent.getValue(),
       ...this.columnFiltersLotsEvent,
@@ -1493,12 +1457,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: this.event.value,
     };
 
-    if (this.event.value == null) {
-      this.alert('warning', 'Debe seleccionar un evento', '');
-      this.loadingExcel = false;
-      return;
-    }
-
     this.comerEventosService.pupExpxcVenvspag(body).subscribe(
       res => {
         console.log(res);
@@ -1509,7 +1467,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingExcel = false;
         this.alert(
           'error',
-          'Se presentó un error inesperado al generar excel',
+          'Se Presentó un Error Inesperado al Generar Excel',
           'Por favor inténtelo nuevamente'
         );
       }
@@ -1523,12 +1481,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: this.event.value,
     };
 
-    if (this.event.value == null) {
-      this.alert('warning', 'Debe seleccionar un evento', '');
-      this.loadingExcel = false;
-      return;
-    }
-
     this.comerEventosService.pupExpExcel(body).subscribe(
       res => {
         console.log(res);
@@ -1539,7 +1491,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingExcel = false;
         this.alert(
           'error',
-          'Se presentó un error inesperado al generar excel',
+          'Se Presentó un Error Inesperado al Generar Excel',
           'Por favor inténtelo nuevamente'
         );
       }
@@ -1553,12 +1505,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: this.event.value,
     };
 
-    if (this.event.value == null) {
-      this.alert('warning', 'Debe seleccionar un evento', '');
-      this.loadingExcel = false;
-      return;
-    }
-
     this.comerEventosService.pupExpPayModest(body).subscribe(
       res => {
         console.log(res);
@@ -1569,7 +1515,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingExcel = false;
         this.alert(
           'error',
-          'Se presentó un error inesperado al generar excel',
+          'Se Presentó un Error Inesperado al Generar Excel',
           'Por favor inténtelo nuevamente'
         );
       }
@@ -1584,12 +1530,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pType: 1,
     };
 
-    if (this.event.value == null) {
-      this.alert('warning', 'Debe seleccionar un evento', '');
-      this.loadingExcel = false;
-      return;
-    }
-
     this.comerEventosService.pupExportDetpayments(body).subscribe(
       res => {
         console.log(res);
@@ -1600,7 +1540,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingExcel = false;
         this.alert(
           'error',
-          'Se presentó un error inesperado al generar excel',
+          'Se Presentó un Error Inesperado al Generar Excel',
           'Por favor inténtelo nuevamente'
         );
       }
@@ -1724,7 +1664,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Debe seleccionar un pago recibido en el banco por cliente',
+        'Debe Seleccionar un Pago Recibido en el Banco por Cliente',
         ''
       );
     }

@@ -135,4 +135,8 @@ export class ElectronicFirmService extends HttpService {
       body
     );
   }
+
+  getAllComerDocumentsXml_(params: _Params) {
+    return this.get(ElectronicFirmEndpoint.ComerDocumentsXml, params);
+  }
 }
