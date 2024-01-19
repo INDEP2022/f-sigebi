@@ -77,13 +77,20 @@ export class NumeraireDispersionComponent
       this.data.refresh();
       this.totalItems = 0;
       this.getData();
-      this.getTotals();
     }
   }
 
   override extraOperationsGetData() {
     this.total = 0;
     this.getTotals();
+  }
+
+  override dataNotFound() {
+    this.totalItems = 0;
+    this.total = 0;
+    this.data.load([]);
+    this.data.refresh();
+    this.loading = false;
   }
 
   override getSearchFilter(filter: any): SearchFilter {

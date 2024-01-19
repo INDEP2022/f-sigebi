@@ -212,6 +212,7 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
           let LV_VALREFER = await firstValueFrom(
             this.depositaryService.getCountReference(this.payment.reference)
           );
+          console.log(LV_VALREFER);
           if (LV_VALREFER > 0) {
             LV_VALACT = 1;
             this.alert(

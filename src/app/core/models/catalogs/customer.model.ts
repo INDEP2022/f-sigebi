@@ -142,6 +142,7 @@ export interface ICustomersPenalties {
   };
   clientId: {
     id: number;
+    user: string;
   };
   validSystem: string;
   notInTime: string;
