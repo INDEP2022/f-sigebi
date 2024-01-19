@@ -87,7 +87,7 @@ export class PaymentSearchProcessComponent extends BasePage implements OnInit {
         } else if (process == 3) {
           this.LV_DESC_BUSQUEDA = 'pagos en efectivo';
         } else if (process == 4) {
-          this.LV_DESC_BUSQUEDA = 'pagos iconsistente';
+          this.LV_DESC_BUSQUEDA = 'pagos con inconsistencia';
         }
       } else {
         this.alert('warning', 'Error', 'Error');
