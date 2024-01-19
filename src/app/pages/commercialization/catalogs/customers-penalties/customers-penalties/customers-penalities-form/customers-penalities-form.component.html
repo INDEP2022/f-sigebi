@@ -33,23 +33,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="releaseDate"
-              bsDatepicker
-              [maxDate]="today"
-              [bsConfig]="{
-                dateInputFormat: 'DD/MM/YYYY'
-              }" />
-            <!--<i
-                *ngIf="form.get('endDate').value"
-                class="fa fa-times"
-                (click)="clearFreeDate('endDate')"
-                style="
-                  position: absolute;
-                  top: 50%;
-                  right: 5px;
-                  transform: translate(0, -50%);
-                  cursor: pointer;
-                "></i>-->
+              formControlName="releaseDate" />
           </form-field>
         </div>
 

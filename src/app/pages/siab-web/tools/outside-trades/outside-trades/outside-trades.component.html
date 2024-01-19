@@ -7,10 +7,10 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mt-5">
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-12">
           <form-field
             [control]="form.get('cve_of_gestion')"
-            label="CVE de Gestion">
+            label="CVE de Gestión">
             <input
               type="text"
               class="form-control"
@@ -18,18 +18,8 @@
               maxlength="20" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="form.get('fecha')" label="Fecha">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="fecha"
-              bsDatepicker
-              [maxDate]="maxDate" />
-          </form-field>
-        </div>
 
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-12">
           <form-field [control]="form.get('nombre')" label="Nombre">
             <input
               type="text"
@@ -48,8 +38,12 @@
               maxlength="20" />
           </form-field>
         </div>
-
         <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('fecha')" label="Fecha">
+            <input type="text" class="form-control" formControlName="fecha" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-12">
           <form-field [control]="form.get('texto1')" label="Texto 1">
             <input
               type="text"
@@ -59,13 +53,50 @@
           </form-field>
         </div>
 
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-12">
           <form-field [control]="form.get('texto2')" label="Texto 2">
             <input
               type="text"
               class="form-control"
               formControlName="texto2"
               maxlength="50" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-12">
+          <form-field [control]="form.get('nombre2')" label="Nombre 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nombre2"
+              maxlength="20" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('avePre')" label="Ave Pre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="avePre"
+              maxlength="20" />
+          </form-field>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('OTVALOR1')" label="OTVALOR1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="OTVALOR1"
+              maxlength="20" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-12">
+          <form-field [control]="form.get('cpp')" label="C.C.P.">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cpp"
+              maxlength="20" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -86,42 +117,6 @@
               formControlName="NoExpediente" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="form.get('avePre')" label="Ave Pre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="avePre"
-              maxlength="20" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="form.get('nombre2')" label="Nombre 2">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nombre2"
-              maxlength="20" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="form.get('OTVALOR1')" label="OTVALOR1">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="OTVALOR1"
-              maxlength="20" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="form.get('cpp')" label="C.C.P.">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="cpp"
-              maxlength="20" />
-          </form-field>
-        </div>
         <div class="d-flex justify-content-center">
           <br />
           <div class="m-3">
@@ -134,7 +129,7 @@
               type="button"
               class="btn btn-primary active btn-sm"
               (click)="onClickPrintOffice()"
-              [disabled]="enabled">
+              [disabled]="!enabled">
               Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
           </div>
