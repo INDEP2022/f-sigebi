@@ -1223,7 +1223,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         LV_TIPO_PROC.toLowerCase() +
         ' , para la acción ' +
         LV_ACCION.toLowerCase() +
-        ' no existe ...';
+        ' no existe';
       this.alert(
         'warning',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
