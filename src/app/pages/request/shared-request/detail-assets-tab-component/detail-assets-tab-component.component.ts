@@ -1146,6 +1146,7 @@ export class DetailAssetsTabComponentComponent
     params['filter.unit'] = `$eq:${unit}`;
     this.strategyService.getUnitsMedXConv(params).subscribe({
       next: async resp => {
+        console.log('getTransferentUnit validado');
         const result = resp.data.map(async (item: any) => {
           const ligieunit: any = await this.getAsyncMedUnid(item.idUnitDestine);
           item['nbCode'] = ligieunit.data[0].nbCode;
@@ -1163,6 +1164,9 @@ export class DetailAssetsTabComponentComponent
             );
           }
         });
+      },
+      error: error => {
+        console.log('getTransferentUnit no validado');
       },
     });
   }
@@ -1209,10 +1213,14 @@ export class DetailAssetsTabComponentComponent
     params['filter.fractionId'] = `$eq:${+fraction}`;
     this.goodProcessService.getVsigLigie(params).subscribe({
       next: resp => {
+        console.log('getLigieUnit validado');
         this.ligieUnit = resp.data[0].unitDescription;
         this.unit = resp.data[0].unit;
         this.getTransferentUnit(new ListParams(), resp.data[0].unit);
         this.setQuantityTypeInput(resp.data[0]);
+      },
+      error: error => {
+        console.log('getLigieUnit no validado');
       },
     });
   }
@@ -2164,7 +2172,11 @@ export class DetailAssetsTabComponentComponent
       params['filter.unit'] = `$eq:${unit}`;
       this.strategyService.getMedUnits(params).subscribe({
         next: resp => {
+          console.log('getAsyncMedUnid validado');
           resolve(resp);
+        },
+        error: error => {
+          console.log('getAsyncMedUnid con error');
         },
       });
     });
