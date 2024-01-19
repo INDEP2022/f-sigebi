@@ -465,7 +465,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        'No Hay Registros para Borrar ...'
+        'No hay registros para borrar ...'
       );
       return;
     }
@@ -473,7 +473,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        'No Hay tipo de búsqueda mae seleccionada'
+        'No hay tipo de búsqueda mae seleccionada'
       );
       return;
     }
@@ -635,7 +635,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Cambiar Proceso',
-        'No hay Registros Seleccionados para Procesar, recuerde dar click a selección antes de continuar'
+        'No hay registros seleccionados para procesar, recuerde dar click a selección antes de continuar'
       );
       return;
     }
@@ -694,7 +694,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         '',
-        'No se Ha Seleccionado el Campo Tipo de Búsqueda'
+        'No se ha seleccionado el campo tipo de búsqueda'
       );
     } else {
       this.SelectPago();
@@ -722,13 +722,13 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.alert(
         'error',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        'Usuario Inválido para Ejecutar Este Procedimiento.'
+        'Usuario inválido para ejecutar este procedimiento.'
       );
     } else {
       this.alertQuestion(
         'question',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        '¿Quiere Continuar con el Proceso?'
+        '¿Quiere continuar con el proceso?'
       ).then(async question => {
         if (question.isConfirmed) {
           // add PUP_CAMBIO_MASIV_LOTES;
@@ -743,14 +743,14 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        'Debe Elegir un Tipo de Proceso'
+        'Debe elegir un tipo de proceso'
       );
     } else {
       if (this.searchForm.get('action').value == null) {
         this.alert(
           'warning',
           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-          'Debe Elegir un Tipo de Acción'
+          'Debe elegir un tipo de acción'
         );
       } else {
         this.confirm();
@@ -866,11 +866,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             this.selectedRows.length > 0 &&
             this.selectedRows.find(
               item => row.getData().toString() === item.toString()
-            )
+            ) &&
+            row.getData()['idselect'] === '1'
           ) {
-            this.table.grid.multipleSelectRow(row);
-            allSelected = allSelected && true;
-          } else if (row.getData()['idselect'] === '1') {
             this.table.grid.multipleSelectRow(row);
             allSelected = allSelected && true;
           } else {
@@ -1221,11 +1219,11 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     }
     if (LV_PROCESA == 1) {
       this.msgPaymentChange =
-        'El Tipo de Proceso ' +
-        LV_TIPO_PROC +
-        ' , para la Acción ' +
-        LV_ACCION +
-        ' no Existe ...';
+        'El tipo de proceso ' +
+        LV_TIPO_PROC.toLowerCase() +
+        ' , para la acción ' +
+        LV_ACCION.toLowerCase() +
+        ' no existe ...';
       this.alert(
         'warning',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
@@ -1248,7 +1246,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           'warning',
           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
           this.msgPaymentChange && this.msgPaymentChange.length > 0
-            ? this.msgPaymentChange
+            ? this.msgPaymentChange.toLowerCase()
             : 'No se encontraron datos'
         );
       }
@@ -1260,7 +1258,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        'Debe Elegir un Banco'
+        'Debe elegir un banco'
       );
       return;
     }
@@ -1272,7 +1270,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-        'Debe Elegir un Banco'
+        'Debe elegir un banco'
       );
     } else {
       const files = (event.target as HTMLInputElement).files;
@@ -1332,7 +1330,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-            'Registro Eliminado Correctamente.'
+            'Registro eliminado correctamente.'
           );
           this.searchForm.patchValue({
             type: id,
@@ -1346,7 +1344,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-          'Ocurrió un Error al Eliminar.'
+          'Ocurrió un error al eliminar.'
         );
       }
     );
@@ -1404,7 +1402,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-            'Registro Actualizado'
+            'Registro actualizado'
           );
           console.log('Resp ActualizarReg', resp);
           //this.getTableData();
@@ -1481,14 +1479,14 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-              this.APLICADO_MSG
+              this.APLICADO_MSG.toLowerCase()
             );
             this.getTableData();
           } else {
             this.alert(
               'warning',
               'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-              this.APLICADO_MSG
+              this.APLICADO_MSG.toLowerCase()
             );
           }
           this.loader.load = false;
@@ -1705,6 +1703,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
             resp.message
           );
+          this.searchForm.reset();
           this.searchForm.get('type').setValue('0');
           this.system.setValue('1');
           this.searchType.setValue('0');
