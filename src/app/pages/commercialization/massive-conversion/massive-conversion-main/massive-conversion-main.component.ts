@@ -5,7 +5,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { BehaviorSubject, skip, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip, takeUntil } from 'rxjs';
 import {
   convertFormatDate,
   generateUrlOrPath,
@@ -19,6 +19,7 @@ import { ITmpLcComer } from 'src/app/core/models/ms-captureline/captureline';
 import { CapturelineService } from 'src/app/core/services/ms-captureline/captureline.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
@@ -30,6 +31,7 @@ import {
   SETTING_CLIENT_ID,
   SETTING_DATA,
   SETTING_LCS,
+  SETTING_REPROCESS,
   SETTING_RFC,
   SETTING_RFC_REWORK,
 } from './massive-conversion-columns';
@@ -73,6 +75,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   dataTotalItems: number = 0;
   dataColumns = new LocalDataSource();
   validGenerateLCs = false;
+  reprocessDisabled = false;
   layout: string = 'RFC'; // 'RFC' || 'clientId'
   reworkType: string = 'CLIENT'; // 'BATCH' || 'CLIENT'
   // lcSource: LocalDataSource;
@@ -102,7 +105,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   clientIdSettings = SETTING_CLIENT_ID;
   batchReworkSettings = SETTING_BATCH_REWORK;
   rfcReworkSettings = SETTING_RFC_REWORK;
-
+  reprocesSettings = SETTING_REPROCESS;
   form = new FormGroup({
     eventId: new FormControl(null),
     batchId: new FormControl(null),
@@ -126,6 +129,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private capturelineService: CapturelineService,
     private guarantyService: GuarantyService,
     private comerEventService: ComerEventosService,
+    private prepareEventService: ComerEventService,
     private httpClient: HttpClient
   ) {
     super();
@@ -330,7 +334,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         .post(url, formData)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
-          next: res => {
+          next: (res: any) => {
             this.alert(
               'success',
               this.title,
@@ -338,6 +342,10 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             );
             this.isLoadingLoadFile = false;
             event.target.value = null;
+            //
+            let listParams = new ListParams();
+            listParams['filter.operationId'] = '$eq:' + res.data.operationId;
+            this.searchData(listParams);
           },
           error: err => {
             console.log({ err });
@@ -384,7 +392,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.isLoadingLcs = true;
     const params = this.makeFiltersParams().getParams();
     this.guarantyService
-      .getComerRefGuarantees(params)
+      .getComerRefGuarantees(params.replace('eventId', 'idEvent'))
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: res => {
@@ -481,6 +489,30 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           },
         });
     }
+  }
+
+  async reprocess() {
+    if (this.eventIdValue) {
+      this.reprocessDisabled = true;
+    }
+    let count = await firstValueFrom(
+      this.prepareEventService.getCountEventMassiveConversionLc(
+        this.eventIdValue
+      )
+    );
+    if (count === 0) {
+      this.alert('error', 'Evento no válido para ingresar a este proceso', '');
+      this.reprocessDisabled = false;
+      return;
+    }
+  }
+
+  get eventId() {
+    return this.form ? this.form.get('eventId') : null;
+  }
+
+  get eventIdValue() {
+    return this.eventId ? this.eventId.value : null;
   }
 
   generateLcs() {
