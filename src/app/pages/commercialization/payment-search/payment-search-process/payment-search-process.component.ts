@@ -79,15 +79,15 @@ export class PaymentSearchProcessComponent extends BasePage implements OnInit {
       let process = this.form.get('process').value;
       if (process != null) {
         if (process == 0) {
-          this.LV_DESC_BUSQUEDA = 'Pagos Realizados';
+          this.LV_DESC_BUSQUEDA = 'pagos realizados';
         } else if (process == 1) {
-          this.LV_DESC_BUSQUEDA = 'Pagos Duplicados';
+          this.LV_DESC_BUSQUEDA = 'pagos duplicados';
         } else if (process == 2) {
-          this.LV_DESC_BUSQUEDA = 'Pagos No Referenciados';
+          this.LV_DESC_BUSQUEDA = 'pagos no referenciados';
         } else if (process == 3) {
-          this.LV_DESC_BUSQUEDA = 'Pagos en Efectivo';
+          this.LV_DESC_BUSQUEDA = 'pagos en efectivo';
         } else if (process == 4) {
-          this.LV_DESC_BUSQUEDA = 'Pagos Iconsistente';
+          this.LV_DESC_BUSQUEDA = 'pagos iconsistente';
         }
       } else {
         this.alert('warning', 'Error', 'Error');
@@ -95,7 +95,7 @@ export class PaymentSearchProcessComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'question',
         'Cambiar Proceso',
-        '¿Esta Seguro de Cambiar las Referencias a ' +
+        '¿Esta seguro de cambiar las referencias a ' +
           this.LV_DESC_BUSQUEDA +
           ' ?'
       ).then(async question => {
