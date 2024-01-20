@@ -428,26 +428,45 @@ export class ElectronicSignaturesMainComponent
 
   initForm() {
     const params = new ListParams();
-    params['filter.parameter'] = '$eq:SUPUSUFIRE';
-    params['filter.value'] = '$eq:' + this.dataUserLogged.user;
+    params['filter.parametro'] = '$eq:SUPUSUFIRE';
+    params['filter.valor'] = '$eq:' + this.dataUserLogged.user;
     // params['sortBy'] = 'goodId:ASC';
     this.svElectronicSignatures.getAllParametersMod(params).subscribe({
       next: res => {
         console.log('DATA PARAMETER MOD', res);
         // FEC_FIRMA IS NOT NULL
-        this.filterByUserH = false;
-        // this.dataTableParamsHistorical.getValue()['filter.firmdate'] = `$not:$null`;
-        // this.dataTableParamsHistorical.getValue()['filter.creationdate'] = `sortby:desc`;
-        this.getRelationHistorical();
-        // this.loadingDataTableHistorical();
+        if (res.count == 0) {
+          this.filterByUserH = true;
+          // this.loadingDataTableHistorical();
+          this.dataTableParamsHistorical.getValue()[
+            'filter.user'
+          ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`;
+          this.dataTableParamsHistorical.getValue()[
+            'filter.firmdate'
+          ] = `$not:$null`;
+          // this.dataTableParamsHistorical.getValue()['filter.creationdate'] = `$order:desc`;
+          this.getRelationHistorical();
+        } else {
+          this.filterByUserH = false;
+          this.dataTableParamsHistorical.getValue()[
+            'filter.firmdate'
+          ] = `$not:$null`;
+          // this.dataTableParamsHistorical.getValue()['filter.creationdate'] = `sortby:desc`;
+          this.getRelationHistorical();
+          // this.loadingDataTableHistorical();
+        }
       },
       error: error => {
         // console.log(error);
         // FEC_FIRMA IS NOT NULL AND USUARIO
         this.filterByUserH = true;
         // this.loadingDataTableHistorical();
-        // this.dataTableParamsHistorical.getValue()['filter.user'] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`;
-        // this.dataTableParamsHistorical.getValue()['filter.firmdate'] = `$not:$null`;
+        this.dataTableParamsHistorical.getValue()[
+          'filter.user'
+        ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`;
+        this.dataTableParamsHistorical.getValue()[
+          'filter.firmdate'
+        ] = `$not:$null`;
         // this.dataTableParamsHistorical.getValue()['filter.creationdate'] = `$order:desc`;
         this.getRelationHistorical();
       },
