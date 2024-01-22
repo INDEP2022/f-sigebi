@@ -209,6 +209,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     // if (!this.isSomeLotSelected()) {
     //   return;
     // }
+    //TODO: AGREGAR VALIDACIÓN DE QUE EXISTE UN DATO AL CUAL ACTUALIZAR
     this.updateDesc().subscribe();
   }
 
@@ -232,6 +233,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     if (!this.isSomeLotSelected()) {
       return;
     }
+    //TODO: Agregar validación de existencia de transferente
     this.updateMand().subscribe();
   }
 
@@ -316,6 +318,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   /** PUP_VALCSV */
   validateCsv(event: Event) {
     console.warn('PUP_VALCSV');
+
     const { eventTpId } = this.controls;
     const body = {
       file: this.getFileFromEvent(event),
@@ -348,16 +351,54 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     );
   }
 
-  async successValCSV(event: Event) {
-    this.excelControl.reset();
+  async pupImpExcelLotes(event: Event) {
+    this.loader.load = true;
 
+    const { id } = this.controls;
+    const { eventTpId } = this.controls;
+
+    const body = {
+      file: this.getFileFromEvent(event),
+      lifMessageYesNo: 'S',
+      eventId: id.value,
+      direction: 'M' as 'M' | 'I',
+      tpEventId: eventTpId.value,
+      pClientId: 1,
+      pLotId: this.lotSelected.id,
+    };
+
+    return this.lotService.pupImpExcelBatchesCustomer(body).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        this.excelControl.reset();
+        return throwError(() => error);
+      }),
+      tap(async response => {
+        console.log(response);
+        this.loader.load = false;
+        this.alert('success', 'Proceso Terminado', '');
+        this.excelControl.reset();
+        this.refreshTable();
+      })
+    );
+  }
+
+  async successValCSV(event: Event) {
     const { isConfirmed } = await this.alertQuestion(
       'question',
       'No se encontraron errores en el archivo',
       '¿Desea Lotificar el evento?'
     );
-    if (isConfirmed) {
+    if (!isConfirmed) {
+      console.log('Se lotifico el evento');
       this.eventPreparationService.$lotifyGoods.next(event);
+      this.excelControl.reset();
+    } else {
+      if (!this.lotSelected) {
+        return this.alert('warning', 'No se seleccionó un Lote', '');
+      }
+
+      // (await this.pupImpExcelLotes(event)).subscribe();
     }
   }
 
@@ -393,15 +434,16 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   async successValCsvCustomer(event: Event) {
-    this.excelControl.reset();
-
     const { isConfirmed } = await this.alertQuestion(
       'question',
       'No se encontraron errores en el archivo',
       '¿Desea Realiza la Carga de Clientes en el evento?'
     );
-    if (isConfirmed) {
+    if (!isConfirmed) {
       this.eventPreparationService.$lotifyCustomers.next(event);
+      this.excelControl.reset();
+    } else {
+      (await this.pupImpExcelLotes(event)).subscribe();
     }
   }
 

@@ -255,6 +255,7 @@ export class EventPreparationComponent
         this.validPermissions(true);
       }
     } else if ([7, 8].includes(Number(eventTpId.value))) {
+      //7,6
       const currentDate = new Date();
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
