@@ -42,6 +42,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   LS_EVENTO: number;
   dataCompositionExpenses: IComerDetExpense2[] = [];
   selectedComposition: IComerDetExpense2;
+  selectedCompositions: IComerDetExpense2[] = [];
   addByLotExpenseComposition = new Subject<ILoadLotResponse[]>();
   updateExpenseComposition = new Subject();
   resetExpenseComposition = new Subject();
@@ -137,7 +138,10 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   clean() {
-    this.form.reset();
+    if (this.form) {
+      this.form.reset();
+    }
+
     this.havePolicie = false;
     // this.publicLot = null;
     this.actionButton = '';
@@ -185,7 +189,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.selectedComposition = null;
     this.expenseModalService.clean();
 
-    this.formScan.reset();
+    if (this.formScan) this.formScan.reset();
     // this.delUser = null;
     // this.subDelUser = null;
     // this.departmentUser = null;
@@ -714,10 +718,14 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       );
       return false;
     }
-    // if (!this.coordRegional.value) {
-    //   this.alert('error', 'Debe tener coordinación regional', '');
-    //   return false;
-    // }
+    if (!this.coordRegional.value) {
+      this.alert('error', 'Debe tener coordinación regional', '');
+      return false;
+    }
+    if (!this.invoiceRecDate.value) {
+      this.alert('error', 'Debe tener fecha doc.', '');
+      return false;
+    }
     // if (!this.eventoChatarra()) {
     //   return false;
     // }

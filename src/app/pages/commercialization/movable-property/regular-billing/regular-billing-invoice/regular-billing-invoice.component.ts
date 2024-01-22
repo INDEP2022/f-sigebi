@@ -147,7 +147,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   btnLoading12: boolean = false;
   btnLoading13: boolean = false;
   btnLoading14: boolean = false;
-
+  btnLoadAU: boolean = false;
+  btnLoadAP: boolean = false;
   invoiceSelected: any = null;
 
   get xLote() {
@@ -231,7 +232,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         sort: false,
       },
       subBrand: {
-        title: 'Sub Marca',
+        title: 'Submarca',
         sort: false,
       },
       model: {
@@ -597,9 +598,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       if (this.totalItems2 > 0) this.getComerDetInovice();
     });
   }
-
+  selectDataRow: any = null;
   getComerDetInvocie(data: any) {
     this.rowInvoice = data;
+    this.selectDataRow = data;
     this.paramsList2.getValue()[
       'filter.eventId'
     ] = `${SearchFilter.EQ}:${data.eventId}`;
@@ -2521,17 +2523,17 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             aux_val_liq = await this.batchLiq(invoice.eventId, invoice.batchId);
             if (aux_val_liq == 1) {
               invoice.process = process;
-              // let obj = {
-              //   process: process,
-              //   eventId: invoice.eventId,
-              //   billId: invoice.billId
-              // }
-              // arr.push(obj);
-              await this.updateProcess(
-                invoice.eventId,
-                invoice.billId,
-                process
-              );
+              let obj = {
+                process: process,
+                eventId: invoice.eventId,
+                billId: invoice.billId,
+              };
+              arr.push(obj);
+              // await this.updateProcess(
+              //   invoice.eventId,
+              //   invoice.billId,
+              //   process
+              // );
             } else {
               cont++;
             }
@@ -2540,13 +2542,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           }
         } else {
           invoice.process = process;
-          // let obj = {
-          //   process: process,
-          //   eventId: invoice.eventId,
-          //   billId: invoice.billId
-          // }
-          // arr.push(obj);
-          await this.updateProcess(invoice.eventId, invoice.billId, process);
+          let obj = {
+            process: process,
+            eventId: invoice.eventId,
+            billId: invoice.billId,
+          };
+          arr.push(obj);
+          // await this.updateProcess(invoice.eventId, invoice.billId, process);
         }
       }
     }
@@ -2565,11 +2567,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         `${cont} facturas no pueden ser foliadas`,
         `Sus lotes no han sido afectados`
       );
+    } else {
+      let resp = await this.putApplicationPutProcess(arr);
+      // console.log("NICE", resp)
     }
-    // else{
-    //   // let resp = await this.putApplicationPutProcess(arr);
-    //   // console.log("NICE", resp)
-    // }
 
     if (contg == 1 && aux_valgasto == 1) {
       this.alert(
@@ -2988,5 +2989,73 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   pupSendATC(P_RUTA: string, P_EVENTO: any, P_LOTE: any) {
     // PUP_ENVIAR_ATC
+  }
+
+  selectDataDet: any = null;
+  selectDataComerDetInvocie(data: any) {
+    this.selectDataDet = data;
+  }
+
+  async updateDetFact(option: string) {
+    if (!this.rowInvoice)
+      return this.alert('warning', 'No ha seleccionado Factura', '');
+
+    if (!this.selectDataDet)
+      return this.alert('warning', 'No ha seleccionado Detalle de Factura', '');
+
+    if (this.rowInvoice.factstatusId == 'PREF') {
+      let result: any = false;
+      if (option == 'AP') {
+        // AP
+        this.btnLoadAP = true;
+        let body = {
+          detinvoiceId: this.selectDataDet.detinvoiceId,
+          eventId: this.selectDataDet.eventId,
+          batchId: this.selectDataDet.batchId,
+          billId: this.selectDataDet.billId,
+          prodservSatKey: this.selectDataDet.prodservSatKey,
+        };
+        result = await this.billingsService.updateDetBillings(body);
+        // update comer_detfacturas
+        // set CVE_PRODSERV_SAT=:comer_detfacturas.CVE_PRODSERV_SAT
+        // where id_evento=:comer_detfacturas.ID_EVENTO
+        // and id_lote=:comer_detfacturas.ID_LOTE
+        // and id_factura=:comer_detfacturas.ID_FACTURA;
+      } else if (option == 'AU') {
+        this.btnLoadAU = true;
+        let body = {
+          detinvoiceId: this.selectDataDet.detinvoiceId,
+          eventId: this.selectDataDet.eventId,
+          batchId: this.selectDataDet.batchId,
+          billId: this.selectDataDet.billId,
+          unitSatKey: this.selectDataDet.unitSatKey,
+        };
+        result = await this.billingsService.updateDetBillings(body);
+        // AU
+        // update comer_detfacturas
+        // set CVE_UNIDAD_SAT=:comer_detfacturas.CVE_UNIDAD_SAT
+        // where id_evento=:comer_detfacturas.ID_EVENTO
+        // and id_lote=:comer_detfacturas.ID_LOTE
+        // and id_factura=:comer_detfacturas.ID_FACTURA;
+      }
+
+      if (!result) {
+        this.alert('warning', 'No se pudo actualizar el registro', '');
+        this.btnLoadAP = false;
+        this.btnLoadAU = false;
+      } else {
+        this.alert('success', 'Se actualizó el registro correctamente', '');
+        this.getComerDetInovice();
+        this.btnLoadAP = false;
+        this.btnLoadAU = false;
+      }
+      this.selectDataDet = null;
+    } else {
+      this.alert(
+        'warning',
+        'Estatus de la factura inválida para realizar el cambio.',
+        ''
+      );
+    }
   }
 }

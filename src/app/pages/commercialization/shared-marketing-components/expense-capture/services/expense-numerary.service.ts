@@ -26,4 +26,8 @@ export class ExpenseNumeraryService extends HttpService {
       { policy }
     );
   }
+
+  PUP_GUARDA_BIENES_SEG(policy: string, spentId: number) {
+    return this.post('application/load-goods-update-seg', { policy, spentId });
+  }
 }
