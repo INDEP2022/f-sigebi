@@ -63,7 +63,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       list.push({ value: 'C', title: 'GENERAL' });
       list.push({ value: 'M', title: 'MUEBLES' });
       this.form.get('formPayment').setValidators(Validators.required);
-      // this.form.get('eventNumber').setValidators(Validators.required);
+      this.form.get('eventNumber').setValidators(Validators.required);
       // this.form.get('publicLot').setValidators(Validators.required);
     } else if (value === 'I') {
       this.initScreenI();

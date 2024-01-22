@@ -86,11 +86,15 @@
                   </button>
                   <!-- LISTO -->
                   <button
+                    [ngClass]="{ loading: btnLoading2 }"
+                    [disabled]="btnLoading2"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="imprimeInvoice()">
                     Imprime Factura
-                    <i class="bx bx-printer bx-sm float-icon"></i>
+                    <i
+                      *ngIf="!btnLoading2"
+                      class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                   <!-- LISTO -->
                   <form-check label="Solo Fact." for="label">
@@ -548,6 +552,26 @@
 
   <div class="row pt-3">
     <div class="col-12 d-flex justify-content-end pb-3">
+      <div>
+        <button
+          [ngClass]="{ loading: btnLoadAU }"
+          [disabled]="btnLoadAU"
+          (click)="updateDetFact('AU')"
+          type="button"
+          class="btn btn-primary active btn-sm mr-2 mb-2">
+          <span *ngIf="!btnLoadAU">AU</span>
+        </button>
+      </div>
+      <div>
+        <button
+          [ngClass]="{ loading: btnLoadAP }"
+          [disabled]="btnLoadAP"
+          (click)="updateDetFact('AP')"
+          type="button"
+          class="btn btn-info active btn-sm mr-2 mb-2">
+          <span *ngIf="!btnLoadAP">AP</span>
+        </button>
+      </div>
       <app-columns-select
         [(settings)]="settings2"
         [leftList]="true"></app-columns-select>
@@ -559,6 +583,7 @@
           height: loading2 ? '0px' : totalItems2 > 10 ? '600px' : 'auto'
         }"
         [attr.class]="'table-bordered table-responsive mb-4'"
+        (userRowSelect)="selectDataComerDetInvocie($event.data)"
         [settings]="settings2"
         [source]="dataFilter2">
       </ng2-smart-table>

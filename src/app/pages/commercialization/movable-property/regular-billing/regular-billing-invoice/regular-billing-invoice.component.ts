@@ -32,6 +32,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { _Params } from 'src/app/common/services/http.service';
 import { InvoiceFolioSeparate } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
+import { IPupRepBillMore } from 'src/app/core/models/ms-ldocument/pgr-file.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
@@ -40,6 +41,7 @@ import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-good
 import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
 import { ComerElecBillService } from 'src/app/core/services/ms-invoice/ms-comer-elec-bill.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -50,7 +52,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BillingsService } from '../../../billing-m/services/services';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
 import { UseModalComponent } from '../../mass-bill-base-sales/sat-catalogs/use-comp/use-modal.component';
-import { GetCfdiComponent } from '../get-cfdi/get-cfdi.component';
 import { ActModalComponent } from './act-comp/act-modal.component';
 import { AuthorizationModalComponent } from './authorization-modal/authorization-modal.component';
 import { FactCanceladasComponent } from './fact-canceladas/fact-canceladas.component';
@@ -147,7 +148,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   btnLoading12: boolean = false;
   btnLoading13: boolean = false;
   btnLoading14: boolean = false;
-
+  btnLoadAU: boolean = false;
+  btnLoadAP: boolean = false;
   invoiceSelected: any = null;
 
   get xLote() {
@@ -173,7 +175,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     private comerSpenService: SpentService,
     private comerEventService: ComerEventService,
     private parameterGoodService: ParameterCatService,
-    private billingsService: BillingsService
+    private billingsService: BillingsService,
+    private fileBrowserService: FileBrowserService
   ) {
     super();
 
@@ -231,7 +234,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         sort: false,
       },
       subBrand: {
-        title: 'Sub Marca',
+        title: 'Submarca',
         sort: false,
       },
       model: {
@@ -597,9 +600,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       if (this.totalItems2 > 0) this.getComerDetInovice();
     });
   }
-
+  selectDataRow: any = null;
   getComerDetInvocie(data: any) {
     this.rowInvoice = data;
+    this.selectDataRow = data;
     this.paramsList2.getValue()[
       'filter.eventId'
     ] = `${SearchFilter.EQ}:${data.eventId}`;
@@ -2006,11 +2010,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       '¿Desea Continuar?'
     ).then(async question => {
       if (question.isConfirmed) {
-        // PUP_GENERA_RUTA;
+        // PUP_GENERA_RUTA; // CANCELADO
         await this.pupGeneraRuta();
-        // PUP_GENERA_RUTA2;
+        // PUP_GENERA_RUTA2; // CANCELADO
         await this.pupGeneraRuta2();
-        // PUP_INICIALIZA_BATS;
+        // PUP_INICIALIZA_BATS; // CANCELADO
         await this.pupInicializaBats();
         // IMPRIME_PAQUETE;
         await this.impresioPackage();
@@ -2077,7 +2081,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert('warning', 'No ha capturado el folio de la factura', '');
       return;
     }
-
+    this.btnLoading2 = true;
     await this.readParameter();
 
     this.impresionInvoice();
@@ -2111,11 +2115,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         current[index]['delegation'] = delegation;
         // Realizar DesSelección
         this.desSelectOne(current[index]);
-        this.dataFilter.load(current);
+        // this.dataFilter.load(current);
         this.dataFilter.refresh();
+        this.btnLoading2 = false;
       } else {
         invoice.delegation = delegation;
         invoice.factstatusId = factstatusId;
+        this.btnLoading2 = false;
       }
       break;
     }
@@ -2177,24 +2183,24 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       '¿Desea continuar?'
     ).then(answer => {
       if (answer.isConfirmed) {
-        let config: ModalOptions = {
-          initialState: {
-            callback: (data: boolean, val: number) => {},
-          },
-          class: 'modal-xl modal-dialog-centered',
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(GetCfdiComponent, config);
+        // let config: ModalOptions = {
+        //   initialState: {
+        //     callback: (data: boolean, val: number) => {},
+        //   },
+        //   class: 'modal-xl modal-dialog-centered',
+        //   ignoreBackdropClick: true,
+        // };
+        // this.modalService.show(GetCfdiComponent, config);
         // PUP_GENERA_RUTA3;
         // PUP_INICIALIZA_BATS;
-        // this.impresioPackage();
+        this.impresioPackage();
       }
     });
   }
 
   async impresioPackage() {
     let v_uuid: number;
-    for (const invoice of this.isSelect) {
+    let result = this.isSelect.map(async invoice => {
       if (
         [2, 5].includes(Number(invoice.Type)) &&
         (invoice.exhibit ?? 'S') == 'S'
@@ -2205,9 +2211,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
         if (['CFDI', 'IMP'].includes(invoice.factstatusId) && v_uuid == 1) {
           //'PUP_REP_FACTURA_MAS 10','A'
-          this.pupRepBillMore(10, invoice.Type, invoice);
+          await this.pupRepBillMore(10, invoice.Type, invoice);
           //'PUP_REP_FACTURA_MAS 11','A'
-          this.pupRepBillMore(11, invoice.Type, invoice); // CONSTANCIA DE ENTREGA Y CFDI
+          await this.pupRepBillMore(11, invoice.Type, invoice); // CONSTANCIA DE ENTREGA Y CFDI
         } else {
           this.alert(
             'warning',
@@ -2217,12 +2223,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         }
       } else {
         // pup_rep_factura_mas
-        this.pupRepBillMore(11, invoice.Type, invoice);
+        await this.pupRepBillMore(11, invoice.Type, invoice);
       }
-    }
-    //llama PUP_EJECUTA_BATS
-    this.pupEjecutaBats();
-    this.alert('success', 'El CFDI nuevo fue enviado', '');
+    });
+    // for (const invoice of this.isSelect) {
+
+    // }
+
+    Promise.all(result).then(resp => {
+      //llama PUP_EJECUTA_BATS
+      this.isSelect = [];
+      this.dataFilter.refresh();
+      this.pupEjecutaBats();
+      this.alert('success', 'El CFDI nuevo fue enviado', '');
+    });
   }
   pupEjecutaBats() {}
   async getBill(invoice: any) {
@@ -2604,8 +2618,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.isSelect[0].billId,
       this.isSelect[0].impressionDate
     );
-
-    this.isSelect = [];
+    this.desSelectOne(this.isSelect[0]);
+    // this.isSelect = [];
     this.dataFilter.refresh();
   }
 
@@ -2848,7 +2862,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     return '';
   }
 
-  printerBill2() {
+  async printerBill2() {
     // IMPRIMIR_FACTURA_2
     if (this.isSelect.length == 0)
       return this.alert('warning', 'Debe seleccionar una factura', '');
@@ -2872,111 +2886,80 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       for (const invoice of this.isSelect) {
         J = J + 1;
         // PUP_REP_FACTURA_MAS
-        this.pupRepBillMore(0, invoice.Type, invoice);
-        break;
+        await this.pupRepBillMore(0, invoice.Type, invoice);
+        // break;
       }
     }
   }
 
-  pupRepBillMore(P_TIPOA: number, psubtipo: number, invoice: any) {
-    // PUP_REP_FACTURA_MAS
-    let pTipo: number;
-    let V_PATH_TIPO: string;
-    let V_PATH_TIPO1: string;
-    let V_ARCHOSAL: string;
-    let V_RUTA: string;
-    let V_RUTA1: string;
-    let V_RUTA2: string;
-    let LEYENDA1: string;
-    let V_ARCHOSAL1: string;
-    pTipo = psubtipo;
-    if (P_TIPOA == 10) {
-      pTipo = P_TIPOA;
-    } else if (P_TIPOA == 11) {
-      pTipo = P_TIPOA;
-    }
-
-    // --AGREGA LA RUTA DE ACUERDO AL TIPO  --  LIRH-1 -- //
-    let dateYear = this.datePipe.transform(invoice.impressionDate, 'yyyy');
-    let dateMonth = this.datePipe.transform(invoice.impressionDate, 'MM');
-    V_PATH_TIPO = `ANEXOS\\${dateYear}\\${dateMonth}\\`;
-    V_PATH_TIPO1 = `XML\\${dateYear}\\${dateMonth}\\`;
-
-    if (invoice.vouchertype == 'FAC' && invoice.series.startsWith('INGR')) {
-      V_PATH_TIPO = `INGR\\${V_PATH_TIPO}`;
-      V_PATH_TIPO1 = `INGR\\${V_PATH_TIPO1}`;
-    } else if (
-      invoice.vouchertype == 'FAC' &&
-      invoice.series.startsWith('EGR')
-    ) {
-      V_PATH_TIPO1 = `EGR\\${V_PATH_TIPO1}`;
-    } else if (
-      invoice.vouchertype == 'NCR' &&
-      invoice.series.startsWith('EGR')
-    ) {
-      V_PATH_TIPO = `EGR\\${V_PATH_TIPO}`;
-    }
-
-    // -- EXTRAE EL NOMBRE DEL CFDI
-    // REALIZAR CONSULTA
-    /***********************EXTRAE EL NOMBRE DEL CFDI PARA VENTAS DIRECTAS**********************************/
-    // REALIZAR CONSULTA
-    /***********************EXTRAE EL NOMBRE DEL CFDI PARA ATENCION A CLIENTES******************************/
-    // REALIZAR CONSULTA
-    /***********************EXTRAE EL NOMBRE DEL XML PARA ATENCION A CLIENTES******************************/
-    // REALIZAR CONSULTA
-    const data = {
-      PEVENTO: invoice.eventId,
-      PFACTURA: invoice.factura,
+  async pupRepBillMore(P_TIPOA: number, psubtipo: number, invoice: any) {
+    let data_: IPupRepBillMore = {
+      pTypeA: P_TIPOA,
+      pSubType: psubtipo,
+      type: invoice.Type,
+      eventId: invoice.eventId,
+      lotId: invoice.batchId,
+      billId: invoice.billId,
+      statusFactId: invoice.factstatusId,
+      impressionDate: invoice.impressionDate,
+      typeVoucher: invoice.vouchertype,
+      series: invoice.series,
+      invoice: invoice.Invoice,
+      tpEvent: invoice.tpevent,
+      delegationNumber: Number(invoice.delegationNumber),
     };
-    if (pTipo == 10) {
-      // -- PARA IMPRIMIR EL ANEXO
-      this.getReport('RCOMERFACTURAS_ANEXOS2', data);
-    } else if (pTipo == 11 && psubtipo == 1) {
-      //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE VEHICULOS
-      this.getReport('RCOMERCONSENTVEH', data);
-    } else if (pTipo == 11 && psubtipo == 2) {
-      //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE AERONAVES
-      this.getReport('RCOMERCONSENTBDCA', data);
-    } else if (pTipo == 11 && psubtipo == 3) {
-      //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE DIVERSOS Y CHATARRA
-      this.getReport('RCOMERCONSENTSBD', data);
-    } else if (pTipo == 11 && psubtipo == 4) {
-      //-- PARA IMPRIMIR CARTAS DE ENTREGA DE VEHICULOS Y AERONAVES
-      this.getReport('RCOMERCONSENTAERO', data);
-    } else if (pTipo == 11 && psubtipo == 5) {
-      //-- PARA IMPRIMIR CARTAS DE ENTREGA DE VEHICULOS Y AERONAVES
-      this.getReport('RCOMERCONSENTCHCA', data);
-    } else if (pTipo == 11 && psubtipo == 6) {
-      //-- PARA IMPRIMIR CARTAS DE ENTREGA DE AERONAVES
-      this.getReport('RCOMERCONSENTCHSA', data);
-    }
 
-    if (pTipo == 10) {
-      this.pupSaveFile(V_ARCHOSAL, invoice.eventId, invoice.batchId);
-      if (invoice.tpevent == 3) {
-        this.pupSendVD(V_RUTA1, invoice.eventId, invoice.batchId);
-        this.pupSendVD(V_ARCHOSAL, invoice.eventId, invoice.batchId);
-      }
-      if (LEYENDA1) {
-        this.pupSendATC(V_RUTA2, invoice.eventId, invoice.batchId);
-        this.pupSendATC(V_ARCHOSAL1, invoice.eventId, invoice.batchId);
-      }
-    } else {
-      this.pupSaveFile(V_RUTA, invoice.eventId, invoice.batchId);
-      this.pupSaveFile(V_ARCHOSAL, invoice.eventId, invoice.batchId);
+    let result = await this.servicePupRepBillMore(data_);
+    console.log('result', result);
+    return result;
 
-      if (invoice.tpevent == 3) {
-        this.pupSendVD(V_RUTA1, invoice.eventId, invoice.batchId);
-      }
+    // let pTipo: number;
+    // pTipo = psubtipo;
+    // if (P_TIPOA == 10) {
+    //   pTipo = P_TIPOA;
+    // } else if (P_TIPOA == 11) {
+    //   pTipo = P_TIPOA;
+    // }
 
-      if (invoice.vouchertype == 'FAC' && invoice.factstatusId == 'CFDI') {
-        this.pupSendATC(V_RUTA2, invoice.eventId, invoice.batchId);
-        this.pupSendATC(V_ARCHOSAL1, invoice.eventId, invoice.batchId);
-      }
-    }
+    // const data = {
+    //   PEVENTO: invoice.eventId,
+    //   PFACTURA: invoice.billId,
+    // };
+    // if (pTipo == 10) {
+    //   // -- PARA IMPRIMIR EL ANEXO
+    //   this.getReport('RCOMERFACTURAS_ANEXOS2', data);
+    // } else if (pTipo == 11 && psubtipo == 1) {
+    //   //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE VEHICULOS
+    //   this.getReport('RCOMERCONSENTVEH', data);
+    // } else if (pTipo == 11 && psubtipo == 2) {
+    //   //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE AERONAVES
+    //   this.getReport('RCOMERCONSENTBDCA', data);
+    // } else if (pTipo == 11 && psubtipo == 3) {
+    //   //-- PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE DIVERSOS Y CHATARRA
+    //   this.getReport('RCOMERCONSENTSBD', data);
+    // } else if (pTipo == 11 && psubtipo == 4) {
+    //   //-- PARA IMPRIMIR CARTAS DE ENTREGA DE VEHICULOS Y AERONAVES
+    //   this.getReport('RCOMERCONSENTAERO', data);
+    // } else if (pTipo == 11 && psubtipo == 5) {
+    //   //-- PARA IMPRIMIR CARTAS DE ENTREGA DE VEHICULOS Y AERONAVES
+    //   this.getReport('RCOMERCONSENTCHCA', data);
+    // } else if (pTipo == 11 && psubtipo == 6) {
+    //   //-- PARA IMPRIMIR CARTAS DE ENTREGA DE AERONAVES
+    //   this.getReport('RCOMERCONSENTCHSA', data);
+    // }
   }
-
+  servicePupRepBillMore(data: IPupRepBillMore) {
+    return new Promise((resolve, reject) => {
+      this.fileBrowserService.pupRepBillFurtherFurniture(data).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
   pupSaveFile(P_RUTA: string, P_EVENTO: any, P_LOTE: any) {
     // PUP_GUARDA_ARCHIVO
   }
@@ -2987,5 +2970,73 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   pupSendATC(P_RUTA: string, P_EVENTO: any, P_LOTE: any) {
     // PUP_ENVIAR_ATC
+  }
+
+  selectDataDet: any = null;
+  selectDataComerDetInvocie(data: any) {
+    this.selectDataDet = data;
+  }
+
+  async updateDetFact(option: string) {
+    if (!this.rowInvoice)
+      return this.alert('warning', 'No ha seleccionado Factura', '');
+
+    if (!this.selectDataDet)
+      return this.alert('warning', 'No ha seleccionado Detalle de Factura', '');
+
+    if (this.rowInvoice.factstatusId == 'PREF') {
+      let result: any = false;
+      if (option == 'AP') {
+        // AP
+        this.btnLoadAP = true;
+        let body = {
+          detinvoiceId: this.selectDataDet.detinvoiceId,
+          eventId: this.selectDataDet.eventId,
+          batchId: this.selectDataDet.batchId,
+          billId: this.selectDataDet.billId,
+          prodservSatKey: this.selectDataDet.prodservSatKey,
+        };
+        result = await this.billingsService.updateDetBillings(body);
+        // update comer_detfacturas
+        // set CVE_PRODSERV_SAT=:comer_detfacturas.CVE_PRODSERV_SAT
+        // where id_evento=:comer_detfacturas.ID_EVENTO
+        // and id_lote=:comer_detfacturas.ID_LOTE
+        // and id_factura=:comer_detfacturas.ID_FACTURA;
+      } else if (option == 'AU') {
+        this.btnLoadAU = true;
+        let body = {
+          detinvoiceId: this.selectDataDet.detinvoiceId,
+          eventId: this.selectDataDet.eventId,
+          batchId: this.selectDataDet.batchId,
+          billId: this.selectDataDet.billId,
+          unitSatKey: this.selectDataDet.unitSatKey,
+        };
+        result = await this.billingsService.updateDetBillings(body);
+        // AU
+        // update comer_detfacturas
+        // set CVE_UNIDAD_SAT=:comer_detfacturas.CVE_UNIDAD_SAT
+        // where id_evento=:comer_detfacturas.ID_EVENTO
+        // and id_lote=:comer_detfacturas.ID_LOTE
+        // and id_factura=:comer_detfacturas.ID_FACTURA;
+      }
+
+      if (!result) {
+        this.alert('warning', 'No se pudo actualizar el registro', '');
+        this.btnLoadAP = false;
+        this.btnLoadAU = false;
+      } else {
+        this.alert('success', 'Se actualizó el registro correctamente', '');
+        this.getComerDetInovice();
+        this.btnLoadAP = false;
+        this.btnLoadAU = false;
+      }
+      this.selectDataDet = null;
+    } else {
+      this.alert(
+        'warning',
+        'Estatus de la factura inválida para realizar el cambio.',
+        ''
+      );
+    }
   }
 }

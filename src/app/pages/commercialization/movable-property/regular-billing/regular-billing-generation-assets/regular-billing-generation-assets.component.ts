@@ -148,6 +148,7 @@ export class RegularBillingGenerationAssetsComponent
             'filter.sessionId'
           ] = `${SearchFilter.EQ}:7545034`;
           this.getAllComerPapel();
+          this.alert('success', 'Se ha cargado el archivo correctamente', '');
         }
       }
     );

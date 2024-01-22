@@ -64,6 +64,9 @@ export class ExpenseCompositionComponent
   v_tip_gast: string = '';
   errorsClasification: any[] = [];
   chargeGoodsByLote = false;
+  showTable = true;
+  // chargeGoodsI = false;
+  previousSelecteds: IComerDetExpense2[] = [];
   constructor(
     private modalService: BsModalService,
     private dataService: ComerDetexpensesService,
@@ -95,7 +98,17 @@ export class ExpenseCompositionComponent
           let lotData = await this.newGoodsByLot(response);
           // let newData = this.data ? [...this.data, ...lotData] : lotData;
           this.chargeGoodsByLote = true;
-          this.setData(lotData, lotData.length === 0, false);
+          this.showTable = false;
+          this.settings = {
+            ...this.settings,
+            columns: COLUMNS,
+            selectMode: 'multi',
+          };
+          setTimeout(() => {
+            this.showTable = true;
+            // this.chargeGoodsI = true;
+            this.setData(lotData, lotData.length === 0, false);
+          }, 500);
         },
       });
 
@@ -408,6 +421,7 @@ export class ExpenseCompositionComponent
     this.isrWithholding = 0;
     this.vatWithholding = 0;
     this.total = 0;
+    this.selectedRows = [];
   }
 
   get PCONDIVXMAND() {
@@ -486,9 +500,34 @@ export class ExpenseCompositionComponent
     );
     if (response.isConfirmed) {
       let dataCSV: IComerDetExpense[] = this.getComerDetExpenseOfGoodsByLot(
-        this.data
+        this.selectedRows
       );
       this.saveGoodsMassive(dataCSV);
+      // if (this.chargeGoodsI && this.v_tip_gast === 'GASTOSEG') {
+      //   this.loading = true;
+      //   this.expenseNumeraryService
+      //     .PUP_GUARDA_BIENES_SEG(
+      //       this.form.get('policie').value,
+      //       +this.expense.expenseNumber
+      //     )
+      //     .pipe(takeUntil(this.$unSubscribe))
+      //     .subscribe({
+      //       next: response => {
+      //         this.alert('success', 'Bienes guardados correctamente', '');
+      //         this.getData2();
+      //       },
+      //       error: err => {
+      //         this.alert(
+      //           'error',
+      //           'No se pudieron guardar los bienes',
+      //           err.error.message
+      //         );
+      //         this.loading = false;
+      //       },
+      //     });
+      // } else {
+      //   this.saveGoodsMassive(dataCSV);
+      // }
     } else {
     }
   }
@@ -832,7 +871,7 @@ export class ExpenseCompositionComponent
       this.alert('warning', 'Requiere contrato para cargar bienes', '');
       return;
     }
-    if (this.v_tip_gast === 'GASTOVIG' && !this.form.get('policie').value) {
+    if (this.v_tip_gast === 'GASTOSEG' && !this.form.get('policie').value) {
       this.alert('warning', 'Requiere cve poliza para cargar bienes', '');
       return;
     }
@@ -844,6 +883,7 @@ export class ExpenseCompositionComponent
     if (response.isConfirmed) {
       this.loading = true;
       console.log(this.v_tip_gast);
+      // this.chargeGoodsI = false;
       if (['GASTOINMU', 'GASTOADMI'].includes(this.v_tip_gast)) {
         this.fileI.nativeElement.click();
       } else if (this.v_tip_gast === 'GASTOVIG') {
@@ -859,10 +899,21 @@ export class ExpenseCompositionComponent
                 console.log(response.data);
                 let newGoodsData = await this.newGoodsByVig(response.data);
                 this.chargeGoodsByLote = true;
-                this.setData(newGoodsData, newGoodsData.length === 0, false);
+                this.showTable = false;
+                this.settings = {
+                  ...this.settings,
+                  columns: COLUMNS,
+                  selectMode: 'multi',
+                };
+                setTimeout(() => {
+                  this.showTable = true;
+                  // this.chargeGoodsI = true;
+                  this.setData(newGoodsData, newGoodsData.length === 0, false);
+                }, 500);
                 // this.getData2();
               } else {
                 this.loading = false;
+                // this.chargeGoodsI = false;
                 this.alert(
                   'error',
                   'Carga de bienes',
@@ -873,6 +924,7 @@ export class ExpenseCompositionComponent
             },
             error: err => {
               this.loading = false;
+              // this.chargeGoodsI = false;
               this.alert(
                 'error',
                 'Carga de bienes',
@@ -890,10 +942,22 @@ export class ExpenseCompositionComponent
                 console.log(response.data);
                 let newGoodsData = await this.newGoodsBySeg(response.data);
                 this.chargeGoodsByLote = true;
-                this.setData(newGoodsData, newGoodsData.length === 0, false);
+                this.showTable = false;
+                this.settings = {
+                  ...this.settings,
+                  columns: COLUMNS,
+                  selectMode: 'multi',
+                };
+                setTimeout(() => {
+                  this.showTable = true;
+                  // this.chargeGoodsI = true;
+                  this.setData(newGoodsData, newGoodsData.length === 0, false);
+                }, 500);
+
                 // this.getData2();
               } else {
                 // this.alert('error','')
+                // this.chargeGoodsI = false;
                 this.loading = false;
                 this.alert(
                   'error',
@@ -903,6 +967,7 @@ export class ExpenseCompositionComponent
               }
             },
             error: err => {
+              // this.chargeGoodsI = false;
               this.loading = false;
               this.alert('error', 'Carga de bienes', 'No se encontraron datos');
             },
@@ -1034,6 +1099,34 @@ export class ExpenseCompositionComponent
     }
   }
 
+  private fillSelectedRows() {
+    setTimeout(() => {
+      this.table.isAllSelected = false;
+      let allSelected = true;
+      if (this.selectedRows && this.selectedRows.length > 0) {
+        this.table.grid.getRows().forEach(row => {
+          // console.log(row);
+
+          if (
+            this.selectedRows.find(
+              item =>
+                row.getData()['detPaymentsId'] === item.detPaymentsId &&
+                row.getData()['goodNumber'] === item.goodNumber
+            )
+          ) {
+            this.table.grid.multipleSelectRow(row);
+            allSelected = allSelected && true;
+          } else {
+            allSelected = allSelected && false;
+          }
+          // if(row.getData())
+          // this.table.grid.multipleSelectRow(row)
+        });
+        this.table.isAllSelected = allSelected;
+      }
+    }, 300);
+  }
+
   private setData(
     data,
     loadContMands = false,
@@ -1083,6 +1176,7 @@ export class ExpenseCompositionComponent
       };
     });
     this.fillData(newData);
+    this.fillSelectedRows();
     if (loadGoodsLote && this.expenseCaptureDataService.callNextItemLote) {
       this.expenseCaptureDataService.callNextItemLoteSubject.next(true);
       this.loading = false;
@@ -1101,9 +1195,29 @@ export class ExpenseCompositionComponent
     }
   }
 
+  override searchParams() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: resp => {
+        if (this.data) {
+          this.getPaginated(resp);
+          this.fillSelectedRows();
+        }
+      },
+    });
+  }
+
   getData2(loadContMands = false) {
     this.chargeGoodsByLote = false;
     // let params = new FilterParams();
+    this.showTable = false;
+    this.settings = {
+      ...this.settings,
+      columns: COLUMNS,
+      selectMode: '',
+    };
+    setTimeout(() => {
+      this.showTable = true;
+    }, 500);
     if (!this.dataService) {
       return;
     }
@@ -1148,8 +1262,68 @@ export class ExpenseCompositionComponent
     };
   }
 
-  selectRow(row: IComerDetExpense2) {
-    this.selectedRow = row;
+  selectRow(row: any) {
+    console.log(row);
+    if (row.data) {
+      this.selectedRow = row;
+    }
+    if (row.selected !== undefined) {
+      if (row.isSelected === null) {
+        if (row.selected.length > 0) {
+          row.selected.forEach(x => {
+            if (
+              this.selectedRows.findIndex(
+                y =>
+                  y.detPaymentsId === x.detPaymentsId &&
+                  y.goodNumber === x.goodNumber
+              ) === -1
+            ) {
+              this.selectedRows.push(x);
+            }
+          });
+          this.previousSelecteds = row.selected;
+        } else {
+          this.selectedRows = this.selectedRows.filter(
+            x =>
+              this.previousSelecteds.findIndex(
+                y =>
+                  y.detPaymentsId === x.detPaymentsId &&
+                  y.goodNumber === x.goodNumber
+              ) === -1
+          );
+          this.previousSelecteds = [];
+        }
+      } else if (row.isSelected === true) {
+        if (
+          row.data &&
+          this.selectedRows.findIndex(
+            y =>
+              y.detPaymentsId === row.data.detPaymentsId &&
+              y.goodNumber === row.data.goodNumber
+          ) === -1
+        ) {
+          this.selectedRows.push(row.data);
+        }
+      } else {
+        if (row.data)
+          this.selectedRows = this.selectedRows.filter(
+            x =>
+              !(
+                row.data.detPaymentsId === x.detPaymentsId &&
+                row.data.goodNumber === x.goodNumber
+              )
+          );
+      }
+    }
+    //
+  }
+
+  get selectedRows() {
+    return this.expenseCaptureDataService.selectedCompositions;
+  }
+
+  set selectedRows(value) {
+    this.expenseCaptureDataService.selectedCompositions = value;
   }
 
   showErrorDisperGasto(message: string) {
