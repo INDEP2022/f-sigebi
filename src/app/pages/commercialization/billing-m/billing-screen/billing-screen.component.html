@@ -100,9 +100,11 @@
                             </div>
                             <div class="col-12">
                               <button
-                                (click)="cancelBilling()"
-                                class="btn btn-sm btn-block btn-danger active mt-2">
-                                Cancelar Factura
+                                (click)="getDate()"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Consulta x Fecha
+                                <i
+                                  class="bx bx-search-alt bx-sm float-icon"></i>
                               </button>
                             </div>
                           </div>
@@ -144,14 +146,9 @@
                             </div>
                             <div class="col-12">
                               <button
-                                (click)="export()"
-                                [ngClass]="{ loading: btnLoading7 }"
-                                [disabled]="btnLoading7"
-                                class="btn btn-sm btn-block btn-success active mt-2">
-                                Exporta a CSV
-                                <i
-                                  *ngIf="!btnLoading7"
-                                  class="bx bx-upload float-icon"></i>
+                                (click)="cancelBilling()"
+                                class="btn btn-sm btn-block btn-danger active mt-2">
+                                Cancelar Factura
                               </button>
                             </div>
                           </div>
@@ -185,11 +182,14 @@
                             </div>
                             <div class="col-12">
                               <button
-                                (click)="getDate()"
-                                class="btn btn-sm btn-block btn-primary active mt-2">
-                                Consulta x Fecha
+                                (click)="export()"
+                                [ngClass]="{ loading: btnLoading7 }"
+                                [disabled]="btnLoading7"
+                                class="btn btn-sm btn-block btn-success active mt-2">
+                                Exporta a CSV
                                 <i
-                                  class="bx bx-search-alt bx-sm float-icon"></i>
+                                  *ngIf="!btnLoading7"
+                                  class="bx bx-upload float-icon"></i>
                               </button>
                             </div>
                           </div>

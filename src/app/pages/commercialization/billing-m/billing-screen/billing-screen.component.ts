@@ -20,11 +20,13 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IPupRepBillMoreI } from 'src/app/core/models/ms-ldocument/pgr-file.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared';
@@ -201,7 +203,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private excelService: ExcelService,
     private comerInvoiceService: ComerInvoiceService,
-    private comerDetInvoice: ComerDetailInvoiceService
+    private comerDetInvoice: ComerDetailInvoiceService,
+    private fileBrowserService: FileBrowserService
   ) {
     super();
 
@@ -2395,8 +2398,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         this.btnLoading3 = true;
         await this.pupGenerateRoute3(); // PUP_GENERA_RUTA3
         await this.printerPackage(); // IMPRIME_PAQUETE
-
-        this.alert('success', 'El CFDI nuevo fue enviado', '');
       }
     });
   }
@@ -2429,24 +2430,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     }
 
     let V_ARCHOSAL = L_PATH + V_PATH_TIPO;
-    //   V_RUTA2:= 'MD ' || V_ARCHOSAL || 'PDF\'||TO_CHAR(:COMER_FACTURAS.FECHA_IMPRESION,'YYYY')||'\'||TO_CHAR(:COMER_FACTURAS.FECHA_IMPRESION,'MM')||'\';
-    //   LFIARCHIVO:= TEXT_IO.FOPEN('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\CREARUTA3.BAT', 'W');
-    //   TEXT_IO.PUT_LINE(LFIARCHIVO, V_RUTA2);
-    //   TEXT_IO.FCLOSE(LFIARCHIVO);
-    //   HOST('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\CREARUTA3.BAT',NO_SCREEN);
-    //   PUP_LIMPIA_ARCHIVO;
-    //   V_ARCHOSAL:= L_PATH || V_PATH_TIPO;
-    //   V_RUTA3:= 'MD ' || V_ARCHOSAL || 'XML\'||TO_CHAR(:COMER_FACTURAS.FECHA_IMPRESION,'YYYY')||'\'||TO_CHAR(:COMER_FACTURAS.FECHA_IMPRESION,'MM')||'\';
-    //   LFIARCHIVO:= TEXT_IO.FOPEN('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\CREARUTA3.BAT', 'W');
-    //   TEXT_IO.PUT_LINE(LFIARCHIVO, V_RUTA3);
-    //   TEXT_IO.FCLOSE(LFIARCHIVO);
-    //   HOST('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\CREARUTA3.BAT',NO_SCREEN);
   }
-  async pupCleanArchive() {
-    // PUP_LIMPIA_ARCHIVO
-    // LFIARCHIVO:= TEXT_IO.FOPEN('C:\SIABTMP\'||:GLOBAL.VG_DIRUSR||'\COPIACFISERV.BAT', 'W');
-    // TEXT_IO.FCLOSE(LFIARCHIVO);
-  }
+  async pupCleanArchive() {}
   async printerPackage() {
     // IMPRIME_PAQUETE
     if (!this.billingSelected)
@@ -2454,51 +2439,61 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         (this.btnLoading3 = false),
         this.alert('warning', 'Debe seleccionar una factura', '')
       );
-    const params = new ListParams();
-    params['filter.id'] = `$eq:PATHANEXOS`;
-    const parameter: any = await this.billingsService.getParamaters(params);
-    if (!parameter)
-      return (
-        (this.btnLoading3 = false),
-        this.alert('warning', 'No se obtuvo el parámetro del PATH', '')
-      );
+    // const params = new ListParams();
+    // params['filter.id'] = `$eq:PATHANEXOS`;
+    // const parameter: any = await this.billingsService.getParamaters(params);
+    // if (!parameter)
+    //   return (
+    //     (this.btnLoading3 = false),
+    //     this.alert('warning', 'No se obtuvo el parámetro del PATH', '')
+    //   );
 
     let result = this.selectedbillings.map(async item => {
-      await this.pupRepBillingMore(11, item.Type);
+      await this.pupRepBillingMore(11, item.Type, item);
+    });
+    Promise.all(result).then(resp => {
+      this.alert('success', 'El CFDI nuevo fue enviado', '');
+      this.btnLoading3 = false;
+      this.selectedbillings = [];
+      this.data.refresh();
     });
   }
 
-  async pupRepBillingMore(pType: number, item: any) {
+  async pupRepBillingMore(P_TIPOA: number, psubtipo: number, invoice: any) {
     // PUP_REP_FACTURA_MAS
-    let PTIPO = item.Type;
-    if (pType == 10) {
-      PTIPO = pType;
-    } else if (pType == 11) {
-      PTIPO = pType;
-    }
-    const impressionDate = new Date(item.impressionDate);
-    var mes: any = impressionDate.getMonth(); // Obtener el mes (0-11)
-    var anio = impressionDate.getFullYear(); // Obtener el año (yyyy)
-    if (mes < 9) {
-      mes = '0' + (mes + 1);
-    } else {
-      mes = mes + 1;
-    }
+    let data_: IPupRepBillMoreI = {
+      pTypeA: P_TIPOA,
+      pSubType: psubtipo,
+      type: invoice.Type,
+      eventId: invoice.eventId,
+      lotId: invoice.batchId,
+      billId: invoice.billId,
+      statusFactId: invoice.factstatusId,
+      impressionDate: invoice.impressionDate,
+      typeVoucher: invoice.vouchertype,
+      series: invoice.series,
+      invoice: invoice.Invoice,
+      tpEvent: invoice.tpevent,
+    };
 
-    let V_PATH_TIPO = `ANEXOS\\${anio}\\${mes}\\`;
-    let V_PATH_TIPO1 = `XML\\${anio}\\${mes}\\`;
-
-    if (item.vouchertype == 'FAC' && item.series.startsWith('INGRG')) {
-      V_PATH_TIPO = 'INGRG\\' + V_PATH_TIPO;
-      V_PATH_TIPO1 = 'INGRG\\' + V_PATH_TIPO1;
-    } else if (item.vouchertype == 'FAC' && item.series.startsWith('EGRG')) {
-      V_PATH_TIPO1 = 'EGRG\\' + V_PATH_TIPO1;
-    } else if (item.vouchertype == 'NCR' && item.series.startsWith('EGRG')) {
-      V_PATH_TIPO = 'EGRG\\' + V_PATH_TIPO;
-    }
-    // PROGRAMACIÓN DETENIDA PARA CHECAR FUNCIONALIDAD //
+    let result = await this.servicePupRepBillMore(data_);
+    return result;
   }
 
+  async servicePupRepBillMore(data: IPupRepBillMoreI) {
+    return new Promise((resolve, reject) => {
+      this.fileBrowserService
+        .pupRepBillFurtherFurnitureImmovables(data)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
+    });
+  }
   async prefPaysParc() {
     // Pref Pagos Parciales - GEN_XPAGOS
     const eventId = this.idEventBlkCtrl.value;
