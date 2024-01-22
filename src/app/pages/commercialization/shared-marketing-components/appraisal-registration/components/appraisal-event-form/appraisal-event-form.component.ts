@@ -92,6 +92,7 @@ export class AppraisalEventFormComponent
           return throwError(() => error);
         }),
         tap(res => {
+          console.log(res);
           this.documentTypes = new DefaultSelect(res.data, res.count);
         })
       )

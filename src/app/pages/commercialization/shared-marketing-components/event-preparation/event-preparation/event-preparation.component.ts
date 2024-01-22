@@ -148,7 +148,7 @@ export class EventPreparationComponent
     return await firstValueFrom(
       this.parametersModService.getAllFilter(params.getParams()).pipe(
         catchError(() => of({ data: [{ value: defaultBank }] })),
-        map(response => response.data[0]?.value ?? defaultBank)
+        map(response => response.data[0]?.valor ?? defaultBank)
       )
     );
   }

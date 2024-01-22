@@ -1,7 +1,7 @@
 export interface IParameterMod {
-  parameter: string;
-  value: string;
-  description: string;
-  address: string;
-  tpEventId: number;
+  parametro: string;
+  valor: string;
+  descriptionparameter: string;
+  direccion: string;
+  tpevent: any;
 }
