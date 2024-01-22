@@ -83,8 +83,11 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            console.log('Hola');
+            console.log(filter.field);
             switch (filter.field) {
+              case 'clientId':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'typeProcess':
                 searchFilter = SearchFilter.EQ;
                 break;
@@ -92,33 +95,26 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'publicLot':
+              case 'lotId':
                 searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}.publicLot`;
                 break;
 
-              /*case 'startDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;*/
               case 'startDate':
-                filter.search = this.returnParseDate(filter.search);
-                searchFilter = SearchFilter.EQ;
-                break;
-              /*case 'endDate':
                 if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
+                  filter.search = this.checkType(filter.search)
+                    ? this.formatDate(filter.search)
+                    : filter.search;
                   searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
                 }
-                break;*/
+                break;
               case 'endDate':
-                filter.search = this.returnParseDate(filter.search);
-                searchFilter = SearchFilter.EQ;
+                if (filter.search != null) {
+                  filter.search = this.checkType(filter.search)
+                    ? this.formatDate(filter.search)
+                    : filter.search;
+                  searchFilter = SearchFilter.EQ;
+                }
                 break;
               case 'refeOfficeOther':
                 searchFilter = SearchFilter.ILIKE;
@@ -134,7 +130,9 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                   filter.search = '';
                 }*/
               case 'penaltiDate':
-                filter.search = this.returnParseDate(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -143,9 +141,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
             } else {
               delete this.columnFilters[field];
             }
@@ -165,6 +160,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            console.log(filter.field);
             switch (filter.field) {
               case 'processType':
                 searchFilter = SearchFilter.EQ;
@@ -180,11 +176,17 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'initialDate':
-                filter.search = this.returnParseDate(filter.search);
+                console.log(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'finalDate':
-                filter.search = this.returnParseDate(filter.search);
+                console.log(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'referenceJobOther':
@@ -200,11 +202,15 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'penalizesDate':
-                filter.search = this.returnParseDate(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'releasesDate':
-                filter.search = this.returnParseDate(filter.search);
+                filter.search = this.checkType(filter.search)
+                  ? this.formatDate(filter.search)
+                  : filter.search;
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -298,18 +304,27 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     );
   }
 
-  formatDate(dateString: string): string {
-    if (dateString === '') {
+  formatDate(dateString: Date): string {
+    console.log(dateString);
+    if (dateString == null) {
       return '';
+    } else {
+      // const date = new Date(dateString);
+      const day = dateString.getDay().toString().padStart(2, '0');
+      const month = (dateString.getMonth() + 1).toString().padStart(2, '0');
+      const year = dateString.getFullYear().toString();
+      return `${year}-${month}-${day}`;
     }
-
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString();
-    return `${year}-${month}-${day}`;
   }
-
+  checkType(valor: Date | string): boolean {
+    if (typeof valor === 'string') {
+      return false;
+    } else if (valor instanceof Date) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   rowsSelected(event: any) {
     if (event) {
       console.log(event);
