@@ -38,6 +38,7 @@ import { ChangeOfGoodCharacteristicService } from 'src/app/pages/administrative-
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
 
+import { FractionSelectedService } from './classify-assets-tab-service';
 @Component({
   selector: 'app-classify-assets-tab',
   templateUrl: './classify-assets-tab.component.html',
@@ -55,11 +56,13 @@ export class ClassifyAssetsTabComponent
   @Input() process: string = '';
   @Input() goodSelect: any;
   @Input() typeOfTransfer?: string = '';
+  //@Input() noFracction: any;
   @Output() updateClassifyAssetTableEvent?: EventEmitter<any> =
     new EventEmitter();
   @Output() classifyChildSaveFraction?: EventEmitter<any> = new EventEmitter();
 
   classiGoodsForm: IFormGroup<IGood>; //bien
+  noFracction: any;
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
   private listAdvancedFractions: any = [];
@@ -87,7 +90,7 @@ export class ClassifyAssetsTabComponent
   domicileSelected: any = null;
 
   service = inject(ChangeOfGoodCharacteristicService);
-  noFracction: number;
+  //noFracction: number;
 
   constructor(
     private fb: FormBuilder,
@@ -102,7 +105,8 @@ export class ClassifyAssetsTabComponent
     private goodDataAsetService: GoodDataAsetService,
     private authService: AuthService,
     private historyGoodService: HistoryGoodService,
-    private goodsInvService: GoodsInvService
+    private goodsInvService: GoodsInvService,
+    private fractionSelectedService: FractionSelectedService
   ) {
     super();
   }
@@ -972,8 +976,24 @@ export class ClassifyAssetsTabComponent
     let config: ModalOptions = {
       initialState: {
         parameter: '',
-        callback: (next: boolean) => {
-          if (next) console.log('Se cerró el modal de búsqueda avanzada');
+        callback: (next: boolean, fractionSelect: any) => {
+          if (next) {
+            console.log('Se cerró el modal de búsqueda avanzada');
+          }
+          const noFracction2 = Number(fractionSelect.id);
+          this.fractionSelectedService.actualizarValorCompartido(noFracction2);
+          console.log('Fracción seleccionada: ', noFracction2);
+          console.log('Proceso: ', this.typeDoc);
+          /*if (this.typeDoc === "classify-assets"){
+
+            if (fractionSelect != null) {
+            console.log('Actualizando bien automáticamente al cerrar modal');
+            this.saveRequest();
+            //this.saveGoodAut(fractionSelect)
+
+          }
+
+          }*/
         },
       },
       class: 'modalSizeXL modal-dialog-centered',
@@ -986,6 +1006,11 @@ export class ClassifyAssetsTabComponent
       console.log('this.matchLevelFraction(res)', res);
       this.noFracction = res.id;
     });
+  }
+
+  saveGoodAut(fractionSelect: any) {
+    let goodData = this.good;
+    goodData.frac;
   }
 
   matchLevelFraction(res: any) {
@@ -1038,9 +1063,9 @@ export class ClassifyAssetsTabComponent
   }
 
   async saveRequest(): Promise<void> {
-    console.log(this.dataAtribute);
-
+    console.log('this.dataAtribute', this.dataAtribute);
     const goods = this.classiGoodsForm.getRawValue();
+    console.log('const goods', goods);
     if (goods.addressId === null) {
       this.message(
         'warning',
@@ -1071,7 +1096,7 @@ export class ClassifyAssetsTabComponent
     /**
      * descomentar en caso de usar la tabla
      */
-    if (goods.goodId) {
+    /*if (goods.goodId) {
       let noCumply: boolean = false;
       if (this.dataAtribute.length > 0) {
         for (let index = 0; index < this.dataAtribute.length; index++) {
@@ -1095,7 +1120,7 @@ export class ClassifyAssetsTabComponent
           return;
         }
       }
-    }
+    }*/
 
     if (!goods.idGoodProperty) {
       goods.idGoodProperty =

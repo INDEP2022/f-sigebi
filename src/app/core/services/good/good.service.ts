@@ -429,11 +429,14 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
       case 2:
         console.log('ACTUALIZANDO VEHÍCULOS');
 
+        good.val2 = good?.physicalStatus === 1 ? 'BUENO' : good.val2;
+        good.val2 = good?.physicalStatus === 2 ? 'MALO' : good.val2;
+
         //NUMERO DE EJES
         good.axesNumber = good?.val5 ?? good.axesNumber;
 
         //ESTADO FISICO
-        good.physicalStatus = good?.val2 ?? good.physicalStatus;
+        //good.physicalStatus = good?.val2 ?? good.physicalStatus;
 
         //MARCA
         good.brand = good?.val3 ?? good.brand;
@@ -454,10 +457,10 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
         good.subBrand = good?.val10 ?? good.subBrand;
 
         //APTO PARA CIRCULAR
-        good.fitCircular = good?.val25 ?? good.fitCircular;
+        good.fitCircular = good?.val25 === 'APTO PARA CIRCULAR' ? 'Y' : 'N';
 
         //REPORTE DE ROBO
-        good.theftReport = good?.val26 ?? good.theftReport;
+        good.theftReport = good?.val26 === 'CON REPORTE DE ROBO' ? 'Y' : 'N';
 
         //MATRICULA
         good.tuition = good?.val61 ?? good.tuition;

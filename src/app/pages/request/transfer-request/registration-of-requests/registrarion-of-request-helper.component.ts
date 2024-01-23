@@ -430,7 +430,7 @@ export class RegistrationHelper extends BasePage {
             } */
             // else {
             const realEstate: any = await this.getGoodRealEstate(good.id); //
-            if (realEstate.publicDeed === null) {
+            /*if (realEstate.publicDeed === null) {
               tipoRelInmueble = true;
               this.message(
                 'warning',
@@ -438,7 +438,9 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Escritura Pública" en el Bien Inmueble esta vacio.'
               );
               break;
-            } else if (realEstate.forProblems === null) {
+            } else */
+
+            if (realEstate.forProblems === null) {
               tipoRelInmueble = true;
               this.message(
                 'warning',
@@ -446,7 +448,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Problemáticas" en el Bien Inmueble esta vacio.'
               );
               break;
-            } else if (realEstate.problemDesc === null) {
+            } else if (realEstate.pubRegProperty === null) {
+            /*else if (realEstate.problemDesc === null) {
               tipoRelInmueble = true;
               this.message(
                 'warning',
@@ -454,7 +457,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Descripción de Problemática" en el Bien Inmueble esta vacio.'
               );
               break;
-            } else if (realEstate.pubRegProperty === null) {
+            } */
               tipoRelInmueble = true;
               this.message(
                 'warning',
@@ -470,7 +473,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Tipo de Inmueble" en el Bien Inmueble esta vacio.'
               );
               break;
-            } else if (realEstate.pffDate == null) {
+            }
+            /*else if (realEstate.pffDate == null) {
               console.log('pffDate; ', realEstate.pffDate);
               if (
                 idTrandference == 120 ||
@@ -485,21 +489,21 @@ export class RegistrationHelper extends BasePage {
                 );
                 break;
               }
-            }
+            }*/
             // }
           } else if (Number(good.goodTypeId) === 2) {
-            /**## Tipo Vehiculos ##*/
-            // if (good.fitCircular === null) {
-            //   //apto para circular
-            //   tipoRelVehiculo = true;
-            //   this.message(
-            //     'error',
-            //     `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
-            //     'El campo Apto para cirular en Información del Vehículo esta vacio.'
-            //   );
-            //   break;
-            // } else
-            if (good.brand === null) {
+            //## Tipo Vehiculos ##*/
+            if (good.fitCircular === null) {
+              //apto para circular
+              tipoRelVehiculo = true;
+              this.message(
+                'error',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo Apto para cirular en Información del Vehículo esta vacio.'
+              );
+              break;
+            } else if (good.theftReport === null) {
+            /*else if (good.brand === null) {
               //marca
               tipoRelVehiculo = true;
               this.message(
@@ -508,7 +512,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Marca" en Información del Vehículo esta vacio.'
               );
               break;
-            } else if (good.model === null) {
+            } 
+            else if (good.model === null) {
               //modelo
               tipoRelVehiculo = true;
               this.message(
@@ -517,7 +522,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Modelo" en Información del Vehículo esta vacio.'
               );
               break;
-            } /*else if (good.axesNumber === null) {
+            } else if (good.axesNumber === null) {
               //numero de ejes
               tipoRelVehiculo = true;
               this.message(
@@ -545,17 +550,15 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } */
-            // else if (good.theftReport === null) {
-            //   //reporte de robos
-            //   tipoRelVehiculo = true;
-            //   this.message(
-            //     'error',
-            //     `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
-            //     'El campo Reporte de Robo en Información del Vehículo esta vacio.'
-            //   );
-            //   break;
-            // }
-            else if (good.serie === null) {
+              //reporte de robos
+              tipoRelVehiculo = true;
+              this.message(
+                'error',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo Reporte de Robo en Información del Vehículo esta vacio.'
+              );
+              break;
+            } else if (good.serie === null) {
               // serie
               tipoRelVehiculo = true;
               this.message(
@@ -585,7 +588,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Año de Fabricación" en Información de la Embarcación esta vacio.'
               );
               break;
-            } else if (good.flag === null) {
+            } else if (good.openwork === null) {
+            /*else if (good.flag === null) {
               //bandera
               tipoRelEmbarca = true;
               this.message(
@@ -594,7 +598,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Bandera" en Información de la Embarcación esta vacio.'
               );
               break;
-            } else if (good.openwork === null) {
+            } */
               //calado
               tipoRelEmbarca = true;
               this.message(
@@ -639,7 +643,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo Matrícula en Información de la Embarcación esta vacio.'
               );
               break;
-            } */ else if (good.shipName === null) {
+            } */ else if (good.engineNumber === null) {
+            /*else if (good.shipName === null) {
               //Nombre Barco
               tipoRelEmbarca = true;
               this.message(
@@ -648,7 +653,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Nombre" de Embarcacion en Información de la Embarcación esta vacio.'
               );
               break;
-            } else if (good.engineNumber === null) {
+            } */
               //Num Motor
               tipoRelEmbarca = true;
               this.message(
@@ -675,7 +680,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo Procedencia en Información de la Embarcación esta vacio.'
               );
               break;
-            } */ else if (good.publicRegistry === null) {
+            } */
+            /*else if (good.publicRegistry === null) {
               //Registro Publico de la embarcación
               tipoRelEmbarca = true;
               this.message(
@@ -684,7 +690,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Registro Publico" de la Embarcación en Información de la Embarcación esta vacio.'
               );
               break;
-            }
+            }*/
           } else if (Number(good.goodTypeId) === 4) {
             // Aeronaves
             if (good.operationalState === null) {
@@ -769,7 +775,7 @@ export class RegistrationHelper extends BasePage {
             }
           } else if (Number(good.goodTypeId) === 5) {
             // Joyas
-            if (good.caratage === null) {
+            /* if (good.caratage === null) {
               tipoRelJoya = true;
               this.message(
                 'warning',
@@ -777,7 +783,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Kilataje" en Información de Joya esta vacio.'
               );
               break;
-            } else if (good.material === null) {
+            } */
+            if (good.material === null) {
               tipoRelJoya = true;
               this.message(
                 'warning',

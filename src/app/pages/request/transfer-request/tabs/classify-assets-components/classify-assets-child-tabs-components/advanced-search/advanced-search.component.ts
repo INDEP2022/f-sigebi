@@ -88,6 +88,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   rowSelected(event: any) {
     this.complaince = event.data;
+    console.log('Registro seleccionado: ', this.complaince);
   }
 
   search(): void {
@@ -153,7 +154,8 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
   }
 
   selectionFraccion(): void {
-    this.modelRef.content.callback(true);
+    const fractionSelect = this.complaince;
+    this.modelRef.content.callback(true, fractionSelect);
     this.modelRef.hide();
   }
 

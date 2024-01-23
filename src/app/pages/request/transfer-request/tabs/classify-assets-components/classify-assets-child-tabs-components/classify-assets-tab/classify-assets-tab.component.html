@@ -17,7 +17,7 @@
       </div>
       <div class="p-2 buttons">
         <button
-          *ngIf="good?.id == null"
+          *ngIf="good?.id == null || typeDoc === 'classify-assets'"
           [disabled]="statusTask == 'FINALIZADA' || isClassifyAsset"
           class="btn btn-primary btn-sm active"
           (click)="saveRequest()">
@@ -238,8 +238,7 @@
         [process]="process"
         [childSaveAction]="childSaveAction"
         (sendDomicileSelectedEvent)="getDomicile($event)"
-        [typeDoc]="typeDoc"
-        [noFracction]="noFracction"></app-detail-assets-tab-component>
+        [typeDoc]="typeDoc"></app-detail-assets-tab-component>
     </div>
     <!-- Fin -->
 

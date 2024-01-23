@@ -62,6 +62,7 @@ import { ChangeOfGoodCharacteristicService } from 'src/app/pages/administrative-
 import { getClassColour } from 'src/app/pages/general-processes/goods-characteristics/goods-characteristics/good-table-vals/good-table-vals.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
+import { FractionSelectedService } from '../../transfer-request/tabs/classify-assets-components/classify-assets-child-tabs-components/classify-assets-tab/classify-assets-tab-service';
 import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 @Component({
@@ -82,7 +83,7 @@ export class DetailAssetsTabComponentComponent
   @Input() typeDoc: any;
   @Input() process: string = '';
   @Input() childSaveAction: boolean = false;
-  @Input() noFracction: number;
+  //@Input() noFracction: number;
   @Output() sendDetailInfoEvent?: EventEmitter<any> = new EventEmitter();
   @Output() sendDomicileSelectedEvent?: EventEmitter<any> = new EventEmitter();
 
@@ -206,7 +207,8 @@ export class DetailAssetsTabComponentComponent
     private relevantTypeService: TypeRelevantService,
     private goodDomicilieService: GoodDomiciliesService,
     private goodProcessService: GoodProcessService,
-    private strategyService: StrategyServiceService //private goodService2: GoodService2,
+    private strategyService: StrategyServiceService, //private goodService2: GoodService2,
+    private fractionSelectedService: FractionSelectedService
   ) {
     super();
     this.atributActSettings = {
@@ -1521,6 +1523,7 @@ export class DetailAssetsTabComponentComponent
       case 8:
         this.closeTabs();
         this.otherAssets = true;
+        this.diverseAssets = true;
         //this.detailAssetsInfo = [];
         //this.classificationNumber = null;
         //this.service.data = [];
@@ -1615,6 +1618,11 @@ export class DetailAssetsTabComponentComponent
           this.disableUpdate = !this.disableUpdate;
           this.good = resp[0];
           console.log('Bien creado,', resp);
+
+          //Si el bien es de tipo inmueble, se crea un registro en bien_inmuebles
+          if (resp.goodTypeId == 1) {
+            this.createGoodProperty(Number(resp.id));
+          }
           this.alert('success', 'El Bien se ha creado', '');
         },
         error: error => {
@@ -1713,6 +1721,10 @@ export class DetailAssetsTabComponentComponent
               this.viewAct = !this.viewAct;
               this.disableUpdate = !this.disableUpdate;
               this.good = resp;
+              //Si el bien es de tipo inmueble, se actualiza el registro en bien_inmueble
+              if (resp.goodTypeId == 1) {
+                this.updateGoodProperty(resp);
+              }
               this.alert('success', 'El Bien se ha actualizado', '');
               setTimeout(() => {
                 this.goodChange++;
@@ -1731,6 +1743,337 @@ export class DetailAssetsTabComponentComponent
         );
       }
     }
+  }
+
+  createGoodProperty(idGood: number) {
+    //Crear inmueble
+    console.log('createGoodProperty: idGood:', idGood);
+    let bien_inmueble = this.goodDomicilieForm.getRawValue();
+    //let domicilio = this.fillUpForm(); en caso de que se este usando la tabla
+    bien_inmueble.addressId = this.domicileForm.controls['id'].value;
+    bien_inmueble.creationDate = new Date().toISOString();
+    bien_inmueble.modificationDate = new Date().toISOString();
+
+    const username = this.authService.decodeToken().preferred_username;
+    bien_inmueble.userCreation = username;
+    bien_inmueble.userModification = username;
+    bien_inmueble.id = idGood; //id good
+    this.goodEstateService.create(bien_inmueble).subscribe({
+      next: resp => {
+        console.log('Se creó el inmueble', resp);
+      },
+      error: error => {
+        console.log('inmueble cno creado', error);
+        this.message(
+          'error',
+          'Error',
+          `El registro del inmueble no se guardó\n. ${error.error.message}`
+        );
+      },
+    });
+  }
+
+  updateGoodProperty(dataGoodProperty: IGoodTable) {
+    //Verifica si existe el registro en bien_inmueble
+    this.goodEstateService.getById(dataGoodProperty.id).subscribe({
+      next: resp => {
+        console.log('Valores del inmueble: ', dataGoodProperty);
+        //const realState: IGoodRealState = this.goodDomicilieForm.value;
+
+        let bien_inmueble: IGoodRealState =
+          this.goodDomicilieForm.getRawValue();
+        bien_inmueble.id = dataGoodProperty.id; //id good
+        //let domicilio = this.fillUpForm(); en caso de que se este usando la tabla
+        bien_inmueble.addressId = this.domicileForm.controls['id'].value;
+        bien_inmueble.creationDate = new Date().toISOString();
+        bien_inmueble.modificationDate = new Date().toISOString();
+        const username = this.authService.decodeToken().preferred_username;
+        bien_inmueble.userCreation = username;
+        bien_inmueble.userModification = username;
+
+        //bien_inmueble.description = dataGoodProperty?.description ?? bien_inmueble.description;
+
+        //SITUACION JURIDICA
+        bien_inmueble.legalStatus =
+          dataGoodProperty?.val34 ?? bien_inmueble.legalStatus;
+
+        //CALLE
+        bien_inmueble.addressSAT =
+          dataGoodProperty?.val1 ?? bien_inmueble.addressSAT;
+
+        //COLONIA
+        bien_inmueble.suburbSAT =
+          dataGoodProperty?.val2 ?? bien_inmueble.suburbSAT;
+
+        //DELEGACION O MUNICIPIO
+        bien_inmueble.municipalityDelegationSAT =
+          dataGoodProperty?.val3 ?? bien_inmueble.municipalityDelegationSAT;
+
+        //ENTIDAD FEDERATIVA
+        bien_inmueble.federativeEntitySAT =
+          dataGoodProperty?.val4 ?? bien_inmueble.federativeEntitySAT;
+
+        //**SUPERFICIE DEL TERRENO**
+        bien_inmueble.surfaceMts =
+          Number(dataGoodProperty?.val5) ?? bien_inmueble.surfaceMts;
+
+        //**SUPERFICIE CONSTRUIDA**
+        bien_inmueble.consSurfaceMts =
+          Number(dataGoodProperty?.val6) ?? bien_inmueble.consSurfaceMts;
+
+        //TIPO DE INMUEBLE
+        bien_inmueble.propertyType =
+          dataGoodProperty?.val7 ?? bien_inmueble.propertyType;
+
+        //CARACTERÍSTICAS DEL INMUEBLE
+
+        //VALOR DE REGISTRO CONTABLE
+
+        //FOLIO DE ESCRITURA
+        bien_inmueble.propTitleFolio =
+          dataGoodProperty?.val10 ?? bien_inmueble.propTitleFolio;
+
+        //ESTADO FISICO MENAJE
+
+        //IMPORTE TOTAL DEL MENAJE
+
+        //INSTALAC. ESPECIALES
+
+        //CON AVALUO
+
+        //NUMERO DEPARTAMENTOS
+        bien_inmueble.bedrooms =
+          dataGoodProperty?.val15 ?? bien_inmueble.bedrooms;
+
+        //NUMERO DEPARTAMENTOS OCUPADOS
+        bien_inmueble.departmentNumber =
+          dataGoodProperty?.val16 ?? bien_inmueble.departmentNumber;
+
+        //SEGUROS
+        bien_inmueble.assurance =
+          dataGoodProperty?.val17 ?? bien_inmueble.assurance;
+
+        //NUMERO PISOS O NIVELES
+        bien_inmueble.floorNumber =
+          dataGoodProperty?.val18 ?? bien_inmueble.floorNumber;
+
+        //PREDIAL
+        bien_inmueble.lien = dataGoodProperty?.val19 ?? bien_inmueble.lien;
+
+        //REGISTRO PUBLICO DE LA PROPIED
+        bien_inmueble.pubRegProperty =
+          dataGoodProperty?.val20 ?? bien_inmueble.pubRegProperty;
+
+        //VALOR CONSTRUCCION HAB
+
+        //VALOR CONSTRUCCION COMERCIAL
+
+        //VIGILANCIA
+        bien_inmueble.vigilanceRequired =
+          dataGoodProperty?.val23 ?? bien_inmueble.vigilanceRequired;
+
+        //DOCUMENTOS COLINDANCIA
+        bien_inmueble.measuresAdjacent =
+          dataGoodProperty?.val32 ?? bien_inmueble.measuresAdjacent;
+
+        //CLAVE DE SITUACIONES JURIDICAS
+        bien_inmueble.legalStatus =
+          dataGoodProperty?.val49 ?? bien_inmueble.legalStatus;
+
+        //AGUA
+
+        //FECHA DE SOLICITUD AL RPP
+
+        //HABITADO
+
+        //MENAJE
+
+        //NOMBRE DEL INMUEBLE
+
+        //OFICIO SOLICITUD EN EL RPP
+
+        //DOMICILIO
+        //bien_inmueble.description = dataGoodProperty?.val28 ?? bien_inmueble.description;
+
+        //NUMERO EXTERIOR
+
+        //CODIGO POSTAL
+
+        //DESCRIPCION DE UBICACIÓN
+        bien_inmueble.description =
+          dataGoodProperty?.val40 ?? bien_inmueble.description;
+
+        //MANZANA
+
+        //VALOR OTROS
+
+        //LOTE
+
+        //FECHA DEL AVALUO
+        //bien_inmueble.appraisalDate = dataGoodProperty?.val35 ?? bien_inmueble.appraisalDate;
+
+        //VALOR INSTALACIONES ESP
+
+        //**VALOR TERRENO**
+        //bien_inmueble.appraisalValue = Number(dataGoodProperty?.val38) ?? bien_inmueble.appraisalValue;
+
+        //FECHA DE ESCRITURA
+        bien_inmueble.certLienDate =
+          dataGoodProperty?.val44 ?? bien_inmueble.certLibLien;
+
+        //NUMERO DE ESCRITURA
+        bien_inmueble.publicDeed =
+          dataGoodProperty?.val45 ?? bien_inmueble.publicDeed;
+
+        //CATÁLOGO COMERCIAL
+
+        //OPCIONALES CATÁLOGO COMERCIAL
+
+        //NUMERO INTERIOR
+
+        //ESTATUS
+        bien_inmueble.status = dataGoodProperty?.val61 ?? bien_inmueble.status;
+
+        //NIVEL DE VIGILANCIA
+        bien_inmueble.vigilanceLevel =
+          dataGoodProperty?.val62 ?? bien_inmueble.vigilanceLevel;
+
+        //METROS DE BODEGA
+        bien_inmueble.mtsOfiWarehouse =
+          dataGoodProperty?.val63 ?? bien_inmueble.mtsOfiWarehouse;
+
+        //COCINA
+        bien_inmueble.kitchen =
+          dataGoodProperty?.val64 ?? bien_inmueble.kitchen;
+
+        //SALA
+        bien_inmueble.livingRoom =
+          dataGoodProperty?.val65 ?? bien_inmueble.livingRoom;
+
+        //COMEDOR
+        bien_inmueble.diningRoom =
+          dataGoodProperty?.val66 ?? bien_inmueble.diningRoom;
+
+        //CERT. LIBERACION GRAVAMEN
+        bien_inmueble.certLibLien =
+          dataGoodProperty?.val67 ?? bien_inmueble.certLibLien;
+
+        //ESTUDIO
+        bien_inmueble.study = dataGoodProperty?.val68 ?? bien_inmueble.study;
+
+        //ESPACIO DE ESTACIONAMIENTO
+        bien_inmueble.espPark =
+          dataGoodProperty?.val69 ?? bien_inmueble.espPark;
+
+        //FECHA DE PASO AL FISCO
+        bien_inmueble.pffDate =
+          dataGoodProperty?.val70 ?? bien_inmueble.pffDate;
+
+        //FECHA CERTIFICADO LIBERACION GRAVAMEN
+        bien_inmueble.certLibLienDate =
+          dataGoodProperty?.val71 ?? bien_inmueble.certLibLienDate;
+
+        //EMBARGO
+        bien_inmueble.attachment =
+          dataGoodProperty?.val72 ?? bien_inmueble.attachment;
+
+        //GRAVAMEN A FAVOR DE TERCERO
+        bien_inmueble.gravFavorThird =
+          dataGoodProperty?.val73 ?? bien_inmueble.gravFavorThird;
+
+        //CO-PROPIEDAD
+        bien_inmueble.coOwnership =
+          dataGoodProperty?.val74 ?? bien_inmueble.coOwnership;
+
+        //GRAVAMEN A FAVOR DE TRANSFERENTE
+        bien_inmueble.gravPleaseTrans =
+          dataGoodProperty?.val75 ?? bien_inmueble.gravPleaseTrans;
+
+        //EMBARGO A FAVOR DE TERCERO
+        bien_inmueble.embFavorThird =
+          dataGoodProperty?.val76 ?? bien_inmueble.embFavorThird;
+
+        //DECRETO_EXPRO_PROC
+        bien_inmueble.decreeExproProc =
+          dataGoodProperty?.val77 ?? bien_inmueble.decreeExproProc;
+
+        //NUMERO DE COPROPIETARO
+        bien_inmueble.ownershipPercentage =
+          dataGoodProperty?.val78 ?? bien_inmueble.ownershipPercentage;
+
+        //DECLARACION REMEDIACION
+        bien_inmueble.declareRemediation =
+          dataGoodProperty?.val79 ?? bien_inmueble.declareRemediation;
+
+        //DECRETO_EXPRO_SUPE
+        bien_inmueble.decreeExproSupe =
+          dataGoodProperty?.val80 ?? bien_inmueble.decreeExproSupe;
+
+        //PATRIMONIO
+        bien_inmueble.heritage =
+          dataGoodProperty?.val81 ?? bien_inmueble.heritage;
+
+        //PROVISION ECOLOGICA
+        bien_inmueble.echoForecast =
+          dataGoodProperty?.val82 ?? bien_inmueble.echoForecast;
+
+        //NUMERO PREVISION ECOLOGICA
+        bien_inmueble.echoForecastPercentage =
+          dataGoodProperty?.val83 ?? bien_inmueble.echoForecastPercentage;
+
+        //COMPROBANTES DE AGUA
+        bien_inmueble.vouchersWater =
+          dataGoodProperty?.val84 ?? bien_inmueble.vouchersWater;
+
+        //ADEUDOS
+        bien_inmueble.debts = dataGoodProperty?.val85 ?? bien_inmueble.debts;
+
+        //POSESION FISICA
+        bien_inmueble.physicalPossession =
+          dataGoodProperty?.val86 ?? bien_inmueble.physicalPossession;
+
+        //CLAUSURADO
+        bien_inmueble.closed = dataGoodProperty?.val87 ?? bien_inmueble.closed;
+
+        //PATRIMONIO DE FAMILIA
+        bien_inmueble.familyHeritage =
+          dataGoodProperty?.val88 ?? bien_inmueble.familyHeritage;
+
+        //DESCRIPCION DE PROBLEMÁTICA
+        bien_inmueble.problemDesc =
+          dataGoodProperty?.val89 ?? bien_inmueble.problemDesc;
+
+        //PROBLEMATICAS
+        bien_inmueble.forProblems =
+          dataGoodProperty?.val90 ?? bien_inmueble.forProblems;
+
+        //FOTOS ADJUNTAS
+        bien_inmueble.photosAttached =
+          dataGoodProperty?.val91 ?? bien_inmueble.photosAttached;
+
+        //GUARDA CUSTODIA
+        bien_inmueble.guardCustody =
+          dataGoodProperty?.val92 ?? bien_inmueble.guardCustody;
+
+        this.goodEstateService.update(bien_inmueble).subscribe({
+          next: resp => {
+            console.log('inmueble actualizado', resp);
+          },
+          error: error => {
+            console.log('inmueble no actualizado', error);
+            this.message(
+              'error',
+              'Error',
+              `El registro del inmueble no se actualizó\n. ${error.error.message}`
+            );
+          },
+        });
+      },
+      error: error => {
+        console.log('No existe registro, crearlo');
+        this.createGoodProperty(dataGoodProperty.id);
+      },
+    });
   }
 
   refreshTable(refresh: boolean) {
@@ -1908,7 +2251,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se actualizo\n. ${error.error.message}`
+            `El registro del inmueble no se actualizó\n. ${error.error.message}`
           );
         },
       });
@@ -2211,15 +2554,28 @@ export class DetailAssetsTabComponentComponent
   }
 
   indiceActivo = 0;
+  valorCompartido: number;
   async onTabSelected(event: any) {
     console.log('Pestañas:', event);
     console.log('Pestaña seleccionada:', event.id);
     console.log('información del bien seleccionado:', this.detailAssetsInfo);
 
     const fractionOrigin = this.detailAssetsInfo?.fractionId;
-
     console.log('Fracción del Bien original ', fractionOrigin);
-    console.log('Fracción seleccionada de la búsuqeda', this.noFracction);
+
+    this.fractionSelectedService.valorCompartido$.subscribe(valor => {
+      this.valorCompartido = valor;
+    });
+
+    console.log('Fracción seleccionada de la búsqueda', this.valorCompartido);
+
+    console.log(
+      'Original: ',
+      fractionOrigin,
+      'VS Nuevo: ',
+      Number(this.valorCompartido)
+    );
+    console.log('Proceso: ', this.typeDoc);
 
     switch (event.id) {
       case 'boatGood':
@@ -2254,11 +2610,13 @@ export class DetailAssetsTabComponentComponent
           return;
         }
 
-        if (this.noFracction != undefined) {
+        //verificar en que proceso estamos
+        //Quitar la primera condición
+        if (this.valorCompartido != 0) {
           //Verifica si la fracción cambio, para obligar al usuario primero guardar y se muestre correctamente la tabla de atributos
-          const fraccionDestiny = this.noFracction;
+          //const fraccionDestiny = this.valorCompartido;
 
-          if (fractionOrigin != fraccionDestiny) {
+          if (fractionOrigin != Number(this.valorCompartido)) {
             const result = await this.alertQuestion(
               'warning',
               'Atención',
@@ -2276,8 +2634,8 @@ export class DetailAssetsTabComponentComponent
                 tab.active = i === 0;
               });
             }
+            return;
           }
-          return;
         }
 
         break;
