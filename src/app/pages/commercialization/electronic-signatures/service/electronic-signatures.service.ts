@@ -59,4 +59,7 @@ export class ElectronicSignaturesService {
   getAllComerDocumentsXml_(params: _Params) {
     return this.msElectronicFirmService.getAllComerDocumentsXml_(params);
   }
+  getReportXMLToFirm_(params: ListParams) {
+    return this.msProcessgoodreportService.getReportXMLToFirm_(params);
+  }
 }
