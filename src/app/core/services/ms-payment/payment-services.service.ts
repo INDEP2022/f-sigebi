@@ -175,7 +175,7 @@ export class PaymentService extends HttpService {
   }
 
   deleteMassive(id: number | string) {
-    return this.delete('delete-busqueda-pagos-det-busqueda/' + id);
+    return this.get('application/delete-busqueda-pagos-det-busqueda/' + id);
   }
 
   UpdateRecord(params: any) {
