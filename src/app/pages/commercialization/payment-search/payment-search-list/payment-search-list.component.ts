@@ -1328,7 +1328,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       resp => {
         if (resp != null && resp != undefined) {
           this.alert(
-            'error',
+            'success',
             'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
             'Registro eliminado correctamente.'
           );
