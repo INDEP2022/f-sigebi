@@ -15,7 +15,7 @@
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
       </div>
-      <div class="p-2 buttons">
+      <div class="p-2 buttons" *ngIf="!showButtonSave">
         <button
           *ngIf="good?.id == null || typeDoc === 'classify-assets'"
           [disabled]="statusTask == 'FINALIZADA' || isClassifyAsset"

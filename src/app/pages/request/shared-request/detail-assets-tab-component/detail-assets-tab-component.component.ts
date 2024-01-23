@@ -2624,6 +2624,9 @@ export class DetailAssetsTabComponentComponent
               'Guardar'
             );
             if (result.isConfirmed) {
+              this.tabset.tabs.forEach((tab, i) => {
+                tab.active = i === 0;
+              });
               //this.reseteValsGoods();
               this.validGoodB = true;
               this.updateGood();

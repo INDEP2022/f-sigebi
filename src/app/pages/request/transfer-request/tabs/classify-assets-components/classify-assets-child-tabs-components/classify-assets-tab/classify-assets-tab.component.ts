@@ -90,7 +90,7 @@ export class ClassifyAssetsTabComponent
   domicileSelected: any = null;
 
   service = inject(ChangeOfGoodCharacteristicService);
-  //noFracction: number;
+  showButtonSave: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -980,20 +980,34 @@ export class ClassifyAssetsTabComponent
           if (next) {
             console.log('Se cerró el modal de búsqueda avanzada');
           }
+          console.log('Proceso: ', this.typeDoc);
+
           const noFracction2 = Number(fractionSelect.id);
           this.fractionSelectedService.actualizarValorCompartido(noFracction2);
-          console.log('Fracción seleccionada: ', noFracction2);
-          console.log('Proceso: ', this.typeDoc);
-          /*if (this.typeDoc === "classify-assets"){
 
-            if (fractionSelect != null) {
-            console.log('Actualizando bien automáticamente al cerrar modal');
-            this.saveRequest();
-            //this.saveGoodAut(fractionSelect)
+          const fractionOrigin = this.good?.fractionId;
+          console.log('Fracción del Bien original ', fractionOrigin);
+          console.log('Fracción seleccionada de la búsqueda', noFracction2);
+          console.log(
+            'Original: ',
+            fractionOrigin,
+            'VS Nuevo: ',
+            Number(noFracction2)
+          );
+          console.log('Formulario de capitulos: ');
 
+          if (this.typeDoc === 'classify-assets') {
+            if (noFracction2 != 0) {
+              if (fractionOrigin != Number(noFracction2)) {
+                console.log(
+                  'Actualizando bien automáticamente al cerrar modal'
+                );
+                setTimeout(() => {
+                  this.saveGoodAut(Number(noFracction2));
+                }, 3000);
+              }
+            }
           }
-
-          }*/
         },
       },
       class: 'modalSizeXL modal-dialog-centered',
@@ -1008,9 +1022,47 @@ export class ClassifyAssetsTabComponent
     });
   }
 
-  saveGoodAut(fractionSelect: any) {
-    let goodData = this.good;
-    goodData.frac;
+  saveGoodAut(fractionSelect: number) {
+    let goodObj = this.classiGoodsForm.value;
+    goodObj.goodTypeId = this.classiGoodsForm.controls['goodTypeId'].value;
+    goodObj.ligieSection = this.classiGoodsForm.controls['ligieSection'].value;
+    goodObj.ligieChapter = this.classiGoodsForm.controls['ligieChapter'].value;
+    goodObj.ligieLevel1 = this.classiGoodsForm.controls['ligieLevel1'].value;
+    goodObj.ligieLevel2 = this.classiGoodsForm.controls['ligieLevel2'].value;
+    goodObj.ligieLevel3 = this.classiGoodsForm.controls['ligieLevel3'].value;
+    goodObj.ligieLevel4 = this.classiGoodsForm.controls['ligieLevel4'].value;
+    goodObj.goodClassNumber =
+      this.classiGoodsForm.controls['goodClassNumber'].value;
+    goodObj.fractionId = fractionSelect;
+
+    this.goodService.update(goodObj).subscribe({
+      next: resp => {
+        console.log('Se actualizó de forma automática: ', resp);
+        this.message(
+          'success',
+          'Fracción del bien cambiada',
+          `Asegúrese de guardar sus atributos`
+        );
+        this.classifyChildSaveFraction.emit(resp.result);
+      },
+      error: error => {
+        console.log('No se actualizó ', error);
+        this.message(
+          'warning',
+          'Fracción del bien no cambió',
+          `Verifique la fracción seleccionada`
+        );
+      },
+    });
+
+    /*console.log(this.classiGoodsForm.controls['goodTypeId'].value);
+    console.log(this.classiGoodsForm.controls['ligieSection'].value);
+    console.log(this.classiGoodsForm.controls['ligieChapter'].value);
+    console.log(this.classiGoodsForm.controls['ligieLevel1'].value);
+    console.log(this.classiGoodsForm.controls['ligieLevel2'].value);
+    console.log(this.classiGoodsForm.controls['ligieLevel3'].value);
+    console.log(this.classiGoodsForm.controls['ligieLevel4'].value);
+    console.log(this.classiGoodsForm.controls['goodClassNumber'].value);*/
   }
 
   matchLevelFraction(res: any) {
