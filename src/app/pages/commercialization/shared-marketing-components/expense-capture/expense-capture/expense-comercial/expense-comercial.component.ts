@@ -17,7 +17,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IEatConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
-import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
 import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -538,15 +537,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.dataService.address = 'I';
     let usuarioCapturaData = await this.usuarioCapturaDataI(user);
     if (usuarioCapturaData) {
-      this.form.get('capturedUser').setValue(usuarioCapturaData.value);
+      this.form.get('capturedUser').setValue(usuarioCapturaData.valor);
     }
     let usuarioAutorizaData = await this.usuarioParametro('USUAUTORIZA');
     if (usuarioAutorizaData) {
-      this.form.get('authorizedUser').setValue(usuarioAutorizaData.value);
+      this.form.get('authorizedUser').setValue(usuarioAutorizaData.valor);
     }
     let usuarioSolicitaData = await this.usuarioParametro('USUSOLICITA');
     if (usuarioSolicitaData) {
-      this.form.get('requestedUser').setValue(usuarioSolicitaData.value);
+      this.form.get('requestedUser').setValue(usuarioSolicitaData.valor);
     }
     // this._address = 'I';
   }
@@ -786,7 +785,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return firstValueFrom(
       this.parameterModService.getAll(filterParams.getParams()).pipe(
         take(1),
-        catchError(x => of({ data: [] as IParameterConcept[] })),
+        catchError(x => of({ data: [] })),
         map(x => {
           return x.data.length > 0 ? x.data[0] : null;
         })
@@ -802,7 +801,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return firstValueFrom(
       this.parameterModService.getAll(filterParams.getParams()).pipe(
         take(1),
-        catchError(x => of({ data: [] as IParameterConcept[] })),
+        catchError(x => of({ data: [] })),
         map(x => {
           return x.data.length > 0 ? x.data[0] : null;
         })
@@ -1238,8 +1237,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           let data = response.data;
           let success;
           if (data.length > 0) {
-            this.dataService.CHCONIVA = data[0].value;
-            this.dataService.IVA = data[1].value ? +data[1].value / 100 : 0;
+            this.dataService.CHCONIVA = data[0].valor;
+            this.dataService.IVA = data[1].valor ? +data[1].valor / 100 : 0;
             success = true;
           } else {
             this.dataService.CHCONIVA = null;

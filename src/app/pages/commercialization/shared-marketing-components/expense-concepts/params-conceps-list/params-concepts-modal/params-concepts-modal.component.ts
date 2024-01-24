@@ -70,9 +70,9 @@ export class ParamsConceptsModalComponent
 
   selectParamsMod(event: IParameterMod) {
     console.log(event);
-    this.parameter.setValue(event.parameter);
-    this.value.setValue(event.value);
-    this.address.setValue(event.address);
+    this.parameter.setValue(event.parametro);
+    this.value.setValue(event.valor);
+    this.address.setValue(event.direccion);
   }
 
   getAddressCode(address: string) {
