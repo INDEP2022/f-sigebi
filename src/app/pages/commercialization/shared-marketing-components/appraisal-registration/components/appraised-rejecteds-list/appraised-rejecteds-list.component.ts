@@ -25,6 +25,7 @@ export class AppraisedRejectedsListComponent
 
   ngOnInit(): void {
     const isDisccount = this.$rejectedDisscount.getValue();
+    console.log('Descuentos rechazados ' + isDisccount);
     isDisccount
       ? this.appraisalsD().subscribe()
       : this.appraisals().subscribe();
@@ -58,6 +59,7 @@ export class AppraisedRejectedsListComponent
       takeUntil(this.$unSubscribe),
       tap(appraisal => {
         this.params.next(new FilterParams());
+        console.log(appraisal);
         this.data = appraisal;
         this.totalItems = this.data.length;
       })
