@@ -541,4 +541,360 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.GetAllGoodQuery}`;
     return this.get(route, params);
   }
+
+  updateGoodTable(good: IGood | any) {
+    //Homologar descripción
+    good.description = good?.goodDescription ?? good.description;
+
+    //Para homologar los atributos
+    switch (Number(good?.goodTypeId)) {
+      case 8:
+        console.log('ACTUALIZANDO DIVERSOS');
+        //Estado Físico
+        good.val1 = good?.physicalStatus === 1 ? 'BUENO' : good.val1;
+        good.val1 = good?.physicalStatus === 2 ? 'MALO' : good.val1;
+
+        //Procedencia
+        good.origin = good?.val2 ?? good.origin;
+
+        break;
+
+      case 5:
+        console.log('ACTUALIZANDO JOYAS');
+
+        //Estado Físico
+        good.val1 = good?.physicalStatus === 1 ? 'BUENO' : good.val1;
+        good.val1 = good?.physicalStatus === 2 ? 'MALO' : good.val1;
+        //Kilataje
+        good.caratage = good?.val2 ?? good.caratage;
+        //Material
+        good.material = good?.val61 ?? good.material;
+        //Peso
+        good.weight = good.val62 ?? good.weight;
+
+        break;
+
+      case 4:
+        console.log('ACTUALIZANDO AERONAVES');
+
+        //AÑO DE FABRICACION
+        good.manufacturingYear = good?.val1 ?? good.manufacturingYear;
+
+        //ESTADO OPERATIVO
+        good.operationalState = good?.val3 ?? good.operationalState;
+
+        //MATRICULA
+        good.tuition = good?.val5 ?? good.tuition;
+
+        //MODELO
+        good.model = good?.val7 ?? good.model;
+
+        //NUMERO DE MOTORES
+        good.enginesNumber = good?.val8 ?? good.enginesNumber;
+
+        //NUMERO DE SERIE
+        good.serie = good?.val9 ?? good.serie;
+
+        //PROCEDENCIA
+        good.origin = good?.val14 ?? good.origin;
+
+        //TIPO DE AVION
+        good.airplaneType = good?.val16 ?? good.airplaneType;
+
+        //REGISTRO DGAC
+        good.dgacRegistry = good?.val15 ?? good.dgacRegistry;
+
+        //BLINDAJE
+        good.armor = good?.val19 ?? good.armor;
+
+        //NUMERO DE MOTOR
+        good.engineNumber = good?.val20 ?? good.engineNumber;
+
+        //BANDERA
+        good.flag = good?.val38 ?? good.flag;
+
+        //TIPO DE USO
+        good.useType = good?.val22 ?? good.useType;
+
+        break;
+
+      case 3:
+        console.log('ACTUALIZANDO EMBARCACIONES');
+
+        //Estado Operativo
+        good.operationalState = good?.val3 ?? good.operationalState;
+
+        //Marca
+        good.brand = good?.val9 ?? good.brand;
+
+        //Matrícula
+        good.tuition = good?.val13 ?? good.tuition;
+
+        //Nombre de Embarcación
+        good.shipName = good?.val15 ?? good.shipName;
+
+        //No. Motor
+        good.engineNumber = good?.val16 ?? good.engineNumber;
+
+        //Procedencia
+        good.origin = good?.val20 ?? good.origin;
+
+        //Registro Público
+        good.publicRegistry = good?.val21 ?? good.publicRegistry;
+
+        //Blindaje
+        good.armor = good?.val61 ?? good.armor;
+
+        //No. Motores
+        good.enginesNumber = good?.val62 ?? good.enginesNumber;
+
+        //Bandera
+        good.flag = good?.val63 ?? good.flag;
+
+        //cabina
+        good.cabin = good?.val64 ?? good.cabin;
+
+        //Calado
+        good.openwork = good?.val65 ?? good.openwork;
+
+        //Volumen
+        good.volume = good?.val66 ?? good.volume;
+
+        //Eslora
+        good.length = good?.val67 ?? good.length;
+
+        //Manga
+        good.sleeve = good?.val68 ?? good.sleeve;
+
+        //Tipo de Uso
+        good.useType = good?.val69 ?? good.useType;
+
+        //Año de fabración
+        good.manufacturingYear = good?.val70 ?? good.manufacturingYear;
+
+        //Capacidad lts
+        good.capacity = good?.val71 ?? good.capacity;
+
+        //Embarcaciones
+        good.ships = good?.val72 ?? good.ships;
+
+        break;
+
+      case 2:
+        console.log('ACTUALIZANDO VEHÍCULOS');
+
+        good.val2 = good?.physicalStatus === 1 ? 'BUENO' : good.val2;
+        good.val2 = good?.physicalStatus === 2 ? 'MALO' : good.val2;
+
+        //NUMERO DE EJES
+        good.axesNumber = good?.val5 ?? good.axesNumber;
+
+        //ESTADO FISICO
+        //good.physicalStatus = good?.val2 ?? good.physicalStatus;
+
+        //MARCA
+        good.brand = good?.val3 ?? good.brand;
+
+        //MODELO
+        good.model = good?.val4 ?? good.model;
+
+        //NUMERO DE MOTOR
+        good.engineNumber = good?.val6 ?? good.engineNumber;
+
+        //NUMERO DE SERIE
+        good.serie = good?.val8 ?? good.serie;
+
+        //PROCEDENCIA
+        good.origin = good?.val9 ?? good.origin;
+
+        //SUBMARCA
+        good.subBrand = good?.val10 ?? good.subBrand;
+
+        //APTO PARA CIRCULAR
+        good.fitCircular = good?.val25 === 'APTO PARA CIRCULAR' ? 'Y' : 'N';
+
+        //REPORTE DE ROBO
+        good.theftReport = good?.val26 === 'CON REPORTE DE ROBO' ? 'Y' : 'N';
+
+        //MATRICULA
+        good.tuition = good?.val61 ?? good.tuition;
+
+        //BLINDAJE
+        good.armor = good?.val62 ?? good.armor;
+
+        //CHASIS
+        good.chassis = good?.val63 ?? good.chassis;
+
+        //NUMERO DE PUERTAS
+        good.doorsNumber = good?.val64 ?? good.doorsNumber;
+
+        break;
+
+      case 1:
+        console.log('ACTUALIZANDO INMUEBLES');
+
+        //SITUACION JURIDICA
+
+        //CALLE
+
+        //COLONIA
+
+        //DELEGACION O MUNICIPIO
+
+        //ENTIDAD FEDERATIVA
+
+        //SUPERFICIE DEL TERRENO
+
+        //SUPERFICIE CONSTRUIDA
+
+        //TIPO DE INMUEBLE
+
+        //CARACTERÍSTICAS DEL INMUEBLE
+
+        //VALOR DE REGISTRO CONTABLE
+
+        //FOLIO DE ESCRITURA
+
+        //ESTADO FISICO MENAJE
+
+        //IMPORTE TOTAL DEL MENAJE
+
+        //INSTALAC. ESPECIALES
+
+        //CON AVALUO
+
+        //NUMERO DEPARTAMENTOS
+
+        //NUMERO DEPARTAMENTOS OCUPADOS
+
+        //SEGUROS
+
+        //NUMERO PISOS O NIVELES
+
+        //PREDIAL
+
+        //REGISTRO PUBLICO DE LA PROPIED
+
+        //VALOR CONSTRUCCION HAB
+
+        //VALOR CONSTRUCCION COMERCIAL
+
+        //VIGILANCIA
+
+        //DOCUMENTOS COLINDANCIA
+
+        //CLAVE DE SITUACIONES JURIDICAS
+
+        //AGUA
+
+        //FECHA DE SOLICITUD AL RPP
+
+        //HABITADO
+
+        //MENAJE
+
+        //NOMBRE DEL INMUEBLE
+
+        //OFICIO SOLICITUD EN EL RPP
+
+        //DOMICILIO
+
+        //NUMERO EXTERIOR
+
+        //CODIGO POSTAL
+
+        //DESCRIPCION DE UBICACIÓN
+
+        //MANZANA
+
+        //VALOR OTROS
+
+        //LOTE
+
+        //FECHA DEL AVALUO
+
+        //VALOR INSTALACIONES ESP
+
+        //VALOR TERRENO
+
+        //FECHA DE ESCRITURA
+
+        //NUMERO DE ESCRITURA
+
+        //CATÁLOGO COMERCIAL
+
+        //OPCIONALES CATÁLOGO COMERCIAL
+
+        //NUMERO INTERIOR
+
+        //ESTATUS
+
+        //NIVEL DE VIGILANCIA
+
+        //METROS DE BODEGA
+
+        //COCINA
+
+        //SALA
+
+        //COMEDOR
+
+        //CERT. LIBERACION GRAVAMEN
+
+        //ESTUDIO
+
+        //ESPACIO DE ESTACIONAMIENTO
+
+        //FECHA DE PASO AL FISCO
+
+        //FECHA CERTIFICADO LIBERACION GRAVAMEN
+
+        //EMBARGO
+
+        //GRAVAMEN A FAVOR DE TERCERO
+
+        //CO-PROPIEDAD
+
+        //GRAVAMEN A FAVOR DE TRANSFERENTE
+
+        //EMBARGO A FAVOR DE TERCERO
+
+        //DECRETO_EXPRO_PROC
+
+        //NUMERO DE COPROPIETARO
+
+        //DECLARACION REMEDIACION
+
+        //DECRETO_EXPRO_SUPE
+
+        //PATRIMONIO
+
+        //PROVISION ECOLOGICA
+
+        //NUMERO PREVISION ECOLOGICA
+
+        //COMPROBANTES DE AGUA
+
+        //ADEUDOS
+
+        //POSESION FISICA
+
+        //CLAUSURADO
+
+        //PATRIMONIO DE FAMILIA
+
+        //DESCRIPCION DE PROBLEMÁTICA
+
+        //PROBLEMATICAS
+
+        //FOTOS ADJUNTAS
+
+        //GUARDA CUSTODIA
+
+        break;
+    }
+
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
+  }
 }

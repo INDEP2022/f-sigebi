@@ -13,7 +13,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { takeUntil } from 'rxjs';
+import { Subscription, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -2555,6 +2555,7 @@ export class DetailAssetsTabComponentComponent
 
   indiceActivo = 0;
   valorCompartido: number;
+  valorCompartidoSubscription: Subscription;
   async onTabSelected(event: any) {
     console.log('Pestañas:', event);
     console.log('Pestaña seleccionada:', event.id);
@@ -2576,6 +2577,13 @@ export class DetailAssetsTabComponentComponent
       Number(this.valorCompartido)
     );
     console.log('Proceso: ', this.typeDoc);
+
+    if (
+      this.typeDoc == 'verify-compliance' ||
+      this.typeDoc == 'approval-process'
+    ) {
+      return;
+    }
 
     switch (event.id) {
       case 'boatGood':
@@ -2630,7 +2638,13 @@ export class DetailAssetsTabComponentComponent
               //this.reseteValsGoods();
               this.validGoodB = true;
               this.updateGood();
+              //this.valorCompartidoSubscription.unsubscribe();
+              this.resetFractionValue();
               console.log('Confirmado, guardar');
+              console.log(
+                'Reiniciando valorCompartido: ',
+                this.valorCompartido
+              );
             } else {
               console.log(' this.tabset.tabs.length', this.tabset.tabs.length);
               this.tabset.tabs.forEach((tab, i) => {
@@ -2646,6 +2660,10 @@ export class DetailAssetsTabComponentComponent
       default:
         break;
     }
+  }
+
+  resetFractionValue() {
+    this.fractionSelectedService.updateShareValue(0);
   }
 
   async reseteValsGoods() {

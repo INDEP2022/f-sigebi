@@ -449,7 +449,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (realEstate.pubRegProperty === null) {
-            /*else if (realEstate.problemDesc === null) {
+              /*else if (realEstate.problemDesc === null) {
               tipoRelInmueble = true;
               this.message(
                 'warning',
@@ -503,7 +503,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.theftReport === null) {
-            /*else if (good.brand === null) {
+              /*else if (good.brand === null) {
               //marca
               tipoRelVehiculo = true;
               this.message(
@@ -541,7 +541,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } */
-            /* else if (good.origin === null) {
+              /* else if (good.origin === null) {
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -558,7 +558,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo Reporte de Robo en Información del Vehículo esta vacio.'
               );
               break;
-            } else if (good.serie === null) {
+            }
+            /*else if (good.serie === null) {
               // serie
               tipoRelVehiculo = true;
               this.message(
@@ -567,7 +568,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Serie" en Información del Vehículo esta vacio.'
               );
               break;
-            } else if (good.subBrand === null) {
+            } */
+            /*else if (good.subBrand === null) {
               //sub marca
               tipoRelVehiculo = true;
               this.message(
@@ -576,10 +578,10 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Sub-Marca" en Información del Vehículo esta vacio.'
               );
               break;
-            }
+            }*/
           } else if (Number(good.goodTypeId) === 3) {
             /**## Tipo Embarcaciones ##*/
-            if (good.manufacturingYear === null) {
+            /*if (good.manufacturingYear === null) {
               // ano de manufacturacion
               tipoRelEmbarca = true;
               this.message(
@@ -588,8 +590,9 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Año de Fabricación" en Información de la Embarcación esta vacio.'
               );
               break;
-            } else if (good.openwork === null) {
-            /*else if (good.flag === null) {
+            } */
+            if (good.openwork === null) {
+              /*else if (good.flag === null) {
               //bandera
               tipoRelEmbarca = true;
               this.message(
@@ -643,8 +646,9 @@ export class RegistrationHelper extends BasePage {
                 'El campo Matrícula en Información de la Embarcación esta vacio.'
               );
               break;
-            } */ else if (good.engineNumber === null) {
-            /*else if (good.shipName === null) {
+            } */ else if (good.enginesNumber === null) {
+            /*else if (good.engineNumber === null) {
+            else if (good.shipName === null) {
               //Nombre Barco
               tipoRelEmbarca = true;
               this.message(
@@ -653,7 +657,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Nombre" de Embarcacion en Información de la Embarcación esta vacio.'
               );
               break;
-            } */
+            } 
               //Num Motor
               tipoRelEmbarca = true;
               this.message(
@@ -662,7 +666,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "No. Motor" en Información de la Embarcación esta vacio.'
               );
               break;
-            } else if (good.enginesNumber === null) {
+            } */
               //Num Motores
               tipoRelEmbarca = true;
               this.message(
@@ -720,7 +724,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Modelo" en Información de Aereonave esta vacio.'
               );
               break;
-            } else if (good.engineNumber === null) {
+            } else if (good.enginesNumber === null) {
+            /*else if (good.engineNumber === null) {
               //Num Motor
               tipoRelAeronave = true;
               this.message(
@@ -729,7 +734,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "No. Motor" en Información de Aereonave esta vacio.'
               );
               break;
-            } else if (good.enginesNumber === null) {
+            } */
               //Num Motores
               tipoRelAeronave = true;
               this.message(

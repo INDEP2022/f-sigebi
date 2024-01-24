@@ -647,14 +647,10 @@
 
     <div *ngIf="!showFormGoods">
       <form [formGroup]="detailAssets" class="form-material">
-        <div
-          *ngIf="
-            process == 'registration-request' || process == 'classify-assets'
-          "
-          class="vehicleDateSheet">
-          <p class="msg-required">
+        <div class="vehicleDateSheet">
+          <!-- <p class="msg-required">
             Los campos con <span>*</span> son requeridos
-          </p>
+          </p> -->
           <div class="row pt-5">
             <div class="col-md-4">
               <form-field [control]="detailAssets.get('brand')" label="Marca">
@@ -937,9 +933,9 @@
     <div *ngIf="!showFormGoods">
       <form [formGroup]="detailAssets" class="form-material">
         <div class="boatInformation">
-          <p class="msg-required" *ngIf="process != 'classify-assets'">
+          <!-- <p class="msg-required" *ngIf="process != 'classify-assets'">
             Los campos con <span>*</span> son requeridos
-          </p>
+          </p> -->
           <div class="row pt-5">
             <div class="col-md-4">
               <form-field
@@ -1453,10 +1449,10 @@
     </div>
     <div *ngIf="!showFormGoods">
       <form [formGroup]="detailAssets" class="form-material">
-        <div class="jewelInformation" *ngIf="!showFormGoods">
-          <p class="msg-required" *ngIf="process != 'classify-assets'">
+        <div class="jewelInformation">
+          <!-- <p class="msg-required" *ngIf="process != 'classify-assets'">
             Los campos con <span>*</span> son requeridos
-          </p>
+          </p> -->
           <div class="row pt-4">
             <div class="col-md-3">
               <form-field
@@ -3108,7 +3104,6 @@
   </tab>
 
   <!-- Información de Maquinaria Pesada-->
-
   <tab
     (selectTab)="onTabSelected($event)"
     id="especialMachineryGood"
@@ -3155,7 +3150,6 @@
   </tab>
 
   <!-- Información de Minerales -->
-
   <tab
     (selectTab)="onTabSelected($event)"
     id="mineralsGood"
