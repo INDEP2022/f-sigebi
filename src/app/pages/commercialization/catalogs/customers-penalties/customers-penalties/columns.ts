@@ -30,6 +30,7 @@ export const COLUMNS = {
     filterFunction(cell?: any, search?: string): boolean {
       return true;
     },
+    filter: false,
   },
   lotId: {
     title: 'Lote',
@@ -45,6 +46,7 @@ export const COLUMNS = {
         return false;
       }
     },
+    filter: false,
   },
   startDate: {
     title: 'Fecha Inicial',
@@ -119,6 +121,7 @@ export const COLUMNS2 = {
     filterFunction(cell?: any, search?: string): boolean {
       return true;
     },
+    filter: false,
   },
   lot: {
     title: 'Lote',
@@ -129,6 +132,7 @@ export const COLUMNS2 = {
     filterFunction(cell?: any, search?: string): boolean {
       return true;
     },
+    filter: false,
   },
   initialDate: {
     title: 'Fecha Inicial',
