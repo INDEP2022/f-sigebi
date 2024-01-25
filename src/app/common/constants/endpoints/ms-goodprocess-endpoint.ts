@@ -45,4 +45,5 @@ export enum GoodprocessEndpoints {
   pupPortafolio = 'application/pup-portafolio',
   seqFolio = 'application/seqfol-univ',
   GetTypeMinuteDetailDelivery = 'application/get-type-minute-detail-delivery',
+  ApplicationGetvwComerPaymentsReturn = 'application/get-vw-comer-payments-return',
 }

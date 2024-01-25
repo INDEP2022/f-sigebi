@@ -337,4 +337,11 @@ export class GoodprocessService extends HttpService {
   postqueryBlkDet(goodNumber: string) {
     return this.get(`application/get-noSubtype-good/${goodNumber}`);
   }
+
+  getvwComerPaymentsReturn(params: _Params) {
+    return this.get(
+      `${GoodprocessEndpoints.ApplicationGetvwComerPaymentsReturn}`,
+      params
+    );
+  }
 }

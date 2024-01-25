@@ -35,7 +35,7 @@
         <div class="col-md-3">
           <form-field label="Fecha" [control]="comerUserForm.get('date')">
             <input
-              [ngClass]="{ 'bg-gray': disabledSend }"
+              [ngClass]="{ 'not-press bg-gray': disabledSend }"
               type="text"
               class="form-control"
               formControlName="date"
