@@ -7,6 +7,14 @@ export const COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? `${value.id}` : '';
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.id;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     sort: false,
   },
   typeProcess: {
@@ -22,6 +30,7 @@ export const COLUMNS = {
     filterFunction(cell?: any, search?: string): boolean {
       return true;
     },
+    filter: false,
   },
   lotId: {
     title: 'Lote',
@@ -29,6 +38,15 @@ export const COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? `${value.publicLot} - ${value.description}` : '';
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.publicLot;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    filter: false,
   },
   startDate: {
     title: 'Fecha Inicial',
@@ -103,6 +121,7 @@ export const COLUMNS2 = {
     filterFunction(cell?: any, search?: string): boolean {
       return true;
     },
+    filter: false,
   },
   lot: {
     title: 'Lote',
@@ -113,6 +132,7 @@ export const COLUMNS2 = {
     filterFunction(cell?: any, search?: string): boolean {
       return true;
     },
+    filter: false,
   },
   initialDate: {
     title: 'Fecha Inicial',

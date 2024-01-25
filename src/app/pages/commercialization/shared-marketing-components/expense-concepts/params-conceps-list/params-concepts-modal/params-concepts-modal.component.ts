@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
-import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
+import { IParameterMod2 } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -15,7 +15,7 @@ import { COLUMNS } from './columns';
   styleUrls: ['./params-concepts-modal.component.scss'],
 })
 export class ParamsConceptsModalComponent
-  extends BasePageWidhtDinamicFiltersExtra<IParameterMod>
+  extends BasePageWidhtDinamicFiltersExtra<IParameterMod2>
   implements OnInit
 {
   form: FormGroup;
@@ -68,7 +68,7 @@ export class ParamsConceptsModalComponent
     this.searchParams();
   }
 
-  selectParamsMod(event: IParameterMod) {
+  selectParamsMod(event: IParameterMod2) {
     console.log(event);
     this.parameter.setValue(event.parameter);
     this.value.setValue(event.value);
