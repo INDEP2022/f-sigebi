@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -42,7 +42,8 @@ import { BillingCommunicationService } from '../communication/communication.serv
     `,
   ],
 })
-export class DatCancComponent extends BasePage implements OnInit {
+export class DatCancComponent extends BasePage implements OnDestroy, OnInit {
+  public dataSeleccionada$: Observable<any | undefined> | undefined;
   title: 'Cancelar Factura';
   form: FormGroup;
   events = new DefaultSelect<any>();
@@ -62,6 +63,7 @@ export class DatCancComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   cause: any;
   btnLoading: boolean = false;
+  private _unsubscribeAll: Subject<void>;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -72,9 +74,18 @@ export class DatCancComponent extends BasePage implements OnInit {
     private billingCommunicationService: BillingCommunicationService
   ) {
     super();
+    this._unsubscribeAll = new Subject();
+    this.dataSeleccionada$ =
+      this.billingCommunicationService.dataSeleccionada$.pipe(
+        takeUntil(this._unsubscribeAll)
+      );
   }
 
   ngOnInit(): void {
+    this.dataSeleccionada$.subscribe((next: any) => {
+      console.log('Data seleccionada', next);
+      this.dataSeleccionada = next;
+    });
     this.prepareForm();
   }
 
@@ -161,7 +172,8 @@ export class DatCancComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.factstatusId'] = `$in:CFDI,IMP,PREF`;
     this.params.getValue()['filter.vouchertype'] = `$eq:FAC`;
 
-    await this.enviarParams(this.params);
+    let res = await this.enviarParams(this.params);
+    console.log(res);
     contador = 0;
     let n_CONP = 0;
     let l_BAF = false;
@@ -174,33 +186,37 @@ export class DatCancComponent extends BasePage implements OnInit {
       cvman: !this.selectedMan ? null : this.selectedMan.cvman,
     };
     let cursor1: any = await this.billingsService.cursor1(obj_cursor1);
-
-    for (let a = 0; a < cursor1; a++) {
+    console.log('cursor1', cursor1);
+    for (const data of cursor1) {
       let obj_cursor2 = {
-        idEvent: cursor1[a].idEvent,
-        idLot: cursor1[a].idLot,
-        delegationNumber: cursor1[a].delegationNumber,
-        cvman: cursor1[a].cvman,
+        idEvent: data.idEvent,
+        idLot: data.idLot,
+        delegationNumber: data.delegationNumber,
+        cvman: data.cvman,
       };
+      console.log(obj_cursor2);
       let cursor2: any = await this.billingsService.cursor2(obj_cursor2);
+      console.log('curs', cursor2);
       l_BAF = false;
-      for (let i = 0; i < cursor2; i++) {
-        if (cursor2[i].idStatusFac == 'PREF') {
+      for (const data2 of cursor2) {
+        if (data2.idStatusFac == 'PREF') {
           n_CONP = n_CONP + 1;
           l_BAF = true;
         } else {
           if (l_BAF) {
             l_BAF = true;
+            console.log('SI');
             break;
           }
           n_CONP = n_CONP + 1;
         }
       }
       if (l_BAF) {
+        console.log('SI2');
         break;
       }
     }
-
+    console.log('l_BAF', l_BAF);
     if (l_BAF)
       return (
         (this.btnLoading = false),
@@ -210,9 +226,10 @@ export class DatCancComponent extends BasePage implements OnInit {
           ''
         )
       );
-
-    const arr: any = await this.selectData();
-    this.dataSeleccionada = arr;
+    console.log('AQUI', this.dataSeleccionada);
+    // const arr: any = await this.selectData();
+    // console.log("arr", arr)
+    // this.dataSeleccionada = arr;
 
     if (contador == 0 && n_CONP == 0)
       return (
@@ -238,14 +255,8 @@ export class DatCancComponent extends BasePage implements OnInit {
     });
   }
   async selectData() {
-    return new Promise((resolve, reject) => {
-      this.billingCommunicationService.dataSeleccionada$.subscribe(
-        (next: any) => {
-          // console.log('Data seleccionada', next);
-          resolve(next);
-        }
-      );
-    });
+    // return new Promise((resolve, reject) => {
+    // });
   }
   valUser() {
     // Validamos al usuario para autorizar la cancelación //
@@ -557,10 +568,16 @@ export class DatCancComponent extends BasePage implements OnInit {
   }
 
   async enviarParams(params: any) {
-    this.billingCommunicationService.enviarParams(params);
+    let result = await this.billingCommunicationService.enviarParams(params);
+    return result;
   }
 
   async changeValSelect(bool: boolean) {
     this.billingCommunicationService.changeValSelect(bool);
+  }
+
+  public override ngOnDestroy(): void {
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 }

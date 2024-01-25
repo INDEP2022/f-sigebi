@@ -45,4 +45,20 @@ export class PaymentDevolutionService extends HttpService {
       body
     );
   }
+
+  getEatCtlCreate_(params: _Params) {
+    return this.get(`${PaymentDevolutionEndPoints.EatCtlCreate}`, params);
+  }
+  createEatCtlCreate_(data: any) {
+    return this.post(`${PaymentDevolutionEndPoints.EatCtlCreate}`, data);
+  }
+  putEatCtlCreate_(data: any, user: string) {
+    return this.put(`${PaymentDevolutionEndPoints.EatCtlCreate}/${user}`, data);
+  }
+  deleteEatCtlCreate_(data: any, user: string) {
+    return this.delete(
+      `${PaymentDevolutionEndPoints.EatCtlCreate}/${user}`,
+      data
+    );
+  }
 }
