@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { CheckPermissionsNonWinnersComponent } from '../components/check-permissions-non-winners/check-permissions-non-winners.component';
-import { CheckPermissionsWinnersComponent } from '../components/check-permissions-winners/check-permissions-winners.component';
-import { CREATION_PERMISSIONS_COLUMNS } from './creation-permissions-columns';
+import { PaysService } from '../services/services';
 
 @Component({
   selector: 'app-creation-permissions-modal',
@@ -20,144 +20,106 @@ export class CreationPermissionsModalComponent
   implements OnInit
 {
   title: 'Permisos de Creación';
-  isCollapsed: boolean = true;
-  adding: boolean = false;
   selectedUser: any = null;
   userItems = new DefaultSelect();
   creationForm: FormGroup = new FormGroup({});
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  totalItems: number = 0;
-  creationColumns: any[] = [];
-  creationSettings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
-
-  usersTestData = [
-    {
-      user: 'NESTEVEZ',
-      name: 'NANCY ESTEVEZ',
-    },
-    {
-      user: 'IJIMENEZ',
-      name: 'IGNACIO JIMENEZ',
-    },
-    {
-      user: 'PTORRES',
-      name: 'PAMELA TORRES',
-    },
-    {
-      user: 'MORTEGA',
-      name: 'MARIO ORTEGA',
-    },
-    {
-      user: 'PALVAREZ',
-      name: 'PEDRO ALVAREZ',
-    },
-    {
-      user: 'OHERNANDEZ',
-      name: 'OLGA HERNANDEZ',
-    },
-    {
-      user: 'SMARADIAGA',
-      name: 'SANTIAGO MARADIAGA',
-    },
-    {
-      user: 'FMENDOZA',
-      name: 'FRANCISCO MENDOZA',
-    },
-  ];
-
-  permissionsTestData = [
-    {
-      user: 'PALVAREZ',
-      name: 'PEDRO ALVAREZ',
-      createNonWinners: 'S',
-      createWinners: 'N',
-    },
-    {
-      user: 'OHERNANDEZ',
-      name: 'OLGA HERNANDEZ',
-      createNonWinners: 'S',
-      createWinners: 'S',
-    },
-    {
-      user: 'SMARADIAGA',
-      name: 'SANTIAGO MARADIAGA',
-      createNonWinners: 'N',
-      createWinners: 'S',
-    },
-    {
-      user: 'FMENDOZA',
-      name: 'FRANCISCO MENDOZA',
-      createNonWinners: 'S',
-      createWinners: 'S',
-    },
-  ];
-
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  data_: any;
+  text: string = 'Creado';
+  constructor(
+    private paysService: PaysService,
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private securityService: SecurityService
+  ) {
     super();
-    this.creationSettings.columns = CREATION_PERMISSIONS_COLUMNS;
-    this.creationSettings.columns = {
-      ...this.creationSettings.columns,
-      createNonWinners: {
-        title: 'Crea Controles No Ganadores',
-        type: 'custom',
-        sort: false,
-        renderComponent: CheckPermissionsNonWinnersComponent,
-      },
-      createWinners: {
-        title: 'Crea Controles Ganadores',
-        type: 'custom',
-        sort: false,
-        renderComponent: CheckPermissionsWinnersComponent,
-      },
-    };
   }
 
   ngOnInit(): void {
-    this.getData();
     this.prepareForm();
-    this.getUsers({ page: 1, text: '' });
+    // this.getUsers(new ListParams())
   }
 
   private prepareForm(): void {
     this.creationForm = this.fb.group({
       user: [null, [Validators.required]],
-      createNonWinners: [''],
-      createWinners: [''],
+      name: [null],
+      indGuarantee: [null],
+      inddisp: [null],
     });
-  }
-
-  getData() {
-    this.creationColumns = this.permissionsTestData;
-    this.totalItems = this.creationColumns.length;
+    if (this.data_) {
+      this.creationForm.patchValue({
+        user: this.data_.user + ' - ' + this.data_.name,
+        name: this.data_.name,
+        indGuarantee: this.data_.indGuarantee == 1 ? true : false,
+        inddisp: this.data_.inddisp == 1 ? true : false,
+      });
+      this.text = 'Actualizado';
+    }
   }
 
   close() {
     this.modalRef.hide();
   }
 
-  getUsers(params: ListParams) {
-    if (params.text == '') {
-      this.userItems = new DefaultSelect(this.usersTestData, 5);
+  async getUsers(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (lparams.text) params.search = lparams.text;
+    // params.addFilter('user', lparams.text, SearchFilter.ILIKE);
+
+    params.sortBy = `user:ASC`;
+    // return new Promise((resolve, reject) => {
+    this.securityService.getAllUsersTracker(params.getParams()).subscribe({
+      next: async (response: any) => {
+        // console.log('resss', response);
+        let result = response.data.map(async (item: any) => {
+          item['userAndName'] = item.user + ' - ' + item.name;
+        });
+
+        Promise.all(result).then(async (resp: any) => {
+          this.userItems = new DefaultSelect(response.data, response.count);
+          this.loading = false;
+        });
+      },
+      error: error => {
+        this.userItems = new DefaultSelect();
+        this.loading = false;
+        // resolve(null);
+      },
+    });
+    // });
+  }
+
+  async addPermission() {
+    let response: any;
+    if (this.data_) {
+      // UPDATE
+      let obj = {
+        user: this.data_.user,
+        indGuarantee: this.creationForm.value.indGuarantee ? 1 : 0,
+        inddisp: this.creationForm.value.inddisp ? 1 : 0,
+        registerNumber: this.data_.registerNumber,
+      };
+      response = await this.paysService.putEatCtlCreate_(obj, this.data_.user);
     } else {
-      const id = parseInt(params.text);
-      const item = [this.usersTestData.filter((i: any) => i.id == id)];
-      this.userItems = new DefaultSelect(item[0], 1);
+      // CREATE
+      let obj = {
+        user: this.creationForm.value.user,
+        indGuarantee: this.creationForm.value.indGuarantee ? 1 : 0,
+        inddisp: this.creationForm.value.inddisp ? 1 : 0,
+        registerNumber: null,
+      };
+      response = await this.paysService.createEatCtlCreate_(obj);
     }
-  }
-
-  showAdd() {
-    this.adding = true;
-    this.isCollapsed = false;
-  }
-
-  addPermission() {
-    console.log(this.creationForm.value);
-    // Llamar servicio para agregar
-    this.creationForm.reset();
-    this.adding = false;
-    this.isCollapsed = true;
+    if (response) {
+      this.alert('success', `Registro ${this.text} correctamente`, '');
+      this.modalRef.content.callback(true);
+      this.close();
+    } else {
+      this.alert('warning', 'Ha ocurrido un error', '');
+    }
   }
 }

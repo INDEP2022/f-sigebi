@@ -8,17 +8,39 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { IApplicationFComerCtldPag3 } from 'src/app/core/services/ms-payment/payment-service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
-import { ADD_RELATED_EVENT_COLUMNS } from './create-modal-columns';
-
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 @Component({
   selector: 'app-create-control-modal',
   templateUrl: './create-control-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class CreateControlModalComponent extends BasePage implements OnInit {
   title: string = 'Control de Devolución';
@@ -31,27 +53,120 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
   controlSettings = {
     ...TABLE_SETTINGS,
     actions: false,
-    selectMode: 'multi',
+    // selectMode: 'multi',
   };
   // Control
   dataTableControl: LocalDataSource = new LocalDataSource();
   dataTableParamsControl = new BehaviorSubject<ListParams>(new ListParams());
   loadingControl: boolean = false;
   totalControl: number = 0;
-  testDataControl: any[] = [];
   columnFiltersControl: any = [];
   //
   @Input() ind_garant: number = 0;
   @Input() ind_disp: number = 0;
 
+  selectedbillings: any[] = [];
+  selectEventsCheck: any[] = [];
+
+  btnLoading: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private svPaymentDevolutionService: PaymentDevolutionService,
-    private msPaymentService: PaymentService
+    private msPaymentService: PaymentService,
+    private goodprocessService: GoodprocessService
   ) {
     super();
-    this.controlSettings.columns = ADD_RELATED_EVENT_COLUMNS;
+    this.controlSettings.hideSubHeader = false;
+    this.controlSettings.columns = {
+      selection: {
+        filter: false,
+        sort: false,
+        title: 'Selección',
+        type: 'custom',
+        showAlways: true,
+        width: '10%',
+        valuePrepareFunction: (isSelected: boolean, row: any) =>
+          this.isBillingDetSelected(row),
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onBillingDetSelect(instance),
+      },
+      eventId: {
+        title: 'Id. Evento',
+        type: 'number',
+        sort: false,
+        width: '15%',
+      },
+      processKey: {
+        title: 'Clave',
+        type: 'string',
+        sort: false,
+        width: '35%',
+      },
+      cantPayments: {
+        title: 'Cantidad',
+        type: 'number',
+        sort: false,
+        width: '20%',
+      },
+      amountPayments: {
+        title: 'Monto',
+        type: 'html',
+        sort: false,
+        width: '20%',
+        valuePrepareFunction: (amount: string) => {
+          const numericAmount = parseFloat(amount);
+
+          if (!isNaN(numericAmount)) {
+            const a = numericAmount.toLocaleString('en-US', {
+              // style: 'currency',
+              // currency: 'USD',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+            return '<p class="cell_right">' + a + '</p>';
+          } else {
+            return amount;
+          }
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+          return true;
+        },
+      },
+    };
+  }
+
+  onBillingDetSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.billingDetSelectedChange(data.row, data.toggle),
+    });
+  }
+  isBillingDetSelected(data: any) {
+    const exists = this.selectEventsCheck.find(
+      (item: any) => item.eventId == data.eventId
+    );
+    return !exists ? false : true;
+  }
+  billingDetSelectedChange(data: any, selected: boolean) {
+    const { origin } = this.controlForm.value;
+    if (selected) {
+      this.selectEventsCheck.push(data);
+      for (const data of this.selectEventsCheck) {
+        if (origin == 2) {
+          this.controlForm.get('key').setValue(data.processKey);
+          this.controlForm.get('txtBan').setValue(1);
+        }
+      }
+    } else {
+      this.selectEventsCheck = this.selectEventsCheck.filter(
+        (item: any) => item.eventId != data.eventId
+      );
+      if (origin == 2) {
+        this.controlForm.get('key').setValue('');
+        this.controlForm.get('txtBan').setValue(0);
+      }
+    }
   }
 
   ngOnInit(): void {
@@ -67,6 +182,7 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
       direction: [null],
       dispersionType: [null],
       origin: [null],
+      txtBan: [null],
       // events: this.fb.array([null]),
     });
     setTimeout(() => {
@@ -85,12 +201,7 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
   }
 
   search() {
-    // this.controlColumns = this.eventsTestData;
-    // this.totalItems = this.controlColumns.length;
-
-    // if (this.controlForm.invalid) {
-    //   return;
-    // }
+    this.btnLoading = true;
     let params = {
       dispTypeId: this.controlForm.get('dispersionType').value,
       originId: this.controlForm.get('origin').value,
@@ -98,50 +209,58 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
     };
     this.msPaymentService.getDataFromView(params).subscribe({
       next: res => {
-        console.log('DATA Control', res);
-        this.loading = false;
+        if (res.data == 0) {
+          this.alert('warning', 'No se tienen Eventos con este criterio.', '');
+          this.btnLoading = false;
+        } else {
+          this.controlForm.get('key').setValue('');
+          this.controlForm.get('txtBan').setValue('0');
+          this.getControlData('si');
+        }
       },
       error: error => {
-        console.log(error);
-        this.loading = false;
+        this.alert('warning', 'No se tienen Eventos con este criterio.', '');
+        this.btnLoading = false;
       },
     });
   }
-
-  select(rows: any[]) {
-    this.selectedRows = rows;
-    console.log(this.selectedRows);
-  }
-
+  select(event: any) {}
   close() {
     this.modalRef.hide();
   }
 
   async confirm() {
-    if (this.controlForm.invalid) {
-      this.alert('warning', 'Ingresa una clave', '');
+    const { key } = this.controlForm.value;
+    const data = await this.dataTableControl.getAll();
+    // let c_REL_EVENTOS: string = '';
+    if (!key) {
+      this.alert('warning', 'Debe especificar la Clave', '');
       return;
     }
-    let confirm = await this.alertQuestion(
-      'question',
-      'Control de devoluciones',
-      '¿Desea generar el control de devoluciones?'
-    );
-    if (confirm.isConfirmed) {
-      // PETICIONES AL REQUERIMIENTO FCOMERCTLDPAG-3
-      // this.handleSuccess();
-      this.createControlDevolutions();
-    } else {
-      this.handleSuccess();
-    }
-  }
 
-  handleSuccess() {
-    this.loading = true;
-    // Llamar servicio para agregar control
-    this.loading = false;
-    this.onControlAdded.emit(true);
-    this.modalRef.hide();
+    if (data.length == 0)
+      return this.alert('warning', 'No se tienen Eventos a relacionar.', '');
+
+    if (this.selectEventsCheck.length == 0) {
+      this.alert('warning', 'No se seleccionó al menos un Evento.', '');
+    }
+    let arrayEvents = [];
+    let result = this.selectEventsCheck.map(item => {
+      arrayEvents.push(item.eventId);
+    });
+
+    Promise.all(result).then(resp => {
+      this.alertQuestion(
+        'question',
+        'Se generará el control de devoluciones',
+        '¿Desea continuar?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          // PETICIONES AL REQUERIMIENTO FCOMERCTLDPAG-3
+          this.createControlDevolutions(arrayEvents);
+        }
+      });
+    });
   }
 
   loadingDataTableControl() {
@@ -157,11 +276,12 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
             //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              id: () => (searchFilter = SearchFilter.EQ),
-              key: () => (searchFilter = SearchFilter.EQ),
+              eventId: () => (searchFilter = SearchFilter.EQ),
+              processKey: () => (searchFilter = SearchFilter.ILIKE),
+              cantPayments: () => (searchFilter = SearchFilter.EQ),
+              amountPayments: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
@@ -177,87 +297,73 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
             this.dataTableParamsControl
           );
           //Su respectivo metodo de busqueda de datos
-          this.getControlData();
+          this.getControlData('no');
         }
       });
     //observador para el paginado
     this.dataTableParamsControl
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getControlData());
+      .subscribe(() => {
+        if (this.totalControl > 0) this.getControlData('no');
+      });
   }
 
-  getControlData() {
+  getControlData(filter: string) {
     this.loadingControl = true;
     let params = {
       ...this.dataTableParamsControl.getValue(),
       ...this.columnFiltersControl,
     };
-    this.testDataControl = [
-      {
-        id: 1,
-        key: 'KEY1',
-        quantity: 1,
-        amount: 10,
-      },
-      {
-        id: 2,
-        key: 'KEY2',
-        quantity: 2,
-        amount: 20,
-      },
-      {
-        id: 3,
-        key: 'KEY3',
-        quantity: 3,
-        amount: 30,
-      },
-      {
-        id: 4,
-        key: 'KEY4',
-        quantity: 4,
-        amount: 40,
-      },
-      {
-        id: 5,
-        key: 'KEY5',
-        quantity: 5,
-        amount: 50,
-      },
-    ];
-    this.dataTableControl.load(this.testDataControl);
     this.loadingControl = false;
-    // // CONSULTAR DEL REQUERIMIENTO FCOMERCTLDPAG-2
-    // this.svPaymentDevolutionService.getCtlDevPagP(params).subscribe({
-    //   next: (res: any) => {
-    //     console.log('DATA Control', res);
-    //     this.testDataControl = res.data;
-    //     this.dataTableControl.load(this.testDataControl);
-    //     this.loadingControl = false;
-    //   },
-    //   error: error => {
-    //     console.log(error);
-    //     this.testDataControl = [];
-    //     this.dataTableControl.load([]);
-    //     this.loadingControl = false;
-    //   },
-    // });
+    const { dispersionType, origin, direction } = this.controlForm.value;
+    params['filter.typeDisp'] = `$eq:${dispersionType}`;
+    params['filter.address'] = `$eq:${direction}`;
+    params['filter.originId'] = `$eq:${origin}`;
+    this.goodprocessService.getvwComerPaymentsReturn(params).subscribe({
+      next: (res: any) => {
+        console.log('DATA Control', res);
+        this.totalControl = res.count;
+        this.dataTableControl.load(res.data);
+        this.dataTableControl.refresh();
+        this.loadingControl = false;
+        if (filter == 'si') {
+          this.btnLoading = false;
+        }
+      },
+      error: error => {
+        console.log(error);
+        this.dataTableControl.load([]);
+        this.dataTableControl.refresh();
+        this.totalControl = 0;
+        this.loadingControl = false;
+        if (filter == 'si') {
+          this.btnLoading = false;
+        }
+      },
+    });
   }
-  createControlDevolutions() {
+  createControlDevolutions(arrayEvents: any) {
     console.log(this.controlForm.value);
     let params: IApplicationFComerCtldPag3 = {
       dispTypeId: this.controlForm.get('dispersionType').value,
       originId: this.controlForm.get('origin').value,
       direction: this.controlForm.get('direction').value,
       ctldevpagKey: this.controlForm.get('key').value,
-      cRelEvents: [],
+      cRelEvents: arrayEvents,
     };
-    console.log(params);
-
     this.svPaymentDevolutionService.getFComerCtldPag3(params).subscribe({
       next: (res: any) => {
+        this.alert('success', res.message[0], '');
+        this.onControlAdded.emit(true);
+        this.close();
         console.log('Crear control', res);
       },
       error: error => {
+        this.alert(
+          'warning',
+          'No se pudo generar el control de devoluciones',
+          ''
+        );
         console.log(error);
       },
     });
