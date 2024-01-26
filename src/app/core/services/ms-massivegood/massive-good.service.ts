@@ -304,4 +304,11 @@ export class MassiveGoodService extends HttpService {
       formData
     );
   }
+
+  applicationPupExpCsvReldevgar(data: any) {
+    return this.post(
+      `${MassiveGoodEndpoints.ApplicationPupExpCsvReldevGar}`,
+      data
+    );
+  }
 }

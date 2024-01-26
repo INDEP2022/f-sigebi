@@ -2389,6 +2389,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
   attentionCustomer() {
     // ATENCION - Atención a Clientes
+    if (this.selectedbillings.length == 0)
+      return this.alert('warning', 'Debe seleccionar una factura', '');
     this.alertQuestion(
       'question',
       `Se enviará el nuevo CFDI para Atención a Clientes`,
@@ -2396,7 +2398,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     ).then(async question => {
       if (question.isConfirmed) {
         this.btnLoading3 = true;
-        await this.pupGenerateRoute3(); // PUP_GENERA_RUTA3
+        // await this.pupGenerateRoute3(); // PUP_GENERA_RUTA3
         await this.printerPackage(); // IMPRIME_PAQUETE
       }
     });

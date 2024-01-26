@@ -102,6 +102,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
 
               case 'startDate':
                 if (filter.search != null) {
+                  console.log(filter.search);
                   filter.search = this.checkType(filter.search)
                     ? this.formatDate(filter.search)
                     : filter.search;
@@ -110,6 +111,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 break;
               case 'endDate':
                 if (filter.search != null) {
+                  console.log(filter.search);
                   filter.search = this.checkType(filter.search)
                     ? this.formatDate(filter.search)
                     : filter.search;
@@ -166,7 +168,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
-                //field = `filter.${filter.field}.id`;
+                field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'batchPublic':
@@ -304,15 +306,15 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     );
   }
 
-  formatDate(dateString: Date): string {
+  formatDate(dateString: string): string {
     console.log(dateString);
     if (dateString == null) {
       return '';
     } else {
-      // const date = new Date(dateString);
-      const day = dateString.getDay().toString().padStart(2, '0');
-      const month = (dateString.getMonth() + 1).toString().padStart(2, '0');
-      const year = dateString.getFullYear().toString();
+      const date = new Date(dateString);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear().toString();
       return `${year}-${month}-${day}`;
     }
   }
