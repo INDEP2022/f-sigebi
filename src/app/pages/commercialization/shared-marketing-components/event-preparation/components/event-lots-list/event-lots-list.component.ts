@@ -29,10 +29,14 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerGoodsXLotService } from 'src/app/core/services/ms-comersale/comer-goods-x-lot.service';
+import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot.service';
+import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
 import { BasePage } from 'src/app/core/shared';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import Swal, { SweetAlertResult } from 'sweetalert2';
 import { EventPreparationService } from '../../event-preparation.service';
@@ -63,6 +67,8 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() onlyBase = false;
   lotSelected: IComerLot = null;
 
+  private _flagTracker = true;
+
   excelControl = new FormControl(null);
   get controls() {
     return this.eventForm.controls;
@@ -73,7 +79,11 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private lotService: LotService,
     private comerGoodsXLotService: ComerGoodsXLotService,
-    private eventPreparationService: EventPreparationService
+    private eventPreparationService: EventPreparationService,
+    private authService: AuthService,
+    private globalVarsService: GlobalVarsService,
+    private prepareEventService: UtilComerV1Service,
+    private eventAppService: EventAppService
   ) {
     super();
     this.settings = {
@@ -116,6 +126,90 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         tap(params => this.getLots(params).subscribe())
       )
       .subscribe();
+    // this.returnTracker(); //!Se está realizando en otro lado y se cicla
+  }
+
+  returnTracker() {
+    this.globalVarsService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: async global => {
+          const nRel = global.REL_BIENES;
+
+          if (global.REL_BIENES) {
+            console.log(global);
+            //TODO
+            if (this._flagTracker) {
+              const selfState = await this.eventPreparationService.getState();
+              this.processTracker(nRel, selfState).subscribe();
+            }
+          }
+        },
+      });
+  }
+
+  processTracker(nRel: number, selfState: any) {
+    this.loader.load = true;
+    const { id, statusVtaId, eventTpId } = this.controls;
+    const { pDirection } = this.parameters;
+
+    console.log(selfState);
+    this._flagTracker = false;
+    const body = {
+      id: nRel,
+      dir: pDirection,
+      event: id.value,
+      lot: selfState.lastLot,
+      tpeve2: eventTpId.value,
+      program: 'FCOMEREVENTOS',
+      lotepub: selfState.lastPublicLot,
+      user: this.authService.decodeToken().preferred_username,
+    };
+
+    return this.prepareEventService.processTracker(body).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        return throwError(() => error);
+      }),
+      tap(async res => {
+        console.log(res);
+        this.loader.load = false;
+        await this.verifyRejectedGoods();
+        this.fillStadistics.emit();
+        this.alert(
+          'success',
+          'Proceso Terminado',
+          'Se agregaron bienes desde el rastreador'
+        );
+        this.refreshTable();
+      })
+    );
+  }
+
+  /**VERIFICARECHAZADOS */
+  async verifyRejectedGoods() {
+    const { id } = this.controls;
+    return firstValueFrom(
+      this.eventAppService.verifyRejectedGoods(id.value).pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          console.warn('VERIFICARECHAZADOS');
+
+          console.log(response);
+          const c: any = response;
+          if (response.data > 0 || c > 0) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              'Hubo Bienes Rechazados pulse el botón de Bienes no Cargados'
+            );
+          }
+        })
+      )
+    );
   }
 
   columnsFilter() {
@@ -347,6 +441,40 @@ export class EventLotsListComponent extends BasePage implements OnInit {
           await this.successValCSV(event);
           return;
         }
+      })
+    );
+  }
+
+  async pupImpLotes(event: Event) {
+    this.loader.load = true;
+
+    const { id, statusVtaId, eventTpId } = this.controls;
+    const { pDirection } = this.parameters;
+    console.log(pDirection);
+
+    const body = {
+      file: this.getFileFromEvent(event),
+      event: id.value.toString(),
+      eventType: '1', //TODO: PREGUNTAR
+      validGood: 'N', //TODO: PREGUNTAR
+      clean: 'N', //TODO: PREGUNTAR
+      statusVta: statusVtaId.value,
+      address: pDirection as 'M' | 'I',
+      user: this.authService.decodeToken().preferred_username,
+    };
+
+    return this.lotService.impLotExcel(body).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        this.excelControl.reset();
+        return throwError(() => error);
+      }),
+      tap(async response => {
+        console.log(response);
+        this.loader.load = false;
+        this.alert('success', 'Proceso Terminado', '');
+        this.excelControl.reset();
+        this.refreshTable();
       })
     );
   }
