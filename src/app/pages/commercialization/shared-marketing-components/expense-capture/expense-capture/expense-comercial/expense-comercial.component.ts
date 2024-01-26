@@ -1237,8 +1237,16 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
           let data = response.data;
           let success;
           if (data.length > 0) {
-            this.dataService.CHCONIVA = data[0].value;
-            this.dataService.IVA = data[1].value ? +data[1].value / 100 : 0;
+            this.dataService.CHCONIVA = data.find(
+              x => x.parameter === 'CHCONIVA'
+            ).value;
+            const iva = data.find(x => x.parameter === 'IVA');
+            if (iva) {
+              this.dataService.IVA = iva.value ? +iva.value / 100 : 0;
+            } else {
+              this.dataService.IVA = 0;
+            }
+
             success = true;
           } else {
             this.dataService.CHCONIVA = null;
@@ -1463,7 +1471,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         return;
       }
       this.dataService.updateOI.next(true);
-      const otherParams = await this.fillOthersParameters();
+      // setTimeout(() => {
+      //   if (expense.conceptNumber + '' === '643' && this.PVALIDADET === 'S') {
+      //     this.fillOthersParameters();
+      //   }
+      // }, 100);
     }, 500);
   }
 

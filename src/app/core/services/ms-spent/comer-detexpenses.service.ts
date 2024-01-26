@@ -9,6 +9,7 @@ import {
   IComerDetExpense2,
   IMandContaDTO,
 } from '../../models/ms-spent/comer-detexpense';
+import { IComerExpense } from '../../models/ms-spent/comer-expense';
 
 @Injectable({
   providedIn: 'root',
@@ -25,15 +26,13 @@ export class ComerDetexpensesService extends HttpService {
   }
 
   getAll(
-    idGasto: string,
+    expense: IComerExpense,
     PVALIDADET: string,
     PDEVPARCIALBIEN: string,
-    CHCONIVA: string,
-    IVA: number,
     params?: _Params
   ): Observable<IListResponseMessage<IComerDetExpense2>> {
     return this.get<IListResponseMessage<IComerDetExpense2>>(
-      'aplication/comer-det-payments-mod-where/' + idGasto,
+      'aplication/comer-det-payments-mod-where/' + expense.expenseNumber,
       params
     ).pipe(
       catchError(x =>
@@ -49,10 +48,6 @@ export class ComerDetexpensesService extends HttpService {
                     ...row,
                     amount: row.amount ? row.amount : row.amount,
                     total: row.total ? row.total : row.total2,
-                    iva:
-                      idGasto === '643' && row.iva2 === 0 && CHCONIVA === 'S'
-                        ? row.amount * IVA
-                        : row.iva,
                   };
                 })
               : PDEVPARCIALBIEN === 'S'
