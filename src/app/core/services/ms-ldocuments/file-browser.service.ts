@@ -103,4 +103,14 @@ export class FileBrowserService extends HttpService {
     // OBTENCIÓN DE BASE64
     return this.post('route-billing/billingSiab', data);
   }
+
+  pupRepBillFurtherFurniture(data: any) {
+    // PUP_REP_FACTURA_MAS - MUEBLES //
+    return this.post('route-billing/pup-rep-bill-further-furniture', data);
+  }
+
+  pupRepBillFurtherFurnitureImmovables(data: any) {
+    // PUP_REP_FACTURA_MAS
+    return this.post('route-billing/pup-rep-bill-further-immovables', data);
+  }
 }

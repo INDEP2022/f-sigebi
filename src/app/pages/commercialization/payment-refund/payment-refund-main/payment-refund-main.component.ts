@@ -1,6 +1,8 @@
 import { animate, style, transition, trigger } from '@angular/animations';
+import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
@@ -11,22 +13,22 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TableCheckboxComponent } from '../../massive-conversion/components/table-checkbox/table-checkbox.component';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 import { ChangeRfcModalComponent } from './change-rfc-modal/change-rfc-modal.component';
 import { CreateControlModalComponent } from './create-control-modal/create-control-modal.component';
-import { CreationPermissionsModalComponent } from './creation-permissions-modal/creation-permissions-modal.component';
 import { KeyChangeModalComponent } from './key-change-modal/key-change-modal.component';
 import {
-  BANK_ACCOUNTS_COLUMNS,
   PAYMENT_COLUMNS,
   REFUND_CONTROL_COLUMNS,
   RELATED_EVENT_COLUMNS,
 } from './payment-refund-columns';
+import { TablePermissionsModalComponent } from './table-permissions-modal/table-permissions-modal.component';
 import { TransferDateModalComponent } from './transfer-date-modal/transfer-date-modal.component';
-
 @Component({
   selector: 'app-payment-refund-main',
   templateUrl: './payment-refund-main.component.html',
@@ -81,6 +83,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   //
   controlForm: FormGroup = new FormGroup({});
   selectedAccounts: any[] = [];
+  selectedAccountB: any = null;
   selectedPayment: any[] = [];
   eventsTotalQuantity: number = 0;
   eventsTotalAmount: number = 0;
@@ -105,13 +108,13 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     actions: false,
     hideSubHeader: false,
     // selectMode: 'multi',
-    rowClassFunction: (row: any) => {
-      if (row.data.seleccion == false) {
-        return 'bg-success text-white';
-      } else {
-        return 'bg-dark text-white';
-      }
-    },
+    // rowClassFunction: (row: any) => {
+    //   if (row.data.seleccion == false) {
+    //     return 'bg-success text-white';
+    //   } else {
+    //     return 'bg-dark text-white';
+    //   }
+    // },
   };
   selectedControl: any[] = [];
   eventSettings = {
@@ -119,13 +122,13 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     actions: false,
     hideSubHeader: false,
     // selectMode: 'multi',
-    rowClassFunction: (row: any) => {
-      if (row.data.seleccion == false) {
-        return 'bg-success text-white';
-      } else {
-        return 'bg-dark text-white';
-      }
-    },
+    // rowClassFunction: (row: any) => {
+    //   if (row.data.seleccion == false) {
+    //     return 'bg-success text-white';
+    //   } else {
+    //     return 'bg-dark text-white';
+    //   }
+    // },
   };
   selectedEvents: any[] = [];
   accountSettings = {
@@ -143,72 +146,205 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   devolutionCtlDevPagId: number = null;
   loadingreferenceRequest: boolean = false;
   countVerifPay: number = 0;
+  selectBanksCheck: any[] = [];
 
+  // BLK_BANCO_PAGOS
+  blkBankPays: any[] = [];
+  selectRowCtrol: any = null;
+  disabledBtn: boolean = true;
+  @ViewChild('myTabset', { static: true }) tabset: TabsetComponent;
+  accountTotalItemsP: number = 0;
+  loadingP: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private svPaymentDevolutionService: PaymentDevolutionService,
     private svPaymentService: PaymentService,
-    private authService: AuthService
+    private authService: AuthService,
+    private datePipe: DatePipe,
+    private router: Router,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.controlSettings = {
       ...this.controlSettings,
-      rowClassFunction: (row: any) => {
-        if (row.data.seleccion == 0) {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
-      },
+      // rowClassFunction: (row: any) => {
+      //   if (row.data.seleccion == 0) {
+      //     return 'bg-success text-white';
+      //   } else {
+      //     return 'bg-dark text-white';
+      //   }
+      // },
     };
     this.controlSettings.columns = REFUND_CONTROL_COLUMNS;
-    REFUND_CONTROL_COLUMNS.seleccion = {
-      ...REFUND_CONTROL_COLUMNS.seleccion,
-      onComponentInitFunction: this.onClickSelect.bind(this),
-    };
-    // this.eventSettings.columns = RELATED_EVENT_COLUMNS;
     this.eventSettings = {
       ...this.eventSettings,
-      rowClassFunction: (row: any) => {
-        if (row.data.seleccion == 0) {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
-      },
+      // rowClassFunction: (row: any) => {
+      //   if (row.data.seleccion == 0) {
+      //     return 'bg-success text-white';
+      //   } else {
+      //     return 'bg-dark text-white';
+      //   }
+      // },
     };
     this.eventSettings.columns = RELATED_EVENT_COLUMNS;
-    RELATED_EVENT_COLUMNS.seleccion = {
-      ...RELATED_EVENT_COLUMNS.seleccion,
-      onComponentInitFunction: this.onClickSelectEvents.bind(this),
-    };
+    // RELATED_EVENT_COLUMNS.seleccion = {
+    //   ...RELATED_EVENT_COLUMNS.seleccion,
+    //   onComponentInitFunction: this.onClickSelectEvents.bind(this),
+    // };
 
-    this.accountSettings.columns = BANK_ACCOUNTS_COLUMNS;
+    this.accountSettings.columns = {
+      // status: {
+      //   title: 'Estatus',
+      //   type: 'string',
+      //   sort: false,
+      // },
+      cveBank: {
+        title: 'Cve. Banco',
+        type: 'string',
+        sort: false,
+      },
+      account: {
+        title: 'Cuenta',
+        type: 'string',
+        sort: false,
+      },
+      countPayments: {
+        title: 'Cantidad',
+        type: 'number',
+        sort: false,
+      },
+      amountPayments: {
+        title: 'Monto',
+        type: 'number',
+        sort: false,
+        filter: false,
+      },
+      idwaste: {
+        title: 'Id Gasto',
+        type: 'number',
+        sort: false,
+      },
+      idCtldevpag: {
+        title: 'Id Pago',
+        type: 'number',
+        sort: false,
+      },
+      numberInvoicePay: {
+        title: 'Folio Pag.',
+        type: 'number',
+        sort: false,
+      },
+      datePay: {
+        title: 'Fecha Pago',
+        type: 'string',
+        sort: false,
+        filter: false,
+        valuePrepareFunction: (value: string) => {
+          if (!value) {
+            return '';
+          }
+          return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+        },
+      },
+      numberCheck: {
+        title: 'No. de Cheque',
+        type: 'number',
+        sort: false,
+      },
+      obscanc: {
+        title: 'Observaciones de Cancelación',
+        sort: false,
+        type: 'custom',
+        renderComponent: SeeMoreComponent,
+        valuePrepareFunction: (value: string) => {
+          if (value == 'null' || value == 'undefined') {
+            return '';
+          }
+
+          return value ? value : '';
+        },
+      },
+      _fis: {
+        title: 'FIS',
+        sort: false,
+        type: 'custom',
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction(instance: any) {
+          instance.toggle.subscribe((data: any) => {
+            console.log(data);
+          });
+        },
+      },
+      _cnt: {
+        title: 'CNT',
+        sort: false,
+        type: 'custom',
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction(instance: any) {
+          instance.toggle.subscribe((data: any) => {
+            console.log(data);
+          });
+        },
+      },
+      _pto: {
+        title: 'PTO',
+        sort: false,
+        type: 'custom',
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction(instance: any) {
+          instance.toggle.subscribe((data: any) => {
+            console.log(data);
+          });
+        },
+      },
+      _tsr: {
+        title: 'TSR',
+        sort: false,
+        type: 'custom',
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction(instance: any) {
+          instance.toggle.subscribe((data: any) => {
+            console.log(data);
+          });
+        },
+      },
+      selection: {
+        filter: false,
+        sort: false,
+        title: 'Selección',
+        type: 'custom',
+        showAlways: true,
+        width: '15%',
+        valuePrepareFunction: (isSelected: boolean, row: any) =>
+          this.isBankSelected(row),
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onBankSelect(instance),
+      },
+    };
     this.paymentSettings.columns = PAYMENT_COLUMNS;
   }
 
-  ngOnInit(): void {
-    // this.accountSettings.columns = this.modifyColumns(
-    //   this.accountSettings.columns
-    // );
-    // this.paymentSettings.columns = {
-    //   ...this.paymentSettings.columns,
-    //   validKey: {
-    //     title: 'Clave Válida',
-    //     type: 'custom',
-    //     sort: false,
-    //     renderComponent: CheckValidKeyComponent,
-    //   },
-    // };
-    this.tokenData = this.authService.decodeToken();
-    this.eventsTotalQuantity = 0;
-    this.eventsTotalAmount = 0;
-    this.prepareForm();
-    this.getData();
-    this.loadingDataTableControl();
-    this.loadingDataTableBank();
-    this.loadingDataTableBankAccount();
+  onBankSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.billingDetSelectedChange(data.row, data.toggle),
+    });
+  }
+  isBankSelected(data: any) {
+    const exists = this.selectBanksCheck.find(
+      (item: any) => item.idEvent == data.idEvent
+    );
+    return !exists ? false : true;
+  }
+  billingDetSelectedChange(data: any, selected: boolean) {
+    if (selected) {
+      this.selectBanksCheck.push(data);
+    } else {
+      this.selectBanksCheck = this.selectBanksCheck.filter(
+        (item: any) => item.detinvoiceId != data.detinvoiceId
+      );
+    }
   }
 
   onClickSelect(event: any) {
@@ -276,10 +412,75 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       });
     }
   }
+  ngOnInit(): void {
+    this.tokenData = this.authService.decodeToken();
+    this.getComerCtrlCreation('P');
+    this.eventsTotalQuantity = 0;
+    this.eventsTotalAmount = 0;
+    this.prepareForm();
+    this.getData();
+
+    this.loadingDataTableBank();
+    this.loadingDataTableBankAccount();
+  }
+  // COMER_CTLCREACION
+  async getComerCtrlCreation(status: string) {
+    if (!this.tokenData) {
+      this.alert(
+        'warning',
+        'Datos usuario actual',
+        'Error al obtener la información del usuario actual'
+      );
+      return;
+    }
+    let params1 = new ListParams();
+    params1['filter.user'] = `$eq:${this.tokenData.preferred_username}`;
+    params1['filter.indGuarantee'] = `$eq:1`;
+    // ID_ORIGEN = 1;
+    let res1 = await this.getCrtlCreate(params1);
+
+    let params2 = new ListParams();
+    params2['filter.user'] = `$eq:${this.tokenData.preferred_username}`;
+    params2['filter.inddisp'] = `$eq:1`;
+    // ID_ORIGEN = 2;
+    let res2 = await this.getCrtlCreate(params2);
+
+    if (res1 && res2) {
+      this.dataTableParamsControl.getValue()['filter.idOrigen'] = `$in:1,2`;
+    } else if (!res1 && res2) {
+      this.dataTableParamsControl.getValue()['filter.idOrigen'] = `$eq:2`;
+    } else if (res1 && !res2) {
+      this.dataTableParamsControl.getValue()['filter.idOrigen'] = `$eq:1`;
+    } else {
+      return;
+    }
+    if (status == 'P') {
+      this.dataTableParamsControl.getValue()['filter.idEstatus'] = `$eq:PROC`;
+    } else if (status == 'C') {
+      this.dataTableParamsControl.getValue()['filter.idEstatus'] = `$eq:CONC`;
+    } else {
+      delete this.dataTableParamsControl.getValue()['filter.idEstatus'];
+    }
+
+    this.loadingDataTableControl();
+  }
+
+  async getCrtlCreate(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.svPaymentDevolutionService.getEatCtlCreate_(params).subscribe({
+        next: (res: any) => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
 
   private prepareForm(): void {
     this.controlForm = this.fb.group({
-      filter: [null],
+      filter: ['P'],
     });
   }
 
@@ -293,142 +494,46 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.controlTotalItems = this.controlColumns.length;
   }
 
-  modifyColumns(columns: any) {
-    columns = {
-      fis: {
-        title: 'FIS',
-        type: 'custom',
-        sort: false,
-        renderComponent: TableCheckboxComponent,
-      },
-      cnt: {
-        title: 'CNT',
-        type: 'custom',
-        sort: false,
-        renderComponent: TableCheckboxComponent,
-      },
-      pto: {
-        title: 'PTO',
-        type: 'custom',
-        sort: false,
-        renderComponent: TableCheckboxComponent,
-      },
-      tsr: {
-        title: 'TSR',
-        type: 'custom',
-        sort: false,
-        renderComponent: TableCheckboxComponent,
-      },
-      ...columns,
-    };
-    delete columns.status;
-    return columns;
-  }
-
-  modifyStatus(columns: any[]) {
-    columns = columns.map((c, i) => {
-      let fis, cnt, pto, tsr: boolean;
-      // c.status == 'CHECK' ? (type = true) : (type = false);
-      switch (c.status) {
-        case 'FIS':
-          fis = true;
-          cnt = false;
-          pto = false;
-          tsr = false;
-          break;
-        case 'CNT':
-          fis = true;
-          cnt = true;
-          pto = false;
-          tsr = false;
-          break;
-        case 'PTO':
-          fis = true;
-          cnt = true;
-          pto = true;
-          tsr = false;
-          break;
-        case 'TSR':
-          fis = true;
-          cnt = true;
-          pto = true;
-          tsr = true;
-          break;
-        default:
-          break;
-      }
-      c = {
-        ...c,
-        fis: fis,
-        cnt: cnt,
-        pto: pto,
-        tsr: tsr,
-      };
-      delete c.status;
-      return c;
-    });
-    return columns;
-  }
-
-  getTotalQuantity(columns: any[]) {
-    let total: number = 0;
-    columns.forEach(c => {
-      total = total + c.quantity;
-    });
-    return total;
-  }
-
-  getTotalAmount(columns: any[]) {
-    let total: number = 0;
-    columns.forEach(c => {
-      total = total + c.amount;
-    });
-    return total;
-  }
-
   selectControl(event: any) {
-    // this.eventColumns = this.eventTestData;
-    // this.eventTotalItems = this.eventColumns.length;
-    // this.eventsTotalQuantity = this.getTotalQuantity(this.eventColumns);
-    // this.eventsTotalAmount = this.getTotalAmount(this.eventColumns);
-    // this.refundTabs.tabs[0].active = true;
-    // let { x, y } = this.tabsContainer.nativeElement.getBoundingClientRect();
-    // y = y - 300;
-    // window.scrollTo(x, y);
-    if (event.isSelected) {
+    if (event) {
+      this.selectRowCtrol = event.data;
       this.devolutionCtlDevPagId = event.data.ctlDevPagId;
-      this.loadingDataTableRelationEvent();
-    } else {
-      this.devolutionCtlDevPagId = null;
-      this.testDataRelationEvent = [];
-      this.dataTableRelationEvent.load([]);
-      this.totalRelationEvent = 0;
-      this.eventsTotalQuantity = 0;
-      this.eventsTotalAmount = 0;
+      this.getRelationEventData();
+      this.getBankData();
+      if (event.data.idEstatus == 'PROC') {
+        this.disabledBtn = true;
+      } else {
+        this.disabledBtn = false;
+      }
     }
-    console.log(
-      'CONTROL SELECTED ',
-      event,
-      this.dataTableControl,
-      this.devolutionCtlDevPagId
-    );
+    if (event.isSelected) {
+      // this.devolutionCtlDevPagId = event.data.ctlDevPagId;
+      // this.loadingDataTableRelationEvent();
+    } else {
+      // this.devolutionCtlDevPagId = null;
+      // this.testDataRelationEvent = [];
+      // this.dataTableRelationEvent.load([]);
+      // this.totalRelationEvent = 0;
+      // this.eventsTotalQuantity = 0;
+      // this.eventsTotalAmount = 0;
+    }
+    // console.log(
+    //   'CONTROL SELECTED ',
+    //   event,
+    //   this.dataTableControl,
+    //   this.devolutionCtlDevPagId
+    // );
   }
 
   selectRelatedEvent(rows: any[]) {
-    // // this.accountColumns = this.accountTestData;
-    // this.accountColumns = this.modifyStatus(this.accountColumns);
-    // this.accountTotalItems = this.accountColumns.length;
-    // this.accountsTotalQuantity = this.getTotalQuantity(this.accountColumns);
-    // this.accountsTotalAmount = this.getTotalAmount(this.accountColumns);
-    // // this.paymentColumns = this.paymentTestData;
-    // this.paymentTotalItems = this.paymentColumns.length;
-    // this.paymentsTotalAmount = this.getTotalAmount(this.paymentColumns);
-    // this.refundTabs.tabs[1].active = true;
     console.log('EVENTS SELECTED ', rows);
   }
 
-  selectAccounts(rows: any[]) {
-    this.selectedAccounts = rows;
+  selectAccounts(event: any) {
+    this.selectedAccountB = event;
+    if (event) {
+      this.getBankAccountData();
+    }
   }
 
   selectPayment(rows: any[]) {
@@ -442,10 +547,11 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.paymentTotalItems = this.paymentColumns.length;
   }
 
+  // PUP_ACT_HEADER
   filter(event: Event) {
     let { value } = event.target as HTMLInputElement;
     console.log(value, this.controlForm.get('filter').value);
-    this.loadingDataTableControl();
+    this.getComerCtrlCreation(value);
   }
 
   refresh() {
@@ -466,33 +572,37 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       .getEatCtlCreate(this.tokenData.preferred_username)
       .subscribe({
         next: (res: any) => {
-          console.log('DATA Control Modal', res);
-          this.openControlModal(res.data.indGuarantee, res.data.inddisp);
+          // console.log('DATA Control Modal', res);
+          this.openControlModal(res.indGuarantee, res.inddisp);
         },
         error: error => {
-          console.log(error);
-          this.openControlModal(1, 1);
+          // console.log(error);
+          this.openControlModal(0, 0);
         },
       });
   }
 
   openControlModal(ind_garant: number, ind_disp: number) {
-    const modalRef = this.modalService.show(CreateControlModalComponent, {
-      initialState: {
-        ind_garant,
-        ind_disp,
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.onControlAdded.subscribe((data: boolean) => {
-      if (data) this.getData();
-    });
+    if (ind_garant != 0 && ind_disp != 0) {
+      const modalRef = this.modalService.show(CreateControlModalComponent, {
+        initialState: {
+          ind_garant,
+          ind_disp,
+        },
+        class: 'modal-xl modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+      modalRef.content.onControlAdded.subscribe((data: boolean) => {
+        if (data) this.getControlData();
+      });
+    } else {
+      this.alert('warning', 'No cuenta con permisos de creación', '');
+    }
   }
 
   openCreationModal() {
-    const modalRef = this.modalService.show(CreationPermissionsModalComponent, {
-      class: 'modal-lg modal-dialog-centered',
+    const modalRef = this.modalService.show(TablePermissionsModalComponent, {
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     });
   }
@@ -527,12 +637,64 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     });
   }
 
-  changeLayout(layout: string) {
-    this.layout = layout;
+  changeLayout() {
+    this.router.navigate(
+      ['/pages/commercialization/layouts-configuration']
+      // {
+      //   queryParams: {
+      //   },
+      // }
+    );
   }
 
-  sendRequests() {}
+  async sendRequests() {
+    const dataBanks = await this.dataTableBank.getAll();
+    const dataEvents = await this.dataTableRelationEvent.getAll();
+    // GO_BLOCK('COMER_CTLDEVPAG_B');
+    if (dataBanks.length == 0) {
+      this.alert(
+        'warning',
+        'No hay registros cargados en la tabla "Control de Devoluciones"',
+        ''
+      );
+      return;
+    }
+    if (this.selectBanksCheck.length == 0) {
+      return this.alert(
+        'warning',
+        'No se tienen registros de Bancos a procesar.',
+        'Selecciona por lo menos un registro de la tabla "Control de Devoluciones"'
+      );
+    }
 
+    this.alertQuestion(
+      'question',
+      'Envío de Solicitudes de Gasto a SIRSAE',
+      '¿Desear Continua?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        let result = dataBanks.map(async item => {
+          if (item.idwaste && item.idCtldevpag) {
+            // PUP_ENVIAR_SIRSAE
+            let body = {};
+            await this.pupSendSirsae(body);
+            if (item.idOrigen == 2) {
+            }
+          }
+        });
+
+        Promise.all(result).then(res => {
+          this.alert('success', 'Proceso terminado', '');
+        });
+      }
+    });
+  }
+  // PUP_ENVIAR_SIRSAE
+  async pupSendSirsae(data: any) {
+    return new Promise((resolve, reject) => {
+      // ENDPOINT EDWIN //
+    });
+  }
   formatTotalAmount(numberParam: number) {
     if (numberParam) {
       return new Intl.NumberFormat('es-MX').format(numberParam);
@@ -561,12 +723,23 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               cveCtlDevPag: () => (searchFilter = SearchFilter.ILIKE),
               idEstatus: () => (searchFilter = SearchFilter.EQ),
               direccion: () => (searchFilter = SearchFilter.EQ),
+              fecCreacion: () => (searchFilter = SearchFilter.EQ),
+              fecTermino: () => (searchFilter = SearchFilter.EQ),
               idTipoDisp: () => (searchFilter = SearchFilter.EQ),
               idOrigen: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
             if (filter.search !== '') {
+              if (
+                filter.field == 'fecCreacion' ||
+                filter.field == 'fecTermino'
+              ) {
+                filter.search = this.datePipe.transform(
+                  filter.search,
+                  'yyyy-MM-dd'
+                );
+              }
               this.columnFiltersControl[
                 field
               ] = `${searchFilter}:${filter.search}`;
@@ -581,15 +754,15 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           this.getControlData();
         }
       });
-    console.log(this.controlForm.get('filter').value);
+    // console.log(this.controlForm.get('filter').value);
     if (this.controlForm.get('filter').value) {
-      this.columnFiltersControl['filter.idEstatus'] = `${
-        this.controlForm.get('filter').value == 'P'
-          ? '$eq:PROC'
-          : this.controlForm.get('filter').value == 'C'
-          ? '$eq:CONC'
-          : '$ilike:'
-      }`;
+      // this.columnFiltersControl['filter.idEstatus'] = `${
+      //   this.controlForm.get('filter').value == 'P'
+      //     ? '$eq:PROC'
+      //     : this.controlForm.get('filter').value == 'C'
+      //     ? '$eq:CONC'
+      //     : '$ilike:'
+      // }`;
     }
     // this.columnFiltersControl['filter.creationdate'] = `$order:desc`;
     //observador para el paginado
@@ -604,10 +777,12 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       ...this.dataTableParamsControl.getValue(),
       ...this.columnFiltersControl,
     };
-    console.log('PARAMS ', params);
+    params['sortBy'] = `ctlDevPagId:DESC`;
+    // params['filter.idEstatus'] = `$eq:PROC`
+    // console.log('PARAMS ', params);
     this.svPaymentDevolutionService.getCtlDevPagH(params).subscribe({
       next: res => {
-        console.log('DATA Control', res);
+        // console.log('DATA Control', res);
         this.testDataControl = res.data.map((i: any) => {
           const index2: number = this.selectedControl.findIndex(
             (_data: any) => _data.ctlDevPagId == i.ctlDevPagId
@@ -672,15 +847,13 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           this.getRelationEventData();
         }
       });
-    if (this.devolutionCtlDevPagId) {
-      this.columnFiltersRelationEvent[
-        'filter.ctlDevPagId'
-      ] = `$eq:${this.devolutionCtlDevPagId}`;
-    }
+
     //observador para el paginado
     this.dataTableParamsRelationEvent
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRelationEventData());
+      .subscribe(() => {
+        if (this.totalRelationEvent > 0) this.getRelationEventData();
+      });
   }
 
   getRelationEventData() {
@@ -689,13 +862,16 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       ...this.dataTableParamsRelationEvent.getValue(),
       ...this.columnFiltersRelationEvent,
     };
+    // if (this.devolutionCtlDevPagId) {
+    params['filter.ctlDevPagId'] = `$eq:${this.selectRowCtrol.ctlDevPagId}`;
+    // }
     // let params_1 = new ListParams();
     // params_1 = { ...params };
     // console.log('PARAMS ', params, params_1);
     this.svPaymentDevolutionService.getEatCtlPagE(params).subscribe({
       next: (res: any) => {
         console.log('DATA RelationEvent', res);
-        this.testDataRelationEvent = res.data.map((i: any) => {
+        let result = res.data.map((i: any) => {
           const index2: number = this.selectedEvents.findIndex(
             (_data: any) => _data.ctlDevPagId == i.ctlDevPagId
           );
@@ -707,16 +883,20 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
             return i;
           }
         });
-        this.dataTableRelationEvent.load(this.testDataRelationEvent);
-        this.totalRelationEvent = res.count;
-        this.eventsTotalQuantity = res.numPaymentsTotal;
-        this.eventsTotalAmount = res.paymentsAmountTotal;
-        this.loadingRelationEvent = false;
+        Promise.all(result).then(resp => {
+          this.dataTableRelationEvent.load(res.data);
+          this.dataTableRelationEvent.refresh();
+          this.totalRelationEvent = res.count;
+          this.eventsTotalQuantity = res.numPaymentsTotal;
+          this.eventsTotalAmount = res.paymentsAmountTotal;
+          this.loadingRelationEvent = false;
+        });
       },
       error: error => {
         console.log(error);
         this.testDataRelationEvent = [];
         this.dataTableRelationEvent.load([]);
+        this.dataTableRelationEvent.refresh();
         this.totalRelationEvent = 0;
         this.eventsTotalQuantity = 0;
         this.eventsTotalAmount = 0;
@@ -767,7 +947,9 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     //observador para el paginado
     this.dataTableParamsBank
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getBankData());
+      .subscribe(() => {
+        if (this.accountTotalItems > 0) this.getBankData();
+      });
   }
 
   getBankData() {
@@ -776,26 +958,32 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       ...this.dataTableParamsBank.getValue(),
       ...this.columnFiltersBank,
     };
+    params['filter.idCtldevpag'] = `$eq:${this.selectRowCtrol.ctlDevPagId}`;
+    // idCtldevpag
     this.svPaymentService.getCtlDevPagBfindAllRegistersV2(params).subscribe({
       next: (res: any) => {
         console.log('DATA Bank', res);
-        this.testDataBank = res.data.map((i: any) => {
+        let result = res.data.map((i: any) => {
           i['_fis'] = i.indfis;
           i['_cnt'] = i.indcnt;
           i['_pto'] = i.indpt;
           i['_tsr'] = i.indtsr;
-          return i;
+          // return i;
         });
-        this.dataTableBank.load(this.testDataBank);
-        this.accountTotalItems = res.count;
-        this.accountsTotalQuantity = res.totalCountPayments;
-        this.accountsTotalAmount = res.totalAmountPayments;
-        this.loadingBank = false;
+        Promise.all(result).then(resp => {
+          this.dataTableBank.load(res.data);
+          this.dataTableBank.refresh();
+          this.accountTotalItems = res.count;
+          this.accountsTotalQuantity = res.totalCountPayments;
+          this.accountsTotalAmount = res.totalAmountPayments;
+          this.loadingBank = false;
+        });
       },
       error: error => {
         console.log(error);
         this.testDataBank = [];
         this.dataTableBank.load([]);
+        this.dataTableBank.refresh();
         this.accountTotalItems = 0;
         this.accountsTotalQuantity = 0;
         this.accountsTotalAmount = 0;
@@ -843,7 +1031,9 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     //observador para el paginado
     this.dataTableParamsBankAccount
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getBankAccountData());
+      .subscribe(() => {
+        if (this.accountTotalItemsP > 0) this.getBankAccountData();
+      });
   }
 
   getBankAccountData() {
@@ -852,13 +1042,18 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       ...this.dataTableParamsBankAccount.getValue(),
       ...this.columnFiltersBankAccount,
     };
+    params[
+      'filter.devPaymentControlId'
+    ] = `$eq:${this.selectedAccountB.idCtldevpag}`;
+    params['filter.account'] = `$eq:${this.selectedAccountB.account}`;
+    params['filter.bankCode'] = `$eq:${this.selectedAccountB.cveBank}`;
     // CONSULTAR LA VISTA VW_COMER_CTLDEVPAG_P
     this.svPaymentDevolutionService.getCtlDevPagP(params).subscribe({
       next: (res: any) => {
         console.log('DATA BankAccount', res);
         this.testDataBankAccount = res.data;
         this.dataTableBankAccount.load(this.testDataBankAccount);
-        this.accountTotalItems = res.count;
+        this.accountTotalItemsP = res.count;
         this.totalAmountAccount = res.paymentsAmountTotal;
         this.loadingBankAccount = false;
       },
@@ -866,61 +1061,141 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         console.log(error);
         this.testDataBankAccount = [];
         this.dataTableBankAccount.load([]);
-        this.accountTotalItems = 0;
+        this.accountTotalItemsP = 0;
         this.totalAmountAccount = 0;
         this.loadingBankAccount = false;
       },
     });
   }
-  requestSpentGenerator() {
-    if (this.selectedControl.length == 0) {
+
+  async requestSpentGenerator() {
+    const dataBanks = await this.dataTableBank.getAll();
+    const dataEvents = await this.dataTableRelationEvent.getAll();
+    let n_MONTO_PAGOS: number;
+    let n_CANT_PAGOS: number;
+    // GO_BLOCK('COMER_CTLDEVPAG_B');
+    if (dataBanks.length == 0) {
       this.alert(
         'warning',
-        'No se tienen registros de bancos a procesar',
+        'No hay registros cargados en la tabla "Control de Devoluciones"',
+        ''
+      );
+      return;
+    }
+    if (this.selectBanksCheck.length == 0) {
+      return this.alert(
+        'warning',
+        'No se tienen registros de Bancos a procesar.',
         'Selecciona por lo menos un registro de la tabla "Control de Devoluciones"'
       );
-      return;
     }
-    if (this.selectedEvents.length == 0) {
-      this.alert('warning', 'No se tienen eventos relacionados', '');
-      return;
+    // GO_BLOCK('COMER_CTLDEVPAG_E');
+    if (dataEvents.length == 0) {
+      this.alert('warning', 'No se tienen Eventos relacionados.', '');
     }
+    let arrEvents = [];
+    let c_REL_EVENTOS = '';
+    for (const event of dataEvents) {
+      arrEvents.push(event.event);
+    }
+
+    let c_DESC_RECIBO = await this.getDescRecibo();
+    this.blkBankPays = [];
+
+    let result = this.selectBanksCheck.map(async item => {
+      // COMER_CTLDEVPAG_H.ID_ORIGEN = 1
+      if (this.selectRowCtrol.idOrigen == 1) {
+        let resBank: any = await this.catBanks();
+        let objCreate = {
+          CLKPV: resBank.CLKPV,
+          NOMBREPROV: resBank.NOMBREPROV,
+          CVE_BANCO: item.cveBank,
+          CUENTA: item.account,
+          MONTO: item.amountPayments,
+          COMENTARIO: `${item.cveBank} DEVOLUCIÓN DE DEPÓSITO POR CONCEPTO DE GARANTIA DE SERIEDAD CORRESPONDIENTE A LA
+          ${c_DESC_RECIBO} ${this.selectRowCtrol.cveCtlDevPag} (${c_REL_EVENTOS}) DE ${item.countPayments} PAGOS`,
+          DOCUMENTACION_ANEXA: `RELACIÓN DE DEVOLUCIONES DE GARANTIAS DE SERIEDAD DE LA ${this.selectRowCtrol.cveCtlDevPag}
+          (${c_REL_EVENTOS}), DEPOSITADAS EN LA CUENTA DE ${resBank.NOMBREPROV} |${item.cveBank}|`,
+        };
+      } else {
+        n_MONTO_PAGOS = n_MONTO_PAGOS + Number(item.amountPayments);
+        n_CANT_PAGOS = n_CANT_PAGOS + Number(item.countPayments);
+      }
+    });
+    Promise.all(result).then(res => {
+      if (this.selectRowCtrol.idOrigen == 1) {
+        // :COMER_GASTOS.ID_EVENTO := 9999999;
+        // :COMER_GASTOS.DIRECCION := 'M';
+        // :COMER_GASTOS.ID_CONCEPTO := 544;
+        // :COMER_GASTOS.DESC_CONCEPTO := 'PAGO POR CONCEPTO DE GARANTÍAS';
+      } else {
+        // :COMER_GASTOS.ID_EVENTO := n_EVENTO;
+        // SELECT DIRECCION
+        //   INTO :COMER_GASTOS.DIRECCION
+        //   FROM COMER_EVENTOS
+        // WHERE ID_EVENTO = n_EVENTO;
+        // :COMER_GASTOS.ID_CONCEPTO := 21;
+        // :COMER_GASTOS.DESC_CONCEPTO := 'PAGO POR CONCEPTO DE PAGO EN EXCESO';
+        // /* << JACG 15-05-19 Se actualiza la dirección del Evento para CLientes ganadores. */
+        // IF n_MONTO_PAGOS > 0 THEN
+        //   :BLK_BANCO_PAGOS.CLKPV := 19819;
+        //   :BLK_BANCO_PAGOS.NOMBREPROV := 'BANAMEX PORTAL SAE';
+        //   :BLK_BANCO_PAGOS.CVE_BANCO := 'BANAMEX PS';
+        //   :BLK_BANCO_PAGOS.CUENTA := '7007-1894728';
+        //   :BLK_BANCO_PAGOS.MONTO := n_MONTO_PAGOS;
+        //   :BLK_BANCO_PAGOS.COMENTARIO := SUBSTR('|'||'SAE'||
+        //                                   '| DEVOLUCIÓN DE PAGOS EN EXCESO CORRESPONDIENTE A LA '||
+        //                                   c_DESC_RECIBO||' '||:COMER_CTLDEVPAG_H.CVE_CTLDEVPAG||' ('||c_REL_EVENTOS||') DE '||
+        //                                   n_CANT_PAGOS||' PAGOS',1,255);
+        //   :BLK_BANCO_PAGOS.DOCUMENTACION_ANEXA := SUBSTR('RELACIÓN DE PAGOS EN EXCESO DE LA '||
+        //                                           :COMER_CTLDEVPAG_H.CVE_CTLDEVPAG||' ('||c_REL_EVENTOS||')',1,255);
+        // END IF;
+      }
+    });
+  }
+  async getDescRecibo() {
+    // SELECT DESC_RECIBO
+    //   INTO c_DESC_RECIBO
+    //   FROM COMER_TPEVENTOS
+    //   WHERE ID_TPEVENTO = (SELECT ID_TPEVENTO
+    //                         FROM COMER_EVENTOS
+    //                         WHERE ID_EVENTO = :COMER_CTLDEVPAG_E.ID_EVENTO);
+  }
+  async catBanks() {
+    // SELECT ID_PROVEEDOR,
+    //       NOMBRE
+    // INTO :BLK_BANCO_PAGOS.CLKPV,
+    //       :BLK_BANCO_PAGOS.NOMBREPROV
+    // FROM CAT_BANCOS
+    // WHERE CVE_BANCO = :COMER_CTLDEVPAG_B.CVE_BANCO;
   }
   referenceRequestExpensesPayments() {
-    // http://sigebimstest.indep.gob.mx/payment/api/v1/application/exp-ref-sol/42
-    console.log(this.selectedAccounts);
-
-    let nameTable = '"Cuentas de Banco Relacionadas"';
-    if (this.selectedAccounts.length == 0) {
-      this.alert(
+    if (!this.selectRowCtrol) {
+      this.alertInfo(
         'warning',
-        'No se tiene ' + nameTable + ' seleccionadas',
-        'Selecciona un registro de la tabla ' + nameTable
-      );
-      return;
-    }
-    if (this.selectedAccounts.length > 1) {
-      this.alert(
-        'warning',
-        'No se pueden seleccionar varias ' + nameTable + ' seleccionadas',
-        'Selecciona solo un registro de la tabla ' + nameTable
-      );
+        'Debe seleccionar un registro de la tabla Control de Devoluciones',
+        ''
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(0);
+        }
+      });
       return;
     }
     // PUP_EXP_CSV_REFSOL
     this.alertQuestion(
-      'warning',
-      '¿Desea continuar con la generación del archivo?',
-      ''
+      'question',
+      'Se generará el archivo',
+      '¿Desea Continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         this.loadingreferenceRequest = true;
         this.svPaymentService
-          .getExpRefSol(this.selectedAccounts[0].idCtldevpag)
+          .getExpRefSol(this.selectRowCtrol.ctlDevPagId)
           .subscribe({
             next: (data: any) => {
               this.loadingreferenceRequest = false;
-              console.log(data);
+              // console.log(data);
 
               this.alert('success', 'Archivo generado correctamente', ``);
               this.downloadFile(
@@ -930,11 +1205,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
             },
             error: error => {
               this.loadingreferenceRequest = false;
-              this.alert(
-                'error',
-                'Error al generar el archivo',
-                'Ocurrió un error al generar el archivo'
-              );
+              this.alert('error', 'Error al generar el archivo', '');
             },
           });
       }
@@ -949,33 +1220,102 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     downloadLink.click();
     downloadLink.remove();
   }
-  verifyPaysSirsae() {
-    let nameTable = '"Cuentas de Banco Relacionadas"';
-    if (this.selectedAccounts.length == 0) {
+  async verifyPaysSirsae() {
+    const dataBanks = await this.dataTableBank.getAll();
+    const dataEvents = await this.dataTableRelationEvent.getAll();
+    // GO_BLOCK('COMER_CTLDEVPAG_B');
+    if (dataBanks.length == 0) {
       this.alert(
         'warning',
-        'No se tiene ' + nameTable + ' seleccionadas',
-        'Selecciona un registro de la tabla ' + nameTable
+        'No hay registros cargados en la tabla "Control de Devoluciones"',
+        ''
       );
       return;
     }
-    if (this.selectedAccounts.length > 1) {
-      this.alert(
+    if (this.selectBanksCheck.length == 0) {
+      return this.alert(
         'warning',
-        'No se pueden seleccionar varias ' + nameTable + ' seleccionadas',
-        'Selecciona solo un registro de la tabla ' + nameTable
+        'No se tienen registros de Bancos a procesar.',
+        'Selecciona por lo menos un registro de la tabla "Control de Devoluciones"'
       );
-      return;
     }
-    // PUP_EXP_CSV_REFSOL
+
     this.alertQuestion(
-      'warning',
-      '¿Desea continuar con la generación del archivo?',
-      ''
-    ).then(question => {
+      'question',
+      'Verificación de pagos en SIRSAE',
+      '¿Desear Continua?'
+    ).then(async question => {
       if (question.isConfirmed) {
-        this.startVariableVerifyPays();
+        // PUP_VERIF_PAGO_SIRSAE
+        let respuesta: boolean = true;
+        let result = dataBanks.map(async item => {
+          let body = {};
+          let res: boolean = await this.verifySirsae(body);
+          if (!res) {
+            respuesta = res;
+            return;
+          }
+        });
+        Promise.all(result).then(async res => {
+          if (!respuesta)
+            return this.alert(
+              'warning',
+              'Ocurrió un error al intentar verificar pagos en SIRSAE',
+              ''
+            );
+
+          await this.continueVerifySirsae();
+        });
+        // this.startVariableVerifyPays(); // Antiguo llamado de serivicio
       }
+    });
+  }
+
+  async continueVerifySirsae() {
+    let n_ID_CTLDEVPAG: any;
+    // -- VERIFICA TODOS LOS PAGOS PARA CAMBIO DE ESTATUS DE CONTROL --
+    let counts: any = await this.getCounts();
+    if (counts.n_CONTT == counts.n_CONTF && counts.n_CONTT > 0) {
+      n_ID_CTLDEVPAG = this.selectRowCtrol.ctlDevPagId;
+      let res = await this.updateCtrlDevPagH();
+      this.filterActHeader('I');
+    } else {
+      this.dataTableBank.load([]);
+      this.dataTableBank.refresh();
+      this.accountTotalItems = 0;
+    }
+    this.alert('success', 'Proceso terminado', '');
+  }
+
+  // UPDATE - COMER_CTLDEVPAG_H //
+  updateCtrlDevPagH() {
+    return new Promise((resolve, reject) => {
+      // UPDATE COMER_CTLDEVPAG_H
+      //       SET ID_ESTATUS = 'CONC',
+      //           FEC_TERMINO = SYSDATE
+      //     WHERE ID_CTLDEVPAG = n_ID_CTLDEVPAG;
+      resolve(true);
+    });
+  }
+
+  getCounts() {
+    // EDWIN
+    return new Promise((resolve, reject) => {
+      resolve({});
+    });
+    //     SELECT COUNT(0),
+    //           NVL(SUM(DECODE(DECODE(OBS_CANC,NULL,0,1)+DECODE(NVL(IND_TSR,0),1,1,0),0,0,1)),0)
+    // --             COUNT(NO_FOLIO_PAGO)
+    //     INTO n_CONTT,
+    //           n_CONTF
+    //     FROM COMER_CTLDEVPAG_B
+    //     WHERE ID_CTLDEVPAG = :COMER_CTLDEVPAG_H.ID_CTLDEVPAG;
+  }
+  verifySirsae(body: any): Promise<boolean> {
+    // PUP_VERIF_PAGO_SIRSAE
+    // EDWIN
+    return new Promise<boolean>((resolve, reject) => {
+      resolve(true);
     });
   }
   startVariableVerifyPays() {
@@ -1003,4 +1343,70 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       });
   }
   endSendVerifyPays() {}
+
+  // PUP_ACT_HEADER
+  filterActHeader(event: string) {
+    this.controlForm.get('filter').setValue(event);
+    this.getComerCtrlCreation(event);
+  }
+
+  generateFile1() {
+    if (!this.selectRowCtrol) {
+      this.alertInfo(
+        'warning',
+        'Debe seleccionar un registro de la tabla Control de Devoluciones',
+        ''
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(0);
+        }
+      });
+      return;
+    }
+    let body = {
+      originId: this.selectRowCtrol.idOrigen,
+      ctldevpagId: this.selectRowCtrol.ctlDevPagId,
+      crldevpagKey: this.selectRowCtrol.cveCtlDevPag,
+    };
+    this.alertQuestion(
+      'question',
+      'Se generará el archivo',
+      '¿Desea Continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        // PUP_EXP_CSV_RELDEVGAR
+        this.massiveGoodService.applicationPupExpCsvReldevgar(body).subscribe({
+          next: (data: any) => {
+            // this.loadingreferenceRequest = false;
+            // console.log(data);
+
+            this.alert('success', 'Archivo generado correctamente', ``);
+            this.downloadFile(
+              data.base64,
+              `RELACIÓN_DE_DEVOLUCIONES_DE_GARANTIA_DE_SERIEDAD`
+            );
+          },
+          error: error => {
+            // this.loadingreferenceRequest = false;
+            this.alert('error', 'Error al generar el archivo', '');
+          },
+        });
+      }
+    });
+  }
+  generateFile2() {
+    this.alertQuestion(
+      'question',
+      'Se generarán los Layouts',
+      '¿Desea Continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+      }
+    });
+  }
+
+  async cambiarTab(numberTab: any) {
+    console.log(numberTab);
+    this.refundTabs.tabs[numberTab].active = true;
+  }
 }

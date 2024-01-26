@@ -4,7 +4,7 @@ import {
   IListResponse,
   IListResponseMessage,
 } from '../../interfaces/list-response.interface';
-import { IParameterMod } from '../../models/ms-comer-concepts/parameter-mod.model';
+import { IParameterMod2 } from '../../models/ms-comer-concepts/parameter-mod.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +17,10 @@ export class ParametersModService extends HttpService {
   }
 
   getAll(params?: _Params) {
-    return this.get<IListResponseMessage<IParameterMod>>(this.endpoint, params);
+    return this.get<IListResponseMessage<IParameterMod2>>(
+      this.endpoint,
+      params
+    );
   }
 
   private getAddress(address: string) {
@@ -42,7 +45,7 @@ export class ParametersModService extends HttpService {
   }
 
   getAllFilter(params?: _Params) {
-    return this.get<IListResponse<IParameterMod>>(this.endpoint, params);
+    return this.get<IListResponse<any>>(this.endpoint, params);
   }
 
   getByParameter(parameter: string) {

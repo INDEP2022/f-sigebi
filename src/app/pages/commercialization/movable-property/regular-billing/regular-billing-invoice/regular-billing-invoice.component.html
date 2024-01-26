@@ -86,11 +86,15 @@
                   </button>
                   <!-- LISTO -->
                   <button
+                    [ngClass]="{ loading: btnLoading2 }"
+                    [disabled]="btnLoading2"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="imprimeInvoice()">
                     Imprime Factura
-                    <i class="bx bx-printer bx-sm float-icon"></i>
+                    <i
+                      *ngIf="!btnLoading2"
+                      class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                   <!-- LISTO -->
                   <form-check label="Solo Fact." for="label">
