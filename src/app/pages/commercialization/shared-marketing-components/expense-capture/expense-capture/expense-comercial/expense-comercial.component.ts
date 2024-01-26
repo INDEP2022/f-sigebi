@@ -17,7 +17,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IEatConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
-import { IParameterMod2 } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -1224,43 +1223,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         this.dataService.SELECT_CAMBIA_CLASIF_UPDATE = true;
       }
     }
-  }
-
-  private async fillOthersParameters() {
-    const filterParams = new FilterParams();
-    filterParams.addFilter('parameter', 'CHCONIVA,IVA', SearchFilter.IN);
-    return firstValueFrom(
-      this.parameterModService.getAll(filterParams.getParams()).pipe(
-        take(1),
-        catchError(x => of({ data: [] as IParameterMod2[], message: x })),
-        map(response => {
-          let data = response.data;
-          let success;
-          if (data.length > 0) {
-            this.dataService.CHCONIVA = data.find(
-              x => x.parameter === 'CHCONIVA'
-            ).value;
-            const iva = data.find(x => x.parameter === 'IVA');
-            if (iva) {
-              this.dataService.IVA = iva.value ? +iva.value / 100 : 0;
-            } else {
-              this.dataService.IVA = 0;
-            }
-
-            success = true;
-          } else {
-            this.dataService.CHCONIVA = null;
-            this.dataService.IVA = 0;
-            success = false;
-          }
-          if (this.dataService.CHCONIVA === null)
-            this.alert('warning', 'No tiene parámetro CHCONIVA', '');
-          if (this.dataService.IVA === 0)
-            this.alert('warning', 'No tiene parámetro IVA', '');
-          return success;
-        })
-      )
-    );
   }
 
   get numReceipts() {
