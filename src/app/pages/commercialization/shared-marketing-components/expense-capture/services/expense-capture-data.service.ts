@@ -76,8 +76,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   PNOENVIASIRSAE: string;
   PDEVPARCIALBIEN: string;
   PVALIDADET: string;
-  CHCONIVA: string;
-  IVA: number;
   LS_ESTATUS: string;
   V_VALCON_ROBO = 0;
   amount = 0;
@@ -170,8 +168,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.PNOENVIASIRSAE = undefined;
     this.PDEVPARCIALBIEN = undefined;
     this.PVALIDADET = undefined;
-    this.CHCONIVA = undefined;
-    this.IVA = undefined;
     this.V_VALCON_ROBO = 0;
     this.amount = 0;
     this.vat = 0;
@@ -268,8 +264,6 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.PNOENVIASIRSAE = 'N';
     this.PDEVPARCIALBIEN = 'N';
     this.PVALIDADET = 'N';
-    this.CHCONIVA = 'N';
-    this.IVA = 0;
   }
 
   private fillParams(row: IReadParameter, updateComposition: boolean = true) {
@@ -1517,7 +1511,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         pEventId: this.eventNumber.value,
         pLotPub: this.publicLot.value,
         pSpentId: this.expenseNumber.value,
-        pTotIva: this.IVA,
+        pTotIva: this.vat,
         pTotMonto: this.amount,
         pTotTot: this.total,
         pConceptId: this.conceptNumber.value,
