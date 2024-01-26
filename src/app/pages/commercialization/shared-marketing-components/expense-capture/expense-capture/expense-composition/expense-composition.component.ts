@@ -448,14 +448,6 @@ export class ExpenseCompositionComponent
     return this.expenseCaptureDataService.PDEVPARCIALBIEN;
   }
 
-  get CHCONIVA() {
-    return this.expenseCaptureDataService.CHCONIVA;
-  }
-
-  get IVA() {
-    return this.expenseCaptureDataService.IVA;
-  }
-
   get form() {
     return this.expenseCaptureDataService.form;
   }
@@ -991,8 +983,6 @@ export class ExpenseCompositionComponent
       eventNumber: this.eventNumber,
       conceptNumber: this.conceptNumber.value,
       lotNumber: this.lotNumber.value,
-      CHCONIVA: this.expenseCaptureDataService.CHCONIVA,
-      IVA: this.expenseCaptureDataService.IVA,
       address: this.address,
       V_VALCON_ROBO: this.expenseCaptureDataService.V_VALCON_ROBO,
       chargeGoodsByLote: this.chargeGoodsByLote,
@@ -1025,8 +1015,6 @@ export class ExpenseCompositionComponent
       conceptNumber: this.conceptNumber.value,
       lotNumber: this.lotNumber.value,
       comerDetExpense: row,
-      CHCONIVA: this.expenseCaptureDataService.CHCONIVA,
-      IVA: this.expenseCaptureDataService.IVA,
       address: this.address,
       chargeGoodsByLote: this.chargeGoodsByLote,
       data: this.data,
@@ -1228,14 +1216,10 @@ export class ExpenseCompositionComponent
     this.loading = true;
     let params = this.getParams();
     this.dataService
-      .getAll(
-        this.expenseNumber.value,
-        this.PVALIDADET,
-        this.PDEVPARCIALBIEN,
-        this.CHCONIVA,
-        this.IVA,
-        { ...params, limit: 1000000 }
-      )
+      .getAll(this.expense, this.PVALIDADET, this.PDEVPARCIALBIEN, {
+        ...params,
+        limit: 1000000,
+      })
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
