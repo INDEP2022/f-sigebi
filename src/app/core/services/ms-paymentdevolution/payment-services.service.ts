@@ -61,4 +61,38 @@ export class PaymentDevolutionService extends HttpService {
       data
     );
   }
+  applicationPupExpCsvReldevGar(data: any) {
+    return this.post(
+      `${PaymentDevolutionEndPoints.ApplicationPupExpCsvReldevGar2}`,
+      data
+    );
+  }
+
+  getCtlDevPagP_(params: any) {
+    return this.get(`${PaymentDevolutionEndPoints.ComerCtldevpagP}`, params);
+  }
+
+  getApplicationVwComerCtldevPagp(params: _Params) {
+    return this.get(
+      `${PaymentDevolutionEndPoints.ApplicationVwComerCtldevPagp}`,
+      params
+    );
+  }
+
+  getvwComerPaymenttobeReturned(params: any) {
+    return this.post(
+      `${PaymentDevolutionEndPoints.ApplicationGetvwComerPaymenttobeReturned}`,
+      params
+    );
+  }
+
+  getApplicationGetComerCtldevpagb(id: number | string) {
+    return this.get(
+      `${PaymentDevolutionEndPoints.ApplicationGetComerCtldevpagb}/${id}`
+    );
+  }
+
+  updateCtlDevPagH(data: any, id: number | string) {
+    return this.put(`${PaymentDevolutionEndPoints.EatCtldevpagH}/${id}`, data);
+  }
 }
