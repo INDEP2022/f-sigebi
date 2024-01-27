@@ -202,6 +202,7 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
 
   search() {
     this.btnLoading = true;
+    this.loadingControl = true;
     let params = {
       dispTypeId: this.controlForm.get('dispersionType').value,
       originId: this.controlForm.get('origin').value,
@@ -212,6 +213,10 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
         if (res.data == 0) {
           this.alert('warning', 'No se tienen Eventos con este criterio.', '');
           this.btnLoading = false;
+          this.loadingControl = false;
+          // this.dataTableControl.load([]);
+          // this.dataTableControl.refresh();
+          // this.totalControl = 0;
         } else {
           this.controlForm.get('key').setValue('');
           this.controlForm.get('txtBan').setValue('0');
@@ -221,6 +226,10 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
       error: error => {
         this.alert('warning', 'No se tienen Eventos con este criterio.', '');
         this.btnLoading = false;
+        this.loadingControl = false;
+        // this.dataTableControl.load([]);
+        // this.dataTableControl.refresh();
+        // this.totalControl = 0;
       },
     });
   }
@@ -314,7 +323,7 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
       ...this.dataTableParamsControl.getValue(),
       ...this.columnFiltersControl,
     };
-    this.loadingControl = false;
+    // this.loadingControl = false;
     const { dispersionType, origin, direction } = this.controlForm.value;
     params['filter.typeDisp'] = `$eq:${dispersionType}`;
     params['filter.address'] = `$eq:${direction}`;
