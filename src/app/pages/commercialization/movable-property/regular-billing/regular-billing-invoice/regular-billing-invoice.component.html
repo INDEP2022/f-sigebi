@@ -39,9 +39,14 @@
                   type="text"
                   class="form-control"
                   bsDatepicker
-                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                  [bsConfig]="{
+                    withTimepicker: true,
+                    dateInputFormat: 'DD/MM/YYYY h:mm a',
+                    keepDatepickerOpened: true
+                  }"
                   formControlName="date" />
               </form-field>
+              <!-- [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" -->
             </div>
           </div>
           <div class="row mt-4">

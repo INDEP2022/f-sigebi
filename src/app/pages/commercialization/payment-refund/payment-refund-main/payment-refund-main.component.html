@@ -205,10 +205,10 @@
                   </div>
                 </div>
                 <div class="col-12" name="COMER_CTLDEVPAG_B">
-                  <form-loader *ngIf="loading"></form-loader>
+                  <form-loader *ngIf="loadingBank"></form-loader>
                   <ng-scrollbar
                     [track]="'all'"
-                    [ngStyle]="{ height: loading ? '0px' : '400px' }">
+                    [ngStyle]="{ height: loadingBank ? '0px' : '400px' }">
                     <ng2-smart-table
                       id="accountTable"
                       [settings]="accountSettings"
@@ -259,9 +259,10 @@
                     </div>
                     <div>
                       <button
-                        class="btn btn-sm btn-success active me-2 font-size-13"
+                        class="btn btn-sm btn-primary active me-2 font-size-13"
                         (click)="openTransferDateModal()">
                         Fecha de Transferencia
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
                       </button>
                     </div>
                   </div>
@@ -285,14 +286,6 @@
                     [totalItems]="accountTotalItemsP">
                   </app-pagination>
                 </div>
-                <!-- <div
-                  class="col-sm-12 col-12 col-md-12 table-responsive p-5"
-                  style="max-height: 500px; overflow-y: scroll">
-                  <div [class]="loading ? 'table-loading' : ''">
-                    
-                    <div class="table-padding"></div>
-                  </div>
-                </div> -->
                 <div class="col-md-12">
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
