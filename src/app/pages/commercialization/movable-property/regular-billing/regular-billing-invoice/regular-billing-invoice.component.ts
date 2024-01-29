@@ -601,6 +601,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
+              if (
+                // filter.field == 'eventDate' ||
+                filter.field == 'impressionDate'
+              ) {
+                filter.search = this.datePipe.transform(
+                  filter.search,
+                  'yyyy-MM-dd'
+                );
+              }
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -776,7 +785,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
 
       this.isSelect = [];
-
+      this.rowInvoice = null;
       this.loading = false;
       this.totalItems = 0;
       this.dataFilter.load([]);
@@ -811,7 +820,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           this.totalItems = resp.count;
           this.dataFilter.load(resp.data);
           this.dataFilter.refresh();
-          this.rowInvoice = resp.data[0];
+
           if (resp.data[0]?.eventId)
             this.paramsList2.getValue()[
               'filter.eventId'
@@ -821,6 +830,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               'filter.billId'
             ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
           if (resp.count > 0) {
+            this.rowInvoice = resp.data[0];
             this.getComerDetInovice();
             this.getSum();
 
@@ -1263,8 +1273,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       await this.updateDoc(n_id_event);
 
       await this.newMarkProcess('FL', 'PREF', c_indN);
-
-      await this.generateInvoiceCtrl(String(event), tp_event);
+      console.log({ pEvent: String(event), ptpevento: tp_event });
+      // await this.generateInvoiceCtrl(String(event), tp_event);
 
       if (c_indN == 'F') {
         this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
