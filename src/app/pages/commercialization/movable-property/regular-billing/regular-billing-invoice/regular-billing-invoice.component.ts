@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -12,6 +19,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
 import { DatePipe } from '@angular/common';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import {
   BehaviorSubject,
   catchError,
@@ -154,6 +162,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     return this.formFactura.get('xLote');
   }
   path: string = '';
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -669,39 +678,68 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,
     };
+    if (
+      // !params['filter.goodNot'] &&
+      // !params['filter.amount'] &&
+      // !params['filter.description'] &&
+      // !params['filter.price'] &&
+      // !params['filter.vat'] &&
+      // !params['filter.total'] &&
+      // !params['filter.brand'] &&
+      // !params['filter.subBrand'] &&
 
-    this.loading2 = true;
-    this.comerDetInvoice.getAllCustom(params).subscribe({
-      next: async (resp: any) => {
-        const data = await this.postQuery(params);
-        this.formDetalle.get('count').patchValue(resp.count);
-        this.formDetalle.get('totalI').patchValue(resp.data[0].sum.importe);
-        this.formDetalle.get('totalIva').patchValue(resp.data[0].sum.iva);
-        this.formDetalle.get('total').patchValue(resp.data[0].sum.total);
-        this.formDetalle.get('countTotal').patchValue(resp.data[0].sum.amount);
-        this.totalItems2 = resp.count;
+      // !params['filter.model'] &&
+      // !params['filter.series'] &&
+      // !params['filter.downloadcvman'] &&
 
-        const result = resp.data[0].result;
+      // !params['filter.tuition'] &&
+      // !params['filter.unit'] &&
+      // !params['filter.prod'] &&
 
-        result.map((value: any, index: number) => {
-          value.desc_producto_det = data[index].desc_producto_det;
-          value.desc_unidad_det = data[index].desc_unidad_det;
-          value.downloadcvman = data[index].mandato;
-          value.modmandato = data[index].matricula;
-        });
+      !params['filter.billId'] &&
+      !params['filter.eventId']
+    ) {
+      this.loading2 = false;
+      this.totalItems2 = 0;
+      this.dataFilter2.load([]);
+      this.dataFilter2.refresh();
+      this.formDetalle.reset();
+    } else {
+      this.loading2 = true;
+      this.comerDetInvoice.getAllCustom(params).subscribe({
+        next: async (resp: any) => {
+          const data = await this.postQuery(params);
+          this.formDetalle.get('count').patchValue(resp.count);
+          this.formDetalle.get('totalI').patchValue(resp.data[0].sum.importe);
+          this.formDetalle.get('totalIva').patchValue(resp.data[0].sum.iva);
+          this.formDetalle.get('total').patchValue(resp.data[0].sum.total);
+          this.formDetalle
+            .get('countTotal')
+            .patchValue(resp.data[0].sum.amount);
+          this.totalItems2 = resp.count;
 
-        this.dataFilter2.load(result);
-        this.dataFilter2.refresh();
-        this.loading2 = false;
-      },
-      error: () => {
-        this.loading2 = false;
-        this.totalItems2 = 0;
-        this.dataFilter2.load([]);
-        this.dataFilter2.refresh();
-        this.formDetalle.reset();
-      },
-    });
+          const result = resp.data[0].result;
+
+          result.map((value: any, index: number) => {
+            value.desc_producto_det = data[index].desc_producto_det;
+            value.desc_unidad_det = data[index].desc_unidad_det;
+            value.downloadcvman = data[index].mandato;
+            value.modmandato = data[index].matricula;
+          });
+
+          this.dataFilter2.load(result);
+          this.dataFilter2.refresh();
+          this.loading2 = false;
+        },
+        error: () => {
+          this.loading2 = false;
+          this.totalItems2 = 0;
+          this.dataFilter2.load([]);
+          this.dataFilter2.refresh();
+          this.formDetalle.reset();
+        },
+      });
+    }
   }
 
   async postQuery(params: _Params) {
@@ -733,6 +771,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       !params['filter.vouchertype'] &&
       !params['filter.impressionDate']
     ) {
+      this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+      this.paramsList.getValue()['limit'] = 500;
+      this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
+
       this.isSelect = [];
 
       this.loading = false;
@@ -757,6 +799,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.formDetalle.get('totalIva').patchValue(0);
       this.formDetalle.get('total').patchValue(0);
       this.formDetalle.get('countTotal').patchValue(0);
+
+      delete this.paramsList2.getValue()['filter.eventId'];
+      delete this.paramsList2.getValue()['filter.billId'];
     } else {
       this.loading = true;
       this.comerInvoice.getAllSumInvoice(params).subscribe({
@@ -775,14 +820,17 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             this.paramsList2.getValue()[
               'filter.billId'
             ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
-          this.getComerDetInovice();
-          this.getSum();
-          this.comer.emit({
-            val: resp.data[0]?.eventId,
-            count: resp.data.length,
-            data: [],
-            filter: params,
-          });
+          if (resp.count > 0) {
+            this.getComerDetInovice();
+            this.getSum();
+
+            this.comer.emit({
+              val: resp.data[0]?.eventId,
+              count: resp.data.length,
+              data: [],
+              filter: params,
+            });
+          }
         },
         error: () => {
           this.loading = false;
@@ -892,6 +940,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           this.paramsList.getValue()[
             'filter.eventId'
           ] = `${SearchFilter.EQ}:${event}`;
+          await this.forArrayFilters('eventId', event);
           this.getAllComer();
           const params = new ListParams();
           params['filter.eventId'] = `$eq:${event}`; // COMER_INCONSISTENCIAS
@@ -1083,6 +1132,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             this.paramsList.getValue()[
               'filter.address'
             ] = `${SearchFilter.EQ}:M`;
+            await this.forArrayFilters('eventId', event);
             this.getAllComer();
           }
         },
@@ -1251,6 +1301,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       'filter.eventId'
     ] = `${SearchFilter.EQ}:${event}`;
     this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
+    await this.forArrayFilters('eventId', event);
     this.getAllComer();
     this.alert('success', 'Proceso terminado correctamente', '');
   }
@@ -1566,23 +1617,23 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     });
 
     this.formFactura = this.fb.group({
-      importE: [null],
-      ivaE: [null],
-      totalE: [null],
-      count: [null],
-      importI: [null],
-      ivaI: [null],
-      totalI: [null],
+      importE: [0],
+      ivaE: [0],
+      totalE: [0],
+      count: [0],
+      importI: [0],
+      ivaI: [0],
+      totalI: [0],
       order: [null],
       xLote: [null],
     });
 
     this.formDetalle = this.fb.group({
-      count: [null],
+      count: [0],
       totalI: [0],
       totalIva: [0],
       total: [0],
-      countTotal: [null],
+      countTotal: [0],
     });
   }
 
@@ -2448,6 +2499,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               this.paramsList.getValue()[
                 'filter.eventId'
               ] = `${SearchFilter.EQ}:${data.eventId}`;
+              await this.forArrayFilters('eventId', data.eventId);
               this.getAllComer();
             }
             if (GO_BLOCK) {
@@ -2475,6 +2527,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
                       this.paramsList.getValue()[
                         'filter.eventId'
                       ] = `${SearchFilter.EQ}:${data.eventId}`;
+                      await this.forArrayFilters('eventId', data.eventId);
                       this.getAllComer();
                     }
                   },
@@ -2791,7 +2844,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         //   saveData.hourAttention,
         //   'yyyy-MM-dd HH:mm:ss'
         // );
-        const newDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss');
+        const newDate = this.datePipe.transform(date, 'yyyy-MM-dd');
         const data = await this.dataFilter.getAll();
         let exist: boolean = false;
         for (const invoice of data) {
@@ -3132,5 +3185,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         ''
       );
     }
+  }
+
+  async forArrayFilters(field: any, value: any) {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.field == field) {
+          item.search = value;
+        }
+      });
+    }
+    this.dataFilter.refresh();
+    return true;
   }
 }
