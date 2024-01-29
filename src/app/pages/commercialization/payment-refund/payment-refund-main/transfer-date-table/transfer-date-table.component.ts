@@ -77,10 +77,28 @@ export class TransferDateTableComponent extends BasePage implements OnInit {
         },
         amount: {
           title: 'Monto',
-          type: 'string',
+          type: 'html',
           sort: false,
           width: '10%',
           filter: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              const a = numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+              return '<p class="cell_right">' + a + '</p>';
+            } else {
+              return amount;
+            }
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            return true;
+          },
         },
         batchId: {
           title: 'Lote',

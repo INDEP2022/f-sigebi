@@ -366,7 +366,9 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                   pDeletedEmits: Number(this.user.department),
                 };
                 // COMER_CTRLFACTURA.COPIA_FACTURA
-                cf_nuevafact = await this.copyInovice(body2);
+                console.log('body2', body2);
+
+                // cf_nuevafact = await this.copyInovice(body2);
                 console.log('cf_nuevafact', cf_nuevafact);
               } else if (yyyy <= 2009) {
                 this.alert('warning', 'Año 2009 proceso por definir', '');
