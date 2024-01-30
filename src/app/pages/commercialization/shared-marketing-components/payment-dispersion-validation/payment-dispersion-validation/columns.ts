@@ -104,22 +104,22 @@ export const ALLOTMENT_COLUMNS = {
     },
   },
   camp2: {
-    title: 'Campo 2',
+    title: '',
     type: 'string',
     sort: false,
   },
   camp3: {
-    title: 'Campo 3',
+    title: '',
     type: 'string',
     sort: false,
   },
   camp4: {
-    title: 'Campo 4',
+    title: '',
     type: 'string',
     sort: false,
   },
   camp5: {
-    title: 'Campo 5',
+    title: '',
     type: 'string',
     sort: false,
   },
