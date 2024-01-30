@@ -24,6 +24,7 @@ import { PaymentRefundMainComponent } from './payment-refund-main/payment-refund
 import { TableCheckComponent } from './payment-refund-main/table-check/table-check.component';
 import { TablePermissionsModalComponent } from './payment-refund-main/table-permissions-modal/table-permissions-modal.component';
 import { TransferDateModalComponent } from './payment-refund-main/transfer-date-modal/transfer-date-modal.component';
+import { TransferDateTableComponent } from './payment-refund-main/transfer-date-table/transfer-date-table.component';
 import { PaymentRefundRoutingModule } from './payment-refund-routing.module';
 
 @NgModule({
@@ -44,6 +45,7 @@ import { PaymentRefundRoutingModule } from './payment-refund-routing.module';
     ChangeRfcModalComponent,
     CheckValidKeyComponent,
     TablePermissionsModalComponent,
+    TransferDateTableComponent,
   ],
   imports: [
     CommonModule,

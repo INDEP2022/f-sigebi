@@ -7,6 +7,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   ListParams,
@@ -17,6 +18,7 @@ import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent_ } from 'src/app/pages/final-destination-process/donation-process/maintenance-commitment-donation/data-in-table/CheckboxDisabled';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 import { ChangeRfcModalComponent } from './change-rfc-modal/change-rfc-modal.component';
@@ -28,7 +30,7 @@ import {
   RELATED_EVENT_COLUMNS,
 } from './payment-refund-columns';
 import { TablePermissionsModalComponent } from './table-permissions-modal/table-permissions-modal.component';
-import { TransferDateModalComponent } from './transfer-date-modal/transfer-date-modal.component';
+import { TransferDateTableComponent } from './transfer-date-table/transfer-date-table.component';
 @Component({
   selector: 'app-payment-refund-main',
   templateUrl: './payment-refund-main.component.html',
@@ -203,49 +205,87 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         title: 'Cve. Banco',
         type: 'string',
         sort: false,
+        width: '10%',
       },
       account: {
         title: 'Cuenta',
         type: 'string',
         sort: false,
+        width: '10%',
       },
       countPayments: {
         title: 'Cantidad',
         type: 'number',
         sort: false,
+        width: '10%',
       },
       amountPayments: {
         title: 'Monto',
-        type: 'number',
+        type: 'html',
         sort: false,
-        filter: false,
+        // filter: false,
+        width: '10%',
+        valuePrepareFunction: (amount: string) => {
+          const numericAmount = parseFloat(amount);
+
+          if (!isNaN(numericAmount)) {
+            const a = numericAmount.toLocaleString('en-US', {
+              // style: 'currency',
+              // currency: 'USD',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+            return '<p class="cell_right">' + a + '</p>';
+          } else {
+            return amount;
+          }
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+          return true;
+        },
       },
       idwaste: {
         title: 'Id Gasto',
         type: 'number',
         sort: false,
+        width: '10%',
       },
       idCtldevpag: {
         title: 'Id Pago',
         type: 'number',
         sort: false,
+        width: '10%',
       },
       numberInvoicePay: {
         title: 'Folio Pag.',
         type: 'number',
         sort: false,
+        width: '10%',
       },
       datePay: {
         title: 'Fecha Pago',
         type: 'string',
         sort: false,
-        filter: false,
-        valuePrepareFunction: (value: string) => {
-          if (!value) {
-            return '';
-          }
-          return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+        // filter: false,
+        width: '20%',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          }`;
         },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
+        filterFunction(): boolean {
+          return true;
+        },
+        // valuePrepareFunction: (value: string) => {
+        //   if (!value) {
+        //     return '';
+        //   }
+        //   return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+        // },
       },
       numberCheck: {
         title: 'No. de Cheque',
@@ -256,6 +296,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         title: 'Observaciones de Cancelación',
         sort: false,
         type: 'custom',
+        width: '30%',
         renderComponent: SeeMoreComponent,
         valuePrepareFunction: (value: string) => {
           if (value == 'null' || value == 'undefined') {
@@ -269,44 +310,100 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         title: 'FIS',
         sort: false,
         type: 'custom',
-        renderComponent: CheckboxElementComponent,
+        width: '10%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              { value: '1', title: 'Activo' },
+              { value: '0', title: 'Inactivo' },
+            ],
+          },
+        },
+        renderComponent: CheckboxElementComponent_,
         onComponentInitFunction(instance: any) {
           instance.toggle.subscribe((data: any) => {
             console.log(data);
           });
+        },
+        filterFunction: () => {
+          return true;
         },
       },
       _cnt: {
         title: 'CNT',
         sort: false,
         type: 'custom',
-        renderComponent: CheckboxElementComponent,
+        width: '10%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              { value: '1', title: 'Activo' },
+              { value: '0', title: 'Inactivo' },
+            ],
+          },
+        },
+        renderComponent: CheckboxElementComponent_,
         onComponentInitFunction(instance: any) {
           instance.toggle.subscribe((data: any) => {
             console.log(data);
           });
+        },
+        filterFunction: () => {
+          return true;
         },
       },
       _pto: {
         title: 'PTO',
         sort: false,
         type: 'custom',
-        renderComponent: CheckboxElementComponent,
+        width: '10%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              { value: '1', title: 'Activo' },
+              { value: '0', title: 'Inactivo' },
+            ],
+          },
+        },
+        renderComponent: CheckboxElementComponent_,
         onComponentInitFunction(instance: any) {
           instance.toggle.subscribe((data: any) => {
             console.log(data);
           });
+        },
+        filterFunction: () => {
+          return true;
         },
       },
       _tsr: {
         title: 'TSR',
         sort: false,
         type: 'custom',
-        renderComponent: CheckboxElementComponent,
+        width: '10%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              { value: '1', title: 'Activo' },
+              { value: '0', title: 'Inactivo' },
+            ],
+          },
+        },
+        renderComponent: CheckboxElementComponent_,
         onComponentInitFunction(instance: any) {
           instance.toggle.subscribe((data: any) => {
             console.log(data);
           });
+        },
+        filterFunction: () => {
+          return true;
         },
       },
       selection: {
@@ -315,7 +412,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         title: 'Selección',
         type: 'custom',
         showAlways: true,
-        width: '15%',
+        width: '10%',
         valuePrepareFunction: (isSelected: boolean, row: any) =>
           this.isBankSelected(row),
         renderComponent: CheckboxElementComponent,
@@ -422,6 +519,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
     this.loadingDataTableBank();
     this.loadingDataTableBankAccount();
+    this.loadingDataTableRelationEvent();
   }
   // COMER_CTLCREACION
   async getComerCtrlCreation(status: string) {
@@ -618,13 +716,43 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   openTransferDateModal() {
-    const modalRef = this.modalService.show(TransferDateModalComponent, {
-      class: 'modal-md modal-dialog-centered',
+    if (!this.selectRowCtrol) {
+      this.alertInfo(
+        'warning',
+        'Debe seleccionar un registro de la tabla: "Control de Devoluciones"',
+        ''
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(0);
+        }
+      });
+      return;
+    }
+
+    if (!this.selectedAccountB) {
+      this.alertInfo(
+        'warning',
+        'Cuentas de Banco Relacionadas',
+        'Debe seleccionar al menos un registro de la tabla'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(2);
+        }
+      });
+      return;
+    }
+
+    const modalRef = this.modalService.show(TransferDateTableComponent, {
+      initialState: {
+        selectedAccountB: this.selectedAccountB,
+        selectRowCtrol: this.selectRowCtrol,
+      },
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onKeyChange.subscribe((data: boolean) => {
-      if (data) this.refreshAccountsPayments();
-    });
+    // modalRef.content.onKeyChange.subscribe((data: boolean) => {
+    //   if (data) this.refreshAccountsPayments();
+    // });
   }
 
   openRfcModal() {
@@ -652,31 +780,47 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     const dataEvents = await this.dataTableRelationEvent.getAll();
     // GO_BLOCK('COMER_CTLDEVPAG_B');
     if (dataBanks.length == 0) {
-      this.alert(
+      this.alertInfo(
         'warning',
-        'No hay registros cargados en la tabla "Control de Devoluciones"',
-        ''
-      );
+        'Cuentas de Banco Relacionadas',
+        'No se tienen registros de Bancos a enviar a SIRSAE'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(2);
+        }
+      });
       return;
     }
     if (this.selectBanksCheck.length == 0) {
-      return this.alert(
+      this.alertInfo(
         'warning',
-        'No se tienen registros de Bancos a procesar.',
-        'Selecciona por lo menos un registro de la tabla "Control de Devoluciones"'
-      );
+        'Cuentas de Banco Relacionadas',
+        'Debe seleccionar al menos un registro de la tabla'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(2);
+        }
+      });
+      return;
     }
 
     this.alertQuestion(
       'question',
       'Envío de Solicitudes de Gasto a SIRSAE',
-      '¿Desear Continua?'
+      '¿Desear Continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         let result = dataBanks.map(async item => {
           if (item.idwaste && item.idCtldevpag) {
             // PUP_ENVIAR_SIRSAE
-            let body = {};
+            let body = {
+              pSpentId: item.idwaste,
+              pBankKey: item.cveBank,
+              pAccount: item.account,
+              toolbarUser: this.authService.decodeToken().preferred_username,
+              idCtldevpag: item.idCtldevpag,
+              originId: item.idOrigen,
+            };
             await this.pupSendSirsae(body);
             if (item.idOrigen == 2) {
             }
@@ -829,13 +973,23 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
             const search: any = {
               eventId: () => (searchFilter = SearchFilter.EQ),
               numPayments: () => (searchFilter = SearchFilter.EQ),
+              paymentsAmount: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFiltersRelationEvent[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'amountPayments') {
+                this.columnFiltersRelationEvent[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFiltersRelationEvent[
+                  field
+                ] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFiltersRelationEvent[
+              //   field
+              // ] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFiltersRelationEvent[field];
             }
@@ -852,11 +1006,13 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.dataTableParamsRelationEvent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => {
+        // this.getRelationEventData();
         if (this.totalRelationEvent > 0) this.getRelationEventData();
       });
   }
 
   getRelationEventData() {
+    if (!this.selectRowCtrol) return;
     this.loadingRelationEvent = true;
     let params = {
       ...this.dataTableParamsRelationEvent.getValue(),
@@ -917,7 +1073,17 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
             let field = '';
             //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
+            // if('_fis'){
+            //   field = `filter.fis`;
+            // }else if('_cnt'){
+            //   field = `filter.cnt`;
+            // }if('_pto'){
+            //   field = `filter.pto`;
+            // }if('_tsr'){
+            //   field = `filter.tsr`;
+            // }else{
             field = `filter.${filter.field}`;
+            // }
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
@@ -928,13 +1094,27 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               idCtldevpag: () => (searchFilter = SearchFilter.EQ),
               numberInvoicePay: () => (searchFilter = SearchFilter.EQ),
               numberCheck: () => (searchFilter = SearchFilter.EQ),
+              amountPayments: () => (searchFilter = SearchFilter.EQ),
+              _fis: () => (searchFilter = SearchFilter.EQ),
+              _cnt: () => (searchFilter = SearchFilter.EQ),
+              _pto: () => (searchFilter = SearchFilter.EQ),
+              _tsr: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFiltersBank[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'amountPayments') {
+                this.columnFiltersBank[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFiltersBank[
+                  field
+                ] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFiltersBank[
+              //   field
+              // ] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFiltersBank[field];
             }
@@ -953,21 +1133,46 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   getBankData() {
+    if (!this.selectRowCtrol) return;
     this.loadingBank = true;
     let params = {
       ...this.dataTableParamsBank.getValue(),
       ...this.columnFiltersBank,
     };
     params['filter.idCtldevpag'] = `$eq:${this.selectRowCtrol.ctlDevPagId}`;
+    params['sortBy'] = `account,cveBank:ASC`;
+
+    if (params['filter._fis']) {
+      params['filter.indfis'] = params['filter._fis'] + '';
+      delete params['filter._fis'];
+    } else if (params['filter._cnt']) {
+      params['filter.indcnt'] = params['filter._cnt'] + '';
+      delete params['filter._cnt'];
+    }
+    if (params['filter._pto']) {
+      params['filter.indpt'] = params['filter._pto'] + '';
+      delete params['filter._pto'];
+    }
+    if (params['filter._tsr']) {
+      params['filter.indtsr'] = params['filter._tsr'] + '';
+      delete params['filter._tsr'];
+    }
     // idCtldevpag
     this.svPaymentService.getCtlDevPagBfindAllRegistersV2(params).subscribe({
       next: (res: any) => {
         console.log('DATA Bank', res);
         let result = res.data.map((i: any) => {
-          i['_fis'] = i.indfis;
-          i['_cnt'] = i.indcnt;
-          i['_pto'] = i.indpt;
-          i['_tsr'] = i.indtsr;
+          // IF :COMER_CTLDEVPAG_B.OBS_CANC IS NOT NULL THEN
+          //   c_VISUAL := 'VA_REG_PROC_CANC';
+          // ELSIF NVL(:COMER_CTLDEVPAG_B.IND_TSR,0) = 1 THEN
+          //   c_VISUAL := 'VA_REG_PROC_PAGO';
+          // ELSIF :COMER_CTLDEVPAG_B.ID_SOLICITUDPAGO IS NOT NULL THEN
+          //   c_VISUAL := 'VA_REG_PROC_SP';
+          // END IF;
+          i['_fis'] = i.indfis == 1 ? true : false;
+          i['_cnt'] = i.indcnt == 1 ? true : false;
+          i['_pto'] = i.indpt == 1 ? true : false;
+          i['_tsr'] = i.indtsr == 1 ? true : false;
           // return i;
         });
         Promise.all(result).then(resp => {
@@ -1010,6 +1215,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
             const search: any = {
               eventId: () => (searchFilter = SearchFilter.EQ),
               numPayments: () => (searchFilter = SearchFilter.EQ),
+              paymentsAmount: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
@@ -1037,7 +1243,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   getBankAccountData() {
-    this.loadingBankAccount = true;
+    // this.loadingBankAccount = true;
     let params = {
       ...this.dataTableParamsBankAccount.getValue(),
       ...this.columnFiltersBankAccount,
@@ -1048,24 +1254,27 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     params['filter.account'] = `$eq:${this.selectedAccountB.account}`;
     params['filter.bankCode'] = `$eq:${this.selectedAccountB.cveBank}`;
     // CONSULTAR LA VISTA VW_COMER_CTLDEVPAG_P
-    this.svPaymentDevolutionService.getCtlDevPagP(params).subscribe({
-      next: (res: any) => {
-        console.log('DATA BankAccount', res);
-        this.testDataBankAccount = res.data;
-        this.dataTableBankAccount.load(this.testDataBankAccount);
-        this.accountTotalItemsP = res.count;
-        this.totalAmountAccount = res.paymentsAmountTotal;
-        this.loadingBankAccount = false;
-      },
-      error: error => {
-        console.log(error);
-        this.testDataBankAccount = [];
-        this.dataTableBankAccount.load([]);
-        this.accountTotalItemsP = 0;
-        this.totalAmountAccount = 0;
-        this.loadingBankAccount = false;
-      },
-    });
+    return;
+    this.svPaymentDevolutionService
+      .getApplicationVwComerCtldevPagp(params)
+      .subscribe({
+        next: (res: any) => {
+          console.log('DATA BankAccount', res);
+          this.testDataBankAccount = res.data;
+          this.dataTableBankAccount.load(this.testDataBankAccount);
+          this.accountTotalItemsP = res.count;
+          this.totalAmountAccount = res.paymentsAmountTotal;
+          this.loadingBankAccount = false;
+        },
+        error: error => {
+          console.log(error);
+          this.testDataBankAccount = [];
+          this.dataTableBankAccount.load([]);
+          this.accountTotalItemsP = 0;
+          this.totalAmountAccount = 0;
+          this.loadingBankAccount = false;
+        },
+      });
   }
 
   async requestSpentGenerator() {
@@ -1173,7 +1382,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     if (!this.selectRowCtrol) {
       this.alertInfo(
         'warning',
-        'Debe seleccionar un registro de la tabla Control de Devoluciones',
+        'Debe seleccionar un registro de la tabla: "Control de Devoluciones"',
         ''
       ).then(question => {
         if (question.isConfirmed) {
@@ -1223,6 +1432,19 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   async verifyPaysSirsae() {
     const dataBanks = await this.dataTableBank.getAll();
     const dataEvents = await this.dataTableRelationEvent.getAll();
+    if (!this.selectRowCtrol) {
+      this.alertInfo(
+        'warning',
+        'Debe seleccionar un registro de la tabla: "Control de Devoluciones"',
+        ''
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(0);
+        }
+      });
+      return;
+    }
+
     // GO_BLOCK('COMER_CTLDEVPAG_B');
     if (dataBanks.length == 0) {
       this.alert(
@@ -1233,11 +1455,21 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       return;
     }
     if (this.selectBanksCheck.length == 0) {
-      return this.alert(
+      this.alertInfo(
         'warning',
-        'No se tienen registros de Bancos a procesar.',
-        'Selecciona por lo menos un registro de la tabla "Control de Devoluciones"'
-      );
+        'Cuentas de Banco Relacionadas',
+        'Debe seleccionar al menos un registro de la tabla'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(2);
+        }
+      });
+      return;
+      // return this.alert(
+      //   'warning',
+      //   'No se tienen registros de Bancos a procesar.',
+      //   'Selecciona por lo menos un registro de la tabla "Control de Devoluciones"'
+      // );
     }
 
     this.alertQuestion(
@@ -1274,22 +1506,38 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   async continueVerifySirsae() {
     let n_ID_CTLDEVPAG: any;
     // -- VERIFICA TODOS LOS PAGOS PARA CAMBIO DE ESTATUS DE CONTROL --
-    let counts: any = await this.getCounts();
-    if (counts.n_CONTT == counts.n_CONTF && counts.n_CONTT > 0) {
+    let counts: any = await this.getCounts(this.selectRowCtrol.ctlDevPagId);
+
+    if (counts.countt == counts.countf && counts.countt > 0) {
       n_ID_CTLDEVPAG = this.selectRowCtrol.ctlDevPagId;
-      let res = await this.updateCtrlDevPagH();
+      let data = {
+        ctlDevPagId: n_ID_CTLDEVPAG,
+        idEstatus: 'CONC',
+        fecTermino: new Date(),
+      };
+      let res = await this.updateCtrlDevPagH(data, n_ID_CTLDEVPAG);
+      console.log('res', res);
       this.filterActHeader('I');
     } else {
       this.dataTableBank.load([]);
       this.dataTableBank.refresh();
       this.accountTotalItems = 0;
+      this.getControlData();
     }
     this.alert('success', 'Proceso terminado', '');
   }
 
   // UPDATE - COMER_CTLDEVPAG_H //
-  updateCtrlDevPagH() {
+  updateCtrlDevPagH(data: any, id: any) {
     return new Promise((resolve, reject) => {
+      this.svPaymentDevolutionService.updateCtlDevPagH(data, id).subscribe({
+        next(value) {
+          resolve(value);
+        },
+        error(err) {
+          resolve(null);
+        },
+      });
       // UPDATE COMER_CTLDEVPAG_H
       //       SET ID_ESTATUS = 'CONC',
       //           FEC_TERMINO = SYSDATE
@@ -1298,10 +1546,23 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     });
   }
 
-  getCounts() {
+  getCounts(id: number | string) {
     // EDWIN
     return new Promise((resolve, reject) => {
-      resolve({});
+      this.svPaymentDevolutionService
+        .getApplicationGetComerCtldevpagb(id)
+        .subscribe({
+          next(value) {
+            resolve(value.data[0]);
+          },
+          error(err) {
+            let obj = {
+              countt: 0,
+              countf: 0,
+            };
+            resolve(obj);
+          },
+        });
     });
     //     SELECT COUNT(0),
     //           NVL(SUM(DECODE(DECODE(OBS_CANC,NULL,0,1)+DECODE(NVL(IND_TSR,0),1,1,0),0,0,1)),0)
@@ -1354,7 +1615,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     if (!this.selectRowCtrol) {
       this.alertInfo(
         'warning',
-        'Debe seleccionar un registro de la tabla Control de Devoluciones',
+        'Debe seleccionar un registro de la tabla: "Control de Devoluciones"',
         ''
       ).then(question => {
         if (question.isConfirmed) {
@@ -1363,6 +1624,11 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       });
       return;
     }
+    // let body = {
+    //   id_ctldevpag: this.selectRowCtrol.ctlDevPagId,
+    //   id_origen: this.selectRowCtrol.idOrigen,
+    //   cve_ctldevpag: this.selectRowCtrol.cveCtlDevPag
+    // }
     let body = {
       originId: this.selectRowCtrol.idOrigen,
       ctldevpagId: this.selectRowCtrol.ctlDevPagId,
@@ -1375,6 +1641,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         // PUP_EXP_CSV_RELDEVGAR
+        // this.svPaymentDevolutionService.applicationPupExpCsvReldevGar(body).subscribe({
         this.massiveGoodService.applicationPupExpCsvReldevgar(body).subscribe({
           next: (data: any) => {
             // this.loadingreferenceRequest = false;
