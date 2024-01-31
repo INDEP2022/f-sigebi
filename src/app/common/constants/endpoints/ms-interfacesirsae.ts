@@ -5,4 +5,5 @@ export enum InterfaceSirsaeEndpoints {
   PupBusqueda = 'sirsae/pup-query',
   ValidPayments = 'sirsae/valid-payments',
   Interfaceesirsae = 'interfaceesirsae',
+  ApplicationGetReturnPayments = 'application/get-return-payments',
 }

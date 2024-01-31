@@ -1,290 +1,349 @@
-<div class="d-flex flex-row">
-  <div class="col-3">
-    <button
-      class="btn btn-sm btn-block btn-danger font-size-14"
-      (click)="return()">
-      <i class="bx bx-chevron-left float-icon"></i>Regresar
-    </button>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Generar Solicitudes de Gastos</h5>
   </div>
-</div>
-<form class="form-material" [formGroup]="requestForm">
-  <div class="row mt-3">
-    <div class="col-sm-8 col-md-9">
-      <div class="d-flex align-items-center">
-        <h6 class="d-inline ms-3">
-          Datos Generales de las Solicitudes de Gastos
-        </h6>
-      </div>
-    </div>
-  </div>
-  <hr class="mw-98 mt-n2" />
-  <div class="row mt-5">
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-      <div class="row">
-        <div class="col-4">
-          <form-field [control]="requestForm.get('concept')">
-            <ngx-select
-              [form]="requestForm"
-              [data]="conceptItems"
-              value="id"
-              bindLabel="id"
-              label="Concepto"
-              (fetchItems)="getConcepts($event)"
-              control="concept"
-              (change)="selectConcept($event)">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-8">
-          <p *ngIf="selectedConcept != null" class="mt-2">
-            {{ selectedConcept.description }}
-          </p>
+  <div body>
+    <app-card [header]="true" [footer]="false">
+      <div header>
+        <div class="ch-content">
+          <h5 class="title">Datos Generales de las Solicitudes de Gastos</h5>
         </div>
       </div>
-    </div>
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-      <div class="row">
-        <div class="col-4">
-          <form-field [control]="requestForm.get('event')">
-            <ngx-select
-              [form]="requestForm"
-              [data]="eventItems"
-              value="id"
-              bindLabel="id"
-              label="Evento"
-              (fetchItems)="getEvents($event)"
-              control="event"
-              (change)="selectEvent($event)">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-8">
-          <p *ngIf="selectedEvent != null" class="mt-2">
-            {{ selectedEvent.description }}
-          </p>
+      <div body>
+        <form class="form-material" [formGroup]="requestForm">
+          <div class="row m-2">
+            <div class="col-3">
+              <form-field
+                label="Concepto"
+                [control]="requestForm.get('concept')">
+                <input
+                  maxlength="4"
+                  type="text"
+                  class="form-control"
+                  formControlName="concept" />
+                <!-- <ngx-select
+                    [form]="requestForm"
+                    [data]="conceptItems"
+                    value="id"
+                    bindLabel="id"
+                    label="Concepto"
+                    (fetchItems)="getConcepts($event)"
+                    control="concept"
+                    (change)="selectConcept($event)">
+                  </ngx-select> -->
+              </form-field>
+            </div>
+            <div class="col-sm-9 col-md-9">
+              <form-field
+                [control]="requestForm.get('desconcept')"
+                label="Descripción">
+                <input
+                  maxlength="120"
+                  type="text"
+                  class="form-control"
+                  formControlName="desconcept" />
+              </form-field>
+            </div>
+
+            <div class="col-3 mt-2">
+              <form-field
+                label="Id. Evento"
+                [control]="requestForm.get('idevent')">
+                <input
+                  maxlength="8"
+                  type="text"
+                  class="form-control"
+                  formControlName="idevent" />
+                <!-- <ngx-select
+                    [form]="requestForm"
+                    [data]="eventItems"
+                    value="id"
+                    bindLabel="id"
+                    label="Evento"
+                    (fetchItems)="getEvents($event)"
+                    control="event"
+                    (change)="selectEvent($event)">
+                  </ngx-select> -->
+              </form-field>
+            </div>
+            <div class="col-9 mt-2">
+              <form-field label="Evento" [control]="requestForm.get('event')">
+                <input
+                  maxlength="100"
+                  type="text"
+                  class="form-control"
+                  formControlName="event" />
+              </form-field>
+            </div>
+            <div class="col-12 mt-2">
+              <div class="row">
+                <div class="col-sm-3 col-md-3">
+                  <form-field
+                    [control]="requestForm.get('voucherCount')"
+                    label="No. Comprobantes">
+                    <input
+                      maxlength="4"
+                      type="text"
+                      class="form-control"
+                      formControlName="voucherCount" />
+                  </form-field>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                  <form-field
+                    [control]="requestForm.get('documentNumber')"
+                    label="No. Documento">
+                    <input
+                      maxlength="12"
+                      type="text"
+                      class="form-control"
+                      formControlName="documentNumber" />
+                  </form-field>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                  <form-field
+                    [control]="requestForm.get('paymentType')"
+                    label="Forma Pago">
+                    <input
+                      maxlength="20"
+                      type="text"
+                      class="form-control"
+                      formControlName="paymentType" />
+                    <!-- <ng-select
+                        formControlName="paymentType"
+                        [searchable]="false"
+                        class="form-control"
+                        [clearable]="false">
+                        <ng-option value="EFECTIVO">EFECTIVO</ng-option>
+                        <ng-option value="CHEQUE">CHEQUE</ng-option>
+                      </ng-select> -->
+                  </form-field>
+                </div>
+                <div class="col-sm-3 col-md-3 mt-2">
+                  <form-field
+                    label="Comprobante a Nombre:"
+                    [control]="requestForm.get('voucher')">
+                    <input
+                      maxlength="2"
+                      type="text"
+                      class="form-control"
+                      formControlName="voucher" />
+                    <!-- <ngx-select
+                        [form]="requestForm"
+                        [data]="voucherItems"
+                        value="id"
+                        bindLabel="id"
+                        label="Comprobante a Nombre:"
+                        (fetchItems)="getVouchers($event)"
+                        control="voucher"
+                        (change)="selectVoucher($event)">
+                      </ngx-select> -->
+                  </form-field>
+                </div>
+                <div class="col-sm-3 col-md-3 mt-2">
+                  <form-field [control]="requestForm.get('voucherName')">
+                    <input
+                      maxlength="10"
+                      type="text"
+                      class="form-control"
+                      formControlName="voucherName" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </app-card>
+
+    <app-card [header]="true" [footer]="false">
+      <div header>
+        <div class="ch-content">
+          <h5 class="title">Datos variables</h5>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-sm-6 col-md-4">
-      <form-field
-        [control]="requestForm.get('voucherCount')"
-        label="No. Comprobantes">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="voucherCount" />
-      </form-field>
-    </div>
-    <div class="col-sm-6 col-md-4">
-      <form-field
-        [control]="requestForm.get('documentNumber')"
-        label="No. Documento">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="documentNumber" />
-      </form-field>
-    </div>
-    <div class="col-sm-6 col-md-4">
-      <form-field [control]="requestForm.get('paymentType')" label="Forma Pago">
-        <ng-select
-          formControlName="paymentType"
-          [searchable]="false"
-          class="form-control"
-          [clearable]="false">
-          <ng-option value="EFECTIVO">EFECTIVO</ng-option>
-          <ng-option value="CHEQUE">CHEQUE</ng-option>
-        </ng-select>
-      </form-field>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-      <div class="row">
-        <div class="col-4">
-          <form-field [control]="requestForm.get('voucher')">
-            <ngx-select
-              [form]="requestForm"
-              [data]="voucherItems"
-              value="id"
-              bindLabel="id"
-              label="Comprobante"
-              (fetchItems)="getVouchers($event)"
-              control="voucher"
-              (change)="selectVoucher($event)">
-            </ngx-select>
-          </form-field>
+      <div body>
+        <form class="form-material" [formGroup]="requestForm">
+          <div class="row">
+            <div class="col-3">
+              <app-card [header]="false" [footer]="false">
+                <div body>
+                  <div class="row mt-3">
+                    <div class="col-sm-12">
+                      <form-field
+                        [control]="requestForm.get('documentDate')"
+                        label="Fecha Documento">
+                        <input
+                          type="text"
+                          formControlName="documentDate"
+                          class="form-control"
+                          [maxDate]="maxDate"
+                          bsDatepicker />
+                      </form-field>
+                    </div>
+                    <div class="col-sm-12 mt-2">
+                      <form-field
+                        [control]="requestForm.get('paymentDate')"
+                        label="Fecha Pago">
+                        <input
+                          type="text"
+                          formControlName="paymentDate"
+                          class="form-control"
+                          [maxDate]="maxDate"
+                          bsDatepicker />
+                      </form-field>
+                    </div>
+                    <div class="col-sm-12 mt-2">
+                      <form-field
+                        [control]="requestForm.get('captureDate')"
+                        label="Fecha Captura">
+                        <input
+                          type="text"
+                          formControlName="captureDate"
+                          class="form-control"
+                          [maxDate]="maxDate"
+                          bsDatepicker />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+              </app-card>
+            </div>
+            <div class="col-9">
+              <app-card [header]="false" [footer]="false">
+                <div body>
+                  <div class="row mt-2">
+                    <div class="col-sm-3">
+                      <form-field [control]="requestForm.get('userCapture')">
+                        <ngx-select
+                          [form]="requestForm"
+                          [data]="userItems"
+                          value="clkdet"
+                          bindLabel="clkdet"
+                          label="Captura"
+                          [searchOnInit]="true"
+                          (fetchItems)="getUsers($event)"
+                          control="userCapture"
+                          (change)="selectUser($event, 'CAPTURE')">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+                    <div class="col-sm-9">
+                      <form-field
+                        [control]="requestForm.get('userCaptureName')"
+                        label="Nombre:">
+                        <input
+                          maxlength="120"
+                          type="text"
+                          formControlName="userCaptureName"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col-sm-3 mt-2">
+                      <form-field [control]="requestForm.get('userRequest')">
+                        <ngx-select
+                          [form]="requestForm"
+                          [data]="userItems"
+                          value="clkdet"
+                          bindLabel="clkdet"
+                          label="Solicita"
+                          (fetchItems)="getUsers($event)"
+                          control="userRequest"
+                          (change)="selectUser($event, 'REQUEST')">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+                    <div class="col-sm-9 mt-2">
+                      <form-field
+                        [control]="requestForm.get('userRequestName')"
+                        label="Nombre:">
+                        <input
+                          maxlength="120"
+                          type="text"
+                          formControlName="userRequestName"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col-sm-3 mt-2">
+                      <form-field [control]="requestForm.get('userAuthorize')">
+                        <ngx-select
+                          [form]="requestForm"
+                          [data]="userItems"
+                          value="clkdet"
+                          bindLabel="clkdet"
+                          label="Autoriza"
+                          (fetchItems)="getUsers($event)"
+                          control="userAuthorize"
+                          (change)="selectUser($event, 'AUTHORIZE')">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+                    <div class="col-sm-9 mt-2">
+                      <form-field
+                        [control]="requestForm.get('userAuthorizeName')"
+                        label="Nombre:">
+                        <input
+                          maxlength="120"
+                          type="text"
+                          formControlName="userAuthorizeName"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+              </app-card>
+            </div>
+          </div>
+        </form>
+      </div>
+    </app-card>
+    <app-card [header]="false" [footer]="false">
+      <div body>
+        <div class="col-12 d-flex flex-row-reverse">
+          <div>
+            <button
+              class="btn btn-sm btn-info btn-block active"
+              (click)="openForm()">
+              Nuevo
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
-        <div class="col-8">
-          <p *ngIf="selectedVoucher != null" class="mt-2">
-            {{ selectedVoucher.name }}
-          </p>
+        <div class="col-12 mt-3">
+          <form-loader *ngIf="loading"></form-loader>
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '300px' }">
+            <ng2-smart-table
+              [settings]="requestSettings"
+              [source]="requestSource"
+              (edit)="openForm($event.data)"
+              (delete)="questionDelete($event.data)">
+            </ng2-smart-table>
+          </ng-scrollbar>
+          <!-- <app-pagination [params]="requestParams" [totalItems]="requestTotalItems">
+          </app-pagination> -->
         </div>
       </div>
-    </div>
+    </app-card>
   </div>
-  <div class="row mt-4">
-    <div class="col-sm-8 col-md-9">
-      <div class="d-flex align-items-center">
-        <h6 class="d-inline ms-3">Datos Variables</h6>
-      </div>
-    </div>
-  </div>
-  <hr class="mw-98 mt-n2" />
-  <div class="row mt-5">
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
-      <form-field
-        [control]="requestForm.get('documentDate')"
-        label="Fecha Documento">
-        <input
-          type="text"
-          formControlName="documentDate"
-          class="form-control"
-          [maxDate]="maxDate"
-          bsDatepicker />
-      </form-field>
-    </div>
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8">
-      <div class="row">
-        <div class="col-4">
-          <form-field [control]="requestForm.get('userCapture')">
-            <ngx-select
-              [form]="requestForm"
-              [data]="userItems"
-              value="user"
-              bindLabel="user"
-              label="Captura"
-              (fetchItems)="getUsers($event)"
-              control="userCapture"
-              (change)="selectUser($event, 'CAPTURE')">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-8">
-          <p *ngIf="userCapture != null" class="mt-2">
-            {{ userCapture.name }}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
-      <form-field [control]="requestForm.get('paymentDate')" label="Fecha Pago">
-        <input
-          type="text"
-          formControlName="paymentDate"
-          class="form-control"
-          [maxDate]="maxDate"
-          bsDatepicker />
-      </form-field>
-    </div>
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8">
-      <div class="row">
-        <div class="col-4">
-          <form-field [control]="requestForm.get('userRequest')">
-            <ngx-select
-              [form]="requestForm"
-              [data]="userItems"
-              value="user"
-              bindLabel="user"
-              label="Solicita"
-              (fetchItems)="getUsers($event)"
-              control="userRequest"
-              (change)="selectUser($event, 'REQUEST')">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-8">
-          <p *ngIf="userRequest != null" class="mt-2">
-            {{ userRequest.name }}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
-      <form-field
-        [control]="requestForm.get('captureDate')"
-        label="Fecha Captura">
-        <input
-          type="text"
-          formControlName="captureDate"
-          class="form-control"
-          [maxDate]="maxDate"
-          bsDatepicker />
-      </form-field>
-    </div>
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8">
-      <div class="row">
-        <div class="col-4">
-          <form-field [control]="requestForm.get('userAuthorize')">
-            <ngx-select
-              [form]="requestForm"
-              [data]="userItems"
-              value="user"
-              bindLabel="user"
-              label="Autoriza"
-              (fetchItems)="getUsers($event)"
-              control="userAuthorize"
-              (change)="selectUser($event, 'AUTHORIZE')">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-8">
-          <p *ngIf="userAuthorize != null" class="mt-2">
-            {{ userAuthorize.name }}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-sm-12 col-md-12 col-lg-6">
-      <div class="form-material">
-        <search-bar [params]="requestParams"></search-bar>
-      </div>
-    </div>
-    <div class="col-sm-12 col-md-12 col-lg-6">
-      <div class="d-flex flex-row-reverse">
-        <div class="">
-          <button
-            class="btn btn-sm btn-success btn-block active me-2 font-size-13"
-            (click)="openForm()">
-            Nuevo
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <ng-scrollbar
-    [track]="'horizontal'"
-    [autoHeightDisabled]="false"
-    class="table-scrollbar mt-5">
-    <div [class]="loading ? 'table-loading' : ''">
-      <ng2-smart-table
-        id="accountTable"
-        [settings]="requestSettings"
-        [source]="requestSource"
-        (edit)="openForm($event.data)">
-      </ng2-smart-table>
-    </div>
-    <div class="table-padding"></div>
-  </ng-scrollbar>
-  <app-pagination [params]="requestParams" [totalItems]="requestTotalItems">
-  </app-pagination>
-  <div class="row my-4">
-    <div class="d-flex justify-content-center align-items-center">
-      <div>
+  <div footer>
+    <div class="d-flex justify-content-center mb-3">
+      <div class="m-2">
         <button
-          class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
+          [disabled]="!requestForm.valid"
+          class="btn btn-sm btn-primary active"
           (click)="sendRequests()">
           Generar Solicitudes de Gasto
         </button>
       </div>
+      <div class="m-2">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
     </div>
   </div>
-</form>
+</app-modal>

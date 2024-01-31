@@ -110,4 +110,35 @@ export class PaysService {
       });
     });
   }
+
+  getCtlDevPagP(params: any) {
+    return new Promise((resolve, reject) => {
+      this.svPaymentDevolutionService.getCtlDevPagP(params).subscribe({
+        next: (res: any) => {
+          resolve(res);
+        },
+        error: error => {
+          let res = {
+            data: [],
+            count: 0,
+          };
+          resolve(res);
+        },
+      });
+    });
+  }
+  getvwComerPaymenttobeReturned(params) {
+    return new Promise((resolve, reject) => {
+      this.svPaymentDevolutionService
+        .getvwComerPaymenttobeReturned(params)
+        .subscribe({
+          next: (res: any) => {
+            resolve(res.data[0]);
+          },
+          error: error => {
+            resolve(null);
+          },
+        });
+    });
+  }
 }
