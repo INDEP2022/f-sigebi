@@ -127,4 +127,8 @@ export class ComerDetexpensesService extends HttpService {
       { eventId, lotId }
     );
   }
+
+  create_(body: any) {
+    return this.post(SpentEndpoints.ExpenseComerDet, body);
+  }
 }
