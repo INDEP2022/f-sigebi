@@ -1,6 +1,6 @@
 <app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">devolución de pagos</h5>
+  <div #scrollContainer class="ch-content" header>
+    <h5 class="title">Devolución de Pagos</h5>
   </div>
   <div body>
     <div *ngIf="layout == 'MAIN'" @OnInOut>
@@ -325,6 +325,7 @@
                   (click)="requestSpentGenerator()"
                   [disabled]="!disabledBtn">
                   Generar Solicitudes Gastos
+                  <i class="bi bi-cash"></i>
                 </button>
                 <!-- (click)="changeLayout('EXPENSE REQUEST')" -->
               </div>
@@ -334,6 +335,7 @@
                   (click)="sendRequests()"
                   [disabled]="!disabledBtn">
                   Enviar Solicitudes a SIRSAE
+                  <i class="bx bx-send"></i>
                 </button>
               </div>
               <div class="col">
@@ -349,6 +351,7 @@
                   class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
                   (click)="changeLayout()">
                   Mantenimiento de Layouts
+                  <i class="fas fa-wrench"></i>
                 </button>
               </div>
               <div class="col">
@@ -356,6 +359,7 @@
                   class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
                   (click)="openCreationModal()">
                   Permisos de Creaci&oacute;n
+                  <i class="bx bxs-file"></i>
                 </button>
               </div>
             </div>

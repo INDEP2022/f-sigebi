@@ -9,4 +9,6 @@ export enum PaymentDevolutionEndPoints {
   ApplicationVwComerCtldevPagp = 'application/vw-comer-ctldevpag-p',
   ApplicationGetvwComerPaymenttobeReturned = 'application/get-vw-comer-payment-to-be-returned',
   ApplicationGetComerCtldevpagb = 'application/get-comer-ctldevpag-b',
+  ApplicationPupSendSirsae = 'application/pupSendSirsae',
+  ApplicationPupVerifPagoSirsae = 'application/pup-verif-pago-sirsae',
 }
