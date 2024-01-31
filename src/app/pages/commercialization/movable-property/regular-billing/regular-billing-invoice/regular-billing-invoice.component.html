@@ -39,9 +39,14 @@
                   type="text"
                   class="form-control"
                   bsDatepicker
-                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                  [bsConfig]="{
+                    withTimepicker: true,
+                    dateInputFormat: 'DD/MM/YYYY h:mm a',
+                    keepDatepickerOpened: true
+                  }"
                   formControlName="date" />
               </form-field>
+              <!-- [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" -->
             </div>
           </div>
           <div class="row mt-4">
@@ -117,7 +122,7 @@
                     (click)="updateData()">
                     Actualiza Datos <i class="fas fa-sync-alt"> </i>
                   </button>
-                  <!-- FALTA VALIDAR -->
+                  <!-- LISTO -->
                   <button
                     [disabled]="buttons"
                     type="button"
@@ -352,16 +357,16 @@
   <div class="ch-content">
     <h5 class="title">PREFACTURAS DEL EVENTO</h5>
     <div class="row justify-content-end mr-3">
-      <app-columns-select
-        [defaultColumns]="7"
-        [(settings)]="settings"
-        [leftList]="true"></app-columns-select>
+      <!-- [defaultColumns]="7" -->
+      <!-- [leftList]="true" -->
+      <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
   <div class="row pt-3">
     <form-loader *ngIf="loading"></form-loader>
     <div>
       <ng2-smart-table
+        #myTable
         [ngStyle]="{
           height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
         }"

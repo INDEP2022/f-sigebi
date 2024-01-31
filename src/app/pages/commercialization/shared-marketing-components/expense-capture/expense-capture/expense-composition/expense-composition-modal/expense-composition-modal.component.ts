@@ -30,8 +30,6 @@ export class ExpenseCompositionModalComponent
   conceptNumber: number;
   lotNumber: number;
   expenseNumber: number;
-  CHCONIVA: string;
-  IVA: number;
   address: string;
   chargeGoodsByLote: boolean;
   data: IComerDetExpense2[];

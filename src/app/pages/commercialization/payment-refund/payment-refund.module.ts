@@ -6,6 +6,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ChangeRfcModalComponent } from './payment-refund-main/change-rfc-modal/change-rfc-modal.component';
 import { CheckPermissionsNonWinnersComponent } from './payment-refund-main/components/check-permissions-non-winners/check-permissions-non-winners.component';
@@ -21,7 +22,9 @@ import { LayoutMaintenanceStructureModalComponent } from './payment-refund-main/
 import { LayoutMaintenanceComponent } from './payment-refund-main/layout-maintenance/layout-maintenance.component';
 import { PaymentRefundMainComponent } from './payment-refund-main/payment-refund-main.component';
 import { TableCheckComponent } from './payment-refund-main/table-check/table-check.component';
+import { TablePermissionsModalComponent } from './payment-refund-main/table-permissions-modal/table-permissions-modal.component';
 import { TransferDateModalComponent } from './payment-refund-main/transfer-date-modal/transfer-date-modal.component';
+import { TransferDateTableComponent } from './payment-refund-main/transfer-date-table/transfer-date-table.component';
 import { PaymentRefundRoutingModule } from './payment-refund-routing.module';
 
 @NgModule({
@@ -41,6 +44,8 @@ import { PaymentRefundRoutingModule } from './payment-refund-routing.module';
     CheckPermissionsNonWinnersComponent,
     ChangeRfcModalComponent,
     CheckValidKeyComponent,
+    TablePermissionsModalComponent,
+    TransferDateTableComponent,
   ],
   imports: [
     CommonModule,
@@ -51,6 +56,7 @@ import { PaymentRefundRoutingModule } from './payment-refund-routing.module';
     CollapseModule.forRoot(),
     BsDatepickerModule.forRoot(),
     NgScrollbarModule,
+    FormLoaderComponent,
   ],
 })
 export class PaymentRefundModule {}

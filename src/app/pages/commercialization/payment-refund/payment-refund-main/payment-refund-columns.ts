@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
@@ -7,6 +8,7 @@ export const REFUND_CONTROL_COLUMNS = {
     title: 'Id',
     type: 'number',
     sort: false,
+    width: '10%',
   },
   cveCtlDevPag: {
     title: 'Clave',
@@ -17,16 +19,30 @@ export const REFUND_CONTROL_COLUMNS = {
     title: 'Estatus',
     type: 'string',
     sort: false,
+    width: '10%',
+    filter: false,
   },
   direccion: {
-    title: 'Dis.',
+    title: 'D.',
     type: 'string',
     sort: false,
+    width: '10%',
   },
   idTipoDisp: {
     title: 'Tipo Dispersión',
     type: 'string',
     sort: false,
+    filter: false,
+    // filter: {
+    //   type: 'list',
+    //   config: {
+    //     selectText: 'Todos',
+    //     list: [
+    //       { value: '1', title: 'Por Cliente' },
+    //       { value: '2', title: 'Por Lote' },
+    //     ],
+    //   },
+    // },
     valuePrepareFunction: (value: any) => {
       if (value !== null) {
         if (value == '1') {
@@ -43,6 +59,17 @@ export const REFUND_CONTROL_COLUMNS = {
     title: 'Origen',
     type: 'string',
     sort: false,
+    filter: false,
+    // filter: {
+    //   type: 'list',
+    //   config: {
+    //     selectText: 'Todos',
+    //     list: [
+    //       { value: '1', title: 'No Ganadores' },
+    //       { value: '2', title: 'Ganadores' },
+    //     ],
+    //   },
+    // },
     valuePrepareFunction: (value: any) => {
       if (value !== null) {
         if (value == '1') {
@@ -59,38 +86,58 @@ export const REFUND_CONTROL_COLUMNS = {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    filter: false,
-    valuePrepareFunction: (value: string) => {
-      if (!value) {
-        return '';
-      }
-      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    // filter: false,
+    // valuePrepareFunction: (value: string) => {
+    //   if (!value) {
+    //     return '';
+    //   }
+    //   return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    // },
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   fecTermino: {
     title: 'Fecha Término',
     type: 'string',
     sort: false,
-    filter: false,
-    valuePrepareFunction: (value: string) => {
-      if (!value) {
-        return '';
-      }
-      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    // filter: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
-  },
-  seleccion: {
-    title: 'Selección',
-    sort: false,
-    type: 'custom',
-    showAlways: true,
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
+    filterFunction(): boolean {
+      return true;
+    },
+    // valuePrepareFunction: (value: string) => {
+    //   if (!value) {
+    //     return '';
+    //   }
+    //   return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    // },
   },
+  // seleccion: {
+  //   title: 'Selección',
+  //   sort: false,
+  //   type: 'custom',
+  //   showAlways: true,
+  //   renderComponent: CheckboxElementComponent,
+  //   onComponentInitFunction(instance: any) {
+  //     instance.toggle.subscribe((data: any) => {
+  //       data.row.to = data.toggle;
+  //     });
+  //   },
+  // },
 };
 
 export const RELATED_EVENT_COLUMNS = {
@@ -98,10 +145,12 @@ export const RELATED_EVENT_COLUMNS = {
     title: 'Id',
     type: 'number',
     sort: false,
+    width: '15%',
   },
   processKey: {
     title: 'Cve. Proceso',
     type: 'string',
+    width: '35%',
     sort: false,
     filter: false,
     valuePrepareFunction: (cell: any, row: any) => {
@@ -109,7 +158,7 @@ export const RELATED_EVENT_COLUMNS = {
         if (row.event.processKey) {
           return row.event.processKey;
         } else {
-          return 'Clave NO Encontrada';
+          return 'CLAVE NO ENCONTRA';
         }
       } else {
         return 'Clave NO Encontrada';
@@ -120,25 +169,45 @@ export const RELATED_EVENT_COLUMNS = {
     title: 'Cantidad',
     type: 'number',
     sort: false,
+    width: '20%',
   },
   paymentsAmount: {
     title: 'Monto',
-    type: 'number',
+    type: 'html',
     sort: false,
-    filter: false,
-  },
-  seleccion: {
-    title: 'Selección',
-    sort: false,
-    type: 'custom',
-    showAlways: true,
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+    // filter: false,
+    width: '20%',
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        const a = numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return '<p class="cell_right">' + a + '</p>';
+      } else {
+        return amount;
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
+  // seleccion: {
+  //   title: 'Selección',
+  //   sort: false,
+  //   type: 'custom',
+  //   showAlways: true,
+  //   renderComponent: CheckboxElementComponent,
+  //   onComponentInitFunction(instance: any) {
+  //     instance.toggle.subscribe((data: any) => {
+  //       data.row.to = data.toggle;
+  //     });
+  //   },
+  // },
 };
 
 export const BANK_ACCOUNTS_COLUMNS = {

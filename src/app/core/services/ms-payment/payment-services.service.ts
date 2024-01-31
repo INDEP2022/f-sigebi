@@ -266,4 +266,8 @@ export class PaymentService extends HttpService {
       params
     );
   }
+
+  updateComerCtldevpagB(body: any) {
+    return this.put(PaymentEndPoints.ComerCtldevpagB, body);
+  }
 }

@@ -1477,7 +1477,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           this.APLICADO_MSG = resp.P_MSG_PROCESO;
           if (this.APLICADO_EST == 1) {
             this.alert(
-              'warning',
+              'success',
               'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
               this.APLICADO_MSG.toLowerCase()
             );

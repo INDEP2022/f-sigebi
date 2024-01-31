@@ -5,113 +5,110 @@
   <div body>
     <form class="form-material" [formGroup]="controlForm">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-9">
           <form-field [control]="controlForm.get('key')" label="Clave">
             <input type="text" class="form-control" formControlName="key" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <h6>Direcci&oacute;n</h6>
-          <div class="row">
-            <form-radio label="Muebles" class="col-6">
-              <input type="radio" formControlName="direction" value="M" />
-            </form-radio>
-            <form-radio label="Inmuebles" class="col-6">
-              <input type="radio" formControlName="direction" value="I" />
-            </form-radio>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <h6>Tipo de Disperci&oacute;n</h6>
-          <div class="row">
-            <form-radio label="Cliente" class="col-6">
-              <input type="radio" formControlName="dispersionType" value="1" />
-            </form-radio>
-            <form-radio label="Lote" class="col-6">
-              <input type="radio" formControlName="dispersionType" value="2" />
-            </form-radio>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <h6>Origen</h6>
-          <div class="row">
-            <form-radio label="No Ganadores" class="col-6">
-              <input type="radio" formControlName="origin" value="1" />
-            </form-radio>
-            <form-radio label="Ganadores" class="col-6">
-              <input type="radio" formControlName="origin" value="2" />
-            </form-radio>
-          </div>
-        </div>
-        <div
-          class="col-sm-6 col-md-4 d-flex justify-content-center align-items-center">
+        <div class="col-sm-3 col-md-3">
           <div>
             <button
+              [ngClass]="{ loading: btnLoading }"
+              [disabled]="btnLoading"
               class="btn btn-sm btn-block btn-primary active font-size-14"
               (click)="search()">
               Buscar Eventos
+              <i
+                *ngIf="!btnLoading"
+                class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
         </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col-sm-12 col-md-12">
-          <h5 class="title">Eventos</h5>
-        </div>
-        <div
-          class="col-sm-12 col-12 col-md-12 table-responsive p-5"
-          style="max-height: 500px; overflow-y: scroll">
-          <div [class]="loadingControl ? 'table-loading' : ''">
-            <ng2-smart-table
-              id="eventTable"
-              [settings]="controlSettings"
-              [source]="dataTableControl"
-              (userRowSelect)="select($event.selected)">
-            </ng2-smart-table>
-          </div>
-        </div>
         <div class="col-md-12">
-          <app-pagination
-            [params]="dataTableParamsControl"
-            [totalItems]="totalControl">
-          </app-pagination>
-        </div>
-      </div>
-      <!-- <div class="row mt-3">
-        <div class="col-sm-12 col-md-12 col-lg-6">
-          <div class="form-material">
-            <search-bar [params]="params"></search-bar>
+          <div class="row justify-content-center">
+            <div class="col-md-4 justify-content-center text-center">
+              <h6>Direcci&oacute;n</h6>
+              <div class="row justify-content-center">
+                <form-radio label="Muebles" class="col-6">
+                  <input type="radio" formControlName="direction" value="M" />
+                </form-radio>
+                <form-radio label="Inmuebles" class="col-6">
+                  <input type="radio" formControlName="direction" value="I" />
+                </form-radio>
+              </div>
+            </div>
+            <div class="col-md-4 justify-content-center text-center">
+              <h6>Tipo de Disperci&oacute;n</h6>
+              <div class="row justify-content-center">
+                <form-radio label="Cliente" class="col-6">
+                  <input
+                    type="radio"
+                    formControlName="dispersionType"
+                    value="1" />
+                </form-radio>
+                <form-radio label="Lote" class="col-6">
+                  <input
+                    type="radio"
+                    formControlName="dispersionType"
+                    value="2" />
+                </form-radio>
+              </div>
+            </div>
+            <div class="col-md-4 justify-content-center text-center">
+              <h6>Origen</h6>
+              <div class="row justify-content-center">
+                <form-radio label="No Ganadores" class="col-7">
+                  <input type="radio" formControlName="origin" value="1" />
+                </form-radio>
+                <form-radio label="Ganadores" class="col-5">
+                  <input type="radio" formControlName="origin" value="2" />
+                </form-radio>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <ng-scrollbar
-        [track]="'horizontal'"
-        [autoHeightDisabled]="false"
-        class="table-scrollbar">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            id="addControlTable"
-            [settings]="controlSettings"
-            [source]="controlColumns"
-            (userRowSelect)="select($event.selected)">
-          </ng2-smart-table>
-        </div>
-      </ng-scrollbar>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination> -->
     </form>
+    <div class="row mt-3">
+      <div class="col-sm-12 col-md-12">
+        <h5 class="title">Eventos</h5>
+      </div>
+      <div class="col-12">
+        <form-loader *ngIf="loadingControl"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loadingControl ? '0px' : '200px' }">
+          <ng2-smart-table
+            id="eventTable"
+            [settings]="controlSettings"
+            [source]="dataTableControl"
+            (userRowSelect)="select($event)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+        <app-pagination
+          [params]="dataTableParamsControl"
+          [totalItems]="totalControl">
+        </app-pagination>
+      </div>
+    </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <button
+          class="btn btn-primary btn-sm active"
           [disabled]="controlForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
+          type="button"
+          (click)="confirm()">
+          Generar Control
+          <i class="fa fa-save"></i>
+        </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

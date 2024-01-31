@@ -17,7 +17,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IEatConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
-import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -1226,35 +1225,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
   }
 
-  private async fillOthersParameters() {
-    const filterParams = new FilterParams();
-    filterParams.addFilter('parameter', 'CHCONIVA,IVA', SearchFilter.IN);
-    return firstValueFrom(
-      this.parameterModService.getAll(filterParams.getParams()).pipe(
-        take(1),
-        catchError(x => of({ data: [] as IParameterMod[], message: x })),
-        map(response => {
-          let data = response.data;
-          let success;
-          if (data.length > 0) {
-            this.dataService.CHCONIVA = data[0].valor;
-            this.dataService.IVA = data[1].valor ? +data[1].valor / 100 : 0;
-            success = true;
-          } else {
-            this.dataService.CHCONIVA = null;
-            this.dataService.IVA = 0;
-            success = false;
-          }
-          if (this.dataService.CHCONIVA === null)
-            this.alert('warning', 'No tiene parámetro CHCONIVA', '');
-          if (this.dataService.IVA === 0)
-            this.alert('warning', 'No tiene parámetro IVA', '');
-          return success;
-        })
-      )
-    );
-  }
-
   get numReceipts() {
     return this.form.get('numReceipts');
   }
@@ -1463,7 +1433,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         return;
       }
       this.dataService.updateOI.next(true);
-      const otherParams = await this.fillOthersParameters();
+      // setTimeout(() => {
+      //   if (expense.conceptNumber + '' === '643' && this.PVALIDADET === 'S') {
+      //     this.fillOthersParameters();
+      //   }
+      // }, 100);
     }, 500);
   }
 
