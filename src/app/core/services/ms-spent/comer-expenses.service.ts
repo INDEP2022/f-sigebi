@@ -7,6 +7,7 @@ import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import {
   IComerExpense,
   IComerExpenseDTO,
+  IComerExpenseDTO2,
   IFillExpenseData,
   IFillExpensesDTO,
 } from '../../models/ms-spent/comer-expense';
@@ -76,5 +77,9 @@ export class SpentService extends HttpService {
 
   getTotalByMandate(idSpent: number) {
     return this.get('aplication/GetTotalSpent/' + idSpent);
+  }
+
+  save_(body: IComerExpenseDTO2) {
+    return this.post<IComerExpense>(SpentEndpoints.ExpenseComer, body);
   }
 }

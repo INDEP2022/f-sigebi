@@ -1,6 +1,8 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Nuevo {{ title }}</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar ' + title : 'Agregar ' + title }}
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="dataForm">
@@ -10,6 +12,7 @@
             [control]="dataForm.get('beneficiary')"
             label="Beneficiario">
             <input
+              maxlength="11"
               type="number"
               class="form-control"
               formControlName="beneficiary" />
@@ -31,8 +34,12 @@
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="dataForm.get('service')" label="Servicio">
-            <textarea rows="2" class="form-control" formControlName="service">
+          <form-field [control]="dataForm.get('commentary')" label="Servicio">
+            <textarea
+              rows="3"
+              maxlength="255"
+              class="form-control"
+              formControlName="commentary">
             </textarea>
           </form-field>
         </div>
@@ -41,7 +48,8 @@
             [control]="dataForm.get('documentation')"
             label="Documentación Anexa">
             <textarea
-              rows="2"
+              rows="3"
+              maxlength="255"
               class="form-control"
               formControlName="documentation">
             </textarea>
@@ -53,14 +61,25 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <button
+          [disabled]="!dataForm.valid"
+          type="button"
+          class="btn btn-sm btn-primary active"
+          (click)="confirm()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+        <!-- <confirm-button
           [disabled]="!dataForm.valid"
           [loading]="loading"
           (confirm)="confirm()">
-        </confirm-button>
+        </confirm-button> -->
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>
