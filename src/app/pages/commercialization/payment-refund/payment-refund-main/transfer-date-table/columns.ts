@@ -11,20 +11,13 @@ export const COLUMNS = {
     sort: false,
     width: '35%',
     filter: false,
-    valuePrepareFunction: (amount: string) => {
-      const numericAmount = parseFloat(amount);
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        currency: 'USD',
+        minimumFractionDigits: 2,
+      });
 
-      if (!isNaN(numericAmount)) {
-        const a = numericAmount.toLocaleString('en-US', {
-          // style: 'currency',
-          // currency: 'USD',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
-        return '<p class="cell_right">' + a + '</p>';
-      } else {
-        return amount;
-      }
+      return formatter.format(Number(val));
     },
     filterFunction(cell?: any, search?: string): boolean {
       return true;

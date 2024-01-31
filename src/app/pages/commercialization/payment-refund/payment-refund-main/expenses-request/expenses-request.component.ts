@@ -1,10 +1,24 @@
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IMandExpenseCont } from 'src/app/core/models/ms-accounting/mand-expensecont';
+import {
+  IComerExpenseDTO2,
+  IComerGastosDev,
+} from 'src/app/core/models/ms-spent/comer-expense';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { AccountingService } from 'src/app/core/services/ms-accounting/accounting.service';
+import { InterfaceesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfaceesirsae.service';
+import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
+import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
+import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
+import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { ExpensesRequestModalComponent } from '../expenses-request-modal/expenses-request-modal.component';
@@ -31,18 +45,17 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
   userItems = new DefaultSelect();
   requestParams = new BehaviorSubject<ListParams>(new ListParams());
   requestTotalItems: number = 0;
-  requestColumns: any[] = [];
   requestSettings = {
     ...TABLE_SETTINGS,
     actions: {
       columnTitle: 'Acciones',
       position: 'left',
-      add: true,
+      add: false,
       edit: true,
-      delete: false,
+      delete: true,
     },
   };
-  requestSource: LocalDataSource;
+  requestSource: LocalDataSource = new LocalDataSource();
   @Output() onReturn = new EventEmitter<boolean>();
 
   conceptTestData = [
@@ -137,41 +150,29 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
     },
   ];
 
-  requestTestData = [
-    {
-      beneficiary: 16186,
-      name: 'ANTONIO RIVERA',
-      amount: 10000,
-      service: 'SERVICE TEST DATA',
-      documentation: 'DOCUMENTATION TEST DATA',
-    },
-    {
-      beneficiary: 16187,
-      name: 'ANDREA ORTIZ',
-      amount: 30000,
-      service: 'SERVICE TEST DATA',
-      documentation: 'DOCUMENTATION TEST DATA',
-    },
-    {
-      beneficiary: 16188,
-      name: 'PABLO ESTEVEZ',
-      amount: 20000,
-      service: 'SERVICE TEST DATA',
-      documentation: 'DOCUMENTATION TEST DATA',
-    },
-  ];
-
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  blkBankPays: any[];
+  selectRowCtrol: any = null;
+  constructor(
+    private interfaceesirsaeService: InterfaceesirsaeService,
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private modalRef: BsModalRef,
+    private datePipe: DatePipe,
+    private spentService: SpentService,
+    private comerDetexpensesService: ComerDetexpensesService,
+    private accountingService: AccountingService,
+    private svPaymentService: PaymentService,
+    private svPaymentDevolutionService: PaymentDevolutionService,
+    private authService: AuthService
+  ) {
     super();
     this.requestSettings.columns = PAYMENT_REQUEST_COLUMNS;
   }
-
+  comerGastosFields: IComerGastosDev;
   ngOnInit(): void {
+    console.log('blkBankPays', this.blkBankPays);
     this.prepareForm();
-    this.getConcepts({ page: 1, text: '' });
-    this.getEvents({ page: 1, text: '' });
-    this.getVouchers({ page: 1, text: '' });
-    this.getUsers({ page: 1, text: '' });
+    // this.getUsers({ page: 1, text: '' });
     this.getData();
   }
 
@@ -181,59 +182,90 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.requestForm = this.fb.group({
-      concept: [null, [Validators.required]],
-      event: [null, [Validators.required]],
-      voucherCount: [null, [Validators.required]],
-      documentNumber: [null, [Validators.required]],
-      paymentType: [null, [Validators.required]],
-      voucher: [null, [Validators.required]],
+      concept: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      desconcept: [null, [Validators.pattern(STRING_PATTERN)]],
+      event: [null, [Validators.pattern(STRING_PATTERN)]],
+      idevent: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      voucherCount: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      documentNumber: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      paymentType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      voucher: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      voucherName: [null, [Validators.pattern(STRING_PATTERN)]],
+
       documentDate: [null, [Validators.required]],
       paymentDate: [null, [Validators.required]],
       captureDate: [null, [Validators.required]],
+
       userCapture: [null, [Validators.required]],
       userRequest: [null, [Validators.required]],
       userAuthorize: [null, [Validators.required]],
+      userCaptureName: [null, [Validators.required]],
+      userRequestName: [null, [Validators.required]],
+      userAuthorizeName: [null, [Validators.required]],
+
+      address: [null],
     });
-  }
+    if (this.comerGastosFields) {
+      this.requestForm.patchValue({
+        concept: this.comerGastosFields.idConcept,
+        desconcept: this.comerGastosFields.descConcept,
+        address: this.comerGastosFields.direccion,
+        idevent: this.comerGastosFields.id_evento,
 
-  getConcepts(params: ListParams) {
-    if (params.text == '') {
-      this.conceptItems = new DefaultSelect(this.conceptTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.conceptTestData.filter((i: any) => i.id == id)];
-      this.conceptItems = new DefaultSelect(item[0], 1);
-    }
-  }
+        documentDate: this.comerGastosFields.fecha_factura_rec,
+        paymentDate: this.comerGastosFields.fecha_pago,
+        captureDate: this.comerGastosFields.fecha_captura,
 
-  getEvents(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.eventTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.conceptTestData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
-    }
-  }
+        userCapture: this.comerGastosFields.usuario_capturo,
+        userRequest: this.comerGastosFields.usuario_solicita,
+        userAuthorize: this.comerGastosFields.usuario_autoriza,
 
-  getVouchers(params: ListParams) {
-    if (params.text == '') {
-      this.voucherItems = new DefaultSelect(this.voucherTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.voucherTestData.filter((i: any) => i.id == id)];
-      this.voucherItems = new DefaultSelect(item[0], 1);
+        userCaptureName: this.comerGastosFields.nom_empl_captura,
+        userRequestName: this.comerGastosFields.nom_empl_solicita,
+        userAuthorizeName: this.comerGastosFields.nom_empl_autoriza,
+
+        paymentType: this.comerGastosFields.forma_pago,
+        voucherCount: this.comerGastosFields.num_comprobantes,
+        documentNumber: this.comerGastosFields.no_factura_rec,
+
+        voucher: this.comerGastosFields.comproafmandsae,
+        voucherName: this.comerGastosFields.nom_sae,
+      });
     }
   }
 
   getUsers(params: ListParams) {
-    if (params.text == '') {
-      this.userItems = new DefaultSelect(this.userTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.userTestData.filter((i: any) => i.id == id)];
-      this.userItems = new DefaultSelect(item[0], 1);
+    if (params.text) {
+      params['filter.clkdet'] = `$eq:${params.text}`;
     }
+    this.interfaceesirsaeService
+      .ApplicationGetReturnPayments(params)
+      .subscribe({
+        next: value => {
+          this.userItems = new DefaultSelect(value.data, value.count);
+        },
+        error: err => {
+          this.userItems = new DefaultSelect([], 0);
+        },
+      });
   }
 
   selectConcept(item: any) {
@@ -249,15 +281,20 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
   }
 
   selectUser(item: any, type: string) {
+    let name = '';
+    if (item) name = item.menomemp + ' ' + item.menomam;
     switch (type) {
       case 'CAPTURE':
         this.userCapture = item;
+        this.requestForm.get('userCaptureName').setValue(name);
         break;
       case 'REQUEST':
         this.userRequest = item;
+        this.requestForm.get('userRequestName').setValue(name);
         break;
       case 'AUTHORIZE':
         this.userAuthorize = item;
+        this.requestForm.get('userAuthorizeName').setValue(name);
         break;
       default:
         break;
@@ -266,8 +303,7 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
 
   getData() {
     // Llamar al servicio para llenar la informacion
-    this.requestColumns = this.requestTestData;
-    this.requestSource = new LocalDataSource(this.requestColumns);
+    this.requestSource.load(this.blkBankPays);
     this.requestTotalItems = this.requestSource.count();
   }
 
@@ -298,14 +334,334 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
 
   editRow(row: any) {
     this.requestSource.update(this.editedRow, row);
+    this.requestSource.refresh();
     this.requestTotalItems = this.requestSource.count();
   }
 
   async sendRequests() {
-    this.requestSource.getAll().then(table => {
-      let array = this.fb.array([...table]);
-      this.requestForm.addControl('beneficiaries', array);
-      console.log(this.requestForm.value);
+    let resp: boolean = this.validationFields();
+    if (resp) {
+      const data = await this.requestSource.getAll();
+
+      if (data.length == 0)
+        return this.alert('warning', 'No se tienen solicitudes a generar.', '');
+
+      this.alertQuestion(
+        'question',
+        'Se generarán las Solicitudes de Pago',
+        '¿Desea Continuar?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          // PUP_GEN_SOLPAGOS
+          this.pupGenSolPagos(data);
+        }
+      });
+    }
+  }
+
+  pupGenSolPagos(dataTable: any[]) {
+    const {
+      concept,
+      desconcept,
+      event,
+      idevent,
+      voucherCount,
+      documentNumber,
+      paymentType,
+      voucher,
+      voucherName,
+      documentDate,
+      paymentDate,
+      captureDate,
+      userCapture,
+      userRequest,
+      userAuthorize,
+      userCaptureName,
+      userRequestName,
+      userAuthorizeName,
+    } = this.requestForm.value;
+    let n_descDep = '';
+    if (this.selectRowCtrol.idOrigen == 1) {
+      n_descDep = 'DEVOLUCIONES DE DEPOSITOS DE GARANTIA';
+    } else {
+      n_descDep = 'DEVOLUCIONES DE PAGOS EN EXCESO';
+    }
+    const mm1 = this.datePipe.transform(paymentDate, 'MM');
+    // let mm = Number(paymentDate.split('-')[0]);
+
+    let result = dataTable.map(async item => {
+      let bodyInsert: IComerExpenseDTO2 = {
+        // expenseNumber: "expenseNumber",
+        conceptNumber: concept,
+        comment: item.commentary,
+        amount: item.amount,
+        vat: this.comerGastosFields.iva,
+        invoiceRecNumber: documentNumber,
+        invoiceRecDate: documentDate,
+        eventNumber: idevent,
+        lotNumber: this.comerGastosFields.id_lote,
+        paymentRequestNumber: null,
+        capturedUser: userCapture,
+        authorizedUser: userAuthorize,
+        requestedUser: userRequest,
+        fecha_contrarecibo: null,
+        captureDate: captureDate,
+        payDay: paymentDate,
+        attachedDocumentation: item.documentation,
+        numReceipts: voucherCount,
+        paymentInstructions: null,
+        vatWithheld: this.comerGastosFields.iva_retenido,
+        isrWithheld: this.comerGastosFields.isr_retenido,
+        folioAtnCustomer: null,
+        totDocument: item.amount,
+        formPayment: paymentType,
+        clkpv: item.beneficiary,
+        providerName: item.name,
+        monthExpense: Number(mm1) == 1 ? '1' : null,
+        monthExpense2: Number(mm1) == 2 ? '2' : null,
+        monthExpense3: Number(mm1) == 3 ? '3' : null,
+        monthExpense4: Number(mm1) == 4 ? '4' : null,
+        monthExpense5: Number(mm1) == 5 ? '5' : null,
+        monthExpense6: Number(mm1) == 6 ? '6' : null,
+        monthExpense7: Number(mm1) == 7 ? '7' : null,
+        monthExpense8: Number(mm1) == 8 ? '8' : null,
+        monthExpense9: Number(mm1) == 9 ? '9' : null,
+        monthExpense10: Number(mm1) == 10 ? '10' : null,
+        monthExpense11: Number(mm1) == 11 ? '11' : null,
+        monthExpense12: Number(mm1) == 12 ? '12' : null,
+        spDate: null,
+        comproafmandsae: voucher,
+        idOrdinginter: null,
+        exchangeRate: null,
+        nomEmplRequest: userRequestName,
+        nomEmplAuthorizes: userCaptureName,
+        nomEmplcapture: userCaptureName,
+        ur_coordregional: null,
+        descurcoord: null,
+        address: this.comerGastosFields.direccion,
+        usu_captura_siab: this.comerGastosFields.usu_captura_siab,
+        dateOfResolution: null,
+        typepe: null,
+        tiptram: null,
+        contractNumber: null,
+        adj: null,
+        spFolio: null,
+        indicator: this.comerGastosFields.indicador,
+      };
+      // INSERT INTO COMER_GASTOS
+      let resInsert: any = await this.saveComerExpenses(bodyInsert);
+      console.log('resInsert', resInsert);
+      if (resInsert) {
+        let bodyInsertDet = {
+          expenseDetailNumber: 1,
+          expenseNumber: resInsert.expenseNumber,
+          amount: item.amount,
+          vat: 0,
+          isrWithholding: 0,
+          vatWithholding: 0,
+          transferorNumber: null,
+          goodNumber: null,
+          total: item.amount,
+          cvman: '800000',
+          budgetItem: 'A',
+        };
+        // INSERT INTO COMER_DETGASTOS
+        await this.saveComerDetExpenses(bodyInsertDet);
+
+        if (this.selectRowCtrol.idOrigen == 1) {
+          let objInsertMandXGast = {
+            spentId: resInsert.expenseNumber,
+            mandxexpensecontId: 1,
+            cvman: '800000',
+            amount: item.amount,
+            cabms: 'OT39909196',
+            vat: 0,
+            departure: '39909',
+            cooperation: 'B97',
+            descabms: n_descDep,
+            retentionisr: 0,
+            retentionvat: 0,
+            total: item.amount,
+            categorycabms: '1',
+            appliesto: null,
+            departurestop: 'A',
+          };
+          // INSERT INTO COMER_MANDXGASTOSCONT
+          await this.saveAccounting(objInsertMandXGast);
+
+          item['idwaste'] = resInsert.expenseNumber;
+
+          let bodyUpdate = {
+            idCtldevpag: this.selectRowCtrol.ctlDevPagId,
+            cveBank: item.cveBank,
+            account: item.account,
+            idwaste: resInsert.expenseNumber,
+          };
+          // UPDATE COMER_CTLDEVPAG_B
+          await this.updateCtlDevPagB(bodyUpdate);
+        } else {
+          let objInsertMandXGast = {
+            spentId: resInsert.expenseNumber,
+            mandxexpensecontId: 1,
+            cvman: '800000',
+            amount: item.amount,
+            cabms: 'AD33104025',
+            vat: 0,
+            departure: '33104',
+            cooperation: '189',
+            descabms: n_descDep,
+            retentionisr: 0,
+            retentionvat: 0,
+            total: item.amount,
+            categorycabms: '1',
+            appliesto: null,
+            departurestop: 'A',
+          };
+          // INSERT INTO COMER_MANDXGASTOSCONT
+          await this.saveAccounting(objInsertMandXGast);
+
+          item['idwaste'] = resInsert.expenseNumber;
+
+          let bodyUpdate = {
+            idCtldevpag: this.selectRowCtrol.ctlDevPagId,
+          };
+          // UPDATE COMER_CTLDEVPAG_B
+          await this.updateCtlDevPagB(bodyUpdate);
+        }
+      }
+    });
+
+    Promise.all(result).then(resp => {
+      let result2 = dataTable.map(async item => {
+        let body = {
+          pSpentId: Number(item.idwaste),
+          pBankKey: item.cveBank,
+          pAccount: item.account,
+          toolbarUser: this.authService.decodeToken().preferred_username,
+          idCtldevpag: Number(this.selectRowCtrol.ctlDevPagId),
+          originId: Number(this.selectRowCtrol.idOrigen),
+        };
+        await this.pupSendSirsae(body);
+      });
+      Promise.all(result2).then(resp2 => {
+        this.modalRef.hide();
+        this.modalRef.content.callback(true);
+        this.alert('success', 'Proceso Terminado Correctamente', '');
+      });
+    });
+  }
+  saveComerExpenses(data: IComerExpenseDTO2) {
+    return new Promise((resolve, reject) => {
+      this.spentService.save_(data).subscribe({
+        next: value => {
+          resolve(value);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+  saveComerDetExpenses(data: any) {
+    return console.log('data2', data);
+    return new Promise((resolve, reject) => {
+      this.comerDetexpensesService.create_(data).subscribe({
+        next: value => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  saveAccounting(data: IMandExpenseCont) {
+    return new Promise((resolve, reject) => {
+      this.accountingService.create(data).subscribe({
+        next: value => {
+          resolve(value);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  updateCtlDevPagB(data: any) {
+    return new Promise((resolve, reject) => {
+      this.svPaymentService.updateComerCtldevpagB(data).subscribe({
+        next: value => {
+          resolve(value);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+  // PUP_ENVIAR_SIRSAE
+  async pupSendSirsae(data: any) {
+    return new Promise((resolve, reject) => {
+      this.svPaymentDevolutionService.applicationPupSendSirsae(data).subscribe({
+        next(value) {
+          resolve(value);
+        },
+        error(err) {
+          resolve(null);
+        },
+      });
+    });
+  }
+  validationFields(): boolean {
+    const {
+      userAuthorize,
+      userCapture,
+      userRequest,
+      captureDate,
+      paymentDate,
+      documentDate,
+    } = this.requestForm.value;
+    if (!paymentDate) {
+      this.alert('warning', 'Debe insertar la Fecha de Pago', '');
+      return false;
+    } else if (!captureDate) {
+      this.alert('warning', 'Debe insertar la Fecha de Captura', '');
+      return false;
+    } else if (!documentDate) {
+      this.alert('warning', 'Debe insertar la Fecha de Documento', '');
+      return false;
+    } else if (!userAuthorize) {
+      this.alert('warning', 'Debe insertar el Usuario que Autoriza', '');
+      return false;
+    } else if (!userCapture) {
+      this.alert('warning', 'Debe insertar el Usuario que Captura', '');
+      return false;
+    } else if (!userRequest) {
+      this.alert('warning', 'Debe insertar el Usuario que Solicita', '');
+      return false;
+    }
+
+    return true;
+  }
+
+  async close() {
+    this.modalService.hide();
+  }
+
+  async questionDelete(data: any) {
+    console.log(data);
+    this.alertQuestion(
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.requestSource.remove(data);
+        this.requestSource.refresh();
+        this.alert('success', 'El registro se eliminó correctamente', '');
+      }
     });
   }
 }

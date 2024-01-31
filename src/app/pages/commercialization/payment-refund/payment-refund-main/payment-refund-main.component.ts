@@ -4,7 +4,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
@@ -13,7 +13,11 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IComerGastosDev } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { BankService } from 'src/app/core/services/catalogs/bank.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
@@ -23,6 +27,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 import { ChangeRfcModalComponent } from './change-rfc-modal/change-rfc-modal.component';
 import { CreateControlModalComponent } from './create-control-modal/create-control-modal.component';
+import { ExpensesRequestComponent } from './expenses-request/expenses-request.component';
 import { KeyChangeModalComponent } from './key-change-modal/key-change-modal.component';
 import {
   PAYMENT_COLUMNS,
@@ -157,6 +162,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   @ViewChild('myTabset', { static: true }) tabset: TabsetComponent;
   accountTotalItemsP: number = 0;
   loadingP: boolean = false;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+  comerGastos: IComerGastosDev;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -165,7 +172,10 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private datePipe: DatePipe,
     private router: Router,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private comerTpEventosService: ComerTpEventosService,
+    private comerEventosService: ComerEventosService,
+    private bankService: BankService
   ) {
     super();
     this.controlSettings = {
@@ -225,20 +235,13 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         sort: false,
         // filter: false,
         width: '10%',
-        valuePrepareFunction: (amount: string) => {
-          const numericAmount = parseFloat(amount);
+        valuePrepareFunction: (val: string) => {
+          const formatter = new Intl.NumberFormat('en-US', {
+            currency: 'USD',
+            minimumFractionDigits: 2,
+          });
 
-          if (!isNaN(numericAmount)) {
-            const a = numericAmount.toLocaleString('en-US', {
-              // style: 'currency',
-              // currency: 'USD',
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            });
-            return '<p class="cell_right">' + a + '</p>';
-          } else {
-            return amount;
-          }
+          return formatter.format(Number(val));
         },
         filterFunction(cell?: any, search?: string): boolean {
           return true;
@@ -250,7 +253,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         sort: false,
         width: '10%',
       },
-      idCtldevpag: {
+      payIdmentrequest: {
         title: 'Id Pago',
         type: 'number',
         sort: false,
@@ -511,6 +514,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
   ngOnInit(): void {
     this.tokenData = this.authService.decodeToken();
+    // PUP_LLENA_DEFAULTS
+    this.pupLlenaDefaults();
     this.getComerCtrlCreation('P');
     this.eventsTotalQuantity = 0;
     this.eventsTotalAmount = 0;
@@ -521,6 +526,41 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.loadingDataTableBankAccount();
     this.loadingDataTableRelationEvent();
   }
+  // PUP_LLENA_DEFAULTS
+  async pupLlenaDefaults() {
+    this.comerGastos = {
+      idConcept: null,
+      descConcept: '',
+      iva: 0,
+      no_factura_rec: '1',
+      fecha_factura_rec: new Date(),
+      id_evento: 9999999,
+      id_lote: null,
+      usuario_capturo: '30884',
+      usuario_autoriza: '30471',
+      usuario_solicita: '9601',
+      fecha_captura: new Date(),
+      fecha_pago: null, // No se puede asignar PK_COMER_LC.OBTENER_POST_FECHA_HABIL (TRUNC(SYSDATE), 3, c_RESUL) en TypeScript
+      num_comprobantes: 1,
+      iva_retenido: 0,
+      isr_retenido: 0,
+      forma_pago: 'TRANSFERENCIA',
+      comproafmandsae: 1,
+      nom_sae: 'SAE',
+      id_ordinginter: null,
+      tipo_cambio: null,
+      nom_empl_solicita: 'ALEJANDRO LEDESMA RIOS',
+      nom_empl_autoriza: 'ALMARA EDILIA DABDOUB GIRON',
+      nom_empl_captura: 'FERNANDO GOMEZ GUZMAN',
+      ur_coordregional: null,
+      direccion: 'M',
+      usu_captura_siab: this.tokenData.preferred_username,
+      tipo_pe: null,
+      adj: null,
+      indicador: 1,
+    };
+  }
+
   // COMER_CTLCREACION
   async getComerCtrlCreation(status: string) {
     if (!this.tokenData) {
@@ -562,7 +602,6 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
     this.loadingDataTableControl();
   }
-
   async getCrtlCreate(params: ListParams) {
     return new Promise((resolve, reject) => {
       this.svPaymentDevolutionService.getEatCtlCreate_(params).subscribe({
@@ -596,6 +635,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     if (event) {
       this.selectRowCtrol = event.data;
       this.devolutionCtlDevPagId = event.data.ctlDevPagId;
+      this.selectBanksCheck = [];
       this.getRelationEventData();
       this.getBankData();
       if (event.data.idEstatus == 'PROC') {
@@ -604,23 +644,6 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         this.disabledBtn = false;
       }
     }
-    if (event.isSelected) {
-      // this.devolutionCtlDevPagId = event.data.ctlDevPagId;
-      // this.loadingDataTableRelationEvent();
-    } else {
-      // this.devolutionCtlDevPagId = null;
-      // this.testDataRelationEvent = [];
-      // this.dataTableRelationEvent.load([]);
-      // this.totalRelationEvent = 0;
-      // this.eventsTotalQuantity = 0;
-      // this.eventsTotalAmount = 0;
-    }
-    // console.log(
-    //   'CONTROL SELECTED ',
-    //   event,
-    //   this.dataTableControl,
-    //   this.devolutionCtlDevPagId
-    // );
   }
 
   selectRelatedEvent(rows: any[]) {
@@ -719,8 +742,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     if (!this.selectRowCtrol) {
       this.alertInfo(
         'warning',
-        'Debe seleccionar un registro de la tabla: "Control de Devoluciones"',
-        ''
+        'Control de Devoluciones',
+        'Debe seleccionar al menos un registro de la tabla'
       ).then(question => {
         if (question.isConfirmed) {
           this.cambiarTab(0);
@@ -777,7 +800,18 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
   async sendRequests() {
     const dataBanks = await this.dataTableBank.getAll();
-    const dataEvents = await this.dataTableRelationEvent.getAll();
+    if (!this.selectRowCtrol) {
+      this.alertInfo(
+        'warning',
+        'Control de Devoluciones',
+        'Debe seleccionar al menos un registro de la tabla'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(0);
+        }
+      });
+      return;
+    }
     // GO_BLOCK('COMER_CTLDEVPAG_B');
     if (dataBanks.length == 0) {
       this.alertInfo(
@@ -791,18 +825,18 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       });
       return;
     }
-    if (this.selectBanksCheck.length == 0) {
-      this.alertInfo(
-        'warning',
-        'Cuentas de Banco Relacionadas',
-        'Debe seleccionar al menos un registro de la tabla'
-      ).then(question => {
-        if (question.isConfirmed) {
-          this.cambiarTab(2);
-        }
-      });
-      return;
-    }
+    // if (this.selectBanksCheck.length == 0) {
+    //   this.alertInfo(
+    //     'warning',
+    //     'Cuentas de Banco Relacionadas',
+    //     'Debe seleccionar al menos un registro de la tabla'
+    //   ).then(question => {
+    //     if (question.isConfirmed) {
+    //       this.cambiarTab(2);
+    //     }
+    //   });
+    //   return;
+    // }
 
     this.alertQuestion(
       'question',
@@ -814,15 +848,16 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           if (item.idwaste && item.idCtldevpag) {
             // PUP_ENVIAR_SIRSAE
             let body = {
-              pSpentId: item.idwaste,
+              pSpentId: Number(item.idwaste),
               pBankKey: item.cveBank,
               pAccount: item.account,
               toolbarUser: this.authService.decodeToken().preferred_username,
-              idCtldevpag: item.idCtldevpag,
-              originId: item.idOrigen,
+              idCtldevpag: Number(item.idCtldevpag),
+              originId: Number(this.selectRowCtrol.idOrigen),
             };
             await this.pupSendSirsae(body);
-            if (item.idOrigen == 2) {
+            if (this.selectRowCtrol.idOrigen == 2) {
+              return;
             }
           }
         });
@@ -836,7 +871,14 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   // PUP_ENVIAR_SIRSAE
   async pupSendSirsae(data: any) {
     return new Promise((resolve, reject) => {
-      // ENDPOINT EDWIN //
+      this.svPaymentDevolutionService.applicationPupSendSirsae(data).subscribe({
+        next(value) {
+          resolve(value);
+        },
+        error(err) {
+          resolve(null);
+        },
+      });
     });
   }
   formatTotalAmount(numberParam: number) {
@@ -1091,7 +1133,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               account: () => (searchFilter = SearchFilter.EQ),
               countPayments: () => (searchFilter = SearchFilter.EQ),
               idwaste: () => (searchFilter = SearchFilter.EQ),
-              idCtldevpag: () => (searchFilter = SearchFilter.EQ),
+              payIdmentrequest: () => (searchFilter = SearchFilter.EQ),
               numberInvoicePay: () => (searchFilter = SearchFilter.EQ),
               numberCheck: () => (searchFilter = SearchFilter.EQ),
               amountPayments: () => (searchFilter = SearchFilter.EQ),
@@ -1280,110 +1322,218 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   async requestSpentGenerator() {
     const dataBanks = await this.dataTableBank.getAll();
     const dataEvents = await this.dataTableRelationEvent.getAll();
-    let n_MONTO_PAGOS: number;
-    let n_CANT_PAGOS: number;
+    let n_MONTO_PAGOS: number = 0;
+    let n_CANT_PAGOS: number = 0;
+
+    if (!this.selectRowCtrol) {
+      this.alertInfo(
+        'warning',
+        'Control de Devoluciones',
+        'Debe seleccionar al menos un registro de la tabla'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(0);
+        }
+      });
+      return;
+    }
+    // GO_BLOCK('COMER_CTLDEVPAG_E');
+    if (dataEvents.length == 0) {
+      this.alertInfo(
+        'warning',
+        'Eventos Relacionados',
+        'No se tienen Eventos relacionados.'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(1);
+        }
+      });
+      return;
+    }
+
     // GO_BLOCK('COMER_CTLDEVPAG_B');
     if (dataBanks.length == 0) {
       this.alert(
         'warning',
-        'No hay registros cargados en la tabla "Control de Devoluciones"',
-        ''
+        'Cuentas de Banco Relacionadas',
+        'No se tienen registros de Bancos a procesar.'
       );
       return;
     }
     if (this.selectBanksCheck.length == 0) {
-      return this.alert(
+      this.alertInfo(
         'warning',
-        'No se tienen registros de Bancos a procesar.',
-        'Selecciona por lo menos un registro de la tabla "Control de Devoluciones"'
-      );
+        'Cuentas de Banco Relacionadas',
+        'Debe seleccionar al menos un registro de la tabla'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(2);
+        }
+      });
+      return;
     }
-    // GO_BLOCK('COMER_CTLDEVPAG_E');
-    if (dataEvents.length == 0) {
-      this.alert('warning', 'No se tienen Eventos relacionados.', '');
-    }
+
     let arrEvents = [];
     let c_REL_EVENTOS = '';
+    let n_event: number;
     for (const event of dataEvents) {
-      arrEvents.push(event.event);
+      arrEvents.push(event.eventId);
+      n_event = Number(event.eventId);
     }
+    c_REL_EVENTOS = arrEvents.join(', ');
 
-    let c_DESC_RECIBO = await this.getDescRecibo();
+    let c_DESC_RECIBO = await this.getDescRecibo(dataEvents[0].eventId);
     this.blkBankPays = [];
-
+    console.log(c_DESC_RECIBO);
     let result = this.selectBanksCheck.map(async item => {
       // COMER_CTLDEVPAG_H.ID_ORIGEN = 1
       if (this.selectRowCtrol.idOrigen == 1) {
-        let resBank: any = await this.catBanks();
+        let resBank: any = await this.catBanks(item.cveBank);
+        let name = resBank ? resBank.name : '';
+        let idProvider = resBank ? resBank.idProvider : '';
         let objCreate = {
-          CLKPV: resBank.CLKPV,
-          NOMBREPROV: resBank.NOMBREPROV,
-          CVE_BANCO: item.cveBank,
-          CUENTA: item.account,
-          MONTO: item.amountPayments,
-          COMENTARIO: `${item.cveBank} DEVOLUCIÓN DE DEPÓSITO POR CONCEPTO DE GARANTIA DE SERIEDAD CORRESPONDIENTE A LA
+          beneficiary: idProvider,
+          name: name,
+          cveBank: item.cveBank,
+          account: item.account,
+          amount: item.amountPayments,
+          commentary: `${item.cveBank} DEVOLUCIÓN DE DEPÓSITO POR CONCEPTO DE GARANTIA DE SERIEDAD CORRESPONDIENTE A LA
           ${c_DESC_RECIBO} ${this.selectRowCtrol.cveCtlDevPag} (${c_REL_EVENTOS}) DE ${item.countPayments} PAGOS`,
-          DOCUMENTACION_ANEXA: `RELACIÓN DE DEVOLUCIONES DE GARANTIAS DE SERIEDAD DE LA ${this.selectRowCtrol.cveCtlDevPag}
-          (${c_REL_EVENTOS}), DEPOSITADAS EN LA CUENTA DE ${resBank.NOMBREPROV} |${item.cveBank}|`,
+          documentation: `RELACIÓN DE DEVOLUCIONES DE GARANTIAS DE SERIEDAD DE LA ${this.selectRowCtrol.cveCtlDevPag}
+          (${c_REL_EVENTOS}), DEPOSITADAS EN LA CUENTA DE ${name} ${item.cveBank}`,
         };
+        this.blkBankPays.push(objCreate);
       } else {
         n_MONTO_PAGOS = n_MONTO_PAGOS + Number(item.amountPayments);
         n_CANT_PAGOS = n_CANT_PAGOS + Number(item.countPayments);
       }
     });
-    Promise.all(result).then(res => {
+    Promise.all(result).then(async res => {
+      console.log(this.blkBankPays);
       if (this.selectRowCtrol.idOrigen == 1) {
-        // :COMER_GASTOS.ID_EVENTO := 9999999;
-        // :COMER_GASTOS.DIRECCION := 'M';
-        // :COMER_GASTOS.ID_CONCEPTO := 544;
-        // :COMER_GASTOS.DESC_CONCEPTO := 'PAGO POR CONCEPTO DE GARANTÍAS';
+        this.comerGastos.id_evento = 9999999;
+        this.comerGastos.direccion = 'M';
+        this.comerGastos.idConcept = 544;
+        this.comerGastos.descConcept = 'PAGO POR CONCEPTO DE GARANTÍAS';
+
+        // let comerGastosFields = {
+        //   idevent: 9999999,
+        //   address: 'M',
+        //   concept: 544,
+        //   desconcept: 'PAGO POR CONCEPTO DE GARANTÍAS',
+        // }
+        this.openModal(this.comerGastos);
       } else {
-        // :COMER_GASTOS.ID_EVENTO := n_EVENTO;
-        // SELECT DIRECCION
-        //   INTO :COMER_GASTOS.DIRECCION
-        //   FROM COMER_EVENTOS
-        // WHERE ID_EVENTO = n_EVENTO;
-        // :COMER_GASTOS.ID_CONCEPTO := 21;
-        // :COMER_GASTOS.DESC_CONCEPTO := 'PAGO POR CONCEPTO DE PAGO EN EXCESO';
-        // /* << JACG 15-05-19 Se actualiza la dirección del Evento para CLientes ganadores. */
-        // IF n_MONTO_PAGOS > 0 THEN
-        //   :BLK_BANCO_PAGOS.CLKPV := 19819;
-        //   :BLK_BANCO_PAGOS.NOMBREPROV := 'BANAMEX PORTAL SAE';
-        //   :BLK_BANCO_PAGOS.CVE_BANCO := 'BANAMEX PS';
-        //   :BLK_BANCO_PAGOS.CUENTA := '7007-1894728';
-        //   :BLK_BANCO_PAGOS.MONTO := n_MONTO_PAGOS;
-        //   :BLK_BANCO_PAGOS.COMENTARIO := SUBSTR('|'||'SAE'||
-        //                                   '| DEVOLUCIÓN DE PAGOS EN EXCESO CORRESPONDIENTE A LA '||
-        //                                   c_DESC_RECIBO||' '||:COMER_CTLDEVPAG_H.CVE_CTLDEVPAG||' ('||c_REL_EVENTOS||') DE '||
-        //                                   n_CANT_PAGOS||' PAGOS',1,255);
-        //   :BLK_BANCO_PAGOS.DOCUMENTACION_ANEXA := SUBSTR('RELACIÓN DE PAGOS EN EXCESO DE LA '||
-        //                                           :COMER_CTLDEVPAG_H.CVE_CTLDEVPAG||' ('||c_REL_EVENTOS||')',1,255);
-        // END IF;
+        this.comerGastos.id_evento = n_event;
+        this.comerGastos.idConcept = 21;
+        this.comerGastos.descConcept = 'PAGO POR CONCEPTO DE PAGO EN EXCESO';
+        // let comerGastosFields = {
+        //   idevent: n_event,
+        //   address: 'M',
+        //   concept: 21,
+        //   desconcept: 'PAGO POR CONCEPTO DE PAGO EN EXCESO',
+        // }
+        let dataEvent: any = await this.comerEvents(n_event);
+        console.log(dataEvent);
+        if (dataEvent) this.comerGastos.direccion = dataEvent.address;
+
+        if (n_MONTO_PAGOS > 0) {
+          let objCreate = {
+            beneficiary: 19819,
+            name: 'BANAMEX PORTAL SAE',
+            cveBank: 'BANAMEX PS',
+            account: '7007-1894728',
+            amount: n_MONTO_PAGOS,
+            commentary: `SAE DEVOLUCIÓN DE DEPÓSITO POR CONCEPTO DE GARANTIA DE SERIEDAD CORRESPONDIENTE A LA
+            ${c_DESC_RECIBO} ${this.selectRowCtrol.cveCtlDevPag} (${c_REL_EVENTOS}) DE ${n_CANT_PAGOS} PAGOS`,
+            documentation: `RELACIÓN DE PAGOS EN EXCESO DE LA ${this.selectRowCtrol.cveCtlDevPag}
+            (${c_REL_EVENTOS})`,
+          };
+          this.blkBankPays.push(objCreate);
+        }
+        this.openModal(this.comerGastos);
       }
     });
   }
-  async getDescRecibo() {
-    // SELECT DESC_RECIBO
-    //   INTO c_DESC_RECIBO
-    //   FROM COMER_TPEVENTOS
-    //   WHERE ID_TPEVENTO = (SELECT ID_TPEVENTO
-    //                         FROM COMER_EVENTOS
-    //                         WHERE ID_EVENTO = :COMER_CTLDEVPAG_E.ID_EVENTO);
+
+  openModal(comerGastosFields?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        selectRowCtrol: this.selectRowCtrol,
+        comerGastosFields,
+        blkBankPays: this.blkBankPays,
+        callback: (next: boolean) => {
+          if (next) {
+            this.selectBanksCheck = [];
+            this.getBankData();
+          }
+        },
+      },
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ExpensesRequestComponent, config);
   }
-  async catBanks() {
-    // SELECT ID_PROVEEDOR,
-    //       NOMBRE
-    // INTO :BLK_BANCO_PAGOS.CLKPV,
-    //       :BLK_BANCO_PAGOS.NOMBREPROV
-    // FROM CAT_BANCOS
-    // WHERE CVE_BANCO = :COMER_CTLDEVPAG_B.CVE_BANCO;
+  async getDescRecibo(eventId: any) {
+    let evento: any = await this.comerEvents(eventId);
+    if (evento) {
+      let tpEvento: any = await this.comerTpEvents(evento.eventTpId);
+      if (tpEvento) {
+        return tpEvento.descReceipt;
+      } else {
+        return '';
+      }
+    } else {
+      return '';
+    }
+  }
+
+  async comerEvents(id: string | number) {
+    return new Promise((resolve, reject) => {
+      this.comerEventosService.getComerEventById(id).subscribe({
+        next(value) {
+          resolve(value);
+        },
+        error(err) {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async comerTpEvents(id: string | number) {
+    return new Promise((resolve, reject) => {
+      this.comerTpEventosService.getByIdComerTEvents(id).subscribe({
+        next(value) {
+          resolve(value);
+        },
+        error(err) {
+          resolve(null);
+        },
+      });
+    });
+  }
+  async catBanks(cveBank: string) {
+    const params = new ListParams();
+    params['filter.bankCode'] = `$eq:${cveBank}`;
+    return new Promise((resolve, reject) => {
+      console.log(cveBank);
+      this.bankService.getAll_(params).subscribe({
+        next(value) {
+          resolve(value.data[0]);
+        },
+        error(err) {
+          resolve(null);
+        },
+      });
+    });
   }
   referenceRequestExpensesPayments() {
     if (!this.selectRowCtrol) {
       this.alertInfo(
         'warning',
-        'Debe seleccionar un registro de la tabla: "Control de Devoluciones"',
-        ''
+        'Control de Devoluciones',
+        'Debe seleccionar al menos un registro de la tabla'
       ).then(question => {
         if (question.isConfirmed) {
           this.cambiarTab(0);
@@ -1431,12 +1581,11 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
   async verifyPaysSirsae() {
     const dataBanks = await this.dataTableBank.getAll();
-    const dataEvents = await this.dataTableRelationEvent.getAll();
     if (!this.selectRowCtrol) {
       this.alertInfo(
         'warning',
-        'Debe seleccionar un registro de la tabla: "Control de Devoluciones"',
-        ''
+        'Control de Devoluciones',
+        'Debe seleccionar al menos un registro de la tabla'
       ).then(question => {
         if (question.isConfirmed) {
           this.cambiarTab(0);
@@ -1449,43 +1598,55 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     if (dataBanks.length == 0) {
       this.alert(
         'warning',
-        'No hay registros cargados en la tabla "Control de Devoluciones"',
-        ''
+        'Cuentas de Banco Relacionadas',
+        'No se tienen registros de Bancos a procesar.'
       );
       return;
     }
-    if (this.selectBanksCheck.length == 0) {
-      this.alertInfo(
-        'warning',
-        'Cuentas de Banco Relacionadas',
-        'Debe seleccionar al menos un registro de la tabla'
-      ).then(question => {
-        if (question.isConfirmed) {
-          this.cambiarTab(2);
+    let arr = [];
+    if (dataBanks) {
+      for (const item of dataBanks) {
+        if (item.payIdmentrequest) {
+          arr.push(item);
         }
-      });
-      return;
-      // return this.alert(
-      //   'warning',
-      //   'No se tienen registros de Bancos a procesar.',
-      //   'Selecciona por lo menos un registro de la tabla "Control de Devoluciones"'
-      // );
+      }
+      if (arr.length == 0) {
+        this.alertInfo(
+          'warning',
+          'Cuentas de Banco Relacionadas',
+          'No se tienen registros de Bancos a verificar Pagos'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.cambiarTab(2);
+          }
+        });
+        return;
+      }
     }
 
     this.alertQuestion(
       'question',
       'Verificación de pagos en SIRSAE',
-      '¿Desear Continua?'
+      '¿Desear Continuar?'
     ).then(async question => {
       if (question.isConfirmed) {
         // PUP_VERIF_PAGO_SIRSAE
         let respuesta: boolean = true;
+        console.log('dataBanks', dataBanks);
         let result = dataBanks.map(async item => {
-          let body = {};
-          let res: boolean = await this.verifySirsae(body);
-          if (!res) {
-            respuesta = res;
-            return;
+          if (item.payIdmentrequest) {
+            let body = {
+              pApplicationId: item.payIdmentrequest,
+              pBankKey: item.cveBank,
+              pAccount: item.account,
+              originId: this.selectRowCtrol.idOrigen,
+              ctldevpagId: this.selectRowCtrol.ctlDevPagId,
+            };
+            let res: boolean = await this.verifySirsae(body);
+            if (!res) {
+              respuesta = res;
+              return;
+            }
           }
         });
         Promise.all(result).then(async res => {
@@ -1538,16 +1699,10 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           resolve(null);
         },
       });
-      // UPDATE COMER_CTLDEVPAG_H
-      //       SET ID_ESTATUS = 'CONC',
-      //           FEC_TERMINO = SYSDATE
-      //     WHERE ID_CTLDEVPAG = n_ID_CTLDEVPAG;
-      resolve(true);
     });
   }
 
   getCounts(id: number | string) {
-    // EDWIN
     return new Promise((resolve, reject) => {
       this.svPaymentDevolutionService
         .getApplicationGetComerCtldevpagb(id)
@@ -1564,19 +1719,19 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           },
         });
     });
-    //     SELECT COUNT(0),
-    //           NVL(SUM(DECODE(DECODE(OBS_CANC,NULL,0,1)+DECODE(NVL(IND_TSR,0),1,1,0),0,0,1)),0)
-    // --             COUNT(NO_FOLIO_PAGO)
-    //     INTO n_CONTT,
-    //           n_CONTF
-    //     FROM COMER_CTLDEVPAG_B
-    //     WHERE ID_CTLDEVPAG = :COMER_CTLDEVPAG_H.ID_CTLDEVPAG;
   }
   verifySirsae(body: any): Promise<boolean> {
-    // PUP_VERIF_PAGO_SIRSAE
-    // EDWIN
     return new Promise<boolean>((resolve, reject) => {
-      resolve(true);
+      this.svPaymentDevolutionService
+        .applicationPupVerifPagoSirsae(body)
+        .subscribe({
+          next(value) {
+            resolve(true);
+          },
+          error(err) {
+            resolve(false);
+          },
+        });
     });
   }
   startVariableVerifyPays() {
@@ -1615,8 +1770,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     if (!this.selectRowCtrol) {
       this.alertInfo(
         'warning',
-        'Debe seleccionar un registro de la tabla: "Control de Devoluciones"',
-        ''
+        'Control de Devoluciones',
+        'Debe seleccionar al menos un registro de la tabla'
       ).then(question => {
         if (question.isConfirmed) {
           this.cambiarTab(0);
@@ -1675,5 +1830,18 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   async cambiarTab(numberTab: any) {
     console.log(numberTab);
     this.refundTabs.tabs[numberTab].active = true;
+
+    setTimeout(() => {
+      this.performScroll();
+    }, 200);
+  }
+
+  performScroll() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
   }
 }
