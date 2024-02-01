@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -233,7 +233,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       puestoCcp1: [null],
       nombreCcp2: [null],
       puestoCcp2: [null],
-      lote: [null],
+      lote: [null, Validators.required],
       evento: [null],
       evento_descripcion: [null],
       lote_descripcion: [null],

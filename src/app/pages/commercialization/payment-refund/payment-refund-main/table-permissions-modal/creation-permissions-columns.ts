@@ -1,3 +1,5 @@
+import { CheckboxElementComponent_ } from 'src/app/pages/final-destination-process/donation-process/maintenance-commitment-donation/data-in-table/CheckboxDisabled';
+
 export const CREATION_PERMISSIONS_COLUMNS = {
   user: {
     title: 'Usuario',
@@ -12,9 +14,9 @@ export const CREATION_PERMISSIONS_COLUMNS = {
     width: '35%',
     filter: false,
   },
-  indGuarantee: {
+  _indGuarantee: {
     title: 'Crea Controles No Ganadores',
-    type: 'string',
+    type: 'custom',
     sort: false,
     width: '20%',
     filter: {
@@ -22,23 +24,32 @@ export const CREATION_PERMISSIONS_COLUMNS = {
       config: {
         selectText: 'Todos',
         list: [
-          { value: '1', title: 'Si' },
-          { value: '0', title: 'No' },
+          { value: '1', title: 'Activo' },
+          { value: '0', title: 'Inactivo' },
         ],
       },
     },
-    valuePrepareFunction: (_cell: any, row: any) => {
-      const process = row.indGuarantee;
-      if (process == 1) {
-        return 'Si';
-      } else {
-        return 'No';
-      }
+    renderComponent: CheckboxElementComponent_,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        console.log(data);
+      });
     },
+    filterFunction: () => {
+      return true;
+    },
+    // valuePrepareFunction: (_cell: any, row: any) => {
+    //   const process = row.indGuarantee;
+    //   if (process == 1) {
+    //     return 'Si';
+    //   } else {
+    //     return 'No';
+    //   }
+    // },
   },
-  inddisp: {
+  _inddisp: {
     title: 'Crea Controles Ganadores',
-    type: 'string',
+    type: 'custom',
     sort: false,
     width: '20%',
     filter: {
@@ -46,18 +57,27 @@ export const CREATION_PERMISSIONS_COLUMNS = {
       config: {
         selectText: 'Todos',
         list: [
-          { value: '1', title: 'Si' },
-          { value: '0', title: 'No' },
+          { value: '1', title: 'Activo' },
+          { value: '0', title: 'Inactivo' },
         ],
       },
     },
-    valuePrepareFunction: (_cell: any, row: any) => {
-      const process = row.inddisp;
-      if (process == 1) {
-        return 'Si';
-      } else {
-        return 'No';
-      }
+    renderComponent: CheckboxElementComponent_,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        console.log(data);
+      });
     },
+    filterFunction: () => {
+      return true;
+    },
+    // valuePrepareFunction: (_cell: any, row: any) => {
+    //   const process = row.inddisp;
+    //   if (process == 1) {
+    //     return 'Si';
+    //   } else {
+    //     return 'No';
+    //   }
+    // },
   },
 };

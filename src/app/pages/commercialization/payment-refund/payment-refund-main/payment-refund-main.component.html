@@ -211,6 +211,7 @@
                     [ngStyle]="{ height: loadingBank ? '0px' : '400px' }">
                     <ng2-smart-table
                       id="accountTable"
+                      (dblclick)="method2($event)"
                       [settings]="accountSettings"
                       [source]="dataTableBank"
                       (userRowSelect)="selectAccounts($event.data)">
@@ -313,33 +314,43 @@
               class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading }"
+                  [disabled]="btnLoading"
                   class="btn btn-sm btn-info btn-block active me-2 font-size-13"
                   (click)="getComerCreationData()">
                   Crear Control
-                  <i class="bx bx-plus bx-sm float-icon"></i>
+                  <i
+                    *ngIf="!btnLoading"
+                    class="bx bx-plus bx-sm float-icon"></i>
                 </button>
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading2 }"
+                  [disabled]="btnLoading2"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="requestSpentGenerator()"
                   [disabled]="!disabledBtn">
                   Generar Solicitudes Gastos
-                  <i class="bi bi-cash"></i>
+                  <i *ngIf="!btnLoading2" class="bi bi-cash"></i>
                 </button>
                 <!-- (click)="changeLayout('EXPENSE REQUEST')" -->
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading3 }"
+                  [disabled]="btnLoading3"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="sendRequests()"
                   [disabled]="!disabledBtn">
                   Enviar Solicitudes a SIRSAE
-                  <i class="bx bx-send"></i>
+                  <i *ngIf="!btnLoading3" class="bx bx-send"></i>
                 </button>
               </div>
               <div class="col">
                 <button
+                  [ngClass]="{ loading: btnLoading4 }"
+                  [disabled]="btnLoading4"
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
                   (click)="verifyPaysSirsae()"
                   [disabled]="!disabledBtn">
