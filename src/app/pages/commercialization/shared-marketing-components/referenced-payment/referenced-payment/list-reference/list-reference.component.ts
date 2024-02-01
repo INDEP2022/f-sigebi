@@ -172,6 +172,7 @@ export class ListReferenceComponent extends BasePage implements OnInit {
     } else {
       const requestBody: any = {
         paymentId: this.dataParams.paymentId,
+        validSistem: 'D',
         lotId: this.dataSelected.lotId,
       };
 
