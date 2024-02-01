@@ -39,7 +39,29 @@ import { TransferDateTableComponent } from './transfer-date-table/transfer-date-
 @Component({
   selector: 'app-payment-refund-main',
   templateUrl: './payment-refund-main.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
   animations: [
     trigger('OnInOut', [
       transition(':enter', [
@@ -164,6 +186,12 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   loadingP: boolean = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   comerGastos: IComerGastosDev;
+
+  btnLoading: boolean = false;
+  btnLoading2: boolean = false;
+  btnLoading3: boolean = false;
+  btnLoading4: boolean = false;
+  btnLoading5: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -689,6 +717,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       );
       return;
     }
+    this.btnLoading = true;
     this.svPaymentDevolutionService
       .getEatCtlCreate(this.tokenData.preferred_username)
       .subscribe({
@@ -705,6 +734,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
   openControlModal(ind_garant: number, ind_disp: number) {
     if (ind_garant != 0 && ind_disp != 0) {
+      this.btnLoading = false;
       const modalRef = this.modalService.show(CreateControlModalComponent, {
         initialState: {
           ind_garant,
@@ -717,6 +747,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         if (data) this.getControlData();
       });
     } else {
+      this.btnLoading = false;
       this.alert('warning', 'No cuenta con permisos de creación', '');
     }
   }
@@ -817,6 +848,25 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       this.alertInfo(
         'warning',
         'Cuentas de Banco Relacionadas',
+        'No se tienen registros de Bancos a procesar.'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(2);
+        }
+      });
+      return;
+    }
+    let val = false;
+    for (const item of dataBanks) {
+      if (item.idwaste && !item.payIdmentrequest) {
+        val = true;
+        break;
+      }
+    }
+    if (val == false) {
+      this.alertInfo(
+        'warning',
+        'Cuentas de Banco Relacionadas',
         'No se tienen registros de Bancos a enviar a SIRSAE'
       ).then(question => {
         if (question.isConfirmed) {
@@ -825,27 +875,15 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       });
       return;
     }
-    // if (this.selectBanksCheck.length == 0) {
-    //   this.alertInfo(
-    //     'warning',
-    //     'Cuentas de Banco Relacionadas',
-    //     'Debe seleccionar al menos un registro de la tabla'
-    //   ).then(question => {
-    //     if (question.isConfirmed) {
-    //       this.cambiarTab(2);
-    //     }
-    //   });
-    //   return;
-    // }
-
+    this.btnLoading3 = true;
     this.alertQuestion(
       'question',
-      'Envío de Solicitudes de Gasto a SIRSAE',
+      'Envío de Solicitudes de Gastos a SIRSAE',
       '¿Desear Continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         let result = dataBanks.map(async item => {
-          if (item.idwaste && item.idCtldevpag) {
+          if (item.idwaste && !item.payIdmentrequest) {
             // PUP_ENVIAR_SIRSAE
             let body = {
               pSpentId: Number(item.idwaste),
@@ -863,8 +901,11 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         });
 
         Promise.all(result).then(res => {
-          this.alert('success', 'Proceso terminado', '');
+          this.btnLoading3 = false;
+          this.alert('success', 'Proceso terminado correctamente', '');
         });
+      } else {
+        this.btnLoading3 = false;
       }
     });
   }
@@ -1187,7 +1228,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     if (params['filter._fis']) {
       params['filter.indfis'] = params['filter._fis'] + '';
       delete params['filter._fis'];
-    } else if (params['filter._cnt']) {
+    }
+    if (params['filter._cnt']) {
       params['filter.indcnt'] = params['filter._cnt'] + '';
       delete params['filter._cnt'];
     }
@@ -1372,7 +1414,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       });
       return;
     }
-
+    this.btnLoading2 = true;
     let arrEvents = [];
     let c_REL_EVENTOS = '';
     let n_event: number;
@@ -1415,24 +1457,11 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         this.comerGastos.direccion = 'M';
         this.comerGastos.idConcept = 544;
         this.comerGastos.descConcept = 'PAGO POR CONCEPTO DE GARANTÍAS';
-
-        // let comerGastosFields = {
-        //   idevent: 9999999,
-        //   address: 'M',
-        //   concept: 544,
-        //   desconcept: 'PAGO POR CONCEPTO DE GARANTÍAS',
-        // }
         this.openModal(this.comerGastos);
       } else {
         this.comerGastos.id_evento = n_event;
         this.comerGastos.idConcept = 21;
         this.comerGastos.descConcept = 'PAGO POR CONCEPTO DE PAGO EN EXCESO';
-        // let comerGastosFields = {
-        //   idevent: n_event,
-        //   address: 'M',
-        //   concept: 21,
-        //   desconcept: 'PAGO POR CONCEPTO DE PAGO EN EXCESO',
-        // }
         let dataEvent: any = await this.comerEvents(n_event);
         console.log(dataEvent);
         if (dataEvent) this.comerGastos.direccion = dataEvent.address;
@@ -1457,6 +1486,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   openModal(comerGastosFields?: any) {
+    this.btnLoading2 = false;
     let config: ModalOptions = {
       initialState: {
         selectRowCtrol: this.selectRowCtrol,
@@ -1596,13 +1626,18 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
     // GO_BLOCK('COMER_CTLDEVPAG_B');
     if (dataBanks.length == 0) {
-      this.alert(
+      this.alertInfo(
         'warning',
         'Cuentas de Banco Relacionadas',
         'No se tienen registros de Bancos a procesar.'
-      );
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.cambiarTab(2);
+        }
+      });
       return;
     }
+    this.btnLoading4 = true;
     let arr = [];
     if (dataBanks) {
       for (const item of dataBanks) {
@@ -1611,6 +1646,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         }
       }
       if (arr.length == 0) {
+        this.btnLoading4 = false;
         this.alertInfo(
           'warning',
           'Cuentas de Banco Relacionadas',
@@ -1650,16 +1686,21 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           }
         });
         Promise.all(result).then(async res => {
-          if (!respuesta)
-            return this.alert(
+          if (!respuesta) {
+            this.btnLoading4 = false;
+            this.alert(
               'warning',
               'Ocurrió un error al intentar verificar pagos en SIRSAE',
               ''
             );
+            return;
+          }
 
           await this.continueVerifySirsae();
         });
         // this.startVariableVerifyPays(); // Antiguo llamado de serivicio
+      } else {
+        this.btnLoading4 = false;
       }
     });
   }
@@ -1679,13 +1720,15 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       let res = await this.updateCtrlDevPagH(data, n_ID_CTLDEVPAG);
       console.log('res', res);
       this.filterActHeader('I');
+      this.btnLoading4 = false;
     } else {
       this.dataTableBank.load([]);
       this.dataTableBank.refresh();
       this.accountTotalItems = 0;
       this.getControlData();
+      this.btnLoading4 = false;
     }
-    this.alert('success', 'Proceso terminado', '');
+    this.alert('success', 'Proceso Terminado Correctamente', '');
   }
 
   // UPDATE - COMER_CTLDEVPAG_H //
@@ -1823,10 +1866,23 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       '¿Desea Continuar?'
     ).then(question => {
       if (question.isConfirmed) {
+        let data = {};
+        this.pupGeneLayout(data);
       }
     });
   }
-
+  pupGeneLayout(data: any) {
+    return new Promise((resolve, reject) => {
+      this.massiveGoodService.applicationPupGenLayouts(data).subscribe({
+        next(value) {
+          resolve(value);
+        },
+        error(err) {
+          resolve(false);
+        },
+      });
+    });
+  }
   async cambiarTab(numberTab: any) {
     console.log(numberTab);
     this.refundTabs.tabs[numberTab].active = true;
@@ -1843,5 +1899,25 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         block: 'start',
       });
     }
+  }
+
+  method2(data: any) {
+    setTimeout(() => {
+      this.goExpenseCapture();
+    }, 100);
+    // this.alert("success", "AQUI", data)
+  }
+
+  goExpenseCapture() {
+    if (!this.selectedAccountB) return;
+    if (!this.selectedAccountB.idwaste)
+      return this.alert('warning', 'No se tienen Folio de Gasto.', '');
+
+    this.router.navigate(['/pages/commercialization/expense-capture/M'], {
+      queryParams: {
+        origin: 'FCOMERCTLDPAG',
+        P_ID_GASTO: this.selectedAccountB.idwaste,
+      },
+    });
   }
 }

@@ -33,4 +33,5 @@ export enum MassiveGoodEndpoints {
   winnersReport = 'application/export-query-winners-report',
   pupProcesaCsvPaymentSearch = 'application/pup-procesa-csv',
   ApplicationPupExpCsvReldevGar = 'application/pup-exp-csv-reldevgar',
+  ApplicationPupGenLayouts = 'application/pup-gen-layouts',
 }

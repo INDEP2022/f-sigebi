@@ -330,7 +330,8 @@
     <div class="d-flex justify-content-center mb-3">
       <div class="m-2">
         <button
-          [disabled]="!requestForm.valid"
+          [ngClass]="{ loading: btnLoading }"
+          [disabled]="btnLoading || !requestForm.valid"
           class="btn btn-sm btn-primary active"
           (click)="sendRequests()">
           Generar Solicitudes de Gasto
