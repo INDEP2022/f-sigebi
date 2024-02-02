@@ -8,7 +8,7 @@ export const SETTING_DATA = {
   actions: false,
   columns: {
     eventId: {
-      title: 'Id Evento',
+      title: 'ID Evento',
       type: 'number',
       sort: false,
     },
@@ -165,22 +165,22 @@ export const SETTING_LCS = {
   actions: false,
   columns: {
     idlcg: {
-      title: 'Id Lcg',
+      title: 'ID LCG',
       type: 'number',
       sort: false,
     },
     idEvent: {
-      title: 'Id Evento',
+      title: 'ID Evento',
       type: 'number',
       sort: false,
     },
     idBatch: {
-      title: 'Id Lote',
+      title: 'ID Lote',
       type: 'number',
       sort: false,
     },
     idCustomer: {
-      title: 'Id Cliente',
+      title: 'ID Cliente',
       type: 'number',
       sort: false,
     },
@@ -285,7 +285,7 @@ export const SETTING_RFC = {
       sort: false,
     },
     batch: {
-      title: 'Id Lote',
+      title: 'ID Lote',
       type: 'number',
       sort: false,
     },
@@ -353,12 +353,12 @@ export const SETTING_CLIENT_ID = {
   },
   columns: {
     clientId: {
-      title: 'Id cliente',
+      title: 'ID cliente',
       type: 'number',
       sort: false,
     },
     batch: {
-      title: 'Id Evento',
+      title: 'ID Evento',
       type: 'number',
       sort: false,
     },
@@ -466,7 +466,7 @@ export const SETTING_REPROCESS = {
       sort: false,
     },
     idEvent: {
-      title: 'Id Evento',
+      title: 'ID Evento',
       type: 'number',
       sort: false,
     },

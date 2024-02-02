@@ -157,74 +157,6 @@
                     </button> -->
                   </form-field>
                 </div>
-                <!-- <div
-                  class="col-md-2 d-flex"
-                  *ngIf="!selectedEvent"
-                  @OnEventSelected>
-                  <div class="mr-auto">
-                    <button
-                      type="button"
-                      [ngClass]="'btn-primary'"
-                      class="btn active btn-sm mt-5"
-                      (click)="searchEvent()">
-                      Buscar
-                      <i class="bx bx-search-alt bx-sm float-icon"></i>
-                    </button>
-                  </div>
-                </div> -->
-                <!-- <div
-                  class="col-sm-2 col-md-2"
-                  *ngIf="selectedEvent != null"
-                  @OnEventSelected>
-                  <i
-                    class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
-                  <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
-                  <p class="text-muted">{{ selectedEvent.processKey }}</p>
-                </div>
-                <div
-                  class="col-sm-2 col-md-2"
-                  *ngIf="selectedEvent != null"
-                  @OnEventSelected>
-                  <i
-                    class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                  <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
-                  <p class="text-muted">
-                    {{ selectedEvent.eventDate | date : 'medium' }}
-                  </p>
-                </div>
-                <div
-                  class="col-sm-2 col-md-2"
-                  *ngIf="selectedEvent != null"
-                  @OnEventSelected>
-                  <i
-                    class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                  <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
-                  <p class="text-muted">
-                    {{ selectedEvent.place }}
-                  </p>
-                </div>
-                <div
-                  class="col-sm-2 col-md-2"
-                  *ngIf="selectedEvent != null"
-                  @OnEventSelected>
-                  <i
-                    class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                  <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
-                  <p class="text-muted">
-                    {{ selectedEvent.failedDate | date : 'medium' }}
-                  </p>
-                </div>
-                <div
-                  class="col-sm-2 col-md-2"
-                  *ngIf="selectedEvent != null"
-                  @OnEventSelected>
-                  <i
-                    class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                  <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
-                  <p class="text-muted">
-                    {{ selectedEvent.statusvtaId }}
-                  </p>
-                </div> -->
               </div>
             </div>
           </div>
@@ -341,13 +273,12 @@
     </div>
     <div class="row mt-5">
       <div class="md-tabs mt-n3">
-        <tabset #lcsTabs>
+        <tabset #tabset [(ngModel)]="activeTab">
           <tab heading="Datos" id="dataTab">
             <div class="row">
               <div class="d-flex justify-content-end my-3">
                 <div>
                   <app-columns-select
-                    [leftList]="true"
                     [(settings)]="dataSettings"></app-columns-select>
                 </div>
               </div>
@@ -367,50 +298,113 @@
               [totalItems]="totalItemsD"></app-pagination>
           </tab>
           <tab heading="Líneas de Captura" id="lcsTab">
-            <div class="row mt-3">
-              <div class="md-tabs mt-n3">
-                <tabset>
-                  <tab heading="Visualización" id="displayTab">
-                    <div class="row">
-                      <div class="d-flex justify-content-end my-3">
-                        <div class="mr-3">
-                          <app-columns-select
-                            [(settings)]="lcsSettings"></app-columns-select>
-                        </div>
-                        <div>
-                          <button
-                            [disabled]="isLoadingExportFile"
-                            class="btn btn-sm btn-success active me-2 font-size-14"
-                            (click)="exportFile()">
-                            Exportar <i class="bx bx-download float-icon"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div [class]="isLoadingLcs ? 'table-loading' : ''">
-                      <ng2-smart-table
-                        id="lcsTable"
-                        [attr.class]="'table-bordered table-responsive'"
-                        [settings]="lcsSettings"
-                        [source]="lcsSource">
-                      </ng2-smart-table>
-                    </div>
-
-                    <app-pagination
-                      [params]="paramsLc"
-                      [totalItems]="totalItemsLc"></app-pagination>
-
-                    <!-- <app-pagination [params]="lcsParams"  [totalItems]="lcsTotalItems">   </app-pagination> -->
-                  </tab>
-                </tabset>
+            <div class="row">
+              <div class="d-flex justify-content-end my-3">
+                <div class="mr-3">
+                  <app-columns-select
+                    [(settings)]="lcsSettings"></app-columns-select>
+                </div>
+                <div>
+                  <button
+                    [disabled]="isLoadingExportFile"
+                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    (click)="exportFile()">
+                    Exportar <i class="bx bx-download float-icon"></i>
+                  </button>
+                </div>
               </div>
             </div>
+
+            <div [class]="isLoadingLcs ? 'table-loading' : ''">
+              <ng2-smart-table
+                id="lcsTable"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="lcsSettings"
+                [source]="lcsSource">
+              </ng2-smart-table>
+            </div>
+
+            <app-pagination
+              [params]="paramsLc"
+              [totalItems]="totalItemsLc"></app-pagination>
           </tab>
           <tab
             (selectTab)="onTabSelected($event)"
             heading="Reproceso"
-            id="reProTab">
+            id="reProTab"
+            [disabled]="reProTabActive"
+            [active]="tab3Active">
+            <div class="row">
+              <div
+                class="col-md-2 d-flex"
+                *ngIf="!selectedEvent"
+                @OnEventSelected>
+                <div class="mr-auto">
+                  <button
+                    type="button"
+                    [ngClass]="'btn-primary'"
+                    class="btn active btn-sm mt-5"
+                    (click)="searchEvent()">
+                    Buscar
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
+                <p class="text-muted">{{ selectedEvent.processKey }}</p>
+              </div>
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
+                <p class="text-muted">
+                  {{ selectedEvent.eventDate | date : 'medium' }}
+                </p>
+              </div>
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
+                <p class="text-muted">
+                  {{ selectedEvent.place }}
+                </p>
+              </div>
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
+                <p class="text-muted">
+                  {{ selectedEvent.failedDate | date : 'medium' }}
+                </p>
+              </div>
+              <div
+                class="col-sm-2 col-md-2"
+                *ngIf="selectedEvent != null"
+                @OnEventSelected>
+                <i
+                  class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
+                <p class="text-muted">
+                  {{ selectedEvent.statusvtaId }}
+                </p>
+              </div>
+            </div>
+
             <div class="row">
               <div class="d-flex justify-content-end my-3">
                 <div class="mr-3">
@@ -433,7 +427,7 @@
                 id="lcsTable"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="reprocesSettings"
-                [source]="lcsSource">
+                [source]="reprocesSource">
               </ng2-smart-table>
             </div>
 

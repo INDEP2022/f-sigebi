@@ -132,6 +132,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   columnFiltersLc: any = [];
   totalItemsLc: number = 0;
 
+  @ViewChild('tabset') tabset: TabsetComponent;
+
+  activeTab: string = 'tab1';
+  reProTabActive: boolean = true;
+  tab3Active: boolean = false;
+
+  reprocesSource: [];
+
   constructor(
     private excelService: ExcelService,
     private modalService: BsModalService,
@@ -603,6 +611,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   async reprocess() {
+    this.tabset.tabs.forEach((tab, i) => {
+      tab.active = i === 2;
+      this.reProTabActive = false;
+      this.tab3Active = true;
+    });
+
     if (this.eventIdValue) {
       this.reprocessDisabled = true;
     }
@@ -833,9 +847,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   onTabSelected(event: any) {
     console.log('Tab seleccionado', event);
-    // this.tabset.tabs.forEach((tab, i) => {
-    //           tab.active = i === 0;
-    //         });
   }
 
   // getData(listParams?: ListParams, notValidate: boolean = false): void {
