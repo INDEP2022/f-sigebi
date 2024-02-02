@@ -248,6 +248,8 @@
                           label="Solicita"
                           (fetchItems)="getUsers($event)"
                           control="userRequest"
+                          [showTooltip]="true"
+                          [searchOnInit]="true"
                           (change)="selectUser($event, 'REQUEST')">
                         </ngx-select>
                       </form-field>
