@@ -68,7 +68,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     private findicaService: FIndicaService,
     private generateCveService: GenerateCveService,
     private cityService: CityService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     this.settings = {
@@ -92,8 +93,15 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     //   }
     // });
     // 23959- 23496 - 23972 - 6185
+
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        console.log(params);
+        this.event = params['event'];
+      });
     this.user = localStorage.getItem('username');
-    this.event = 6185;
+    // this.event = 6185;
     this.form.controls['event'].setValue(this.event);
     this.getsContent();
   }
