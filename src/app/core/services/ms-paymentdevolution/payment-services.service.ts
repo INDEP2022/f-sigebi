@@ -109,4 +109,8 @@ export class PaymentDevolutionService extends HttpService {
       data
     );
   }
+
+  updateCtlDevPagP(data: any) {
+    return this.put(`${PaymentDevolutionEndPoints.ComerCtldevpagP}`, data);
+  }
 }
