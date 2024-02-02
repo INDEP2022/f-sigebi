@@ -1,4 +1,4 @@
-import { CustomDateFilterComponent_ } from './searchDate';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const RELEASE_REPORT_COLUMNS = {
   id: {
@@ -10,18 +10,18 @@ export const RELEASE_REPORT_COLUMNS = {
     sort: false,
     filter: false,
   },
-  // addressedTo: {
-  //   title: 'Dirigido a',
-  //   sort: false,
-  // },
-  // position: {
-  //   title: 'Puesto',
-  //   sort: false,
-  // },
-  // paragraph1: {
-  //   title: 'Parrafo 1',
-  //   sort: false,
-  // },
+  addressedTo: {
+    title: 'Dirigido a',
+    sort: false,
+  },
+  position: {
+    title: 'Puesto',
+    sort: false,
+  },
+  paragraph1: {
+    title: 'Parrafo 1',
+    sort: false,
+  },
   invoiceNumber: {
     title: 'No. Factura',
     sort: false,
@@ -36,21 +36,21 @@ export const RELEASE_REPORT_COLUMNS = {
     },
     filter: {
       type: 'custom',
-      component: CustomDateFilterComponent_,
+      component: CustomDateFilterComponent,
     },
   },
   signatory: {
     title: 'Adjudicatario',
     sort: false,
   },
-  // ccp1: {
-  //   title: 'Ccp1',
-  //   sort: false,
-  // },
-  // ccp2: {
-  //   title: 'Ccp2',
-  //   sort: false,
-  // },
+  ccp1: {
+    title: 'Ccp1',
+    sort: false,
+  },
+  ccp2: {
+    title: 'Ccp2',
+    sort: false,
+  },
   // ccp3: {
   //   title: 'Ccp3',
   //   sort: false,
@@ -68,10 +68,12 @@ export const COMEMR_BIENES_COLUMNS = {
   goodNumber: {
     title: 'No. Bien',
     sort: false,
+    width: '15%',
   },
   description: {
     title: 'Descripción',
     sort: false,
+    width: '85%',
     valuePrepareFunction: (cell: any, row: any) => {
       return row.good.description;
     },
