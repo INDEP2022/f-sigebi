@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
 export const SETTING_DATA = {
@@ -45,6 +46,11 @@ export const SETTING_DATA = {
       title: 'Fecha Vigencia',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (date: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+        return formatted;
+      },
     },
     checkNumber: {
       title: 'N° Cheque',
@@ -112,6 +118,11 @@ export const SETTING_DATA = {
       title: 'Fecha Inserta',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (date: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+        return formatted;
+      },
     },
     palletteId: {
       title: 'ID Paleta',
@@ -165,6 +176,11 @@ export const SETTING_LCS = {
       title: 'Fecha Videncia',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (date: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+        return formatted;
+      },
     },
     status: {
       title: 'Estatus',
@@ -175,6 +191,11 @@ export const SETTING_LCS = {
       title: 'Fecha Registro',
       type: 'string',
       sort: false,
+      valuePrepareFunction: (date: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+        return formatted;
+      },
     },
     bankExpCheck: {
       title: 'Banco Exp. Cheque',

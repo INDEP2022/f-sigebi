@@ -227,7 +227,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   searchData(list?: ListParams) {
-    console.error('Este es Search');
     this.loading = true;
     let params = {
       ...this.paramsD.getValue(),
@@ -241,25 +240,24 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: res => {
-          console.error(res);
           this.dataSource.load(res.data);
           this.totalItemsD = res.count;
           this.loading = false;
+          this.validGenerateLCs = true;
         },
         error: error => {
-          console.error(error);
           this.dataSource.load([]);
           this.loading = false;
+          this.validGenerateLCs = false;
         },
       });
-    const params2 =
+    /*const params2 =
       params + '&filter.amount=$not:$null&filter.batchId=$not:$null';
     this.capturelineService
       .getTmpLcComer(params2)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: res => {
-          console.error(res);
           if (res.count > 0) {
             this.validGenerateLCs = true;
           } else {
@@ -269,29 +267,32 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         error: error => {
           this.validGenerateLCs = false;
         },
-      });
+      });*/
   }
 
   guarantyData() {
     this.isLoadingLcs = true;
     let params = {
-      ...this.paramsD.getValue(),
-      ...this.columnFiltersD,
+      ...this.paramsLc.getValue(),
+      ...this.columnFiltersLc,
     };
     params['filter.idEvent'] = `$eq:${this.form.controls['eventId'].value}`;
 
-    this.guarantyService.getComerRefGuarantees(params).subscribe({
-      next: res => {
-        this.lcsSource.load(res.data);
-        this.totalItemsLc = res.count;
-        //this.lcsTotalItems = res.count;
-        this.isLoadingLcs = false;
-      },
-      error: error => {
-        this.lcsSource.load([]);
-        this.isLoadingLcs = false;
-      },
-    });
+    this.guarantyService
+      .getComerRefGuarantees(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: res => {
+          this.lcsSource.load(res.data);
+          this.totalItemsLc = res.count;
+          //this.lcsTotalItems = res.count;
+          this.isLoadingLcs = false;
+        },
+        error: error => {
+          this.lcsSource.load([]);
+          this.isLoadingLcs = false;
+        },
+      });
   }
 
   /*searchLcs(listParams?: ListParams) {
