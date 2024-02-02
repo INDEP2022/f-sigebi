@@ -13,6 +13,7 @@ import {
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ITmpLcComer } from 'src/app/core/models/ms-captureline/captureline';
@@ -149,22 +150,104 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       this.clientIdSettings.columns
     );
 
-    this.paramsD = this.pageFilter(this.paramsD);
+    this.dataSource
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'batchId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'batch':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${'comerLots'}.lotPublic`;
+                break;
+              case 'customerId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${'comerClient'}.rfc`;
+                break;
+              case 'validityDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'insertDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFiltersD[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersD[field];
+            }
+          });
+          this.paramsD = this.pageFilter(this.paramsD);
+          this.paramsD
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.searchData());
+        }
+      });
+
     this.paramsD
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchData());
 
-    this.paramsLc = this.pageFilter(this.paramsLc);
+    this.lcsSource
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'idlcg':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dateValidity':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dateRecord':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFiltersLc[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersLc[field];
+            }
+          });
+          this.paramsLc = this.pageFilter(this.paramsLc);
+          this.paramsLc
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.guarantyData());
+        }
+      });
+
     this.paramsLc
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.guarantyData());
-
-    /*this.dataParams.pipe(skip(1)).subscribe(params => {
-      this.searchData(params);
-    });
-    this.lcsParams.pipe(skip(1)).subscribe(params => {
-      this.guarantyData(params);
-    });*/
   }
 
   searchEvent(): void {
@@ -241,33 +324,19 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       .subscribe({
         next: res => {
           this.dataSource.load(res.data);
+          this.dataSource.refresh();
           this.totalItemsD = res.count;
           this.loading = false;
           this.validGenerateLCs = true;
         },
         error: error => {
-          this.dataSource.load([]);
           this.loading = false;
           this.validGenerateLCs = false;
+          this.dataSource.load([]);
+          this.dataSource.refresh();
+          this.totalItemsD = 0;
         },
       });
-    /*const params2 =
-      params + '&filter.amount=$not:$null&filter.batchId=$not:$null';
-    this.capturelineService
-      .getTmpLcComer(params2)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: res => {
-          if (res.count > 0) {
-            this.validGenerateLCs = true;
-          } else {
-            this.validGenerateLCs = false;
-          }
-        },
-        error: error => {
-          this.validGenerateLCs = false;
-        },
-      });*/
   }
 
   guarantyData() {
@@ -284,13 +353,15 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       .subscribe({
         next: res => {
           this.lcsSource.load(res.data);
+          this.lcsSource.refresh();
           this.totalItemsLc = res.count;
-          //this.lcsTotalItems = res.count;
           this.isLoadingLcs = false;
         },
         error: error => {
           this.lcsSource.load([]);
+          this.lcsSource.refresh();
           this.isLoadingLcs = false;
+          this.totalItemsLc = 0;
         },
       });
   }
@@ -414,26 +485,30 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   isLoadingExportFile = false;
   exportFile() {
-    /*if (!this.form.get('eventId').value) {
+    if (!this.form.get('eventId').value) {
       this.alert('warning', this.title, 'No se ha seleccionado un evento');
       return;
     }
     this.isLoadingExportFile = true;
-    const params = this.makeFiltersParams().getParams();
+    let params = {
+      ...this.paramsLc.getValue(),
+      ...this.columnFiltersLc,
+    };
+    params['filter.idEvent'] = `$eq:${this.form.controls['eventId'].value}`;
 
     this.guarantyService
-      .getComerRefGuarantees()
+      .getComerRefGuarantees(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: res => {
           this.isLoadingExportFile = false;
           this.excelService.export(res.data, { filename: 'LCS' });
-          this.searchLcs();
+          //this.searchLcs();
         },
         error: err => {
           this.isLoadingExportFile = false;
         },
-      });*/
+      });
   }
 
   insertTmpLcComer(tmpLcComer: ITmpLcComer) {

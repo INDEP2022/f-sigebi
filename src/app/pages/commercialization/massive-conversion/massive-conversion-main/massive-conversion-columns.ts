@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
 export const SETTING_DATA = {
@@ -46,9 +47,17 @@ export const SETTING_DATA = {
       title: 'Fecha Vigencia',
       type: 'string',
       sort: false,
+      filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },
       valuePrepareFunction: (date: Date) => {
         var raw = new Date(date);
-        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
         return formatted;
       },
     },
@@ -70,6 +79,16 @@ export const SETTING_DATA = {
         if (cell == 1) return 'LC_GENERADA';
         if (cell == 0) return 'SOLICITADA';
         return '';
+      },
+      filter: {
+        type: 'list',
+        config: {
+          selectText: 'Seleccionar',
+          list: [
+            { value: 1, title: 'LC_GENERADA' },
+            { value: 0, title: 'SOLICITADA' },
+          ],
+        },
       },
     },
     observations: {
@@ -118,9 +137,17 @@ export const SETTING_DATA = {
       title: 'Fecha Inserta',
       type: 'string',
       sort: false,
+      filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },
       valuePrepareFunction: (date: Date) => {
         var raw = new Date(date);
-        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
         return formatted;
       },
     },
@@ -176,9 +203,17 @@ export const SETTING_LCS = {
       title: 'Fecha Videncia',
       type: 'string',
       sort: false,
+      filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },
       valuePrepareFunction: (date: Date) => {
         var raw = new Date(date);
-        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
         return formatted;
       },
     },
@@ -191,9 +226,17 @@ export const SETTING_LCS = {
       title: 'Fecha Registro',
       type: 'string',
       sort: false,
+      filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },
       valuePrepareFunction: (date: Date) => {
         var raw = new Date(date);
-        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
         return formatted;
       },
     },
