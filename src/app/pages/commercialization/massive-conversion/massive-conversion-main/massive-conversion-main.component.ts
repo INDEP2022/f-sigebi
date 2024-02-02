@@ -295,7 +295,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   consultInServer() {
-    if (!this.validConsult()) {
+    let fromButton = true;
+    if (this.form.controls['eventId'].value == null) {
       this.alert(
         'warning',
         this.title,
@@ -304,12 +305,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
-    this.searchData();
+    this.searchData(fromButton);
     // this.searchLcs();
-    this.guarantyData();
+    this.guarantyData(fromButton);
   }
 
-  searchData(list?: ListParams) {
+  searchData(fromButton?: boolean) {
     this.loading = true;
     let params = {
       ...this.paramsD.getValue(),
@@ -335,11 +336,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.dataSource.load([]);
           this.dataSource.refresh();
           this.totalItemsD = 0;
+          if (fromButton) {
+            this.alert('warning', 'Advertencia', 'No se encontraron Datos');
+          }
         },
       });
   }
 
-  guarantyData() {
+  guarantyData(fromButton?: boolean) {
     this.isLoadingLcs = true;
     let params = {
       ...this.paramsLc.getValue(),
@@ -362,6 +366,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.lcsSource.refresh();
           this.isLoadingLcs = false;
           this.totalItemsLc = 0;
+          if (fromButton) {
+            this.alert('warning', 'Advertencia', 'No se encontraron Lc´s');
+          }
         },
       });
   }
@@ -464,7 +471,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             //
             let listParams = new ListParams();
             listParams['filter.operationId'] = '$eq:' + res.data.operationId;
-            this.searchData(listParams);
+            //this.searchData(listParams);
           },
           error: err => {
             console.log({ err });

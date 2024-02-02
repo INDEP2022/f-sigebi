@@ -457,16 +457,11 @@ export const SETTING_RFC_REWORK = {
 
 export const SETTING_REPROCESS = {
   ...TABLE_SETTINGS,
-  actions: {
-    columnTitle: 'Acciones',
-    position: 'right',
-    add: true,
-    edit: true,
-    delete: true,
-  },
+  hideSubHeader: false,
+  actions: false,
   columns: {
     idlcg: {
-      title: 'Id Lcg',
+      title: 'ID LCG',
       type: 'number',
       sort: false,
     },
@@ -475,62 +470,62 @@ export const SETTING_REPROCESS = {
       type: 'number',
       sort: false,
     },
-    FOLIO_APROBACION: {
+    invoiceApproval: {
       title: 'Folio Aprobación',
       type: 'number',
       sort: false,
     },
-    BANCO_EMISOR: {
+    bankTransmitter: {
       title: 'Banco Emisor',
       type: 'string',
       sort: false,
     },
-    USER_GENERA: {
+    generateUser: {
       title: 'User Genera',
       type: 'string',
       sort: false,
     },
-    INDICADOR: {
+    indicator: {
       title: 'Indicador',
       type: 'string',
       sort: false,
     },
-    FEC_APRO_PAGO: {
+    approPayDate: {
       title: 'Fecha Aprobación Pago',
       type: 'string',
       sort: false,
     },
-    NO_PALETA: {
+    palletteNumber: {
       title: 'No. Paleta',
       type: 'string',
       sort: false,
     },
     idBatch: {
-      title: 'Id Lote',
+      title: 'ID Lote',
       type: 'number',
       sort: false,
     },
     idCustomer: {
-      title: 'Id Cliente',
+      title: 'ID Cliente',
       type: 'number',
       sort: false,
     },
-    idPublicBatch: {
-      title: 'Id Lote Público',
+    /*idPublicBatch: {
+      title: 'Lote Público',
       type: 'number',
       sort: false,
-    },
+    },*/
     amount: {
       title: 'Monto',
       type: 'number',
       sort: false,
     },
-    PALETA: {
+    /*PALETA: {
       title: 'Paleta',
       type: 'string',
       sort: false,
-    },
-    numberCheck: {
+    },*/
+    checkNumber: {
       title: 'N° Cheque',
       type: 'number',
       sort: false,
@@ -555,18 +550,23 @@ export const SETTING_REPROCESS = {
       type: 'number',
       sort: false,
     },
-    description: {
+    /*description: {
       title: 'Descripción',
       type: 'string',
       sort: false,
-    },
+    },*/
     status: {
       title: 'Estatus',
       type: 'string',
       sort: false,
     },
-    dateRecord: {
+    recordDate: {
       title: 'Fecha Registro',
+      type: 'string',
+      sort: false,
+    },
+    idTypeSat: {
+      title: 'Tipo de Pago',
       type: 'string',
       sort: false,
     },
