@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
 export const SETTING_DATA = {
@@ -11,12 +13,12 @@ export const SETTING_DATA = {
       sort: false,
     },
     batchId: {
-      title: 'Id Lote',
+      title: 'ID Lote',
       type: 'number',
       sort: false,
     },
     batch: {
-      title: 'Lote',
+      title: 'Lote Público',
       type: 'number',
       sort: false,
       valuePrepareFunction: (_cell: any, item: any) => {
@@ -24,7 +26,7 @@ export const SETTING_DATA = {
       },
     },
     customerId: {
-      title: 'Id Cliente',
+      title: 'ID Cliente',
       type: 'number',
       sort: false,
     },
@@ -37,7 +39,7 @@ export const SETTING_DATA = {
       },
     },
     amount: {
-      title: 'Monto $',
+      title: 'Monto',
       type: 'number',
       sort: false,
     },
@@ -45,6 +47,19 @@ export const SETTING_DATA = {
       title: 'Fecha Vigencia',
       type: 'string',
       sort: false,
+      filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },
+      valuePrepareFunction: (date: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
+        return formatted;
+      },
     },
     checkNumber: {
       title: 'N° Cheque',
@@ -57,13 +72,23 @@ export const SETTING_DATA = {
       sort: false,
     },
     status: {
-      title: 'Estatus',
+      title: 'Descripción Estatus',
       type: 'string',
       sort: false,
       valuePrepareFunction: (cell: any, _row: any) => {
-        if (cell == 1) return 'LC GENERADA';
+        if (cell == 1) return 'LC_GENERADA';
         if (cell == 0) return 'SOLICITADA';
         return '';
+      },
+      filter: {
+        type: 'list',
+        config: {
+          selectText: 'Seleccionar',
+          list: [
+            { value: 1, title: 'LC_GENERADA' },
+            { value: 0, title: 'SOLICITADA' },
+          ],
+        },
       },
     },
     observations: {
@@ -102,6 +127,34 @@ export const SETTING_DATA = {
         // console.log({ observation });
         return observation;
       },
+    },
+    usrinsert: {
+      title: 'Usuario Inserta',
+      type: 'string',
+      sort: false,
+    },
+    insertDate: {
+      title: 'Fecha Inserta',
+      type: 'string',
+      sort: false,
+      filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },
+      valuePrepareFunction: (date: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
+        return formatted;
+      },
+    },
+    palletteId: {
+      title: 'ID Paleta',
+      type: 'string',
+      sort: false,
     },
   },
 };
@@ -150,6 +203,19 @@ export const SETTING_LCS = {
       title: 'Fecha Videncia',
       type: 'string',
       sort: false,
+      filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },
+      valuePrepareFunction: (date: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
+        return formatted;
+      },
     },
     status: {
       title: 'Estatus',
@@ -160,6 +226,19 @@ export const SETTING_LCS = {
       title: 'Fecha Registro',
       type: 'string',
       sort: false,
+      filter: {
+        type: 'custom',
+        component: CustomDateFilterComponent,
+      },
+      valuePrepareFunction: (date: Date) => {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(
+          raw,
+          'dd/MM/yyyy',
+          'UTC'
+        );
+        return formatted;
+      },
     },
     bankExpCheck: {
       title: 'Banco Exp. Cheque',
@@ -169,6 +248,21 @@ export const SETTING_LCS = {
     numberCheck: {
       title: 'N° Cheque',
       type: 'number',
+      sort: false,
+    },
+    InvoiceApproval: {
+      title: 'Folio de Aprobación',
+      type: 'string',
+      sort: false,
+    },
+    bankTransmitter: {
+      title: 'Banco Emisor',
+      type: 'string',
+      sort: false,
+    },
+    userGenerate: {
+      title: 'Usuario Genera',
+      type: 'string',
       sort: false,
     },
   },

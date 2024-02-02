@@ -247,7 +247,7 @@ export class ResponsibilityLettersReportComponent
       puestoCcp1: [null],
       nombreCcp2: [null],
       puestoCcp2: [null],
-      lote: [null],
+      lote: [null, Validators.required],
       evento: [null],
       evento_descripcion: [null],
       lote_descripcion: [null],

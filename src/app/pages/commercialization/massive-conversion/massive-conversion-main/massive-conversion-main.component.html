@@ -362,8 +362,9 @@
               </ng2-smart-table>
             </div>
 
-            <app-pagination [params]="dataParams" [totalItems]="dataTotalItems">
-            </app-pagination>
+            <app-pagination
+              [params]="paramsD"
+              [totalItems]="totalItemsD"></app-pagination>
           </tab>
           <tab heading="Líneas de Captura" id="lcsTab">
             <div class="row mt-3">
@@ -397,9 +398,10 @@
                     </div>
 
                     <app-pagination
-                      [params]="lcsParams"
-                      [totalItems]="lcsTotalItems">
-                    </app-pagination>
+                      [params]="paramsLc"
+                      [totalItems]="totalItemsLc"></app-pagination>
+
+                    <!-- <app-pagination [params]="lcsParams"  [totalItems]="lcsTotalItems">   </app-pagination> -->
                   </tab>
                   <!-- <tab
                     heading="Mantenimiento"
