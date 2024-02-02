@@ -407,7 +407,10 @@
               </div>
             </div>
           </tab>
-          <tab heading="Reproceso" id="reProTab">
+          <tab
+            (selectTab)="onTabSelected($event)"
+            heading="Reproceso"
+            id="reProTab">
             <div class="row">
               <div class="d-flex justify-content-end my-3">
                 <div class="mr-3">

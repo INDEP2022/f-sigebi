@@ -831,6 +831,13 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     });
   }
 
+  onTabSelected(event: any) {
+    console.log('Tab seleccionado', event);
+    // this.tabset.tabs.forEach((tab, i) => {
+    //           tab.active = i === 0;
+    //         });
+  }
+
   // getData(listParams?: ListParams, notValidate: boolean = false): void {
   //   if (this.form.invalid && !notValidate) {
   //     this.form.markAllAsTouched();
