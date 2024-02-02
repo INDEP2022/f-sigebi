@@ -5,7 +5,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { BehaviorSubject, firstValueFrom, skip, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, takeUntil } from 'rxjs';
 import {
   convertFormatDate,
   generateUrlOrPath,
@@ -123,6 +123,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   pathGetBath = generateUrlOrPath('catalog', 'batch', true);
   title: string = "Conversión Masiva de LC'S";
 
+  paramsD = new BehaviorSubject<ListParams>(new ListParams());
+  columnFiltersD: any = [];
+  totalItemsD: number = 0;
+
+  paramsLc = new BehaviorSubject<ListParams>(new ListParams());
+  columnFiltersLc: any = [];
+  totalItemsLc: number = 0;
+
   constructor(
     private excelService: ExcelService,
     private modalService: BsModalService,
@@ -141,12 +149,22 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       this.clientIdSettings.columns
     );
 
-    this.dataParams.pipe(skip(1)).subscribe(params => {
+    this.paramsD = this.pageFilter(this.paramsD);
+    this.paramsD
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.searchData());
+
+    this.paramsLc = this.pageFilter(this.paramsLc);
+    this.paramsLc
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.guarantyData());
+
+    /*this.dataParams.pipe(skip(1)).subscribe(params => {
       this.searchData(params);
     });
     this.lcsParams.pipe(skip(1)).subscribe(params => {
-      this.searchLcs(params);
-    });
+      this.guarantyData(params);
+    });*/
   }
 
   searchEvent(): void {
@@ -211,7 +229,13 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   searchData(list?: ListParams) {
     console.error('Este es Search');
     this.loading = true;
-    const params = this.makeFiltersParams(list).getParams();
+    let params = {
+      ...this.paramsD.getValue(),
+      ...this.columnFiltersD,
+    };
+    params['filter.eventId'] = `$eq:${this.form.controls['eventId'].value}`;
+
+    //const params = this.makeFiltersParams(list).getParams();
     this.capturelineService
       .getTmpLcComer(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -219,7 +243,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         next: res => {
           console.error(res);
           this.dataSource.load(res.data);
-          this.dataTotalItems = res.count;
+          this.totalItemsD = res.count;
           this.loading = false;
         },
         error: error => {
@@ -248,8 +272,31 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       });
   }
 
-  searchLcs(listParams?: ListParams) {
+  guarantyData() {
     this.isLoadingLcs = true;
+    let params = {
+      ...this.paramsD.getValue(),
+      ...this.columnFiltersD,
+    };
+    params['filter.idEvent'] = `$eq:${this.form.controls['eventId'].value}`;
+
+    this.guarantyService.getComerRefGuarantees(params).subscribe({
+      next: res => {
+        this.lcsSource.load(res.data);
+        this.totalItemsLc = res.count;
+        //this.lcsTotalItems = res.count;
+        this.isLoadingLcs = false;
+      },
+      error: error => {
+        this.lcsSource.load([]);
+        this.isLoadingLcs = false;
+      },
+    });
+  }
+
+  /*searchLcs(listParams?: ListParams) {
+    this.isLoadingLcs = true;
+    
     //TODO: decirle a Eduardo que haga opcional el campo de validityDate
     const paramsPaginate = {
       page: listParams?.page || 1,
@@ -262,7 +309,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         next: res => {
           this.isLoadingLcs = false;
           this.lcsSource.load(res.data);
-          this.lcsTotalItems = res.count;
+          this.totalItems = res.count;
 
           this.isLoadingLcs = false;
         },
@@ -271,7 +318,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.isLoadingLcs = false;
         },
       });
-  }
+  }*/
 
   makeFiltersParams(
     list?: ListParams,
@@ -366,7 +413,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   isLoadingExportFile = false;
   exportFile() {
-    if (!this.form.get('eventId').value) {
+    /*if (!this.form.get('eventId').value) {
       this.alert('warning', this.title, 'No se ha seleccionado un evento');
       return;
     }
@@ -374,7 +421,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     const params = this.makeFiltersParams().getParams();
 
     this.guarantyService
-      .getComerRefGuarantees(params)
+      .getComerRefGuarantees()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: res => {
@@ -385,26 +432,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         error: err => {
           this.isLoadingExportFile = false;
         },
-      });
-  }
-
-  guarantyData() {
-    this.isLoadingLcs = true;
-    const params = this.makeFiltersParams().getParams();
-    this.guarantyService
-      .getComerRefGuarantees(params.replace('eventId', 'idEvent'))
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: res => {
-          this.lcsSource.load(res.data);
-          this.lcsTotalItems = res.count;
-          this.isLoadingLcs = false;
-        },
-        error: () => {
-          this.lcsSource.load([]);
-          this.isLoadingLcs = false;
-        },
-      });
+      });*/
   }
 
   insertTmpLcComer(tmpLcComer: ITmpLcComer) {
