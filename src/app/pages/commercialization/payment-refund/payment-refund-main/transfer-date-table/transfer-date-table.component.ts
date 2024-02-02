@@ -22,7 +22,7 @@ import { PaysService } from '../services/services';
   styles: [],
 })
 export class TransferDateTableComponent extends BasePage implements OnInit {
-  title: 'Permisos de Creación';
+  title: 'Fechas de Transferencias';
   data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any[] = [];

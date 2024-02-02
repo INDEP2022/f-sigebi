@@ -1274,7 +1274,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
       await this.newMarkProcess('FL', 'PREF', c_indN);
       console.log({ pEvent: String(event), ptpevento: tp_event });
-      // await this.generateInvoiceCtrl(String(event), tp_event);
+      await this.generateInvoiceCtrl(String(event), tp_event);
 
       if (c_indN == 'F') {
         this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
