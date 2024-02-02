@@ -433,7 +433,7 @@ export class EventGoodsLotsListActionsComponent
   /**ACT_TMP_COMER */
   updateComerTmp() {
     const { id, address } = this.controls;
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
+    //* Esta implementado el endpoint
     console.log('ACT_TMP_COMER');
     return this.lotService
       .updateTmpComer({
