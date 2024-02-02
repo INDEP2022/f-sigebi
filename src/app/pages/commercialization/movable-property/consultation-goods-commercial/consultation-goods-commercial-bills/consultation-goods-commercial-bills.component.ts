@@ -95,7 +95,7 @@ export class ConsultationGoodsCommercialBillsComponent
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: () => {
         if (this.isValid()) {
-          this.getData();
+          this.executeConsult();
         }
       },
     });
@@ -107,11 +107,6 @@ export class ConsultationGoodsCommercialBillsComponent
   }
 
   getData() {
-    if (!this.isValid()) {
-      this.alert('warning', '', 'Debe completar al menos un campo de búsqueda');
-      return;
-    }
-
     this.goodSpentService
       .getGoodSpents(this.form.value, this.params2.getValue())
       .subscribe({
@@ -174,6 +169,7 @@ export class ConsultationGoodsCommercialBillsComponent
       );
     } else {
       this.loading = false;
+      console.log('Llamo 178');
       this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
     }
   }
@@ -332,6 +328,7 @@ export class ConsultationGoodsCommercialBillsComponent
     this.modelSave2 = model;
 
     if (Object.keys(model).length === 0) {
+      console.log('Llamo 337');
       this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
       this.loading = false;
     } else {
@@ -343,12 +340,23 @@ export class ConsultationGoodsCommercialBillsComponent
           this.loading = false;
         },
         err => {
-          this.alert(
-            'error',
-            'Se presentó un error inesperado al obtener los Bienes',
-            ''
-          );
           console.log(err);
+          console.log(err.status);
+
+          if (err.status === 400) {
+            this.alert(
+              'warning',
+              'No se encontraron resultados con los filtros seleccionados',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Se presentó un error inesperado al obtener los Bienes',
+              ''
+            );
+          }
+
           this.data.load([]);
           this.totalItems2 = 0;
           this.loading = false;

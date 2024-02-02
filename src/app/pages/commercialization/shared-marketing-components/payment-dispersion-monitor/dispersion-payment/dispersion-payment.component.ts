@@ -1436,7 +1436,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       ...this.columnFiltersLotsBank,
     };
 
-    params['filter.BatchID'] = `$eq:${idLote}`;
+    params['filter.lotId'] = `$eq:${idLote}`;
 
     this.paymentService.getComerPaymentRef2(params).subscribe(
       res => {
