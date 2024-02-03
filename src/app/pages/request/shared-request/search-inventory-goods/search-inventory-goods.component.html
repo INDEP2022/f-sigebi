@@ -203,17 +203,15 @@
           <div class="mt-3 d-flex flex-row-reverse">
             <div class="mx-1">
               <button
-                (click)="search()"
-                class="btn btn-sm btn-primary active btn-sm">
-                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-              </button>
-            </div>
-            <div class="mx-1">
-              <button
                 (click)="reset()"
                 class="btn btn-danger active btn-sm"
                 [disabled]="!searchForm.touched">
                 Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+            <div class="mx-1">
+              <button (click)="search()" class="btn btn-sm btn-primary active btn-sm">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
           </div>
