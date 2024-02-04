@@ -59,3 +59,10 @@ export interface IPupProcSelReproceso {
   totalClient: string;
   dateGraceLiq: string;
 }
+
+export interface IPupImpExcelBatchesCustomer {
+  lifMessageYesNo: string;
+  direction: string;
+  tpEventId: string;
+  eventId: number;
+}

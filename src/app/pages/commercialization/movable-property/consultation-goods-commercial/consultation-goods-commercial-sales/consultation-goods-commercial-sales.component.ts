@@ -426,6 +426,20 @@ export class ConsultationGoodsCommercialSalesComponent
           this.loading = false;
         },
         err => {
+          if (err.status === 400) {
+            this.alert(
+              'warning',
+              'No se encontraron resultados con los filtros seleccionados',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Se presentó un error inesperado al obtener los Bienes',
+              ''
+            );
+          }
+
           this.dataGoods.load([]);
           this.totalItems = 0;
           this.modelSave = null;
