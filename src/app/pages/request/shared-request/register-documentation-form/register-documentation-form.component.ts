@@ -111,7 +111,11 @@ export class RegisterDocumentationFormComponent
       holderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       phoneOfOwner: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(13)],
+        [
+          Validators.maxLength(13),
+          Validators.minLength(10),
+          Validators.pattern(NUM_POSITIVE),
+        ],
       ],
       emailOfOwner: [null, [Validators.pattern(EMAIL_PATTERN)]],
       trialType: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -403,6 +407,14 @@ export class RegisterDocumentationFormComponent
   =============================================================== */
   displayNotifyMailsInput() {
     this.displayNotifyMails = this.process == 'register-request-similar-goods';
+  }
+
+  numericOnly(event): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 
   showInput(comp) {

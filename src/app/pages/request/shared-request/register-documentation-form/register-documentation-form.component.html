@@ -65,12 +65,11 @@
   <div class="row mt-5">
     <div class="col-md-4">
       <div class="row">
-        
         <div class="col">
           <p class="font-size-13 mb-2">
             <label class="font-size-12">Prioridad&#58;</label>
             <input
-              style="margin-left: 10px !important;"
+              style="margin-left: 10px !important"
               id="priority"
               type="checkbox"
               class="gcheckbox"
@@ -196,7 +195,8 @@
         <input
           type="text"
           formControlName="phoneOfOwner"
-          class="form-control" />
+          class="form-control"
+          (keypress)="numericOnly($event)" />
       </form-field>
     </div>
     <div class="col-md-4">
