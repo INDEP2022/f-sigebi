@@ -107,7 +107,7 @@ export class RegisterDocumentationFormComponent
       affair: [null],
       receiptRoute: [null],
       typeOfTransfer: [null],
-      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN_LETTER)]],
       holderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       phoneOfOwner: [
         null,

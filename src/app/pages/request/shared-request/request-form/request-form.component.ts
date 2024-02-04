@@ -456,7 +456,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       config
     );
     this.bsModalRef.content.event.subscribe((res: any) => {
-      this.userName = res.firstName;
+      this.userName = res.firstName + ' ' + res.lastName;
       this.nickName = res.username;
       this.requestForm.controls['targetUser'].setValue(res.id);
     });

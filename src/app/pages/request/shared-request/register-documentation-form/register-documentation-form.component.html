@@ -311,9 +311,7 @@
           class="form-control" />
       </form-field>
     </div>
-    <div
-      class="col-md-4 pt-5"
-      *ngIf="transference == 120 || showInput('trialType')">
+    <div class="col-md-4" *ngIf="transference == 120 || showInput('trialType')">
       <form-field [control]="registerForm.get('trialType')" label="Tipo Juicio">
         <input
           type="text"
