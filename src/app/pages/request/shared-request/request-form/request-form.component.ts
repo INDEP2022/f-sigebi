@@ -465,7 +465,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   save() {
     Swal.fire({
       title: 'Guardar Solicitud',
-      text: '¿Desea Guardar la solicitud?',
+      text: '¿Desea guardar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -514,7 +514,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
-      '¿Desea Turnar la solicitud?'
+      '¿Desea turnar la solicitud?'
     ).then(async question => {
       if (question.isConfirmed) {
         if (this.op == 2) {
