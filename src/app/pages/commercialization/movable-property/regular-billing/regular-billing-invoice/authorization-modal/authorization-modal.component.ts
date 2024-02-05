@@ -238,7 +238,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                     pCfdi: 1,
                     pLot: Number(invoice.batchId),
                     pCause: Number(causerebillId),
-                    pDeletedEmits: Number(this.user.department),
+                    pDelEmits: Number(this.user.department),
                   };
                   // COMER_CTRLFACTURA.COPIA_FACTURA
                   cf_nuevafact = await this.copyInovice(body);
@@ -271,7 +271,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                       pCfdi: 0,
                       pLot: Number(invoice.batchId),
                       pCause: Number(causerebillId),
-                      pDeletedEmits: Number(this.user.department),
+                      pDelEmits: Number(this.user.department),
                     };
 
                     cf_nuevafact = await this.copyInovice(body);
@@ -304,9 +304,8 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                       pCfdi: 1,
                       pLot: Number(invoice.batchId),
                       pCause: Number(causerebillId),
-                      pDeletedEmits: Number(this.user.department),
+                      pDelEmits: Number(this.user.department),
                     };
-
                     cf_nuevafact = await this.copyInovice(body);
 
                     if (cf_nuevafact) {
@@ -363,12 +362,12 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                   pCfdi: 0,
                   pLot: Number(invoice.batchId),
                   pCause: Number(causerebillId),
-                  pDeletedEmits: Number(this.user.department),
+                  pDelEmits: Number(this.user.department),
                 };
                 // COMER_CTRLFACTURA.COPIA_FACTURA
                 console.log('body2', body2);
 
-                // cf_nuevafact = await this.copyInovice(body2);
+                cf_nuevafact = await this.copyInovice(body2);
                 console.log('cf_nuevafact', cf_nuevafact);
               } else if (yyyy <= 2009) {
                 this.alert('warning', 'Año 2009 proceso por definir', '');
@@ -394,7 +393,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
                   pCfdi: 2,
                   pLot: Number(invoice.batchId),
                   pCause: Number(causerebillId),
-                  pDeletedEmits: Number(this.user.department),
+                  pDelEmits: Number(this.user.department),
                 };
                 // COMER_CTRLFACTURA.COPIA_FACTURA
                 cf_nuevafact = await this.copyInovice(body);
@@ -477,7 +476,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
   async copyInovice(data: any) {
     return firstValueFrom<number>(
       this.comerInvoiceService.copyInvoice(data).pipe(
-        map(resp => resp),
+        map(resp => 1),
         catchError(() => of(0))
       )
     );

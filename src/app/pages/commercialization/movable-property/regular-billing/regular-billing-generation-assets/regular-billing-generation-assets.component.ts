@@ -26,7 +26,29 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-regular-billing-generation-assets',
   templateUrl: './regular-billing-generation-assets.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class RegularBillingGenerationAssetsComponent
   extends BasePage
@@ -44,7 +66,8 @@ export class RegularBillingGenerationAssetsComponent
     { id: null, description: 'Todos' },
   ]);
   @ViewChild('fileExcel', { static: true }) file: ElementRef<HTMLInputElement>;
-
+  btnLoading: boolean = false;
+  btnLoading2: boolean = false;
   constructor(
     private authService: AuthService,
     private massiveGoodService: MassiveGoodService,
@@ -126,15 +149,17 @@ export class RegularBillingGenerationAssetsComponent
   }
 
   async importExcell(event: any) {
-    this.alertQuestion('warning', '¿Desea cargar el archivo en CSV?', '').then(
+    this.alertQuestion('question', '¿Desea cargar el archivo en CSV?', '').then(
       async ans => {
         if (ans.isConfirmed) {
+          this.btnLoading = true;
           let file = event.target.files[0];
 
           const response = await this.importCSV(file);
           this.file.nativeElement.value = '';
           if (!response) {
-            this.alert('warning', 'No se puede copiar el archivo de excel', '');
+            this.btnLoading = false;
+            this.alert('warning', 'No se puede copiar el archivo', '');
             return;
           }
           //   COMER_VNR.P_INSERTA_LOTE(VAUDSID);
@@ -148,6 +173,7 @@ export class RegularBillingGenerationAssetsComponent
             'filter.sessionId'
           ] = `${SearchFilter.EQ}:7545034`;
           this.getAllComerPapel();
+          this.btnLoading = false;
           this.alert('success', 'Se ha cargado el archivo correctamente', '');
         }
       }
@@ -195,6 +221,7 @@ export class RegularBillingGenerationAssetsComponent
 
   exportAsXLSX(): void {
     const { status } = this.form.value;
+    this.btnLoading2 = true;
     this.massiveGoodService.getCSVStatus(status).subscribe({
       next: resp => {
         const linkSource = `data:application/xlsx;base64,${resp.resultExcel.base64File}`;
@@ -204,8 +231,10 @@ export class RegularBillingGenerationAssetsComponent
         downloadLink.target = '_blank';
         downloadLink.click();
         downloadLink.remove();
+        this.btnLoading2 = false;
       },
       error: () => {
+        this.btnLoading2 = false;
         this.alert(
           'warning',
           'Atención',

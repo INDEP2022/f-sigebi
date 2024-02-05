@@ -31,7 +31,6 @@ import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { CustomDateFilterComponent_ } from 'src/app/pages/administrative-processes/numerary/deposit-tokens/deposit-tokens/searchDate';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BillingsService } from '../services/services';
@@ -283,16 +282,17 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         impressionDate_: {
           title: 'Fecha',
           width: '20%',
+          filter: false,
           sort: false,
           valuePrepareFunction: (text: string) => {
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
             }`;
           },
-          filter: {
-            type: 'custom',
-            component: CustomDateFilterComponent_,
-          },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomDateFilterComponent_,
+          // },
           filterFunction(): boolean {
             return true;
           },
@@ -811,15 +811,18 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         }
       });
 
-    this.params
-      .pipe(
-        skip(1),
-        tap(() => {
-          this.getBillings('no');
-        }),
-        takeUntil(this.$unSubscribe)
-      )
-      .subscribe(() => {});
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.totalItems > 0) this.getBillings('no');
+    });
+    // this.params
+    //   .pipe(
+    //     skip(1),
+    //     tap(() => {
+    //       this.getBillings('no');
+    //     }),
+    //     takeUntil(this.$unSubscribe)
+    //   )
+    //   .subscribe(() => {});
     // this.params
     //   .pipe(takeUntil(this.$unSubscribe))
     //   .subscribe(() => this.getBillings('no'));
@@ -1076,9 +1079,11 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-
-    // if (!params['filter.eventId'])
-    //   return this.alert('warning', 'Debe especificar un evento', '')
+    let res = await this.forArrayFilters_();
+    console.log('res', res);
+    if (res) {
+    } else {
+    }
 
     this.loading = true;
     this.totalItems = 0;
@@ -1107,9 +1112,6 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       ] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
       delete params['filter.impressionDate_'];
     }
-
-    // if (this.valDefaultWhere)
-    //   params['filter.eventId'] = `$eq:${this.idEventBlkCtrl.value}`;
 
     params['filter.address'] = `$eq:I`;
     if (!this.valSortBy) params['sortBy'] = `eventId:DESC`;
@@ -1682,6 +1684,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
           this.params.getValue()[
             'filter.eventId'
           ] = `$eq:${this.idEventBlkCtrl.value}`;
+          await this.forArrayFilters('eventId', this.idEventBlkCtrl.value);
           await this.getBillings('si'); // GO_BLOCK('COMER_FACTURAS');
           await this.visualProcess(0, 1); // VISUALIZA_PROCESO(0, 1);
           this.btnLoading = false;
@@ -1908,6 +1911,8 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     if (!this.billingSelected)
       return this.alert('warning', 'No se tiene una factura seleccionada.', '');
 
+    window.open('http://facturacionelec.sae.gob.mx/Log.aspx', '_blank');
+    return;
     //  THEN-- VA AL LINK DE PARA GENERAR LOS XML Y SELLO
     const url: any = await this.billingsService.getApplicationGetFaUrlwebFac(
       this.billingSelected.eventId
@@ -1943,7 +1948,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
     if (countFacturas.count == 0) {
       this.alertQuestion(
         'question',
-        'Se realiza la actualización de todos los lotes en estatus PAG, PAGE a estatus VEN',
+        'Se realizará la actualización de todos los lotes en estatus PAG, PAGE a estatus VEN',
         '¿Se ejecuta el proceso?'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -2019,7 +2024,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
 
       this.alertQuestion(
         'question',
-        'Se realiza la actualización de todos los lotes en estatus PAG, PAGE a estatus VEN',
+        'Se realizará la actualización de todos los lotes en estatus PAG, PAGE a estatus VEN',
         '¿Se ejecuta el proceso?'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -2697,12 +2702,20 @@ export class BillingScreenComponent extends BasePage implements OnInit {
             if (item_.delegationNumber == this.token.decodeToken().department) {
               const updateDateImp = this.billingsService.updateBillings(obj);
               // : COMER_FACTURAS.FECHA_IMPRESION := : BLK_CTRL.fecha;
-              cont = cont + 1;
+              (item_.impressionDate = this.datePipe.transform(
+                this.dateBlkCtrl.value,
+                'yyyy-MM-dd'
+              )),
+                (cont = cont + 1);
             }
           } else {
             const updateDateImp = this.billingsService.updateBillings(obj);
             // : COMER_FACTURAS.FECHA_IMPRESION := : BLK_CTRL.fecha;
-            cont = cont + 1;
+            (item_.impressionDate = this.datePipe.transform(
+              this.dateBlkCtrl.value,
+              'yyyy-MM-dd'
+            )),
+              (cont = cont + 1);
           }
         }
       });
@@ -2710,6 +2723,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
       Promise.all(result_).then(resp => {
         this.form.get('date').setValue(null);
         this.btnLoading13 = false;
+        this.getBillings('no');
         this.alert('success', `Se actualizó la fecha a ${cont} facturas.`, '');
         // LIP_MENSAJE('Se actualizó la fecha a ' || TO_CHAR(n_CONT) || ' facturas.', 'A');
       });
@@ -3145,6 +3159,7 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         }
       });
     }
+    this.data.refresh();
     return true;
   }
 
@@ -3308,5 +3323,21 @@ export class BillingScreenComponent extends BasePage implements OnInit {
         block: 'start',
       });
     }
+  }
+
+  async forArrayFilters_() {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    let val = true;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.search != '') {
+          val = false;
+        }
+      });
+    }
+    this.data.refresh();
+    return val;
   }
 }
