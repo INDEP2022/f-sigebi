@@ -370,7 +370,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       body.processStatus = 'SOLICITAR_ACLARACION'; //typeClarify;
       body.goodStatus = 'SOLICITUD DE ACLARACION';
       body.status = status;
-      // debugger;
+      // //
       this.goodService.update(body).subscribe({
         next: resp => {
           //console.log('good updated', resp);

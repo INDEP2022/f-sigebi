@@ -91,7 +91,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   handleError(error: HttpErrorResponse) {
-    // debugger;
+    // //
     const status = error.status;
     let message = '';
     if (Array.isArray(error?.error?.message) === true) {
@@ -140,7 +140,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   private handleSuccess(response: HttpEvent<any>) {
-    // debugger;
+    // //
     if (response instanceof HttpResponse) {
       this.validateResponse(response);
       if (!response.body) {

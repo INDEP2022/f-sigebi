@@ -56,7 +56,7 @@ export class MassiveConversionErrorsModalComponent
       .subscribe(change => {
         if (change.action === 'filter') {
           // this.data = this.dataOld;
-          // debugger;
+          // //
           let filters = change.filter.filters;
           filters.map((filter: any, index: number) => {
             // console.log(filter, index);

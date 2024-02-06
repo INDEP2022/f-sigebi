@@ -191,7 +191,7 @@ export class LoanDocumentComponent extends BasePage implements OnInit {
   loadUserFor(user: any) {
     this.usersService.getAllSegUsers4(user).subscribe({
       next: response => {
-        //debugger;
+        ////
         this.user1 = new DefaultSelect(response.data, response.count);
         console.log('response user For ', response, this.user1);
         this.form.get('loanFor').setValue(response.data[0].user);

@@ -72,7 +72,7 @@ export class ReceiptTableGoodsComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // debugger;
+    // //
     if (
       (changes['estatus_bien_programacion'] &&
         changes['estatus_bien_programacion'].currentValue) ||
@@ -175,7 +175,7 @@ export class ReceiptTableGoodsComponent
 
   private fillSelectedRows() {
     setTimeout(() => {
-      // debugger;
+      // //
       console.log(this.selectedGoods, this.table);
       const currentPage = this.params.getValue().page;
       const selectedPage = this.pageSelecteds.find(
@@ -205,7 +205,7 @@ export class ReceiptTableGoodsComponent
     }, 300);
   }
   override getParams() {
-    // debugger;
+    // //
     let newColumnFilters = this.columnFilters;
     // if (this.folio) {
     //   newColumnFilters['filter.folio'] = '$eq:' + this.folio;
@@ -221,7 +221,7 @@ export class ReceiptTableGoodsComponent
   }
 
   override getData() {
-    // debugger;
+    // //
     this.loading = true;
     let params = this.getParams();
     const programmingId = this.id_programacion;

@@ -447,7 +447,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async findOfficeService(data: any) {
-    // debugger;
+    // //
     let valorObjeto: any;
     valorObjeto = data;
     console.log(data);
@@ -650,7 +650,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   async getOfficeResponse(body: any, type?: number, arrayLength?: number) {
-    // debugger;
+    // //
     let array = [];
     array = await this.getOfficeRequest(body);
     if (array.length > 0) {
@@ -730,7 +730,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
     console.log(this.idOficio);
 
-    // debugger;
+    // //
     if (this.idOficio > 0) {
       let array = await this.getOfficeResponseTwo(body);
       let statusOffice: string;
@@ -781,7 +781,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   validateFindOfficeOne(status: any) {
-    // debugger;
+    // //
     if (status == 'ENVIADO') {
       this.pnlControles = false;
       this.pnlControles2 = false;
@@ -921,7 +921,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   //#region Excel
   //Export and Import Excel
   exportExcel() {
-    // debugger;
+    // //
     this.loadingExcel = true;
     if (this.officeType + '' === '3') {
       if (this.cancelData.length > 0) {
