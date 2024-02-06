@@ -1,7 +1,8 @@
 import { animate, style, transition, trigger } from '@angular/animations';
+import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
@@ -25,7 +26,6 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { environment } from 'src/environments/environment';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
 import { TableCheckPortalDialogComponent } from '../components/table-check-portal-dialog/table-check-portal-dialog.component';
 import { TableCheckboxComponent } from '../components/table-checkbox/table-checkbox.component';
@@ -136,6 +136,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   form: ModelForm<any>;
 
+  validityDate: any;
+
   constructor(
     private excelService: ExcelService,
     private modalService: BsModalService,
@@ -144,7 +146,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private comerEventService: ComerEventosService,
     private prepareEventService: ComerEventService,
     private httpClient: HttpClient,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -397,6 +400,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.validGenerateLCs = true;
           this.form.enable();
           console.log('datos: ', res.data, 'count: ', res.count);
+          this.validityDate = res.data[0].validityDate;
         },
         error: error => {
           console.log('Error', error);
@@ -506,15 +510,16 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   //#region on click load file
   isLoadingLoadFile = false;
-  async onClickLoadFile(event: any, type: 'rfc' | 'client_id') {
+  async onClickLoadFile() {
     const result = await this.alertQuestion(
       'question',
-      this.title,
-      `¿Está seguro de que desea insertar el archivo por ${type}?`
+      'Atención',
+      `¿Insertar el archivo?`
     );
     if (result.isConfirmed) {
       this.isLoadingLoadFile = true;
-      const file = event.target.files[0];
+
+      /*const file = event.target.files[0];
       const formData = new FormData();
       formData.append('file', file);
       formData.append('pmode', 'W');
@@ -553,7 +558,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
             this.isLoadingLoadFile = false;
             event.target.value = null;
           },
-        });
+        });*/
     }
   }
 
@@ -570,7 +575,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       ...this.paramsLc.getValue(),
       ...this.columnFiltersLc,
     };
-    params['filter.idEvent'] = `$eq:${this.form.controls['eventId'].value}`;
+    params['filter.idEvent'] = `${this.form.controls['eventId'].value}`;
 
     this.guarantyService.getExcelComerRefGuarantees(params).subscribe({
       next: res => {
@@ -582,6 +587,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         //this.searchLcs();
       },
       error: err => {
+        this.alert('error', 'Error', 'No se logró generar el archivo');
         this.isLoadingExportFile = false;
       },
     });
@@ -603,25 +609,77 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   loadChecks() {
-    if (!this.selectedEvent) {
-      this.alert(
-        'warning',
-        this.title,
-        this.form.get('eventId').value
-          ? 'El evento seleccionado no existe, por favor ingrese uno correcto'
-          : ' No se ha seleccionado un evento'
+    if (this.form.controls['validityDate'].value != null) {
+      const fechaOriginal: Date = new Date(
+        this.form.controls['validityDate'].value
       );
-      return;
-    }
+      const fechaFormateada: string = this.datePipe.transform(
+        fechaOriginal,
+        'dd/MM/yyyy',
+        'es-MX'
+      );
 
-    this.loadCheckLc(
-      this.form,
-      this.capturelineService,
-      this.openDialogCheckPortal.bind(this)
-    );
+      this.alertQuestion(
+        'question',
+        `La fecha de vigencia será: ${fechaFormateada}`,
+        '¿Continuar?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.loadingChecks(
+            this.form.controls['eventId'].value,
+            this.form.controls['validityDate'].value,
+            true
+          );
+        }
+      });
+    } else {
+      const fechaOriginal: Date = new Date(this.validityDate);
+      const fechaFormateada: string = this.datePipe.transform(
+        fechaOriginal,
+        'dd/MM/yyyy',
+        'es-MX'
+      );
+
+      this.alertQuestion(
+        'question',
+        `La Fecha de vigencia se tomará de la tabla: ${fechaFormateada}`,
+        '¿Desea continuar?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.loadingChecks(
+            this.form.controls['eventId'].value,
+            this.validityDate,
+            true
+          );
+        }
+      });
+    }
   }
 
-  async loadCheckLc(
+  loadingChecks(event1: string, validation1: string, p_flag1: boolean) {
+    this.capturelineService
+      .postLoadCheckPortal({
+        event: event1,
+        p_FLAG: p_flag1,
+        validation: validation1,
+      })
+      .subscribe({
+        next: resp => {
+          console.log('Respuesta: ', resp);
+          this.alert(
+            'success',
+            'Cheques cargados',
+            'Se cargaron los cheques correctamente'
+          );
+        },
+        error: error => {
+          console.log('Error', error);
+          this.alert('error', 'Error', 'Error al generar la búsqueda');
+        },
+      });
+  }
+
+  /*async loadCheckLc(
     form: FormGroup,
     capturelineService: CapturelineService,
     cbOpenCheckPortal: (item: any) => void
@@ -669,7 +727,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           },
         });
     }
-  }
+  }*/
 
   async reprocess() {
     this.searchEvent();

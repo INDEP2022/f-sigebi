@@ -51,16 +51,14 @@
                 <div class="col-12">
                   <div class="btn-group d-block" dropdown>
                     <button
-                      dropdownToggle
-                      id="loadBtn"
+                      (click)="onClickLoadFile()"
                       type="button"
                       [disabled]="isLoadingLoadFile"
-                      class="btn btn-sm btn-info btn-block active me-2 font-size-14 dropdown-toggle"
-                      aria-controls="dropdown-animated">
+                      class="btn btn-sm btn-info btn-block active me-2 font-size-14">
                       <i class="bx bx-file text-light float-icon"></i>
                       Cargar Archivo <span class="caret"></span>
                     </button>
-                    <ul
+                    <!-- <ul
                       id="dropdown-animated"
                       *dropdownMenu
                       class="dropdown-menu"
@@ -90,12 +88,12 @@
                             (change)="onClickLoadFile($event, 'client_id')"
                         /></a>
                       </li>
-                    </ul>
+                    </ul> -->
                   </div>
                 </div>
                 <div class="col-12">
                   <button
-                    [disabled]="!eventIdValue"
+                    [disabled]="!validGenerateLCs"
                     class="btn btn-sm btn-secondary btn-block active me-2 font-size-14"
                     (click)="loadChecks()">
                     <i class="bx bx-upload text-light float-icon"></i>
@@ -280,7 +278,7 @@
                     [disabled]="isLoadingExportFile"
                     class="btn btn-sm btn-success active me-2 font-size-14"
                     (click)="exportFile()">
-                    Exportar <i class="bx bx-download float-icon"></i>
+                    Exportar todo <i class="bx bx-download float-icon"></i>
                   </button>
                 </div>
               </div>
