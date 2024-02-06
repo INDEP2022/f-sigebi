@@ -83,7 +83,7 @@ export class PaginationComponent extends BasePage implements OnInit {
   }
 
   pageSizeChange() {
-    // debugger;
+    // //
     const params = this.params.getValue();
     if (
       +(this.limit.value + '') > params.limit &&

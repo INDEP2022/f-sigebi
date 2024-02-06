@@ -191,7 +191,7 @@ export class CommercialFileComponent extends BasePage implements OnInit {
 /* 
 private async getData() {
     this.files = [];
-    // debugger;
+    // //
     // this.lastConsecutive = 1;
     this.filePhotoService
       .getAll(this.goodNumber + '')
@@ -200,7 +200,7 @@ private async getData() {
         next: async response => {
           if (response) {
             console.log(response);
-            // debugger;
+            // //
             if (response) {
               this.files = [...response];
               // const index = last.indexOf('F');

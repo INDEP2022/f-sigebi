@@ -38,7 +38,7 @@ export const NUMBERS_BY_COMMA = '^(d+,?)+$';
 export const SPECIAL_STRING_PATTERN =
   '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\/\\s\\.,_\\-\\\\()\\Üü“”"";:]*';
 export const NUM_POSITIVE_LETTERS = '^[0-9]+|[a-zA-Z]+$';
-export const NUM_POSITIVE = '^[0-9]+';
+export const NUM_POSITIVE = '^[0-9]*$';
 export const SPECIAL2_STRING_PATTERN =
   '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\/\\s\\.,_\\-\\\\()\\Üü“”"";:|]*';
 export const TEST_NUMBER = '^[0-9]{1,3}([,][0-9]{3})*[.]?[0-9]{2}$';

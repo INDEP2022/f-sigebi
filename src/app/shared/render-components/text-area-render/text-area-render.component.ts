@@ -15,7 +15,7 @@ export class TextAreaRenderComponent extends DefaultEditor implements OnInit {
   form: FormGroup = new FormGroup({});
   description: string;
   @Input() set value(value: { description: string; disabled: boolean }) {
-    // debugger;
+    // //
     // this.disabled = value.disabled;
     this.description = value.description;
     this.form = this.fb.group({

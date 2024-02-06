@@ -915,3 +915,12 @@ div:where(.swal2-container).swal2-center,
 div:where(.swal2-container).swal2-bottom {
   z-index: 10000 !important;
 }
+
+.bs-datepicker-head button.current {
+  margin-left: -15px !important;
+  padding: 0px !important;
+}
+
+.current.ng-star-inserted {
+  margin-right: -15px !important;
+}

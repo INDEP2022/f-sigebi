@@ -153,7 +153,7 @@ export class PaqDestinoDetComponent extends BasePage {
       .subscribe(change => {
         if (change.action === 'filter') {
           // this.data = this.dataOld;
-          // debugger;
+          // //
           let filters = change.filter.filters;
           filters.map((filter: any, index: number) => {
             // console.log(filter, index);
@@ -359,7 +359,7 @@ export class PaqDestinoDetComponent extends BasePage {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        debugger;
+        //
         console.log(event);
 
         const data = event.data;

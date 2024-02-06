@@ -50,7 +50,7 @@ export class CheckboxChangeStatusComponent implements OnInit {
   constructor(private expenseCaptureDataService: ExpenseCaptureDataService) {}
 
   ngOnInit(): void {
-    // debugger;
+    // //
     this.checked = this.value;
     const row = this.rowData;
     if (

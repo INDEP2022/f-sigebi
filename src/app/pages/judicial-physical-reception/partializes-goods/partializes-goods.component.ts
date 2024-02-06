@@ -112,7 +112,7 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
 
   showTable() {
     // console.log(row);
-    // debugger;
+    // //
     this.loadingTree = true;
     this.treeViewService.selected = null;
     this.service

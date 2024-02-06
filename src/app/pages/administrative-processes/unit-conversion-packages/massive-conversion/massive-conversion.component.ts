@@ -1453,7 +1453,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           check.checked = true;
           const ch_bienes_ok = 1;
 
-          // debugger;
+          // //
           let availablePrincipal = true;
           this.unitConversionDataService.dataErrors = [];
 
@@ -1496,7 +1496,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   validateGoods(good: any) {
-    // debugger;
+    // //
     const noPack: IPackageGoodEnc = this.noPackage.value;
     let LV_VALIDA: string;
     let lv_DESC_ERROR = '';

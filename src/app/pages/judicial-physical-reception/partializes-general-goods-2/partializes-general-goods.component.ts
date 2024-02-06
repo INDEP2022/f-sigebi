@@ -64,7 +64,7 @@ export class PartializesGeneralGoodsComponent
   }
 
   checkSum(pindica: string) {
-    // debugger;
+    // //
     this.loading = true;
     if (this.form.valid && this.formGood.valid) {
       this.checkSumObj.execute(pindica);
@@ -102,7 +102,7 @@ export class PartializesGeneralGoodsComponent
 
   async partialize() {
     this.loading = true;
-    // debugger;
+    // //
     // this.ind.setValue('N');
     if (this.form.valid && this.formGood.valid) {
       const vres = this.partializeObj.execute(

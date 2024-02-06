@@ -16,6 +16,7 @@ import {
 import { IComerGastosDev } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BankService } from 'src/app/core/services/catalogs/bank.service';
+import { CapturelineService } from 'src/app/core/services/ms-captureline/captureline.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -34,7 +35,6 @@ import { ExpensesRequestComponent } from './expenses-request/expenses-request.co
 import { FilterCheckboxComponent } from './filterCheckbox-elements';
 import { KeyChangeModalComponent } from './key-change-modal/key-change-modal.component';
 import {
-  PAYMENT_COLUMNS,
   REFUND_CONTROL_COLUMNS,
   RELATED_EVENT_COLUMNS,
 } from './payment-refund-columns';
@@ -209,7 +209,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     private comerEventosService: ComerEventosService,
     private bankService: BankService,
     private parameterModService: ParameterModService,
-    private communicationService: CommunicationService
+    private communicationService: CommunicationService,
+    private capturelineService: CapturelineService
   ) {
     super();
 
@@ -352,7 +353,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           sort: false,
           type: 'custom',
           width: '10%',
-          showAlways: true,
+          // showAlways: true,
           filter: {
             type: 'list',
             config: {
@@ -378,7 +379,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           sort: false,
           type: 'custom',
           width: '10%',
-          showAlways: true,
+          // showAlways: true,
           filter: {
             type: 'list',
             config: {
@@ -404,7 +405,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           sort: false,
           type: 'custom',
           width: '10%',
-          showAlways: true,
+          // showAlways: true,
           filter: {
             type: 'list',
             config: {
@@ -430,7 +431,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           sort: false,
           type: 'custom',
           width: '10%',
-          showAlways: true,
+          // showAlways: true,
           filter: {
             type: 'list',
             config: {
@@ -487,7 +488,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         return '';
       },
     };
-    this.paymentSettings.columns = PAYMENT_COLUMNS;
+    // this.paymentSettings.columns = PAYMENT_COLUMNS;
     this.paymentSettings = {
       ...this.paymentSettings,
       actions: false,
@@ -565,13 +566,13 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-        keyAuthorization: {
+        authorizes: {
           title: 'Autoriza Cambio Clabe',
           type: 'string',
           sort: false,
           filter: false,
         },
-        keyChangeObservations: {
+        obsAuthorizes: {
           title: 'Observaciones de Cambio Clabe',
           type: 'string',
           sort: false,
@@ -628,7 +629,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         if (row.data.statusClabe == 0) {
           return 'bg-no-approved';
         }
-        if (row.data.keyAuthorization != null) {
+        if (row.data.authorizes != null) {
           return 'bg-warning text-black';
         }
         return '';
@@ -790,7 +791,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       usuario_autoriza: '30471',
       usuario_solicita: '9601',
       fecha_captura: new Date(),
-      fecha_pago: null, // No se puede asignar PK_COMER_LC.OBTENER_POST_FECHA_HABIL (TRUNC(SYSDATE), 3, c_RESUL) en TypeScript
+      // PK_COMER_LC.OBTENER_POST_FECHA_HABIL (TRUNC(SYSDATE), 3, c_RESUL);
+      fecha_pago: await this.obteterFechaHabil(),
       num_comprobantes: 1,
       iva_retenido: 0,
       isr_retenido: 0,
@@ -809,8 +811,25 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       adj: null,
       indicador: 1,
     };
+    // console.log(await this.obteterFechaHabil())
   }
-
+  obteterFechaHabil() {
+    let params = {
+      dateCurrent: new Date(),
+      daysPost: 3,
+      pResults: '',
+    };
+    return new Promise((resolve, reject) => {
+      this.capturelineService.pkComerLcObtainPostDateSkilled(params).subscribe({
+        next: (res: any) => {
+          resolve(res.VA);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
   // COMER_CTLCREACION
   async getComerCtrlCreation(status: string) {
     if (!this.tokenData) {
@@ -849,7 +868,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     } else {
       delete this.dataTableParamsControl.getValue()['filter.idEstatus'];
     }
-
+    this.dataTableParamsControl.getValue().page = 1;
+    // this.dataTableParamsControl.getValue().limit = 10;
     this.loadingDataTableControl();
   }
   async getCrtlCreate(params: ListParams) {
@@ -1095,7 +1115,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       this.alertInfo(
         'warning',
         'Cuentas de Banco Relacionadas',
-        'No se tienen registros de Bancos a enviar a SIRSAE'
+        'No se tienen registros válidos de Bancos a enviar a SIRSAE'
       ).then(question => {
         if (question.isConfirmed) {
           this.cambiarTab(2);
@@ -1529,8 +1549,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
               rfc: () => (searchFilter = SearchFilter.ILIKE),
               customer: () => (searchFilter = SearchFilter.ILIKE),
               interbankCode: () => (searchFilter = SearchFilter.ILIKE),
-              keyAuthorization: () => (searchFilter = SearchFilter.ILIKE),
-              keyChangeObservations: () => (searchFilter = SearchFilter.ILIKE),
+              authorizes: () => (searchFilter = SearchFilter.ILIKE),
+              obsAuthorizes: () => (searchFilter = SearchFilter.ILIKE),
               obsTransDate: () => (searchFilter = SearchFilter.ILIKE),
               _statusClabe: () => (searchFilter = SearchFilter.EQ),
               dateTransfer: () => (searchFilter = SearchFilter.EQ),

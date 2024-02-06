@@ -90,11 +90,10 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
-    this.CargaGrids();
-    this.inicialize();
   }
   async inicialize() {
     if (!this.requested) {
+      console.log('cargarEvento');
       this.cargaDDLEvento();
       this.controlBotnoes('', '');
     } else {
@@ -119,7 +118,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     this.estatusLotes = await this.CargaDDLDrop();
     console.log(this.estatusLotes);
     if (this.estatusLotes.length > 0) {
-      this.onLoadToast('warning', 'Advertencia', 'Selecciona oficio');
+      // this.onLoadToast('warning', 'Advertencia', 'Selecciona oficio');
     } else {
       this.onLoadToast('warning', 'Advertencia', 'No exixte ningun evento');
       this.form.controls['Tipo'].setValue('NO EXISTE NINGUN EVENTO');
@@ -553,7 +552,10 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     //
   }
 
-  search() {}
+  search() {
+    this.CargaGrids();
+    this.inicialize();
+  }
   controlBotnoes(tipoProceso: string, estado: string) {
     if (tipoProceso == '1') {
       if (estado == 'V') {

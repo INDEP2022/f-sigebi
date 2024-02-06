@@ -302,7 +302,7 @@ export class ScheduledMaintenanceComponent
       'Reporte de Mantenimiento de Programaciones',
       'Consiguiendo datos'
     );
-    // debugger;
+    // //
     const data = await this.data.getAll();
     try {
       const array = await firstValueFrom(this.deliveryService.getExcel2(data));
