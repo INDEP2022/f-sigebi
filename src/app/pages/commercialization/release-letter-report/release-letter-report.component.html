@@ -290,9 +290,9 @@
                     <ngx-select
                       [readonly]="!disabledFields"
                       [data]="selectDataUser0"
-                      bindLabel="id"
+                      bindLabel="user"
                       label="Firmante"
-                      value="id"
+                      value="user"
                       (fetchItems)="getUsers($event, 0)"
                       (change)="changeUser($event, 0)"
                       [form]="comerLibsForm"
@@ -325,9 +325,9 @@
                     <ngx-select
                       [readonly]="!disabledFields"
                       [data]="selectDataUser1"
-                      bindLabel="id"
+                      bindLabel="user"
                       label="CCP1"
-                      value="id"
+                      value="user"
                       (fetchItems)="getUsers($event, 1)"
                       (change)="changeUser($event, 1)"
                       [form]="comerLibsForm"
@@ -363,15 +363,14 @@
                     <ngx-select
                       [readonly]="!disabledFields"
                       [data]="selectDataUser2"
-                      bindLabel="id"
+                      bindLabel="user"
                       label="CCP2"
-                      value="id"
+                      value="user"
                       (fetchItems)="getUsers($event, 2)"
                       (change)="changeUser($event, 2)"
                       [form]="comerLibsForm"
                       [showTooltip]="true"
                       [searchOnInit]="true"
-                      termMaxLength="50"
                       control="ccp2">
                     </ngx-select>
                     <!-- <input
