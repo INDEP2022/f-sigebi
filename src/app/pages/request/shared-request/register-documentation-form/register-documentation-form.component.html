@@ -300,7 +300,7 @@
   <!-- Fin -->
   <!-- Se aumento datos del codigo oracle transferente-->
   <div class="row">
-    <div class="col-md-4 pt-5" *ngIf="showInput('authorityOrdering')">
+    <div class="col-md-4" *ngIf="showInput('authorityOrdering')">
       <form-field
         [control]="registerForm.get('authorityOrdering')"
         label="Autoridad Ordenante">
@@ -321,7 +321,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="
         processDetonate == 'AMPARO' ||
         transference == 3 ||
@@ -339,7 +339,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="
         transference == 1 ||
         transference == 3 ||
@@ -356,7 +356,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="
         transference == 1 || transference == 3 || showInput('previousInquiry')
       ">
@@ -371,7 +371,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="transference == 1 || transference == 3 || showInput('lawsuit')">
       <form-field [control]="registerForm.get('lawsuit')" label="Causa Penal">
         <input
@@ -384,7 +384,7 @@
     <!-- </div>
   <div class="row pt-5"> -->
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="transference == 1 || transference == 3 || showInput('tocaPenal')">
       <form-field [control]="registerForm.get('tocaPenal')" label="Toca Penal">
         <input
@@ -395,7 +395,7 @@
       </form-field>
     </div>
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="transference == 1 || transference == 3 || showInput('crime')">
       <form-field [control]="registerForm.get('crime')" label="Delito">
         <input
@@ -408,7 +408,7 @@
     <!-- </div>
   <div class="row pt-5" > -->
     <div
-      class="col-md-4 pt-5"
+      class="col-md-4"
       *ngIf="
         transference == 1 || transference == 3 || showInput('domainExtinction')
       ">
