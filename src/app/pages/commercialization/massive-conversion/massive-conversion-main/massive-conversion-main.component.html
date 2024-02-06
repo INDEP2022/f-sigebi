@@ -95,27 +95,54 @@
                 </div>
                 <div class="col-12">
                   <button
-                    class="btn btn-sm btn-secondary btn-block active me-2 font-size-14 dropdown-toggle"
-                    data-toggle="dropdown"
+                    [disabled]="!eventIdValue"
+                    class="btn btn-sm btn-secondary btn-block active me-2 font-size-14"
                     (click)="loadChecks()">
                     <i class="bx bx-upload text-light float-icon"></i>
                     Cargar Cheques
                   </button>
                 </div>
                 <div class="col-12">
-                  <button
-                    class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
-                    (click)="generateLcs()"
-                    [disabled]="!validGenerateLCs">
-                    <i class="bx bx-send text-light float-icon"></i>
-                    Generar LCs
-                  </button>
+                  <div class="btn-group d-block" dropdown>
+                    <button
+                      [ngClass]="{ disabled: !validGenerateLCs }"
+                      dropdownToggle
+                      id="loadBtn2"
+                      type="button"
+                      class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
+                      aria-controls="dropdown-animated">
+                      <i class="bx bx-send text-light float-icon"></i>
+                      Generar LCs <span class="caret"></span>
+                    </button>
+                    <ul
+                      id="dropdown-animated"
+                      *dropdownMenu
+                      class="dropdown-menu"
+                      role="menu"
+                      aria-labelledby="loadBtn2">
+                      <li role="menuitem">
+                        <a
+                          class="dropdown-item bg-primary text-light"
+                          (click)="generateLcs('CONSULTA')"
+                          >CONSULTA</a
+                        >
+                      </li>
+                      <li role="menuitem">
+                        <a
+                          class="dropdown-item bg-primary text-light"
+                          (click)="generateLcs('UPDATE')"
+                          >ACTUALIZACIÓN</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
                 </div>
+
                 <div class="col-12">
                   <button
                     class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
                     (click)="reprocess()"
-                    [disabled]="!eventIdValue || reprocessDisabled">
+                    [disabled]="!validGenerateLCs">
                     <i class="bx bx-send text-light float-icon"></i>
                     Mantto y Reprocesos
                   </button>
@@ -131,148 +158,92 @@
             </div>
           </div>
         </div>
-        <div class="row mt-5 mb-0 d-block">
-          <div class="row d-flex justify-content-left align-content-left">
-            <div class="col-sm-12 col-md-12 mh-80">
-              <div class="row">
-                <div class="col-md-2">
-                  <i
-                    class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
-                  <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
-                  <form-field
-                    [control]="form.get('eventId')"
-                    class="form-group position-relative d-flex">
-                    <input
-                      type="number"
-                      class="form-control px-3"
-                      formControlName="eventId"
-                      (keyup.enter)="searchEvent()" />
-                    <!-- <button
-                      class="mt-2"
-                      type="button"
-                      (click)="selectedEvent ? enableInputEvent() : searchEvent()">
-                      <i
-                        [ngClass]="selectedEvent ? 'bx-x text-danger' : 'bx-search'"
-                        class="bx"></i>
-                    </button> -->
-                  </form-field>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-5">
-          <!-- <div
-            class="ms-n2 mb-2 pointer"
-            (click)="toggleFilter = !toggleFilter"
-            [attr.aria-expanded]="!toggleFilter"
-            aria-controls="collapseFilter">
-            <i
-              class="bx bx-chevron-down bx-md float-icon-md"
-              [ngClass]="{
-                'rotate-down': toggleFilter,
-                'rotate-up': !toggleFilter
-              }"></i>
-            <h6 class="d-inline">Filtros</h6>
-          </div> -->
-          <hr class="mw-98" />
-          <!-- <div
-            class="row mt-5"
-            id="collapseFilter"
-            [isAnimated]="true"
-            [collapse]="!toggleFilter">
-            <div class="col-sm-6 col-md-4">
-              <ng-custom-select-loading
-                [form]="form"
-                [updateValues]="true"
-                formControlName="batchId"
-                label="Lote"
-                path="lot/api/v1/eat-lots"
-                value="idLot"
-                bindLabel="description"
-                paramSearch="filter.description"
-                prefixSearch="$ilike"
-                secondParamSearch="filter.idLot"
-                [labelTemplate]="lotLabel"
-                [optionTemplate]="lotOption">
-              </ng-custom-select-loading>
-              <ng-template #lotLabel let-item="item">
-                {{ item.idLot }} - {{ item.description }}
-              </ng-template>
-              <ng-template #lotOption let-item="item">
-                <div [title]="item.idLot + '-' + item.description">
-                  {{ item.idLot }} - {{ item.description }}
-                </div>
-              </ng-template>
-            </div>
-             <div class="col-sm-4 col-md-2">
+      </div>
+    </div>
+    <div class="row pt-5">
+      <div class="col-sm-12 col-md-12 mh-80">
+        <h5 class="title">Filtros de búsqueda</h5>
+        <div class="row pt-2">
+          <form class="form-material" [formGroup]="form">
+            <div class="col-md-2">
               <form-field
-                label="Lote"
+                [control]="form.get('eventId')"
                 class="form-group"
-                [control]="form.get('batchId')">
-                <ng-custom-select
-                  class="form-control"
-                  formControlName="batchId"
-                  paramSearch="filter.id"
-                  value="id"
-                  [path]="pathGetBath"
-                  control="batchId">
-                  <ng-template let-item>
-                    {{ item.id }}/ {{ item.description }}
-                  </ng-template>
-                </ng-custom-select>
-              </form-field>
-            </div> 
-            <div class="col-sm-4 col-md-2">
-              <form-field [control]="form.get('status')" label="Estatus">
-                <ng-select
-                  formControlName="status"
-                  [searchable]="false"
-                  class="form-control"
-                  [clearable]="false">
-                  <ng-option value="0">LC SOLICITADA</ng-option>
-                  <ng-option value="1">LC GENERADA</ng-option>
-                </ng-select>
-              </form-field>
-            </div> 
-
-            <div class="col-sm-4 col-md-2">
-              <form-field
-                [control]="form.get('insertDate')"
-                label="Fecha Insert">
+                label="ID Evento">
                 <input
                   type="text"
-                  formControlName="insertDate"
                   class="form-control"
+                  formControlName="eventId" />
+              </form-field>
+            </div>
+
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('batchId')"
+                class="form-group"
+                label="ID Lote">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="batchId" />
+              </form-field>
+            </div>
+
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('insertDate')"
+                class="form-group"
+                label="Fecha Inserta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="insertDate"
                   bsDatepicker />
               </form-field>
-            </div> 
-            <div class="col-sm-4 col-md-2">
+            </div>
+
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('status')"
+                class="form-group"
+                label="Estatus">
+                <ng-select formControlName="status" class="form-control">
+                  <ng-option value="1">LC_GENERADA</ng-option>
+                  <ng-option value="0">SOLICITADA</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+
+            <div class="col-md-2">
+              <form-field
+                [control]="form.get('operationId')"
+                class="form-group"
+                label="ID Operación">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="operationId" />
+              </form-field>
+            </div>
+
+            <div class="col-md-2">
               <form-field
                 [control]="form.get('validityDate')"
+                class="form-group"
                 label="Fecha Vigencia">
                 <input
                   type="text"
-                  formControlName="validityDate"
                   class="form-control"
+                  formControlName="validityDate"
                   bsDatepicker />
               </form-field>
             </div>
-            <div class="col-sm-4 col-md-2 d-flex">
-              <div class="ml-auto">
-                <button
-                  class="btn btn-danger btn-sm active custom-btn"
-                  (click)="resetFilter()">
-                  Limpiar <i class="fas fa-eraser"></i>
-                </button>
-              </div>
-            </div> 
-          </div> -->
+          </form>
         </div>
       </div>
     </div>
-    <div class="row mt-5">
-      <div class="md-tabs mt-n3">
+    <div class="row pt-5 mt-5">
+      <div class="md-tabs pt-5 mt-5">
         <tabset #tabset [(ngModel)]="activeTab">
           <tab heading="Datos" id="dataTab">
             <div class="row">
@@ -335,7 +306,7 @@
             [disabled]="reProTabActive"
             [active]="tab3Active">
             <div class="row">
-              <div
+              <!-- <div
                 class="col-md-2 d-flex"
                 *ngIf="!selectedEvent"
                 @OnEventSelected>
@@ -349,7 +320,7 @@
                     <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
                 </div>
-              </div>
+              </div> -->
               <div
                 class="col-sm-2 col-md-2"
                 *ngIf="selectedEvent != null"

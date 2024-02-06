@@ -17,12 +17,22 @@ export const SETTING_DATA = {
       type: 'number',
       sort: false,
     },
-    batch: {
+    comerLots: {
       title: 'Lote Público',
       type: 'number',
       sort: false,
-      valuePrepareFunction: (_cell: any, item: any) => {
-        return item?.comerLots?.lotPublic;
+
+      valuePrepareFunction: (value: any) => {
+        return value != null ? value.lotPublic : '';
+      },
+
+      filterFunction(cell?: any, search?: string): boolean {
+        let column = cell.lotPublic;
+        if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+          return true;
+        } else {
+          return false;
+        }
       },
     },
     customerId: {
@@ -30,12 +40,20 @@ export const SETTING_DATA = {
       type: 'number',
       sort: false,
     },
-    rfc: {
+    comerClient: {
       title: 'R.F.C.',
       type: 'string',
       sort: false,
-      valuePrepareFunction: (_cell: any, item: any) => {
-        return item?.comerClient?.rfc;
+      valuePrepareFunction: (value: any) => {
+        return value != null ? value.rfc : '';
+      },
+      filterFunction(cell?: any, search?: string): boolean {
+        let column = cell.rfc;
+        if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+          return true;
+        } else {
+          return false;
+        }
       },
     },
     amount: {
@@ -153,6 +171,11 @@ export const SETTING_DATA = {
     },
     palletteId: {
       title: 'ID Paleta',
+      type: 'string',
+      sort: false,
+    },
+    operationId: {
+      title: 'ID Operación',
       type: 'string',
       sort: false,
     },

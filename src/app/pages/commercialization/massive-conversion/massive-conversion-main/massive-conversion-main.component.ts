@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
@@ -16,12 +16,14 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITmpLcComer } from 'src/app/core/models/ms-captureline/captureline';
 import { CapturelineService } from 'src/app/core/services/ms-captureline/captureline.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
@@ -107,14 +109,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   batchReworkSettings = SETTING_BATCH_REWORK;
   rfcReworkSettings = SETTING_RFC_REWORK;
   reprocesSettings = SETTING_REPROCESS;
-  form = new FormGroup({
-    eventId: new FormControl(null),
-    batchId: new FormControl(null),
-    status: new FormControl(null),
-    operationId: new FormControl(null),
-    insertDate: new FormControl(null),
-    validityDate: new FormControl(null),
-  });
 
   dataSource: LocalDataSource = new LocalDataSource();
   rfcSource = new LocalDataSource();
@@ -140,6 +134,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   reprocesSource: [];
 
+  form: ModelForm<any>;
+
   constructor(
     private excelService: ExcelService,
     private modalService: BsModalService,
@@ -147,12 +143,15 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private guarantyService: GuarantyService,
     private comerEventService: ComerEventosService,
     private prepareEventService: ComerEventService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private fb: FormBuilder
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.prepareForm();
+
     this.rfcSettings.columns = this.modifyColumns(this.rfcSettings.columns);
     this.clientIdSettings.columns = this.modifyColumns(
       this.clientIdSettings.columns
@@ -173,15 +172,15 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
               case 'batchId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'batch':
+              case 'comerLots':
                 searchFilter = SearchFilter.EQ;
                 field = `filter.${'comerLots'}.lotPublic`;
                 break;
               case 'customerId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'rfc':
-                searchFilter = SearchFilter.EQ;
+              case 'comerClient':
+                searchFilter = SearchFilter.ILIKE;
                 field = `filter.${'comerClient'}.rfc`;
                 break;
               case 'validityDate':
@@ -258,16 +257,38 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       .subscribe(() => this.guarantyData());
   }
 
+  prepareForm() {
+    this.form = this.fb.group({
+      eventId: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      batchId: [
+        { value: null, disabled: true },
+        [Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      insertDate: [{ value: null, disabled: true }],
+      status: [{ value: null, disabled: true }],
+      operationId: [
+        { value: null, disabled: true },
+        [Validators.pattern(NUMBERS_PATTERN)],
+      ],
+
+      validityDate: [{ value: null, disabled: true }],
+    });
+  }
+
   searchEvent(): void {
     const eventId = this.form.controls['eventId'].value;
     if (!eventId) {
       this.alert('warning', this.title, 'Debe ingresar un evento');
       return;
     }
-    this.enabledOrDisabledControl('eventId', false);
+    //this.enabledOrDisabledControl('eventId', false);
     this.comerEventService.getComerEventById(eventId).subscribe({
       next: (event: any) => {
         // this.enabledOrDisabledControl('eventId', true);
+        this.form.enable();
         console.log({ event });
         this.selectedEvent = event || null;
       },
@@ -300,10 +321,19 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.form.controls['insertDate'].setValue(null);
     this.form.controls['validityDate'].setValue(null);
     this.form.controls['eventId'].setValue(null);
+
+    this.tabset.tabs.forEach((tab, i) => {
+      tab.active = i === 0;
+      this.reProTabActive = true;
+      this.tab3Active = false;
+    });
+
+    this.validGenerateLCs = false;
   }
 
   consultInServer() {
     let fromButton = true;
+
     if (this.form.controls['eventId'].value == null) {
       this.alert(
         'warning',
@@ -326,6 +356,34 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     };
     params['filter.eventId'] = `$eq:${this.form.controls['eventId'].value}`;
 
+    if (this.form.controls['batchId'].value) {
+      params['filter.batchId'] = `$eq:${this.form.controls['batchId'].value}`;
+    }
+
+    if (this.form.controls['insertDate'].value) {
+      const insertDate = this.returnParseDate(
+        this.form.controls['insertDate'].value
+      );
+      params['filter.insertDate'] = `$eq:${insertDate}`;
+    }
+
+    if (this.form.controls['status'].value) {
+      params['filter.status'] = `$eq:${this.form.controls['status'].value}`;
+    }
+
+    if (this.form.controls['operationId'].value) {
+      params[
+        'filter.operationId'
+      ] = `$eq:${this.form.controls['operationId'].value}`;
+    }
+
+    if (this.form.controls['validityDate'].value) {
+      const validityDate = this.returnParseDate(
+        this.form.controls['validityDate'].value
+      );
+      params['filter.validityDate'] = `$eq:${validityDate}`;
+    }
+
     //const params = this.makeFiltersParams(list).getParams();
     this.capturelineService
       .getTmpLcComer(params)
@@ -337,8 +395,11 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
           this.totalItemsD = res.count;
           this.loading = false;
           this.validGenerateLCs = true;
+          this.form.enable();
+          console.log('datos: ', res.data, 'count: ', res.count);
         },
         error: error => {
+          console.log('Error', error);
           this.loading = false;
           this.validGenerateLCs = false;
           this.dataSource.load([]);
@@ -511,19 +572,19 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     };
     params['filter.idEvent'] = `$eq:${this.form.controls['eventId'].value}`;
 
-    this.guarantyService
-      .getComerRefGuarantees(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: res => {
-          this.isLoadingExportFile = false;
-          this.excelService.export(res.data, { filename: 'LCS' });
-          //this.searchLcs();
-        },
-        error: err => {
-          this.isLoadingExportFile = false;
-        },
-      });
+    this.guarantyService.getExcelComerRefGuarantees(params).subscribe({
+      next: res => {
+        this.isLoadingExportFile = false;
+        console.log('Respuesta Excel', res.base64File);
+        const filename: string = 'test';
+        this._downloadExcelFromBase64(res.base64File, res.nameFile);
+
+        //this.searchLcs();
+      },
+      error: err => {
+        this.isLoadingExportFile = false;
+      },
+    });
   }
 
   insertTmpLcComer(tmpLcComer: ITmpLcComer) {
@@ -611,22 +672,38 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   async reprocess() {
+    this.searchEvent();
+
     this.tabset.tabs.forEach((tab, i) => {
       tab.active = i === 2;
       this.reProTabActive = false;
       this.tab3Active = true;
     });
 
-    if (this.eventIdValue) {
+    if (this.form.controls['eventId'].value) {
       this.reprocessDisabled = true;
     }
     let count = await firstValueFrom(
       this.prepareEventService.getCountEventMassiveConversionLc(
-        this.eventIdValue
+        this.form.controls['eventId'].value
       )
     );
-    if (count === 0) {
-      this.alert('error', 'Evento no válido para ingresar a este proceso', '');
+    console.log('count:', count);
+    if (Number(count) === 0) {
+      this.alertInfo(
+        'warning',
+        'Advertencia',
+        'Evento no válido para ingresar a este proceso'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.tabset.tabs.forEach((tab, i) => {
+            tab.active = i === 0;
+            this.reProTabActive = true;
+            this.tab3Active = false;
+          });
+        }
+      });
+
       this.reprocessDisabled = false;
       return;
     }
@@ -640,7 +717,23 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     return this.eventId ? this.eventId.value : null;
   }
 
-  generateLcs() {
+  generateLcs(type: string) {
+    console.log('Tipo seleccionado', type);
+
+    if (type === 'CONSULTA') {
+      this.alertInfo('success', 'CONSULTA', null);
+    } else if (type === 'UPDATE') {
+      this.alertInfo('success', 'ACTUALIZACIÓN', null);
+    }
+
+    /*this.alertQuestion('question', 'Atención', '¿Generar las Líneas de Captura?').then(question => {
+      if (question.isConfirmed) {
+        
+        this.alertInfo('success', 'Líneas de Captura', 'Proceso Terminado');
+
+      }
+    });*/
+
     // this.lcsColumns = this.lcsTestData;
     // this.lcsTotalItems = this.lcsColumns.length;
     // if (this.layout == 'RFC') {
