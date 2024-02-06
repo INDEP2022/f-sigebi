@@ -15,7 +15,8 @@
         <div class="p-2">
           <button
             [disabled]="statusTask == 'FINALIZADA'"
-            class="btn btn-primary btn-sm active mr-2 float-right">
+            class="btn btn-primary btn-sm active mr-2 float-right"
+            (click)="getRequestData()">
             Recargar <i class="fas fa-sync-alt"> </i>
           </button>
         </div>
