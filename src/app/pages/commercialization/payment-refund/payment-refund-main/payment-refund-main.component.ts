@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -19,6 +19,7 @@ import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -26,8 +27,11 @@ import { CheckboxElementComponent_ } from 'src/app/pages/final-destination-proce
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 import { ChangeRfcModalComponent } from './change-rfc-modal/change-rfc-modal.component';
+import { CheckboxElementComponent2 } from './checkbox-element';
+import { CommunicationService } from './communication-service/communication-service';
 import { CreateControlModalComponent } from './create-control-modal/create-control-modal.component';
 import { ExpensesRequestComponent } from './expenses-request/expenses-request.component';
+import { FilterCheckboxComponent } from './filterCheckbox-elements';
 import { KeyChangeModalComponent } from './key-change-modal/key-change-modal.component';
 import {
   PAYMENT_COLUMNS,
@@ -73,6 +77,7 @@ import { TransferDateTableComponent } from './transfer-date-table/transfer-date-
   ],
 })
 export class PaymentRefundMainComponent extends BasePage implements OnInit {
+  public toggleAll$: Observable<any | undefined> | undefined;
   layout: string = 'MAIN'; // 'MAIN', 'EXPENSE REQUEST', 'MAINTENANCE'
   @ViewChild('refundTabs', { static: false }) refundTabs?: TabsetComponent;
   @ViewChild('tabsContainer', { static: false }) tabsContainer: ElementRef;
@@ -111,9 +116,10 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   columnFiltersBankAccount: any = [];
   //
   controlForm: FormGroup = new FormGroup({});
+  controlForm2: FormGroup = new FormGroup({});
   selectedAccounts: any[] = [];
   selectedAccountB: any = null;
-  selectedPayment: any[] = [];
+  selectedPayment: any = null;
   eventsTotalQuantity: number = 0;
   eventsTotalAmount: number = 0;
   accountsTotalQuantity: number = 0;
@@ -161,15 +167,10 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   };
   selectedEvents: any[] = [];
   accountSettings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    // selectMode: 'multi',
-    hideSubHeader: false,
+    ...this.settings,
   };
   paymentSettings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-    hideSubHeader: false,
+    ...this.settings,
   };
   tokenData: any;
   devolutionCtlDevPagId: number = null;
@@ -192,6 +193,9 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   btnLoading3: boolean = false;
   btnLoading4: boolean = false;
   btnLoading5: boolean = false;
+  valBtns: boolean = false;
+  private _unsubscribeAll: Subject<void>;
+  toggleAll: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -203,9 +207,12 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     private massiveGoodService: MassiveGoodService,
     private comerTpEventosService: ComerTpEventosService,
     private comerEventosService: ComerEventosService,
-    private bankService: BankService
+    private bankService: BankService,
+    private parameterModService: ParameterModService,
+    private communicationService: CommunicationService
   ) {
     super();
+
     this.controlSettings = {
       ...this.controlSettings,
       // rowClassFunction: (row: any) => {
@@ -233,227 +240,414 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     //   onComponentInitFunction: this.onClickSelectEvents.bind(this),
     // };
 
-    this.accountSettings.columns = {
-      // status: {
-      //   title: 'Estatus',
-      //   type: 'string',
-      //   sort: false,
-      // },
-      cveBank: {
-        title: 'Cve. Banco',
-        type: 'string',
-        sort: false,
-        width: '10%',
-      },
-      account: {
-        title: 'Cuenta',
-        type: 'string',
-        sort: false,
-        width: '10%',
-      },
-      countPayments: {
-        title: 'Cantidad',
-        type: 'number',
-        sort: false,
-        width: '10%',
-      },
-      amountPayments: {
-        title: 'Monto',
-        type: 'html',
-        sort: false,
-        // filter: false,
-        width: '10%',
-        valuePrepareFunction: (val: string) => {
-          const formatter = new Intl.NumberFormat('en-US', {
-            currency: 'USD',
-            minimumFractionDigits: 2,
-          });
+    this.accountSettings = {
+      ...this.settings,
+      actions: false,
+      hideSubHeader: false,
+      columns: {
+        cveBank: {
+          title: 'Cve. Banco',
+          type: 'string',
+          sort: false,
+          width: '10%',
+        },
+        account: {
+          title: 'Cuenta',
+          type: 'string',
+          sort: false,
+          width: '10%',
+        },
+        countPayments: {
+          title: 'Cantidad',
+          type: 'number',
+          sort: false,
+          width: '10%',
+        },
+        amountPayments: {
+          title: 'Monto',
+          type: 'html',
+          sort: false,
+          // filter: false,
+          width: '10%',
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
 
-          return formatter.format(Number(val));
+            if (!isNaN(numericAmount)) {
+              const a = numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+              return '<p class="cell_right">' + a + '</p>';
+            } else {
+              return amount;
+            }
+          },
         },
-        filterFunction(cell?: any, search?: string): boolean {
-          return true;
+        idwaste: {
+          title: 'Id Gasto',
+          type: 'number',
+          sort: false,
+          width: '10%',
         },
-      },
-      idwaste: {
-        title: 'Id Gasto',
-        type: 'number',
-        sort: false,
-        width: '10%',
-      },
-      payIdmentrequest: {
-        title: 'Id Pago',
-        type: 'number',
-        sort: false,
-        width: '10%',
-      },
-      numberInvoicePay: {
-        title: 'Folio Pag.',
-        type: 'number',
-        sort: false,
-        width: '10%',
-      },
-      datePay: {
-        title: 'Fecha Pago',
-        type: 'string',
-        sort: false,
-        // filter: false,
-        width: '20%',
-        valuePrepareFunction: (text: string) => {
-          return `${
-            text ? text.split('T')[0].split('-').reverse().join('/') : ''
-          }`;
+        payIdmentrequest: {
+          title: 'Id Pago',
+          type: 'number',
+          sort: false,
+          width: '10%',
         },
-        filter: {
+        numberInvoicePay: {
+          title: 'Folio Pag.',
+          type: 'number',
+          sort: false,
+          width: '10%',
+        },
+        datePay: {
+          title: 'Fecha Pago',
+          type: 'string',
+          sort: false,
+          // filter: false,
+          width: '20%',
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+          filterFunction(): boolean {
+            return true;
+          },
+          // valuePrepareFunction: (value: string) => {
+          //   if (!value) {
+          //     return '';
+          //   }
+          //   return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+          // },
+        },
+        numberCheck: {
+          title: 'No. de Cheque',
+          type: 'number',
+          sort: false,
+        },
+        obscanc: {
+          title: 'Observaciones de Cancelación',
+          sort: false,
           type: 'custom',
-          component: CustomDateFilterComponent,
-        },
-        filterFunction(): boolean {
-          return true;
-        },
-        // valuePrepareFunction: (value: string) => {
-        //   if (!value) {
-        //     return '';
-        //   }
-        //   return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
-        // },
-      },
-      numberCheck: {
-        title: 'No. de Cheque',
-        type: 'number',
-        sort: false,
-      },
-      obscanc: {
-        title: 'Observaciones de Cancelación',
-        sort: false,
-        type: 'custom',
-        width: '30%',
-        renderComponent: SeeMoreComponent,
-        valuePrepareFunction: (value: string) => {
-          if (value == 'null' || value == 'undefined') {
-            return '';
-          }
+          width: '30%',
+          renderComponent: SeeMoreComponent,
+          valuePrepareFunction: (value: string) => {
+            if (value == 'null' || value == 'undefined') {
+              return '';
+            }
 
-          return value ? value : '';
-        },
-      },
-      _fis: {
-        title: 'FIS',
-        sort: false,
-        type: 'custom',
-        width: '10%',
-        filter: {
-          type: 'list',
-          config: {
-            selectText: 'Todos',
-            list: [
-              { value: '1', title: 'Activo' },
-              { value: '0', title: 'Inactivo' },
-            ],
+            return value ? value : '';
           },
         },
-        renderComponent: CheckboxElementComponent_,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            console.log(data);
-          });
-        },
-        filterFunction: () => {
-          return true;
-        },
-      },
-      _cnt: {
-        title: 'CNT',
-        sort: false,
-        type: 'custom',
-        width: '10%',
-        filter: {
-          type: 'list',
-          config: {
-            selectText: 'Todos',
-            list: [
-              { value: '1', title: 'Activo' },
-              { value: '0', title: 'Inactivo' },
-            ],
+        _fis: {
+          title: 'FIS',
+          sort: false,
+          type: 'custom',
+          width: '10%',
+          showAlways: true,
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Todos',
+              list: [
+                { value: '1', title: 'Activo' },
+                { value: '0', title: 'Inactivo' },
+              ],
+            },
+          },
+          renderComponent: CheckboxElementComponent_,
+          onComponentInitFunction(instance: any) {
+            instance.toggle.subscribe((data: any) => {
+              console.log(data);
+            });
+          },
+          filterFunction: () => {
+            return true;
           },
         },
-        renderComponent: CheckboxElementComponent_,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            console.log(data);
-          });
-        },
-        filterFunction: () => {
-          return true;
-        },
-      },
-      _pto: {
-        title: 'PTO',
-        sort: false,
-        type: 'custom',
-        width: '10%',
-        filter: {
-          type: 'list',
-          config: {
-            selectText: 'Todos',
-            list: [
-              { value: '1', title: 'Activo' },
-              { value: '0', title: 'Inactivo' },
-            ],
+        _cnt: {
+          title: 'CNT',
+          sort: false,
+          type: 'custom',
+          width: '10%',
+          showAlways: true,
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Todos',
+              list: [
+                { value: '1', title: 'Activo' },
+                { value: '0', title: 'Inactivo' },
+              ],
+            },
+          },
+          renderComponent: CheckboxElementComponent_,
+          onComponentInitFunction(instance: any) {
+            instance.toggle.subscribe((data: any) => {
+              console.log(data);
+            });
+          },
+          filterFunction: () => {
+            return true;
           },
         },
-        renderComponent: CheckboxElementComponent_,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            console.log(data);
-          });
-        },
-        filterFunction: () => {
-          return true;
-        },
-      },
-      _tsr: {
-        title: 'TSR',
-        sort: false,
-        type: 'custom',
-        width: '10%',
-        filter: {
-          type: 'list',
-          config: {
-            selectText: 'Todos',
-            list: [
-              { value: '1', title: 'Activo' },
-              { value: '0', title: 'Inactivo' },
-            ],
+        _pto: {
+          title: 'PTO',
+          sort: false,
+          type: 'custom',
+          width: '10%',
+          showAlways: true,
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Todos',
+              list: [
+                { value: '1', title: 'Activo' },
+                { value: '0', title: 'Inactivo' },
+              ],
+            },
+          },
+          renderComponent: CheckboxElementComponent_,
+          onComponentInitFunction(instance: any) {
+            instance.toggle.subscribe((data: any) => {
+              console.log(data);
+            });
+          },
+          filterFunction: () => {
+            return true;
           },
         },
-        renderComponent: CheckboxElementComponent_,
-        onComponentInitFunction(instance: any) {
-          instance.toggle.subscribe((data: any) => {
-            console.log(data);
-          });
+        _tsr: {
+          title: 'TSR',
+          sort: false,
+          type: 'custom',
+          width: '10%',
+          showAlways: true,
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Todos',
+              list: [
+                { value: '1', title: 'Activo' },
+                { value: '0', title: 'Inactivo' },
+              ],
+            },
+          },
+          renderComponent: CheckboxElementComponent_,
+          onComponentInitFunction(instance: any) {
+            instance.toggle.subscribe((data: any) => {
+              console.log(data);
+            });
+          },
+          filterFunction: () => {
+            return true;
+          },
         },
-        filterFunction: () => {
-          return true;
+        selection: {
+          filter: {
+            type: 'custom',
+            component: FilterCheckboxComponent,
+          },
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          width: '10%',
+
+          valuePrepareFunction: (isSelected: boolean, row: any) =>
+            this.isBankSelected(row),
+          renderComponent: CheckboxElementComponent2,
+          onComponentInitFunction: (instance: CheckboxElementComponent2) =>
+            this.onBankSelect(instance),
         },
       },
-      selection: {
-        filter: false,
-        sort: false,
-        title: 'Selección',
-        type: 'custom',
-        showAlways: true,
-        width: '10%',
-        valuePrepareFunction: (isSelected: boolean, row: any) =>
-          this.isBankSelected(row),
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) =>
-          this.onBankSelect(instance),
+      rowClassFunction: (row: any) => {
+        // console.log("row", row.data)
+        if (row.data.idwaste != null) {
+          if (row.data.obscanc != null) {
+            // 'VA_REG_PROC_CANC';
+            return 'bg-no-approved';
+          } else if (row.data.indtsr == 1) {
+            // VA_REG_PROC_PAGO
+            return '';
+          } else if (row.data.payIdmentrequest != null) {
+            // VA_REG_PROC_SP
+            return 'bg-warning text-black';
+          }
+          return '';
+        }
+        return '';
       },
     };
     this.paymentSettings.columns = PAYMENT_COLUMNS;
+    this.paymentSettings = {
+      ...this.paymentSettings,
+      actions: false,
+      hideSubHeader: false,
+      columns: {
+        payId: {
+          title: 'Id Pago',
+          type: 'string',
+          sort: false,
+        },
+        payDate: {
+          title: 'Fecha',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+          filterFunction(): boolean {
+            return true;
+          },
+        },
+        reference: {
+          title: 'Referencia',
+          type: 'number',
+          sort: false,
+        },
+        amount: {
+          title: 'Monto',
+          type: 'html',
+          sort: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              const a = numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+              return '<p class="cell_right">' + a + '</p>';
+            } else {
+              return amount;
+            }
+          },
+        },
+        lotPublic: {
+          title: 'Lote',
+          type: 'string',
+          sort: false,
+        },
+        customerId: {
+          title: 'Id Cliente',
+          type: 'number',
+          sort: false,
+        },
+        rfc: {
+          title: 'R.F.C',
+          type: 'string',
+          sort: false,
+        },
+        customer: {
+          title: 'Nombre / Denominación',
+          type: 'string',
+          sort: false,
+        },
+        interbankCode: {
+          title: 'Clabe Interbancaria',
+          type: 'string',
+          sort: false,
+        },
+        keyAuthorization: {
+          title: 'Autoriza Cambio Clabe',
+          type: 'string',
+          sort: false,
+          filter: false,
+        },
+        keyChangeObservations: {
+          title: 'Observaciones de Cambio Clabe',
+          type: 'string',
+          sort: false,
+          filter: false,
+        },
+        obsTransDate: {
+          title: 'Observaciones de Fecha de Transferencia',
+          type: 'string',
+          sort: false,
+        },
+        _statusClabe: {
+          title: 'Clabe Válida',
+          type: 'custom',
+          sort: false,
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Todos',
+              list: [
+                { value: '1', title: 'Activo' },
+                { value: '0', title: 'Inactivo' },
+              ],
+            },
+          },
+          renderComponent: CheckboxElementComponent_,
+          onComponentInitFunction(instance: any) {
+            instance.toggle.subscribe((data: any) => {
+              console.log(data);
+            });
+          },
+          filterFunction: () => {
+            return true;
+          },
+        },
+        dateTransfer: {
+          title: 'Fecha Transf.',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+          filterFunction(): boolean {
+            return true;
+          },
+        },
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.statusClabe == 0) {
+          return 'bg-no-approved';
+        }
+        if (row.data.keyAuthorization != null) {
+          return 'bg-warning text-black';
+        }
+        return '';
+      },
+    };
   }
 
+  async selectAll(toggle: boolean) {
+    let data = await this.dataTableBank.getAll();
+    if (toggle) {
+      for (const item of data) {
+        if (item.idwaste) this.selectBanksCheck.push(item);
+      }
+      this.dataTableBank.refresh();
+    } else {
+      this.selectBanksCheck = [];
+      this.dataTableBank.refresh();
+    }
+  }
   onBankSelect(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => this.billingDetSelectedChange(data.row, data.toggle),
@@ -544,6 +738,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.tokenData = this.authService.decodeToken();
     // PUP_LLENA_DEFAULTS
     this.pupLlenaDefaults();
+    this.getValid();
     this.getComerCtrlCreation('P');
     this.eventsTotalQuantity = 0;
     this.eventsTotalAmount = 0;
@@ -553,7 +748,34 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.loadingDataTableBank();
     this.loadingDataTableBankAccount();
     this.loadingDataTableRelationEvent();
+    this.communicationService.changeValSelect$.subscribe(async (next: any) => {
+      this.selectAll(next);
+    });
   }
+  async getValid() {
+    let res = await this.getValBtnLayoutsPermissions();
+    if (res) this.valBtns = true;
+    else this.valBtns = false;
+  }
+  async getValBtnLayoutsPermissions() {
+    const params = new ListParams();
+    params.page = 1;
+    params.limit = 1;
+    params['filter.parametro'] = 'SUPUSUCOMER';
+    params['filter.valor'] = this.tokenData.preferred_username;
+    return new Promise((resolve, reject) => {
+      this.parameterModService.getParamterMod_(params).subscribe({
+        next: response => {
+          console.log(response);
+          resolve(response);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
   // PUP_LLENA_DEFAULTS
   async pupLlenaDefaults() {
     this.comerGastos = {
@@ -647,6 +869,9 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.controlForm = this.fb.group({
       filter: ['P'],
     });
+    this.controlForm2 = this.fb.group({
+      txtMsg: [null],
+    });
   }
 
   getData() {
@@ -685,7 +910,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     }
   }
 
-  selectPayment(rows: any[]) {
+  selectPayment(rows: any) {
     this.selectedPayment = rows;
   }
 
@@ -761,11 +986,14 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
   openKeyChangeModal() {
     const modalRef = this.modalService.show(KeyChangeModalComponent, {
+      initialState: {
+        selectedPayment: this.selectedPayment,
+      },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onKeyChange.subscribe((data: boolean) => {
-      if (data) this.refreshAccountsPayments();
+      if (data) this.getBankAccountData();
     });
   }
 
@@ -1010,7 +1238,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.svPaymentDevolutionService.getCtlDevPagH(params).subscribe({
       next: res => {
         // console.log('DATA Control', res);
-        this.testDataControl = res.data.map((i: any) => {
+        let result = res.data.map((i: any) => {
           const index2: number = this.selectedControl.findIndex(
             (_data: any) => _data.ctlDevPagId == i.ctlDevPagId
           );
@@ -1022,10 +1250,19 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
             return i;
           }
         });
-        this.dataTableControl.load(this.testDataControl);
-        this.totalControl = res.count;
-        this.totalControl_Count = res.totalLength;
-        this.loadingControl = false;
+        Promise.all(result).then(resp => {
+          if (res.data[0]) {
+            this.selectRowCtrol = res.data[0];
+            this.devolutionCtlDevPagId = res.data[0].ctlDevPagId;
+            this.getRelationEventData();
+            this.getBankData();
+          }
+          this.dataTableControl.load(res.data);
+          this.dataTableControl.refresh();
+          this.totalControl = res.count;
+          this.totalControl_Count = res.totalLength;
+          this.loadingControl = false;
+        });
       },
       error: error => {
         console.log(error);
@@ -1156,17 +1393,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
             let field = '';
             //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
-            // if('_fis'){
-            //   field = `filter.fis`;
-            // }else if('_cnt'){
-            //   field = `filter.cnt`;
-            // }if('_pto'){
-            //   field = `filter.pto`;
-            // }if('_tsr'){
-            //   field = `filter.tsr`;
-            // }else{
             field = `filter.${filter.field}`;
-            // }
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
@@ -1246,20 +1473,16 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       next: (res: any) => {
         console.log('DATA Bank', res);
         let result = res.data.map((i: any) => {
-          // IF :COMER_CTLDEVPAG_B.OBS_CANC IS NOT NULL THEN
-          //   c_VISUAL := 'VA_REG_PROC_CANC';
-          // ELSIF NVL(:COMER_CTLDEVPAG_B.IND_TSR,0) = 1 THEN
-          //   c_VISUAL := 'VA_REG_PROC_PAGO';
-          // ELSIF :COMER_CTLDEVPAG_B.ID_SOLICITUDPAGO IS NOT NULL THEN
-          //   c_VISUAL := 'VA_REG_PROC_SP';
-          // END IF;
           i['_fis'] = i.indfis == 1 ? true : false;
           i['_cnt'] = i.indcnt == 1 ? true : false;
           i['_pto'] = i.indpt == 1 ? true : false;
           i['_tsr'] = i.indtsr == 1 ? true : false;
-          // return i;
         });
         Promise.all(result).then(resp => {
+          this.selectedAccountB = res.data[0];
+          if (res.data[0]) {
+            this.getBankAccountData();
+          }
           this.dataTableBank.load(res.data);
           this.dataTableBank.refresh();
           this.accountTotalItems = res.count;
@@ -1297,16 +1520,46 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              eventId: () => (searchFilter = SearchFilter.EQ),
-              numPayments: () => (searchFilter = SearchFilter.EQ),
-              paymentsAmount: () => (searchFilter = SearchFilter.EQ),
+              payId: () => (searchFilter = SearchFilter.EQ),
+              payDate: () => (searchFilter = SearchFilter.EQ),
+              reference: () => (searchFilter = SearchFilter.ILIKE),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              lotPublic: () => (searchFilter = SearchFilter.EQ),
+              customerId: () => (searchFilter = SearchFilter.EQ),
+              rfc: () => (searchFilter = SearchFilter.ILIKE),
+              customer: () => (searchFilter = SearchFilter.ILIKE),
+              interbankCode: () => (searchFilter = SearchFilter.ILIKE),
+              keyAuthorization: () => (searchFilter = SearchFilter.ILIKE),
+              keyChangeObservations: () => (searchFilter = SearchFilter.ILIKE),
+              obsTransDate: () => (searchFilter = SearchFilter.ILIKE),
+              _statusClabe: () => (searchFilter = SearchFilter.EQ),
+              dateTransfer: () => (searchFilter = SearchFilter.EQ),
             };
+
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFiltersBankAccount[
-                field
-              ] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'amount') {
+                this.columnFiltersBank[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                if (
+                  filter.field == 'payDate' ||
+                  filter.field == 'dateTransfer'
+                ) {
+                  filter.search = this.datePipe.transform(
+                    filter.search,
+                    'yyyy-MM-dd'
+                  );
+                }
+                this.columnFiltersBank[
+                  field
+                ] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFiltersBankAccount[
+              //   field
+              // ] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFiltersBankAccount[field];
             }
@@ -1332,23 +1585,40 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       ...this.dataTableParamsBankAccount.getValue(),
       ...this.columnFiltersBankAccount,
     };
-    params[
-      'filter.devPaymentControlId'
-    ] = `$eq:${this.selectedAccountB.idCtldevpag}`;
+    params['filter.controlId'] = `$eq:${this.selectedAccountB.idCtldevpag}`;
     params['filter.account'] = `$eq:${this.selectedAccountB.account}`;
-    params['filter.bankCode'] = `$eq:${this.selectedAccountB.cveBank}`;
+    params['filter.bankKey'] = `$eq:${this.selectedAccountB.cveBank}`;
     // CONSULTAR LA VISTA VW_COMER_CTLDEVPAG_P
-    return;
+
+    if (params['filter._statusClabe']) {
+      params['filter.statusClabe'] = params['filter._statusClabe'] + '';
+      delete params['filter._statusClabe'];
+    }
     this.svPaymentDevolutionService
       .getApplicationVwComerCtldevPagp(params)
       .subscribe({
         next: (res: any) => {
+          let val = false;
+          let result = res.data.map((i: any) => {
+            i['_statusClabe'] = i.statusClabe == 1 ? true : false;
+            if (i.statusClabe == 0) val = true;
+          });
+          Promise.all(result).then(resp => {
+            if (val)
+              this.controlForm2
+                .get('txtMsg')
+                .setValue('Con CLABE(s) errónea(s)');
+            else
+              this.controlForm2
+                .get('txtMsg')
+                .setValue('Sin CLABE(s) errónea(s)');
+            this.testDataBankAccount = res.data;
+            this.dataTableBankAccount.load(this.testDataBankAccount);
+            this.accountTotalItemsP = res.count;
+            this.totalAmountAccount = res.paymentsAmountTotal;
+            this.loadingBankAccount = false;
+          });
           console.log('DATA BankAccount', res);
-          this.testDataBankAccount = res.data;
-          this.dataTableBankAccount.load(this.testDataBankAccount);
-          this.accountTotalItemsP = res.count;
-          this.totalAmountAccount = res.paymentsAmountTotal;
-          this.loadingBankAccount = false;
         },
         error: error => {
           console.log(error);
@@ -1909,6 +2179,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   goExpenseCapture() {
+    console.log(this.selectedAccountB);
     if (!this.selectedAccountB) return;
     if (!this.selectedAccountB.idwaste)
       return this.alert('warning', 'No se tienen Folio de Gasto.', '');
@@ -1919,5 +2190,12 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         P_ID_GASTO: this.selectedAccountB.idwaste,
       },
     });
+  }
+  method3(data: any) {
+    setTimeout(() => {
+      if (!this.selectedPayment)
+        return this.alert('warning', 'Debe seleccinar un pago', '');
+      if (this.selectedPayment.statusClabe == 0) this.openKeyChangeModal();
+    }, 100);
   }
 }

@@ -760,13 +760,92 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     );
   }
 
-  getAllComer(val?: string) {
+  async getAllComer(val?: string) {
     const params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
       //...{ sortBy: 'batchId:ASC' },
     };
+    let res = await this.forArrayFilters_();
+    console.log('res', res);
+    if (res) {
+      this.paramsList = new BehaviorSubject<ListParams>(new ListParams());
+      this.paramsList.getValue()['limit'] = 500;
+      this.paramsList.getValue()['filter.address'] = `${SearchFilter.EQ}:M`;
 
+      this.isSelect = [];
+      this.rowInvoice = null;
+      this.loading = false;
+      this.totalItems = 0;
+      this.dataFilter.load([]);
+      this.dataFilter.refresh();
+      this.formFactura.reset();
+      this.formDetalle.reset();
+      this.totalItems2 = 0;
+      this.dataFilter2.load([]);
+      this.dataFilter2.refresh();
+
+      this.formFactura.get('importE').patchValue(0);
+      this.formFactura.get('ivaE').patchValue(0);
+      this.formFactura.get('totalE').patchValue(0);
+      this.formFactura.get('importI').patchValue(0);
+      this.formFactura.get('ivaI').patchValue(0);
+      this.formFactura.get('totalI').patchValue(0);
+
+      this.formDetalle.get('count').patchValue(0);
+      this.formDetalle.get('totalI').patchValue(0);
+      this.formDetalle.get('totalIva').patchValue(0);
+      this.formDetalle.get('total').patchValue(0);
+      this.formDetalle.get('countTotal').patchValue(0);
+
+      delete this.paramsList.getValue()['filter.eventId'];
+      delete this.paramsList2.getValue()['filter.eventId'];
+      delete this.paramsList2.getValue()['filter.billId'];
+    } else {
+      this.loading = true;
+      this.comerInvoice.getAllSumInvoice(params).subscribe({
+        next: resp => {
+          this.loading = false;
+          this.formFactura.get('count').patchValue(resp.count);
+          this.totalItems = resp.count;
+          this.dataFilter.load(resp.data);
+          this.dataFilter.refresh();
+
+          if (resp.data[0]?.eventId)
+            this.paramsList2.getValue()[
+              'filter.eventId'
+            ] = `${SearchFilter.EQ}:${resp.data[0].eventId}`;
+          if (resp.data[0]?.billId)
+            this.paramsList2.getValue()[
+              'filter.billId'
+            ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
+          if (resp.count > 0) {
+            this.rowInvoice = resp.data[0];
+            this.getComerDetInovice();
+            this.getSum();
+
+            this.comer.emit({
+              val: resp.data[0]?.eventId,
+              count: resp.data.length,
+              data: [],
+              filter: params,
+            });
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.totalItems = 0;
+          this.dataFilter.load([]);
+          this.dataFilter.refresh();
+          this.formFactura.reset();
+          this.formDetalle.reset();
+          this.totalItems2 = 0;
+          this.dataFilter2.load([]);
+          this.dataFilter2.refresh();
+        },
+      });
+    }
+    return;
     if (
       !params['filter.eventId'] &&
       !params['filter.batchId'] &&
@@ -809,6 +888,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.formDetalle.get('total').patchValue(0);
       this.formDetalle.get('countTotal').patchValue(0);
 
+      delete this.paramsList.getValue()['filter.eventId'];
       delete this.paramsList2.getValue()['filter.eventId'];
       delete this.paramsList2.getValue()['filter.billId'];
     } else {
@@ -1041,7 +1121,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.alert('warning', 'No se realizo selección de Factura(s)', '');
       return;
     }
-
+    this.btnLoading3 = true;
     for (const act of this.blk_actdat) {
       const sumEat = await this.getSumEat(act.eventId, act.batchId);
       if (sumEat) {
@@ -1129,7 +1209,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         }
       }
     }
-
+    this.btnLoading3 = false;
     let config: ModalOptions = {
       initialState: {
         data: this.blk_actdat,
@@ -3210,5 +3290,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
     this.dataFilter.refresh();
     return true;
+  }
+
+  async forArrayFilters_() {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    let val = true;
+    if (filterConf.filters.length > 0) {
+      filterConf.filters.forEach((item: any) => {
+        if (item.search != '') {
+          val = false;
+        }
+      });
+    }
+    return val;
   }
 }

@@ -39,4 +39,9 @@ export class GuarantyService extends HttpService {
       `${this.route.GetTransfereexEvent}/${evento}`
     );
   }
+
+  getExcelComerRefGuarantees(params?: ListParams) {
+    const route = `${this.route.GetExcelComerRefGuarantees}`;
+    return this.get(route, params);
+  }
 }
