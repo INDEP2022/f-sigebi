@@ -28,7 +28,6 @@ export class RegionalDelegateImplementationReportFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.electronicSignture();
         }
       },
@@ -43,7 +42,6 @@ export class RegionalDelegateImplementationReportFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.showSignProg();
         }
       },
@@ -61,7 +59,6 @@ export class RegionalDelegateImplementationReportFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.aprobateService = true;
         }
       },

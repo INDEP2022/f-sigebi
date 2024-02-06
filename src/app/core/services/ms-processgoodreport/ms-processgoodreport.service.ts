@@ -37,4 +37,13 @@ export class ProcessgoodreportService extends HttpService {
 
     return new HttpParams({ fromObject: rawParams });
   }
+
+  getReportXMLToFirm_(_params: ListParams) {
+    const params: any = this.getParams(_params);
+    // const header = { responseType: 'arraybuffer' };
+    return this.httpClient.post(
+      `${this.url}${this.microservice}${ProcessGoodReportEndpoint.GetXMLShowReport}`,
+      { params }
+    );
+  }
 }

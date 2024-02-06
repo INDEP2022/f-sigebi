@@ -55,4 +55,11 @@ export class ElectronicSignaturesService {
   comerModifyXML(body: Partial<IComerModifyXML>) {
     return this.msElectronicFirmService.comerModifyXML(body);
   }
+
+  getAllComerDocumentsXml_(params: _Params) {
+    return this.msElectronicFirmService.getAllComerDocumentsXml_(params);
+  }
+  getReportXMLToFirm_(params: ListParams) {
+    return this.msProcessgoodreportService.getReportXMLToFirm_(params);
+  }
 }

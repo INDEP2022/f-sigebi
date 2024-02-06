@@ -11,6 +11,15 @@
           }
         }
       }
+
+      ng2-smart-table {
+        thead {
+          th.address {
+            min-width: 130px;
+          }
+        }
+      }
+
       .notAdd {
         ng2-smart-table {
           .ng2-smart-actions-title-add {

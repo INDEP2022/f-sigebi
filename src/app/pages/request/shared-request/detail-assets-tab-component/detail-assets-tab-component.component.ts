@@ -219,7 +219,7 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    // console.log(this.detailAssets.value);
+
     for (const campo in this.detailAssets.controls) {
       if (this.detailAssets.controls.hasOwnProperty(campo)) {
         const control = this.detailAssets.get(campo);
@@ -386,7 +386,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnInit(): void {
-    console.log('Tarea:', this.process);
     this.detailAssetsInfo = this.detailAssets.value;
     this.classificationNumber = +this.detailAssetsInfo?.goodClassNumber;
     //Cambiar la forma de traer el clasificador
@@ -754,7 +753,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   setDomiciliesFieldRequired() {
-    console.log('TIPO DE TRANSFERENCIA ', this.typeOfRequest);
     const transferent = this.requestObject.transferenceId;
 
     /*if (this.typeOfRequest === 'MANUAL') {
@@ -837,8 +835,6 @@ export class DetailAssetsTabComponentComponent
 
           switch (transferente) {
             case 'SAT_SAE':
-              console.log('SAT_SAE');
-
               if (
                 this.detailAssets.controls['transferentDestiny'].value === null
               ) {
@@ -853,8 +849,6 @@ export class DetailAssetsTabComponentComponent
 
               break;
             case 'PGR_SAE':
-              console.log('PGR_SAE');
-
               if (
                 this.detailAssets.controls['transferentDestiny'].value === null
               ) {

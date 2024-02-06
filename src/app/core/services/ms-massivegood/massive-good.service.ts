@@ -79,7 +79,7 @@ export class MassiveGoodService extends HttpService {
     return this.get(route);
   }
 
-  getObtnGoodExcel(id: string | number) {
+  getObtnGoodExcel(id: any) {
     const route = `${this.route.ObtnGoodPag}?filter.clasif=$in:${id}`;
     return this.get(route);
   }
@@ -298,9 +298,21 @@ export class MassiveGoodService extends HttpService {
     const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('keyBank', cveBank);
     return this.httpClient.post<any>(
-      `${this._url}${this.microservice}/${this._prefix}${MassiveGoodEndpoints.pupProcesaCsvPaymentSearch}/${cveBank}`,
+      `${this._url}${this.microservice}/${this._prefix}${MassiveGoodEndpoints.pupProcesaCsvPaymentSearch}`,
       formData
     );
+  }
+
+  applicationPupExpCsvReldevgar(data: any) {
+    return this.post(
+      `${MassiveGoodEndpoints.ApplicationPupExpCsvReldevGar}`,
+      data
+    );
+  }
+
+  applicationPupGenLayouts(data: any) {
+    return this.post(`${MassiveGoodEndpoints.ApplicationPupGenLayouts}`, data);
   }
 }

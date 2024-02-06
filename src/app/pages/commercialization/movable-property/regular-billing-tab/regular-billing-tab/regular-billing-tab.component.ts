@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 
 @Component({
   selector: 'app-regular-billing-tab',
@@ -20,7 +21,8 @@ export class RegularBillingTabComponent implements OnInit {
     sum5: 0,
     sum6: 0,
   };
-
+  tabSet: number;
+  @ViewChild('myTabset', { static: true }) tabset: TabsetComponent;
   constructor() {}
 
   ngOnInit(): void {}
@@ -31,6 +33,13 @@ export class RegularBillingTabComponent implements OnInit {
       this.invoices = view.data;
       this.count = view.count;
       this.filter = view.filter;
+    }
+  }
+
+  async cambiarTab(view: { numberTab: number; event: any }) {
+    if (view) {
+      this.event = view.event;
+      this.tabset.tabs[view.numberTab].active = true;
     }
   }
 }

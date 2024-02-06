@@ -245,7 +245,8 @@ export class EventGoodsLotsListActionsComponent
    */
   thirdFile() {
     // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.log('ARCHIVO_TERCERO');
+    // TODO: ES EL ARCHIVO QUE GENERA DEMORA, PABLO ESTA REVISANDO
+    console.log('ARCHIVO_TERCERO Demora - Pablo');
   }
 
   /**
@@ -432,7 +433,7 @@ export class EventGoodsLotsListActionsComponent
   /**ACT_TMP_COMER */
   updateComerTmp() {
     const { id, address } = this.controls;
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
+    //* Esta implementado el endpoint
     console.log('ACT_TMP_COMER');
     return this.lotService
       .updateTmpComer({
@@ -883,6 +884,7 @@ export class EventGoodsLotsListActionsComponent
 
   // ? --------------- Generar Oficio Avalúo
   onGenerateOffice() {
+    console.log('Generar Oficio Avalúo del evento');
     const { eventTpId, tpsolavalId } = this.controls;
     if (Number(eventTpId.value) != 10) {
       this.alert(
@@ -896,7 +898,13 @@ export class EventGoodsLotsListActionsComponent
       this.alert('error', 'Error', 'No ha seleccionado un tipo de solicitud');
       return;
     }
-    // TODO: PREGUNTAR POR EL LLAMADO A ESTO: "http://172.20.230.57/Pantallas/Avaluos/SolicitudAvaluo.aspx?"
+    console.log('Generar Oficio Avalúo del evento ' + this.controls.id.value);
+    this.router.navigate(['/pages/siab-web/appraisals/valuation-request'], {
+      queryParams: {
+        origin: 'FCOMEREVENTOS',
+        event: this.controls.id.value,
+      },
+    });
   }
 
   // ?------------------------- Verifica Mandato

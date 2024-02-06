@@ -2,6 +2,7 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { take } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { INumeraryxGoods } from 'src/app/core/models/ms-numerary/numerary.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
@@ -27,6 +28,7 @@ export class NumeraireDispersionComponent
   toggleInformation = true;
   total = 0;
   fillData = true;
+
   constructor(
     private modalService: BsModalService,
     private dataService: NumeraryXGoodsService,
@@ -34,6 +36,7 @@ export class NumeraireDispersionComponent
     private numerarieService: NumerarieService
   ) {
     super();
+    this.dateFilters = ['date'];
     this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
@@ -67,14 +70,41 @@ export class NumeraireDispersionComponent
     }
     if (changes['selectedExpenseData'] && this.fillData) {
       this.total = 0;
+      this.columnFilters = [];
+      this.data.setFilter([], true, false);
+      this.data.load([]);
+      // console.log(filter);
+      this.data.refresh();
+      this.totalItems = 0;
       this.getData();
-      this.getTotals();
     }
   }
 
   override extraOperationsGetData() {
     this.total = 0;
     this.getTotals();
+  }
+
+  override dataNotFound() {
+    this.totalItems = 0;
+    this.total = 0;
+    this.data.load([]);
+    this.data.refresh();
+    this.loading = false;
+  }
+
+  override getSearchFilter(filter: any): SearchFilter {
+    let searchFilter = SearchFilter.ILIKE;
+    if (this.ilikeFilters.includes(filter.field)) {
+      searchFilter = SearchFilter.ILIKE;
+    } else {
+      if (filter.field === 'date') {
+        searchFilter = SearchFilter.LIKE2;
+      } else {
+        searchFilter = SearchFilter.EQ;
+      }
+    }
+    return searchFilter;
   }
 
   private getTotals() {

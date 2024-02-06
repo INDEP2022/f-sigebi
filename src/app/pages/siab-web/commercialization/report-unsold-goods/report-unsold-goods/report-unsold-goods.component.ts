@@ -284,7 +284,7 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
     this.serviceParameterComer.getParamterMod(params).subscribe({
       next: response => {
         this.form.controls['startDate'].setValue(
-          this.servicePipe.transform(response?.data[0]?.value, 'dd/MM/yyyy')
+          this.servicePipe.transform(response?.data[0]?.valor, 'dd/MM/yyyy')
         );
       },
       error: data => {

@@ -58,9 +58,19 @@
                             <input
                               type="text"
                               class="form-control"
+                              bsDatepicker
+                              [bsConfig]="{
+                                withTimepicker: true,
+                                dateInputFormat: 'DD/MM/YYYY h:mm a',
+                                keepDatepickerOpened: true
+                              }"
+                              formControlName="date" />
+                            <!-- <input
+                              type="text"
+                              class="form-control"
                               formControlName="date"
                               bsDatepicker
-                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" /> -->
                           </form-field>
                         </div>
                       </div>
@@ -100,9 +110,11 @@
                             </div>
                             <div class="col-12">
                               <button
-                                (click)="cancelBilling()"
-                                class="btn btn-sm btn-block btn-danger active mt-2">
-                                Cancelar Factura
+                                (click)="getDate()"
+                                class="btn btn-sm btn-block btn-primary active mt-2">
+                                Consulta x Fecha
+                                <i
+                                  class="bx bx-search-alt bx-sm float-icon"></i>
                               </button>
                             </div>
                           </div>
@@ -144,14 +156,9 @@
                             </div>
                             <div class="col-12">
                               <button
-                                (click)="export()"
-                                [ngClass]="{ loading: btnLoading7 }"
-                                [disabled]="btnLoading7"
-                                class="btn btn-sm btn-block btn-success active mt-2">
-                                Exporta a CSV
-                                <i
-                                  *ngIf="!btnLoading7"
-                                  class="bx bx-upload float-icon"></i>
+                                (click)="cancelBilling()"
+                                class="btn btn-sm btn-block btn-danger active mt-2">
+                                Cancelar Factura
                               </button>
                             </div>
                           </div>
@@ -185,11 +192,14 @@
                             </div>
                             <div class="col-12">
                               <button
-                                (click)="getDate()"
-                                class="btn btn-sm btn-block btn-primary active mt-2">
-                                Consulta x Fecha
+                                (click)="export()"
+                                [ngClass]="{ loading: btnLoading7 }"
+                                [disabled]="btnLoading7"
+                                class="btn btn-sm btn-block btn-success active mt-2">
+                                Exporta a CSV
                                 <i
-                                  class="bx bx-search-alt bx-sm float-icon"></i>
+                                  *ngIf="!btnLoading7"
+                                  class="bx bx-download float-icon"></i>
                               </button>
                             </div>
                           </div>
@@ -349,7 +359,7 @@
                     [ngStyle]="{ height: loading ? '0px' : '400px' }">
                     <ng2-smart-table
                       #myTable
-                      [attr.class]="'table-bordered'"
+                      [attr.class]="''"
                       [settings]="settings"
                       [source]="data"
                       (edit)="edit($event)"
@@ -669,7 +679,7 @@
                     [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
                     <ng2-smart-table
                       (edit)="editDetalleFact($event)"
-                      [attr.class]="'table-bordered'"
+                      [attr.class]="''"
                       [settings]="settings2"
                       [source]="data2">
                     </ng2-smart-table>
@@ -703,7 +713,7 @@
                     [track]="'all'"
                     [ngStyle]="{ height: loading3 ? '0px' : '400px' }">
                     <ng2-smart-table
-                      [attr.class]="'table-bordered'"
+                      [attr.class]="''"
                       [settings]="settings3"
                       [source]="data3">
                     </ng2-smart-table>
@@ -733,7 +743,7 @@
                     [track]="'all'"
                     [ngStyle]="{ height: loading4 ? '0px' : '400px' }">
                     <ng2-smart-table
-                      [attr.class]="'table-bordered'"
+                      [attr.class]="''"
                       [settings]="settings4"
                       [source]="data4">
                     </ng2-smart-table>
@@ -764,7 +774,7 @@
                     [track]="'all'"
                     [ngStyle]="{ height: loading5 ? '0px' : '400px' }">
                     <ng2-smart-table
-                      [attr.class]="'table-bordered'"
+                      [attr.class]="''"
                       [settings]="settings5"
                       [source]="data5">
                     </ng2-smart-table>

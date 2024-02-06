@@ -63,7 +63,8 @@
               [disabled]="
                 form.invalid ||
                 (paymentRequestNumber && paymentRequestNumber.value) ||
-                this.data.length === 0
+                this.data.length === 0 ||
+                this.selectedRows.length === 0
               "
               (click)="save()">
               Guardar <i aria-hidden="true" class="fa fa-save"></i>
@@ -93,11 +94,12 @@
             [track]="'all'"
             [ngStyle]="{ height: loading ? '0px' : '300px' }">
             <ng2-smart-table
+              *ngIf="showTable"
               #table
               [attr.class]="'table-responsive table-bordered'"
               [settings]="settings"
               [source]="dataPaginated"
-              (userRowSelect)="selectRow($event.data)"
+              (userRowSelect)="selectRow($event)"
               (delete)="delete($event.data)"
               (edit)="edit($event.data)">
             </ng2-smart-table>
@@ -263,10 +265,7 @@
               *ngIf="address !== 'M'"
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="
-                (paymentRequestNumber && paymentRequestNumber.value) ||
-                !validChargeGoods
-              "
+              [disabled]="paymentRequestNumber && paymentRequestNumber.value"
               (click)="loadGoodsI()">
               Carga de Bienes
             </button>

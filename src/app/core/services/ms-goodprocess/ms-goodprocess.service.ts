@@ -14,6 +14,7 @@ import {
   ISecondIfMC,
 } from '../../models/ms-good/good';
 import { IGoodDistinctTypes } from '../../models/ms-good/good-distinct-types';
+import { IdeleteBlkDet } from './interface-goodprocess';
 
 @Injectable({
   providedIn: 'root',
@@ -325,6 +326,21 @@ export class GoodprocessService extends HttpService {
     return this.post(
       `${GoodprocessEndpoints.GetTypeMinuteDetailDelivery}`,
       body,
+      params
+    );
+  }
+
+  deleteBlkDet(body: IdeleteBlkDet) {
+    return this.post(`application/get-status-insert`, body);
+  }
+
+  postqueryBlkDet(goodNumber: string) {
+    return this.get(`application/get-noSubtype-good/${goodNumber}`);
+  }
+
+  getvwComerPaymentsReturn(params: _Params) {
+    return this.get(
+      `${GoodprocessEndpoints.ApplicationGetvwComerPaymentsReturn}`,
       params
     );
   }

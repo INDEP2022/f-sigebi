@@ -49,11 +49,15 @@ export class GoodsAvailableSaleFormComponent
   //private goodsAvailableSaleService: GoodsAvailableSaleService
   private prepareForm() {
     this.goodsAvailableSaleForm = this.fb.group({
-      idStatus: [null, [Validators.required]],
+      idStatus: [null, [Validators.required, Validators.maxLength(6)]],
       idDirection: [null, [Validators.required]],
       description: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+          Validators.required,
+        ],
       ],
       idTypeEvent: [null, [Validators.required]],
     });

@@ -43,4 +43,8 @@ export const COLUMNS = {
     title: 'Monto',
     sort: false,
   },
+  total: {
+    title: 'Total',
+    sort: false,
+  },
 };

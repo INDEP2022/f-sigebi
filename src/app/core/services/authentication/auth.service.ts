@@ -64,6 +64,15 @@ export class AuthService {
     );
   }
 
+  getToken2(username: string, password: string): Observable<AuthModel> {
+    let params = `client_id=indep-auth&grant_type=password&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs&scope=openid&username=${username}&password=${password}`;
+    let headers = new HttpHeaders().set(
+      'Content-Type',
+      'application/x-www-form-urlencoded'
+    );
+    return this.http.post<AuthModel>(this.tokenUrl, params, { headers });
+  }
+
   refreshToken(token: string) {
     let params = `client_id=indep-auth&grant_type=refresh_token&refresh_token=${token}&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs`;
     let headers = new HttpHeaders().set(

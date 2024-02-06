@@ -157,25 +157,25 @@ export class NumeraireConversionAuctionsComponent
   private async calculaParcBody() {
     this.loader.load = true;
     // debugger;
-    let resultBorra = await firstValueFrom(
-      this.convNumeraryService
-        .SPBorraNumera(+(this.selectedEvent.id + ''))
-        .pipe(catchError(x => of(x.error)))
-    );
-    if (
-      resultBorra &&
-      resultBorra.statusCode &&
-      resultBorra.statusCode !== 200
-    ) {
-      this.alert(
-        'error',
-        'No se ha podido calcular parcialmente',
-        resultBorra.message
-      );
-      this.loader.load = false;
-      return;
-    }
-    console.log(resultBorra);
+    // let resultBorra = await firstValueFrom(
+    //   this.convNumeraryService
+    //     .SPBorraNumera(+(this.selectedEvent.id + ''))
+    //     .pipe(catchError(x => of(x.error)))
+    // );
+    // if (
+    //   resultBorra &&
+    //   resultBorra.statusCode &&
+    //   resultBorra.statusCode !== 200
+    // ) {
+    //   this.alert(
+    //     'error',
+    //     'No se ha podido calcular parcialmente',
+    //     resultBorra.message
+    //   );
+    //   this.loader.load = false;
+    //   return;
+    // }
+    // console.log(resultBorra);
     let resultParcial = await firstValueFrom(
       this.convNumeraryService
         .getSPGastosEventoParcial(+(this.selectedEvent.id + ''))

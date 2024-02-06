@@ -19,7 +19,7 @@ import { secondFormatDateToDate2 } from 'src/app/shared/utils/date';
   styles: [
     `
       .bg-gray {
-        background-color: white !important;
+        background-color: #eee !important;
       }
     `,
   ],
@@ -62,7 +62,7 @@ export class EvenPermissionControlModalComponent
     this.comerUserForm = this.fb.group({
       idEvent: [null, [Validators.required]],
       username: [null, [Validators.required]],
-      date: [new Date(), [Validators.required]],
+      date: [new Date(), []],
     });
     if (this.comerUser != null) {
       this.edit = true;

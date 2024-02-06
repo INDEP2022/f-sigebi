@@ -66,7 +66,6 @@ export class CreateManualServiceFormComponent
   }
 
   createOrderServiceProvided(body: IOrderServiceProvider) {
-    console.log('body', body);
     this.orderEntryService.createServiceProvided(body).subscribe({
       next: resp => {
         this.onLoadToast('success', 'Servicio manual creado correctamente');

@@ -17,8 +17,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IEatConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
-import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
-import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -65,7 +63,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       list.push({ value: 'M', title: 'MUEBLES' });
       this.form.get('formPayment').setValidators(Validators.required);
       this.form.get('eventNumber').setValidators(Validators.required);
-      this.form.get('publicLot').setValidators(Validators.required);
+      // this.form.get('publicLot').setValidators(Validators.required);
     } else if (value === 'I') {
       this.initScreenI();
     }
@@ -346,7 +344,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
             },
             error: err => {
               this.loader.load = false;
-              this.alert('error', 'No se pudo eliminar el gasto', '');
+              this.alert(
+                'error',
+                'No se pudo eliminar el gasto',
+                err.error.message.includes('comer_detgastos')
+                  ? 'Necesita eliminar antes su composición de gastos'
+                  : ''
+              );
             },
           });
       }
@@ -532,15 +536,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.dataService.address = 'I';
     let usuarioCapturaData = await this.usuarioCapturaDataI(user);
     if (usuarioCapturaData) {
-      this.form.get('capturedUser').setValue(usuarioCapturaData.value);
+      this.form.get('capturedUser').setValue(usuarioCapturaData.valor);
     }
     let usuarioAutorizaData = await this.usuarioParametro('USUAUTORIZA');
     if (usuarioAutorizaData) {
-      this.form.get('authorizedUser').setValue(usuarioAutorizaData.value);
+      this.form.get('authorizedUser').setValue(usuarioAutorizaData.valor);
     }
     let usuarioSolicitaData = await this.usuarioParametro('USUSOLICITA');
     if (usuarioSolicitaData) {
-      this.form.get('requestedUser').setValue(usuarioSolicitaData.value);
+      this.form.get('requestedUser').setValue(usuarioSolicitaData.valor);
     }
     // this._address = 'I';
   }
@@ -690,6 +694,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get conceptNumber() {
     return this.form.get('conceptNumber');
   }
+
+  get paymentRequestExpense() {
+    return this.data ? this.data.paymentRequestNumber : null;
+  }
+
   get paymentRequestNumber() {
     return this.form.get('paymentRequestNumber');
   }
@@ -775,7 +784,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return firstValueFrom(
       this.parameterModService.getAll(filterParams.getParams()).pipe(
         take(1),
-        catchError(x => of({ data: [] as IParameterConcept[] })),
+        catchError(x => of({ data: [] })),
         map(x => {
           return x.data.length > 0 ? x.data[0] : null;
         })
@@ -791,7 +800,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return firstValueFrom(
       this.parameterModService.getAll(filterParams.getParams()).pipe(
         take(1),
-        catchError(x => of({ data: [] as IParameterConcept[] })),
+        catchError(x => of({ data: [] })),
         map(x => {
           return x.data.length > 0 ? x.data[0] : null;
         })
@@ -1216,35 +1225,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
   }
 
-  private async fillOthersParameters() {
-    const filterParams = new FilterParams();
-    filterParams.addFilter('parameter', 'CHCONIVA,IVA', SearchFilter.IN);
-    return firstValueFrom(
-      this.parameterModService.getAll(filterParams.getParams()).pipe(
-        take(1),
-        catchError(x => of({ data: [] as IParameterMod[], message: x })),
-        map(response => {
-          let data = response.data;
-          let success;
-          if (data.length > 0) {
-            this.dataService.CHCONIVA = data[0].value;
-            this.dataService.IVA = data[1].value ? +data[1].value / 100 : 0;
-            success = true;
-          } else {
-            this.dataService.CHCONIVA = null;
-            this.dataService.IVA = 0;
-            success = false;
-          }
-          if (this.dataService.CHCONIVA === null)
-            this.alert('warning', 'No tiene parámetro CHCONIVA', '');
-          if (this.dataService.IVA === 0)
-            this.alert('warning', 'No tiene parámetro IVA', '');
-          return success;
-        })
-      )
-    );
-  }
-
   get numReceipts() {
     return this.form.get('numReceipts');
   }
@@ -1387,34 +1367,34 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       await this.dataService.getLS_ESTATUS(+expense.conceptNumber);
       this.controlsInDet();
     }
-    if (this.address === 'M') {
-      if (
-        expense.lotNumber !== this.lotNumber.value ||
-        expense.conceptNumber != this.conceptNumber.value ||
-        expense.eventNumber != this.eventNumber.value
-      ) {
-        entro = true;
-        if (+expense.lotNumber > 0 && +expense.eventNumber > 0)
-          this.expenseGoodProcessService
-            .getValidGoods(
-              +expense.lotNumber,
-              +expense.eventNumber,
-              this.address !== 'M' ? 'N' : this.dataService.PDEVPARCIALBIEN,
-              +expense.conceptNumber,
-              this.address !== 'M' ? 'N' : this.PVALIDADET
-            )
-            .pipe(
-              takeUntil(this.$unSubscribe),
-              catchError(x => of({ data: [] })),
-              map(x => (x ? x.data : []))
-            )
-            .subscribe(x => {
-              this.dataService.goods = x;
-            });
-      }
-    } else {
-      // ss;
-    }
+    // if (this.address === 'M') {
+    //   if (
+    //     expense.lotNumber !== this.lotNumber.value ||
+    //     expense.conceptNumber != this.conceptNumber.value ||
+    //     expense.eventNumber != this.eventNumber.value
+    //   ) {
+    //     entro = true;
+    //     if (+expense.lotNumber > 0 && +expense.eventNumber > 0)
+    //       this.expenseGoodProcessService
+    //         .getValidGoods(
+    //           +expense.lotNumber,
+    //           +expense.eventNumber,
+    //           this.address !== 'M' ? 'N' : this.dataService.PDEVPARCIALBIEN,
+    //           +expense.conceptNumber,
+    //           this.address !== 'M' ? 'N' : this.PVALIDADET
+    //         )
+    //         .pipe(
+    //           takeUntil(this.$unSubscribe),
+    //           catchError(x => of({ data: [] })),
+    //           map(x => (x ? x.data : []))
+    //         )
+    //         .subscribe(x => {
+    //           this.dataService.goods = x;
+    //         });
+    //   }
+    // } else {
+    //   // ss;
+    // }
 
     // this.dataService.callNextItemLote = entro;
     this.conceptNumber.setValue(expense.conceptNumber);
@@ -1425,8 +1405,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       expense.publicLot
         ? expense.publicLot
         : expense.comerLot
-          ? expense.comerLot.publicLot
-          : null
+        ? expense.comerLot.publicLot
+        : null
     );
     this.clkpv.setValue(expense.clkpv);
 
@@ -1453,7 +1433,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         return;
       }
       this.dataService.updateOI.next(true);
-      const otherParams = await this.fillOthersParameters();
+      // setTimeout(() => {
+      //   if (expense.conceptNumber + '' === '643' && this.PVALIDADET === 'S') {
+      //     this.fillOthersParameters();
+      //   }
+      // }, 100);
     }, 500);
   }
 
@@ -1522,10 +1506,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       'comerconcepts/api/v1/application/query-eat-concepts?sortBy=conceptId:ASC' +
       (this.address
         ? '?filter.address=$in:' +
-        this.address +
-        (this.address === 'M'
-          ? ',C'
-          : this.PDIRECCION_A
+          this.address +
+          (this.address === 'M'
+            ? ',C'
+            : this.PDIRECCION_A
             ? ',' + this.PDIRECCION_A
             : '')
         : '')
@@ -1756,7 +1740,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered',
               ignoreBackdropClick: true,

@@ -1,13 +1,14 @@
-import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const REGULAR_BILLING_GENERATION_ASSETS_COLUMNS = {
   notGood: {
     title: 'No. Bien',
     sort: false,
-    filter: {
-      type: 'custom',
-      component: CustomFilterComponent,
-    },
+    type: 'string',
+    // filter: {
+    //   type: 'custom',
+    //   component: CustomFilterComponent,
+    // },
   },
   series: {
     title: 'Serie',
@@ -16,10 +17,11 @@ export const REGULAR_BILLING_GENERATION_ASSETS_COLUMNS = {
   Invoice: {
     title: 'Folio',
     sort: false,
-    filter: {
-      type: 'custom',
-      component: CustomFilterComponent,
-    },
+    type: 'string',
+    // filter: {
+    //   type: 'custom',
+    //   component: CustomFilterComponent,
+    // },
   },
   observations: {
     title: 'Observaciones',
@@ -28,34 +30,44 @@ export const REGULAR_BILLING_GENERATION_ASSETS_COLUMNS = {
   eventId: {
     title: 'Evento',
     sort: false,
-    filter: {
-      type: 'custom',
-      component: CustomFilterComponent,
-    },
+    type: 'string',
+    // filter: {
+    //   type: 'custom',
+    //   component: CustomFilterComponent,
+    // },
   },
   lotPublic: {
     title: 'Lote',
     sort: false,
-    filter: {
-      type: 'custom',
-      component: CustomFilterComponent,
-    },
+    type: 'string',
+    // filter: {
+    //   type: 'custom',
+    //   component: CustomFilterComponent,
+    // },
   },
   status: {
     title: 'Estatus',
     sort: false,
-    valuePrepareFunction: (state: string) => {
-      const val: any = {
-        '1': () => 'Procesado',
-        '3': () => 'No procesado por validación',
-        '0': () => 'No procesado',
-      };
-
-      return val[state]();
-    },
     filter: {
-      type: 'custom',
-      component: CustomFilterComponent,
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 1, title: 'Procesado' },
+          { value: 0, title: 'No procesado' },
+          { value: 3, title: 'No procesado por validación' },
+        ],
+      },
+    },
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.status == 1) {
+        return 'Procesado';
+      } else if (row.status == 0) {
+        return 'No Procesado';
+      } else if (row.status == 3) {
+        return 'No procesado por validación';
+      }
+      return '';
     },
   },
   downloadValidation: {
@@ -65,8 +77,15 @@ export const REGULAR_BILLING_GENERATION_ASSETS_COLUMNS = {
   insertDate: {
     title: 'Fecha Proceso',
     sort: false,
-    valuePrepareFunction: (date: string) => {
-      return date ? date.split('-').reverse().join('/') : date;
+    valuePrepareFunction: (val: string) => {
+      return val ? val.split('-').reverse().join('/') : '';
+    },
+    filterFunction: () => {
+      return true;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   userinsert: {

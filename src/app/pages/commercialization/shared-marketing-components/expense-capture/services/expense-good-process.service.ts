@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { INotifyDTO, IValidGood } from '../models/expense-good-process';
 
@@ -54,7 +54,8 @@ export class ExpenseGoodProcessService extends HttpService {
     pevent: number,
     pDevPartialGood: string,
     conceptId: number,
-    PVALIDADET: string
+    pValidDet: string,
+    _params: _Params
   ) {
     return this.post<{ data: IValidGood[] }>(
       'application/query-pro-list-good',
@@ -63,8 +64,9 @@ export class ExpenseGoodProcessService extends HttpService {
         pevent,
         pDevPartialGood,
         conceptId,
-        PVALIDADET,
-      }
+        pValidDet,
+      },
+      _params
     );
   }
 }

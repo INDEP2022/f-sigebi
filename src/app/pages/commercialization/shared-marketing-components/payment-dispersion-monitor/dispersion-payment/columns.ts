@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 //Arrays
@@ -27,7 +28,14 @@ export const COLUMNSCUSTOMER = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return format(new Date(row.ExecutionDate), 'dd/MM/yyyy');
+      return format(correctDate(row.ExecutionDate), 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   BlackListed: {
@@ -165,7 +173,14 @@ export const COLUMNS_CUSTOMER_BANKS = {
     type: 'text',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return format(correctDate(cell), 'dd/MM/yyyy');
+      return format(correctDate(row.date), 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   bankCode: {
@@ -205,8 +220,15 @@ export const COLUMNS_LOTS_BANKS = {
     title: 'Fecha',
     type: 'text',
     sort: false,
-    valuePrepareFunction: (isSelected: any, row: any) => {
-      return format(new Date(row.date), 'dd/MM/yyyy');
+    valuePrepareFunction: (cell: any, row: any) => {
+      return format(correctDate(row.date), 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(): boolean {
+      return true;
     },
   },
   bankKey: {

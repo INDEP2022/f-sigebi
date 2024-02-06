@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { GuarantyEndpoints } from 'src/app/common/constants/endpoints/ms-guaranty';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IComerRefGuarantees } from '../../models/ms-guaranty/guaranty';
 
@@ -15,11 +16,11 @@ export class GuarantyService extends HttpService {
     this.microservice = this.route.Guaranty;
   }
 
-  getComerRefGuarantees(params?: _Params) {
-    return this.get<IListResponse<IComerRefGuarantees>>(
-      this.route.ComerRefGuarantees,
-      params
-    );
+  getComerRefGuarantees(
+    params?: ListParams
+  ): Observable<IListResponse<IComerRefGuarantees>> {
+    const route = `${this.route.ComerRefGuarantees}`;
+    return this.get(route, params);
   }
 
   getComerRefGuarantees2(params?: ListParams) {
@@ -37,5 +38,10 @@ export class GuarantyService extends HttpService {
     return this.get<IListResponse<IComerRefGuarantees>>(
       `${this.route.GetTransfereexEvent}/${evento}`
     );
+  }
+
+  getExcelComerRefGuarantees(params?: ListParams) {
+    const route = `${this.route.GetExcelComerRefGuarantees}`;
+    return this.get(route, params);
   }
 }

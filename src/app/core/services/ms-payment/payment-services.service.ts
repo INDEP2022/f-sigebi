@@ -175,7 +175,7 @@ export class PaymentService extends HttpService {
   }
 
   deleteMassive(id: number | string) {
-    return this.delete('delete-busqueda-pagos-det-busqueda/' + id);
+    return this.get('application/delete-busqueda-pagos-det-busqueda/' + id);
   }
 
   UpdateRecord(params: any) {
@@ -185,10 +185,20 @@ export class PaymentService extends HttpService {
   getValidSystem(filter?: string) {
     if (filter != null) {
       return this.get(
-        `${PaymentEndPoints.validSystem}?filter.valsisKey=$eq:${filter}`
+        `${PaymentEndPoints.validSystem}?filter.valsisKey=$eq:${filter}&sortBy=valsisKey:ASC`
       );
     } else {
       return this.get(`${PaymentEndPoints.validSystem}`);
+    }
+  }
+
+  getValidSystemAll(filter?: string) {
+    if (filter != null) {
+      return this.get(
+        `${PaymentEndPoints.validSystem}?limit=100&filter.valsisKey=$eq:${filter}`
+      );
+    } else {
+      return this.get(`${PaymentEndPoints.validSystem}?limit=100`);
     }
   }
 
@@ -255,5 +265,9 @@ export class PaymentService extends HttpService {
       PaymentEndPoints.ApplicationValidCabms + '/' + opcion,
       params
     );
+  }
+
+  updateComerCtldevpagB(body: any) {
+    return this.put(PaymentEndPoints.ComerCtldevpagB, body);
   }
 }

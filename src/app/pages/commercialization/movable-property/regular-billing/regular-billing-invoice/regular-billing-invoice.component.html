@@ -39,9 +39,14 @@
                   type="text"
                   class="form-control"
                   bsDatepicker
-                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                  [bsConfig]="{
+                    withTimepicker: true,
+                    dateInputFormat: 'DD/MM/YYYY h:mm a',
+                    keepDatepickerOpened: true
+                  }"
                   formControlName="date" />
               </form-field>
+              <!-- [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" -->
             </div>
           </div>
           <div class="row mt-4">
@@ -67,7 +72,7 @@
                     Asig. Manual Folios
                     <i class="bx bx-plus bx-sm float-icon"></i>
                   </button>
-                  <!-- Generación de los CFDI - Revisar (Dejar para el final) -->
+                  <!-- FALTA VALIDAR -->
                   <button
                     type="button"
                     class="btn btn-primary btn-sm btn-block active mr-2 mb-2"
@@ -77,18 +82,24 @@
                   </button>
                   <!-- LISTO -->
                   <button
+                    [disabled]="true"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
-                    (click)="visualizarCR()">
-                    Visualiza CR <i class="bx bx-printer bx-sm float-icon"></i>
+                    (click)="viewInvoice()">
+                    Visualizar Factura
+                    <i class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                   <!-- LISTO -->
                   <button
-                    [disabled]="buttons"
+                    [ngClass]="{ loading: btnLoading2 }"
+                    [disabled]="btnLoading2"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
-                    (click)="impresionCR()">
-                    Imprime CR <i class="bx bx-printer bx-sm float-icon"></i>
+                    (click)="imprimeInvoice()">
+                    Imprime Factura
+                    <i
+                      *ngIf="!btnLoading2"
+                      class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                   <!-- LISTO -->
                   <form-check label="Solo Fact." for="label">
@@ -106,11 +117,15 @@
                 <div class="col-12">
                   <!-- LISTO -->
                   <button
+                    [ngClass]="{ loading: btnLoading3 }"
+                    [disabled]="btnLoading3"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="updateData()">
-                    Actualiza Datos <i class="fas fa-sync-alt"> </i>
+                    Actualiza Datos
+                    <i *ngIf="!btnLoading3" class="fas fa-sync-alt"> </i>
                   </button>
+                  <!-- LISTO -->
                   <button
                     [disabled]="buttons"
                     type="button"
@@ -120,25 +135,33 @@
                   </button>
                   <!-- LISTO -->
                   <button
+                    [ngClass]="{ loading: btnLoading9 }"
+                    [disabled]="btnLoading9"
+                    type="button"
+                    class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
+                    (click)="actMatricula()">
+                    Act. Matricula
+                    <i *ngIf="!btnLoading9" class="fas fa-sync-alt"> </i>
+                  </button>
+                  <!-- LISTO -->
+                  <button
+                    [ngClass]="{ loading: btnLoading14 }"
+                    [disabled]="btnLoading14"
+                    type="button"
+                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
+                    (click)="viewAnexo()">
+                    Visualiza Anexo
+                    <i
+                      *ngIf="!btnLoading14"
+                      class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                  <!-- FALTA VALIDAR -->
+                  <button
                     [disabled]="buttons"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
-                    (click)="viewInvoice()">
-                    Visualizar Factura
-                    <i class="bx bx-printer bx-sm float-icon"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
-                    (click)="visualizarCE()">
-                    Visualiza CE <i class="bx bx-printer bx-sm float-icon"></i>
-                  </button>
-                  <button
-                    [disabled]="buttons"
-                    type="button"
-                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
-                    (click)="impresionCE()">
-                    Imprime CE <i class="bx bx-printer bx-sm float-icon"></i>
+                    (click)="impresionAnex()">
+                    Imprime Anexo <i class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                   <!-- LISTO -->
                   <button
@@ -175,29 +198,27 @@
                   <!-- LISTO -->
                   <button
                     type="button"
-                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
-                    (click)="viewAnexo()">
-                    Visualiza Anexo
-                    <i class="bx bx-printer bx-sm float-icon"></i>
-                  </button>
-                  <!-- LISTO -->
-                  <button
-                    [ngClass]="{ loading: btnLoading9 }"
-                    [disabled]="btnLoading9"
-                    type="button"
-                    class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
-                    (click)="actMatricula()">
-                    Act. Matricula
-                    <i *ngIf="!btnLoading9" class="fas fa-sync-alt"> </i>
-                  </button>
-                  <!-- LISTO -->
-                  <button
-                    type="button"
                     class="btn btn-block btn-primary btn-sm active mr-2 mb-2"
                     (click)="track()">
-                    Tracto S/P <i class="bx bx-printer bx-sm float-icon"></i>
+                    Tracto S/P
+                    <!-- <i class="bx bx-printer bx-sm float-icon"></i> -->
                   </button>
-                  <!-- LISTO -- Falta optimizar -->
+                  <!-- LISTO -->
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
+                    (click)="visualizarCR()">
+                    Visualiza CR <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                  <!-- LISTO -->
+                  <button
+                    [disabled]="buttons"
+                    type="button"
+                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
+                    (click)="impresionCR()">
+                    Imprime CR <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                  <!-- LISTO -->
                   <button
                     [ngClass]="{ loading: btnLoading13 }"
                     [disabled]="btnLoading13"
@@ -224,13 +245,13 @@
                     (click)="allSelect()">
                     Selec. Todos
                     <i
-                      *nfIg="!btnLoading8"
+                      *ngIf="!btnLoading8"
                       class="fas fa-edit bx-sm float-icon"></i>
                   </button>
                   <!-- LISTO -->
                   <button
                     [ngClass]="{ loading: btnLoading11 }"
-                    [disabled]="buttons || btnLoading11"
+                    [disabled]="true"
                     type="button"
                     class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
                     (click)="removeInvoice()">
@@ -240,26 +261,28 @@
                       class="fa fa-trash"
                       aria-hidden="true"></i>
                   </button>
+                  <!-- FALTA VALIDAR -->
                   <button
-                    type="button"
-                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
-                    (click)="imprimeInvoice()">
-                    Imprime Factura
-                    <i class="bx bx-printer bx-sm float-icon"></i>
-                  </button>
-                  <button
-                    [disabled]="buttons"
-                    type="button"
-                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
-                    (click)="impresionAnex()">
-                    Imprime Anexo <i class="bx bx-printer bx-sm float-icon"></i>
-                  </button>
-                  <!--Revisar con Carlos-->
-                  <button
+                    (click)="printerMasivePDF()"
                     type="button"
                     class="btn btn-primary btn-block active btn-sm mr-2 mb-2">
                     Imprime Masivo .pdf
                     <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                  <!-- LISTO -->
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
+                    (click)="visualizarCE()">
+                    Visualiza CE <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                  <!-- LISTO -->
+                  <button
+                    [disabled]="buttons"
+                    type="button"
+                    class="btn btn-primary btn-block btn-sm active mr-2 mb-2"
+                    (click)="impresionCE()">
+                    Imprime CE <i class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                 </div>
               </div>
@@ -268,8 +291,8 @@
           <div
             class="row justify-content-center text-center mt-4"
             *ngIf="isCancel">
+            <!-- LISTO -->
             <div class="col-1 col-md-1">
-              <!-- LISTO -->
               <button
                 type="button"
                 class="btn btn-block btn-primary btn-sm active mr-2"
@@ -337,6 +360,8 @@
   <div class="ch-content">
     <h5 class="title">PREFACTURAS DEL EVENTO</h5>
     <div class="row justify-content-end mr-3">
+      <!-- [defaultColumns]="7" -->
+      <!-- [leftList]="true" -->
       <app-columns-select
         [defaultColumns]="7"
         [(settings)]="settings"
@@ -347,6 +372,7 @@
     <form-loader *ngIf="loading"></form-loader>
     <div>
       <ng2-smart-table
+        #myTable
         [ngStyle]="{
           height: loading ? '0px' : totalItems > 10 ? '600px' : 'auto'
         }"
@@ -537,6 +563,28 @@
 
   <div class="row pt-3">
     <div class="col-12 d-flex justify-content-end pb-3">
+      <div>
+        <!-- <button
+          tooltip=""
+          containerClass="tooltip-style"
+          [ngClass]="{ loading: btnLoadAU }"
+          [disabled]="btnLoadAU"
+          (click)="updateDetFact('AU')"
+          type="button"
+          class="btn btn-primary active btn-sm mr-2 mb-2">
+          <span *ngIf="!btnLoadAU">AU</span>
+        </button> -->
+      </div>
+      <div>
+        <!-- <button
+          [ngClass]="{ loading: btnLoadAP }"
+          [disabled]="btnLoadAP"
+          (click)="updateDetFact('AP')"
+          type="button"
+          class="btn btn-info active btn-sm mr-2 mb-2">
+          <span *ngIf="!btnLoadAP">AP</span>
+        </button> -->
+      </div>
       <app-columns-select
         [(settings)]="settings2"
         [leftList]="true"></app-columns-select>
@@ -548,6 +596,7 @@
           height: loading2 ? '0px' : totalItems2 > 10 ? '600px' : 'auto'
         }"
         [attr.class]="'table-bordered table-responsive mb-4'"
+        (userRowSelect)="selectDataComerDetInvocie($event.data)"
         [settings]="settings2"
         [source]="dataFilter2">
       </ng2-smart-table>

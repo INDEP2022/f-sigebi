@@ -38,6 +38,8 @@ import { PermissionsDirective } from './directives/permissions.directive';
 import { NgxCurrencyModule } from 'ngx-currency';
 import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-select-loading/custom-select-loading.component';
 import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import { CustomDateFilter2Component } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter2';
+import { CustomHourFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-hour-filter';
 import { CustomDateDayFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 import { CustomDateMounthFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-mounth-filter';
 import { CustomFilterComponent } from '../@standalone/shared-forms/input-number/input-number';
@@ -86,10 +88,12 @@ export const customCurrencyMaskConfig = {
     UppercaseDirective,
     DatePickerDirective,
     CustomDateFilterComponent,
+    CustomDateFilter2Component,
     CustomDateMounthFilterComponent,
     CustomDateDayFilterComponent,
     ButtonColumnComponent,
     CustomFilterComponent,
+    CustomHourFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -139,6 +143,7 @@ export const customCurrencyMaskConfig = {
     UppercaseDirective,
     DatePickerDirective,
     CustomDateFilterComponent,
+    CustomDateFilter2Component,
     CustomDateMounthFilterComponent,
     CustomDateDayFilterComponent,
     ButtonColumnComponent,
