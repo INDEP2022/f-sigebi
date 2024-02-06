@@ -58,9 +58,19 @@
                             <input
                               type="text"
                               class="form-control"
+                              bsDatepicker
+                              [bsConfig]="{
+                                withTimepicker: true,
+                                dateInputFormat: 'DD/MM/YYYY h:mm a',
+                                keepDatepickerOpened: true
+                              }"
+                              formControlName="date" />
+                            <!-- <input
+                              type="text"
+                              class="form-control"
                               formControlName="date"
                               bsDatepicker
-                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" /> -->
                           </form-field>
                         </div>
                       </div>
@@ -189,7 +199,7 @@
                                 Exporta a CSV
                                 <i
                                   *ngIf="!btnLoading7"
-                                  class="bx bx-upload float-icon"></i>
+                                  class="bx bx-download float-icon"></i>
                               </button>
                             </div>
                           </div>

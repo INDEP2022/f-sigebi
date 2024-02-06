@@ -24,11 +24,14 @@
   <div class="col-md-9 d-flex justify-content-end">
     <div>
       <button
+        [ngClass]="{ loading: btnLoading }"
+        [disabled]="btnLoading"
         type="button"
         class="btn btn-sm btn-success active mr-2"
         (click)="fileExcel.click()">
         Carga CSV
-        <i class="bi bi-file-earmark-excel-fill"></i>
+        <i *ngIf="!btnLoading" class="bx bx-upload float-icon"></i>
+        <!-- <i *ngIf="!btnLoading" class="bi bi-file-earmark-excel-fill"></i> -->
       </button>
     </div>
     <div>
@@ -40,10 +43,12 @@
         class="d-none"
         accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
       <button
+        [ngClass]="{ loading: btnLoading2 }"
+        [disabled]="btnLoading2"
         class="btn btn-sm btn-success active mr-2"
         (click)="exportAsXLSX()">
         Exportar a Excel
-        <i class="bx bx-download float-icon"></i>
+        <i *ngIf="!btnLoading2" class="bx bx-download float-icon"></i>
       </button>
     </div>
     <app-columns-select
