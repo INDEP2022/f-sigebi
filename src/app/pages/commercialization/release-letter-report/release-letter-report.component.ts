@@ -182,7 +182,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.validPermisos = !this.validPermisos;
     this.settings = {
       ...TABLE_SETTINGS,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: false,
       columns: {
         ...COMEMR_BIENES_COLUMNS,
@@ -221,7 +221,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
 
             const search: any = {
-              idGood: () => (searchFilter = SearchFilter.EQ),
+              goodNumber: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.ILIKE),
             };
             search[filter.field]();
@@ -526,16 +526,30 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     });
   }
 
-  Generar() {
-    if (this.letterDefault == null) {
-      this.alert('warning', 'Realiza una consulta para continuar', '');
+  async Generar() {
+    if (this.dataVal == null) {
+      this.alert(
+        'warning',
+        'Realiza una consulta o cree un nuevo registro para continuar',
+        ''
+      );
       return;
     }
-    this.loading = true;
+    // this.loading = true;
     const start = this.comerLibsForm.get('fechaFactura').value;
-    const carta = this.comerLibsForm.get('fechaCarta').value;
-    this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
-    this.carta = this.datePipe.transform(carta, 'dd/MM/yyyy');
+    const carta = new Date();
+    const mm1 = start ? this.datePipe.transform(start, 'MM') : null;
+    const dd1 = start ? this.datePipe.transform(start, 'dd') : null;
+    const yy1 = carta ? this.datePipe.transform(start, 'yyyy') : null;
+    const mm2 = carta ? this.datePipe.transform(carta, 'MM') : null;
+    const dd2 = carta ? this.datePipe.transform(carta, 'dd') : null;
+    const yy2 = carta ? this.datePipe.transform(carta, 'yyyy') : null;
+    const v_mes_fact = await this.obtenerNombreMes(Number(mm1));
+    const v_mes_carta = await this.obtenerNombreMes(Number(mm2));
+
+    let v_fecha_carta = `México D.F. a ${dd2} de ${v_mes_carta} del ${yy2}`;
+    let v_fecha_fact = `${dd1} de ${v_mes_fact} del ${yy1}`;
+
     let params = {
       DESTYPE: this.bienesLotesForm.controls['description'].value,
       ID_LOTE: this.bienesLotesForm.controls['lote'].value,
@@ -545,7 +559,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       PARRAFO1: this.comerLibsForm.controls['parrafo1'].value,
       ADJUDICATARIO: this.comerLibsForm.controls['adjudicatorio'].value,
       NO_FACTURA: this.comerLibsForm.controls['factura'].value,
-      FECHA_FACTURA: this.start,
+      FECHA_FACTURA: v_fecha_fact,
       PARRAFO2: this.comerLibsForm.controls['parrafo2'].value,
       FIRMANTE: this.comerLibsForm.controls['firmante'].value,
       PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
@@ -553,7 +567,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       CCP2: this.comerLibsForm.controls['ccp1'].value,
       PUESTOCCP1: this.comerLibsForm.controls['puestoCcp1'].value,
       PUESTOCCP2: this.comerLibsForm.controls['puestoCcp2'].value,
-      FECHA_CARTA: this.carta,
+      FECHA_CARTA: v_fecha_carta,
     };
 
     this.siabService
@@ -652,24 +666,22 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['filter.lotId'] = `$eq:${lote}`;
+    // params['filter.lotId'] = `$eq:${lote}`;
     params.page = this.paramsBienes.value.page;
     params.limit = this.paramsBienes.value.limit;
 
-    this.comerEventService.getFindAllComerGoodXlotTotal(params).subscribe({
+    this.comerEventService.getAllFilterLetter_(lote, params).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.bienesLoading = false;
-        if (data) {
-          this.bienes = data.items.map((i: any) => {
-            i['description'] = i.good ? i.good.description : '';
-            return i;
-          });
-          console.log(this.bienes);
-          this.dataTableGood.load(this.bienes);
+        let result = data.data.map(i => {
+          i['description'] = i.good ? i.good.description : '';
+        });
+        Promise.all(result).then(resp => {
+          this.dataTableGood.load(data.data);
           this.dataTableGood.refresh();
           this.totalItems = data.count;
-        }
+          this.bienesLoading = false;
+        });
       },
       error: () => {
         this.bienesLoading = false;
@@ -875,7 +887,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
           this.llenarCampos(data.data[0]);
           this.dataVal = data.data[0];
           this.disabledFields = true;
-          this.valResult = false;
+          this.valResult = true;
         } else if (data.count > 1) {
           this.openModal();
           this.dataVal = null;
@@ -1176,6 +1188,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLibsForm.get('ccp5').setValue(this.letter.ccp5);
     this.bienesLotesForm.get('lote').setValue(this.letter.lotsId);
 
+    this.getUsersPuesto(this.letter.signatory, 0);
+    this.getUsersPuesto(this.letter.ccp1, 1);
+    this.getUsersPuesto(this.letter.ccp2, 2);
     // '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
     setTimeout(() => {
       if (this.puestoUser) {
@@ -1188,6 +1203,43 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         this.getAllNameOtval(2);
       }
     }, 300);
+  }
+
+  getUsersPuesto(user: string, option: number = 0) {
+    if (!user) {
+      if (option == 0) {
+        this.comerLibsForm.get('puestoFirma').setValue(null);
+      } else if (option == 1) {
+        this.comerLibsForm.get('puestoCcp1').setValue(null);
+      } else if (option == 2) {
+        this.comerLibsForm.get('puestoCcp2').setValue(null);
+      }
+      return;
+    }
+    let params = new ListParams();
+    // if(params.text)
+    params['filter.user'] = `$eq:${user}`;
+    this.securityService.getApplicationGetUserTvaltable(params).subscribe({
+      next: (res: any) => {
+        console.log('res', res);
+        if (option == 0) {
+          this.comerLibsForm.get('puestoFirma').setValue(res.data[0].atvalue);
+        } else if (option == 1) {
+          this.comerLibsForm.get('puestoCcp1').setValue(res.data[0].atvalue);
+        } else if (option == 2) {
+          this.comerLibsForm.get('puestoCcp2').setValue(res.data[0].atvalue);
+        }
+      },
+      error: error => {
+        if (option == 0) {
+          this.comerLibsForm.get('puestoFirma').setValue(null);
+        } else if (option == 1) {
+          this.comerLibsForm.get('puestoCcp1').setValue(null);
+        } else if (option == 2) {
+          this.comerLibsForm.get('puestoCcp2').setValue(null);
+        }
+      },
+    });
   }
 
   async parrafo1_() {
@@ -1263,17 +1315,19 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     }
   }
 
-  getUsers(params: ListParams, option: number = 0) {
-    let nameSearch: string = '';
-
-    this.msUsersService.getAllSegUsers(params).subscribe({
+  getUsers(params: any, option: number = 0) {
+    console.log('params1', params);
+    if (params.text) params['filter.user'] = `$ilike:${params.text}`;
+    console.log('params2', params);
+    this.securityService.getApplicationGetUserTvaltable(params).subscribe({
       next: (res: any) => {
+        console.log('res', res);
         if (option == 0) {
-          this.selectDataUser0 = new DefaultSelect(res.data, 0);
+          this.selectDataUser0 = new DefaultSelect(res.data, res.count);
         } else if (option == 1) {
-          this.selectDataUser1 = new DefaultSelect(res.data, 0);
+          this.selectDataUser1 = new DefaultSelect(res.data, res.count);
         } else if (option == 2) {
-          this.selectDataUser2 = new DefaultSelect(res.data, 10);
+          this.selectDataUser2 = new DefaultSelect(res.data, res.count);
         }
       },
       error: error => {
@@ -1290,8 +1344,15 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
   changeUser(event: any, option: number) {
     console.log(event);
-    if (event) this.insertPuestoFields(event.id, option);
-    else {
+    if (event) {
+      if (option == 0) {
+        this.comerLibsForm.get('puestoFirma').setValue(event.atvalue);
+      } else if (option == 1) {
+        this.comerLibsForm.get('puestoCcp1').setValue(event.atvalue);
+      } else if (option == 2) {
+        this.comerLibsForm.get('puestoCcp2').setValue(event.atvalue);
+      }
+    } else {
       if (option == 0) {
         this.comerLibsForm.get('puestoFirma').setValue(null);
       } else if (option == 1) {
