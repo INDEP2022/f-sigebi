@@ -121,7 +121,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   @Output() onSave = new EventEmitter<any>();
   @ViewChild('file') file: any;
   @Input() set files(files: any[]) {
-    // debugger;
+    // //
     if (files.length === 0) return;
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);

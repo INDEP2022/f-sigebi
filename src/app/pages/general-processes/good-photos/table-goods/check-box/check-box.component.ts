@@ -15,7 +15,7 @@ export class CheckBoxComponent extends DefaultEditor implements OnInit {
   disabled: boolean;
   @Input()
   set value(value: { checked: boolean; disabled: boolean; id: string }) {
-    // debugger;
+    // //
     this.disabled = value.disabled;
     this.checked = value.checked;
     this.id = value.id;

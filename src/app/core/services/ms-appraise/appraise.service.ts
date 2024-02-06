@@ -30,10 +30,7 @@ export class AppraiseService extends HttpService {
   }
 
   exportAppraiseExcel(params: _Params) {
-    return this.get<{ base64: string }>(
-      AppraiseEndpoints.EatAppraisalViewExcel,
-      params
-    );
+    return this.get<any>(AppraiseEndpoints.EatAppraisalViewExcel, params);
   }
 
   exportAppraiseSum(params: _Params) {

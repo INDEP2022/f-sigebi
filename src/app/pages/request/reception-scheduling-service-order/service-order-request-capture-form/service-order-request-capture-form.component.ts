@@ -273,7 +273,7 @@ export class ServiceOrderRequestCaptureFormComponent
   getOrderServiceProvided() {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
-      debugger;
+      //
       params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
       this.orderEntryService
         .getAllOrderServicesProvided(params)

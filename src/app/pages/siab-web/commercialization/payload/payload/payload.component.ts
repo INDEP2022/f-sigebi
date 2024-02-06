@@ -68,7 +68,15 @@ export class PayloadComponent extends BasePage implements OnInit {
       bank: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
-
+  valuePrepareFunction(date: number): string {
+    const fechaString = date.toString();
+    const año = fechaString.substring(0, 4);
+    const mes = fechaString.substring(4, 6);
+    const dia = fechaString.substring(6, 8);
+    const fecha = `${año}-${mes}-${dia}`;
+    console.log(fecha);
+    return fecha;
+  }
   rowSelect(event: any) {}
 
   data: any;
@@ -149,7 +157,9 @@ export class PayloadComponent extends BasePage implements OnInit {
 
             LST_2COL1 = this.dataSql.data[0].ifDsc;
             V_CTA_BANCARIA = this.dataSql.data[0].cbCtaBn;
-            LST_COL2 = this.dataSql.data[0].Fecha_Mov;
+            LST_COL2 = this.valuePrepareFunction(
+              this.dataSql.data[0].Fecha_Mov
+            );
             DESCRIPCION_MOV = this.dataSql.data[0].CveCheque;
             if (TipoSat == '99' || TipoSat == null) {
               let CarPagos = await this.paymentType(L_LOTE, references);
@@ -225,9 +235,15 @@ export class PayloadComponent extends BasePage implements OnInit {
                   false
                 );
                 let bancData1: any = bancDesc1;
-                CODIGO_BANCO = bancData1.data[0];
+                CODIGO_BANCO =
+                  bancData1.data[0] != undefined
+                    ? bancData1.data[0].codigo
+                    : '';
                 console.log(bancData1.data[0]);
-                L_DESCPAGO = bancData1.data[0];
+                L_DESCPAGO =
+                  bancData1.data[0] != undefined
+                    ? bancData1.data[0].descripcion
+                    : '';
                 console.log(bancDesc1);
               }
             } else if (LST_2COL1.indexOf('BANCO SANT') !== -1) {
@@ -237,9 +253,15 @@ export class PayloadComponent extends BasePage implements OnInit {
               const auxsan = DESCRIPCION_MOV_TRIM;
               let bancDesc2 = await this.obtenCodDescPago(auxsan, 0, true);
               let bancData2: any = bancDesc2;
-              CODIGO_BANCO = bancData2.data[0].codigo;
+              CODIGO_BANCO =
+                bancData2.data[0].codigo != undefined
+                  ? bancData2.data[0].codigo
+                  : '';
               console.log(bancData2.data[0]);
-              L_DESCPAGO = DESCRIPCION_MOV;
+              L_DESCPAGO =
+                bancData2.data[0].descripcion != undefined
+                  ? bancData2.data[0].descripcion
+                  : '';
             } else if (LST_2COL1.indexOf('HSBC') !== -1) {
               V_FECHA = 3;
               LST_2COL1 = 'HSBC PS';
@@ -249,33 +271,57 @@ export class PayloadComponent extends BasePage implements OnInit {
                 false
               );
               let bancData3: any = bancDesc3;
-              CODIGO_BANCO = bancData3.data[0].codigo;
+              CODIGO_BANCO =
+                bancData3.data[0].codigo != undefined
+                  ? bancData3.data[0].codigo
+                  : '';
               console.log(bancData3.data[0]);
-              L_DESCPAGO = bancData3.data[0].descripcion;
+              L_DESCPAGO =
+                bancData3.data[0].descripcion != undefined
+                  ? bancData3.data[0].descripcion
+                  : '';
             } else if (LST_2COL1.indexOf('BANORTE') !== -1) {
               V_FECHA = 4;
               LST_2COL1 = 'BANORTE PS';
               let bancDesc4 = await this.obtenCodDescPago(LST_2COL1, 3, false);
               let bancData4: any = bancDesc4;
-              CODIGO_BANCO = bancData4.data[0].codigo;
+              CODIGO_BANCO =
+                bancData4.data[0].codigo != undefined
+                  ? bancData4.data[0].codigo
+                  : '';
               console.log(bancData4.data[0]);
-              L_DESCPAGO = bancData4.data[0].descripcion;
+              L_DESCPAGO =
+                bancData4.data[0].descripcion != undefined
+                  ? bancData4.data[0].descripcion
+                  : '';
             } else if (LST_2COL1.indexOf('SCOTIABANK') !== -1) {
               V_FECHA = 5;
               LST_2COL1 = 'SCOTIA PS';
               let bancDesc5 = await this.obtenCodDescPago(LST_2COL1, 10, false);
               let bancData5: any = bancDesc5;
-              CODIGO_BANCO = bancData5.data[0].codigo;
+              CODIGO_BANCO =
+                bancData5.data[0].codigo != undefined
+                  ? bancData5.data[0].codigo
+                  : '';
               console.log(bancData5.data[0]);
-              L_DESCPAGO = bancData5.data[0].descripcion;
+              L_DESCPAGO =
+                bancData5.data[0].descripcion != undefined
+                  ? bancData5.data[0].descripcion
+                  : '';
             } else if (LST_2COL1.indexOf('BBVA BA') !== -1) {
               V_FECHA = 5;
               LST_2COL1 = 'BANCOM PS';
               let bancDesc6 = await this.obtenCodDescPago(LST_2COL1, 10, false);
               let bancData6: any = bancDesc6;
-              CODIGO_BANCO = bancData6.data[0].codigo;
+              CODIGO_BANCO =
+                bancData6.data[0].codigo != undefined
+                  ? bancData6.data[0].codigo
+                  : '';
               console.log(bancData6.data[0]);
-              L_DESCPAGO = bancData6.data[0].descripcion;
+              L_DESCPAGO =
+                bancData6.data[0].descripcion != undefined
+                  ? bancData6.data[0].descripcion
+                  : '';
             } else {
               V_FECHA = 0;
             }
