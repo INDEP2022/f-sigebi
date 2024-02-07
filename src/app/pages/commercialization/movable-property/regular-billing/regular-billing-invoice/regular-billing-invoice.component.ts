@@ -1893,70 +1893,100 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     impressionDate: string
   ) {
     const count = await this.getCount(eventId, factura);
+    console.log(count);
     const data = {
       PEVENTO: eventId,
       PFACTURA: factura,
     };
     if (pTipo == 1) {
       if (count > 0) {
-        this.getReport('RCOMERFACTURAS_VEH_VNR', data);
+        this.getReportNull();
+        // this.getReport('RCOMERFACTURAS_VEH_VNR', data);
       } else {
-        this.getReport('RCOMERFACTURAS_VEH', data);
+        this.getReportNull();
+        // this.getReport('RCOMERFACTURAS_VEH', data);
       }
     } else if (pTipo == 2) {
       const v_val = await this.etapaNexo(impressionDate);
       if (v_val == 1) {
-        this.getReport('RCOMERFACTURAS_DIVERSOS', data);
+        this.getReportNull();
+        // this.getReport('RCOMERFACTURAS_DIVERSOS', data);
       } else if (v_val == 2) {
-        this.getReport('RCOMERFAC_GRALSNANX', data);
+        // this.getReport('RCOMERFAC_GRALSNANX', data);
+        this.getReportNull();
       } else {
         this.alert('warning', 'No se puede visualizar el reporte', '');
       }
     } else if (pTipo == 3) {
       if (count > 0) {
-        this.getReport('RCOMERFACTURAS_DIV_SA_VNR', data);
+        this.getReportNull();
+        // this.getReport('RCOMERFACTURAS_DIV_SA_VNR', data);
       } else {
-        this.getReport('RCOMERFACTURAS_DIVSANEXO', data);
+        this.getReportNull();
+        // this.getReport('RCOMERFACTURAS_DIVSANEXO', data);
       }
     } else if (pTipo == 4) {
       if (count > 0) {
-        this.getReport('RCOMERFACTURAS_AERONAVE_VNR', data);
+        this.getReport('RCOMERFACTURAS_AERONAVE_VNR', data); // SI
       } else {
-        this.getReport('RCOMERFACTURAS_AERONAVE', data);
+        this.getReport('RCOMERFACTURAS_AERONAVE', data); // FUNCIONA
       }
     } else if (pTipo == 5) {
       const v_val = await this.etapaNexo(impressionDate);
       if (v_val == 1) {
-        this.getReport('RCOMERFACTURAS_CHCONANEXO', data);
+        // this.getReport('RCOMERFACTURAS_CHCONANEXO', data);
+        this.getReportNull();
       } else if (v_val == 2) {
-        this.getReport('RCOMERFAC_GRALSNANX', data);
+        // this.getReport('RCOMERFAC_GRALSNANX', data);
+        this.getReportNull();
       } else {
         this.alert('warning', 'No se puede visualizar el reporte', '');
       }
     } else if (pTipo == 6) {
-      this.getReport('RCOMERFACTURAS_CHATARRA_SA', data);
+      this.getReport('RCOMERFACTURAS_CHATARRA_SA', data); // FUNCIONA
     } else if (pTipo == 10) {
-      this.getReport('RCOMERFACTURAS_ANEXOS', data);
+      this.getReport('RCOMERFACTURAS_ANEXOS', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 1) {
-      this.getReport('RCOMERCONSENTVEH', data);
+      this.getReport('RCOMERCONSENTVEH', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 2) {
       // PARA IMPRIMIR CARTAS DE RESPONSABILIDAD DE AERONAVES
-      this.getReport('RCOMERCONSENTBDCA', data);
+      this.getReport('RCOMERCONSENTBDCA', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 3) {
-      this.getReport('RCOMERCONSENTSBD', data);
+      this.getReport('RCOMERCONSENTSBD', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 4) {
-      this.getReport('RCOMERCONSENTAERO', data);
+      this.getReport('RCOMERCONSENTAERO', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 5) {
-      this.getReport('RCOMERCONSENTCHCA', data);
+      this.getReport('RCOMERCONSENTCHCA', data); // FUNCIONA
     } else if (pTipo == 11 && psubtipo == 6) {
-      this.getReport('RCOMERCONSENTCHSA', data);
+      this.getReport('RCOMERCONSENTCHSA', data); // FUNCIONA
     } else if (pTipo == 12 && [1, 2, 3, 4, 5, 6].includes(psubtipo)) {
-      this.getReport('RCOMERCARTASLIB', { PEVENTO: eventId });
+      // this.getReport('RCOMERCARTASLIB', { PEVENTO: eventId });
+      this.getReportNull();
     }
   }
 
   getReport(name: string, params: Object) {
     this.siabService.fetchReport(name, params).subscribe({
+      next: resp => {
+        const blob = new Blob([resp], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+  }
+  getReportNull(name?: string, params?: Object) {
+    this.siabService.fetchReportBlank('blank').subscribe({
       next: resp => {
         const blob = new Blob([resp], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -2322,6 +2352,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   async impresionInvoice() {
     for (let invoice of this.isSelect) {
       // let invoice = this.isSelect[0];
+      if (!invoice.Invoice) {
+        this.alert('warning', 'No ha capturado el folio de la factura', '');
+        break;
+      }
       //revisar con procedimiento pup_rep_facturas_mas
       this.callReport(
         Number(invoice.Type),
