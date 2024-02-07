@@ -282,7 +282,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'warning',
             'Advertencia',
-            'El bien ya cuenta con un resultado validado'
+            'El bien ya cuenta con un resultado registrado'
           );
         }
       } else {
@@ -337,6 +337,8 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     const codigoAlmacenTarea = ''; //
     const resultadoFinal = this.selectedList[0].resultFinal;
 
+    console.log('resultadoFinal', resultadoFinal);
+
     if (resultadoFinal == 'P') {
       this.alertQuestion(
         'question',
@@ -351,7 +353,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'No es posible aprobar el bien seleccionado'
+        'El bien seleccionado ya cuenta con un resultado registrado'
       );
       return;
     }
