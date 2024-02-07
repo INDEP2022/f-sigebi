@@ -1761,7 +1761,11 @@ export class RequestCompDocTasksComponent
         )
         .subscribe({
           next: response => {
-            console.log(response);
+            //let blob = this.dataURItoBlob(response);
+            let file = new Blob([response], { type: 'application/pdf' });
+            const fileURL = URL.createObjectURL(file);
+            this.openPrevPdf(fileURL);
+
           },
           error: error => {
             this.showError('Vista previa no dipoonible');
