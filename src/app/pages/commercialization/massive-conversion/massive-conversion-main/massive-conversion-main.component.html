@@ -45,58 +45,30 @@
                     class="btn btn-sm btn-success btn-block active me-2 font-size-14"
                     (click)="consultInServer()">
                     Consultar Datos
-                    <i class="bx bx-search text-light float-icon"></i>
+                    <!-- <i class="bx bx-search text-light float-icon"></i> -->
                   </button>
                 </div>
                 <div class="col-12">
-                  <div class="btn-group d-block" dropdown>
-                    <button
-                      (click)="onClickLoadFile()"
-                      type="button"
-                      [disabled]="isLoadingLoadFile"
-                      class="btn btn-sm btn-info btn-block active me-2 font-size-14">
-                      <i class="bx bx-file text-light float-icon"></i>
-                      Cargar Archivo <span class="caret"></span>
-                    </button>
-                    <!-- <ul
-                      id="dropdown-animated"
-                      *dropdownMenu
-                      class="dropdown-menu"
-                      role="menu"
-                      aria-labelledby="loadBtn">
-                      <li role="menuitem">
-                        <a
-                          class="dropdown-item bg-info text-light"
-                          (click)="rfc.click()"
-                          >RFC<input
-                            #rfc
-                            hidden
-                            type="file"
-                            accept=".csv"
-                            (change)="onClickLoadFile($event, 'rfc')"
-                        /></a>
-                      </li>
-                      <li role="menuitem">
-                        <a
-                          class="dropdown-item bg-info text-light"
-                          (click)="clientId.click()"
-                          >Id Cliente<input
-                            #clientId
-                            hidden
-                            type="file"
-                            accept=".csv"
-                            (change)="onClickLoadFile($event, 'client_id')"
-                        /></a>
-                      </li>
-                    </ul> -->
-                  </div>
+                  <button
+                    class="btn btn-sm btn-success btn-block active me-2 font-size-14"
+                    type="button"
+                    (click)="file.click()">
+                    Insertar Archivo
+                  </button>
+                  <input
+                    type="file"
+                    name="file"
+                    #file
+                    class="d-none"
+                    accept=".csv"
+                    (change)="onFileChange($event)" />
                 </div>
                 <div class="col-12">
                   <button
                     [disabled]="!validGenerateLCs"
                     class="btn btn-sm btn-secondary btn-block active me-2 font-size-14"
                     (click)="loadChecks()">
-                    <i class="bx bx-upload text-light float-icon"></i>
+                    <!-- <i class="bx bx-upload text-light float-icon"></i> -->
                     Cargar Cheques
                   </button>
                 </div>
@@ -109,7 +81,7 @@
                       type="button"
                       class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
                       aria-controls="dropdown-animated">
-                      <i class="bx bx-send text-light float-icon"></i>
+                      <!-- <i class="bx bx-send text-light float-icon"></i> -->
                       Generar LCs <span class="caret"></span>
                     </button>
                     <ul
@@ -141,7 +113,7 @@
                     class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
                     (click)="reprocess()"
                     [disabled]="!validGenerateLCs">
-                    <i class="bx bx-send text-light float-icon"></i>
+                    <!-- <i class="bx bx-send text-light float-icon"></i> -->
                     Mantto y Reprocesos
                   </button>
                 </div>
