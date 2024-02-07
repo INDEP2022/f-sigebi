@@ -58,6 +58,8 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
   private delegationService = inject(DelegationService);
   private fractionService = inject(FractionService);
 
+  toggleInformation = true;
+
   ngOnInit(): void {
     console.log('validate visita', this.idRequest);
     const self = this;
